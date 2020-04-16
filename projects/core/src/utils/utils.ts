@@ -1168,7 +1168,7 @@ export const addForIdAttributes = (element: HTMLElement) => {
 
 /**
  * This method is used to adjust the container position
- * For example: 1. When datepicker control placed closed to the screen left edges, it is going cutting the container.
+ * For example: 1. When datepicker control placed closed to the screen left edges, it is going to negative values which is  cutting the container.
  * To Fix the container overlapping issue changing the contrainer left translation to 0
  * @param containerElem - picker/dropdown container element(jquery)
  * @param parentElem - widget native element
@@ -1176,29 +1176,69 @@ export const addForIdAttributes = (element: HTMLElement) => {
  * @param ele - Child element(jquery). For some of the widgets(time, search) containerElem doesn't have height. The inner element(dropdown-menu) has height so passing it as optional.
  */
 export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) => {
-    const containerWidth = ele ? _.parseInt(ele.css('width')) : _.parseInt(containerElem.css('width'));
-    const viewPortWidth = $(window).width() + window.scrollX;
-    const parentDimesion = parentElem.getBoundingClientRect();
-    const parentRight = parentDimesion.right + window.scrollX;
-    let newLeft;
-
     const zoneRef = ref._ngZone || ref.ngZone;
-
     zoneRef.onStable.subscribe(() => {
-        const containerEleTransformations = new WebKitCSSMatrix(window.getComputedStyle(containerElem[0]).webkitTransform);
-         if (viewPortWidth - (parentRight + parentDimesion.width) < containerWidth) {
-             newLeft = parentRight - containerWidth; containerEleTransformations.m41 = newLeft;
-         } else if (containerEleTransformations.m41 < 0) {
+        const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
+        if (containerEleTransformations.m41 < 0) {
              containerEleTransformations.m41 = 0;
+         }else{
+             return;
          }
-      const translatePosition = "translate3d(" + containerEleTransformations.m41 + "px, " + containerEleTransformations.m42 + "px, 0px)";
-      containerElem[0].style.webkitTransform = translatePosition;
-      containerElem[0].style.MozTransform = translatePosition;
-      containerElem[0].style.msTransform = translatePosition;
-      containerElem[0].style.OTransform = translatePosition;
-      containerElem[0].style.transform = translatePosition;
+         setTranslation3dPosition(containerElem, containerEleTransformations);
      });
    };
+
+
+/**
+ * This method is used to adjust the container position
+ * For example: 1. When datepicker control placed closed to the screen right edges, it is going to out of the viewport values which is  cutting the container.
+ * @param containerElem  picker/dropdown container element(jquery)
+ * @param parentElem widget native element
+ * @param ref  scope of particular library directive
+ * @param ele Child element(jquery). For some of the widgets(time, search) containerElem doesn't have height. The inner element(dropdown-menu) has height so passing it as optional.
+ */
+   export const adjustContainerRightEdges = (containerElem, parentElem, ref, ele?) => {
+        const containerWidth = ele ? _.parseInt(ele.css('width')) : _.parseInt(containerElem.css('width'));
+        const viewPortWidth = $(window).width() + window.scrollX;
+        const parentDimesion = parentElem.getBoundingClientRect();
+        const parentRight = parentDimesion.right + window.scrollX;
+        let newLeft;
+        const zoneRef = ref._ngZone || ref.ngZone;
+        zoneRef.onStable.subscribe(() => {
+            const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
+
+            if (viewPortWidth - (parentRight + parentDimesion.width) < containerWidth) {
+                newLeft = parentRight - containerWidth;
+                containerEleTransformations.m41 = newLeft;
+            }else{
+                return;
+            }
+            setTranslation3dPosition(containerElem, containerEleTransformations);
+        });
+   }
+
+  /**
+   * For given element set the traslation
+   * @param containerElem tanslated element
+   *
+   * @param containerEleTransformations translate matrix positions
+   */
+   export const setTranslation3dPosition = (containerElem, containerEleTransformations) => {
+        const translatePosition = "translate3d(" + containerEleTransformations.m41 + "px, " + containerEleTransformations.m42 + "px, 0px)";
+        containerElem[0].style.webkitTransform = translatePosition;
+        containerElem[0].style.MozTransform = translatePosition;
+        containerElem[0].style.msTransform = translatePosition;
+        containerElem[0].style.OTransform = translatePosition;
+        containerElem[0].style.transform = translatePosition;
+   }
+
+   /**
+    *
+    * @param containerElem elemet for the WebKitCSSMatrix
+    */
+   export const getWebkitTraslationMatrix = (containerElem) => {
+     return  new WebKitCSSMatrix(window.getComputedStyle(containerElem[0]).webkitTransform)
+   }
 
 // close all the popovers.
 export const closePopover = (element) => {
