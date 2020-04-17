@@ -1209,6 +1209,9 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
 
             if (viewPortWidth - (parentRight + parentDimesion.width) < containerWidth) {
                 newLeft = parentRight - containerWidth;
+                if(newLeft <0){
+                    newLeft = 0;
+                }
                 containerEleTransformations.m41 = newLeft;
             }else{
                 return;

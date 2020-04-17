@@ -3,7 +3,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { PopoverDirective } from 'ngx-bootstrap/popover';
 
-import { addClass, App, setAttr, setCSSFromObj, findRootContainer } from '@wm/core';
+import { addClass, App, setAttr, setCSSFromObj, findRootContainer, adjustContainerPosition, adjustContainerRightEdges } from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef, AUTOCLOSE_TYPE } from '@wm/components/base';
 
 import { registerProps } from './popover.props';
@@ -93,30 +93,41 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         setTimeout(() => this.anchorRef.nativeElement.focus(), 10);
     }
 
-    private adjustPopoverPosition(popoverElem, parentDimesion, popoverLeftShift) {
-        const arrowLeftShift = (parentDimesion.left + (parentDimesion.width / 2)) - popoverLeftShift;
+    private adjustPopoverArrowPosition(popoverElem, popoverLeftShift) {
         this.bsPopoverDirective._popover._ngZone.onStable.subscribe(() => {
-            popoverElem.css('left', popoverLeftShift + 'px');
-            popoverElem.find('.popover-arrow').css('left', arrowLeftShift + 'px');
+            popoverElem.find('.popover-arrow').css('left', popoverLeftShift + 'px');
         });
     }
 
     private calculatePopoverPostion(element) {
+
         const popoverElem = $(element);
-        const popoverLeft = _.parseInt(popoverElem.css('left'));
-        const popoverWidth = _.parseInt(popoverElem.css('width'));
+        let popoverLeft =  popoverElem.offset().left;
+        const popoverWidth = popoverElem[0].offsetWidth;
         const viewPortWidth = $(window).width();
         const parentDimesion = this.anchorRef.nativeElement.getBoundingClientRect();
         // Adjusting popover position, if it is not visible at left side
         if (popoverLeft < 0) {
+            adjustContainerPosition(popoverElem, this.nativeElement, this.bsPopoverDirective._popover);
             const popoverLeftShift = 4;
-            this.adjustPopoverPosition(popoverElem, parentDimesion, popoverLeftShift);
+            const arrowLeftShift = (parentDimesion.left + (parentDimesion.width / 2)) - popoverLeftShift;
+            this.adjustPopoverArrowPosition(popoverElem, arrowLeftShift);
         }
         // Adjusting popover position, if it is not visible at right side
         if (popoverLeft + popoverWidth > viewPortWidth) {
-            const popoverLeftAdjust = (popoverLeft + popoverWidth) - viewPortWidth;
-            const popoverLeftShift =  popoverLeft - popoverLeftAdjust - 50;
-            this.adjustPopoverPosition(popoverElem, parentDimesion, popoverLeftShift);
+            adjustContainerRightEdges(popoverElem, this.nativeElement, this.bsPopoverDirective._popover);
+            setTimeout(() => {
+                popoverLeft = popoverElem.offset().left;
+                const popoverLeftAdjust = (popoverLeft + popoverWidth) - viewPortWidth;
+                const popoverLeftShift =  popoverLeft - popoverLeftAdjust;
+                let arrowLeftShift ;
+                if(popoverLeft<=100){
+                    arrowLeftShift =  (parentDimesion.left + (parentDimesion.width / 2)) - popoverLeft;
+                }else{
+                    arrowLeftShift = (parentDimesion.left + (parentDimesion.width / 2)) - popoverLeftShift;
+                }
+               this.adjustPopoverArrowPosition(popoverElem, arrowLeftShift);
+            });
         }
     }
 
