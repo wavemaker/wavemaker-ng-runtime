@@ -126,6 +126,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                 }else{
                     arrowLeftShift = (parentDimesion.left + (parentDimesion.width / 2)) - popoverLeftShift;
                 }
+                if(viewPortWidth > 500){
+                    arrowLeftShift += 30;
+                }
                this.adjustPopoverArrowPosition(popoverElem, arrowLeftShift);
             });
         }
