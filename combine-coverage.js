@@ -4,6 +4,37 @@ const fs = require("fs")
 var glob = require("glob");
 var summary = istanbulCoverage.createCoverageSummary();
 
+// Console function registration for colors
+/**
+ *  info : Green
+ *  warn : Yellow
+ *  Error : Red
+ */
+const colorSet = {
+    Reset: "\x1b[0m",
+    Red: "\x1b[31m",
+    Green: "\x1b[32m",
+    Yellow: "\x1b[33m",
+    Blue: "\x1b[34m",
+    Magenta: "\x1b[35m"
+};
+
+var funcNames = ["info", "warn", "error"];
+var colors = [colorSet.Green,  colorSet.Yellow, colorSet.Red];
+
+for (var i = 0; i < funcNames.length; i++) {
+    let funcName = funcNames[i];
+    let color = colors[i];
+    let oldFunc = console[funcName];
+    console[funcName] = function () {
+        var args = Array.prototype.slice.call(arguments);
+        if (args.length) {
+            args = [color + args[0]].concat(args.slice(1), colorSet.Reset);
+        }
+        oldFunc.apply(null, args);
+    };
+}
+
 // Read the text file which has the karma reports from terminal.
 // This is we are reading to get the total number of test cases from all the projects;
 fs.readFile('./karma-test-report.txt', 'utf-8', (err, file) => {
@@ -35,9 +66,9 @@ fs.readFile('./karma-test-report.txt', 'utf-8', (err, file) => {
     console.log("=============================== Overall Test Summary ===========================");
 
 
-    console.log("Tests completed : " + totalTestCompleted);
-    console.log("Tests failed : " + totalTestsFailed);
-    console.log("Tests skipped : " + totalTestSkipped);
+    console.info("Tests completed : " + totalTestCompleted);
+    console.error("Tests failed : " + totalTestsFailed);
+    console.warn("Tests skipped : " + totalTestSkipped);
 
 });
 
