@@ -206,12 +206,6 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
 
     setOrderBy(expression) {
         this.orderBy = expression;
-
-        /* update the variable if autoUpdate flag is set */
-        if (this.autoUpdate) {
-            this.update();
-        }
-
         return this.orderBy;
     }
 
