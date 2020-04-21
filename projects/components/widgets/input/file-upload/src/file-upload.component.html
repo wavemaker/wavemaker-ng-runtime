@@ -1,7 +1,7 @@
 <div class="app-fileupload" init-widget>
     <!-- drag and drop files UI in web -->
     <div class="app-multi-file-upload" *ngIf="!_isMobileType && multiple">
-        <div class="drop-box" drag-files="onFileSelect($event,$event.target.files)">
+        <div class="drop-box" (dragover)="dragOverHandler($event)" (drop)="onFileDrop($event)" >
             <i class="{{iconclass}}"></i>
             <div class="message">
                 <label [innerHtml]="caption" class="caption"></label>
@@ -58,5 +58,21 @@
                 </div>
             </li>
         </div>
+    </ul>
+    <!-- list of selectedfolders UI to show the error in title -->
+    <ul class="list-group file-upload" [ngStyle]="{height: filelistheight, overflow: overflow}" title="{{this.appLocale.MESSAGE_FOLDER_UPLOADS_NOT_ALLOWED}}" *ngIf="selectedFolders.length > 0" >
+        <li *ngFor="let ft of selectedFolders" class="list-group-item file-upload-status">
+            <div class="media upload-file-list">
+                <div class="media-left media-middle file-icon fa fa-folder-o"></div>
+                <div class="media-body media-middle file-details">
+                    <p class="uploaddetails">
+                        <label class="upload-title">{{ft.name}}</label><br/>
+                    </p>
+                </div>
+                <div class="media-right media-middle" >
+                    <span class="status-icon  wi wi-cancel text-danger"></span>
+                </div>
+            </div>
+        </li>
     </ul>
 </div>
