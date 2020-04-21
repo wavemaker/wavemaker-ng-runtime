@@ -107,12 +107,14 @@ export class DialogServiceImpl {
      * closes the dialog with the given name
      * @param {string} name
      */
-    public close(name: string, scope?: any) {
+    public close(name: string, scope?: any, callBackFn?:any) {
         const dialogRef = this.getDialogRef(name, scope);
         if (!dialogRef) {
             return;
         }
-
+        // For notification action variable dialogs onok callback event should be called after closing the dialog.
+        // So passing it as callback function
+        dialogRef.closeCallBackFn = callBackFn;
         dialogRef.close();
     }
 
