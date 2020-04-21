@@ -64,6 +64,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
                     this.dialogService.removeFromOpenedDialogs(ref);
                     this.dialogService.removeFromClosedDialogs(ref);
                     invokeClosedCallback(ref);
+                    if (ref.closeCallBackFn) {
+                        ref.closeCallBackFn();
+                    }
                 }
             })
         ];
@@ -71,7 +74,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
             this.dialogService.removeFromOpenedDialogs(this);
             this.dialogService.removeFromClosedDialogs(this);
             subscriptions.forEach(s => s.unsubscribe());
-        })
+        });
     }
 
     /**
