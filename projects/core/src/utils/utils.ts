@@ -321,7 +321,13 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
 /**
  * method to get the date object from the input received
  */
-export const getDateObj = (value): Date => {
+export const getDateObj = (value, options?): Date => {
+    // Handling localization
+    if (options && options.pattern && options.pattern !== 'timestamp') {
+        const pattern = momentPattern(options.pattern);
+        value = moment(value, pattern).toDate();
+    }
+
     /*if the value is a date object, no need to covert it*/
     if (_.isDate(value)) {
         return value;
@@ -589,8 +595,30 @@ export const isDateTimeType = type => {
     return _.includes([DataType.DATE, DataType.TIME, DataType.TIMESTAMP, DataType.DATETIME, DataType.LOCALDATETIME], type);
 };
 
+const momentPattern = (pattern) => {
+    if (_.includes(pattern, 'E')) {
+       pattern =  _.replace(pattern, /E[,]?/g, '');
+    }
+    return _.replace(pattern, /y*d*/g, (val) => val.toUpperCase());
+};
+
 /*  This function returns date object. If val is undefined it returns invalid date */
-export const getValidDateObject = val => {
+export const getValidDateObject = (val, options?) => {
+   const defaultMeridian = ['AM', 'PM'];
+    // Updating localized meridians with default meridians
+    if (options && options.meridians) {
+        _.forEach(options.meridians, (meridian, index) => {
+            if (_.includes(val, meridian)) {
+                val = val.replace(meridian, defaultMeridian[index]);
+            }
+        });
+    }
+    // Handling localization
+    if (options && options.pattern && options.pattern !== 'timestamp') {
+        const pattern = momentPattern(options.pattern);
+        val = moment(val, pattern).toDate();
+    }
+
     if (moment(val).isValid()) {
         // date with +5 hours is returned in safari browser which is not a valid date.
         // Hence converting the date to the supported format "YYYY/MM/DD HH:mm:ss" in IOS
@@ -613,8 +641,8 @@ export const getValidDateObject = val => {
 };
 
 /*  This function returns javascript date object*/
-export const getNativeDateObject = val => {
-    val = getValidDateObject(val);
+export const getNativeDateObject = (val, options?) => {
+    val = getValidDateObject(val, options);
     return new Date(val);
 };
 

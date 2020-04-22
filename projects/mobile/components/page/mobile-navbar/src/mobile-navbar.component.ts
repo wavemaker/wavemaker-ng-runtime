@@ -78,13 +78,15 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
                 }
             }
         });
+        this.binddisplaylabel = this.nativeElement.getAttribute('displaylabel.bind');
         setTimeout(() => this._isReady = true, 1000);
     }
 
     ngAfterViewInit() {
         this.searchComponent.binddisplayimagesrc = this.binddisplayimagesrc;
         this.searchComponent.displayimagesrc = this.binddisplayimagesrc ? this.binddisplayimagesrc : this.displayimagesrc;
-        this.searchComponent.displaylabel = this.binddisplaylabel ? this.binddisplaylabel : this.displaylabel;
+        this.searchComponent.displaylabel =  this.displaylabel;
+        this.searchComponent.binddisplaylabel = this.binddisplaylabel;
         this.searchComponent.datafield = this.datafield;
         this.searchComponent.binddataset = this.binddataset;
         this.searchComponent.dataset = this.dataset;
@@ -112,8 +114,8 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
             if (key === 'datafield') {
                 this.searchComponent.datafield = this.datafield;
             }
-            if (key === 'displaylabel') {
-                this.searchComponent.displaylabel = this.binddisplaylabel ? this.binddisplaylabel : this.displaylabel;
+            if (key === 'displaylabel' ) {
+                this.searchComponent.displaylabel = this.displaylabel;
             }
         }
 
