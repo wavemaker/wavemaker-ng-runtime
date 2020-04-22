@@ -130,9 +130,9 @@ export class CrudVariableManager extends ServiceVariableManager {
      * @private
      */
     protected _invoke (variable: CrudVariable, options: any, success: Function, error: Function) {
-        let inputFields = getClonedObject(options.inputFields || variable.dataBinding);
+        let inputFields = getClonedObject(options.inputFields || {});
         if (options.operation === 'delete') {
-            inputFields = getClonedObject(options.row || inputFields.row || options.inputFields);
+            inputFields = getClonedObject(options.row || inputFields.row || options.inputFields || variable.dataBinding);
         } else if (options.operation === 'create' && options.row) {
             inputFields = getClonedObject(options.row);
         } else if (options.operation === 'update' && options.row) {
@@ -158,16 +158,27 @@ export class CrudVariableManager extends ServiceVariableManager {
                 return op.parameterType === 'body';
             })[0];
         }
-        if (options.operation === 'create' || options.operation === 'update') {
+        // merge fields with bindings
+        const bindingFields = _.get(variable.dataBinding, options.operation) || {};
+        // bindings from setInput can come along with the body param, so employee.age will have to be converted to age
+        if (bodyName && bindingFields[bodyName.name]) {
+            _.forEach(bindingFields, function(bindingFieldVal, bindingFieldKey) {
+                if (bindingFieldKey === bodyName.name) {
+                    _.merge(inputFields, bindingFieldVal);
+                } else {
+                    inputFields[bindingFieldKey] = bindingFieldVal;
+                }
+            });
+        } else {
+            _.merge(inputFields, bindingFields);
+        }
+        if ((options.operation === 'create' || options.operation === 'update') && !inputFields[bodyName.name]) {
             if (bodyName) {
                 inputFields[bodyName.name] = getClonedObject(inputFields);
             } else {
                 inputFields.RequestBody = getClonedObject(inputFields);
             }
         }
-        // merge fields with bindings
-        const bindingFields = _.get(variable.dataBinding, options.operation) || {};
-        _.merge(inputFields, bindingFields);
         let paginationInfo;
         const operationInfo = this.getMethodInfoForCrud(variable, inputFields, options);
         let pathParam, bodyTypeParam;
@@ -287,7 +298,8 @@ export class CrudVariableManager extends ServiceVariableManager {
 
     public invoke(variable, options, success, error) {
         options = options || {};
-        options.inputFields = options.inputFields || getClonedObject(variable.dataBinding);
+        options.operation = options.operation || 'list';
+        options.inputFields = options.inputFields || getClonedObject(variable.dataBinding[options.operation]);
         return $queue.submit(variable).then(this._invoke.bind(this, variable, options, success, error), error);
     }
 
@@ -296,8 +308,12 @@ export class CrudVariableManager extends ServiceVariableManager {
         return _.get(wmServiceOperationInfo, 'parameters');
     }
 
-    public setInput(variable, key, val, options) {
-        return setInput(variable.dataBinding, key, val, options);
+    public setInput(variable, key, val, options, type?) {
+        type = type || 'list';
+        if (_.isEmpty(variable.dataBinding[type])) {
+            variable.dataBinding[type] = {};
+        }
+        return setInput(variable.dataBinding[type], key, val, options);
     }
 
     /**

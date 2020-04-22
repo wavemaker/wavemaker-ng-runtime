@@ -5,6 +5,10 @@ import { ApiAwareVariable } from './api-aware-variable';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { CrudVariableManager } from '../../manager/variable/crud-variable.manager';
 import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
+import {CRUDList} from '../crud-list';
+import {CRUDCreate} from '../crud-create';
+import {CRUDUpdate} from '../crud-update';
+import {CRUDDelete} from '../crud-delete';
 
 declare const _;
 
@@ -19,11 +23,21 @@ export class CrudVariable extends ApiAwareVariable implements IDataSource {
     // Used to track a variable http call, so that it can be cancelled at any point of time during its execution
     _observable;
     pagination;
+    list;
+    create;
+    update;
+    delete;
 
     constructor(variable: any) {
         super();
         Object.assign(this as any, variable);
+        // for having separate setInput methods for each type
+        this.list   = new CRUDList(this, getManager());
+        this.create = new CRUDCreate(this, getManager());
+        this.update = new CRUDUpdate(this, getManager());
+        this.delete = new CRUDDelete(this, getManager());
     }
+
 
     execute(operation, options) {
         let returnVal = super.execute(operation, options);
@@ -57,7 +71,7 @@ export class CrudVariable extends ApiAwareVariable implements IDataSource {
                 returnVal = this.invoke(options);
                 break;
             case DataSource.Operation.UPDATE :
-                returnVal = this.update(options);
+                returnVal = this.invoke(options);
                 break;
             case DataSource.Operation.SEARCH_RECORDS:
                 returnVal = this.searchRecords(options);
@@ -121,10 +135,6 @@ export class CrudVariable extends ApiAwareVariable implements IDataSource {
     deleteRecord(options?, success?, error?) {
         options = options || {};
         options.operation = 'delete';
-        return getManager().invoke(this, options, success, error);
-    }
-
-    update(options, success?, error?) {
         return getManager().invoke(this, options, success, error);
     }
 
