@@ -33,6 +33,7 @@
     (keydown.shift.arrowdown)="handleKeyDown($event, 'selectNext')"
     (keydown.shift.arrowleft)="handleKeyDown($event, 'selectPrev')"
     (keydown.shift.arrowright)="handleKeyDown($event, 'selectNext')"
+    [hidden]="noDataFound && !variableInflight"
 >
     <ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
         <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
