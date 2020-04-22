@@ -1,7 +1,7 @@
 import { Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
-import { TimepickerConfig } from 'ngx-bootstrap';
+import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 import {
     $appDigest,
     AbstractI18nService,
