@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
                     return Promise.resolve(true);
                 }
 
-                this.appManager.handle401(route.routeConfig.path);
+                this.appManager.handle401(route.routeConfig.path, {queryParams: route.queryParams});
 
                 return Promise.resolve(false);
             });
