@@ -240,8 +240,11 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                 return componentFactoryRef;
             }, (err) => {
                 if (err) {
+                    const msg = "Error while loading page";
+                    // console the error for easy debugging
+                    console.log(msg, err);
                     this.appManager.notifyApp(
-                        err,
+                        msg + ', check browser console for error details',
                         'error'
                     );
                 }
