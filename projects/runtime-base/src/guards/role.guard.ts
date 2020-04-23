@@ -43,7 +43,7 @@ export class RoleGuard implements CanActivate {
 
                 } else {
                     // redirect to Login
-                    this.appManager.handle401(route.routeConfig.path);
+                    this.appManager.handle401(route.routeConfig.path, {queryParams: route.queryParams});
 
                     return Promise.resolve(false);
                 }
