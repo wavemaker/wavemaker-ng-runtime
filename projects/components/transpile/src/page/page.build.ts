@@ -22,6 +22,9 @@ const addAtrribute = (node: Element, name: string, value: string) => {
 
 const getElementNode = (name, node) => {
     let elementNode;
+    if (!node) {
+        return;
+    }
     _.forEach(node.children, (child) => {
         if (child instanceof Element) {
             if ((child as Element).name === name) {
