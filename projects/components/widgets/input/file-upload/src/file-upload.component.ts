@@ -26,6 +26,7 @@ const WIDGET_CONFIG = {
 export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit {
     static initializeProps = registerProps();
     selectedFiles: any = [];
+    selectedFolders: any = [];
     progressObservable;
     name;
     multiple;
@@ -56,7 +57,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     };
     chooseFilter = '';
     datasource;
-    fileUploadMessage = 'You can also browse for files';
+    fileUploadMessage = 'Drop your files here or click here to browse';
     uploadedFiles = {
         fileName: '',
         path: '',
@@ -197,6 +198,11 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         const files = this.getValidFiles($files);
         $files = files.validFiles;
 
+        // If the user has previously tried uploading folders using drop, and then uploading using click method we clear the folders dom
+        if ($event.type === "change") {
+            this.selectedFolders = [];
+        }
+
         // Trigger error callback event if any invalid file found.
         if (!_.isEmpty(files.errorFiles)) {
             this.invokeEventCallback('error', {
@@ -234,6 +240,34 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                 // EVENT: ON_SELECT
                 this.onSelectEventCall($event, $files);
             }
+        }
+    }
+
+    // Prevent default behavior (Prevent file from being opened)
+    dragOverHandler($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+    }
+
+    // Get the file data if it exists and call the onFileSelect function
+    onFileDrop($event) {
+        $event.preventDefault();
+        let listOfFiles = [];
+        this.selectedFolders = [];
+        const filesData = $event.dataTransfer.items;
+        if (filesData.length > 0) {
+            // Use DataTransferItemList interface to access the file(s)
+            for (var i = 0; i < filesData.length; i++) {
+                 // Get all the files and push them into an array
+                if (filesData[i].webkitGetAsEntry().isFile) {
+                    listOfFiles.push(filesData[i].getAsFile());
+                }
+                // If a selected item is directory push the folder element into an array and display error message by adding to dom
+                else if(filesData[i].webkitGetAsEntry().isDirectory) {
+                    this.selectedFolders.push(filesData[i].getAsFile());
+                }
+            }
+            this.onFileSelect($event, listOfFiles);
         }
     }
 
