@@ -757,6 +757,7 @@ $.widget('wm.datatable', {
             gridElement: null,
             gridHeader: null,
             gridBody: null,
+            gridActions: null,
             gridSearch: null,
             tableId: null,
             searchObj: {
@@ -805,6 +806,7 @@ $.widget('wm.datatable', {
         this._reselectColumns();
         this.addOrRemoveScroll();
         this._setGridEditMode(false);
+        this.gridActions = $(this.element).siblings('div.panel-footer').find('div.app-datagrid-actions');
     },
     //Populate row data with default data
     setDefaultRowData: function (rowData) {
@@ -1505,6 +1507,7 @@ $.widget('wm.datatable', {
             this.setStatus('nodata', this.dataStatus.nodata);
         }
         this.addOrRemoveScroll();
+        this.toggleNewRowActions(false);
     },
     //Method to save a row which is in editable state
     saveRow: function (callBack) {
@@ -1570,6 +1573,35 @@ $.widget('wm.datatable', {
                 e.stopPropagation();
             }
         });
+    },
+    // WMS-18568 changes added Save and Cancel buttons for Inline Data Table with no actions
+    toggleNewRowActions: function (saveInd) {
+        var self = this
+            $newRow = this.gridBody.find('tr.app-datagrid-row.row-editing'),
+            $newRowButton = this.gridActions.find('i.wi-plus').closest('.app-button');
+        if (this.options.editmode === this.CONSTANTS.INLINE && this.options.rowActions.length === 0) {
+            if (saveInd) {
+                this.gridActions.append(`<button type="button" wmbutton="" class="btn app-button btn-secondary cancelNewRow" tabindex="0" accesskey="" title="Cancel">
+                                    <i aria-hidden="true" class="app-icon wi wi-cancel"></i>
+                                    <span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>
+                                </button>
+                                <button type="button" wmbutton="" class="btn app-button btn-primary saveNewRow" tabindex="0" accesskey="" title="Save">
+                                    <i aria-hidden="true" class="app-icon wi wi-done"></i>
+                                    <span class="sr-only">Save Icon</span><span class="btn-caption">Save</span>
+                                </button>`);
+                this.gridActions.find('.cancelNewRow').on('click', function (event) {
+                    self.toggleEditRow(event, {action: 'cancel', $row: $newRow});
+                });
+                this.gridActions.find('.saveNewRow').on('click', function (event) {
+                    self.toggleEditRow(event, {action: 'save', $row: $newRow});
+                });
+                $newRowButton.hide();
+            } else {
+                this.gridActions.find('.cancelNewRow').remove();
+                this.gridActions.find('.saveNewRow').remove();
+                $newRowButton.show();
+            }
+        }
     },
     _isNewRow: function ($row) {
         var rowId = parseInt($row.attr('data-row-id'), 10);
@@ -1643,6 +1675,7 @@ $.widget('wm.datatable', {
             //For new operation, set the rowdata from the default values
             if (options.operation === 'new') {
                 self.setDefaultRowData(rowData);
+                self.toggleNewRowActions(true);
             }
             //Event for on before form render. User can update row data here.
             if ($.isFunction(this.options.onBeforeFormRender)) {
@@ -1754,6 +1787,7 @@ $.widget('wm.datatable', {
                             }
                         }
                         this.options.onRowInsert(rowData, e, onSaveSuccess, editOptions);
+                        self.toggleNewRowActions(false);
                     } else {
                         if ($.isFunction(this.options.onBeforeRowUpdate)) {
                             isValid = this.options.onBeforeRowUpdate(rowData, e, editOptions);
