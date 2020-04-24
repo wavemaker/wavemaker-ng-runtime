@@ -4,6 +4,7 @@ import { FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {
     $appDigest,
     getClonedObject,
+    getValidJSON,
     getFiles,
     isDefined,
     removeClass,
@@ -860,7 +861,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     submitForm($event) {
-        let template, formData;
+        let template, formData, result;
         const dataSource = this.datasource;
         // Disable the form submit if form is in invalid state.
         if (this.validateFieldsOnSubmit()) {
@@ -903,8 +904,14 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                                 this.closeDialog();
                             }
                         }
+                        if (isDefined(data.body)) {
+                            result = getValidJSON(data.body);
+                            result = isDefined(result) ? result : data.body;
+                        } else {
+                            result = data;
+                        }
                         return {
-                            'result': data,
+                            'result': result,
                             'status': true,
                             'message': this.postmessage,
                             'type': 'success'
@@ -913,7 +920,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                         template = this.errormessage || error.error || error;
                         $appDigest();
                         return {
-                            'result': error,
+                            'result': _.get(error, 'error') || error,
                             'status': false,
                             'message': template,
                             'type': 'error'
