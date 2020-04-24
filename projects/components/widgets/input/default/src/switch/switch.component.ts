@@ -122,14 +122,14 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     // Triggered on selected the option from the switch.
     // set the index and highlight the default value. Invoke onchange event handler.
     selectOpt($event, $index, option) {
-        this.modelByKey = option.key;
-
-        this.invokeOnTouched();
         $event.preventDefault();
 
         if (this.disabled) {
             return;
         }
+
+        this.modelByKey = option.key;
+        this.invokeOnTouched();
 
         if (this.selectedItem && $index === _.findIndex(this.datasetItems, {key: this.selectedItem.key})) {
             if (this.datasetItems.length === 2) {
