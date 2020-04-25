@@ -60,6 +60,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public title: string;
     public tabindex: any;
     public name: string;
+    public adaptiveposition:boolean;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor') anchorRef: ElementRef;
@@ -200,7 +201,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         setTimeout(() => popoverStartBtn.focus(), 50);
         // Adjusting popover position if the popover placement is top or bottom
         setTimeout( () => {
-            if (this.popoverplacement === 'bottom' || this.popoverplacement === 'top') {
+            if (!this.adaptiveposition ) {
                 this.calculatePopoverPostion(popoverContainer);
             }
             // triggering onload and onshow events after popover content has rendered
@@ -279,5 +280,11 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     ngAfterViewInit() {
         super.ngAfterViewInit();
         styler(this.anchorRef.nativeElement, this);
+
+        let parentElemPopover = $(this.nativeElement).parents();
+        if(parentElemPopover.closest('[wmTable]').length || parentElemPopover.closest('[wmtabs]').length){
+            this.adaptiveposition = false;
+
+        }
     }
 }
