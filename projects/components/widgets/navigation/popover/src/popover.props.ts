@@ -31,7 +31,8 @@ export const registerProps = () => {
                 ['shortcutkey', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
-                ['title', PROP_STRING]
+                ['title', PROP_STRING],
+                ['adaptiveposition', {value: true, ...PROP_BOOLEAN}]
 
             ]
         )
