@@ -605,8 +605,9 @@ const momentPattern = (pattern) => {
 /*  This function returns date object. If val is undefined it returns invalid date */
 export const getValidDateObject = (val, options?) => {
    const defaultMeridian = ['AM', 'PM'];
-    // Updating localized meridians with default meridians
-    if (options && options.meridians) {
+   const momentMeridian = moment()._locale.meridiem();
+    // Updating localized meridians with default meridians when moment meridian is not defined
+    if (options && options.meridians && _.includes(defaultMeridian, momentMeridian)) {
         _.forEach(options.meridians, (meridian, index) => {
             if (_.includes(val, meridian)) {
                 val = val.replace(meridian, defaultMeridian[index]);
