@@ -385,7 +385,29 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.invokeEventCallback('beforeservicecall', { inputData });
     }
 
+    // Registering the scroll events for the modal and popover.
+    // When scroll event triggeres closinng the typeahead results.
+    private registerScrollEvent(elem){
+        $(elem).off("scroll").on("scroll", ()=> {
+            $(this.nativeElement).find('input').blur();
+        });
+    }
+
     private onDropdownOpen() {
+
+        // This scroll event is to prevent the  autocomplete result detaching from the widget
+        // We are closing the dropdown result on scroll of popover and modal dailog
+        // https://wavemaker.atlassian.net/browse/WMS-18751
+        let parentSearchElement = $(this.nativeElement).parents();
+        let modalContainerElemArr  = parentSearchElement.closest('modal-container');
+        let popoverContainerElemArr = parentSearchElement.closest("popover-container .popover-body");
+            if (modalContainerElemArr && modalContainerElemArr.length) {
+                this.registerScrollEvent(modalContainerElemArr[0]);
+            }
+            if (popoverContainerElemArr && popoverContainerElemArr.length) {
+                this.registerScrollEvent(popoverContainerElemArr[0]);
+            }
+
         // setting the ulElements, liElement on typeaheadContainer.
         // as we are using customOption template, liElements are not available on typeaheadContainer so append them explicitly.
         const fn = _.debounce(() => {
