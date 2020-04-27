@@ -806,7 +806,8 @@ $.widget('wm.datatable', {
         this._reselectColumns();
         this.addOrRemoveScroll();
         this._setGridEditMode(false);
-        this.gridActions = $(this.element).siblings('div.panel-footer').find('div.app-datagrid-actions');
+        this.gridActions = $(this.element).siblings('div.panel-footer, div.panel-heading').find('div.app-datagrid-actions');
+        this.toggleNewRowActions(false);
     },
     //Populate row data with default data
     setDefaultRowData: function (rowData) {
@@ -1579,7 +1580,7 @@ $.widget('wm.datatable', {
         var self = this
             $newRow = this.gridBody.find('tr.app-datagrid-row.row-editing'),
             $newRowButton = this.gridActions.find('i.wi-plus').closest('.app-button');
-        if (this.options.editmode === this.CONSTANTS.INLINE && this.options.rowActions.length === 0) {
+        if (this.options.editmode === this.CONSTANTS.INLINE && (this.options.rowActions.length === 0 || !_.some(this.options.rowActions, { action: 'editRow($event)' }))) {
             if (saveInd) {
                 this.gridActions.append(`<button type="button" wmbutton="" class="btn app-button btn-secondary cancelNewRow" tabindex="0" accesskey="" title="Cancel">
                                     <i aria-hidden="true" class="app-icon wi wi-cancel"></i>
