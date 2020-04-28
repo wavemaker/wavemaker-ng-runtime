@@ -1577,7 +1577,7 @@ $.widget('wm.datatable', {
     },
     // WMS-18568 changes added Save and Cancel buttons for Inline Data Table with no actions
     toggleNewRowActions: function (saveInd) {
-        var self = this
+        var self = this,
             $newRow = this.gridBody.find('tr.app-datagrid-row.row-editing'),
             $newRowButton = this.gridActions.find('i.wi-plus').closest('.app-button');
         if (this.options.editmode === this.CONSTANTS.INLINE && (this.options.rowActions.length === 0 || !_.some(this.options.rowActions, { action: 'editRow($event)' }))) {
