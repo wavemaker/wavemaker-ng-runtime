@@ -54,8 +54,19 @@ export class SliderComponent extends BaseFormCustomComponent {
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'tabindex') {
             return;
+        } else if (key === 'minvalue') {
+            this.datavalue = nv;
         }
 
         super.onPropertyChange(key, nv, ov);
+    }
+
+    ngAfterContentInit() {
+        if(!this.minvalue && !this.maxvalue) {
+            this.datavalue = 50;
+        }
+        else {
+            this.datavalue = (this.minvalue + this.maxvalue)/2;
+        }
     }
 }
