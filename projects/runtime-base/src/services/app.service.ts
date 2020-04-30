@@ -13,10 +13,14 @@ import {
     isDefined,
     isString,
     ConstantService,
+    UserCustomPipeManager,
     UtilsService,
     DynamicComponentRefProvider
 } from '@wm/core';
+import { PipeProvider } from './pipe-provider.service';
+
 import { SecurityService } from '@wm/security';
+// import { WmPipe } from '@wm/components/base';
 
 declare const _;
 
@@ -38,10 +42,10 @@ const enum PROJECT_TYPE {
     TEMPLATE_BUNDLE = 'TEMPLATEBUNDLE'
 }
 
-const noop = (...args) => {};
+const noop = (...args) => { };
 
 // Wraps httpService to behave as angular 1.x $http service.
-const getHttpDependency = function() {
+const getHttpDependency = function () {
     const httpService = this.httpService;
     const fn = function (key, options?) {
         const args = Array.from(arguments).slice(1);
@@ -62,9 +66,9 @@ export class AppRef {
     onSessionTimeout = noop;
     onPageReady = noop;
     onBeforePageLeave = noop;
-    onBeforeServiceCall =  noop;
-    onServiceSuccess =  noop;
-    onServiceError =  noop;
+    onBeforeServiceCall = noop;
+    onServiceSuccess = noop;
+    onServiceError = noop;
     dynamicComponentContainerRef = {};
 
     projectName: string;
@@ -85,12 +89,14 @@ export class AppRef {
     reload() {
         window.location.reload();
     }
-
+    // export const REUSE_1  = new InjectionToken<ReuseService>('ReuseService1');
     constructor(
         private inj: Injector,
         private i18nService: AbstractI18nService,
         private httpService: AbstractHttpService,
-        private securityService: SecurityService
+        private securityService: SecurityService,
+        private userCustomPipeManager: UserCustomPipeManager,
+        private pipeProvider: PipeProvider
     ) {
 
         const wmProjectProperties = getWmProjectProperties();
@@ -168,4 +174,20 @@ export class AppRef {
             console.warn('The default Action "appNotification" doesn\'t exist in the app. App notified following error:\n', template);
         }
     }
+
+    public registerPipe(pipeName: string, callback: Function) {
+        try {
+            // if (this.userCustomPipeManager.hasCustomPipe(pipeName)) {
+            //     throw new Error('Pipe already registered');
+            // }
+            // this.userCustomPipeManager.setCustomPipe(pipeName, callback);
+            // callback.prototype = WmPipe;
+            this.pipeProvider.setPipeMeta(callback , pipeName);
+        } catch (e) {
+            throw e;
+        }
+
+    }
+
+
 }

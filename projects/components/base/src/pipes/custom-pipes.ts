@@ -1,6 +1,6 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, Injectable } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { CURRENCY_INFO, isDefined } from '@wm/core';
+import { CURRENCY_INFO, isDefined, App, UserCustomPipeManager } from '@wm/core';
 
 declare const moment, _, $;
 
@@ -38,7 +38,7 @@ export class ToDatePipe implements PipeTransform {
         return '';
     }
 
-    constructor(private datePipe: DatePipe) {}
+    constructor(private datePipe: DatePipe) { }
 }
 
 @Pipe({
@@ -53,7 +53,7 @@ export class ToNumberPipe implements PipeTransform {
             return this.decimalPipe.transform(data, fracSize);
         }
     }
-    constructor(private decimalPipe: DecimalPipe) {}
+    constructor(private decimalPipe: DecimalPipe) { }
 }
 
 @Pipe({
@@ -66,7 +66,7 @@ export class ToCurrencyPipe implements PipeTransform {
         return _val ? _currencySymbol + _val : '';
     }
 
-    constructor(private decimalPipe: DecimalPipe) {}
+    constructor(private decimalPipe: DecimalPipe) { }
 }
 
 @Pipe({
@@ -87,6 +87,24 @@ export class SuffixPipe implements PipeTransform {
     }
 }
 
+
+// @Pipe({
+//     name: 'wmpipe'
+// })
+// export class WmPipe implements PipeTransform {
+//     constructor(private customPipe: UserCustomPipeManager) {
+
+//     }
+//     transform(data, pipename, param1, param2) {
+//         let pipeRef = this.customPipe.getCustomPipe(pipename);
+//         if (data) {
+//             return pipeRef(data, param1, param2);
+//         }
+//         return data;
+
+//     }
+// }
+
 @Pipe({
     name: 'timeFromNow'
 })
@@ -104,7 +122,7 @@ export class TimeFromNowPipe implements PipeTransform {
 @Pipe({
     name: 'numberToString'
 })
-export class NumberToStringPipe extends ToNumberPipe implements PipeTransform {}
+export class NumberToStringPipe extends ToNumberPipe implements PipeTransform { }
 
 @Pipe({
     name: 'stringToNumber'
@@ -167,32 +185,32 @@ export class FileSizePipe implements PipeTransform {
 export class FileIconClassPipe implements PipeTransform {
     transform(fileExtension: any) {
         const fileClassMapping = {
-            'zip'       :   'fa-file-zip-o',
-            'pdf'       :   'fa-file-pdf-o',
-            'rar'       :   'fa-file-archive-o',
-            'txt'       :   'fa-file-text-o',
-            'ppt'       :   'fa-file-powerpoint-o',
-            'pot'       :   'fa-file-powerpoint-o',
-            'pps'       :   'fa-file-powerpoint-o',
-            'pptx'      :   'fa-file-powerpoint-o',
-            'potx'      :   'fa-file-powerpoint-o',
-            'ppsx'      :   'fa-file-powerpoint-o',
-            'mpg'       :   'fa-file-movie-o',
-            'mp4'       :   'fa-file-movie-o',
-            'mov'       :   'fa-file-movie-o',
-            'avi'       :   'fa-file-movie-o',
-            'mp3'       :   'fa-file-audio-o',
-            'docx'      :   'fa-file-word-o',
-            'js'        :   'fa-file-code-o',
-            'md'        :   'fa-file-code-o',
-            'html'      :   'fa-file-code-o',
-            'css'       :   'fa-file-code-o',
-            'xlsx'      :   'fa-file-excel-o',
-            'png'       :   'fa-file-image-o',
-            'jpg'       :   'fa-file-image-o',
-            'jpeg'      :   'fa-file-image-o',
-            'file'      :   'fa-file-o',
-            'default'   :   'fa-file-o'
+            'zip': 'fa-file-zip-o',
+            'pdf': 'fa-file-pdf-o',
+            'rar': 'fa-file-archive-o',
+            'txt': 'fa-file-text-o',
+            'ppt': 'fa-file-powerpoint-o',
+            'pot': 'fa-file-powerpoint-o',
+            'pps': 'fa-file-powerpoint-o',
+            'pptx': 'fa-file-powerpoint-o',
+            'potx': 'fa-file-powerpoint-o',
+            'ppsx': 'fa-file-powerpoint-o',
+            'mpg': 'fa-file-movie-o',
+            'mp4': 'fa-file-movie-o',
+            'mov': 'fa-file-movie-o',
+            'avi': 'fa-file-movie-o',
+            'mp3': 'fa-file-audio-o',
+            'docx': 'fa-file-word-o',
+            'js': 'fa-file-code-o',
+            'md': 'fa-file-code-o',
+            'html': 'fa-file-code-o',
+            'css': 'fa-file-code-o',
+            'xlsx': 'fa-file-excel-o',
+            'png': 'fa-file-image-o',
+            'jpg': 'fa-file-image-o',
+            'jpeg': 'fa-file-image-o',
+            'file': 'fa-file-o',
+            'default': 'fa-file-o'
         };
 
         return 'fa ' + (fileClassMapping[fileExtension] || 'fa-file-o');
@@ -205,8 +223,8 @@ export class FileIconClassPipe implements PipeTransform {
 export class StateClassPipe implements PipeTransform {
     transform(state) {
         const stateClassMap = {
-            'success'   : 'wi wi-done text-success',
-            'error'     : 'wi wi-cancel text-danger'
+            'success': 'wi wi-done text-success',
+            'error': 'wi wi-cancel text-danger'
         };
         return stateClassMap[state.toLowerCase()];
     }
@@ -291,3 +309,5 @@ export class FileExtensionFromMimePipe implements PipeTransform {
         return typeMapping[mimeType];
     }
 }
+
+

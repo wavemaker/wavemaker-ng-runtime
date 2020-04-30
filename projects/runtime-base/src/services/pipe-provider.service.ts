@@ -1,4 +1,4 @@
-import { Compiler, Injectable, Injector, ChangeDetectorRef, InjectionToken, KeyValueDiffers, Pipe } from '@angular/core';
+import { Compiler, Injectable, Injector, ChangeDetectorRef, InjectionToken, KeyValueDiffers, Pipe, Inject } from '@angular/core';
 import {
     AsyncPipe,
     UpperCasePipe,
@@ -30,8 +30,8 @@ import {
     StateClassPipe,
     StringToNumberPipe
 } from '@wm/components/base';
-import { getSessionStorageItem } from '@wm/core';
-
+import { getSessionStorageItem, UserCustomPipeManager } from '@wm/core';
+declare const window;
 @Injectable({
     providedIn: 'root'
 })
@@ -92,8 +92,30 @@ export class PipeProvider {
         this.preparePipeMeta(NumberToStringPipe, 'numberToString', true, [
             new DecimalPipe(this._locale)
         ]),
-        this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true)
+        this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true),
+        // this.preparePipeMeta(WmPipe, 'wmpipe', true, [this.injector.get(UserCustomPipeManager)])
     ];
+
+    setPipeMeta(pipeRef, pipeName){
+
+        window[pipeName] = function(){
+        };
+        window[pipeName].prototype.transform = function(value, param1, param2){
+          return  pipeRef(value, param1, param2);
+        }
+
+        window[pipeName].decorators = [
+            { type: Pipe, args: [{ name: pipeName },] }
+        ];
+        window[pipeName].ctorParameters = () => [
+            { type: String, decorators: [{ type: Inject, args: [] }] }
+        ];
+
+
+        let preparePipeMeta = this.preparePipeMeta(window[pipeName], pipeName, true);
+        this._pipeData.push(preparePipeMeta);
+        this._pipeMeta.set(preparePipeMeta.name, preparePipeMeta);
+    }
 
     unknownPipe(name) {
         throw Error(`The pipe '${name}' could not be found`);

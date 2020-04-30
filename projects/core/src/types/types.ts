@@ -77,6 +77,7 @@ export abstract class App {
     notifyApp: Function;
     getDependency: Function;
     networkStatus: any;
+    getUserRegisteredPipe: Function;
     notify: (eventName: string, data?: any) => void;
     deployedUrl: string;
     selectedViewPort: Object;
