@@ -60,30 +60,48 @@ export class LiveFormDirective {
         form.onDataSourceChange = this.onDataSourceChange.bind(this);
         form.onFieldValueChange = this.onFieldValueChange.bind(this);
         form.submitForm = this.submitForm.bind(this);
+        form.form_registerFormFields = form.registerFormFields;
+        form.registerFormFields = this.registerFormFields.bind(this);
     }
 
+    /* 
+    WMS:18583
+    Overriding 'registerFormFields' for liveForms, 
+    On Each field added, check if the dataSource is updated or not
+    if the field is added after the dataSource is updated at LiveForm, retrigger
+    */
+    registerFormFields(formField) {
+        const formFields = this.form.getFormFields();
+        this.form.form_registerFormFields(formField);
+        if (this.form.isDataSourceUpdated) {
+            this._updateFieldOnDataSourceChange(formField, formFields);
+        }
+    }
+    private _updateFieldOnDataSourceChange(field,formFields){
+        if (!field.isDataSetBound && isDataSetWidget(field.widgettype)) {
+            if (field['is-related']) {
+                field.isDataSetBound = true;
+                fetchRelatedFieldData(this.form.datasource, field.widget, {
+                    relatedField: field.key,
+                    datafield: ALLFIELDS,
+                    widget: 'widgettype',
+                });
+            } else {
+                getDistinctValuesForField(this.form.datasource, field.widget, {
+                    widget: 'widgettype',
+                    enableemptyfilter: this.form.enableemptyfilter
+                });
+                applyFilterOnField(this.form.datasource, field.widget, formFields, field.value, {isFirst: true});
+            }
+        }
+    }
     onDataSourceChange() {
         if (_.get(this.form.formFields, 'length')) {
             this.form.isDataSourceUpdated = true;
         }
         const formFields = this.form.getFormFields();
         formFields.forEach(field => {
-            if (!field.isDataSetBound && isDataSetWidget(field.widgettype)) {
-                if (field['is-related']) {
-                    field.isDataSetBound = true;
-                    fetchRelatedFieldData(this.form.datasource, field.widget, {
-                        relatedField: field.key,
-                        datafield: ALLFIELDS,
-                        widget: 'widgettype',
-                    });
-                } else {
-                    getDistinctValuesForField(this.form.datasource, field.widget, {
-                        widget: 'widgettype',
-                        enableemptyfilter: this.form.enableemptyfilter
-                    });
-                    applyFilterOnField(this.form.datasource, field.widget, formFields, field.value, {isFirst: true});
-                }
-            }
+            this._updateFieldOnDataSourceChange(field, formFields);
         });
     }
 
