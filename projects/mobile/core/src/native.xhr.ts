@@ -88,8 +88,14 @@ class Internals {
     }
 
     public sendViaXhr(body) {
+        const self = this;
         this.xhr.onreadystatechange = this.nXhr.onreadystatechange;
-        this.xhr.onload = this.nXhr.onload;
+        this.xhr.onload = function() {
+            self.copyXMLHttpResponse(self.xhr);
+            if (self.nXhr.onload) {
+                self.nXhr.onload.apply(self.nXhr, arguments);
+            }
+        };
         this.xhr.onerror = this.nXhr.onerror;
         if (!this.async) {
             this.xhr.ontimeout = this.nXhr.ontimeout;
