@@ -1,4 +1,5 @@
-import { _WM_APP_PROJECT, hasCordova, isIE } from '@wm/core';
+import { _WM_APP_PROJECT, hasCordova, isIE, getWmProjectProperties } from '@wm/core';
+import {trigger} from "@angular/animations";
 
 declare const moment, _;
 
@@ -193,12 +194,25 @@ function checkForWindowExistence(oAuthWindow, provider, callback) {
  * @param onSuccess
  * @param onError
  */
-function handleLoginForIE(url, providerId, onSuccess, onError, removeProviderConfigCallBack) {
+function handleLoginForIE(url, providerId, onSuccess, onError, removeProviderConfigCallBack, securityObj?, requestSourceType?) {
     const loginObj = {
         'accesstoken_retrieved': false
     };
+    if (isImplicitFlow(securityObj)) {
+        url = constructURLForImplicit(providerId, securityObj, requestSourceType);
+    }
     window.open(url, '_blank', newWindowProps);
     checkAccessTokenInWindow(providerId, onSuccess, onError, moment.duration(moment().format('HH:mm'), 'HH:mm'), loginObj, removeProviderConfigCallBack);
+}
+
+/**
+ * this functions returns if the current oAuth Flow is implicit or not
+ * @param providerInfo
+ */
+function isImplicitFlow(providerInfo) {
+    let oAuthFlow = _.get(providerInfo, 'oauth2Flow');
+    oAuthFlow = oAuthFlow ? oAuthFlow.toLowerCase() : oAuthFlow;
+    return oAuthFlow === 'implicit';
 }
 
 /**
@@ -217,9 +231,11 @@ function onAuthWindowOpen(provider, callback, removeProviderConfigCallBack) {
  * @param onSuccess
  * @param url
  */
-function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack) {
+function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack, securityObj?, requestSourceType?) {
     let oAuthWindow;
-
+    if (isImplicitFlow(securityObj)) {
+        url = constructURLForImplicit(providerId, securityObj, requestSourceType);
+    }
      if (hasCordova()) {
          window.open(url, '_system');
          window['OAuthInMobile'](providerId).then(accessToken => {
@@ -236,6 +252,26 @@ function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfi
          onAuthWindowOpen(providerId, onSuccess, removeProviderConfigCallBack);
          checkForWindowExistence(oAuthWindow, providerId, onSuccess);
      }
+}
+
+/**
+ * function to construct the url for implicit flow.
+ * @param providerId provider id for which the url has to be set
+ * @param providerInfo provider object which contains details such as scope, client id etc
+ * @param requestSourceType requesting source is web or mobile or wavelens
+ * @returns url string
+ */
+function constructURLForImplicit(providerId, providerInfo, requestSourceType) {
+    let redirectUri = window.location.href.split('/#/')[0] + '/oAuthCallback.html';
+    const clientId = providerInfo.clientId;
+    const scopes = providerInfo.scopes.map(function(scope) { return scope.name }).join(' ');
+    let state;
+    if (getWmProjectProperties().isTestRuntime === true) {
+        redirectUri = location.protocol + '//' + window.location.host + '/studio/oAuthCallback.html';
+    }
+    state = {providerId: providerId, suffix: accessTokenSuffix, requestSourceType: requestSourceType};
+    const url = providerInfo.authorizationUrl + '?client_id=' + clientId + '&redirect_uri=' + redirectUri + '&response_type=token&state=' + encodeURIComponent(JSON.stringify(state)) + '&scope=' + encodeURIComponent(scopes);
+    return url;
 }
 
 /**
@@ -262,6 +298,24 @@ function getAuthorizationUrl(params, http) {
 }
 
 /**
+ * function trigger the addProviderConfigCallBack after getting the authorization url
+ */
+function triggerProviderConfigCallBack(url, providerId, onSuccess, onError, http, addProviderConfigCallBack, removeProviderConfigCallBack, securityObj, requestSourceType) {
+    const urlBody = isImplicitFlow(securityObj) ? url : url.body;
+    addProviderConfigCallBack({
+        name: providerId,
+        url: urlBody,
+        invoke: () => {
+            if (isIE()) { // handling for IE
+                handleLoginForIE(url, providerId, onSuccess, onError, removeProviderConfigCallBack, securityObj, requestSourceType);
+            } else {
+                postGetAuthorizationURL(urlBody, providerId, onSuccess, removeProviderConfigCallBack, securityObj, requestSourceType);
+            }
+        }
+    });
+}
+
+/**
  * this function retrieves the accessToken based on the run/studiomode
  * @param provider
  * @returns {*}
@@ -282,13 +336,13 @@ export const getAccessToken = (provider, checkLocalStorage) => {
  * @param onSuccess
  * @returns {*}
  */
-export const performAuthorization = (url, providerId, onSuccess, onError, http, addProviderConfigCallBack, removeProviderConfigCallBack) => {
+export const performAuthorization = (url, providerId, onSuccess, onError, http, addProviderConfigCallBack, removeProviderConfigCallBack, securityObj?) => {
     let requestSourceType = 'WEB';
     if (url) {
         if (isIE()) { // handling for IE
             handleLoginForIE(url, providerId, onSuccess, onError, removeProviderConfigCallBack);
         } else {
-            postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack);
+            postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack, securityObj, requestSourceType);
         }
     } else {
         if (window['WaveLens']) {
@@ -296,21 +350,15 @@ export const performAuthorization = (url, providerId, onSuccess, onError, http, 
         } else if (hasCordova()) {
             requestSourceType = 'MOBILE';
         }
-        return getAuthorizationUrl({
-            'providerId': providerId,
-            'requestSourceType': requestSourceType
-        }, http).then((response) => {
-            addProviderConfigCallBack({
-                name: providerId,
-                url: response.body,
-                invoke: () => {
-                    if (isIE()) { // handling for IE
-                        handleLoginForIE(response, providerId, onSuccess, onError, removeProviderConfigCallBack);
-                    } else {
-                        postGetAuthorizationURL(response.body, providerId, onSuccess, removeProviderConfigCallBack);
-                    }
-                }
+        if (isImplicitFlow(securityObj)) {
+            triggerProviderConfigCallBack(url, providerId, onSuccess, onError, http, addProviderConfigCallBack, removeProviderConfigCallBack, securityObj, requestSourceType);
+        } else {
+            return getAuthorizationUrl({
+                'providerId': providerId,
+                'requestSourceType': requestSourceType
+            }, http).then((response) => {
+                triggerProviderConfigCallBack(response, providerId, onSuccess, onError, http, addProviderConfigCallBack, removeProviderConfigCallBack, securityObj, requestSourceType);
             });
-        });
+        }
     }
 };
