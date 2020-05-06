@@ -757,7 +757,6 @@ $.widget('wm.datatable', {
             gridElement: null,
             gridHeader: null,
             gridBody: null,
-            gridActions: null,
             gridSearch: null,
             tableId: null,
             searchObj: {
@@ -806,7 +805,6 @@ $.widget('wm.datatable', {
         this._reselectColumns();
         this.addOrRemoveScroll();
         this._setGridEditMode(false);
-        this.gridActions = $(this.element).siblings('div.panel-footer, div.panel-heading').find('div.app-datagrid-actions');
         this.toggleNewRowActions(false);
     },
     //Populate row data with default data
@@ -1578,11 +1576,12 @@ $.widget('wm.datatable', {
     // WMS-18568 changes added Save and Cancel buttons for Inline Data Table with no actions
     toggleNewRowActions: function (saveInd) {
         var self = this,
+            $gridActions = $(this.element).siblings('div.panel-footer, div.panel-heading').find('div.app-datagrid-actions'),
             $newRow = this.gridBody.find('tr.app-datagrid-row.row-editing'),
-            $newRowButton = this.gridActions.find('i.wi-plus').closest('.app-button');
+            $newRowButton = $gridActions.find('i.wi-plus').closest('.app-button');
         if (this.options.editmode === this.CONSTANTS.INLINE && (this.options.rowActions.length === 0 || !_.some(this.options.rowActions, { action: 'editRow($event)' }))) {
             if (saveInd) {
-                this.gridActions.append(`<button type="button" wmbutton="" class="btn app-button btn-secondary cancelNewRow" tabindex="0" accesskey="" title="Cancel">
+                $gridActions.append(`<button type="button" wmbutton="" class="btn app-button btn-secondary cancelNewRow" tabindex="0" accesskey="" title="Cancel">
                                     <i aria-hidden="true" class="app-icon wi wi-cancel"></i>
                                     <span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>
                                 </button>
@@ -1590,16 +1589,16 @@ $.widget('wm.datatable', {
                                     <i aria-hidden="true" class="app-icon wi wi-done"></i>
                                     <span class="sr-only">Save Icon</span><span class="btn-caption">Save</span>
                                 </button>`);
-                this.gridActions.find('.cancelNewRow').on('click', function (event) {
+                $gridActions.find('.cancelNewRow').on('click', function (event) {
                     self.toggleEditRow(event, {action: 'cancel', $row: $newRow});
                 });
-                this.gridActions.find('.saveNewRow').on('click', function (event) {
+                $gridActions.find('.saveNewRow').on('click', function (event) {
                     self.toggleEditRow(event, {action: 'save', $row: $newRow});
                 });
                 $newRowButton.hide();
             } else {
-                this.gridActions.find('.cancelNewRow').remove();
-                this.gridActions.find('.saveNewRow').remove();
+                $gridActions.find('.cancelNewRow').remove();
+                $gridActions.find('.saveNewRow').remove();
                 $newRowButton.show();
             }
         }
