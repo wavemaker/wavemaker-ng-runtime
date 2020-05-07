@@ -340,9 +340,15 @@ export class LiveFormDirective {
             this.getPrevformFields();
         }
         this.form.isUpdateMode = false;
-        this.closeDialog();
         if (this.form._liveTableParent) {
             this.form._liveTableParent.onCancel();
+        } else {
+            /*
+              WMS-18759: dialog close is calling twice and dialog onHidden subscription is calling once from the library
+              due to this if we have another dialog inside liveform and if we click on cancel of second dialog the library
+              subscription is calling for both the dialogs.
+             */
+            this.closeDialog();
         }
         $appDigest();
     }
