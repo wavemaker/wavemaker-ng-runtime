@@ -75,6 +75,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
                 this.clearTimeInterval();
                 this.bsTimeValue = getNativeDateObject(newVal);
                 this.isCurrentTime = false;
+                this.mintimeMaxtimeValidation();
             }
         } else {
             this.bsTimeValue = undefined;
