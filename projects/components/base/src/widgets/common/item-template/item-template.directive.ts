@@ -52,5 +52,12 @@ export class ItemTemplateDirective extends StylableComponent {
     ngOnInit() {
         super.ngOnInit();
         this.partialParams.item = this.userComponentParams.dataObject;
+        const cancelSubscription = this.app.subscribe('partialLoaded', (data) => {
+            const inputId = this.$element.find('input').attr('id');
+            if (inputId) {
+                this.$element.find('[partial-container-target] .app-label').attr('for', inputId);
+            }
+            cancelSubscription();
+        });
     }
 }

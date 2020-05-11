@@ -16,6 +16,7 @@
         <label *ngIf="content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" >
             <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
                    [tabindex]="tabindex"
+                   [id]="'checkboxset_'+widgetId+'_' +i"
                    [disabled]="disabled || readonly" [attr.data-attr-index]="i"
                    [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
             <span class="caption customTemplate" partial-container-target></span>
@@ -54,6 +55,7 @@
                 <label *ngIf="content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" >
                     <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
                            [tabindex]="tabindex"
+                           [id]="'checkboxset_'+widgetId+'_' +i"
                            [disabled]="disabled || readonly" [attr.data-attr-index]="i"
                            [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
                     <span class="caption" partial-container-target></span>

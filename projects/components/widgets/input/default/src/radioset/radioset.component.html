@@ -15,7 +15,7 @@
     <label *ngIf="content" class="app-radioset-label"
            [ngClass]="{'disabled':disabled || readonly}"
            [title]="item.label">
-        <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
+        <input [name]="'radioset_' + widgetId" type="radio" [id]="'radioset_'+widgetId+'_' +i" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
                [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
         <span class="caption customTemplate" partial-container-target></span>
     </label>
