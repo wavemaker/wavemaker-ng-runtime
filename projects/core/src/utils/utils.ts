@@ -742,17 +742,23 @@ export const loadStyleSheets = (urls = []) => {
 // function to check if the script is already loaded
 const isScriptLoaded = src => !!getNode(`script[src="${src}"], script[data-src="${src}"]`);
 
-export const loadScript = async url => {
+export const loadScript = async (url, loadViaScriptTag) => {
     const _url = url.trim();
     if (!_url.length || isScriptLoaded(_url)) {
         return Promise.resolve();
     }
 
-    return fetchContent('text', _url, false, text => {
-        const script = document.createElement('script');
-        script.textContent = text;
-        document.head.appendChild(script);
-    });
+    if (loadViaScriptTag) {
+        return fetchContent('text', _url, false, text => {
+            const script = document.createElement('script');
+            script.textContent = text;
+            document.head.appendChild(script);
+        });
+    } else {
+        return $.getScript(url)
+            .done(response => response)
+            .fail(reason => reason);
+    }
 
     // return fetch(_url)
     //     .then(response => response.text())
@@ -763,9 +769,9 @@ export const loadScript = async url => {
     //     });
 };
 
-export const loadScripts = async (urls = []) => {
+export const loadScripts = async (urls = [], loadViaScriptTag = true) => {
     for (const url of urls) {
-        await loadScript(url);
+        await loadScript(url, loadViaScriptTag);
     }
     return Promise.resolve();
 };
@@ -853,7 +859,6 @@ export const openLink = (link: string, target: string = '_self') => {
         window.open(link, target);
     }
 };
-
 
 /* util function to load the content from a url */
 export const fetchContent = (dataType, url: string, inSync: boolean = false, success?, error?): Promise<any> => {
