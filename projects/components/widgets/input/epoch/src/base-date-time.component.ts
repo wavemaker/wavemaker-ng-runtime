@@ -112,8 +112,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     public validate(c: AbstractControl) {
         if (this.invalidDateTimeFormat) {
-            // validateType is specific to min / max values for time, date, datetime widgets only.
-            this.validateType = '';
             return {
                 invalidDateTimeFormat: {
                     valid: false
@@ -154,6 +152,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (pattern === 'timestamp') {
                 if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
                     this.invalidDateTimeFormat = true;
+                    this.validateType = 'incorrectformat';
                     this.invokeOnChange(this.datavalue, undefined, false);
                     return false;
                 }
@@ -164,6 +163,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 }
                 if (inputVal !== formattedDate) {
                     this.invalidDateTimeFormat = true;
+                    this.validateType = 'incorrectformat';
                     this.invokeOnChange(this.datavalue, undefined, false);
                     return false;
                 }
