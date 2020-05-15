@@ -13,6 +13,7 @@ export * from './components/app-component/app.component';
 export * from './components/empty-component/empty-page.component';
 export * from './components/prefab-preview.component';
 export * from './resolves/app-js.resolve';
+export * from './resolves/app-extension.resolve';
 export * from './resolves/app-variables.resolve';
 export * from './resolves/i18n.resolve';
 export * from './resolves/metadata.resolve';

@@ -1,6 +1,6 @@
 import { Attribute, Element, Text } from '@angular/compiler';
 
-import { DataType, FormWidgetType, getFormWidgetTemplate, getRequiredFormWidget, IDGenerator, isDateTimeType } from '@wm/core';
+import { DataType, FormWidgetType, getFormWidgetTemplate, getRequiredFormWidget, IDGenerator, isDateTimeType, checkIsCustomPipeExpression } from '@wm/core';
 import {getAttrMarkup, getDataSource, IBuildTaskDef, ImportDef, register} from '@wm/transpiler';
 
 import { EDIT_MODE, getDataTableFilterWidget, getEditModeWidget } from '../../../utils/utils';
@@ -161,7 +161,7 @@ const getValiationErrorTemplate = (errorTmplType) => {
 
 const getFormatExpression = (attrs) => {
     const columnValue = `row.getProperty('${attrs.get('binding')}')`;
-    let formatPattern = attrs.get('formatpattern');
+    let formatPattern = attrs.get('custompipeformat') || attrs.get('formatpattern');
     let colExpression = '';
     // For date time data types, if format pattern is not applied, Apply default toDate format
     if (isDateTimeType(attrs.get('type')) && (!formatPattern || formatPattern === 'None')) {
@@ -205,6 +205,12 @@ const getFormatExpression = (attrs) => {
                 colExpression = `{{${columnValue} | suffix: '${attrs.get('suffix')}'}}`;
             }
             break;
+           default:
+               if(checkIsCustomPipeExpression(formatPattern)){
+                   colExpression = `{{${columnValue} |  ${formatPattern} : ${`row`}}}` ;
+               }
+
+           break;
     }
     return colExpression;
 };

@@ -41,6 +41,7 @@ export const registerProps = () => {
                 ['filterwidget', PROP_STRING],
                 ['filterinputtype', PROP_STRING],
                 ['formatpattern', PROP_STRING],
+                ['custompipeformat', PROP_STRING],
                 ['fractionsize', PROP_STRING],
                 ['generator', PROP_STRING],
                 ['limit', PROP_NUMBER],

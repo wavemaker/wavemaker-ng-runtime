@@ -153,6 +153,20 @@ const addDatasetBoundExprAttribute = (childNode, attr, attrValue) => {
 };
 
 
+/**
+ * exp: User built bind expression
+ *  To check the custom pipe expressions.
+ *  If user use the custom pipe expression it will check in the exp. that "custom" string exist or not with (:) syntax.
+ *  Eg: custom:
+ *      custom    :
+ */
+export const checkIsCustomPipeExpression = function(exp){
+    let customRegEx = /(custom(\s*:))/g;
+    let matches = exp.match(customRegEx);
+    return matches && matches.length;
+}
+
+
 // The bound value is replaced with {{item.fieldname}} here. This is needed by the liveList when compiling inner elements
 export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string, instance: string = '', referenceName: string = 'item') => {
 
@@ -195,6 +209,12 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                             addDatasetBoundExprAttribute(childNode, attr, value);
                             value = value.replace(regex, referenceName);
                             value = 'bind:' + value;
+                            // Check is this custom bind expression and currentWidgetItem regex
+                            if(checkIsCustomPipeExpression(value) && currentItemRegEx){
+                                // Adding the currentItem as last argument for the expression.
+                                // For the custom pipes(expresion), it will send the currentItem as context.
+                                value +=  ':'+ currentItemRegEx.exec(currentItemRegEx.source).flatten()[0];
+                            }
                         }
                     }
                     // Replace item if widget property is bound to livelist currentItem
@@ -209,6 +229,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                     if (currentItemWidgetsRegEx && currentItemWidgetsRegEx.test(value)) {
                         value = value.replace(currentItemWidgetsRegEx, `${instance}currentItemWidgets`);
                     }
+
                     attr.value = value;
                 }
             });

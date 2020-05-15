@@ -32,7 +32,8 @@ import {
     TimeFromNowPipe,
     ToCurrencyPipe,
     ToDatePipe,
-    ToNumberPipe
+    ToNumberPipe,
+    CustomPipe
 } from './pipes/custom-pipes';
 import { TrustAsPipe } from './pipes/trust-as.pipe';
 import { DialogServiceImpl } from './widgets/common/dialog/dialog.service';
@@ -67,7 +68,8 @@ const PIPES = [
     StateClassPipe,
     StringToNumberPipe,
     TrustAsPipe,
-    ImagePipe
+    ImagePipe,
+    CustomPipe
 ];
 
 @NgModule({
@@ -88,6 +90,7 @@ export class WmComponentsModule {
                 FilterPipe,
                 TrustAsPipe,
                 ImagePipe,
+                CustomPipe,
                 Location,
                 {provide: AbstractDialogService, useClass: DialogServiceImpl}
             ]

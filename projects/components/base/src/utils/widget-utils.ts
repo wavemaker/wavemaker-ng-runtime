@@ -1,6 +1,6 @@
 import { forwardRef } from '@angular/core';
 
-import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr, getClonedObject, prettifyLabel, initCaps, deHyphenate } from '@wm/core';
+import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr, getClonedObject, prettifyLabel, initCaps, deHyphenate, checkIsCustomPipeExpression } from '@wm/core';
 import { DialogRef, WidgetRef } from '../widgets/framework/types';
 
 declare const _;
@@ -106,6 +106,12 @@ export const getEvaluatedData = (dataObj: any, options: any, context?: any) => {
     if (bindExpr) {
         // remove 'bind:' prefix from the boundExpressionName
         expressionValue = bindExpr.replace('bind:', '');
+
+        // For bind expression passing the last argument that the object of dataset item.
+        // Note: For parse expression we are sending dataObj with the propery name "__1", we used the same propery to send the last argument as dataset item
+        if(checkIsCustomPipeExpression(expressionValue)){
+            expressionValue = expressionValue+': __1';
+        }
         // parse the expressionValue for replacing all the expressions with values in the object
         expressionValue = getUpdatedExpr(expressionValue);
     } else {
