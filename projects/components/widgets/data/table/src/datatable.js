@@ -1017,6 +1017,7 @@ $.widget('wm.datatable', {
         });
         this.toggleRowFilter(true);
         this.gridElement.parent().prop('scrollLeft', scrollLeft);
+        this.gridHeaderElement.parent().prop('scrollLeft', scrollLeft);
     },
 
     /* Returns the selected columns in the table. */
