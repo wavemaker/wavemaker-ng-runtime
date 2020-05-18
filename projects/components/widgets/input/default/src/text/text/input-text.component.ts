@@ -1,9 +1,9 @@
-import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
+import {Component, ElementRef, Injector, ViewChild} from '@angular/core';
+import {NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS} from '@angular/forms';
 
-import { IWidgetConfig, provideAs, provideAsWidgetRef } from '@wm/components/base';
-import { registerProps } from './input-text.props';
-import { BaseInput } from '../base/base-input';
+import {IWidgetConfig, provideAs, provideAsWidgetRef} from '@wm/components/base';
+import {registerProps} from './input-text.props';
+import {BaseInput} from '../base/base-input';
 
 declare const _;
 
@@ -51,27 +51,7 @@ export class InputTextComponent extends BaseInput {
         /*Monitoring changes for styles or properties and accordingly handling respective changes.*/
         switch (key) {
             case 'displayformat':
-                this.maskVal = [];
-                _.forEach(this.displayformat, (dF) => {
-                    // This condition is used to support all numbers from 0-9
-                    if (dF === '9') {
-                        this.maskVal.push(/\d/);
-                    }
-                    // This condition is used to support all capital and small alphabets
-                    else if (dF === 'A') {
-                        this.maskVal.push(/[A-Z, a-z]/);
-                    }
-                    // This condition is used to support all small alphabets
-                    else if (dF === 'a') {
-                        this.maskVal.push(/[a-z]/);
-                    }
-                    // This condition is used to support all characters except new line
-                    else if (dF === '*') {
-                        this.maskVal.push(/\w/);
-                    } else {
-                        this.maskVal.push(dF);
-                    }
-                });
+                this.maskVal = this.displayformat;
                 break;
             default:
                 super.onPropertyChange(key, nv, ov);
@@ -79,10 +59,14 @@ export class InputTextComponent extends BaseInput {
     }
 
     get mask() {
-        if (this.displayformat) {
-            return {mask: this.maskVal, showMask: true};
-        } else {
-            return {mask: false};
-        }
+        return {
+            mask: this.maskVal,
+            lazy: false,
+            definitions: {
+                '9': /\d/,
+                'A': /[a-zA-Z]/,
+                '*': /[a-zA-Z0-9]/
+            }
+        };
     }
 }

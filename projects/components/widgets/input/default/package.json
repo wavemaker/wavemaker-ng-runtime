@@ -11,6 +11,7 @@
                 "@angular/forms": "ng.forms",
 
                 "angular2-text-mask": "angular2TextMask",
+                "angular-imask": "angular-imask",
 
                 "rxjs": "rxjs",
 
