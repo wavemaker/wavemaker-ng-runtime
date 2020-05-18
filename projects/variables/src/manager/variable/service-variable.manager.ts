@@ -245,6 +245,16 @@ export class ServiceVariableManager extends BaseVariableManager {
                 break;
             case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.METADATA_MISSING:
             case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.CRUD_OPERATION_MISSING:
+                if (info.error.message) {
+                    info.error.message = info.error.message.replace('$variable', variable.name);
+                    let reasons;
+                    if (err_type === VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.METADATA_MISSING) {
+                        reasons = ['1. You did not Preview the app after creating a Variable for the imported service.', '2. You deleted the imported service this Variable is linked to.'];
+                    } else {
+                        reasons = ['1. You haven\'t chosen an endpoint for ' +  options.operation + ' operation for this Entity.'];
+                    }
+                    console.warn(info.error.message + '\n Possible reasons for this:\n ' + reasons.join('\n '));
+                }
                 this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, options.skipNotification, info.error.skipDefaultNotification);
                 break;
             default:

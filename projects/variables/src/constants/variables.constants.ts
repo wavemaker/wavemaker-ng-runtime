@@ -100,9 +100,9 @@ export const VARIABLE_CONSTANTS = {
         ERR_MSG: {
             NO_ACCESSTOKEN: 'Access token missing',
             NO_CREDENTIALS: 'No credentials present',
-            METADATA_MISSING: 'Metadata missing',
+            METADATA_MISSING: 'Metadata missing for "$variable"',
             USER_UNAUTHORISED: 'Unauthorized User',
-            CRUD_OPERATION_MISSING: 'Operation "$operation" not allowed',
+            CRUD_OPERATION_MISSING: 'Operation "$operation" not allowed for "$variable"',
             REQUIRED_FIELD_MISSING: 'Required field(s) missing: "${0}"'
         },
         UNCLOAKED_HEADERS: ['CONTENT-TYPE', 'ACCEPT', 'CONTENT-LENGTH', 'ACCEPT-ENCODING', 'ACCEPT-LANGUAGE'],

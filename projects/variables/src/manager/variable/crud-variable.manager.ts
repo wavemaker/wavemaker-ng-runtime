@@ -213,7 +213,7 @@ export class CrudVariableManager extends ServiceVariableManager {
                 requestParams.error.message = requestParams.error.message.replace('$operation', options.operation);
             }
             const info = this.handleRequestMetaError(requestParams, variable, success, error, options);
-            const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable: ') + ': ' +  variable.name;
+            const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable');
             triggerFn(error);
             return Promise.reject(reason);
         }
