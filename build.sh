@@ -546,6 +546,9 @@ bundleWebLibs() {
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
+        ./node_modules/imask/dist/imask.js \
+        ./node_modules/angular-imask/bundles/angular-imask.umd.js \
+        ./angular-imask.js \
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
 

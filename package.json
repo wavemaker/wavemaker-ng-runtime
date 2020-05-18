@@ -41,6 +41,7 @@
         "@ionic-native/network": "4.10.0",
         "@ionic-native/sqlite": "4.10.0",
         "@ionic-native/vibration": "4.10.0",
+        "angular-imask": "6.0.4",
         "angular2-text-mask": "9.0.0",
         "angular2-websocket": "0.9.7",
         "core-js": "2.5.4",
