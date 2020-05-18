@@ -34,6 +34,7 @@ export class WizardStepDirective extends BaseComponent {
     public disabledone: boolean;
     public disableprevious: boolean;
     public isInitialized: boolean;
+    isDone: boolean = false ;
 
     private status: STEP_STATUS = STEP_STATUS.DISABLED;
 

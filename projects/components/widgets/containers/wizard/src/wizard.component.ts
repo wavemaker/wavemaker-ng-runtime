@@ -28,6 +28,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     public currentStep: WizardStepDirective;
 
     public stepClass: string;
+    public class;
     private readonly promiseResolverFn: Function;
     public actionsalignment: any;
     public cancelable: any;
@@ -218,6 +219,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
 
         // If there are any steps which has show then only change state of current step else remain same
         if (nextStep) {
+            currentStep.isDone = true;
             currentStep.done = true;
             nextStep.active = true;
             this.currentStep = nextStep;
@@ -239,6 +241,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
 
         // If there are any steps which has show then only change state of current step else remain same
         if (prevStep) {
+            currentStep.isDone = false;
             currentStep.disabled = true;
             prevStep.active = true;
             this.currentStep = prevStep;
@@ -251,6 +254,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
 
     // Method to invoke on-Done event on wizard
     public done() {
+        this.currentStep.isDone = true;
         this.invokeEventCallback('done', {steps: this.steps.toArray()});
     }
     // Method to invoke on-Cancel event on wizard

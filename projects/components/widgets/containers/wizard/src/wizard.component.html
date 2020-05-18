@@ -1,12 +1,19 @@
 <div class="app-wizard-heading" role="tab">
     <ul class="app-wizard-steps nav nav-pills {{stepClass}}">
-        <li class="app-wizard-step" *ngFor="let step of steps" [hidden]="!step.show"
+        <li class="app-wizard-step" *ngFor="let step of steps; let i = index" [hidden]="!step.show"
             [ngClass]="{active: step.done, current: step.active, disabled: step.disabled}"
             (click)="onWizardHeaderClick($event, step)">
             <a href="javascript:void(0)" [attr.aria-label]="step.title" [attr.title]="step.title">
-                <span class="arrow"></span>
-                <i class="app-icon {{step.iconclass}}" *ngIf="step.iconclass"></i>
-                <span class="step-title" [textContent]="step.title"></span>
+                <span class="arrow" *ngIf="class && class.includes('classic')"></span>
+                <span class="wizard-step-number">
+                    <span class="count" *ngIf="class && class.includes('number') && !step.isDone">{{i+1}}</span>
+                    <i class="dottedstepper" *ngIf="class && (class.includes('dottedstepper') || class.includes('text-inline')) && !step.isDone"></i>
+                    <i class="app-icon {{step.iconclass}}" *ngIf="step.iconclass && step.isDone"></i>
+                </span>
+                <span class="title-wrapper">
+                    <span *ngIf="class && class.includes('text-inline')">{{'0' + (i+1)}}</span>
+                    <span class="step-title" [textContent]="step.title"></span>
+                </span>
             </a>
         </li>
     </ul>
