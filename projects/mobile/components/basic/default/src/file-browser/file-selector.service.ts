@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { Camera } from '@ionic-native/camera';
-
-import { convertToBlob, isIphone } from '@wm/core';
+import { convertToBlob, AbstractSpinnerService } from '@wm/core';
 import { FileBrowserComponent } from './file-browser.component';
 
 declare const _;
-declare const window;
+declare const cordova;
 
 export interface FileContent {
     name: string;
@@ -20,16 +18,16 @@ export class FileSelectorService {
 
     private fileBrowserComponent: FileBrowserComponent;
 
-    public constructor(private camera: Camera) {}
+    public constructor(private spinnerService: AbstractSpinnerService) {}
 
     public selectAudio(multiple = false): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            // if multiple is true allows user to select multiple songs
-            // if icloud is true will show iCloud songs
-            (window['plugins']['mediapicker']).getAudio(resolve, reject, multiple, isIphone());
-        }).then(files =>  {
-            const filePaths = _.map(_.isArray(files) ? files : [files], 'exportedurl');
-            return this.getFiles(filePaths);
+        var spinnerId = this.spinnerService.show("");
+        return new Promise<string[]>((resolve, reject) => {
+            cordova.wavemaker.filePicker.selectAudio(multiple, resolve, reject);
+        }).then(files => this.getFiles(files))
+        .then((paths) => {
+            this.spinnerService.hide(spinnerId);
+            return paths;
         });
     }
 
@@ -38,61 +36,35 @@ export class FileSelectorService {
     }
 
     public selectFiles(multiple = false, fileTypeToSelect?: string): Promise<FileContent[]> {
-        if (!this.fileBrowserComponent) {
-            return Promise.reject('File Browser component is not present.');
-        }
-        this.fileBrowserComponent.multiple = multiple;
-        this.fileBrowserComponent.fileTypeToSelect = fileTypeToSelect;
-        this.fileBrowserComponent.show = true;
-        return new Promise<any[]>((resolve, reject) => {
-            const subscription = this.fileBrowserComponent.submitEmitter.subscribe(result => {
-                return this.getFiles(_.map(result.files, 'path'))
-                    .then(files => {
-                        subscription.unsubscribe();
-                        this.fileBrowserComponent.show = false;
-                        resolve(files);
-                    }, () => {
-                        subscription.unsubscribe();
-                        this.fileBrowserComponent.show = false;
-                        reject();
-                    });
-            });
+        var spinnerId = this.spinnerService.show("");
+        return new Promise<string[]>((resolve, reject) => {
+            cordova.wavemaker.filePicker.selectFiles(multiple, resolve, reject);
+        }).then(files => this.getFiles(files))
+        .then((paths) => {
+            this.spinnerService.hide(spinnerId);
+            return paths;
         });
     }
 
     public selectImages(multiple = false): Promise<FileContent[]> {
-        const maxImg = multiple ? 10 : 1;
-        return new Promise<any>((resolve, reject) => {
-            window.imagePicker.getPictures(resolve, reject,
-                {
-                    mediaType : 0,  // allows picture selection
-                    maxImages: maxImg
-                }
-            );
-        }).then(files => {
-            const selectedFiles = files.map(filepath => {
-                if (filepath.indexOf('://') < 0) {
-                    return 'file://' + filepath;
-                }
-                return filepath;
-            });
-            return this.getFiles(selectedFiles);
+        var spinnerId = this.spinnerService.show("");
+        return new Promise<string[]>((resolve, reject) => {
+            cordova.wavemaker.filePicker.selectImage(multiple, resolve, reject);
+        }).then(files => this.getFiles(files))
+        .then((paths) => {
+            this.spinnerService.hide(spinnerId);
+            return paths;
         });
     }
 
     public selectVideos(multiple = false): Promise<FileContent[]> {
-        const cameraOptions = {
-            destinationType   : 1,  // file_uri
-            sourceType        : 0,  // photolibrary
-            mediaType         : 1  // allows video selection
-        };
-
-        return this.camera.getPicture(cameraOptions)
-            .then(filepath => {
-            if (filepath.indexOf('://') < 0) {
-                filepath = 'file://' + filepath;
-            }
-            return this.getFiles([filepath]);
+        var spinnerId = this.spinnerService.show("");
+        return new Promise<string[]>((resolve, reject) => {
+            cordova.wavemaker.filePicker.selectVideo(multiple, resolve, reject);
+        }).then(files => this.getFiles(files))
+        .then((paths) => {
+            this.spinnerService.hide(spinnerId);
+            return paths;
         });
 
     }

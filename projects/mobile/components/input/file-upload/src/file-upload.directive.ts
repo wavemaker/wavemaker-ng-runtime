@@ -17,22 +17,22 @@ export class FileUploadDirective {
         fileUploadComponent._isMobileType = true;
         fileUploadComponent._isCordova = hasCordova();
         fileUploadComponent['openFileSelector'] = () => {
-            this.openFileSelector().then((contents: FileContent[]) => {
+            this.openFileSelector(fileUploadComponent.multiple).then((contents: FileContent[]) => {
                 this.fileUploadComponent.onFileSelect({}, contents);
             });
         };
     }
 
-    public openFileSelector(): Promise<FileContent[]> {
+    public openFileSelector(multiple): Promise<FileContent[]> {
         switch (this.fileUploadComponent['contenttype']) {
             case 'image':
-                return this.fileSelectorService.selectImages();
+                return this.fileSelectorService.selectImages(multiple);
             case 'video':
-                return this.fileSelectorService.selectVideos();
+                return this.fileSelectorService.selectVideos(multiple);
             case 'audio':
-                return this.fileSelectorService.selectAudio();
+                return this.fileSelectorService.selectAudio(multiple);
             default:
-                return this.fileSelectorService.selectFiles();
+                return this.fileSelectorService.selectFiles(multiple);
         }
     }
 }
