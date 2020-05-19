@@ -1,4 +1,4 @@
-import { Injector } from '@angular/core';
+import { Injector, AfterViewInit } from '@angular/core';
 
 import { DataSource } from '@wm/core';
 
@@ -6,7 +6,7 @@ import { IWidgetConfig, StylableComponent } from '@wm/components/base';
 
 declare const _;
 
-export abstract class BaseFormComponent extends StylableComponent {
+export abstract class BaseFormComponent extends StylableComponent implements AfterViewInit{
     public datavalue;
     private prevDatavalue;
     protected binddatavalue: string;
@@ -68,5 +68,19 @@ export abstract class BaseFormComponent extends StylableComponent {
 
     protected updatePrevDatavalue(val: any) {
         this.prevDatavalue = val;
+    }
+
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+
+// [WMS-18892]- stopping event propagation [for ArrowLeft, ArrowUp, ArrowRight, ArrowDown actions]  when form widgets or form is inside list widget
+        let parentElemList = $(this.nativeElement).parents();
+        if (parentElemList.closest('[wmList]').length) {
+            this.$element.keydown(function($event) {
+                if ($event.keyCode === 37 || $event.keyCode === 38 || $event.keyCode === 39 || $event.keyCode === 40) {
+                    $event.stopPropagation();
+                }
+            });
+        }
     }
 }
