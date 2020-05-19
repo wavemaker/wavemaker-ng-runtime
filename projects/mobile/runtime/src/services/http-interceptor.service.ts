@@ -77,7 +77,7 @@ export class MobileHttpInterceptor implements HttpInterceptor {
     }
 }
 
-export class ServiceCallInterceptor implements RequestInterceptor {
+class ServiceCallInterceptor implements RequestInterceptor {
 
     private static REMOTE_SERVICE_URL_PATTERNS = [
         new RegExp('^((./)|/)?services/'),
