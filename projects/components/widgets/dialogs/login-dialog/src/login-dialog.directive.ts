@@ -50,7 +50,7 @@ export class LoginDialogDirective implements AfterViewInit, OnDestroy {
     doLogin() {
         const loginInfo = this.getLoginDetails();
         const ds = (this.dialogRef as any).eventsource;
-        if (ds) {
+        if (ds && loginInfo['j_username'] && loginInfo['j_password']) {
             this.showLoading();
             ds.invoke({loginInfo: loginInfo}, this.onSuccess.bind(this), this.onError.bind(this));
         }
