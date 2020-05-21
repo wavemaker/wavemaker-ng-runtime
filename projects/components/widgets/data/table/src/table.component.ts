@@ -106,6 +106,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private inlineCompliedTl: any = {};
     private inlineNewCompliedTl: any = {};
     private customExprCompiledTl: any = {};
+    private customExprCompiledSummaryTl: any = {};
     private rowDefInstances = {};
     private rowDefMap = {};
     private rowExpansionActionTl: any = {};
@@ -406,13 +407,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         clearCustomExpression: () => {
             this.customExprViewRef.clear();
             this.customExprCompiledTl = {};
+            this.customExprCompiledSummaryTl = {};
         },
         clearRowDetailExpression: () => {
             this.rowDetailViewRef.clear();
             this.rowDefMap = {};
             this.rowDefInstances = {};
         },
-        generateCustomExpressions: (rowData, index) => {
+        generateCustomExpressions: (rowData, index, summaryRow?) => {
             const row = this.getClonedRowObject(rowData);
             const compileTemplate = (tmpl) => {
                 if (!tmpl) {
@@ -428,7 +430,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 const rootNode = customExprView.rootNodes[0];
                 const fieldName = rootNode.getAttribute('data-col-identifier');
                 _.extend(colDef, this.columns[fieldName]);
-                this.customExprCompiledTl[fieldName + index] = rootNode;
+                if(!summaryRow){
+                    this.customExprCompiledTl[fieldName + index] = rootNode;
+                }else{
+                    this.customExprCompiledSummaryTl[fieldName + index] = rootNode;
+                }
             };
             if (this.isdynamictable) {
                 this.fieldDefs.forEach(col => {
@@ -490,8 +496,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         onRowCollapse: ($event, row) => {
             this.rowInstance.invokeEventCallback('rowcollapse', {$event, row});
         },
-        getCustomExpression: (fieldName, index) => {
-            return this.customExprCompiledTl[fieldName + index] || '';
+        getCustomExpression: (fieldName, index, summaryRow?) => {
+            let customExpression;
+            if (!summaryRow) {
+                customExpression = this.customExprCompiledTl[fieldName + index];
+            } else {
+                customExpression = this.customExprCompiledSummaryTl[fieldName + index];
+            }
+            return customExpression || '';
         },
         clearRowActions: () => {
             this.rowActionsViewRef.clear();

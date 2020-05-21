@@ -548,6 +548,50 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this['showPendingSpinner' + (type == 'inlineInstance' ? '' : 'New')] = (status === 'PENDING');
     }
 
+    /* Summary Row Logic start */
+    setSummaryRowData(data) {
+        const newData = (data instanceof Array) ? data : [data]
+        this._invokeSummaryRowData(newData);
+    }
+
+    private _invokeSummaryRowData(data) {
+        _.forEach(data, (item, index) => {
+            let content = item;
+            if (content instanceof Promise) {
+                content.then(res => {
+                    this.table.callDataGridMethod('setSummaryRowDef', this.key, res, index, true);
+                });
+            }
+            this.table.callDataGridMethod('setSummaryRowDef', this.key, content, index);
+        });
+    }
+    
+    private _getColumnData() {
+        return _.map(this.table.dataset, this.binding);
+    }
+
+    public aggregate = {
+        sum: () => {
+            return _.sum(this._getColumnData());
+        },
+        average: () => {
+            return _.mean(this._getColumnData());
+        },
+        count: () => {
+            return this._getColumnData().length;
+        },
+        minimum: () => {
+            return _.min(this._getColumnData());
+        },
+        maximum: () => {
+            return _.max(this._getColumnData());
+        },
+        percent: (value) => {
+            return (_.sum(this._getColumnData())/value)*100;
+        }
+    }
+    /* Summary Row Logic end */
+
     // Set the props on the inline edit widget
     setInlineWidgetProp(widget, prop, nv) {
         if (prop === 'datepattern' && this.editWidgetType === FormWidgetType.TIME) {

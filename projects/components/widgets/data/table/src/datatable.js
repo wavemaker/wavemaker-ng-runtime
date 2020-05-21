@@ -66,6 +66,8 @@ $.widget('wm.datatable', {
             closeothers: false,
             columnwidth: '30px'
         },
+        summaryRow: false,
+        summaryRowDefs: [],
         searchHandler: function () {
         },
         sortHandler: function () {
@@ -414,6 +416,28 @@ $.widget('wm.datatable', {
         });
     },
 
+    setSummaryRowDef: function (key, value, rowindex, refreshIndicator) {
+        this.options.summaryRow = true;
+        if (this.options.summaryRowDefs[rowindex] == undefined) this.options.summaryRowDefs[rowindex] = {};
+        this.options.summaryRowDefs[rowindex][key] = value;
+        if (refreshIndicator) this.refreshGridData();
+    },
+
+    /* Returns the tbody markup. */
+    _getSummaryRowTemplate: function () {
+        var self = this,
+            $tfoot = $('<tfoot style="border-top: 3px solid #eee;"></tfoot>');
+        
+        _.forEach(this.options.summaryRowDefs, function (row, index) {
+            var _row = _.clone(row);
+            _row.$index = index + 1;
+            self.options.generateCustomExpressions(_row, index, true);
+            $tfoot.append(self._getRowTemplate(row, index, true));
+        });
+
+        return $tfoot;
+    },
+
     /* Returns the tbody markup. */
     _getGridTemplate: function () {
         var self = this,
@@ -441,14 +465,14 @@ $.widget('wm.datatable', {
     },
 
     /* Returns the table row template. */
-    _getRowTemplate: function (row, rowIndex) {
+    _getRowTemplate: function (row, rowIndex, summaryRow) {
         var $htm,
             self = this,
             gridOptions = self.options;
 
         $htm = $('<tr tabindex="0" class="' + gridOptions.cssClassNames.tableRow + ' ' + (gridOptions.rowClass || '') + '" data-row-id="' + row.$$pk + '"></tr>');
         this.preparedHeaderData.forEach(function (current, colIndex) {
-            $htm.append(self._getColumnTemplate(row, colIndex, current, rowIndex));
+            $htm.append(self._getColumnTemplate(row, colIndex, current, rowIndex, summaryRow));
         });
         return $htm;
     },
@@ -487,18 +511,37 @@ $.widget('wm.datatable', {
     },
 
     /* Returns the table cell template. */
-    _getColumnTemplate: function (row, colId, colDef, rowIndex) {
+    _getColumnTemplate: function (row, colId, colDef, rowIndex, summaryRow) {
         var $htm,
             columnValue,
+            summaryColumnValue,
             innerTmpl,
             classes = this.options.cssClassNames.tableCell + ' ' + (colDef.class || ''),
             colExpression = colDef.customExpression;
 
-        $htm = $('<td class="' + classes + '" data-col-id="' + colId + '" style="text-align: ' + colDef.textAlignment + ';"></td>');
+        $htm = $('<td class="' + classes + '" data-col-id="' + colId + '" style="text-align: ' + colDef.textAlignment + ';position: relative;"></td>');
 
         columnValue = _.get(row, colDef.field);
 
-        if (colExpression) {
+        if (summaryRow) {
+            if (columnValue instanceof Promise) {
+                $htm.html('<div class="overlay"><span aria-hidden="true" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span></div>'); 
+            } else if (columnValue instanceof Object) {
+                if (columnValue.class) {
+                    $htm.addClass(columnValue.class);
+                }
+                summaryColumnValue = columnValue.value;
+            } else {
+                summaryColumnValue = columnValue;
+            }
+
+            if (colExpression) {
+                $htm.html(this.options.getCustomExpression(colDef.field, rowIndex, true));
+            } else {
+                innerTmpl = (_.isUndefined(summaryColumnValue) || summaryColumnValue === null) ? '' : summaryColumnValue;
+                $htm.html(innerTmpl);
+            }
+        } else if (colExpression) {
             $htm.html(this.options.getCustomExpression(colDef.field, rowIndex));
         } else {
             if (colDef.type !== 'custom') {
@@ -757,6 +800,7 @@ $.widget('wm.datatable', {
             gridElement: null,
             gridHeader: null,
             gridBody: null,
+            gridFooter: null,
             gridSearch: null,
             tableId: null,
             searchObj: {
@@ -774,6 +818,8 @@ $.widget('wm.datatable', {
         this._debounceOnEnter = _.debounce(function ($target, $row, quickEdit, event) {
             this._onEnter($target, $row, quickEdit, event);
         }, 150);
+        this.options.summaryRow = false;
+        this.options.summaryRowDefs = [];
         this._prepareHeaderData();
         this._prepareData();
         this._render(true);
@@ -801,6 +847,7 @@ $.widget('wm.datatable', {
     refreshGridData: function () {
         this._prepareData();
         this.gridBody.remove();
+        this.gridFooter.remove();
         this._renderGrid();
         this._reselectColumns();
         this.addOrRemoveScroll();
@@ -2614,6 +2661,10 @@ $.widget('wm.datatable', {
     _renderGrid: function (isCreated) {
         var $htm = $(this._getGridTemplate());
         this.gridElement.append($htm);
+        if (this.options.summaryRow) {
+            var $summaryRowHtm = $(this._getSummaryRowTemplate());
+            this.gridElement.append($summaryRowHtm);
+        }
         // Set proper data status messages after the grid is rendered.
         if (!this.options.data.length && this.dataStatus.state === 'nodata') {
             this.setStatus('nodata');
@@ -2623,6 +2674,7 @@ $.widget('wm.datatable', {
             this.setStatus(this.dataStatus.state, this.dataStatus.message, isCreated);
         }
         this.gridBody = this.gridElement.find('tbody');
+        this.gridFooter = this.gridElement.find('tfoot');
         this._findAndReplaceCompiledTemplates();
         this.options.clearRowActions();
         this._appendRowExpansionButtons($htm);
