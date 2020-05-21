@@ -59,14 +59,20 @@ export class InputTextComponent extends BaseInput {
     }
 
     get mask() {
-        return {
-            mask: this.maskVal,
-            lazy: false,
-            definitions: {
-                '9': /\d/,
-                'A': /[a-zA-Z]/,
-                '*': /[a-zA-Z0-9]/
-            }
-        };
+        if (this.displayformat) {
+            return {
+                mask: this.maskVal,
+                lazy: false,
+                definitions: {
+                    '9': /\d/,
+                    'A': /[a-zA-Z]/,
+                    'a': /[a-z]/,
+                    '*': /\w/
+                }
+            };
+        } else {
+            return false;
+        }
+
     }
 }
