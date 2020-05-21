@@ -54,6 +54,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected isReadOnly = false;
     protected selectedLocale: string;
     public selectfromothermonth: boolean;
+    public todaybutton:boolean;
+    public clearbutton:boolean;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -792,9 +794,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         } else if (key == 'selectfromothermonth') {
             this._dateOptions.selectFromOtherMonth = nv;
 
-        } else {
+        } else if(key == 'todaybutton'){
+            this._dateOptions.showTodayButton = nv;
+        }else if(key == 'clearbutton'){
+            this._dateOptions.showClearButton = nv;
+        }else {
             super.onPropertyChange(key, nv, ov);
         }
+
     }
 
     ngAfterViewInit() {

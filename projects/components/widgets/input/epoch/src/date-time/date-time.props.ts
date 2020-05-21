@@ -31,7 +31,9 @@ export const dateTimeProps = new Map(
         ['showweeks', PROP_BOOLEAN],
         ['tabindex', { value: 0, ...PROP_NUMBER }],
         ['timestamp', PROP_STRING],
-        ['selectfromothermonth', { value: true, ...PROP_BOOLEAN }]
+        ['selectfromothermonth', { value: true, ...PROP_BOOLEAN }],
+        ['todaybutton', { value: true, ...PROP_BOOLEAN }],
+        ['clearbutton',  { value: true, ...PROP_BOOLEAN }]
 
     ]
 );
