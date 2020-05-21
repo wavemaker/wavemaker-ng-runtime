@@ -487,10 +487,6 @@ buildNgxToastr() {
     execCommand "rollup" "ngx-toastr" "${ROLLUP} -c ./config/rollup.ngx-toastr.config.js --silent"
 }
 
-buildAngularTextMask() {
-    execCommand "rollup" "angular2-text-mask" "${ROLLUP} -c ./config/rollup.angular2-text-mask.config.js --silent"
-}
-
 buildAngularWebSocket() {
     execCommand "rollup" "angular-websocket" "${ROLLUP} -c ./config/rollup.angular-websocket.config.js --silent"
 }
@@ -520,7 +516,6 @@ bundleWebLibs() {
         ./node_modules/@angular/router/bundles/router.umd.js \
         ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
         ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
-        ./dist/tmp/libs/angular2-text-mask/angular2-text-mask.umd.js \
         ./dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
@@ -546,9 +541,8 @@ bundleWebLibs() {
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
-        ./node_modules/imask/dist/imask.js \
+        ./node_modules/imask/dist/imask.min.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
-        ./angular-imask.js \
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
 
@@ -584,7 +578,6 @@ bundleMobileLibs() {
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
         ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
-        ./dist/tmp/libs/angular2-text-mask/angular2-text-mask.umd.js \
         ./dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
@@ -612,6 +605,8 @@ bundleMobileLibs() {
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
+        ./node_modules/imask/dist/imask.min.js \
+        ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         ./projects/mobile/runtime/src/spotcue-utils.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
 
@@ -631,7 +626,6 @@ buildWebLibs() {
     buildTsLib
     buildNgxBootstrap
     buildNgxToastr
-    buildAngularTextMask
     buildAngularWebSocket
     buildNgCircleProgressbar
 

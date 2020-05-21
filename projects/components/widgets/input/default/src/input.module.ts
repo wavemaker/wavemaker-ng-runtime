@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { TextMaskModule } from 'angular2-text-mask';
 import { IMaskModule } from 'angular-imask';
 
 import { WmComponentsModule } from '@wm/components/base';
@@ -45,7 +44,6 @@ const components = [
     imports: [
         CommonModule,
         FormsModule,
-        TextMaskModule,
         WmComponentsModule,
         IMaskModule
     ],
