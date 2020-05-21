@@ -5,7 +5,7 @@ import { FormWidgetDirective } from './form-widget.directive';
 import { InputModule } from '@wm/components/input';
 import { FormBuilder, FormsModule, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Component, ViewChild } from '@angular/core';
-import { TextMaskModule } from 'angular2-text-mask';
+import { IMaskModule } from 'angular-imask';
 import { FormActionDirective } from './form-action/form-action.directive';
 import { FormFieldDirective } from './form-field/form-field.directive';
 import { compileTestComponent, setInputValue, onClickCheckTaglengthOnBody, checkCustomElementClass } from '../../../../base/src/test/util/component-test-util';
@@ -213,7 +213,7 @@ const testModuleDef: ITestModuleDef = {
         InputModule,
         FormsModule,
         ReactiveFormsModule,
-        TextMaskModule,
+        IMaskModule,
         WmComponentsModule.forRoot(),
         LayoutGridModule,
         BasicModule,
