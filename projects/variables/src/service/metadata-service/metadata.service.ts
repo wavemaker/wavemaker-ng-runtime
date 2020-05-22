@@ -23,8 +23,9 @@ export class MetadataService {
         return new Promise((resolve, reject) => {
             this.$http.send({'url' : url, 'method': 'GET'}).then((response) => {
                 this.metadataMap = this.metadataMap || new Map();
-                this.metadataMap.set(prefabName || this.CONTEXT_APP, response.body);
-                resolve(response.body);
+                response.body = response.body || {};
+                this.metadataMap.set(prefabName || this.CONTEXT_APP, response.body.serviceDefs);
+                resolve(response.body.serviceDefs);
             }, reject);
         });
     }
