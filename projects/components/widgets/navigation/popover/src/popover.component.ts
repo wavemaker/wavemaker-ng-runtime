@@ -153,7 +153,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         const popoverContainer  = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
         setCSSFromObj(popoverContainer, {
             height: this.popoverheight,
-            minWidth: this.popoverwidth
+            minWidth: this.popoverwidth,
+            width: this.popoverwidth
         });
         if (!this.popoverarrow) {
             addClass(popoverContainer.querySelector('.arrow') as HTMLElement, 'hidden');
