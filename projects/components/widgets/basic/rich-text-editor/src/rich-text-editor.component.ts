@@ -137,9 +137,14 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
 
     initEditor() {
         this.ngZone.runOutsideAngular(() => {
+            this.invokeEventCallback('beforerender', {'$event' : {}});
             this.$richTextEditor.summernote(this.EDITOR_DEFAULT_OPTIONS);
         });
 
+    }
+
+    overrideDefaults(options) {
+        _.extend(this.EDITOR_DEFAULT_OPTIONS, options);
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {

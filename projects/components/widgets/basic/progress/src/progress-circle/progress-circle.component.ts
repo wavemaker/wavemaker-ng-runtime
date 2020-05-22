@@ -75,7 +75,12 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
+        this.invokeEventCallback('beforerender', {'$event' : {}});
         this.options = Object.assign(this.circleRef.options, this.options);
+    }
+
+    overrideDefaults(options) {
+        _.extend(this.options, options);
     }
 
     updateDisplayValueFormat() {
