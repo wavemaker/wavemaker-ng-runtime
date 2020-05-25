@@ -36,6 +36,7 @@ $.widget('wm.datatable', {
             'grid': '',
             'gridDefault': 'table',
             'gridBody': 'app-datagrid-body',
+            'gridFooter': 'app-datagrid-footer',
             'deleteRow': 'danger',
             'ascIcon': 'wi wi-long-arrow-up',
             'descIcon': 'wi wi-long-arrow-down',
@@ -68,6 +69,7 @@ $.widget('wm.datatable', {
         },
         summaryRow: false,
         summaryRowDefs: [],
+        summaryRowDefsObject: [],
         searchHandler: function () {
         },
         sortHandler: function () {
@@ -416,18 +418,22 @@ $.widget('wm.datatable', {
         });
     },
 
-    setSummaryRowDef: function (key, value, rowindex, refreshIndicator) {
+    setSummaryRowDef: function (key, data, rowIndex, refreshIndicator) {
         this.options.summaryRow = true;
-        if (this.options.summaryRowDefs[rowindex] == undefined) this.options.summaryRowDefs[rowindex] = {};
-        this.options.summaryRowDefs[rowindex][key] = value;
+        if (this.options.summaryRowDefs[rowIndex] == undefined) {
+            this.options.summaryRowDefs[rowIndex] = {};
+            this.options.summaryRowDefsObject[rowIndex] = {};
+        }
+        this.options.summaryRowDefsObject[rowIndex][key] = data;
+        this.options.summaryRowDefs[rowIndex][key] = (data && data.value) ? data.value : data;
         if (refreshIndicator) this.refreshGridData();
     },
 
     /* Returns the tbody markup. */
     _getSummaryRowTemplate: function () {
         var self = this,
-            $tfoot = $('<tfoot style="border-top: 3px solid #eee;"></tfoot>');
-        
+            $tfoot = $('<tfoot class="' + this.options.cssClassNames.gridFooter + '" style="border-top: 3px solid #eee;"></tfoot>');
+
         _.forEach(this.options.summaryRowDefs, function (row, index) {
             var _row = _.clone(row);
             _row.$index = index + 1;
@@ -514,7 +520,9 @@ $.widget('wm.datatable', {
     _getColumnTemplate: function (row, colId, colDef, rowIndex, summaryRow) {
         var $htm,
             columnValue,
-            summaryColumnValue,
+            columnValueObject,
+            cellPreloader = '<div class="overlay"><span aria-hidden="true" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span></div>',
+            customExpressionHtml,
             innerTmpl,
             classes = this.options.cssClassNames.tableCell + ' ' + (colDef.class || ''),
             colExpression = colDef.customExpression;
@@ -524,21 +532,25 @@ $.widget('wm.datatable', {
         columnValue = _.get(row, colDef.field);
 
         if (summaryRow) {
-            if (columnValue instanceof Promise) {
-                $htm.html('<div class="overlay"><span aria-hidden="true" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span></div>'); 
-            } else if (columnValue instanceof Object) {
-                if (columnValue.class) {
-                    $htm.addClass(columnValue.class);
+            columnValueObject = this.options.summaryRowDefsObject[rowIndex][colDef.field];
+            if (columnValueObject instanceof Object) {
+                if (columnValueObject.class) {
+                    $htm.addClass(columnValueObject.class);
                 }
-                summaryColumnValue = columnValue.value;
-            } else {
-                summaryColumnValue = columnValue;
             }
 
-            if (colExpression) {
+            if (columnValue instanceof Promise) {
+                if (colExpression) {
+                    customExpressionHtml = this.options.getCustomExpression(colDef.field, rowIndex, true);
+                    $(customExpressionHtml).html(cellPreloader);
+                } else{
+                    customExpressionHtml = cellPreloader;
+                }
+                $htm.html(customExpressionHtml); 
+            } else if (colExpression) {
                 $htm.html(this.options.getCustomExpression(colDef.field, rowIndex, true));
             } else {
-                innerTmpl = (_.isUndefined(summaryColumnValue) || summaryColumnValue === null) ? '' : summaryColumnValue;
+                innerTmpl = (_.isUndefined(columnValue) || columnValue === null) ? '' : columnValue;
                 $htm.html(innerTmpl);
             }
         } else if (colExpression) {

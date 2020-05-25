@@ -561,7 +561,13 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 content.then(res => {
                     this.table.callDataGridMethod('setSummaryRowDef', this.key, res, index, true);
                 });
-            }
+            } else if (content.value && content.value instanceof Promise) {
+                let contentData = content;
+                content.value.then(res => {
+                    contentData.value = res;
+                    this.table.callDataGridMethod('setSummaryRowDef', this.key, contentData, index, true);
+                });
+            } 
             this.table.callDataGridMethod('setSummaryRowDef', this.key, content, index);
         });
     }
