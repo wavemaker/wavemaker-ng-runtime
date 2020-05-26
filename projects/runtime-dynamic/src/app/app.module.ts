@@ -100,13 +100,15 @@ import {
     ComponentRefProvider,
     PrefabConfigProvider,
     WM_MODULES_FOR_ROOT,
-    REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
+    REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS,
+    AppExtensionProvider
 } from '@wm/runtime/base';
 
 import { routes } from './app.routes';
 import { PageWrapperComponent } from './components/page-wrapper.component';
 import { AppJSProviderService } from './services/app-js-provider.service';
 import { AppVariablesProviderService } from './services/app-variables-provider.service';
+import { AppExtensionProviderService } from './services/app-extension.service';
 import { ComponentRefProviderService } from './services/component-ref-provider.service';
 import { PrefabConfigProviderService } from './services/prefab-config-provider.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
@@ -248,6 +250,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         AppResourceManagerService,
         { provide: AppJSProvider, useClass: AppJSProviderService },
         { provide: AppVariablesProvider, useClass: AppVariablesProviderService },
+        {provide: AppExtensionProvider,useClass:AppExtensionProviderService},
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
         { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService }

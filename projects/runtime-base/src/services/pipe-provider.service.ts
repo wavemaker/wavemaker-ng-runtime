@@ -1,4 +1,4 @@
-import { Compiler, Injectable, Injector, ChangeDetectorRef, InjectionToken, KeyValueDiffers, Pipe } from '@angular/core';
+import { Compiler, Injectable, Injector, ChangeDetectorRef, InjectionToken, KeyValueDiffers, Pipe, Inject } from '@angular/core';
 import {
     AsyncPipe,
     UpperCasePipe,
@@ -28,9 +28,10 @@ import {
     TimeFromNowPipe,
     NumberToStringPipe,
     StateClassPipe,
-    StringToNumberPipe
+    StringToNumberPipe,
+    CustomPipe
 } from '@wm/components/base';
-import { getSessionStorageItem } from '@wm/core';
+import { getSessionStorageItem, CustomPipeManager } from '@wm/core';
 
 @Injectable({
     providedIn: 'root'
@@ -92,7 +93,8 @@ export class PipeProvider {
         this.preparePipeMeta(NumberToStringPipe, 'numberToString', true, [
             new DecimalPipe(this._locale)
         ]),
-        this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true)
+        this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true),
+        this.preparePipeMeta(CustomPipe, 'custom', true, [this.injector.get(CustomPipeManager)])
     ];
 
     unknownPipe(name) {

@@ -1,6 +1,7 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, Injectable } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { CURRENCY_INFO, isDefined } from '@wm/core';
+import { CURRENCY_INFO, isDefined, App, CustomPipeManager } from '@wm/core';
+
 
 declare const moment, _, $;
 
@@ -38,7 +39,7 @@ export class ToDatePipe implements PipeTransform {
         return '';
     }
 
-    constructor(private datePipe: DatePipe) {}
+    constructor(private datePipe: DatePipe) { }
 }
 
 @Pipe({
@@ -53,7 +54,7 @@ export class ToNumberPipe implements PipeTransform {
             return this.decimalPipe.transform(data, fracSize);
         }
     }
-    constructor(private decimalPipe: DecimalPipe) {}
+    constructor(private decimalPipe: DecimalPipe) { }
 }
 
 @Pipe({
@@ -66,7 +67,7 @@ export class ToCurrencyPipe implements PipeTransform {
         return _val ? _currencySymbol + _val : '';
     }
 
-    constructor(private decimalPipe: DecimalPipe) {}
+    constructor(private decimalPipe: DecimalPipe) { }
 }
 
 @Pipe({
@@ -87,6 +88,32 @@ export class SuffixPipe implements PipeTransform {
     }
 }
 
+
+/**
+ * Custom pipe: It is work as interceptor between the user custom pipe function and angular pipe
+ */
+@Pipe({
+    name: 'custom'
+})
+export class CustomPipe implements PipeTransform {
+    constructor(private custmeUserPipe: CustomPipeManager) {
+
+    }
+    transform(data, pipename) {
+       let argumentArr = [];
+       for(let i =2 ; i<arguments.length; i++ ){
+        argumentArr.push(arguments[i]);
+       }
+
+        let pipeRef = this.custmeUserPipe.getCustomPipe(pipename);
+        if (data) {
+            return pipeRef.pipeFunction(data, ...argumentArr);
+        }
+        return data;
+
+    }
+}
+
 @Pipe({
     name: 'timeFromNow'
 })
@@ -104,7 +131,7 @@ export class TimeFromNowPipe implements PipeTransform {
 @Pipe({
     name: 'numberToString'
 })
-export class NumberToStringPipe extends ToNumberPipe implements PipeTransform {}
+export class NumberToStringPipe extends ToNumberPipe implements PipeTransform { }
 
 @Pipe({
     name: 'stringToNumber'
@@ -291,3 +318,5 @@ export class FileExtensionFromMimePipe implements PipeTransform {
         return typeMapping[mimeType];
     }
 }
+
+

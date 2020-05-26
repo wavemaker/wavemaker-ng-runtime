@@ -74,6 +74,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     filterwidget;
     field;
     formatpattern;
+    custompipeformat;
     generator;
     limit;
     mobiledisplay;
@@ -528,7 +529,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             this.fieldValidations_new.setUpValidators();
         }
     }
-    
+
     // Sets the Async validators on the inline and quickedit new row form control
     setAsyncValidators(validators){
         this.asyncValidators = _.cloneDeep(validators);
@@ -641,6 +642,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.style =  this.getStyleDef();
         this.class =  this['col-class'];
         this.ngclass =  this['col-ng-class'];
+        this.custompipeformat = this.custompipeformat;
         this.formatpattern =  this.formatpattern === 'toNumber' ? 'numberToString'  :  this.formatpattern;
         this.searchable =  (this.type === 'blob' || this.type === 'clob') ? false  :  this.searchable;
         this.limit =  this.limit ? +this.limit  :  undefined;

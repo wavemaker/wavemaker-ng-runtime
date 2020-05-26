@@ -1,4 +1,4 @@
-import { AppJSResolve, MetadataResolve } from '@wm/runtime/base';
+import { AppJSResolve, MetadataResolve, AppExtensionJSResolve } from '@wm/runtime/base';
 import { SecurityConfigResolve, PrefabPreviewComponent, CanDeactivatePageGuard, EmptyPageComponent } from '@wm/runtime/base';
 
 import { PageWrapperComponent } from './components/page-wrapper.component';
@@ -6,7 +6,8 @@ import { PageWrapperComponent } from './components/page-wrapper.component';
 const appDependenciesResolve = {
     securityConfig: SecurityConfigResolve,
     metadata: MetadataResolve,
-    appJS: AppJSResolve
+    appJS: AppJSResolve,
+    appMetaConfig: AppExtensionJSResolve
 };
 
 export const routes = [
