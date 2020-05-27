@@ -266,6 +266,66 @@ const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 d
                                 </div>
                             </div>`;
 
+const summary_row_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="quickedit"
+                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false" 
+                                beforedatarender.event="UserTable1Beforedatarender(widget, data, columns)">
+
+                                <div wmTableColumn binding="exam" caption="Exam" edit-widget-type="text" type="string"
+                                    mobiledisplay="false" searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
+                                    <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
+                                        let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
+                                        <div data-col-identifier="exam">
+                                            <wm-input #inlineWidget wmFormWidget key="exam" data-field-name="exam"
+                                                formControlName="exam" type="text" aria-describedby="Enter text"></wm-input>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template #inlineWidgetTmplNew let-row="row" let-getControl="getControl"
+                                        let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatusNew="getPendingSpinnerStatusNew">
+                                        <div data-col-identifier="exam">
+                                            <wm-input #inlineWidgetNew wmFormWidget key="exam" data-field-name="exam"
+                                                formControlName="exam_new" type="text" aria-describedby="Enter text">
+                                            </wm-input>
+                                        </div>
+                                    </ng-template>
+                                </div>
+
+                                <div wmTableColumn binding="science" caption="Science" edit-widget-type="number" type="number" mobiledisplay="false"
+                                    searchable="false" show="true" readonly="undefined" [formGroup]="table_1.ngform">
+                                    <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
+                                        let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
+                                        <div data-col-identifier="science">
+                                            <div wmNumber #inlineWidget wmFormWidget key="science" data-field-name="science" formControlName="science"
+                                                type="number" aria-label="Only numbers"></div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template #inlineWidgetTmplNew let-row="row" let-getControl="getControl"
+                                        let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatusNew="getPendingSpinnerStatusNew">
+                                        <div data-col-identifier="science">
+                                            <div wmNumber #inlineWidgetNew wmFormWidget key="science" data-field-name="science" formControlName="science_new"
+                                                type="number" aria-label="Only numbers"></div>
+                                        </div>
+                                    </ng-template>
+                                </div>
+
+                                <div wmTableColumn binding="arts" caption="Arts" edit-widget-type="number" type="number" mobiledisplay="false"
+                                    searchable="false" show="true" readonly="undefined" [formGroup]="table_1.ngform">
+                                    <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
+                                        let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
+                                        <div data-col-identifier="arts">
+                                            <div wmNumber #inlineWidget wmFormWidget key="arts" data-field-name="arts" formControlName="arts"
+                                                type="number" aria-label="Only numbers"></div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template #inlineWidgetTmplNew let-row="row" let-getControl="getControl"
+                                        let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatusNew="getPendingSpinnerStatusNew">
+                                        <div data-col-identifier="arts">
+                                            <div wmNumber #inlineWidgetNew wmFormWidget key="arts" data-field-name="arts" formControlName="arts_new"
+                                                type="number" aria-label="Only numbers"></div>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>`;
+
 const testData: any = [
     {
         firstname: "admin",
@@ -285,6 +345,19 @@ const testData: any = [
         age: 23,
         dateofbirth: "2019-12-12",
         timeofbirth: "10:00:00"
+    }
+];
+
+const summaryRowData: any = [
+    {
+      exam: "Internal",
+      science: 20,
+      arts: 5
+    },
+    {
+      exam: "External",
+      science: 44,
+      arts: 29
     }
 ];
 
@@ -633,6 +706,11 @@ const customValidatorAsync = (isNewRow, wmComponent, fixture) => {
     tick(500);
     expect(formFieldControl.valid).toBeTruthy();
     discardPeriodicTasks();
+}
+
+const getSummaryContainer = (fixture) => {
+    const debugEl = fixture.debugElement.nativeElement;
+    return debugEl.querySelector(".app-datagrid-footer");
 }
 
 describe("DataTable", () => {
@@ -1086,6 +1164,194 @@ describe("DataTable", () => {
                         xit("To Do", () => { });
                     });
                 });
+            });
+
+            describe("Summary Row", () => {
+                @Component({
+                    template: summary_row_markup
+                })
+                class SummaryRowWrapperComponent {
+                    @ViewChild(TableComponent)
+                    wmComponent: TableComponent;
+                    UserTable1Beforedatarender(widget, data, columns) {
+                        const internalMarks = data.find(o => o.exam === 'Internal');
+                        const externalMarks = data.find(o => o.exam === 'External');
+
+                        const scienceAggregate = columns.science.aggregate;
+                        const artsAggregate = columns.arts.aggregate;
+
+                        columns.exam.setSummaryRowData([
+                            'Sum',
+                            'Average', 
+                            'Count',
+                            'Minimum',
+                            'Maximum',
+                            'Percent',
+                            'Result'
+                        ]);
+                        columns.science.setSummaryRowData([
+                            scienceAggregate.sum(),
+                            scienceAggregate.average(),
+                            scienceAggregate.count(),
+                            scienceAggregate.minimum(),
+                            scienceAggregate.maximum(),
+                            scienceAggregate.percent(100) + '%',
+                            calculateResult('science'),
+                            'Total Marks',
+                            'Grade'
+                        ]);
+                        columns.arts.setSummaryRowData([
+                            artsAggregate.sum(),
+                            artsAggregate.average(),
+                            artsAggregate.count(),
+                            artsAggregate.minimum(),
+                            artsAggregate.maximum(),
+                            artsAggregate.percent(100) + '%',
+                            calculateResult('arts'),
+                            calculateTotal(),
+                            evaluateGrade(calculateTotal())
+                        ]);
+
+                        function calculateResult(columnName) {
+                            if (internalMarks[columnName] >= 10 && externalMarks[columnName] >= 25) {
+                                return {
+                                    value: 'Pass',
+                                    class: 'pass'
+                                }
+                            } else {
+                                return {
+                                    value: 'Fail',
+                                    class: 'fail'
+                                }
+                            }
+                        }
+
+                        function calculateTotal() {
+                            let total = 0;
+                            ['science', 'arts'].forEach((item) => {
+                                total = total + columns[item].aggregate.sum();
+                            });
+                            return total;
+                        }
+
+                        function evaluateGrade(total) {
+                            return new Promise(function(resolve, reject) {
+                                setTimeout(() => resolve('B+'), 100);
+                            });
+                        }
+                    };
+                }
+
+                const summaryRowTestModuleDef: ITestModuleDef = {
+                    imports: imports,
+                    declarations: [...declarations, SummaryRowWrapperComponent],
+                    providers: providers
+                };
+
+                let wrapperComponent: SummaryRowWrapperComponent;
+                let wmComponent: TableComponent;
+                let summary_row_fixture: ComponentFixture<SummaryRowWrapperComponent>;
+
+                beforeEach(async(() => {
+                    summary_row_fixture = compileTestComponent(summaryRowTestModuleDef, SummaryRowWrapperComponent);
+                    wrapperComponent = summary_row_fixture.componentInstance;
+                    summary_row_fixture.detectChanges();
+                    wmComponent = wrapperComponent.wmComponent;
+                    wmComponent.dataset = summaryRowData;
+                    wmComponent.populateGridData(summaryRowData);
+                }));
+
+                it("Should create the component", () => {
+                    expect(wmComponent).toBeDefined();
+                });
+
+                it("Should have summary row at the bottom", () => {
+                    const tableSummaryEl = getSummaryContainer(summary_row_fixture);
+                    expect(tableSummaryEl).toBeDefined();
+                });
+
+                it("Sum aggregate function", () => {
+                    const tableSummaryEl = getSummaryContainer(summary_row_fixture);
+                    const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(1)");
+                    const summaryColumns = summaryRow.querySelectorAll("td");
+                    expect(summaryColumns[0].innerText).toEqual('Sum');
+                    expect(summaryColumns[1].innerText).toEqual('64');
+                    expect(summaryColumns[2].innerText).toEqual('34');
+                });
+
+                it("Average aggregate function", () => {
+                    const tableSummaryEl = getSummaryContainer(summary_row_fixture);
+                    const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(2)");
+                    const summaryColumns = summaryRow.querySelectorAll("td");
+                    expect(summaryColumns[0].innerText).toEqual('Average');
+                    expect(summaryColumns[1].innerText).toEqual('32');
+                    expect(summaryColumns[2].innerText).toEqual('17');
+                });
+
+                it("Count aggregate function", () => {
+                    const tableSummaryEl = getSummaryContainer(summary_row_fixture);
+                    const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(3)");
+                    const summaryColumns = summaryRow.querySelectorAll("td");
+                    expect(summaryColumns[0].innerText).toEqual('Count');
+                    expect(summaryColumns[1].innerText).toEqual('2');
+                    expect(summaryColumns[2].innerText).toEqual('2');
+                });
+
+                it("Minimum aggregate function", () => {
+                    const tableSummaryEl = getSummaryContainer(summary_row_fixture);
+                    const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(4)");
+                    const summaryColumns = summaryRow.querySelectorAll("td");
+                    expect(summaryColumns[0].innerText).toEqual('Minimum');
+                    expect(summaryColumns[1].innerText).toEqual('20');
+                    expect(summaryColumns[2].innerText).toEqual('5');
+                });
+                
+                it("Maximum aggregate function", () => {
+                    const tableSummaryEl = getSummaryContainer(summary_row_fixture);
+                    const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(5)");
+                    const summaryColumns = summaryRow.querySelectorAll("td");
+                    expect(summaryColumns[0].innerText).toEqual('Maximum');
+                    expect(summaryColumns[1].innerText).toEqual('44');
+                    expect(summaryColumns[2].innerText).toEqual('29');
+                });
+
+                it("Percent aggregate function and Value concatination", () => {
+                    const tableSummaryEl = getSummaryContainer(summary_row_fixture);
+                    const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(6)");
+                    const summaryColumns = summaryRow.querySelectorAll("td");
+                    expect(summaryColumns[0].innerText).toEqual('Percent');
+                    expect(summaryColumns[1].innerText).toEqual('64%');
+                    expect(summaryColumns[2].innerText).toEqual('34%');
+                });
+
+                it("Object notation custom function with class property", () => {
+                    const tableSummaryEl = getSummaryContainer(summary_row_fixture);
+                    const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(7)");
+                    const summaryColumns = summaryRow.querySelectorAll("td");
+                    expect(summaryColumns[0].innerText).toEqual('Result');
+                    expect(summaryColumns[1].innerText).toEqual('Pass');
+                    expect(summaryColumns[1].classList).toContain('pass');
+                    expect(summaryColumns[2].innerText).toEqual('Fail');
+                    expect(summaryColumns[2].classList).toContain('fail');
+                });
+
+                it("Custom function in combination with aggregate function", () => {
+                    const tableSummaryEl = getSummaryContainer(summary_row_fixture);
+                    const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(8)");
+                    const summaryColumns = summaryRow.querySelectorAll("td");
+                    expect(summaryColumns[1].innerText).toEqual('Total Marks');
+                    expect(summaryColumns[2].innerText).toEqual('98');
+                });
+
+                it("Asyncronous function in combination with aggregate function", fakeAsync(() => {
+                    tick(500);
+                    const tableSummaryEl = getSummaryContainer(summary_row_fixture);
+                    const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(9)");
+                    const summaryColumns = summaryRow.querySelectorAll("td");
+                    expect(summaryColumns[1].innerText).toEqual('Grade');
+                    expect(summaryColumns[2].innerText).toEqual('B+');
+                    discardPeriodicTasks();
+                }));
             });
         });
     });
