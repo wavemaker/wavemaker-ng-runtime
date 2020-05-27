@@ -24,20 +24,20 @@ export class AppExtensionJSResolve implements Resolve<any> {
         }
 
         try {
-            // execute app.extension.js
+            // execute pipe.config.js
             const appScriptFn = await this.appJsProvider.getAppMetaConfigScripts();
-           let appExtension = appScriptFn(this.app, this.utilService, this.inj);
-
+           let appExtension = appScriptFn();
+            // If user defined the invalid pipes format.
             if(!appExtension || !appExtension.Pipes){
-                console.log('Please return valid Pipe object');
-                return;
+                console.warn('Please return valid Pipe object');
+                return true;
             }
             let pipesObj = appExtension.Pipes;
             for(let key in pipesObj){
                 this.customPipeManager.setCustomPipe(key, pipesObj[key]);
             }
         } catch (e) {
-            console.warn('Error in executing app.extension.js', e);
+            console.warn('Error in executing pipes.config.js', e);
         }
 
         appJsLoaded = true;
