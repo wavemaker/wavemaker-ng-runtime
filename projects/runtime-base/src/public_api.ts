@@ -19,3 +19,4 @@ export * from './resolves/i18n.resolve';
 export * from './resolves/metadata.resolve';
 export * from './resolves/security-config.resolve';
 export * from './guards/can-deactivate-page.guard';
+export * from './util/wm-route-reuse-strategy';

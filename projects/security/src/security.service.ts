@@ -176,10 +176,9 @@ export class SecurityService {
      */
     getCurrentRouteQueryParam(paramName) {
         let paramVal;
-        // this.activatedRoute.queryParams.subscribe(params => {
-        //     paramVal = params[paramName];
-        // });
-        paramVal = (this as any).routerService.currentUrlTree.queryParams[paramName];
+        this.activatedRoute.queryParams.subscribe(params => {
+            paramVal = params[paramName];
+        });
         return paramVal;
     }
 
@@ -283,14 +282,10 @@ export class SecurityService {
      */
     getRedirectedRouteQueryParams() {
         let queryParams = {};
-        // this.activatedRoute.queryParams.subscribe((paramVal) => {
-        //     _.forEach(paramVal, (val, key) => {
-        //         queryParams[key] = val;
-        //     });
-        // });
-
-        _.forEach((this as any).routerService.currentUrlTree.queryParams, (val, key) => {
-            queryParams[key] = val;
+        this.activatedRoute.queryParams.subscribe((paramVal) => {
+            _.forEach(paramVal, (val, key) => {
+                queryParams[key] = val;
+            });
         });
         return queryParams;
     }

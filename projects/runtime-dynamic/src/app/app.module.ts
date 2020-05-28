@@ -1,7 +1,7 @@
 import { Injector, ModuleWithProviders, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouteReuseStrategy, RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -99,6 +99,7 @@ import {
     AppVariablesProvider,
     ComponentRefProvider,
     PrefabConfigProvider,
+    WmRouteReuseStrategy,
     WM_MODULES_FOR_ROOT,
     REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS,
     AppExtensionProvider
@@ -253,7 +254,8 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         {provide: AppExtensionProvider,useClass:AppExtensionProviderService},
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
-        { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService }
+        { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService },
+        { provide: RouteReuseStrategy, useClass: WmRouteReuseStrategy }
     ],
     bootstrap: [AppComponent]
 })
