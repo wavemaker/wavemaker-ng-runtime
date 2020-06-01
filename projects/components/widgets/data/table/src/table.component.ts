@@ -703,7 +703,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
 
             if (!gridOptions.colDefs.length && this.fieldDefs.length) {
-                this.setDataGridOption('colDefs', this.checkHiddenColumns(getClonedObject(this.fieldDefs)));
+                this.setDataGridOption('colDefs', getClonedObject(this.fieldDefs));
             }
             // If data and colDefs are present, call on before data render event
             if (!this.isdynamictable && !_.isEmpty(newValue) && gridOptions.colDefs.length) {
@@ -815,7 +815,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
         }
 
-        this.gridOptions.colDefs = this.checkHiddenColumns(this.fullFieldDefs);
+        this.gridOptions.colDefs = this.fullFieldDefs;
         this.gridOptions.rowActions = this.rowActions;
         this.gridOptions.headerConfig = this.headerConfig;
         this.gridOptions.rowClass = this.rowclass;
@@ -845,7 +845,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         });
 
         this.renderOperationColumns();
-        this.gridOptions.colDefs = this.checkHiddenColumns(this.fieldDefs);
+        this.gridOptions.colDefs = this.fieldDefs;
 
         this.datagridElement.datatable(this.gridOptions);
         this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
@@ -1443,6 +1443,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     registerColumns(tableColumn) {
+        if (isMobile()) {
+            if (!tableColumn.mobileDisplay) {
+                return;
+            }
+        } else {
+            if (!tableColumn.pcDisplay) {
+                return;
+            }
+        }
         const colCount = this.fieldDefs.push(tableColumn);
         this.fullFieldDefs.push(tableColumn);
         this.rowFilter[tableColumn.field] = {
@@ -1454,25 +1463,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // If dynamic datatable and last column, pass the columns to jquery datatable
         if (this.isdynamictable && colCount === this.noOfColumns) {
             this.renderOperationColumns();
-            this.setDataGridOption('colDefs', this.checkHiddenColumns(this.fieldDefs));
+            this.setDataGridOption('colDefs', this.fieldDefs);
         }
-    }
-
-    checkHiddenColumns(allColumns) {
-        let filteredColumns = [];
-        allColumns.forEach((column) => {
-            if (isMobile()) {
-                if (!column.mobileDisplay) {
-                    return;
-                }
-            } else {
-                if (!column.pcDisplay) {
-                    return;
-                }
-            }
-            filteredColumns.push(column);
-        });
-        return filteredColumns;
     }
 
     registerFormField(name, formField) {
