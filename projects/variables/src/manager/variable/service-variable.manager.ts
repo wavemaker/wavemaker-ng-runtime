@@ -218,6 +218,7 @@ export class ServiceVariableManager extends BaseVariableManager {
             appManager.pushToSessionFailureRequests(variable.invoke.bind(variable, options, success, errorCB));
             appManager.handle401();
         }
+        console.warn(variable.name + ': ' + info.error.message);
         return info;
     }
 
