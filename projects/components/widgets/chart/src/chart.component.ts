@@ -90,7 +90,7 @@ const angle = d => {
 @Component({
     selector: 'div[wmChart]',
     templateUrl: './chart.component.html',
-    styleUrls: ['../../../../../node_modules/wm-nvd3/build/nv.d3.css'],
+    styleUrls: ['../../../../../node_modules/@wavemaker.com/nvd3/build/nv.d3.min.css'],
     providers: [
         provideAsWidgetRef(ChartComponent)
     ],

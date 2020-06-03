@@ -522,7 +522,7 @@ bundleWebLibs() {
         ./node_modules/moment/moment.js \
         ./node_modules/x2js/x2js.js \
         ./node_modules/d3/d3.min.js \
-        ./node_modules/wm-nvd3/build/nv.d3.min.js \
+        ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
         ./node_modules/summernote/dist/summernote-lite.js \
@@ -584,7 +584,7 @@ bundleMobileLibs() {
         ./node_modules/moment/moment.js \
         ./node_modules/x2js/x2js.js \
         ./node_modules/d3/d3.min.js \
-        ./node_modules/wm-nvd3/build/nv.d3.min.js \
+        ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
         ./node_modules/summernote/dist/summernote-lite.js \
