@@ -1,1 +1,1 @@
-export const appExtensionScript = (App, Utils, Injector) => {};
+export const appExtensionScript = () => {};

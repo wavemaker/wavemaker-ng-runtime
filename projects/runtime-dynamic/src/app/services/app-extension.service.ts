@@ -12,8 +12,8 @@ export class AppExtensionProviderService extends AppExtensionProvider {
         super();
     }
     public getAppMetaConfigScripts(): Promise<Function> {
-        return this.$http.get('./app.extension.js', {responseType: 'text'})
+        return this.$http.get('./extensions/pipes.config.js', {responseType: 'text'})
             .toPromise()
-            .then(script => new Function('App', 'Utils', 'Injector', script));
+            .then(script => new Function('return ' + script));
     }
 }

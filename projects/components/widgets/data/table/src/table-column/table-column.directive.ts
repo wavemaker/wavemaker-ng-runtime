@@ -568,11 +568,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                     contentData.value = res;
                     this.table.callDataGridMethod('setSummaryRowDef', this.key, contentData, index, true);
                 });
-            } 
+            }
             this.table.callDataGridMethod('setSummaryRowDef', this.key, content, index);
         });
     }
-    
     private _getColumnData() {
         return _.map(this.table.dataset, this.binding);
     }
@@ -642,7 +641,6 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.style =  this.getStyleDef();
         this.class =  this['col-class'];
         this.ngclass =  this['col-ng-class'];
-        this.custompipeformat = this.custompipeformat;
         this.formatpattern =  this.formatpattern === 'toNumber' ? 'numberToString'  :  this.formatpattern;
         this.searchable =  (this.type === 'blob' || this.type === 'clob') ? false  :  this.searchable;
         this.limit =  this.limit ? +this.limit  :  undefined;

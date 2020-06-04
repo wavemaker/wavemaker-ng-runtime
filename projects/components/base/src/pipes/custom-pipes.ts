@@ -106,11 +106,17 @@ export class CustomPipe implements PipeTransform {
        }
 
         let pipeRef = this.custmeUserPipe.getCustomPipe(pipename);
-        if (data) {
-            return pipeRef.pipeFunction(data, ...argumentArr);
+        if(!pipeRef || !_.isFunction(pipeRef.pipeFunction)){
+            console.warn('pipeFunction is not defined, please check the custom pipes documentation');
+            return data;
         }
-        return data;
 
+        try{
+            return pipeRef.pipeFunction(data, ...argumentArr);
+        } catch(error){
+            console.error('Pipe name: '+pipename, error);
+            return data;
+         }
     }
 }
 
