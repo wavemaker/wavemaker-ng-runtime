@@ -187,8 +187,10 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             this.steps.forEach((step, index) => {
                 if (index < this.getStepIndexByRef(currentStep)) {
                    step.done = true;
+                   step.isDone = true;
                 } else {
                     step.disabled = true;
+                    step.isDone = false;
                 }
             });
             // set the selected step as current step and make it active
