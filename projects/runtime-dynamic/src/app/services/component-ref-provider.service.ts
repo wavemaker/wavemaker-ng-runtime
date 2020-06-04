@@ -32,7 +32,7 @@ interface IPageMinJSON {
     config?: string;
 }
 
-declare const window: any;
+declare const window: any, _;
 
 const fragmentCache = new Map<string, any>();
 
@@ -244,7 +244,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                     // console the error for easy debugging
                     console.log(msg, err);
                     this.appManager.notifyApp(
-                        msg + ', check browser console for error details',
+                        _.isString(err) ? err : msg + ', check browser console for error details',
                         'error'
                     );
                 }
