@@ -26,15 +26,15 @@ export class AppExtensionJSResolve implements Resolve<any> {
         try {
             // execute pipe.config.js
             const appScriptFn = await this.appJsProvider.getAppMetaConfigScripts();
-           let appExtension = appScriptFn();
+           let frmatterObj = appScriptFn();
             // If user defined the invalid pipes format.
-            if(!appExtension || !appExtension.Pipes){
-                console.warn('Please return valid Pipe object');
+            if(!frmatterObj){
+                console.warn('Please return valid formatter');
                 return true;
             }
-            let pipesObj = appExtension.Pipes;
-            for(let key in pipesObj){
-                this.customPipeManager.setCustomPipe(key, pipesObj[key]);
+
+            for(let key in frmatterObj){
+                this.customPipeManager.setCustomPipe(key, frmatterObj[key]);
             }
         } catch (e) {
             console.warn('Error in executing pipes.config.js', e);
