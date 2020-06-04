@@ -24,7 +24,7 @@ export class AppExtensionJSResolve implements Resolve<any> {
         }
 
         try {
-            // execute pipe.config.js
+            // execute formatters.js
             const appScriptFn = await this.appJsProvider.getAppMetaConfigScripts();
            let frmatterObj = appScriptFn();
             // If user defined the invalid pipes format.
@@ -37,7 +37,7 @@ export class AppExtensionJSResolve implements Resolve<any> {
                 this.customPipeManager.setCustomPipe(key, frmatterObj[key]);
             }
         } catch (e) {
-            console.warn('Error in executing pipes.config.js', e);
+            console.warn('Error in executing formatters.js', e);
         }
 
         appJsLoaded = true;
