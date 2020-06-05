@@ -79,6 +79,7 @@ export abstract class App {
     networkStatus: any;
     notify: (eventName: string, data?: any) => void;
     deployedUrl: string;
+    customUrlScheme: string;
     selectedViewPort: Object;
     subscribe: (eventName, callback: (data: any) => void) => () => void;
     dynamicComponentContainerRef: any;

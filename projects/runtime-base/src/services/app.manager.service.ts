@@ -361,6 +361,15 @@ export class AppManagerService {
         return this.$app.deployedUrl ? this.$app.deployedUrl : $rootScope.project.deployedUrl;
     }
 
+    /**
+     * Fetches the customurlscheme for a mobile app
+     * which is used for redirection back to the app from browser in implicit oAuth flow
+     * @returns {string}
+     */
+    public getCustomUrlScheme() {
+        return this.$app.customUrlScheme;
+    }
+
     notify(eventName, data) {
         this.$app.notify(eventName, data);
     }

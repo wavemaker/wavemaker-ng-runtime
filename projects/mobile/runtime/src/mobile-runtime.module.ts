@@ -262,6 +262,7 @@ export class MobileRuntimeModule {
                 fetchContent('json', './config.json', true, (response => {
                     if (!response.error && response.baseUrl) {
                         deployedUrl = response.baseUrl;
+                        this.app.customUrlScheme = response.customUrlScheme;
                     }
                 }));
             }
