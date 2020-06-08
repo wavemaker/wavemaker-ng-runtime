@@ -533,6 +533,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     let fieldName;
                     const context = {
                         row,
+                        formWidgets: this.formWidgets,
                         getControl: () => {
                             return this.ngform.controls[fieldName + '_new'] || {};
                         },
@@ -559,6 +560,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 let fieldName;
                 const context = {
                     row,
+                    formWidgets: this.formWidgets,
                     getControl: () => {
                         return this.ngform.controls[fieldName] || {};
                     },
