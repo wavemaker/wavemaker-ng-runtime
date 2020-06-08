@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { App } from '@wm/core';
+import { App, getValidJSON } from '@wm/core';
 
 declare const _;
 
@@ -60,9 +60,32 @@ export class ExtAppMessageService {
     function indexOf(str, pattern) {
         return str && str.indexOf(pattern);
     }
+    /**
+     * checks if oAuth flow is implicit or not using state object in redirect_uri response.
+     *
+     * @param {url} string which contains access token and state information.
+     * @returns {Boolean}
+     */
+    function isImplicitoAuthFlow(url) {
+        if (!url) {
+            return false;
+        }
+        const stateObj = url.match(/\{([^)]+)\}/);
+        if (stateObj) {
+            const parsedObj = getValidJSON('{' + stateObj[1] + '}');
+            if (parsedObj && parsedObj.flow === 'implicit') {
+                return true;
+            }
+        }
+        return false;
+    }
     function extractData(url) {
-        const str = subString(url, indexOf(url, '?') + 1, indexOf(url, '#')),
-            data = {};
+        let str = subString(url, indexOf(url, '?') + 1, indexOf(url, '#'));
+        const data = {};
+        // access token comes as a hash for implicit flow
+        if (isImplicitoAuthFlow(url)) {
+            str = subString(url, indexOf(url, '#') + 1, indexOf(url, '&'));
+        }
         _.forEach(_.split(str, '&'), entry => {
             const esplits = entry.split('=');
             data[esplits[0]] = esplits[1];
@@ -70,7 +93,9 @@ export class ExtAppMessageService {
         return data;
     }
     function extractAddress(url) {
-        return subString(url, indexOf(url, '://') + 3, indexOf(url, '?'));
+        // access token comes as a hash for implicit flow
+        const addressKey = isImplicitoAuthFlow(url) ? '#' : '?';
+        return subString(url, indexOf(url, '://') + 3, indexOf(url, addressKey));
     }
     function createMessage(url) {
         return {
