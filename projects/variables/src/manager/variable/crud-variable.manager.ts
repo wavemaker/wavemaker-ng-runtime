@@ -152,18 +152,18 @@ export class CrudVariableManager extends ServiceVariableManager {
             inputFields = output;
         }
         const opInfo = this.getOperationInfo(variable, options);
-        let bodyName;
+        let bodyParam;
         if (opInfo && opInfo.parameters) {
-            bodyName = opInfo.parameters.filter(function(op) {
+            bodyParam = opInfo.parameters.filter(function(op) {
                 return op.parameterType === 'body';
             })[0];
         }
         // merge fields with bindings
         const bindingFields = _.get(variable.dataBinding, options.operation) || {};
         // bindings from setInput can come along with the body param, so employee.age will have to be converted to age
-        if (bodyName && bindingFields[bodyName.name]) {
+        if (bodyParam && bindingFields[bodyParam.name]) {
             _.forEach(bindingFields, function(bindingFieldVal, bindingFieldKey) {
-                if (bindingFieldKey === bodyName.name) {
+                if (bindingFieldKey === bodyParam.name) {
                     _.merge(inputFields, bindingFieldVal);
                 } else {
                     inputFields[bindingFieldKey] = bindingFieldVal;
@@ -172,9 +172,9 @@ export class CrudVariableManager extends ServiceVariableManager {
         } else {
             _.merge(inputFields, bindingFields);
         }
-        if ((options.operation === 'create' || options.operation === 'update') && !inputFields[bodyName.name]) {
-            if (bodyName) {
-                inputFields[bodyName.name] = getClonedObject(inputFields);
+        if ((options.operation === 'create' || options.operation === 'update') && (!bodyParam || !inputFields[bodyParam.name])) {
+            if (bodyParam) {
+                inputFields[bodyParam.name] = getClonedObject(inputFields);
             } else {
                 inputFields.RequestBody = getClonedObject(inputFields);
             }
