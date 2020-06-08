@@ -38,7 +38,7 @@ export class DeviceFileCacheService implements IDeviceStartUpService {
                     if (downloadIfNotExists) {
                         return this.download(url, isPersistent);
                     } else {
-                        Promise.reject('No cache entry for ' + url);
+                        return Promise.reject('No cache entry for ' + url);
                     }
                 });
     }
