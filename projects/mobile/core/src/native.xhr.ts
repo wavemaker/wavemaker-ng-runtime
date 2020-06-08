@@ -281,6 +281,10 @@ export class NativeXMLHttpRequest {
                 status: 200,
                 data: file
             };
+            let contentType = (response && response.headers && response.headers['content-type']);
+            if (contentType) {
+                res.data.type = contentType.split(';')[0];
+            }
             console.log('network call with request %O successed with response : %O', this, res);
             this._internal.copyNativeResponse(res);
             this._internal.triggerListeners(EVENT.LOAD);
@@ -295,8 +299,8 @@ export class NativeXMLHttpRequest {
             clearTimeout(timerId);
         };
         cordova.plugin.http.downloadFile(new URL(this._internal.url).href, {}, options.headers, tempfile,
-            entry => {
-                entry.file(onSuccess, onError);
+            (entry, response)  => {
+                entry.file(f => onSuccess(f, response), onError);
             }, onError);
     }
 
