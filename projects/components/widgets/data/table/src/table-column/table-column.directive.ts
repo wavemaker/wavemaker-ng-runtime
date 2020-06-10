@@ -401,7 +401,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 widget: 'edit-widget-type'
             });
         }
-        if(this.table.ngform.touched){
+        if (this.table.ngform.touched) {
             this.activeControlType = widget;
             if (widget === 'inlineInstance') {
                 this.notifyChanges();
@@ -531,7 +531,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     }
 
     // Sets the Async validators on the inline and quickedit new row form control
-    setAsyncValidators(validators){
+    setAsyncValidators(validators) {
         this.asyncValidators = _.cloneDeep(validators);
     }
 
@@ -551,7 +551,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     /* Summary Row Logic start */
     setSummaryRowData(data) {
-        const newData = (data instanceof Array) ? data : [data]
+        const newData = (data instanceof Array) ? data : [data];
         this._invokeSummaryRowData(newData);
     }
 
@@ -580,8 +580,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         sum: () => {
             return _.sum(this._getColumnData());
         },
-        average: () => {
-            return _.mean(this._getColumnData());
+        average: (precision: number = 2) => {
+            return _.round(_.mean(this._getColumnData()), precision);
         },
         count: () => {
             return this._getColumnData().length;
@@ -592,10 +592,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         maximum: () => {
             return _.max(this._getColumnData());
         },
-        percent: (value) => {
-            return (_.sum(this._getColumnData())/value)*100;
+        percent: (value, precision: number = 2) => {
+            return _.round((_.sum(this._getColumnData()) / value ) * 100, precision);
         }
-    }
+    };
     /* Summary Row Logic end */
 
     // Set the props on the inline edit widget
