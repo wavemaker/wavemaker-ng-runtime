@@ -1,19 +1,17 @@
 import { Injectable } from '@angular/core';
 import { AppExtensionProvider } from '@wm/runtime/base';
-// import { AppResourceManagerService } from './app-resource-manager.service';
-import { HttpClient } from '@angular/common/http';
-
+import { appendScriptToHead } from '@wm/core';
 @Injectable({
     providedIn: 'root'
 })
 export class AppExtensionProviderService extends AppExtensionProvider {
 
-    constructor(private $http: HttpClient) {
-        super();
-    }
-    public getAppMetaConfigScripts(): Promise<Function> {
-        return this.$http.get('./extensions/formatters.js', {responseType: 'text'})
-            .toPromise()
-            .then(script => new Function('return ' + script));
+    // With renderer create element, added onloaded callback the append to the body
+    public loadFormatterConfigScript(callback:Function):void {
+       try{
+        appendScriptToHead(callback);
+       }catch(e){
+           console.warn('Error while loading the formatters.js file');
+       }
     }
 }
