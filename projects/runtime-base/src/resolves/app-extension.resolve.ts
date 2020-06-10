@@ -4,44 +4,46 @@ import { Resolve } from '@angular/router';
 import { App, UtilsService, CustomPipeManager } from '@wm/core';
 
 import { AppExtensionProvider } from '../types/types';
+import { AppManagerService } from '../services/app.manager.service';
+
 
 let appJsLoaded = false;
+
 
 @Injectable()
 export class AppExtensionJSResolve implements Resolve<any> {
 
     constructor(
-        private inj: Injector,
-        private app: App,
-        private utilService: UtilsService,
+        private appManager: AppManagerService,
         private appJsProvider: AppExtensionProvider,
         private customPipeManager: CustomPipeManager
     ) {}
 
-    async resolve() {
-        if (appJsLoaded) {
+     resolve() {
+         if(this.appManager.isPrefabType()){
             return true;
+         }
+        if (!appJsLoaded) {
+            this.appJsProvider.loadFormatterConfigScript(this.loadedFormatterScript.bind(this));
+            appJsLoaded = true;
         }
+        return appJsLoaded;
+    }
 
+    // Formatters load callback
+    loadedFormatterScript(response){
         try {
-            // execute formatters.js
-            const appScriptFn = await this.appJsProvider.getAppMetaConfigScripts();
-           let frmatterObj = appScriptFn();
-            // If user defined the invalid pipes format.
-            if(!frmatterObj){
-                console.warn('Please return valid formatter');
-                return true;
+           let formatterObj = response;
+            // If user defined the invalid formatters.
+            if(!formatterObj){
+                console.warn('Please return valid formatter object');
             }
 
-            for(let key in frmatterObj){
-                this.customPipeManager.setCustomPipe(key, frmatterObj[key]);
+            for(let key in formatterObj){
+                this.customPipeManager.setCustomPipe(key, formatterObj[key]);
             }
         } catch (e) {
-            console.warn('Error in executing formatters.js', e);
+            console.warn('Error in reading formatters.js', e);
         }
-
-        appJsLoaded = true;
-
-        return true;
     }
 }

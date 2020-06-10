@@ -213,7 +213,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
                             if(checkIsCustomPipeExpression(value) && currentItemRegEx){
                                 // Adding the currentItem as last argument for the expression.
                                 // For the custom pipes(expresion), it will send the currentItem as context.
-                                value +=  ':'+ currentItemRegEx.exec(currentItemRegEx.source).flatten()[0];
+                                value +=  ':'+ currentItemRegEx.exec(currentItemRegEx.source)[0];
                             }
                         }
                     }

@@ -21,6 +21,6 @@ export abstract class AppVariablesProvider {
     abstract async getAppVariables(): Promise<any>;
 }
 export abstract class AppExtensionProvider {
-    abstract async getAppMetaConfigScripts(): Promise<any>;
+    abstract  loadFormatterConfigScript(callback:Function): void;
 }
 
