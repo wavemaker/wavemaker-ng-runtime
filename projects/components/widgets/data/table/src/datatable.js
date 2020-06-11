@@ -437,7 +437,6 @@ $.widget('wm.datatable', {
         _.forEach(this.options.summaryRowDefs, function (row, index) {
             var _row = _.clone(row);
             _row.$index = index + 1;
-            self.options.generateCustomExpressions(_row, index, true);
             $tfoot.append(self._getRowTemplate(row, index, true));
         });
 
@@ -540,15 +539,8 @@ $.widget('wm.datatable', {
             }
 
             if (columnValue instanceof Promise) {
-                if (colExpression) {
-                    customExpressionHtml = this.options.getCustomExpression(colDef.field, rowIndex, true);
-                    $(customExpressionHtml).html(cellPreloader);
-                } else{
-                    customExpressionHtml = cellPreloader;
-                }
-                $htm.html(customExpressionHtml); 
-            } else if (colExpression) {
-                $htm.html(this.options.getCustomExpression(colDef.field, rowIndex, true));
+                customExpressionHtml = cellPreloader;
+                $htm.html(customExpressionHtml);
             } else {
                 innerTmpl = (_.isUndefined(columnValue) || columnValue === null) ? '' : columnValue;
                 $htm.html(innerTmpl);
@@ -1808,13 +1800,13 @@ $.widget('wm.datatable', {
                             }
                         }
                     });
-                    
+
                     // Check for form control async state and recall save function
                     if ($editableElements.find('.ng-pending').length > 0) {
                         setTimeout(this.toggleEditRow.bind(this, e, options), 200);
                         return;
                     }
-                    
+
                     $requiredEls = $editableElements.find('.ng-invalid');
                     //If required fields are present and value is not filled, return here
                     if ($requiredEls.length > 0) {
