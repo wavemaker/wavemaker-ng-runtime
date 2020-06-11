@@ -84,7 +84,7 @@ export class ExtAppMessageService {
         const data = {};
         // access token comes as a hash for implicit flow
         if (isImplicitoAuthFlow(url)) {
-            str = subString(url, indexOf(url, '#') + 1, indexOf(url, '&'));
+            str = url.match(/access_token=([^&#]*)/)[0];
         }
         _.forEach(_.split(str, '&'), entry => {
             const esplits = entry.split('=');

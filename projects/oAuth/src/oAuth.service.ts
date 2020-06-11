@@ -32,8 +32,8 @@ export class OAuthService {
         this.providers.next(this.providersConfig);
     }
 
-    perfromOAuthorization(url, providerId, onSuccess, onError, securityObj?, customUriScheme?) {
-        performAuthorization(url, providerId, onSuccess, onError, this.httpService, this.addProviderConfig.bind(this), this.removeProviderConfig.bind(this), securityObj, customUriScheme);
+    perfromOAuthorization(url, providerId, onSuccess, onError, securityObj?, customUriScheme?, deployedURL?) {
+        performAuthorization(url, providerId, onSuccess, onError, this.httpService, this.addProviderConfig.bind(this), this.removeProviderConfig.bind(this), securityObj, customUriScheme, deployedURL);
     }
 
     getAccessToken(provider, checkLocalStorage) {
