@@ -4,7 +4,7 @@ import { convertToBlob, AbstractSpinnerService } from '@wm/core';
 import { FileBrowserComponent } from './file-browser.component';
 
 declare const _;
-declare const cordova;
+declare const window, cordova;
 
 export interface FileContent {
     name: string;
@@ -49,7 +49,11 @@ export class FileSelectorService {
     public selectImages(multiple = false): Promise<FileContent[]> {
         var spinnerId = this.spinnerService.show("");
         return new Promise<string[]>((resolve, reject) => {
-            cordova.wavemaker.filePicker.selectImage(multiple, resolve, reject);
+            cordova.wavemaker.filePicker.selectImage(multiple, resolve, reject, () => {
+                window.imagePicker.getPictures(resolve, reject, {
+                    maximumImagesCount: multiple ?  20 : 1
+                });
+            });
         }).then(files => this.getFiles(files))
         .then((paths) => {
             this.spinnerService.hide(spinnerId);
@@ -75,8 +79,12 @@ export class FileSelectorService {
      * @returns fileObj having name, path, content
      */
     private getFiles(filePaths: string[]): Promise<FileContent[]> {
-        return Promise.all(_.map(filePaths, filePath => convertToBlob(filePath)))
-            .then(filesList => {
+        return Promise.all(_.map(filePaths, filePath => {
+                if (filePath.indexOf('://') < 0) {
+                    filePath = 'file://' + filePath;
+                }
+                return convertToBlob(filePath)
+            })).then(filesList => {
                 return _.map(filesList, fileObj => {
                     const path = fileObj.filepath;
                     return {
