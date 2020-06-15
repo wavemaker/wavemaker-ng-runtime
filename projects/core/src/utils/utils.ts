@@ -13,6 +13,8 @@ declare const moment;
 declare const document;
 declare const resolveLocalFileSystemURL;
 declare const $;
+declare const WM_CUSTOM_FORMATTERS;
+
 
 const userAgent = window.navigator.userAgent;
 const REGEX = {
@@ -1402,3 +1404,17 @@ export const transformFileURI = (url) => {
     }
     return url;
 };
+
+export const appendScriptToHead = (callback) =>{
+
+    const scriptele = document.createElement('script');
+    scriptele.onload = ()=>{
+     callback(WM_CUSTOM_FORMATTERS);
+    };
+    scriptele.onerror = err=>{
+        console.warn('Error while loading the file '+scriptele.src+'\n' + err);
+    }
+    scriptele.type = 'text/javascript';
+    scriptele.src = './extensions/formatters.js';
+    document.head.appendChild(scriptele);
+}
