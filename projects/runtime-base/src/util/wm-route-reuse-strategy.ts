@@ -56,6 +56,10 @@ class WmDefaultRouteReuseStrategy {
 export class WmRouteReuseStrategy extends WmDefaultRouteReuseStrategy
     implements RouteReuseStrategy {
     private isSameRoute(future, current): boolean {
+        // Incase of prefab project we have only one route So reloading the route everytime
+        if (future.routeConfig && future.routeConfig.path === 'prefab-preview') {
+            return false;
+        }
         /*
         In WM Deployment, Navigation is handled by PageWrapperComponent
                           & Route Info is passed as a parameter
