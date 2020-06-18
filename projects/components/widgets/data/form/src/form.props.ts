@@ -16,6 +16,7 @@ const propsMap = new Map(
         ['expanded', {value: true, ...PROP_BOOLEAN}],
         ['formdatasource', PROP_STRING],
         ['name', PROP_STRING],
+        ['numberOfFields', PROP_NUMBER],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['subheading', PROP_STRING],

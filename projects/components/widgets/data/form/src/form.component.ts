@@ -157,6 +157,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     filter: Function;
     filterOnDefault: Function;
     onMaxDefaultValueChange: Function;
+    numberOfFields: number;
 
     private _debouncedUpdateFieldSource: Function = _.debounce(this.updateFieldSource, 350);
     private operationType;
@@ -620,7 +621,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     registerFormFields(formField) {
-        this.formFields.push(formField);
+        const fieldCount = this.formFields.push(formField);
         this.formfields[formField.key] = formField;
         this.registerFormWidget(formField);
         this._debouncedUpdateFieldSource();
@@ -629,6 +630,11 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             this.parentForm.formfields[formField.key] = formField;
             // inner formfields are pushed to parentForm, passing current innerForm's formdata to set innerFormdata to these innerFormFields
             this.parentForm.setFormData(this.parentForm.formdata, this.formFields, this.formdata || {});
+        }
+        // WMS-18967: Applying formadata after formfields are ready
+        if (fieldCount === this.numberOfFields && this.formdata) {
+            this.onDataSourceChange();
+            _.isArray(this.formdata) ? this.setFormData(_.last(this.formdata)) : this.setFormData(this.formdata);
         }
     }
 
