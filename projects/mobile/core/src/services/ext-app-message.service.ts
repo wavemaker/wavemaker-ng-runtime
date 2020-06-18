@@ -61,30 +61,32 @@ export class ExtAppMessageService {
         return str && str.indexOf(pattern);
     }
     /**
-     * checks if oAuth flow is implicit or not using state object in redirect_uri response.
+     * returns if oAuth flow is implicit or pkce using state object in redirect_uri response.
      *
      * @param {url} string which contains access token and state information.
      * @returns {Boolean}
      */
-    function isImplicitoAuthFlow(url) {
+    function getFlow(url) {
         if (!url) {
             return false;
         }
         const stateObj = url.match(/\{([^)]+)\}/);
         if (stateObj) {
             const parsedObj = getValidJSON('{' + stateObj[1] + '}');
-            if (parsedObj && parsedObj.flow === 'implicit') {
-                return true;
+            if (parsedObj && parsedObj.flow) {
+                return parsedObj.flow;
             }
         }
         return false;
     }
     function extractData(url) {
         let str = subString(url, indexOf(url, '?') + 1, indexOf(url, '#'));
-        const data = {};
+        const data = {}, flow = getFlow(url);
         // access token comes as a hash for implicit flow
-        if (isImplicitoAuthFlow(url)) {
+        if (flow === 'implicit') {
             str = url.match(/access_token=([^&#]*)/)[0];
+        } else if (flow === 'pkce') {
+            str = url.match(/code=([^&#]*)/)[0];
         }
         _.forEach(_.split(str, '&'), entry => {
             const esplits = entry.split('=');
@@ -94,7 +96,7 @@ export class ExtAppMessageService {
     }
     function extractAddress(url) {
         // access token comes as a hash for implicit flow
-        const addressKey = isImplicitoAuthFlow(url) ? '#' : '?';
+        const addressKey = getFlow(url) === 'implicit' ? '#' : '?';
         return subString(url, indexOf(url, '://') + 3, indexOf(url, addressKey));
     }
     function createMessage(url) {
