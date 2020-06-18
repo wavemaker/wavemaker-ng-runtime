@@ -435,7 +435,7 @@ $.widget('wm.datatable', {
             $tfoot = $('<tfoot class="' + this.options.cssClassNames.gridFooter + '" style="border-top: 3px solid #eee;"></tfoot>');
 
         _.forEach(this.options.summaryRowDefs, function (row, index) {
-            row.$$Pk = index;
+            row.$$pk = index;
             $tfoot.append(self._getRowTemplate(row, index, true));
         });
 
