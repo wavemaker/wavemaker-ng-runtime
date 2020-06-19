@@ -12,7 +12,7 @@ export abstract class BaseContainerComponent extends StylableComponent {
     private updateRedrawableComponents(widgets) {
         _.pickBy(widgets, widget => {
             // check for redrawable widget and whether it is already exist in reDrawableComponents query list or not
-            if (widget.nativeElement.hasAttribute('redrawable') && !_.includes(this.reDrawableComponents._results, widget)) {
+            if (widget.nativeElement && widget.nativeElement.hasAttribute('redrawable') && !_.includes(this.reDrawableComponents._results, widget)) {
                 this.reDrawableComponents._results.push(widget);
             }
             if (widget.Widgets) {
