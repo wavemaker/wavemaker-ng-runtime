@@ -57,6 +57,18 @@ export class LoginActionManager extends BaseActionManager {
         return loginParams;
     }
 
+    /*
+         * This method is used to redirect the user to app base path
+         * After successful navigation to the base path, will reload the app
+    */
+    private redirectToAppBasePath() {
+        routerService.navigate(['/']).then(nav => {
+            if (nav) {
+                window.location.reload();
+            }
+        });
+    }
+
     login(variable, options, success, error) {
         let newDataSet;
         options = options || {};
@@ -108,12 +120,12 @@ export class LoginActionManager extends BaseActionManager {
                 newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, _.get(config, 'userInfo'));
                 if (newDataSet) {
                         // setting newDataSet as the response to service variable onPrepareSetData
-                        _.set(config, 'userInfo',newDataSet);
+                        _.set(config, 'userInfo', newDataSet);
                 }
                 // hide the spinner after all the n/w calls are completed
                 this.notifyInflight(variable, false, response);
                 triggerFn(success);
-                setTimeout(()=>{
+                setTimeout(() => {
                     // EVENT: ON_SUCCESS
                     initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, _.get(config, 'userInfo'));
 
@@ -152,16 +164,14 @@ export class LoginActionManager extends BaseActionManager {
                                     routerService.navigate([`/${redirectPage}`], { queryParams : queryParamsObj});
                                 } else {
                                     // different user logs in, reload the app and discard the redirectPage
-                                    routerService.navigate([`/`]);
-                                    window.location.reload();
+                                    this.redirectToAppBasePath();
                                 }
                             } else {
                                 const securityConfig = securityService.get(),
                                     sessionTimeoutLoginMode = _.get(securityConfig, 'loginConfig.sessionTimeout.type') || 'PAGE';
                                 // if in dialog mode and a new user logs in OR login happening through page, reload the app
                                 if (!isSameUserReloggedIn || sessionTimeoutLoginMode !== 'DIALOG') {
-                                    routerService.navigate([`/`]);
-                                    window.location.reload();
+                                    this.redirectToAppBasePath();
                                 }
                             }
 
@@ -169,8 +179,8 @@ export class LoginActionManager extends BaseActionManager {
                     }
                     // EVENT: ON_CAN_UPDATE
                     initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, _.get(config, 'userInfo'));
-                })
-                
+                });
+
             });
         }, (e) => {
             // EVENT: ON_RESULT
