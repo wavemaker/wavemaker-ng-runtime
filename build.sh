@@ -607,7 +607,6 @@ bundleMobileLibs() {
         ./projects/swipey/src/swipey.jquery.plugin.js \
         ./node_modules/imask/dist/imask.min.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
-        ./projects/mobile/runtime/src/spotcue-utils.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
 
     ./node_modules/.bin/terser ./dist/bundles/wmmobile/scripts/wm-libs.js \
