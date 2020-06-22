@@ -309,7 +309,7 @@ export class AppManagerService {
                 case LOGIN_METHOD.PAGE:
                     // do not provide redirectTo page if fetching HOME page resulted 401
                     // on app load, by default Home page is loaded
-                    page = !!page ? page : this.$security.getRedirectPage(config);
+                    page = this.$security.getRedirectPage(config, page);
                     queryParamsObj['redirectTo'] = page;
                     const extraQueryParams = (options && options.queryParams) || this.$security.getRedirectedRouteQueryParams();
                     queryParamsObj = _.merge(queryParamsObj, extraQueryParams);
