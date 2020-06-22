@@ -133,6 +133,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     messagelayout;
     metadata;
     errormessage;
+    onError;
+    onSuccess;
     primaryKey = [];
     postmessage;
     _liveTableParent;
@@ -926,7 +928,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                             'type': 'error'
                         };
                     }).then(response => {
-                    this.toggleMessage(true, response.message, response.type);
+                    if ((response.type === 'error' && !this.onError) || (response.type === 'success' && !this.onSuccess)) {
+                        this.toggleMessage(true, response.message, response.type);
+                    }
                     this.invokeEventCallback('submit', getParams());
                     this.onResultCb(response.result, response.status, $event);
                 });
