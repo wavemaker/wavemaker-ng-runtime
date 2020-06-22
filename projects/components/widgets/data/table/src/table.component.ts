@@ -135,7 +135,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     nodatamessage;
     pagesize;
     prevData;
-    primaryKey;
+    primaryKey = [];
     radioselect;
     rowclass;
     rowngclass;
@@ -1283,6 +1283,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             newVal = result;
         }
 
+        let sortExp = this.getSortExpr();
+        let sortExpArr = sortExp.split(' ');
+        if(sortExp && sortExpArr.length){
+            this.sortInfo = {
+                direction : sortExpArr[1],
+                field:  sortExpArr[0]
+
+            };
+        }
+
         /*Return if data is invalid.*/
         if (!this.isDataValid()) {
             return;
@@ -1453,6 +1463,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             if (!tableColumn.pcDisplay) {
                 return;
             }
+        }
+        if(tableColumn['primary-key']){
+            this.primaryKey.push(tableColumn.field);
         }
         const colCount = this.fieldDefs.push(tableColumn);
         this.fullFieldDefs.push(tableColumn);
