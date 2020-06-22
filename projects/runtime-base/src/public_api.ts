@@ -5,6 +5,7 @@ export * from './components/base-page.component';
 export * from './components/base-partial.component';
 export * from './components/base-prefab.component';
 export * from './runtime-base.module';
+export * from './util/spotcues.utils';
 export * from './util/utils';
 export * from './guards/auth.guard';
 export * from './guards/role.guard';

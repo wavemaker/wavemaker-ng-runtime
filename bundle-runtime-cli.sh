@@ -43,8 +43,6 @@ mkdir -p libraries/scripts/iscroll/build
 cp ./node_modules/iscroll/build/iscroll.js libraries/scripts/iscroll/build/
 mkdir -p libraries/scripts/swipey
 cp ./projects/swipey/src/swipey.jquery.plugin.js libraries/scripts/swipey/
-mkdir -p libraries/scripts/spotcues/
-cp ./projects/mobile/runtime/src/spotcue-utils.js libraries/scripts/spotcues/
 
 
 node_modules/.bin/rollup -c rollup.build-task.js
