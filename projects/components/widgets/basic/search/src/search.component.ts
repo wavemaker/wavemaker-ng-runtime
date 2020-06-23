@@ -712,6 +712,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this._modelByKey = item.key;
         this._modelByValue = item.value;
 
+          $event['data'] = {
+            item: item.dataObject,
+            model:item.value,
+            label:item.label,
+            query :this.query
+        }
+
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, $event || {});
         // updating the variable bound to default value as invokeOnChange is not updating the variable.
