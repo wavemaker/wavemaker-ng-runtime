@@ -20,7 +20,7 @@ export class AppExtensionJSResolve implements Resolve<any> {
     ) {}
 
      resolve() {
-         if(this.appManager.isPrefabType()){
+         if(this.appManager.isPrefabType() || this.appManager.isTemplateBundleType()){
             return true;
          }
         if (!appJsLoaded) {
