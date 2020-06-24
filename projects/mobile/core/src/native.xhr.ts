@@ -67,7 +67,7 @@ class Internals {
         this.nXhr.responseType = (res.headers && res.headers['content-type']) || 'plain/text';
         this.nXhr.responseURL = res.responseURL;
         this.nXhr.responseXML = res.responseXML;
-        this.nXhr.responseText = res.data && res.data.toString();
+        this.nXhr.responseText = (res.data && res.data.toString()) || res.error;
         this.responseHeaderText = ((): string => {
             const headers = [];
             for (let k in res.headers) {
