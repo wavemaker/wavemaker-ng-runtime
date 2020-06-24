@@ -17,7 +17,7 @@ export class LeftPanelAnimator extends SwipeAnimation {
         this.init(this.leftPanel.$ele, this.leftPanel.$page);
     }
 
-    public bounds(): {} {
+    public bounds(e, length): {} {
         let offset = 0;
         this.setGesturesEnabled(this.leftPanel.isGesturesEnabled());
         if (!this._width) {
@@ -36,6 +36,11 @@ export class LeftPanelAnimator extends SwipeAnimation {
         }
         if (this.leftPanel.app.isTabletApplicationType) {
             offset = 53.32;
+        }
+        if (e.pageX > offset + 100) {
+            return {
+                strict: true
+            };
         }
         return {
             'center': 0,
