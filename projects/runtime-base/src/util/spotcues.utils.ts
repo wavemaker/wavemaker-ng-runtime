@@ -20,10 +20,13 @@ const setupFileSystem = () => {
         appId = ($('title:first').text() || 'no_name') + '_' +  Date.now();
         localStorage.setItem(APP_STORE_KEY, appId);
     }
-    return createDirectory(cordova.file.dataDirectory, appId)
-            .then(() => cordova.file.dataDirectory += appId + '/')
-            .then(() => createDirectory(cordova.file.cacheDirectory, appId))
-            .then(() => cordova.file.cacheDirectory += appId + '/');
+    const wmDirectory = 'wavemaker_app_data';
+    return createDirectory(cordova.file.dataDirectory, wmDirectory)
+            .then(() => createDirectory(cordova.file.dataDirectory + wmDirectory + '/', appId))
+            .then(() => cordova.file.dataDirectory += wmDirectory + '/' + appId + '/')
+            .then(() => createDirectory(cordova.file.cacheDirectory, wmDirectory))
+            .then(() => createDirectory(cordova.file.cacheDirectory + wmDirectory + '/', appId))
+            .then(() => cordova.file.cacheDirectory += wmDirectory + '/' + appId + '/');
 };
 
 export const initSpotCues = () => {
