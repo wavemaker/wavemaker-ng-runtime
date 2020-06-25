@@ -744,7 +744,7 @@ export const loadStyleSheets = (urls = []) => {
 // function to check if the script is already loaded
 const isScriptLoaded = src => !!getNode(`script[src="${src}"], script[data-src="${src}"]`);
 
-export const loadScript = async (url, loadViaScriptTag) => {
+export const loadScript = async (url, loadViaScriptTag, cacheable = false) => {
     const _url = url.trim();
     if (!_url.length || isScriptLoaded(_url)) {
         return Promise.resolve();
@@ -756,6 +756,13 @@ export const loadScript = async (url, loadViaScriptTag) => {
             script.textContent = text;
             document.head.appendChild(script);
         });
+    } else if(cacheable) {
+        return $.ajax({
+            dataType: "script",
+            cache: true,
+            url: url
+        }).done(response => response)
+            .fail(reason => reason);
     } else {
         return $.getScript(url)
             .done(response => response)
