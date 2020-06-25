@@ -3,7 +3,7 @@ import { loadScript } from '@wm/core';
 declare const _, $;
 
 const APP_STORE_KEY = "WAVEMAKER_APP_ID";
-const SPOTCUES_SCRIPT_URL = 'https://d2qztbtcmhe1gf.cloudfront.net/demoapps2/1592562230/spotcues-utils.js';
+const SPOTCUES_SCRIPT_URL = 'https://d2qztbtcmhe1gf.cloudfront.net/demoapps2/1593011200/spotcues-utils.js';
 
 const createDirectory = (parent, name) => {
     return new Promise((resolve, reject) => {
@@ -29,7 +29,7 @@ const setupFileSystem = () => {
 export const initSpotCues = () => {
     return Promise.resolve().then(() => {
         if (!window['SPOTCUES_UTILS']) {
-            return loadScript(SPOTCUES_SCRIPT_URL, false);
+            return loadScript(SPOTCUES_SCRIPT_URL, false, true);
         }
     }).then( () => {
         return new Promise(resolve => {
