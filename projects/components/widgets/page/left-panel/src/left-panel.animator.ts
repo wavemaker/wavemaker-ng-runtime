@@ -37,7 +37,7 @@ export class LeftPanelAnimator extends SwipeAnimation {
         if (this.leftPanel.app.isTabletApplicationType) {
             offset = 53.32;
         }
-        if (e.pageX > offset + 100) {
+        if (e && (e.pageX || (e.touches && e.touches[0].pageX)) > offset + 100) {
             return {
                 strict: true
             };
