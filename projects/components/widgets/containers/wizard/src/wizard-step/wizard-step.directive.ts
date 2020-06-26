@@ -2,6 +2,7 @@ import { ContentChildren, Directive, HostBinding, Injector, Self } from '@angula
 import { NgForm } from '@angular/forms';
 
 import { BaseComponent, IWidgetConfig, provideAsWidgetRef, RedrawableDirective } from '@wm/components/base';
+import { WizardComponent } from '../wizard.component';
 
 import { registerProps } from './wizard-step.props';
 
@@ -117,19 +118,19 @@ export class WizardStepDirective extends BaseComponent {
         return this.status === STEP_STATUS.DISABLED;
     }
 
-    constructor(inj: Injector, @Self() private ngForm: NgForm) {
+    constructor(inj: Injector, @Self() private ngForm: NgForm, private wizardComponent: WizardComponent) {
         super(inj, WIDGET_CONFIG);
     }
 
-    public onNext(index: number): boolean {
+    public invokeNextCB(index: number): boolean {
         return this.invokeEventCallback('next', {currentStep: this, stepIndex: index});
     }
 
-    public onPrev(index: number): boolean {
+    public invokePrevCB(index: number): boolean {
         return this.invokeEventCallback('prev', {currentStep: this, stepIndex: index});
     }
 
-    public onSkip(index: number): boolean {
+    public invokeSkipCB(index: number): boolean {
         return this.invokeEventCallback('skip', {currentStep: this, stepIndex: index});
     }
 
@@ -139,7 +140,8 @@ export class WizardStepDirective extends BaseComponent {
             if (this.reDrawableComponents) {
                 this.reDrawableComponents.forEach(c => c.redraw());
             }
-            this.invokeEventCallback('load');
+            const stepIndex = (this as any).wizardComponent.getCurrentStepIndex();
+            this.invokeEventCallback('load', { stepIndex });
         }, 100);
     }
 }

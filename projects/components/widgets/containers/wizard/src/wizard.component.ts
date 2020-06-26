@@ -208,11 +208,11 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
 
         // abort if onSkip method returns false
         if (eventName === 'skip') {
-            if (currentStep.onSkip(currentStepIndex) === false) {
+            if (currentStep.invokeSkipCB(currentStepIndex) === false) {
                 return;
             }
         } else if (eventName === 'next') {
-            if (currentStep.onNext(currentStepIndex) === false) {
+            if (currentStep.invokeNextCB(currentStepIndex) === false) {
                 return;
             }
         }
@@ -235,7 +235,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         let prevStep: WizardStepDirective;
 
         // abort if onPrev method returns false.
-        if (currentStep.onPrev(currentStepIndex) === false) {
+        if (currentStep.invokePrevCB(currentStepIndex) === false) {
             return;
         }
 
