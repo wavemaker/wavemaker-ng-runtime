@@ -25,31 +25,19 @@ export class ImageCacheDirective implements DoCheck {
     ) {}
 
     public ngDoCheck() {
-        if (this.componentInstance.imgSource) {
-            if (isSpotcues && this.componentInstance.imgSource.startsWith
-                && this.componentInstance.imgSource.startsWith('file')
-                && this._lastUrl !== this.componentInstance.imgSource) {
-
+        if (!isSpotcues && this._isEnabled
+            && this.componentInstance.imgSource
+            && this.componentInstance.imgSource.startsWith('http')
+            && !this.componentInstance.imgSource.startsWith('http://localhost')) {
+            if (this._lastUrl !== this.componentInstance.imgSource) {
                 this._lastUrl = this.componentInstance.imgSource;
-                const lastSlash = this.componentInstance.imgSource.lastIndexOf('/');
-                const path = this.componentInstance.imgSource.substring(0, lastSlash);
-                const file = this.componentInstance.imgSource.substring(lastSlash+1);
-                this.file.readAsDataURL(path, file).then((url) => {
-                    this.componentInstance.imgSource = url;
-                });
-            } else if (this._isEnabled
-                && this.componentInstance.imgSource.startsWith('http')
-                && !this.componentInstance.imgSource.startsWith('http://localhost')) {
-                if (this._lastUrl !== this.componentInstance.imgSource) {
-                    this._lastUrl = this.componentInstance.imgSource;
-                    this.componentInstance.imgSource = DEFAULT_IMAGE;
-                    this.getLocalPath(this._lastUrl).then((localPath) => {
-                        this._cacheUrl = transformFileURI(localPath);
-                        this.componentInstance.imgSource = this._cacheUrl;
-                    });
-                } else if (this._cacheUrl) {
+                this.componentInstance.imgSource = DEFAULT_IMAGE;
+                this.getLocalPath(this._lastUrl).then((localPath) => {
+                    this._cacheUrl = transformFileURI(localPath);
                     this.componentInstance.imgSource = this._cacheUrl;
-                }
+                });
+            } else if (this._cacheUrl) {
+                this.componentInstance.imgSource = this._cacheUrl;
             }
         }
     }
