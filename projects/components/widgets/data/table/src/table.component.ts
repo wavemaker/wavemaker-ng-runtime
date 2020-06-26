@@ -320,11 +320,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
         },
         callOnRowClickEvent: (row, e) => {
-            // Call row click only if click is triggered by user
-            if (e && e.hasOwnProperty('originalEvent')) {
-                const rowData = this.addRowIndex(row);
-                this.invokeEventCallback('rowclick', {$data: rowData, $event: e, row: rowData});
-            }
+            // WMS-18774: If we invoke navigation action variable on rowclick callback, the navigation is triggering outside angular zone so adding ngZone.run
+            this.ngZone.run(() => {
+                // Call row click only if click is triggered by user
+                if (e && e.hasOwnProperty('originalEvent')) {
+                    const rowData = this.addRowIndex(row);
+                    this.invokeEventCallback('rowclick', {$data: rowData, $event: e, row: rowData});
+                }
+            });
         },
         closePopover: closePopover,
         onColumnSelect: (col, e) => {
