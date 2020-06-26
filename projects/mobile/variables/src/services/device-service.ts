@@ -3,7 +3,7 @@ import { Device } from '@ionic-native/device';
 import { Geolocation, GeolocationOptions } from '@ionic-native/geolocation';
 import { Vibration } from '@ionic-native/vibration';
 
-import { $appDigest, App } from '@wm/core';
+import { $appDigest, App, isSpotcues } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 import { DeviceVariableService, IDeviceVariableOperation, initiateCallback } from '@wm/variables';
 
@@ -62,6 +62,12 @@ class AppInfoOperation implements IDeviceVariableOperation {
 
     public invoke(variable: any, options: any): Promise<any> {
         const cordovaVersion = this.device.cordova;
+        if (isSpotcues) {
+            return Promise.resolve({
+                appversion: window['_WM_APP_PROPERTIES']['version'],
+                cordovaversion: cordovaVersion
+            });
+        }
         return this.appVersion.getVersionNumber().then(appVersion => {
             return {
                 appversion: appVersion,
