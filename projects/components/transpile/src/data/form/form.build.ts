@@ -29,8 +29,13 @@ const formWidgets = new Set([
     'wm-table'
 ]);
 
+let numberOfFields;
+
 const addFormControlName = (children = []) => {
     children.forEach(childNode => {
+        if (childNode.name === 'wm-form-field') {
+            numberOfFields++;
+        }
         if (formWidgets.has(childNode.name)) {
             let key = childNode.attrs.find((attr) => attr.name === 'key' || attr.name === 'name');
             key = key && key.value;
@@ -54,6 +59,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
     return {
         requires: ['wm-livetable', 'wm-login'],
         template: (node: Element) => {
+             numberOfFields = 0;
             addFormControlName(node.children);
         },
         pre: (attrs, shared, parentLiveTable, parentLoginWidget) => {
@@ -67,6 +73,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             attrs.delete('dependson');
             const liveFormTmpl = `<${tagName} wmForm role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
                     class="${classProp}" [class]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
+            attrs.set('numberOfFields', `${numberOfFields}`);
             shared.set('counter', counter);
             updateFormDataSource(attrs);
             if (attrs.get('formlayout') === 'dialog') {
