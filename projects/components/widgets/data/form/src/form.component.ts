@@ -634,7 +634,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             this.parentForm.setFormData(this.parentForm.formdata, this.formFields, this.formdata || {});
         }
         // WMS-18967: Applying formadata after formfields are ready
-        if (fieldCount === this.numberOfFields && this.formdata) {
+        if (fieldCount === this.numberOfFields && !_.isEmpty(this.formdata)) {
             this.onDataSourceChange();
             _.isArray(this.formdata) ? this.setFormData(_.last(this.formdata)) : this.setFormData(this.formdata);
         }
