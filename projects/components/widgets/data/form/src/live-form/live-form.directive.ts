@@ -64,9 +64,9 @@ export class LiveFormDirective {
         form.registerFormFields = this.registerFormFields.bind(this);
     }
 
-    /* 
+    /*
     WMS:18583
-    Overriding 'registerFormFields' for liveForms, 
+    Overriding 'registerFormFields' for liveForms,
     On Each field added, check if the dataSource is updated or not
     if the field is added after the dataSource is updated at LiveForm, retrigger
     */
@@ -457,8 +457,9 @@ export class LiveFormDirective {
             } else {
                 result = response;
             }
-
-            this.form.toggleMessage(true, msg, 'success');
+            if (!this.form.onSuccess) {
+                this.form.toggleMessage(true, msg, 'success');
+            }
             if (this.form._liveTableParent) {
                 // highlight the current updated row
                 this.form._liveTableParent.onResult(operationType, response, newForm, updateMode);
@@ -474,7 +475,9 @@ export class LiveFormDirective {
                 'status': true
             };
         }, (error) => {
-            this.form.toggleMessage(true, error, 'error');
+            if (!this.form.onError) {
+                this.form.toggleMessage(true, error, 'error');
+            }
             $appDigest();
             return {
                 'result': error,
