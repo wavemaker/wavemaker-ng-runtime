@@ -148,7 +148,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     shownewrow;
     deleteoktext;
     deletecanceltext;
-
+    onError;
+    onRowinsert;
+    onRowupdate;
+    onRowdelete;
     selectedItemChange = new Subject();
     selectedItemChange$: Observable<any> = this.selectedItemChange.asObservable();
 
