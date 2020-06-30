@@ -58,6 +58,7 @@
                             "./node_modules/jquery-ui/ui/widgets/mouse.js",
                             "./node_modules/jquery-ui/ui/widgets/resizable.js",
                             "./node_modules/jquery-ui/ui/widgets/sortable.js",
+                            "./node_modules/jquery-ui/ui/widgets/draggable.js",
                             "./node_modules/jquery-ui/ui/widgets/droppable.js",
                             "./libraries/scripts/datatable/datatable.js",
                             "./libraries/scripts/swipey/swipey.jquery.plugin.js",

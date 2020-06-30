@@ -597,6 +597,7 @@ bundleMobileLibs() {
         ./node_modules/jquery-ui/ui/widgets/mouse.js \
         ./node_modules/jquery-ui/ui/widgets/resizable.js \
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
+        ./node_modules/jquery-ui/ui/widgets/draggable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
         ./projects/components/widgets/data/table/src/datatable.js \
