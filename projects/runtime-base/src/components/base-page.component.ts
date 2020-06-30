@@ -1,4 +1,4 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
+import {AfterViewInit, HostListener, Injector, OnDestroy, ViewChild} from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import { ScriptLoaderService } from '@wm/core';
@@ -200,6 +200,25 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     getPageTransitionTarget() {
         // Looks for 'app-page-target' tag for WM BUild & 'app-page-*' tag for Ng Build
         return $('app-page-outlet:first').length ? $('app-page-outlet:first') : $('div[data-role="pageContainer"]:first').parent();
+    }
+
+    /**
+     * canDeactivate is called before a route change.
+     * This will internally call onBeforePageLeave method present
+     * at page level and app level in the application and decide
+     * whether to change route or not based on return value.
+     */
+    @HostListener('window:beforeunload')
+    canDeactivate() {
+        let retVal;
+        // Calling onBeforePageLeave method present at page level
+        retVal = this.onBeforePageLeave();
+        // Calling onBeforePageLeave method present at app level only if page level method return true
+        // or if there is no page level method
+        if (retVal !== false ) {
+            retVal =  (this.App.onBeforePageLeave || noop)(this.App.activePageName, this.App.activePage);
+        }
+        return retVal === undefined ? true : retVal;
     }
 
     ngAfterViewInit(): void {

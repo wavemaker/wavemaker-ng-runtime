@@ -72,25 +72,6 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         this.router.navigate(['prefab-preview']);
     }
 
-    /**
-     * canDeactivate is called before a route change.
-     * This will internally call onBeforePageLeave method present
-     * at page level and app level in the application and decide
-     * whether to change route or not based on return value.
-     */
-    @HostListener('window:beforeunload')
-    canDeactivate() {
-        let retVal;
-        // Calling onBeforePageLeave method present at page level
-        retVal = this.app.activePage && this.app.activePage.onBeforePageLeave();
-        // Calling onBeforePageLeave method present at app level only if page level method return true
-        // or if there is no page level method
-        if (retVal !== false ) {
-            retVal =  (this.app.onBeforePageLeave || noop)(this.app.activePageName, this.app.activePage);
-        }
-        return retVal === undefined ? true : retVal;
-    }
-
     loadPage(pageName) {
         this.ngZone.run(() => {
             if (pageName) {
