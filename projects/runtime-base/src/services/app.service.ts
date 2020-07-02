@@ -157,6 +157,7 @@ export class AppRef {
                 return;
             }
             type = type || 'success';
+            template = notificationAction.getMessage() || template;
             notificationAction.invoke({
                 message: template,
                 title: isDefined(title) ? title : type.toUpperCase(),
