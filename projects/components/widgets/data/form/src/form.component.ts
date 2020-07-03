@@ -590,6 +590,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (show && msg) {
             template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
             if (this.messagelayout === 'Inline') {
+                template = this.checkAppServiceErrorMsg(type) || template;
                 this.statusMessage = {'caption': template || '', type: type};
                 if (this.messageRef) {
                     this.messageRef.showMessage(this.statusMessage.caption, this.statusMessage.type);
@@ -600,6 +601,15 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         } else {
             this.statusMessage.caption = '';
         }
+    }
+
+    // if there is an App.onServiceError handler for the app, that message should be used instead of server returned error message
+    checkAppServiceErrorMsg(type) {
+        const notificationAction = _.get(this.app, 'Actions.appNotification');
+        if (notificationAction && type === 'error') {
+            return notificationAction.getMessage();
+        }
+        return;
     }
 
     // Hide the inline message/ toaster
