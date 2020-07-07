@@ -1415,7 +1415,7 @@ export const VALIDATOR = {
 
 export const transformFileURI = (url) => {
     if(url && hasCordova() && isIos() && url.startsWith('file://')) {
-        return url.replace('file://', 'http://' + location.host + '/local-filesystem');
+        return url.replace('file://', '/_app_file_');
     }
     return url;
 };
