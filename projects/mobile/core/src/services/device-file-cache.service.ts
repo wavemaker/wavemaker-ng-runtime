@@ -30,7 +30,10 @@ export class DeviceFileCacheService implements IDeviceStartUpService {
         this.writeCacheIndexToFile();
     }
 
-    public getLocalPath(url: string, downloadIfNotExists: boolean, isPersistent: boolean): Promise<string> {
+    public getLocalPath(url: string, downloadIfNotExists: boolean, isPersistent: boolean, forceRefresh = false): Promise<string> {
+        if (forceRefresh) {
+            return this.download(url, isPersistent);
+        }
         const filePath = this._cacheIndex[url];
         return this.fileService.isValidPath(filePath)
                 .catch(() => {
