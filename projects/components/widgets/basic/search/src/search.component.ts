@@ -239,6 +239,30 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this._loadingItems = false;
             return of(this._lastResult);
         }
+
+        /*
+             WMS-19177: On focus of input field for autocomplete type, do not trigger api call when
+                 a) searchkey and displayexpression are different
+                 b) binddisplaylabel contains multiple values
+                 c) binddisplaylabel contains single value which does not match with searchkey
+        */
+        if (this.type === 'autocomplete') {
+            const bindDisplayLabelArray = _.split(this.binddisplaylabel, '+');
+            const searchKeyArray = _.split(this.searchkey, ',');
+            let displaylabel;
+            if (bindDisplayLabelArray.length === 1) {
+                if (!_.includes(bindDisplayLabelArray[0], '|')) {
+                    const regex = /\[(.*?)\]/;
+                    displaylabel = regex.exec(bindDisplayLabelArray[0])[1];
+                }
+            }
+            if (this.query && this.datavalue &&
+                (bindDisplayLabelArray.length > 1 || !_.includes(searchKeyArray, displaylabel)
+                    || (this.displayexpression && !_.includes(searchKeyArray, this.displayexpression)))) {
+                this._loadingItems = false;
+                return of([]);
+            }
+        }
         this._lastQuery = this.query;
         return from(this.getDataSource(query));
     }
@@ -712,13 +736,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this._modelByKey = item.key;
         this._modelByValue = item.value;
 
-        if ($event){
+        if ($event) {
             $event['data'] = {
                 item  : item.dataObject,
                 model : item.value,
                 label : item.label,
                 query : this.query
-            }
+            };
         }
 
         this.invokeOnTouched();
