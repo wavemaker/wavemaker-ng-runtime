@@ -246,18 +246,22 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                  b) binddisplaylabel contains multiple values
                  c) binddisplaylabel contains single value which does not match with searchkey
         */
-        if (this.type === 'autocomplete') {
-            const bindDisplayLabelArray = _.split(this.binddisplaylabel, '+');
+        if (this.type === 'autocomplete' && this.searchkey && this.query && this.datavalue) {
+            let bindDisplayLabelArray = [];
             const searchKeyArray = _.split(this.searchkey, ',');
             let displaylabel;
-            if (bindDisplayLabelArray.length === 1) {
-                if (!_.includes(bindDisplayLabelArray[0], '|')) {
-                    const regex = /\[(.*?)\]/;
-                    displaylabel = regex.exec(bindDisplayLabelArray[0])[1];
+            if (this.binddisplaylabel) {
+                bindDisplayLabelArray = _.split(this.binddisplaylabel, '+');
+                if (bindDisplayLabelArray.length === 1) {
+                    if (!_.includes(bindDisplayLabelArray[0], '|')) {
+                        const regex = /\[(.*?)\]/;
+                        displaylabel = regex.exec(bindDisplayLabelArray[0])[1];
+                    } else {
+                        displaylabel = true;
+                    }
                 }
             }
-            if (this.query && this.datavalue &&
-                (bindDisplayLabelArray.length > 1 || !_.includes(searchKeyArray, displaylabel)
+            if ((bindDisplayLabelArray.length > 1 || (displaylabel && !_.includes(searchKeyArray, displaylabel))
                     || (this.displayexpression && !_.includes(searchKeyArray, this.displayexpression)))) {
                 this._loadingItems = false;
                 return of([]);
