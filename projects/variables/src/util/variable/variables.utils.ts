@@ -71,6 +71,11 @@ const processVariablePostBindUpdate = (nodeName, nodeVal, nodeType, variable, no
                 }
             }
             break;
+        case VARIABLE_CONSTANTS.CATEGORY.CRUD:
+            if (variable.operationType === 'list' && variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
+                _invoke(variable, 'invoke');
+            }
+            break;
         case VARIABLE_CONSTANTS.CATEGORY.SERVICE:
         case VARIABLE_CONSTANTS.CATEGORY.LOGIN:
             if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
