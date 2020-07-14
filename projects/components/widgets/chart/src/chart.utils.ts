@@ -1,6 +1,6 @@
 import { isEmptyObject, prettifyLabels } from '@wm/core';
 
-declare const _, $, d3, nv;
+declare const _, $, d3, nv, moment;
 
 export const chartTypes = ['Column', 'Line', 'Area', 'Cumulative Line', 'Bar', 'Pie', 'Donut', 'Bubble'],
     allShapes = ['circle', 'square', 'diamond', 'cross', 'triangle-up', 'triangle-down'];
@@ -423,7 +423,13 @@ export const getNumberValue = (value, callback) => {
 // Formats the given value according to date format
 export const getDateFormatedData = (dateFormat, d) => {
     dateFormat = dateFormat || '%x';
-    return d3.time.format(dateFormat)(new Date(d));
+    /**
+     * if date value is string "20-05-2019" then new Date(value) return 20May2019 with current time in India,
+     * whereas this will return 19May2019 with time lagging for few hours.
+     * This is because it returns UTC time i.e. Coordinated Universal Time (UTC).
+     * To create date in local time use moment
+     */
+    return d3.time.format(dateFormat)(new Date(moment(moment(d).format()).valueOf()));
 };
 
 // Formats the given value according to number format
