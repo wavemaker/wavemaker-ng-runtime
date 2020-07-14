@@ -351,7 +351,12 @@ export const getDateObj = (value, options?): Date => {
      * To create date in local time use moment
      */
     if (_.isString(value)) {
-        dateObj = new Date(moment(value).format());
+        /*
+         * If selected locale is Arabic, moment(value).format() is giving date in Arabic language
+         * (Ex: If date value is "1990-11-23" and moment(value).format() is "١٩٩٠-١١-٢٣T٠٠:٠٠:٠٠+٠٥:٣٠")
+         * and new Date(moment(value).format()) is giving Invalid Date. So frst converting it to timestamp value.
+        */
+        dateObj = new Date(moment(moment(value).format()).valueOf());
     }
 
     if (value === CURRENT_DATE || isNaN(dateObj.getDay())) {
