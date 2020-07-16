@@ -14,9 +14,9 @@ import { FileBrowserComponent, FileSelectorService, ProcessManagerComponent, Pro
 })
 export class AppExtComponent implements AfterViewInit {
 
-    @ViewChild(FileBrowserComponent) fileBrowserComponent: FileBrowserComponent;
+    @ViewChild(FileBrowserComponent, /* TODO: add static flag */ {static: false}) fileBrowserComponent: FileBrowserComponent;
 
-    @ViewChild(ProcessManagerComponent) processManagerComponent: ProcessManagerComponent;
+    @ViewChild(ProcessManagerComponent, /* TODO: add static flag */ {static: false}) processManagerComponent: ProcessManagerComponent;
 
     constructor(
         private elRef: ElementRef,

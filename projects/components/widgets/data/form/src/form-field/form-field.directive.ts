@@ -35,8 +35,8 @@ const FILE_TYPES = {
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
     static initializeProps = registerProps();
 
-    @ContentChild('formWidget') formWidget;
-    @ContentChild('formWidgetMax') formWidgetMax;
+    @ContentChild('formWidget', /* TODO: add static flag */ {static: false}) formWidget;
+    @ContentChild('formWidgetMax', /* TODO: add static flag */ {static: false}) formWidgetMax;
 
     private fb;
     // excludeProps is used to store the props that should not be applied on inner widget

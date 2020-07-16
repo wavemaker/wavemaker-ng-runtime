@@ -366,7 +366,7 @@ const summaryRowData: any = [
 })
 
 class TableWrapperComponent {
-    @ViewChild(TableComponent)
+    @ViewChild(TableComponent, /* TODO: add static flag */ {static: true})
     wmComponent: TableComponent;
 }
 
@@ -735,7 +735,7 @@ describe("DataTable", () => {
                     template: inline_edit_markup
                 })
                 class InlineTableWrapperComponent {
-                    @ViewChild(TableComponent)
+                    @ViewChild(TableComponent, /* TODO: add static flag */ {static: true})
                     wmComponent: TableComponent;
                 }
 
@@ -923,7 +923,7 @@ describe("DataTable", () => {
                     template: quick_edit_markup
                 })
                 class QuickEditTableWrapperComponent {
-                    @ViewChild(TableComponent)
+                    @ViewChild(TableComponent, /* TODO: add static flag */ {static: true})
                     wmComponent: TableComponent;
                 }
 
@@ -1171,7 +1171,7 @@ describe("DataTable", () => {
                     template: summary_row_markup
                 })
                 class SummaryRowWrapperComponent {
-                    @ViewChild(TableComponent)
+                    @ViewChild(TableComponent, /* TODO: add static flag */ {static: true})
                     wmComponent: TableComponent;
                     UserTable1Beforedatarender(widget, data, columns) {
                         const internalMarks = data.find(o => o.exam === 'Internal');

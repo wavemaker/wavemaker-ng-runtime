@@ -69,8 +69,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
     protected bsDatePickerDirective: BsDatepickerDirective;
 
-    @ViewChild(BsDropdownDirective) protected bsDropdown;
-    @ViewChild(TimepickerComponent) protected bsTimePicker;
+    @ViewChild(BsDropdownDirective, /* TODO: check static flag */ { static: false }) protected bsDropdown;
+    @ViewChild(TimepickerComponent, /* TODO: check static flag */ { static: false }) protected bsTimePicker;
     private validateType: string;
 
     constructor(inj: Injector, WIDGET_CONFIG) {

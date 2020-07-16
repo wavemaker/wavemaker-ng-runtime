@@ -33,7 +33,7 @@ export class SliderComponent extends BaseFormCustomComponent {
     public name: string;
     public readonly: boolean;
 
-    @ViewChild(NgModel) ngModel: NgModel;
+    @ViewChild(NgModel, /* TODO: add static flag */ {static: false}) ngModel: NgModel;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

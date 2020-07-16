@@ -49,7 +49,7 @@ const markup = `<div
     template: markup
 })
 class MenuWrapperComponent {
-    @ViewChild(MenuComponent)
+    @ViewChild(MenuComponent, /* TODO: add static flag */ {static: true})
     wmComponent: MenuComponent;
 
     public testdata = 'Op1,op2,op3';

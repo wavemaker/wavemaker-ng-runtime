@@ -45,7 +45,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     appLocale: any;
     startupVariablesLoaded = false;
     pageTransitionCompleted = false;
-    @ViewChild(PageDirective) pageDirective;
+    @ViewChild(PageDirective, /* TODO: add static flag */ {static: false}) pageDirective;
     scriptLoaderService: ScriptLoaderService;
 
     destroy$ = new Subject();

@@ -66,7 +66,7 @@ shortcutkey="t" showweeks="true" class="input-group-lg" readonly="false" require
 })
 class DatetimeWrapperComponent {
 
-    @ViewChild(DatetimeComponent)
+    @ViewChild(DatetimeComponent, /* TODO: add static flag */ {static: true})
     wmComponent: DatetimeComponent;
 
 

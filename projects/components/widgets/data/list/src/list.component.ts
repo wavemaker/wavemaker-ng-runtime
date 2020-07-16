@@ -27,13 +27,13 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
 export class ListComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
 
-    @ContentChild('listTemplate') listTemplate: TemplateRef<ElementRef>;
+    @ContentChild('listTemplate', /* TODO: add static flag */ {static: false}) listTemplate: TemplateRef<ElementRef>;
 
-    @ContentChild('listLeftActionTemplate') listLeftActionTemplate:  TemplateRef<ElementRef>;
-    @ContentChild('listRightActionTemplate') listRightActionTemplate:  TemplateRef<ElementRef>;
+    @ContentChild('listLeftActionTemplate', /* TODO: add static flag */ {static: false}) listLeftActionTemplate:  TemplateRef<ElementRef>;
+    @ContentChild('listRightActionTemplate', /* TODO: add static flag */ {static: false}) listRightActionTemplate:  TemplateRef<ElementRef>;
     @ContentChildren(ButtonComponent) btnComponents;
 
-    @ViewChild(PaginationComponent) dataNavigator;
+    @ViewChild(PaginationComponent, /* TODO: add static flag */ {static: false}) dataNavigator;
     @ViewChildren(ListItemDirective) listItems: QueryList<ListItemDirective>;
 
     private itemsPerRowClass: string;

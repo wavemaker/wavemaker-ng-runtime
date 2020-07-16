@@ -30,7 +30,7 @@ export class MediaListComponent extends StylableComponent {
     public thumbnailurl: string;
     public selectedMediaIndex = -1;
 
-    @ContentChild('mediaListTemplate') mediaListTemplate: TemplateRef<ElementRef>;
+    @ContentChild('mediaListTemplate', /* TODO: add static flag */ {static: false}) mediaListTemplate: TemplateRef<ElementRef>;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

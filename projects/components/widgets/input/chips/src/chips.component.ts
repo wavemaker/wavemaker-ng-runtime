@@ -39,7 +39,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     private inputposition: string;
     private showsearchicon: boolean;
 
-    @ViewChild(SearchComponent) searchComponent: SearchComponent;
+    @ViewChild(SearchComponent, /* TODO: add static flag */ {static: true}) searchComponent: SearchComponent;
     private _datasource: any;
     private _unsubscribeDv = false;
     private searchkey: string;

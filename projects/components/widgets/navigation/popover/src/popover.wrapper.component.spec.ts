@@ -64,7 +64,7 @@ const markup = `
     template: markup
 })
 class PopoverwrapperComponent {
-    @ViewChild(PopoverComponent)
+    @ViewChild(PopoverComponent, /* TODO: add static flag */ {static: true})
     wmComponent: PopoverComponent;
 
     onClick() {

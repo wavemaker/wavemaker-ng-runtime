@@ -29,7 +29,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     containerWidget: any;
     i18nService: AbstractI18nService;
     appLocale: any;
-    @ViewChild(PartialDirective) partialDirective;
+    @ViewChild(PartialDirective, /* TODO: add static flag */ {static: false}) partialDirective;
     scriptLoaderService: ScriptLoaderService;
     compileContent = false;
 

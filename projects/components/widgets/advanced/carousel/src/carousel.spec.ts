@@ -36,7 +36,7 @@ const markup = `
     template: markup
 })
 class CarouselSpec {
-    @ViewChild('wm_carousel_ref') carousel: CarouselDirective;
+    @ViewChild('wm_carousel_ref', /* TODO: add static flag */ {static: true}) carousel: CarouselDirective;
     public testdata: any = [{name: 'Peter', age: 21}, {name: 'Tony', age: 42}];
 
     onChangeCB(widget, newIndex, oldIndex) {

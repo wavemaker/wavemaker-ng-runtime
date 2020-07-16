@@ -21,9 +21,9 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     static initializeProps = registerProps();
     loginBtnCmp: ButtonComponent;
 
-    @ContentChild(FormComponent) formCmp: FormComponent;
+    @ContentChild(FormComponent, /* TODO: add static flag */ {static: false}) formCmp: FormComponent;
     @ContentChildren(ButtonComponent, {descendants: true}) buttonComponents: QueryList<ButtonComponent>;
-    @ViewChild(MessageComponent) messageCmp: MessageComponent;
+    @ViewChild(MessageComponent, /* TODO: add static flag */ {static: false}) messageCmp: MessageComponent;
 
     loginMessage: { type?: string; caption?: any; show?: boolean; };
     errormessage: any;

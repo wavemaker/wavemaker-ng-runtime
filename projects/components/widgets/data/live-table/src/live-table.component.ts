@@ -23,7 +23,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
 })
 export class LiveTableComponent extends StylableComponent implements AfterContentInit {
     static initializeProps = registerProps();
-    @ContentChild(TableComponent) table: TableComponent;
+    @ContentChild(TableComponent, /* TODO: add static flag */ {static: false}) table: TableComponent;
 
     form;
     isLayoutDialog: boolean;

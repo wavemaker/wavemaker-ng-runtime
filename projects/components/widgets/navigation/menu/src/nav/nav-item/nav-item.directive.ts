@@ -19,7 +19,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-nav-item', hostClass: DEFAULT_CLS};
 })
 export class NavItemDirective extends StylableComponent implements AfterViewInit{
     static initializeProps = registerProps();
-    @ContentChild(AnchorComponent) innerLink;
+    @ContentChild(AnchorComponent, /* TODO: add static flag */ {static: false}) innerLink;
 
     @HostListener('click')
     @HostListener('keydown.enter')

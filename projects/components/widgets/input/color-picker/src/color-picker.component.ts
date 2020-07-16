@@ -34,8 +34,8 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     public tabindex: any;
     public shortcutkey: string;
 
-    @ViewChild(NgModel) ngModel: NgModel;
-    @ViewChild('input', {read: ElementRef}) inputEl: ElementRef;
+    @ViewChild(NgModel, /* TODO: add static flag */ {static: false}) ngModel: NgModel;
+    @ViewChild('input', /* TODO: add static flag */ { static: false, read: ElementRef }) inputEl: ElementRef;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

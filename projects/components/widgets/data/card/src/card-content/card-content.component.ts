@@ -19,7 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class CardContentComponent extends StylableComponent implements AfterViewInit {
     static initializeProps = registerProps();
 
-    @ViewChild('cardContentContainer') private cardContentContainerElRef: ElementRef;
+    @ViewChild('cardContentContainer', /* TODO: add static flag */ {static: false}) private cardContentContainerElRef: ElementRef;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

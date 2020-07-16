@@ -26,7 +26,7 @@ class mockAbstractI18nServicePt {
 })
 
 class NumberWrapperComponent {
-    @ViewChild(NumberComponent)
+    @ViewChild(NumberComponent, /* TODO: add static flag */ {static: true})
     numberComponent: NumberComponent;
     public testDefaultValue = 123.4;
     constructor(_pipeProvider: PipeProvider) {

@@ -32,8 +32,8 @@ export class InputColorComponent extends BaseInput {
     public autofocus: boolean;
     public disabled: boolean;
     public placeholder: any;
-    @ViewChild('input') inputEl: ElementRef;
-    @ViewChild(NgModel) ngModel: NgModel;
+    @ViewChild('input', /* TODO: add static flag */ {static: false}) inputEl: ElementRef;
+    @ViewChild(NgModel, /* TODO: add static flag */ {static: false}) ngModel: NgModel;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

@@ -23,7 +23,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     prefabName: string;
     i18nService: AbstractI18nService;
     appLocale: any;
-    @ViewChild(PrefabContainerDirective) prefabContainerDirective;
+    @ViewChild(PrefabContainerDirective, /* TODO: add static flag */ {static: false}) prefabContainerDirective;
     scriptLoaderService: ScriptLoaderService;
     compileContent = false;
 

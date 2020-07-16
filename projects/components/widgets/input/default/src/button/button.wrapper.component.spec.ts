@@ -32,7 +32,7 @@ const markup = `
     template: markup
 })
 class TestComponent {
-    @ViewChild(ButtonComponent)
+    @ViewChild(ButtonComponent, /* TODO: add static flag */ {static: true})
     wmComponent: ButtonComponent;
 
     public disableButton: boolean = false;
@@ -215,7 +215,7 @@ const btnMarkup = `<button wmButton name="testbutton1" caption="Test Button1" ty
     template: btnMarkup
 })
 class BtnTestComponent {
-    @ViewChild(ButtonComponent)
+    @ViewChild(ButtonComponent, /* TODO: add static flag */ {})
     wmComponent: ButtonComponent;
 }
 const btnTestModuleDef: ITestModuleDef = {

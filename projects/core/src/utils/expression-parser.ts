@@ -493,7 +493,7 @@ export function $parseExpr(expr: string): ParseExprResult {
         return fn;
     }
     const parser = new Parser(new Lexer);
-    const ast = parser.parseBinding(expr, '');
+    const ast = parser.parseBinding(expr, '',0);
     let boundFn;
 
     if (ast.errors.length) {
@@ -556,7 +556,7 @@ export function $parseEvent(expr): ParseExprResult {
         return fn;
     }
     const parser = new Parser(new Lexer);
-    const ast = parser.parseAction(expr, '');
+    const ast = parser.parseAction(expr, '',0);
 
     if (ast.errors.length) {
         return noop;

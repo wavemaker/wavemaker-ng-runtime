@@ -22,9 +22,9 @@ const WIDGET_INFO = {widgetType: 'wm-dialog'};
 export class DialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
 
-    @ViewChild('dialogTemplate', {read: TemplateRef}) dialogTemplate: TemplateRef<any>;
-    @ContentChild('dialogBody', {read: TemplateRef}) dialogBody: TemplateRef<any>;
-    @ContentChild('dialogFooter', {read: TemplateRef}) dialogFooter: TemplateRef<any>;
+    @ViewChild('dialogTemplate', /* TODO: add static flag */ { static: false, read: TemplateRef }) dialogTemplate: TemplateRef<any>;
+    @ContentChild('dialogBody', /* TODO: add static flag */ { static: false, read: TemplateRef }) dialogBody: TemplateRef<any>;
+    @ContentChild('dialogFooter', /* TODO: add static flag */ { static: false, read: TemplateRef }) dialogFooter: TemplateRef<any>;
 
     constructor(
         inj: Injector,

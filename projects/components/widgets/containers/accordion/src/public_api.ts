@@ -1,1 +1,3 @@
-export * from './accordion.module';
+export {
+    AccordionModule
+} from './accordion.module';
