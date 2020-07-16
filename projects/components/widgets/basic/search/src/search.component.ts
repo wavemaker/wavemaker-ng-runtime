@@ -389,6 +389,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
     // Triggerred when typeahead option is selected.
     private onSearchSelect($event: Event) {
+        let item = this.typeaheadContainer.active.item || {};
+        $event = this.eventData($event, item);
+
         // searchOn is set as onBtnClick, then invoke the search api call manually.
         if (!this.isUpdateOnKeyPress()) {
             this.listenQuery = true;
@@ -728,6 +731,19 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         styler(this.nativeElement as HTMLElement, this);
     }
 
+    private eventData($event, item){
+        if($event){
+            $event['data'] = {
+                item  : item.dataObject,
+                model : item.value,
+                label : item.label,
+                query : this.query
+            };
+        }
+  
+        return $event;
+    }
+
     // triggered on select on option from the list. Set the queryModel, query and modelByKey from the matched item.
     public typeaheadOnSelect(match: TypeaheadMatch, $event: Event): void {
         const item = match.item;
@@ -740,14 +756,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this._modelByKey = item.key;
         this._modelByValue = item.value;
 
-        if ($event) {
-            $event['data'] = {
-                item  : item.dataObject,
-                model : item.value,
-                label : item.label,
-                query : this.query
-            };
-        }
+        $event = this.eventData($event, item);
 
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, $event || {});
