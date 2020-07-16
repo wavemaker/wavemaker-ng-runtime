@@ -10,7 +10,8 @@ export const registerProps = () => {
                 ['defaultpaneindex', {value: 0, ...PROP_NUMBER}],
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['tabindex', {value: 0, ...PROP_NUMBER}]
+                ['tabindex', {value: 0, ...PROP_NUMBER}],
+                ['statehandler', {value: 'inherit', ...PROP_STRING}]
             ]
         )
     );

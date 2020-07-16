@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, C
 
 import { Subscription } from 'rxjs';
 
-import { $appDigest, $invokeWatchers, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass } from '@wm/core';
+import { $appDigest, $invokeWatchers, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass, StatePersistence } from '@wm/core';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 import { ButtonComponent } from '@wm/components/input';
@@ -52,6 +52,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private app: any;
     private appDefaults: any;
     private ngZone: NgZone;
+    private statePersistence: StatePersistence;
 
     public lastSelectedItem: ListItemDirective;
     public fieldDefs: Array<any>;
@@ -105,8 +106,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public iconclass: string;
     public listclass: any;
     private isDataChanged: boolean;
+    public statehandler: any;
 
     _isDependent;
+    private _pageLoad;
+    private _selectedItemsExist;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -186,6 +190,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('datasource.bind') binddatasource: string,
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
+        statePersistence: StatePersistence,
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
@@ -196,6 +201,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.cdRef = cdRef;
         this.ngZone = ngZone;
         this.datePipe = datePipe;
+        this.statePersistence = statePersistence;
+        this._pageLoad = true;
 
         this.binditemclass = binditemclass;
         this.binddisableitem = binddisableitem;
@@ -267,6 +274,16 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
             this.ngZone.run(() => {
+                if (this._pageLoad && this.statehandler !== 'none') {
+                    this._pageLoad = false;
+                    const widgetState = this.statePersistence.getWidgetState(this);
+                    if (_.get(widgetState, 'pagination')) {
+                        data.options.page = widgetState.pagination;
+                    }
+                    if (_.get(widgetState, 'selectedItem')) {
+                        this._selectedItemsExist = true;
+                    }
+                }
                 this.variableInflight = data.active;
             });
         }
@@ -606,11 +623,22 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             datasetBoundExpr ? this.context : this.datasource,
             this.dataset,
             this.binddatasource,
-            datasetBoundExpr
+            datasetBoundExpr,
+            this.statehandler
         );
     }
 
     private onDataSetChange(newVal) {
+        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.statehandler !== 'none' && this._pageLoad) {
+            const widgetState = this.statePersistence.getWidgetState(this);
+            this._pageLoad = false;
+            if (_.get(widgetState, 'pagination')) {
+                this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
+            }
+            if (_.get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = true;
+            }
+        }
         if (!this.dataNavigatorWatched) {
             if (this.navigation && this.navigation !== NAVIGATION_TYPE.NONE) {
                 this.setupDataSource();
@@ -655,6 +683,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     private updateSelectedItemsWidgets() {
+        let obj = [];
         if (this.multiselect) {
             (this.selectedItemWidgets as Array<WidgetRef>).length = 0;
         }
@@ -665,8 +694,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 } else {
                     this.selectedItemWidgets = item.currentItemWidgets;
                 }
+                obj.push({page: this.dataNavigator.dn.currentPage, index: item.$index});
             }
         });
+        if (this.statehandler !== 'none') {
+            this.statePersistence.setWidgetState(this, {'selectedItem': obj});
+        }
     }
 
     /**
@@ -709,6 +742,19 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             // Whenever dataset is changed, trigger watchers to evaluate listitem bind expressions.
             $invokeWatchers(true);
             this.invokeEventCallback('render', {$data: this.fieldDefs});
+        }
+        if (this.statehandler !== 'none' && listItems.length && this._selectedItemsExist) {
+            const widgetState = this.statePersistence.getWidgetState(this);
+            if (_.get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = false;
+                setTimeout( () => {
+                    widgetState.selectedItem.forEach((item) => {
+                        if (item.page === this.dataNavigator.dn.currentPage) {
+                            this.selectItem(item.index);
+                        }
+                    });
+                }, 100);
+            }
         }
         const selectedItems = _.isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];
 
@@ -796,6 +842,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const data = this.fieldDefs;
         const newIndex = ui.item.index();
         const oldIndex = this.$ulEle.data('oldIndex');
+
+        if (this.statehandler !== 'none') {
+            this.statePersistence.removeWidgetState(this, 'selectedItem');
+        }
 
         const minIndex = _.min([newIndex, oldIndex]);
         const maxIndex = _.max([newIndex, oldIndex]);

@@ -1,10 +1,12 @@
 import { AfterContentInit, ContentChildren, Directive, Injector, QueryList } from '@angular/core';
 
-import { isNumber, noop } from '@wm/core';
+import { isNumber, noop, StatePersistence } from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './accordion.props';
 import { AccordionPaneComponent } from './accordion-pane/accordion-pane.component';
+
+declare const _;
 
 const DEFAULT_CLS = 'app-accordion panel-group';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -23,6 +25,8 @@ export class AccordionDirective extends StylableComponent implements AfterConten
 
     public defaultpaneindex: number;
     public closeothers: boolean;
+    public statehandler: any;
+    private statePersistence: StatePersistence;
 
     private activePaneIndex: number;
     private activePane: AccordionPaneComponent;
@@ -30,10 +34,11 @@ export class AccordionDirective extends StylableComponent implements AfterConten
 
     @ContentChildren(AccordionPaneComponent) panes: QueryList<AccordionPaneComponent>;
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, statePersistence: StatePersistence) {
         let resolveFn: Function = noop;
         super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
         this.promiseResolverFn = resolveFn;
+        this.statePersistence = statePersistence;
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 
@@ -61,6 +66,19 @@ export class AccordionDirective extends StylableComponent implements AfterConten
                 });
             }
             this.activePaneIndex = index;
+        }
+        if (evt && this.statehandler !== 'none') {
+            const activePanes = [];
+            this.panes.forEach(function(pane, paneIndex) {
+                if (pane.isActive) {
+                    activePanes.push(paneIndex);
+                }
+            });
+            if (activePanes.length) {
+                this.statePersistence.setWidgetState(this, activePanes);
+            } else {
+                this.statePersistence.removeWidgetState(this);
+            }
         }
     }
 
@@ -97,8 +115,21 @@ export class AccordionDirective extends StylableComponent implements AfterConten
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'defaultpaneindex') {
-            if (this.isValidPaneIndex(nv)) {
-                this.expandPane(nv);
+            this.defaultpaneindex = nv;
+        } else if (key === 'statehandler') {
+            const widgetState = this.statePersistence.getWidgetState(this);
+            if (nv !== 'none' && _.isArray(widgetState)) {
+                widgetState.forEach(paneIndex => {
+                    if (!_.isInteger(paneIndex) || this.panes.length - paneIndex <= 0) {
+                        console.warn('Accordion pane index ' + paneIndex + ' in State is incorrect.');
+                    } else {
+                        this.expandPane(paneIndex);
+                    }
+                });
+            } else {
+                if (this.isValidPaneIndex(this.defaultpaneindex)) {
+                    this.expandPane(this.defaultpaneindex);
+                }
             }
         } else {
             super.onPropertyChange(key, nv, ov);

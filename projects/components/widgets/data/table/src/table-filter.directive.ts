@@ -335,7 +335,7 @@ export class TableFilterSortDirective {
     }
 
     // This method handles the sort for server side variables
-    private handleSeverSideSort(sortObj, e) {
+    private handleSeverSideSort(sortObj, e, statePersistenceTriggered?) {
         // Update the sort info for passing to datagrid
         this.table.gridOptions.sortInfo.field = sortObj.field;
         this.table.gridOptions.sortInfo.direction = sortObj.direction;
@@ -343,6 +343,10 @@ export class TableFilterSortDirective {
 
         const sortOptions  = sortObj && sortObj.direction ? (sortObj.field + ' ' + sortObj.direction) : '';
         const filterFields = this.getFilterFields(this.table.filterInfo);
+
+        if (!statePersistenceTriggered && this.table.statehandler !== 'none') {
+            this.table.statePersistence.removeWidgetState(this.table, 'pagination');
+        }
 
         refreshDataSource(this.table.datasource, {
             page : 1,
@@ -359,7 +363,26 @@ export class TableFilterSortDirective {
         });
     }
 
-    private searchHandler(searchSortObj, e, type) {
+    private searchHandler(searchSortObj, e, type, statePersistenceTriggered?) {
+        let obj;
+        if (_.isArray(searchSortObj)) {
+            obj = searchSortObj.filter(function(searchObject) {
+                return searchObject.value;
+            });
+        } else {
+            obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
+        }
+        if (this.table.statehandler !== 'none') {
+            if ((_.isArray(searchSortObj) && obj.length) || searchSortObj.value) {
+                this.table.statePersistence.setWidgetState(this.table, {search: obj});
+            } else {
+                this.table.statePersistence.removeWidgetState(this.table, 'search');
+            }
+            if (!statePersistenceTriggered) {
+                this.table.statePersistence.removeWidgetState(this.table, 'pagination');
+                this.table.statePersistence.removeWidgetState(this.table, 'selectedItem');
+            }
+        }
         let filterFields = getClonedObject(searchSortObj);
         const dataSource = this.table.datasource;
         if (!dataSource) {
@@ -401,24 +424,33 @@ export class TableFilterSortDirective {
         }
     }
 
-    private sortHandler(searchSortObj, e, type) {
+    private sortHandler(searchSortObj, e, type, statePersistenceTriggered?) {
         const dataSource = this.table.datasource;
         if (!dataSource) {
             return;
         }
+        if (!statePersistenceTriggered && this.table.statehandler !== 'none') {
+            const obj = {direction: searchSortObj.direction, field: searchSortObj.field};
+            if (searchSortObj.direction) {
+                this.table.statePersistence.setWidgetState(this.table, {sort: obj});
+            } else {
+                this.table.statePersistence.removeWidgetState(this.table, 'sort');
+            }
+            this.table.statePersistence.removeWidgetState(this.table, 'selectedItem');
+        }
         if (dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
-            this.handleSeverSideSort(searchSortObj, e);
+            this.handleSeverSideSort(searchSortObj, e, statePersistenceTriggered);
         } else {
             this.handleClientSideSortSearch(searchSortObj, e, type);
         }
     }
 
     // This method is triggered by jquery table
-    searchSortHandler(searchSortObj, e, type) {
+    searchSortHandler(searchSortObj, e, type, statePersistenceTriggered?) {
         if (type === 'search') {
-            this.searchHandler(searchSortObj, e, type);
+            this.searchHandler(searchSortObj, e, type, statePersistenceTriggered);
         } else {
-            this.sortHandler(searchSortObj, e, type);
+            this.sortHandler(searchSortObj, e, type, statePersistenceTriggered);
         }
     }
 
