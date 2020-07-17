@@ -2553,6 +2553,23 @@ $.widget('wm.datatable', {
             });
         }
 
+        // WMS-17629: Hiding the table header column when show property is set to false
+        var headerCells = $header.find("th.app-datagrid-header-cell");
+        var headerCols = $colgroup.find('col');
+        headerCells.each(function () {
+            var id = Number($(this).attr('data-col-id')),
+                colDef = self.preparedHeaderData[id],
+                $headerCol = $(headerCols[id]);
+            if (!colDef) {
+                return;
+            }
+            if (!_.isUndefined(colDef.show) && !colDef.show) {
+                //Hide the header and column if show is false
+                $(this).hide();
+                $headerCol.hide();
+            }
+        });
+
         /*For mobile view, append header to the main table only*/
         if (this.options.isMobile) {
             this.gridElement.append($colgroup).append($header);
