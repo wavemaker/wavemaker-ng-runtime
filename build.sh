@@ -659,11 +659,11 @@ buildLibs() {
     fi
 }
 
-# buildLibs
+buildLibs
 buildApp
-# buildDocs
-# copyLocale
-# copyDist
+buildDocs
+copyLocale
+copyDist
 
 end=`date +%s`
 
