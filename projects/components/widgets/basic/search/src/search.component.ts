@@ -389,8 +389,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
     // Triggerred when typeahead option is selected.
     private onSearchSelect($event: Event) {
-        let item = this.typeaheadContainer.active.item || {};
-        $event = this.eventData($event, item);
+        let item;
+        if(this.typeaheadContainer && this.typeaheadContainer.active){
+            item = this.typeaheadContainer.active.item;
+        }
+        $event = this.eventData($event, item || {});
 
         // searchOn is set as onBtnClick, then invoke the search api call manually.
         if (!this.isUpdateOnKeyPress()) {
