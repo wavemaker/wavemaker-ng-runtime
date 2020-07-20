@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
+const TypeaheadModuleForRoot: ModuleWithProviders = TypeaheadModule.forRoot();
 let mockApp = {};
 const Type
 @NgModule({
@@ -25,7 +26,8 @@ const Type
         CommonModule,
         FormsModule,
         BrowserAnimationsModule,
-        TypeaheadModule.forRoot()
+        // TypeaheadModule.forRoot()
+        TypeaheadModuleForRoot
     ],
     exports: [ButtonComponent, ImagePipe, TrustAsPipe]
 })
