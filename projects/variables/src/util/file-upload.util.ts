@@ -131,6 +131,8 @@ function uploadWithAjax(file, fd, url, options) {
             if (event.type === HTTP_EVENT_TYPE.Response) {
                 resolve(event.body);
             }
+        }, (error) => {
+            reject(error);
         });
         file._uploadProgress = request;
     });
