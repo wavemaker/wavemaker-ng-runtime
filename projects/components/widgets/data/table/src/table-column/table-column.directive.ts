@@ -52,7 +52,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     @ContentChildren('filterWidget') _filterInstances;
     @ContentChildren('inlineWidget') _inlineInstances;
     @ContentChildren('inlineWidgetNew') _inlineInstancesNew;
-    @ContentChild('customExprTmpl', /* TODO: add static flag */ {static: false}) customExprTmpl;
+    @ContentChild('customExprTmpl') customExprTmpl;
 
     private _propsInitialized: boolean;
     private _filterDataSet;
@@ -130,7 +130,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     private asyncValidators = [];
     private observeOnFields = [];
 
-    @ContentChild('filterTmpl', /* TODO: add static flag */ {static: false}) filterTemplateRef: TemplateRef<any>;
+    @ContentChild('filterTmpl') filterTemplateRef: TemplateRef<any>;
 
     constructor(
         inj: Injector,

@@ -32,8 +32,8 @@ export class NumberComponent extends NumberLocale {
     public tabindex: any;
     public shortcutkey: string;
     public autofocus: boolean;
-    @ViewChild('input', /* TODO: add static flag */ {static: false}) inputEl: ElementRef;
-    @ViewChild(NgModel, /* TODO: add static flag */ {static: false}) ngModel: NgModel;
+    @ViewChild('input') inputEl: ElementRef;
+    @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector, i18nService: AbstractI18nService, decimalPipe: DecimalPipe) {
         super(inj, WIDGET_CONFIG, i18nService, decimalPipe);

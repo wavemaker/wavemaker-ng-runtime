@@ -15,7 +15,7 @@ import { HttpServiceImpl } from './http.service';
 })
 export class HttpServiceModule {
 
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<CommonModule> {
         return {
             ngModule: CommonModule,
             providers: [

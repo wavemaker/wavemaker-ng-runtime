@@ -33,7 +33,7 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
 
     private _backBtnListenerDestroyer;
 
-    @ViewChild(SearchComponent, /* TODO: add static flag */ {static: false}) searchComponent: SearchComponent;
+    @ViewChild(SearchComponent) searchComponent: SearchComponent;
     private searchkey: string;
     private dataset: any;
     private binddataset: any;

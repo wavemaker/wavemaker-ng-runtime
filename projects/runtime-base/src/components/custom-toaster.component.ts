@@ -21,8 +21,8 @@ declare const _, $;
 })
 export class CustomToasterComponent extends Toast implements AfterViewInit, OnDestroy {
 
-    @ViewChild('customToast', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) customToastRef: ViewContainerRef;
-    @ViewChild('customToastTmpl', /* TODO: add static flag */ {static: false}) customToastTmpl: TemplateRef<any>;
+    @ViewChild('customToast', /* TODO: add static flag */ { read: ViewContainerRef }) customToastRef: ViewContainerRef;
+    @ViewChild('customToastTmpl') customToastTmpl: TemplateRef<any>;
     pagename: any;
     watchers: any = [];
     params: any = {};

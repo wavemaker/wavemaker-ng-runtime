@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmDesigndialog component defines the designdialog widget.
  */
+@Directive()
 export class Designdialog {
     /**
      * This property specifies the title for the designdialog widget. <br>

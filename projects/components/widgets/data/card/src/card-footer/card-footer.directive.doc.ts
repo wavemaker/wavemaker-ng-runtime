@@ -1,9 +1,10 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmCardFooter directive defines the card footer.
  */
 
+@Directive()
 export class CardFooter {
     /**
      * Class of the widget.

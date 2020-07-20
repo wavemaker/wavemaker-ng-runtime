@@ -9,7 +9,7 @@ import { FormComponent } from '@wm/components/data/form';
 })
 export class LoginDialogDirective implements AfterViewInit, OnDestroy {
     @ContentChildren(FormComponent) formCmp: QueryList<FormComponent>;
-    @ContentChild(MessageComponent, /* TODO: add static flag */ {static: false}) msgCmp: MessageComponent;
+    @ContentChild(MessageComponent) msgCmp: MessageComponent;
     dialogOpenSubscription;
 
     constructor(@Self() @Inject(Context) private contexts: Array<any>,

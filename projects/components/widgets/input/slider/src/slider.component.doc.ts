@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmSlider component defines the slider widget.
  */
+@Directive()
 export class Slider {
     /**
      * Class of the widget.

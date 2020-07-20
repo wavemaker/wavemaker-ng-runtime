@@ -20,7 +20,7 @@ const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
 export class IframeDialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
 
-    @ViewChild('dialogTemplate', /* TODO: add static flag */ {static: false}) dialogTemplate: TemplateRef<any>;
+    @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
 
     constructor(
         inj: Injector,

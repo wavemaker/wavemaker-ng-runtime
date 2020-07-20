@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The `wmSegmentedControl` directive defines the segmented control widget.
  */
+@Directive()
 export class SegmentedControl {
 
     /**

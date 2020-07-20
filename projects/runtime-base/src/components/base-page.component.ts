@@ -1,4 +1,4 @@
-import {AfterViewInit, HostListener, Injector, OnDestroy, ViewChild} from '@angular/core';
+import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import { ScriptLoaderService } from '@wm/core';
@@ -27,6 +27,7 @@ import { FragmentMonitor } from '../util/fragment-monitor';
 
 declare const $;
 
+@Directive()
 export abstract class BasePageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
     Widgets: any;
     Variables: any;
@@ -45,7 +46,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     appLocale: any;
     startupVariablesLoaded = false;
     pageTransitionCompleted = false;
-    @ViewChild(PageDirective, /* TODO: add static flag */ {static: false}) pageDirective;
+    @ViewChild(PageDirective) pageDirective;
     scriptLoaderService: ScriptLoaderService;
 
     destroy$ = new Subject();

@@ -86,8 +86,8 @@ const dateFormat = 'YYYY/MM/DD';
 export class CalendarComponent extends StylableComponent implements AfterContentInit, AfterViewInit, OnInit, IRedrawableComponent {
     static initializeProps = registerProps();
     // The calendar element reference
-    @ViewChild('calendar', /* TODO: add static flag */ {static: false}) _calendar: ElementRef;
-    @ViewChild('datepicker', /* TODO: add static flag */ {static: false}) _datepicker: ElementRef;
+    @ViewChild('calendar') _calendar: ElementRef;
+    @ViewChild('datepicker') _datepicker: ElementRef;
 
     public _datepickerInnerComponent: DatePickerInnerComponent;
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { Validator, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { getLocaleDayPeriods, FormStyle, TranslationWidth } from '@angular/common';
@@ -31,6 +31,7 @@ export function getTimepickerConfig(i18nService): TimepickerConfig {
     });
 }
 
+@Directive()
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
     public excludedays: string;
     protected excludedDaysToDisable: Array<number>;
@@ -69,8 +70,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
     protected bsDatePickerDirective: BsDatepickerDirective;
 
-    @ViewChild(BsDropdownDirective, /* TODO: check static flag */ { static: false }) protected bsDropdown;
-    @ViewChild(TimepickerComponent, /* TODO: check static flag */ { static: false }) protected bsTimePicker;
+    @ViewChild(BsDropdownDirective) protected bsDropdown;
+    @ViewChild(TimepickerComponent) protected bsTimePicker;
     private validateType: string;
 
     constructor(inj: Injector, WIDGET_CONFIG) {

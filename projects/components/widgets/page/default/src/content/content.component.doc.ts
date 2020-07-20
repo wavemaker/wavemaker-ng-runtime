@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The `wmContent` directive defines a content component.
  */
+@Directive()
 export class Content {
     /**
      * Class of the widget.

@@ -1,4 +1,4 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers } from '@wm/core';
@@ -11,6 +11,7 @@ import {FragmentMonitor} from "../util/fragment-monitor";
 
 declare const _;
 
+@Directive()
 export abstract class BasePrefabComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
     Widgets: any;
     Variables: any;
@@ -23,7 +24,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     prefabName: string;
     i18nService: AbstractI18nService;
     appLocale: any;
-    @ViewChild(PrefabContainerDirective, /* TODO: add static flag */ {static: false}) prefabContainerDirective;
+    @ViewChild(PrefabContainerDirective) prefabContainerDirective;
     scriptLoaderService: ScriptLoaderService;
     compileContent = false;
 

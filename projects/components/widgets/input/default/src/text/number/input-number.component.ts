@@ -35,8 +35,8 @@ export class InputNumberComponent extends BaseInput {
     public autofocus: boolean;
     public autocomplete: any;
 
-    @ViewChild('input', /* TODO: add static flag */ {static: false}) inputEl: ElementRef;
-    @ViewChild(NgModel, /* TODO: add static flag */ {static: false}) ngModel: NgModel;
+    @ViewChild('input') inputEl: ElementRef;
+    @ViewChild(NgModel) ngModel: NgModel;
 
     public step;
 

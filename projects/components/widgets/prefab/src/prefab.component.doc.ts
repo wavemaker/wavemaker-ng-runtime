@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmPrefab component defines the prefab widget.
  */
+@Directive()
 export class Prefab {
 
     /**

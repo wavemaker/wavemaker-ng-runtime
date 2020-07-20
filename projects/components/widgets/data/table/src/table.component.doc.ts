@@ -1,9 +1,10 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The `wmTable` is the data grid used to display data in a tabular manner.
  * `wmTable` can be bound to variables and display the data associated with them.
  */
+@Directive()
 export class Table {
     /**
      * Class of the widget.

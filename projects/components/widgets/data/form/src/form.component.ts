@@ -93,8 +93,8 @@ const setTouchedState = ngForm => {
 })
 export class FormComponent extends StylableComponent implements OnDestroy, AfterContentInit, AfterViewInit {
     static  initializeProps = registerFormProps();
-    @ViewChild('dynamicForm', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) dynamicFormRef: ViewContainerRef;
-    @ViewChild(MessageComponent, /* TODO: add static flag */ {static: false}) messageRef;
+    @ViewChild('dynamicForm', /* TODO: add static flag */ { read: ViewContainerRef }) dynamicFormRef: ViewContainerRef;
+    @ViewChild(MessageComponent) messageRef;
     // this is the reference to the component refs inside the form-group
     @ContentChildren(WidgetRef, {descendants: true}) componentRefs;
 

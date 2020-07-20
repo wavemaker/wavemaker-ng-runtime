@@ -57,7 +57,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         return getFormattedDate(this.datePipe, this.proxyModel, this._dateOptions.dateInputFormat) || '';
     }
 
-    @ViewChild(BsDatepickerDirective, /* TODO: add static flag */ {static: false}) bsDatePickerDirective;
+    @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
 
     /**
      * This property checks if the timePicker is Open

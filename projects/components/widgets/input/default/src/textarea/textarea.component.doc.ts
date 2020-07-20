@@ -1,9 +1,10 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 import {TextareaComponent} from './textarea.component';
 
 /**
  * The wmTextarea component defines the textarea widget.
  */
+@Directive()
 export class Textarea {
     /**
      * This property makes the widget get focused automatically when the page loads. <br>

@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmFormField component defines the form field widget.
  */
+@Directive()
 export class FormField {
     /**
      * Class of the widget.

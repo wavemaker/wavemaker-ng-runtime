@@ -54,8 +54,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public binddisplaylabel: string;
     public typeaheadContainer: TypeaheadContainerComponent;
 
-    @ViewChild(TypeaheadDirective, /* TODO: add static flag */ {static: false}) typeahead: TypeaheadDirective;
-    @ViewChild('ulElement', /* TODO: add static flag */ {static: false}) ulElement: ElementRef;
+    @ViewChild(TypeaheadDirective) typeahead: TypeaheadDirective;
+    @ViewChild('ulElement') ulElement: ElementRef;
     @ViewChildren('liElements') liElements: QueryList<ElementRef>;
 
     private allowonlyselect: boolean;

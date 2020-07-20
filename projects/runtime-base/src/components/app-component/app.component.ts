@@ -21,7 +21,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
     public startApp = false;
     public isApplicationType = false;
 
-    @ViewChild('dynamicComponent', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) dynamicComponentContainerRef: ViewContainerRef;
+    @ViewChild('dynamicComponent', /* TODO: add static flag */ { read: ViewContainerRef }) dynamicComponentContainerRef: ViewContainerRef;
 
     spinner: SPINNER = {show: false, messages: []};
     constructor(

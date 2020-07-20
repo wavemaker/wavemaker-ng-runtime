@@ -87,7 +87,7 @@ const ionicServices = [
 })
 export class MobileRuntimeModule {
 
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<MobileRuntimeModule> {
         /* add all providers that are required for mobile here. This is to simplify placeholder.*/
         return {
             ngModule: MobileRuntimeModule,

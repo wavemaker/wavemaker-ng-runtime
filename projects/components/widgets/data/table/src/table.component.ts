@@ -75,31 +75,31 @@ const isInputBodyWrapper = target => {
 })
 export class TableComponent extends StylableComponent implements AfterContentInit, OnDestroy, ControlValueAccessor {
     static initializeProps = registerProps();
-    @ViewChild(PaginationComponent, /* TODO: add static flag */ {static: false}) dataNavigator;
+    @ViewChild(PaginationComponent) dataNavigator;
 
-    @ViewChild('datagridElement', /* TODO: add static flag */ {static: false}) private _tableElement: ElementRef;
+    @ViewChild('datagridElement') private _tableElement: ElementRef;
 
     @ContentChildren('rowActionTmpl') rowActionTmpl: QueryList<any>;
-    @ViewChild('rowActionsView', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) rowActionsViewRef: ViewContainerRef;
+    @ViewChild('rowActionsView', /* TODO: add static flag */ { read: ViewContainerRef }) rowActionsViewRef: ViewContainerRef;
 
     @ContentChildren('filterTmpl', {descendants: true}) filterTmpl: QueryList<any>;
-    @ViewChild('multiColumnFilterView', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) filterViewRef: ViewContainerRef;
+    @ViewChild('multiColumnFilterView', /* TODO: add static flag */ { read: ViewContainerRef }) filterViewRef: ViewContainerRef;
 
     @ContentChildren('inlineWidgetTmpl', {descendants: true}) inlineWidgetTmpl: QueryList<any>;
-    @ViewChild('inlineEditView', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) inlineEditViewRef: ViewContainerRef;
+    @ViewChild('inlineEditView', /* TODO: add static flag */ { read: ViewContainerRef }) inlineEditViewRef: ViewContainerRef;
 
     @ContentChildren('inlineWidgetTmplNew', {descendants: true}) inlineWidgetNewTmpl: QueryList<any>;
-    @ViewChild('inlineEditNewView', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) inlineEditNewViewRef: ViewContainerRef;
+    @ViewChild('inlineEditNewView', /* TODO: add static flag */ { read: ViewContainerRef }) inlineEditNewViewRef: ViewContainerRef;
 
     @ContentChildren('customExprTmpl', {descendants: true}) customExprTmpl: QueryList<any>;
-    @ViewChild('customExprView', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) customExprViewRef: ViewContainerRef;
+    @ViewChild('customExprView', /* TODO: add static flag */ { read: ViewContainerRef }) customExprViewRef: ViewContainerRef;
 
     @ContentChildren('rowExpansionActionTmpl') rowExpansionActionTmpl: QueryList<any>;
-    @ContentChild('rowExpansionTmpl', /* TODO: add static flag */ {static: false}) rowExpansionTmpl: TemplateRef<any>;
-    @ViewChild('rowDetailView', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) rowDetailViewRef: ViewContainerRef;
-    @ViewChild('rowExpansionActionView', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) rowExpansionActionViewRef: ViewContainerRef;
+    @ContentChild('rowExpansionTmpl') rowExpansionTmpl: TemplateRef<any>;
+    @ViewChild('rowDetailView', /* TODO: add static flag */ { read: ViewContainerRef }) rowDetailViewRef: ViewContainerRef;
+    @ViewChild('rowExpansionActionView', /* TODO: add static flag */ { read: ViewContainerRef }) rowExpansionActionViewRef: ViewContainerRef;
 
-    @ViewChild('dynamicTable', /* TODO: add static flag */ { static: false, read: ViewContainerRef }) dynamicTableRef: ViewContainerRef;
+    @ViewChild('dynamicTable', /* TODO: add static flag */ { read: ViewContainerRef }) dynamicTableRef: ViewContainerRef;
 
     private rowActionsCompiledTl: any  = {};
     private rowFilterCompliedTl: any = {};

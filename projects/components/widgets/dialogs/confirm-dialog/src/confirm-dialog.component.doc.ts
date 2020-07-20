@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmConfirmdialog component defines the confirmdialog widget.
  */
+@Directive()
 export class Confirmdialog {
     /**
      * This property specifies the title for the confirmdialog widget. <br>

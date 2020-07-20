@@ -28,7 +28,7 @@ export class CardComponent extends MenuAdapterComponent implements OnInit, After
     public iconurl: string;
     public actions: string;
 
-    @ViewChild('cardContainerWrapper', /* TODO: add static flag */ {static: false}) private cardContainerElRef: ElementRef;
+    @ViewChild('cardContainerWrapper') private cardContainerElRef: ElementRef;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

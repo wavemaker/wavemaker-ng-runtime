@@ -39,8 +39,8 @@ export class InputTextComponent extends BaseInput {
     public autocomplete: any;
     public maskVal: any;
 
-    @ViewChild('input', /* TODO: add static flag */ {static: false}) inputEl: ElementRef;
-    @ViewChild(NgModel, /* TODO: add static flag */ {static: false}) ngModel: NgModel;
+    @ViewChild('input') inputEl: ElementRef;
+    @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

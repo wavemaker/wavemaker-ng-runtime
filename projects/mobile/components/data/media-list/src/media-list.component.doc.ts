@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmMediaList component defines the MediaList widget.
  */
+@Directive()
 export class MediaList {
 
     /**

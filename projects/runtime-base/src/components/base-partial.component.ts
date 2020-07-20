@@ -1,4 +1,4 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
@@ -13,6 +13,7 @@ import { $invokeWatchers } from '@wm/core';
 
 export const commonPartialWidgets = {};
 
+@Directive()
 export abstract class BasePartialComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
     Widgets: any;
     Variables: any;
@@ -29,7 +30,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     containerWidget: any;
     i18nService: AbstractI18nService;
     appLocale: any;
-    @ViewChild(PartialDirective, /* TODO: add static flag */ {static: false}) partialDirective;
+    @ViewChild(PartialDirective) partialDirective;
     scriptLoaderService: ScriptLoaderService;
     compileContent = false;
 

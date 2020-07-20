@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmTabs component defines the tabs widget.
  */
+@Directive()
 export class Tabs {
 
     /**

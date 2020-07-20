@@ -65,7 +65,7 @@ export class DateComponent extends BaseDateTimeComponent {
         this.cdRef.detectChanges();
     }
 
-    @ViewChild(BsDatepickerDirective, /* TODO: add static flag */ {static: false}) protected bsDatePickerDirective;
+    @ViewChild(BsDatepickerDirective) protected bsDatePickerDirective;
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
     constructor(

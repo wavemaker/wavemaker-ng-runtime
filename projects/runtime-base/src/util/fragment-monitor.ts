@@ -1,7 +1,9 @@
 import { noop } from '@wm/core';
 
 import { Subject } from 'rxjs';
+import { Directive } from "@angular/core";
 
+@Directive()
 export abstract class FragmentMonitor {
     fragments = 0;
     viewInit$: Subject<any>;

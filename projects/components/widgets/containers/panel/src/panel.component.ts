@@ -37,9 +37,9 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
     private fullScreenTitle: string;
     private expandCollapseTitle: string;
 
-    @ViewChild('panelHeading', /* TODO: add static flag */ {static: false}) private panelHeader: ElementRef;
-    @ViewChild('panelContent', /* TODO: add static flag */ {static: false}) private panelContent: ElementRef;
-    @ViewChild('panelBody', /* TODO: add static flag */ {static: false}) private panelBody: ElementRef;
+    @ViewChild('panelHeading') private panelHeader: ElementRef;
+    @ViewChild('panelContent') private panelContent: ElementRef;
+    @ViewChild('panelBody') private panelBody: ElementRef;
     @ContentChildren(RedrawableDirective, { descendants: true }) reDrawableComponents;
 
     private hasFooter: boolean;

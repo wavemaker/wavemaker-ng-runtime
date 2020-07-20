@@ -62,10 +62,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public name: string;
     public adaptiveposition:boolean;
 
-    @ViewChild(PopoverDirective, /* TODO: add static flag */ {static: false}) private bsPopoverDirective;
-    @ViewChild('anchor', /* TODO: add static flag */ {static: false}) anchorRef: ElementRef;
-    @ContentChild(TemplateRef, /* TODO: add static flag */ {static: false}) popoverTemplate;
-    @ContentChild('partial', /* TODO: add static flag */ {static: false}) partialRef;
+    @ViewChild(PopoverDirective) private bsPopoverDirective;
+    @ViewChild('anchor') anchorRef: ElementRef;
+    @ContentChild(TemplateRef) popoverTemplate;
+    @ContentChild('partial') partialRef;
 
     constructor(inj: Injector, private app: App, @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
         super(inj, WIDGET_CONFIG);

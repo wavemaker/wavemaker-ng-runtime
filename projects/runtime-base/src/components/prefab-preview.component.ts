@@ -18,7 +18,7 @@ export class PrefabPreviewComponent implements AfterViewInit {
     private config: any;
     private previewMode: boolean;
 
-    @ViewChild(PrefabDirective, /* TODO: add static flag */ {static: false}) prefabInstance;
+    @ViewChild(PrefabDirective) prefabInstance;
 
     constructor(private prefabManager: PrefabManagerService) {
 

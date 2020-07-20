@@ -144,7 +144,7 @@ export class RuntimeBaseModule {
             window['CustomEvent'] = CustomEvent;
     }
 
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<RuntimeBaseModule> {
         return {
             ngModule: RuntimeBaseModule,
             providers: [

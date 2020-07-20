@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmIFramedialog component defines the iframedialog widget.
  */
+@Directive()
 export class IFramedialog {
     /**
      * This property specifies the title for the iframedialog widget. <br>

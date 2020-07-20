@@ -59,7 +59,7 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     public redraw: Function;
     public options: CircleProgressOptionsInterface;
 
-    @ViewChild(CircleProgressComponent, /* TODO: add static flag */ {static: false}) circleRef: CircleProgressComponent;
+    @ViewChild(CircleProgressComponent) circleRef: CircleProgressComponent;
 
 
     constructor(inj: Injector) {
