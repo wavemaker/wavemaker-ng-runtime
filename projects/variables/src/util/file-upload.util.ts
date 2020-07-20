@@ -131,6 +131,9 @@ function uploadWithAjax(file, fd, url, options) {
             if (event.type === HTTP_EVENT_TYPE.Response) {
                 resolve(event.body);
             }
+        },() => { 
+            const uploadStatus =  "fail";
+            notify(uploadStatus);
         });
         file._uploadProgress = request;
     });
