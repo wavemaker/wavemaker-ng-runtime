@@ -239,7 +239,7 @@ export class StateClassPipe implements PipeTransform {
     transform(state) {
         const stateClassMap = {
             'success'   : 'wi wi-done text-success',
-            'error'     : 'wi wi-cancel text-danger'
+            'error'     : 'wi wi-error text-danger'
         };
         return stateClassMap[state.toLowerCase()];
     }
