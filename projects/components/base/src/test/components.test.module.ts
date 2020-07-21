@@ -7,11 +7,10 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { TypeaheadModule } from 'ngx-bootstrap';
 
-const TypeaheadModuleForRoot: ModuleWithProviders = TypeaheadModule.forRoot();
 let mockApp = {};
-const Type
+
 @NgModule({
     declarations: [
         ButtonComponent,
@@ -26,8 +25,7 @@ const Type
         CommonModule,
         FormsModule,
         BrowserAnimationsModule,
-        // TypeaheadModule.forRoot()
-        TypeaheadModuleForRoot
+        TypeaheadModule.forRoot()
     ],
     exports: [ButtonComponent, ImagePipe, TrustAsPipe]
 })

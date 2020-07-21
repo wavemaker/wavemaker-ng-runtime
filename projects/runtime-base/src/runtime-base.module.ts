@@ -141,7 +141,7 @@ export class RuntimeBaseModule {
 
             CustomEvent.prototype = window['Event'].prototype;
 
-            window['CustomEvent'] = CustomEvent;
+            // window['CustomEvent'] = CustomEvent;
     }
 
     static forRoot(): ModuleWithProviders<RuntimeBaseModule> {

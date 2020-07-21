@@ -49,7 +49,8 @@ export class MobileCoreModule {
         MobileCoreModule.addStartupServices(deviceService, deviceFileService, fileCacheService, fileOpener, networkService);
         if (isIos() && hasCordova() && cordova.plugin && cordova.plugin.http) {
             document.addEventListener("wmDeviceReady", () => {
-                window['XMLHttpRequest'] = NativeXMLHttpRequest;
+                // ### ANGULAR9TODO###
+                // window['XMLHttpRequest'] = NativeXMLHttpRequest;
                 this.overrideResolveLocalFileSystemURL();
             }, false);
         }
