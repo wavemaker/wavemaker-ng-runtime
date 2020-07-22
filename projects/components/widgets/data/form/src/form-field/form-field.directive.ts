@@ -63,6 +63,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     viewmodewidget;
     binddataset;
     binddisplayexpression;
+    bindChipclass;
     displayimagesrc: string;
     binddisplayimagesrc;
     binddisplaylabel;
@@ -97,12 +98,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         form: FormComponent,
         fb: FormBuilder,
         @Optional() parentList: ListComponent,
+        @Attribute('chipclass.bind') bindChipclass: string,
         @Attribute('dataset.bind') binddataset,
         @Attribute('displayexpression.bind') binddisplayexpression: string,
         @Attribute('displaylabel.bind') binddisplaylabel: string,
         @Attribute('widgettype') _widgetType,
         @Attribute('name') name,
-        @Attribute('displayimagesrc.bind') binddisplayimagesrc:String,
+        @Attribute('displayimagesrc.bind') binddisplayimagesrc: String,
         @Attribute('key') key,
         @Attribute('is-range') isRange,
         @Attribute('pc-display') pcDisplay,
@@ -121,6 +123,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.binddataset = binddataset;
         this.binddisplayimagesrc = binddisplayimagesrc;
         this.binddisplayexpression = binddisplayexpression;
+        this.bindChipclass = bindChipclass;
         this.binddisplaylabel = binddisplaylabel;
         this.form = form;
         this.fb = fb;
@@ -207,7 +210,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     // sets the custom async validation on the form field
-    setAsyncValidators(validators){
+    setAsyncValidators(validators) {
         this.fieldValidations.setAsyncValidators(validators);
     }
 
@@ -478,6 +481,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.setFormWidget('binddisplaylabel', this.binddisplaylabel);
             this.setFormWidget('binddisplayexpression', this.binddisplayexpression);
             this.setFormWidget('binddisplayimagesrc', this.binddisplayimagesrc);
+            this.setFormWidget('bindChipclass', this.bindChipclass);
         }
 
         this.registerReadyStateListener(() => {
