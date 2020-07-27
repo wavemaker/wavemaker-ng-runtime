@@ -2,7 +2,7 @@ import { Attribute, Directive, Injector } from '@angular/core';
 
 import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/core';
 
-import { getEvaluatedData, getOrderedDataset, IRedrawableComponent, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
 
 declare const _, $;
@@ -72,6 +72,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         @Attribute('nodeid.bind') private bindnodeid
     ) {
         super(inj, WIDGET_INFO);
+        styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.bindEvents();
     }
 
