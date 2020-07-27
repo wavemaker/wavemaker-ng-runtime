@@ -659,11 +659,43 @@ buildLibs() {
     fi
 }
 
+esBundleForWebApp(){
+ echo "uglify: es-bundle-web - begin"
+
+ ${TERSER} \
+ ./dist/bundles/wmapp/scripts/wm-libs.js \
+ ./dist/bundles/wmapp/scripts/wm-loader.js \
+ -o ./dist/bundles/wmapp/scripts/ng9-wm-web-bundle.js -b
+
+ if [[ "$?" -eq "0" ]]; then
+        echo "uglify: es-bundle-web - success"
+    else
+        echo -e "uglify: es-bundle-web - failure"
+    fi    
+}
+esBundleForMobileApp(){
+ echo "uglify: es-bundle-mobile - begin"
+
+ ${TERSER} \
+ ./dist/bundles/wmmobile/scripts/wm-libs.js \
+ ./dist/bundles/wmmobile/scripts/wm-mobileloader.js \
+ -o ./dist/bundles/wmmobile/scripts/ng9-wm-mobile-bundle.js -b
+
+ if [[ "$?" -eq "0" ]]; then
+        echo "uglify: es-bundle-mobile - success"
+    else
+        echo -e "uglify: es-bundle-mobile - failure"
+    fi    
+}
+
 buildLibs
 buildApp
 buildDocs
 copyLocale
 copyDist
+
+esBundleForWebApp
+esBundleForMobileApp
 
 end=`date +%s`
 
