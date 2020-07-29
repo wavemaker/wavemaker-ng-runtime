@@ -28,6 +28,7 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
     public name: string;
     public show: boolean;
     public smoothscroll: any;
+    private isdynamic: boolean;
 
     @HostBinding('class.active') isActive = false;
     @HostBinding('class.disabled') disabled = false;
@@ -132,5 +133,8 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
             APPLY_STYLES_TYPE.CONTAINER
         );
         super.ngAfterViewInit();
+        if (this.isdynamic) {
+            this.tabsRef.registerDynamicTab(this);
+        }
     }
 }

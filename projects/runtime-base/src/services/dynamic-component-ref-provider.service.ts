@@ -16,6 +16,7 @@ import { AppManagerService } from './app.manager.service';
 import { RuntimeBaseModule } from '../runtime-base.module';
 
 initComponentsBuildTask();
+declare const _;
 
 const componentFactoryRefCache = new Map<string, any>();
 
@@ -95,9 +96,9 @@ export class DynamicComponentRefProviderService {
     public async addComponent(target: HTMLElement, markup: string, context = {}, options: any = {}) {
         options.transpile = isDefined(options.transpile) ? options.transpile : true;
         options.noCache = isDefined(options.noCache) ? options.noCache : true;
-        options.selector = isDefined(options.selector) ? options.selector : 'wm-dynamic-component-'+ this.counter++;
+        options.selector = isDefined(options.selector) ? options.selector : 'wm-dynamic-component-' + this.counter++;
         const componentFactoryRef = await this.getComponentFactoryRef(options.selector, markup, options);
-        const component = this.app.dynamicComponentContainerRef.createComponent(componentFactoryRef, 0);
+        const component = this.app.dynamicComponentContainerRef.createComponent(componentFactoryRef, 0, _.get(options, 'inj'));
         extendProto(component.instance, context);
         target.appendChild(component.location.nativeElement);
     }

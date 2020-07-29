@@ -9,8 +9,11 @@ export const registerProps = () => {
                 ['badgevalue', PROP_STRING],
                 ['class', PROP_STRING],
                 ['content', PROP_STRING],
+                ['dynamicPaneIndex', PROP_NUMBER], // internal property
+                ['expandpane', PROP_BOOLEAN], // internal property
                 ['iconclass', PROP_STRING],
                 ['isdefaultpane', PROP_BOOLEAN],
+                ['isdynamic', PROP_STRING], // internal property
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['smoothscroll', {value: true, ...PROP_BOOLEAN}],

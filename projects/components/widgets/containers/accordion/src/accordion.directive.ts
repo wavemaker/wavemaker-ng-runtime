@@ -1,6 +1,6 @@
 import { AfterContentInit, ContentChildren, Directive, Injector, QueryList } from '@angular/core';
 
-import { isNumber, noop } from '@wm/core';
+import { DynamicComponentRefProvider, extendProto, isNumber, noop } from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './accordion.props';
@@ -11,6 +11,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-accordion',
     hostClass: DEFAULT_CLS
 };
+declare const _;
 
 @Directive({
     selector: 'div[wmAccordion]',
@@ -27,14 +28,21 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     private activePaneIndex: number;
     private activePane: AccordionPaneComponent;
     private promiseResolverFn: Function;
+    private dynamicComponentProvider;
+    private _dynamicContext;
+    private dynamicPaneIndex;
+    private dynamicPanes;
 
     @ContentChildren(AccordionPaneComponent) panes: QueryList<AccordionPaneComponent>;
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, dynamicComponentProvider: DynamicComponentRefProvider) {
         let resolveFn: Function = noop;
         super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
         this.promiseResolverFn = resolveFn;
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        this.dynamicComponentProvider = dynamicComponentProvider;
+        this.dynamicPanes = [];
+        this.dynamicPaneIndex = 0;
     }
 
     /**
@@ -62,6 +70,47 @@ export class AccordionDirective extends StylableComponent implements AfterConten
             }
             this.activePaneIndex = index;
         }
+    }
+
+    public registerDynamicPane(paneRef) {
+        this.dynamicPanes.push(paneRef);
+        const isLastPane =  this.dynamicPanes.length === this.dynamicPaneIndex;
+        if (isLastPane) {
+            for (let i = 0; i < this.dynamicPanes.length; i++) {
+                const paneRef1  = _.find(this.dynamicPanes, pane => pane.dynamicPaneIndex === i);
+                (this as any).panes._results.push(paneRef1);
+                if (paneRef1.expandpane || this.defaultpaneindex === (this.panes.toArray().length - 1)) {
+                    paneRef1.expand();
+                }
+            }
+        }
+    }
+
+   public addPane(paneName, properties?) {
+       let paramMarkup = '';
+       let propsTmpl = '';
+       this.dynamicPaneIndex++;
+       const name = paneName ? paneName : `accordionpane${this.panes.toArray().length + this.dynamicPaneIndex}`;
+       const partialParams = _.get(properties, 'params');
+
+       _.forEach(properties, (value, key) => {
+           if (key !== 'params') {
+               propsTmpl = `${propsTmpl} ${key}="${value}"`;
+           }
+       });
+       _.forEach(partialParams, (value, key) => {
+           paramMarkup = `${paramMarkup} <wm-param name="${key}" value="${value}"></wm-param>`;
+       });
+       const markup = `<wm-accordionpane dynamicPaneIndex="${this.dynamicPaneIndex - 1}" isdynamic="true" name="${name}" ${propsTmpl}>
+                            ${paramMarkup}
+                        </wm-accordionpane>`;
+
+       if (!this._dynamicContext) {
+           this._dynamicContext = Object.create(this.viewParent);
+           this._dynamicContext[this.getAttr('wmAccordian')] = this;
+       }
+
+        this.dynamicComponentProvider.addComponent(this.getNativeElement(), markup, this._dynamicContext, {inj: this.inj});
     }
 
     private isValidPaneIndex(index: number): boolean {
