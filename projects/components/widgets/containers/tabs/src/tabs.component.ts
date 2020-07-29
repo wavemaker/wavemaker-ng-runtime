@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Attribute, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
 
-import { addClass, appendNode, noop, removeClass } from '@wm/core';
+import {addClass, appendNode, DynamicComponentRefProvider, extendProto, noop, removeClass} from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { TabsAnimator } from './tabs.animator';
@@ -35,11 +35,16 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     private readonly promiseResolverFn: Function;
     private tabsAnimator: TabsAnimator;
     private _oldPaneIndex: number;
+    private dynamicComponentProvider;
+    private _dynamicContext;
+    private dynamicPaneIndex;
+    public dynamicTabs;
 
     @ContentChildren(TabPaneComponent) panes: QueryList<TabPaneComponent>;
 
     constructor(
         inj: Injector,
+        dynamicComponentProvider: DynamicComponentRefProvider,
         @Attribute('transition') _transition: string,
         @Attribute('tabsposition') _tabsPosition: string
     ) {
@@ -54,6 +59,9 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.promiseResolverFn = resolveFn;
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
+        this.dynamicComponentProvider = dynamicComponentProvider;
+        this.dynamicTabs = [];
+        this.dynamicPaneIndex = 0;
     }
 
     animateIn (element: HTMLElement) {
@@ -71,6 +79,48 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         } else {
             ul.scrollLeft = 0;
         }
+    }
+
+    public registerDynamicTab(paneRef) {
+        this.dynamicTabs.push(paneRef);
+        const isLastPane =  this.dynamicTabs.length === this.dynamicPaneIndex;
+        if (isLastPane) {
+            for (let i = 0; i < this.dynamicTabs.length; i++) {
+                const paneRef1  = _.find(this.dynamicTabs, pane => pane.dynamicPaneIndex === i);
+                (this as any).panes._results.push(paneRef1);
+                if (paneRef1.selecttab || this.defaultpaneindex === (this.panes.toArray().length - 1)) {
+                    paneRef1.select();
+                }
+            }
+        }
+    }
+
+    public addTab(paneName, properties?) {
+        let paramMarkup = '';
+        let propsTmpl = '';
+        this.dynamicPaneIndex++;
+        const name = paneName ? paneName : `tabpane${this.panes.toArray().length + this.dynamicPaneIndex}`;
+        const partialParams = _.get(properties, 'params');
+
+        _.forEach(properties, (value, key) => {
+            if (key !== 'params') {
+                propsTmpl = `${propsTmpl} ${key}="${value}"`;
+            }
+        });
+
+        _.forEach(partialParams, (value, key) => {
+            paramMarkup = `${paramMarkup} <wm-param name="${key}" value="${value}"></wm-param>`;
+        });
+        const markup = `<wm-tabpane dynamicPaneIndex="${this.dynamicPaneIndex - 1}" isdynamic="true" name="${name}" ${propsTmpl}>
+                            ${paramMarkup}
+                        </wm-tabpane>`;
+
+        if (!this._dynamicContext) {
+            this._dynamicContext = Object.create(this.viewParent);
+            this._dynamicContext[this.getAttr('wmTab')] = this;
+        }
+
+        this.dynamicComponentProvider.addComponent(this.getNativeElement().querySelector('.tab-content'), markup, this._dynamicContext, {inj: this.inj});
     }
 
     /**
