@@ -5,7 +5,7 @@ declare const _;
 const checkEmptyObject = (obj) => {
     let isEmpty = true;
     _.forEach(obj, (value) => {
-        if (_.isEmpty(value)) {
+        if (_.isEmpty(value) && !_.isBoolean(value) && !_.isNumber(value)) {
           return;
         }
         if (!_.isObject(value)) {
