@@ -32,7 +32,7 @@ export class NumberComponent extends NumberLocale {
     public tabindex: any;
     public shortcutkey: string;
     public autofocus: boolean;
-    @ViewChild('input') inputEl: ElementRef;
+    @ViewChild('input',{static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector, i18nService: AbstractI18nService, decimalPipe: DecimalPipe) {

@@ -39,7 +39,7 @@ export class InputTextComponent extends BaseInput {
     public autocomplete: any;
     public maskVal: any;
 
-    @ViewChild('input') inputEl: ElementRef;
+    @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {

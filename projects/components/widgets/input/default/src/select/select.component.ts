@@ -33,7 +33,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     public name: string;
     public autofocus: boolean;
 
-    @ViewChild('select', /* TODO: add static flag */ { read: ElementRef }) selectEl: ElementRef;
+    @ViewChild('select', { static: true, read: ElementRef }) selectEl: ElementRef;
 
     set datasource(ds) {
         if (ds && ds.execute && ds.execute(DataSource.Operation.IS_BOUND_TO_LOCALE)) {

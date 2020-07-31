@@ -19,7 +19,7 @@ const WIDGET_INFO = {widgetType: 'wm-partialdialog'};
 })
 export class PartialDialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
-    @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
+    @ViewChild('dialogTemplate', { static: true }) dialogTemplate: TemplateRef<any>;
     @ContentChild(TemplateRef) dialogContent: TemplateRef<any>;
 
     constructor(

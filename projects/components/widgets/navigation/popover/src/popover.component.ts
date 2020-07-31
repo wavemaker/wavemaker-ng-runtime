@@ -63,7 +63,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public adaptiveposition:boolean;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
-    @ViewChild('anchor') anchorRef: ElementRef;
+    @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
     @ContentChild(TemplateRef) popoverTemplate;
     @ContentChild('partial') partialRef;
 

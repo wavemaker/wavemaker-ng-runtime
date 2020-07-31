@@ -36,7 +36,7 @@ export class InputCalendarComponent extends BaseInput {
     public autofocus: boolean;
     public autocomplete: any;
 
-    @ViewChild('input') inputEl: ElementRef;
+    @ViewChild('input',{static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {

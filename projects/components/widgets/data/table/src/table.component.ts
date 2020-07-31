@@ -77,29 +77,29 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     static initializeProps = registerProps();
     @ViewChild(PaginationComponent) dataNavigator;
 
-    @ViewChild('datagridElement') private _tableElement: ElementRef;
+    @ViewChild('datagridElement', {static: true}) private _tableElement: ElementRef;
 
     @ContentChildren('rowActionTmpl') rowActionTmpl: QueryList<any>;
-    @ViewChild('rowActionsView', /* TODO: add static flag */ { read: ViewContainerRef }) rowActionsViewRef: ViewContainerRef;
+    @ViewChild('rowActionsView', { static: true, read: ViewContainerRef }) rowActionsViewRef: ViewContainerRef;
 
     @ContentChildren('filterTmpl', {descendants: true}) filterTmpl: QueryList<any>;
-    @ViewChild('multiColumnFilterView', /* TODO: add static flag */ { read: ViewContainerRef }) filterViewRef: ViewContainerRef;
+    @ViewChild('multiColumnFilterView', { static: true, read: ViewContainerRef }) filterViewRef: ViewContainerRef;
 
     @ContentChildren('inlineWidgetTmpl', {descendants: true}) inlineWidgetTmpl: QueryList<any>;
-    @ViewChild('inlineEditView', /* TODO: add static flag */ { read: ViewContainerRef }) inlineEditViewRef: ViewContainerRef;
+    @ViewChild('inlineEditView', { static: true, read: ViewContainerRef }) inlineEditViewRef: ViewContainerRef;
 
     @ContentChildren('inlineWidgetTmplNew', {descendants: true}) inlineWidgetNewTmpl: QueryList<any>;
-    @ViewChild('inlineEditNewView', /* TODO: add static flag */ { read: ViewContainerRef }) inlineEditNewViewRef: ViewContainerRef;
+    @ViewChild('inlineEditNewView', { static: true, read: ViewContainerRef }) inlineEditNewViewRef: ViewContainerRef;
 
     @ContentChildren('customExprTmpl', {descendants: true}) customExprTmpl: QueryList<any>;
-    @ViewChild('customExprView', /* TODO: add static flag */ { read: ViewContainerRef }) customExprViewRef: ViewContainerRef;
+    @ViewChild('customExprView', { static: true, read: ViewContainerRef }) customExprViewRef: ViewContainerRef;
 
     @ContentChildren('rowExpansionActionTmpl') rowExpansionActionTmpl: QueryList<any>;
     @ContentChild('rowExpansionTmpl') rowExpansionTmpl: TemplateRef<any>;
-    @ViewChild('rowDetailView', /* TODO: add static flag */ { read: ViewContainerRef }) rowDetailViewRef: ViewContainerRef;
-    @ViewChild('rowExpansionActionView', /* TODO: add static flag */ { read: ViewContainerRef }) rowExpansionActionViewRef: ViewContainerRef;
+    @ViewChild('rowDetailView', { static: true, read: ViewContainerRef }) rowDetailViewRef: ViewContainerRef;
+    @ViewChild('rowExpansionActionView', { static: true, read: ViewContainerRef }) rowExpansionActionViewRef: ViewContainerRef;
 
-    @ViewChild('dynamicTable', /* TODO: add static flag */ { read: ViewContainerRef }) dynamicTableRef: ViewContainerRef;
+    @ViewChild('dynamicTable', { static: true, read: ViewContainerRef }) dynamicTableRef: ViewContainerRef;
 
     private rowActionsCompiledTl: any  = {};
     private rowFilterCompliedTl: any = {};

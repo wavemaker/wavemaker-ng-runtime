@@ -38,7 +38,7 @@ export class CurrencyComponent extends NumberLocale {
     public shortcutkey: string;
 
     @ViewChild(NgModel) ngModel: NgModel;
-    @ViewChild('input', /* TODO: add static flag */ { read: ElementRef }) inputEl: ElementRef;
+    @ViewChild('input', { static: true, read: ElementRef }) inputEl: ElementRef;
 
     constructor(inj: Injector, i18nService: AbstractI18nService, decimalPipe: DecimalPipe) {
         super(inj, WIDGET_CONFIG, i18nService, decimalPipe);
