@@ -342,6 +342,8 @@ export class LiveVariableUtils {
                 param = LiveVariableUtils.encodeAndAddQuotes('%' + value, type, skipEncode);
                 param = LiveVariableUtils.wrapInLowerCase(param, options, ignoreCase);
                 break;
+            case dbModes.nowhereignorecase:
+            case dbModes.nowhere:
             case dbModes.anywhereignorecase:
             case dbModes.anywhere:
                 param = LiveVariableUtils.encodeAndAddQuotes('%' + value + '%', type, skipEncode);
@@ -474,10 +476,10 @@ export class LiveVariableUtils {
      */
     static getIgnoreCase(matchMode, ignoreCase) {
         const matchModes = DB_CONSTANTS.DATABASE_MATCH_MODES;
-        if (_.indexOf([matchModes['anywhere'], matchModes['start'], matchModes['end'], matchModes['exact']], matchMode) !== -1) {
+        if (_.indexOf([matchModes['anywhere'], matchModes['nowhere'], matchModes['start'], matchModes['end'], matchModes['exact']], matchMode) !== -1) {
             return false;
         }
-        if (_.indexOf([matchModes['anywhereignorecase'], matchModes['startignorecase'], matchModes['endignorecase'], matchModes['exactignorecase']], matchMode) !== -1) {
+        if (_.indexOf([matchModes['anywhereignorecase'], matchModes['nowhereignorecase'], matchModes['startignorecase'], matchModes['endignorecase'], matchModes['exactignorecase']], matchMode) !== -1) {
             return true;
         }
         return ignoreCase;
