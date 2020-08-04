@@ -125,15 +125,15 @@ export class RemoteDataProvider implements IDataProvider {
             }
             // if data expression exists, extract the data from the expression path
             if (dataExpression) {
-                const index = dataExpression.lastIndexOf($I);
-                const restExpr = dataExpression.substr(index + 5);
-
                 if (_.isArray(data)) {
-                    formattedData = data.map(datum => findValueOf(datum, restExpr));
+                    const index = dataExpression.lastIndexOf($I);
+                    if(index > -1){
+                        const restExpr = dataExpression.substr(index + 5);
+                        formattedData = data.map(datum => findValueOf(datum, restExpr));
+                    }
                 } else if (_.isObject(data)) {
                     formattedData = _.get(data, dataExpression);
                 }
-
                 data = formattedData || data;
             }
             if (!_.isArray(data)) {
