@@ -14,7 +14,7 @@ declare const document;
 declare const resolveLocalFileSystemURL;
 declare const $;
 declare const WM_CUSTOM_FORMATTERS;
-
+declare const MSCSSMatrix;
 
 const userAgent = window.navigator.userAgent;
 const REGEX = {
@@ -1287,9 +1287,12 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
     *
     * @param containerElem elemet for the WebKitCSSMatrix
     */
-   export const getWebkitTraslationMatrix = (containerElem) => {
-     return  new WebKitCSSMatrix(window.getComputedStyle(containerElem[0]).webkitTransform)
-   }
+    export const getWebkitTraslationMatrix = (containerElem) => {
+        if (typeof WebKitCSSMatrix === 'undefined') {
+            return new MSCSSMatrix(window.getComputedStyle(containerElem[0]).transform);
+        }
+        return new WebKitCSSMatrix(window.getComputedStyle(containerElem[0]).webkitTransform);
+    }
 
 // close all the popovers.
 export const closePopover = (element) => {
