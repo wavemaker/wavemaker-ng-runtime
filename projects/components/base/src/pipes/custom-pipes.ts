@@ -17,6 +17,19 @@ const getEpochValue = data => {
 };
 
 @Pipe({
+    name: 'trailingZeroDecimalPipe'
+})
+export class TrailingZeroDecimalPipe implements PipeTransform {
+    transform(value: any, selectedLocale: string, numberfiler: string, localefilter: any, trailingzero: boolean, decimalValue: string): any {
+        const number =  this.decimalPipe.transform(value, numberfiler, localefilter || selectedLocale);
+        return trailingzero ? Number(number).toFixed(decimalValue.length) : number;
+    }
+
+    constructor(private decimalPipe: DecimalPipe) { }
+
+}
+
+@Pipe({
     name: 'toDate'
 })
 export class ToDatePipe implements PipeTransform {
