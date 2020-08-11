@@ -4,22 +4,23 @@ import { Component, ViewChild } from '@angular/core';
 import { NumberComponent } from './number.component';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe, registerLocaleData } from '@angular/common';
+import { TrailingZeroDecimalPipe } from '@wm/components/base';
 import { PipeProvider } from '../../../../../../runtime-base/src/services/pipe-provider.service';
 import localePT from '@angular/common/locales/pt.js';
 
 
 let mockApp =  {};
 
-class mockAbstractI18nService {
+class MockAbstractI18nService {
     public getSelectedLocale() {
        return 'en';
     }
-};
-class mockAbstractI18nServicePt {
+}
+class MockAbstractI18nServicePt {
     public getSelectedLocale() {
         return 'pt';
     }
-};
+}
 
 @Component({
     template: `<div wmNumber textalign="right" name="testnumber" ngModel></div>`
@@ -47,8 +48,9 @@ describe('NumberComponent', () => {
             declarations: [NumberWrapperComponent, NumberComponent],
             providers: [
                 {provide: App, useValue: mockApp},
-                {provide: AbstractI18nService, useClass: mockAbstractI18nService},
-                {provide: DecimalPipe, useClass: DecimalPipe}
+                {provide: AbstractI18nService, useClass: MockAbstractI18nService},
+                {provide: DecimalPipe, useClass: DecimalPipe},
+                {provide: TrailingZeroDecimalPipe, useClass: TrailingZeroDecimalPipe}
             ]
         })
             .compileComponents();
@@ -71,7 +73,7 @@ describe('NumberComponent', () => {
     });
 
 });
-describe('NumberComponent with Localization',()=>{
+describe('NumberComponent with Localization', () => {
     let wrapperComponent: NumberWrapperComponent;
     let numberComponent: NumberComponent;
     let fixture: ComponentFixture<NumberWrapperComponent>;
@@ -85,8 +87,9 @@ describe('NumberComponent with Localization',()=>{
             declarations: [NumberWrapperComponent, NumberComponent],
             providers: [
                 {provide: App, useValue: mockApp},
-                {provide: AbstractI18nService, useClass: mockAbstractI18nServicePt},
-                {provide: DecimalPipe, useClass: DecimalPipe}
+                {provide: AbstractI18nService, useClass: MockAbstractI18nServicePt},
+                {provide: DecimalPipe, useClass: DecimalPipe},
+                {provide: TrailingZeroDecimalPipe, useClass: TrailingZeroDecimalPipe}
             ]
         })
             .compileComponents();
