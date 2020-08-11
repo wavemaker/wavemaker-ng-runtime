@@ -140,7 +140,7 @@ export class RuntimeBaseModule {
             };
 
             CustomEvent.prototype = window['Event'].prototype;
-
+            // ### ANGULAR9TODO ###
             // window['CustomEvent'] = CustomEvent;
     }
 

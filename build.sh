@@ -660,12 +660,12 @@ buildLibs() {
 }
 
 esBundleForWebApp(){
- echo "uglify: es-bundle-web - begin"
+ echo "uglify: es-bundle-web - begin" 
 
  ${TERSER} \
  ./dist/bundles/wmapp/scripts/wm-libs.js \
  ./dist/bundles/wmapp/scripts/wm-loader.js \
- -o ./dist/bundles/wmapp/scripts/ng9-wm-web-bundle.js -b
+ -o "./dist/bundles/wmapp/scripts/ng9-wm-web-bundle.js" -b
 
  if [[ "$?" -eq "0" ]]; then
         echo "uglify: es-bundle-web - success"
@@ -674,12 +674,12 @@ esBundleForWebApp(){
     fi    
 }
 esBundleForMobileApp(){
- echo "uglify: es-bundle-mobile - begin"
+ echo "uglify: es-bundle-mobile - begin" 
 
  ${TERSER} \
  ./dist/bundles/wmmobile/scripts/wm-libs.js \
  ./dist/bundles/wmmobile/scripts/wm-mobileloader.js \
- -o ./dist/bundles/wmmobile/scripts/ng9-wm-mobile-bundle.js -b
+ -o "./dist/bundles/wmmobile/scripts/ng9-wm-mobile-bundle.js" -b
 
  if [[ "$?" -eq "0" ]]; then
         echo "uglify: es-bundle-mobile - success"
@@ -694,8 +694,8 @@ buildDocs
 copyLocale
 copyDist
 
-esBundleForWebApp
-esBundleForMobileApp
+# esBundleForWebApp
+# esBundleForMobileApp
 
 end=`date +%s`
 
