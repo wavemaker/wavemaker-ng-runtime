@@ -72,7 +72,7 @@ export const isIE = () => {
 
 export const isAndroid = () => REGEX.ANDROID.test(userAgent);
 
-export const isAndroidTablet = () => REGEX.ANDROID_TABLET.test(userAgent);
+export const isAndroidTablet = () => REGEX.ANDROID_TABLET.test(userAgent) && !((/Tablet PC 2.0/i).test(userAgent));
 
 export const isIphone = () => REGEX.IPHONE.test(userAgent);
 export const isIpod = () => REGEX.IPOD.test(userAgent);
