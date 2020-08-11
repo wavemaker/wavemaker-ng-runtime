@@ -33,7 +33,8 @@ import {
     ToCurrencyPipe,
     ToDatePipe,
     ToNumberPipe,
-    CustomPipe
+    CustomPipe,
+    TrailingZeroDecimalPipe
 } from './pipes/custom-pipes';
 import { TrustAsPipe } from './pipes/trust-as.pipe';
 import { DialogServiceImpl } from './widgets/common/dialog/dialog.service';
@@ -89,6 +90,7 @@ export class WmComponentsModule {
             providers: [
                 ToDatePipe,
                 FilterPipe,
+                TrailingZeroDecimalPipe,
                 TrustAsPipe,
                 ImagePipe,
                 CustomPipe,

@@ -71,6 +71,11 @@ export class Number {
     @Input() tabindex: number = 0;
 
     /**
+     * This property specifies whether to keep trailing zeros after decimal point or not
+     */
+    @Input() trailingzero: boolean = false;
+
+    /**
      * Callback function which will be triggered when the widget value is changed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the textarea widget
