@@ -637,7 +637,9 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
     }
 
     // Setting the legend type choosen by user or default it will be furious
-    chart.legend.vers((propertyValueMap.legendtype && propertyValueMap.legendtype.toLowerCase()) || 'furious');
+    if(chart && chart.legend){
+        chart.legend.vers((propertyValueMap.legendtype && propertyValueMap.legendtype.toLowerCase()) || 'furious');
+    }
 
     if (!_.includes(chartTypes, widgetContext.type)) {
         chart = nv.models.multiBarChart()

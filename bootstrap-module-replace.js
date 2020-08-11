@@ -5,7 +5,7 @@ const fileLocation = './dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js'
 var content = fs.readFileSync(fileLocation, 'utf8');
 // Wrap the content into the IIF function with ngx-bootstrap context
 // To fix the issue: https://github.com/valor-software/ngx-bootstrap/issues/5609
-fs.writeFileSync(fileLocation, '(function(){ \n', 'utf8');
+fs.writeFileSync(fileLocation, '(function(bsRef){ \n', 'utf8');
 
 // Content: Split into the lines
 content.split(/\r?\n/).forEach(function (line) {
