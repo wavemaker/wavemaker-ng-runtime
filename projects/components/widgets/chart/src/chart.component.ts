@@ -506,7 +506,6 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 obj[this.xaxisdatakey] = _.get(responseContent, xAxisAliasKey) || _.get(responseContent, this.xaxisdatakey);
 
                 yAxisKeys.forEach((yAxisKey, index) => {
-                    obj[yAxisKey] = responseContent[yAxisAliasKeys[index]];
                     obj[yAxisKey] = _.get(responseContent, yAxisAliasKeys[index]) || _.get(responseContent, yAxisKey);
                 });
 
