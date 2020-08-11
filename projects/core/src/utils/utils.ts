@@ -773,14 +773,6 @@ export const loadScript = async (url, loadViaScriptTag, cacheable = false) => {
             .done(response => response)
             .fail(reason => reason);
     }
-
-    // return fetch(_url)
-    //     .then(response => response.text())
-    //     .then(text => {
-    //         const script = document.createElement('script');
-    //         script.textContent = text;
-    //         document.head.appendChild(script);
-    //     });
 };
 
 export const loadScripts = async (urls = [], loadViaScriptTag = true) => {

@@ -50,8 +50,10 @@ export class VariableFactory {
                 variableInstance = new WebSocketVariable(variable);
         }
 
-        variableInstance._context = context;
-        variableInstance.__cloneable__ = false;
+        if(variableInstance){
+            variableInstance._context = context;
+            variableInstance.__cloneable__ = false;
+        }
         return variableInstance;
     }
 }

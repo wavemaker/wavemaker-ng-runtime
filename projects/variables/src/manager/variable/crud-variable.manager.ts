@@ -25,40 +25,14 @@ export class CrudVariableManager extends ServiceVariableManager {
         }
         const serviceDef = getClonedObject(metadataService.getByCrudId(variable.crudOperationId, variable.getPrefabName()));
         let methodInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
-        methodInfo = serviceDef.filter(function(item) {
-            return options.operation === item.operationType;
-        })[0];
+        if(serviceDef){
+            methodInfo = serviceDef.filter(function(item) {
+                return options.operation === item.operationType;
+            })[0];
+        }
         if (!methodInfo) {
             return methodInfo;
         }
-        // methodInfo.paginationInfo = {
-        //                                 "contentMapping": "content",
-        //                                 "ascSortExpression": "{{fieldName}} a",
-        //                                 "descSortExpression": "{{fieldName}} d",
-        //                                 //"defaultSortExpression": "id",
-        //                                 "totalMapping": "totalElements",
-        //                                 "pageMapping": {
-        //                                     "in": "query",
-        //                                     "name": "pageNum",
-        //                                     "description": "the existing id",
-        //                                     "type": "integer",
-        //                                     "required": true
-        //                                 },
-        //                                 "sizeMapping": {
-        //                                     "in": "query",
-        //                                     "name": "limit",
-        //                                     "description": "the existing id",
-        //                                     "type": "integer",
-        //                                     "required": true
-        //                                 },
-        //                                 "sortMapping": {
-        //                                     "name": "sortInfo",
-        //                                     "in": "query",
-        //                                     "description": "the sorting criteria",
-        //                                     "required": true,
-        //                                     "type": "integer"
-        //                                 }
-        //                             };
         methodInfo.paginationInfo = null;
         return methodInfo.paginationInfo;
     }
