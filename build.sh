@@ -95,7 +95,7 @@ hasSourceChanges() {
         return 0
     fi
 
-    local updateTime=`gfind ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -printf "%T@\n" | sort | tail -1 | cut -d. -f1`
+    local updateTime=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -printf "%T@\n" | sort | tail -1 | cut -d. -f1`
     local buildTime=`date -r ${successFile} +%s`
 
 	if [[ ${updateTime} -le ${buildTime} ]]; then
