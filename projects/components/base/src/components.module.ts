@@ -68,6 +68,7 @@ const PIPES = [
     NumberToStringPipe,
     StateClassPipe,
     StringToNumberPipe,
+    TrailingZeroDecimalPipe,
     TrustAsPipe,
     ImagePipe,
     CustomPipe
