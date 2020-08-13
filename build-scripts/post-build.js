@@ -9,8 +9,8 @@ const crypto = require(`crypto`);
 const opPath = `${process.cwd()}/dist/ng-bundle`;
 const copyCssFiles = (hash)=>{
     copyFile(`${opPath}/wm-styles.css`,`${opPath}/wm-styles.${hash}.css`);
-    copyFile(`${opPath}/wm-styles.br.css`,`${opPath}/wm-styles.${hash}.br.css`);
-    copyFile(`${opPath}/wm-styles.gzip.css`,`${opPath}/wm-styles.${hash}.gzip.css`);
+    // copyFile(`${opPath}/wm-styles.br.css`,`${opPath}/wm-styles.${hash}.br.css`);
+    // copyFile(`${opPath}/wm-styles.gzip.css`,`${opPath}/wm-styles.${hash}.gzip.css`);
 };
 const generateHash = async (filepath)=>{
     const cssContent = await readFile(filepath);
@@ -30,8 +30,8 @@ const generateHashForScripts = () => {
                         scriptsMap[`${key}.js`] = `${key}.${hash}.js`;
                         return Promise.all([
                             copyFile(`${opPath}/${key}-NOHASH.js`, `${opPath}/${key}.${hash}.js`),
-                            copyFile(`${opPath}/${key}-NOHASH.br.js`, `${opPath}/${key}.${hash}.br.js`),
-                            copyFile(`${opPath}/${key}-NOHASH.gzip.js`, `${opPath}/${key}.${hash}.gzip.js`)
+                            // copyFile(`${opPath}/${key}-NOHASH.br.js`, `${opPath}/${key}.${hash}.br.js`),
+                            // copyFile(`${opPath}/${key}-NOHASH.gzip.js`, `${opPath}/${key}.${hash}.gzip.js`)
                         ]);
                     });
                 }
