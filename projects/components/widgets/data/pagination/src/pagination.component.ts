@@ -420,10 +420,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                     binddataset,
                     parent,
                     datasetBoundExpr ? dataSource : {},
-                    nv => {
-                        this.dataset = nv;
-                        this._debouncedApplyDataset();
-                    }
+                    nv => this.widget.dataset = nv
                 )
             );
 
