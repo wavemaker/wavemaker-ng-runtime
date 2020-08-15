@@ -28,7 +28,10 @@ const getSearchValue = (value, type) => {
 const getFilteredData = (data, searchObj) => {
     const searchVal = getSearchValue(searchObj.value, searchObj.type);
     let currentVal;
-    if (!isDefined(searchVal) && !_.includes(emptyMatchModes, searchObj.matchMode)) {
+    // Return whole data if
+    // - search value is undefined and matchmode is not an empty matchmode type
+    // - search value is null and datatype is number. Null can not be compared with numeric values[WMS-19275].
+    if ((!isDefined(searchVal) && !_.includes(emptyMatchModes, searchObj.matchMode)) || (isNumberType(searchObj.type) && _.isNull(searchObj.value))) {
         return data;
     }
     data = data.filter((obj) => {
