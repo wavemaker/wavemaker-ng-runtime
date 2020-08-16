@@ -4,6 +4,7 @@ import { FormWidgetType } from '@wm/core';
 export const textareaProps = new Map(
     [
         ['autofocus', PROP_BOOLEAN],
+        ['autotrim', {value: true, ...PROP_BOOLEAN}],
         ['class', PROP_STRING],
         ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
