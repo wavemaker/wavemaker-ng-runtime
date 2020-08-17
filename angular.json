@@ -67,7 +67,8 @@
                             "./node_modules/summernote/dist/summernote-lite.min.js",
                             "./node_modules/hammerjs/hammer.min.js",
                             "./node_modules/iscroll/build/iscroll.js",
-                            "./node_modules/js-cookie/src/js.cookie.js"
+                            "./node_modules/js-cookie/src/js.cookie.js",
+                            "./node_modules/js-sha256/build/sha256.min.js"
                         ],
                         "lazyModules":[]
                     },
@@ -137,7 +138,8 @@
                             "./node_modules/summernote/dist/summernote-lite.min.js",
                             "./node_modules/hammerjs/hammer.min.js",
                             "./node_modules/iscroll/build/iscroll.js",
-                            "./node_modules/js-cookie/src/js.cookie.js"
+                            "./node_modules/js-cookie/src/js.cookie.js",
+                            "./node_modules/js-sha256/build/sha256.min.js"
                         ]
                     },
                     "configurations": {
