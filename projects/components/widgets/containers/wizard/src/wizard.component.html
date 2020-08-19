@@ -25,7 +25,7 @@
 <div class="app-wizard-actions panel-footer {{actionsalignment}}">
     <a class="app-wizard-skip" name="skipStep_{{name}}" *ngIf="currentStep?.enableskip" title="Skip step" (click)="skip()">Skip &raquo;</a>
     <div class="app-wizard-actions-right">
-        <button type="button" name="cancelBtn_{{name}}" class="btn app-button btn-secondary" *ngIf="cancelable"
+        <button type="button" name="cancelBtn_{{name}}" class="btn app-button btn-default" *ngIf="cancelable"
                 (click)="cancel()" [title]="cancelbtnlabel" [textContent]="cancelbtnlabel"></button>
         <button type="button" name="previousBtn_{{name}}" class="btn app-button btn-secondary"
                 *ngIf="hasPrevStep" (click)="prev()" [disabled]="!enablePrev">
