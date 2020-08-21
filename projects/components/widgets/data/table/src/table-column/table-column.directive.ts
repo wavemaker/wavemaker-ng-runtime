@@ -53,6 +53,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     @ContentChildren('inlineWidget') _inlineInstances;
     @ContentChildren('inlineWidgetNew') _inlineInstancesNew;
     @ContentChild('customExprTmpl') customExprTmpl;
+    @ContentChild('inlineWidgetTmpl') inlineWidthTempRef;
 
     private _propsInitialized: boolean;
     private _filterDataSet;
@@ -237,6 +238,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             this.key = this.field || this.binding;
         });
         super.ngAfterContentInit();
+        if((this as any).table.isdynamictable){
+            (this.table.inlineWidgetTmpl as any)._results.push(this.inlineWidthTempRef); 
+        }
     }
 
     ngAfterViewInit() {
