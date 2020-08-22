@@ -25,7 +25,7 @@ import { VariablesService } from '@wm/variables';
 import { AppManagerService } from '../services/app.manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
 
-declare const $;
+declare const $, _;
 
 export abstract class BasePageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
     Widgets: any;
@@ -100,7 +100,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     registerPageParams() {
-        const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = params);
+        const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = _.extend({}, params));
         this.registerDestroyListener(() => subscription.unsubscribe());
     }
 
