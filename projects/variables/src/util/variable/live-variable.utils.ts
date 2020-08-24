@@ -728,5 +728,30 @@ export class LiveVariableUtils {
             return LiveVariableUtils.prepareTableOptions(variable, options, clonedFields).query;
         };
     }
+
+    /**
+     * This method decodes the live variable data which is encoded from backend before showing in the widgets.
+     * It takes variable response content as input and iterates recursively,
+     * if the value is string type then it will decode the data.
+     * Used DOMParser().parseFromString() with mime type text/html to decode the data.
+     * @param responseContent (Array of objects)
+     */
+    static decodeData(responseContent) {
+        if (!responseContent) {
+            return;
+        }
+        const domParser = new DOMParser();
+        _.forEach(responseContent, data => {
+            if (data) {
+                _.forEach(data, (value, key) => {
+                    if (value && _.isString(value)) {
+                        data[key] = domParser.parseFromString(value, 'text/html').body.textContent;
+                    } else if (_.isObject(value)) {
+                        _.isArray(value) ? this.decodeData(value) : this.decodeData([value]);
+                    }
+                });
+            }
+        });
+    }
 }
 
