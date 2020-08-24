@@ -1,4 +1,4 @@
-import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef, Injector } from '@angular/core';
 
 import { SecurityService } from '@wm/security';
 
@@ -23,7 +23,8 @@ export class AccessrolesDirective {
     constructor(
         private templateRef: TemplateRef<any>,
         private viewContainerRef: ViewContainerRef,
-        private securityService: SecurityService
+        private securityService: SecurityService,
+        private inj: Injector
     ) {
         const securityConfig = this.securityService.get();
         this.securityEnabled = _.get(securityConfig, 'securityEnabled');
@@ -98,7 +99,8 @@ export class AccessrolesDirective {
         const widgetRoles = this.getWidgetRolesArrayFromStr(roles);
         const isAccessible = !this.securityEnabled || this.hasAccessToWidget(widgetRoles, this.userRoles);
         if (isAccessible) {
-            this.viewContainerRef.createEmbeddedView(this.templateRef);
+            // [WMS-19294] pass on the previous context as second param.
+            this.viewContainerRef.createEmbeddedView(this.templateRef, (this.inj as any).view.context);
         } else {
             this.viewContainerRef.clear();
         }
