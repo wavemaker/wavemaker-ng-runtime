@@ -131,8 +131,8 @@ export class RuntimeBaseModule {
             if ( typeof window['CustomEvent'] === 'function' ) {
                 return false;
             }
-
-            const CustomEvent = (event, params) => {
+            // Adding type as any to avoid error TS2322
+            const CustomEvent: any = (event, params) => {
                 params = params || { bubbles: false, cancelable: false, detail: null };
                 const evt = document.createEvent( 'CustomEvent' );
                 evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
@@ -141,7 +141,7 @@ export class RuntimeBaseModule {
 
             CustomEvent.prototype = window['Event'].prototype;
             // ### ANGULAR9TODO ###
-            // window['CustomEvent'] = CustomEvent;
+            window['CustomEvent'] = CustomEvent;
     }
 
     static forRoot(): ModuleWithProviders<RuntimeBaseModule> {
