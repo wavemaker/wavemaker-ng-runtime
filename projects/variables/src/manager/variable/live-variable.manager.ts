@@ -222,7 +222,7 @@ export class LiveVariableManager extends BaseVariableManager {
                     this.handleError(variable, error, response.error, options, advancedOptions);
                     return Promise.reject(response.error);
                 }
-                LiveVariableUtils.decodeData(response.content);
+
                 LiveVariableUtils.processBlobColumns(response.content, variable);
 
                 if (!options.skipDataSetUpdate) {
@@ -909,7 +909,7 @@ export class LiveVariableManager extends BaseVariableManager {
 
                 const pagination = Object.assign({}, response);
                 delete pagination.content;
-                LiveVariableUtils.decodeData(data);
+
                 const result = {data: data, pagination};
                 triggerFn(success, result);
 
