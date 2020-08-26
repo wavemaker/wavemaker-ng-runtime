@@ -15,7 +15,6 @@ const DEFAULT_CLS = 'app-dialog-body modal-body';
 })
 export class DialogBodyDirective {
     @HostBinding('style.height') height;
-
     constructor(
         elRef: ElementRef,
         @Inject(DialogRef) private dialogRef,
@@ -26,6 +25,12 @@ export class DialogBodyDirective {
         const subscription = bsModal.onShown.subscribe(() => {
             const dialogRoot = $(elRef.nativeElement).closest('.app-dialog')[0];
             const width = this.dialogRef.width;
+            const height = this.dialogRef.height;
+            if(height){
+               setTimeout(e=>{
+                    setCSS($(elRef.nativeElement)[0], 'height', height);
+                });
+            }      
             if (dialogRoot) {
                 if (width) {
                     setCSS(dialogRoot, 'width', width);
