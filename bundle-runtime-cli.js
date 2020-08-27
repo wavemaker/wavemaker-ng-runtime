@@ -15,26 +15,46 @@ const ng9Log = ()=>{
     }
 };
 
+console.log(process.argv.length);
+process.argv = process.argv.splice(2);
+console.log(process.argv);
+console.log(process.argv.length);
+
+let argvi = 0;
+let argv = {};
+while(argvi<process.argv.length){
+    if(process.argv[argvi]==="-v" || process.argv[argvi]==="--version"){
+        argv.version = process.argv[argvi+1]; argvi++;
+    } else if(process.argv[argvi].includes("useS3") ){
+        argv.useS3 = !process.argv[argvi].includes("false");
+    } else if(process.argv[argvi].includes("updateWmVersion")){
+        argv.updateWmVersion = !process.argv[argvi].includes("false");
+    }
+    argvi++;
+}
+
+
 const ng9Logger = ng9Log();
 
-const argv = require("yargs")
-.options({
-    "updateWmVersion": {
-        type: "boolean"
-    },
-    "useS3": {
-        type: "boolean"
-    },
-    "version": {
-        alias: "v",
-        type: "string"
-    }
-}).argv;
+// const argv = require("yargs")
+// .options({
+//     "updateWmVersion": {
+//         type: "boolean"
+//     },
+//     "useS3": {
+//         type: "boolean"
+//     },
+//     "version": {
+//         alias: "v",
+//         type: "string"
+//     }
+// }).argv;
 
 ng9Logger.log('argv: '+ argv);
 ng9Logger.log('argv.updateWmVersion: ' + argv['updateWmVersion']);
 ng9Logger.log('argv.useS3: ' + argv['useS3']);
 ng9Logger.log('argv.version: ' + argv['version']);
+
 
 
 const generateNpmVersion = (version) => {
@@ -134,6 +154,6 @@ const processRequest = () => {
     ng9Logger.log(`processRequest | Done`)
 };
 
-processRequest();
+// processRequest();
 
 ng9Logger.store();
