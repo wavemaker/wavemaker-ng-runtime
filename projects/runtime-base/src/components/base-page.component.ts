@@ -1,7 +1,7 @@
 import {AfterViewInit, HostListener, Injector, OnDestroy, ViewChild} from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
-import { ScriptLoaderService } from '@wm/core';
+import { isAndroid, isIos, ScriptLoaderService } from '@wm/core';
 import { PageDirective } from '@wm/components/page';
 
 import {Subject, Subscription} from 'rxjs';
@@ -46,7 +46,9 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     startupVariablesLoaded = false;
     pageTransitionCompleted = false;
     @ViewChild(PageDirective) pageDirective;
+    $page;
     scriptLoaderService: ScriptLoaderService;
+    pageTransitionTarget;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -79,7 +81,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.registerPageParams();
 
         this.defineI18nProps();
-
+        this.getPageTransitionTarget();
         super.init();
     }
 
@@ -156,10 +158,10 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     runPageTransition(transition: string): Promise<void> {
         return new Promise(resolve => {
-            const $target = this.getPageTransitionTarget();
-            if (transition) {
-                const onTransitionEnd = () => {
-                    if (resolve) {
+            if (transition && !transition.startsWith('none')) {
+                const $target = this.pageTransitionTarget.parent();
+                const onTransitionEnd = (e) => {
+                    if (resolve && !e.pseudoElement) {
                         $target.off('animationend', onTransitionEnd);
                         $target.removeClass(transition);
                         $target.children().first().remove();
@@ -168,13 +170,22 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                     }
                 };
                 transition = 'page-transition page-transition-' + transition;
+                this.pageTransitionTarget.addClass('page-exit');
+                this.$page.addClass('page-entry');
                 $target.addClass(transition);
                 $target.on('animationend', onTransitionEnd);
                 // Wait for a maximum of 1 second for transition to end.
-                setTimeout(onTransitionEnd, 1000);
+                //setTimeout(onTransitionEnd, 1000);
             } else {
                 resolve();
             }
+        }).then(() => {
+            this.$page.removeClass('page-entry');
+            if (this.pageTransitionTarget) {
+                this.pageTransitionTarget.remove();
+                this.pageTransitionTarget = null;
+            }
+            this.pageTransitionCompleted = true;
         });
     }
 
@@ -197,9 +208,13 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         });
     }
 
-    getPageTransitionTarget() {
-        // Looks for 'app-page-target' tag for WM BUild & 'app-page-*' tag for Ng Build
-        return $('app-page-outlet:first').length ? $('app-page-outlet:first') : $('div[data-role="pageContainer"]:first').parent();
+    private getPageTransitionTarget() {
+        if (!this.pageTransitionTarget) {
+            const pageOutlet = $('app-page-outlet:first').length ? $('app-page-outlet:first') : $('div[data-role="pageContainer"]:first').parent();
+            this.pageTransitionTarget = pageOutlet.children().first().clone();
+            pageOutlet.prepend(this.pageTransitionTarget);
+        }
+        return this.pageTransitionTarget;
     }
 
     /**
@@ -222,17 +237,18 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     ngAfterViewInit(): void {
+        this.$page = this.pageDirective.$element.parent();
+        if (isIos()) {
+            this.$page.addClass('ios-page')
+        }
+        if (isAndroid()) {
+            this.$page.addClass('android-page')
+        }
         this.loadScripts().then(() => {
             const transition = this.navigationService.getPageTransition();
-            if (transition) {
-                const pageOutlet = this.getPageTransitionTarget();
-                pageOutlet.prepend(pageOutlet.children().first().clone());
-            }
-            this.runPageTransition(transition).then(() => {
-                this.pageTransitionCompleted = true;
-                (this as any).compilePageContent = true;
-            }).then(() => {
-                setTimeout(() => {
+            this.runPageTransition(transition)
+                .then(() => {
+                    (this as any).compilePageContent = true;
                     unMuteWatchers();
                     this.viewInit$.complete();
                     this.onPageContentReady = () => {
@@ -241,8 +257,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                         });
                         this.onPageContentReady = noop;
                     };
-                }, 300);
-            });
+                });
         });
     }
 
