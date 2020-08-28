@@ -85,6 +85,8 @@ class Internals {
         this.nXhr.responseURL = req.responseURL;
         this.nXhr.responseXML = req.responseXML;
         this.nXhr.responseText = req.responseText;
+        this.responseHeaderText = req.getAllResponseHeaders();
+        this.nXhr.getResponseHeader = header => req.getResponseHeader(header);
     }
 
     public sendViaXhr(body) {

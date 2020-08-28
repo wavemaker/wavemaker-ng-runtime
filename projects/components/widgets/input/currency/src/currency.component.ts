@@ -3,7 +3,7 @@ import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import {  DecimalPipe } from '@angular/common';
 
 import { CURRENCY_INFO, AbstractI18nService } from '@wm/core';
-import { IWidgetConfig, provideAs, provideAsWidgetRef } from '@wm/components/base';
+import { IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe } from '@wm/components/base';
 import { NumberLocale } from '@wm/components/input';
 
 import { registerProps } from './currency.props';
@@ -40,8 +40,8 @@ export class CurrencyComponent extends NumberLocale {
     @ViewChild(NgModel, {static: true}) ngModel: NgModel;
     @ViewChild('input', { static: true, read: ElementRef }) inputEl: ElementRef;
 
-    constructor(inj: Injector, i18nService: AbstractI18nService, decimalPipe: DecimalPipe) {
-        super(inj, WIDGET_CONFIG, i18nService, decimalPipe);
+    constructor(inj: Injector, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe) {
+        super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe);
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {

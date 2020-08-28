@@ -7,6 +7,7 @@ import { BaseFormCustomComponent } from '../../base-form-custom.component';
 
 export abstract class BaseInput extends BaseFormCustomComponent implements AfterViewInit {
     public class: string;
+    public autotrim: boolean;
 
     // possible values for ngModelOptions are 'blur' and 'change'
     // default is 'blur'
@@ -51,6 +52,9 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
 
     // invoke the change callback
     handleChange(newValue: any) {
+        if (this.autotrim && this.datavalue) {
+            this.datavalue = this.datavalue.trim();
+        }
         this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
     }
 

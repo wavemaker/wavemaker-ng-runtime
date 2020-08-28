@@ -654,7 +654,7 @@ export const simulateFileDownload = (requestParams, fileName, exportFormat, succ
         if (exportFormat) {
             fileExtension = exportTypesMap[exportFormat];
         }
-        appManager.notify('device-file-download', { url: requestParams.url, name: fileName, extension: fileExtension, successCb: success, errorCb: error});
+        appManager.notify('device-file-download', { url: requestParams.url, name: fileName, extension: fileExtension, headers: requestParams.headers, successCb: success, errorCb: error});
     } else if (!_.isEmpty(requestParams.headers) || isXsrfEnabled()) {
         downloadThroughAnchor(requestParams, success, error);
     } else {

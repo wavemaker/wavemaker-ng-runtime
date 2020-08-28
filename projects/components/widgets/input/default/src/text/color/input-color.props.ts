@@ -3,6 +3,7 @@ import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/
 export const inputColorTypeProps = new Map([
     ['autocomplete', {value: true, ...PROP_BOOLEAN}],
     ['autofocus', PROP_BOOLEAN],
+    ['autotrim', {value: true, ...PROP_BOOLEAN}],
     ['class', PROP_STRING],
     ['datavaluesource', PROP_ANY],
     ['datavalue', PROP_STRING],

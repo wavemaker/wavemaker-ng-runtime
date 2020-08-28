@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { File } from '@ionic-native/file';
 
-import { AbstractHttpService, App, hasCordova, noop } from '@wm/core';
+import { AbstractHttpService, App, hasCordova, noop, isSpotcues } from '@wm/core';
 import { DeviceFileService, DeviceFileUploadService, DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 
@@ -107,7 +107,7 @@ export class OfflineModule {
         networkService: NetworkService,
         securityService: SecurityService
     ) {
-        if (hasCordova()) {
+        if (hasCordova() && !isSpotcues) {
             OfflineModule.initialize(app,
                 changeLogService,
                 deviceService,

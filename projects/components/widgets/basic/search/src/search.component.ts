@@ -445,7 +445,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             dropdownEl.css({ position: 'relative', top: 0, height: screenHeight + 'px' });
             this.showClosebtn = this.query && this.query !== '';
 
-            if (!this.dataProvider.isLastPage) {
+            if (!_.isUndefined(this.dataProvider.isLastPage) && !this.dataProvider.isLastPage) {
                 this.triggerSearch();
             }
         }
@@ -633,7 +633,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 }
 
                 // In mobile, trigger the search by default until the results have height upto page height. Other results can be fetched by scrolling
-                if (this._isOpen && this.isMobileAutoComplete() && !this.dataProvider.isLastPage) {
+                if (this._isOpen && this.isMobileAutoComplete() && !_.isUndefined(this.dataProvider.isLastPage) && !this.dataProvider.isLastPage) {
                     this.triggerSearch();
                 }
 

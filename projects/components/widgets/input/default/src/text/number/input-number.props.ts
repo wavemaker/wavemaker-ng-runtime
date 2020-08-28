@@ -4,6 +4,7 @@ export const inputNumberTypeProps = new Map(
     [
         ['autocomplete', {value: true, ...PROP_BOOLEAN}],
         ['autofocus', PROP_BOOLEAN],
+        ['autotrim', {value: true, ...PROP_BOOLEAN}],
         ['class', PROP_STRING],
         ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
