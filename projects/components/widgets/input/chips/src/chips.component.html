@@ -1,4 +1,4 @@
-<li class="chip-item" role="option" *ngFor="let item of chipsList; let $index = index;"
+<li class="chip-item {{chipclass && !bindChipclass ? chipclass : ''}}" role="option" *ngFor="let item of chipsList; let $index = index;"
     [ngClass]="{'active': item.active, 'disabled': disabled}">
     <a class="app-chip" href="javascript:void(0);" tabindex="-1"
        (click)="handleChipClick($event, item)"

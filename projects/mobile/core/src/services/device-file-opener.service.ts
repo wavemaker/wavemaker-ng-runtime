@@ -40,8 +40,8 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
         });
     }
 
-    public openRemoteFile(url: string, extension: string, fileName?: string): Promise<void> {
-        return this.getLocalPath(url, extension, fileName)
+    public openRemoteFile(url: string, extension: string, fileName?: string, headers?: any): Promise<void> {
+        return this.getLocalPath(url, extension, fileName, headers)
             .then(filePath => {
                 return this.getFileMimeType(filePath).then(type => {
                     return this.cordovaFileOpener.open(filePath, type);
@@ -79,7 +79,7 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
         return fileName;
     }
 
-    private getLocalPath(url: string, extension?: string, filename?: string): Promise<string> {
+    private getLocalPath(url: string, extension?: string, filename?: string, headers?: any): Promise<string> {
         return new Promise( (resolve, reject) => {
             return this.cacheService.getLocalPath(url, false, false)
                     .then( filePath => {
@@ -100,7 +100,7 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
                                 });
                         }
                     }).catch(() => {
-                        this.downloadService.download(url, false, this._downloadsFolder, filename)
+                        this.downloadService.download(url, false, this._downloadsFolder, filename, undefined, headers)
                             .then(filePath => {
                                 this.cacheService.addEntry(url, filePath);
                                 resolve(filePath);

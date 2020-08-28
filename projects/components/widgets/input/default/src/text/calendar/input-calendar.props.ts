@@ -3,6 +3,7 @@ import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/
 export const inputCalendarTypeProps = new Map(
     [
         ['autocomplete', {value: true, ...PROP_BOOLEAN}],
+        ['autotrim', {value: true, ...PROP_BOOLEAN}],
         ['autofocus', PROP_BOOLEAN],
         ['class', PROP_STRING],
         ['datasource', PROP_ANY],
