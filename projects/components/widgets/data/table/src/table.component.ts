@@ -631,7 +631,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.isLoading = val === 'loading';
         },
         noChangesDetected: () => {
-            this.toggleMessage(true, 'info', 'No Changes Detected');
+            this.toggleMessage(true, 'info', 'No Changes Detected', '');
         },
         // Function to redraw the widgets on resize of columns
         redrawWidgets: () => {
