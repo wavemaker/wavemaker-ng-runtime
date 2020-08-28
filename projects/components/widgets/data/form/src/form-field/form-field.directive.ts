@@ -35,7 +35,7 @@ const FILE_TYPES = {
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
     static initializeProps = registerProps();
 
-    @ContentChild('formWidget') formWidget;
+    @ContentChild('formWidget', {static: true}) formWidget;
     @ContentChild('formWidgetMax') formWidgetMax;
 
     private fb;
@@ -102,7 +102,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Attribute('displaylabel.bind') binddisplaylabel: string,
         @Attribute('widgettype') _widgetType,
         @Attribute('name') name,
-        @Attribute('displayimagesrc.bind') binddisplayimagesrc:String,
+        @Attribute('displayimagesrc.bind') binddisplayimagesrc: String,
         @Attribute('key') key,
         @Attribute('is-range') isRange,
         @Attribute('pc-display') pcDisplay,
@@ -207,7 +207,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     // sets the custom async validation on the form field
-    setAsyncValidators(validators){
+    setAsyncValidators(validators) {
         this.fieldValidations.setAsyncValidators(validators);
     }
 
