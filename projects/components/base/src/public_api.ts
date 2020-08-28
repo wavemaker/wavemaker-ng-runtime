@@ -94,7 +94,8 @@ export {
     FileSizePipe,
     FileIconClassPipe,
     StateClassPipe,
-    FileExtensionFromMimePipe    
+    FileExtensionFromMimePipe,
+    TrailingZeroDecimalPipe   
 } from './pipes/custom-pipes';
 export * from './pipes/trust-as.pipe';
 export * from './pipes/image.pipe';
