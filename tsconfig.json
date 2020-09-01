@@ -98,5 +98,8 @@
                 "libraries/mobile/runtime-dynamic"
             ]
         }
+    },
+    "angularCompilerOptions":{
+        "enableIvy": false
     }
 }
