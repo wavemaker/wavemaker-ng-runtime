@@ -42,7 +42,7 @@ export const rollupGlobals = {
     'ngx-bootstrap': 'ngx-bootstrap',
     'ng-circle-progress': 'ngCircleProgress',
     'ngx-bootstrap/pagination': 'ngx-bootstrap',
-    'ngx-color-picker': 'zef.ngxColorPicker',
+    'ngx-color-picker': 'ngx-color-picker',
     'angular-imask': 'angular-imask',
     'ngx-toastr': 'ngxToastr',
     'rxjs': 'rxjs',
