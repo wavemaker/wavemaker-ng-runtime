@@ -10,7 +10,7 @@
                 "@angular/core": "ng.core",
                 "@angular/forms": "ng.forms",
 
-                "ngx-color-picker": "zef.ngxColorPicker",
+                "ngx-color-picker": "ngx-color-picker",
 
                 "@wm/core": "wm.core",
                 "@wm/components/input": "wm.components.input",
