@@ -170,7 +170,8 @@ export const checkIsCustomPipeExpression = function(exp){
 // The bound value is replaced with {{item.fieldname}} here. This is needed by the liveList when compiling inner elements
 export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string, instance: string = '', referenceName: string = 'item') => {
 
-    const regex = new RegExp('(' + parentDataSet + ')(\\[0\\])?(.data\\[\\$i\\])?(.content\\[\\$i\\])?(\\[\\$i\\])?', 'g');
+    const sanitizedParentDataset = parentDataSet.replace(/([^a-zA-Z0-9.])/g, '\\$1');
+    const regex = new RegExp('(' + sanitizedParentDataset + ')(\\[0\\])?(.data\\[\\$i\\])?(.content\\[\\$i\\])?(\\[\\$i\\])?', 'g');
     let currentItemRegEx;
     let currentItemWidgetsRegEx;
     let formWidgetsRegex;
