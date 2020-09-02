@@ -426,7 +426,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (!this.chipsList || !this.chipsList.length || this.searchComponent.query) {
             return;
         }
-        this.$element.find('li.chip-item > a.app-chip:last').focus();
+        this.$element.find('li.chip-item > a.app-chip:last-child').focus();
         this.stopEvent($event);
     }
 
@@ -451,7 +451,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         // On left arrow click when search input query is empty.
         if (!this.searchComponent.query && !isDefined($index) && !isDefined($item)) {
-            this.$element.find('li.chip-item > a.app-chip:last').focus();
+            this.$element.find('li.chip-item > a.app-chip:last-child').focus();
             return;
         }
 
@@ -468,7 +468,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
         // On right arrow click when search input query is empty.
         if (!this.searchComponent.query && !isDefined($index) && !isDefined($item)) {
-            this.$element.find('li.chip-item > a.app-chip:first').focus();
+            this.$element.find('li.chip-item > a.app-chip:first-child').focus();
             return;
         }
 

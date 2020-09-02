@@ -200,7 +200,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     getPageTransitionTarget() {
         // Looks for 'app-page-target' tag for WM BUild & 'app-page-*' tag for Ng Build
-        return $('app-page-outlet:first').length ? $('app-page-outlet:first') : $('div[data-role="pageContainer"]:first').parent();
+        return $('app-page-outlet:first-child').length ? $('app-page-outlet:first-child') : $('div[data-role="pageContainer"]:first-child').parent();
     }
 
     /**

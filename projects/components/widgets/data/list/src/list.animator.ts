@@ -22,7 +22,7 @@ export class ListAnimator extends SwipeAnimation {
 
     constructor(private list: ListComponent) {
         super();
-        this.$el = $(this.list.getNativeElement()).find('ul.app-livelist-container:first');
+        this.$el = $(this.list.getNativeElement()).find('ul.app-livelist-container:first-child');
 
         this.leftChildrenCount = this.$el.find('>.app-list-item-left-action-panel > button:visible').length;
         this.rightChildrenCount = this.$el.find('>.app-list-item-right-action-panel > button:visible').length;

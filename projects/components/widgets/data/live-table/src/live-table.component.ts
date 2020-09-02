@@ -89,7 +89,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     focusFirstInput() {
-        const $firstInput = $(this.form.$element).find('[role="input"]:first');
+        const $firstInput = $(this.form.$element).find('[role="input"]:first-child');
         $firstInput.focus();
         $firstInput.select();
     }

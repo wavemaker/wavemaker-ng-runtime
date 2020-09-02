@@ -41,7 +41,7 @@ export class MediaListComponent extends StylableComponent {
         if (!this.$fullScreenEle) {
             setTimeout(() => {
                 this.$fullScreenEle = this.$element.find('>.app-media-fullscreen');
-                this.$fullScreenEle.appendTo('body:first');
+                this.$fullScreenEle.appendTo('body:first-child');
             }, 100);
         }
         return true;

@@ -277,7 +277,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     private selectNode(evt, value) {
         const target = evt && $(evt.target),
             $el = $(this.nativeElement),
-            $li = _.isObject(value) ? value : $el.find(`li[id="${value}"]:first`);
+            $li = _.isObject(value) ? value : $el.find(`li[id="${value}"]:first-child`);
         let data,
             path = '',
             $liPath,

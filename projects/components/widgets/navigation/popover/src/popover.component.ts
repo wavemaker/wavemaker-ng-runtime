@@ -140,7 +140,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         const root = findRootContainer(this.$element);
         // if page styles have to be applied to popover then popover has to be child of page element.
         if (root) {
-            $('body:first > popover-container').wrap('<' + root + '/>');
+            $('body:first-child > popover-container').wrap('<' + root + '/>');
         }
 
         if (activePopover && activePopover.isOpen) {

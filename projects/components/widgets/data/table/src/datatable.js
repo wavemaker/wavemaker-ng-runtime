@@ -983,7 +983,7 @@ $.widget('wm.datatable', {
         var self = this,
             headerCols = this.options.isMobile ? this.gridElement.find('col') : this.gridHeaderElement.find('col'),
             bodyCols = this.gridElement.find('col'),
-            headerCells = this.options.showHeader ? this.gridContainer.find('th.app-datagrid-header-cell') : this.gridElement.find('tr.app-datagrid-row:first td'),
+            headerCells = this.options.showHeader ? this.gridContainer.find('th.app-datagrid-header-cell') : this.gridElement.find('tr.app-datagrid-row:first-child td'),
             colLength = this.preparedHeaderData.length,
             scrollLeft = this.gridElement.parent().prop('scrollLeft'); //Preserve the scroll left to keep the same scroll after setting width
         if (!headerCols.length && !headerCells.length) {
@@ -1223,9 +1223,9 @@ $.widget('wm.datatable', {
         //If visible flag is true, select the first visible row item (Do not select the always new row)
         if (visible && this.gridElement.find('tBody').is(':visible')) {
             this.__setStatus();
-            $row = this.gridElement.find('tBody tr.app-datagrid-row:visible:not(.always-new-row):first');
+            $row = this.gridElement.find('tBody tr.app-datagrid-row:visible:not(.always-new-row):first-child');
         } else {
-            $row = this.gridElement.find('tBody tr.app-datagrid-row:not(.always-new-row):first');
+            $row = this.gridElement.find('tBody tr.app-datagrid-row:not(.always-new-row):first-child');
         }
         id = $row.attr('data-row-id');
         // Select the first row if it exists, i.e. it is not the first row being added.

@@ -110,7 +110,7 @@ export class MenuDropdownItemComponent implements OnInit {
             $event.stopPropagation();
             if (this.item.children.length) {
                 $li.toggleClass('open');
-                $li.find('li:first > a').focus();
+                $li.find('li:first-child > a').focus();
             } else {
                 $li.find('> a').focus();
             }
@@ -125,13 +125,13 @@ export class MenuDropdownItemComponent implements OnInit {
                 $event.stopPropagation();
             }
         } else if (eventAction === KEY_MOVEMENTS.MOVE_UP) {
-            if ($parentUl[0] !== $ul[0] || $parentUl.find('> li:first')[0] !== this.nativeElement) {
+            if ($parentUl[0] !== $ul[0] || $parentUl.find('> li:first-child')[0] !== this.nativeElement) {
                 $event.stopPropagation();
                 $li.prev().find('> a').focus();
             }
         } else if (eventAction === KEY_MOVEMENTS.MOVE_DOWN) {
             $event.stopPropagation();
-            if ($parentUl.find('> li:last')[0] === this.nativeElement
+            if ($parentUl.find('> li:last-child')[0] === this.nativeElement
                 && (this.menuRef.menulayout !== MENU_LAYOUT_TYPE.HORIZONTAL
                     && this.menuRef.menuposition === MENU_POSITION.UP_RIGHT
                     || this.menuRef.menuposition === MENU_POSITION.UP_LEFT)) {

@@ -17,7 +17,7 @@ const invokeOpenedCallback = (ref) => {
             const root = findRootContainer(ref.$element);
             // if page styles have to be applied to dialog then dialog has to be child of page element.
             if (root) {
-                $('body:first > modal-container > div').wrap('<' + root + '/>');
+                $('body:first-child > modal-container > div').wrap('<' + root + '/>');
             }
             ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
         });
