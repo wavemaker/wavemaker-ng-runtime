@@ -162,6 +162,7 @@ export class MenuDropdownItemComponent implements OnInit {
         const selectedItem = _.clone(item);
         selectedItem.target = selectedItem.target || this.menuRef.linktarget;
         // Trigger the action associated with active item
+        _.extend((this.userDefinedExecutionContext as any).Variables, (this.userDefinedExecutionContext as any).Actions)
         triggerItemAction(this, selectedItem);
     }
 }
