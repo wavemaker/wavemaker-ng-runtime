@@ -23,7 +23,7 @@ import {
     extendProto,
     $invokeWatchers
 } from '@wm/core';
-import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData } from '@wm/components/base';
+import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 
 import { ListComponent } from '@wm/components/data/list';
@@ -261,6 +261,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         name: '',
         messages: {
             selectField: 'Select Field'
+        },
+        securityUtils: {
+            pipeTransform : {}
         },
         onDataRender: () => {
             this.ngZone.run(() => {
@@ -758,7 +761,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         @Attribute('dataset.bind') public binddataset,
         @Attribute('datasource.bind') public binddatasource,
         @Attribute('readonlygrid') public readonlygrid,
-        private ngZone: NgZone
+        private ngZone: NgZone,
+        private trustAsPipe: TrustAsPipe
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
@@ -835,6 +839,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.searchLabel = this.searchlabel;
         this.gridOptions.isMobile = isMobile();
         this.gridOptions.name = this.name;
+        this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
         if (!_.isEmpty(this.gridData)) {
