@@ -1,6 +1,6 @@
 import { AfterViewInit, ElementRef, Injector } from '@angular/core';
 import { NgModel } from '@angular/forms';
-
+import { setCSS } from '@wm/core';
 import { $appDigest, addClass, switchClass } from '@wm/core';
 import { IWidgetConfig, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '../../base-form-custom.component';
@@ -94,5 +94,6 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         let updateOn = this.nativeElement.getAttribute('updateon') || 'blur';
         updateOn = updateOn === 'default' ? 'change' : updateOn;
         this.ngModelOptions.updateOn = updateOn;
+        setCSS(this.nativeElement,'height', '100%')
     }
 }
