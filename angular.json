@@ -11,11 +11,8 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "customWebpackConfig": {
-              "path": "./wm-custom-webpack.config.js"
-            },
             "deployUrl": "ng-bundle/",
             "outputPath": "dist/ng-bundle",
             "index": "src/index.html",
