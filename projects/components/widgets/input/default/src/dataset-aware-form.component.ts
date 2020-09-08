@@ -206,7 +206,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         // if no item is found in datasetItems, wait untill the dataset updates by preserving the datavalue in toBeProcessedDatavalue.
         if (!isDefined(this._modelByKey) || (_.isArray(this._modelByKey) && !this._modelByKey.length)) {
             this.toBeProcessedDatavalue = values;
-            this._modelByValue = undefined;
+            this._modelByValue = '';
         } else if (isDefined(this.toBeProcessedDatavalue)) {
             // obtain the first array value when multiple is set to false.
             // set the modelByValue only when undefined.
