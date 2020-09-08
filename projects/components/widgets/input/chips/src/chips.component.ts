@@ -92,6 +92,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         const datasetSubscription = this.dataset$.subscribe(() => {
             this.searchComponent.dataset = this.dataset;
+            // clearing the last results when dataset is reassigned
+            (this.searchComponent as any)._lastResult = undefined;
             this.nextItemIndex = this.datasetItems.length;
             this._debounceUpdateQueryModel(this.datavalue || this.toBeProcessedDatavalue);
         });
