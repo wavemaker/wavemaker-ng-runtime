@@ -558,6 +558,7 @@ export const isPageable = (obj: any): boolean => {
         'first': true,
         'last': true,
         'number': 0,
+        'empty': true,
         'numberOfElements': 10,
         'size': 20,
         'sort': null,
