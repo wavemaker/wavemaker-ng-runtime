@@ -186,7 +186,6 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
             if (k === '[ngClass]' && v.startsWith('{')) {
                 v = v.replace(/"/g, `'`);
             }
-            // Device: isMObileView, isTabletProtrait, isTabletLandscape, LargeScrEen => App.
             if (k === 'show.bind' && attrs.get('deferload') === 'true') {
                 v = v + `" *lazyLoad="${wrapWithApos(v)}`;
             }
