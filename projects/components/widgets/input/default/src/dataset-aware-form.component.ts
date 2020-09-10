@@ -228,7 +228,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             }
         });
 
-        this.displayValue = this.multiple ? displayValues : displayValues[0];
+        this.displayValue = this.multiple ? displayValues : displayValues[0] || '';
     }
 
     // This function parses the dataset and extracts the displayOptions from parsed dataset.
