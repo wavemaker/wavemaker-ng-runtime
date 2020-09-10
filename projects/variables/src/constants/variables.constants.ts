@@ -312,12 +312,9 @@ export const VARIABLE_URLS = {
         url: '/:service/:dataModelName/procedureExecutor/procedure/execute/:procedureName?page=:page&size=:size&:procedureParams',
             method: 'GET'
     },
-    countTableDataWithQuery : {
-        url: '/:service/:dataModelName/:entityName/count',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
+    countTableDataWithQuery: {
+        url: '/:service/:dataModelName/:entityName/count?:queryParams',
+        method: 'GET'
     }
 },
     oauthConfiguration : {
