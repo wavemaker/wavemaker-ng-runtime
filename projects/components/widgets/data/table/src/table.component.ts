@@ -379,6 +379,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.fieldDefs.forEach(col => {
                     if (col[widget]) {
                         this.formWidgets[col.field] = col[widget];
+                        // Adding formwidgets to the context for inlineinstance widget when fieldDefs were ready
+                        if (col[widget].context) {
+                            col[widget].context.formWidgets = this.formWidgets;
+                        }
                         this.setDisabledOnField(operation, col, widget);
                     }
                 });
@@ -539,7 +543,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     let fieldName;
                     const context = {
                         row,
-                        formWidgets: this.formWidgets,
                         getControl: () => {
                             return this.ngform.controls[fieldName + '_new'] || {};
                         },
@@ -566,7 +569,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 let fieldName;
                 const context = {
                     row,
-                    formWidgets: this.formWidgets,
                     getControl: () => {
                         return this.ngform.controls[fieldName] || {};
                     },

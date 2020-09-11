@@ -8,7 +8,7 @@ export const radiosetProps = new Map(
         ['datafield', PROP_STRING],
         ['dataset', {value: 'Option 1, Option 2, Option 3', ...PROP_ANY}],
         ['datavaluesource', PROP_ANY],
-        ['datavalue', PROP_STRING],
+        ['datavalue', PROP_ANY],
         ['disabled', PROP_BOOLEAN],
         ['displayexpression', PROP_STRING],
         ['displayfield', PROP_STRING],

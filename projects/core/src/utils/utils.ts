@@ -14,7 +14,7 @@ declare const document;
 declare const resolveLocalFileSystemURL;
 declare const $;
 declare const WM_CUSTOM_FORMATTERS;
-
+declare const MSCSSMatrix;
 
 const userAgent = window.navigator.userAgent;
 const REGEX = {
@@ -72,7 +72,7 @@ export const isIE = () => {
 
 export const isAndroid = () => REGEX.ANDROID.test(userAgent);
 
-export const isAndroidTablet = () => REGEX.ANDROID_TABLET.test(userAgent);
+export const isAndroidTablet = () => REGEX.ANDROID_TABLET.test(userAgent) && !((/Tablet PC 2.0/i).test(userAgent));
 
 export const isIphone = () => REGEX.IPHONE.test(userAgent);
 export const isIpod = () => REGEX.IPOD.test(userAgent);
@@ -351,7 +351,12 @@ export const getDateObj = (value, options?): Date => {
      * To create date in local time use moment
      */
     if (_.isString(value)) {
-        dateObj = new Date(moment(value).format());
+        /*
+         * If selected locale is Arabic, moment(value).format() is giving date in Arabic language
+         * (Ex: If date value is "1990-11-23" and moment(value).format() is "١٩٩٠-١١-٢٣T٠٠:٠٠:٠٠+٠٥:٣٠")
+         * and new Date(moment(value).format()) is giving Invalid Date. So frst converting it to timestamp value.
+        */
+        dateObj = new Date(moment(moment(value).format()).valueOf());
     }
 
     if (value === CURRENT_DATE || isNaN(dateObj.getDay())) {
@@ -1283,9 +1288,12 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
     *
     * @param containerElem elemet for the WebKitCSSMatrix
     */
-   export const getWebkitTraslationMatrix = (containerElem) => {
-     return  new WebKitCSSMatrix(window.getComputedStyle(containerElem[0]).webkitTransform)
-   }
+    export const getWebkitTraslationMatrix = (containerElem) => {
+        if (typeof WebKitCSSMatrix === 'undefined') {
+            return new MSCSSMatrix(window.getComputedStyle(containerElem[0]).transform);
+        }
+        return new WebKitCSSMatrix(window.getComputedStyle(containerElem[0]).webkitTransform);
+    }
 
 // close all the popovers.
 export const closePopover = (element) => {
@@ -1408,7 +1416,7 @@ export const VALIDATOR = {
 
 export const transformFileURI = (url) => {
     if(url && hasCordova() && isIos() && url.startsWith('file://')) {
-        return url.replace('file://', 'http://' + location.host + '/local-filesystem');
+        return url.replace('file://', '/_app_file_');
     }
     return url;
 };

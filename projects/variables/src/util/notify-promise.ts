@@ -24,7 +24,7 @@ export class NotifyPromise {
                     cleanUp();
                 },
                 reason => {
-                    onResolve(reason);
+                    onReject(reason);
                     cleanUp();
                 }
             );

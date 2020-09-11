@@ -17,6 +17,19 @@ const getEpochValue = data => {
 };
 
 @Pipe({
+    name: 'trailingZeroDecimalPipe'
+})
+export class TrailingZeroDecimalPipe implements PipeTransform {
+    transform(value: any, selectedLocale: string, numberfilter: string, localefilter: any, trailingzero: boolean, decimalValue: string): any {
+        numberfilter = trailingzero ? `1.${decimalValue.length}-16`: numberfilter;
+        return this.decimalPipe.transform(value, numberfilter, localefilter || selectedLocale);
+    }
+
+    constructor(private decimalPipe: DecimalPipe) { }
+
+}
+
+@Pipe({
     name: 'toDate'
 })
 export class ToDatePipe implements PipeTransform {
@@ -239,7 +252,7 @@ export class StateClassPipe implements PipeTransform {
     transform(state) {
         const stateClassMap = {
             'success'   : 'wi wi-done text-success',
-            'error'     : 'wi wi-cancel text-danger'
+            'error'     : 'wi wi-error text-danger'
         };
         return stateClassMap[state.toLowerCase()];
     }

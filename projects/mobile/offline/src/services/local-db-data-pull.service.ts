@@ -254,7 +254,7 @@ export class LocalDBDataPullService {
         const params = {
             dataModelName: db.schema.name,
             entityName: entitySchema.entityName,
-            data: filter
+            queryParams: filter
         };
         return this.retryIfNetworkFails(() => {
             return this.executeDatabaseCountQuery(params).then(function (response) {

@@ -16,8 +16,7 @@ const getUploadEventTmpl = (attrs, counter?, fieldName?) => {
     });
     return eventTmpl;
 };
-// WMS-18936 | Explicitly set default values for Dynamic Forms
-const setDefaultVal = (attrs) => attrs.get('defaultvalue') && !attrs.get('datavalue') ? ` datavalue="${attrs.get('defaultvalue')}" ` : ``;
+
 // Method to get the form widget template
 export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, attrs?: Map<string, string>, options: any = {}) => {
     let tmpl;
@@ -41,16 +40,16 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmColorPicker ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl}></div>`;
             break;
         case FormWidgetType.CURRENCY:
-            tmpl = `<div wmCurrency ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl}  ${setDefaultVal(attrs)}></div>`;
+            tmpl = `<div wmCurrency ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl}></div>`;
             break;
         case FormWidgetType.DATE:
-            tmpl = `<div wmDate ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} ${setDefaultVal(attrs)}></div>`;
+            tmpl = `<div wmDate ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.DATETIME:
-            tmpl = `<div wmDateTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} ${setDefaultVal(attrs)}></div>`;
+            tmpl = `<div wmDateTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<div wmNumber ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} type="number" aria-label="Only numbers" ${updateOnTmpl}  ${setDefaultVal(attrs)}></div>`;
+            tmpl = `<div wmNumber ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} type="number" aria-label="Only numbers" ${updateOnTmpl}></div>`;
             break;
         case FormWidgetType.PASSWORD:
             tmpl = `<wm-input ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} type="password" aria-label="Enter password" ${updateOnTmpl}></wm-input>`;
@@ -62,10 +61,10 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmRating ${innerTmpl}></div>`;
             break;
         case FormWidgetType.RICHTEXT:
-            tmpl = `<div wmRichTextEditor role="textbox" ${innerTmpl} ${setDefaultVal(attrs)}></div>`;
+            tmpl = `<div wmRichTextEditor role="textbox" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.SELECT:
-            tmpl = `<wm-select ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl}  ${setDefaultVal(attrs)}></wm-select>`;
+            tmpl = `<wm-select ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl}></wm-select>`;
             break;
         case FormWidgetType.TOGGLE:
             tmpl = `<div wmCheckbox ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} type="toggle" role="checkbox" aria-label="Toggle button"></div>`;
@@ -78,13 +77,13 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             break;
         case FormWidgetType.TEXT:
             const inputType = options.inputType || 'inputtype';
-            tmpl = `<wm-input ${innerTmpl}  ${attrs.get('required')==='true' ? 'required=true' : ''} type="${attrs.get(inputType) || 'text'}" aria-describedby="Enter text" ${updateOnTmpl} ${setDefaultVal(attrs)}></wm-input>`;
+            tmpl = `<wm-input ${innerTmpl}  ${attrs.get('required')==='true' ? 'required=true' : ''} type="${attrs.get(inputType) || 'text'}" aria-describedby="Enter text" ${updateOnTmpl}></wm-input>`;
             break;
         case FormWidgetType.TEXTAREA:
-            tmpl = `<wm-textarea ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} role="textbox" aria-describedby="Place your text" ${updateOnTmpl}  ${setDefaultVal(attrs)}></wm-textarea>`;
+            tmpl = `<wm-textarea ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} role="textbox" aria-describedby="Place your text" ${updateOnTmpl}></wm-textarea>`;
             break;
         case FormWidgetType.TIME:
-            tmpl = `<div wmTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} ${setDefaultVal(attrs)}></div>`;
+            tmpl = `<div wmTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.TIMESTAMP:
             tmpl = `<div wmDateTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} role="input"></div>`;
@@ -109,7 +108,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             }
             break;
         default:
-            tmpl = `<wm-input ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} aria-describedby="Enter text" type="text" ${updateOnTmpl}  ${setDefaultVal(attrs)}></wm-input>`;
+            tmpl = `<wm-input ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} aria-describedby="Enter text" type="text" ${updateOnTmpl}></wm-input>`;
             break;
     }
     return tmpl;
@@ -171,7 +170,8 @@ export const checkIsCustomPipeExpression = function(exp){
 // The bound value is replaced with {{item.fieldname}} here. This is needed by the liveList when compiling inner elements
 export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDataSet: string, widgetName: string, instance: string = '', referenceName: string = 'item') => {
 
-    const regex = new RegExp('(' + parentDataSet + ')(\\[0\\])?(.data\\[\\$i\\])?(.content\\[\\$i\\])?(\\[\\$i\\])?', 'g');
+    const sanitizedParentDataset = parentDataSet.replace(/([^a-zA-Z0-9.])/g, '\\$1');
+    const regex = new RegExp('(' + sanitizedParentDataset + ')(\\[0\\])?(.data\\[\\$i\\])?(.content\\[\\$i\\])?(\\[\\$i\\])?', 'g');
     let currentItemRegEx;
     let currentItemWidgetsRegEx;
     let formWidgetsRegex;

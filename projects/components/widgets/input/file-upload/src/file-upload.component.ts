@@ -229,6 +229,9 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                                 file.status = 'success';
                             } else {
                                 file.status = progressObj.status;
+                                if (progressObj.errMsg) {
+                                    file.errMsg = progressObj.errMsg;
+                                }
                             }
                         }
                     });

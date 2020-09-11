@@ -2,7 +2,7 @@ import { DatePickerInnerComponent } from 'ngx-bootstrap/datepicker/datepicker-in
 
 import { AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
-import { $watch, getClonedObject, getSessionStorageItem, isMobile, AbstractI18nService } from '@wm/core';
+import {$watch, getClonedObject, getSessionStorageItem, AbstractI18nService, isMobileApp} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, createArrayFrom, getEvaluatedData, IWidgetConfig, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
@@ -426,7 +426,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     constructor(inj: Injector, i18nService: AbstractI18nService) {
         super(inj, WIDGET_CONFIG);
 
-        this.mobileCalendar = isMobile();
+        this.mobileCalendar = isMobileApp();
         this.eventSources.push(this.dataSetEvents);
         const FullCalendar = window['FullCalendar'];
         if (!FullCalendar.__wm_locale_initialized) {

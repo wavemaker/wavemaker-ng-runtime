@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpEventType, HttpRequest, HttpResponse } from '@angular/common/http';
+import {
+    HttpClient,
+    HttpEvent,
+    HttpEventType,
+    HttpHeaders,
+    HttpRequest,
+    HttpResponse
+} from '@angular/common/http';
 
 import { File } from '@ionic-native/file';
 import { Observer } from 'rxjs';
@@ -26,15 +33,16 @@ export class DeviceFileDownloadService {
 
     }
 
-    public download(url: string, isPersistent: boolean, destFolder?: string, destFile?: string, progressObserver?: Observer<any>): Promise<string> {
-        return this.addToDownloadQueue(url, isPersistent, destFolder, destFile, progressObserver);
+    public download(url: string, isPersistent: boolean, destFolder?: string, destFile?: string, progressObserver?: Observer<any>, headers?: any): Promise<string> {
+        return this.addToDownloadQueue(url, isPersistent, destFolder, destFile, progressObserver, headers);
     }
 
     // Adds to download request queue
-    private addToDownloadQueue(url: string, isPersistent: boolean, destFolder?: string, destFile?: string, progressObserver?: Observer<any>): Promise<string> {
+    private addToDownloadQueue(url: string, isPersistent: boolean, destFolder?: string, destFile?: string, progressObserver?: Observer<any>, headers?: any): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             this._downloadQueue.push({
                 url: url,
+                headers: headers,
                 isPersistent: isPersistent,
                 destFolder: destFolder,
                 destFile: destFile,
@@ -66,7 +74,7 @@ export class DeviceFileDownloadService {
         let filePath, blob;
         this._concurrentDownloads++;
 
-        return this.sendHttpRequest(req.url, req.progressObserver).then((e) => {
+        return this.sendHttpRequest(req.url, req.progressObserver, req.headers).then((e) => {
             blob = (e as HttpResponse<Blob>).body;
             return this.getFileName(e, req, blob.type);
         }).then((fileName) => {
@@ -129,8 +137,15 @@ export class DeviceFileDownloadService {
         return this.deviceFileService.newFileName(folder, filename);
     }
 
-    private sendHttpRequest(url: string, progressObserver: Observer<HttpEvent<any>>): Promise<HttpResponse<any>> {
+    private sendHttpRequest(url: string, progressObserver: Observer<HttpEvent<any>>, headers?: any): Promise<HttpResponse<any>> {
+        let reqHeaders = new HttpHeaders();
+
+        // headers
+        if (headers) {
+            Object.entries(headers).forEach(([k, v]) => reqHeaders = reqHeaders.append(k, v as string));
+        }
         const req = new HttpRequest('GET', url, {
+            headers: reqHeaders,
             responseType: 'blob',
             reportProgress: progressObserver != null
         });

@@ -1,4 +1,4 @@
-import {AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self} from '@angular/core';
+import { AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
@@ -29,7 +29,7 @@ const FILE_TYPES = {
     providers: [
         provideAsWidgetRef(FormFieldDirective),
         provideAs(FormFieldDirective, NG_VALUE_ACCESSOR, true),
-        {provide: Context, useValue: {}, multi: true}
+        { provide: Context, useValue: {}, multi: true }
     ]
 })
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
@@ -63,6 +63,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     viewmodewidget;
     binddataset;
     binddisplayexpression;
+    bindChipclass;
     displayimagesrc: string;
     binddisplayimagesrc;
     binddisplaylabel;
@@ -73,13 +74,15 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     period;
     isRange;
     name;
-
     // Validation properties
     required;
     maxchars;
     minvalue;
     maxvalue;
     regexp;
+    fieldDefConfig;
+    placeholder;
+    inputtype;
     validationmessage;
 
     public _fieldName;
@@ -97,12 +100,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         form: FormComponent,
         fb: FormBuilder,
         @Optional() parentList: ListComponent,
+        @Attribute('chipclass.bind') bindChipclass: string,
         @Attribute('dataset.bind') binddataset,
         @Attribute('displayexpression.bind') binddisplayexpression: string,
         @Attribute('displaylabel.bind') binddisplaylabel: string,
         @Attribute('widgettype') _widgetType,
         @Attribute('name') name,
-        @Attribute('displayimagesrc.bind') binddisplayimagesrc:String,
+        @Attribute('displayimagesrc.bind') binddisplayimagesrc: String,
         @Attribute('key') key,
         @Attribute('is-range') isRange,
         @Attribute('pc-display') pcDisplay,
@@ -116,11 +120,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         };
 
         super(inj, WIDGET_CONFIG, new Promise(res => this._initPropsRes = res));
-
+        this.fieldDefConfig = {};
         this.class = '';
         this.binddataset = binddataset;
         this.binddisplayimagesrc = binddisplayimagesrc;
         this.binddisplayexpression = binddisplayexpression;
+        this.bindChipclass = bindChipclass;
         this.binddisplaylabel = binddisplaylabel;
         this.form = form;
         this.fb = fb;
@@ -207,7 +212,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     // sets the custom async validation on the form field
-    setAsyncValidators(validators){
+    setAsyncValidators(validators) {
         this.fieldValidations.setAsyncValidators(validators);
     }
 
@@ -346,8 +351,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     // Get the displayValue
-    get displayValue () {
-    return this.formWidget && this.formWidget.displayValue;
+    get displayValue() {
+        return this.formWidget && this.formWidget.displayValue;
     }
 
     // Create the reactive form control
@@ -414,7 +419,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     triggerUploadEvent($event, eventName) {
-        const params: any = {$event};
+        const params: any = { $event };
         if (eventName === 'change') {
             params.newVal = $event.target.files;
             params.oldVal = this._oldUploadVal;
@@ -436,7 +441,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             }
             this.ngform.addControl(_fieldName, this.createControl());
             this._fieldName = _fieldName;
-         } else {
+        } else {
             this.ngform.addControl(fieldName, this.createControl());
         }
         const onValueChangeSubscription = this._control.valueChanges
@@ -457,7 +462,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 .subscribe(this.onValueChange.bind(this));
             this.registerDestroyListener(() => onMaxValueChangeSubscription.unsubscribe());
         }
-        this.value =  _.get(this.form.formdata, this._fieldName);
+        this.value = _.get(this.form.formdata, this._fieldName);
     }
 
     ngOnInit() {
@@ -478,6 +483,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.setFormWidget('binddisplaylabel', this.binddisplaylabel);
             this.setFormWidget('binddisplayexpression', this.binddisplayexpression);
             this.setFormWidget('binddisplayimagesrc', this.binddisplayimagesrc);
+            this.setFormWidget('bindChipclass', this.bindChipclass);
         }
 
         this.registerReadyStateListener(() => {
@@ -501,6 +507,25 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                     this.widget.show = false;
                 }
             }
+
+            this.fieldDefConfig.displaname = this.displayname;
+            this.fieldDefConfig.show = this.show;
+            this.fieldDefConfig.isRelated = this['is-related'];
+            this.fieldDefConfig.inputtype = this.inputtype;
+            this.fieldDefConfig.generator = this.generator;
+            this.fieldDefConfig.placeholder = this.placeholder;
+            this.fieldDefConfig.primaryKey = this['primary-key'];
+            this.fieldDefConfig.required = this.required;
+            this.fieldDefConfig._readonly = this.readonly;
+            this.fieldDefConfig.regexp = this.regexp
+            this.fieldDefConfig.type = this.type;
+            this.fieldDefConfig.key = this.key;
+            this.fieldDefConfig.mobileDisplay = this['mobile-display'];
+            this.fieldDefConfig.name = this.name;
+            this.fieldDefConfig.pcDisplay = this['pc-display'];
+            this.fieldDefConfig.validationmessage = this.validationmessage;
+            this.fieldDefConfig.viewmodewidget = this.viewmodewidget;
+            this.fieldDefConfig.widget = this.widgettype;
 
             // Register the form field with parent form
             this.form.registerFormFields(this.widget);

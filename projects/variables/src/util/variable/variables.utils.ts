@@ -71,6 +71,11 @@ const processVariablePostBindUpdate = (nodeName, nodeVal, nodeType, variable, no
                 }
             }
             break;
+        case VARIABLE_CONSTANTS.CATEGORY.CRUD:
+            if (variable.operationType === 'list' && variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
+                _invoke(variable, 'invoke');
+            }
+            break;
         case VARIABLE_CONSTANTS.CATEGORY.SERVICE:
         case VARIABLE_CONSTANTS.CATEGORY.LOGIN:
             if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
@@ -649,7 +654,7 @@ export const simulateFileDownload = (requestParams, fileName, exportFormat, succ
         if (exportFormat) {
             fileExtension = exportTypesMap[exportFormat];
         }
-        appManager.notify('device-file-download', { url: requestParams.url, name: fileName, extension: fileExtension, successCb: success, errorCb: error});
+        appManager.notify('device-file-download', { url: requestParams.url, name: fileName, extension: fileExtension, headers: requestParams.headers, successCb: success, errorCb: error});
     } else if (!_.isEmpty(requestParams.headers) || isXsrfEnabled()) {
         downloadThroughAnchor(requestParams, success, error);
     } else {

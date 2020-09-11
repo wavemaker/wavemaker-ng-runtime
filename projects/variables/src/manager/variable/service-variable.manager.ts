@@ -170,9 +170,17 @@ export class ServiceVariableManager extends BaseVariableManager {
             this.fileUploadCount++;
             this.failedFileUploadCount++;
             this.fileUploadResponse.push(e);
+            const errMsg = httpService.getErrMessage(e);
+            // if a file upload failed, notify the progress listener to take action
+            if (variable._progressObservable) {
+                variable._progressObservable.next({
+                    'status': "error",
+                    'fileName': file.name,
+                    'errMsg': errMsg
+                });
+            }
             if (this.totalFilesCount === this.fileUploadCount) {
-                this.processErrorResponse(variable, this.fileUploadResponse, error, options.xhrObj, options.skipNotification);
-                initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, this.fileUploadResponse);
+                this.processErrorResponse(variable, errMsg, error, e, options.skipNotification);
                 this.fileUploadResponse = [];
                 this.fileUploadCount = 0;
                 this.failedFileUploadCount = 0;

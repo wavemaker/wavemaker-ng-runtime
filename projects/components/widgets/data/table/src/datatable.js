@@ -1632,7 +1632,7 @@ $.widget('wm.datatable', {
             $newRowButton = $gridActions.find('i.wi-plus').closest('.app-button');
         if (this.options.editmode === this.CONSTANTS.INLINE && (this.options.rowActions.length === 0 || !_.some(this.options.rowActions, { action: 'editRow($event)' }))) {
             if (saveInd) {
-                $gridActions.append(`<button type="button" wmbutton="" class="btn app-button btn-secondary cancelNewRow" tabindex="0" accesskey="" title="Cancel">
+                $gridActions.append(`<button type="button" wmbutton="" class="btn app-button btn-default cancelNewRow" tabindex="0" accesskey="" title="Cancel">
                                     <i aria-hidden="true" class="app-icon wi wi-cancel"></i>
                                     <span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>
                                 </button>
@@ -2552,6 +2552,23 @@ $.widget('wm.datatable', {
                 }
             });
         }
+
+        // WMS-17629: Hiding the table header column when show property is set to false
+        var headerCells = $header.find("th.app-datagrid-header-cell");
+        var headerCols = $colgroup.find('col');
+        headerCells.each(function () {
+            var id = Number($(this).attr('data-col-id')),
+                colDef = self.preparedHeaderData[id],
+                $headerCol = $(headerCols[id]);
+            if (!colDef) {
+                return;
+            }
+            if (!_.isUndefined(colDef.show) && !colDef.show) {
+                //Hide the header and column if show is false
+                $(this).hide();
+                $headerCol.hide();
+            }
+        });
 
         /*For mobile view, append header to the main table only*/
         if (this.options.isMobile) {

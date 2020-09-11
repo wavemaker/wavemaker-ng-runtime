@@ -447,22 +447,24 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
             if (!selector.startsWith('/*') && selector.trim().length > 0) {
                 // splits the selector by commas and we iterate over the array and add page level scoping and join it.
                 selector = selector.split(',').map(s=>{
-                    const spaceIndex = selector.indexOf(' ');
+                    let prefix = '.wm-app';
                     s = s.trim();
+                    const spaceIndex = s.indexOf(' ');
                     if (s.startsWith('.wm-app')) {
                         if (spaceIndex > 0) {
+                            prefix = s.substring(0, spaceIndex);
                             s = s.substring(spaceIndex + 1);
                         } else {
-                            return selector;
+                            return s;
                         }
                     }
-    
+
                     if (componentType === 0 || componentType === 'PAGE') {
-                        s = `.wm-app app-page-${componentName} ${s}`;
+                        s = `${prefix} app-page-${componentName} ${s}`;
                     } else if (componentType === 1 || componentType === 'PREFAB') {
-                        s = `.wm-app app-prefab-${componentName} ${s}`;
+                        s = `${prefix} app-prefab-${componentName} ${s}`;
                     } else if (componentType === 2 || componentType === 'PARTIAL') {
-                        s = `.wm-app app-partial-${componentName} ${s}`;
+                        s = `${prefix} app-partial-${componentName} ${s}`;
                     }
                     return s;
                 }).join(',');

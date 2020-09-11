@@ -158,6 +158,8 @@ export const DB_CONSTANTS = {
         'endignorecase'    : 'ENDING_WITH_IGNORECASE',
         'anywhere'         : 'CONTAINING',
         'anywhereignorecase': 'CONTAINING_IGNORECASE',
+        'nowhere'          : 'DOES_NOT_CONTAIN',
+        'nowhereignorecase': 'DOES_NOT_CONTAIN_IGNORECASE',
         'exact'            : 'EQUALS',
         'exactignorecase'  : 'EQUALS_IGNORECASE',
         'notequals'        : 'NOT_EQUALS',
@@ -192,6 +194,8 @@ export const DB_CONSTANTS = {
         'ENDING_WITH_IGNORECASE' : '${0} like ${1}',
         'CONTAINING'             : '${0} like ${1}',
         'CONTAINING_IGNORECASE'  : '${0} like ${1}',
+        'DOES_NOT_CONTAIN'       : '${0} not like ${1}',
+        'DOES_NOT_CONTAIN_IGNORECASE': '${0} not like ${1}',
         'EQUALS'                 : '${0}=${1}',
         'EQUALS_IGNORECASE'      : '${0}=${1}',
         'NOT_EQUALS'             : '${0}!=${1}',
@@ -209,7 +213,7 @@ export const DB_CONSTANTS = {
         'IS_NOT_EMPTY'           : '${0}<>\'\'',
         'NULL_OR_EMPTY'          : '${0} is null or ${0}=\'\''
     },
-    'DATABASE_STRING_MODES': ['LIKE', 'STARTING_WITH', 'STARTING_WITH_IGNORECASE', 'ENDING_WITH', 'ENDING_WITH_IGNORECASE', 'CONTAINING', 'CONTAINING_IGNORECASE', 'EQUALS', 'EQUALS_IGNORECASE', 'NOT_EQUALS', "NOT_EQUALS_IGNORECASE"]
+    'DATABASE_STRING_MODES': ['LIKE', 'STARTING_WITH', 'STARTING_WITH_IGNORECASE', 'ENDING_WITH', 'ENDING_WITH_IGNORECASE', 'CONTAINING', 'CONTAINING_IGNORECASE', 'DOES_NOT_CONTAIN', 'DOES_NOT_CONTAIN_IGNORECASE', 'EQUALS', 'EQUALS_IGNORECASE', 'NOT_EQUALS', "NOT_EQUALS_IGNORECASE"]
 };
 
 export const SWAGGER_CONSTANTS = {
@@ -308,12 +312,9 @@ export const VARIABLE_URLS = {
         url: '/:service/:dataModelName/procedureExecutor/procedure/execute/:procedureName?page=:page&size=:size&:procedureParams',
             method: 'GET'
     },
-    countTableDataWithQuery : {
-        url: '/:service/:dataModelName/:entityName/count',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
+    countTableDataWithQuery: {
+        url: '/:service/:dataModelName/:entityName/count?:queryParams',
+        method: 'GET'
     }
 },
     oauthConfiguration : {

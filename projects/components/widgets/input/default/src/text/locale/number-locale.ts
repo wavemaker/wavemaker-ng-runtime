@@ -1,9 +1,9 @@
 import { Injector } from '@angular/core';
 import { AbstractControl, Validator } from '@angular/forms';
-import { DecimalPipe, getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
+import { getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
 import { AbstractI18nService } from '@wm/core';
-import { IWidgetConfig } from '@wm/components/base';
+import { IWidgetConfig, TrailingZeroDecimalPipe } from '@wm/components/base';
 
 import { BaseInput } from '../base/base-input';
 
@@ -17,6 +17,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     private numberNotInRange: boolean;
     private isInvalidNumber: boolean;
     private isDefaultQuery: boolean = true;
+    private decimalValue: string = '';
     public displayValue: string;
     private numberfilter: string;
     private localefilter: string;
@@ -27,13 +28,14 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public maxvalue: number;
     public updateon: string;
     public step: number;
+    public trailingzero: boolean;
     private validateType: string;
 
     constructor(
         inj: Injector,
         config: IWidgetConfig,
         i18nService: AbstractI18nService,
-        private decimalPipe: DecimalPipe
+        private trailingZeroDecimalPipe: TrailingZeroDecimalPipe
     ) {
         super(inj, config);
         this.selectedLocale = i18nService.getSelectedLocale();
@@ -55,6 +57,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         // if the widget has default value and if we change the locale, the value should be in selected locale format.
         if (this.isDefaultQuery) {
+            // The default value should be in english language
+            const parts = _.isString(value) && (value as any).split('.');
+            this.decimalValue = parts[1] || '';
             (value as any) = this.transformNumber(value);
         }
 
@@ -127,7 +132,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {string}
      */
     private transformNumber(number): string {
-        return this.decimalPipe.transform(number, this.numberfilter, this.localefilter || this.selectedLocale);
+        return this.trailingZeroDecimalPipe.transform(number, this.selectedLocale, this.numberfilter, this.localefilter, this.trailingzero, this.decimalValue);
     }
 
     /**
@@ -178,6 +183,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         const input = this.inputEl.nativeElement;
         const position: number = input.selectionStart;
         const preValue: string = input.value;
+        if (!this.isDefaultQuery) {
+            const parts = preValue.split(this.DECIMAL);
+            this.decimalValue = parts[1] || '';
+        }
         this.displayValue = input.value = this.transformNumber(this.proxyModel);
         // in safari browser, setSelectionRange will focus the input by default, which may invoke the focus event on widget.
         // Hence preventing the setSelectionRange when default value is set i.e. widget is not focused.
@@ -260,7 +269,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         this.validateType = '';
         /* WMS-18269 | Extending the existing validation for 'required' */
-        if (this["show"] && this["required"]) {
+        if (this['show'] && this['required']) {
             return (!!c.value || c.value === 0) ? null : { required: true };
         }
         return null;

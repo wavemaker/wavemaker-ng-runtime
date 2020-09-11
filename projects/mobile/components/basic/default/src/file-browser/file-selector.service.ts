@@ -49,11 +49,7 @@ export class FileSelectorService {
     public selectImages(multiple = false): Promise<FileContent[]> {
         var spinnerId = this.spinnerService.show("");
         return new Promise<string[]>((resolve, reject) => {
-            cordova.wavemaker.filePicker.selectImage(multiple, resolve, reject, () => {
-                window.imagePicker.getPictures(resolve, reject, {
-                    maximumImagesCount: multiple ?  20 : 1
-                });
-            });
+            cordova.wavemaker.filePicker.selectImage(multiple, resolve, reject);
         }).then(files => this.getFiles(files))
         .then((paths) => {
             this.spinnerService.hide(spinnerId);

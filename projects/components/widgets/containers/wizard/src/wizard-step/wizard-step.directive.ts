@@ -38,6 +38,7 @@ export class WizardStepDirective extends BaseComponent {
     isDone: boolean = false ;
 
     private status: STEP_STATUS = STEP_STATUS.DISABLED;
+    private wizardComponent: WizardComponent;
 
     // reference to the components which needs a redraw(eg, grid, chart) when the height of this component changes
     @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
@@ -118,8 +119,10 @@ export class WizardStepDirective extends BaseComponent {
         return this.status === STEP_STATUS.DISABLED;
     }
 
-    constructor(inj: Injector, @Self() private ngForm: NgForm, private wizardComponent: WizardComponent) {
+    constructor(inj: Injector, @Self() private ngForm: NgForm) {
         super(inj, WIDGET_CONFIG);
+        // If we inject directly as a param in the constructor, getting circular dependency error in unit testcases
+        this.wizardComponent = this.inj.get(WizardComponent);
     }
 
     public invokeNextCB(index: number): boolean {

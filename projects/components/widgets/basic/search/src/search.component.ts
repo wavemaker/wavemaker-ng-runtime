@@ -239,6 +239,34 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this._loadingItems = false;
             return of(this._lastResult);
         }
+
+        /*
+             WMS-19177: On focus of input field for autocomplete type, do not trigger api call when
+                 a) searchkey and displayexpression are different
+                 b) binddisplaylabel contains multiple values
+                 c) binddisplaylabel contains single value which does not match with searchkey
+        */
+        if (this.type === 'autocomplete' && this.searchkey && this.query && this.datavalue) {
+            let bindDisplayLabelArray = [];
+            const searchKeyArray = _.split(this.searchkey, ',');
+            let displaylabel;
+            if (this.binddisplaylabel) {
+                bindDisplayLabelArray = _.split(this.binddisplaylabel, '+');
+                if (bindDisplayLabelArray.length === 1) {
+                    if (!_.includes(bindDisplayLabelArray[0], '|')) {
+                        const regex = /\[(.*?)\]/;
+                        displaylabel = regex.exec(bindDisplayLabelArray[0])[1];
+                    } else {
+                        displaylabel = true;
+                    }
+                }
+            }
+            if ((bindDisplayLabelArray.length > 1 || (displaylabel && !_.includes(searchKeyArray, displaylabel))
+                    || (this.displayexpression && !_.includes(searchKeyArray, this.displayexpression)))) {
+                this._loadingItems = false;
+                return of([]);
+            }
+        }
         this._lastQuery = this.query;
         return from(this.getDataSource(query));
     }
@@ -361,6 +389,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
     // Triggerred when typeahead option is selected.
     private onSearchSelect($event: Event) {
+        let item;
+        if(this.typeaheadContainer && this.typeaheadContainer.active){
+            item = this.typeaheadContainer.active.item;
+        }
+        $event = this.eventData($event, item || {});
+
         // searchOn is set as onBtnClick, then invoke the search api call manually.
         if (!this.isUpdateOnKeyPress()) {
             this.listenQuery = true;
@@ -411,7 +445,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             dropdownEl.css({ position: 'relative', top: 0, height: screenHeight + 'px' });
             this.showClosebtn = this.query && this.query !== '';
 
-            if (!this.dataProvider.isLastPage) {
+            if (!_.isUndefined(this.dataProvider.isLastPage) && !this.dataProvider.isLastPage) {
                 this.triggerSearch();
             }
         }
@@ -599,7 +633,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 }
 
                 // In mobile, trigger the search by default until the results have height upto page height. Other results can be fetched by scrolling
-                if (this._isOpen && this.isMobileAutoComplete() && !this.dataProvider.isLastPage) {
+                if (this._isOpen && this.isMobileAutoComplete() && !_.isUndefined(this.dataProvider.isLastPage) && !this.dataProvider.isLastPage) {
                     this.triggerSearch();
                 }
 
@@ -700,6 +734,19 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         styler(this.nativeElement as HTMLElement, this);
     }
 
+    private eventData($event, item){
+        if($event){
+            $event['data'] = {
+                item  : item.dataObject,
+                model : item.value,
+                label : item.label,
+                query : this.query
+            };
+        }
+  
+        return $event;
+    }
+
     // triggered on select on option from the list. Set the queryModel, query and modelByKey from the matched item.
     public typeaheadOnSelect(match: TypeaheadMatch, $event: Event): void {
         const item = match.item;
@@ -712,14 +759,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this._modelByKey = item.key;
         this._modelByValue = item.value;
 
-        if ($event){
-            $event['data'] = {
-                item  : item.dataObject,
-                model : item.value,
-                label : item.label,
-                query : this.query
-            }
-        }
+        $event = this.eventData($event, item);
 
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, $event || {});
