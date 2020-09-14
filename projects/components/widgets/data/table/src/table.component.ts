@@ -841,7 +841,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.gridOptions.data = getClonedObject(this.gridData);
         }
         this.gridOptions.messages = {
-            'selectField': 'Select Field'
+            'selectField': this.appLocale.MESSAGE_SELECT_FIELD
         };
         this.datagridElement = $(this._tableElement.nativeElement);
 
