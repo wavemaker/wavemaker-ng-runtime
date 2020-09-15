@@ -95,11 +95,15 @@ export class CarouselDirective extends StylableComponent implements AfterContent
         super.ngOnDestroy();
     }
 
+    setanimationinterval(){
+        this.animation === 'auto' ? this.interval = this.animationinterval * 1000 : this.interval = 0 ;
+    }
+
     ngOnInit() {
         super.ngOnInit();
 
         // Calculating animation interval if animation is enabled
-        this.animation === 'auto' ? this.interval = this.animationinterval * 1000 : this.interval = 0 ;
+         this.setanimationinterval();
         // TODO transition is pending
 
     }
@@ -112,6 +116,9 @@ export class CarouselDirective extends StylableComponent implements AfterContent
             // For showing controls
             this.navigationClass = navigationClassMap[this.controls];
         }  else if (key === 'animation' || key === 'animationinterval') {
+            if(key === 'animationinterval'){
+                this.setanimationinterval();
+            }
             this.animation === 'none' ? this.stopAnimation() :  this.startAnimation();
         } else {
             super.onPropertyChange(key, nv, ov);
