@@ -150,7 +150,7 @@ export const getOrderByExpr = pageableObj => {
         KEY_VAL_SEPARATOR = ' ',
         FIELD_SEPARATOR   = ',';
     _.forEach(pageableObj, obj => {
-        expressions.push(obj.property + KEY_VAL_SEPARATOR + obj.direction.toLowerCase());
+        expressions.push(obj.property + KEY_VAL_SEPARATOR + (obj.direction && obj.direction.toLowerCase()));
     });
 
     return _.join(expressions, FIELD_SEPARATOR);
