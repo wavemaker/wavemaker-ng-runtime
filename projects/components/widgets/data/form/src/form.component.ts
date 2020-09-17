@@ -916,7 +916,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                             this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
                                 'skipToggleState': true,
                                 'operation': 'list',
-                                'page': currentPageNum
+                                'page': currentPageNum,
+                                'preventMissingOpMsg': true
                             });
                             if (this.dialogId) {
                                 this.closeDialog();

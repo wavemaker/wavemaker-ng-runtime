@@ -212,6 +212,10 @@ export class CrudVariableManager extends ServiceVariableManager {
             if (requestParams.error.type === VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.CRUD_OPERATION_MISSING) {
                 requestParams.error.message = requestParams.error.message.replace('$operation', options.operation);
             }
+            if (options.preventMissingOpMsg) {
+                $queue.process(variable);
+                return Promise.resolve('');
+            }
             const info = this.handleRequestMetaError(requestParams, variable, success, error, options);
             const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable');
             triggerFn(error);
