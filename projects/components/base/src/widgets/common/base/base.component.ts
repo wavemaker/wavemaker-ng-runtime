@@ -154,6 +154,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     private $attrs = new Map<string, string>();
 
+    private isMuted = false;
+
     protected constructor(
         protected inj: Injector,
         config: IWidgetConfig,
@@ -456,7 +458,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 nv => this.widget[propName] = nv,
                 getWatchIdentifier(this.widgetId, propName),
                 propName === 'datasource',
-                this.widgetProps.get(propName)
+                this.widgetProps.get(propName),
+                () => this.isMuted
             )
         );
     }
@@ -600,6 +603,14 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     // Defining the execute method on BaseComponent. If dataset is binded to widgets ouptut then datasource.execute will be defined
     protected execute(operation, options): any {
 
+    }
+
+    public mute() {
+        this.isMuted = true;
+    }
+
+    public unmute() {
+        this.isMuted = false;
     }
 
     /**

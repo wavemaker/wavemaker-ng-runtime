@@ -127,5 +127,6 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
 
     public ngOnDestroy() {
         this._eventNotifier.destroy();
+        super.ngOnDestroy();
     }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouteReuseStrategy } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
 import {
@@ -15,6 +15,7 @@ import {
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService } from '@wm/variables';
+import { WmRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
 
 declare const _;
 
@@ -46,7 +47,8 @@ export class AppManagerService {
         private $metadata: MetadataService,
         private $spinner: AbstractSpinnerService,
         private $i18n: AbstractI18nService,
-        private $datePipe: DatePipe
+        private $datePipe: DatePipe,
+        private routeReuseStrategy: RouteReuseStrategy
     ) {
         // register method to invoke on session timeout
         this.$http.registerOnSessionTimeout(this.handle401.bind(this));
@@ -71,12 +73,19 @@ export class AppManagerService {
         });
         this.$app.subscribe('userLoggedIn', () => this.setLandingPage());
         this.$app.subscribe('userLoggedOut', () => this.setLandingPage().then(() => {
+            this.clearCache();
             // navigate to the landing page without reloading the window in device.
             if (window['cordova']) {
                 this.$router.navigate([`/`]);
             }
         }));
         this.$app.subscribe('http401', (d = {}) => this.handle401(d.page, d.options));
+    }
+
+    private clearCache() {
+        if(this.routeReuseStrategy instanceof WmRouteReuseStrategy) {
+            (this.routeReuseStrategy as WmRouteReuseStrategy).reset();
+        }
     }
 
     /**
@@ -270,6 +279,7 @@ export class AppManagerService {
         const config = this.$security.get();
         let queryParamsObj = {};
         loginConfig = config.loginConfig;
+        this.clearCache();
         // if user found, 401 was thrown after session time
         if (config.userInfo && config.userInfo.userName) {
             config.authenticated = false;

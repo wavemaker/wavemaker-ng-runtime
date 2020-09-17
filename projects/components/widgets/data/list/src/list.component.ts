@@ -1206,5 +1206,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.cancelSubscription) {
             this.cancelSubscription();
         }
+        super.ngOnDestroy();
     }
 }

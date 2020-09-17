@@ -15,6 +15,7 @@ declare const resolveLocalFileSystemURL;
 declare const $;
 declare const WM_CUSTOM_FORMATTERS;
 declare const MSCSSMatrix;
+declare const _WM_APP_PROPERTIES;
 
 const userAgent = window.navigator.userAgent;
 const REGEX = {
@@ -1435,3 +1436,7 @@ export const appendScriptToHead = (callback) =>{
     scriptele.src = './extensions/formatters.js';
     document.head.appendChild(scriptele);
 }
+
+export const getAppSetting = (key, defaultValue) => {
+    return (_WM_APP_PROPERTIES.extra_settings && _.get(_WM_APP_PROPERTIES.extra_settings, key)) || defaultValue;
+};

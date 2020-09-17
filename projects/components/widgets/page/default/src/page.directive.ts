@@ -62,7 +62,16 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
         }, 1);
     }
 
+    public onAttach() {
+        this.invokeEventCallback('attach', { widget: this });
+    }
+
+    public onDetach() {
+        this.invokeEventCallback('detach', { widget: this });
+    }
+
     public ngOnDestroy() {
+        this.invokeEventCallback('destroy', { widget: this });
         this._eventNotifier.destroy();
     }
 }

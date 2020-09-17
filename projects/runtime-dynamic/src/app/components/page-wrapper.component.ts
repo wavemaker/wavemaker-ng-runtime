@@ -25,6 +25,7 @@ import { AppManagerService, ComponentRefProvider, ComponentType } from '@wm/runt
 export class PageWrapperComponent implements OnInit, OnDestroy {
 
     subscription: Subscription;
+    instance: any;
 
     constructor(
         private injector: Injector,
@@ -59,8 +60,9 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
             .then(async () => {
                 const pageComponentFactoryRef = await this.componentRefProvider.getComponentFactoryRef(pageName, ComponentType.PAGE);
                 if (pageComponentFactoryRef) {
-                    const instance = this.vcRef.createComponent(pageComponentFactoryRef, 0, this.injector);
-                    $target.appendChild(instance.location.nativeElement);
+                    const componentRef = this.vcRef.createComponent(pageComponentFactoryRef, 0, this.injector);
+                    this.instance = componentRef.instance;
+                    $target.appendChild(componentRef.location.nativeElement);
                 }
                 if (this.vcRef.length > 1) {
                     this.vcRef.remove(1);
@@ -97,5 +99,14 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
+    }
+
+    ngOnAttach() {
+        this.getTargetNode().appendChild(this.instance.$page[0]);
+        this.instance.ngOnAttach();
+    }
+
+    ngOnDetach() {
+        this.instance.ngOnDetach();
     }
 }

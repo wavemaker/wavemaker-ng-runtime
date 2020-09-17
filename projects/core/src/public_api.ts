@@ -129,7 +129,8 @@ export {
     findRootContainer,
     VALIDATOR,
     transformFileURI,
-    appendScriptToHead
+    appendScriptToHead,
+    getAppSetting
 } from './utils/utils';
 export {
     FIRST_TIME_WATCH,
@@ -157,3 +158,4 @@ export * from './services/user-custom-pipe-manager.service';
 export {StatePersistence} from './services/state-persistence.service';
 export * from './core.module';
 export * from './utils/wm-project-properties';
+export * from './utils/lru-cache';

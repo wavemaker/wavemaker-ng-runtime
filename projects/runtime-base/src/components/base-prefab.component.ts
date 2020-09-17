@@ -60,6 +60,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
 
     registerWidgets() {
         this.Widgets = {};
+        this.Widgets = {};this.containerWidget.Widgets = this.Widgets;
     }
 
     initUserScript() {
@@ -149,6 +150,8 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         // create namespace for Variables nad Actions on page/partial, which inherits the Variables and Actions from App instance
         this.Variables = {};
         this.Actions = {};
+        this.containerWidget.Variables = this.Variables;
+        this.containerWidget.Actions = this.Actions;
 
         // assign all the page variables to the pageInstance
         Object.entries(variableCollection.Variables).forEach(([name, variable]) => this.Variables[name] = variable);
