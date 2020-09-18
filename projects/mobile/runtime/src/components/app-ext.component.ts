@@ -26,7 +26,7 @@ export class AppExtComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         const mobileElements = $(this.elRef.nativeElement).find('>[wmNetworkInfoToaster], >[wmAppUpdate], >[wmMobileFileBrowser]');
-        const $body = $('body:first-child');
+        const $body = $('body');
         if (hasCordova()) {
             mobileElements.appendTo($body);
             this.fileSelectorService.setFileBrowser(this.fileBrowserComponent);

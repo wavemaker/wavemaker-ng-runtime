@@ -169,7 +169,7 @@ export class MobileRuntimeModule {
                         return a;
                     }, {});
                 if (params && params['wavelens']) {
-                    const $body = $('body:first-child');
+                    const $body = $('body');
                     $body.append(`<script src="${params['wavelens']}/runtime/script.js"></script>`);
                     $body.append(`<link rel="stylesheet" href="${params['wavelens']}/runtime/styles.css">`);
                 }
