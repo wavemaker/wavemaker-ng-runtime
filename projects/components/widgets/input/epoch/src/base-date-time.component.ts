@@ -798,7 +798,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this._dateOptions.showTodayButton = nv;
         }else if(key == 'clearbutton'){
             this._dateOptions.showClearButton = nv;
-        }else {
+        }else if(key == 'todaybuttonlabel'){
+            this._dateOptions.todayButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
+        }else if(key == 'clearbuttonlabel'){
+            this._dateOptions.clearButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
+        }
+        else {
             super.onPropertyChange(key, nv, ov);
         }
 
