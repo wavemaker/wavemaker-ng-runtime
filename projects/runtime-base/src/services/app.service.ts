@@ -54,6 +54,10 @@ const getHttpDependency = function() {
     return $http;
 };
 
+const MINIMUM_TAB_WIDTH = 768;
+const MINIMUM_TAB_LANDSCAPE_WIDTH = 992;
+const MINIMUM_DESKTOP_LAPTOP_WIDTH = 1200;
+
 @Injectable()
 export class AppRef {
     Variables: any = {};
@@ -72,6 +76,7 @@ export class AppRef {
     isApplicationType: boolean;
     isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
+    screenType: any;
 
     appLocale: any;
 
@@ -99,6 +104,14 @@ export class AppRef {
         this.isPrefabType = wmProjectProperties.type === PROJECT_TYPE.PREFAB;
         this.isApplicationType = wmProjectProperties.type === PROJECT_TYPE.APPLICATION;
         this.isTemplateBundleType = wmProjectProperties.type === PROJECT_TYPE.TEMPLATE_BUNDLE;
+
+        this.screenType = {
+            isMobile: false,
+            isTabletProtrait: false,
+            isTabletLandscape: false,
+            isLargeScreen: false
+        };
+        this.setScreenType();
 
         this.httpService.registerOnSessionTimeout(this.on401.bind(this));
 
@@ -167,6 +180,19 @@ export class AppRef {
             });
         } else {
             console.warn('The default Action "appNotification" doesn\'t exist in the app. App notified following error:\n', template);
+        }
+    }
+
+    private setScreenType() {
+        const w =  $('.wm-app:first').width();
+        if (w >= MINIMUM_DESKTOP_LAPTOP_WIDTH) {
+            this.screenType.isLargeScreen = true;
+        } else if (w >= MINIMUM_TAB_LANDSCAPE_WIDTH) {
+            this.screenType.isTabletProtrait = true;
+        } else if (w >= MINIMUM_TAB_WIDTH) {
+            this.screenType.isTabletLandscape = true;
+        } else {
+            this.screenType.isMobile = true;
         }
     }
 }

@@ -89,6 +89,7 @@ export abstract class App {
     Page: any;
     landingPageName: string;
     lastActivePageName: string;
+    screenType: object;
 }
 
 
