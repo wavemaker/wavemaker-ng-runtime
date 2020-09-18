@@ -119,20 +119,20 @@ export const getDataSource = (dataSetExpr: string): string => {
 };
 
 const widgetChildAttrs = (() => {
-    let childAttrs = new Map();
+    const childAttrs = new Map();
     const validChildAttrs = [
         `required`
     ];
     return {
         set: attrs => {
-            attrs.forEach((val,key)=>{
-                validChildAttrs.includes(key) && (childAttrs.set(key,val));
+            attrs.forEach((val, key) => {
+                validChildAttrs.includes(key) && (childAttrs.set(key, val));
             });
         },
         get: attrs => {
             const fltrAttrs = new Map();
-            childAttrs.forEach((val,key)=>{
-                !attrs.get(key) && fltrAttrs.set(key,val);
+            childAttrs.forEach((val, key) => {
+                !attrs.get(key) && fltrAttrs.set(key, val);
             });
             return fltrAttrs;
         },
@@ -141,17 +141,17 @@ const widgetChildAttrs = (() => {
         }
     };
 })();
-export const setChildAttrs = attrs =>{
+export const setChildAttrs = attrs => {
     widgetChildAttrs.set(attrs);
     return '';
-}
-export const getChildAttrs = attrs =>{
+};
+export const getChildAttrs = attrs => {
     return getAttrMarkup(widgetChildAttrs.get(attrs));
-}
-export const clearChildAttrs = () =>{
+};
+export const clearChildAttrs = () => {
     widgetChildAttrs.clear();
     return '';
-}
+};
 export const getFormMarkupAttr = attrs => {
     if (attrs.get('datavalue.bind')) {
         const onDataValueBinding = getDataSource(attrs.get('datavalue.bind'));
@@ -186,10 +186,18 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
             if (k === '[ngClass]' && v.startsWith('{')) {
                 v = v.replace(/"/g, `'`);
             }
+            // Device: isMObileView, isTabletProtrait, isTabletLandscape, LargeScrEen => App.
             if (k === 'show.bind' && attrs.get('deferload') === 'true') {
                 v = v + `" *lazyLoad="${wrapWithApos(v)}`;
             }
             attrMarkup += `="${v}"`;
+
+            if (k === 'showInDevice' && v !== 'all') {
+                attrMarkup += ` *ngIf="(App.screenType.isMobile  && '${v}'.includes('xs')) ||
+                                        (App.screenType.isTabletProtrait && '${v}'.includes('sm')) ||
+                                        (App.screenType.isTabletLandscape && '${v}'.includes('md')) ||
+                                        (App.screenType.isLargeScreen && '${v}'.includes('lg'))"`;
+            }
         }
     });
 
@@ -413,7 +421,7 @@ export interface ImportDef {
     as?: string;
     forRoot?: boolean;
     platformType?: string;
-};
+}
 
 export interface IBuildTaskDef {
     requires?: string | Array<string>;
@@ -421,7 +429,7 @@ export interface IBuildTaskDef {
     pre: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
     provide?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => Map<any, any>;
     post?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
-    imports?:  string[] | ((attrs: Map<string, string>) => string[])
+    imports?:  string[] | ((attrs: Map<string, string>) => string[]);
 }
 
 export const scopeComponentStyles = (componentName, componentType, styles = '') => {
@@ -446,7 +454,7 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
             }
             if (!selector.startsWith('/*') && selector.trim().length > 0) {
                 // splits the selector by commas and we iterate over the array and add page level scoping and join it.
-                selector = selector.split(',').map(s=>{
+                selector = selector.split(',').map(s => {
                     const spaceIndex = selector.indexOf(' ');
                     s = s.trim();
                     if (s.startsWith('.wm-app')) {
@@ -456,7 +464,7 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
                             return selector;
                         }
                     }
-    
+
                     if (componentType === 0 || componentType === 'PAGE') {
                         s = `.wm-app app-page-${componentName} ${s}`;
                     } else if (componentType === 1 || componentType === 'PREFAB') {

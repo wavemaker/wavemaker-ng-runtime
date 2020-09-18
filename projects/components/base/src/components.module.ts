@@ -81,6 +81,7 @@ const PIPES = [
     exports: [...wmComponents, ...PIPES]
 })
 export class WmComponentsModule {
+    private _$appEl;
 
     static forRoot(): ModuleWithProviders {
         return {
