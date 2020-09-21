@@ -563,14 +563,15 @@ export const isPageable = (obj: any): boolean => {
         'first': true,
         'last': true,
         'number': 0,
-        'empty': true,
         'numberOfElements': 10,
         'size': 20,
         'sort': null,
         'totalElements': 10,
         'totalPages': 1
     };
-    return (_.isEqual(_.keys(pageable), _.keys(obj).sort()));
+    // paginated object may or may not contain 'empty' property. In either case, Pageable should return as true.
+    const paginatedObj = _.omit(obj, 'empty');
+    return (_.isEqual(_.keys(pageable), _.keys(paginatedObj).sort()));
 };
 
 /*
