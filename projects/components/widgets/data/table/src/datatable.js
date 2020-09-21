@@ -2781,9 +2781,9 @@ $.widget('wm.datatable', {
             this.gridContainer.addClass('show-msg');
         } else {
             this.gridContainer.removeClass('show-msg');
-            if (!isCreated) {
-                this.setColGroupWidths();
-            }
+        }
+        if (!isCreated) {
+            this.setColGroupWidths();
         }
         this.addOrRemoveScroll();
     },
