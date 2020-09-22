@@ -81,4 +81,17 @@ export class ToasterServiceImpl extends AbstractToasterService {
         options.toastClass = 'toast';
         return this.toaster.show(page, '', options);
     }
+
+    /**
+     * Updates the Global Toaster options based on the passed object. Useful in cases where
+     * a user wants to display multiple toasts at the same time, newest on bottom etc
+     * @param val
+     */
+    public setToasterConfig(options) {
+        if (_.isObject(options)) {
+            _.merge(this.toaster.toastrConfig, options);
+        } else {
+            console.warn('Please pass a valid options object, For Example : {maxOpened: 1, autoDismiss: true}');
+        }
+    }
 }
