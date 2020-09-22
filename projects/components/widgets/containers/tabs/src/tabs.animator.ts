@@ -29,7 +29,7 @@ export class TabsAnimator extends SwipeAnimation {
 
     public bounds() {
         const activeTabIndex = this.tabs.getActiveTabIndex(),
-            w = this._$el.find('>.tab-pane:first-child').width(),
+            w = this._$el.find('>.tab-pane').first().width(),
             noOfTabs = this._$el.find('>.tab-pane:visible').length,
             centerVal = -1 * activeTabIndex * w;
         this.clearContentFocus();

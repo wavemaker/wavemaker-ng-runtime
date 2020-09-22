@@ -198,7 +198,7 @@ export class MobileRuntimeModule {
         private networkService: NetworkService,
         private webProcessService: WebProcessService
     ) {
-        this._$appEl = $('.wm-app:first-child');
+        this._$appEl = $('.wm-app').first();
         if (this._$appEl.width() >= MINIMUM_TAB_WIDTH) {
             app.isTabletApplicationType =  true;
             this._$appEl.addClass('wm-tablet-app');
@@ -229,7 +229,7 @@ export class MobileRuntimeModule {
     }
 
     private applyOSTheme(os) {
-        let oldStyleSheet = $('link[theme="wmtheme"]:first-child');
+        let oldStyleSheet = $('link[theme="wmtheme"]').first();
         const themeUrl = oldStyleSheet.attr('href').replace(new RegExp('/[a-z]*/style.css$'), `/${os.toLowerCase()}/style.css`),
             newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
         oldStyleSheet = oldStyleSheet.length > 0 && oldStyleSheet[0];

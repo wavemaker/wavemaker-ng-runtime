@@ -17,7 +17,7 @@ const setupFileSystem = () => {
     const cordova = window['cordova'];
     let appId = localStorage.getItem(APP_STORE_KEY);
     if (_.isEmpty(appId)) {
-        appId = ($('title:first-child').text() || 'no_name') + '_' +  Date.now();
+        appId = ($('title').first().text() || 'no_name') + '_' +  Date.now();
         localStorage.setItem(APP_STORE_KEY, appId);
     }
     const wmDirectory = 'wavemaker_app_data';

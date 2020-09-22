@@ -624,7 +624,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         // setTimeout is used so that by then time input has the updated value. focus is setting back to the input field
         this.elementScope.ngZone.runOutsideAngular(() => {
             setTimeout(() => {
-                $('timepicker .form-group:first-child > input.form-control').focus();
+                $('timepicker .form-group').first().find('> input.form-control').focus();
             });
         });
 

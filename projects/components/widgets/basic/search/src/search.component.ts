@@ -440,7 +440,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }
             const dropdownEl = this.dropdownEl.closest('typeahead-container');
 
-            dropdownEl.insertAfter(this.$element.find('input:first-child'));
+            dropdownEl.insertAfter(this.$element.find('input').first());
             const screenHeight = this.$element.closest('.app-content').height();
             dropdownEl.css({ position: 'relative', top: 0, height: screenHeight + 'px' });
             this.showClosebtn = this.query && this.query !== '';

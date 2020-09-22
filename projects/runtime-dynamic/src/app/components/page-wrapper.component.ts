@@ -85,7 +85,7 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
             // there is only one route
             this.renderPrefabPreviewPage();
         } else {
-            $(this.getTargetNode()).find('>div:first-child').remove();
+            $(this.getTargetNode()).find('>div').first().remove();
             this.subscription = this.route.params.subscribe(({pageName}: any) => {
                this.loadPage(pageName);
             });

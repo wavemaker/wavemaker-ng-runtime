@@ -1073,7 +1073,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             this._isGridLayoutPresent = this.$element.find('.panel-body [wmlayoutgrid]').length > 0;
         }
         if (this._isGridLayoutPresent) {
-            $gridLayout = this.$element.find('.form-elements [wmlayoutgrid]:first-child');
+            $gridLayout = this.$element.find('.form-elements [wmlayoutgrid]').first();
             noOfColumns = Number($gridLayout.attr('columns')) || 1;
         } else {
             $gridLayout = this.$element.find('.form-elements .dynamic-form-container');

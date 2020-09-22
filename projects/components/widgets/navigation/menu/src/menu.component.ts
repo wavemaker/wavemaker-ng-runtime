@@ -83,7 +83,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     @HostListener('onShown') onShow() {
         if (this._selectFirstItem) {
             setTimeout(() => {
-                this.$element.find('> ul[wmmenudropdown] li.app-menu-item:first-child > a').focus();
+                this.$element.find('> ul[wmmenudropdown] li.app-menu-item').first().find('> a').focus();
             });
         }
         $appDigest();
@@ -119,7 +119,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
                 this._selectFirstItem = true;
                 this.bsDropdown.show();
             } else {
-                this.$element.find('> ul[wmmenudropdown] li.app-menu-item:first-child > a').focus();
+                this.$element.find('> ul[wmmenudropdown] li.app-menu-item').first().find('> a').focus();
             }
         } else if (eventAction === KEY_MOVEMENTS.ON_ENTER) {
             this.bsDropdown.toggle(true);
