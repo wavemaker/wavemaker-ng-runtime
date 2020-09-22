@@ -85,7 +85,7 @@ export class ToasterServiceImpl extends AbstractToasterService {
     /**
      * Updates the Global Toaster options based on the passed object. Useful in cases where
      * a user wants to display multiple toasts at the same time, newest on bottom etc
-     * @param val
+     * @param {options} Object
      */
     public setToasterConfig(options) {
         if (_.isObject(options)) {
