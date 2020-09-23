@@ -331,6 +331,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
         }
+        this.removeKeyupListener();
     }
 
     private isValid(event) {

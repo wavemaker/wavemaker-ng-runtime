@@ -54,8 +54,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected isReadOnly = false;
     protected selectedLocale: string;
     public selectfromothermonth: boolean;
-    public todaybutton:boolean;
-    public clearbutton:boolean;
+    public todaybutton: boolean;
+    public clearbutton: boolean;
+    public removeKeyupListener;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -661,11 +662,35 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this.invokeOnChange(this.datavalue, undefined, false);
     }
 
+    private updateTimeValue(value, fieldName) {
+        if (value.length < 2) {
+            setTimeout(() => {
+                fieldName === 'minutes' ? this.bsTimePicker.updateMinutes('00') : this.bsTimePicker.updateSeconds('00');
+            }, 500);
+        } else {
+            fieldName === 'minutes' ? this.bsTimePicker.updateMinutes('00') : this.bsTimePicker.updateSeconds('00');
+        }
+    }
+
     /**
      * This function sets the events to given element
      * @param $el - element on which the event is added
      */
     private addEventsOnTimePicker($el: JQuery) {
+        const inputFields = $el.find('.bs-timepicker-field');
+        // WMS-19382: update minutes and seconds to 0 when we enter hour value
+        inputFields.first().on('keyup', evt => {
+            const hourValue = (evt.target as any).value;
+            _.forEach(inputFields, (field, index) => {
+                if (evt.target !== field && field.value === '' && hourValue.length) {
+                    const fieldName = index === 1 ? 'minutes' : 'seconds';
+                    this.updateTimeValue(hourValue, fieldName);
+                }
+            });
+        });
+        this.removeKeyupListener = () => {
+            inputFields.first().off('keyup');
+        };
         $el.on('keydown', evt => {
             const $target = $(evt.target);
             const $parent = $target.parent();
