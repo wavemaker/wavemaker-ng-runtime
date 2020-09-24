@@ -96,7 +96,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
             },
             onChange: (contents, editable) => {
                 this.proxyModel = this.domSanitizer.sanitize(SecurityContext.HTML, contents.toString());
-                this.invokeOnChange(contents, getChangeEvt(), true);
+                this.invokeOnChange(this.proxyModel, getChangeEvt(), true);
                 this.invokeOnTouched();
             }
         },
