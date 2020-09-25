@@ -88,7 +88,6 @@ export class StatePersistence {
 
     private computeMode(widgetStateHandler) {
         if (widgetStateHandler && widgetStateHandler.toLowerCase() === 'inherit') {
-            getWmProjectProperties().stateHandler = 'localStorage';
             return getWmProjectProperties().stateHandler;
         } else if (widgetStateHandler && widgetStateHandler.toLowerCase() === 'none') {
             return;
