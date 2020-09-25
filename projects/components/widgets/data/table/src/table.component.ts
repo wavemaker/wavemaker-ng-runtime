@@ -797,6 +797,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.ngform = fb.group({});
         this.addEventsToContext(this.context);
 
+        // Updates pagination, filter, sort etc options for service and crud variables
+        this.app.subscribe('check-state-persistence-options', options => {
+            if (this._pageLoad && this.statehandler !== 'none') {
+                this._pageLoad = false;
+                const widgetState = this.statePersistence.getWidgetState(this);
+                if (widgetState) {
+                    options = this.handleStateParams(widgetState, options);
+                }
+            }
+        });
+
         // Show loading status based on the variable life cycle
         this.app.subscribe('toggle-variable-state', options => {
             this.datasource.req = false;
