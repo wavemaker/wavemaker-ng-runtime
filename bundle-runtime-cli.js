@@ -134,6 +134,6 @@ const processRequest = () => {
     ng9Logger.log(`processRequest | Done`)
 };
 
-// processRequest();
+processRequest();
 
 ng9Logger.store();
