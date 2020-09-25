@@ -209,9 +209,21 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     }
 
     private toggleExpandCollapseNode($event, $i, $li) {
-        const treeIcons = ICON_CLASSES[this.treeicons || defaultTreeIconClass],
-            eventParams = {
-                '$event'  : $event
+        const treeIcons = ICON_CLASSES[this.treeicons || defaultTreeIconClass];
+        const  $liPath =  $li.find('> span.title').parents('.app-tree li');
+        let path = '';
+
+        // construct the path of the node
+        $liPath
+            .each((i, el) => {
+                const current = $(el).children('.title').text();
+                path = `/${current + path}`;
+            });
+
+         const  eventParams = {
+                '$event'  : $event,
+                "$item"   :  $li.data('nodedata'),
+                "$path" : path
             };
 
         if ($i.hasClass('collapsed')) {
