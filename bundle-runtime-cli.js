@@ -9,7 +9,7 @@ const ng9Log = ()=>{
             log+=str;
         },
         store(){
-            const logPath = './dist/runtime-cli/angular-app/ng9-logger.json';
+            const logPath = './dist/runtime-cli/angular-app/logger.json';
             fs.appendFileSync(logPath, log);
         }
     }
@@ -154,6 +154,6 @@ const processRequest = () => {
     ng9Logger.log(`processRequest | Done`)
 };
 
-processRequest();
+// processRequest();
 
 ng9Logger.store();
