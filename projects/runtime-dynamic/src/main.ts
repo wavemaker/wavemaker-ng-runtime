@@ -24,14 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             resolve();
         }
-    }).then(() => {
-        return new Promise(resolve => {
-            if(isIos() && window['cordova'] && !window['__isLocalStorageReady']) {
-                document.addEventListener('localStorageReady', resolve);
-            } else {
-                resolve();
-            }
-        });
     }).then(() => platformBrowserDynamic().bootstrapModule(AppModule))
         .then(() => console.timeEnd('bootstrap'), err => console.log(err));
 });

@@ -4,7 +4,7 @@ import { AppVersion } from '@ionic-native/app-version';
 import { File } from '@ionic-native/file';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 
-import { DataType, DEFAULT_FORMATS, executePromiseChain, extractType, isAndroid, isArray, isIos, noop, toPromise } from '@wm/core';
+import { DataType, DEFAULT_FORMATS, executePromiseChain, extractType, isAndroid, isArray, isIos, noop, toPromise, transformFileURI } from '@wm/core';
 import { DeviceFileService, DeviceService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 import { formatDate } from '@wm/variables';
@@ -726,7 +726,7 @@ export class LocalDBManagementService {
                     return new Promise((resolve, reject) => {
                         // Cordova File reader has buffer issues with large files.
                         // so, using ajax to retrieve local json
-                        $.getJSON((isIos() ? '/' + META_LOCATION + '/': folder) + f['name'], data => resolve(data));
+                        $.getJSON(transformFileURI(folder) + f['name'], data => resolve(data));
                     });
                 }))
             );

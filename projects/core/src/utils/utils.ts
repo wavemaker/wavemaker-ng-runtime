@@ -569,7 +569,9 @@ export const isPageable = (obj: any): boolean => {
         'totalElements': 10,
         'totalPages': 1
     };
-    return (_.isEqual(_.keys(pageable), _.keys(obj).sort()));
+    // paginated object may or may not contain 'empty' property. In either case, Pageable should return as true.
+    const paginatedObj = _.omit(obj, 'empty');
+    return (_.isEqual(_.keys(pageable), _.keys(paginatedObj).sort()));
 };
 
 /*
@@ -1415,7 +1417,7 @@ export const VALIDATOR = {
 
 export const transformFileURI = (url) => {
     if(url && hasCordova() && isIos() && url.startsWith('file://')) {
-        return url.replace('file://', 'http://' + location.host + '/local-filesystem');
+        return url.replace('file://', '/_app_file_');
     }
     return url;
 };

@@ -352,6 +352,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         } else if (key === 'animation') {
             // update styles if old and nv value are different
             addClass(this.nativeElement, "animated " + nv);
+        }  else if (key === 'disabled') {
+            // WMS-19321: In IE, widget is in disabled state when disabled="false" attribute is present
+            (nv === true) ? setAttr(this.nativeElement, 'disabled', 'true', true) : removeAttr(this.nativeElement, 'disabled', true);
         }
     }
 

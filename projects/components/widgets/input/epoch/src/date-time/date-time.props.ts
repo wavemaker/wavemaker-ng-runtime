@@ -33,7 +33,9 @@ export const dateTimeProps = new Map(
         ['timestamp', PROP_STRING],
         ['selectfromothermonth', { value: true, ...PROP_BOOLEAN }],
         ['todaybutton', { value: true, ...PROP_BOOLEAN }],
-        ['clearbutton',  { value: true, ...PROP_BOOLEAN }]
+        ['clearbutton',  { value: true, ...PROP_BOOLEAN }],
+        ['todaybuttonlabel',  { value: 'LABEL_CALENDAR_TODAY', ...PROP_STRING }],
+        ['clearbuttonlabel',  { value: 'LABEL_CLEAR', ...PROP_STRING }]
 
     ]
 );

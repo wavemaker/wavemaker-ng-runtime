@@ -5,6 +5,7 @@ import { setTheme } from 'ngx-bootstrap/utils';
 
 import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App, addClass, removeClass } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
+import { AppManagerService } from '../../services/app.manager.service';
 import { PipeProvider } from '../../services/pipe-provider.service';
 
 interface SPINNER {
@@ -33,7 +34,8 @@ export class AppComponent implements DoCheck, AfterViewInit {
         private spinnerService: AbstractSpinnerService,
         ngZone: NgZone,
         private router: Router,
-        private app: App
+        private app: App,
+        private appManager: AppManagerService
     ) {
         setPipeProvider(_pipeProvider);
         setNgZone(ngZone);
@@ -77,14 +79,14 @@ export class AppComponent implements DoCheck, AfterViewInit {
                 if (node) {
                     addClass(node, 'page-load-in-progress');
                 }
-            } else if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) {
-                setTimeout(() => {
-                    this.spinnerService.hide(spinnerId);
-                    const node = document.querySelector('app-page-outlet') as HTMLElement;
-                    if (node) {
-                        removeClass(node, 'page-load-in-progress');
-                    }
-                }, 1000);
+            }
+        });
+
+        this.appManager.subscribe('pageReady', () => {
+            this.spinnerService.hide(spinnerId);
+            const node = document.querySelector('app-page-outlet') as HTMLElement;
+            if (node) {
+                removeClass(node, 'page-load-in-progress');
             }
         });
     }

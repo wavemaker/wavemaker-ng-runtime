@@ -54,6 +54,8 @@ const getHttpDependency = function() {
     return $http;
 };
 
+const MINIMUM_TAB_WIDTH = 768;
+
 @Injectable()
 export class AppRef {
     Variables: any = {};
@@ -72,6 +74,7 @@ export class AppRef {
     isApplicationType: boolean;
     isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
+    screenType: any;
 
     appLocale: any;
 
@@ -100,10 +103,14 @@ export class AppRef {
         this.isApplicationType = wmProjectProperties.type === PROJECT_TYPE.APPLICATION;
         this.isTemplateBundleType = wmProjectProperties.type === PROJECT_TYPE.TEMPLATE_BUNDLE;
 
+        this.setScreenType();
+
         this.httpService.registerOnSessionTimeout(this.on401.bind(this));
 
         this.appLocale = this.i18nService.getAppLocale();
         this.httpService.setLocale(this.appLocale);
+
+        window.addEventListener('resize', this.setScreenType.bind(this));
     }
 
     public notify(eventName: string, ...data: Array<any>) {
@@ -167,6 +174,26 @@ export class AppRef {
             });
         } else {
             console.warn('The default Action "appNotification" doesn\'t exist in the app. App notified following error:\n', template);
+        }
+    }
+
+    private setScreenType() {
+        const $el = $('.wm-app:first');
+        const w = $el.width();
+        const h = $el.height();
+        this.screenType = {
+            isMobile: false,
+            isTabletProtrait: false,
+            isTabletLandscape: false
+        };
+        if (w >= MINIMUM_TAB_WIDTH && h >= MINIMUM_TAB_WIDTH) {
+            if (w > h) {
+                this.screenType.isTabletLandscape = true;
+            } else {
+                this.screenType.isTabletProtrait = true;
+            }
+        } else {
+            this.screenType.isMobile = true;
         }
     }
 }
