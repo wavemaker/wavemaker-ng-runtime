@@ -781,7 +781,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (this.excludedays) {
                 this.excludedDaysToDisable = _.split(this.excludedays, ',').map((day) => {
                     return +day;
-                })
+                });
             }
             if (this.excludedates) {
                 this.excludedDatesToDisable = this.excludedates;
@@ -791,19 +791,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.excludedDatesToDisable = this.excludedDatesToDisable.map(d => getDateObj(d));
             }
             this.minDateMaxDateValidationOnInput(this.datavalue);
-        } else if (key == 'selectfromothermonth') {
+        } else if (key === 'selectfromothermonth') {
             this._dateOptions.selectFromOtherMonth = nv;
 
-        } else if(key == 'todaybutton'){
+        } else if (key === 'todaybutton'){
             this._dateOptions.showTodayButton = nv;
-        }else if(key == 'clearbutton'){
+        } else if (key === 'clearbutton'){
             this._dateOptions.showClearButton = nv;
-        }else if(key == 'todaybuttonlabel'){
+        } else if (key === 'todaybuttonlabel'){
             this._dateOptions.todayButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
-        }else if(key == 'clearbuttonlabel'){
+        } else if (key === 'clearbuttonlabel'){
             this._dateOptions.clearButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
-        }
-        else {
+        } else {
             super.onPropertyChange(key, nv, ov);
         }
 
