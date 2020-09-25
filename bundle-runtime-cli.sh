@@ -62,14 +62,10 @@ if [[ "${dev}" == true ]]; then
 fi
 cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
 cp ./wm.package.json libraries/package.json
-echo 'NG9 | ### RUNNING JS BEGIN ####'
+
 if [[ "${publish}" == true ]]; then
-    echo ' ### RUNNING JS ####'
-    echo ' * version: '"${version}"
-    echo ' * useS3: ' "${useS3}"
     node bundle-runtime-cli.js -v "${version}" --useS3=${useS3} --updateWmVersion
 fi
-echo 'NG9 | ### RUNNING JS END ####'
 mkdir -p dist/npm-packages/wm
 cp -r libraries/. dist/npm-packages/wm
 tar -zcf dist/npm-packages/wm.tar.gz -C dist/npm-packages wm
