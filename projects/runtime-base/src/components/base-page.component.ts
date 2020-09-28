@@ -252,11 +252,11 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                 .then(() => {
                     (this as any).compilePageContent = true;
                     unMuteWatchers();
-                    this.viewInit$.complete();
                     this.onPageContentReady = () => {
                         this.fragmentsLoaded$.subscribe(noop, noop, () => {
                             this.invokeOnReady();
                         });
+                        this.viewInit$.complete();
                         this.onPageContentReady = noop;
                     };
                 });
