@@ -6,8 +6,9 @@ import {
     getHtmlTagDefinition
 } from '@angular/compiler';
 import { WIDGET_IMPORTS } from './imports';
+import { isMobileApp } from '@wm/core';
+
 declare const _;
-declare const $;
 
 const CSS_REGEX = {
     COMMENTS_FORMAT : /\/\*((?!\*\/).|\n)+\*\//g,
@@ -84,20 +85,13 @@ const wrapWithApos = (val: string) => {
     return `&apos;${val.replace(/&apos/g, '&quot').replace(/&quot/g, '\\&quot')}&apos;`;
 };
 const ELE_PREFIX = '.wm-app';
-const $el = $(ELE_PREFIX);
-let isMobile = false;
-
-const isMobileApplicationType = () => {
-     isMobile = isMobile || $el.hasClass('wm-mobile-app') || $el.hasClass('wm-tablet-app');
-     return isMobile;
-};
 
 const processAttr = attr => {
     let overridden = OVERRIDES[attr.name];
     const value = attr.valueSpan ? attr.value : undefined;
 
     // do not append showInDevice attribute for mobile application.
-    if (attr.name === 'showindevice' && isMobileApplicationType()) {
+    if (attr.name === 'showindevice' && isMobileApp()) {
         overridden = '';
     }
     if (overridden) {

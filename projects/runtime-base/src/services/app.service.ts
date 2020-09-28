@@ -178,7 +178,7 @@ export class AppRef {
     }
 
     private setScreenType() {
-        const $el = $('.wm-app:first');
+        const $el = $('.wm-app');
         const w = $el.width();
         const h = $el.height();
         this.screenType = {
