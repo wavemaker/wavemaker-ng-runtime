@@ -2,7 +2,10 @@
 const fs = require('fs');
 const node_path = require('path');
 
-const addScript = (path)=>{
+const validScript = (path,indexHtml)=>{
+    return !indexHtml.includes(path);
+}
+const getScriptTag = (path)=>{
     return `<script src="ng-bundle/${path}"></script>`
 }
 module.exports = (targetOptions, indexHtml) =>{
@@ -10,8 +13,8 @@ module.exports = (targetOptions, indexHtml) =>{
     let vendorScripts = ``;
     fs.readdirSync(vendor_path).forEach((file)=>{
         if(file.indexOf('vendor-')===0){
-            if(!file.includes('.br.js') && !file.includes('.gzip.js')){
-                vendorScripts+=addScript(file);
+            if(!file.includes('.br.js') && !file.includes('.gzip.js') && validScript(file,indexHtml)){
+                vendorScripts+=getScriptTag(file);
             }
         }
     });
