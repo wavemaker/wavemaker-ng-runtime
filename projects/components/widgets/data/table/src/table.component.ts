@@ -810,7 +810,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         // Show loading status based on the variable life cycle
         this.app.subscribe('toggle-variable-state', options => {
-            this.datasource.req = false;
             if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(options.variable, this.datasource)) {
                 if (this._pageLoad && this.statehandler !== 'none') {
                     this._pageLoad = false;

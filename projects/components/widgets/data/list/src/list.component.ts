@@ -217,6 +217,20 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         this.noDataFound = !binddataset;
 
+        // Updates pagination, filter, sort etc options for service and crud variables
+        this.app.subscribe('check-state-persistence-options', options => {
+            if (this._pageLoad && this.statehandler !== 'none') {
+                this._pageLoad = false;
+                const widgetState = this.statePersistence.getWidgetState(this);
+                if (_.get(widgetState, 'pagination')) {
+                    options.options.page = widgetState.pagination;
+                }
+                if (_.get(widgetState, 'selectedItem')) {
+                    this._selectedItemsExist = true;
+                }
+            }
+        });
+
         // Show loading status based on the variable life cycle
         this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
         this.app.subscribe('setup-cud-listener', param => {
@@ -270,7 +284,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     delete(item?) {
         this.deleteRow(item);
     }
-    handleLoading(data) {
+    handleLoading(data, stateTriggered?) {
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
             this.ngZone.run(() => {
@@ -284,7 +298,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                         this._selectedItemsExist = true;
                     }
                 }
-                this.variableInflight = data.active;
+                if (!stateTriggered) {
+                    this.variableInflight = data.active;
+                }
             });
         }
     }
