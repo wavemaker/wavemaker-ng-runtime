@@ -10,10 +10,13 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['content', PROP_STRING],
                 ['disabled', PROP_BOOLEAN],
+                ['dynamicPaneIndex', PROP_NUMBER], // internal property
                 ['heading', PROP_STRING],
                 ['isdefaulttab', PROP_STRING],
+                ['isdynamic', PROP_BOOLEAN], // internal property
                 ['name', PROP_STRING],
                 ['paneicon', PROP_STRING],
+                ['selecttab', PROP_BOOLEAN], // internal property
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['smoothscroll', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],

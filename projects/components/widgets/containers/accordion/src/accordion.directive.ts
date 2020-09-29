@@ -1,6 +1,6 @@
 import { AfterContentInit, ContentChildren, Directive, Injector, QueryList } from '@angular/core';
 
-import { isNumber, noop, StatePersistence } from '@wm/core';
+import { DynamicComponentRefProvider, isNumber, noop, StatePersistence } from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './accordion.props';
@@ -31,14 +31,21 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     private activePaneIndex: number;
     private activePane: AccordionPaneComponent;
     private promiseResolverFn: Function;
+    private dynamicComponentProvider;
+    private _dynamicContext;
+    private dynamicPaneIndex;
+    private dynamicPanes;
 
     @ContentChildren(AccordionPaneComponent) panes: QueryList<AccordionPaneComponent>;
 
-    constructor(inj: Injector, statePersistence: StatePersistence) {
+    constructor(inj: Injector, statePersistence: StatePersistence, dynamicComponentProvider: DynamicComponentRefProvider) {
         let resolveFn: Function = noop;
         super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
         this.promiseResolverFn = resolveFn;
         this.statePersistence = statePersistence;
+        this.dynamicComponentProvider = dynamicComponentProvider;
+        this.dynamicPanes = [];
+        this.dynamicPaneIndex = 0;
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 
@@ -83,8 +90,74 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         }
     }
 
+    /**
+     * This method is used to register the dynamic panes.
+     * After all panes are initialzed, update the querylist manually based on index.
+     * @param paneRef - refrence of the tabpane
+     */
+    public registerDynamicPane(paneRef) {
+        this.dynamicPanes.push(paneRef);
+        const isLastPane =  this.dynamicPanes.length === this.dynamicPaneIndex;
+        if (isLastPane) {
+            for (let i = 0; i < this.dynamicPanes.length; i++) {
+                const newPaneRef  = _.find(this.dynamicPanes, pane => pane.dynamicPaneIndex === i);
+                this.panes.reset([...this.panes.toArray(), newPaneRef]);
+                if (newPaneRef.expandpane || this.defaultpaneindex === (this.panes.toArray().length - 1)) {
+                    newPaneRef.expand();
+                }
+            }
+        }
+    }
+
+    /**
+     * This method is to add the tabpane dynamically
+     * @param paneName - name of the tabpane
+     * @param properties - properties of the tabpane
+     */
+   public addPane(paneName, properties?) {
+       let paramMarkup = '';
+       let propsTmpl = '';
+       this.dynamicPaneIndex++;
+       const name = paneName ? paneName : `accordionpane${this.panes.toArray().length + this.dynamicPaneIndex}`;
+       const partialParams = _.get(properties, 'params');
+
+       _.forEach(properties, (value, key) => {
+           if (key !== 'params') {
+               propsTmpl = `${propsTmpl} ${key}="${value}"`;
+           }
+       });
+       _.forEach(partialParams, (value, key) => {
+           paramMarkup = `${paramMarkup} <wm-param name="${key}" value="${value}"></wm-param>`;
+       });
+       const markup = `<wm-accordionpane dynamicPaneIndex="${this.dynamicPaneIndex - 1}" isdynamic="true" name="${name}" ${propsTmpl}>
+                            ${paramMarkup}
+                        </wm-accordionpane>`;
+
+       if (!this._dynamicContext) {
+           this._dynamicContext = Object.create(this.viewParent);
+           this._dynamicContext[this.getAttr('wmAccordian')] = this;
+       }
+
+        this.dynamicComponentProvider.addComponent(this.getNativeElement(), markup, this._dynamicContext, {inj: this.inj});
+    }
+
+    /**
+     * This method is to remove the tabpane
+     * @param paneName - name of the pane
+     */
+    public removePane(paneName) {
+        const paneRef = this.getPaneRefByName(paneName);
+        if (paneRef) {
+           paneRef.remove();
+        }
+    }
+
     private isValidPaneIndex(index: number): boolean {
         return (index >= 0 && index < this.panes.length);
+    }
+
+    private getPaneRefByName(name: string): AccordionPaneComponent {
+        return _.find(this.panes.toArray(), {name: name});
     }
 
     private getPaneIndexByRef(paneRef: AccordionPaneComponent): number {
