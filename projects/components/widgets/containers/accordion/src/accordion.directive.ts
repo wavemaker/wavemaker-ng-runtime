@@ -67,7 +67,8 @@ export class AccordionDirective extends StylableComponent implements AfterConten
             }
             this.activePaneIndex = index;
         }
-        if (evt && this.statehandler !== 'none') {
+        const mode = this.statePersistence.computeMode(this.statehandler);
+        if (evt &&  mode && mode.toLowerCase()!== 'none') {
             const activePanes = [];
             this.panes.forEach(function(pane, paneIndex) {
                 if (pane.isActive) {

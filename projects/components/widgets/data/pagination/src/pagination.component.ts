@@ -277,7 +277,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     goToPage(event?, callback?) {
         this.firstRow = (this.dn.currentPage - 1) * this.maxResults;
         this.getPageData(event, callback);
-        if (this.statehandler !== 'none' && (this.parent.widgetType === 'wm-table' || this.parent.widgetType === 'wm-list')) {
+        const mode = this.parent.statePersistence.computeMode(this.statehandler);
+        if (mode && mode.toLowerCase() !== 'none' && (this.parent.widgetType === 'wm-table' || this.parent.widgetType === 'wm-list')) {
             this.parent._selectedItemsExist = true;
             if (this.isFirstPage()) {
                 this.parent.statePersistence.removeWidgetState(this.parent, 'pagination');

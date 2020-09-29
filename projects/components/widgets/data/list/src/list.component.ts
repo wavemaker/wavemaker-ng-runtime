@@ -219,16 +219,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         // Updates pagination, filter, sort etc options for service and crud variables
         this.app.subscribe('check-state-persistence-options', options => {
-            if (this._pageLoad && this.statehandler !== 'none') {
-                this._pageLoad = false;
-                const widgetState = this.statePersistence.getWidgetState(this);
-                if (_.get(widgetState, 'pagination')) {
-                    options.options.page = widgetState.pagination;
-                }
-                if (_.get(widgetState, 'selectedItem')) {
-                    this._selectedItemsExist = true;
-                }
-            }
+            this.handleStateParams(options);
         });
 
         // Show loading status based on the variable life cycle
@@ -239,6 +230,24 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
             this._isDependent = true;
         });
+    }
+
+    private getConfiguredState() {
+        const mode = this.statePersistence.computeMode(this.statehandler);
+        return mode && mode.toLowerCase();
+    }
+
+    private handleStateParams(options) {
+        if (this._pageLoad && this.getConfiguredState() !== 'none') {
+            this._pageLoad = false;
+            const widgetState = this.statePersistence.getWidgetState(this);
+            if (_.get(widgetState, 'pagination')) {
+                options.options.page = widgetState.pagination;
+            }
+            if (_.get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = true;
+            }
+        }
     }
 
     private triggerWMEvent(eventName, item?) {
@@ -284,23 +293,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     delete(item?) {
         this.deleteRow(item);
     }
-    handleLoading(data, stateTriggered?) {
+    handleLoading(data) {
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
             this.ngZone.run(() => {
-                if (this._pageLoad && this.statehandler !== 'none') {
-                    this._pageLoad = false;
-                    const widgetState = this.statePersistence.getWidgetState(this);
-                    if (_.get(widgetState, 'pagination')) {
-                        data.options.page = widgetState.pagination;
-                    }
-                    if (_.get(widgetState, 'selectedItem')) {
-                        this._selectedItemsExist = true;
-                    }
-                }
-                if (!stateTriggered) {
-                    this.variableInflight = data.active;
-                }
+                this.handleStateParams(data);
+                this.variableInflight = data.active;
             });
         }
     }
@@ -645,7 +643,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     private onDataSetChange(newVal) {
-        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.statehandler !== 'none' && this._pageLoad) {
+        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none' && this._pageLoad) {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
             if (_.get(widgetState, 'pagination')) {
@@ -713,7 +711,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 obj.push({page: this.dataNavigator.dn.currentPage, index: item.$index});
             }
         });
-        if (this.statehandler !== 'none') {
+        if (this.getConfiguredState() !== 'none') {
             this.statePersistence.setWidgetState(this, {'selectedItem': obj});
         }
     }
@@ -759,7 +757,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             $invokeWatchers(true);
             this.invokeEventCallback('render', {$data: this.fieldDefs});
         }
-        if (this.statehandler !== 'none' && listItems.length && this._selectedItemsExist) {
+        if (this.getConfiguredState() !== 'none' && listItems.length && this._selectedItemsExist) {
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = false;
@@ -859,7 +857,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const newIndex = ui.item.index();
         const oldIndex = this.$ulEle.data('oldIndex');
 
-        if (this.statehandler !== 'none') {
+        if (this.getConfiguredState() !== 'none') {
             this.statePersistence.removeWidgetState(this, 'selectedItem');
         }
 

@@ -288,7 +288,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
                 this.selectedItemChange.next(this.selectedItems);
                 const rowData = this.addRowIndex(row);
-                if (rowData.$index && this.statehandler !== 'none') {
+                if (rowData.$index && this.getConfiguredState() !== 'none') {
                     const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
@@ -331,7 +331,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.selectedItems = this.callDataGridMethod('getSelectedRows');
                     this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
                     const rowData = this.addRowIndex(row);
-                    if (this.statehandler !== 'none') {
+                    if (this.getConfiguredState() !== 'none') {
                         const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                         const widgetState = this.statePersistence.getWidgetState(this);
                         if (_.get(widgetState, 'selectedItem')) {
@@ -347,6 +347,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 });
             }
         },
+
         callOnRowDeselectEvent: (row, e) => {
             this.items = this.selectedItems = this.callDataGridMethod('getSelectedRows');
             this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
@@ -799,7 +800,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         // Updates pagination, filter, sort etc options for service and crud variables
         this.app.subscribe('check-state-persistence-options', options => {
-            if (this._pageLoad && this.statehandler !== 'none') {
+            if (this._pageLoad && this.getConfiguredState() !== 'none') {
                 this._pageLoad = false;
                 const widgetState = this.statePersistence.getWidgetState(this);
                 if (widgetState) {
@@ -811,7 +812,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // Show loading status based on the variable life cycle
         this.app.subscribe('toggle-variable-state', options => {
             if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(options.variable, this.datasource)) {
-                if (this._pageLoad && this.statehandler !== 'none') {
+                if (this._pageLoad && this.getConfiguredState() !== 'none') {
                     this._pageLoad = false;
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (widgetState) {
@@ -834,6 +835,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         this.deleteoktext = this.appLocale.LABEL_OK;
         this.deletecanceltext = this.appLocale.LABEL_CANCEL;
+    }
+
+    private getConfiguredState() {
+        const mode = this.statePersistence.computeMode(this.statehandler);
+        return mode && mode.toLowerCase();
     }
 
     private handleStateParams(widgetState, options) {
@@ -1279,7 +1285,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         } else {
             this.setGridData(this.serverData);
         }
-        if (this.statehandler !== 'none' && this._selectedItemsExist && serviceData.length) {
+        if (this.getConfiguredState() !== 'none' && this._selectedItemsExist && serviceData.length) {
             const widgetState = this.statePersistence.getWidgetState(this);
             let currentPageItems;
             if (_.get(widgetState, 'selectedItem')) {
@@ -1412,7 +1418,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     watchVariableDataSet(newVal) {
         let result;
-        if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.statehandler !== 'none') {
+        if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
             if (_.get(widgetState, 'selectedItem')) {

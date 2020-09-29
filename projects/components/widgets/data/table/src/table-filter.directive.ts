@@ -344,7 +344,7 @@ export class TableFilterSortDirective {
         const sortOptions  = sortObj && sortObj.direction ? (sortObj.field + ' ' + sortObj.direction) : '';
         const filterFields = this.getFilterFields(this.table.filterInfo);
 
-        if (!statePersistenceTriggered && this.table.statehandler !== 'none') {
+        if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
             this.table.statePersistence.removeWidgetState(this.table, 'pagination');
         }
 
@@ -372,7 +372,7 @@ export class TableFilterSortDirective {
         } else {
             obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
         }
-        if (this.table.statehandler !== 'none') {
+        if (this.table.getConfiguredState() !== 'none') {
             if ((_.isArray(searchSortObj) && obj.length) || searchSortObj.value) {
                 this.table.statePersistence.setWidgetState(this.table, {search: obj});
             } else {
@@ -429,7 +429,7 @@ export class TableFilterSortDirective {
         if (!dataSource) {
             return;
         }
-        if (!statePersistenceTriggered && this.table.statehandler !== 'none') {
+        if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
             const obj = {direction: searchSortObj.direction, field: searchSortObj.field};
             if (searchSortObj.direction) {
                 this.table.statePersistence.setWidgetState(this.table, {sort: obj});

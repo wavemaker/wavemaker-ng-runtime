@@ -27,7 +27,6 @@ export const registerProps = () => {
                 ['formposition', PROP_STRING],
                 ['gridclass', {value: 'table-hover', ...PROP_STRING}],
                 ['gridfirstrowselect', PROP_BOOLEAN],
-                ['statehandler', {value: 'inherit', ...PROP_STRING}],
                 ['iconclass', PROP_STRING],
                 ['insertmessage', {value: 'Record added successfully', ...PROP_STRING}],
                 ['isdynamictable', PROP_BOOLEAN], // internal property to determine dynamic table
@@ -50,6 +49,7 @@ export const registerProps = () => {
                 ['showrecordcount', PROP_BOOLEAN],
                 ['showrowindex', PROP_BOOLEAN],
                 ['spacing', {value: 'normal', ...PROP_STRING}],
+                ['statehandler', {value: 'inherit', ...PROP_STRING}],
                 ['subheading', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', PROP_STRING],

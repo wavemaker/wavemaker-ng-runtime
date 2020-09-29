@@ -86,7 +86,7 @@ export class StatePersistence {
         return;
     }
 
-    private computeMode(widgetStateHandler) {
+    public computeMode(widgetStateHandler) {
         if (widgetStateHandler && widgetStateHandler.toLowerCase() === 'inherit') {
             return getWmProjectProperties().stateHandler;
         } else if (widgetStateHandler && widgetStateHandler.toLowerCase() === 'none') {
