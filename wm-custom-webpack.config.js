@@ -23,14 +23,8 @@ module.exports = {
         })
     ],
     optimization: {
-        /* 
-        Commenting SplitChunks, as the generated chunk are not 
-        added to index.html due to the bug in 
-        'angular-builders/custom-webpack' package
-        Bug: https://github.com/just-jeb/angular-builders/issues/738
-        */
-       /*
         splitChunks: {
+            automaticNameDelimiter:'-',
             cacheGroups: {
                 vendor: {
                     minSize: 1000000,
@@ -39,6 +33,5 @@ module.exports = {
                 }
             }
         }
-        */
     }
 }
