@@ -3,6 +3,7 @@ import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Rout
 
 import { setTheme } from 'ngx-bootstrap/utils';
 
+import { noop } from '@wm/core';
 import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App, addClass, removeClass } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { AppManagerService } from '../../services/app.manager.service';
@@ -72,6 +73,8 @@ export class AppComponent implements DoCheck, AfterViewInit {
 
         let spinnerId;
 
+        let onPageRendered = noop;
+
         this.router.events.subscribe(e => {
             if (e instanceof NavigationStart) {
                 spinnerId = this.spinnerService.show('', 'globalSpinner');
@@ -79,15 +82,22 @@ export class AppComponent implements DoCheck, AfterViewInit {
                 if (node) {
                     addClass(node, 'page-load-in-progress');
                 }
+                onPageRendered = () => {
+                    this.spinnerService.hide(spinnerId);
+                    const node = document.querySelector('app-page-outlet') as HTMLElement;
+                    if (node) {
+                        removeClass(node, 'page-load-in-progress');
+                    }
+                    onPageRendered = noop;
+                };
+            } else if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) {
+                setTimeout(() =>{
+                    onPageRendered();
+                }, 1000);
             }
         });
-
         this.appManager.subscribe('pageReady', () => {
-            this.spinnerService.hide(spinnerId);
-            const node = document.querySelector('app-page-outlet') as HTMLElement;
-            if (node) {
-                removeClass(node, 'page-load-in-progress');
-            }
+            onPageRendered();
         });
     }
 
