@@ -48,6 +48,7 @@ export const registerProps = () => {
                 ['matchmode', PROP_STRING],
                 ['maxchars', PROP_NUMBER],
                 ['maxvalue', PROP_NUMBER],
+                ['step', PROP_NUMBER],
                 ['mobiledisplay', {value: true, ...PROP_BOOLEAN}],
                 ['minvalue', PROP_NUMBER],
                 ['maxdate', PROP_STRING],
