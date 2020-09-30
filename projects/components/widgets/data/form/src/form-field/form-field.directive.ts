@@ -111,6 +111,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Attribute('is-range') isRange,
         @Attribute('pc-display') pcDisplay,
         @Attribute('mobile-display') mobileDisplay,
+        @Attribute('tablet-display') tabletDisplay,
         @Self() @Inject(Context) contexts: Array<any>
     ) {
         const WIDGET_CONFIG = {
@@ -497,9 +498,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 fileType = this.filetype ? FILE_TYPES[this.filetype] : '';
                 this.permitted = fileType + (this.extensions ? (fileType ? ',' : '') + this.extensions : '');
             }
-
-            if (isMobile()) {
+            const screenType = this.viewParent.App.screenType;
+            if (isMobile() && screenType.isMobile) {
                 if (!this['mobile-display']) {
+                    this.widget.show = false;
+                }
+            } else if (screenType.isTabletProtrait || screenType.isTabletLandscape) {
+                if (!this['tablet-display']) {
                     this.widget.show = false;
                 }
             } else {
@@ -523,6 +528,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.fieldDefConfig.mobileDisplay = this['mobile-display'];
             this.fieldDefConfig.name = this.name;
             this.fieldDefConfig.pcDisplay = this['pc-display'];
+            this.fieldDefConfig.tabletDisplay = this['tablet-display'];
             this.fieldDefConfig.validationmessage = this.validationmessage;
             this.fieldDefConfig.viewmodewidget = this.viewmodewidget;
             this.fieldDefConfig.widget = this.widgettype;

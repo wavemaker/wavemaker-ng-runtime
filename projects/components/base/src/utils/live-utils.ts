@@ -51,6 +51,7 @@ export const getRowOperationsColumn = (): any => {
         'opConfig'      : {},
         'pcDisplay'     : true,
         'mobileDisplay' : true,
+        'tabletDisplay' : true,
         'include'       : true,
         'isRowOperation': true
     };

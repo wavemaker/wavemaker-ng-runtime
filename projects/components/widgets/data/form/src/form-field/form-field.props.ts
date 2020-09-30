@@ -36,6 +36,7 @@ export const registerProps = () => {
             ['related-entity-name', PROP_STRING],
             ['required', PROP_BOOLEAN],
             ['show', {value: true, ...PROP_BOOLEAN}],
+            ['tablet-display', {value: true, ...PROP_BOOLEAN}],
             ['type', PROP_STRING],
             ['validationmessage', PROP_STRING],
             ['viewmodewidget', PROP_STRING],

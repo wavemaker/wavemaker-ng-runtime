@@ -28,7 +28,7 @@ import { PaginationComponent } from '@wm/components/data/pagination';
 
 import { ListComponent } from '@wm/components/data/list';
 import { registerProps } from './table.props';
-import {debounceTime} from "rxjs/operators";
+import { debounceTime } from 'rxjs/operators';
 
 declare const _, $;
 
@@ -440,9 +440,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 const rootNode = customExprView.rootNodes[0];
                 const fieldName = rootNode.getAttribute('data-col-identifier');
                 _.extend(colDef, this.columns[fieldName]);
-                if(!summaryRow){
+                if (!summaryRow) {
                     this.customExprCompiledTl[fieldName + index] = rootNode;
-                }else{
+                } else {
                     this.customExprCompiledSummaryTl[fieldName + index] = rootNode;
                 }
             };
@@ -957,17 +957,29 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         });
     }
 
+    showFieldBasedOnScreenType(field, screenType) {
+        let showField;
+        if (isMobile() && screenType.isMobile) {
+            showField = field.mobileDisplay;
+        } else if (screenType.isTabletProtrait || screenType.isTabletLandscape) {
+            showField = field.tabletDisplay;
+        } else {
+            showField = field.pcDisplay;
+        }
+        return showField;
+    }
+
     /* Check whether it is non-empty row. */
     isEmptyRecord(record) {
         const properties = Object.keys(record);
+        const screenType = this.app.screenType;
         let data,
             isDisplayed;
 
         return properties.every((prop, index) => {
             data = record[prop];
             /* If fieldDefs are missing, show all columns in data. */
-            isDisplayed = (this.fieldDefs.length && isDefined(this.fieldDefs[index]) &&
-                (isMobile() ? this.fieldDefs[index].mobileDisplay : this.fieldDefs[index].pcDisplay)) || true;
+            isDisplayed = (this.fieldDefs.length && isDefined(this.fieldDefs[index]) && this.showFieldBasedOnScreenType(this.fieldDefs[index], screenType)) || true;
             /*Validating only the displayed fields*/
             if (isDisplayed) {
                 return (data === null || data === undefined || data === '');
@@ -1220,6 +1232,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             columnDef.caption = columnDef.displayName;
             columnDef.pcDisplay = true;
             columnDef.mobileDisplay = true;
+            columnDef.tabletDisplay = true;
             columnDef.searchable = true;
             columnDef.type  = 'string';
         });
@@ -1291,9 +1304,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             newVal = result;
         }
 
-        let sortExp = this.getSortExpr();
-        let sortExpArr = sortExp.split(' ');
-        if(sortExp && sortExpArr.length){
+        const sortExp = this.getSortExpr();
+        const sortExpArr = sortExp.split(' ');
+        if (sortExp && sortExpArr.length) {
             this.sortInfo = {
                 direction : sortExpArr[1],
                 field:  sortExpArr[0]
@@ -1463,8 +1476,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     registerColumns(tableColumn) {
-        if (isMobile()) {
+        const screenType = this.app.screenType;
+        if (isMobile() && screenType.isMobile) {
             if (!tableColumn.mobileDisplay) {
+                return;
+            }
+        } else if (screenType.isTabletLandscape || screenType.isTabletProtrait) {
+            if (!tableColumn.tabletDisplay) {
                 return;
             }
         } else {
@@ -1472,7 +1490,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 return;
             }
         }
-        if(tableColumn['primary-key']){
+        if (tableColumn['primary-key']) {
             this.primaryKey.push(tableColumn.field);
         }
         const colCount = this.fieldDefs.push(tableColumn);
