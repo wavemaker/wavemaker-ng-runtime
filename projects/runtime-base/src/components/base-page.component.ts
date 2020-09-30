@@ -213,7 +213,10 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     private getPageTransitionTarget() {
         if (!this.pageTransitionTarget) {
-            const pageOutlet = $('app-page-outlet:first').length ? $('app-page-outlet:first') : $('div[data-role="pageContainer"]:first').parent();
+            let pageOutlet = $('app-page-outlet').first();
+            if (pageOutlet.length === 0) { 
+                pageOutlet = $('div[data-role="pageContainer"]').first().parent();
+            }
             this.pageTransitionTarget = BasePageComponent.lastPageSnapShot;
             BasePageComponent.lastPageSnapShot = null;
             pageOutlet.prepend(this.pageTransitionTarget);
