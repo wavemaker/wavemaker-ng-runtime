@@ -95,5 +95,6 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         let updateOn = this.nativeElement.getAttribute('updateon') || 'blur';
         updateOn = updateOn === 'default' ? 'change' : updateOn;
         this.ngModelOptions.updateOn = updateOn;
+        addClass(this.nativeElement, 'full-height');
     }
 }
