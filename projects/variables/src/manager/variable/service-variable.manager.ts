@@ -155,7 +155,9 @@ export class ServiceVariableManager extends BaseVariableManager {
                 if (this.failedFileUploadCount === 0) {
                     this.processSuccessResponse(this.fileUploadResponse, variable, options, success);
                     this.fileUploadResponse = [];
-                    appManager.notifyApp(appManager.getAppLocale().MESSAGE_FILE_UPLOAD_SUCCESS, 'success');
+                    if (!variable.onSuccess) {
+                        appManager.notifyApp(appManager.getAppLocale().MESSAGE_FILE_UPLOAD_SUCCESS, 'success');
+                    }
                 } else {
                     initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, this.fileUploadResponse);
                     this.fileUploadResponse = [];
