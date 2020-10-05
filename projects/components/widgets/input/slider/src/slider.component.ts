@@ -1,8 +1,9 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
+import { addClass } from '@wm/core';
 
 import { registerProps } from './slider.props';
 
@@ -32,6 +33,7 @@ export class SliderComponent extends BaseFormCustomComponent {
     public tabindex: any;
     public name: string;
     public readonly: boolean;
+    @ViewChild('slider', {static: true}) sliderEle: ElementRef;
 
     @ViewChild(NgModel) ngModel: NgModel;
 
@@ -57,5 +59,10 @@ export class SliderComponent extends BaseFormCustomComponent {
         }
 
         super.onPropertyChange(key, nv, ov);
+    }
+
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        addClass(this.sliderEle.nativeElement, 'full-height');
     }
 }
