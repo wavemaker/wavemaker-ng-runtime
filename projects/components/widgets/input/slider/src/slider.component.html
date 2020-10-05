@@ -13,5 +13,6 @@
        (blur)="invokeOnTouched($event)"
        (ngModelChange)="handleChange($event)"
        [attr.name]="name"
-       [tabindex]="tabindex"/>
+       [tabindex]="tabindex"
+       #slider/>
 <div *ngIf="readonly || disabled" aria-readonly="true" class="readonly-wrapper"></div>

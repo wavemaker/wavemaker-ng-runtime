@@ -84,7 +84,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         if (this.class) {
             addClass(this.inputEl.nativeElement, this.class);
         }
-        styler(this.inputEl.nativeElement, this);
+        styler(this.nativeElement, this);
     }
 
     constructor(

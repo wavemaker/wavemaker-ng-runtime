@@ -48,7 +48,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        styler(this.selectEl.nativeElement as HTMLElement, this);
+        styler(this.nativeElement as HTMLElement, this);
     }
 
     // Change event is registered from the template, Prevent the framework from registering one more event
