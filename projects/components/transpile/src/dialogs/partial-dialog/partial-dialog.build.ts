@@ -31,7 +31,7 @@ register('wm-pagedialog', (): IBuildTaskDef => {
             if (contentMarkup) {
 
                 shared.set('hasPartialContent', true);
-                containerMarkup += `<ng-template><div wmContainer partialContainer ${contentMarkup} width="100%" height="100%" ${onLoadEvtMarkup}>`;
+                containerMarkup += `<ng-template><div wmContainer #partial partialContainer ${contentMarkup} width="100%" height="100%" ${onLoadEvtMarkup}>`;
             }
 
             return `<${tagName} wmPartialDialog ${getAttrMarkup(attrs)}>${containerMarkup}`;
