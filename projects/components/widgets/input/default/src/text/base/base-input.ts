@@ -1,7 +1,7 @@
 import { AfterViewInit, ElementRef, Injector } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-import { $appDigest, addClass, switchClass } from '@wm/core';
+import { $appDigest, addClass, setCSS, switchClass } from '@wm/core';
 import { IWidgetConfig, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '../../base-form-custom.component';
 declare const _;
@@ -84,7 +84,16 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         if (this.class) {
             addClass(this.inputEl.nativeElement, this.class);
         }
-        styler(this.inputEl.nativeElement, this);
+
+        if (this.height) {
+            setCSS(this.nativeElement, 'height', this.height);
+        }
+
+        if (this.width) {
+            setCSS(this.nativeElement, 'width', this.width);
+        }
+
+        styler(this.inputEl.nativeElement, this, null, ['height', 'width']);
     }
 
     constructor(
