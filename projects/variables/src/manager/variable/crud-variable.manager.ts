@@ -155,7 +155,7 @@ export class CrudVariableManager extends ServiceVariableManager {
         let bodyParam;
         if (opInfo && opInfo.parameters) {
             bodyParam = opInfo.parameters.filter(function(op) {
-                return op.parameterType === 'body';
+                return op.parameterType === 'body' || op.parameterType === 'formData';
             })[0];
         }
         // merge fields with bindings
