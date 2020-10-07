@@ -30,6 +30,7 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     private navigationClass;
     private fieldDefs;
     private interval;
+    private oldIndex;
 
     public animationinterval;
     public animation;
@@ -77,6 +78,13 @@ export class CarouselDirective extends StylableComponent implements AfterContent
             this.onSlidesRender(slides);
         });
         this.slides.setDirty();
+    }
+
+    slideChange($event) {
+        if (this.animation === 'none' || !this.animator) {
+            this.onChangeCB($event, this.oldIndex);
+            this.oldIndex = $event;
+        }
     }
 
     public onChangeCB(newIndex, oldIndex) {
