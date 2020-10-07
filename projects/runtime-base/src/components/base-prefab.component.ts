@@ -1,14 +1,14 @@
 import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers } from '@wm/core';
+import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers, Screen } from '@wm/core';
 import { WidgetRef} from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';
 import { PrefabContainerDirective } from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
 
 import { PrefabManagerService } from '../services/prefab-manager.service';
-import {FragmentMonitor} from "../util/fragment-monitor";
+import { FragmentMonitor } from '../util/fragment-monitor';
 
 declare const _;
 
@@ -29,6 +29,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     scriptLoaderService: ScriptLoaderService;
     compileContent = false;
     pageDirective: PageDirective;
+    Screen: Screen;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -45,17 +46,18 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
 
         this.containerWidget = this.injector.get(WidgetRef);
         this.prefabMngr = this.injector.get(PrefabManagerService);
-        this.i18nService = this.injector.get(AbstractI18nService);;
+        this.i18nService = this.injector.get(AbstractI18nService);
         this.scriptLoaderService = this.injector.get(ScriptLoaderService);
+        this.Screen = this.injector.get(Screen);
         if (this.getContainerWidgetInjector().view.component.registerFragment) {
-            this.getContainerWidgetInjector().view.component.registerFragment()
+            this.getContainerWidgetInjector().view.component.registerFragment();
         }
 
         try {
             this.pageDirective = this.injector.get(PageDirective);
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
             this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
-        } catch(e) {
+        } catch (e) {
             // prefab may be part of common partial
         }
 

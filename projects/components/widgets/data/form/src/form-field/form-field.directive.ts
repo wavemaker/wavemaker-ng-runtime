@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes } from '@wm/core';
+import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Screen } from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
@@ -39,6 +39,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     @ContentChild('formWidgetMax') formWidgetMax;
 
     private fb;
+    private screen;
+
     // excludeProps is used to store the props that should not be applied on inner widget
     private excludeProps;
     private _validators;
@@ -99,6 +101,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         inj: Injector,
         form: FormComponent,
         fb: FormBuilder,
+        screen: Screen,
         @Optional() parentList: ListComponent,
         @Attribute('chipclass.bind') bindChipclass: string,
         @Attribute('dataset.bind') binddataset,
@@ -130,6 +133,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.binddisplaylabel = binddisplaylabel;
         this.form = form;
         this.fb = fb;
+        this.screen = screen;
         this._fieldName = key || name;
         this.isRange = isRange;
         this.excludeProps = new Set(['type', 'name']);
@@ -498,12 +502,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 fileType = this.filetype ? FILE_TYPES[this.filetype] : '';
                 this.permitted = fileType + (this.extensions ? (fileType ? ',' : '') + this.extensions : '');
             }
-            const screenType = this.viewParent.App.screenType;
-            if (isMobile() && screenType.isMobile) {
+            if (isMobile() && this.screen.isMobileType) {
                 if (!this['mobile-display']) {
                     this.widget.show = false;
                 }
-            } else if (screenType.isTabletProtrait || screenType.isTabletLandscape) {
+            } else if (this.screen.isTabletType) {
                 if (!this['tablet-display']) {
                     this.widget.show = false;
                 }
@@ -522,7 +525,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.fieldDefConfig.primaryKey = this['primary-key'];
             this.fieldDefConfig.required = this.required;
             this.fieldDefConfig._readonly = this.readonly;
-            this.fieldDefConfig.regexp = this.regexp
+            this.fieldDefConfig.regexp = this.regexp;
             this.fieldDefConfig.type = this.type;
             this.fieldDefConfig.key = this.key;
             this.fieldDefConfig.mobileDisplay = this['mobile-display'];

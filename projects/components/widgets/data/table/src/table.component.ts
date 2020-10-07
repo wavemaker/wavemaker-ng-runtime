@@ -1,6 +1,6 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import {StatePersistence} from '@wm/core';
+import { Screen, StatePersistence } from '@wm/core';
 
 import { Observable, Subject } from 'rxjs';
 
@@ -786,6 +786,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
         private statePersistence: StatePersistence,
+        private screen: Screen,
         @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('datasource.bind') public binddatasource,
@@ -1081,11 +1082,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         });
     }
 
-    showFieldBasedOnScreenType(field, screenType) {
+    showFieldBasedOnScreenType(field) {
         let showField;
-        if (isMobile() && screenType.isMobile) {
+        if (isMobile() && this.screen.isMobileType) {
             showField = field.mobileDisplay;
-        } else if (screenType.isTabletProtrait || screenType.isTabletLandscape) {
+        } else if (this.screen.isTabletType) {
             showField = field.tabletDisplay;
         } else {
             showField = field.pcDisplay;
@@ -1096,14 +1097,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     /* Check whether it is non-empty row. */
     isEmptyRecord(record) {
         const properties = Object.keys(record);
-        const screenType = this.app.screenType;
         let data,
             isDisplayed;
 
         return properties.every((prop, index) => {
             data = record[prop];
             /* If fieldDefs are missing, show all columns in data. */
-            isDisplayed = (this.fieldDefs.length && isDefined(this.fieldDefs[index]) && this.showFieldBasedOnScreenType(this.fieldDefs[index], screenType)) || true;
+            isDisplayed = (this.fieldDefs.length && isDefined(this.fieldDefs[index]) && this.showFieldBasedOnScreenType(this.fieldDefs[index])) || true;
             /*Validating only the displayed fields*/
             if (isDisplayed) {
                 return (data === null || data === undefined || data === '');
@@ -1631,12 +1631,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     registerColumns(tableColumn) {
-        const screenType = this.app.screenType;
-        if (isMobile() && screenType.isMobile) {
+        if (isMobile() && this.screen.isMobileType) {
             if (!tableColumn.mobileDisplay) {
                 return;
             }
-        } else if (screenType.isTabletLandscape || screenType.isTabletProtrait) {
+        } else if (this.screen.isTabletType) {
             if (!tableColumn.tabletDisplay) {
                 return;
             }

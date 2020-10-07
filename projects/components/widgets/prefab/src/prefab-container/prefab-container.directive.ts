@@ -1,6 +1,7 @@
 import { Directive, Injector, OnDestroy } from '@angular/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { Screen } from '@wm/core';
 import { registerProps } from './prefab-container.props';
 
 const DEFAULT_CLS = 'app-prefab-container full-height';
@@ -8,6 +9,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-prefab-container',
     hostClass: DEFAULT_CLS
 };
+declare const _;
 
 @Directive({
     selector: '[wmPrefabContainer]',
@@ -18,20 +20,28 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class PrefabContainerDirective extends StylableComponent  implements OnDestroy {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, private screen: Screen) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+
+        this.registerDestroyListener(this.screen.subscribe('on-resize', data => this.callback('resize', data)));
+        this.registerDestroyListener(this.screen.subscribe('on-orientationchange', data => this.callback('orientationchange', data)));
+    }
+
+    private callback(eventName, locals?: object) {
+        locals = _.assign({ widget: this }, locals);
+        this.invokeEventCallback(eventName, locals);
     }
 
     public ngOnAttach() {
-        this.invokeEventCallback('attach', { widget: this });
+        this.callback('attach');
     }
 
     public ngOnDetach() {
-        this.invokeEventCallback('detach', { widget: this });
+        this.callback('detach');
     }
 
     public ngOnDestroy() {
-        this.invokeEventCallback('destroy', { widget: this });
+        this.callback('destroy');
     }
 }

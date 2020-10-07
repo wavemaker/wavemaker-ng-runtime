@@ -1,7 +1,7 @@
 import { AfterViewInit, Directive, Injector, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import { EventNotifier } from '@wm/core';
+import { EventNotifier, Screen } from '@wm/core';
 import { updateDeviceView, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './page.props';
@@ -29,7 +29,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
         }
     }
 
-    constructor(inj: Injector, private titleService: Title) {
+    constructor(inj: Injector, private titleService: Title, private screen: Screen) {
         super(inj, WIDGET_CONFIG);
     }
 
@@ -61,6 +61,12 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
             this._eventNotifier.start();
             updateDeviceView(this.nativeElement, this.getAppInstance().isTabletApplicationType);
         }, 1);
+        this.registerDestroyListener(this.screen.subscribe('on-resize', data => {
+            this.invokeEventCallback('resize', { data, widget: this });
+        }));
+        this.registerDestroyListener(this.screen.subscribe('on-orientationchange', data => {
+            this.invokeEventCallback('orientationchange', data);
+        }));
     }
 
     public ngOnAttach() {

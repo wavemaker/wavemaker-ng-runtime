@@ -54,13 +54,6 @@ export const DataSource = {
     Operation
 };
 
-interface IScreenTypes {
-    isMobile: boolean;
-    isTabletLandscape: boolean;
-    isTabletProtrait: boolean;
-    isTablet: boolean;
-}
-
 export abstract class App {
     appLocale: any;
     Variables: any;
@@ -96,7 +89,6 @@ export abstract class App {
     Page: any;
     landingPageName: string;
     lastActivePageName: string;
-    screenType: IScreenTypes;
 }
 
 
