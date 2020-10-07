@@ -9,6 +9,7 @@ import { ListComponent } from '@wm/components/data/list';
 
 import { registerProps } from './form-field.props';
 import { FormComponent } from '../form.component';
+import { setCSS } from '@wm/core';
 
 declare const _, $;
 
@@ -307,6 +308,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.setFormWidget(key, nv);
         this.setMaxFormWidget(key, nv);
         super.onStyleChange(key, nv, ov);
+        if (key === 'height') {
+            setCSS(this.formWidget.nativeElement, 'height', this.formWidget.height);
+        }
+
+        if (key === 'width') {
+            setCSS(this.formWidget.nativeElement, 'width', this.formWidget.width);
+        }
     }
 
     get datavalue() {
