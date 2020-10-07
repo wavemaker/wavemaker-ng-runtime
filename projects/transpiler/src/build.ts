@@ -204,10 +204,10 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
                     condition.push('App.screenType.isMobile');
                 }
                 if (v.includes('sm')) {
-                    condition.push('App.screenType.isTabletProtrait');
+                    condition.push('(App.screenType.isTablet && App.screenOrientation.isPortrait)');
                 }
                 if (v.includes('md')) {
-                    condition.push('App.screenType.isTabletLandscape');
+                    condition.push('(App.screenType.isTablet && App.screenOrientation.isLandscape)');
                 }
                 attrMarkup += ` *ngIf="${condition.join(' || ')}"`;
             }

@@ -1085,7 +1085,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         let showField;
         if (isMobile() && screenType.isMobile) {
             showField = field.mobileDisplay;
-        } else if (screenType.isTabletProtrait || screenType.isTabletLandscape) {
+        } else if (screenType.isTablet) {
             showField = field.tabletDisplay;
         } else {
             showField = field.pcDisplay;
@@ -1636,7 +1636,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             if (!tableColumn.mobileDisplay) {
                 return;
             }
-        } else if (screenType.isTabletLandscape || screenType.isTabletProtrait) {
+        } else if (screenType.isTablet) {
             if (!tableColumn.tabletDisplay) {
                 return;
             }

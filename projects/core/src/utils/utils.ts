@@ -82,6 +82,11 @@ export const isIos = () => isIphone() || isIpod() || isIpad();
 
 export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('#wm-mobile-display:visible').length > 0;
 
+export const isTablet = () => {
+    const scope = document.querySelector('.app-page').widget;
+    return scope && scope.viewParent.App.screenType.isTablet;
+};
+
 export const isMobileApp = () => getWmProjectProperties().platformType === 'MOBILE' && getWmProjectProperties().type === 'APPLICATION';
 
 export const getAndroidVersion = () => {

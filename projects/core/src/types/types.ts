@@ -56,9 +56,12 @@ export const DataSource = {
 
 interface IScreenTypes {
     isMobile: boolean;
-    isTabletLandscape: boolean;
-    isTabletProtrait: boolean;
     isTablet: boolean;
+}
+
+interface IScreenOrientations {
+    isLandscape: boolean;
+    isPortrait: boolean;
 }
 
 export abstract class App {
@@ -97,6 +100,7 @@ export abstract class App {
     landingPageName: string;
     lastActivePageName: string;
     screenType: IScreenTypes;
+    screenOrientation: IScreenOrientations;
 }
 
 

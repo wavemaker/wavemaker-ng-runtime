@@ -503,7 +503,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 if (!this['mobile-display']) {
                     this.widget.show = false;
                 }
-            } else if (screenType.isTabletProtrait || screenType.isTabletLandscape) {
+            } else if (screenType.isTablet) {
                 if (!this['tablet-display']) {
                     this.widget.show = false;
                 }

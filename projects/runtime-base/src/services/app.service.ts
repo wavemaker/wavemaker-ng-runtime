@@ -58,6 +58,7 @@ const getHttpDependency = function() {
 };
 
 const MINIMUM_TAB_WIDTH = 768;
+const MINIMUM_LARGE_SCREEN_WIDTH = 1200;
 
 @Injectable()
 export class AppRef {
@@ -78,6 +79,7 @@ export class AppRef {
     isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
     screenType: any;
+    screenOrientation: any;
 
     appLocale: any;
 
@@ -160,7 +162,7 @@ export class AppRef {
     public notifyApp(template, type, title) {
         const notificationAction = _.get(this, 'Actions.appNotification');
         const EXCLUDE_NOTIFICATION_MESSAGES = ['PROCESS_REJECTED_IN_QUEUE'];
-        let skipDefaultNotification = EXCLUDE_NOTIFICATION_MESSAGES.indexOf(template) !== -1;
+        const skipDefaultNotification = EXCLUDE_NOTIFICATION_MESSAGES.indexOf(template) !== -1;
         if (notificationAction) {
             // do not notify the error to the app, just throw it in console
             if (skipDefaultNotification) {
@@ -187,15 +189,22 @@ export class AppRef {
         const h = $el.height();
         this.screenType = {
             isMobile: false,
-            isTabletProtrait: false,
-            isTabletLandscape: false
+            isTablet: false
         };
-        if (w >= MINIMUM_TAB_WIDTH && h >= MINIMUM_TAB_WIDTH) {
-            if (w > h) {
-                this.screenType.isTabletLandscape = true;
-            } else {
-                this.screenType.isTabletProtrait = true;
-            }
+        this.screenOrientation = {
+            isLandscape: false,
+            isPortrait: false
+        };
+        if (w > h) {
+            this.screenOrientation.isLandscape = true;
+        } else {
+            this.screenOrientation.isPortrait = true;
+        }
+        if (w >= MINIMUM_LARGE_SCREEN_WIDTH || h >= MINIMUM_LARGE_SCREEN_WIDTH) {
+            return; // this specifies that it is large screen device.
+        }
+        if (w >= MINIMUM_TAB_WIDTH || h >= MINIMUM_TAB_WIDTH) {
+            this.screenType.isTablet = true;
         } else {
             this.screenType.isMobile = true;
         }
