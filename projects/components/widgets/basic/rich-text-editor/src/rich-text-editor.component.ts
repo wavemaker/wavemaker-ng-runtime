@@ -96,7 +96,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
             },
             onChange: (contents, editable) => {
                 this.proxyModel = this.domSanitizer.sanitize(SecurityContext.HTML, contents.toString());
-                this.invokeOnChange(this.proxyModel, getChangeEvt(), true);
+                this.invokeOnChange(contents, getChangeEvt(), true);
                 this.invokeOnTouched();
             }
         },
@@ -118,7 +118,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         if (nv !== undefined && nv !== null) {
             this.$hiddenInputEle.val(nv);
             this.performEditorOperation('reset');
-            this.performEditorOperation('code', nv);
+            this.performEditorOperation('code', this.domSanitizer.sanitize(SecurityContext.HTML, nv));
         }
     }
 
