@@ -81,7 +81,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             break;
         case FormWidgetType.TEXTAREA:
             tmpl = `<wm-textarea ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} role="textbox" aria-describedby="Place your text" ${updateOnTmpl}></wm-textarea>`;
-             break;
+            break;
         case FormWidgetType.TIME:
             tmpl = `<div wmTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl}></div>`;
             break;
