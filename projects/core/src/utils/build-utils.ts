@@ -27,13 +27,13 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
     switch (widgetType) {
         case FormWidgetType.AUTOCOMPLETE:
         case FormWidgetType.TYPEAHEAD:
-            tmpl = `<div wmSearch  type="autocomplete" debouncetime="${attrs.get('debouncetime')}" ${innerTmpl}></div>`;
+            tmpl = `<div wmSearch  height="${height}" width="${width}"  type="autocomplete" debouncetime="${attrs.get('debouncetime')}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.CHECKBOX:
-            tmpl = `<div wmCheckbox ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''}></div>`;
+            tmpl = `<div wmCheckbox  height="${height}" width="${width}" ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''}></div>`;
             break;
         case FormWidgetType.CHECKBOXSET:
-            tmpl = `<ul wmCheckboxset ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''}></ul>`;
+            tmpl = `<ul wmCheckboxset ${innerTmpl}  height="${height}" width="${width}" ${attrs.get('required')==='true' ? 'required=true' : ''}></ul>`;
             break;
         case FormWidgetType.CHIPS:
             tmpl = `<ul wmChips role="input" debouncetime="${attrs.get('debouncetime')}" ${innerTmpl}></ul>`;
@@ -57,7 +57,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<wm-input ${innerTmpl}  height="${height}" width="${width}" ${attrs.get('required')==='true' ? 'required=true' : ''} type="password" aria-label="Enter password" ${updateOnTmpl}></wm-input>`;
             break;
         case FormWidgetType.RADIOSET:
-            tmpl = `<ul wmRadioset ${innerTmpl}></ul>`;
+            tmpl = `<ul wmRadioset  height="${height}" width="${width}" ${innerTmpl}></ul>`;
             break;
         case FormWidgetType.RATING:
             tmpl = `<div wmRating ${innerTmpl}></div>`;
@@ -69,13 +69,13 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<wm-select  height="${height}" width="${width}" ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl}></wm-select>`;
             break;
         case FormWidgetType.TOGGLE:
-            tmpl = `<div wmCheckbox ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} type="toggle" role="checkbox" aria-label="Toggle button"></div>`;
+            tmpl = `<div wmCheckbox  height="${height}" width="${width}" ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} type="toggle" role="checkbox" aria-label="Toggle button"></div>`;
             break;
         case FormWidgetType.SLIDER:
             tmpl = `<div wmSlider  height="${height}" width="${width}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.SWITCH:
-            tmpl = `<div wmSwitch ${innerTmpl}></div>`;
+            tmpl = `<div wmSwitch  height="${height}" width="${width}" ${innerTmpl}></div>`;
             break;
         case FormWidgetType.TEXT:
             const inputType = options.inputType || 'inputtype';
