@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { DataSource, removeAttr, setAttr } from '@wm/core';
+import { DataSource, removeAttr, setAttr, setCSS } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
@@ -48,7 +48,15 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        styler(this.selectEl.nativeElement as HTMLElement, this);
+
+        if (this.height) {
+            setCSS(this.nativeElement, 'height', this.height);
+        }
+
+        if (this.width) {
+            setCSS(this.nativeElement, 'width', this.width);
+        }
+        styler(this.selectEl.nativeElement as HTMLElement, this,  null, ['height', 'width']);
     }
 
     // Change event is registered from the template, Prevent the framework from registering one more event
