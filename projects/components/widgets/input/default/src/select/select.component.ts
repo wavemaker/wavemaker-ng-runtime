@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { DataSource, removeAttr, setAttr} from '@wm/core';
+import { DataSource, removeAttr, setAttr } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 

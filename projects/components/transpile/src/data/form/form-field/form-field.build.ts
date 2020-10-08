@@ -134,7 +134,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             }
 
             let existedClass = attrs.get('class');
-            existedClass = existedClass ? existedClass + ' full-height' : 'full-height';
+            existedClass = (existedClass || '') + ' full-height';
             attrs.set('class', existedClass);
 
             return `<${tagName} class="full-height" data-role="${dataRole}" [formGroup]="${pCounter}.ngform" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" ${getFormMarkupAttr(attrs)}>
