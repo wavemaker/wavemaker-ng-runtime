@@ -30,6 +30,9 @@ export class CarouselAnimator extends SwipeAnimation {
             $(this).on('click', () => {
                 self._activeIndex = i;
                 self.setActiveItem();
+                // WMS-17583: Triggering onChange event
+                self.carousel.onChangeCB(self._activeIndex, self._oldIndex);
+                self._oldIndex = self._activeIndex;
             });
         });
         this._$el.find('>.left.carousel-control').on('click', () => {
