@@ -67,7 +67,9 @@ export class CarouselDirective extends StylableComponent implements AfterContent
             this.currentslide = this.fieldDefs[0];
         }
         setTimeout(() => {
-            this.animator = new CarouselAnimator(this, this.interval, this.ngZone);
+            if (slides.length) {
+                this.animator = new CarouselAnimator(this, this.interval, this.ngZone);
+            }
         }, 50);
     }
 
