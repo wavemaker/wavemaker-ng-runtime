@@ -1,4 +1,3 @@
-import { setCSS } from '@wm/core';
 import { BaseComponent } from './base.component';
 
 export abstract class StylableComponent extends BaseComponent {
@@ -50,18 +49,4 @@ export abstract class StylableComponent extends BaseComponent {
     width: string;
     wordbreak: string;
     zindex: string;
-
-   public setHeightWidthForElement(ele:any, height?:string, width?:string){
-        if(!ele){
-            return;
-        }
-        if(height){
-            setCSS(ele, 'height', height);
-        }
-
-        if(width){
-            setCSS(ele, 'width', width);
-        }
-    }
-
 }
