@@ -85,14 +85,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
             addClass(this.inputEl.nativeElement, this.class);
         }
 
-        if (this.height) {
-            setCSS(this.nativeElement, 'height', this.height);
-        }
-
-        if (this.width) {
-            setCSS(this.nativeElement, 'width', this.width);
-        }
-
+        super.setHeightWidthForElement(this.nativeElement, this.height, this.width);
         styler(this.inputEl.nativeElement, this, null, ['height', 'width']);
     }
 

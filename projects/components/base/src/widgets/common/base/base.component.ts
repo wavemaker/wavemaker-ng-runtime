@@ -638,6 +638,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     ngAfterContentInit() {}
 
+    setHeightWidthForElement(ele:any, height?:string, width?:string) {}
+
     ngOnDestroy() {
         this.isDestroyed = true;
         this.widget = Object.create(null);

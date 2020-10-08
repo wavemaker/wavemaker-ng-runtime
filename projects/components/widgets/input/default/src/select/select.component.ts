@@ -48,14 +48,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-
-        if (this.height) {
-            setCSS(this.nativeElement, 'height', this.height);
-        }
-
-        if (this.width) {
-            setCSS(this.nativeElement, 'width', this.width);
-        }
+        super.setHeightWidthForElement(this.nativeElement, this.height, this.width);
         styler(this.selectEl.nativeElement as HTMLElement, this,  null, ['height', 'width']);
     }
 
