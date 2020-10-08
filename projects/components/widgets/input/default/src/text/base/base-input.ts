@@ -1,7 +1,7 @@
 import { AfterViewInit, ElementRef, Injector } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-import { $appDigest, addClass, setCSS, switchClass } from '@wm/core';
+import { $appDigest, addClass, switchClass } from '@wm/core';
 import { IWidgetConfig, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '../../base-form-custom.component';
 declare const _;

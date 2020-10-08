@@ -9,7 +9,6 @@ import { ListComponent } from '@wm/components/data/list';
 
 import { registerProps } from './form-field.props';
 import { FormComponent } from '../form.component';
-import { setCSS } from '@wm/core';
 
 declare const _, $;
 
