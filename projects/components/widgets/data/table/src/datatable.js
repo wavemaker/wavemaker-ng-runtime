@@ -501,7 +501,7 @@ $.widget('wm.datatable', {
 
     /* Returns the checkbox template. */
     _getCheckboxTemplate: function (row, isMultiSelectCol) {
-        var checked = row.checked ? ' checked' : '',
+        var checked = row._checked === true ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '',
             chkBoxName = isMultiSelectCol ? 'gridMultiSelect' : '';
         return '<input name="' + chkBoxName + '" type="checkbox"' + checked + disabled + '/>';
@@ -509,7 +509,7 @@ $.widget('wm.datatable', {
 
     /* Returns the radio template. */
     _getRadioTemplate: function (row) {
-        var checked = row.checked ? ' checked' : '',
+        var checked = row._checked === true ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '';
         return '<input type="radio" rowSelectInput name="" value=""' + checked + disabled + '/>';
     },
@@ -945,7 +945,7 @@ $.widget('wm.datatable', {
             self = this;
 
         this.preparedData.forEach(function (data, i) {
-            if (data.selected) {
+            if (data._selected) {
                 selectedRowsData.push(self.options.data[i]);
             }
         });
@@ -956,7 +956,7 @@ $.widget('wm.datatable', {
         var self = this;
         /*Deselect all the previous selected rows in the table*/
         self.gridBody.find('tr.app-datagrid-row').each(function (index) {
-            if (self.preparedData[index] && self.preparedData[index].selected) {
+            if (self.preparedData[index] && self.preparedData[index]._selected === true) {
                 $(this).trigger('click', [$(this), {skipSingleCheck: true}]);
             }
         });
@@ -1230,7 +1230,7 @@ $.widget('wm.datatable', {
         id = $row.attr('data-row-id');
         // Select the first row if it exists, i.e. it is not the first row being added.
         if ($row.length && this.preparedData.length) {
-            this.preparedData[id].selected = !value;
+            this.preparedData[id]._selected = !value;
             // Triggering row click event using javascript click method because jquery trigger method is not triggering the events which are attached through javascript addEventListener method.
             $row[0].click();
         }
@@ -1245,7 +1245,7 @@ $.widget('wm.datatable', {
             selector = 'tr.app-datagrid-row[data-row-id=' + rowIndex + ']';
             $row = this.gridBody.find(selector);
             if ($row.length) {
-                this.preparedData[rowIndex].selected = !value;
+                this.preparedData[rowIndex]._selected = !value;
             }
             if (value) {
                 $row.trigger('click');
@@ -1274,7 +1274,7 @@ $.widget('wm.datatable', {
         if (!this.preparedData[rowId]) {
             return;
         }
-        this.preparedData[rowId].selected = selected;
+        this.preparedData[rowId]._selected = selected;
         if (selected) {
             $row.addClass('active');
         } else {
@@ -1283,12 +1283,12 @@ $.widget('wm.datatable', {
         if (this.options.showRadioColumn) {
             $radio = $row.find('td input[rowSelectInput]:radio:not(:disabled)');
             $radio.prop('checked', selected);
-            this.preparedData[rowId].checked = selected;
+            this.preparedData[rowId]._checked = selected;
         }
         if (this.options.multiselect) {
             $checkbox = $row.find('td input[name="gridMultiSelect"]:checkbox:not(:disabled)');
             $checkbox.prop('checked', selected);
-            this.preparedData[rowId].checked = selected;
+            this.preparedData[rowId]._checked = selected;
             // if we check header checkbox(select/unselect all the records) then updating selectAll checkbox state is not required.
             if (!isSelectAll) {
                 this.updateSelectAllCheckboxState();
@@ -1368,7 +1368,7 @@ $.widget('wm.datatable', {
         rowId = $row.attr('data-row-id');
         rowData = this.preparedData[rowId];
         data = this.options.data[rowId];
-        selected = (rowData && rowData.selected) || false;
+        selected = (rowData && rowData._selected) || false;
         if (!options.skipSingleCheck && (($row.hasClass('active') && !this.options.multiselect) || !rowData)) {
             if (!isQuickEdit && options.operation !== 'new') { //For quick edit, row will be in edit mode. So, no need to call events.
                 callRowSelectionEvents();
@@ -2019,7 +2019,7 @@ $.widget('wm.datatable', {
                 preparedData = self.preparedData[id];
             if (id !== rowId && preparedData) {
                 $(this).find('input[rowSelectInput]:radio').prop('checked', false);
-                preparedData.selected = preparedData.checked = false;
+                preparedData._selected = preparedData._checked = false;
                 $(this).removeClass('active');
                 self.options.callOnRowDeselectEvent(preparedData, e);
             }
@@ -2397,7 +2397,7 @@ $.widget('wm.datatable', {
             return;
         }
         if (isClosed) {
-            if (e && self.preparedData[rowId].selected) {
+            if (e && self.preparedData[rowId]._selected) {
                 e.stopPropagation();
             }
             if (self.options.rowDef.closeothers) {
