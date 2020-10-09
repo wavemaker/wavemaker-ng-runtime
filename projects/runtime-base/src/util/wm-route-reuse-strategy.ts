@@ -45,7 +45,11 @@ class WmDefaultRouteReuseStrategy {
             .keys().orderBy()
             .map(k => k + '=' + route.queryParams[k])
             .value().join('&');
-        return route.params.pageName + '?' + queryParams;
+        let pageName = route.params.pageName;
+        if (route.data.pageName && route.routeConfig.path === '') {
+            pageName = route.data.pageName;
+        }
+        return pageName && (pageName + '?' + queryParams);
     }
 
     protected getSize = (obj: object | null): number =>
@@ -83,7 +87,9 @@ class WmDefaultRouteReuseStrategy {
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
         if(!!route.data['__wm_page_reuse']) {
             const key = this.getKey(route);
-            this.cache.set(key, handle);
+            if(key) {
+                this.cache.set(key, handle);
+            }
         }
     }
 
