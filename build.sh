@@ -80,7 +80,27 @@ hasLibChanges() {
 	fi
     return 0
 }
+hasLibJsChanges(){
+    if [[ ${force} == true ]]; then
+        return 0
+    fi
 
+    local successFile="./dist/LIB_${SUCCESS_FILE}"
+
+    if ! [[ -e ${successFile} ]]; then
+        return 0
+    fi
+
+    local updateTime=`date -r ./projects/components/widgets/data/table/src/datatable.js +%s`
+    local buildTime=`date -r ${successFile} +%s`
+
+	if [[ ${updateTime} -le ${buildTime} ]]; then
+		return 1
+	else
+		return 0
+	fi
+    return 0
+}
 hasSourceChanges() {
 
     if [[ ${force} == true ]]; then
@@ -655,37 +675,18 @@ buildLibs() {
             touch ./dist/LIB_${SUCCESS_FILE}
         fi
     else
-        echo "No changes in package.json. use --force to re-build libs"
+        hasLibJsChanges
+        
+        if [[ "$?" -eq "0" ]]; then
+        bundleWebLibs
+        bundleMobileLibs
+        if [[ "$?" -eq "0" ]]; then
+            touch ./dist/LIB_${SUCCESS_FILE}
+        fi
+        else
+            echo "No changes in package.json. use --force to re-build libs"
+        fi
     fi
-}
-
-esBundleForWebApp(){
- echo "uglify: es-bundle-web - begin" 
-
- ${TERSER} \
- ./dist/bundles/wmapp/scripts/wm-libs.js \
- ./dist/bundles/wmapp/scripts/wm-loader.js \
- -o "./dist/bundles/wmapp/scripts/ng9-wm-web-bundle.js" -b
-
- if [[ "$?" -eq "0" ]]; then
-        echo "uglify: es-bundle-web - success"
-    else
-        echo -e "uglify: es-bundle-web - failure"
-    fi    
-}
-esBundleForMobileApp(){
- echo "uglify: es-bundle-mobile - begin" 
-
- ${TERSER} \
- ./dist/bundles/wmmobile/scripts/wm-libs.js \
- ./dist/bundles/wmmobile/scripts/wm-mobileloader.js \
- -o "./dist/bundles/wmmobile/scripts/ng9-wm-mobile-bundle.js" -b
-
- if [[ "$?" -eq "0" ]]; then
-        echo "uglify: es-bundle-mobile - success"
-    else
-        echo -e "uglify: es-bundle-mobile - failure"
-    fi    
 }
 
 buildLibs
@@ -693,9 +694,6 @@ buildApp
 buildDocs
 copyLocale
 copyDist
-
-# esBundleForWebApp
-# esBundleForMobileApp
 
 end=`date +%s`
 
