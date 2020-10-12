@@ -1,4 +1,4 @@
-import { Directive, Injector } from '@angular/core';
+import { Directive, Injector, OnDestroy } from '@angular/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './prefab-container.props';
@@ -15,11 +15,23 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(PrefabContainerDirective)
     ]
 })
-export class PrefabContainerDirective extends StylableComponent {
+export class PrefabContainerDirective extends StylableComponent  implements OnDestroy {
     static initializeProps = registerProps();
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+    }
+
+    public ngOnAttach() {
+        this.invokeEventCallback('attach', { widget: this });
+    }
+
+    public ngOnDetach() {
+        this.invokeEventCallback('detach', { widget: this });
+    }
+
+    public ngOnDestroy() {
+        this.invokeEventCallback('destroy', { widget: this });
     }
 }

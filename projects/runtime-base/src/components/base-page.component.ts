@@ -286,38 +286,21 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     onPageContentReady() {}
 
     canReuse() {
-        return !!this.pageDirective.reuse && this.pageDirective.reuse !== "no";
+        return !!this.pageDirective.reuse;
     }
 
-    mute(c = this) {
-        _.each(c.Widgets, w =>  {
-            if (w) {
-                w.mute && w.mute();
-                this.mute(w);
-            }
-        });
-        _.each(c.Variables, v =>  v && v.mute && v.mute());
-        _.each(c.Actions, a =>  a && a.mute && a.mute());
+    mute() {
+        const m = o => { o && o.mute && o.mute(); };
+        _.each(this.Widgets, m);
+        _.each(this.Variables, m);
+        _.each(this.Actions, m);
     }
 
     unmute(c = this) {
-        const refreshData = (this.pageDirective.reuse === 'yes-and-refresh-data');
-        const m  = v =>  {
-            if (v) { 
-                v.unmute && v.unmute();
-                if (refreshData && v.startUpdate && v.invoke) {
-                    v.invoke();
-                }
-            }
-        };
-        _.each(c.Variables, m);
-        _.each(c.Actions, m);
-        _.each(c.Widgets, w =>  {
-            if (w) {
-                w.unmute && w.unmute();
-                this.unmute(w);
-            }
-        });
+        const um = o => { o && o.unmute && o.unmute(); };
+        _.each(this.Widgets, um);
+        _.each(this.Variables, um);
+        _.each(this.Actions, um);
     }
 
     ngOnAttach() {
@@ -329,8 +312,13 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.activePageName = this.pageName;
         this.restoreLastPageSnapshot();
         this.unmute();
+        if(this.pageDirective.refreshdataonattach) {
+            const refresh = v => { v.startUpdate && v.invoke && v.invoke(); };
+            _.each(this.Variables, refresh);
+            _.each(this.Actions, refresh);
+        }
         this.runPageTransition().then(() => {
-            this.pageDirective.onAttach();
+            this.pageDirective.ngOnAttach();
             this.appManager.notify('pageAttach', {'name' : this.pageName, instance: this});
         });
     }
@@ -338,7 +326,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     ngOnDetach() {
         this.savePageSnapShot();
         this.mute();
-        this.pageDirective.onDetach();
+        this.pageDirective.ngOnDetach();
         this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
     }
 }

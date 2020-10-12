@@ -1,4 +1,4 @@
-import { Directive, Injector } from '@angular/core';
+import { Directive, Injector, OnDestroy } from '@angular/core';
 
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './partial.props';
@@ -13,9 +13,22 @@ const WIDGET_CONFIG = {widgetType: 'wm-partial', hostClass: DEFAULT_CLS};
         provideAsWidgetRef(PartialDirective)
     ]
 })
-export class PartialDirective extends StylableComponent {
+export class PartialDirective extends StylableComponent implements OnDestroy {
     static initializeProps = registerProps();
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
     }
+
+    public ngOnAttach() {
+        this.invokeEventCallback('attach', { widget: this });
+    }
+
+    public ngOnDetach() {
+        this.invokeEventCallback('detach', { widget: this });
+    }
+
+    public ngOnDestroy() {
+        this.invokeEventCallback('destroy', { widget: this });
+    }
+
 }

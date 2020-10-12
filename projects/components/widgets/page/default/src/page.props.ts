@@ -5,7 +5,8 @@ export const registerProps = () => {
         'wm-page',
         new Map(
             [
-                ['reuse', {value: "no", PROP_STRING}],
+                ['reuse', {value: false, ...PROP_BOOLEAN}],
+                ['refreshdataonattach', {value: true, ...PROP_BOOLEAN}],
                 ['pagetitle', PROP_STRING]
             ]
         )

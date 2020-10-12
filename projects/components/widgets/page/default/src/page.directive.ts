@@ -19,6 +19,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
     static initializeProps = registerProps();
 
     private _eventNotifier = new EventNotifier(false);
+    public refreshdataonattach = true;
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'pagetitle') {
@@ -62,12 +63,16 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
         }, 1);
     }
 
-    public onAttach() {
+    public ngOnAttach() {
         this.invokeEventCallback('attach', { widget: this });
+        this.notify('attach', {
+            refreshData : this.refreshdataonattach
+        });
     }
 
-    public onDetach() {
+    public ngOnDetach() {
         this.invokeEventCallback('detach', { widget: this });
+        this.notify('detach');
     }
 
     public ngOnDestroy() {

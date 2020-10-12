@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 
 import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers } from '@wm/core';
 import { WidgetRef} from '@wm/components/base';
+import { PageDirective } from '@wm/components/page';
 import { PrefabContainerDirective } from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
 
@@ -27,6 +28,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     @ViewChild(PrefabContainerDirective) prefabContainerDirective;
     scriptLoaderService: ScriptLoaderService;
     compileContent = false;
+    pageDirective: PageDirective;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -47,6 +49,14 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         this.scriptLoaderService = this.injector.get(ScriptLoaderService);
         if (this.getContainerWidgetInjector().view.component.registerFragment) {
             this.getContainerWidgetInjector().view.component.registerFragment()
+        }
+
+        try {
+            this.pageDirective = this.injector.get(PageDirective);
+            this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
+            this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
+        } catch(e) {
+            // prefab may be part of common partial
         }
 
         this.initUserScript();
@@ -187,6 +197,35 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         });
     }
 
+    mute() {
+        const m = o => { o && o.mute && o.mute(); };
+        _.each(this.Widgets, m);
+        _.each(this.Variables, m);
+        _.each(this.Actions, m);
+    }
+
+    unmute() {
+        const um = o => { o && o.unmute && o.unmute(); };
+        _.each(this.Widgets, um);
+        _.each(this.Variables, um);
+        _.each(this.Actions, um);
+    }
+
+    ngOnAttach(refreshData) {
+        this.unmute();
+        if(refreshData) {
+            const refresh = v => { v.startUpdate && v.invoke && v.invoke(); };
+            _.each(this.Variables, refresh);
+            _.each(this.Actions, refresh);
+        }
+        this.prefabContainerDirective.ngOnAttach();
+    }
+
+    ngOnDetach() {
+        this.mute();
+        this.prefabContainerDirective.ngOnDetach();
+    }
+
 
     ngAfterViewInit(): void {
         this.loadScripts().then(() => {
@@ -200,7 +239,6 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     }
 
     ngOnDestroy(): void {
-        this.containerWidget.invokeEventCallback('destroy');
         this.destroy$.complete();
     }
 
