@@ -8,6 +8,7 @@
             "umdId": "wm.components.dialogs",
             "umdModuleIds": {
                 "@angular/core": "ng.core",
+                "@angular/router": "ng.router",
                 "ngx-bootstrap/modal": "ngx-bootstrap.modal",
                 "rxjs": "rxjs",
                 "@wm/core": "wm.core",
