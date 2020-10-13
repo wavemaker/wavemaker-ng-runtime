@@ -15,8 +15,7 @@ import {
     App,
     AppDefaults,
     CoreModule,
-    DynamicComponentRefProvider,
-    getAppSetting
+    DynamicComponentRefProvider
 } from '@wm/core';
 import { WmComponentsModule } from '@wm/components/base';
 import { DialogModule } from '@wm/components/dialogs';
@@ -61,10 +60,10 @@ const initializeProjectDetails = () => {
     _WM_APP_PROJECT.ngDest = 'ng-bundle/';
 };
 
-const getSettingProvider = (key: string, defaultValue: any) => {
+export function getSettingProvider(key: string, defaultValue: any) {
     return {
         provide: key,
-        useValue: getAppSetting(key, defaultValue)
+        useValue: defaultValue
     };
 };
 
