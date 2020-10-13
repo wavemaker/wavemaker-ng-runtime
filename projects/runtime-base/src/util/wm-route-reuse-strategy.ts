@@ -29,6 +29,9 @@ export const MAX_CACHE_AGE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_AGE';
 class WmDefaultRouteReuseStrategy {
     private cache: LRUCache<DetachedRouteHandle>;
     private currentRouteKey: string;
+    private paramsToIgnore = [
+        'wm_state' // state persistence
+    ];
 
     constructor(private maxCacheSize: number, private maxCacheAge: number) {
         this.cache = new LRUCache<DetachedRouteHandle>(maxCacheSize, maxCacheAge, (key, handle) => {
@@ -42,7 +45,9 @@ class WmDefaultRouteReuseStrategy {
 
     private getKey(route: ActivatedRouteSnapshot) {
         const queryParams = _.chain(route.queryParams)
-            .keys().orderBy()
+            .keys()
+            .filter(k => _.find(this.paramsToIgnore, k))
+            .orderBy()
             .map(k => k + '=' + route.queryParams[k])
             .value().join('&');
         let pageName = route.params.pageName;

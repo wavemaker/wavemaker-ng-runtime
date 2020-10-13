@@ -313,7 +313,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.restoreLastPageSnapshot();
         this.unmute();
         if(this.pageDirective.refreshdataonattach) {
-            const refresh = v => { v.startUpdate && v.invoke && v.invoke(); };
+            const refresh = v => { (v.startUpdate || v.autoUpdate) && v.invoke && v.invoke(); };
             _.each(this.Variables, refresh);
             _.each(this.Actions, refresh);
         }

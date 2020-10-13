@@ -797,21 +797,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         this.ngform = fb.group({});
         this.addEventsToContext(this.context);
-
-        // Updates pagination, filter, sort etc options for service and crud variables
-        this.app.subscribe('check-state-persistence-options', options => {
-            if (this._pageLoad && this.getConfiguredState() !== 'none') {
-                this._pageLoad = false;
-                const widgetState = this.statePersistence.getWidgetState(this);
-                if (widgetState) {
-                    options = this.handleStateParams(widgetState, options);
-                }
-            }
-        });
-
-        // Show loading status based on the variable life cycle
-        this.app.subscribe('toggle-variable-state', options => {
-            if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(options.variable, this.datasource)) {
+        const listenersToRemove = [
+            // Updates pagination, filter, sort etc options for service and crud variables
+            this.app.subscribe('check-state-persistence-options', options => {
                 if (this._pageLoad && this.getConfiguredState() !== 'none') {
                     this._pageLoad = false;
                     const widgetState = this.statePersistence.getWidgetState(this);
@@ -819,19 +807,38 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                         options = this.handleStateParams(widgetState, options);
                     }
                 }
-                isDefined(this.variableInflight) ? this.debouncedHandleLoading(options) : this.handleLoading(options);
-            }
-        });
+            }),
 
-        this.app.subscribe('setup-cud-listener', param => {
-            if (this.name !== param) {
-                return;
-            }
-            this._isDependent = true;
-            this.selectedItemChange$
-                .pipe(debounceTime(250))
-                .subscribe(this.triggerWMEvent.bind(this));
-        });
+            // Show loading status based on the variable life cycle
+            this.app.subscribe('toggle-variable-state', options => {
+                if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(options.variable, this.datasource)) {
+                    if (this._pageLoad && this.getConfiguredState() !== 'none') {
+                        this._pageLoad = false;
+                        const widgetState = this.statePersistence.getWidgetState(this);
+                        if (widgetState) {
+                            options = this.handleStateParams(widgetState, options);
+                        }
+                    }
+                    isDefined(this.variableInflight) ? this.debouncedHandleLoading(options) : this.handleLoading(options);
+                }
+            }),
+
+            this.app.subscribe('pageDetach', () => {
+                this._pageLoad = true;
+            }),
+
+            this.app.subscribe('setup-cud-listener', param => {
+                if (this.name !== param) {
+                    return;
+                }
+                this._isDependent = true;
+                this.selectedItemChange$
+                    .pipe(debounceTime(250))
+                    .subscribe(this.triggerWMEvent.bind(this));
+            })
+        ];
+
+        listenersToRemove.forEach( l => this.registerDestroyListener(l) );
 
         this.deleteoktext = this.appLocale.LABEL_OK;
         this.deletecanceltext = this.appLocale.LABEL_CANCEL;
