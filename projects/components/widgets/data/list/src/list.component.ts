@@ -99,7 +99,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private $ulEle: any;
     private _listAnimator: ListAnimator;
     public pulltorefresh: boolean;
-    private cancelSubscription: Function;
+    private _listenerDestroyers: Array<any>;
 
     public title: string;
     public subheading: string;
@@ -218,18 +218,22 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.noDataFound = !binddataset;
 
         // Updates pagination, filter, sort etc options for service and crud variables
-        this.app.subscribe('check-state-persistence-options', options => {
-            this.handleStateParams(options);
-        });
-
-        // Show loading status based on the variable life cycle
-        this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
-        this.app.subscribe('setup-cud-listener', param => {
-            if (this.nativeElement.getAttribute('name') !== param) {
-                return;
-            }
-            this._isDependent = true;
-        });
+        this._listenerDestroyers = [
+            this.app.subscribe('check-state-persistence-options', options => {
+                this.handleStateParams(options);
+            }),
+            // Show loading status based on the variable life cycle
+            this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this)),
+            this.app.subscribe('setup-cud-listener', param => {
+                if (this.nativeElement.getAttribute('name') !== param) {
+                    return;
+                }
+                this._isDependent = true;
+            }),
+            this.app.subscribe('pageDetach', () => {
+                this._pageLoad = true;
+            })
+        ];
     }
 
     private getConfiguredState() {
@@ -1145,11 +1149,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     // Invoke the datasource variable by default when pulltorefresh event is not specified.
     private subscribeToPullToRefresh() {
-        this.cancelSubscription = this.app.subscribe('pulltorefresh', () => {
+        this._listenerDestroyers.push(this.app.subscribe('pulltorefresh', () => {
             if (this.datasource && this.datasource.listRecords) {
                 this.datasource.listRecords();
             }
-        });
+        }));
     }
 
     ngOnInit() {
@@ -1203,9 +1207,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this._listAnimator && this._listAnimator.$btnSubscription) {
             this._listAnimator.$btnSubscription.unsubscribe();
         }
-        if (this.cancelSubscription) {
-            this.cancelSubscription();
-        }
+        this._listenerDestroyers.forEach(d => d && d());
         super.ngOnDestroy();
     }
 }
