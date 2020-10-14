@@ -74,7 +74,6 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
             router.events.subscribe(e => {
                 if (e instanceof NavigationStart) {
                     this.close();
-                    this.deRegister(this.viewParent);
                 }
             })
         ];
