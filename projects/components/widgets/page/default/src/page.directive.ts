@@ -20,6 +20,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
 
     private _eventNotifier = new EventNotifier(false);
     public refreshdataonattach = true;
+    public pagetitle: string;
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'pagetitle') {
@@ -70,6 +71,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
     }
 
     public ngOnAttach() {
+        this.titleService.setTitle(this.pagetitle);
         this.invokeEventCallback('attach', { widget: this });
         this.notify('attach', {
             refreshData : this.refreshdataonattach
