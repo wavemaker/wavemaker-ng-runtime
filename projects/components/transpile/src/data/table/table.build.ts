@@ -1,4 +1,4 @@
-import { Element } from '@angular/compiler';
+import { Attribute, Element } from '@angular/compiler';
 
 import { IDGenerator, updateTemplateAttrs } from '@wm/core';
 import { getAttrMarkup, getBoundToExpr, IBuildTaskDef, register } from '@wm/transpiler';
@@ -6,6 +6,35 @@ import { getAttrMarkup, getBoundToExpr, IBuildTaskDef, register } from '@wm/tran
 const tagName = 'div';
 const dataSetKey = 'dataset';
 const idGen = new IDGenerator('table_');
+let columnIndex = 0;
+
+/**
+ * This method assigns index to the table-column and column-groups in order to the maintain the columns in the same order
+ * as specified in the configuration.
+ * Scenario: ordering the columns when accessrole is specified on column.
+ *
+ * headerIndex:    ID  |      Name        |   Street  |  ==> top level header (ID has index 0, Name 1, Street 2)
+ * index:         ---- |  fname | lname    |   ---    |  ==> sub level header ( ID 0, fname 1, lname 2, Street 3)
+ * fname will have headerIndex as 1 and colIndex as 1. lname will have headerIndex as 1 and columnIndex as 2.
+ * If suppose we have a group in the sub-level-header, then col index will be treated as the header index.
+ *
+ */
+function assignColumnIndex(node, parentIndex?: number) {
+    let headerIndex = 0;
+    node.forEach((childNode) => {
+        const nodeName = (<any>childNode).name;
+        const newheaderIndex = parentIndex !== undefined ? parentIndex : headerIndex;
+        if (nodeName === 'wm-table-column' || nodeName === 'wm-table-column-group') {
+            (childNode as any).attrs.push(new Attribute('index', '' + columnIndex, <any>1, <any>1));
+            (childNode as any).attrs.push(new Attribute('headerIndex', '' + newheaderIndex, <any>1, <any>1));
+            if (nodeName === 'wm-table-column-group') {
+                assignColumnIndex(childNode.children, headerIndex);
+            }
+            columnIndex++;
+            headerIndex++;
+        }
+    });
+}
 
 register('wm-table', (): IBuildTaskDef => {
     return {
@@ -15,6 +44,7 @@ register('wm-table', (): IBuildTaskDef => {
                 const isColumnsPresent = node.children.some(childNode => {
                     return (<any>childNode).name === 'wm-table-column' || (<any>childNode).name === 'wm-table-column-group';
                 });
+                assignColumnIndex(node.children);
                 shared.set('isdynamictable', isColumnsPresent ? 'false' : 'true');
             } else {
                 shared.set('isdynamictable', 'true');
