@@ -6,7 +6,7 @@ import { ServiceVariableUtils } from '../../util/variable/service-variable.utils
 import { $queue } from '../../util/inflight-queue';
 import { BaseVariableManager } from './base-variable.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
-import { appManager, formatExportExpression, setInput } from './../../util/variable/variables.utils';
+import { appManager, formatExportExpression, setInput, decodeData } from './../../util/variable/variables.utils';
 import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, securityService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 import { AdvancedOptions } from '../../advanced-options';
@@ -77,6 +77,9 @@ export class ServiceVariableManager extends BaseVariableManager {
             pagination = _.omit(response, 'content');
         } else {
             dataSet = response;
+        }
+        if (variable.serviceType === 'DataService') {
+            decodeData(dataSet);
         }
         /**
          * send pagination object with advancedOptions all the time.
