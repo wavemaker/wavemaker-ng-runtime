@@ -1,7 +1,7 @@
 import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { isAndroid, isIos, ScriptLoaderService } from '@wm/core';
+import { isAndroid, isIos, Screen, ScriptLoaderService } from '@wm/core';
 import { PageDirective } from '@wm/components/page';
 
 import {Subject, Subscription} from 'rxjs';
@@ -50,6 +50,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     @ViewChild(PageDirective) pageDirective;
     $page;
     scriptLoaderService: ScriptLoaderService;
+    screen: Screen;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -68,6 +69,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.scriptLoaderService = this.injector.get(ScriptLoaderService);
         this.i18nService = this.injector.get(AbstractI18nService);
         this.router = this.injector.get(Router);
+        this.screen = this.injector.get(Screen);
 
         this.initUserScript();
 
@@ -80,7 +82,6 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.activePageName = this.pageName; // Todo: remove this
 
         this.registerPageParams();
-        
         this.defineI18nProps();
         super.init();
     }
@@ -150,7 +151,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                     setTimeout(() => {
                         this.showPageContent = true;
                     }, 100);
-                });            
+                });
             variableCollection.callback(variableCollection.Actions);
 
             subscription.unsubscribe();
@@ -161,8 +162,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         transition = transition || this.navigationService.getPageTransition();
         const lastPage = BasePageComponent.lastPageSnapShot
         return new Promise(resolve => {
-            if (transition 
-                && !transition.startsWith('none') 
+            if (transition
+                && !transition.startsWith('none')
                 && lastPage) {
                 const $target = lastPage.parent();
                 const onTransitionEnd = (e) => {

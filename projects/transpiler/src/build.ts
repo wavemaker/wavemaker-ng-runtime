@@ -201,13 +201,13 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
             if (k === 'showindevice' && v !== 'all') {
                 const condition = [];
                 if (v.includes('xs')) {
-                    condition.push('App.screenType.isMobile');
+                    condition.push('screen.isMobileType');
                 }
                 if (v.includes('sm')) {
-                    condition.push('(App.screenType.isTablet && App.screenOrientation.isPortrait)');
+                    condition.push('(screen.isTabletType && screen.orientation.isPortrait)');
                 }
                 if (v.includes('md')) {
-                    condition.push('(App.screenType.isTablet && App.screenOrientation.isLandscape)');
+                    condition.push('(screen.isTabletType && screen.orientation.isLandscape)');
                 }
                 attrMarkup += ` *ngIf="${condition.join(' || ')}"`;
             }

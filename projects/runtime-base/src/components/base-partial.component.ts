@@ -3,14 +3,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 
-import { AbstractI18nService, AbstractNavigationService, App, noop, ScriptLoaderService, UtilsService } from '@wm/core';
+import { $invokeWatchers, AbstractI18nService, AbstractNavigationService, App, noop, Screen, ScriptLoaderService, UtilsService } from '@wm/core';
 import { PartialDirective, WidgetRef} from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';
 import { VariablesService } from '@wm/variables';
 
 import { FragmentMonitor } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
-import { $invokeWatchers } from '@wm/core';
 
 declare const _;
 
@@ -36,6 +35,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     @ViewChild(PartialDirective) partialDirective;
     pageDirective: PageDirective;
     scriptLoaderService: ScriptLoaderService;
+    screen: Screen;
     compileContent = false;
 
     destroy$ = new Subject();
@@ -55,6 +55,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.containerWidget = this.injector.get(WidgetRef);
         this.i18nService = this.injector.get(AbstractI18nService);
         this.scriptLoaderService = this.injector.get(ScriptLoaderService);
+        this.screen = this.injector.get(Screen);
         if (this.getContainerWidgetInjector().view.component.registerFragment) {
             this.getContainerWidgetInjector().view.component.registerFragment();
         }
@@ -77,7 +78,11 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             this.pageDirective = this.injector.get(PageDirective);
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
             this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
-        } catch(e) {
+            this.registerDestroyListener(this.pageDirective.subscribe('resize',
+                    data => this.partialDirective.callback('resize', data)));
+            this.registerDestroyListener(this.pageDirective.subscribe('orientationchange',
+                data => this.partialDirective.callback('orientationchange', data)));
+        } catch (e) {
             // partial may be part of common partial
         }
 
@@ -196,7 +201,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     ngOnAttach(refreshData) {
         this.unmute();
-        if(refreshData) {
+        if (refreshData) {
             const refresh = v => { (v.startUpdate || v.autoUpdate) && v.invoke && v.invoke(); };
             _.each(this.Variables, refresh);
             _.each(this.Actions, refresh);

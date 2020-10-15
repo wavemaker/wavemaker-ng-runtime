@@ -6,6 +6,7 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-partial clearfix';
 const WIDGET_CONFIG = {widgetType: 'wm-partial', hostClass: DEFAULT_CLS};
+declare const _;
 
 @Directive({
     selector: '[wmPartial]',
@@ -19,16 +20,21 @@ export class PartialDirective extends StylableComponent implements OnDestroy {
         super(inj, WIDGET_CONFIG);
     }
 
+    private callback(eventName, locals?: object) {
+        locals = _.assign({ widget: this }, locals);
+        this.invokeEventCallback(eventName, locals);
+    }
+
     public ngOnAttach() {
-        this.invokeEventCallback('attach', { widget: this });
+        this.callback('attach');
     }
 
     public ngOnDetach() {
-        this.invokeEventCallback('detach', { widget: this });
+        this.callback('detach');
     }
 
     public ngOnDestroy() {
-        this.invokeEventCallback('destroy', { widget: this });
+        this.callback('destroy');
     }
 
 }

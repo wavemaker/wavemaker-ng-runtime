@@ -15,7 +15,8 @@ import {
     ConstantService,
     UtilsService,
     DynamicComponentRefProvider,
-    StatePersistence
+    StatePersistence,
+    Screen
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
@@ -27,6 +28,7 @@ const injectorMap = {
     statePersistence: StatePersistence,
     SpinnerService: AbstractSpinnerService,
     StatePersistenceService: StatePersistence,
+    Screen: Screen,
     ToasterService: AbstractToasterService,
     Utils: UtilsService,
     CONSTANTS: ConstantService,
@@ -57,9 +59,6 @@ const getHttpDependency = function() {
     return $http;
 };
 
-const MINIMUM_TAB_WIDTH = 768;
-const MINIMUM_LARGE_SCREEN_WIDTH = 1200;
-
 @Injectable()
 export class AppRef {
     Variables: any = {};
@@ -78,8 +77,6 @@ export class AppRef {
     isApplicationType: boolean;
     isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
-    screenType: any;
-    screenOrientation: any;
 
     appLocale: any;
 
@@ -109,14 +106,10 @@ export class AppRef {
         this.isApplicationType = wmProjectProperties.type === PROJECT_TYPE.APPLICATION;
         this.isTemplateBundleType = wmProjectProperties.type === PROJECT_TYPE.TEMPLATE_BUNDLE;
 
-        this.setScreenType();
-
         this.httpService.registerOnSessionTimeout(this.on401.bind(this));
 
         this.appLocale = this.i18nService.getAppLocale();
         this.httpService.setLocale(this.appLocale);
-
-        window.addEventListener('resize', this.setScreenType.bind(this));
     }
 
     public notify(eventName: string, ...data: Array<any>) {
@@ -180,33 +173,6 @@ export class AppRef {
             });
         } else {
             console.warn('The default Action "appNotification" doesn\'t exist in the app. App notified following error:\n', template);
-        }
-    }
-
-    private setScreenType() {
-        const $el = $('.wm-app');
-        const w = $el.width();
-        const h = $el.height();
-        this.screenType = {
-            isMobile: false,
-            isTablet: false
-        };
-        this.screenOrientation = {
-            isLandscape: false,
-            isPortrait: false
-        };
-        if (w > h) {
-            this.screenOrientation.isLandscape = true;
-        } else {
-            this.screenOrientation.isPortrait = true;
-        }
-        if (w >= MINIMUM_LARGE_SCREEN_WIDTH || h >= MINIMUM_LARGE_SCREEN_WIDTH) {
-            return; // this specifies that it is large screen device.
-        }
-        if (w >= MINIMUM_TAB_WIDTH || h >= MINIMUM_TAB_WIDTH) {
-            this.screenType.isTablet = true;
-        } else {
-            this.screenType.isMobile = true;
         }
     }
 }

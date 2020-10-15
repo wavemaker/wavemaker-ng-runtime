@@ -54,16 +54,6 @@ export const DataSource = {
     Operation
 };
 
-interface IScreenTypes {
-    isMobile: boolean;
-    isTablet: boolean;
-}
-
-interface IScreenOrientations {
-    isLandscape: boolean;
-    isPortrait: boolean;
-}
-
 export abstract class App {
     appLocale: any;
     Variables: any;
@@ -99,8 +89,6 @@ export abstract class App {
     Page: any;
     landingPageName: string;
     lastActivePageName: string;
-    screenType: IScreenTypes;
-    screenOrientation: IScreenOrientations;
 }
 
 

@@ -8,6 +8,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-prefab-container',
     hostClass: DEFAULT_CLS
 };
+declare const _;
 
 @Directive({
     selector: '[wmPrefabContainer]',
@@ -23,15 +24,20 @@ export class PrefabContainerDirective extends StylableComponent  implements OnDe
         styler(this.nativeElement, this);
     }
 
+    private callback(eventName, locals?: object) {
+        locals = _.assign({ widget: this }, locals);
+        this.invokeEventCallback(eventName, locals);
+    }
+
     public ngOnAttach() {
-        this.invokeEventCallback('attach', { widget: this });
+        this.callback('attach');
     }
 
     public ngOnDetach() {
-        this.invokeEventCallback('detach', { widget: this });
+        this.callback('detach');
     }
 
     public ngOnDestroy() {
-        this.invokeEventCallback('destroy', { widget: this });
+        this.callback('destroy');
     }
 }
