@@ -149,7 +149,7 @@ export {
 } from './utils/watcher';
 export * from './utils/id-generator';
 export * from './types/types';
-export { Screen } from './services/screen.service';
+export { Viewport, ViewportEvent } from './services/viewport.service';
 export * from './services/constant.service';
 export * from './services/utils.service';
 export * from './services/field-type.service';

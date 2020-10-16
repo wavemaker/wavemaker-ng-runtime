@@ -84,7 +84,7 @@ export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('
 
 export const isTablet = () => {
     const scope = document.querySelector('.app-page').widget;
-    return scope && scope.viewParent.Screen.isTabletType;
+    return scope && scope.viewParent.Viewport.isTabletType;
 };
 
 export const isMobileApp = () => getWmProjectProperties().platformType === 'MOBILE' && getWmProjectProperties().type === 'APPLICATION';

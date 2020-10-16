@@ -1,7 +1,7 @@
 import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers, Screen } from '@wm/core';
+import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers, Viewport } from '@wm/core';
 import { WidgetRef} from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';
 import { PrefabContainerDirective } from '@wm/components/prefab';
@@ -29,7 +29,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     scriptLoaderService: ScriptLoaderService;
     compileContent = false;
     pageDirective: PageDirective;
-    Screen: Screen;
+    Viewport: Viewport;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -48,7 +48,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         this.prefabMngr = this.injector.get(PrefabManagerService);
         this.i18nService = this.injector.get(AbstractI18nService);
         this.scriptLoaderService = this.injector.get(ScriptLoaderService);
-        this.Screen = this.injector.get(Screen);
+        this.Viewport = this.injector.get(Viewport);
         if (this.getContainerWidgetInjector().view.component.registerFragment) {
             this.getContainerWidgetInjector().view.component.registerFragment();
         }

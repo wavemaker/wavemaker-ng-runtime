@@ -1,7 +1,7 @@
 import { Directive, Injector, OnDestroy } from '@angular/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { Screen } from '@wm/core';
+import { Viewport, ViewportEvent } from '@wm/core';
 import { registerProps } from './prefab-container.props';
 
 const DEFAULT_CLS = 'app-prefab-container full-height';
@@ -20,12 +20,12 @@ declare const _;
 export class PrefabContainerDirective extends StylableComponent  implements OnDestroy {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector, private screen: Screen) {
+    constructor(inj: Injector, private viewport: Viewport) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 
-        this.registerDestroyListener(this.screen.subscribe('on-resize', data => this.callback('resize', data)));
-        this.registerDestroyListener(this.screen.subscribe('on-orientationchange', data => this.callback('orientationchange', data)));
+        this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.RESIZE, data => this.callback('resize', data)));
+        this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.ORIENTATION_CHANGE, data => this.callback('orientationchange', data)));
     }
 
     private callback(eventName, locals?: object) {

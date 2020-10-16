@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 
-import { $invokeWatchers, AbstractI18nService, AbstractNavigationService, App, noop, Screen, ScriptLoaderService, UtilsService } from '@wm/core';
+import { $invokeWatchers, AbstractI18nService, AbstractNavigationService, App, noop, Viewport, ScriptLoaderService, UtilsService } from '@wm/core';
 import { PartialDirective, WidgetRef} from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';
 import { VariablesService } from '@wm/variables';
@@ -35,7 +35,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     @ViewChild(PartialDirective) partialDirective;
     pageDirective: PageDirective;
     scriptLoaderService: ScriptLoaderService;
-    Screen: Screen;
+    Viewport: Viewport;
     compileContent = false;
 
     destroy$ = new Subject();
@@ -55,7 +55,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.containerWidget = this.injector.get(WidgetRef);
         this.i18nService = this.injector.get(AbstractI18nService);
         this.scriptLoaderService = this.injector.get(ScriptLoaderService);
-        this.Screen = this.injector.get(Screen);
+        this.Viewport = this.injector.get(Viewport);
         if (this.getContainerWidgetInjector().view.component.registerFragment) {
             this.getContainerWidgetInjector().view.component.registerFragment();
         }

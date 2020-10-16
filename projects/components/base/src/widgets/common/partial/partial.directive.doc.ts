@@ -1,11 +1,10 @@
-import { Input, Directive } from '@angular/core';
+import { Directive } from '@angular/core';
 
 /**
- * The wmPrefab component defines the prefab widget.
+ * The `wmPartial` directive defines a partial.
  */
 @Directive()
-export class Partial {
-
+export class PartialDirective {
     /**
      * Callback function which will be triggered when a saved reusable host page instance is attached to dom.
      * @param $event  DOM event on which call back is triggered
@@ -26,5 +25,18 @@ export class Partial {
      * @param widget  Instance of the partial widget
      */
     onDestroy($event: MouseEvent, widget: any) {}
-    
+
+    /**
+     * Callback function which will be triggered when window is resized.
+     * @param $event  DOM event on which call back is triggered
+     * @param widget  Instance of the page
+     * @param data  this is an object which contains screen width and screen height
+     */
+    onResize($event: Event, widget: any, data: object) {}
+
+    /**
+     * Callback function which will be triggered when screen orientation is changed.
+     * @param $event  DOM event on which call back is triggered
+     */
+    onOrientationchange($event: MediaQueryListEvent) {}
 }

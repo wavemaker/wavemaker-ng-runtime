@@ -1,7 +1,7 @@
 import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { isAndroid, isIos, Screen, ScriptLoaderService } from '@wm/core';
+import { isAndroid, isIos, Viewport, ScriptLoaderService } from '@wm/core';
 import { PageDirective } from '@wm/components/page';
 
 import {Subject, Subscription} from 'rxjs';
@@ -50,7 +50,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     @ViewChild(PageDirective) pageDirective;
     $page;
     scriptLoaderService: ScriptLoaderService;
-    Screen: Screen;
+    Viewport: Viewport;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -69,7 +69,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.scriptLoaderService = this.injector.get(ScriptLoaderService);
         this.i18nService = this.injector.get(AbstractI18nService);
         this.router = this.injector.get(Router);
-        this.Screen = this.injector.get(Screen);
+        this.Viewport = this.injector.get(Viewport);
 
         this.initUserScript();
 

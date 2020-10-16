@@ -10,8 +10,18 @@ const enum SCREEN_TYPE {
     LARGE_SCREEN_DEVICES
 }
 
+export class IViewportService {
+    notify: (eventname: ViewportEvent, options?: Array<any>) => void;
+    subscribe: (eventname: ViewportEvent, callback: (data: any) => void) => void;
+}
+
+export const enum ViewportEvent {
+    ORIENTATION_CHANGE = 'orientationchange',
+    RESIZE = 'resize'
+}
+
 @Injectable({providedIn: 'root'})
-export class Screen implements OnDestroy {
+export class Viewport implements IViewportService, OnDestroy {
     public orientation = {
         isPortrait: false,
         isLandscape: false
@@ -26,7 +36,7 @@ export class Screen implements OnDestroy {
     constructor() {
         this.setScreenType();
 
-        window.addEventListener('resize', this.resizeFn.bind(this));
+        window.addEventListener(ViewportEvent.RESIZE, this.resizeFn.bind(this));
 
         const query = window.matchMedia('(orientation: portrait)');
         if (query.matches) {
@@ -40,13 +50,13 @@ export class Screen implements OnDestroy {
             const isLandscape = !$event.matches;
             this.orientation.isPortrait = !isLandscape;
             this.orientation.isLandscape = isLandscape;
-            this.notify('on-orientationchange', { $event });
+            this.notify(ViewportEvent.ORIENTATION_CHANGE, { $event, data: {isPortrait: !isLandscape, isLandscape: isLandscape} });
         });
     }
 
     private resizeFn($event) {
         this.setScreenType();
-        this.notify('on-resize', {$event, screenWidth: this.screenWidth, screenHeight: this.screenHeight});
+        this.notify(ViewportEvent.RESIZE, {$event, data: {screenWidth: this.screenWidth, screenHeight: this.screenHeight}});
     }
 
     public subscribe(eventName, callback: (data: any) => void): () => void {

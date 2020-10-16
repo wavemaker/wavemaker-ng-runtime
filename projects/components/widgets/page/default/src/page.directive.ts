@@ -1,7 +1,7 @@
 import { AfterViewInit, Directive, Injector, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import { EventNotifier, Screen } from '@wm/core';
+import { EventNotifier, Viewport, ViewportEvent } from '@wm/core';
 import { updateDeviceView, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './page.props';
@@ -30,7 +30,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
         }
     }
 
-    constructor(inj: Injector, private titleService: Title, private screen: Screen) {
+    constructor(inj: Injector, private titleService: Title, private viewport: Viewport) {
         super(inj, WIDGET_CONFIG);
     }
 
@@ -62,11 +62,11 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
             this._eventNotifier.start();
             updateDeviceView(this.nativeElement, this.getAppInstance().isTabletApplicationType);
         }, 1);
-        this.registerDestroyListener(this.screen.subscribe('on-resize', data => {
-            this.invokeEventCallback('resize', { data, widget: this });
+        this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.RESIZE, args => {
+            this.invokeEventCallback('resize', { $event: args.$event, widget: this, data: args.data });
         }));
-        this.registerDestroyListener(this.screen.subscribe('on-orientationchange', data => {
-            this.invokeEventCallback('orientationchange', data);
+        this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.ORIENTATION_CHANGE, args => {
+            this.invokeEventCallback('orientationchange', { $event: args.$event, widget: this, data: args.data });
         }));
     }
 

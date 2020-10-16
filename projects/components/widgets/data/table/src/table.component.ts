@@ -1,6 +1,6 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Screen, StatePersistence } from '@wm/core';
+import { Viewport, StatePersistence } from '@wm/core';
 
 import { Observable, Subject } from 'rxjs';
 
@@ -786,7 +786,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
         private statePersistence: StatePersistence,
-        private screen: Screen,
+        private viewport: Viewport,
         @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('datasource.bind') public binddatasource,
@@ -1084,9 +1084,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     showFieldBasedOnScreenType(field) {
         let showField;
-        if (isMobile() && this.screen.isMobileType) {
+        if (isMobile() && this.viewport.isMobileType) {
             showField = field.mobileDisplay;
-        } else if (this.screen.isTabletType) {
+        } else if (this.viewport.isTabletType) {
             showField = field.tabletDisplay;
         } else {
             showField = field.pcDisplay;
@@ -1631,11 +1631,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     registerColumns(tableColumn) {
-        if (isMobile() && this.screen.isMobileType) {
+        if (isMobile() && this.viewport.isMobileType) {
             if (!tableColumn.mobileDisplay) {
                 return;
             }
-        } else if (this.screen.isTabletType) {
+        } else if (this.viewport.isTabletType) {
             if (!tableColumn.tabletDisplay) {
                 return;
             }

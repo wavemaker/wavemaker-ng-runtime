@@ -11,14 +11,14 @@ export class Page {
     @Input() pagetitle: string;
 
     /**
-     * When a user navigates from a page, the page instance is destroyed. If this property 
+     * When a user navigates from a page, the page instance is destroyed. If this property
      * is set to true, then the page instance is saved. If user re-visits the same path, then
      * the saved instance is shown to the user.
      */
     @Input() reuse: string;
 
     /**
-     * If this property is set to true, then variables that have either 'load on page startup' 
+     * If this property is set to true, then variables that have either 'load on page startup'
      * or 'update on input change' as true, are refreshed when a reusable page is attached back.
      */
     @Input() refreshdataonattach: string;
@@ -43,4 +43,18 @@ export class Page {
      * @param widget  Instance of the page
      */
     onDestroy($event: any, widget: any) {}
+
+    /**
+     * Callback function which will be triggered when window is resized.
+     * @param $event  DOM event on which call back is triggered
+     * @param widget  Instance of the page
+     * @param data  this is an object which contains screen width and screen height
+     */
+    onResize($event: Event, widget: any, data: object) {}
+
+    /**
+     * Callback function which will be triggered when screen orientation is changed.
+     * @param $event  DOM event on which call back is triggered
+     */
+    onOrientationchange($event: MediaQueryListEvent) {}
 }

@@ -1,6 +1,6 @@
 import { Directive, Injector, OnDestroy } from '@angular/core';
 
-import { Screen } from '@wm/core';
+import { Viewport, ViewportEvent } from '@wm/core';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './partial.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
@@ -17,11 +17,11 @@ declare const _;
 })
 export class PartialDirective extends StylableComponent implements OnDestroy {
     static initializeProps = registerProps();
-    constructor(inj: Injector, private screen: Screen) {
+    constructor(inj: Injector, private viewport: Viewport) {
         super(inj, WIDGET_CONFIG);
 
-        this.registerDestroyListener(this.screen.subscribe('on-resize', data => this.callback('resize', data)));
-        this.registerDestroyListener(this.screen.subscribe('on-orientationchange', data => this.callback('orientationchange', data)));
+        this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.RESIZE, data => this.callback('resize', data)));
+        this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.ORIENTATION_CHANGE, data => this.callback('orientationchange', data)));
     }
 
     private callback(eventName, locals?: object) {

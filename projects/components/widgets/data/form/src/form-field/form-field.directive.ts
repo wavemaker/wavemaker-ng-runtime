@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Screen } from '@wm/core';
+import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport } from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
@@ -39,7 +39,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     @ContentChild('formWidgetMax') formWidgetMax;
 
     private fb;
-    private screen;
+    private viewport;
 
     // excludeProps is used to store the props that should not be applied on inner widget
     private excludeProps;
@@ -101,7 +101,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         inj: Injector,
         form: FormComponent,
         fb: FormBuilder,
-        screen: Screen,
+        viewport: Viewport,
         @Optional() parentList: ListComponent,
         @Attribute('chipclass.bind') bindChipclass: string,
         @Attribute('dataset.bind') binddataset,
@@ -133,7 +133,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.binddisplaylabel = binddisplaylabel;
         this.form = form;
         this.fb = fb;
-        this.screen = screen;
+        this.viewport = viewport;
         this._fieldName = key || name;
         this.isRange = isRange;
         this.excludeProps = new Set(['type', 'name']);
@@ -502,11 +502,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 fileType = this.filetype ? FILE_TYPES[this.filetype] : '';
                 this.permitted = fileType + (this.extensions ? (fileType ? ',' : '') + this.extensions : '');
             }
-            if (isMobile() && this.screen.isMobileType) {
+            if (isMobile() && this.viewport.isMobileType) {
                 if (!this['mobile-display']) {
                     this.widget.show = false;
                 }
-            } else if (this.screen.isTabletType) {
+            } else if (this.viewport.isTabletType) {
                 if (!this['tablet-display']) {
                     this.widget.show = false;
                 }

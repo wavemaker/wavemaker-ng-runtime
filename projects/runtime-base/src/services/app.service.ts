@@ -16,7 +16,7 @@ import {
     UtilsService,
     DynamicComponentRefProvider,
     StatePersistence,
-    Screen
+    Viewport
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
@@ -28,7 +28,7 @@ const injectorMap = {
     statePersistence: StatePersistence,
     SpinnerService: AbstractSpinnerService,
     StatePersistenceService: StatePersistence,
-    Screen: Screen,
+    Viewport: Viewport,
     ToasterService: AbstractToasterService,
     Utils: UtilsService,
     CONSTANTS: ConstantService,
