@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { getWmProjectProperties } from '../utils/wm-project-properties';
 
 declare const _;
 
@@ -7,6 +6,7 @@ declare const _;
 export class StatePersistence {
     private HISTORY_HANDLER = 'replace';
     private HISTORY_HANDLER_TYPES = {'push': 'pushState', 'replace': 'replaceState'};
+    private WIDGET_STATE_KEY = 'ws';
 
     /**
      * Sets the passed value as the History handler if it exists in the History_Handler_Types object
@@ -79,20 +79,20 @@ export class StatePersistence {
             return;
         }
         const parsedStateInfo = this.getStateInformation(mode);
-        if (_.get(parsedStateInfo, 'widgetstate')) {
+        if (_.get(parsedStateInfo, this.WIDGET_STATE_KEY)) {
             const stateKey = this.getNestedPath(widget.viewParent, widget.getWidget().name);
-            return parsedStateInfo.widgetstate[stateKey];
+            return parsedStateInfo[this.WIDGET_STATE_KEY][stateKey];
         }
         return;
     }
 
     public computeMode(widgetStateHandler) {
-        if (widgetStateHandler && widgetStateHandler.toLowerCase() === 'inherit') {
-            return getWmProjectProperties().stateHandler;
+        if (!widgetStateHandler) {
+            return 'url';
         } else if (widgetStateHandler && widgetStateHandler.toLowerCase() === 'none') {
             return;
         } else {
-            return widgetStateHandler;
+            return widgetStateHandler.toLowerCase();
         }
     }
 
@@ -109,7 +109,7 @@ export class StatePersistence {
         if (!mode) {
             return;
         }
-        this.setStateParams('widgetstate', stateKey, value, mode);
+        this.setStateParams(this.WIDGET_STATE_KEY, stateKey, value, mode);
     }
 
     /**
@@ -126,7 +126,7 @@ export class StatePersistence {
             return;
         }
         const stateKey = this.getNestedPath(widget.viewParent, widget.getWidget().name);
-        this.removeStateParam('widgetstate', stateKey, key, mode);
+        this.removeStateParam(this.WIDGET_STATE_KEY, stateKey, key, mode);
     }
 
     /**
@@ -137,6 +137,10 @@ export class StatePersistence {
      * other than the project level mode
      */
     public setStateVariable(variableName, value, mode?) {
+        mode = mode || this.computeMode(mode);
+        if (!mode) {
+            return;
+        }
         this.setStateParams('', variableName, value, mode);
     }
 
@@ -147,6 +151,10 @@ export class StatePersistence {
      * other than the project level mode
      */
     public getStateVariable(variableName: string, mode?) {
+        mode = mode || this.computeMode(mode);
+        if (!mode) {
+            return;
+        }
         const parsedStateInfo = this.getStateInformation(mode);
         if (parsedStateInfo) {
             return parsedStateInfo[variableName];
@@ -155,15 +163,17 @@ export class StatePersistence {
     }
 
     /**
-     * Removes the passed variable’s state information from the URL. If a key is passed, then only that particular
-     * entry will be removed from the url, not any other entries for that variable.
+     * Removes the passed variable’s state information from the URL.
      * @param variableName
-     * @param key
      * @param mode : optional parameter if the widget uses a state handling mode(url, local storage, session storage)
      * other than the project level mode
      */
-    public removeStateVariable(variableName, key?, mode?) {
-        this.removeStateParam('', variableName, key, mode);
+    public removeStateVariable(variableName, mode?) {
+        mode = mode || this.computeMode(mode);
+        if (!mode) {
+            return;
+        }
+        this.removeStateParam('', variableName, null, mode);
     }
 
     /**
@@ -316,7 +326,7 @@ export class StatePersistence {
     public removeStateParam(stateParam, key, subParam?, mode?) {
         let url = '';
         const parsedObj = this.getStateInformation(mode);
-        if (!_.get(parsedObj, [stateParam])) {
+        if (!_.get(parsedObj, [stateParam]) && !_.get(parsedObj, key)) {
             return;
         }
         if (_.get(parsedObj, stateParam + '.' + key)) {
@@ -331,6 +341,8 @@ export class StatePersistence {
             if (_.isEmpty(parsedObj[stateParam])) {
                 delete parsedObj[stateParam];
             }
+        } else if (!stateParam && _.get(parsedObj, key)) {
+            delete parsedObj[key];
         }
 
         if (mode.toLowerCase() === 'localstorage') {
