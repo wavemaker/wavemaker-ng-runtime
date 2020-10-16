@@ -1632,14 +1632,14 @@ $.widget('wm.datatable', {
             $newRowButton = $gridActions.find('i.wi-plus').closest('.app-button');
         if (this.options.editmode === this.CONSTANTS.INLINE && (this.options.rowActions.length === 0 || !_.some(this.options.rowActions, { action: 'editRow($event)' }))) {
             if (saveInd) {
-                $gridActions.append(`<button type="button" wmbutton="" class="btn app-button btn-default cancelNewRow" tabindex="0" accesskey="" title="Cancel">
-                                    <i aria-hidden="true" class="app-icon wi wi-cancel"></i>
-                                    <span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>
-                                </button>
-                                <button type="button" wmbutton="" class="btn app-button btn-primary saveNewRow" tabindex="0" accesskey="" title="Save">
-                                    <i aria-hidden="true" class="app-icon wi wi-done"></i>
-                                    <span class="sr-only">Save Icon</span><span class="btn-caption">Save</span>
-                                </button>`);
+                $gridActions.append('<button type="button" wmbutton="" class="btn app-button btn-default cancelNewRow" tabindex="0" accesskey="" title="Cancel">'+
+                                    '<i aria-hidden="true" class="app-icon wi wi-cancel"></i>'+
+                                    '<span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>'+
+                                '</button>'+
+                                '<button type="button" wmbutton="" class="btn app-button btn-primary saveNewRow" tabindex="0" accesskey="" title="Save">'+
+                                    '<i aria-hidden="true" class="app-icon wi wi-done"></i>'+
+                                    '<span class="sr-only">Save Icon</span><span class="btn-caption">Save</span>'+
+                                '</button>');
                 $gridActions.find('.cancelNewRow').on('click', function (event) {
                     self.toggleEditRow(event, {action: 'cancel', $row: $newRow});
                 });
