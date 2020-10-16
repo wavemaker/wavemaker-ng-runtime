@@ -68,11 +68,11 @@ export class AccordionDirective extends StylableComponent implements AfterConten
             this.activePaneIndex = index;
         }
         const mode = this.statePersistence.computeMode(this.statehandler);
-        if (evt &&  mode && mode.toLowerCase()!== 'none') {
+        if (evt &&  mode && mode.toLowerCase() !== 'none') {
             const activePanes = [];
-            this.panes.forEach(function(pane, paneIndex) {
+            this.panes.forEach(function(pane) {
                 if (pane.isActive) {
-                    activePanes.push(paneIndex);
+                    activePanes.push(pane.name);
                 }
             });
             if (activePanes.length) {
@@ -119,12 +119,16 @@ export class AccordionDirective extends StylableComponent implements AfterConten
             this.defaultpaneindex = nv;
         } else if (key === 'statehandler') {
             const widgetState = this.statePersistence.getWidgetState(this);
+            let paneToSelect: any = [];
             if (nv !== 'none' && _.isArray(widgetState)) {
-                widgetState.forEach(paneIndex => {
-                    if (!_.isInteger(paneIndex) || this.panes.length - paneIndex <= 0) {
-                        console.warn('Accordion pane index ' + paneIndex + ' in State is incorrect.');
+                widgetState.forEach(paneName => {
+                    paneToSelect = this.panes.filter(function(pane) {
+                        return paneName === pane.name;
+                    });
+                    if (!paneToSelect.length) {
+                        console.warn('Accordion pane name ' + paneName + ' in State is incorrect.');
                     } else {
-                        this.expandPane(paneIndex);
+                        this.expandPane(this.getPaneIndexByRef(paneToSelect[0]));
                     }
                 });
             } else {

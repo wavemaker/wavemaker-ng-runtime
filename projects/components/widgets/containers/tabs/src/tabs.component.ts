@@ -99,7 +99,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         const newPaneIndex = this.getPaneIndexByRef(paneRef);
         const mode = this.statePersistence.computeMode(this.statehandler);
         if (!this.isPageLoadCall && mode && mode.toLowerCase()!== 'none') {
-            this.statePersistence.setWidgetState(this, this.getActiveTabIndex());
+            this.statePersistence.setWidgetState(this, this.activeTab.name);
         } else {
             this.isPageLoadCall = false;
         }
@@ -237,11 +237,15 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             this.isPageLoadCall = true;
             const widgetState = this.statePersistence.getWidgetState(this);
             if (nv !== 'none' && widgetState) {
-                if (!_.isInteger(widgetState) || this.panes.length - widgetState <= 0) {
-                    console.warn('Tab pane index ' + widgetState + ' in State is incorrect. Falling back to default pane index');
+                const paneToSelect: any = this.panes.filter(function(pane) {
+                    return widgetState === pane.name;
+                });
+                if (!paneToSelect.length) {
+                    console.warn('Tab pane name ' + widgetState + ' in State is incorrect. Falling back to the default pane');
                     setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
                 } else {
-                    setTimeout(() => this.selectDefaultPaneByIndex(widgetState), 20);
+                    const index = this.getPaneIndexByRef(paneToSelect[0]);
+                    setTimeout(() => this.selectDefaultPaneByIndex(index), 20);
                 }
             } else {
                 setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
