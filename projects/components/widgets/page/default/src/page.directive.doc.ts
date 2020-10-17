@@ -18,8 +18,8 @@ export class Page {
     @Input() reuse: string;
 
     /**
-     * If this property is set to true, then variables that have either 'load on page startup'
-     * or 'update on input change' as true, are refreshed when a reusable page is attached back.
+     * If this property is set to true, then variables that have 'load on page startup'
+     * as true, are refreshed when a reusable page is attached back.
      */
     @Input() refreshdataonattach: string;
 

@@ -36,6 +36,7 @@ export class AppManagerService {
     private appVariablesFired = false;
     private _noRedirect = false;
     private templates: Array<any>;
+    private lastLoggedUserId;
 
     constructor(
         private $http: AbstractHttpService,
@@ -71,7 +72,16 @@ export class AppManagerService {
                 }
             }
         });
-        this.$app.subscribe('userLoggedIn', () => this.setLandingPage());
+        this.$app.subscribe('userLoggedIn', () => { 
+            this.setLandingPage();
+            if (this.lastLoggedUserId) {
+                this.$security.getConfig(config => {
+                    if(config && config.userInfo.userId !== this.lastLoggedUserId) {
+                        this.clearCache();
+                    }
+                }, null);
+            }
+        });
         this.$app.subscribe('userLoggedOut', () => this.setLandingPage().then(() => {
             this.clearCache();
             // navigate to the landing page without reloading the window in device.
@@ -279,7 +289,7 @@ export class AppManagerService {
         const config = this.$security.get();
         let queryParamsObj = {};
         loginConfig = config.loginConfig;
-        this.clearCache();
+        this.lastLoggedUserId = config.userInfo && config.userInfo.userId;
         // if user found, 401 was thrown after session time
         if (config.userInfo && config.userInfo.userName) {
             config.authenticated = false;

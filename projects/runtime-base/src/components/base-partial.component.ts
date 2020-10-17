@@ -198,7 +198,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     ngOnAttach(refreshData) {
         this.unmute();
         if (refreshData) {
-            const refresh = v => { (v.startUpdate || v.autoUpdate) && v.invoke && v.invoke(); };
+            const refresh = v => { v.startUpdate && v.invoke && v.invoke(); };
             _.each(this.Variables, refresh);
             _.each(this.Actions, refresh);
         }
