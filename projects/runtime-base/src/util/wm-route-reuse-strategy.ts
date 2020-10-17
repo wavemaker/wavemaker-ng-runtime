@@ -46,7 +46,7 @@ class WmDefaultRouteReuseStrategy {
     private getKey(route: ActivatedRouteSnapshot) {
         const queryParams = _.chain(route.queryParams)
             .keys()
-            .filter(k => _.find(this.paramsToIgnore, k))
+            .filter(k => !_.includes(this.paramsToIgnore, k))
             .orderBy()
             .map(k => k + '=' + route.queryParams[k])
             .value().join('&');
