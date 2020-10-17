@@ -81,7 +81,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
                 }
                 let page = e.url.split('?')[0];
                 page = page.substring(1);
-                console.time(page + ' Load Time');
+                const pageLoadStartTime = Date.now();
                 onPageRendered = () => {
                     this.spinnerService.hide(spinnerId);
                     const node = document.querySelector('app-page-outlet') as HTMLElement;
@@ -89,7 +89,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
                         removeClass(node, 'page-load-in-progress');
                     }
                     onPageRendered = noop;
-                    console.timeEnd(page + ' Load Time');
+                    this.app.activePageLoadTime = Date.now() - pageLoadStartTime;
                 };
             } else if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) {
                 setTimeout(() =>{

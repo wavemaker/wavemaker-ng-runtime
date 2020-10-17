@@ -87,6 +87,7 @@ export abstract class App {
     activePageName: string;
     activePage: any;
     Page: any;
+    activePageLoadTime: number;
     landingPageName: string;
     lastActivePageName: string;
 }

@@ -197,8 +197,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     invokeOnReady() {
         this.onReady();
-        (this.App.onPageReady || noop)(this.pageName, this);
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
+        (this.App.onPageReady || noop)(this.pageName, this);
     }
 
     private loadScripts() {
