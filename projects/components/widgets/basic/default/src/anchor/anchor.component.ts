@@ -41,7 +41,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     @HostBinding('target') target: string;
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;
-    private _eventNotifier = new EventNotifier(false);
+    private _eventNotifier = new EventNotifier();
 
     constructor(
         inj: Injector,
@@ -49,6 +49,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+        this.registerDestroyListener(this.app.subscribe('pageAttach', () => this.init()));
     }
 
     protected processEventAttr(eventName: string, expr: string, meta?: string) {
@@ -111,18 +112,19 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
         }
     }
 
-    ngAfterViewInit() {
-        super.ngAfterViewInit();
+    init() {
         if (this.hasNavigationToCurrentPageExpr) {
             addClass(this.nativeElement, 'active');
         }
-        setTimeout(() => {
-            if (this.hyperlink && getRouteNameFromLink(this.hyperlink) === `/${this.app.activePageName}`
-                || this.hasNavigationToCurrentPageExpr) {
-                this._eventNotifier.notify("on-active", {});
-            }
-        });
+        if (this.hyperlink && getRouteNameFromLink(this.hyperlink) === `/${this.app.activePageName}`
+            || this.hasNavigationToCurrentPageExpr) {
+            this._eventNotifier.notify("on-active", {});
+        }
+    }
 
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        this.init();
     }
 
     public ngOnDestroy() {
