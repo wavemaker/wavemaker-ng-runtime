@@ -186,7 +186,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                 resolve();
             }
         }).then(() => {
-            this.$page.removeClass('page-entry');
+            this.$page && this.$page.removeClass('page-entry');
             if (lastPage) {
                 lastPage.remove();
                 BasePageComponent.lastPageSnapShot = null;
@@ -215,7 +215,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     private restoreLastPageSnapshot() {
-        if (BasePageComponent.lastPageSnapShot) {
+        if (BasePageComponent.lastPageSnapShot && this.$page) {
             this.$page.parent().prepend(BasePageComponent.lastPageSnapShot);
         }
     }
@@ -224,8 +224,10 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         if (BasePageComponent.lastPageSnapShot) {
             BasePageComponent.lastPageSnapShot.remove();
         }
-        BasePageComponent.lastPageSnapShot = this.$page.clone();
-        this.$page.parents('app-root').prepend(BasePageComponent.lastPageSnapShot);
+        if (this.$page) {
+            BasePageComponent.lastPageSnapShot = this.$page.clone();
+            this.$page.parents('app-root').prepend(BasePageComponent.lastPageSnapShot);
+        }
     }
 
     /**
@@ -249,12 +251,14 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     ngAfterViewInit(): void {
         this.route.snapshot.data['__wm_page_reuse'] = this.canReuse();
-        this.$page = this.pageDirective.$element.parent();
-        if (isIos()) {
-            this.$page.addClass('ios-page');
-        }
-        if (isAndroid()) {
-            this.$page.addClass('android-page');
+        if (this.pageDirective) {
+            this.$page = this.pageDirective.$element.parent();
+            if (isIos()) {
+                this.$page.addClass('ios-page');
+            }
+            if (isAndroid()) {
+                this.$page.addClass('android-page');
+            }
         }
         this.restoreLastPageSnapshot();
         this.loadScripts().then(() => {
@@ -287,7 +291,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     onPageContentReady() {}
 
     canReuse() {
-        return !!this.pageDirective.reuse;
+        return !!(this.pageDirective && this.pageDirective.reuse);
     }
 
     mute() {
@@ -313,13 +317,13 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.activePageName = this.pageName;
         this.restoreLastPageSnapshot();
         this.unmute();
-        if(this.pageDirective.refreshdataonattach) {
+        if(this.pageDirective && this.pageDirective.refreshdataonattach) {
             const refresh = v => { v.startUpdate && v.invoke && v.invoke(); };
             _.each(this.Variables, refresh);
             _.each(this.Actions, refresh);
         }
         this.runPageTransition().then(() => {
-            this.pageDirective.ngOnAttach();
+            this.pageDirective && this.pageDirective.ngOnAttach();
             this.appManager.notify('pageAttach', {'name' : this.pageName, instance: this});
         });
     }
@@ -327,7 +331,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     ngOnDetach() {
         this.savePageSnapShot();
         this.mute();
-        this.pageDirective.ngOnDetach();
+        this.pageDirective && this.pageDirective.ngOnDetach();
         this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
     }
 }
