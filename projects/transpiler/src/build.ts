@@ -6,6 +6,8 @@ import {
     getHtmlTagDefinition
 } from '@angular/compiler';
 import { WIDGET_IMPORTS } from './imports';
+import { isMobileApp } from '@wm/core';
+
 declare const _;
 
 const CSS_REGEX = {
@@ -82,11 +84,16 @@ const processEvent = attr => {
 const wrapWithApos = (val: string) => {
     return `&apos;${val.replace(/&apos/g, '&quot').replace(/&quot/g, '\\&quot')}&apos;`;
 };
+const ELE_PREFIX = '.wm-app';
 
 const processAttr = attr => {
-    const overridden = OVERRIDES[attr.name];
+    let overridden = OVERRIDES[attr.name];
     const value = attr.valueSpan ? attr.value : undefined;
 
+    // do not append showInDevice attribute for mobile application.
+    if (attr.name === 'showindevice' && isMobileApp()) {
+        overridden = '';
+    }
     if (overridden) {
         /**
          * wrap value for accessroles with ''.
@@ -119,20 +126,20 @@ export const getDataSource = (dataSetExpr: string): string => {
 };
 
 const widgetChildAttrs = (() => {
-    let childAttrs = new Map();
+    const childAttrs = new Map();
     const validChildAttrs = [
         `required`
     ];
     return {
         set: attrs => {
-            attrs.forEach((val,key)=>{
-                validChildAttrs.includes(key) && (childAttrs.set(key,val));
+            attrs.forEach((val, key) => {
+                validChildAttrs.includes(key) && (childAttrs.set(key, val));
             });
         },
         get: attrs => {
             const fltrAttrs = new Map();
-            childAttrs.forEach((val,key)=>{
-                !attrs.get(key) && fltrAttrs.set(key,val);
+            childAttrs.forEach((val, key) => {
+                !attrs.get(key) && fltrAttrs.set(key, val);
             });
             return fltrAttrs;
         },
@@ -141,17 +148,17 @@ const widgetChildAttrs = (() => {
         }
     };
 })();
-export const setChildAttrs = attrs =>{
+export const setChildAttrs = attrs => {
     widgetChildAttrs.set(attrs);
     return '';
-}
-export const getChildAttrs = attrs =>{
+};
+export const getChildAttrs = attrs => {
     return getAttrMarkup(widgetChildAttrs.get(attrs));
-}
-export const clearChildAttrs = () =>{
+};
+export const clearChildAttrs = () => {
     widgetChildAttrs.clear();
     return '';
-}
+};
 export const getFormMarkupAttr = attrs => {
     if (attrs.get('datavalue.bind')) {
         const onDataValueBinding = getDataSource(attrs.get('datavalue.bind'));
@@ -190,6 +197,20 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
                 v = v + `" *lazyLoad="${wrapWithApos(v)}`;
             }
             attrMarkup += `="${v}"`;
+
+            if (k === 'showindevice' && v !== 'all') {
+                const condition = [];
+                if (v.includes('xs')) {
+                    condition.push('Viewport.isMobileType');
+                }
+                if (v.includes('sm')) {
+                    condition.push('(Viewport.isTabletType && Viewport.orientation.isPortrait)');
+                }
+                if (v.includes('md')) {
+                    condition.push('(Viewport.isTabletType && Viewport.orientation.isLandscape)');
+                }
+                attrMarkup += ` *ngIf="${condition.join(' || ')}"`;
+            }
         }
     });
 
@@ -413,7 +434,7 @@ export interface ImportDef {
     as?: string;
     forRoot?: boolean;
     platformType?: string;
-};
+}
 
 export interface IBuildTaskDef {
     requires?: string | Array<string>;
@@ -421,7 +442,7 @@ export interface IBuildTaskDef {
     pre: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
     provide?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => Map<any, any>;
     post?: (attrs: Map<string, string>, shared ?: Map<any, any>, ...requires: Array<Map<any, any>>) => string;
-    imports?:  string[] | ((attrs: Map<string, string>) => string[])
+    imports?:  string[] | ((attrs: Map<string, string>) => string[]);
 }
 
 export const scopeComponentStyles = (componentName, componentType, styles = '') => {
@@ -446,11 +467,11 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
             }
             if (!selector.startsWith('/*') && selector.trim().length > 0) {
                 // splits the selector by commas and we iterate over the array and add page level scoping and join it.
-                selector = selector.split(',').map(s=>{
-                    let prefix = '.wm-app';
+                selector = selector.split(',').map(s => {
+                    let prefix = ELE_PREFIX;
                     s = s.trim();
                     const spaceIndex = s.indexOf(' ');
-                    if (s.startsWith('.wm-app')) {
+                    if (s.startsWith(ELE_PREFIX)) {
                         if (spaceIndex > 0) {
                             prefix = s.substring(0, spaceIndex);
                             s = s.substring(spaceIndex + 1);

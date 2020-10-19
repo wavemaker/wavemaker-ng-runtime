@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmTabPane component defines the tabpane widget.
  */
+@Directive()
 export class TabPane {
 
     /**

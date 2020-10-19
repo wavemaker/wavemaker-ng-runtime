@@ -6,7 +6,8 @@
         "entryFile": "src/public_api.ts",
         "umdId": "wm.transpiler",
         "umdModuleIds": {
-            "@angular/compiler": "ng.compiler"
+            "@angular/compiler": "ng.compiler",
+            "@wm/core": "wm.core"
         }
     }
 }

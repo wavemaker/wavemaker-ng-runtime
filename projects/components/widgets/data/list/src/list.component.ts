@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, C
 
 import { Subscription } from 'rxjs';
 
-import { $appDigest, $invokeWatchers, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass } from '@wm/core';
+import { $appDigest, $invokeWatchers, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass, StatePersistence } from '@wm/core';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 import { ButtonComponent } from '@wm/components/input';
@@ -52,6 +52,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private app: any;
     private appDefaults: any;
     private ngZone: NgZone;
+    private statePersistence: StatePersistence;
 
     public lastSelectedItem: ListItemDirective;
     public fieldDefs: Array<any>;
@@ -98,15 +99,18 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private $ulEle: any;
     private _listAnimator: ListAnimator;
     public pulltorefresh: boolean;
-    private cancelSubscription: Function;
+    private _listenerDestroyers: Array<any>;
 
     public title: string;
     public subheading: string;
     public iconclass: string;
     public listclass: any;
     private isDataChanged: boolean;
+    public statehandler: any;
 
     _isDependent;
+    private _pageLoad;
+    private _selectedItemsExist;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -186,6 +190,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('datasource.bind') binddatasource: string,
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
+        statePersistence: StatePersistence,
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
@@ -196,6 +201,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.cdRef = cdRef;
         this.ngZone = ngZone;
         this.datePipe = datePipe;
+        this.statePersistence = statePersistence;
+        this._pageLoad = true;
 
         this.binditemclass = binditemclass;
         this.binddisableitem = binddisableitem;
@@ -210,14 +217,41 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         this.noDataFound = !binddataset;
 
-        // Show loading status based on the variable life cycle
-        this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
-        this.app.subscribe('setup-cud-listener', param => {
-            if (this.nativeElement.getAttribute('name') !== param) {
-                return;
+        // Updates pagination, filter, sort etc options for service and crud variables
+        this._listenerDestroyers = [
+            this.app.subscribe('check-state-persistence-options', options => {
+                this.handleStateParams(options);
+            }),
+            // Show loading status based on the variable life cycle
+            this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this)),
+            this.app.subscribe('setup-cud-listener', param => {
+                if (this.nativeElement.getAttribute('name') !== param) {
+                    return;
+                }
+                this._isDependent = true;
+            }),
+            this.app.subscribe('pageDetach', () => {
+                this._pageLoad = true;
+            })
+        ];
+    }
+
+    private getConfiguredState() {
+        const mode = this.statePersistence.computeMode(this.statehandler);
+        return mode && mode.toLowerCase();
+    }
+
+    private handleStateParams(options) {
+        if (this._pageLoad && this.getConfiguredState() !== 'none') {
+            this._pageLoad = false;
+            const widgetState = this.statePersistence.getWidgetState(this);
+            if (_.get(widgetState, 'pagination')) {
+                options.options.page = widgetState.pagination;
             }
-            this._isDependent = true;
-        });
+            if (_.get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = true;
+            }
+        }
     }
 
     private triggerWMEvent(eventName, item?) {
@@ -267,6 +301,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
             this.ngZone.run(() => {
+                this.handleStateParams(data);
                 this.variableInflight = data.active;
             });
         }
@@ -606,11 +641,22 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             datasetBoundExpr ? this.context : this.datasource,
             this.dataset,
             this.binddatasource,
-            datasetBoundExpr
+            datasetBoundExpr,
+            this.statehandler
         );
     }
 
     private onDataSetChange(newVal) {
+        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none' && this._pageLoad) {
+            const widgetState = this.statePersistence.getWidgetState(this);
+            this._pageLoad = false;
+            if (_.get(widgetState, 'pagination')) {
+                this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
+            }
+            if (_.get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = true;
+            }
+        }
         if (!this.dataNavigatorWatched) {
             if (this.navigation && this.navigation !== NAVIGATION_TYPE.NONE) {
                 this.setupDataSource();
@@ -655,6 +701,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     private updateSelectedItemsWidgets() {
+        let obj = [];
         if (this.multiselect) {
             (this.selectedItemWidgets as Array<WidgetRef>).length = 0;
         }
@@ -665,8 +712,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 } else {
                     this.selectedItemWidgets = item.currentItemWidgets;
                 }
+                obj.push({page: this.dataNavigator.dn.currentPage, index: item.$index});
             }
         });
+        if (this.getConfiguredState() !== 'none') {
+            this.statePersistence.setWidgetState(this, {'selectedItem': obj});
+        }
     }
 
     /**
@@ -709,6 +760,19 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             // Whenever dataset is changed, trigger watchers to evaluate listitem bind expressions.
             $invokeWatchers(true);
             this.invokeEventCallback('render', {$data: this.fieldDefs});
+        }
+        if (this.getConfiguredState() !== 'none' && listItems.length && this._selectedItemsExist) {
+            const widgetState = this.statePersistence.getWidgetState(this);
+            if (_.get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = false;
+                setTimeout( () => {
+                    widgetState.selectedItem.forEach((item) => {
+                        if (item.page === this.dataNavigator.dn.currentPage) {
+                            this.selectItem(item.index);
+                        }
+                    });
+                }, 100);
+            }
         }
         const selectedItems = _.isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];
 
@@ -796,6 +860,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const data = this.fieldDefs;
         const newIndex = ui.item.index();
         const oldIndex = this.$ulEle.data('oldIndex');
+
+        if (this.getConfiguredState() !== 'none') {
+            this.statePersistence.removeWidgetState(this, 'selectedItem');
+        }
 
         const minIndex = _.min([newIndex, oldIndex]);
         const maxIndex = _.max([newIndex, oldIndex]);
@@ -1081,11 +1149,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     // Invoke the datasource variable by default when pulltorefresh event is not specified.
     private subscribeToPullToRefresh() {
-        this.cancelSubscription = this.app.subscribe('pulltorefresh', () => {
+        this._listenerDestroyers.push(this.app.subscribe('pulltorefresh', () => {
             if (this.datasource && this.datasource.listRecords) {
                 this.datasource.listRecords();
             }
-        });
+        }));
     }
 
     ngOnInit() {
@@ -1139,8 +1207,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this._listAnimator && this._listAnimator.$btnSubscription) {
             this._listAnimator.$btnSubscription.unsubscribe();
         }
-        if (this.cancelSubscription) {
-            this.cancelSubscription();
-        }
+        this._listenerDestroyers.forEach(d => d && d());
+        super.ngOnDestroy();
     }
 }

@@ -85,5 +85,8 @@
                 "libraries/mobile/placeholder/runtime/dynamic"
             ]
         }
+    },
+    "angularCompilerOptions":{
+        "enableIvy": false
     }
 }

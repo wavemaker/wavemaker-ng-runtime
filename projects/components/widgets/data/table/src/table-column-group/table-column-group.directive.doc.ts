@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The `wmTableColumnColumn` serves the purpose of providing column group definitions to the parent wmTable directive. wmTableColumnColumn is internally used by wmTable.
  */
+@Directive()
 export class TableColumnGroup {
     /**
      * Title of the column group header.

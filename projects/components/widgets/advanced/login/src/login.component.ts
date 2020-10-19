@@ -23,7 +23,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
 
     @ContentChild(FormComponent) formCmp: FormComponent;
     @ContentChildren(ButtonComponent, {descendants: true}) buttonComponents: QueryList<ButtonComponent>;
-    @ViewChild(MessageComponent) messageCmp: MessageComponent;
+    @ViewChild(MessageComponent, { static: true }) messageCmp: MessageComponent;
 
     loginMessage: { type?: string; caption?: any; show?: boolean; };
     errormessage: any;

@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmCalendar component defines the Calendar widget.
  */
+@Directive()
 export class Calendar {
 
     /**

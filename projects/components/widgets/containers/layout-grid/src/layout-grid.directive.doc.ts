@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The `wmLayoutGrid` directive defines a layoutgrid component.
  */
+@Directive()
 export class Layoutgrid {
     /**
      * Class of the widget.

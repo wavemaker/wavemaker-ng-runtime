@@ -17,7 +17,7 @@ const markup =  `<div wmFileUpload name="testfileupload" select.event="onSelect(
 })
 
 class FileUploadWrapperComponent {
-    @ViewChild(FileUploadComponent)
+    @ViewChild(FileUploadComponent, /* TODO: add static flag */ {static: true})
     wmComponent: FileUploadComponent;
     files: Array<File>;
 

@@ -1,9 +1,10 @@
-import {Input} from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmSpinner component defines spinner widget.
  */
 
+@Directive()
 export class Spinner {
     /**
      * This property specifies label of the spinner widget.

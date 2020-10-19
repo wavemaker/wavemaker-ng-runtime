@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes } from '@wm/core';
+import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport } from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
@@ -35,10 +35,12 @@ const FILE_TYPES = {
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
     static initializeProps = registerProps();
 
-    @ContentChild('formWidget') formWidget;
+    @ContentChild('formWidget', {static: true}) formWidget;
     @ContentChild('formWidgetMax') formWidgetMax;
 
     private fb;
+    private viewport;
+
     // excludeProps is used to store the props that should not be applied on inner widget
     private excludeProps;
     private _validators;
@@ -99,6 +101,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         inj: Injector,
         form: FormComponent,
         fb: FormBuilder,
+        viewport: Viewport,
         @Optional() parentList: ListComponent,
         @Attribute('chipclass.bind') bindChipclass: string,
         @Attribute('dataset.bind') binddataset,
@@ -111,6 +114,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Attribute('is-range') isRange,
         @Attribute('pc-display') pcDisplay,
         @Attribute('mobile-display') mobileDisplay,
+        @Attribute('tablet-display') tabletDisplay,
         @Self() @Inject(Context) contexts: Array<any>
     ) {
         const WIDGET_CONFIG = {
@@ -129,6 +133,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.binddisplaylabel = binddisplaylabel;
         this.form = form;
         this.fb = fb;
+        this.viewport = viewport;
         this._fieldName = key || name;
         this.isRange = isRange;
         this.excludeProps = new Set(['type', 'name']);
@@ -497,9 +502,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 fileType = this.filetype ? FILE_TYPES[this.filetype] : '';
                 this.permitted = fileType + (this.extensions ? (fileType ? ',' : '') + this.extensions : '');
             }
-
-            if (isMobile()) {
+            if (isMobile() && this.viewport.isMobileType) {
                 if (!this['mobile-display']) {
+                    this.widget.show = false;
+                }
+            } else if (this.viewport.isTabletType) {
+                if (!this['tablet-display']) {
                     this.widget.show = false;
                 }
             } else {
@@ -517,12 +525,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.fieldDefConfig.primaryKey = this['primary-key'];
             this.fieldDefConfig.required = this.required;
             this.fieldDefConfig._readonly = this.readonly;
-            this.fieldDefConfig.regexp = this.regexp
+            this.fieldDefConfig.regexp = this.regexp;
             this.fieldDefConfig.type = this.type;
             this.fieldDefConfig.key = this.key;
             this.fieldDefConfig.mobileDisplay = this['mobile-display'];
             this.fieldDefConfig.name = this.name;
             this.fieldDefConfig.pcDisplay = this['pc-display'];
+            this.fieldDefConfig.tabletDisplay = this['tablet-display'];
             this.fieldDefConfig.validationmessage = this.validationmessage;
             this.fieldDefConfig.viewmodewidget = this.viewmodewidget;
             this.fieldDefConfig.widget = this.widgettype;

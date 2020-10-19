@@ -301,13 +301,17 @@ export class TableCUDDirective {
 
     private deleteFn(options) {
         const dataSource = this.table.datasource;
+        let isLastPageElement, currentPageNum;
         if (!dataSource) {
             return;
         }
         if (dataSource.category === 'wm.CrudVariable') {
             this.triggerWMEvent('resetEditMode');
+            if (dataSource.pagination) {
+                isLastPageElement = dataSource.pagination.last && dataSource.pagination.numberOfElements === 1;
+                currentPageNum = isLastPageElement ? dataSource.pagination.number : dataSource.pagination.number + 1;
+            }
         }
-        const currentPageNum = dataSource.pagination && dataSource.pagination.number + 1;
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE) || this.table._isDependent || dataSource.category === 'wm.CrudVariable') {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
                 const extraOptions = this.generatePath(this.table.binddataset);

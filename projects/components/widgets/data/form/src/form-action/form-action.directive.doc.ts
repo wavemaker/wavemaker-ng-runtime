@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmFormAction component defines the form action widget.
  */
+@Directive()
 export class FormAction {
     /**
      * CSS class for styling the field.

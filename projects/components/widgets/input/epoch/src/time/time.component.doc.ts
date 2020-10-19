@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmTime component defines the time widget.
  */
+@Directive()
 export class Time {
     /**
      * Name of the time widget.

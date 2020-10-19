@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmIframe component defines the iframe widget.
  */
+@Directive()
 export class Iframe {
     /**
      * Class of the widget.

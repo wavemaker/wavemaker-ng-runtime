@@ -36,7 +36,7 @@ const markup = `<div
     template: markup
 })
 class CalendarWrapperComponent {
-    @ViewChild(CalendarComponent)
+    @ViewChild(CalendarComponent, /* TODO: add static flag */ {static: true})
     wmComponent: CalendarComponent;
 
     public testData1 = [{ title: 'event', start: '02/02/2020' }];

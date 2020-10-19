@@ -20,7 +20,7 @@ const markup = `<ul wmChips name="chips1" readonly="false" class= "text-success"
     template: markup
 })
 class ChipsWrapperComponent {
-    @ViewChild(ChipsComponent) wmComponent: ChipsComponent;
+    @ViewChild(ChipsComponent, /* TODO: add static flag */ {static: true}) wmComponent: ChipsComponent;
     public testdata: any = [{name: 'Peter', age: 21}, {name: 'Tony', age: 42}, {name: 'John', age: 25}, {name: 'Peter Son', age: 28}];
 }
 const testModuleDef: ITestModuleDef = {

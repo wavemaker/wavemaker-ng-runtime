@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Attribute, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
 
-import { addClass, appendNode, noop, removeClass } from '@wm/core';
+import { addClass, appendNode, noop, removeClass, StatePersistence } from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { TabsAnimator } from './tabs.animator';
@@ -28,6 +28,8 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public defaultpaneindex: number;
     public transition: string;
     public tabsposition: string;
+    public statehandler: any;
+    private statePersistence: StatePersistence;
 
     public vertical: boolean;
     public justified: boolean;
@@ -35,21 +37,23 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     private readonly promiseResolverFn: Function;
     private tabsAnimator: TabsAnimator;
     private _oldPaneIndex: number;
+    private isPageLoadCall: boolean;
 
     @ContentChildren(TabPaneComponent) panes: QueryList<TabPaneComponent>;
 
     constructor(
         inj: Injector,
         @Attribute('transition') _transition: string,
-        @Attribute('tabsposition') _tabsPosition: string
+        @Attribute('tabsposition') _tabsPosition: string,
+        statePersistence: StatePersistence,
     ) {
         // handle to the promise resolver
         let resolveFn: Function = noop;
-
         super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
 
         this.transition = _transition;
         this.tabsposition = _tabsPosition;
+        this.statePersistence = statePersistence;
 
         this.promiseResolverFn = resolveFn;
 
@@ -93,6 +97,12 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
         this.activeTab = paneRef.getWidget();
         const newPaneIndex = this.getPaneIndexByRef(paneRef);
+        const mode = this.statePersistence.computeMode(this.statehandler);
+        if (!this.isPageLoadCall && mode && mode.toLowerCase()!== 'none') {
+            this.statePersistence.setWidgetState(this, this.activeTab.name);
+        } else {
+            this.isPageLoadCall = false;
+        }
 
         // invoke change callback if the evt is present, select a tab programmatically will not have the event
         if (evt) {
@@ -206,7 +216,6 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         }
     }
 
-
     // update the postion of tab header
     private setTabsPosition() {
         const ul = this.nativeElement.children[0];
@@ -223,8 +232,24 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     onPropertyChange(key: string, nv: any, ov) {
 
         if (key === 'defaultpaneindex') {
-            // If no active tab is set ie.. no isdefaulttab then honor the defaultpaneindex
-            setTimeout(() => this.selectDefaultPaneByIndex(nv || 0), 20);
+            this.defaultpaneindex = nv;
+        } else if (key === 'statehandler') {
+            this.isPageLoadCall = true;
+            const widgetState = this.statePersistence.getWidgetState(this);
+            if (nv !== 'none' && widgetState) {
+                const paneToSelect: any = this.panes.filter(function(pane) {
+                    return widgetState === pane.name;
+                });
+                if (!paneToSelect.length) {
+                    console.warn('Tab pane name ' + widgetState + ' in State is incorrect. Falling back to the default pane');
+                    setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
+                } else {
+                    const index = this.getPaneIndexByRef(paneToSelect[0]);
+                    setTimeout(() => this.selectDefaultPaneByIndex(index), 20);
+                }
+            } else {
+                setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
+            }
         } else {
             super.onPropertyChange(key, nv, ov);
         }

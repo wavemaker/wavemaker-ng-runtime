@@ -93,7 +93,7 @@ const setTouchedState = ngForm => {
 })
 export class FormComponent extends StylableComponent implements OnDestroy, AfterContentInit, AfterViewInit {
     static  initializeProps = registerFormProps();
-    @ViewChild('dynamicForm', {read: ViewContainerRef}) dynamicFormRef: ViewContainerRef;
+    @ViewChild('dynamicForm', { static: true, read: ViewContainerRef }) dynamicFormRef: ViewContainerRef;
     @ViewChild(MessageComponent) messageRef;
     // this is the reference to the component refs inside the form-group
     @ContentChildren(WidgetRef, {descendants: true}) componentRefs;
@@ -916,7 +916,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                             this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
                                 'skipToggleState': true,
                                 'operation': 'list',
-                                'page': currentPageNum
+                                'page': currentPageNum,
+                                'preventMissingOpMsg': true
                             });
                             if (this.dialogId) {
                                 this.closeDialog();
@@ -1073,7 +1074,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             this._isGridLayoutPresent = this.$element.find('.panel-body [wmlayoutgrid]').length > 0;
         }
         if (this._isGridLayoutPresent) {
-            $gridLayout = this.$element.find('.form-elements [wmlayoutgrid]:first');
+            $gridLayout = this.$element.find('.form-elements [wmlayoutgrid]').first();
             noOfColumns = Number($gridLayout.attr('columns')) || 1;
         } else {
             $gridLayout = this.$element.find('.form-elements .dynamic-form-container');
@@ -1221,5 +1222,6 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 this.parentForm.ngform.removeControl(this.name);
             }
         }
+        super.ngOnDestroy();
     }
 }

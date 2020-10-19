@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmLivefilter widget defines a live filter in the layout.
  */
+@Directive()
 export class LiveFilter {
     /**
      * Enabling this property turns on auto-completion in the editor. As the user types the choices in the drop-down select editor change dynamically.

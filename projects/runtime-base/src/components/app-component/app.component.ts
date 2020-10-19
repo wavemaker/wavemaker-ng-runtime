@@ -1,8 +1,9 @@
 import { ApplicationRef, Component, DoCheck, ElementRef, NgZone, ViewEncapsulation, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterOutlet } from '@angular/router';
 
 import { setTheme } from 'ngx-bootstrap/utils';
 
+import { noop } from '@wm/core';
 import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App, addClass, removeClass } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { AppManagerService } from '../../services/app.manager.service';
@@ -21,6 +22,8 @@ interface SPINNER {
 export class AppComponent implements DoCheck, AfterViewInit {
     public startApp = false;
     public isApplicationType = false;
+
+    @ViewChild(RouterOutlet) routerOutlet: RouterOutlet;
 
     @ViewChild('dynamicComponent', {read: ViewContainerRef}) dynamicComponentContainerRef: ViewContainerRef;
 
@@ -64,13 +67,10 @@ export class AppComponent implements DoCheck, AfterViewInit {
 
         // set theme to bs3 on ngx-bootstrap. This avoids runtime calculation to determine bs theme. Thus resolves performance.
         setTheme('bs3');
-        if (hasCordova() && !window['wmDeviceReady']) {
-            document.addEventListener('wmDeviceReady' , () => this.startApp = true);
-        } else {
-            this.startApp = true;
-        }
 
         let spinnerId;
+
+        let onPageRendered = noop;
 
         this.router.events.subscribe(e => {
             if (e instanceof NavigationStart) {
@@ -79,15 +79,29 @@ export class AppComponent implements DoCheck, AfterViewInit {
                 if (node) {
                     addClass(node, 'page-load-in-progress');
                 }
+                let page = e.url.split('?')[0];
+                page = page.substring(1);
+                const pageLoadStartTime = Date.now();
+                onPageRendered = () => {
+                    this.spinnerService.hide(spinnerId);
+                    const node = document.querySelector('app-page-outlet') as HTMLElement;
+                    if (node) {
+                        removeClass(node, 'page-load-in-progress');
+                    }
+                    onPageRendered = noop;
+                    this.app.activePageLoadTime = Date.now() - pageLoadStartTime;
+                };
+            } else if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) {
+                setTimeout(() =>{
+                    onPageRendered();
+                }, 1000);
             }
         });
-
         this.appManager.subscribe('pageReady', () => {
-            this.spinnerService.hide(spinnerId);
-            const node = document.querySelector('app-page-outlet') as HTMLElement;
-            if (node) {
-                removeClass(node, 'page-load-in-progress');
-            }
+            onPageRendered();
+        });
+        this.appManager.subscribe('pageAttach', () => {
+            onPageRendered();
         });
     }
 
@@ -108,8 +122,35 @@ export class AppComponent implements DoCheck, AfterViewInit {
         }
     }
 
+    private start() {
+        this.startApp = true;
+        setTimeout(() => {
+            this.app.dynamicComponentContainerRef = this.dynamicComponentContainerRef;
+            this.overrideRouterOutlet();
+        }, 10);
+    }
+
+    private overrideRouterOutlet() {
+        //override the attach/detach methods
+        const oAttach = this.routerOutlet.attach;
+        const oDetach = this.routerOutlet.detach;
+        this.routerOutlet.attach = (componentRef: any) => {
+            oAttach.call(this.routerOutlet, componentRef);
+            componentRef.instance.ngOnAttach();
+        };
+        this.routerOutlet.detach = () => {
+            const componentRef = oDetach.call(this.routerOutlet);
+            componentRef.instance.ngOnDetach();
+            return componentRef;
+        };
+    }
+
     ngAfterViewInit() {
-        this.app.dynamicComponentContainerRef = this.dynamicComponentContainerRef;
+        if (hasCordova() && !window['wmDeviceReady']) {
+            document.addEventListener('wmDeviceReady' , () => this.start());
+        } else {
+            this.start();
+        }
     }
 
     ngDoCheck() {

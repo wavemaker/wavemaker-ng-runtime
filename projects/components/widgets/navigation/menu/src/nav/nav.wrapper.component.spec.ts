@@ -20,7 +20,7 @@ const markup = ` <ul wmNav data-element-type="wmNav" data-role="page-header"  ty
 })
 
 class NavWrapperComponent {
-    @ViewChild(NavComponent) wmComponent: NavComponent;
+    @ViewChild(NavComponent, /* TODO: add static flag */ {static: true}) wmComponent: NavComponent;
     public testdata = [
         {
             label: 'Home',

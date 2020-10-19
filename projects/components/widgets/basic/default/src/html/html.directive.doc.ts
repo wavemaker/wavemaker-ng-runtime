@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmHtml directive defines the html widget.
  */
+@Directive()
 export class Html {
     /**
      * Class of the widget.

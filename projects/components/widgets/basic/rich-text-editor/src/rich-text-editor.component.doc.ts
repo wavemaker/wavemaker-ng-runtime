@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmRichtexteditor component defines the rich-text-editor widget.
  */
+@Directive()
 export class RichTextEditor {
     /**
      * Name of the rich-text-editor widget.

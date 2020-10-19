@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The `wmSegmentContent` directive defines the segment content component.
  */
+@Directive()
 export class SegmentContent {
 
     /**

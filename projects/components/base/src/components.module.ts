@@ -84,7 +84,7 @@ const PIPES = [
 })
 export class WmComponentsModule {
 
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<WmComponentsModule> {
         return {
             ngModule: WmComponentsModule,
             providers: [

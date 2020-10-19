@@ -13,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
 let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'matchmode', 'displaylabel',
                             'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataentrymode', 'dataset'];
-const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'required', 'mindate', 'maxdate',
+const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'step', 'required', 'mindate', 'maxdate',
                             'excludedates', 'excludedays', 'mintime', 'maxtime'];
 inlineWidgetProps = [...inlineWidgetProps, ...validationProps];
 
@@ -80,6 +80,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     limit;
     mobiledisplay;
     pcdisplay;
+    tabletdisplay;
     readonly;
     required;
     maxchars;
@@ -105,6 +106,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     displayName;
     pcDisplay;
     mobileDisplay;
+    tabletDisplay;
     textAlignment;
     backgroundColor;
     textColor;
@@ -238,8 +240,8 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             this.key = this.field || this.binding;
         });
         super.ngAfterContentInit();
-        if((this as any).table.isdynamictable){
-            (this.table.inlineWidgetTmpl as any)._results.push(this.inlineWidthTempRef); 
+        if ((this as any).table.isdynamictable) {
+            (this.table.inlineWidgetTmpl as any)._results.push(this.inlineWidthTempRef);
         }
     }
 
@@ -637,6 +639,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.displayName =  this.caption || '';
         this.pcDisplay =  this.pcdisplay;
         this.mobileDisplay =  this.mobiledisplay;
+        this.tabletDisplay =  this.tabletdisplay;
         this.textAlignment =  this.textalignment;
         this.backgroundColor =  this.backgroundcolor;
         this.textColor =  this.textcolor;

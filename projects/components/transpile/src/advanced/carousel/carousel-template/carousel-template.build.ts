@@ -1,7 +1,7 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const carouselContentTagName = 'slide';
-
+let counter = 1;
 // For static carousel
 register('wm-carousel-content', (): IBuildTaskDef => {
     return {
@@ -18,9 +18,9 @@ register('wm-carousel-template', (): IBuildTaskDef => {
             const carouselRef = parentCarousel.get('carousel_ref');
             return `<div *ngIf="!${carouselRef}.fieldDefs">{{${carouselRef}.nodatamessage}}</div>
                     <${carouselContentTagName} wmCarouselTemplate  ${getAttrMarkup(attrs)} *ngFor="let item of ${carouselRef}.fieldDefs; let i = index;">
-                        <ng-container [ngTemplateOutlet]="tempRef" [ngTemplateOutletContext]="{item:item, index:i}"></ng-container>
+                        <ng-container [ngTemplateOutlet]="carouselTempRef${counter}" [ngTemplateOutletContext]="{item:item, index:i}"></ng-container>
                     </${carouselContentTagName}>
-                    <ng-template #tempRef let-item="item" let-index="index">`;
+                    <ng-template #carouselTempRef${counter++} let-item="item" let-index="index">`;
         },
         post: () => `</ng-template>`
     };

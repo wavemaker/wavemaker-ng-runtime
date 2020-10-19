@@ -32,7 +32,7 @@ export class InputColorComponent extends BaseInput {
     public autofocus: boolean;
     public disabled: boolean;
     public placeholder: any;
-    @ViewChild('input') inputEl: ElementRef;
+    @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {

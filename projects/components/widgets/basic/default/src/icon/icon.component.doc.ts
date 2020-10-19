@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmIcon component defines the icon widget.
  */
+@Directive()
 export class Icon {
     /**
      * This property specifies the label of the icon. <br>

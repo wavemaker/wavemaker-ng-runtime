@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmDate component defines the date widget.
  */
+@Directive()
 export class Date {
     /**
      * Name of the date widget.

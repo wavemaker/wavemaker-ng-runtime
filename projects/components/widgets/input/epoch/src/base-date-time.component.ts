@@ -1,4 +1,4 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { Validator, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { getLocaleDayPeriods, FormStyle, TranslationWidth } from '@angular/common';
@@ -31,6 +31,7 @@ export function getTimepickerConfig(i18nService): TimepickerConfig {
     });
 }
 
+@Directive()
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
     public excludedays: string;
     protected excludedDaysToDisable: Array<number>;
@@ -623,7 +624,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         // setTimeout is used so that by then time input has the updated value. focus is setting back to the input field
         this.elementScope.ngZone.runOutsideAngular(() => {
             setTimeout(() => {
-                $('timepicker .form-group:first > input.form-control').focus();
+                $('timepicker .form-group').first().find('> input.form-control').focus();
             });
         });
 
@@ -781,7 +782,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (this.excludedays) {
                 this.excludedDaysToDisable = _.split(this.excludedays, ',').map((day) => {
                     return +day;
-                })
+                });
             }
             if (this.excludedates) {
                 this.excludedDatesToDisable = this.excludedates;
@@ -791,14 +792,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.excludedDatesToDisable = this.excludedDatesToDisable.map(d => getDateObj(d));
             }
             this.minDateMaxDateValidationOnInput(this.datavalue);
-        } else if (key == 'selectfromothermonth') {
+        } else if (key === 'selectfromothermonth') {
             this._dateOptions.selectFromOtherMonth = nv;
 
-        } else if(key == 'todaybutton'){
+        } else if (key === 'todaybutton'){
             this._dateOptions.showTodayButton = nv;
-        }else if(key == 'clearbutton'){
+        } else if (key === 'clearbutton'){
             this._dateOptions.showClearButton = nv;
-        }else {
+        } else if (key === 'todaybuttonlabel'){
+            this._dateOptions.todayButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
+        } else if (key === 'clearbuttonlabel'){
+            this._dateOptions.clearButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
+        } else {
             super.onPropertyChange(key, nv, ov);
         }
 

@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmPanel component defines the Panel widget.
  */
+@Directive()
 export class Panel {
 
     /**

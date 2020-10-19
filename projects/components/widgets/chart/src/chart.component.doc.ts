@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmChart component defines the chart widget.
  */
+@Directive()
 export class Chart {
     /**
      * Title for the chart widget. <br>

@@ -1,7 +1,7 @@
 import { AfterViewInit, Directive, Injector, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import { EventNotifier } from '@wm/core';
+import { EventNotifier, Viewport, ViewportEvent } from '@wm/core';
 import { updateDeviceView, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './page.props';
@@ -19,6 +19,8 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
     static initializeProps = registerProps();
 
     private _eventNotifier = new EventNotifier(false);
+    public refreshdataonattach = true;
+    public pagetitle: string;
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'pagetitle') {
@@ -28,7 +30,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
         }
     }
 
-    constructor(inj: Injector, private titleService: Title) {
+    constructor(inj: Injector, private titleService: Title, private viewport: Viewport) {
         super(inj, WIDGET_CONFIG);
     }
 
@@ -60,9 +62,29 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
             this._eventNotifier.start();
             updateDeviceView(this.nativeElement, this.getAppInstance().isTabletApplicationType);
         }, 1);
+        this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.RESIZE, args => {
+            this.invokeEventCallback('resize', { $event: args.$event, widget: this, data: args.data });
+        }));
+        this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.ORIENTATION_CHANGE, args => {
+            this.invokeEventCallback('orientationchange', { $event: args.$event, widget: this, data: args.data });
+        }));
+    }
+
+    public ngOnAttach() {
+        this.titleService.setTitle(this.pagetitle);
+        this.invokeEventCallback('attach', { widget: this });
+        this.notify('attach', {
+            refreshData : this.refreshdataonattach
+        });
+    }
+
+    public ngOnDetach() {
+        this.invokeEventCallback('detach', { widget: this });
+        this.notify('detach');
     }
 
     public ngOnDestroy() {
+        this.invokeEventCallback('destroy', { widget: this });
         this._eventNotifier.destroy();
     }
 }

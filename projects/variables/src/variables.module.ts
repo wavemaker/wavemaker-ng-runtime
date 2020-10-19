@@ -26,7 +26,7 @@ export const toastrModule: ModuleWithProviders = ToastrModule.forRoot({maxOpened
 })
 export class VariablesModule {
 
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<VariablesModule> {
         return {
             ngModule: VariablesModule,
             providers: [

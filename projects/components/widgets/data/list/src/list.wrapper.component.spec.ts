@@ -29,7 +29,7 @@ let mockApp = {
     `
 })
 class ListWrapperComponent {
-    @ViewChild(ListComponent)
+    @ViewChild(ListComponent, /* TODO: add static flag */ {static: true})
     listComponent: ListComponent;
     public testdata: any = [{name: 'Peter', age: 21}, {name: 'Tony', age: 42}];
     public testdata1: any = [{firstname: 'Peter', id: 1}, {firstname: '', id: 2}];

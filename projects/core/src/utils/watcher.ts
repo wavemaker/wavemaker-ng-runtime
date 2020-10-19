@@ -83,7 +83,7 @@ const getUpdatedWatcInfo = (expr, acceptsArray, listener) => {
     };
 };
 
-export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false, config:any={}) => {
+export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false, config:any={}, isMuted?: () => boolean) => {
     if (expr.indexOf('[$i]') !== -1) {
         let watchInfo = getUpdatedWatcInfo(expr, config && config.arrayType, listener);
         expr = watchInfo.expr;
@@ -96,7 +96,8 @@ export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGene
         listener,
         expr,
         last: FIRST_TIME_WATCH,
-        doNotClone
+        doNotClone,
+        isMuted: isMuted
     });
 
     return () => $unwatch(identifier);
@@ -123,6 +124,9 @@ const triggerWatchers = (ignoreMuted?: boolean) => {
     do {
         changeDetected = false;
         registry.forEach(watchInfo => {
+            if(watchInfo.isMuted && watchInfo.isMuted()) {
+                return;
+            }
             const fn = watchInfo.fn;
             const listener = watchInfo.listener;
             const ov = watchInfo.last;

@@ -23,7 +23,7 @@ const markup = `
     template: markup
 })
 class TreeSpec {
-    @ViewChild(TreeDirective) tree: TreeDirective;
+    @ViewChild(TreeDirective, /* TODO: add static flag */ {static: true}) tree: TreeDirective;
     public testdata: any = [
         {
             "key": "a val",

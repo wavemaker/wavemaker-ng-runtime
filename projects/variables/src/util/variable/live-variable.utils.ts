@@ -289,21 +289,6 @@ export class LiveVariableUtils {
     // TODO: Change the function name to represent the added functionality of identifiers for datetime, timestamp and float types. Previously only lower was warapped.
     static wrapInLowerCase(value, options, ignoreCase, isField?) {
         const type = _.toLower(options.attributeType);
-        if (!isField) {
-            // Wrap the identifiers for datetime, timestamp and float types. Wrappring is not required for fields.
-            if (type === 'datetime') {
-                return 'wm_dt(' + value + ')';
-            }
-            if (type === 'timestamp') {
-                return 'wm_ts(' + value + ')';
-            }
-            if (type === 'float') {
-                return 'wm_float(' + value + ')';
-            }
-            if (type === 'boolean') {
-                return 'wm_bool(' + value + ')';
-            }
-        }
         // If ignore case is true and type is string/ text and match mode is string type, wrap in lower()
         if (ignoreCase && (!type || LiveVariableUtils.isStringType(type)) && _.includes(DB_CONSTANTS.DATABASE_STRING_MODES, options.filterCondition)) {
             return 'lower(' + value + ')';
@@ -396,7 +381,7 @@ export class LiveVariableUtils {
             }
             matchModeExpr = DB_CONSTANTS.DATABASE_MATCH_MODES_WITH_QUERY[filterCondition];
             paramValue = LiveVariableUtils.getParamValue(value, fieldValue, ignoreCase, skipEncode);
-            fieldName = LiveVariableUtils.wrapInLowerCase(fieldName, fieldValue, ignoreCase, true);
+            fieldName = LiveVariableUtils.wrapInLowerCase(fieldName, fieldValue, ignoreCase);
             params.push(replace(matchModeExpr, [fieldName, paramValue]));
         });
         query = _.join(params, operator); // empty space added intentionally around OR
@@ -460,7 +445,7 @@ export class LiveVariableUtils {
         }
         matchModeExpr = DB_CONSTANTS.DATABASE_MATCH_MODES_WITH_QUERY[filterCondition];
         paramValue = LiveVariableUtils.getParamValue(value, fieldValue, ignoreCase, skipEncode);
-        fieldName = LiveVariableUtils.wrapInLowerCase(fieldName, fieldValue, ignoreCase, true);
+        fieldName = LiveVariableUtils.wrapInLowerCase(fieldName, fieldValue, ignoreCase);
         return replace(matchModeExpr, [fieldName, paramValue]);
     }
 

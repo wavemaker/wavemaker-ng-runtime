@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmAccordionPane component defines the accordion pane.
  */
+@Directive()
 export class AccordionPane {
 
     /**

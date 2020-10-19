@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The `wmVideo` component defines the video widget.
  */
+@Directive()
 export class Video {
     /**
      * Hint text is shown for the video widget on hover. <br>

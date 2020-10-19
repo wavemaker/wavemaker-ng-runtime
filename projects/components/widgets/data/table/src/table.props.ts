@@ -49,6 +49,7 @@ export const registerProps = () => {
                 ['showrecordcount', PROP_BOOLEAN],
                 ['showrowindex', PROP_BOOLEAN],
                 ['spacing', {value: 'normal', ...PROP_STRING}],
+                ['statehandler', {value: 'none', ...PROP_STRING}],
                 ['subheading', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', PROP_STRING],

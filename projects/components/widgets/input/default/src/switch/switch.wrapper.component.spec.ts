@@ -13,7 +13,7 @@ const markup = `<div wmSwitch datavalue="yes" show="true" width="800" height="20
     template: markup
 })
 class SwitchWrapperComponent {
-    @ViewChild(SwitchComponent) wmComponent: SwitchComponent;
+    @ViewChild(SwitchComponent, /* TODO: add static flag */ {static: true}) wmComponent: SwitchComponent;
 }
 const testModuleDef: ITestModuleDef = {
     imports: [

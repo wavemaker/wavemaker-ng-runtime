@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmChips component defines the chips widget.
  */
+@Directive()
 export class Chips {
     /**
      * This property will restrict adding values other than the values in the dropdown, if set to true.

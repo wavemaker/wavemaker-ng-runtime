@@ -24,6 +24,8 @@ const sizeClasses = {
     }
 };
 
+const unsupportedStatePersistenceTypes = ['On-Demand', 'Scroll'];
+
 @Component({
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html',
@@ -66,6 +68,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     __fullData;
     dataset;
     options;
+    statehandler;
     filterFields;
     sortOptions;
     binddataset;
@@ -276,6 +279,17 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     goToPage(event?, callback?) {
         this.firstRow = (this.dn.currentPage - 1) * this.maxResults;
         this.getPageData(event, callback);
+        const mode = this.parent.statePersistence.computeMode(this.statehandler);
+        if (mode && mode.toLowerCase() !== 'none' && (this.parent.widgetType === 'wm-table' || this.parent.widgetType === 'wm-list')) {
+            this.parent._selectedItemsExist = true;
+            if (this.isFirstPage()) {
+                this.parent.statePersistence.removeWidgetState(this.parent, 'pagination');
+            } else {
+                if (unsupportedStatePersistenceTypes.indexOf(this.parent.navigation) < 0) {
+                    this.parent.statePersistence.setWidgetState(this.parent, {pagination: this.dn.currentPage});
+                }
+            }
+        }
     }
 
     /*Function to be invoked after the data of the page has been fetched.*/
@@ -400,9 +414,10 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         this.goToPage(event, callback);
     }
 
-    setBindDataSet(binddataset, parent, dataSource, dataset?, binddatasource?, datasetBoundExpr?) {
+    setBindDataSet(binddataset, parent, dataSource, dataset?, binddatasource?, datasetBoundExpr?, statehandler?) {
         const parts = binddataset.split('.');
         let bindPagingOptions;
+        this.statehandler = statehandler;
         if (parts[0] === 'Variables' || parts[0] === 'Widgets') {
             bindPagingOptions = `${parts[0]}.${parts[1]}.pagination`;
         }

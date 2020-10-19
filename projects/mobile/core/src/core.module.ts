@@ -48,8 +48,10 @@ export class MobileCoreModule {
     ) {
         MobileCoreModule.addStartupServices(deviceService, deviceFileService, fileCacheService, fileOpener, networkService);
         if (isIos() && hasCordova() && cordova.plugin && cordova.plugin.http) {
-            document.addEventListener("wmDeviceReady", () => {
-                window['XMLHttpRequest'] = NativeXMLHttpRequest;
+            document.addEventListener('wmDeviceReady', () => {
+                // ### ANGULAR9TODO###
+                // Adding type as any to avoid error TS2739:
+                (<any>window)['XMLHttpRequest'] = NativeXMLHttpRequest;
                 this.overrideResolveLocalFileSystemURL();
             }, false);
         }

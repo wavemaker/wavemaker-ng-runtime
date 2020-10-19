@@ -1,9 +1,10 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmCardActions directive defines the card actions.
  */
 
+@Directive()
 export class CardActions {
     /**
      * Class of the widget.

@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The `wmLayoutGridRow` directive defines a layout grid row component.
  */
+@Directive()
 export class LayoutGridRow {
     /**
      * Class of the widget.

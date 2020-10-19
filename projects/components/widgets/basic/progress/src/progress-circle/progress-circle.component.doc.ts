@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The wmProgressCircle component defines the progress circle widget.
  */
+@Directive()
 export class CircleProgressBar {
 
     /**

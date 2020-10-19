@@ -14,7 +14,9 @@ import {
     isString,
     ConstantService,
     UtilsService,
-    DynamicComponentRefProvider
+    DynamicComponentRefProvider,
+    StatePersistence,
+    Viewport
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
@@ -23,7 +25,10 @@ declare const _;
 const injectorMap = {
     DialogService: AbstractDialogService,
     i18nService: AbstractI18nService,
+    statePersistence: StatePersistence,
     SpinnerService: AbstractSpinnerService,
+    StatePersistenceService: StatePersistence,
+    Viewport: Viewport,
     ToasterService: AbstractToasterService,
     Utils: UtilsService,
     CONSTANTS: ConstantService,
@@ -89,6 +94,7 @@ export class AppRef {
     constructor(
         private inj: Injector,
         private i18nService: AbstractI18nService,
+        private statePersistence: StatePersistence,
         private httpService: AbstractHttpService,
         private securityService: SecurityService
     ) {
@@ -149,7 +155,7 @@ export class AppRef {
     public notifyApp(template, type, title) {
         const notificationAction = _.get(this, 'Actions.appNotification');
         const EXCLUDE_NOTIFICATION_MESSAGES = ['PROCESS_REJECTED_IN_QUEUE'];
-        let skipDefaultNotification = EXCLUDE_NOTIFICATION_MESSAGES.indexOf(template) !== -1;
+        const skipDefaultNotification = EXCLUDE_NOTIFICATION_MESSAGES.indexOf(template) !== -1;
         if (notificationAction) {
             // do not notify the error to the app, just throw it in console
             if (skipDefaultNotification) {

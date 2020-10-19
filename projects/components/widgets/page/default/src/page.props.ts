@@ -1,10 +1,12 @@
-import { PROP_STRING, register } from '@wm/components/base';
+import { PROP_STRING, PROP_BOOLEAN, register } from '@wm/components/base';
 
 export const registerProps = () => {
     register(
         'wm-page',
         new Map(
             [
+                ['reuse', {value: false, ...PROP_BOOLEAN}],
+                ['refreshdataonattach', {value: true, ...PROP_BOOLEAN}],
                 ['pagetitle', PROP_STRING]
             ]
         )

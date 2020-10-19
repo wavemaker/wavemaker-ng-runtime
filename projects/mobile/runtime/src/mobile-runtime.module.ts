@@ -87,7 +87,7 @@ const ionicServices = [
 })
 export class MobileRuntimeModule {
 
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<MobileRuntimeModule> {
         /* add all providers that are required for mobile here. This is to simplify placeholder.*/
         return {
             ngModule: MobileRuntimeModule,
@@ -169,7 +169,7 @@ export class MobileRuntimeModule {
                         return a;
                     }, {});
                 if (params && params['wavelens']) {
-                    const $body = $('body:first');
+                    const $body = $('body');
                     $body.append(`<script src="${params['wavelens']}/runtime/script.js"></script>`);
                     $body.append(`<link rel="stylesheet" href="${params['wavelens']}/runtime/styles.css">`);
                 }
@@ -198,7 +198,7 @@ export class MobileRuntimeModule {
         private networkService: NetworkService,
         private webProcessService: WebProcessService
     ) {
-        this._$appEl = $('.wm-app:first');
+        this._$appEl = $('.wm-app').first();
         if (this._$appEl.width() >= MINIMUM_TAB_WIDTH) {
             app.isTabletApplicationType =  true;
             this._$appEl.addClass('wm-tablet-app');
@@ -229,7 +229,7 @@ export class MobileRuntimeModule {
     }
 
     private applyOSTheme(os) {
-        let oldStyleSheet = $('link[theme="wmtheme"]:first');
+        let oldStyleSheet = $('link[theme="wmtheme"]').first();
         const themeUrl = oldStyleSheet.attr('href').replace(new RegExp('/[a-z]*/style.css$'), `/${os.toLowerCase()}/style.css`),
             newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
         oldStyleSheet = oldStyleSheet.length > 0 && oldStyleSheet[0];

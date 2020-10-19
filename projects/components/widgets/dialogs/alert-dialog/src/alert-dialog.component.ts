@@ -21,7 +21,7 @@ const WIDGET_INFO: IWidgetConfig = {widgetType: 'wm-alertdialog'};
 export class AlertDialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
 
-    @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
+    @ViewChild('dialogTemplate',{ static: true }) dialogTemplate: TemplateRef<any>;
 
     constructor(
         inj: Injector,

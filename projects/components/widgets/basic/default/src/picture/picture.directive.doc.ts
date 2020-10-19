@@ -1,8 +1,9 @@
-import { Input } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 
 /**
  * The `wmPicture` directive defines the Picture widget.
  */
+@Directive()
 export class Picture {
     /**
      * Class of the widget.
