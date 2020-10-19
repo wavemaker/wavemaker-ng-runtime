@@ -1,7 +1,10 @@
 @import "./reset.css";
 @import "./bootstrap.min.css";
 @import "./bootstrap-card.css";
+@import "./prism.css";
+@import "./ionicons.min.css";
 @import "./compodoc.css";
+@import "./tablesort.css";
 
 .summary {
     padding-left: 20px;

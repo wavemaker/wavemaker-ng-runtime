@@ -3,7 +3,7 @@ import { Directive } from '@angular/core';
 /**
  * The `wmPartial` directive defines a partial.
  */
-@Directive()
+
 export class PartialDirective {
     /**
      * Callback function which will be triggered when a saved reusable host page instance is attached to dom.

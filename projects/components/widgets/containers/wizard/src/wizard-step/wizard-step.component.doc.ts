@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmWizardStep component defines the wizardstep widget.
  */
-@Directive()
+
 export class WizardStep {
 
     /**

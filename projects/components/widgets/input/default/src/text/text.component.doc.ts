@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmText component defines the text widget.
  */
-@Directive()
+
 export class Text {
     /**
      * Class of the widget.

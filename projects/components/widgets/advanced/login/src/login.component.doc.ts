@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmLogin component defines the login widget.
  */
-@Directive()
+
 export class Login {
 
     /**

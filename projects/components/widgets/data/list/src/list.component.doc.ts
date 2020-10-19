@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmList component defines the list widget.
  */
-@Directive()
+
 export class List {
 
     /**

@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmForm component defines a form in the layout.
  */
-@Directive()
+
 export class Form {
     /**
      * Defines the action to be performed on successful submission of the form.

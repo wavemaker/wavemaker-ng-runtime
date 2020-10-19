@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmAccordion directive defines the Accordion widget.
  */
-@Directive()
+
 export class Accordion {
 
     /**

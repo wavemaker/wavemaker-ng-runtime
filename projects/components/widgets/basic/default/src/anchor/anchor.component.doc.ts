@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The `wmAnchor` component defines the anchor widget.
  */
-@Directive()
+
 export class Anchor {
     /**
      * This property specifies the value to be displayed along with the label of the anchor. <br>

@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmAlertdialog component defines the alertdialog widget.
  */
-@Directive()
+
 export class Alertdialog {
     /**
      * This property specifies the title for the alertdialog widget. <br>

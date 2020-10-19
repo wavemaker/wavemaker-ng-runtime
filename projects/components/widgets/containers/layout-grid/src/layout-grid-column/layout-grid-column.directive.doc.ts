@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The `wmLayoutGridColumn` directive defines a layout grid column widget.
  */
-@Directive()
+
 export class LayoutGridColumn {
     /**
      * Class of the widget.

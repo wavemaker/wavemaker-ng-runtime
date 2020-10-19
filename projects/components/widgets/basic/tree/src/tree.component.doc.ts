@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The 'wmTree' directive used to represent data in hierarchical format..
  */
-@Directive()
+
 export class Tree {
     /**
      * Name of the tree widget.

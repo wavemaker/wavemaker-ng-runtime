@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The `wmContainer` directive defines a container widget.
  */
-@Directive()
+
 export class Container {
     /**
      * Class of the widget.

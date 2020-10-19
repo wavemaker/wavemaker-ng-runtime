@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmNumber component defines the number widget.
  */
-@Directive()
+
 export class Number {
     /**
      * Class of the widget.

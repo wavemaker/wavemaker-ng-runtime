@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmNav component defines the Nav widget.
  */
-@Directive()
+
 export class Nav {
 
     /**

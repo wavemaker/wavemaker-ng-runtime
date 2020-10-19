@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmLogindialog component defines the logindialog widget.
  */
-@Directive()
+
 export class Logindialog {
     /**
      * This property specifies the title for the logindialog widget. <br>

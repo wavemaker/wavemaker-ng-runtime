@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmSwitch component defines the switch widget.
  */
-@Directive()
+
 export class Switch {
     /**
      * Class of the widget.

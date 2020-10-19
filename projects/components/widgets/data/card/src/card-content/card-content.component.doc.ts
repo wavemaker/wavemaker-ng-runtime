@@ -1,10 +1,10 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmCardContent component defines the card content.
  */
 
-@Directive()
+
 export class CardContent {
     /**
      * Class of the widget.

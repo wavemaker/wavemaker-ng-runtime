@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The 'wmTopNav' directive defines a top nav in the layout.
  */
-@Directive()
+
 export class TopNav {
     /**
      * Name of the top nav widget.

@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmRating component defines the rating widget.
  */
-@Directive()
+
 export class Rating {
     /**
      * Class of the widget.

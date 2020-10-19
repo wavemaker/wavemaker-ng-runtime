@@ -1,10 +1,10 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The 'wmLeftPanel' directive defines a left panel in the layout.
  * wmLeftPanel is internally used by wmContent.
  */
-@Directive()
+
 export class LeftPanel {
     /**
      * Name of the left panel widget.

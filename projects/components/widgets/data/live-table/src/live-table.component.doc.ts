@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The `wmLivetable` is the Combination of datatable and live form. Using Livetable user can insert,update,delete the data in database wmLivetable can be bound to variables and display the data associated with them.
  */
-@Directive()
+
 export class LiveTable {
     /**
      * Class of the widget.
