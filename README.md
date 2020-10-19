@@ -1,3 +1,3 @@
-# wavemaker
+# WaveMaker
 
 Widgets - API Documentation
