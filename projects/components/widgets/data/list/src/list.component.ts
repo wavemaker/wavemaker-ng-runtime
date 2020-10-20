@@ -2,7 +2,24 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, C
 
 import { Subscription } from 'rxjs';
 
-import { $appDigest, $invokeWatchers, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass, StatePersistence } from '@wm/core';
+import {
+    $appDigest,
+    $invokeWatchers,
+    App,
+    AppDefaults,
+    DataSource,
+    getClonedObject,
+    isDataSourceEqual,
+    isDefined,
+    isMobile,
+    isMobileApp,
+    isNumber,
+    isObject,
+    noop,
+    switchClass,
+    StatePersistence,
+    setListClass
+} from '@wm/core';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 import { ButtonComponent } from '@wm/components/input';
@@ -342,30 +359,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private enableOnDemandLoad() {
         this.onDemandLoad = true;
         this.showNavigation = true;
-    }
-
-    /* this function sets the itemclass depending on itemsperrow.
-     * if itemsperrow is 2 for large device, then itemclass is 'col-xs-1 col-sm-1 col-lg-2'
-     * if itemsperrow is 'lg-3' then itemclass is 'col-lg-3'
-     */
-    private setListClass() {
-        let temp = '';
-        if (this.itemsperrow) {
-            if (isNaN(parseInt(this.itemsperrow, 10))) {
-                // handling itemsperrow containing string of classes
-                _.split(this.itemsperrow, ' ').forEach((cls: string) => {
-                    const keys = _.split(cls, '-');
-                    cls = `${keys[0]}-${(12 / parseInt(keys[1], 10))}`;
-                    temp += ` col-${cls}`;
-                });
-                this.itemsPerRowClass = temp.trim();
-            } else {
-                // handling itemsperrow having integer value.
-                this.itemsPerRowClass = `col-xs-${(12 / parseInt(this.itemsperrow, 10))}`;
-            }
-        } else { // If itemsperrow is not specified make it full width
-            this.itemsPerRowClass = 'col-xs-12';
-        }
     }
 
     /**
@@ -1001,7 +994,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.dataNavigator.navigationClass = this.paginationclass;
             }
         } else if (key === 'itemsperrow') {
-            this.setListClass();
+            setListClass(this);
         } else if (key === 'tabindex') {
             return;
         } else if (key === 'pulltorefresh' && nv) {
@@ -1190,7 +1183,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.handleHeaderClick = handleHeaderClick;
                 this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
             }
-            this.setListClass();
+            setListClass(this);
         });
         this.setupHandlers();
         const $ul = this.nativeElement.querySelector('ul.app-livelist-container');

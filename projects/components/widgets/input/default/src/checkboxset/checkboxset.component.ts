@@ -1,7 +1,7 @@
 import { Attribute, Component, Injector, OnInit } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { AppDefaults, noop, switchClass } from '@wm/core';
+import { AppDefaults, noop, setListClass, switchClass} from '@wm/core';
 import { convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAs, provideAsWidgetRef, styler, ToDatePipe, toggleAllHeaders } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
@@ -9,7 +9,7 @@ import { registerProps } from '../checkboxset/checkboxset.props';
 
 declare const _, $;
 
-const DEFAULT_CLS = 'app-checkboxset list-group';
+const DEFAULT_CLS = 'app-checkboxset list-group inline';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: DEFAULT_CLS};
 
 @Component({
@@ -37,6 +37,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
     private toggleAllHeaders: void;
 
     public disabled: boolean;
+    public itemsperrow: string;
+    private itemsPerRowClass: string;
 
     constructor(
         inj: Injector,
@@ -108,8 +110,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
             this._onChange(this.datavalue);
             return;
         }
-        if (key === 'layout') {
-            switchClass(this.nativeElement, nv, ov);
+        if (key === 'itemsperrow') {
+            setListClass(this);
         } else if (key === 'groupby' || key === 'match') {
             this.datasetSubscription();
             // If groupby is set, get the groupedData from the datasetItems.

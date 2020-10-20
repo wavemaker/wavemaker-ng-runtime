@@ -130,7 +130,8 @@ export {
     VALIDATOR,
     transformFileURI,
     appendScriptToHead,
-    getAppSetting
+    getAppSetting,
+    setListClass
 } from './utils/utils';
 export {
     FIRST_TIME_WATCH,

@@ -1,4 +1,4 @@
-<li [ngClass]="['radio', 'app-radio', itemclass]"
+<li [ngClass]="['radio', 'app-radio', itemclass, itemsPerRowClass]"
     [class.active]="item.selected"
     *ngFor="let item of datasetItems;let i = index"
     [wmItemTemplate]="content" [userComponentParams]="item" partialContainer

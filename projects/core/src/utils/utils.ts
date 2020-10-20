@@ -1445,3 +1445,27 @@ export const appendScriptToHead = (callback) =>{
 export const getAppSetting = (key, defaultValue) => {
     return (_WM_APP_PROPERTIES.extra_settings && _.get(_WM_APP_PROPERTIES.extra_settings, key)) || defaultValue;
 };
+
+/* this function sets the itemclass depending on itemsperrow.
+   * if itemsperrow is 2 for large device, then itemclass is 'col-xs-1 col-sm-1 col-lg-2'
+   * if itemsperrow is 'lg-3' then itemclass is 'col-lg-3'
+*/
+export const setListClass = (scope) => {
+    let temp = '';
+    if (scope.itemsperrow) {
+        if (isNaN(parseInt(scope.itemsperrow, 10))) {
+            // handling itemsperrow containing string of classes
+            _.split(scope.itemsperrow, ' ').forEach((cls: string) => {
+                const keys = _.split(cls, '-');
+                cls = `${keys[0]}-${(12 / parseInt(keys[1], 10))}`;
+                temp += ` col-${cls}`;
+            });
+            scope.itemsPerRowClass = temp.trim();
+        } else {
+            // handling itemsperrow having integer value.
+            scope.itemsPerRowClass = `col-xs-${(12 / parseInt(scope.itemsperrow, 10))}`;
+        }
+    } else { // If itemsperrow is not specified make it full width
+        scope.itemsPerRowClass = 'col-xs-12';
+    }
+};
