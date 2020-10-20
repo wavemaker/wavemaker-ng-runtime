@@ -6,6 +6,8 @@
        (colorPickerChange)="handleChange($event);"
        (cpToggleChange)="colorPickerToggleChange($event)"
        [cpPosition]="'bottom'"
+       [cpCloseClickOutside]="outsideclick"
+       (colorPickerOpen)="colorPickerOpen($event)"
        [attr.placeholder]="placeholder"
        [disabled]="readonly || disabled"
        [required]="required"
