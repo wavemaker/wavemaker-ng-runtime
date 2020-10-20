@@ -818,15 +818,28 @@ export const decodeData = (responseContent) => {
         return;
     }
     const domParser = new DOMParser();
-    _.forEach(responseContent, data => {
-        if (data) {
-            _.forEach(data, (value, key) => {
-                if (value && _.isString(value)) {
-                    data[key] = domParser.parseFromString(value, 'text/html').body.textContent;
-                } else if (_.isObject(value)) {
-                    _.isArray(value) ? this.decodeData(value) : this.decodeData([value]);
-                }
-            });
-        }
-    });
+    if (_.isArray(responseContent)) {
+        _.forEach(responseContent, data => {
+            if (data) {
+                _.forEach(data, (value, key) => {
+                    if (value && _.isString(value)) {
+                        data[key] = domParser.parseFromString(value, 'text/html').body.textContent;
+                    } else if (_.isObject(value)) {
+                        decodeData(value);
+                    }
+                });
+            }
+        });
+    } else if (_.isObject(responseContent)) {
+        _.forEach(responseContent, (value, key) => {
+            if (value && _.isString(value)) {
+                responseContent[key] = domParser.parseFromString(value, 'text/html').body.textContent;
+            } else if (_.isObject(value)) {
+                decodeData(value);
+            }
+        });
+    } else if (_.isString(responseContent)) {
+        responseContent = domParser.parseFromString(responseContent, 'text/html').body.textContent;
+        return responseContent;
+    }
 }

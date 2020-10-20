@@ -72,14 +72,17 @@ export class ServiceVariableManager extends BaseVariableManager {
         response = isDefined(jsonParsedResponse) ? jsonParsedResponse : (xmlToJson(response) || response);
 
         const isResponsePageable = isPageable(response);
+        if (variable.serviceType === 'DataService') {
+            const decodedData = decodeData(response);
+            if (_.isString(response)) {
+                response = decodedData;
+            }
+        }
         if (isResponsePageable) {
             dataSet = response.content;
             pagination = _.omit(response, 'content');
         } else {
             dataSet = response;
-        }
-        if (variable.serviceType === 'DataService') {
-            decodeData(dataSet);
         }
         /**
          * send pagination object with advancedOptions all the time.
