@@ -69,6 +69,9 @@ export class Viewport implements IViewportService, OnDestroy {
 
     private setScreenType() {
         const $el = document.querySelector('.wm-app');
+        if (!$el) {
+            return;
+        }
         this.screenWidth = $el.clientWidth;
         this.screenHeight = $el.clientHeight;
 

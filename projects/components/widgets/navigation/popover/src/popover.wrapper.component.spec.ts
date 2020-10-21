@@ -10,7 +10,9 @@ import { TrustAsPipe } from '../../../../base/src/pipes/trust-as.pipe';
 import { ImagePipe } from '../../../../base/src/pipes/image.pipe';
 
 
-const mockApp = {};
+const mockApp = {
+    subscribe: () => { }
+};
 
 const markup = `
         <wm-popover

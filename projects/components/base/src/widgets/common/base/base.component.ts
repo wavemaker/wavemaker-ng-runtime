@@ -260,7 +260,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         if (ctx) {
             fn = fn.bind(ctx);
         }
-        this.destroy.subscribe(() => {}, () => {}, () => fn());
+        this.destroy.subscribe(() => {}, () => {}, () => {
+            if (fn) {
+                fn();
+            }
+        });
     }
 
     public getDisplayType(): string {
