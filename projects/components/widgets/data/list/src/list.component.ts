@@ -705,14 +705,14 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.multiselect) {
             (this.selectedItemWidgets as Array<WidgetRef>).length = 0;
         }
-        this.listItems.forEach((item: ListItemDirective) => {
+        this.listItems.forEach((item: ListItemDirective, index) => {
             if (item.isActive) {
                 if (this.multiselect) {
                     (this.selectedItemWidgets as Array<WidgetRef>).push(item.currentItemWidgets);
                 } else {
                     this.selectedItemWidgets = item.currentItemWidgets;
                 }
-                obj.push({page: this.dataNavigator.dn.currentPage, index: item.$index});
+                obj.push({page: this.dataNavigator.dn.currentPage, index: index});
             }
         });
         if (this.getConfiguredState() !== 'none') {
