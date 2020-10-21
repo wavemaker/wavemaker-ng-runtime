@@ -712,7 +712,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 } else {
                     this.selectedItemWidgets = item.currentItemWidgets;
                 }
-                obj.push({page: this.dataNavigator.dn.currentPage, index: index});
+                obj.push({page: _.get(this.dataNavigator, 'dn.currentPage') || 1, index: index});
             }
         });
         if (this.getConfiguredState() !== 'none') {
@@ -765,9 +765,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = false;
+                const currentPage = _.get(this.dataNavigator, 'dn.currentPage') || 1;
                 setTimeout( () => {
                     widgetState.selectedItem.forEach((item) => {
-                        if (item.page === this.dataNavigator.dn.currentPage) {
+                        if (item.page === currentPage) {
                             this.selectItem(item.index);
                         }
                     });
