@@ -72,7 +72,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         response = isDefined(jsonParsedResponse) ? jsonParsedResponse : (xmlToJson(response) || response);
 
         const isResponsePageable = isPageable(response);
-        if (variable.serviceType === 'DataService') {
+        if (variable.serviceType === 'DataService' || variable.serviceType === 'JavaService') {
             const decodedData = decodeData(response);
             if (_.isString(response)) {
                 response = decodedData;
