@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmWizardStep component defines the wizardstep widget.
  */
+
 export class WizardStep {
 
     /**

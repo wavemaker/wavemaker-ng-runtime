@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmLayoutGrid` directive defines a layoutgrid component.
  */
+
 export class Layoutgrid {
     /**
      * Class of the widget.

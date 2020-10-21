@@ -39,7 +39,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
     public iconcolor: string;
     public onFocus: any;
     private touchEnabled:boolean;
-    @ViewChild('ratingInput', {read: ElementRef}) ratingEl: ElementRef;
+    @ViewChild('ratingInput', /* TODO: add static flag */ { read: ElementRef }) ratingEl: ElementRef;
 
     get selectedRatingValue() {
         return this._selectedRatingValue;

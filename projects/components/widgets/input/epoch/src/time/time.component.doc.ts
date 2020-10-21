@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmTime component defines the time widget.
  */
+
 export class Time {
     /**
      * Name of the time widget.

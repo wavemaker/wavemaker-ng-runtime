@@ -7,5 +7,25 @@ export * from './service/variables.service';
 export * from './service/metadata-service/metadata.service';
 export * from './util/variable/live-variable.http.utils';
 export * from './util/variable/live-variable.utils';
-export * from './util/variable/variables.utils';
+export {
+    appManager,
+    httpService,
+    metadataService,
+    navigationService,
+    routerService,
+    toasterService,
+    oauthService,
+    securityService,
+    dialogService,
+    setDependency,
+    initiateCallback,
+    processBinding,
+    simulateFileDownload,
+    setInput,
+    isFileUploadSupported,
+    getEvaluatedOrderBy,
+    formatExportExpression,
+    debounceVariableCall,
+    formatDate    
+} from './util/variable/variables.utils';
 export * from './variables.module';

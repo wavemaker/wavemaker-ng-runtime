@@ -57,7 +57,7 @@ shortcutkey="g" tabindex="0" outputformat="hh:mm:ss"  timepattern="hh:mm:ss" hou
     template: markup
 })
 class TimeWrapperComponent {
-    @ViewChild(TimeComponent)
+    @ViewChild(TimeComponent, /* TODO: add static flag */ {static: true})
     wmComponent: TimeComponent;
 
     time1Change($event, widget, newVal, oldVal) {

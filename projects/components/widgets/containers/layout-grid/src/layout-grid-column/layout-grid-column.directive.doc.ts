@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmLayoutGridColumn` directive defines a layout grid column widget.
  */
+
 export class LayoutGridColumn {
     /**
      * Class of the widget.

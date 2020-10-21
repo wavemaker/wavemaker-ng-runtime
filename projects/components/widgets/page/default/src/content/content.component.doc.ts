@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmContent` directive defines a content component.
  */
+
 export class Content {
     /**
      * Class of the widget.

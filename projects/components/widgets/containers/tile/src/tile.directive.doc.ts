@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmTile directive defines the tile widget.
  */
+
 export class Tile {
 
     /**

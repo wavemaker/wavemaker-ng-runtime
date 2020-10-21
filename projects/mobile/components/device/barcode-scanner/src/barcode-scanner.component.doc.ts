@@ -4,6 +4,7 @@ import { Input } from '@angular/core';
  * The wmBarcodescanner component defines the barcode-scanner widget.
  */
 
+
 export class Barcodescanner {
     /**
      * Format of bar code to scan. <br>

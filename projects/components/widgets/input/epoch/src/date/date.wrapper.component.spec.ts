@@ -49,7 +49,7 @@ const markup = `<div wmDate  name="date1" mindate="2019-12-02"  datavalue="${cur
     template: markup
 })
 class DateWrapperComponent {
-    @ViewChild(DateComponent)
+    @ViewChild(DateComponent, /* TODO: add static flag */ {static: true})
     wmComponent: DateComponent;
 
 

@@ -1,8 +1,9 @@
-import {Input} from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmSpinner component defines spinner widget.
  */
+
 
 export class Spinner {
     /**

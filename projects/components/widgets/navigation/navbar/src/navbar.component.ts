@@ -22,7 +22,7 @@ export class NavbarComponent extends StylableComponent implements AfterViewInit 
     public menuiconclass: any;
     public title: string;
     public imgsrc: string;
-    @ViewChild('navContent') private navContent: ElementRef;
+    @ViewChild('navContent', {static: true}) private navContent: ElementRef;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);

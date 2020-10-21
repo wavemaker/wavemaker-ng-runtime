@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmLogin component defines the login widget.
  */
+
 export class Login {
 
     /**

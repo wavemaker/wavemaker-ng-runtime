@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmDesigndialog component defines the designdialog widget.
  */
+
 export class Designdialog {
     /**
      * This property specifies the title for the designdialog widget. <br>

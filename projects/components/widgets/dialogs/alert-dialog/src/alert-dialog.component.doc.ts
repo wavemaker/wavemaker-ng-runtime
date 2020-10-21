@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmAlertdialog component defines the alertdialog widget.
  */
+
 export class Alertdialog {
     /**
      * This property specifies the title for the alertdialog widget. <br>

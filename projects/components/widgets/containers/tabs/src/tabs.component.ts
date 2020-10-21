@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Attribute, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
 
-import { addClass, appendNode, noop, removeClass } from '@wm/core';
+import { addClass, appendNode, DynamicComponentRefProvider, noop, removeClass, StatePersistence } from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { TabsAnimator } from './tabs.animator';
@@ -28,6 +28,8 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public defaultpaneindex: number;
     public transition: string;
     public tabsposition: string;
+    public statehandler: any;
+    private statePersistence: StatePersistence;
 
     public vertical: boolean;
     public justified: boolean;
@@ -35,25 +37,36 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     private readonly promiseResolverFn: Function;
     private tabsAnimator: TabsAnimator;
     private _oldPaneIndex: number;
+    private isPageLoadCall: boolean;
+    private dynamicComponentProvider;
+    private _dynamicContext;
+    private dynamicPaneIndex;
+    public dynamicTabs;
 
     @ContentChildren(TabPaneComponent) panes: QueryList<TabPaneComponent>;
 
     constructor(
         inj: Injector,
+        dynamicComponentProvider: DynamicComponentRefProvider,
         @Attribute('transition') _transition: string,
-        @Attribute('tabsposition') _tabsPosition: string
+        @Attribute('tabsposition') _tabsPosition: string,
+        statePersistence: StatePersistence,
     ) {
         // handle to the promise resolver
         let resolveFn: Function = noop;
-
         super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
 
         this.transition = _transition;
         this.tabsposition = _tabsPosition;
+        this.statePersistence = statePersistence;
+        this.dynamicComponentProvider = dynamicComponentProvider;
+        this.dynamicTabs = [];
+        this.dynamicPaneIndex = 0;
 
         this.promiseResolverFn = resolveFn;
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
+
     }
 
     animateIn (element: HTMLElement) {
@@ -70,6 +83,71 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             ul.scrollLeft = $prevHeaderEle[0].offsetLeft;
         } else {
             ul.scrollLeft = 0;
+        }
+    }
+
+    /**
+     * This method is used to register the dynamic panes.
+     * After all panes are initialzed, update the querylist manually based on index.
+     * @param paneRef - refrence of the tabpane
+     */
+    public registerDynamicTab(paneRef) {
+        this.dynamicTabs.push(paneRef);
+        const isLastPane =  this.dynamicTabs.length === this.dynamicPaneIndex;
+        if (isLastPane) {
+            for (let i = 0; i < this.dynamicTabs.length; i++) {
+                const newPaneRef  = _.find(this.dynamicTabs, pane => pane.dynamicPaneIndex === i);
+                this.panes.reset([...this.panes.toArray(), newPaneRef]);
+                if (newPaneRef.selecttab || this.defaultpaneindex === (this.panes.toArray().length - 1)) {
+                    setTimeout(() => {
+                        newPaneRef.select();
+                    }, 20);
+                }
+            }
+        }
+    }
+
+    /**
+     * This method is to add the tabpane dynamically
+     * @param paneName - name of the tabpane
+     * @param properties - properties of the tabpane
+     */
+    public addTab(paneName, properties?) {
+        let paramMarkup = '';
+        let propsTmpl = '';
+        this.dynamicPaneIndex++;
+        const name = paneName ? paneName : `tabpane${this.panes.toArray().length + this.dynamicPaneIndex}`;
+        const partialParams = _.get(properties, 'params');
+
+        _.forEach(properties, (value, key) => {
+            if (key !== 'params') {
+                propsTmpl = `${propsTmpl} ${key}="${value}"`;
+            }
+        });
+
+        _.forEach(partialParams, (value, key) => {
+            paramMarkup = `${paramMarkup} <wm-param name="${key}" value="${value}"></wm-param>`;
+        });
+        const markup = `<wm-tabpane dynamicPaneIndex="${this.dynamicPaneIndex - 1}" isdynamic="true" name="${name}" ${propsTmpl}>
+                            ${paramMarkup}
+                        </wm-tabpane>`;
+
+        if (!this._dynamicContext) {
+            this._dynamicContext = Object.create(this.viewParent);
+            this._dynamicContext[this.getAttr('wmTab')] = this;
+        }
+
+        this.dynamicComponentProvider.addComponent(this.getNativeElement().querySelector('.tab-content'), markup, this._dynamicContext, {inj: this.inj});
+    }
+
+    /**
+     * This method is to remove the tabpane
+     * @param paneIndex - index of the pane
+     */
+    public removePane(paneName) {
+        const paneRef = this.getPaneRefByName(paneName);
+        if (paneRef) {
+            paneRef.remove();
         }
     }
 
@@ -93,6 +171,12 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
         this.activeTab = paneRef.getWidget();
         const newPaneIndex = this.getPaneIndexByRef(paneRef);
+        const mode = this.statePersistence.computeMode(this.statehandler);
+        if (!this.isPageLoadCall && mode && mode.toLowerCase()!== 'none') {
+            this.statePersistence.setWidgetState(this, this.activeTab.name);
+        } else {
+            this.isPageLoadCall = false;
+        }
 
         // invoke change callback if the evt is present, select a tab programmatically will not have the event
         if (evt) {
@@ -143,6 +227,10 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
     private getPaneRefByIndex(index: number): TabPaneComponent {
         return this.panes.toArray()[index];
+    }
+
+    private getPaneRefByName(name: string): TabPaneComponent {
+        return _.find(this.panes.toArray(), {name: name});
     }
 
     // returns false if the pane is hidden or disabled
@@ -206,7 +294,6 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         }
     }
 
-
     // update the postion of tab header
     private setTabsPosition() {
         const ul = this.nativeElement.children[0];
@@ -223,8 +310,24 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     onPropertyChange(key: string, nv: any, ov) {
 
         if (key === 'defaultpaneindex') {
-            // If no active tab is set ie.. no isdefaulttab then honor the defaultpaneindex
-            setTimeout(() => this.selectDefaultPaneByIndex(nv || 0), 20);
+            this.defaultpaneindex = nv;
+        } else if (key === 'statehandler') {
+            this.isPageLoadCall = true;
+            const widgetState = this.statePersistence.getWidgetState(this);
+            if (nv !== 'none' && widgetState) {
+                const paneToSelect: any = this.panes.filter(function(pane) {
+                    return widgetState === pane.name;
+                });
+                if (!paneToSelect.length) {
+                    console.warn('Tab pane name ' + widgetState + ' in State is incorrect. Falling back to the default pane');
+                    setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
+                } else {
+                    const index = this.getPaneIndexByRef(paneToSelect[0]);
+                    setTimeout(() => this.selectDefaultPaneByIndex(index), 20);
+                }
+            } else {
+                setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
+            }
         } else {
             super.onPropertyChange(key, nv, ov);
         }

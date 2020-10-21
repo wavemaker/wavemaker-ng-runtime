@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmSegmentContent` directive defines the segment content component.
  */
+
 export class SegmentContent {
 
     /**

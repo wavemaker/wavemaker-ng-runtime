@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmTabPane component defines the tabpane widget.
  */
+
 export class TabPane {
 
     /**

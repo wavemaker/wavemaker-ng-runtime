@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmForm component defines a form in the layout.
  */
+
 export class Form {
     /**
      * Defines the action to be performed on successful submission of the form.

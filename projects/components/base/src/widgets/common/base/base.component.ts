@@ -154,6 +154,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     private $attrs = new Map<string, string>();
 
+    private isMuted = false;
+
     protected constructor(
         protected inj: Injector,
         config: IWidgetConfig,
@@ -352,6 +354,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         } else if (key === 'animation') {
             // update styles if old and nv value are different
             addClass(this.nativeElement, "animated " + nv);
+        }  else if (key === 'disabled') {
+            // WMS-19321: In IE, widget is in disabled state when disabled="false" attribute is present
+            (nv === true) ? setAttr(this.nativeElement, 'disabled', 'true', true) : removeAttr(this.nativeElement, 'disabled', true);
         }
     }
 
@@ -453,7 +458,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 nv => this.widget[propName] = nv,
                 getWatchIdentifier(this.widgetId, propName),
                 propName === 'datasource',
-                this.widgetProps.get(propName)
+                this.widgetProps.get(propName),
+                () => this.isMuted
             )
         );
     }
@@ -597,6 +603,14 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     // Defining the execute method on BaseComponent. If dataset is binded to widgets ouptut then datasource.execute will be defined
     protected execute(operation, options): any {
 
+    }
+
+    public mute() {
+        this.isMuted = true;
+    }
+
+    public unmute() {
+        this.isMuted = false;
     }
 
     /**

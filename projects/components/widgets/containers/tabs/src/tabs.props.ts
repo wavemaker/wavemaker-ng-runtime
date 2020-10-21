@@ -11,6 +11,7 @@ export const registerProps = () => {
             ['tabsposition', {value: 'top', ...PROP_STRING}],
             ['name', PROP_STRING],
             ['show', {value: true, ...PROP_BOOLEAN}],
+            ['statehandler', {value: 'none', ...PROP_STRING}],
             ['transition', PROP_STRING]
         ]
     );

@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmRichtexteditor component defines the rich-text-editor widget.
  */
+
 export class RichTextEditor {
     /**
      * Name of the rich-text-editor widget.

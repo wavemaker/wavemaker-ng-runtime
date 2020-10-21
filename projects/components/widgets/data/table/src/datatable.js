@@ -501,7 +501,7 @@ $.widget('wm.datatable', {
 
     /* Returns the checkbox template. */
     _getCheckboxTemplate: function (row, isMultiSelectCol) {
-        var checked = row.checked ? ' checked' : '',
+        var checked = row._checked === true ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '',
             chkBoxName = isMultiSelectCol ? 'gridMultiSelect' : '';
         return '<input name="' + chkBoxName + '" type="checkbox"' + checked + disabled + '/>';
@@ -509,7 +509,7 @@ $.widget('wm.datatable', {
 
     /* Returns the radio template. */
     _getRadioTemplate: function (row) {
-        var checked = row.checked ? ' checked' : '',
+        var checked = row._checked === true ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '';
         return '<input type="radio" rowSelectInput name="" value=""' + checked + disabled + '/>';
     },
@@ -945,7 +945,7 @@ $.widget('wm.datatable', {
             self = this;
 
         this.preparedData.forEach(function (data, i) {
-            if (data.selected) {
+            if (data._selected) {
                 selectedRowsData.push(self.options.data[i]);
             }
         });
@@ -956,7 +956,7 @@ $.widget('wm.datatable', {
         var self = this;
         /*Deselect all the previous selected rows in the table*/
         self.gridBody.find('tr.app-datagrid-row').each(function (index) {
-            if (self.preparedData[index] && self.preparedData[index].selected) {
+            if (self.preparedData[index] && self.preparedData[index]._selected === true) {
                 $(this).trigger('click', [$(this), {skipSingleCheck: true}]);
             }
         });
@@ -983,7 +983,7 @@ $.widget('wm.datatable', {
         var self = this,
             headerCols = this.options.isMobile ? this.gridElement.find('col') : this.gridHeaderElement.find('col'),
             bodyCols = this.gridElement.find('col'),
-            headerCells = this.options.showHeader ? this.gridContainer.find('th.app-datagrid-header-cell') : this.gridElement.find('tr.app-datagrid-row:first td'),
+            headerCells = this.options.showHeader ? this.gridContainer.find('th.app-datagrid-header-cell') : this.gridElement.find('tr.app-datagrid-row').first().find('td'),
             colLength = this.preparedHeaderData.length,
             scrollLeft = this.gridElement.parent().prop('scrollLeft'); //Preserve the scroll left to keep the same scroll after setting width
         if (!headerCols.length && !headerCells.length) {
@@ -1223,14 +1223,14 @@ $.widget('wm.datatable', {
         //If visible flag is true, select the first visible row item (Do not select the always new row)
         if (visible && this.gridElement.find('tBody').is(':visible')) {
             this.__setStatus();
-            $row = this.gridElement.find('tBody tr.app-datagrid-row:visible:not(.always-new-row):first');
+            $row = this.gridElement.find('tBody tr.app-datagrid-row:visible:not(.always-new-row)').first();
         } else {
-            $row = this.gridElement.find('tBody tr.app-datagrid-row:not(.always-new-row):first');
+            $row = this.gridElement.find('tBody tr.app-datagrid-row:not(.always-new-row)').first();
         }
         id = $row.attr('data-row-id');
         // Select the first row if it exists, i.e. it is not the first row being added.
         if ($row.length && this.preparedData.length) {
-            this.preparedData[id].selected = !value;
+            this.preparedData[id]._selected = !value;
             // Triggering row click event using javascript click method because jquery trigger method is not triggering the events which are attached through javascript addEventListener method.
             $row[0].click();
         }
@@ -1245,7 +1245,7 @@ $.widget('wm.datatable', {
             selector = 'tr.app-datagrid-row[data-row-id=' + rowIndex + ']';
             $row = this.gridBody.find(selector);
             if ($row.length) {
-                this.preparedData[rowIndex].selected = !value;
+                this.preparedData[rowIndex]._selected = !value;
             }
             if (value) {
                 $row.trigger('click');
@@ -1274,7 +1274,7 @@ $.widget('wm.datatable', {
         if (!this.preparedData[rowId]) {
             return;
         }
-        this.preparedData[rowId].selected = selected;
+        this.preparedData[rowId]._selected = selected;
         if (selected) {
             $row.addClass('active');
         } else {
@@ -1283,12 +1283,12 @@ $.widget('wm.datatable', {
         if (this.options.showRadioColumn) {
             $radio = $row.find('td input[rowSelectInput]:radio:not(:disabled)');
             $radio.prop('checked', selected);
-            this.preparedData[rowId].checked = selected;
+            this.preparedData[rowId]._checked = selected;
         }
         if (this.options.multiselect) {
             $checkbox = $row.find('td input[name="gridMultiSelect"]:checkbox:not(:disabled)');
             $checkbox.prop('checked', selected);
-            this.preparedData[rowId].checked = selected;
+            this.preparedData[rowId]._checked = selected;
             // if we check header checkbox(select/unselect all the records) then updating selectAll checkbox state is not required.
             if (!isSelectAll) {
                 this.updateSelectAllCheckboxState();
@@ -1368,7 +1368,7 @@ $.widget('wm.datatable', {
         rowId = $row.attr('data-row-id');
         rowData = this.preparedData[rowId];
         data = this.options.data[rowId];
-        selected = (rowData && rowData.selected) || false;
+        selected = (rowData && rowData._selected) || false;
         if (!options.skipSingleCheck && (($row.hasClass('active') && !this.options.multiselect) || !rowData)) {
             if (!isQuickEdit && options.operation !== 'new') { //For quick edit, row will be in edit mode. So, no need to call events.
                 callRowSelectionEvents();
@@ -1632,14 +1632,14 @@ $.widget('wm.datatable', {
             $newRowButton = $gridActions.find('i.wi-plus').closest('.app-button');
         if (this.options.editmode === this.CONSTANTS.INLINE && (this.options.rowActions.length === 0 || !_.some(this.options.rowActions, { action: 'editRow($event)' }))) {
             if (saveInd) {
-                $gridActions.append(`<button type="button" wmbutton="" class="btn app-button btn-default cancelNewRow" tabindex="0" accesskey="" title="Cancel">
-                                    <i aria-hidden="true" class="app-icon wi wi-cancel"></i>
-                                    <span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>
-                                </button>
-                                <button type="button" wmbutton="" class="btn app-button btn-primary saveNewRow" tabindex="0" accesskey="" title="Save">
-                                    <i aria-hidden="true" class="app-icon wi wi-done"></i>
-                                    <span class="sr-only">Save Icon</span><span class="btn-caption">Save</span>
-                                </button>`);
+                $gridActions.append('<button type="button" wmbutton="" class="btn app-button btn-default cancelNewRow" tabindex="0" accesskey="" title="Cancel">'+
+                                    '<i aria-hidden="true" class="app-icon wi wi-cancel"></i>'+
+                                    '<span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>'+
+                                '</button>'+
+                                '<button type="button" wmbutton="" class="btn app-button btn-primary saveNewRow" tabindex="0" accesskey="" title="Save">'+
+                                    '<i aria-hidden="true" class="app-icon wi wi-done"></i>'+
+                                    '<span class="sr-only">Save Icon</span><span class="btn-caption">Save</span>'+
+                                '</button>');
                 $gridActions.find('.cancelNewRow').on('click', function (event) {
                     self.toggleEditRow(event, {action: 'cancel', $row: $newRow});
                 });
@@ -2019,7 +2019,7 @@ $.widget('wm.datatable', {
                 preparedData = self.preparedData[id];
             if (id !== rowId && preparedData) {
                 $(this).find('input[rowSelectInput]:radio').prop('checked', false);
-                preparedData.selected = preparedData.checked = false;
+                preparedData._selected = preparedData._checked = false;
                 $(this).removeClass('active');
                 self.options.callOnRowDeselectEvent(preparedData, e);
             }
@@ -2397,7 +2397,7 @@ $.widget('wm.datatable', {
             return;
         }
         if (isClosed) {
-            if (e && self.preparedData[rowId].selected) {
+            if (e && self.preparedData[rowId]._selected) {
                 e.stopPropagation();
             }
             if (self.options.rowDef.closeothers) {

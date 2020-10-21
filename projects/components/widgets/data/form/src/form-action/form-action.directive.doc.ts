@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmFormAction component defines the form action widget.
  */
+
 export class FormAction {
     /**
      * CSS class for styling the field.

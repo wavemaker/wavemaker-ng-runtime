@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmMarquee component defines the marquee widget.
  */
+
 export class Marquee {
 
     /**

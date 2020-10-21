@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmTableAction component defines the table action widget.
  */
+
 export class TableAction {
     /**
      * CSS class for styling the field.

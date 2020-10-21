@@ -15,6 +15,7 @@ declare const resolveLocalFileSystemURL;
 declare const $;
 declare const WM_CUSTOM_FORMATTERS;
 declare const MSCSSMatrix;
+declare const _WM_APP_PROPERTIES;
 
 const userAgent = window.navigator.userAgent;
 const REGEX = {
@@ -80,6 +81,11 @@ export const isIpad = () => REGEX.IPAD.test(userAgent);
 export const isIos = () => isIphone() || isIpod() || isIpad();
 
 export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('#wm-mobile-display:visible').length > 0;
+
+export const isTablet = () => {
+    const scope = document.querySelector('.app-page').widget;
+    return scope && scope.viewParent.Viewport.isTabletType;
+};
 
 export const isMobileApp = () => getWmProjectProperties().platformType === 'MOBILE' && getWmProjectProperties().type === 'APPLICATION';
 
@@ -569,7 +575,9 @@ export const isPageable = (obj: any): boolean => {
         'totalElements': 10,
         'totalPages': 1
     };
-    return (_.isEqual(_.keys(pageable), _.keys(obj).sort()));
+    // paginated object may or may not contain 'empty' property. In either case, Pageable should return as true.
+    const paginatedObj = _.omit(obj, 'empty');
+    return (_.isEqual(_.keys(pageable), _.keys(paginatedObj).sort()));
 };
 
 /*
@@ -763,7 +771,7 @@ export const loadScript = async (url, loadViaScriptTag, cacheable = false) => {
         });
     } else if(cacheable) {
         return $.ajax({
-            dataType: "script",
+            dataType: 'script',
             cache: true,
             url: url
         }).done(response => response)
@@ -1229,7 +1237,7 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
         const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
         if (containerEleTransformations.m41 < 0) {
              containerEleTransformations.m41 = 0;
-         }else{
+         } else {
              return;
          }
          setTranslation3dPosition(containerElem, containerEleTransformations);
@@ -1257,16 +1265,16 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
 
             if (viewPortWidth - (parentRight + parentDimesion.width) < containerWidth) {
                 newLeft = parentRight - containerWidth;
-                if(newLeft <0){
+                if (newLeft < 0) {
                     newLeft = 0;
                 }
                 containerEleTransformations.m41 = newLeft;
-            }else{
+            } else {
                 return;
             }
             setTranslation3dPosition(containerElem, containerEleTransformations);
         });
-   }
+   };
 
   /**
    * For given element set the traslation
@@ -1275,13 +1283,13 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
    * @param containerEleTransformations translate matrix positions
    */
    export const setTranslation3dPosition = (containerElem, containerEleTransformations) => {
-        const translatePosition = "translate3d(" + containerEleTransformations.m41 + "px, " + containerEleTransformations.m42 + "px, 0px)";
+        const translatePosition = 'translate3d(' + containerEleTransformations.m41 + 'px, ' + containerEleTransformations.m42 + 'px, 0px)';
         containerElem[0].style.webkitTransform = translatePosition;
         containerElem[0].style.MozTransform = translatePosition;
         containerElem[0].style.msTransform = translatePosition;
         containerElem[0].style.OTransform = translatePosition;
         containerElem[0].style.transform = translatePosition;
-   }
+   };
 
    /**
     *
@@ -1414,8 +1422,8 @@ export const VALIDATOR = {
 };
 
 export const transformFileURI = (url) => {
-    if(url && hasCordova() && isIos() && url.startsWith('file://')) {
-        return url.replace('file://', 'http://' + location.host + '/local-filesystem');
+    if (url && hasCordova() && isIos() && url.startsWith('file://')) {
+        return url.replace('file://', '/_app_file_');
     }
     return url;
 };
@@ -1423,13 +1431,17 @@ export const transformFileURI = (url) => {
 export const appendScriptToHead = (callback) =>{
 
     const scriptele = document.createElement('script');
-    scriptele.onload = ()=>{
+    scriptele.onload = () => {
      callback(WM_CUSTOM_FORMATTERS);
     };
-    scriptele.onerror = err=>{
-        console.warn('Error while loading the file '+scriptele.src+'\n' + err);
-    }
+    scriptele.onerror = err => {
+        console.warn('Error while loading the file ' + scriptele.src + '\n' + err);
+    };
     scriptele.type = 'text/javascript';
     scriptele.src = './extensions/formatters.js';
     document.head.appendChild(scriptele);
-}
+};
+
+export const getAppSetting = (key, defaultValue) => {
+    return (_WM_APP_PROPERTIES.extra_settings && _.get(_WM_APP_PROPERTIES.extra_settings, key)) || defaultValue;
+};

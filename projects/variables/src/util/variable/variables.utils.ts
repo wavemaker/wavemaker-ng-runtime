@@ -564,30 +564,29 @@ const processBindObject = (obj, scope, root, variable) => {
     const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : _.noop;
 
     if (stringStartsWith(obj.value, 'bind:')) {
-        destroyFn(
-            $watch(obj.value.replace('bind:', ''), scope, {}, function (newVal, oldVal) {
-                if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && (!_.isUndefined(oldVal) || !_.isUndefined(targetObj[targetNodeKey])))) {
-                    return;
-                }
-                // Skip cloning for blob column
-                if (!_.includes(['blob', 'file'], obj.type)) {
-                    newVal = getClonedObject(newVal);
-                }
-                setValueToNode(target, obj, root, variable, newVal); // cloning newVal to keep the source clean
+        const listener = (newVal, oldVal) => {
+            if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && (!_.isUndefined(oldVal) || !_.isUndefined(targetObj[targetNodeKey])))) {
+                return;
+            }
+            // Skip cloning for blob column
+            if (!_.includes(['blob', 'file'], obj.type)) {
+                newVal = getClonedObject(newVal);
+            }
+            setValueToNode(target, obj, root, variable, newVal); // cloning newVal to keep the source clean
 
-                if (runMode) {
-                    /*set the internal bound node map with the latest updated value*/
-                    if (!internalBoundNodeMap.has(variable)) {
-                        internalBoundNodeMap.set(variable, {});
-                    }
-                    _.set(internalBoundNodeMap.get(variable), [variable.name, root, target], newVal);
-                    /*update the internal nodes after internal node map is set*/
-                    if (_.isObject(newVal)) {
-                        updateInternalNodes(target, root, variable);
-                    }
+            if (runMode) {
+                /*set the internal bound node map with the latest updated value*/
+                if (!internalBoundNodeMap.has(variable)) {
+                    internalBoundNodeMap.set(variable, {});
                 }
-            })
-        );
+                _.set(internalBoundNodeMap.get(variable), [variable.name, root, target], newVal);
+                /*update the internal nodes after internal node map is set*/
+                if (_.isObject(newVal)) {
+                    updateInternalNodes(target, root, variable);
+                }
+            }
+        };
+        destroyFn($watch(obj.value.replace('bind:', ''), scope, {}, listener, undefined, undefined, undefined, () => variable.isMuted));
     } else if (!_.isUndefined(obj.value)) {
         setValueToNode(target, obj, root, variable, obj.value, true);
         if (runMode && root !== targetNodeKey) {

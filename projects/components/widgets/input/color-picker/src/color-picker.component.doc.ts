@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmColorPicker component defines the colorpicker widget.
  */
+
 export class ColorPicker {
     /**
      * Class of the widget.

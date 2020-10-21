@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmHtml directive defines the html widget.
  */
+
 export class Html {
     /**
      * Class of the widget.

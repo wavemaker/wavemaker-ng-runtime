@@ -16,7 +16,7 @@ const markup = `<div hint="Help text for rating widget" tabindex="1"  wmRating  
     template: markup
 })
 class TestComponent {
-    @ViewChild(RatingComponent) wmComponent: RatingComponent;
+    @ViewChild(RatingComponent, /* TODO: add static flag */ {static: true}) wmComponent: RatingComponent;
 }
 
 const testModuleDef: ITestModuleDef = {

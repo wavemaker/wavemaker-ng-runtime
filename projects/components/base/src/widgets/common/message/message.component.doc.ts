@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmMessage component defines the message widget.
  */
+
 export class Message {
     /**
      * This property specifies the label of the message. <br>

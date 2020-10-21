@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmPrefabContainer component defines the prefab-container widget.
  */
+
 export class PrefabContainer {
 
     /**

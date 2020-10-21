@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmList component defines the list widget.
  */
+
 export class List {
 
     /**

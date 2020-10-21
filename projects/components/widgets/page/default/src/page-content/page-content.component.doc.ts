@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmPageContent directive defines the page content component.
  */
+
 export class PageContent {
 
     /**

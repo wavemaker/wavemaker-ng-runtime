@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmSwitch component defines the switch widget.
  */
+
 export class Switch {
     /**
      * Class of the widget.

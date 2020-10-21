@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The 'wmHeader' directive defines a header in the layout.
  */
+
 export class Header {
     /**
      * Name of the header widget.

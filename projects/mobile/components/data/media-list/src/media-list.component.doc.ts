@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmMediaList component defines the MediaList widget.
  */
+
 export class MediaList {
 
     /**

@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmAccordionPane component defines the accordion pane.
  */
+
 export class AccordionPane {
 
     /**

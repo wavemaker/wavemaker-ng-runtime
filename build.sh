@@ -80,7 +80,27 @@ hasLibChanges() {
 	fi
     return 0
 }
+hasLibJsChanges(){
+    if [[ ${force} == true ]]; then
+        return 0
+    fi
 
+    local successFile="./dist/LIB_${SUCCESS_FILE}"
+
+    if ! [[ -e ${successFile} ]]; then
+        return 0
+    fi
+
+    local updateTime=`date -r ./projects/components/widgets/data/table/src/datatable.js +%s`
+    local buildTime=`date -r ${successFile} +%s`
+
+	if [[ ${updateTime} -le ${buildTime} ]]; then
+		return 1
+	else
+		return 0
+	fi
+    return 0
+}
 hasSourceChanges() {
 
     if [[ ${force} == true ]]; then
@@ -117,7 +137,7 @@ ngBuild() {
     local ngModuleName=$3;
     hasSourceChanges ${bundle} ${sourceLocation}
     if [[ "$?" -eq "0" ]]; then
-        execCommand ng-build ${ngModuleName} "$NG build $ngModuleName"
+        execCommand ng-build ${ngModuleName} "$NG build --prod $ngModuleName"
         isSourceModified=true
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
@@ -395,7 +415,7 @@ buildApp() {
     ngBuild mobile-placeholder-runtimedynamic projects/mobile/placeholder/runtime-dynamic '@wm/mobile/placeholder/runtime/dynamic'
 
     if [[ ${hasChangesInComponentsTranpilation} -eq "0" ]]; then
-        ./node_modules/.bin/ng-packagr -p projects/components/transpile/ng-package.json -c ./projects/components/transpile/tsconfig.lib.json
+        ./node_modules/.bin/ng-packagr -p projects/components/transpile/ng-package.json -c ./projects/components/transpile/tsconfig.lib.prod.json
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/components-transpilation_${SUCCESS_FILE}
         fi
@@ -525,6 +545,7 @@ bundleWebLibs() {
         ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
+        ./node_modules/jssha/dist/sha256.js \
         ./node_modules/summernote/dist/summernote-lite.js \
         ./node_modules/jquery-ui/ui/disable-selection.js \
         ./node_modules/jquery-ui/ui/version.js \
@@ -588,6 +609,7 @@ bundleMobileLibs() {
         ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
+        ./node_modules/jssha/dist/sha256.js \
         ./node_modules/summernote/dist/summernote-lite.js \
         ./node_modules/jquery-ui/ui/disable-selection.js \
         ./node_modules/jquery-ui/ui/version.js \
@@ -655,7 +677,17 @@ buildLibs() {
             touch ./dist/LIB_${SUCCESS_FILE}
         fi
     else
-        echo "No changes in package.json. use --force to re-build libs"
+        hasLibJsChanges
+        
+        if [[ "$?" -eq "0" ]]; then
+        bundleWebLibs
+        bundleMobileLibs
+        if [[ "$?" -eq "0" ]]; then
+            touch ./dist/LIB_${SUCCESS_FILE}
+        fi
+        else
+            echo "No changes in package.json. use --force to re-build libs"
+        fi
     fi
 }
 

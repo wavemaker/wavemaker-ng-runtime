@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmChart component defines the chart widget.
  */
+
 export class Chart {
     /**
      * Title for the chart widget. <br>

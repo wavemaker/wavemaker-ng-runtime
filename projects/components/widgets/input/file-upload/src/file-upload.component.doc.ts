@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmFileUpload component defines the file upload widget.
  */
+
 export class FileUpload {
     /**
      * Caption/Label for the fileupload widget. <br>

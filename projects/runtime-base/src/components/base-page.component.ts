@@ -1,7 +1,7 @@
-import {AfterViewInit, HostListener, Injector, OnDestroy, ViewChild} from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { ScriptLoaderService } from '@wm/core';
+import { isAndroid, isIos, Viewport, ScriptLoaderService } from '@wm/core';
 import { PageDirective } from '@wm/components/page';
 
 import {Subject, Subscription} from 'rxjs';
@@ -25,9 +25,11 @@ import { VariablesService } from '@wm/variables';
 import { AppManagerService } from '../services/app.manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
 
-declare const $;
+declare const $, _;
 
+@Directive()
 export abstract class BasePageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
+    static lastPageSnapShot = null;
     Widgets: any;
     Variables: any;
     Actions: any;
@@ -46,7 +48,9 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     startupVariablesLoaded = false;
     pageTransitionCompleted = false;
     @ViewChild(PageDirective) pageDirective;
+    $page;
     scriptLoaderService: ScriptLoaderService;
+    Viewport: Viewport;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -65,6 +69,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.scriptLoaderService = this.injector.get(ScriptLoaderService);
         this.i18nService = this.injector.get(AbstractI18nService);
         this.router = this.injector.get(Router);
+        this.Viewport = this.injector.get(Viewport);
 
         this.initUserScript();
 
@@ -77,9 +82,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.activePageName = this.pageName; // Todo: remove this
 
         this.registerPageParams();
-
         this.defineI18nProps();
-
         super.init();
     }
 
@@ -100,7 +103,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     registerPageParams() {
-        const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = params);
+        const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = _.extend({}, params));
         this.registerDestroyListener(() => subscription.unsubscribe());
     }
 
@@ -125,6 +128,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         // assign all the page variables to the pageInstance
         Object.entries(variableCollection.Variables).forEach(([name, variable]) => this.Variables[name] = variable);
         Object.entries(variableCollection.Actions).forEach(([name, action]) => this.Actions[name] = action);
+
 
 
         const subscription = this.viewInit$.subscribe(noop, noop, () => {
@@ -154,12 +158,16 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         });
     }
 
-    runPageTransition(transition: string): Promise<void> {
+    runPageTransition(transition?: string): Promise<void> {
+        transition = transition || this.navigationService.getPageTransition();
+        const lastPage = BasePageComponent.lastPageSnapShot
         return new Promise(resolve => {
-            const $target = this.getPageTransitionTarget();
-            if (transition) {
-                const onTransitionEnd = () => {
-                    if (resolve) {
+            if (transition
+                && !transition.startsWith('none')
+                && lastPage) {
+                const $target = lastPage.parent();
+                const onTransitionEnd = (e) => {
+                    if (resolve && !(e && e.pseudoElement)) {
                         $target.off('animationend', onTransitionEnd);
                         $target.removeClass(transition);
                         $target.children().first().remove();
@@ -168,6 +176,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                     }
                 };
                 transition = 'page-transition page-transition-' + transition;
+                lastPage.addClass('page-exit');
+                this.$page.addClass('page-entry');
                 $target.addClass(transition);
                 $target.on('animationend', onTransitionEnd);
                 // Wait for a maximum of 1 second for transition to end.
@@ -175,13 +185,20 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             } else {
                 resolve();
             }
+        }).then(() => {
+            this.$page && this.$page.removeClass('page-entry');
+            if (lastPage) {
+                lastPage.remove();
+                BasePageComponent.lastPageSnapShot = null;
+            }
+            this.pageTransitionCompleted = true;
         });
     }
 
     invokeOnReady() {
         this.onReady();
-        (this.App.onPageReady || noop)(this.pageName, this);
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
+        (this.App.onPageReady || noop)(this.pageName, this);
     }
 
     private loadScripts() {
@@ -197,9 +214,20 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         });
     }
 
-    getPageTransitionTarget() {
-        // Looks for 'app-page-target' tag for WM BUild & 'app-page-*' tag for Ng Build
-        return $('app-page-outlet:first').length ? $('app-page-outlet:first') : $('div[data-role="pageContainer"]:first').parent();
+    private restoreLastPageSnapshot() {
+        if (BasePageComponent.lastPageSnapShot && this.$page) {
+            this.$page.parent().prepend(BasePageComponent.lastPageSnapShot);
+        }
+    }
+
+    private savePageSnapShot() {
+        if (BasePageComponent.lastPageSnapShot) {
+            BasePageComponent.lastPageSnapShot.remove();
+        }
+        if (this.$page) {
+            BasePageComponent.lastPageSnapShot = this.$page.clone();
+            this.$page.parents('app-root').prepend(BasePageComponent.lastPageSnapShot);
+        }
     }
 
     /**
@@ -222,31 +250,37 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     ngAfterViewInit(): void {
-        this.loadScripts().then(() => {
-            const transition = this.navigationService.getPageTransition();
-            if (transition) {
-                const pageOutlet = this.getPageTransitionTarget();
-                pageOutlet.prepend(pageOutlet.children().first().clone());
+        this.route.snapshot.data['__wm_page_reuse'] = this.canReuse();
+        if (this.pageDirective) {
+            this.$page = this.pageDirective.$element.parent();
+            if (isIos()) {
+                this.$page.addClass('ios-page');
             }
-            this.runPageTransition(transition).then(() => {
-                this.pageTransitionCompleted = true;
-                (this as any).compilePageContent = true;
-            }).then(() => {
-                setTimeout(() => {
-                    unMuteWatchers();
-                    this.viewInit$.complete();
-                    this.onPageContentReady = () => {
-                        this.fragmentsLoaded$.subscribe(noop, noop, () => {
-                            this.invokeOnReady();
-                        });
-                        this.onPageContentReady = noop;
-                    };
-                }, 300);
-            });
+            if (isAndroid()) {
+                this.$page.addClass('android-page');
+            }
+        }
+        this.restoreLastPageSnapshot();
+        this.loadScripts().then(() => {
+            this.runPageTransition()
+                .then(() => {
+                    (this as any).compilePageContent = true;
+                    setTimeout(() => {
+                        this.onPageContentReady = () => {
+                            this.fragmentsLoaded$.subscribe(noop, noop, () => {
+                                this.invokeOnReady();
+                            });
+                            unMuteWatchers();
+                            this.viewInit$.complete();
+                            this.onPageContentReady = noop;
+                        };
+                    }, 0);
+                });
         });
     }
 
     ngOnDestroy(): void {
+        this.savePageSnapShot();
         this.destroy$.complete();
     }
 
@@ -255,4 +289,49 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     onBeforePageLeave() {}
 
     onPageContentReady() {}
+
+    canReuse() {
+        return !!(this.pageDirective && this.pageDirective.reuse);
+    }
+
+    mute() {
+        const m = o => { o && o.mute && o.mute(); };
+        _.each(this.Widgets, m);
+        _.each(this.Variables, m);
+        _.each(this.Actions, m);
+    }
+
+    unmute(c = this) {
+        const um = o => { o && o.unmute && o.unmute(); };
+        _.each(this.Widgets, um);
+        _.each(this.Variables, um);
+        _.each(this.Actions, um);
+    }
+
+    ngOnAttach() {
+        this.route.snapshot.data['__wm_page_reuse'] = this.canReuse();
+        this.registerPageParams();
+        this.App.lastActivePageName = this.App.activePageName;
+        this.App.activePageName = this.pageName;
+        this.App.activePage = this;
+        this.activePageName = this.pageName;
+        this.restoreLastPageSnapshot();
+        this.unmute();
+        if(this.pageDirective && this.pageDirective.refreshdataonattach) {
+            const refresh = v => { v.startUpdate && v.invoke && v.invoke(); };
+            _.each(this.Variables, refresh);
+            _.each(this.Actions, refresh);
+        }
+        this.runPageTransition().then(() => {
+            this.pageDirective && this.pageDirective.ngOnAttach();
+            this.appManager.notify('pageAttach', {'name' : this.pageName, instance: this});
+        });
+    }
+
+    ngOnDetach() {
+        this.savePageSnapShot();
+        this.mute();
+        this.pageDirective && this.pageDirective.ngOnDetach();
+        this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
+    }
 }

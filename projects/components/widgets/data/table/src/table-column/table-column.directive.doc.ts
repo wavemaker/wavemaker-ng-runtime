@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmTableColumn component defines the table column widget.
  */
+
 export class TableColumn {
     /**
      * CSS class for styling the column.

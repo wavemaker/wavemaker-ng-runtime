@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmAudio` component defines the audio widget.
  */
+
 export class Audio {
     /**
      * Hint text is shown for the audio on hover. <br>

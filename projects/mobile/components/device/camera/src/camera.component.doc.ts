@@ -4,6 +4,7 @@ import { Input } from '@angular/core';
  * The wmCamera component defines the camera widget.
  */
 
+
 export class Camera {
     /**
      * Allow simple editing on image after capturing.

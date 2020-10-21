@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmAccordion directive defines the Accordion widget.
  */
+
 export class Accordion {
 
     /**

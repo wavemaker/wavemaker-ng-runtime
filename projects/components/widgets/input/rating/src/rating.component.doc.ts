@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmRating component defines the rating widget.
  */
+
 export class Rating {
     /**
      * Class of the widget.

@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmIFramedialog component defines the iframedialog widget.
  */
+
 export class IFramedialog {
     /**
      * This property specifies the title for the iframedialog widget. <br>

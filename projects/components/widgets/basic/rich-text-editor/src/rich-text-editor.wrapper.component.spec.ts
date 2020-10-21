@@ -16,7 +16,7 @@ const  markup = `<div wmRichTextEditor
     template: markup
 })
 class RichTextEditorWrapperComponent {
-    @ViewChild(RichTextEditorComponent) wmComponent: RichTextEditorComponent;
+    @ViewChild(RichTextEditorComponent, /* TODO: add static flag */ {static: true}) wmComponent: RichTextEditorComponent;
 }
 
 const testModuleDef: ITestModuleDef = {

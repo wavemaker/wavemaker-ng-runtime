@@ -6,7 +6,7 @@ import { CONSTANTS } from '@wm/variables';
 
 declare const _, $;
 
-const parentSelector = 'body:first >app-root:last';
+const parentSelector = 'body >app-root';
 
 @Injectable()
 export class NavigationServiceImpl implements AbstractNavigationService {

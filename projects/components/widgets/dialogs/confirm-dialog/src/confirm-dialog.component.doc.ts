@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmConfirmdialog component defines the confirmdialog widget.
  */
+
 export class Confirmdialog {
     /**
      * This property specifies the title for the confirmdialog widget. <br>

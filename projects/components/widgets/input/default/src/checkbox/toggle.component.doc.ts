@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmToggle component defines the toggle widget.
  */
+
 export class Toggle {
     /**
      * Class of the widget.

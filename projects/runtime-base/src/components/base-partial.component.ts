@@ -1,18 +1,21 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 
-import { AbstractI18nService, AbstractNavigationService, App, noop, ScriptLoaderService, UtilsService } from '@wm/core';
+import { $invokeWatchers, AbstractI18nService, AbstractNavigationService, App, noop, Viewport, ScriptLoaderService, UtilsService } from '@wm/core';
 import { PartialDirective, WidgetRef} from '@wm/components/base';
+import { PageDirective } from '@wm/components/page';
 import { VariablesService } from '@wm/variables';
 
 import { FragmentMonitor } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
-import { $invokeWatchers } from '@wm/core';
+
+declare const _;
 
 export const commonPartialWidgets = {};
 
+@Directive()
 export abstract class BasePartialComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
     Widgets: any;
     Variables: any;
@@ -30,7 +33,9 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     i18nService: AbstractI18nService;
     appLocale: any;
     @ViewChild(PartialDirective) partialDirective;
+    pageDirective: PageDirective;
     scriptLoaderService: ScriptLoaderService;
+    Viewport: Viewport;
     compileContent = false;
 
     destroy$ = new Subject();
@@ -50,6 +55,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.containerWidget = this.injector.get(WidgetRef);
         this.i18nService = this.injector.get(AbstractI18nService);
         this.scriptLoaderService = this.injector.get(ScriptLoaderService);
+        this.Viewport = this.injector.get(Viewport);
         if (this.getContainerWidgetInjector().view.component.registerFragment) {
             this.getContainerWidgetInjector().view.component.registerFragment();
         }
@@ -67,6 +73,14 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.viewInit$.subscribe(noop, noop, () => {
             this.pageParams = this.containerWidget.partialParams;
         });
+
+        try {
+            this.pageDirective = this.injector.get(PageDirective);
+            this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
+            this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
+        } catch (e) {
+            // partial may be part of common partial
+        }
 
         super.init();
     }
@@ -151,6 +165,20 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         });
     }
 
+    mute() {
+        const m = o => { o && o.mute && o.mute(); };
+        _.each(this.Widgets, m);
+        _.each(this.Variables, m);
+        _.each(this.Actions, m);
+    }
+
+    unmute() {
+        const um = o => { o && o.unmute && o.unmute(); };
+        _.each(this.Widgets, um);
+        _.each(this.Variables, um);
+        _.each(this.Actions, um);
+    }
+
     ngAfterViewInit(): void {
         this.loadScripts().then(() => {
             this.compileContent = true;
@@ -165,6 +193,21 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     ngOnDestroy(): void {
         this.destroy$.complete();
+    }
+
+    ngOnAttach(refreshData) {
+        this.unmute();
+        if (refreshData) {
+            const refresh = v => { v.startUpdate && v.invoke && v.invoke(); };
+            _.each(this.Variables, refresh);
+            _.each(this.Actions, refresh);
+        }
+        this.partialDirective.ngOnAttach();
+    }
+
+    ngOnDetach() {
+        this.mute();
+        this.partialDirective.ngOnDetach();
     }
 
     onReady(params?) {

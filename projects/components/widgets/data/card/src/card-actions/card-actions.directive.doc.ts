@@ -4,6 +4,7 @@ import { Input } from '@angular/core';
  * The wmCardActions directive defines the card actions.
  */
 
+
 export class CardActions {
     /**
      * Class of the widget.

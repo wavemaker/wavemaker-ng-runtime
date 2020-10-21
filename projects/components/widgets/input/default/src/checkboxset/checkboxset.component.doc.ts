@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmCheckboxset component defines the checkboxset widget.
  */
+
 export class Checkboxset {
     /**
      * Class of the widget.

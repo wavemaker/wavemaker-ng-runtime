@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmLabel` directive defines the label widget.
  */
+
 export class Label {
 
     /**

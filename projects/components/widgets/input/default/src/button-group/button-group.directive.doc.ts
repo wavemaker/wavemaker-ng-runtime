@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmButtonGroup` directive defines a button group widget.
  */
+
 export class ButtonGroup {
     /**
      * Class of the widget.

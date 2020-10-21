@@ -21,7 +21,7 @@ declare const _, $;
 })
 export class CustomToasterComponent extends Toast implements AfterViewInit, OnDestroy {
 
-    @ViewChild('customToast', {read: ViewContainerRef}) customToastRef: ViewContainerRef;
+    @ViewChild('customToast', { static: true, read: ViewContainerRef }) customToastRef: ViewContainerRef;
     @ViewChild('customToastTmpl') customToastTmpl: TemplateRef<any>;
     pagename: any;
     watchers: any = [];
@@ -70,5 +70,6 @@ export class CustomToasterComponent extends Toast implements AfterViewInit, OnDe
 
     ngOnDestroy() {
         _.forEach(this.watchers, watcher => watcher());
+        super.ngOnDestroy();
     }
 }

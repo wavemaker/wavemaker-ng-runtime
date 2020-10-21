@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmProgressCircle component defines the progress circle widget.
  */
+
 export class CircleProgressBar {
 
     /**

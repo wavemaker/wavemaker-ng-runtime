@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmNumber component defines the number widget.
  */
+
 export class Number {
     /**
      * Class of the widget.

@@ -624,7 +624,7 @@ export class LiveVariableManager extends BaseVariableManager {
         options = options || {};
         options.filterFields = options.filterFields || getClonedObject(variable.filterFields);
         return $queue.submit(variable).then(() => {
-            this.notifyInflight(variable, !options.skipToggleState);
+            this.notifyInflight(variable, !options.skipToggleState, undefined, options);
             return this.getEntityData(variable, options, success, error)
                 .then((response) => {
                     $queue.process(variable);

@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmRadioset component defines the radioset widget.
  */
+
 export class Radioset {
     /**
      * Class of the widget.

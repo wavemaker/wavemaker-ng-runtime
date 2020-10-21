@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The 'wmFooter' directive defines a footer in the layout.
  */
+
 export class Footer {
     /**
      * Name of the footer widget.

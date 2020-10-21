@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmSearch component defines the search widget.
  */
+
 export class Search {
     /**
      * Class of the widget.

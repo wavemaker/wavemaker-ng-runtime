@@ -24,6 +24,7 @@ module.exports = {
     ],
     optimization: {
         splitChunks: {
+            automaticNameDelimiter:'-',
             cacheGroups: {
                 vendor: {
                     minSize: 1000000,

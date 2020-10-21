@@ -1,4 +1,5 @@
 import { Injector, OnDestroy, TemplateRef } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { Subscription } from 'rxjs';
@@ -17,7 +18,7 @@ const invokeOpenedCallback = (ref) => {
             const root = findRootContainer(ref.$element);
             // if page styles have to be applied to dialog then dialog has to be child of page element.
             if (root) {
-                $('body:first > modal-container > div').wrap('<' + root + '/>');
+                $('body > modal-container > div').wrap('<' + root + '/>');
             }
             ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
         });
@@ -48,6 +49,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         super(inj, widgetConfig);
         this.dialogService = inj.get(AbstractDialogService);
         this.bsModal = inj.get(BsModalService);
+        const router = inj.get(Router);
 
         const subscriptions: Subscription[] = [
             this.bsModal.onShown.subscribe(() => {
@@ -67,6 +69,11 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
                     if (ref.closeCallBackFn) {
                         ref.closeCallBackFn();
                     }
+                }
+            }),
+            router.events.subscribe(e => {
+                if (e instanceof NavigationStart) {
+                    this.close();
                 }
             })
         ];

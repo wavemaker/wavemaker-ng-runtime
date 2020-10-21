@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmNavbar component defines the nav bar widget.
  */
+
 export class Navbar {
 
     /**

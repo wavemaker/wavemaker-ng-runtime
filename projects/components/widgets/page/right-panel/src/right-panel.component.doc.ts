@@ -4,6 +4,7 @@ import { Input } from '@angular/core';
  * The 'wmRightPanel' directive defines a right panel in the layout.
  * wmRightPanel is internally used by wmContent.
  */
+
 export class RightPanel {
     /**
      * Name of the right panel widget.

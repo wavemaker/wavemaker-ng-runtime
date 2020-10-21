@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmVideo` component defines the video widget.
  */
+
 export class Video {
     /**
      * Hint text is shown for the video widget on hover. <br>

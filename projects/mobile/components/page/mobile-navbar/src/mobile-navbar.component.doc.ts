@@ -4,6 +4,7 @@ import { Input } from '@angular/core';
  * The wmMobileNavbar component defines the mobile navbar widget.
  */
 
+
 export class MobileNavbar {
     /**
      * backbutton on mobile navbar will be shown if set to true.

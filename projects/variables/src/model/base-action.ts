@@ -12,6 +12,7 @@ export abstract class BaseAction {
     dataSet: any;
     dataBinding: any;
     _context: any;
+    isMuted = false;
 
     execute(operation, options) {
         let returnVal;
@@ -81,5 +82,13 @@ export abstract class BaseAction {
     }
 
     init() {
+    }
+
+    mute() {
+        this.isMuted = true;
+    }
+
+    unmute() {
+        this.isMuted = false;
     }
 }

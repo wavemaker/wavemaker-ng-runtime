@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmNav component defines the Nav widget.
  */
+
 export class Nav {
 
     /**

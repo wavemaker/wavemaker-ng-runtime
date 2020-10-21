@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmWizard component defines the wizard widget.
  */
+
 export class Wizard {
 
     /**

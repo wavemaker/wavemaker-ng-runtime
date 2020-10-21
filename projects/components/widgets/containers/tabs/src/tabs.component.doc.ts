@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmTabs component defines the tabs widget.
  */
+
 export class Tabs {
 
     /**

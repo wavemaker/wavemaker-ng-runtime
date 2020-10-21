@@ -4,6 +4,7 @@ import { Input } from '@angular/core';
  * The 'wmLeftPanel' directive defines a left panel in the layout.
  * wmLeftPanel is internally used by wmContent.
  */
+
 export class LeftPanel {
     /**
      * Name of the left panel widget.

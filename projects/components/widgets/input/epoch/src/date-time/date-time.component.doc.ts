@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmDateTime component defines the datetime widget.
  */
+
 export class Datetime {
     /**
      * Name of the datetime widget.

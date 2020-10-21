@@ -4,6 +4,7 @@ import { Input } from '@angular/core';
  * The wmCardContent component defines the card content.
  */
 
+
 export class CardContent {
     /**
      * Class of the widget.

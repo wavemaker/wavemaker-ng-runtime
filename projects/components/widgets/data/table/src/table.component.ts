@@ -1,5 +1,6 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Viewport, StatePersistence } from '@wm/core';
 
 import { Observable, Subject } from 'rxjs';
 
@@ -28,7 +29,7 @@ import { PaginationComponent } from '@wm/components/data/pagination';
 
 import { ListComponent } from '@wm/components/data/list';
 import { registerProps } from './table.props';
-import {debounceTime} from "rxjs/operators";
+import { debounceTime } from 'rxjs/operators';
 
 declare const _, $;
 
@@ -77,29 +78,29 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     static initializeProps = registerProps();
     @ViewChild(PaginationComponent) dataNavigator;
 
-    @ViewChild('datagridElement') private _tableElement: ElementRef;
+    @ViewChild('datagridElement', {static: true}) private _tableElement: ElementRef;
 
     @ContentChildren('rowActionTmpl') rowActionTmpl: QueryList<any>;
-    @ViewChild('rowActionsView', {read: ViewContainerRef}) rowActionsViewRef: ViewContainerRef;
+    @ViewChild('rowActionsView', { static: true, read: ViewContainerRef }) rowActionsViewRef: ViewContainerRef;
 
     @ContentChildren('filterTmpl', {descendants: true}) filterTmpl: QueryList<any>;
-    @ViewChild('multiColumnFilterView', {read: ViewContainerRef}) filterViewRef: ViewContainerRef;
+    @ViewChild('multiColumnFilterView', { static: true, read: ViewContainerRef }) filterViewRef: ViewContainerRef;
 
     @ContentChildren('inlineWidgetTmpl', {descendants: true}) inlineWidgetTmpl: QueryList<any>;
-    @ViewChild('inlineEditView', {read: ViewContainerRef}) inlineEditViewRef: ViewContainerRef;
+    @ViewChild('inlineEditView', { static: true, read: ViewContainerRef }) inlineEditViewRef: ViewContainerRef;
 
     @ContentChildren('inlineWidgetTmplNew', {descendants: true}) inlineWidgetNewTmpl: QueryList<any>;
-    @ViewChild('inlineEditNewView', {read: ViewContainerRef}) inlineEditNewViewRef: ViewContainerRef;
+    @ViewChild('inlineEditNewView', { static: true, read: ViewContainerRef }) inlineEditNewViewRef: ViewContainerRef;
 
     @ContentChildren('customExprTmpl', {descendants: true}) customExprTmpl: QueryList<any>;
-    @ViewChild('customExprView', {read: ViewContainerRef}) customExprViewRef: ViewContainerRef;
+    @ViewChild('customExprView', { static: true, read: ViewContainerRef }) customExprViewRef: ViewContainerRef;
 
     @ContentChildren('rowExpansionActionTmpl') rowExpansionActionTmpl: QueryList<any>;
     @ContentChild('rowExpansionTmpl') rowExpansionTmpl: TemplateRef<any>;
-    @ViewChild('rowDetailView', {read: ViewContainerRef}) rowDetailViewRef: ViewContainerRef;
-    @ViewChild('rowExpansionActionView', {read: ViewContainerRef}) rowExpansionActionViewRef: ViewContainerRef;
+    @ViewChild('rowDetailView', { static: true, read: ViewContainerRef }) rowDetailViewRef: ViewContainerRef;
+    @ViewChild('rowExpansionActionView', { static: true, read: ViewContainerRef }) rowExpansionActionViewRef: ViewContainerRef;
 
-    @ViewChild('dynamicTable', {read: ViewContainerRef}) dynamicTableRef: ViewContainerRef;
+    @ViewChild('dynamicTable', { static: true, read: ViewContainerRef }) dynamicTableRef: ViewContainerRef;
 
     private rowActionsCompiledTl: any  = {};
     private rowFilterCompliedTl: any = {};
@@ -152,6 +153,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     onRowinsert;
     onRowupdate;
     onRowdelete;
+    statehandler;
     selectedItemChange = new Subject();
     selectedItemChange$: Observable<any> = this.selectedItemChange.asObservable();
 
@@ -237,6 +239,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     hideEditRow: Function;
     saveRow: Function;
     cancelRow: Function;
+    private _pageLoad = true;
 
     private gridOptions = {
         data: [],
@@ -288,6 +291,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
                 this.selectedItemChange.next(this.selectedItems);
                 const rowData = this.addRowIndex(row);
+                if (rowData.$index && this.getConfiguredState() !== 'none') {
+                    const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
+                    const widgetState = this.statePersistence.getWidgetState(this);
+                    if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
+                        if (!_.some(widgetState.selectedItem, obj)) {
+                            widgetState.selectedItem.push(obj);
+                        }
+                        this.statePersistence.setWidgetState(this, {'selectedItem': widgetState.selectedItem});
+                    } else {
+                        this.statePersistence.setWidgetState(this, {'selectedItem': [obj]});
+                    }
+                }
                 this.invokeEventCallback('rowselect', {$data: rowData, $event: e, row: rowData});
             });
         },
@@ -318,9 +333,24 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.items = _.pullAllWith(this.items, [row], _.isEqual);
                     this.selectedItems = this.callDataGridMethod('getSelectedRows');
                     this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
+                    const rowData = this.addRowIndex(row);
+                    if (this.getConfiguredState() !== 'none') {
+                        const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
+                        const widgetState = this.statePersistence.getWidgetState(this);
+                        if (_.get(widgetState, 'selectedItem')) {
+                            _.remove(widgetState.selectedItem, function(selectedItem) {
+                                return _.isEqual(selectedItem, obj);
+                            });
+                            this.statePersistence.removeWidgetState(this, 'selectedItem');
+                            if (widgetState.selectedItem.length > 0) {
+                                this.statePersistence.setWidgetState(this, {'selectedItem': widgetState.selectedItem});
+                            }
+                        }
+                    }
                 });
             }
         },
+
         callOnRowDeselectEvent: (row, e) => {
             this.items = this.selectedItems = this.callDataGridMethod('getSelectedRows');
             this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
@@ -443,9 +473,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 const rootNode = customExprView.rootNodes[0];
                 const fieldName = rootNode.getAttribute('data-col-identifier');
                 _.extend(colDef, this.columns[fieldName]);
-                if(!summaryRow){
+                if (!summaryRow) {
                     this.customExprCompiledTl[fieldName + index] = rootNode;
-                }else{
+                } else {
                     this.customExprCompiledSummaryTl[fieldName + index] = rootNode;
                 }
             };
@@ -692,6 +722,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     };
 
     private _gridData;
+    private _selectedItemsExist = false;
     set gridData(newValue) {
         this._gridData = newValue;
         let startRowIndex = 0;
@@ -757,6 +788,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         public fb: FormBuilder,
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
+        private statePersistence: StatePersistence,
+        private viewport: Viewport,
         @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('datasource.bind') public binddatasource,
@@ -769,26 +802,88 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         this.ngform = fb.group({});
         this.addEventsToContext(this.context);
+        const listenersToRemove = [
+            // Updates pagination, filter, sort etc options for service and crud variables
+            this.app.subscribe('check-state-persistence-options', options => {
+                if (this._pageLoad && this.getConfiguredState() !== 'none') {
+                    this._pageLoad = false;
+                    const widgetState = this.statePersistence.getWidgetState(this);
+                    if (widgetState) {
+                        options = this.handleStateParams(widgetState, options);
+                    }
+                }
+            }),
 
-        // Show loading status based on the variable life cycle
-        this.app.subscribe('toggle-variable-state', options => {
-            if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(options.variable, this.datasource)) {
-                isDefined(this.variableInflight) ? this.debouncedHandleLoading(options) : this.handleLoading(options);
-            }
-        });
+            // Show loading status based on the variable life cycle
+            this.app.subscribe('toggle-variable-state', options => {
+                if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(options.variable, this.datasource)) {
+                    if (this._pageLoad && this.getConfiguredState() !== 'none') {
+                        this._pageLoad = false;
+                        const widgetState = this.statePersistence.getWidgetState(this);
+                        if (widgetState) {
+                            options = this.handleStateParams(widgetState, options);
+                        }
+                    }
+                    isDefined(this.variableInflight) ? this.debouncedHandleLoading(options) : this.handleLoading(options);
+                }
+            }),
 
-        this.app.subscribe('setup-cud-listener', param => {
-            if (this.name !== param) {
-                return;
-            }
-            this._isDependent = true;
-            this.selectedItemChange$
-                .pipe(debounceTime(250))
-                .subscribe(this.triggerWMEvent.bind(this));
-        });
+            this.app.subscribe('pageDetach', () => {
+                this._pageLoad = true;
+            }),
+
+            this.app.subscribe('setup-cud-listener', param => {
+                if (this.name !== param) {
+                    return;
+                }
+                this._isDependent = true;
+                this.selectedItemChange$
+                    .pipe(debounceTime(250))
+                    .subscribe(this.triggerWMEvent.bind(this));
+            })
+        ];
+
+        listenersToRemove.forEach( l => this.registerDestroyListener(l) );
 
         this.deleteoktext = this.appLocale.LABEL_OK;
         this.deletecanceltext = this.appLocale.LABEL_CANCEL;
+    }
+
+    private getConfiguredState() {
+        const mode = this.statePersistence.computeMode(this.statehandler);
+        return mode && mode.toLowerCase();
+    }
+
+    private handleStateParams(widgetState, options) {
+        if (_.get(widgetState, 'selectedItem')) {
+            this._selectedItemsExist = true;
+        }
+        if (_.get(widgetState, 'pagination')) {
+            options.options.page = widgetState.pagination;
+            if (_.get(widgetState, 'sort')) {
+                this.sortStateHandler(widgetState);
+                options.options.orderBy = _.get(widgetState, 'sort.field') + ' ' + _.get(widgetState, 'sort.direction');
+            }
+            if (_.get(widgetState, 'search')) {
+                setTimeout( () => {
+                    this.searchStateHandler(widgetState);
+                }, 500);
+                options.options.filterFields = this.getFilterFields(widgetState.search);
+            }
+        } else {
+            options.options.page = 1;
+            if (_.get(widgetState, 'search')) {
+                setTimeout( () => {
+                    this.searchStateHandler(widgetState);
+                }, 500);
+                options.options.filterFields = this.getFilterFields(widgetState.search);
+            }
+            if (_.get(widgetState, 'sort')) {
+                this.sortStateHandler(widgetState);
+                options.options.orderBy = _.get(widgetState, 'sort.field') + ' ' + _.get(widgetState, 'sort.direction');
+            }
+        }
+        return options;
     }
 
     private triggerWMEvent(newVal) {
@@ -797,6 +892,36 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
         $invokeWatchers(true);
         this.app.notify('wm-event', {eventName: 'selectedItemChange', widgetName: this.name, row: newVal, table: this});
+    }
+
+    private sortStateHandler(widgetState) {
+        const $gridElement = this.datagridElement;
+        const $sortIcon =  $gridElement.find('th[data-col-field="' + _.get(widgetState, 'sort.field') + '"] .sort-icon');
+        if (_.get(widgetState, 'sort.direction') === 'asc' && $sortIcon.length)  {
+            $sortIcon.addClass('asc wi wi-long-arrow-up');
+        } else if (_.get(widgetState, 'sort.direction') === 'desc'  && $sortIcon.length) {
+            $sortIcon.addClass('desc wi wi-long-arrow-down');
+        }
+    }
+
+    private searchStateHandler(widgetState) {
+        if (_.isArray(widgetState.search)) {
+            _.forEach( widgetState.search, (filterObj) => {
+                if (this.rowFilter[filterObj.field]) {
+                    this.rowFilter[filterObj.field].value = filterObj.value;
+                    this.rowFilter[filterObj.field].matchMode = filterObj.matchMode;
+                    if ($(this.rowFilterCompliedTl[filterObj.field]).length) {
+                        const val = filterObj.type === 'integer' ? parseInt(filterObj.value) : filterObj.value;
+                        $(this.rowFilterCompliedTl[filterObj.field]).find('input').val(filterObj.value);
+                        console.info($(this.rowFilterCompliedTl[filterObj.field]).find('input').val());
+                    }
+                }
+            });
+        } else {
+            const $gridElement = this.datagridElement;
+            $gridElement.find('[data-element="dgSearchText"]').val(widgetState.search.value);
+            $gridElement.find('[data-element="dgFilterValue"]').val(widgetState.search.field);
+        }
     }
 
     ngAfterContentInit() {
@@ -962,6 +1087,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         });
     }
 
+    showFieldBasedOnScreenType(field) {
+        let showField;
+        if (isMobile() && this.viewport.isMobileType) {
+            showField = field.mobileDisplay;
+        } else if (this.viewport.isTabletType) {
+            showField = field.tabletDisplay;
+        } else {
+            showField = field.pcDisplay;
+        }
+        return showField;
+    }
+
     /* Check whether it is non-empty row. */
     isEmptyRecord(record) {
         const properties = Object.keys(record);
@@ -971,8 +1108,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         return properties.every((prop, index) => {
             data = record[prop];
             /* If fieldDefs are missing, show all columns in data. */
-            isDisplayed = (this.fieldDefs.length && isDefined(this.fieldDefs[index]) &&
-                (isMobile() ? this.fieldDefs[index].mobileDisplay : this.fieldDefs[index].pcDisplay)) || true;
+            isDisplayed = (this.fieldDefs.length && isDefined(this.fieldDefs[index]) && this.showFieldBasedOnScreenType(this.fieldDefs[index])) || true;
             /*Validating only the displayed fields*/
             if (isDisplayed) {
                 return (data === null || data === undefined || data === '');
@@ -1108,7 +1244,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 maxResults: this.pagesize || 5
             };
             this.removePropertyBinding('dataset');
-            this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource, this.dataset, this.binddatasource);
+            this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource, this.dataset, this.binddatasource, undefined, this.statehandler);
         }
     }
 
@@ -1160,6 +1296,19 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.createGridColumns(this.serverData);
         } else {
             this.setGridData(this.serverData);
+        }
+        if (this.getConfiguredState() !== 'none' && this._selectedItemsExist && serviceData.length) {
+            const widgetState = this.statePersistence.getWidgetState(this);
+            let currentPageItems;
+            if (_.get(widgetState, 'selectedItem')) {
+                currentPageItems = widgetState.selectedItem.filter(val => {
+                    return val.page === this.dataNavigator.dn.currentPage;
+                });
+                this._selectedItemsExist = false;
+                if (currentPageItems.length) {
+                    this.selecteditem = currentPageItems.map(function(val) {return val.index; });
+                }
+            }
         }
     }
 
@@ -1225,6 +1374,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             columnDef.caption = columnDef.displayName;
             columnDef.pcDisplay = true;
             columnDef.mobileDisplay = true;
+            columnDef.tabletDisplay = true;
             columnDef.searchable = true;
             columnDef.type  = 'string';
         });
@@ -1280,6 +1430,24 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     watchVariableDataSet(newVal) {
         let result;
+        if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
+            const widgetState = this.statePersistence.getWidgetState(this);
+            this._pageLoad = false;
+            if (_.get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = true;
+            }
+            if (_.get(widgetState, 'search')) {
+                this.searchStateHandler(widgetState);
+                this.searchSortHandler(widgetState.search, undefined, 'search', true);
+            }
+            if (_.get(widgetState, 'sort')) {
+               this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
+                this.sortStateHandler(widgetState);
+            }
+            if (_.get(widgetState, 'pagination')) {
+                this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
+            }
+        }
         // After the setting the watch on navigator, dataset is triggered with undefined. In this case, return here.
         if (this.dataNavigatorWatched && _.isUndefined(newVal) && this.__fullData) {
             return;
@@ -1296,9 +1464,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             newVal = result;
         }
 
-        let sortExp = this.getSortExpr();
-        let sortExpArr = sortExp.split(' ');
-        if(sortExp && sortExpArr.length){
+        const sortExp = this.getSortExpr();
+        const sortExpArr = sortExp.split(' ');
+        if (sortExp && sortExpArr.length) {
             this.sortInfo = {
                 direction : sortExpArr[1],
                 field:  sortExpArr[0]
@@ -1468,8 +1636,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     registerColumns(tableColumn) {
-        if (isMobile()) {
+        if (isMobile() && this.viewport.isMobileType) {
             if (!tableColumn.mobileDisplay) {
+                return;
+            }
+        } else if (this.viewport.isTabletType) {
+            if (!tableColumn.tabletDisplay) {
                 return;
             }
         } else {
@@ -1477,7 +1649,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 return;
             }
         }
-        if(tableColumn['primary-key']){
+        if (tableColumn['primary-key']) {
             this.primaryKey.push(tableColumn.field);
         }
         const colCount = this.fieldDefs.push(tableColumn);

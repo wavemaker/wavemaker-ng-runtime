@@ -9,6 +9,8 @@ import { App } from '@wm/core';
 let mockApp = {};
 
 const markup = `<div wmTree redrawable name="tree1" class="testClass" height="800" width="200" tabindex="1" show="true"
+                collapse.event="tree1Collapse($event, widget, $item, $path)"
+                expand.event="tree1Expand($event, widget, $item, $path)"
                 fontfamily="Segoe UI" color="#0000FF" fontweight="700" fontstyle="italic" fontsize="20"
                 backgroundcolor="#00ff29" backgroundimage="http://www.google.com/doodle4google/images/splashes/featured.png"
                 backgroundrepeat="repeat" backgroundposition="left" backgroundsize="200px 200px" backgroundattachment="fixed"
@@ -20,6 +22,49 @@ const markup = `<div wmTree redrawable name="tree1" class="testClass" height="80
 })
 class TreeWrapperComponent {
     @ViewChild(TreeDirective) wmComponent: TreeDirective;
+
+    treenodeItem;
+    treePath;
+
+    treeDataset = [
+
+        {
+            "label": "item2",
+            "icon": "glyphicon glyphicon-music",
+            "children": [
+                {
+                    "label": "item2.1",
+                    "icon": "glyphicon glyphicon-bookmark",
+                    "children": [
+                        {
+                            "label": "item2.1.1",
+                            "icon": "glyphicon glyphicon-headphones",
+                            "children": [
+                                {
+                                    "label": "item2.1.1.1",
+                                    "icon": "glyphicon glyphicon-euro"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+
+    ];
+
+
+    tree1Collapse($event, widget, $item, $path) {
+        this.treenodeItem = $item;
+        this.treePath = $path;
+        console.log($item, $path);
+    }
+
+    tree1Expand($event, widget, $item, $path) {
+        this.treenodeItem = $item;
+        this.treePath = $path;
+        console.log($item, $path);
+    }
 }
 
 const testModuleDef: ITestModuleDef = {
@@ -55,6 +100,39 @@ describe('wm-tree: Component Specific Tests', () => {
         fixture.detectChanges();
     });
     it('should create tree component', () => {
-        expect(wrapperComponent).toBeTruthy();
+        expect(wmComponent).toBeTruthy();
     });
+
+    it('should call exapand tree callback with item, path as data arguments ', async (done) => {
+        wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
+        spyOn(wrapperComponent, 'tree1Expand').and.callThrough();
+        let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
+        setTimeout(() => {
+            nodeicon.click();
+            fixture.whenStable().then(() => {
+                expect(wrapperComponent.tree1Expand).toHaveBeenCalledTimes(1);
+                expect(wrapperComponent.treePath).toEqual('/item2');
+                expect(wrapperComponent.treenodeItem).toBeDefined();
+                done();
+            });
+        }, 100);
+
+    });
+
+    it('should call collapse tree callback with item, path as data arguments',async (done) => {
+        wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
+        spyOn(wrapperComponent, 'tree1Collapse').and.callThrough();
+        let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
+        setTimeout(() => {
+            nodeicon.click();
+            nodeicon.click();
+            fixture.whenStable().then(() => {
+                expect(wrapperComponent.tree1Collapse).toHaveBeenCalledTimes(1);
+                expect(wrapperComponent.treePath).toEqual('/item2');
+                expect(wrapperComponent.treenodeItem).toBeDefined();
+                done();
+            });
+        }, 100);
+    });
+
 });

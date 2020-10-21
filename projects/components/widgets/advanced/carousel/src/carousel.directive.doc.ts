@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmCarousel` directive defines a carousel widget.
  */
+
 export class Carousel {
     /**
      * Class of the widget.

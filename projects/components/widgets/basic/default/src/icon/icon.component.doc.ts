@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmIcon component defines the icon widget.
  */
+
 export class Icon {
     /**
      * This property specifies the label of the icon. <br>

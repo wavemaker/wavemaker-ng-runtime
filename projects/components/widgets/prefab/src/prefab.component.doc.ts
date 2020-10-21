@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmPrefab component defines the prefab widget.
  */
+
 export class Prefab {
 
     /**
@@ -34,10 +35,37 @@ export class Prefab {
     onLoad($event: MouseEvent, widget: any) {}
 
     /**
+     * Callback function which will be triggered when a saved reusable host page instance is attached to dom.
+     * @param $event  DOM event on which call back is triggered
+     * @param widget  Instance of the prefab widget
+     */
+    onAttach($event: any, widget: any) {}
+
+    /**
+     * Callback function which will be triggered when a reusable host page instance is detached from dom.
+     * @param $event  DOM event on which call back is triggered
+     * @param widget  Instance of the prefab widget
+     */
+    onDetach($event: any, widget: any) {}
+
+    /**
      * Callback function which will be triggered when the widget is being destroyed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the prefab widget
      */
     onDestroy($event: MouseEvent, widget: any) {}
-    
+
+    /**
+     * Callback function which will be triggered when window is resized.
+     * @param $event  DOM event on which call back is triggered
+     * @param widget  Instance of the page
+     * @param data  this is an object which contains screen width and screen height
+     */
+    onResize($event: Event, widget: any, data: object) {}
+
+    /**
+     * Callback function which will be triggered when screen orientation is changed.
+     * @param $event  DOM event on which call back is triggered
+     */
+    onOrientationchange($event: MediaQueryListEvent) {}
 }

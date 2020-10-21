@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmIframe component defines the iframe widget.
  */
+
 export class Iframe {
     /**
      * Class of the widget.

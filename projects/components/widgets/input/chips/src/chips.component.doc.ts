@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmChips component defines the chips widget.
  */
+
 export class Chips {
     /**
      * This property will restrict adding values other than the values in the dropdown, if set to true.

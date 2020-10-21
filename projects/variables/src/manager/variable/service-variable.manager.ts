@@ -510,6 +510,9 @@ export class ServiceVariableManager extends BaseVariableManager {
 
     public invoke(variable, options, success, error) {
         options = options || {};
+        appManager.notify('check-state-persistence-options', {
+            options: options
+        });
         options.inputFields = options.inputFields || getClonedObject(variable.dataBinding);
         return $queue.submit(variable).then(this._invoke.bind(this, variable, options, success, error), error);
     }

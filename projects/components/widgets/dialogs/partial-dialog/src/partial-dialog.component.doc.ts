@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmPagedialog component defines the pagedialog widget.
  */
+
 export class Pagedialog {
     /**
      * This property specifies the title for the pagedialog widget. <br>

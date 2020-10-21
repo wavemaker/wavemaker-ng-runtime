@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmText component defines the text widget.
  */
+
 export class Text {
     /**
      * Class of the widget.

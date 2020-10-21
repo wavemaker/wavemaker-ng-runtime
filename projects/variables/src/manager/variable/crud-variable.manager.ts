@@ -4,7 +4,7 @@ import { CrudVariable } from '../../model/variable/crud-variable';
 import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
 import { $queue } from '../../util/inflight-queue';
 import { VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
-import { setInput } from './../../util/variable/variables.utils';
+import {appManager, setInput} from './../../util/variable/variables.utils';
 import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken } from '../../util/oAuth.utils';
 import {ServiceVariableManager} from './service-variable.manager';
@@ -155,7 +155,7 @@ export class CrudVariableManager extends ServiceVariableManager {
         let bodyParam;
         if (opInfo && opInfo.parameters) {
             bodyParam = opInfo.parameters.filter(function(op) {
-                return op.parameterType === 'body';
+                return op.parameterType === 'body' || op.parameterType === 'formData';
             })[0];
         }
         // merge fields with bindings
@@ -211,6 +211,10 @@ export class CrudVariableManager extends ServiceVariableManager {
         if (requestParams.error) {
             if (requestParams.error.type === VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.CRUD_OPERATION_MISSING) {
                 requestParams.error.message = requestParams.error.message.replace('$operation', options.operation);
+            }
+            if (options.preventMissingOpMsg) {
+                $queue.process(variable);
+                return Promise.resolve('');
             }
             const info = this.handleRequestMetaError(requestParams, variable, success, error, options);
             const reason = (_.get(info, 'error.message') || 'An error occurred while triggering the variable');
@@ -298,6 +302,9 @@ export class CrudVariableManager extends ServiceVariableManager {
 
     public invoke(variable, options, success, error) {
         options = options || {};
+        appManager.notify('check-state-persistence-options', {
+            options: options
+        });
         options.operation = options.operation || 'list';
         options.inputFields = options.inputFields || getClonedObject(variable.dataBinding[options.operation]);
         return $queue.submit(variable).then(this._invoke.bind(this, variable, options, success, error), error);

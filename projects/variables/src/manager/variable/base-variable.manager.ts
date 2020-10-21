@@ -10,11 +10,12 @@ export abstract class BaseVariableManager {
         processBinding(variable, variable._context, bindSource, bindTarget);
     }
 
-    notifyInflight(variable, status: boolean, data?: any) {
+    notifyInflight(variable, status: boolean, data?: any, options?: any) {
         appManager.notify('toggle-variable-state', {
             variable: variable,
             active: status,
-            data: data
+            data: data,
+            options: options
         });
     }
 

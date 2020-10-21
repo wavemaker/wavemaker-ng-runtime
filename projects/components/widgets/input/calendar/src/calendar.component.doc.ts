@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmCalendar component defines the Calendar widget.
  */
+
 export class Calendar {
 
     /**

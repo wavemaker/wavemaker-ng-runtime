@@ -1,4 +1,5 @@
 import { Directive, Injector } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
 
 import { App, addClass, removeClass, switchClass, toggleClass } from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
@@ -39,7 +40,7 @@ export class LeftPanelDirective extends StylableComponent {
     private _destroyCollapseActionListener: () => void;
     private _leftPanelAnimator;
 
-    constructor(public app: App, private page: PageDirective, inj: Injector) {
+    constructor(public app: App, private page: PageDirective, inj: Injector, router: Router) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.$ele = this.$element;
@@ -51,6 +52,12 @@ export class LeftPanelDirective extends StylableComponent {
         if (this.app.isTabletApplicationType) {
             addClass(this.nativeElement, 'wm-tablet-app-left-panel');
         }
+        const onRouteChange = router.events.subscribe(e => {
+            if (e instanceof NavigationStart) {
+                this.collapse();
+            }
+        });
+        this.registerDestroyListener(() => onRouteChange.unsubscribe());
     }
 
     public collapse(): void {

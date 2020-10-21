@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The 'wmTopNav' directive defines a top nav in the layout.
  */
+
 export class TopNav {
     /**
      * Name of the top nav widget.

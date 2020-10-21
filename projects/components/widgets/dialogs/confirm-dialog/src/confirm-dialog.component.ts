@@ -19,7 +19,7 @@ const WIDGET_INFO = {widgetType: 'wm-confirmdialog'};
 })
 export class ConfirmDialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
-    @ViewChild('dialogTemplate') dialogTemplate: TemplateRef<any>;
+    @ViewChild('dialogTemplate', { static: true }) dialogTemplate: TemplateRef<any>;
 
     constructor(
         inj: Injector,

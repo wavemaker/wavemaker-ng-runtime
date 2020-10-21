@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmPicture` directive defines the Picture widget.
  */
+
 export class Picture {
     /**
      * Class of the widget.

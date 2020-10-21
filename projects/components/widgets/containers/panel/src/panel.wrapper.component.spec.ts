@@ -20,7 +20,7 @@ const markup = `<div wmPanel badgevalue="Test val" partialContainer aria-label="
     template: markup
 })
 class PanelWrapperComponent {
-    @ViewChild(PanelComponent)
+    @ViewChild(PanelComponent, /* TODO: add static flag */ {static: true})
     wmComponent: PanelComponent;
 
     public testData = "Option1, Option2, Option3";

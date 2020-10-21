@@ -60,7 +60,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     private _uncheckedvalue;
 
     @ViewChild(NgModel) ngModel: NgModel;
-    @ViewChild('checkbox', {read: ElementRef}) checkboxEl: ElementRef;
+    @ViewChild('checkbox', { static: true, read: ElementRef }) checkboxEl: ElementRef;
 
     // if the checkbox is checked, return checkedvalue else return uncheckedvalue
     public get datavalue() {

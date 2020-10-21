@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmBreadcrumb component defines the Breadcrumb widget.
  */
+
 export class Breadcrumb {
 
     /**

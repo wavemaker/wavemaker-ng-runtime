@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmSlider component defines the slider widget.
  */
+
 export class Slider {
     /**
      * Class of the widget.

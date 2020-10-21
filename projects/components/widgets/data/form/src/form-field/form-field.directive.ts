@@ -1,9 +1,9 @@
-import {AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self} from '@angular/core';
+import { AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes } from '@wm/core';
+import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport } from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
@@ -29,16 +29,18 @@ const FILE_TYPES = {
     providers: [
         provideAsWidgetRef(FormFieldDirective),
         provideAs(FormFieldDirective, NG_VALUE_ACCESSOR, true),
-        {provide: Context, useValue: {}, multi: true}
+        { provide: Context, useValue: {}, multi: true }
     ]
 })
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
     static initializeProps = registerProps();
 
-    @ContentChild('formWidget') formWidget;
+    @ContentChild('formWidget', {static: true}) formWidget;
     @ContentChild('formWidgetMax') formWidgetMax;
 
     private fb;
+    private viewport;
+
     // excludeProps is used to store the props that should not be applied on inner widget
     private excludeProps;
     private _validators;
@@ -74,13 +76,15 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     period;
     isRange;
     name;
-
     // Validation properties
     required;
     maxchars;
     minvalue;
     maxvalue;
     regexp;
+    fieldDefConfig;
+    placeholder;
+    inputtype;
     validationmessage;
 
     public _fieldName;
@@ -97,6 +101,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         inj: Injector,
         form: FormComponent,
         fb: FormBuilder,
+        viewport: Viewport,
         @Optional() parentList: ListComponent,
         @Attribute('chipclass.bind') bindChipclass: string,
         @Attribute('dataset.bind') binddataset,
@@ -109,6 +114,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Attribute('is-range') isRange,
         @Attribute('pc-display') pcDisplay,
         @Attribute('mobile-display') mobileDisplay,
+        @Attribute('tablet-display') tabletDisplay,
         @Self() @Inject(Context) contexts: Array<any>
     ) {
         const WIDGET_CONFIG = {
@@ -118,7 +124,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         };
 
         super(inj, WIDGET_CONFIG, new Promise(res => this._initPropsRes = res));
-
+        this.fieldDefConfig = {};
         this.class = '';
         this.binddataset = binddataset;
         this.binddisplayimagesrc = binddisplayimagesrc;
@@ -127,6 +133,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.binddisplaylabel = binddisplaylabel;
         this.form = form;
         this.fb = fb;
+        this.viewport = viewport;
         this._fieldName = key || name;
         this.isRange = isRange;
         this.excludeProps = new Set(['type', 'name']);
@@ -349,8 +356,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     // Get the displayValue
-    get displayValue () {
-    return this.formWidget && this.formWidget.displayValue;
+    get displayValue() {
+        return this.formWidget && this.formWidget.displayValue;
     }
 
     // Create the reactive form control
@@ -417,7 +424,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     triggerUploadEvent($event, eventName) {
-        const params: any = {$event};
+        const params: any = { $event };
         if (eventName === 'change') {
             params.newVal = $event.target.files;
             params.oldVal = this._oldUploadVal;
@@ -439,7 +446,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             }
             this.ngform.addControl(_fieldName, this.createControl());
             this._fieldName = _fieldName;
-         } else {
+        } else {
             this.ngform.addControl(fieldName, this.createControl());
         }
         const onValueChangeSubscription = this._control.valueChanges
@@ -460,7 +467,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 .subscribe(this.onValueChange.bind(this));
             this.registerDestroyListener(() => onMaxValueChangeSubscription.unsubscribe());
         }
-        this.value =  _.get(this.form.formdata, this._fieldName);
+        this.value = _.get(this.form.formdata, this._fieldName);
     }
 
     ngOnInit() {
@@ -495,9 +502,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 fileType = this.filetype ? FILE_TYPES[this.filetype] : '';
                 this.permitted = fileType + (this.extensions ? (fileType ? ',' : '') + this.extensions : '');
             }
-
-            if (isMobile()) {
+            if (isMobile() && this.viewport.isMobileType) {
                 if (!this['mobile-display']) {
+                    this.widget.show = false;
+                }
+            } else if (this.viewport.isTabletType) {
+                if (!this['tablet-display']) {
                     this.widget.show = false;
                 }
             } else {
@@ -505,6 +515,26 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                     this.widget.show = false;
                 }
             }
+
+            this.fieldDefConfig.displaname = this.displayname;
+            this.fieldDefConfig.show = this.show;
+            this.fieldDefConfig.isRelated = this['is-related'];
+            this.fieldDefConfig.inputtype = this.inputtype;
+            this.fieldDefConfig.generator = this.generator;
+            this.fieldDefConfig.placeholder = this.placeholder;
+            this.fieldDefConfig.primaryKey = this['primary-key'];
+            this.fieldDefConfig.required = this.required;
+            this.fieldDefConfig._readonly = this.readonly;
+            this.fieldDefConfig.regexp = this.regexp;
+            this.fieldDefConfig.type = this.type;
+            this.fieldDefConfig.key = this.key;
+            this.fieldDefConfig.mobileDisplay = this['mobile-display'];
+            this.fieldDefConfig.name = this.name;
+            this.fieldDefConfig.pcDisplay = this['pc-display'];
+            this.fieldDefConfig.tabletDisplay = this['tablet-display'];
+            this.fieldDefConfig.validationmessage = this.validationmessage;
+            this.fieldDefConfig.viewmodewidget = this.viewmodewidget;
+            this.fieldDefConfig.widget = this.widgettype;
 
             // Register the form field with parent form
             this.form.registerFormFields(this.widget);

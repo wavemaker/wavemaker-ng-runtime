@@ -4,6 +4,7 @@ import { Input } from '@angular/core';
  * The wmCardFooter directive defines the card footer.
  */
 
+
 export class CardFooter {
     /**
      * Class of the widget.

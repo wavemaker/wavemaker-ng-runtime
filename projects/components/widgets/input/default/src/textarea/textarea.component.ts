@@ -30,7 +30,7 @@ export class TextareaComponent extends BaseInput {
     public placeholder: any;
     public shortcutkey: string;
     public autofocus: boolean;
-    @ViewChild('textarea') inputEl: ElementRef;
+    @ViewChild('textarea', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {

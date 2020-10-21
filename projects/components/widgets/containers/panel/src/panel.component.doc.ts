@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The wmPanel component defines the Panel widget.
  */
+
 export class Panel {
 
     /**

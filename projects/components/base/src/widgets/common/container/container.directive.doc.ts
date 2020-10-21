@@ -3,6 +3,7 @@ import { Input } from '@angular/core';
 /**
  * The `wmContainer` directive defines a container widget.
  */
+
 export class Container {
     /**
      * Class of the widget.

@@ -29,7 +29,9 @@ export const dateProps = new Map(
         ['tabindex', { value: 0, ...PROP_NUMBER }],
         ['selectfromothermonth', { value: true, ...PROP_BOOLEAN }],
         ['todaybutton',  { value: true, ...PROP_BOOLEAN }],
-        ['clearbutton',  { value: true, ...PROP_BOOLEAN }]
+        ['clearbutton',  { value: true, ...PROP_BOOLEAN }],
+        ['todaybuttonlabel',  { value: 'LABEL_TODAY_DATE', ...PROP_STRING }],
+        ['clearbuttonlabel',  { value: 'LABEL_CLEAR_DATE', ...PROP_STRING }]
 
     ]
 );

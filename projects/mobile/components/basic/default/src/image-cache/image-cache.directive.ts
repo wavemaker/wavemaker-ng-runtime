@@ -25,10 +25,8 @@ export class ImageCacheDirective implements DoCheck {
     ) {}
 
     public ngDoCheck() {
-        if (!isSpotcues && this._isEnabled
-            && this.componentInstance.imgSource
-            && this.componentInstance.imgSource.startsWith('http')
-            && !this.componentInstance.imgSource.startsWith('http://localhost')) {
+        if (!isSpotcues && this.componentInstance.imgSource
+            && this.componentInstance.imgSource.startsWith('http')) {
             if (this._lastUrl !== this.componentInstance.imgSource) {
                 this._lastUrl = this.componentInstance.imgSource;
                 this.componentInstance.imgSource = DEFAULT_IMAGE;
@@ -49,7 +47,7 @@ export class ImageCacheDirective implements DoCheck {
 
     private getLocalPath(val: string) {
         if (hasCordova() && val && val.indexOf('{{') < 0  && val.startsWith('http')) {
-            return this.deviceFileCacheService.getLocalPath(val, true, true)
+            return this.deviceFileCacheService.getLocalPath(val, true, true, !this._isEnabled)
                 .catch(noop);
         }
         return Promise.resolve(val);

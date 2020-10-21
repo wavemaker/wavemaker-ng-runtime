@@ -50,7 +50,7 @@ const markup = `
     template: markup
 })
 class SearchWrapperComponent {
-    @ViewChild(SearchComponent)
+    @ViewChild(SearchComponent, /* TODO: add static flag */ {static: true})
     wmComponent: SearchComponent;
     public testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }, { name: 'John', age: 25 }, { name: 'Peter Son', age: 28 }];
 
