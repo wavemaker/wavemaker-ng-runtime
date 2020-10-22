@@ -19,6 +19,7 @@
             "@swipey": "swipey",
             "@wm/core": "wm.core",
             "@wm/security": "wm.security",
+            "@wm/statepersistence": "wm.statepersistence",
             "@wm/transpiler": "wm.transpiler"
         }
     }

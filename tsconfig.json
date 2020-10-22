@@ -61,6 +61,9 @@
             "@wm/security": [
                 "libraries/security"
             ],
+            "@wm/statepersistence": [
+                "libraries/statepersistence"
+            ],
             "@swipey": [
                 "libraries/swipey"
             ],

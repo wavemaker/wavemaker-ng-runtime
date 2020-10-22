@@ -24,6 +24,7 @@ import { DesignDialogModule } from '@wm/components/dialogs/design-dialog';
 import { PrefabModule } from '@wm/components/prefab';
 import { MobileRuntimeModule } from '@wm/mobile/runtime';
 import { SecurityModule } from '@wm/security';
+import { StatePersistenceModule} from '@wm/statepersistence';
 import { HttpServiceModule } from '@wm/http';
 import { VariablesModule } from '@wm/variables';
 import { OAuthModule } from '@wm/oAuth';
@@ -111,6 +112,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         MobileRuntimeModule,
         CoreModule,
         SecurityModule,
+        StatePersistenceModule,
         OAuthModule,
         VariablesModule,
         HttpServiceModule,
@@ -125,6 +127,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         MobileRuntimeModule,
         CoreModule,
         SecurityModule,
+        StatePersistenceModule,
         OAuthModule,
         VariablesModule,
         HttpServiceModule,
@@ -206,6 +209,7 @@ export const WM_MODULES_FOR_ROOT = [
     MobileRuntimeModule.forRoot(),
     CoreModule.forRoot(),
     SecurityModule.forRoot(),
+    StatePersistenceModule.forRoot(),
     OAuthModule.forRoot(),
     VariablesModule.forRoot(),
     HttpServiceModule.forRoot(),

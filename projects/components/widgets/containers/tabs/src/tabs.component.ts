@@ -1,6 +1,7 @@
 import { AfterContentInit, AfterViewInit, Attribute, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
 
-import { addClass, appendNode, DynamicComponentRefProvider, noop, removeClass, StatePersistence } from '@wm/core';
+import { addClass, appendNode, DynamicComponentRefProvider, noop, removeClass } from '@wm/core';
+import {StatePersistence} from '@wm/statepersistence';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { TabsAnimator } from './tabs.animator';
@@ -50,7 +51,6 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         dynamicComponentProvider: DynamicComponentRefProvider,
         @Attribute('transition') _transition: string,
         @Attribute('tabsposition') _tabsPosition: string,
-        statePersistence: StatePersistence,
     ) {
         // handle to the promise resolver
         let resolveFn: Function = noop;
@@ -58,7 +58,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
         this.transition = _transition;
         this.tabsposition = _tabsPosition;
-        this.statePersistence = statePersistence;
+        this.statePersistence = this.inj.get(StatePersistence);
         this.dynamicComponentProvider = dynamicComponentProvider;
         this.dynamicTabs = [];
         this.dynamicPaneIndex = 0;

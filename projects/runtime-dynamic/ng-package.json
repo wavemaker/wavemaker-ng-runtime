@@ -27,6 +27,7 @@
             "@wm/components/base": "wm.components.base",
             "@wm/core": "wm.core",
             "@wm/security": "wm.security",
+            "@wm/statepersistence": "wm.statepersistence",
             "@wm/oAuth": "wm.oAuth",
             "@wm/variables": "wm.variables",
             "@wm/http": "wm.http",

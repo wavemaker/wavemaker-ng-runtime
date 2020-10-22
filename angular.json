@@ -1889,6 +1889,38 @@
         }
       }
     },
+      "@wm/statepersistence": {
+          "root": "projects/state-persistence",
+          "sourceRoot": "projects/state-persistence/src",
+          "projectType": "library",
+          "prefix": "lib",
+          "architect": {
+              "build": {
+                  "builder": "@angular-devkit/build-ng-packagr:build",
+                  "options": {
+                      "tsConfig": "projects/state-persistence/tsconfig.lib.json",
+                      "project": "projects/state-persistence/ng-package.json"
+                  },
+                  "configurations": {
+                      "production": {
+                          "tsConfig": "projects/state-persistence/tsconfig.lib.prod.json"
+                      }
+                  }
+              },
+              "lint": {
+                  "builder": "@angular-devkit/build-angular:tslint",
+                  "options": {
+                      "tsConfig": [
+                          "projects/state-persistence/tsconfig.lib.json",
+                          "projects/state-persistence/tsconfig.spec.json"
+                      ],
+                      "exclude": [
+                          "**/node_modules/**"
+                      ]
+                  }
+              }
+          }
+      },
     "@wm/swipey": {
       "root": "projects/swipey",
       "sourceRoot": "projects/swipey/src",

@@ -2,7 +2,8 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, C
 
 import { Subscription } from 'rxjs';
 
-import { $appDigest, $invokeWatchers, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass, StatePersistence } from '@wm/core';
+import { $appDigest, $invokeWatchers, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass } from '@wm/core';
+import {StatePersistence} from '@wm/statepersistence';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 import { ButtonComponent } from '@wm/components/input';
@@ -10,6 +11,7 @@ import { ButtonComponent } from '@wm/components/input';
 import { registerProps } from './list.props';
 import { ListItemDirective } from './list-item.directive';
 import { ListAnimator } from './list.animator';
+import {SecurityService} from "@wm/security";
 
 declare const _;
 declare const $;
@@ -190,7 +192,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('datasource.bind') binddatasource: string,
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
-        statePersistence: StatePersistence,
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
@@ -201,7 +202,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.cdRef = cdRef;
         this.ngZone = ngZone;
         this.datePipe = datePipe;
-        this.statePersistence = statePersistence;
+        this.statePersistence = this.inj.get(StatePersistence);
         this._pageLoad = true;
 
         this.binditemclass = binditemclass;

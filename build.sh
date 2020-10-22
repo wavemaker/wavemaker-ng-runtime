@@ -157,6 +157,7 @@ bundleWeb() {
         ./libraries/http/bundles/index.umd.js \
         ./libraries/oAuth/bundles/index.umd.js \
         ./libraries/security/bundles/index.umd.js \
+        ./libraries/statepersistence/bundles/index.umd.js \
         ./libraries/components/base/bundles/index.umd.js \
         ./libraries/build-task/bundles/index.umd.js \
         ./libraries/components/input/default/bundles/index.umd.js \
@@ -233,6 +234,7 @@ bundleMobile() {
         ./libraries/http/bundles/index.umd.js \
         ./libraries/oAuth/bundles/index.umd.js \
         ./libraries/security/bundles/index.umd.js \
+        ./libraries/statepersistence/bundles/index.umd.js \
         ./libraries/components/base/bundles/index.umd.js \
         ./libraries/build-task/bundles/index.umd.js \
         ./libraries/components/input/default/bundles/index.umd.js \
@@ -325,6 +327,7 @@ buildApp() {
     ngBuild http-service projects/http-service '@wm/http'
     ngBuild oAuth projects/oAuth '@wm/oAuth'
     ngBuild security projects/security '@wm/security'
+    ngBuild statepersistence projects/state-persistence '@wm/statepersistence'
     ngBuild variables projects/variables '@wm/variables'
     ngBuild components-base projects/components/base '@wm/components/base'
 
@@ -678,7 +681,7 @@ buildLibs() {
         fi
     else
         hasLibJsChanges
-        
+
         if [[ "$?" -eq "0" ]]; then
         bundleWebLibs
         bundleMobileLibs

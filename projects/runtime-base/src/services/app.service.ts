@@ -15,19 +15,18 @@ import {
     ConstantService,
     UtilsService,
     DynamicComponentRefProvider,
-    StatePersistence,
     Viewport
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
+import { StatePersistence } from '@wm/statepersistence';
 
 declare const _;
 
 const injectorMap = {
     DialogService: AbstractDialogService,
     i18nService: AbstractI18nService,
-    statePersistence: StatePersistence,
     SpinnerService: AbstractSpinnerService,
-    StatePersistenceService: StatePersistence,
+    //StatePersistenceService: StatePersistence,
     Viewport: Viewport,
     ToasterService: AbstractToasterService,
     Utils: UtilsService,
@@ -94,7 +93,6 @@ export class AppRef {
     constructor(
         private inj: Injector,
         private i18nService: AbstractI18nService,
-        private statePersistence: StatePersistence,
         private httpService: AbstractHttpService,
         private securityService: SecurityService
     ) {

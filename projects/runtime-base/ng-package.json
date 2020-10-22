@@ -28,6 +28,7 @@
             "@wm/components/prefab": "wm.components.prefab",
             "@wm/components/page": "wm.components.page",
             "@wm/security": "wm.security",
+            "@wm/statepersistence": "wm.statepersistence",
             "@wm/oAuth": "wm.oAuth",
             "@wm/http": "wm.http",
             "@wm/mobile/runtime": "wm.mobile.runtime",
