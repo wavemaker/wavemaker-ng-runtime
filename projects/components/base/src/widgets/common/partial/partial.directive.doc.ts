@@ -6,7 +6,7 @@ import { Directive } from '@angular/core';
 
 export class PartialDirective {
     /**
-     * Callback function which will be triggered when a saved reusable host page instance is attached to dom.
+     * Callback function which will be triggered when a cached host page instance is attached to dom.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the partial widget
      */

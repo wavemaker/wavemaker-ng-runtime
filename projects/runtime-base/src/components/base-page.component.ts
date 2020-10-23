@@ -291,7 +291,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     onPageContentReady() {}
 
     canReuse() {
-        return !!(this.pageDirective && this.pageDirective.reuse);
+        return !!(this.pageDirective && this.pageDirective.cache);
     }
 
     mute() {

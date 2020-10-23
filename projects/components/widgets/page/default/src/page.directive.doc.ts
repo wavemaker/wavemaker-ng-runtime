@@ -12,19 +12,19 @@ export class Page {
 
     /**
      * When a user navigates from a page, the page instance is destroyed. If this property
-     * is set to true, then the page instance is saved. If user re-visits the same path, then
+     * is set to true, then the page instance is saved in a cache. If user re-visits the same path, then
      * the saved instance is shown to the user.
      */
-    @Input() reuse: string;
+    @Input() cache: string;
 
     /**
      * If this property is set to true, then variables that have 'load on page startup'
-     * as true, are refreshed when a reusable page is attached back.
+     * as true, are refreshed when a cached page is attached back.
      */
     @Input() refreshdataonattach: string;
 
     /**
-     * Callback function which will be triggered when a saved reusable page instance is attached to dom.
+     * Callback function which will be triggered when a cached page instance is attached to dom.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the page
      */
