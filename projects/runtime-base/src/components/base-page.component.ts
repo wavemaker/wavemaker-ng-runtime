@@ -230,6 +230,39 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         }
     }
 
+    private saveScrollPosition() {
+        const fn = ($el, key, recursive = true, $target = $el)  => {
+            if (recursive) {
+                $el.children().each((i, v) => fn($(v), key));
+            }
+            const scrollData = {
+                x: $target.scrollLeft(),
+                y: $target.scrollTop()
+            };
+            if(scrollData.x > 0 || scrollData.y > 0) {
+                $el.attr(key, scrollData.x + ',' + scrollData.y);
+            }
+        };
+        fn(this.$page, 'data-scroll-position');
+        this.$page.attr('data-window-scroll-position', window.scrollX + ',' + window.scrollY);
+    }
+
+    private restoreScrollPosition() {
+        const fn = ($el, key, recursive  = true, $target = $el) => {
+            const scrollData = ($el.attr(key) || '').split(',');
+            if(scrollData.length > 1) {
+                $target.scrollLeft(scrollData[0]);
+                $target.scrollTop(scrollData[1]);
+            }
+            $el.removeAttr(key);
+            if (recursive) {
+                $el.children().each((i, v) => fn($(v), key));
+            }
+        };
+        fn(this.$page, 'data-scroll-position');
+        fn(this.$page, 'data-window-scroll-position', false, $(window));
+    }
+
     /**
      * canDeactivate is called before a route change.
      * This will internally call onBeforePageLeave method present
@@ -323,12 +356,14 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             _.each(this.Actions, refresh);
         }
         this.runPageTransition().then(() => {
+            setTimeout(() => this.restoreScrollPosition(), 100);
             this.pageDirective && this.pageDirective.ngOnAttach();
             this.appManager.notify('pageAttach', {'name' : this.pageName, instance: this});
         });
     }
 
     ngOnDetach() {
+        this.saveScrollPosition();
         this.savePageSnapShot();
         this.mute();
         this.pageDirective && this.pageDirective.ngOnDetach();
