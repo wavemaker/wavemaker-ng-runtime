@@ -139,8 +139,8 @@ export class AppComponent implements DoCheck, AfterViewInit {
             componentRef.instance.ngOnAttach();
         };
         this.routerOutlet.detach = () => {
+            this.app.activePage.ngOnDetach();
             const componentRef = oDetach.call(this.routerOutlet);
-            componentRef.instance.ngOnDetach();
             return componentRef;
         };
     }

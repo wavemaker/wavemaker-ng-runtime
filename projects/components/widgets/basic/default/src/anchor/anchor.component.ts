@@ -49,7 +49,6 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
-        this.registerDestroyListener(this.app.subscribe('pageAttach', () => this.init()));
     }
 
     protected processEventAttr(eventName: string, expr: string, meta?: string) {
@@ -125,6 +124,11 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     ngAfterViewInit() {
         super.ngAfterViewInit();
         this.init();
+    }
+
+    ngOnAttach() {
+        this.init();
+        super.ngOnAttach(); 
     }
 
     public ngOnDestroy() {

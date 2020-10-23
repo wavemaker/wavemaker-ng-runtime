@@ -53,12 +53,10 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
             this.getContainerWidgetInjector().view.component.registerFragment();
         }
 
-        try {
-            this.pageDirective = this.injector.get(PageDirective);
+        this.pageDirective = this.injector.get(PageDirective, null);
+        if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
             this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
-        } catch (e) {
-            // prefab may be part of common partial
         }
 
         this.initUserScript();
@@ -220,11 +218,13 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
             _.each(this.Variables, refresh);
             _.each(this.Actions, refresh);
         }
+        _.each(this.Widgets, w => w.ngOnAttach && w.ngOnAttach());
         this.prefabContainerDirective.ngOnAttach();
     }
 
     ngOnDetach() {
         this.mute();
+        _.each(this.Widgets, w => w.ngOnDetach && w.ngOnDetach());
         this.prefabContainerDirective.ngOnDetach();
     }
 

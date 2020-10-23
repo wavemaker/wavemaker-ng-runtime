@@ -73,13 +73,11 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.viewInit$.subscribe(noop, noop, () => {
             this.pageParams = this.containerWidget.partialParams;
         });
-
-        try {
-            this.pageDirective = this.injector.get(PageDirective);
+        
+        this.pageDirective = this.injector.get(PageDirective, null);
+        if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
             this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
-        } catch (e) {
-            // partial may be part of common partial
         }
 
         super.init();
@@ -202,11 +200,13 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             _.each(this.Variables, refresh);
             _.each(this.Actions, refresh);
         }
+        _.each(this.Widgets, w => w.ngOnAttach && w.ngOnAttach());
         this.partialDirective.ngOnAttach();
     }
 
     ngOnDetach() {
         this.mute();
+        _.each(this.Widgets, w => w.ngOnDetach && w.ngOnDetach());
         this.partialDirective.ngOnDetach();
     }
 

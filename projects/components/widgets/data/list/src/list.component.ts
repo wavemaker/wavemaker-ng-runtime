@@ -229,9 +229,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     return;
                 }
                 this._isDependent = true;
-            }),
-            this.app.subscribe('pageDetach', () => {
-                this._pageLoad = true;
             })
         ];
     }
@@ -1210,5 +1207,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
         this._listenerDestroyers.forEach(d => d && d());
         super.ngOnDestroy();
+    }
+
+    ngOnDetach() {
+        super.ngOnDetach();
+        this._pageLoad = true;
     }
 }

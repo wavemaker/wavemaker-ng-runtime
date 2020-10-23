@@ -828,10 +828,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
             }),
 
-            this.app.subscribe('pageDetach', () => {
-                this._pageLoad = true;
-            }),
-
             this.app.subscribe('setup-cud-listener', param => {
                 if (this.name !== param) {
                     return;
@@ -1835,5 +1831,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
     registerOnTouched(fn) {
         this._onTouched = fn;
+    }
+
+    ngOnDetach() {
+        super.ngOnDetach();
+        this._pageLoad = true;
     }
 }
