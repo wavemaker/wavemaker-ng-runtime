@@ -289,7 +289,7 @@ describe('MenuComponent', () => {
     it('should open the dropdown  on keyboard enter', async(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         const menuElement = getHtmlSelectorElement(fixture, '[wmmenu]');
-        menuElement.triggerEventHandler('keydown.enter', {});
+        menuElement.triggerEventHandler('keydown.enter', { preventDefault: () => {}});
         fixture.whenStable().then(() => {
             const menuDropdownElement = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
             expect(menuDropdownElement).toBeTruthy();

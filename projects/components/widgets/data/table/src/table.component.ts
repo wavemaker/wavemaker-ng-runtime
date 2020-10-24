@@ -76,7 +76,7 @@ const isInputBodyWrapper = target => {
 })
 export class TableComponent extends StylableComponent implements AfterContentInit, OnDestroy, ControlValueAccessor {
     static initializeProps = registerProps();
-    @ViewChild(PaginationComponent) dataNavigator;
+    @ViewChild(PaginationComponent, {static: true}) dataNavigator;
 
     @ViewChild('datagridElement', {static: true}) private _tableElement: ElementRef;
 

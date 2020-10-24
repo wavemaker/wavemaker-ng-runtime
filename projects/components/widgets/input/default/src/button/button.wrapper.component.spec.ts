@@ -215,7 +215,7 @@ const btnMarkup = `<button wmButton name="testbutton1" caption="Test Button1" ty
     template: btnMarkup
 })
 class BtnTestComponent {
-    @ViewChild(ButtonComponent, /* TODO: add static flag */ {})
+    @ViewChild(ButtonComponent, /* TODO: add static flag */ {static: true})
     wmComponent: ButtonComponent;
 }
 const btnTestModuleDef: ITestModuleDef = {

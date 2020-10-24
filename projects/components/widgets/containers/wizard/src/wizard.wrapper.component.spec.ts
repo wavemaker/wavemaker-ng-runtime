@@ -35,7 +35,7 @@ const markup = `
     template: markup
 })
 class WizardWrapperComponent {
-    @ViewChild(WizardComponent) wmComponent: WizardComponent;
+    @ViewChild(WizardComponent, /* TODO: add static flag */ {static: true}) wmComponent: WizardComponent;
     public wizardstep1Next(widget, currentStep, stepIndex) {
         console.log('calling on next');
     }

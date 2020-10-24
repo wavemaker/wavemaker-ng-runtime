@@ -19,7 +19,7 @@ import { DatePipe, CommonModule, DecimalPipe } from '@angular/common';
 import { BsDatepickerModule, TimepickerModule, BsDropdownModule } from 'ngx-bootstrap';
 import { DateComponent, TimeComponent } from '@wm/components/input/epoch';
 import { ToDatePipe } from '../../../../base/src/pipes/custom-pipes';
-import { triggerTimerClickonArrowsByIndex, getTimePickerElement } from 'projects/components/base/src/test/util/date-test-util';
+import { triggerTimerClickonArrowsByIndex, getTimePickerElement, MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
 
 const mockApp = {
@@ -240,7 +240,8 @@ const testModuleDef: ITestModuleDef = {
         { provide: DatePipe, useClass: DatePipe },
         { provide: AbstractI18nService, useValue: mockApp },
         { provide: DecimalPipe, useClass: DecimalPipe },
-        { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext }
+        { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService }
     ]
 };
 
