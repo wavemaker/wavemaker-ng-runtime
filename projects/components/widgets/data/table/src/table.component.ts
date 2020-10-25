@@ -291,7 +291,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
                 this.selectedItemChange.next(this.selectedItems);
                 const rowData = this.addRowIndex(row);
-                if (rowData.$index && this.getConfiguredState() !== 'none') {
+                if (rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator) {
                     const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
