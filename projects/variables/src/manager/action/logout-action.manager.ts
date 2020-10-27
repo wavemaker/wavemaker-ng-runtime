@@ -2,7 +2,7 @@ import { getValidJSON, triggerFn } from '@wm/core';
 
 import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
-import { appManager, initiateCallback, securityService } from './../../util/variable/variables.utils';
+import { appManager, initiateCallback, securityService, statePersistenceService } from './../../util/variable/variables.utils';
 import { routerService } from '../../util/variable/variables.utils';
 
 export class LogoutActionManager extends BaseActionManager {
@@ -72,6 +72,7 @@ export class LogoutActionManager extends BaseActionManager {
                         }
                     }
                     triggerFn(success);
+                    statePersistenceService.clearStorage();
                 }, handleError);
             } else {
                 handleError('No authenticated user to logout.');

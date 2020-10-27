@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AbstractDialogService, AbstractHttpService, AbstractNavigationService, AbstractToasterService } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
+import { StatePersistence } from '@wm/statepersistence';
 
 import { VariableFactory } from '../factory/variable.factory';
 import { BaseAction } from '../model/base-action';
@@ -23,7 +24,8 @@ export class VariablesService {
         private toasterService: AbstractToasterService,
         private oAuthService: OAuthService,
         private securityService: SecurityService,
-        private dialogService: AbstractDialogService
+        private dialogService: AbstractDialogService,
+        private statePersistenceService: StatePersistence
     ) {
         // set external dependencies, to be used across variable classes, managers and utils
         setDependency('http', this.httpService);
@@ -34,6 +36,7 @@ export class VariablesService {
         setDependency('oAuth', this.oAuthService);
         setDependency('security', this.securityService);
         setDependency('dialog', this.dialogService);
+        setDependency('statepersistence', this.statePersistenceService);
     }
 
     /**

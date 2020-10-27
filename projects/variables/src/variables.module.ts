@@ -7,6 +7,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { HttpServiceModule } from '@wm/http';
 import { SecurityModule } from '@wm/security';
 import { OAuthModule } from '@wm/oAuth';
+import { StatePersistenceModule } from '@wm/statepersistence';
 
 import { VariablesService } from './service/variables.service';
 import { MetadataService } from './service/metadata-service/metadata.service';
@@ -20,7 +21,8 @@ export const toastrModule: ModuleWithProviders = ToastrModule.forRoot({maxOpened
         HttpClientModule,
         HttpServiceModule,
         OAuthModule,
-        SecurityModule
+        SecurityModule,
+        StatePersistenceModule
     ],
     declarations: []
 })

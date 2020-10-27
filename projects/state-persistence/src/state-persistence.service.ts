@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
+import {SecurityService} from '@wm/security';
 
 declare const _;
 
@@ -7,6 +8,8 @@ export class StatePersistence {
     private HISTORY_HANDLER = 'replace';
     private HISTORY_HANDLER_TYPES = {'push': 'pushState', 'replace': 'replaceState'};
     private WIDGET_STATE_KEY = 'ws';
+
+    constructor(private securityService: SecurityService) {}
 
     /**
      * Sets the passed value as the History handler if it exists in the History_Handler_Types object
@@ -61,6 +64,9 @@ export class StatePersistence {
         }
         if (stateInfo) {
             parsedStateInfo = JSON.parse(stateInfo);
+            if (this.securityService.loggedInUser && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
+                parsedStateInfo = parsedStateInfo[this.securityService.loggedInUser.userId];
+            }
             return parsedStateInfo;
         }
 
@@ -259,6 +265,10 @@ export class StatePersistence {
             }
         }
 
+        if (this.securityService.loggedInUser && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
+            parsedObj = {[this.securityService.loggedInUser.userId]: parsedObj};
+        }
+
         let decodedURI = decodeURIComponent(window.location.href);
         if (decodedURI.indexOf('?') < 0) {
             decodedURI = decodedURI + '?wm_state=';
@@ -364,6 +374,11 @@ export class StatePersistence {
         }
 
         window.history.replaceState({ path: url }, '', url);
+    }
+
+    public clearStorage() {
+        localStorage.removeItem(window.location.pathname.replace(/\//g, '') + '_wm_state');
+        sessionStorage.removeItem(window.location.pathname.replace(/\//g, '') + '_wm_state');
     }
 
     /**

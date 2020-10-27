@@ -39,11 +39,11 @@ export class AccordionDirective extends StylableComponent implements AfterConten
 
     @ContentChildren(AccordionPaneComponent) panes: QueryList<AccordionPaneComponent>;
 
-    constructor(inj: Injector, dynamicComponentProvider: DynamicComponentRefProvider) {
+    constructor(inj: Injector, statePersistence: StatePersistence, dynamicComponentProvider: DynamicComponentRefProvider) {
         let resolveFn: Function = noop;
         super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
         this.promiseResolverFn = resolveFn;
-        this.statePersistence = this.inj.get(StatePersistence);
+        this.statePersistence = statePersistence;
         this.dynamicComponentProvider = dynamicComponentProvider;
         this.dynamicPanes = [];
         this.dynamicPaneIndex = 0;

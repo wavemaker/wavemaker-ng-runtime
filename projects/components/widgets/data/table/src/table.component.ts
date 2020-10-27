@@ -721,7 +721,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     private _gridData;
     private _selectedItemsExist = false;
-    private statePersistence: any;
     set gridData(newValue) {
         this._gridData = newValue;
         let startRowIndex = 0;
@@ -787,6 +786,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         public fb: FormBuilder,
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
+        private statePersistence: StatePersistence,
         private viewport: Viewport,
         @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
@@ -798,7 +798,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         styler(this.nativeElement, this);
 
         this.ngform = fb.group({});
-        this.statePersistence = this.inj.get(StatePersistence);
         this.addEventsToContext(this.context);
         const listenersToRemove = [
             // Updates pagination, filter, sort etc options for service and crud variables

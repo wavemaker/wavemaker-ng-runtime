@@ -21,7 +21,8 @@
             "@wm/core": "wm.core",
             "@wm/http": "wm.http",
             "@wm/security":  "wm.security",
-            "@wm/oAuth": "wm.oAuth"
+            "@wm/oAuth": "wm.oAuth",
+            "@wm/statepersistence": "wm.statepersistence"
         }
     }
 }

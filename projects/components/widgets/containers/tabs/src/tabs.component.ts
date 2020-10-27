@@ -51,6 +51,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         dynamicComponentProvider: DynamicComponentRefProvider,
         @Attribute('transition') _transition: string,
         @Attribute('tabsposition') _tabsPosition: string,
+        statePersistence: StatePersistence,
     ) {
         // handle to the promise resolver
         let resolveFn: Function = noop;
@@ -58,7 +59,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
         this.transition = _transition;
         this.tabsposition = _tabsPosition;
-        this.statePersistence = this.inj.get(StatePersistence);
+        this.statePersistence = statePersistence;
         this.dynamicComponentProvider = dynamicComponentProvider;
         this.dynamicTabs = [];
         this.dynamicPaneIndex = 0;
