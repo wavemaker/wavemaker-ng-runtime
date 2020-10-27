@@ -11,7 +11,6 @@ import { ButtonComponent } from '@wm/components/input';
 import { registerProps } from './list.props';
 import { ListItemDirective } from './list-item.directive';
 import { ListAnimator } from './list.animator';
-import {SecurityService} from "@wm/security";
 
 declare const _;
 declare const $;
@@ -186,6 +185,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         app: App,
         appDefaults: AppDefaults,
         ngZone: NgZone,
+        statePersistence: StatePersistence,
         @Attribute('itemclass.bind') binditemclass: string,
         @Attribute('disableitem.bind') binddisableitem: string,
         @Attribute('dataset.bind') binddataset: string,
@@ -202,7 +202,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.cdRef = cdRef;
         this.ngZone = ngZone;
         this.datePipe = datePipe;
-        this.statePersistence = this.inj.get(StatePersistence);
+        this.statePersistence = statePersistence;
         this._pageLoad = true;
 
         this.binditemclass = binditemclass;

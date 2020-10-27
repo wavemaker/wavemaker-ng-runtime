@@ -26,7 +26,7 @@ const injectorMap = {
     DialogService: AbstractDialogService,
     i18nService: AbstractI18nService,
     SpinnerService: AbstractSpinnerService,
-    //StatePersistenceService: StatePersistence,
+    StatePersistenceService: StatePersistence,
     Viewport: Viewport,
     ToasterService: AbstractToasterService,
     Utils: UtilsService,

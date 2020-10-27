@@ -3,7 +3,6 @@ import { CommonModule, Location } from '@angular/common';
 
 import { AbstractDialogService } from '@wm/core';
 import { SecurityModule } from '@wm/security';
-import { StatePersistenceModule } from '@wm/statepersistence';
 
 import { ContainerDirective } from './widgets/common/container/container.directive';
 import { ImagePipe } from './pipes/image.pipe';
@@ -78,8 +77,7 @@ const PIPES = [
 @NgModule({
     imports: [
         CommonModule,
-        SecurityModule,
-        StatePersistenceModule
+        SecurityModule
     ],
     declarations: [...wmComponents, ...PIPES],
     exports: [...wmComponents, ...PIPES]

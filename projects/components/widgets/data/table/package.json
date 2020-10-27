@@ -18,7 +18,8 @@
                 "@wm/components/navigation/menu": "wm.components.navigation.menu",
                 "@wm/components/input": "wm.components.input",
                 "@wm/components/data/list": "wm.components.data.list",
-                "@wm/components/data/pagination": "wm.components.data.pagination"
+                "@wm/components/data/pagination": "wm.components.data.pagination",
+                "@wm/statepersistence": "wm.statepersistence"
             }
         }
     }

@@ -10,7 +10,8 @@
                 "@angular/core": "ng.core",
 
                 "@wm/core": "wm.core",
-                "@wm/components/base": "wm.components.base"
+                "@wm/components/base": "wm.components.base",
+                "@wm/statepersistence": "wm.statepersistence"
             }
         }
     }

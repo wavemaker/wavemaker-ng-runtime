@@ -10,6 +10,7 @@
             "@angular/core": "ng.core",
             "@angular/common": "ng.common",
             "@angular/router": "ng.router",
+            "@wm/security": "wm.security",
 
             "rxjs": "rxjs",
             "rxjs/operators": "rxjs.operators",

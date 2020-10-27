@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
+import {SecurityService} from '@wm/security';
 
 declare const _;
 
@@ -7,6 +8,11 @@ export class StatePersistence {
     private HISTORY_HANDLER = 'replace';
     private HISTORY_HANDLER_TYPES = {'push': 'pushState', 'replace': 'replaceState'};
     private WIDGET_STATE_KEY = 'ws';
+    private securityService: any;
+
+    constructor(private inj: Injector) {
+        this.securityService = this.inj.get(SecurityService);
+    }
 
     /**
      * Sets the passed value as the History handler if it exists in the History_Handler_Types object
