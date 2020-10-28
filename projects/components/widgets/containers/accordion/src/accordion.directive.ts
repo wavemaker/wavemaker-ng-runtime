@@ -101,9 +101,12 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         if (isLastPane) {
             for (let i = 0; i < this.dynamicPanes.length; i++) {
                 const newPaneRef  = _.find(this.dynamicPanes, pane => pane.dynamicPaneIndex === i);
-                this.panes.reset([...this.panes.toArray(), newPaneRef]);
-                if (newPaneRef.expandpane || this.defaultpaneindex === (this.panes.toArray().length - 1)) {
-                    newPaneRef.expand();
+                const isDuplicatePane = _.find(this.panes.toArray(), newPaneRef);
+                if (!isDuplicatePane) {
+                    this.panes.reset([...this.panes.toArray(), newPaneRef]);
+                    if (newPaneRef.active) {
+                        newPaneRef.expand();
+                    }
                 }
             }
         }
@@ -111,34 +114,49 @@ export class AccordionDirective extends StylableComponent implements AfterConten
 
     /**
      * This method is to add the tabpane dynamically
-     * @param paneName - name of the tabpane
-     * @param properties - properties of the tabpane
+     * @param tabpanes - list of tabpanes
      */
-   public addPane(paneName, properties?) {
-       let paramMarkup = '';
-       let propsTmpl = '';
-       this.dynamicPaneIndex++;
-       const name = paneName ? paneName : `accordionpane${this.panes.toArray().length + this.dynamicPaneIndex}`;
-       const partialParams = _.get(properties, 'params');
+    public addPane(tabpanes) {
+        if (!_.isArray(tabpanes)) {
+            tabpanes = [tabpanes];
+        }
+        const paneNamesList = [];
+        _.forEach(tabpanes, (pane, index) => {
+            const isPaneAlreadyCreated = _.find(this.panes.toArray(), {name: pane.name});
+            const isPaneNameExist = _.indexOf(paneNamesList, pane.name);
+            // If user tries to add tabpane with the same name which is already exists then do not create the pane
+            if (isPaneAlreadyCreated || isPaneNameExist > 0) {
+                console.warn(`The tab pane with name ${pane.name} already exists`);
+                return;
+            }
 
-       _.forEach(properties, (value, key) => {
-           if (key !== 'params') {
-               propsTmpl = `${propsTmpl} ${key}="${value}"`;
-           }
-       });
-       _.forEach(partialParams, (value, key) => {
-           paramMarkup = `${paramMarkup} <wm-param name="${key}" value="${value}"></wm-param>`;
-       });
-       const markup = `<wm-accordionpane dynamicPaneIndex="${this.dynamicPaneIndex - 1}" isdynamic="true" name="${name}" ${propsTmpl}>
+            let paramMarkup = '';
+            let propsTmpl = '';
+            this.dynamicPaneIndex++;
+            const name = pane.name ? pane.name : `accordionpane${this.panes.toArray().length + (index + 1)}`;
+            paneNamesList.push(name);
+            const partialParams = _.get(pane, 'params');
+
+            _.forEach(pane, (value, key) => {
+                if (key !== 'params') {
+                    propsTmpl = `${propsTmpl} ${key}="${value}"`;
+                }
+            });
+            _.forEach(partialParams, (value, key) => {
+                paramMarkup = `${paramMarkup} <wm-param name="${key}" value="${value}"></wm-param>`;
+            });
+            const markup = `<wm-accordionpane dynamicPaneIndex="${this.dynamicPaneIndex - 1}" isdynamic="true" name="${name}" ${propsTmpl}>
                             ${paramMarkup}
                         </wm-accordionpane>`;
 
-       if (!this._dynamicContext) {
-           this._dynamicContext = Object.create(this.viewParent);
-           this._dynamicContext[this.getAttr('wmAccordian')] = this;
-       }
+            if (!this._dynamicContext) {
+                this._dynamicContext = Object.create(this.viewParent);
+                this._dynamicContext[this.getAttr('wmAccordian')] = this;
+            }
 
-        this.dynamicComponentProvider.addComponent(this.getNativeElement(), markup, this._dynamicContext, {inj: this.inj});
+            this.dynamicComponentProvider.addComponent(this.getNativeElement(), markup, this._dynamicContext, {inj: this.inj});
+        });
+        return paneNamesList;
     }
 
     /**

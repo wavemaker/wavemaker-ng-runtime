@@ -5,6 +5,7 @@ export const registerProps = () => {
         'wm-tabpane',
         new Map(
             [
+                ['active', PROP_BOOLEAN], // internal property
                 ['badgevalue', PROP_STRING],
                 ['badgetype', {value: 'default', ...PROP_STRING}],
                 ['class', PROP_STRING],
@@ -16,7 +17,6 @@ export const registerProps = () => {
                 ['isdynamic', PROP_BOOLEAN], // internal property
                 ['name', PROP_STRING],
                 ['paneicon', PROP_STRING],
-                ['selecttab', PROP_BOOLEAN], // internal property
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['smoothscroll', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],

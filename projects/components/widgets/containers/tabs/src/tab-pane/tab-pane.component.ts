@@ -82,7 +82,7 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         availablePanes.splice((this as any).tabsRef.getPaneIndexByRef(this), 1);
         this.tabsRef.panes.reset([...availablePanes]);
         this.nativeElement.remove();
-        this.tabsRef.$element.find(`.tab-header a[title= '${this.title}']`).remove();
+        this.tabsRef.$element.find(`.tab-header[data-paneid='${this.$element.attr('widget-id')}'] a`).remove();
     }
 
     private redrawChildren() {

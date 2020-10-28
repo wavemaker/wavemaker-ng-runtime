@@ -5,12 +5,12 @@ export const registerProps = () => {
         'wm-accordionpane',
         new Map(
             [
+                ['active', PROP_BOOLEAN], // internal property
                 ['badgetype', {value: 'default', ...PROP_STRING}],
                 ['badgevalue', PROP_STRING],
                 ['class', PROP_STRING],
                 ['content', PROP_STRING],
                 ['dynamicPaneIndex', PROP_NUMBER], // internal property
-                ['expandpane', PROP_BOOLEAN], // internal property
                 ['iconclass', PROP_STRING],
                 ['isdefaultpane', PROP_BOOLEAN],
                 ['isdynamic', PROP_STRING], // internal property
