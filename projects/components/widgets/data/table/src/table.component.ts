@@ -788,6 +788,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         private dynamicComponentProvider: DynamicComponentRefProvider,
         private statePersistence: StatePersistence,
         private viewport: Viewport,
+        private statePersistence: StatePersistence,
         @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('datasource.bind') public binddatasource,

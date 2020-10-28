@@ -8,6 +8,11 @@ export class StatePersistence {
     private HISTORY_HANDLER = 'replace';
     private HISTORY_HANDLER_TYPES = {'push': 'pushState', 'replace': 'replaceState'};
     private WIDGET_STATE_KEY = 'ws';
+    private securityService: any;
+
+    constructor(private inj: Injector) {
+        this.securityService = this.inj.get(SecurityService);
+    }
 
     constructor(private securityService: SecurityService) {}
 
