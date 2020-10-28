@@ -100,6 +100,8 @@ export * as tableRowBuild from './data/table/table-row/table-row.build';
 export * as tableRowActionBuild from './data/table/table-row-action/table-row-action.build';
 export * as tableBuild from './data/table/table.build';
 export * as videoBuild from './basic/default/video/video.build';
+export * as linearLayoutBuild from './containers/linear-layout/linear-layout.build';
+export * as linearLayoutItemBuild from './containers/linear-layout/linear-layout-item/linear-layout-item.build';
 
 export * from '@wm/transpiler';
 

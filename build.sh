@@ -200,6 +200,7 @@ bundleWeb() {
         ./libraries/components/dialogs/partial-dialog/bundles/index.umd.js \
         ./libraries/components/containers/accordion/bundles/index.umd.js \
         ./libraries/components/containers/layout-grid/bundles/index.umd.js \
+        ./libraries/components/containers/linear-layout/bundles/index.umd.js \
         ./libraries/components/containers/panel/bundles/index.umd.js \
         ./libraries/components/containers/tabs/bundles/index.umd.js \
         ./libraries/components/containers/tile/bundles/index.umd.js \
@@ -276,6 +277,7 @@ bundleMobile() {
         ./libraries/components/dialogs/partial-dialog/bundles/index.umd.js \
         ./libraries/components/containers/accordion/bundles/index.umd.js \
         ./libraries/components/containers/layout-grid/bundles/index.umd.js \
+        ./libraries/components/containers/linear-layout/bundles/index.umd.js \
         ./libraries/components/containers/panel/bundles/index.umd.js \
         ./libraries/components/containers/tabs/bundles/index.umd.js \
         ./libraries/components/containers/tile/bundles/index.umd.js \
@@ -352,6 +354,7 @@ buildApp() {
     ngBuild components-navigation-popover projects/components/widgets/navigation/popover '@wm/components/navigation/popover'
 
     ngBuild components-containers-accordion projects/components/widgets/containers/accordion '@wm/components/containers/accordion'
+    ngBuild components-containers-linearlayout projects/components/widgets/containers/linear-layout '@wm/components/containers/linear-layout'
     ngBuild components-containers-layoutgrid projects/components/widgets/containers/layout-grid '@wm/components/containers/layout-grid'
     ngBuild components-containers-panel projects/components/widgets/containers/panel '@wm/components/containers/panel'
     ngBuild components-containers-tabs projects/components/widgets/containers/tabs '@wm/components/containers/tabs'

@@ -38,6 +38,7 @@
             "@wm/components/basic/tree": "wm.components.basic.tree",
             "@wm/components/chart": "wm.components.chart",
             "@wm/components/containers/accordion": "wm.components.containers.accordion",
+            "@wm/components/containers/linear-layout": "wm.components.containers.linearlayout",
             "@wm/components/containers/layout-grid": "wm.components.containers.layoutgrid",
             "@wm/components/containers/panel": "wm.components.containers.panel",
             "@wm/components/containers/tabs": "wm.components.containers.tabs",

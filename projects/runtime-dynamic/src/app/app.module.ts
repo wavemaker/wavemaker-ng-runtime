@@ -61,6 +61,7 @@ import { ChartModule } from '@wm/components/chart';
 
 // Containers
 import { AccordionModule } from '@wm/components/containers/accordion';
+import { LinearLayoutModule } from '@wm/components/containers/linear-layout';
 import { LayoutGridModule } from '@wm/components/containers/layout-grid';
 import { PanelModule } from '@wm/components/containers/panel';
 import { TabsModule } from '@wm/components/containers/tabs';
@@ -179,7 +180,8 @@ const componentsModule = [
     ChartModule,
 
     // container modules
-    AccordionModule,
+    AccordionModule, 
+    LinearLayoutModule,
     LayoutGridModule,
     PanelModule,
     TabsModule,
