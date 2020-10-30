@@ -46,16 +46,23 @@ export class Viewport implements IViewportService, OnDestroy {
         }
 
         // Add a media query change listener
-        query.addEventListener('change', $event => {
-            const isLandscape = !$event.matches;
+        // addEventListener is not supported ios browser
+        if (query.addEventListener) {
+            query.addEventListener('change', $event => this.orientationChange($event, !$event.matches));
+        }
+    }
+
+    private orientationChange($event, isLandscape) {
+        if (isLandscape !== this.orientation.isLandscape) {
             this.orientation.isPortrait = !isLandscape;
             this.orientation.isLandscape = isLandscape;
             this.notify(ViewportEvent.ORIENTATION_CHANGE, { $event, data: {isPortrait: !isLandscape, isLandscape: isLandscape} });
-        });
+        }
     }
 
     private resizeFn($event) {
         this.setScreenType();
+        this.orientationChange($event, this.screenWidth >= this.screenHeight);
         this.notify(ViewportEvent.RESIZE, {$event, data: {screenWidth: this.screenWidth, screenHeight: this.screenHeight}});
     }
 
