@@ -418,6 +418,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             let boundFnVal;
             $invokeWatchers(true);
             try {
+                locals.$event = locals.$event || new window.CustomEvent(eventName);
                 // If the event is bound directly to the variable then we need to internally handle
                 // the promise returned by the variable call.
                 boundFnVal = boundFn();
