@@ -219,13 +219,11 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
             _.each(this.Actions, refresh);
         }
         _.each(this.Widgets, w => w.ngOnAttach && w.ngOnAttach());
-        this.prefabContainerDirective.ngOnAttach();
     }
 
     ngOnDetach() {
         this.mute();
         _.each(this.Widgets, w => w.ngOnDetach && w.ngOnDetach());
-        this.prefabContainerDirective.ngOnDetach();
     }
 
 

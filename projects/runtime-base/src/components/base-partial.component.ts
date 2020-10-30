@@ -201,13 +201,11 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             _.each(this.Actions, refresh);
         }
         _.each(this.Widgets, w => w.ngOnAttach && w.ngOnAttach());
-        this.partialDirective.ngOnAttach();
     }
 
     ngOnDetach() {
         this.mute();
         _.each(this.Widgets, w => w.ngOnDetach && w.ngOnDetach());
-        this.partialDirective.ngOnDetach();
     }
 
     onReady(params?) {
