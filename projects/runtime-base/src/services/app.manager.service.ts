@@ -193,6 +193,7 @@ export class AppManagerService {
                 loggedInUser.name            = securityConfig.userInfo.userName;
                 loggedInUser.id              = securityConfig.userInfo.userId;
                 loggedInUser.tenantId        = securityConfig.userInfo.tenantId;
+                loggedInUser.userAttributes  = securityConfig.userInfo.userAttributes; // assign the extra userAttributes for custom usage.
             } else {
                 this.clearLoggedInUserVariable(loggedInUser);
                 loggedInUser.isSecurityEnabled = securityConfig && securityConfig.securityEnabled;
@@ -205,6 +206,7 @@ export class AppManagerService {
             loggedInUser.name            = undefined;
             loggedInUser.id              = undefined;
             loggedInUser.tenantId        = undefined;
+            loggedInUser.userAttributes  = {};
         });
     }
 

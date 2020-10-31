@@ -6,6 +6,7 @@ force=false
 copy=false
 docs=false
 locale=false
+forcelibs=false
 
 isSourceModified=false
 
@@ -17,6 +18,9 @@ do
             ;;
         -f | --force)
             force=true
+            ;;
+        -fl | --forcelibs)
+            forcelibs=true
             ;;
         -d | --docs)
             docs=true
@@ -60,7 +64,7 @@ execCommand() {
 }
 
 hasLibChanges() {
-    if [[ ${force} == true ]]; then
+    if [[ ${force} == true ]] || [[ ${forcelibs} == true ]]; then
         return 0
     fi
 
