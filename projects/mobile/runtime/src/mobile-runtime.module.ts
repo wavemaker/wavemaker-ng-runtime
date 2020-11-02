@@ -155,6 +155,7 @@ export class MobileRuntimeModule {
                     localStorage.setItem('remoteSync', flag ? 'true' : 'false');
                 };
             }
+            window.open = window['cordova'].InAppBrowser.open;
             runtimeModule.addAuthInBrowser();
         }
         deviceService.start();
