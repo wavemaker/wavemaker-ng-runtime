@@ -169,14 +169,17 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
         // Set the default values and register with table
         this.populateFieldDef();
-
+        // when column is inside a group then consider the col index and not header index.
+        const colIndex = parseInt(this.getAttr('index'), 10);
+        const headerIndex = parseInt(this.getAttr('headerIndex'), 10);
+        const fieldName = this.group && this.group.name;
         // Register column with header config to create group structure
         setHeaderConfigForTable(this.table.headerConfig, {
             field: this.field,
             displayName: this.displayName
-        }, this.group && this.group.name);
+        }, fieldName, fieldName ? colIndex : headerIndex);
 
-        this.table.registerColumns(this.widget);
+        this.table.registerColumns(this.widget, colIndex);
 
         this._isRowFilter = this.table.filtermode === 'multicolumn' && this.searchable;
         this._isInlineEditable = !this.readonly && (this.table.editmode !== EDIT_MODE.DIALOG && this.table.editmode !== EDIT_MODE.FORM);
@@ -552,7 +555,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // Shows spinner for async validators based on status
     onStatusChange(status, type) {
-        this['showPendingSpinner' + (type == 'inlineInstance' ? '' : 'New')] = (status === 'PENDING');
+        this['showPendingSpinner' + (type === 'inlineInstance' ? '' : 'New')] = (status === 'PENDING');
     }
 
     /* Summary Row Logic start */
@@ -563,13 +566,13 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     private _invokeSummaryRowData(data) {
         _.forEach(data, (item, index) => {
-            let content = item;
+            const content = item;
             if (content instanceof Promise) {
                 content.then(res => {
                     this.table.callDataGridMethod('setSummaryRowDef', this.key, res, index, true);
                 });
             } else if (content.value && content.value instanceof Promise) {
-                let contentData = content;
+                const contentData = content;
                 content.value.then(res => {
                     contentData.value = res;
                     this.table.callDataGridMethod('setSummaryRowDef', this.key, contentData, index, true);
