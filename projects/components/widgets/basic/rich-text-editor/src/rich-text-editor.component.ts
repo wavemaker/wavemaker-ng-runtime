@@ -2,7 +2,7 @@ import { Component, Injector, NgZone, OnDestroy, OnInit, SecurityContext } from 
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { setCSS, setHtml } from '@wm/core';
+import { setAttr, setCSS, setHtml } from '@wm/core';
 import { APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
 
@@ -168,6 +168,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
             if (key === 'height') {
                 setCSS(this.nativeElement.querySelector('div.note-editable'), key, value, true);
             } else if (key === 'placeholder') {
+                setAttr(this.nativeElement, key, value);
                 setHtml(this.nativeElement.querySelector('div.note-placeholder'), value, true);
             } else {
                 // if editor content is empty then summernote('code') is returning empty p tags like <p></br></p>. So checking for empty and returning undefined.

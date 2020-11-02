@@ -1,5 +1,5 @@
 import { ComponentFixture } from '@angular/core/testing';
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap';
@@ -19,9 +19,15 @@ const markup = `<ul wmChips name="chips1" readonly="false" class= "text-success"
 @Component({
     template: markup
 })
-class ChipsWrapperComponent {
+class ChipsWrapperComponent implements OnInit {
     @ViewChild(ChipsComponent, /* TODO: add static flag */ {static: true}) wmComponent: ChipsComponent;
     public testdata: any = [{name: 'Peter', age: 21}, {name: 'Tony', age: 42}, {name: 'John', age: 25}, {name: 'Peter Son', age: 28}];
+    ngOnInit() {
+        setTimeout(() => {
+            (this.wmComponent.searchComponent as any).placeholder = 'updated';
+        });
+    }
+
 }
 const testModuleDef: ITestModuleDef = {
     imports: [
