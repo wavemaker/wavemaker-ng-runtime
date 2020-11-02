@@ -1641,7 +1641,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
     }
 
-    registerColumns(tableColumn) {
+    registerColumns(tableColumn, colIndex) {
         if (isMobile() && this.viewport.isMobileType) {
             if (!tableColumn.mobileDisplay) {
                 return;
