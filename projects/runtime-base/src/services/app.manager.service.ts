@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouteReuseStrategy } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
 import {
@@ -15,6 +15,7 @@ import {
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService } from '@wm/variables';
+import { WmRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
 
 declare const _;
 
@@ -35,6 +36,7 @@ export class AppManagerService {
     private appVariablesFired = false;
     private _noRedirect = false;
     private templates: Array<any>;
+    private lastLoggedUserId;
 
     constructor(
         private $http: AbstractHttpService,
@@ -46,7 +48,8 @@ export class AppManagerService {
         private $metadata: MetadataService,
         private $spinner: AbstractSpinnerService,
         private $i18n: AbstractI18nService,
-        private $datePipe: DatePipe
+        private $datePipe: DatePipe,
+        private routeReuseStrategy: RouteReuseStrategy
     ) {
         // register method to invoke on session timeout
         this.$http.registerOnSessionTimeout(this.handle401.bind(this));
@@ -69,14 +72,30 @@ export class AppManagerService {
                 }
             }
         });
-        this.$app.subscribe('userLoggedIn', () => this.setLandingPage());
+        this.$app.subscribe('userLoggedIn', () => { 
+            this.setLandingPage();
+            if (this.lastLoggedUserId) {
+                this.$security.getConfig(config => {
+                    if(config && config.userInfo.userId !== this.lastLoggedUserId) {
+                        this.clearCache();
+                    }
+                }, null);
+            }
+        });
         this.$app.subscribe('userLoggedOut', () => this.setLandingPage().then(() => {
+            this.clearCache();
             // navigate to the landing page without reloading the window in device.
             if (window['cordova']) {
                 this.$router.navigate([`/`]);
             }
         }));
         this.$app.subscribe('http401', (d = {}) => this.handle401(d.page, d.options));
+    }
+
+    private clearCache() {
+        if(this.routeReuseStrategy instanceof WmRouteReuseStrategy) {
+            (this.routeReuseStrategy as WmRouteReuseStrategy).reset();
+        }
     }
 
     /**
@@ -174,6 +193,7 @@ export class AppManagerService {
                 loggedInUser.name            = securityConfig.userInfo.userName;
                 loggedInUser.id              = securityConfig.userInfo.userId;
                 loggedInUser.tenantId        = securityConfig.userInfo.tenantId;
+                loggedInUser.userAttributes  = securityConfig.userInfo.userAttributes; // assign the extra userAttributes for custom usage.
             } else {
                 this.clearLoggedInUserVariable(loggedInUser);
                 loggedInUser.isSecurityEnabled = securityConfig && securityConfig.securityEnabled;
@@ -186,6 +206,7 @@ export class AppManagerService {
             loggedInUser.name            = undefined;
             loggedInUser.id              = undefined;
             loggedInUser.tenantId        = undefined;
+            loggedInUser.userAttributes  = {};
         });
     }
 
@@ -270,6 +291,7 @@ export class AppManagerService {
         const config = this.$security.get();
         let queryParamsObj = {};
         loginConfig = config.loginConfig;
+        this.lastLoggedUserId = config.userInfo && config.userInfo.userId;
         // if user found, 401 was thrown after session time
         if (config.userInfo && config.userInfo.userName) {
             config.authenticated = false;

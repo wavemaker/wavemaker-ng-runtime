@@ -541,7 +541,7 @@ $.widget('wm.datatable', {
                 customExpressionHtml = cellPreloader;
                 $htm.html(customExpressionHtml);
             } else {
-                innerTmpl = (_.isUndefined(columnValue) || columnValue === null) ? '' : columnValue;
+                innerTmpl = (_.isUndefined(columnValue) || columnValue === null) ? '' : this.options.securityUtils.pipeTransform.transform(columnValue, 1);
                 $htm.html(innerTmpl);
             }
         } else if (colExpression) {
@@ -557,7 +557,7 @@ $.widget('wm.datatable', {
                 }
                 $htm.attr('title', columnValue);
                 //Add empty quote, to convert boolean false to 'false', so that value is rendered
-                $htm.html("" + columnValue);
+                $htm.html("" + this.options.securityUtils.pipeTransform.transform(columnValue, 1));
             } else {
                 switch (colDef.field) {
                     case 'checkbox':
@@ -579,7 +579,7 @@ $.widget('wm.datatable', {
                         innerTmpl = '';
                         break;
                     default:
-                        innerTmpl = (_.isUndefined(columnValue) || columnValue === null) ? '' : columnValue;
+                        innerTmpl = (_.isUndefined(columnValue) || columnValue === null) ? '' : this.options.securityUtils.pipeTransform.transform(columnValue, 1);
                 }
                 $htm.html(innerTmpl);
             }
@@ -1632,14 +1632,14 @@ $.widget('wm.datatable', {
             $newRowButton = $gridActions.find('i.wi-plus').closest('.app-button');
         if (this.options.editmode === this.CONSTANTS.INLINE && (this.options.rowActions.length === 0 || !_.some(this.options.rowActions, { action: 'editRow($event)' }))) {
             if (saveInd) {
-                $gridActions.append(`<button type="button" wmbutton="" class="btn app-button btn-default cancelNewRow" tabindex="0" accesskey="" title="Cancel">
-                                    <i aria-hidden="true" class="app-icon wi wi-cancel"></i>
-                                    <span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>
-                                </button>
-                                <button type="button" wmbutton="" class="btn app-button btn-primary saveNewRow" tabindex="0" accesskey="" title="Save">
-                                    <i aria-hidden="true" class="app-icon wi wi-done"></i>
-                                    <span class="sr-only">Save Icon</span><span class="btn-caption">Save</span>
-                                </button>`);
+                $gridActions.append('<button type="button" wmbutton="" class="btn app-button btn-default cancelNewRow" tabindex="0" accesskey="" title="Cancel">'+
+                                    '<i aria-hidden="true" class="app-icon wi wi-cancel"></i>'+
+                                    '<span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>'+
+                                '</button>'+
+                                '<button type="button" wmbutton="" class="btn app-button btn-primary saveNewRow" tabindex="0" accesskey="" title="Save">'+
+                                    '<i aria-hidden="true" class="app-icon wi wi-done"></i>'+
+                                    '<span class="sr-only">Save Icon</span><span class="btn-caption">Save</span>'+
+                                '</button>');
                 $gridActions.find('.cancelNewRow').on('click', function (event) {
                     self.toggleEditRow(event, {action: 'cancel', $row: $newRow});
                 });

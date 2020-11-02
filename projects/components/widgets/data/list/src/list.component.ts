@@ -2,7 +2,24 @@ import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, C
 
 import { Subscription } from 'rxjs';
 
-import { $appDigest, $invokeWatchers, App, AppDefaults, DataSource, getClonedObject, isDataSourceEqual, isDefined, isMobile, isMobileApp, isNumber, isObject, noop, switchClass, StatePersistence } from '@wm/core';
+import {
+    $appDigest,
+    $invokeWatchers,
+    App,
+    AppDefaults,
+    DataSource,
+    getClonedObject,
+    isDataSourceEqual,
+    isDefined,
+    isMobile,
+    isMobileApp,
+    isNumber,
+    isObject,
+    noop,
+    switchClass,
+    StatePersistence,
+    setListClass
+} from '@wm/core';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 import { ButtonComponent } from '@wm/components/input';
@@ -99,7 +116,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private $ulEle: any;
     private _listAnimator: ListAnimator;
     public pulltorefresh: boolean;
-    private cancelSubscription: Function;
+    private _listenerDestroyers: Array<any>;
 
     public title: string;
     public subheading: string;
@@ -218,18 +235,19 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.noDataFound = !binddataset;
 
         // Updates pagination, filter, sort etc options for service and crud variables
-        this.app.subscribe('check-state-persistence-options', options => {
-            this.handleStateParams(options);
-        });
-
-        // Show loading status based on the variable life cycle
-        this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
-        this.app.subscribe('setup-cud-listener', param => {
-            if (this.nativeElement.getAttribute('name') !== param) {
-                return;
-            }
-            this._isDependent = true;
-        });
+        this._listenerDestroyers = [
+            this.app.subscribe('check-state-persistence-options', options => {
+                this.handleStateParams(options);
+            }),
+            // Show loading status based on the variable life cycle
+            this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this)),
+            this.app.subscribe('setup-cud-listener', param => {
+                if (this.nativeElement.getAttribute('name') !== param) {
+                    return;
+                }
+                this._isDependent = true;
+            })
+        ];
     }
 
     private getConfiguredState() {
@@ -341,30 +359,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private enableOnDemandLoad() {
         this.onDemandLoad = true;
         this.showNavigation = true;
-    }
-
-    /* this function sets the itemclass depending on itemsperrow.
-     * if itemsperrow is 2 for large device, then itemclass is 'col-xs-1 col-sm-1 col-lg-2'
-     * if itemsperrow is 'lg-3' then itemclass is 'col-lg-3'
-     */
-    private setListClass() {
-        let temp = '';
-        if (this.itemsperrow) {
-            if (isNaN(parseInt(this.itemsperrow, 10))) {
-                // handling itemsperrow containing string of classes
-                _.split(this.itemsperrow, ' ').forEach((cls: string) => {
-                    const keys = _.split(cls, '-');
-                    cls = `${keys[0]}-${(12 / parseInt(keys[1], 10))}`;
-                    temp += ` col-${cls}`;
-                });
-                this.itemsPerRowClass = temp.trim();
-            } else {
-                // handling itemsperrow having integer value.
-                this.itemsPerRowClass = `col-xs-${(12 / parseInt(this.itemsperrow, 10))}`;
-            }
-        } else { // If itemsperrow is not specified make it full width
-            this.itemsPerRowClass = 'col-xs-12';
-        }
     }
 
     /**
@@ -701,14 +695,14 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.multiselect) {
             (this.selectedItemWidgets as Array<WidgetRef>).length = 0;
         }
-        this.listItems.forEach((item: ListItemDirective) => {
+        this.listItems.forEach((item: ListItemDirective, index) => {
             if (item.isActive) {
                 if (this.multiselect) {
                     (this.selectedItemWidgets as Array<WidgetRef>).push(item.currentItemWidgets);
                 } else {
                     this.selectedItemWidgets = item.currentItemWidgets;
                 }
-                obj.push({page: this.dataNavigator.dn.currentPage, index: item.$index});
+                obj.push({page: _.get(this.dataNavigator, 'dn.currentPage') || 1, index: index});
             }
         });
         if (this.getConfiguredState() !== 'none') {
@@ -761,9 +755,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = false;
+                const currentPage = _.get(this.dataNavigator, 'dn.currentPage') || 1;
                 setTimeout( () => {
                     widgetState.selectedItem.forEach((item) => {
-                        if (item.page === this.dataNavigator.dn.currentPage) {
+                        if (item.page === currentPage) {
                             this.selectItem(item.index);
                         }
                     });
@@ -999,7 +994,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.dataNavigator.navigationClass = this.paginationclass;
             }
         } else if (key === 'itemsperrow') {
-            this.setListClass();
+            setListClass(this);
         } else if (key === 'tabindex') {
             return;
         } else if (key === 'pulltorefresh' && nv) {
@@ -1145,11 +1140,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     // Invoke the datasource variable by default when pulltorefresh event is not specified.
     private subscribeToPullToRefresh() {
-        this.cancelSubscription = this.app.subscribe('pulltorefresh', () => {
+        this._listenerDestroyers.push(this.app.subscribe('pulltorefresh', () => {
             if (this.datasource && this.datasource.listRecords) {
                 this.datasource.listRecords();
             }
-        });
+        }));
     }
 
     ngOnInit() {
@@ -1188,7 +1183,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.handleHeaderClick = handleHeaderClick;
                 this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
             }
-            this.setListClass();
+            setListClass(this);
         });
         this.setupHandlers();
         const $ul = this.nativeElement.querySelector('ul.app-livelist-container');
@@ -1203,8 +1198,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this._listAnimator && this._listAnimator.$btnSubscription) {
             this._listAnimator.$btnSubscription.unsubscribe();
         }
-        if (this.cancelSubscription) {
-            this.cancelSubscription();
-        }
+        this._listenerDestroyers.forEach(d => d && d());
+        super.ngOnDestroy();
+    }
+
+    ngOnDetach() {
+        super.ngOnDetach();
+        this._pageLoad = true;
     }
 }

@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmTableRowAction component defines the table row action widget.
  */
-@Directive()
+
 export class TableRowAction {
     /**
      * CSS class for styling the field.

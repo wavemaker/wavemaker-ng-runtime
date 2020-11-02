@@ -6,7 +6,7 @@ import { ServiceVariableUtils } from '../../util/variable/service-variable.utils
 import { $queue } from '../../util/inflight-queue';
 import { BaseVariableManager } from './base-variable.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
-import { appManager, formatExportExpression, setInput } from './../../util/variable/variables.utils';
+import { appManager, formatExportExpression, setInput, decodeData } from './../../util/variable/variables.utils';
 import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, securityService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 import { AdvancedOptions } from '../../advanced-options';
@@ -72,6 +72,12 @@ export class ServiceVariableManager extends BaseVariableManager {
         response = isDefined(jsonParsedResponse) ? jsonParsedResponse : (xmlToJson(response) || response);
 
         const isResponsePageable = isPageable(response);
+        if (variable.serviceType === 'DataService' || variable.serviceType === 'JavaService') {
+            const decodedData = decodeData(response);
+            if (_.isString(response)) {
+                response = decodedData;
+            }
+        }
         if (isResponsePageable) {
             dataSet = response.content;
             pagination = _.omit(response, 'content');

@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmWizard component defines the wizard widget.
  */
-@Directive()
+
 export class Wizard {
 
     /**

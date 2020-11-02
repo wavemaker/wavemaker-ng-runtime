@@ -1,7 +1,7 @@
 import { _WM_APP_PROJECT, hasCordova, isIE, getWmProjectProperties } from '@wm/core';
 import {trigger} from "@angular/animations";
 
-declare const moment, _;
+declare const moment, _, jsSHA;
 
 const accessTokenSuffix = '.access_token', pkceIdentifier = 'pkce', implicitIdentifier = 'implicit';
 
@@ -263,10 +263,12 @@ function generateRandomString() {
 }
 
 // Returns a promise that resolves to an ArrayBuffer
-function sha256(plain) {
+function getEncryptedCode(plain) {
     const encoder = new TextEncoder();
     const data = encoder.encode(plain);
-    return window.crypto.subtle.digest('SHA-256', data);
+    const shaObj = new jsSHA("SHA-256", "UINT8ARRAY", { encoding: "UTF8" });
+    shaObj.update(data);
+    return shaObj.getHash("ARRAYBUFFER");
 }
 
 // Base64-urlencodes the input string
@@ -298,11 +300,12 @@ function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfi
             url = constructURLForImplicitOrPKCE(providerId, securityObj, requestSourceType, code_challenge, customUriScheme, deployedURL);
             startoAuthFlow(url, providerId, onSuccess, removeProviderConfigCallBack, securityObj, requestSourceType, customUriScheme, deployedURL, http);
         } else {
-            sha256(code_verifier).then(function(v) {
-                code_challenge = base64urlencode(v);
-                url = constructURLForImplicitOrPKCE(providerId, securityObj, requestSourceType, code_challenge, customUriScheme, deployedURL);
-                startoAuthFlow(url, providerId, onSuccess, removeProviderConfigCallBack, securityObj, requestSourceType, customUriScheme, deployedURL, http);
-            });
+            const encryptedCode = getEncryptedCode(code_verifier);
+            code_challenge = base64urlencode(encryptedCode);
+            //code_challenge = encryptedCode;
+            url = constructURLForImplicitOrPKCE(providerId, securityObj, requestSourceType, code_challenge, customUriScheme, deployedURL);
+            startoAuthFlow(url, providerId, onSuccess, removeProviderConfigCallBack, securityObj, requestSourceType, customUriScheme, deployedURL, http);
+
         }
     } else {
         startoAuthFlow(url, providerId, onSuccess, removeProviderConfigCallBack, securityObj, requestSourceType, customUriScheme, deployedURL, http);

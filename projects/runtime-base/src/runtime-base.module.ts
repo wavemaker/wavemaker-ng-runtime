@@ -51,12 +51,20 @@ import { AppComponent } from './components/app-component/app.component';
 import { HttpCallInterceptor } from './services/http-interceptor.services';
 import { PrefabPreviewComponent } from './components/prefab-preview.component';
 import { DynamicComponentRefProviderService } from './services/dynamic-component-ref-provider.service';
-import {CanDeactivatePageGuard} from './guards/can-deactivate-page.guard';
+import { CanDeactivatePageGuard } from './guards/can-deactivate-page.guard';
+import { MAX_CACHE_AGE, MAX_CACHE_SIZE } from './util/wm-route-reuse-strategy';
 
 const initializeProjectDetails = () => {
     _WM_APP_PROJECT.id = location.href.split('/')[3];
     _WM_APP_PROJECT.cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
     _WM_APP_PROJECT.ngDest = 'ng-bundle/';
+};
+
+export function getSettingProvider(key: string, defaultValue: any) {
+    return {
+        provide: key,
+        useValue: defaultValue
+    };
 };
 
 export function InitializeApp(I18nService) {
@@ -181,7 +189,9 @@ export class RuntimeBaseModule {
                 CanDeactivatePageGuard,
                 AppJSResolve,
                 AppExtensionJSResolve,
-                I18nResolve
+                I18nResolve,
+                getSettingProvider(MAX_CACHE_SIZE, 10),
+                getSettingProvider(MAX_CACHE_AGE, 30 * 60)
             ]
         };
     }

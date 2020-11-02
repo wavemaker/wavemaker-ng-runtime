@@ -5,13 +5,16 @@ export const registerProps = () => {
         'wm-tabpane',
         new Map(
             [
+                ['active', PROP_BOOLEAN], // internal property
                 ['badgevalue', PROP_STRING],
                 ['badgetype', {value: 'default', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['content', PROP_STRING],
                 ['disabled', PROP_BOOLEAN],
+                ['dynamicPaneIndex', PROP_NUMBER], // internal property
                 ['heading', PROP_STRING],
                 ['isdefaulttab', PROP_STRING],
+                ['isdynamic', PROP_BOOLEAN], // internal property
                 ['name', PROP_STRING],
                 ['paneicon', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],

@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The 'wmHeader' directive defines a header in the layout.
  */
-@Directive()
+
 export class Header {
     /**
      * Name of the header widget.

@@ -1,8 +1,10 @@
 {
-  "name": "wavemaker",
+  "name": "WaveMaker - Widgets API Documentation",
   "tsconfig": "tsconfig-compodoc.json",
   "extTheme": "documentation/styles",
   "output": "dist/docs",
+  "customFavicon": "documentation/favicon.png",
+  "toggleMenuItems": ["classes"],
   "disableSourceCode": true,
   "disableDomTree": true,
   "disableTemplateTab": true,

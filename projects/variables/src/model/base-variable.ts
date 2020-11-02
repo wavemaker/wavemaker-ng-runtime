@@ -14,6 +14,7 @@ export abstract class BaseVariable {
     dataSet: any;
     dataBinding: any;
     _context: any;
+    isMuted = false;
 
     execute(operation, options) {
         let returnVal;
@@ -143,5 +144,13 @@ export abstract class BaseVariable {
     getPrefabName() {
         // __self__ is a prefab name given to a prefab which is run in preview mode
         return this._context && (this._context.prefabName !== '__self__' && this._context.prefabName);
+    }
+
+    mute() {
+        this.isMuted = true;
+    }
+
+    unmute() {
+        this.isMuted = false;
     }
 }

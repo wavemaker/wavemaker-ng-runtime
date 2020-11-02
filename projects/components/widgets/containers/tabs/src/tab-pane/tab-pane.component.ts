@@ -28,6 +28,7 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
     public name: string;
     public show: boolean;
     public smoothscroll: any;
+    private isdynamic: boolean;
 
     @HostBinding('class.active') isActive = false;
     @HostBinding('class.disabled') disabled = false;
@@ -71,6 +72,17 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
             this.isActive = false;
             this.invokeEventCallback('deselect');
         }
+    }
+
+    public remove() {
+        if (this.isActive) {
+            this === this.tabsRef.panes.last ? this.tabsRef.prev() : this.tabsRef.next();
+        }
+        const availablePanes = this.tabsRef.panes.toArray();
+        availablePanes.splice((this as any).tabsRef.getPaneIndexByRef(this), 1);
+        this.tabsRef.panes.reset([...availablePanes]);
+        this.nativeElement.remove();
+        this.tabsRef.$element.find(`.tab-header[data-paneid='${this.$element.attr('widget-id')}'] a`).remove();
     }
 
     private redrawChildren() {
@@ -132,5 +144,8 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
             APPLY_STYLES_TYPE.CONTAINER
         );
         super.ngAfterViewInit();
+        if (this.isdynamic) {
+            this.tabsRef.registerDynamicTab(this);
+        }
     }
 }

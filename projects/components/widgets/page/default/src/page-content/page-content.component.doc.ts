@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmPageContent directive defines the page content component.
  */
-@Directive()
+
 export class PageContent {
 
     /**

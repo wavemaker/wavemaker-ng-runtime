@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmProgressBar component defines the progress bar widget.
  */
-@Directive()
+
 export class ProgressBar {
 
     /**

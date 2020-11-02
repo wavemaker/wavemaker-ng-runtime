@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmCurrency component defines the currency widget.
  */
-@Directive()
+
 export class Currency {
     /**
      * Class of the widget.

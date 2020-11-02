@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The `wmButtonGroup` directive defines a button group widget.
  */
-@Directive()
+
 export class ButtonGroup {
     /**
      * Class of the widget.

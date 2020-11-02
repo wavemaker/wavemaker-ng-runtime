@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmPopover component defines the popover widget.
  */
-@Directive()
+
 export class Popover {
     /**
      * This property specifies the value to be displayed along with the label of the popover. <br>

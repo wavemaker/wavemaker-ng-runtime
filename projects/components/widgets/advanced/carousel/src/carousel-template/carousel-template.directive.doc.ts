@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The `wmCarouselTemplate` directive defines a carousel template component.
  */
-@Directive()
+
 export class CarouselTemplate {
     /**
      * Class of the widget.

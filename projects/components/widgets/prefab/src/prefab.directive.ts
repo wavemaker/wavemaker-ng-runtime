@@ -1,4 +1,4 @@
-import { Attribute, ChangeDetectorRef, Directive, ElementRef, Injector } from '@angular/core';
+import { Attribute, ChangeDetectorRef, Directive, ElementRef, Injector, OnDestroy } from '@angular/core';
 
 import { setCSS } from '@wm/core';
 
@@ -17,7 +17,7 @@ declare const _;
         provideAsWidgetRef(PrefabDirective)
     ]
 })
-export class PrefabDirective extends StylableComponent {
+export class PrefabDirective extends StylableComponent implements OnDestroy {
 
     widgetType: string;
     prefabName: string;
@@ -85,5 +85,9 @@ export class PrefabDirective extends StylableComponent {
         registeredPropsSet.add(this.widgetType);
 
         return propsMap;
+    }
+
+    ngOnDestroy() {
+        this.invokeEventCallback('destroy', { widget: this });
     }
 }

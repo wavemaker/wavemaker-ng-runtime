@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmPagedialog component defines the pagedialog widget.
  */
-@Directive()
+
 export class Pagedialog {
     /**
      * This property specifies the title for the pagedialog widget. <br>

@@ -24,6 +24,8 @@ const sizeClasses = {
     }
 };
 
+const unsupportedStatePersistenceTypes = ['On-Demand', 'Scroll'];
+
 @Component({
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html',
@@ -283,7 +285,9 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             if (this.isFirstPage()) {
                 this.parent.statePersistence.removeWidgetState(this.parent, 'pagination');
             } else {
-                this.parent.statePersistence.setWidgetState(this.parent, {pagination: this.dn.currentPage});
+                if (unsupportedStatePersistenceTypes.indexOf(this.parent.navigation) < 0) {
+                    this.parent.statePersistence.setWidgetState(this.parent, {pagination: this.dn.currentPage});
+                }
             }
         }
     }

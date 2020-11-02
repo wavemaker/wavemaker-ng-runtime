@@ -1222,5 +1222,6 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 this.parentForm.ngform.removeControl(this.name);
             }
         }
+        super.ngOnDestroy();
     }
 }

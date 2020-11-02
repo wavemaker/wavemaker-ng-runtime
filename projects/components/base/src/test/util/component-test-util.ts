@@ -84,3 +84,12 @@ export const notHavingTheAttribute = (fixture, selector: string, attribute: stri
         expect(element.nativeElement.hasAttribute(attribute)).toBe(false);
     });
 }
+
+export const mockApp = { 
+    subscribe: () => { return () => {}},
+    getSelectedLocale: () => {
+        return 'en';
+    }
+};
+
+export const mockViewport = {};

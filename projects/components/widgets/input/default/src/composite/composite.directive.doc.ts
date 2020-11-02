@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The `wmComposite` directive defines a composite widget.
  */
-@Directive()
+
 export class Composite {
     /**
      * Class of the widget.

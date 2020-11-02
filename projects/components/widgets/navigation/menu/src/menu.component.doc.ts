@@ -1,10 +1,10 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * A menu displays grouped navigation actions. The drop-down menu is typically used inside the navigation header to display a list of related links on a mouse hover or click on the trigger element.
  */
 
-@Directive()
+
 export class Menu {
     /**
      * This property specifies the label of the menu. <br/>

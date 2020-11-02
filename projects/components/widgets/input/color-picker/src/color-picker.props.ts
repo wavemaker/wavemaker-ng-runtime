@@ -3,6 +3,7 @@ import { FormWidgetType } from '@wm/core';
 
 export const colorPickerProps = new Map(
     [
+        ['autoclose', {value: 'outsideClick', ...PROP_STRING}],
         ['class', PROP_STRING],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],

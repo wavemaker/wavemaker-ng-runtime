@@ -15,7 +15,8 @@ import {
     ConstantService,
     UtilsService,
     DynamicComponentRefProvider,
-    StatePersistence
+    StatePersistence,
+    Viewport
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
@@ -27,6 +28,7 @@ const injectorMap = {
     statePersistence: StatePersistence,
     SpinnerService: AbstractSpinnerService,
     StatePersistenceService: StatePersistence,
+    Viewport: Viewport,
     ToasterService: AbstractToasterService,
     Utils: UtilsService,
     CONSTANTS: ConstantService,
@@ -57,8 +59,6 @@ const getHttpDependency = function() {
     return $http;
 };
 
-const MINIMUM_TAB_WIDTH = 768;
-
 @Injectable()
 export class AppRef {
     Variables: any = {};
@@ -77,7 +77,6 @@ export class AppRef {
     isApplicationType: boolean;
     isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
-    screenType: any;
 
     appLocale: any;
 
@@ -107,14 +106,10 @@ export class AppRef {
         this.isApplicationType = wmProjectProperties.type === PROJECT_TYPE.APPLICATION;
         this.isTemplateBundleType = wmProjectProperties.type === PROJECT_TYPE.TEMPLATE_BUNDLE;
 
-        this.setScreenType();
-
         this.httpService.registerOnSessionTimeout(this.on401.bind(this));
 
         this.appLocale = this.i18nService.getAppLocale();
         this.httpService.setLocale(this.appLocale);
-
-        window.addEventListener('resize', this.setScreenType.bind(this));
     }
 
     public notify(eventName: string, ...data: Array<any>) {
@@ -160,7 +155,7 @@ export class AppRef {
     public notifyApp(template, type, title) {
         const notificationAction = _.get(this, 'Actions.appNotification');
         const EXCLUDE_NOTIFICATION_MESSAGES = ['PROCESS_REJECTED_IN_QUEUE'];
-        let skipDefaultNotification = EXCLUDE_NOTIFICATION_MESSAGES.indexOf(template) !== -1;
+        const skipDefaultNotification = EXCLUDE_NOTIFICATION_MESSAGES.indexOf(template) !== -1;
         if (notificationAction) {
             // do not notify the error to the app, just throw it in console
             if (skipDefaultNotification) {
@@ -178,26 +173,6 @@ export class AppRef {
             });
         } else {
             console.warn('The default Action "appNotification" doesn\'t exist in the app. App notified following error:\n', template);
-        }
-    }
-
-    private setScreenType() {
-        const $el = $('.wm-app');
-        const w = $el.width();
-        const h = $el.height();
-        this.screenType = {
-            isMobile: false,
-            isTabletProtrait: false,
-            isTabletLandscape: false
-        };
-        if (w >= MINIMUM_TAB_WIDTH && h >= MINIMUM_TAB_WIDTH) {
-            if (w > h) {
-                this.screenType.isTabletLandscape = true;
-            } else {
-                this.screenType.isTabletProtrait = true;
-            }
-        } else {
-            this.screenType.isMobile = true;
         }
     }
 }

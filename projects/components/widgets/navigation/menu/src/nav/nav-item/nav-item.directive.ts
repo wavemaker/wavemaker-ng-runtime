@@ -1,6 +1,6 @@
 import { ContentChild, Directive, HostListener, Injector, AfterViewInit } from '@angular/core';
 
-import { addClass } from '@wm/core';
+import { addClass, removeClass } from '@wm/core';
 import { APPLY_STYLES_TYPE, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { AnchorComponent } from '@wm/components/basic';
 
@@ -26,7 +26,9 @@ export class NavItemDirective extends StylableComponent implements AfterViewInit
     makeActive() {
         const parentNode = this.nativeElement.parentNode;
         $(parentNode as HTMLElement).find('> li.active').removeClass('active');
-        addClass(this.nativeElement, 'active');
+        if (this.isAttached) {
+            addClass(this.nativeElement, 'active');
+        }
     }
 
     constructor(inj: Injector) {
@@ -38,5 +40,10 @@ export class NavItemDirective extends StylableComponent implements AfterViewInit
         if (this.innerLink) {
             this.innerLink.onActive(() => this.makeActive());
         }
+    }
+
+    public ngOnDetach() {
+        removeClass(this.nativeElement, 'active', true);
+        super.ngOnDetach();
     }
 }

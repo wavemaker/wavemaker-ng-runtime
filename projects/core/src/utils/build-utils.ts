@@ -40,7 +40,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmColorPicker ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl}></div>`;
             break;
         case FormWidgetType.CURRENCY:
-            tmpl = `<div wmCurrency ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl}></div>`;
+            tmpl = `<div wmCurrency ${attrs.get('required')==='true' ? 'required=true' : ''} ${updateOnTmpl} ${innerTmpl}></div>`;
             break;
         case FormWidgetType.DATE:
             tmpl = `<div wmDate ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl}></div>`;

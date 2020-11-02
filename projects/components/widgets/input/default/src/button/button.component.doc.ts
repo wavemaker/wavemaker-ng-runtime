@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmButton component defines the button widget.
  */
-@Directive()
+
 export class Button {
     /**
      * This property specifies the value to be displayed along with the label of the button. <br>

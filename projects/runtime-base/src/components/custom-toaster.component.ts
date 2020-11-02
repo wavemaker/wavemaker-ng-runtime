@@ -70,5 +70,6 @@ export class CustomToasterComponent extends Toast implements AfterViewInit, OnDe
 
     ngOnDestroy() {
         _.forEach(this.watchers, watcher => watcher());
+        super.ngOnDestroy();
     }
 }

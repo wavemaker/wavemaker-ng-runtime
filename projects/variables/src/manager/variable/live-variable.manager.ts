@@ -3,6 +3,7 @@ import { $invokeWatchers, getClonedObject, isDateTimeType, isDefined, processFil
 import { BaseVariableManager } from './base-variable.manager';
 import {debounceVariableCall, formatExportExpression, initiateCallback, setInput, appManager, httpService, formatDate} from '../../util/variable/variables.utils';
 import { LiveVariableUtils } from '../../util/variable/live-variable.utils';
+import { decodeData } from './../../util/variable/variables.utils';
 import { $queue } from '../../util/inflight-queue';
 import { $rootScope, CONSTANTS, VARIABLE_CONSTANTS, DB_CONSTANTS } from '../../constants/variables.constants';
 import { AdvancedOptions } from '../../advanced-options';
@@ -222,7 +223,7 @@ export class LiveVariableManager extends BaseVariableManager {
                     this.handleError(variable, error, response.error, options, advancedOptions);
                     return Promise.reject(response.error);
                 }
-
+                decodeData(response.content);
                 LiveVariableUtils.processBlobColumns(response.content, variable);
 
                 if (!options.skipDataSetUpdate) {
@@ -909,7 +910,7 @@ export class LiveVariableManager extends BaseVariableManager {
 
                 const pagination = Object.assign({}, response);
                 delete pagination.content;
-
+                decodeData(data);
                 const result = {data: data, pagination};
                 triggerFn(success, result);
 

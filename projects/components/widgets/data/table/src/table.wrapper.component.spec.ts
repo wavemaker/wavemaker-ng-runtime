@@ -3,7 +3,7 @@ import { TestBed, async, ComponentFixture, fakeAsync, tick, discardPeriodicTasks
 import { Component, ViewChild } from "@angular/core";
 import { TrustAsPipe } from "../../../../base/src/pipes/trust-as.pipe";;
 import { FormBuilder } from "@angular/forms";
-import { App, AppDefaults, DynamicComponentRefProvider, AbstractI18nService } from "@wm/core";
+import { App, AppDefaults, DynamicComponentRefProvider, AbstractI18nService, Viewport } from "@wm/core";
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -27,14 +27,8 @@ import { DateComponent, TimeComponent } from '@wm/components/input/epoch';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
-import { compileTestComponent } from "projects/components/base/src/test/util/component-test-util";
-
-const mockApp = { 
-    subscribe: () => { },
-    getSelectedLocale: () => {
-        return 'en';
-    }
-};
+import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
+import { compileTestComponent, mockApp, mockViewport } from "projects/components/base/src/test/util/component-test-util";
 
 const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="quickedit"
                                 name="UserTable1" title="User List" navigation="Basic" isdynamictable="false">
@@ -401,12 +395,14 @@ let declarations = [
 
 let providers = [
     { provide: App, useValue: mockApp },
+    { provide: Viewport, useValue: mockViewport },
     { provide: AppDefaults, useClass: AppDefaults },
     { provide: FormBuilder, useClass: FormBuilder },
     { provide: DynamicComponentRefProvider, useValue: mockApp },
     { provide: DatePipe, useClass: DatePipe },
     { provide: AbstractI18nService, useValue: mockApp },
-    { provide: DecimalPipe, useClass: DecimalPipe }
+    { provide: DecimalPipe, useClass: DecimalPipe },
+    { provide: AbstractI18nService, useClass: MockAbstractI18nService }
 ]
 
 const testModuleDef: ITestModuleDef = {

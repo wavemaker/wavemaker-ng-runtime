@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmSearch component defines the search widget.
  */
-@Directive()
+
 export class Search {
     /**
      * Class of the widget.

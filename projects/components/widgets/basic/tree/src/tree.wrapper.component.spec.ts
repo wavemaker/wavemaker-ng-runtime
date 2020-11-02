@@ -21,7 +21,7 @@ const markup = `<div wmTree redrawable name="tree1" class="testClass" height="80
     template: markup
 })
 class TreeWrapperComponent {
-    @ViewChild(TreeDirective) wmComponent: TreeDirective;
+    @ViewChild(TreeDirective, /* TODO: add static flag */ {static: true}) wmComponent: TreeDirective;
 
     treenodeItem;
     treePath;

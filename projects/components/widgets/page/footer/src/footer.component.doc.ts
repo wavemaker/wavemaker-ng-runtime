@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The 'wmFooter' directive defines a footer in the layout.
  */
-@Directive()
+
 export class Footer {
     /**
      * Name of the footer widget.

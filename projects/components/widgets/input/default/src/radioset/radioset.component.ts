@@ -1,7 +1,7 @@
 import { Component, Injector } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { switchClass } from '@wm/core';
+import { setListClass } from '@wm/core';
 
 import { provideAsWidgetRef, styler, provideAs } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
@@ -9,7 +9,7 @@ import { registerProps } from './radioset.props';
 
 declare const $, _;
 
-const DEFAULT_CLS = 'app-radioset list-group';
+const DEFAULT_CLS = 'app-radioset list-group inline';
 const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
 
 @Component({
@@ -27,6 +27,8 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
 
     public layout = '';
     public disabled: boolean;
+    public itemsperrow: string;
+    private itemsPerRowClass: string;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
@@ -72,8 +74,8 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
         if (key === 'tabindex') {
             return;
         }
-        if (key === 'layout') {
-            switchClass(this.nativeElement, nv, ov);
+        if (key === 'itemsperrow') {
+            setListClass(this);
         } else {
             super.onPropertyChange(key, nv, ov);
         }

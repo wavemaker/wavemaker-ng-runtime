@@ -325,7 +325,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForCurrentMonthOryear();
             }
         });
-        $('.bs-datepicker-body').click((event) => {
+        $('.bs-datepicker-body, .bs-datepicker-action-buttons').click((event) => {
             event.stopPropagation();
             // check for original mouse click
             if (event.originalEvent) {

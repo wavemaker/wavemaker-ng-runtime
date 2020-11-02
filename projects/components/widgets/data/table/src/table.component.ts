@@ -1,6 +1,6 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import {StatePersistence} from '@wm/core';
+import { Viewport, StatePersistence } from '@wm/core';
 
 import { Observable, Subject } from 'rxjs';
 
@@ -24,7 +24,7 @@ import {
     extendProto,
     $invokeWatchers
 } from '@wm/core';
-import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData } from '@wm/components/base';
+import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 
 import { ListComponent } from '@wm/components/data/list';
@@ -76,7 +76,7 @@ const isInputBodyWrapper = target => {
 })
 export class TableComponent extends StylableComponent implements AfterContentInit, OnDestroy, ControlValueAccessor {
     static initializeProps = registerProps();
-    @ViewChild(PaginationComponent) dataNavigator;
+    @ViewChild(PaginationComponent, {static: true}) dataNavigator;
 
     @ViewChild('datagridElement', {static: true}) private _tableElement: ElementRef;
 
@@ -265,6 +265,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         messages: {
             selectField: 'Select Field'
         },
+        securityUtils: {
+            pipeTransform : {}
+        },
         onDataRender: () => {
             this.ngZone.run(() => {
                 if (this.gridData.length) {
@@ -288,7 +291,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
                 this.selectedItemChange.next(this.selectedItems);
                 const rowData = this.addRowIndex(row);
-                if (rowData.$index && this.getConfiguredState() !== 'none') {
+                if (rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator) {
                     const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
@@ -786,32 +789,22 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
         private statePersistence: StatePersistence,
+        private viewport: Viewport,
         @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('datasource.bind') public binddatasource,
         @Attribute('readonlygrid') public readonlygrid,
-        private ngZone: NgZone
+        private ngZone: NgZone,
+        private trustAsPipe: TrustAsPipe
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 
         this.ngform = fb.group({});
         this.addEventsToContext(this.context);
-
-        // Updates pagination, filter, sort etc options for service and crud variables
-        this.app.subscribe('check-state-persistence-options', options => {
-            if (this._pageLoad && this.getConfiguredState() !== 'none') {
-                this._pageLoad = false;
-                const widgetState = this.statePersistence.getWidgetState(this);
-                if (widgetState) {
-                    options = this.handleStateParams(widgetState, options);
-                }
-            }
-        });
-
-        // Show loading status based on the variable life cycle
-        this.app.subscribe('toggle-variable-state', options => {
-            if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(options.variable, this.datasource)) {
+        const listenersToRemove = [
+            // Updates pagination, filter, sort etc options for service and crud variables
+            this.app.subscribe('check-state-persistence-options', options => {
                 if (this._pageLoad && this.getConfiguredState() !== 'none') {
                     this._pageLoad = false;
                     const widgetState = this.statePersistence.getWidgetState(this);
@@ -819,19 +812,34 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                         options = this.handleStateParams(widgetState, options);
                     }
                 }
-                isDefined(this.variableInflight) ? this.debouncedHandleLoading(options) : this.handleLoading(options);
-            }
-        });
+            }),
 
-        this.app.subscribe('setup-cud-listener', param => {
-            if (this.name !== param) {
-                return;
-            }
-            this._isDependent = true;
-            this.selectedItemChange$
-                .pipe(debounceTime(250))
-                .subscribe(this.triggerWMEvent.bind(this));
-        });
+            // Show loading status based on the variable life cycle
+            this.app.subscribe('toggle-variable-state', options => {
+                if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(options.variable, this.datasource)) {
+                    if (this._pageLoad && this.getConfiguredState() !== 'none') {
+                        this._pageLoad = false;
+                        const widgetState = this.statePersistence.getWidgetState(this);
+                        if (widgetState) {
+                            options = this.handleStateParams(widgetState, options);
+                        }
+                    }
+                    isDefined(this.variableInflight) ? this.debouncedHandleLoading(options) : this.handleLoading(options);
+                }
+            }),
+
+            this.app.subscribe('setup-cud-listener', param => {
+                if (this.name !== param) {
+                    return;
+                }
+                this._isDependent = true;
+                this.selectedItemChange$
+                    .pipe(debounceTime(250))
+                    .subscribe(this.triggerWMEvent.bind(this));
+            })
+        ];
+
+        listenersToRemove.forEach( l => this.registerDestroyListener(l) );
 
         this.deleteoktext = this.appLocale.LABEL_OK;
         this.deletecanceltext = this.appLocale.LABEL_CANCEL;
@@ -952,6 +960,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.searchLabel = this.searchlabel;
         this.gridOptions.isMobile = isMobile();
         this.gridOptions.name = this.name;
+        this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
         if (!_.isEmpty(this.gridData)) {
@@ -1074,11 +1083,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         });
     }
 
-    showFieldBasedOnScreenType(field, screenType) {
+    showFieldBasedOnScreenType(field) {
         let showField;
-        if (isMobile() && screenType.isMobile) {
+        if (isMobile() && this.viewport.isMobileType) {
             showField = field.mobileDisplay;
-        } else if (screenType.isTabletProtrait || screenType.isTabletLandscape) {
+        } else if (this.viewport.isTabletType) {
             showField = field.tabletDisplay;
         } else {
             showField = field.pcDisplay;
@@ -1089,14 +1098,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     /* Check whether it is non-empty row. */
     isEmptyRecord(record) {
         const properties = Object.keys(record);
-        const screenType = this.app.screenType;
         let data,
             isDisplayed;
 
         return properties.every((prop, index) => {
             data = record[prop];
             /* If fieldDefs are missing, show all columns in data. */
-            isDisplayed = (this.fieldDefs.length && isDefined(this.fieldDefs[index]) && this.showFieldBasedOnScreenType(this.fieldDefs[index], screenType)) || true;
+            isDisplayed = (this.fieldDefs.length && isDefined(this.fieldDefs[index]) && this.showFieldBasedOnScreenType(this.fieldDefs[index])) || true;
             /*Validating only the displayed fields*/
             if (isDisplayed) {
                 return (data === null || data === undefined || data === '');
@@ -1624,12 +1632,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     registerColumns(tableColumn) {
-        const screenType = this.app.screenType;
-        if (isMobile() && screenType.isMobile) {
+        if (isMobile() && this.viewport.isMobileType) {
             if (!tableColumn.mobileDisplay) {
                 return;
             }
-        } else if (screenType.isTabletLandscape || screenType.isTabletProtrait) {
+        } else if (this.viewport.isTabletType) {
             if (!tableColumn.tabletDisplay) {
                 return;
             }
@@ -1824,5 +1831,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
     registerOnTouched(fn) {
         this._onTouched = fn;
+    }
+
+    ngOnDetach() {
+        super.ngOnDetach();
+        this._pageLoad = true;
     }
 }

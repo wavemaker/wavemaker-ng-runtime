@@ -49,6 +49,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     public isDestroyed: boolean;
 
+    public isAttached = false;
+
     /**
      * jQuery nativeElement reference of the component root
      */
@@ -153,6 +155,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     public widgetProps: Map<string, any>;
 
     private $attrs = new Map<string, string>();
+
+    private isMuted = false;
 
     protected constructor(
         protected inj: Injector,
@@ -414,6 +418,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             let boundFnVal;
             $invokeWatchers(true);
             try {
+                locals.$event = locals.$event || new window.CustomEvent(eventName);
                 // If the event is bound directly to the variable then we need to internally handle
                 // the promise returned by the variable call.
                 boundFnVal = boundFn();
@@ -456,7 +461,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 nv => this.widget[propName] = nv,
                 getWatchIdentifier(this.widgetId, propName),
                 propName === 'datasource',
-                this.widgetProps.get(propName)
+                this.widgetProps.get(propName),
+                () => this.isMuted
             )
         );
     }
@@ -602,6 +608,28 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     }
 
+    public mute() {
+        this.isMuted = true;
+    }
+
+    public unmute() {
+        this.isMuted = false;
+    }
+
+    /**
+     * After the host page is attached from cache, this function is called.
+     */
+    public ngOnAttach() {
+        this.isAttached = true;
+    }
+
+    /**
+     * Before the host page is detached from dom and stored in cache,  this function is called.
+     */
+    public ngOnDetach() {
+        this.isAttached = false;
+    }
+
     /**
      * nativeElement will be available by this time
      * if the delayInit is false, properties meta will be available by this time
@@ -623,6 +651,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             }
         }
         this.toBeSetupEventsQueue.length = 0;
+        this.isAttached = true;
     }
 
     ngAfterContentInit() {}
@@ -633,5 +662,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.styleChange.complete();
         this.propertyChange.complete();
         this.destroy.complete();
+        this.isAttached = false;
     }
 }

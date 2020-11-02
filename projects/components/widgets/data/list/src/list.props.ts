@@ -41,7 +41,7 @@ export const registerProps = () => {
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['showcount', PROP_BOOLEAN],
                 ['showrecordcount', PROP_BOOLEAN],
-                ['statehandler', {value: 'inherit', ...PROP_STRING}],
+                ['statehandler', {value: 'none', ...PROP_STRING}],
                 ['subheading', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', PROP_STRING]

@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmFileUpload component defines the file upload widget.
  */
-@Directive()
+
 export class FileUpload {
     /**
      * Caption/Label for the fileupload widget. <br>

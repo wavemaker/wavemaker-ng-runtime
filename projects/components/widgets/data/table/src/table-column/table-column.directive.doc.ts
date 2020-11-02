@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmTableColumn component defines the table column widget.
  */
-@Directive()
+
 export class TableColumn {
     /**
      * CSS class for styling the column.

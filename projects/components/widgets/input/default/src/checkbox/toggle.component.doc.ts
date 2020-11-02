@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmToggle component defines the toggle widget.
  */
-@Directive()
+
 export class Toggle {
     /**
      * Class of the widget.

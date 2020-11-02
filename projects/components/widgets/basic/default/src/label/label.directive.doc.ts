@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The `wmLabel` directive defines the label widget.
  */
-@Directive()
+
 export class Label {
 
     /**

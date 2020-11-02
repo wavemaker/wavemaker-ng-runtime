@@ -111,6 +111,11 @@ export class MockAbstractI18nService {
     public getSelectedLocale() {
         return 'en';
     }
+
+    public getLocalizedMessage(val) {
+        return val;
+    }
+
 }
 
 export class MockAbstractI18nServiceDe {
@@ -121,5 +126,9 @@ export class MockAbstractI18nServiceDe {
     }
     public getSelectedLocale() {
         return 'de';
+    }
+
+    public getLocalizedMessage(val) {
+        return val;
     }
 }

@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmTile directive defines the tile widget.
  */
-@Directive()
+
 export class Tile {
 
     /**

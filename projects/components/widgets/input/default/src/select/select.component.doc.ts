@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmSelect component defines the select widget.
  */
-@Directive()
+
 export class Select {
     /**
      * This property makes the element get focused automatically when the page loads.

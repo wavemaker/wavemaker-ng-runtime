@@ -1,9 +1,9 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmCheckbox component defines the checkbox widget.
  */
-@Directive()
+
 export class Checkbox {
     /**
      * Caption / label for the checkbox. <br>

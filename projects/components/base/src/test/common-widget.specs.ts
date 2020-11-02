@@ -162,8 +162,9 @@ export class ComponentTestBase {
             });
 
             // check for hint property
-            it('"hint" property change should be reflected', async(() => {
+            it('"hint" property change should be reflected', done => {
                 if (!widgetProps.get('hint')) {
+                    done();
                     return;
                 }
                 expect($element.getAttribute('title')).toBe(component.getWidget().hint);
@@ -171,12 +172,14 @@ export class ComponentTestBase {
                 fixture.detectChanges();
                 setTimeout(() => {
                     expect($element.getAttribute('title')).toBe(component.getWidget().hint);
+                    done();
                 }, 200);
-            }));
+            });
 
             // check for placeholder property
-            it('"placeholder" property change should be reflected', () => {
+            it('"placeholder" property change should be reflected', done => {
                 if (!widgetProps.get('placeholder')) {
+                    done();
                     return;
                 }
                 expect($inputEl.getAttribute('placeholder')).toBe(component.getWidget().placeholder);
@@ -184,6 +187,7 @@ export class ComponentTestBase {
                 fixture.detectChanges();
                 setTimeout(() => {
                     expect($inputEl.getAttribute('placeholder')).toBe(component.getWidget().placeholder);
+                    done();
                 }, 200);
             });
 

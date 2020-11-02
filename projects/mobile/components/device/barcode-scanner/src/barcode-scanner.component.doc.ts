@@ -1,10 +1,10 @@
-import { Input, Directive } from '@angular/core';
+import { Input } from '@angular/core';
 
 /**
  * The wmBarcodescanner component defines the barcode-scanner widget.
  */
 
-@Directive()
+
 export class Barcodescanner {
     /**
      * Format of bar code to scan. <br>

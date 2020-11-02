@@ -423,7 +423,7 @@ describe('SearchComponent', () => {
         });
     }));
 
-    it('should clear the input value when clearText method is triggered', async(() => {
+    it('should clear the input value when clearText method is triggered', done => {
         const testValue = 'test';
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
             const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
@@ -431,9 +431,10 @@ describe('SearchComponent', () => {
             fixture.detectChanges();
             setTimeout(()=>{
                 expect(input.value).toBe('');
+                done();
             });
         });
-    }));
+    });
 
     xit('should invoke getTransformedData method ', async(() => {
         const testValue = 'te';

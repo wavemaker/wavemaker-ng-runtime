@@ -27,6 +27,7 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
     public badgevalue: string;
     public smoothscroll: any;
     private $lazyLoad = noop;
+    private isdynamic: boolean;
 
     public name: string;
 
@@ -77,6 +78,17 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
         this.notifyParent(false, evt);
     }
 
+    public remove() {
+        const paneIndex = (this as any).accordionRef.getPaneIndexByRef(this);
+        if (this.isActive && this.accordionRef.panes.length > 1) {
+            this === this.accordionRef.panes.last ? this.accordionRef.panes.toArray()[paneIndex - 1].expand() : this.accordionRef.panes.toArray()[paneIndex + 1].expand();
+        }
+        const availablePanes = this.accordionRef.panes.toArray();
+        availablePanes.splice((this as any).accordionRef.getPaneIndexByRef(this), 1);
+        this.accordionRef.panes.reset([...availablePanes]);
+        this.nativeElement.remove();
+    }
+
     public toggle(evt: Event) {
         if (this.isActive) {
             this.collapse(evt);
@@ -115,5 +127,8 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
             this,
             APPLY_STYLES_TYPE.INNER_SHELL
         );
+        if (this.isdynamic) {
+            this.accordionRef.registerDynamicPane(this);
+        }
     }
 }
