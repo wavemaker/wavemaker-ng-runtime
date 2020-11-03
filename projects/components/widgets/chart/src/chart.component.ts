@@ -763,6 +763,11 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         chart = initChart(this, xDomainValues, yDomainValues, null, !this.binddataset);
 
         if (_.isArray(this._processedData)) {
+            // WMS-19499:  To remove chart X-axis old ticks when chart data loaded dynamically.
+            const oldgTicks =  $('#wmChart' + this.$id + ' svg').find('g.nv-x').find('g.tick');
+            if (oldgTicks && oldgTicks.length) {
+                oldgTicks.remove();
+            }
             beforeRenderVal = this.invokeEventCallback('beforerender', { 'chartInstance' : chart});
             if (beforeRenderVal) {
                 chart = beforeRenderVal;
