@@ -303,7 +303,8 @@ export class CrudVariableManager extends ServiceVariableManager {
     public invoke(variable, options, success, error) {
         options = options || {};
         appManager.notify('check-state-persistence-options', {
-            options: options
+            options: options,
+            variable: variable
         });
         options.operation = options.operation || 'list';
         options.inputFields = options.inputFields || getClonedObject(variable.dataBinding[options.operation]);
