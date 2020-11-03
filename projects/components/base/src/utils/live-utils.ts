@@ -15,23 +15,23 @@ export const EDIT_MODE = {
 };
 
 // Method to set the header config of the data table
-export const setHeaderConfig = (headerConfig, config, field, index?: number): void => {
+export const setHeaderConfig = (headerConfig, config, field): void => {
     _.forEach(headerConfig, cols => {
-        if (_.get(cols, 'isGroup')) {
+        if (cols.isGroup) {
             if (cols.field === field) {
-                cols.columns[index] = config;
+                cols.columns.push(config);
             } else {
-                setHeaderConfig(cols.columns, config, field, index);
+                setHeaderConfig(cols.columns, config, field);
             }
         }
     });
 };
 
-export const setHeaderConfigForTable = (headerConfig: any, config: any, fieldName: string, index?: number): void => {
+export const setHeaderConfigForTable = (headerConfig, config, fieldName): void => {
     if (fieldName) {
-        setHeaderConfig(headerConfig, config, fieldName, index);
+        setHeaderConfig(headerConfig, config, fieldName);
     } else {
-        headerConfig[index] = config;
+        headerConfig.push(config);
     }
 };
 

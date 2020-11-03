@@ -56,10 +56,6 @@ export class TableColumnGroupDirective extends BaseComponent implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.populateConfig();
-        // when group is inside another group (i.e. sub-level column-group) then consider the col index and not header index.
-        const headerIndex = parseInt(this.getAttr('headerIndex'), 10);
-        const colIndex = parseInt(this.getAttr('index'), 10);
-        const fieldName = this.group && this.group.name;
-        setHeaderConfigForTable(this.table.headerConfig, this.config, fieldName, fieldName ? colIndex : headerIndex);
+        setHeaderConfigForTable(this.table.headerConfig, this.config, this.group && this.group.name);
     }
 }

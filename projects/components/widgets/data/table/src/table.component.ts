@@ -920,18 +920,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
     }
 
-    // removes empty values in headerConfig array.
-    filterEmptyValues(item) {
-        if (item.columns) {
-            item.columns = item.columns.filter(this.filterEmptyValues.bind(this));
-        }
-        return item !== undefined;
-    }
-
     ngAfterContentInit() {
         super.ngAfterContentInit();
-        this.headerConfig = this.headerConfig.filter(this.filterEmptyValues.bind(this));
-        _.remove(this.fieldDefs, f => f === undefined);
         const runModeInitialProperties = {
             showrowindex: 'showRowIndex',
             multiselect: 'multiselect',
@@ -1658,8 +1648,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (tableColumn['primary-key']) {
             this.primaryKey.push(tableColumn.field);
         }
-        this.fieldDefs[colIndex] = tableColumn;
-        const colCount = this.fieldDefs.length;
+        const colCount = this.fieldDefs.push(tableColumn);
         this.fullFieldDefs.push(tableColumn);
         this.rowFilter[tableColumn.field] = {
             value: undefined
