@@ -760,7 +760,6 @@ xdescribe("DataTable", () => {
                 it('should trigger default required validator', async(() => {
                     const invalidTestValue = '';
                     const validTestValue = 'test';
-                    // setTimeout(()=>{
                         defaultValidators(
                             false,
                             VALIDATOR.REQUIRED,
@@ -772,8 +771,6 @@ xdescribe("DataTable", () => {
                             invalidTestValue,
                             validTestValue
                         );
-                        // done();
-                    // }, 200);
                 }));
 
                 it('should trigger default regexp validator', async(() => {
