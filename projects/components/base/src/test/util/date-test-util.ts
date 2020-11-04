@@ -132,3 +132,17 @@ export class MockAbstractI18nServiceDe {
         return val;
     }
 }
+
+export class MockAbstractI18nServiceRO {
+    constructor(bsLocaleService) {
+        defineLocale('ro', deLocale);
+        bsLocaleService.use('ro');
+    }
+    public getSelectedLocale() {
+        return 'ro';
+    }
+
+    public getLocalizedMessage(val) {
+        return val;
+    }
+}

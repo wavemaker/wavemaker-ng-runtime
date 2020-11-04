@@ -33,6 +33,7 @@ import { ToDatePipe } from '../../../../../base/src/pipes/custom-pipes';
 import { DatePipe, registerLocaleData } from '@angular/common';
 import { WmComponentsModule } from '@wm/components/base';
 import localeDE from '@angular/common/locales/de';
+import localeRO from '@angular/common/locales/ro';
 
 declare const moment;
 
@@ -44,6 +45,15 @@ class MockAbstractI18nServiceDe {
     }
     public getSelectedLocale() {
         return 'de';
+    }
+}
+
+class MockAbstractI18nServiceRO {
+    constructor() {
+        moment.defineLocale('ro', deLocale);
+    }
+    public getSelectedLocale() {
+        return 'ro';
     }
 }
 
@@ -438,14 +448,48 @@ describe('TimeComponent with localization', () => {
     }));
 
     it('should update the datavalue without error when we type "de" format time in inputbox with "12H" format', async(() => {
-        const time = '03:15:00 nachm.', timepattern = 'hh:mm:ss a', input =  getHtmlSelectorElement(fixture, '.app-textbox');
+        const  timepattern = 'hh:mm:ss a', input =  getHtmlSelectorElement(fixture, '.app-textbox');
         wmComponent.getWidget().timepattern = timepattern;
-        localizedValueOnInputTest(fixture, '03:15:00 nachm.', wmComponent);
+        localizedValueOnInputTest(fixture, '03:15:00 AM', wmComponent);
     }));
 
     it('should update the datavalue without error when we type "de" format time in inputbox with "24H" format', async(() => {
         const time = '15:15:00', timepattern = 'HH:mm:ss';
         wmComponent.getWidget().timepattern = timepattern;
         localizedValueOnInputTest(fixture, '15:15:00', wmComponent);
+    }));
+});
+
+const dateComponentROLocaleModuleDef: ITestModuleDef = {
+    declarations: [TimeWrapperComponent, TimeComponent],
+    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    providers: [
+        { provide: LOCALE_ID, useValue: 'ro' },
+        { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
+        { provide: AppDefaults, useValue: AppDefaults },
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AbstractI18nService, useClass: MockAbstractI18nServiceRO }
+    ]
+};
+
+describe('TimeComponent with ro (Romania) localization', () => {
+    let timeWrapperComponent: TimeWrapperComponent;
+    let wmComponent: TimeComponent;
+    let fixture: ComponentFixture<TimeWrapperComponent>;
+
+    beforeEach((async () => {
+        // register the selected locale language
+        registerLocaleData(localeRO);
+        fixture = compileTestComponent(dateComponentROLocaleModuleDef, TimeWrapperComponent);
+        timeWrapperComponent = fixture.componentInstance;
+        wmComponent = timeWrapperComponent.wmComponent;
+        fixture.detectChanges();
+    }));
+
+    it('should update the datavalue without error when we type "ro" format time in inputbox with "12H" format', async(() => {
+        const  timepattern = 'hh:mm:ss a';
+        wmComponent.getWidget().timepattern = timepattern;
+        localizedValueOnInputTest(fixture, '03:15:00 a.m.', wmComponent);
     }));
 });
