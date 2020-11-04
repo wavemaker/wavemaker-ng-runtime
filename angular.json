@@ -33,7 +33,7 @@
               },
               {
                 "glob": "**/*",
-                "input": "node_modules/wm/locales/",
+                "input": "node_modules/@wavemaker/app-ng-runtime/locales/",
                 "output": "/locales/"
               }
             ],

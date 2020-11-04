@@ -18,6 +18,10 @@ while [ "$1" != "" ]; do
             dev=false
             publish=true
         ;;
+        --use-npm)
+            shift
+            useNpm=$1
+        ;;
     esac
     shift
 done
@@ -64,7 +68,8 @@ cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.js
 cp ./wm.package.json libraries/package.json
 
 if [[ "${publish}" == true ]]; then
-    node bundle-runtime-cli.js -v "${version}" --useS3=${useS3} --updateWmVersion
+    # node bundle-runtime-cli.js -v "${version}" --useS3=${useS3} --updateWmVersion
+    node bundle-runtime-cli.js -v "${version}" --useNpm=${useNpm} --updateWmVersion
 fi
 mkdir -p dist/npm-packages/wm
 cp -r libraries/. dist/npm-packages/wm
