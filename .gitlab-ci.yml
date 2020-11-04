@@ -1,0 +1,14 @@
+image: node:latest
+stages:
+   - build
+   - test
+
+install_dependencies:
+  stage: build
+  script:
+    - npm install
+    
+test:
+  stage: test
+  script:
+    - ng test
