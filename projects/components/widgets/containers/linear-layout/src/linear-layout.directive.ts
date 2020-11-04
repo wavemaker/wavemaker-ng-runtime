@@ -57,15 +57,24 @@ export class LinearLayoutDirective extends BaseContainerComponent {
         $el.css('flex-direction', v);
     }
 
+    protected onStyleChange(key: string, nv: any, ov?: any) {
+        if (key === 'horizontalalign') {
+            this.$element.css('justify-content', hAlignValues[nv]);
+        } else if (key === 'verticalalign') {
+            this.$element.css('justify-content', vAlignValues[nv]);
+        }
+        super.onStyleChange(key, nv, ov);
+    }
+
     onPropertyChange(key: string, nv: any, ov?: any) {
         switch (key) {
-            case 'direction': 
+            case 'direction':
                 this.changeDirection(this.$element, nv);
             break;
-            case 'horizontalalign': 
-                this.$element.css('justify-content', hAlignValues[nv]); 
+            case 'horizontalalign':
+                this.$element.css('justify-content', hAlignValues[nv]);
             break;
-            case 'verticalalign': 
+            case 'verticalalign':
                 this.$element.css('justify-content', vAlignValues[nv]);
             break;
             case 'spacing':
