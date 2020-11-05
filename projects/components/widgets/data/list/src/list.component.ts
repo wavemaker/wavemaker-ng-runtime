@@ -237,6 +237,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         // Updates pagination, filter, sort etc options for service and crud variables
         this._listenerDestroyers = [
             this.app.subscribe('check-state-persistence-options', options => {
+                if (_.get(options, 'variable.name') !== _.get(this.datasource, 'name')) {
+                    return;
+                }
                 this.handleStateParams(options);
             }),
             // Show loading status based on the variable life cycle

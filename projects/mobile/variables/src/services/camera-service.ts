@@ -75,7 +75,9 @@ class CaptureVideoOperation implements IDeviceVariableOperation {
         return this.mediaCapture.captureVideo({
             limit : 1
         }).then( data => {
-            return {videoPath: data[0].fullPath};
+            let path = data[0].fullPath;
+            path = (path.startsWith('file://') ? '' : 'file://') + path;
+            return {videoPath: path};
         });
     }
 }

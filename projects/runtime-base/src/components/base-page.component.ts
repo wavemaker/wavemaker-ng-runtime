@@ -369,4 +369,11 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         _.each(this.Widgets, w => w.ngOnDetach && w.ngOnDetach());
         this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
     }
+
+    static clear() {
+        if(BasePageComponent.lastPageSnapShot) {
+            BasePageComponent.lastPageSnapShot.remove();
+            BasePageComponent.lastPageSnapShot = null;
+        }
+    }
 }

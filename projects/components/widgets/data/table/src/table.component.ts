@@ -805,6 +805,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         const listenersToRemove = [
             // Updates pagination, filter, sort etc options for service and crud variables
             this.app.subscribe('check-state-persistence-options', options => {
+                if (_.get(options, 'variable.name') !== _.get(this.datasource, 'name')) {
+                    return;
+                }
                 if (this._pageLoad && this.getConfiguredState() !== 'none') {
                     this._pageLoad = false;
                     const widgetState = this.statePersistence.getWidgetState(this);

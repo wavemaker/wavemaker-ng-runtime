@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 import { AbstractSpinnerService, App, noop} from '@wm/core';
 import { MetadataService } from '@wm/variables';
 import { SecurityService } from '@wm/security';
-import { AppManagerService, ComponentRefProvider, ComponentType } from '@wm/runtime/base';
+import { AppManagerService, BasePageComponent, ComponentRefProvider, ComponentType } from '@wm/runtime/base';
 
 @Component({
     selector: 'app-page-outlet',
@@ -63,6 +63,8 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
                     const componentRef = this.vcRef.createComponent(pageComponentFactoryRef, 0, this.injector);
                     this.instance = componentRef.instance;
                     $target.appendChild(componentRef.location.nativeElement);
+                } else {
+                    BasePageComponent.clear();
                 }
                 if (this.vcRef.length > 1) {
                     this.vcRef.remove(1);

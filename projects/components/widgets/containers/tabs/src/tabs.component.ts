@@ -194,6 +194,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         if (!this.isPageLoadCall && mode && mode.toLowerCase() !== 'none') {
             this.statePersistence.setWidgetState(this, this.activeTab.name);
         } else {
+            this.defaultpaneindex = this.getPaneIndexByRef(paneRef);
             this.isPageLoadCall = false;
         }
 

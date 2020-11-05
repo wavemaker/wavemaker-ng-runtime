@@ -83,6 +83,7 @@ export class CameraComponent extends StylableComponent {
     }
 
     private updateModel($event, value) {
+        value = (value.startsWith('file://') ? '' : 'file://') + value;
         this.localFilePath = this.datavalue = value;
         convertToBlob(value)
             .then(result => {
