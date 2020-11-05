@@ -12,6 +12,9 @@ const argv = require("yargs")
     "useNpm": {
         type: "boolean"
     },
+    "isProd": {
+        type: "boolean"
+    },
     "version": {
         alias: "v",
         type: "string"
@@ -27,7 +30,7 @@ const generateNpmVersion = (version) => {
     let npmVer = '';
     splits.forEach((v, i) => {
         if (i === 3) {
-            npmVer += '-rc.';
+            npmVer += `-${(argv.isProd?'rc':'next')}.`;
         } else if (i > 0) {
             npmVer += '.';
         }
