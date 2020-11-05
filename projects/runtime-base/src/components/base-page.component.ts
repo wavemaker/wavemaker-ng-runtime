@@ -351,13 +351,13 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.restoreLastPageSnapshot();
         this.unmute();
         if(this.pageDirective && this.pageDirective.refreshdataonattach) {
-            const refresh = v => { v.startUpdate && v.invoke && v.invoke(); };
+            const refresh = v => { v && v.startUpdate && v.invoke && v.invoke(); };
             _.each(this.Variables, refresh);
             _.each(this.Actions, refresh);
         }
         this.runPageTransition().then(() => {
             setTimeout(() => this.restoreScrollPosition(), 100);
-            _.each(this.Widgets, w => w.ngOnAttach && w.ngOnAttach());
+            _.each(this.Widgets, w => w && w.ngOnAttach && w.ngOnAttach());
             this.appManager.notify('pageAttach', {'name' : this.pageName, instance: this});
         });
     }
@@ -366,7 +366,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.saveScrollPosition();
         this.savePageSnapShot();
         this.mute();
-        _.each(this.Widgets, w => w.ngOnDetach && w.ngOnDetach());
+        _.each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
         this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
     }
 
