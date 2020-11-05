@@ -813,6 +813,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (widgetState) {
                         options = this.handleStateParams(widgetState, options);
+                    }  else {
+                        this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
                     }
                 }
             }),
@@ -825,6 +827,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                         const widgetState = this.statePersistence.getWidgetState(this);
                         if (widgetState) {
                             options = this.handleStateParams(widgetState, options);
+                        } else {
+                            this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
                         }
                     }
                     isDefined(this.variableInflight) ? this.debouncedHandleLoading(options) : this.handleLoading(options);
@@ -992,6 +996,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.gridOptions[value] = (this[key] === 'true' || this[key] === true);
             }
         });
+        if (this.statehandler !== 'none') {
+            this.gridOptions['selectFirstRow'] = false;
+        }
 
         this.renderOperationColumns();
         this.gridOptions.colDefs = this.fieldDefs;
@@ -1439,11 +1446,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     watchVariableDataSet(newVal) {
         let result;
+        //State handling for static variables
         if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
             if (_.get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = true;
+            } else {
+                this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
             }
             if (_.get(widgetState, 'search')) {
                 this.searchStateHandler(widgetState);

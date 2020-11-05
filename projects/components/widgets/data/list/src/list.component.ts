@@ -773,7 +773,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.firstSelectedItem = this.lastSelectedItem = null;
 
         // don't select first item if multi-select is enabled and at least item is already selected in the list.
-        if (listItems.length && this.selectfirstitem && !( this._items.length && this.multiselect)) {
+        // don't select first item if state information has selected items
+        if (listItems.length && this.selectfirstitem && !( this._items.length && this.multiselect) && this._selectedItemsExist !== false) {
             const $firstItem: ListItemDirective = listItems.first;
 
             if (
