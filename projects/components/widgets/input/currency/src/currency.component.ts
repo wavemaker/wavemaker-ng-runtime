@@ -2,7 +2,7 @@ import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import {  DecimalPipe } from '@angular/common';
 
-import { CURRENCY_INFO, AbstractI18nService } from '@wm/core';
+import { CURRENCY_INFO, AbstractI18nService, AppDefaults } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe } from '@wm/components/base';
 import { NumberLocale } from '@wm/components/input';
 
@@ -40,13 +40,14 @@ export class CurrencyComponent extends NumberLocale {
     @ViewChild(NgModel, {static: true}) ngModel: NgModel;
     @ViewChild('input', { static: true, read: ElementRef }) inputEl: ElementRef;
 
-    constructor(inj: Injector, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe) {
+    constructor(inj: Injector,  private appDefaults: AppDefaults, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe) {
         super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe);
+        this.currencySymbol = CURRENCY_INFO[this.appDefaults.currencyCode || 'USD'].symbol;
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'currency') {
-            this.currencySymbol = CURRENCY_INFO[this.currency || 'USD'].symbol;
+            this.currencySymbol = CURRENCY_INFO[this.currency || this.appDefaults.currencyCode].symbol;
         } else {
             super.onPropertyChange(key, nv, ov);
         }

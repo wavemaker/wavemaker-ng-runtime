@@ -13,14 +13,17 @@ export class AppDefaultsService implements AppDefaults {
     dateFormat: string;
     timeFormat: string;
     dateTimeFormat: string;
+    currencyCode: string;
 
     setFormats(formats: any) {
         const dateFormat = formats.date;
         const timeFormat = formats.time;
         const dateTimeFormat = (dateFormat && timeFormat) ? dateFormat + ' ' + timeFormat : undefined;
+        const currency = formats.currency;
 
         this.dateFormat = dateFormat;
         this.timeFormat = timeFormat;
         this.dateTimeFormat = dateTimeFormat;
+        this.currencyCode = currency;
     }
 }

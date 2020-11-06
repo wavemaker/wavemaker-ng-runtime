@@ -198,6 +198,7 @@ export abstract class AppDefaults {
     public dateFormat;
     public timeFormat;
     public dateTimeFormat;
+    public currencyCode;
     public abstract setFormats(formats: any);
 }
 

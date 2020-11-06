@@ -4,7 +4,7 @@ import { FormWidgetType } from '@wm/core';
 export const currencyProps = new Map(
     [
         ['class', PROP_STRING],
-        ['currency', {value: 'USD', ...PROP_STRING}],
+        ['currency', PROP_STRING],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
