@@ -4,6 +4,7 @@ export * from './services/prefab-manager.service';
 export * from './components/base-page.component';
 export * from './components/base-partial.component';
 export * from './components/base-prefab.component';
+export * from './runtime-base.module';
 export {
     InitializeApp,
     setAngularLocale,

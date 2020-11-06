@@ -1,6 +1,6 @@
 import { Attribute, Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
-import { toBoolean } from '@wm/core';
+import { App, toBoolean } from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -21,9 +21,16 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
     @ViewChild('dialogTemplate', { static: true }) dialogTemplate: TemplateRef<any>;
     @ContentChild(TemplateRef) dialogContent: TemplateRef<any>;
+    @ContentChild('partial') partialRef;
+
+    protected app;
+    protected Widgets;
+    protected Variables;
+    protected Actions;
 
     constructor(
         inj: Injector,
+        app: App,
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
         @Attribute('closable') closable: string | boolean
@@ -48,6 +55,7 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
                 keyboard: !toBoolean(modal)
             }
         );
+        this.app = app;
     }
 
     protected getTemplateRef(): TemplateRef<any> {
@@ -66,5 +74,25 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.register(this.viewParent);
+    }
+
+    private setPartialLoadListener() {
+        const cancelSubscription = this.app.subscribe('partialLoaded', () => {
+            const parEle = this.partialRef.nativeElement;
+            let partialScope;
+            if (parEle) {
+                partialScope  = parEle.widget;
+                this.Widgets   = partialScope.Widgets;
+                this.Variables = partialScope.Variables;
+                this.Actions   = partialScope.Actions;
+            }
+            cancelSubscription();
+        });
+    }
+
+    public open(initState?: any) {
+        super.open(initState);
+        // WMS-19410 - Set the partial load listener to access widgets, variables and actions of page dialog
+        this.setPartialLoadListener();
     }
 }

@@ -334,7 +334,7 @@ export class LiveFormDirective {
         this.form.resetFormState();
         prevDataValues = this.getPrevDataValues();
         this.form.formFields.forEach(field => {
-            if (field.type === DataType.BLOB) {
+            if (field.type === DataType.BLOB || field.widgettype === 'upload') {
                 this.form.resetFileUploadWidget(field, true);
                 field.href = this.getBlobURL(prevDataValues, field.key, field.value);
             }

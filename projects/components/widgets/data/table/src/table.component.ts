@@ -664,7 +664,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.isLoading = val === 'loading';
         },
         noChangesDetected: () => {
-            this.toggleMessage(true, 'info', 'No Changes Detected');
+            this.toggleMessage(true, 'info', 'No Changes Detected', '');
         },
         // Function to redraw the widgets on resize of columns
         redrawWidgets: () => {
@@ -984,7 +984,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.gridOptions.data = getClonedObject(this.gridData);
         }
         this.gridOptions.messages = {
-            'selectField': 'Select Field'
+            'selectField': this.appLocale.MESSAGE_SELECT_FIELD
         };
         this.datagridElement = $(this._tableElement.nativeElement);
 
@@ -1615,6 +1615,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 } else {
                     this.invokeEventCallback('hide');
                 }
+                break;
             default:
                 super.onPropertyChange(key, nv, ov);
         }

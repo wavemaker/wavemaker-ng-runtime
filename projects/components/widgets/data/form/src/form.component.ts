@@ -774,6 +774,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this.resetFormState();
         this.formFields.forEach(field => {
             field.value = '';
+            if (field.widgettype === 'upload' || field.type === DataType.BLOB) {
+                this.resetFileUploadWidget(field, true);
+            }
         });
         this.constructDataObject();
         this.clearMessage();
