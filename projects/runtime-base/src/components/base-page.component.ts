@@ -350,6 +350,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.activePageName = this.pageName;
         this.restoreLastPageSnapshot();
         this.unmute();
+        // expose current page widgets on app
+        (this.App as any).Widgets = Object.create(this.Widgets);
         if(this.pageDirective && this.pageDirective.refreshdataonattach) {
             const refresh = v => { v && v.startUpdate && v.invoke && v.invoke(); };
             _.each(this.Variables, refresh);
