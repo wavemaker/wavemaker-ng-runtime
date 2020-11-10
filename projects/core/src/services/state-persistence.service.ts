@@ -78,7 +78,10 @@ export class StatePersistence {
         if (!mode) {
             return;
         }
-        const parsedStateInfo = this.getStateInformation(mode);
+        let parsedStateInfo = this.getStateInformation(mode);
+        if (parsedStateInfo && widget  && widget.getAppInstance().activePageName && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
+            parsedStateInfo = parsedStateInfo[widget.getAppInstance().activePageName];
+        }
         if (_.get(parsedStateInfo, this.WIDGET_STATE_KEY)) {
             const stateKey = this.getNestedPath(widget.viewParent, widget.getWidget().name);
             return parsedStateInfo[this.WIDGET_STATE_KEY][stateKey];
@@ -109,7 +112,7 @@ export class StatePersistence {
         if (!mode) {
             return;
         }
-        this.setStateParams(this.WIDGET_STATE_KEY, stateKey, value, mode);
+        this.setStateParams(this.WIDGET_STATE_KEY, stateKey, value, mode, widget);
     }
 
     /**
@@ -126,7 +129,7 @@ export class StatePersistence {
             return;
         }
         const stateKey = this.getNestedPath(widget.viewParent, widget.getWidget().name);
-        this.removeStateParam(this.WIDGET_STATE_KEY, stateKey, key, mode);
+        this.removeStateParam(this.WIDGET_STATE_KEY, stateKey, key, mode, widget);
     }
 
     /**
@@ -230,9 +233,14 @@ export class StatePersistence {
      * @param mode : optional parameter if the widget/variable uses a state handling mode(url, local storage, session storage)
      * other than the project level mode
      */
-    public setStateParams(stateParam: string, key: string, val: any, mode?) {
-        let url = '';
-        let parsedObj = this.getStateInformation(mode);
+    public setStateParams(stateParam: string, key: string, val: any, mode?, widget?) {
+        let url = '', parsedObj;
+        const stateObj = this.getStateInformation(mode);
+        if (widget && stateObj && widget.getAppInstance().activePageName && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
+            parsedObj = stateObj[widget.getAppInstance().activePageName];
+        } else {
+            parsedObj = _.clone(stateObj);
+        }
         if (stateParam) {
             if (parsedObj && !parsedObj[stateParam]) {
                 parsedObj[stateParam] = {};
@@ -258,6 +266,17 @@ export class StatePersistence {
                 parsedObj[key] = val;
             }
         }
+        // for Local and Session Storage, wrap state object inside page name so that widget name conflicts don't arise between pages.
+        if (widget && widget.getAppInstance().activePageName && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
+            if (stateObj) {
+                stateObj[widget.getAppInstance().activePageName] = parsedObj;
+                parsedObj = stateObj;
+            } else {
+                parsedObj = {[widget.getAppInstance().activePageName]: parsedObj};
+            }
+
+        }
+
 
         let decodedURI = decodeURIComponent(window.location.href);
         if (decodedURI.indexOf('?') < 0) {
@@ -323,9 +342,14 @@ export class StatePersistence {
      * @param mode : optional parameter if the widget/variable uses a state handling mode(url, local storage, session storage)
      * other than the project level mode
      */
-    public removeStateParam(stateParam, key, subParam?, mode?) {
-        let url = '';
-        const parsedObj = this.getStateInformation(mode);
+    public removeStateParam(stateParam, key, subParam?, mode?, widget?) {
+        let url = '', parsedObj;
+        const stateObj = this.getStateInformation(mode);
+        if (widget && stateObj && widget.getAppInstance().activePageName && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
+            parsedObj = stateObj[widget.getAppInstance().activePageName];
+        } else {
+            parsedObj = _.clone(stateObj);
+        }
         if (!_.get(parsedObj, [stateParam]) && !_.get(parsedObj, key)) {
             return;
         }
@@ -345,6 +369,16 @@ export class StatePersistence {
             delete parsedObj[key];
         }
 
+        // for Local and Session Storage, wrap state object inside page name so that widget name conflicts don't arise between pages.
+        if (widget && widget.getAppInstance().activePageName && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
+            if (stateObj) {
+                stateObj[widget.getAppInstance().activePageName] = parsedObj;
+                parsedObj = stateObj;
+            } else {
+                parsedObj = {[widget.getAppInstance().activePageName]: parsedObj};
+            }
+
+        }
         if (mode.toLowerCase() === 'localstorage') {
             localStorage.setItem(window.location.pathname.replace(/\//g, '') + '_wm_state', JSON.stringify(parsedObj));
             return;
