@@ -3,8 +3,8 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { PopoverDirective } from 'ngx-bootstrap/popover';
 
-import { addClass, App, setAttr, setCSSFromObj, findRootContainer, adjustContainerPosition, adjustContainerRightEdges } from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef, AUTOCLOSE_TYPE } from '@wm/components/base';
+import { addClass, App, setAttr, setCSSFromObj, findRootContainer, adjustContainerPosition, adjustContainerRightEdges} from '@wm/core';
+import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef, AUTOCLOSE_TYPE, getContainerTargetClass } from '@wm/components/base';
 
 import { registerProps } from './popover.props';
 
@@ -61,6 +61,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public tabindex: any;
     public name: string;
     public adaptiveposition:boolean;
+    public containerTarget: string;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
@@ -281,7 +282,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     ngAfterViewInit() {
         super.ngAfterViewInit();
         styler(this.anchorRef.nativeElement, this);
-
+        this.containerTarget = getContainerTargetClass(this.nativeElement);
         let parentElemPopover = $(this.nativeElement).parents();
         if(parentElemPopover.closest('[wmTable]').length || parentElemPopover.closest('[wmtabs]').length){
             this.adaptiveposition = false;

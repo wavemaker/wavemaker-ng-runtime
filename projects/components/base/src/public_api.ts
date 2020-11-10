@@ -45,7 +45,8 @@ export {
     getMatchModeTypesMap,
     getMatchModeMsgs,
     getConditionalClasses,
-    prepareFieldDefs    
+    prepareFieldDefs ,
+    getContainerTargetClass   
 } from './utils/widget-utils';
 export {
     BaseComponent

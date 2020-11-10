@@ -7,7 +7,7 @@ import { TimepickerComponent, TimepickerConfig } from 'ngx-bootstrap/timepicker'
 
 import { AbstractI18nService, getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
 
-import { ToDatePipe } from '@wm/components/base';
+import { getContainerTargetClass, ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
 import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
@@ -74,6 +74,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     @ViewChild(BsDropdownDirective) protected bsDropdown;
     @ViewChild(TimepickerComponent) protected bsTimePicker;
     private validateType: string;
+    containerTarget: string;
 
     constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
@@ -836,6 +837,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
+        this.containerTarget = getContainerTargetClass(this.nativeElement);
         this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
     }
 

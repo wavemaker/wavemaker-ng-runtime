@@ -188,7 +188,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         this.ngZone.run(() => {
             this.status.isopen = !this.status.isopen;
         });
-
         this.addBodyClickListener(this.status.isopen);
     }
 

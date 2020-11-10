@@ -4,7 +4,7 @@
     <div dropdown
         [isOpen]="isTimeOpen"
         autoClose="false"
-        [container]="'body'"
+        [container]="containerTarget"
         (onShown)="onTimepickerOpen()"
         style="display: inherit;">
         <input class="form-control app-textbox display-input"
@@ -30,7 +30,7 @@
             aria-controls="date">
             <input class="model-holder"
                 focus-target
-                [container]="'body'"
+                [container]="containerTarget"
                 [bsConfig]="_dateOptions"
                 [isOpen]="isDateOpen"
                  placement="bottom right"

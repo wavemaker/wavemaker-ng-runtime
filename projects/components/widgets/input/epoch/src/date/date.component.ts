@@ -6,7 +6,6 @@ import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
 import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
-
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
 
@@ -136,7 +135,7 @@ export class DateComponent extends BaseDateTimeComponent {
         // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
         // So actual bootstrap input target width we made it to 0, so bootstrap calculating the calendar container top position improperly.
         // To fix the container top position set the width 1px;
-        this.$element.find('.model-holder').width('1px')
+        this.$element.find('.model-holder').width('1px');
 
         this.addDatepickerKeyboardEvents(this, false);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);

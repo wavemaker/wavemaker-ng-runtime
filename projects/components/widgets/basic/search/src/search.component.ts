@@ -7,7 +7,7 @@ import { mergeMap } from 'rxjs/operators';
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 import { addClass, adjustContainerPosition, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
-import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, provideAs, provideAsWidgetRef, styler, transformFormData } from '@wm/components/base';
+import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, provideAs, provideAsWidgetRef, styler, transformFormData, getContainerTargetClass } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 
 import { registerProps } from './search.props';
@@ -53,6 +53,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public startIndex: number;
     public binddisplaylabel: string;
     public typeaheadContainer: TypeaheadContainerComponent;
+    public containerTarget: string;
 
     @ViewChild(TypeaheadDirective) typeahead: TypeaheadDirective;
     @ViewChild('ulElement') ulElement: ElementRef;
@@ -732,6 +733,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         super.ngAfterViewInit();
 
         styler(this.nativeElement as HTMLElement, this);
+        this.containerTarget = getContainerTargetClass(this.nativeElement);
     }
 
     private eventData($event, item){
