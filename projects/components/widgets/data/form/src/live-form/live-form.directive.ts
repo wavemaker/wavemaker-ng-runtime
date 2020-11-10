@@ -77,7 +77,7 @@ export class LiveFormDirective {
             this._updateFieldOnDataSourceChange(formField, formFields);
         }
     }
-    private _updateFieldOnDataSourceChange(field,formFields){
+    private _updateFieldOnDataSourceChange(field, formFields) {
         if (!field.isDataSetBound && isDataSetWidget(field.widgettype)) {
             if (field['is-related']) {
                 field.isDataSetBound = true;
@@ -112,7 +112,7 @@ export class LiveFormDirective {
         }
         // Set the default value only if it exists.
         if (isDefined(nv) && nv !== null && nv !== '' && nv !== 'null') {
-            field.value = parseValueByType(nv, field.type, field.widgettype);
+            field.value = parseValueByType(nv, field.type, field.widgettype, field.trailingzero);
         } else {
             field.value = undefined;
         }
