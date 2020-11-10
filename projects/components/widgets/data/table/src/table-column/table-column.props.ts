@@ -6,6 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['accessroles', PROP_STRING],
+                ['autoclose', {value: 'outsideClick', ...PROP_STRING}],
                 ['backgroundcolor', PROP_STRING],
                 ['binding', PROP_STRING],
                 ['caption', PROP_STRING],
