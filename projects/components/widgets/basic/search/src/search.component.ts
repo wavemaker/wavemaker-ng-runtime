@@ -405,6 +405,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     value: this.query // dummy data to notify the observables
                 }
             });
+            this.invokeEventCallback('submit', {
+                $event: $event
+            });
             return;
         }
         // when matches are available.
