@@ -4,6 +4,7 @@ declare const _;
 
 export class LocalDataProvider implements IDataProvider {
     private applyFilter(entry, queryText, filtername?) {
+        entry = _.isNumber(entry) ? entry.toString() : entry;
         if (_.includes(filtername, 'start') ) {
             return _.startsWith(entry, queryText);
         } else if (_.includes(filtername, 'end')) {
