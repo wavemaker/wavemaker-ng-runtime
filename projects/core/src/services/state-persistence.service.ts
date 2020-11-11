@@ -23,9 +23,9 @@ export class StatePersistence {
      * so that name conflicts are avoided when the same widget name is
      * present inside a Page, a Partial within a Page or a Prefab within a Page and so on.
      * E.g.:
-     * if a page has a tabs widget with the name tabs1, a partial Partial1 inclusion within which
+     * if a page has a tabs widget with the name tabs1, a partial Partial1(inside container1) inclusion within which
      * there is a tabs with name tabs1 and a prefab MyPrefab inclusion with a tabs widget with the name tabs1,
-     * getNestedPath will return tabs1, Partial1.tabs1 and MyPrefab.tabs1 respectively.
+     * getNestedPath will return tabs1, container1.Partial1.tabs1 and MyPrefab1.MyPrefab.tabs1 respectively.
      * @param viewParent
      * @param widgetName
      * @param currentOutput
@@ -34,6 +34,8 @@ export class StatePersistence {
         let out = currentOutput || widgetName;
         if (viewParent && (viewParent.prefabName || viewParent.partialName)) {
             out = out.length > 0 ? out + '.' + (viewParent.prefabName || viewParent.partialName) : (viewParent.prefabName || viewParent.partialName);
+            // same partial/prefab can be dropped multiple times in a page. Appending container's name for uniqueness.
+            out = out + '.' + viewParent.containerWidget.name;
             return this.getNestedPath(viewParent.containerWidget.viewParent, widgetName, out);
         }
         return out.split('.').reverse().join('.');
