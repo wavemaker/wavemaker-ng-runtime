@@ -5,6 +5,7 @@ import {
     Comment,
     getHtmlTagDefinition
 } from '@angular/compiler';
+import DOMPurify from 'dompurify';
 import { WIDGET_IMPORTS } from './imports';
 import { isMobileApp } from '@wm/core';
 
@@ -365,7 +366,12 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
             markup = `<${nodeName} ${getAttrMarkup(attrMap)}>`;
         }
 
-        node.children.forEach(child => markup += processNode(child, importCollector, providers));
+        if(node.name === "wm-html") {
+            let childMarkup = getChildMarkup(node, importCollector, providers);
+            markup += DOMPurify.sanitize(childMarkup);
+        } else {
+            markup += getChildMarkup(node, importCollector, providers);
+        }
 
         if (nodeDef) {
             if (provideInfo) {
@@ -399,7 +405,15 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
     return markup;
 };
 
-export const transpile = (markup: string = '') => {
+export const getChildMarkup = (node, importCollector, providers) => {
+    let childMarkup = "" ;
+    node.children.forEach((child) => {
+        childMarkup += processNode(child, importCollector, providers);
+    });
+    return childMarkup;
+};
+
+export const transpile = (markup: string = '',) => {
     if (!markup.length) {
         return;
     }

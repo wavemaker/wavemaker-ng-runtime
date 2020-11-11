@@ -45,6 +45,7 @@
     "angular2-websocket": "0.9.7",
     "core-js": "2.5.4",
     "d3": "3.5.17",
+    "dompurify": "^2.2.2",
     "fullcalendar": "3.10.0",
     "hammerjs": "2.0.8",
     "iscroll": "5.2.0",

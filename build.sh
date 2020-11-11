@@ -541,6 +541,7 @@ bundleWebLibs() {
         ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
         ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
         ./dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js \
+        ./node_modules/dompurify/dist/purify.min.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
@@ -605,6 +606,7 @@ bundleMobileLibs() {
         ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
         ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
         ./dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js \
+        ./node_modules/dompurify/dist/purify.min.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
