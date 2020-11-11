@@ -96,7 +96,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     private isValid(val: number): boolean {
         // id number is infinite then consider it as invalid value
-        if (_.isNaN(val) || !_.isFinite(val)) {
+        if (_.isNaN(val) || !_.isFinite(val) || (!Number.isInteger(this.step) && 
+            this.countDecimals(val) > this.countDecimals(this.step))) {
             this.isInvalidNumber = true;
             return false;
         }
