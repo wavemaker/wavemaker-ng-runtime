@@ -695,7 +695,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     private updateSelectedItemsWidgets() {
-        let obj = [];
+        let obj = {}, widgetState;
+        const pageNum = _.get(this.dataNavigator, 'dn.currentPage') || 1;
+        if (this.getConfiguredState() !== 'none') {
+            // remove previously configured selected items for current page and construct new ones later below.
+            widgetState = this.statePersistence.getWidgetState(this) || {};
+            if (_.get(widgetState, 'selectedItem')) {
+                _.remove(widgetState.selectedItem, function(selectedItem) {
+                    return selectedItem.page === pageNum;
+                });
+            }
+        }
         if (this.multiselect) {
             (this.selectedItemWidgets as Array<WidgetRef>).length = 0;
         }
@@ -706,12 +716,20 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 } else {
                     this.selectedItemWidgets = item.currentItemWidgets;
                 }
-                obj.push({page: _.get(this.dataNavigator, 'dn.currentPage') || 1, index: index});
+                obj = {page: pageNum, index: index};
+                if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
+                    if (!_.some(widgetState.selectedItem, obj)) {
+                        widgetState.selectedItem.push(obj);
+                    }
+                } else {
+                    widgetState.selectedItem = [obj];
+                }
             }
         });
         if (this.getConfiguredState() !== 'none') {
             if (unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
-                this.statePersistence.setWidgetState(this, {'selectedItem': obj});
+                this.statePersistence.removeWidgetState(this, 'selectedItem');
+                this.statePersistence.setWidgetState(this, {'selectedItem': widgetState.selectedItem});
             } else {
                 console.warn('Retain State handling on Widget ' + this.name + ' is not supported for current pagination type.');
             }
