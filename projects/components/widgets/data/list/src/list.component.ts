@@ -33,6 +33,7 @@ declare const $;
 
 const DEFAULT_CLS = 'app-livelist app-panel';
 const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
+const unsupportedStatePersistenceTypes = ['On-Demand', 'Scroll'];
 
 @Component({
     selector: 'div[wmList]',
@@ -709,7 +710,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
         });
         if (this.getConfiguredState() !== 'none') {
-            this.statePersistence.setWidgetState(this, {'selectedItem': obj});
+            if (unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
+                this.statePersistence.setWidgetState(this, {'selectedItem': obj});
+            } else {
+                console.warn('Retain State handling on Widget ' + this.name + ' is not supported for current pagination type.');
+            }
         }
     }
 
