@@ -916,7 +916,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     if ($(this.rowFilterCompliedTl[filterObj.field]).length) {
                         const val = filterObj.type === 'integer' ? parseInt(filterObj.value) : filterObj.value;
                         $(this.rowFilterCompliedTl[filterObj.field]).find('input').val(filterObj.value);
-                        console.info($(this.rowFilterCompliedTl[filterObj.field]).find('input').val());
                     }
                 }
             });
@@ -1321,7 +1320,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     return val.page === this.dataNavigator.dn.currentPage;
                 });
                 this._selectedItemsExist = false;
-                if (currentPageItems.length) {
+                // if an item is already selected, don't trigger onSelect event for it again
+                if (currentPageItems.length && this.selecteditem.length !== widgetState.selectedItem.length) {
                     this.selecteditem = currentPageItems.map(function(val) {return val.index; });
                 }
             }
@@ -1446,7 +1446,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     watchVariableDataSet(newVal) {
         let result;
-        //State handling for static variables
+        // State handling for static variables
         if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
@@ -1502,6 +1502,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (newVal) {
             if (this.shownavigation && !this.dataNavigatorWatched) {
                 this.enablePageNavigation();
+                /*
+                 * watchVariableDataSet is called with the entire data for Static Variable before being called with
+                 * paginated data. Set pageLoad to true so that State logic can be triggered with paginated data.
+                */
+                if (_.get(this.datasource, 'category') === 'wm.Variable') {
+                    this._pageLoad = true;
+                }
                 return;
             }
         } else {
@@ -1551,7 +1558,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (this.parentList && !this.datasource && _.startsWith(this.binddataset, 'item')) {
                     this.datasource = getDatasourceFromExpr(this.widget.$attrs.get('datasetboundexpr'), this);
                 }
-                this.watchVariableDataSet(nv);
+                // for Static Variables with Retain State enabled, prevent Table from rendering more than once
+                if (!(_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none')) {
+                    this.watchVariableDataSet(nv);
+                }
                 break;
             case 'filtermode':
                 this.setDataGridOption('filtermode', nv);

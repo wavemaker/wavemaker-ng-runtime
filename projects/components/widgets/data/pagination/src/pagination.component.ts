@@ -278,7 +278,6 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     /*Function to navigate to the current page*/
     goToPage(event?, callback?) {
         this.firstRow = (this.dn.currentPage - 1) * this.maxResults;
-        this.getPageData(event, callback);
         const mode = this.parent.statePersistence.computeMode(this.statehandler);
         if (mode && mode.toLowerCase() !== 'none' && (this.parent.widgetType === 'wm-table' || this.parent.widgetType === 'wm-list')) {
             this.parent._selectedItemsExist = true;
@@ -292,6 +291,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 }
             }
         }
+        // call getPageData after checking state config so that Static Variables can use it
+        this.getPageData(event, callback);
     }
 
     /*Function to be invoked after the data of the page has been fetched.*/
