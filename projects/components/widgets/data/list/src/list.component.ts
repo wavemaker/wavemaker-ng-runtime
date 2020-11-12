@@ -777,7 +777,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             $invokeWatchers(true);
             this.invokeEventCallback('render', {$data: this.fieldDefs});
         }
-        if (this.getConfiguredState() !== 'none' && listItems.length && this._selectedItemsExist) {
+        if (this.isDataChanged && this.getConfiguredState() !== 'none' && listItems.length && this._selectedItemsExist) {
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = false;
