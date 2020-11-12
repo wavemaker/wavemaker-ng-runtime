@@ -75,9 +75,13 @@ export class ToNumberPipe implements PipeTransform {
 })
 export class ToCurrencyPipe implements PipeTransform {
     transform(data, currencySymbol, fracSize) {
-        const _currencySymbol = (CURRENCY_INFO[currencySymbol] || {}).symbol || currencySymbol || '',
-            _val = new ToNumberPipe(this.decimalPipe).transform(data, fracSize);
-        return _val ? _currencySymbol + _val : '';
+        const _currencySymbol = (CURRENCY_INFO[currencySymbol] || {}).symbol || currencySymbol || '';
+        let _val = new ToNumberPipe(this.decimalPipe).transform(data, fracSize);
+        const isNegativeNumber = _.startsWith(_val, '-');
+        if (isNegativeNumber) {
+            _val = _val.replace('-','');
+        }
+        return _val ? isNegativeNumber ? '-'+ _currencySymbol +_val :_currencySymbol + _val : '';
     }
 
     constructor(private decimalPipe: DecimalPipe) { }
