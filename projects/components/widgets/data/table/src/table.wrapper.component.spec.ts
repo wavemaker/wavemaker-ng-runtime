@@ -726,7 +726,7 @@ describe("DataTable", () => {
             describe("Form Below", () => {
                 xit("To Do", () => { });
             });
-            describe("Inline Editable", () => {
+            fdescribe("Inline Editable", () => {
                 @Component({
                     template: inline_edit_markup
                 })
@@ -757,7 +757,7 @@ describe("DataTable", () => {
                     expect(wmComponent).toBeDefined();
                 });
 
-                it('should trigger default required validator', async(() => {
+                fit('should trigger default required validator', async(() => {
                     const invalidTestValue = '';
                     const validTestValue = 'test';
                     defaultValidators(
@@ -766,7 +766,7 @@ describe("DataTable", () => {
                         'required',
                         true,
                         'This field cannot be empty.',
-                        wmComponent.columns['firstname'],
+                        (wmComponent as any).fullFieldDefs[0],
                         inline_edit_fixture,
                         invalidTestValue,
                         validTestValue
