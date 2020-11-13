@@ -7,7 +7,7 @@
     (onShown)="onShown()"
     (onHidden)="onHidden()"
     containerClass="app-popover animated {{contentanimation}} {{popoverContainerCls}}"
-    [container]="containerTarget"
+    [container]="containerTarget || 'body'"
     [isOpen]="isOpen"
     [tabindex]="tabindex"
     [name]="name"

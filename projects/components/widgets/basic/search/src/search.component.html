@@ -70,7 +70,7 @@
     <span class="sr-only">Back button</span>
     <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs app-search-input" [placeholder]="placeholder || ''"
            focus-target
-           [container]="containerTarget"
+           [container]="containerTarget || 'body'"
            [disabled]="disabled"
            autocomplete="off"
            [(ngModel)]="query"

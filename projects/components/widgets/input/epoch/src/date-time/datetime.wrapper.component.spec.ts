@@ -40,9 +40,10 @@ import {
     disableMindatePanel,
     excludedDaysDisable,
     expectCheckEleHasDisabled,
-    localizedDatePickerTest, localizedTimePickerTest, localizedValueOnInputTest, MockAbstractI18nService, MockAbstractI18nServiceDe
+    localizedDatePickerTest, localizedTimePickerTest, localizedValueOnInputTest, MockAbstractI18nService, MockAbstractI18nServiceDe, MockAbstractI18nServiceRO
 } from '../../../../../base/src/test/util/date-test-util';
 import localeDE from '@angular/common/locales/de';
+import localeRO from '@angular/common/locales/ro';
 
 const getFormatedDate = (date?) => {
     if (!date) {
@@ -493,9 +494,9 @@ describe(('Datetime Component with Localization'), () => {
     }));
 
     it('should update the datavalue without error when we type "de" format datetime in inputbox with "12H" format ',  async(() => {
-        const datetime = '2020, 21 Februar 03:15:00 nachm.', datepattern = 'yyyy, dd MMMM hh:mm:ss a';
+        const datepattern = 'yyyy, dd MMMM hh:mm:ss a';
         wmComponent.getWidget().datepattern = datepattern;
-        localizedValueOnInputTest(fixture, '2020, 21 Februar 03:15:00 nachm.', wmComponent, datepattern);
+        localizedValueOnInputTest(fixture, '2020, 21 Februar 03:15:00 AM', wmComponent, datepattern);
     }));
 
     it('should update the datavalue without error when we type "de" format datetime in inputbox with "24H" format',  async(() => {
@@ -505,3 +506,44 @@ describe(('Datetime Component with Localization'), () => {
     }));
 
 });
+
+
+const dateComponentROLocaleModuleDef: ITestModuleDef = {
+    declarations: [DatetimeWrapperComponent, DatetimeComponent],
+    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    providers: [
+        { provide: LOCALE_ID, useValue: 'ro' },
+        { provide: Router, useValue: Router },
+        { provide: SecurityService, useValue: SecurityService },
+        { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
+        { provide: AppDefaults, useValue: AppDefaults },
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AbstractI18nService,  deps: [BsLocaleService], useClass: MockAbstractI18nServiceRO }
+
+    ]
+};
+
+describe(('Datetime Component with ro(Romania) Localization'), () => {
+    let dateWrapperComponent: DatetimeWrapperComponent;
+    let wmComponent: DatetimeComponent;
+    let fixture: ComponentFixture<DatetimeWrapperComponent>;
+
+    beforeEach((async () => {
+        // register the selected locale language
+        registerLocaleData(localeRO);
+        fixture = compileTestComponent(dateComponentROLocaleModuleDef, DatetimeWrapperComponent);
+        dateWrapperComponent = fixture.componentInstance;
+        wmComponent = dateWrapperComponent.wmComponent;
+        fixture.detectChanges();
+    }));
+
+
+    it('should update the datavalue without error when we type "ro" format datetime in inputbox with "12H" format ',  async(() => {
+        const  datepattern = 'yyyy, dd MMMM hh:mm:ss a';
+        wmComponent.getWidget().datepattern = datepattern;
+        localizedValueOnInputTest(fixture, '2020, 21 februarie 03:15:00 a.m.', wmComponent, datepattern);
+    }));
+
+});
+
