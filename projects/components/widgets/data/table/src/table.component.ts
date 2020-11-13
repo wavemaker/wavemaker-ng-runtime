@@ -1625,7 +1625,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 } else {
                     this.invokeEventCallback('hide');
                 }
-                break;
             default:
                 super.onPropertyChange(key, nv, ov);
         }
