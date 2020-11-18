@@ -1343,7 +1343,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             let attrsTmpl = '';
             let customTmpl = '';
             _.forEach(col, (val, key) => {
-                if (val) {
+                if (!_.isUndefined(val) && val !== '') {
                     // If custom expression is present, keep it inside table column. Else, keep as attribute
                     if (key === 'customExpression') {
                         customTmpl = val;
@@ -1375,6 +1375,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     prepareColDefs(data) {
         let defaultFieldDefs;
         let properties;
+        let columnIndex = 0;
+        let headerIndex = 0;
 
         this.fieldDefs = [];
         this.headerConfig = [];
@@ -1393,6 +1395,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             columnDef.tabletDisplay = true;
             columnDef.searchable = true;
             columnDef.type  = 'string';
+            // Fix for [WMS-19668] and [WMS-19669]- Adding index and headerIndex for Dynamic DB columns.
+            // Note: we don't have column groups for Dynamic DB
+            columnDef.index = columnIndex;
+            columnDef.headerIndex = headerIndex;
+            columnIndex++;
+            headerIndex++;
         });
 
         defaultFieldDefs.forEach(col => {
