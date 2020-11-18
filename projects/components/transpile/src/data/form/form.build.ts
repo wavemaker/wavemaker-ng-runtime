@@ -39,6 +39,17 @@ const addFormControlName = (children = []) => {
         if (formWidgets.has(childNode.name)) {
             let key = childNode.attrs.find((attr) => attr.name === 'key' || attr.name === 'name');
             key = key && key.value;
+            if (!key) {
+                // for checkbox inside table inside form, key and name attrs are not available. Using datavalue to construct formControlName instead.
+                let dataValue = childNode.attrs.find((attr) => attr.name === 'datavalue');
+                if (dataValue && dataValue.value) {
+                    const regex = /\((.*)\)/;
+                    dataValue = dataValue.value.match(regex);
+                    if (dataValue && dataValue.length > 1) {
+                        key = dataValue[1].replace(/["']/g, '');
+                    }
+                }
+            }
             childNode.attrs.push(new Attribute('formControlName', key, <any>1, <any>1));
             childNode.attrs.push(new Attribute('wmFormWidget', '', <any>1, <any>1));
         }

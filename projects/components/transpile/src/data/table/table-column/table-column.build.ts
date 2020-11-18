@@ -37,7 +37,7 @@ const addNgModelStandalone = (children = []) => {
                 formControlAttr = childNode.attrs.filter(function(attr) {
                     return attr.name === 'formControlName';
                 });
-                if (formControlAttr.length && formControlAttr[0].value === undefined) {
+                if (formControlAttr.length) {
                     return;
                 }
             }
