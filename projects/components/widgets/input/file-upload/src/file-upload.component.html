@@ -11,6 +11,9 @@
                 </form>
             </div>
         </div>
+        <button *ngIf="showclear && selectedFiles.length > 0" id="clearFiles" class="app-button btn btn-default" [ngStyle]="{float: 'right', position: 'relative', bottom: '30px'}" (click)="clearAllFiles()" href="javascript:void(0)">
+            <span>{{clearFiles}}</span>
+        </button>
     </div>
     <!-- single file upload in web and single , multiple file upload UI in mobile runmode -->
     <div class="app-single-file-upload" *ngIf="!_isCordova && (!multiple || _isMobileType)">
@@ -25,6 +28,9 @@
                 </button>
             </form>
         </div>
+        <button *ngIf="showclear && selectedFiles.length > 0" id="clearFiles" [ngStyle]="{float: 'right'}" class="app-button btn btn-default" (click)="clearAllFiles()" href="javascript:void(0)">
+            <span>{{clearFiles}}</span>
+        </button>
         <div class="app-files-upload-status single"></div>
     </div>
     <!-- support for file upload in Mobile Application (device) -->

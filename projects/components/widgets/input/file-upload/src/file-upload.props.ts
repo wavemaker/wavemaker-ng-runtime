@@ -12,6 +12,7 @@ export const registerProps = () => {
                 ['multiple', PROP_BOOLEAN],
                 ['fileuploadmessage' , PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
+                ['showclear', {value: false, ...PROP_BOOLEAN}],
                 ['disabled', PROP_BOOLEAN],
                 ['contenttype', PROP_STRING],
                 ['maxfilesize', PROP_NUMBER],

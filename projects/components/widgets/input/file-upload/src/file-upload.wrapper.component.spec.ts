@@ -6,6 +6,7 @@ import { ComponentsTestModule} from '../../../../base/src/test/components.test.m
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef  } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import { FileSizePipe, FileIconClassPipe, StateClassPipe } from '../../../../base/src/pipes/custom-pipes';
+import { By } from '@angular/platform-browser';
 
 const mockApp = {
     notifyApp: function () {}
@@ -87,6 +88,20 @@ describe('Fileupload Component', () => {
         fixture.detectChanges();
         // selected item should be same as mockFile
         expect(wmComponent.selectedFiles).toEqual(mockFiles);
+    });
+
+    it ('should clear all files on click of clear all button',  async(done) => {
+        const mockFiles = getFile();
+        wmComponent.onFileSelect({}, mockFiles);
+        wmComponent.showclear = true;
+        spyOn((wmComponent as any), 'clearAllFiles').and.callThrough();
+        fixture.detectChanges();
+        let fileEle = fixture.debugElement.query(By.css('#clearFiles'));
+        fileEle.nativeElement.click();
+        fixture.whenStable().then(() => {
+            done();
+            expect((wmComponent as any).clearAllFiles).toHaveBeenCalled();
+        });
     });
 
     it ('should trigger error callback if filesize exceeds 1MB', () => {
