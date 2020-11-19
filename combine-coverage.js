@@ -21,13 +21,13 @@ fs.readFile('./karma-test-report.txt', 'utf-8', (err, file) => {
 
     for (var index = 0; index < totalSummary.length; index++) {
         var numbeTest = (totalSummary[index] && +totalSummary[index].split(' ').length) ? +totalSummary[index].split(' ')[1] : 0
-        if (totalSummary[index].indexOf('tests completed') >= 0) {
+        if (totalSummary[index].indexOf('tests completed') >= 0 || totalSummary[index].indexOf('test completed') >= 0) {
             totalTestCompleted = totalTestCompleted + numbeTest;
-        } else if (totalSummary[index].indexOf('tests skipped') >= 0) {
+        } else if (totalSummary[index].indexOf('tests skipped') >= 0 || totalSummary[index].indexOf('test skipped') >= 0) {
             totalTestSkipped = totalTestSkipped + numbeTest;
-        } else if (totalSummary[index].indexOf('tests slow') >= 0) {
+        } else if (totalSummary[index].indexOf('tests slow') >= 0 || totalSummary[index].indexOf('test slow') >= 0) {
             totalTestSlowed = totalTestSlowed + numbeTest;
-        } else if (totalSummary[index].indexOf('tests failed') >= 0) {
+        } else if (totalSummary[index].indexOf('tests failed') >= 0 || totalSummary[index].indexOf('test failed') >= 0) {
             totalTestsFailed = totalTestsFailed + numbeTest;
         }
 

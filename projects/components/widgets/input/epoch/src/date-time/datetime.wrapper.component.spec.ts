@@ -200,12 +200,20 @@ describe("DatetimeComponent", () => {
 
     }));
 
-    it("should show the timer panel on click the time button ", async(() => {
+    it("should show the timer panel on click the time button ", (done) => {
         fixture.whenStable().then(() => {
-            onClickCheckTaglengthOnBody(fixture, '.btn-time', 'timepicker', 1);
+            let elem = getHtmlSelectorElement(fixture, '.btn-time');
+            elem.nativeElement.click();
+
+            fixture.detectChanges();
+            setTimeout(() => {
+                let element = document.getElementsByTagName('timepicker');
+                expect(element.length).toBe(1);
+                done();
+            });
 
         });
-    }));
+    });
 
     it("should set the hours step as 1hour on click on top arrow button", async(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-time');
