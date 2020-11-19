@@ -367,7 +367,7 @@ export class TableFilterSortDirective {
         let obj;
         if (_.isArray(searchSortObj)) {
             obj = searchSortObj.filter(function(searchObject) {
-                return searchObject.value;
+                return searchObject.matchMode !== undefined && searchObject.value !== undefined;
             });
         } else {
             obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
