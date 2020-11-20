@@ -1,5 +1,5 @@
 const { exec } = require("child_process");
-exec("bash build.sh", (error, stdout, stderr) => {
+exec("bash build.sh --force", (error, stdout, stderr) => {
     if (error) {
         console.log(`error: ${error.message}`);
         return;
