@@ -1,6 +1,5 @@
 image: node:latest
 stages:
-   - setup
    - build
    - test
 
@@ -8,16 +7,12 @@ cache:
   paths:
     - node_modules/
 
- setup:
-  stage: setup
+install_dependencies:
+  stage: build
   script:
     - npm install -g @angular/cli
     - npm install
-    - chmod +x ./build.sh 
-
-  build:
-  stage: build
-  script:
+    - chmod +x ./build.sh
     - sh build.sh
     
 test:
