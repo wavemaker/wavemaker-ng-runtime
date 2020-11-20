@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { EventNotifier } from '../utils/event-notifier';
 
-const MINIMUM_MOBILE_WIDTH = 768;
+const MINIMUM_MOBILE_WIDTH = 480;
 const MINIMUM_TAB_WIDTH = 768;
 const MINIMUM_LARGE_SCREEN_WIDTH = 1200;
 
