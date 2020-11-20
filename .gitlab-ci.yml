@@ -13,7 +13,7 @@ install_dependencies:
     - npm install -g @angular/cli
     - npm install
     - chmod +x ./build.sh
-    - ./build.sh
+    - npm run shell-build
     
 test:
   stage: test
