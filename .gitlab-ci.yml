@@ -17,7 +17,7 @@ install_dependencies:
     - if [ -f /.dockerenv ]; then echo "docker-executor"; fi
     - ls
     - cd ./node_modules && ls
-    - cd ./.bin && cd terser && ls
+    - cd ./.bin && ls 
     - bash build.sh
     - ls
     # - cd ./dist && ls
