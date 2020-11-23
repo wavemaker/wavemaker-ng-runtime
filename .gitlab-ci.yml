@@ -10,12 +10,12 @@ cache:
 install_dependencies:
   stage: build
   script:
-    - npm install -g @angular/cli
+    - npm install -g @angular/cli@9.1.11
     - npm install
     - chmod +x ./build.sh
     - node -v
     - if [ -f /.dockerenv ]; then echo "docker-executor"; fi
-    - ./build.sh
+    - node buildrepo.js
     
 test:
   stage: test
