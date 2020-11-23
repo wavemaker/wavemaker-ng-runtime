@@ -238,7 +238,15 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         // Updates pagination, filter, sort etc options for service and crud variables
         this._listenerDestroyers = [
             this.app.subscribe('check-state-persistence-options', options => {
-                if (_.get(options, 'variable.name') !== _.get(this.datasource, 'name')) {
+                let dataSourceName = _.get(this.datasource, 'name');
+                // in Prefabs, this.datasource is not resolved at the time of variable invocation, so additional check is required.
+                if (!dataSourceName && this.binddatasource) {
+                    const parts = this.binddatasource.split('.');
+                    if (parts.length > 1 && parts[0] === 'Variables') {
+                        dataSourceName = parts[1];
+                    }
+                }
+                if (_.get(options, 'variable.name') !== dataSourceName) {
                     return;
                 }
                 this.handleStateParams(options);
@@ -264,6 +272,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this._pageLoad = false;
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'pagination')) {
+                options.options = options.options || {};
                 options.options.page = widgetState.pagination;
             }
             if (_.get(widgetState, 'selectedItem')) {
