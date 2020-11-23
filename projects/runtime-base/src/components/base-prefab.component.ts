@@ -230,9 +230,10 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     ngAfterViewInit(): void {
         this.loadScripts().then(() => {
             this.compileContent = true;
-            this.viewInit$.complete();
             this.registerChangeListeners();
             setTimeout(() => {
+                // trigger viewInit$.complete after a timeout so that the widget listeners are ready before Variable xhr call.
+                this.viewInit$.complete();
                 this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
             }, 100);
         });

@@ -20,7 +20,7 @@ import {
     StatePersistence,
     setListClass
 } from '@wm/core';
-import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef, extractDataSourceName } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 import { ButtonComponent } from '@wm/components/input';
 
@@ -238,7 +238,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         // Updates pagination, filter, sort etc options for service and crud variables
         this._listenerDestroyers = [
             this.app.subscribe('check-state-persistence-options', options => {
-                if (_.get(options, 'variable.name') !== _.get(this.datasource, 'name')) {
+                let dataSourceName = _.get(this.datasource, 'name');
+                // in Prefabs, this.datasource is not resolved at the time of variable invocation, so additional check is required.
+                if (!dataSourceName) {
+                    dataSourceName = extractDataSourceName(this.binddatasource);
+                }
+                if (_.get(options, 'variable.name') !== dataSourceName) {
                     return;
                 }
                 this.handleStateParams(options);
@@ -264,6 +269,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this._pageLoad = false;
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'pagination')) {
+                options.options = options.options || {};
                 options.options.page = widgetState.pagination;
             }
             if (_.get(widgetState, 'selectedItem')) {

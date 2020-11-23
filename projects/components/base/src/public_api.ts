@@ -13,7 +13,7 @@ export {
     toggleAllHeaders,
     handleHeaderClick,
     configureDnD,
-    DataSetItem    
+    DataSetItem
 } from './utils/form-utils';
 export {
     EDIT_MODE,
@@ -26,7 +26,7 @@ export {
     getFieldTypeWidgetTypesMap,
     getDataTableFilterWidget,
     getEditModeWidget,
-    getDefaultValue    
+    getDefaultValue
 } from './utils/live-utils';
 export {
     getObjValueByKey,
@@ -46,7 +46,8 @@ export {
     getMatchModeMsgs,
     getConditionalClasses,
     prepareFieldDefs ,
-    getContainerTargetClass   
+    getContainerTargetClass,
+    extractDataSourceName
 } from './utils/widget-utils';
 export {
     BaseComponent
@@ -78,7 +79,7 @@ export {
     PROP_STRING,
     PROP_NUMBER,
     PROP_BOOLEAN,
-    PROP_ANY    
+    PROP_ANY
 } from './widgets/framework/widget-props';
 export * from './widgets/common/dialog/dialog.service';
 export {
@@ -96,7 +97,7 @@ export {
     FileIconClassPipe,
     StateClassPipe,
     FileExtensionFromMimePipe,
-    TrailingZeroDecimalPipe   
+    TrailingZeroDecimalPipe
 } from './pipes/custom-pipes';
 export * from './pipes/trust-as.pipe';
 export * from './pipes/image.pipe';

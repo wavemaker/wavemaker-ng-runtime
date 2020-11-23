@@ -463,3 +463,18 @@ export const getContainerTargetClass = (element) => {
         return 'body';
     }
 }
+
+/**
+ * To extract the Variable Name from a Widget's binddatasource attribute
+ */
+export const extractDataSourceName = (bindDataSource) => {
+    if (!bindDataSource) {
+        return;
+    }
+    let dataSourceName;
+    const parts = bindDataSource.split('.');
+    if (parts.length > 1 && parts[0] === 'Variables') {
+        dataSourceName = parts[1];
+    }
+    return dataSourceName;
+}

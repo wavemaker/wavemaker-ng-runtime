@@ -24,7 +24,7 @@ import {
     extendProto,
     $invokeWatchers
 } from '@wm/core';
-import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe } from '@wm/components/base';
+import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe, extractDataSourceName } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 
 import { ListComponent } from '@wm/components/data/list';
@@ -805,7 +805,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         const listenersToRemove = [
             // Updates pagination, filter, sort etc options for service and crud variables
             this.app.subscribe('check-state-persistence-options', options => {
-                if (_.get(options, 'variable.name') !== _.get(this.datasource, 'name')) {
+                let dataSourceName = _.get(this.datasource, 'name');
+                // in Prefabs, this.datasource is not resolved at the time of variable invocation, so additional check is required.
+                if (!dataSourceName) {
+                    dataSourceName = extractDataSourceName(this.binddatasource);
+                }
+                if (_.get(options, 'variable.name') !== dataSourceName) {
                     return;
                 }
                 if (this._pageLoad && this.getConfiguredState() !== 'none') {
@@ -861,6 +866,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (_.get(widgetState, 'selectedItem')) {
             this._selectedItemsExist = true;
         }
+        options.options = options.options || {};
         if (_.get(widgetState, 'pagination')) {
             options.options.page = widgetState.pagination;
             if (_.get(widgetState, 'sort')) {
