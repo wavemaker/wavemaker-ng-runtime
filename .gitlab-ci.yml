@@ -18,6 +18,7 @@ install_dependencies:
     - ls
     # - cd ./node_modules && ls
     # - cd ./.bin && ls 
+    - watch -n 1 free -h
     - bash build.sh
     - ls
     - cd ./dist && ls
