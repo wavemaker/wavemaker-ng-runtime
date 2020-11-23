@@ -15,7 +15,9 @@ install_dependencies:
     - chmod +x ./build.sh
     - node -v
     - if [ -f /.dockerenv ]; then echo "docker-executor"; fi
+    - ls
     - bash build.sh
+    - ls
     
 test:
   stage: test
