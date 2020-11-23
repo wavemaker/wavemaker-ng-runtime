@@ -22,7 +22,7 @@
         aria-label="datepicker dropdownmenu"
         aria-controls="date">
         <input class="model-holder"
-            [container]="containerTarget"
+            [container]="containerTarget || 'body'"
             [bsConfig]="_dateOptions"
             [isOpen]="isOpen"
             #datepicker="bsDatepicker"

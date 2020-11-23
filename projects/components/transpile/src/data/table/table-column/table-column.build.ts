@@ -29,8 +29,18 @@ const formWidgets = new Set([
 
 // Add ngModelOptions standalone true as inner custom form widgets will be not part of table ngform
 const addNgModelStandalone = (children = []) => {
+    let formControlAttr = [];
     children.forEach(childNode => {
         if (formWidgets.has(childNode.name)) {
+            // angular build is failing when formControlName is undefined for checkbox and mgModelOptions attr is present
+            if (childNode.name === 'wm-checkbox') {
+                formControlAttr = childNode.attrs.filter(function(attr) {
+                    return attr.name === 'formControlName';
+                });
+                if (formControlAttr.length) {
+                    return;
+                }
+            }
             childNode.attrs.push(new Attribute('[ngModelOptions]', '{standalone: true}', <any>1, <any>1));
         }
         addNgModelStandalone(childNode.children);

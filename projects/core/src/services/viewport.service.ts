@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { EventNotifier } from '../utils/event-notifier';
 
+const MINIMUM_MOBILE_WIDTH = 480;
 const MINIMUM_TAB_WIDTH = 768;
 const MINIMUM_LARGE_SCREEN_WIDTH = 1200;
 
@@ -79,14 +80,14 @@ export class Viewport implements IViewportService, OnDestroy {
         this.screenWidth = $el.clientWidth;
         this.screenHeight = $el.clientHeight;
 
+        var minValue = this.screenWidth < this.screenHeight ? this.screenWidth : this.screenHeight;
+        var maxValue = this.screenWidth > this.screenHeight ? this.screenWidth : this.screenHeight;
+
         this.isTabletType = false;
         this.isMobileType = false;
 
-        if (this.screenWidth >= MINIMUM_LARGE_SCREEN_WIDTH || this.screenHeight >= MINIMUM_LARGE_SCREEN_WIDTH) {
-            this.type = SCREEN_TYPE.LARGE_SCREEN_DEVICES;
-            return; // this specifies that it is large screen device.
-        }
-        if (this.screenWidth >= MINIMUM_TAB_WIDTH || this.screenHeight >= MINIMUM_TAB_WIDTH) {
+        // Tablet specification: min >= 480 max >= 768
+        if (minValue >= MINIMUM_MOBILE_WIDTH && maxValue >= MINIMUM_TAB_WIDTH) {
             this.type = SCREEN_TYPE.TABLET;
             this.isTabletType = true;
         } else {
