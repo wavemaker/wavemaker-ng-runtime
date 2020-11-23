@@ -18,6 +18,10 @@ install_dependencies:
     - ls
     - bash build.sh
     - ls
+    - cd ./dist && ls
+    - cd bundles && ls
+    - cd wmapp && ls
+    - cd scripts && ls
     
 test:
   stage: test
