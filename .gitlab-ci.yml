@@ -16,14 +16,14 @@ install_dependencies:
     - node -v
     - if [ -f /.dockerenv ]; then echo "docker-executor"; fi
     - ls
+    - cd ./node_modules && ls
+    - cd ./.bin && cd terser && ls
     - bash build.sh
     - ls
     # - cd ./dist && ls
     # - cd bundles && ls
     # - cd wmapp && ls
     # - cd scripts && ls
-    - cd ./node_modules && ls
-    - cd ./.bin && cd terser && ls
     
 test:
   stage: test
