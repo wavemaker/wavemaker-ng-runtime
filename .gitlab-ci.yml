@@ -22,6 +22,7 @@ install_dependencies:
     - cd bundles && ls
     - cd wmapp && ls
     - cd scripts && ls
+    - cd ./node_modules && cd /.bin && cd terser && ls
     
 test:
   stage: test
