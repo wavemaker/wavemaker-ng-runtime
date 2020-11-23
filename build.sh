@@ -572,9 +572,6 @@ bundleWebLibs() {
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
 
-         ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-libs.js \
-        -c -o ./dist/bundles/wmapp/scripts/wm-libs.min.js -m   -b beautify=false,ascii_only=true
-
 
     if [[ "$?" -eq "0" ]]; then
         echo "uglify: web-libs - success"
