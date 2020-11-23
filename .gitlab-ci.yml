@@ -1,4 +1,4 @@
-image: node:latest
+image: node:10.21.0
 stages:
    - build
    - test
@@ -13,6 +13,8 @@ install_dependencies:
     - npm install -g @angular/cli
     - npm install
     - chmod +x ./build.sh
+    - node -v
+    - if [ -f /.dockerenv ]; then echo "docker-executor"; fi
     - node buildrepo.js
     
 test:
