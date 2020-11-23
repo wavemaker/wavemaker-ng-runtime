@@ -15,7 +15,7 @@ install_dependencies:
     - chmod +x ./build.sh
     - node -v
     - if [ -f /.dockerenv ]; then echo "docker-executor"; fi
-    - node buildrepo.js
+    - RUN build.sh
     
 test:
   stage: test
