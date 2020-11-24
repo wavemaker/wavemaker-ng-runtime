@@ -458,7 +458,7 @@ export const prepareFieldDefs = (data, options?) => {
  */
 export const getContainerTargetClass = (element) => {
     if (element.closest('.modal-dialog')) {
-        return '.modal-content';
+        return '.modal-body';
     } else {
         return 'body';
     }
