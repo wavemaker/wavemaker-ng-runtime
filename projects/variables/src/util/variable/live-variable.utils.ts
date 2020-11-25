@@ -659,7 +659,6 @@ export class LiveVariableUtils {
                 if (filExpObj.rules) {
                     LiveVariableUtils.traverseFilterExpressions(filExpObj, traverseCallbackFn);
                 } else {
-                    _.set(filExpObj, 'value', $('<text/>').text(filExpObj.value).html());
                     return triggerFn(traverseCallbackFn, filterExpressions, filExpObj);
                 }
             });
