@@ -44,4 +44,5 @@ test:
     - export DISPLAY=:99
     - npm install -g @angular/cli@9.1.11
     - npm install
-    - npm run test-all
+    # - bash build.sh
+    - ng t @wm/variables --code-coverage --watch=false --no-sandbox && ng t @wm/mobile/components/basic --code-coverage --watch=false --no-sandbox 
