@@ -10,6 +10,7 @@ cache:
 install_dependencies:
   stage: build
   script:
+    - cd /usr/bin/google-chrome
     - npm install -g @angular/cli@9.1.11
     - npm install
     - npm install puppeteer
