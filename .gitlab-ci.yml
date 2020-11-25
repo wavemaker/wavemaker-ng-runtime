@@ -12,23 +12,24 @@ install_dependencies:
   script:
     - npm install -g @angular/cli@9.1.11
     - npm install
-    - npm rebuild
-    - export CHROME_BIN=/usr/bin/google-chrome
-    - cd  /usr/bin/google-chrome && ls
-    - chmod +x ./build.sh
-    - node -v
-    - if [ -f /.dockerenv ]; then echo "docker-executor"; fi
-    - ls
-    # - cd ./node_modules && ls
-    # - cd ./.bin && ls 
-    - bash build.sh
-    - ls
-    - cd ./dist && ls
-    - cd bundles && ls
-    - cd wmapp && ls
-    - cd scripts && ls
+    # - npm rebuild
+    # - export CHROME_BIN=/usr/bin/google-chrome
+    # - cd  /usr/bin/google-chrome && ls
+    # - chmod +x ./build.sh
+    # - node -v
+    # - if [ -f /.dockerenv ]; then echo "docker-executor"; fi
+    # - ls
+    # # - cd ./node_modules && ls
+    # # - cd ./.bin && ls 
+    # - bash build.sh
+    # - ls
+    # - cd ./dist && ls
+    # - cd bundles && ls
+    # - cd wmapp && ls
+    # - cd scripts && ls
     
 test:
   stage: test
   script:
+    - npm install
     - npm run test-all
