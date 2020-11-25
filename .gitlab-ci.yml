@@ -10,7 +10,7 @@ cache:
 install_dependencies:
   stage: build
   script:
-    - apt-get install google-chrome-stable
+    - apt-get -y install google-chrome-stable=80.0.3987.106
     - npm install -g @angular/cli@9.1.11
     - npm install
     - cd  /usr/bin/google-chrome && ls
