@@ -10,10 +10,10 @@ cache:
 install_dependencies:
   stage: build
   script:
-    - cd /usr/bin/google-chrome
+    - apt-get install google-chrome-stable
     - npm install -g @angular/cli@9.1.11
     - npm install
-    - npm install puppeteer
+    - cd  /usr/bin/google-chrome && ls
     - chmod +x ./build.sh
     - node -v
     - if [ -f /.dockerenv ]; then echo "docker-executor"; fi
