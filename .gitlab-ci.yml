@@ -45,5 +45,5 @@ test:
     # - export DISPLAY=:99
     - npm install -g @angular/cli@9.1.11
     - npm install
-    # - bash build.sh
+    - bash build.sh
     - npm run test-all
