@@ -13,6 +13,7 @@ install_dependencies:
     - npm install -g @angular/cli@9.1.11
     - npm install
     - bash build.sh
+    - npm run test-all
     # - npm install -g @angular/cli@9.1.11
     # - npm install
     # - npm rebuild
@@ -47,4 +48,4 @@ test:
     # - Xvfb :0 -ac -screen 0 1024x768x24 &
     # Export display for Chrome
     # - export DISPLAY=:99
-    - npm run test-all
+    # - npm run test-all
