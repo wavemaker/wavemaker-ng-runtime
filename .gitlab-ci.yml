@@ -1,14 +1,18 @@
 image: node:10.21.0
 stages:
+   - build
    - test
 
 cache:
   paths:
     - node_modules/
 
-# install_dependencies:
-#   stage: build
-#   script:
+install_dependencies:
+  stage: build
+  script:
+    - npm install -g @angular/cli@9.1.11
+    - npm install
+    - bash build.sh
     # - npm install -g @angular/cli@9.1.11
     # - npm install
     # - npm rebuild
@@ -43,7 +47,4 @@ test:
     # - Xvfb :0 -ac -screen 0 1024x768x24 &
     # Export display for Chrome
     # - export DISPLAY=:99
-    - npm install -g @angular/cli@9.1.11
-    - npm install
-    - bash build.sh
     - npm run test-all
