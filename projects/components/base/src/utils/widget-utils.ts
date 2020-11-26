@@ -457,7 +457,9 @@ export const prepareFieldDefs = (data, options?) => {
  * To get container target element to append the list for search and datepicker panel when field present in dialog
  */
 export const getContainerTargetClass = (element) => {
-    if (element.closest('.modal-dialog')) {
+    if(element.closest('td')) {
+        return '.modal-content';
+    } else if (element.closest('.modal-dialog')) {
         return '.modal-body';
     } else {
         return 'body';
