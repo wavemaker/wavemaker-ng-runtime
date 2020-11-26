@@ -48,10 +48,6 @@ declare const $, navigator, _;
 
 export const MAX_WAIT_TIME_4_OAUTH_MESSAGE = 60000;
 
-enum OS {
-    IOS = 'ios',
-    ANDROID = 'android'
-}
 const MINIMUM_TAB_WIDTH = 768;
 const KEYBOARD_CLASS = 'keyboard';
 
@@ -117,12 +113,6 @@ export class MobileRuntimeModule {
         }
         this.initialized = true;
         app.deployedUrl = runtimeModule.getDeployedUrl();
-        runtimeModule.getDeviceOS().then(os => {
-            app.selectedViewPort = {
-                os: os
-            };
-            runtimeModule.applyOSTheme(os);
-        });
         if (hasCordova()) {
             const unsubscribe = app.subscribe('pageReady', (page) => {
                 if (!isSpotcues) {
@@ -206,6 +196,10 @@ export class MobileRuntimeModule {
         } else {
             this._$appEl.addClass('wm-mobile-app');
         }
+        // applying os theme on getting os details
+        app.subscribe('on-viewport-details', os => {
+            this.applyOSTheme(os);
+        });
         MobileRuntimeModule.initializeRuntime(this, this.app, this.cookieService, this.deviceFileOpenerService, this.deviceService);
     }
 
@@ -229,7 +223,7 @@ export class MobileRuntimeModule {
         handleOpenURL(handleOpenURL.lastURL);
     }
 
-    private applyOSTheme(os) {
+    public applyOSTheme(os) {
         let oldStyleSheet = $('link[theme="wmtheme"]').first();
         const themeUrl = oldStyleSheet.attr('href').replace(new RegExp('/[a-z]*/style.css$'), `/${os.toLowerCase()}/style.css`),
             newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
@@ -273,27 +267,6 @@ export class MobileRuntimeModule {
         }
         $rootScope.project.deployedUrl = deployedUrl;
         return deployedUrl;
-    }
-
-    private getDeviceOS(): Promise<string> {
-        return new Promise<string>(function (resolve, reject) {
-            const msgContent = {key: 'on-load'};
-            // Notify preview window that application is ready. Otherwise, identify the OS.
-            if (window.top !== window) {
-                window.top.postMessage(msgContent, '*');
-                // This is for preview page
-                window.onmessage = function (msg) {
-                    const data = msg.data;
-                    if (isObject(data) && data.key === 'switch-device') {
-                        resolve(data.device.os);
-                    }
-                };
-            } else if (isIphone() || isIpod() || isIpad()) {
-                resolve(OS.IOS);
-            } else {
-                resolve(OS.ANDROID);
-            }
-        });
     }
 
     private addAuthInBrowser() {
