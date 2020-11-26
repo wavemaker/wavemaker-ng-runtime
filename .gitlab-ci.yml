@@ -14,6 +14,7 @@ install_dependencies:
     - npm install
     - bash build.sh
     - npm run test-all
+  timeout: 3h 30m
     # - npm install -g @angular/cli@9.1.11
     # - npm install
     # - npm rebuild
