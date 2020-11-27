@@ -187,6 +187,14 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         } else {
             currentPage = this.dn.currentPage || 1;
         }
+        // For Service variables with client side pagination and State persistence, set the correct page from state
+        if ((this.parent.widgetType === 'wm-table' || this.parent.widgetType === 'wm-list') && newVal.length && this.datasource && _.get(this.datasource, 'category') !== 'wm.Variable' && !this.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
+            const widgetState = this.parent.statePersistence.getWidgetState(this.parent);
+            if (widgetState && widgetState.pagination) {
+                currentPage = widgetState.pagination;
+                this.dn.currentPage = widgetState.pagination;
+            }
+        }
 
         this.setDefaultPagingValues(dataSize, maxResults, currentPage);
         this.disableNavigation();
