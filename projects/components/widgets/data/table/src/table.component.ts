@@ -818,6 +818,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (widgetState) {
                         options = this.handleStateParams(widgetState, options);
+                        if (widgetState.pagination && !this.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
+                            this._pageLoad = false;
+                        }
                     }  else {
                         this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
                     }
@@ -908,8 +911,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         const $sortIcon =  $gridElement.find('th[data-col-field="' + _.get(widgetState, 'sort.field') + '"] .sort-icon');
         if (_.get(widgetState, 'sort.direction') === 'asc' && $sortIcon.length)  {
             $sortIcon.addClass('asc wi wi-long-arrow-up');
+            $sortIcon.parent().addClass('active');
         } else if (_.get(widgetState, 'sort.direction') === 'desc'  && $sortIcon.length) {
             $sortIcon.addClass('desc wi wi-long-arrow-down');
+            $sortIcon.parent().addClass('active');
         }
     }
 
@@ -1479,6 +1484,23 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
             if (_.get(widgetState, 'pagination')) {
                 this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
+            }
+        }
+        if ((_.get(this.datasource, 'category') === 'wm.ServiceVariable' || _.get(this.datasource, 'category') === 'wm.CrudVariable') && this._pageLoad && this.getConfiguredState() !== 'none') {
+            const widgetState = this.statePersistence.getWidgetState(this);
+            this._pageLoad = false;
+            if (_.get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = true;
+            } else {
+                this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
+            }
+            if (_.get(widgetState, 'search')) {
+                this.searchStateHandler(widgetState);
+                this.searchSortHandler(widgetState.search, undefined, 'search', true);
+            }
+            if (_.get(widgetState, 'sort')) {
+                this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
+                this.sortStateHandler(widgetState);
             }
         }
         // After the setting the watch on navigator, dataset is triggered with undefined. In this case, return here.
