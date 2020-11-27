@@ -33,7 +33,7 @@ module.exports = function (config) {
         reporters: ['progress', 'mocha'],
         port: 9876,
         colors: true,
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_DEBUG,
         autoWatch: true,
         // browsers: ['ChromeHeadless'],
         customLaunchers: {
