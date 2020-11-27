@@ -1,7 +1,7 @@
 image: node:10.21.0
 stages:
    - build
-  #  - test
+   - test
 
 cache:
   paths:
@@ -12,9 +12,6 @@ install_dependencies:
   script:
     - npm install -g @angular/cli@9.1.11
     - npm install
-    - bash build.sh
-    - npm run test-all
-  timeout: 3h 30m
     # - npm install -g @angular/cli@9.1.11
     # - npm install
     # - npm rebuild
@@ -33,9 +30,11 @@ install_dependencies:
     # - cd wmapp && ls
     # - cd scripts && ls
     
-# test:
-#   stage: test
-#   script:
+test:
+  stage: test
+  script:
+    - bash build.sh
+    - npm run test-all
     # Add Google Chrome to aptitude's (package manager) sources
     # - echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | tee -a /etc/apt/sources.list
     # Fetch Chrome's PGP keys for secure installation
