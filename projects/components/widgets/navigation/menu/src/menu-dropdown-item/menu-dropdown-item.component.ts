@@ -40,8 +40,11 @@ export class MenuDropdownItemComponent implements OnInit {
         elRef: ElementRef,
     ) {
         this.nativeElement = elRef.nativeElement;
-        addClass(this.nativeElement, 'app-menu-item');
-
+        let itemClass: string = 'app-menu-item';
+        if (this.menuRef.itemclass) {
+            itemClass += ' ' + this.menuRef.itemclass;
+        }
+        addClass(this.nativeElement, itemClass);
         this.menualign = menuAlignClass[this.menuRef.menualign] || menuAlignClass['pull-left'];
     }
 
