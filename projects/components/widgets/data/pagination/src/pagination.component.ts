@@ -446,7 +446,15 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                     binddataset,
                     parent,
                     datasetBoundExpr ? dataSource : {},
-                    nv => this.widget.dataset = nv
+                    nv =>  {
+                        if (nv) {
+                            this.dataset = nv;
+                            this._debouncedApplyDataset();
+                        } else {
+                           // WMS-19285: Setting dataset on proxy only to handle propertychange handler call for undefined cases
+                            this.widget.dataset = nv;
+                        }
+                    }
                 )
             );
 
