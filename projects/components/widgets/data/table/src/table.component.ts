@@ -1482,9 +1482,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
                 this.sortStateHandler(widgetState);
             }
-            if (_.get(widgetState, 'pagination')) {
-                this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
-            }
         }
         if ((_.get(this.datasource, 'category') === 'wm.ServiceVariable' || _.get(this.datasource, 'category') === 'wm.CrudVariable') && this._pageLoad && this.getConfiguredState() !== 'none') {
             const widgetState = this.statePersistence.getWidgetState(this);

@@ -650,9 +650,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (_.get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none' && this._pageLoad) {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
-            if (_.get(widgetState, 'pagination')) {
-                this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
-            }
             if (_.get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = true;
             }
