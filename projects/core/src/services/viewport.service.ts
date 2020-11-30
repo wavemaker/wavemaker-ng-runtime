@@ -1,15 +1,17 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { EventNotifier } from '../utils/event-notifier';
+import { isAndroid, isAndroidTablet, isIos, isIpad } from '../utils/utils';
 
 const MINIMUM_MOBILE_WIDTH = 480;
 const MINIMUM_TAB_WIDTH = 768;
-const MINIMUM_LARGE_SCREEN_WIDTH = 1200;
+const MINIMUM_LARGE_SCREEN_WIDTH = 1280;
 
 const enum SCREEN_TYPE {
     MOBILE,
     TABLET,
     LARGE_SCREEN_DEVICES
 }
+declare const _;
 
 export class IViewportService {
     notify: (eventname: ViewportEvent, options?: Array<any>) => void;
@@ -33,6 +35,7 @@ export class Viewport implements IViewportService, OnDestroy {
     public _eventNotifier = new EventNotifier(true);
     private screenWidth;
     private screenHeight;
+    private selectedViewPort: any;
 
     constructor() {
         this.setScreenType();
@@ -51,6 +54,11 @@ export class Viewport implements IViewportService, OnDestroy {
         if (query.addEventListener) {
             query.addEventListener('change', $event => this.orientationChange($event, !$event.matches));
         }
+    }
+
+    update(selectedViewPort: Object) {
+        this.selectedViewPort = selectedViewPort;
+        this.setScreenType();
     }
 
     private orientationChange($event, isLandscape) {
@@ -86,13 +94,24 @@ export class Viewport implements IViewportService, OnDestroy {
         this.isTabletType = false;
         this.isMobileType = false;
 
-        // Tablet specification: min >= 480 max >= 768
-        if (minValue >= MINIMUM_MOBILE_WIDTH && maxValue >= MINIMUM_TAB_WIDTH) {
-            this.type = SCREEN_TYPE.TABLET;
-            this.isTabletType = true;
+        if (_.get(this.selectedViewPort, 'deviceCategory')) {
+            const deviceCategory = this.selectedViewPort.deviceCategory;
+            if (deviceCategory === 'Tab') {
+                this.isTabletType = true;
+            } else if (deviceCategory === 'Smartphone') {
+                this.isMobileType = true;
+            }
         } else {
-            this.type = SCREEN_TYPE.MOBILE;
-            this.isMobileType = true;
+            // Tablet specification: min >= 480 max >= 768
+            if (minValue >= MINIMUM_MOBILE_WIDTH && maxValue >= MINIMUM_TAB_WIDTH) {
+                this.type = SCREEN_TYPE.TABLET;
+                if (isAndroid() || isIos() || isAndroidTablet()) {
+                    this.isTabletType = true;
+                }
+            } else {
+                this.type = SCREEN_TYPE.MOBILE;
+                this.isMobileType = true;
+            }
         }
     }
 

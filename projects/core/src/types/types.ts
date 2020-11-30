@@ -90,6 +90,7 @@ export abstract class App {
     activePageLoadTime: number;
     landingPageName: string;
     lastActivePageName: string;
+    deviceCategory: string;
 }
 
 

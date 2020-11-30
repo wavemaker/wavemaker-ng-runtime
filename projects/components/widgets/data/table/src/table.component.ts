@@ -1500,6 +1500,23 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.sortStateHandler(widgetState);
             }
         }
+        if ((_.get(this.datasource, 'category') === 'wm.ServiceVariable' || _.get(this.datasource, 'category') === 'wm.CrudVariable') && this._pageLoad && this.getConfiguredState() !== 'none') {
+            const widgetState = this.statePersistence.getWidgetState(this);
+            this._pageLoad = false;
+            if (_.get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = true;
+            } else {
+                this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
+            }
+            if (_.get(widgetState, 'search')) {
+                this.searchStateHandler(widgetState);
+                this.searchSortHandler(widgetState.search, undefined, 'search', true);
+            }
+            if (_.get(widgetState, 'sort')) {
+                this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
+                this.sortStateHandler(widgetState);
+            }
+        }
         // After the setting the watch on navigator, dataset is triggered with undefined. In this case, return here.
         if (this.dataNavigatorWatched && _.isUndefined(newVal) && this.__fullData) {
             return;
