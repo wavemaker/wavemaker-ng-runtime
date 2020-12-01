@@ -131,6 +131,10 @@ describe('SearchComponent', () => {
         return getUlElement()[0].querySelectorAll('li');
     };
 
+    let getSearchButtonEle = (fixture) => {
+        return getHtmlSelectorElement(fixture, '.app-search-button');
+    };
+
     beforeEach(async(() => {
         fixture = compileTestComponent(testModuleDef, SearchWrapperComponent);
         wrapperComponent = fixture.componentInstance;
@@ -173,6 +177,20 @@ describe('SearchComponent', () => {
         });
     }));
 
+    it('should trigger the onSubmit callback when no search results', async(async () => {
+        wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
+        wmComponent.getWidget().showsearchicon = true;
+        wmComponent.getWidget().searchon = 'onsearchiconclick';
+        spyOn(wrapperComponent, 'search1Submit').and.callThrough();
+        const testValue = 'test67';
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
+            const btnEle = getSearchButtonEle(fixture);
+            btnEle.nativeElement.click();
+            fixture.whenStable().then(() => {
+            expect(wrapperComponent.search1Submit).toHaveBeenCalledTimes(1);
+          });
+        });
+    }));
 
     it('should trigger the onselect callback', async(async () => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
