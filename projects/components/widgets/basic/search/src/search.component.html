@@ -79,6 +79,7 @@
            [typeaheadWaitMs]="debouncetime"
            [typeaheadItemTemplate]="customItemTemplate"
            [optionsListTemplate]="customListTemplate"
+           (typeaheadNoResults)="typeaheadNoResults($event)"
            (input)="onInputChange($event)"
            (keydown)="listenQuery = true"
            (keydown.enter)="$typeaheadEvent = $event;handleEnterEvent($event)"

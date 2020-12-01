@@ -79,6 +79,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private _domUpdated: boolean;
     private searchon: string;
     public matchmode: string;
+    isSubmitFromIcon: boolean;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -388,8 +389,19 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.onSearchSelect($event);
         }
     }
+
+    typeaheadNoResults($event) {
+        // When search query doesn't match with search results.
+        // isSubmitFromIcon: To track the user flow that icon click or enter button.
+        if ($event && this.dataset && this.dataset.length && !this.isUpdateOnKeyPress() && this.isSubmitFromIcon) {
+            this.invokeEventCallback('submit', { $event });
+            this.isSubmitFromIcon = false;
+        }
+    }
+
     // Triggerred when typeahead option is selected.
     private onSearchSelect($event: Event) {
+        this.isSubmitFromIcon = true;
         let item;
         if(this.typeaheadContainer && this.typeaheadContainer.active){
             item = this.typeaheadContainer.active.item;
@@ -404,9 +416,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 target: {
                     value: this.query // dummy data to notify the observables
                 }
-            });
-            this.invokeEventCallback('submit', {
-                $event: $event
             });
             return;
         }
