@@ -85,6 +85,9 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const liveFormTmpl = `<${tagName} wmForm role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
                     class="${classProp}" [class]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
             attrs.set('numberOfFields', `${numberOfFields}`);
+            if (attrs.get('height')) {
+                attrs.set('overflow', 'auto');
+            }
             shared.set('counter', counter);
             updateFormDataSource(attrs);
             if (attrs.get('formlayout') === 'dialog') {
@@ -99,9 +102,9 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                 attrs.set('width', '100%');
                 tmpl = getAttrMarkup(attrs);
                 return `<div data-identifier="liveform" init-widget class="app-liveform liveform-dialog" ${dependsOn} dialogid="${dialogId}">
-                            <div wmDialog class="app-liveform-dialog" name="${dialogId}" role="form" ${getAttrMarkup(dialogAttrsMap)} modal="true">
-                            <ng-template #dialogBody>
-                            ${liveFormTmpl} ${tmpl}>`;
+                <div wmDialog class="app-liveform-dialog" name="${dialogId}" role="form" ${getAttrMarkup(dialogAttrsMap)} modal="true">
+                <ng-template #dialogBody>
+                ${liveFormTmpl} ${tmpl}>`;
             }
             let mobileFormContentTmpl = '';
             let buttonTemplate = '';
@@ -125,7 +128,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
 
             tmpl = getAttrMarkup(attrs);
             return `${liveFormTmpl} ${tmpl} ${dependsOn}>
-                       ${buttonTemplate} ${mobileFormContentTmpl}`;
+            ${buttonTemplate} ${mobileFormContentTmpl}`;
         },
         post: (attrs) => {
             if (attrs.get('formlayout') === 'dialog') {
