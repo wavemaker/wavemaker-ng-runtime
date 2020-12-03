@@ -412,7 +412,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.typeaheadContainer.selectActiveMatch();
         } else {
             this.queryModel = this.query;
-            this.invokeEventCallback('submit', { $event });
+            if (!item) {
+                this.invokeEventCallback('submit', { $event });
+            }
         }
     }
 
