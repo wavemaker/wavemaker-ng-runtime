@@ -16,6 +16,7 @@ import {
     DataSource,
     AbstractDialogService,
     DataType,
+    removeAttr,
     $invokeWatchers
 } from '@wm/core';
 import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
@@ -257,6 +258,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
         styler(this.nativeElement, this);
 
+        // remove title property as attribute as it is causing unnecessary tooltip
+        removeAttr(this.nativeElement, 'title');
         this.isUpdateMode = true;
         this.dialogId = this.nativeElement.getAttribute('dialogId');
         this.ngform = fb.group({});
