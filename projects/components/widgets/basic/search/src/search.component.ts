@@ -110,7 +110,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.typeaheadDataSource = Observable
             .create((observer: any) => {
                 // Runs on every search
-                if (this.listenQuery) {
+                if (this.listenQuery && (this.minchars === 0 || (this.minchars > 0 && this.query))) {
                     this._defaultQueryInvoked = false;
                     this._loadingItems = true;
                     observer.next(this.query);
@@ -591,7 +591,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             datasource: this.datasource,
             datafield: this.datafield,
             hasData: this.dataset && this.dataset.length,
-            query: query,
+            query: this.query,
             isLocalFilter: !this.searchkey,
             searchKey: searchOnDataField ? this.datafield : this.searchkey,
             // default search call match mode should be startignorecase
