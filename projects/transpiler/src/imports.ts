@@ -17,7 +17,6 @@ const PROGRESS_MODULE: ImportDef[] = [{from: '@wm/components/basic/progress', na
 
 
 const MOBILE_BASIC_MODULE: ImportDef[] = [...PROGRESS_MODULE, {from: '@wm/mobile/components/basic', name: 'BasicModule', as: 'WM_MobileBasicModule', platformType: 'MOBILE'}];
-const MOBILE_EPOCH_MODULE: ImportDef[] = [{from: '@wm/mobile/components/input/epoch', name: 'EpochModule', as: 'WM_MobileEpochModule',  platformType: 'MOBILE'}];
 const MOBILE_FILE_UPLOAD_MODULE: ImportDef[] = [{from: '@wm/mobile/components/input/file-upload', name: 'FileUploadModule', as: 'WM_MobileFileUploadModule', platformType: 'MOBILE'}];
 const PAGE_MODULE: ImportDef[] = [{from: '@wm/components/page', name: 'PageModule'},
     {from: '@wm/mobile/components/page', name: 'PageModule', as: 'WM_MobilePageModule', platformType: 'MOBILE'}];
@@ -42,7 +41,7 @@ const CONFIRM_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/compon
 const CONTENT_MODULE: ImportDef[] = [{from: '@wm/components/page', name: 'PageModule'}];
 const CURRENCY_MODULE: ImportDef[] = [...INPUT_MODULE, {from: '@wm/components/input/currency', name: 'CurrencyModule'}];
 const DESIGN_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/design-dialog', name: 'DesignDialogModule'}];
-const EPOCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE, ...NGX_DATE_PICKER, ...MOBILE_EPOCH_MODULE, {from: '@wm/components/input/epoch', name: 'EpochModule'}];
+const EPOCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE, ...NGX_DATE_PICKER, {from: '@wm/components/input/epoch', name: 'EpochModule'}];
 const FILE_UPLOAD_MODULE: ImportDef[] = [...MOBILE_FILE_UPLOAD_MODULE, {from: '@wm/components/input/file-upload', name: 'FileUploadModule'}];
 const FOOTER_MODULE: ImportDef[] = [{from: '@wm/components/page/footer', name: 'FooterModule'}];
 const HEADER_MODULE: ImportDef[] = [{from: '@wm/components/page/header', name: 'HeaderModule'}];
