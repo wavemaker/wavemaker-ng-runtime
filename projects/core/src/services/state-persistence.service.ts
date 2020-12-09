@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-declare const _;
+declare const _, $;
 
 @Injectable({ providedIn: 'root' })
 export class StatePersistence {
@@ -35,7 +35,26 @@ export class StatePersistence {
         if (viewParent && (viewParent.prefabName || viewParent.partialName)) {
             out = out.length > 0 ? out + '.' + (viewParent.prefabName || viewParent.partialName) : (viewParent.prefabName || viewParent.partialName);
             // same partial/prefab can be dropped multiple times in a page. Appending container's name for uniqueness.
-            out = out + '.' + viewParent.containerWidget.name;
+            if (viewParent.containerWidget && viewParent.containerWidget.name) {
+                out = out + '.' + viewParent.containerWidget.name;
+            } else if (viewParent.containerWidget && viewParent.containerWidget.$element) {
+                const $popoverContainer = viewParent.containerWidget.$element.closest('popover-container');
+                if ($popoverContainer.length) {
+                    const popoverElements = document.querySelectorAll('.app-popover-wrapper');
+                    const $openPopover = _.filter(popoverElements, (ele) => {
+                        return ele.widget.isOpen;
+                    });
+                    if ($openPopover.length) {
+                        out = out + '.' + $openPopover[0].widget.name;
+                    }
+                }
+            }
+            if (viewParent.containerWidget && viewParent.containerWidget.$element) {
+                const $dialog = viewParent.containerWidget.$element.closest('.app-page-dialog');
+                if ($dialog.length) {
+                    out = out + '.' + $dialog.attr('name');
+                }
+            }
             return this.getNestedPath(viewParent.containerWidget.viewParent, widgetName, out);
         }
         return out.split('.').reverse().join('.');
