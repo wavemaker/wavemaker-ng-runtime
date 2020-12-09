@@ -60,7 +60,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             // The default value should be in english language
             const parts = _.isString(value) && (value as any).split('.');
             this.decimalValue = parts[1] || '';
-            (value as any) = this.transformNumber(value);
+            (value as any) =  _.isString(value) ? this.transformNumber((value as any).split(this.GROUP).join('')) : this.transformNumber(value);
         }
 
         // get a valid number form the text.
