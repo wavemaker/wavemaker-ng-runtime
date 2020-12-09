@@ -38,6 +38,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     private getTransformedData: (data, itemIndex?) => DataSetItem[];
     private inputposition: string;
     private showsearchicon: boolean;
+    private globalChipList: Array<any> = []; // This is a global chip array which will contain chip objects. Maintaining this to handle chips added in dynamic dataset filters.
 
     @ViewChild(SearchComponent, /* TODO: add static flag */ {static: true}) searchComponent: SearchComponent;
     private _datasource: any;
@@ -196,10 +197,14 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
          * 6. If value is not object and allowonlyselect is false, then create a customModel and replace this value with customModel and prepare datasetItem from this value
          */
         dataValue.forEach((val: any, i: number) => {
-            const itemFound = _.find(this.datasetItems, item => {
+            let itemFound = _.find(this.datasetItems, item => {
                 return _.isObject(item.value) ? _.isEqual(item.value, val) : _.toString(item.value) === _.toString(val);
             });
-
+            if (!itemFound) { // check for the chip object in global chips array "globalChipList"
+                itemFound = _.find(this.globalChipList, item => {
+                    return _.isObject(item.value) ? _.isEqual(item.value, val) : _.toString(item.value) === _.toString(val);
+                });
+            }
             if (itemFound) {
                 this.chipsList.push(itemFound);
             } else if (this.datafield !== ALLFIELDS) {
@@ -337,6 +342,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
         this.registerChipItemClass(chipObj, this.chipsList.length);
         this.chipsList.push(chipObj);
+        this.globalChipList.push(chipObj); // add chip object into "globalChipList"
 
         if (!this.datavalue) {
             this._modelByValue = [chipObj.value];
@@ -497,7 +503,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             result.push(this.chipsList[i]);
             return result;
         }, []);
-
+        _.remove(this.globalChipList, chip => chip.value === item.value); // remove chip object from "globalChipList"
         // prevent deletion if the before-remove event callback returns false
         const allowRemove = this.invokeEventCallback('beforeremove', {$event, $item: items.length === 1 ? items[0] : items});
         if (isDefined(allowRemove) && !toBoolean(allowRemove)) {
