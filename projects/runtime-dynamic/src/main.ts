@@ -30,8 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('unload', () => {
                 applicationRef.components.map(c => c && c.destroy());
             });
-            console.timeEnd('bootstrap'), err => console.log(err);
-        });
+            console.timeEnd('bootstrap');
+        }, err => console.log(err));
 });
 
 (window as any).debugMode = function(on) {
