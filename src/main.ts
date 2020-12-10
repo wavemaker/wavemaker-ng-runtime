@@ -1,4 +1,4 @@
-import { enableProdMode } from '@angular/core';
+import { ApplicationRef, enableProdMode, NgModuleRef } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
@@ -24,5 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
             resolve();
         }
     }).then(() => platformBrowserDynamic().bootstrapModule(AppModule))
-        .then(() => console.timeEnd('bootstrap'), err => console.log(err));
+        .then((appModuleRef: NgModuleRef<AppModule>) => {
+            const applicationRef = appModuleRef.injector.get(ApplicationRef);
+            window.addEventListener('unload', () => {
+                applicationRef.components.map(c => c && c.destroy());
+            });
+            console.timeEnd('bootstrap'), err => console.log(err);
+        }, err => console.log(err));
 });
