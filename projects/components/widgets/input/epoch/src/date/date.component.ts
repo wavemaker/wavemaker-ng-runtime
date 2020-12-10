@@ -4,7 +4,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
-import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, isMobile } from '@wm/core';
+import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
@@ -43,12 +43,8 @@ export class DateComponent extends BaseDateTimeComponent {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
     }
 
-    get dateInputFormat() {
-        return this.useDatapicker ? this._dateOptions.dateInputFormat : 'yyyy-MM-dd';
-    }
-
     get displayValue() {
-        return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat) || '';
+        return getFormattedDate(this.datePipe, this.bsDataValue, this._dateOptions.dateInputFormat) || '';
     }
 
     get datavalue() {
@@ -118,7 +114,7 @@ export class DateComponent extends BaseDateTimeComponent {
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
-        if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat) === this.displayValue) {
+        if (getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
             $(this.nativeElement).find('.app-dateinput').val(this.displayValue);
         }
         if (newVal) {
@@ -173,10 +169,6 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method used to toggle the dropdown of the date widget
      */
     toggleDpDropdown($event) {
-        if (isMobile()) {
-            this.onDateTimeInputFocus();
-            return;
-        }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', { $event: $event });
         }
@@ -211,7 +203,7 @@ export class DateComponent extends BaseDateTimeComponent {
             if (action === 'enter' || action === 'arrowdown') {
                 const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
                 event.preventDefault();
-                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat);
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {

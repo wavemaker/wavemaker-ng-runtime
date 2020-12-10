@@ -15,8 +15,8 @@
             type="text"
             [value]="displayValue"
             (click)="toggleDpDropdown($event)"
-            (focus)="onDateTimeInputFocus(); invokeOnFocus($event)"
-            (blur)="onDateTimeInputBlur(); onInputBlur($event)"
+            (focus)="invokeOnFocus($event)"
+            (blur)="onInputBlur($event)"
             (change)="onDateChange($event)"
             [autofocus]="autofocus"
             [disabled]="disabled || readonly || isCurrentDate"
@@ -92,13 +92,11 @@
 </ng-template>
 <ng-template #nativeDateTemplate>
     <input type="datetime-local"
-        class="form-control app-textbox mobile-input"
+        class="form-control app-textbox"
         role="input"
         step="any"
         [value]="displayValue"
         [required]="required"
         [disabled]="disabled || readonly || isCurrentDate"
-        (change)="onDateChange($event, true)"
-        (focus)="useDatapicker=false; invokeOnFocus($event)"
-        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
+        (change)="onDateChange($event, true)">
 </ng-template>

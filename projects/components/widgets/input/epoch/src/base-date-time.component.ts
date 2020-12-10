@@ -5,7 +5,7 @@ import { getLocaleDayPeriods, FormStyle, TranslationWidth } from '@angular/commo
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { TimepickerComponent, TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, getDateObj, getFormattedDate, getNativeDateObject, isMobile, isString, setAttr } from '@wm/core';
+import { AbstractI18nService, getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
 
 import { getContainerTargetClass, ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
@@ -782,36 +782,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         } else if (pattern === 'timepattern') {
             this.showseconds = _.includes(this.timepattern, 's');
             this.ismeridian = _.includes(this.timepattern, 'h');
-        }
-    }
-
-    getMobileInput() {
-        return this.nativeElement.querySelector('.mobile-input') as HTMLElement;
-    }
-
-    triggerNativeDateTimeInput() {
-        let displayInputElem = this.getMobileInput();
-        if (displayInputElem) {
-            displayInputElem.focus();
-            displayInputElem.click();
-            return true;
-        }
-    }
-
-    onDateTimeInputFocus(): void {
-        if (isMobile()) {
-            this.useDatapicker = false;
-            if (!this.triggerNativeDateTimeInput()) {
-                setTimeout((function () {
-                    this.triggerNativeDateTimeInput();
-                }).bind(this));
-            }
-        }
-    }
-
-    onDateTimeInputBlur() {
-        if (isMobile()) {
-            this.useDatapicker = true;
         }
     }
 

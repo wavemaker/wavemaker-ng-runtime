@@ -5,7 +5,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, isMobile } from '@wm/core';
+import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
@@ -49,16 +49,12 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         return this.proxyModel ? this.proxyModel.valueOf() : undefined;
     }
 
-    get dateInputFormat() {
-        return this.useDatapicker ? this._dateOptions.dateInputFormat : 'yyyy-MM-ddTHH:mm:ss';
-    }
-
     /**
      * The displayValue is the display value of the bsDateTimeValue after applying the datePattern on it.
      * @returns {any|string}
      */
     get displayValue(): any {
-        return getFormattedDate(this.datePipe, this.proxyModel, this.dateInputFormat) || '';
+        return getFormattedDate(this.datePipe, this.proxyModel, this._dateOptions.dateInputFormat) || '';
     }
 
     @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
@@ -157,10 +153,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method to toggle the time picker
      */
     private toggleTimePicker(newVal, $event?: any) {
-        if (isMobile()) {
-            this.onDateTimeInputFocus();
-            return;
-        }
         this.isTimeOpen = newVal;
         if ($event && $event.type === 'click') {
             this.invokeEventCallback('click', { $event: $event });
@@ -236,7 +228,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private onModelUpdate(newVal, type?) {
         if (type === 'date') {
             this.invalidDateTimeFormat = false;
-            if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat) === this.displayValue) {
+            if (getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
                 $(this.nativeElement).find('.display-input').val(this.displayValue);
             }
         }
@@ -277,10 +269,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method used to toggle the dropdown of the date widget
      */
     private toggleDpDropdown($event) {
-        if (isMobile()) {
-            this.onDateTimeInputFocus();
-            return;
-        }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', { $event: $event });
         }
@@ -347,7 +335,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             if (action === 'enter' || action === 'arrowdown') {
                 newVal = newVal ? getNativeDateObject(newVal, {pattern: this.datepattern, meridians: this.meridians}) : undefined;
                 event.preventDefault();
-                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat);
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {

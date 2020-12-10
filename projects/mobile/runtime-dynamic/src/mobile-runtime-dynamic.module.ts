@@ -11,6 +11,7 @@ import { MediaListModule } from '@wm/mobile/components/data/media-list';
 import { BarcodeScannerModule } from '@wm/mobile/components/device/barcode-scanner';
 import { CameraModule } from '@wm/mobile/components/device/camera';
 
+import { EpochModule } from '@wm/mobile/components/input/epoch';
 import { FileUploadModule } from '@wm/mobile/components/input/file-upload';
 
 import { PageModule } from '@wm/mobile/components/page';
@@ -25,6 +26,7 @@ export const MOBILE_COMPONENT_MODULES_FOR_ROOT = [
     MediaListModule,
     BarcodeScannerModule,
     CameraModule,
+    EpochModule,
     FileUploadModule,
     PageModule,
     LeftPanelModule,

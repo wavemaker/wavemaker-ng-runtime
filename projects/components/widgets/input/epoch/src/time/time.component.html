@@ -17,8 +17,8 @@
                [required]="required"
                [readOnly]="isReadOnly"
                (click)="toggleDropdown($event)"
-               (focus)="onDateTimeInputFocus(); invokeOnFocus($event)"
-               (blur)="onDateTimeInputBlur(); onInputBlur($event)"
+               (focus)="invokeOnFocus($event)"
+               (blur)="onInputBlur($event)"
                (change)="onDisplayTimeChange($event)"
                (keydown)="onDisplayKeydown($event)">
         <span class="input-group-btn dropdown-toggle">
@@ -43,12 +43,12 @@
     </div>
 </ng-template>
 <ng-template #nativeTimeTemplate>
-    <input type="time" class="form-control app-textbox display-input mobile-input"
+    <input type="time" class="form-control app-textbox"
            role="input"
            [value]="displayValue"
            [required]="required"
            [disabled]="disabled || readonly || isCurrentTime"
            (change)="onTimeChange($event, true)"
-           (focus)="useDatapicker=false; invokeOnFocus($event)"
-           (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
+           (focus)="invokeOnFocus($event)"
+           (blur)="invokeOnTouched($event)">
 </ng-template>
