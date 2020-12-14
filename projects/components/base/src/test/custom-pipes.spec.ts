@@ -98,9 +98,9 @@ describe('ToDate pipe', () => {
     });
 
     it('should transform the date to the format dd/MM/yyyy', () => {
-        const date = new Date();
+        const date = new Date('12/14/2020 09:07:05:055');
         const result = pipe.transform(date, 'dd/MM/yyyy');
-        expect(result).toBe(new Date().toLocaleDateString());
+        expect(result).toBe('14/12/2020');
     });
 
     it('should transform the date to the format yyyy-MM-dd', () => {
@@ -118,7 +118,7 @@ describe('ToDate pipe', () => {
     it('should transform the date to the format yyyy-MM-dd hh:mm:ss:sss Z', () => {
         const date = new Date('04/03/2020 09:07:05:055');
         const result = pipe.transform(date, 'yyyy-MM-dd hh:mm:ss:sss Z');
-        expect(result).toBe('2020-04-03 09:07:05:055 +0530');
+        expect(result).toBe('2020-04-03 09:07:05:055 '+ date.toString().match(/([-\+][0-9]+)\s/)[1]);
 
     });
 
