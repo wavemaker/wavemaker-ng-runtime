@@ -1,3 +1,5 @@
+import { NgZone } from '@angular/core';
+
 import { isMobile, setCSS } from '@wm/core';
 
 declare const $, _;
@@ -17,7 +19,7 @@ enum CLASS_NAME {
  * @returns {string}
  */
 const roleSelector = (roleName: string) => `[data-role='${roleName}']`;
-const pageSelector = roleSelector("pageContainer");
+let angularNgZone;
 /*setup touch event handler*/
 const bindTapEvtHandler = (selector, handler) => {
     /*
@@ -25,15 +27,13 @@ const bindTapEvtHandler = (selector, handler) => {
      * functionalities of other controls like input[type="range"].
      * So, replaced the hammer Js handler with click event handler.
      */
-    if (!selector) {
-        return;
-    }
-    if (typeof (selector) === 'string') {
-        selector = document.querySelector(selector);
-    }
-    // Add js event listeners as the event handlers has to be invoked in angular zone.
-    selector.removeEventListener('click', handler);
-    selector.addEventListener('click', handler);
+    $(selector).off('click.deviceview').on('click.deviceview', () => {
+        if (angularNgZone) {
+            angularNgZone.run(handler);
+        } else {
+            handler();
+        }
+    });
 };
 
 /**
@@ -114,7 +114,7 @@ const bindSearchIconEvent = (searchElements, leftNavEle: HTMLElement) => {
 
 };
 
-export const updateDeviceView  = (element: HTMLElement, isTablet = false) => {
+export const updateDeviceView  = (element: HTMLElement, isTablet = false, ngZone?: NgZone) => {
 
     const leftNavEle = element.querySelector(roleSelector(CLASS_NAME.LEFT_PANEL)) as HTMLElement;
     const rightNavEle = element.querySelector(roleSelector(CLASS_NAME.RIGHT_PANEL)) as HTMLElement;
@@ -122,6 +122,9 @@ export const updateDeviceView  = (element: HTMLElement, isTablet = false) => {
     const searchEle =  headerEle && headerEle.querySelector(`.${CLASS_NAME.SEARCH}`) as HTMLElement;
     const pageEle = element.querySelector(`.${CLASS_NAME.CONTENT}`) as HTMLElement;
 
+    if (ngZone) {
+        angularNgZone = ngZone;
+    }
     bindContentEvents(leftNavEle, pageEle, searchEle, isTablet);
 
     if (leftNavEle) {

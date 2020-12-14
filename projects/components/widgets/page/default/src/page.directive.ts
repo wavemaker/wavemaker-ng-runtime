@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, Injector, OnDestroy } from '@angular/core';
+import { AfterViewInit, Directive, Injector, NgZone, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { EventNotifier, Viewport, ViewportEvent } from '@wm/core';
@@ -21,6 +21,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
     private _eventNotifier = new EventNotifier(false);
     public refreshdataonattach = true;
     public pagetitle: string;
+    private ngZone: NgZone;
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'pagetitle') {
@@ -30,8 +31,9 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
         }
     }
 
-    constructor(inj: Injector, private titleService: Title, private viewport: Viewport) {
+    constructor(inj: Injector, private titleService: Title, private viewport: Viewport, ngZone: NgZone) {
         super(inj, WIDGET_CONFIG);
+        this.ngZone = ngZone;
     }
 
     /**
@@ -60,7 +62,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
     public ngAfterViewInit() {
         setTimeout(() => {
             this._eventNotifier.start();
-            updateDeviceView(this.nativeElement, this.getAppInstance().isTabletApplicationType);
+            updateDeviceView(this.nativeElement, this.getAppInstance().isTabletApplicationType, this.ngZone);
         }, 1);
         this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.RESIZE, args => {
             this.invokeEventCallback('resize', { $event: args.$event, widget: this, data: args.data });
