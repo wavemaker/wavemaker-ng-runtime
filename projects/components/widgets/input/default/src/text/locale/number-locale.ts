@@ -39,7 +39,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     ) {
         super(inj, config);
         this.selectedLocale = i18nService.getSelectedLocale();
-        this.DECIMAL = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Decimal);
+    this.DECIMAL = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Decimal);
         this.GROUP = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Group);
         this.numberfilter = '1.0-16';
         this.resetValidations();
@@ -133,7 +133,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {string}
      */
     private transformNumber(number): string {
-        return this.trailingZeroDecimalPipe.transform(number, this.selectedLocale, this.numberfilter, this.localefilter, this.trailingzero, this.decimalValue);
+        const normalizedNum = number.toString().replace(this.GROUP, '');
+        return this.trailingZeroDecimalPipe.transform(parseInt(normalizedNum), this.selectedLocale, this.numberfilter, this.localefilter, this.trailingzero, this.decimalValue);
     }
 
     /**

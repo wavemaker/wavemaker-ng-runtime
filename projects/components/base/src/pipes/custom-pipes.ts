@@ -5,7 +5,7 @@ import { CURRENCY_INFO, isDefined, App, CustomPipeManager } from '@wm/core';
 
 declare const moment, _, $;
 
-const getEpochValue = data => {
+const getEpochValue = data => { 
     let epoch;
     // For data in form of string number ('123'), convert to number (123). And don't parse date objects.
     if (!_.isDate(data) && !isNaN(data)) {
@@ -22,8 +22,7 @@ const getEpochValue = data => {
 export class TrailingZeroDecimalPipe implements PipeTransform {
     transform(value: any, selectedLocale: string, numberfilter: string, localefilter: any, trailingzero: boolean, decimalValue: string): any {
         numberfilter = trailingzero ? `1.${decimalValue.length}-16`: numberfilter;
-        const normalizedVal = value.toString().replace(',', '');
-        return this.decimalPipe.transform(parseInt(normalizedVal), numberfilter, localefilter || selectedLocale);
+        return this.decimalPipe.transform(value, numberfilter, localefilter || selectedLocale);
     }
 
     constructor(private decimalPipe: DecimalPipe) { }
