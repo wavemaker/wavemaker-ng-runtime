@@ -39,7 +39,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     ) {
         super(inj, config);
         this.selectedLocale = i18nService.getSelectedLocale();
-    this.DECIMAL = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Decimal);
+        this.DECIMAL = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Decimal);
         this.GROUP = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Group);
         this.numberfilter = '1.0-16';
         this.resetValidations();

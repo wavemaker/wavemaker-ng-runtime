@@ -5,7 +5,7 @@ import { CURRENCY_INFO, isDefined, App, CustomPipeManager } from '@wm/core';
 
 declare const moment, _, $;
 
-const getEpochValue = data => { 
+const getEpochValue = data => {
     let epoch;
     // For data in form of string number ('123'), convert to number (123). And don't parse date objects.
     if (!_.isDate(data) && !isNaN(data)) {
