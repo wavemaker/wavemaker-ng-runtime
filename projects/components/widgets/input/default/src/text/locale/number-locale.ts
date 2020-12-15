@@ -133,8 +133,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {string}
      */
     private transformNumber(number): string {
-        const normalizedNum = number.toString().replace(this.GROUP, '');
-        return this.trailingZeroDecimalPipe.transform(parseInt(normalizedNum), this.selectedLocale, this.numberfilter, this.localefilter, this.trailingzero, this.decimalValue);
+        return this.trailingZeroDecimalPipe.transform(number, this.selectedLocale, this.numberfilter, this.localefilter, this.trailingzero, this.decimalValue);
     }
 
     /**

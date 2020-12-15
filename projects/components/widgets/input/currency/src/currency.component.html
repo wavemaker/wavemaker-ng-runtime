@@ -19,7 +19,7 @@
 
        (blur)="handleBlur($event)"
        (ngModelChange)="datavalue=$event"
-       (keypress)="validateInputEntry($event)"
+       (keydown)="validateInputEntry($event)"
        (keydown.enter)="onEnter($event)"
        (keydown.ArrowUp)="onArrowPress($event, 'UP')"
        (keydown.ArrowDown)="onArrowPress($event, 'DOWN')">
