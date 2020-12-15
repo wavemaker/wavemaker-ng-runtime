@@ -2277,38 +2277,6 @@
         }
       }
     },
-    "@wm/mobile/components/input/epoch": {
-      "root": "projects/mobile/components/input/epoch",
-      "sourceRoot": "projects/mobile/components/input/epoch/src",
-      "projectType": "library",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "projects/mobile/components/tsconfig.lib.json",
-            "project": "projects/mobile/components/input/epoch/package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/mobile/components/input/epoch/tsconfig.lib.prod.json"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
     "@wm/mobile/components/input/file-upload": {
       "root": "projects/mobile/components/input/file-upload",
       "sourceRoot": "projects/mobile/components/input/file-upload/src",

@@ -814,12 +814,14 @@ export const formatDate = (value, type) => {
  */
 export const decodeData = (responseContent) => {
     if (!responseContent) {
-        return;
+        return responseContent;
     }
     const domParser = new DOMParser();
     if (_.isArray(responseContent)) {
         _.forEach(responseContent, data => {
-            if (data) {
+            if (_.isString(data)) {
+                data = domParser.parseFromString(data, 'text/html').body.textContent;
+            } else if (_.isObject(data)) {
                 _.forEach(data, (value, key) => {
                     if (value && _.isString(value)) {
                         data[key] = domParser.parseFromString(value, 'text/html').body.textContent;
@@ -841,4 +843,4 @@ export const decodeData = (responseContent) => {
         responseContent = domParser.parseFromString(responseContent, 'text/html').body.textContent;
         return responseContent;
     }
-}
+};

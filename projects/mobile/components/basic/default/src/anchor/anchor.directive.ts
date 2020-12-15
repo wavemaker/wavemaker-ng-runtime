@@ -24,7 +24,9 @@ export class AnchorDirective {
             } else if (_.startsWith(href, '//')) {
                 href = 'https:' + href;
             }
-            cordova.InAppBrowser.open(href, this.widget.target);
+            if (window['cordova']) {
+                window.open(href, this.widget.target);
+            }
         }
     }
 }

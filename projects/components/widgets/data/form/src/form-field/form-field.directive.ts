@@ -377,7 +377,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (!this.isDestroyed) {
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
-            if (this.form.touched) {
+            if (this.$element.find('.active').length > 0 || this.form.touched) {
+                this.ngform.controls[this._fieldName].markAsTouched();
                 this.fieldValidations.setCustomValidationMessage();
             }
         }
