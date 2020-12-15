@@ -814,7 +814,7 @@ export const formatDate = (value, type) => {
  */
 export const decodeData = (responseContent) => {
     if (!responseContent) {
-        return;
+        return responseContent;
     }
     const domParser = new DOMParser();
     if (_.isArray(responseContent)) {
