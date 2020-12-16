@@ -1516,13 +1516,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (newVal) {
             if (this.shownavigation && !this.dataNavigatorWatched) {
                 this.enablePageNavigation();
-                /*
-                 * watchVariableDataSet is called with the entire data for Static Variable before being called with
-                 * paginated data. Set pageLoad to true so that State logic can be triggered with paginated data.
-                */
-                if (_.get(this.datasource, 'category') === 'wm.Variable') {
-                    this._pageLoad = true;
-                }
                 return;
             }
         } else {

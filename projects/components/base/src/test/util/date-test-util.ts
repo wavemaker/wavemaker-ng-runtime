@@ -10,6 +10,8 @@ export const datepatternTest = (fixture, selector: string, inputSelector: string
         let attrVal = dateControl.nativeElement.getAttribute(attr || 'datepattern');
         if (!isLower) {
             attrVal = attrVal.toUpperCase();
+        } else {
+            attrVal = attrVal.replaceAll('y', 'Y').replaceAll('d', 'D');
         }
         expect(moment(dateInputControl.nativeElement.value, attrVal, true).isValid()).toBe(true);
     })

@@ -5,7 +5,7 @@ import { getLocaleDayPeriods, FormStyle, TranslationWidth } from '@angular/commo
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { TimepickerComponent, TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, getDateObj, getFormattedDate, getNativeDateObject, isString, setAttr } from '@wm/core';
+import { AbstractI18nService, getDateObj, getFormattedDate, getNativeDateObject, hasCordova, isString, setAttr } from '@wm/core';
 
 import { getContainerTargetClass, ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
@@ -41,7 +41,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public mindate;
     public maxdate;
     public dataentrymode;
-    public useDatapicker = true;
     protected activeDate;
     private keyEventPluginInstance;
     private elementScope;
@@ -58,6 +57,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public todaybutton: boolean;
     public clearbutton: boolean;
     public removeKeyupListener;
+    private loadNativeDateInput;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -83,6 +83,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this.selectedLocale = this.i18nService.getSelectedLocale();
 
         this.meridians = getLocaleDayPeriods(this.selectedLocale, FormStyle.Format, TranslationWidth.Abbreviated);
+        this.loadNativeDateInput = hasCordova();
     }
 
 
@@ -785,6 +786,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
+    getMobileInput() {
+        return this.nativeElement.querySelector('.mobile-input') as HTMLElement;
+    }
+
+    onDateTimeInputFocus(): void {
+        let displayInputElem = this.getMobileInput();
+        if (displayInputElem) {
+            displayInputElem.focus();
+            displayInputElem.click();
+        }
+    }
+
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'tabindex') {
@@ -794,7 +807,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this._onChange(this.datavalue);
             return;
         }
-        if (this.useDatapicker && key === 'datepattern') {
+        if (key === 'datepattern') {
             this.updateFormat(key);
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;

@@ -332,7 +332,8 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
 export const getDateObj = (value, options?): Date => {
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        const pattern = momentPattern(options.pattern);
+        // Fix for WMS-19601, invalid date is returned on date selection.
+        const pattern = window['cordova'] ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
         value = moment(value, pattern).toDate();
     }
 
@@ -631,7 +632,8 @@ export const getValidDateObject = (val, options?) => {
     }
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        const pattern = momentPattern(options.pattern);
+        // Fix for WMS-19601, invalid date is returned on date selection.
+        const pattern = window['cordova'] ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
         val = moment(val, pattern).toDate();
     }
 

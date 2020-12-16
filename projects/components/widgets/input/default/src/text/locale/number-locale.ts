@@ -57,10 +57,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         // if the widget has default value and if we change the locale, the value should be in selected locale format.
         if (this.isDefaultQuery) {
-            // The default value should be in english language
-            const parts = _.isString(value) && (value as any).split('.');
+            const isLocalizedNumber = _.isString(value) && _.includes(value, this.DECIMAL);
+            const parts = isLocalizedNumber ?  (value as any).split(this.DECIMAL) : _.isString(value) && (value as any).split('.');
             this.decimalValue = parts[1] || '';
-            (value as any) = this.transformNumber(value);
+            (value as any) = isLocalizedNumber ? value : this.transformNumber(value);
         }
 
         // get a valid number form the text.
