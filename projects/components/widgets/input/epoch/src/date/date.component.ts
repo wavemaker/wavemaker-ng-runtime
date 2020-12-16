@@ -4,7 +4,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
-import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, isMobile } from '@wm/core';
+import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, hasCordova } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
@@ -44,7 +44,7 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     get dateInputFormat() {
-        return this.useDatapicker ? this._dateOptions.dateInputFormat : 'yyyy-MM-dd';
+        return this._dateOptions.dateInputFormat || 'yyyy-MM-dd';
     }
 
     get displayValue() {
@@ -173,7 +173,7 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method used to toggle the dropdown of the date widget
      */
     toggleDpDropdown($event) {
-        if (isMobile()) {
+        if (hasCordova()) {
             this.onDateTimeInputFocus();
             return;
         }

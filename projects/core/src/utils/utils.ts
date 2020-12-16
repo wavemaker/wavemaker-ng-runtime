@@ -332,14 +332,9 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
 export const getDateObj = (value, options?): Date => {
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        const pattern = momentPattern(options.pattern);
-        var newVal = moment(value, pattern);
         // Fix for WMS-19601, invalid date is returned on date selection.
-        if (newVal.isValid() && _.isString(value)) {
-            value = new Date(value);
-        } else {
-            value = newVal.toDate();
-        }
+        const pattern = window['cordova'] ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
+        value = moment(value, pattern).toDate();
     }
 
     /*if the value is a date object, no need to covert it*/
@@ -637,14 +632,9 @@ export const getValidDateObject = (val, options?) => {
     }
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        const pattern = momentPattern(options.pattern);
-        const newVal = moment(val, pattern);
         // Fix for WMS-19601, invalid date is returned on date selection.
-        if (newVal.isValid() && _.isString(val)) {
-            val = new Date(val);
-        } else {
-            val = newVal.toDate();
-        }
+        const pattern = window['cordova'] ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
+        val = moment(val, pattern).toDate();
     }
 
     if (moment(val).isValid()) {

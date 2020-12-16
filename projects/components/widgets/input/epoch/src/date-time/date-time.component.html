@@ -1,6 +1,3 @@
-<ng-container *ngIf="useDatapicker; then dataPickerTemplate else nativeDateTemplate"></ng-container>
-
-<ng-template #dataPickerTemplate>
     <div dropdown
         [isOpen]="isTimeOpen"
         autoClose="false"
@@ -15,8 +12,8 @@
             type="text"
             [value]="displayValue"
             (click)="toggleDpDropdown($event)"
-            (focus)="onDateTimeInputFocus(); invokeOnFocus($event)"
-            (blur)="onDateTimeInputBlur(); onInputBlur($event)"
+            (focus)="invokeOnFocus($event)"
+            (blur)="onInputBlur($event)"
             (change)="onDateChange($event)"
             [autofocus]="autofocus"
             [disabled]="disabled || readonly || isCurrentDate"
@@ -89,16 +86,16 @@
                 (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
         </div>
     </div>
-</ng-template>
-<ng-template #nativeDateTemplate>
+<ng-template [ngIf]="loadNativeDateInput">
     <input type="datetime-local"
         class="form-control app-textbox mobile-input"
         role="input"
         step="any"
         [value]="displayValue"
+        [tabindex]="tabindex"
         [required]="required"
         [disabled]="disabled || readonly || isCurrentDate"
         (change)="onDateChange($event, true)"
-        (focus)="useDatapicker=false; invokeOnFocus($event)"
-        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
+        (focus)="invokeOnFocus($event)"
+        (blur)="invokeOnTouched($event)">
 </ng-template>

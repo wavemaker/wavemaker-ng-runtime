@@ -5,7 +5,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, isMobile } from '@wm/core';
+import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, hasCordova } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
@@ -50,7 +50,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     get dateInputFormat() {
-        return this.useDatapicker ? this._dateOptions.dateInputFormat : 'yyyy-MM-ddTHH:mm:ss';
+        return this._dateOptions.dateInputFormat || 'yyyy-MM-ddTHH:mm:ss';
     }
 
     /**
@@ -157,7 +157,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method to toggle the time picker
      */
     private toggleTimePicker(newVal, $event?: any) {
-        if (isMobile()) {
+        if (hasCordova()) {
             this.onDateTimeInputFocus();
             return;
         }
@@ -277,7 +277,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method used to toggle the dropdown of the date widget
      */
     private toggleDpDropdown($event) {
-        if (isMobile()) {
+        if (hasCordova()) {
             this.onDateTimeInputFocus();
             return;
         }
