@@ -1,7 +1,3 @@
-<ng-container *ngIf="useDatapicker; then timePickerTemplate else nativeTimeTemplate">
-</ng-container>
-
-<ng-template #timePickerTemplate>
     <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" (onHidden)="hideTimepickerDropdown()" [container]="'body'" style="display: inherit">
         <input class="form-control app-textbox display-input" aria-label="Set the time"
                focus-target
@@ -41,11 +37,11 @@
                         [showSeconds]="showseconds" (ngModelChange)="onTimeChange($event)"></timepicker>
         </div>
     </div>
-</ng-template>
-<ng-template #nativeTimeTemplate>
-    <input type="time" class="form-control app-textbox"
+<ng-template [ngIf]="loadNativeDateInput">
+    <input type="time" class="form-control app-textbox display-input mobile-input"
            role="input"
            [value]="displayValue"
+           [tabindex]="tabindex"
            [required]="required"
            [disabled]="disabled || readonly || isCurrentTime"
            (change)="onTimeChange($event, true)"

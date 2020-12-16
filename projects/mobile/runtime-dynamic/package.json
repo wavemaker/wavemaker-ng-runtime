@@ -15,7 +15,6 @@
                 "@wm/mobile/components/data/media-list": "wm.mobile.components.data.medialist",
                 "@wm/mobile/components/device/barcode-scanner": "wm.mobile.components.device.barcodescanner",
                 "@wm/mobile/components/device/camera": "wm.mobile.components.device.camera",
-                "@wm/mobile/components/input/epoch": "wm.mobile.components.input.epoch",
                 "@wm/mobile/components/input/file-upload": "wm.mobile.components.input.fileupload",
                 "@wm/mobile/components/page": "wm.mobile.components.page",
                 "@wm/mobile/components/page/left-panel": "wm.mobile.components.page.leftpanel",

@@ -37,9 +37,12 @@ export class StatePersistence {
             // same partial/prefab can be dropped multiple times in a page. Appending container's name for uniqueness.
             if (viewParent.containerWidget && viewParent.containerWidget.name) {
                 out = out + '.' + viewParent.containerWidget.name;
-            } else if (viewParent.containerWidget && viewParent.containerWidget.$element) {
+            }
+            if (viewParent.containerWidget && viewParent.containerWidget.$element) {
+                // to check if content is inside popover or not
                 const $popoverContainer = viewParent.containerWidget.$element.closest('popover-container');
                 if ($popoverContainer.length) {
+                    // if content is inside popover, then append the popover widget's name
                     const popoverElements = document.querySelectorAll('.app-popover-wrapper');
                     const $openPopover = _.filter(popoverElements, (ele) => {
                         return ele.widget.isOpen;
@@ -48,8 +51,7 @@ export class StatePersistence {
                         out = out + '.' + $openPopover[0].widget.name;
                     }
                 }
-            }
-            if (viewParent.containerWidget && viewParent.containerWidget.$element) {
+                // to check if content is inside a page dialog and append dialog name if it exists
                 const $dialog = viewParent.containerWidget.$element.closest('.app-page-dialog');
                 if ($dialog.length) {
                     out = out + '.' + $dialog.attr('name');

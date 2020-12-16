@@ -31,9 +31,6 @@ export const timeProps = new Map(
 );
 
 export const registerProps = () => {
-    if (isMobileApp()) {
-        timeProps.set('timepattern', {value: 'HH:mm', ...PROP_STRING});
-    }
     register(
         'wm-time',
         timeProps
