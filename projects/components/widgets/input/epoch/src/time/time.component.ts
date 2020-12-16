@@ -91,8 +91,12 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         return getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern) || '';
     }
 
+    get nativeDisplayValue() {
+        return getFormattedDate(this.datePipe, this.bsTimeValue, 'hh:mm:ss') || '';
+    }
+
     /* Internal property to have a flag to check the given datavalue is of Current time*/
-    private isCurrentTime: boolean;
+    public isCurrentTime: boolean;
 
     private timeinterval: any;
 
@@ -109,7 +113,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This is an internal property used to toggle the timepicker dropdown
      */
-    private status = { isopen: false };
+    public status = { isopen: false };
 
     /**
      * This is an internal property used to map the main model to the time widget
@@ -179,7 +183,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This is an internal method used to toggle the dropdown of the time widget
      */
-    private toggleDropdown($event): void {
+    public toggleDropdown($event): void {
         if (hasCordova()) {
             this.onDateTimeInputFocus();
             return;
@@ -219,7 +223,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This is an internal method triggered when pressing key on the time input
      */
-    private onDisplayKeydown(event) {
+    public onDisplayKeydown(event) {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
@@ -329,7 +333,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
     }
 
-    private hideTimepickerDropdown() {
+    public hideTimepickerDropdown() {
         this.invokeOnTouched();
         this.status.isopen = false;
         if (this.deregisterEventListener) {
