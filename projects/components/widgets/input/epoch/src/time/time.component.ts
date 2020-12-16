@@ -14,7 +14,7 @@ import {
     getDisplayDateTimeFormat,
     getFormattedDate,
     getNativeDateObject,
-    isMobile
+    hasCordova
 } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
@@ -180,7 +180,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method used to toggle the dropdown of the time widget
      */
     private toggleDropdown($event): void {
-        if (isMobile()) {
+        if (hasCordova()) {
             this.onDateTimeInputFocus();
             return;
         }
