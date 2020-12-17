@@ -207,6 +207,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             }
             if (itemFound) {
                 this.chipsList.push(itemFound);
+                const itemExist = _.find(this.globalChipList, item => item.value === itemFound.value);
+                if (!itemExist) {
+                    this.globalChipList.push(itemFound); // add chip object into "globalChipList"
+                }
             } else if (this.datafield !== ALLFIELDS) {
                 searchQuery.push(val);
             } else if (this.datafield === ALLFIELDS) {
@@ -235,6 +239,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                     (chipObj as any).iscustom = isCustom;
                 }
                 this.chipsList.push(chipObj);
+                const itemExist = _.find(this.globalChipList, item => chipObj.value === item.value);
+                if (!itemExist) {
+                    this.globalChipList.push(chipObj); // add chip object into "globalChipList"
+                }
             }
         });
 
@@ -260,6 +268,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                             const chipObj = transformedData[0];
                             (chipObj as any).iscustom = true;
                             this.chipsList.push(chipObj);
+                            const itemExist = _.find(this.globalChipList, item => chipObj.value === item.value);
+                            if (!itemExist) {
+                                this.globalChipList.push(chipObj); // add chip object into "globalChipList"
+                            }
                         }
                     });
                 }));
@@ -267,7 +279,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
         // default chip data is adding focus on to the search input. Hence this flag helps not to focus.
         this.resetSearchModel(true);
-
         return Promise.all(promises).then(() => {
             this._modelByValue = data;
             this.removeDuplicates();
@@ -342,8 +353,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
         this.registerChipItemClass(chipObj, this.chipsList.length);
         this.chipsList.push(chipObj);
-        this.globalChipList.push(chipObj); // add chip object into "globalChipList"
-
+        const itemExist = _.find(this.globalChipList, item => chipObj.value === item.value);
+        if (!itemExist) {
+            this.globalChipList.push(chipObj); // add chip object into "globalChipList"
+        }
         if (!this.datavalue) {
             this._modelByValue = [chipObj.value];
         } else {
