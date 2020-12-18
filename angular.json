@@ -104,24 +104,54 @@
                   "maximumWarning": "2mb"
                 }
               ]
+            },
+            "local": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local.ts"
+                }
+              ],
+              "optimization": false,
+              "outputHashing": "none",
+              "sourceMap": true,
+              "extractCss": false,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": false,
+              "buildOptimizer": false
             }
           }
         },
         "build-ng": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist",
+            "deployUrl": "ng-bundle/",
+            "outputPath": "dist/ng-bundle",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "libraries/locales/",
+                "output": "/locales/"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@wavemaker/app-ng-runtime/locales/",
+                "output": "/locales/"
+              }
+
             ],
             "styles": [
               "src/styles.css",
               "src/assets/styles/css/wm-style.css",
+              "src/assets/styles/css/wm-responsive.css",
               "src/assets/themes/material/style.css",
               "src/assets/app.css"
             ],
@@ -140,8 +170,10 @@
               "./node_modules/jquery-ui/ui/widgets/mouse.js",
               "./node_modules/jquery-ui/ui/widgets/resizable.js",
               "./node_modules/jquery-ui/ui/widgets/sortable.js",
+              "./node_modules/jquery-ui/ui/widgets/draggable.js",
               "./node_modules/jquery-ui/ui/widgets/droppable.js",
               "./libraries/scripts/datatable/datatable.js",
+              "./libraries/scripts/swipey/swipey.jquery.plugin.js",
               "./node_modules/moment/min/moment.min.js",
               "./node_modules/fullcalendar/dist/fullcalendar.min.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
@@ -149,43 +181,33 @@
               "./node_modules/iscroll/build/iscroll.js",
               "./node_modules/js-cookie/src/js.cookie.js",
               "./node_modules/jssha/dist/sha256.js"
-            ]
+            ],
+            "lazyModules": []
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
-              ]
+              "browserTarget": "angular-app:build:production"
+            },
+            "local": {
+              "browserTarget": "angular-app:build:local"
             }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-app:build"
+            "browserTarget": "angular-app:build",
+            "proxyConfig": "src/proxy/local-proxy.conf.js",
+            "deployUrl": "/ng-bundle/",
+            "baseHref": "/ng-bundle/",
+            "open": true
           },
           "configurations": {
             "production": {
               "browserTarget": "angular-app:build:production"
+            },
+            "local": {
+              "browserTarget": "angular-app:build:local"
             }
           }
         },
