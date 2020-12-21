@@ -90,7 +90,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this.datePipe = this.inj.get(ToDatePipe);
         this.i18nService = this.inj.get(AbstractI18nService);
         this.selectedLocale = this.i18nService.getSelectedLocale();
-
+        this._dateOptions.todayPosition = 'left';
+        this._dateOptions.clearPosition = 'right';
         this.meridians = getLocaleDayPeriods(this.selectedLocale, FormStyle.Format, TranslationWidth.Abbreviated);
         this.loadNativeDateInput = hasCordova();
     }
