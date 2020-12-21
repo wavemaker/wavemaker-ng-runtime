@@ -103,6 +103,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this._triggeredByUser = true;
     }
 
+    private isFocused;
     constructor(
         inj: Injector,
         form: FormComponent,
