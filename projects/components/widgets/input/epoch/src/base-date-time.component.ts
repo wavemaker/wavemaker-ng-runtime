@@ -5,7 +5,7 @@ import { getLocaleDayPeriods, FormStyle, TranslationWidth } from '@angular/commo
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { TimepickerComponent, TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, getDateObj, getFormattedDate, getNativeDateObject, isMobile, isString, setAttr } from '@wm/core';
+import { AbstractI18nService, getDateObj, getFormattedDate, getNativeDateObject, hasCordova, isString, setAttr } from '@wm/core';
 
 import { getContainerTargetClass, ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
@@ -33,15 +33,23 @@ export function getTimepickerConfig(i18nService): TimepickerConfig {
 
 @Directive()
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
+    public required: boolean;
+    public disabled: boolean;
+    public tabindex: any;
+    public name: string;
+    public autofocus: boolean;
+    public readonly: boolean;
+    public placeholder: string;
+    public shortcutkey: string;
+
     public excludedays: string;
-    protected excludedDaysToDisable: Array<number>;
-    protected excludedDatesToDisable: Array<Date>;
+    public excludedDaysToDisable: Array<number>;
+    public excludedDatesToDisable: Array<Date>;
     public excludedates;
     public outputformat;
     public mindate;
     public maxdate;
     public dataentrymode;
-    public useDatapicker = true;
     protected activeDate;
     private keyEventPluginInstance;
     private elementScope;
@@ -52,12 +60,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected meridians: any;
     protected datePipe;
     protected i18nService;
-    protected isReadOnly = false;
+    public isReadOnly = false;
     protected selectedLocale: string;
     public selectfromothermonth: boolean;
     public todaybutton: boolean;
     public clearbutton: boolean;
     public removeKeyupListener;
+    public loadNativeDateInput;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -68,7 +77,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     /**
      * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
      */
-    protected _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
+    public _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
     protected bsDatePickerDirective: BsDatepickerDirective;
 
     @ViewChild(BsDropdownDirective) protected bsDropdown;
@@ -83,6 +92,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this.selectedLocale = this.i18nService.getSelectedLocale();
 
         this.meridians = getLocaleDayPeriods(this.selectedLocale, FormStyle.Format, TranslationWidth.Abbreviated);
+        this.loadNativeDateInput = hasCordova();
     }
 
 
@@ -789,29 +799,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         return this.nativeElement.querySelector('.mobile-input') as HTMLElement;
     }
 
-    triggerNativeDateTimeInput() {
+    onDateTimeInputFocus(): void {
         let displayInputElem = this.getMobileInput();
         if (displayInputElem) {
             displayInputElem.focus();
             displayInputElem.click();
-            return true;
-        }
-    }
-
-    onDateTimeInputFocus(): void {
-        if (isMobile()) {
-            this.useDatapicker = false;
-            if (!this.triggerNativeDateTimeInput()) {
-                setTimeout((function () {
-                    this.triggerNativeDateTimeInput();
-                }).bind(this));
-            }
-        }
-    }
-
-    onDateTimeInputBlur() {
-        if (isMobile()) {
-            this.useDatapicker = true;
         }
     }
 
@@ -824,7 +816,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this._onChange(this.datavalue);
             return;
         }
-        if (this.useDatapicker && key === 'datepattern') {
+        if (key === 'datepattern') {
             this.updateFormat(key);
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;

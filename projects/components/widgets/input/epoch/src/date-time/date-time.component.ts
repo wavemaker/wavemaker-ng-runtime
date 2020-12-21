@@ -5,7 +5,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, isMobile } from '@wm/core';
+import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, hasCordova } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
@@ -35,7 +35,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * The bsDateTimeValue = bsDateValue + bsTimeValue.
      */
     private bsDateTimeValue: any;
-    private bsDateValue;
+    public bsDateValue;
     private bsTimeValue;
     private proxyModel;
 
@@ -50,7 +50,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     get dateInputFormat() {
-        return this.useDatapicker ? this._dateOptions.dateInputFormat : 'yyyy-MM-ddTHH:mm:ss';
+        return this._dateOptions.dateInputFormat || 'yyyy-MM-ddTHH:mm:ss';
     }
 
     /**
@@ -61,17 +61,21 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         return getFormattedDate(this.datePipe, this.proxyModel, this.dateInputFormat) || '';
     }
 
+    get nativeDisplayValue() {
+        return getFormattedDate(this.datePipe, this.proxyModel, 'yyyy-MM-ddTHH:mm:ss') || '';
+    }
+
     @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
 
     /**
      * This property checks if the timePicker is Open
      */
-    private isTimeOpen = false;
+    public isTimeOpen = false;
 
     /**
      * This property checks if the datePicker is Open
      */
-    private isDateOpen = false;
+    public isDateOpen = false;
 
     /**
      * This timeinterval is used to run the timer when the time component value is set to CURRENT_TIME in properties panel.
@@ -81,7 +85,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This property is set to TRUE if the time component value is set to CURRENT_TIME; In this case the timer keeps changing the time value until the widget is available.
      */
-    private isCurrentDate = false;
+    public isCurrentDate = false;
 
     private _debouncedOnChange: Function = _.debounce(this.invokeOnChange, 10);
 
@@ -156,8 +160,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This is an internal method to toggle the time picker
      */
-    private toggleTimePicker(newVal, $event?: any) {
-        if (isMobile()) {
+    public toggleTimePicker(newVal, $event?: any) {
+        if (hasCordova()) {
             this.onDateTimeInputFocus();
             return;
         }
@@ -200,7 +204,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This is an internal method to add a click listener once the time dropdown is open
      */
-    private onTimepickerOpen() {
+    public onTimepickerOpen() {
         // adding class for time widget dropdown menu
         const tpElements = document.querySelectorAll('timepicker');
         _.forEach(tpElements, (element) => {
@@ -214,7 +218,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         adjustContainerRightEdges($('bs-dropdown-container'), this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
     }
 
-    private onDatePickerOpen() {
+    public onDatePickerOpen() {
         this.isDateOpen = !this.isDateOpen;
         this.toggleTimePicker(false);
         // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
@@ -233,7 +237,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This is an internal method to update the model
      */
-    private onModelUpdate(newVal, type?) {
+    public onModelUpdate(newVal, type?) {
         if (type === 'date') {
             this.invalidDateTimeFormat = false;
             if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat) === this.displayValue) {
@@ -276,8 +280,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This is an internal method used to toggle the dropdown of the date widget
      */
-    private toggleDpDropdown($event) {
-        if (isMobile()) {
+    public toggleDpDropdown($event) {
+        if (hasCordova()) {
             this.onDateTimeInputFocus();
             return;
         }
@@ -305,7 +309,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }, 350);
     }
 
-    private hideDatepickerDropdown() {
+    public hideDatepickerDropdown() {
         this.isDateOpen = false;
         this.invokeOnTouched();
         this.bsDatePickerDirective.hide();
@@ -315,7 +319,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
     }
 
-    private onDateChange($event, isNativePicker) {
+    public onDateChange($event, isNativePicker?: boolean) {
         if (this.isEnterPressedOnDateInput) {
             this.isEnterPressedOnDateInput = false;
             return;
@@ -339,7 +343,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This is an internal method triggered when pressing key on the datetime input
      */
-    private onDisplayKeydown(event) {
+    public onDisplayKeydown(event) {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             let newVal = event.target.value.trim();

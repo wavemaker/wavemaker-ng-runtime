@@ -4,7 +4,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
-import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, isMobile } from '@wm/core';
+import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, hasCordova } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
@@ -30,10 +30,10 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class DateComponent extends BaseDateTimeComponent {
     static initializeProps = registerProps();
 
-    private bsDataValue;
+    public bsDataValue;
     public showdropdownon: string;
     private dateContainerCls: string;
-    private isOpen: boolean;
+    public isOpen: boolean;
     private isEnterPressedOnDateInput = false;
 
     private keyEventPlugin;
@@ -44,11 +44,15 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     get dateInputFormat() {
-        return this.useDatapicker ? this._dateOptions.dateInputFormat : 'yyyy-MM-dd';
+        return this._dateOptions.dateInputFormat || 'yyyy-MM-dd';
     }
 
     get displayValue() {
         return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat) || '';
+    }
+
+    get nativeDisplayValue() {
+        return getFormattedDate(this.datePipe, this.bsDataValue, 'yyyy-MM-dd') || '';
     }
 
     get datavalue() {
@@ -153,7 +157,7 @@ export class DateComponent extends BaseDateTimeComponent {
         }
     }
 
-    private hideDatepickerDropdown() {
+    public hideDatepickerDropdown() {
         this.invokeOnTouched();
         this.isOpen = false;
         this.isEnterPressedOnDateInput = false;
@@ -173,7 +177,7 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method used to toggle the dropdown of the date widget
      */
     toggleDpDropdown($event) {
-        if (isMobile()) {
+        if (hasCordova()) {
             this.onDateTimeInputFocus();
             return;
         }
@@ -204,7 +208,7 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method triggered when pressing key on the date input
      */
-    private onDisplayKeydown(event) {
+    public onDisplayKeydown(event) {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
