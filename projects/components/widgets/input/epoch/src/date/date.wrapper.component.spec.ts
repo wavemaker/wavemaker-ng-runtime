@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { WmComponentsModule } from '@wm/components/base';
 
 import { async, ComponentFixture } from '@angular/core/testing';
-import { BsDatepickerModule } from 'ngx-bootstrap';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { DateComponent } from './date.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
 import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
