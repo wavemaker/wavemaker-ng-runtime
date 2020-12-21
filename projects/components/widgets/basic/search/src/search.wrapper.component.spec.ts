@@ -6,7 +6,7 @@ import { Component, ViewChild } from '@angular/core';
 import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 
-import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap';
+import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 import { By } from '@angular/platform-browser';
 
