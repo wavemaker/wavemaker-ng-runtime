@@ -2,7 +2,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { TypeaheadModule } from 'ngx-bootstrap';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 import { App } from '@wm/core';
 import { ChipsComponent } from './chips.component';

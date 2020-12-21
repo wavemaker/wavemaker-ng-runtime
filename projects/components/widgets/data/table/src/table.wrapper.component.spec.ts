@@ -22,7 +22,9 @@ import { TableColumnGroupDirective } from './table-column-group/table-column-gro
 import { TableRowDirective } from './table-row/table-row.directive';
 import { TableRowActionDirective } from './table-row-action/table-row-action.directive';
 import { VALIDATOR } from '@wm/core';
-import { BsDatepickerModule, TimepickerModule, BsDropdownModule } from 'ngx-bootstrap';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { DateComponent, TimeComponent } from '@wm/components/input/epoch';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
