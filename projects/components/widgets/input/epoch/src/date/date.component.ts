@@ -33,7 +33,7 @@ export class DateComponent extends BaseDateTimeComponent {
     public bsDataValue;
     public showdropdownon: string;
     private dateContainerCls: string;
-    public isOpen: boolean;
+    public isOpen: boolean = false;
     private isEnterPressedOnDateInput = false;
 
     private keyEventPlugin;
@@ -229,7 +229,7 @@ export class DateComponent extends BaseDateTimeComponent {
                 } else {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
-                    this.bsDatePickerDirective.bsValue = newVal;
+                    this.bsDatePickerDirective.bsValue =  event.target.value ? newVal : '';
                 }
                 this.toggleDpDropdown(event);
             } else {

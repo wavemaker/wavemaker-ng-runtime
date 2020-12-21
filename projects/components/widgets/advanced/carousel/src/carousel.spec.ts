@@ -1,6 +1,6 @@
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
-import { CarouselModule } from 'ngx-bootstrap';
+import { CarouselModule } from 'ngx-bootstrap/carousel';
 import {CarouselDirective} from "./carousel.directive";
 import {CarouselTemplateDirective} from "./carousel-template/carousel-template.directive";
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
