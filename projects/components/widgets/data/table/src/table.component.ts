@@ -870,7 +870,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (_.get(widgetState, 'pagination')) {
             options.options.page = widgetState.pagination;
             if (_.get(widgetState, 'sort')) {
-                this.sortStateHandler(widgetState);
+                setTimeout( () => {
+                    this.sortStateHandler(widgetState);
+                });
                 options.options.orderBy = _.get(widgetState, 'sort.field') + ' ' + _.get(widgetState, 'sort.direction');
             }
             if (_.get(widgetState, 'search')) {
@@ -888,7 +890,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 options.options.filterFields = this.getFilterFields(widgetState.search);
             }
             if (_.get(widgetState, 'sort')) {
-                this.sortStateHandler(widgetState);
+                setTimeout( () => {
+                    this.sortStateHandler(widgetState);
+                });
                 options.options.orderBy = _.get(widgetState, 'sort.field') + ' ' + _.get(widgetState, 'sort.direction');
             }
         }
@@ -1475,7 +1479,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
             if (_.get(widgetState, 'sort')) {
                this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
-                this.sortStateHandler(widgetState);
+                setTimeout( () => {
+                    this.sortStateHandler(widgetState);
+                });
             }
             if (_.get(widgetState, 'pagination')) {
                 this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
