@@ -121,9 +121,9 @@ export class LocalDBDataPullService {
                             query += ' AND ';
                         }
                         if (deltaField.sqlType === 'datetime') {
-                            query += deltaFieldName + ' > wm_dt(\'' + moment(lastPullTime).utc().format('YYYY-MM-DDTHH:mm:ss') + '\')';
+                            query += deltaFieldName + ' > \'' + moment(lastPullTime).utc().format('YYYY-MM-DDTHH:mm:ss') + '\'';
                         } else {
-                            query += deltaFieldName + ' > wm_ts(\'' + lastPullTime + '\')';
+                            query += deltaFieldName + ' > ' + lastPullTime;
                         }
                     }
                     return query;
