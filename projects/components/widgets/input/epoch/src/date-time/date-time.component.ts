@@ -268,6 +268,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         this._debouncedOnChange(this.datavalue, {}, true);
         this.cdRef.detectChanges();
+        $(this.nativeElement).find('input').focus();
     }
 
     /**

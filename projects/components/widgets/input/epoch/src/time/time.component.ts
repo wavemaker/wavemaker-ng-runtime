@@ -291,6 +291,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, {}, true);
+        $(this.nativeElement).find('input').focus();
     }
 
     /**
