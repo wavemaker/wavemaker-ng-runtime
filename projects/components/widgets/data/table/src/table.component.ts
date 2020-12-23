@@ -1,6 +1,8 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Viewport, StatePersistence } from '@wm/core';
+import { Viewport, StatePersistence, AppDefaults, getFormattedDate } from '@wm/core';
+
+import { ToDatePipe } from '@wm/components/base';
 
 import { Observable, Subject } from 'rxjs';
 
@@ -198,6 +200,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private noOfColumns;
 
     private applyProps = new Map();
+
+    protected datePipe;
 
     redraw = _.debounce(this._redraw, 150);
     debouncedHandleLoading = _.debounce(this.handleLoading, 350);
@@ -790,6 +794,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         private dynamicComponentProvider: DynamicComponentRefProvider,
         private statePersistence: StatePersistence,
         private viewport: Viewport,
+        private appDefaults: AppDefaults,
         @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
         @Attribute('datasource.bind') public binddatasource,
@@ -801,6 +806,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         styler(this.nativeElement, this);
 
         this.ngform = fb.group({});
+        this.datePipe = this.inj.get(ToDatePipe);
         this.addEventsToContext(this.context);
         const listenersToRemove = [
             // Updates pagination, filter, sort etc options for service and crud variables
@@ -919,9 +925,30 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (this.rowFilter[filterObj.field]) {
                     this.rowFilter[filterObj.field].value = filterObj.value;
                     this.rowFilter[filterObj.field].matchMode = filterObj.matchMode;
-                    if ($(this.rowFilterCompliedTl[filterObj.field]).length) {
-                        const val = filterObj.type === 'integer' ? parseInt(filterObj.value) : filterObj.value;
-                        $(this.rowFilterCompliedTl[filterObj.field]).find('input').val(filterObj.value);
+                    const $col = $(this.rowFilterCompliedTl[filterObj.field]);
+                    let val = filterObj.type === 'integer' ? parseInt(filterObj.value) : filterObj.value, selector;
+                    if ($col.length) {
+                        if ($col.hasClass('date')) {
+                            val = getFormattedDate(this.datePipe, filterObj.value, this.appDefaults.dateFormat);
+                            selector = 'div[wmdate]';
+                        } else if ($col.hasClass('time')) {
+                            val = getFormattedDate(this.datePipe, filterObj.value, this.appDefaults.timeFormat);
+                            selector = 'div[wmtime]';
+                        } else if ($col.hasClass('datetime')) {
+                            val = getFormattedDate(this.datePipe, filterObj.value, this.appDefaults.dateTimeFormat);
+                            selector = 'div[wmdatetime]';
+                        } else if ($col.hasClass('select')) {
+                            selector = 'wm-select';
+                        } else if ($col.hasClass('text')) {
+                            selector = 'wm-input';
+                        } else if ($col.hasClass('autocomplete')) {
+                            selector = 'div[wmsearch]';
+                        }
+                        if (selector) {
+                            $col.find(selector)[0].widget.datavalue = filterObj.value;
+                        }
+                        $col.find('input.form-control').val(val);
+
                     }
                 }
             });
