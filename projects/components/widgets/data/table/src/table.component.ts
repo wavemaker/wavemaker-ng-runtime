@@ -925,12 +925,27 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (this.rowFilter[filterObj.field]) {
                     this.rowFilter[filterObj.field].value = filterObj.value;
                     this.rowFilter[filterObj.field].matchMode = filterObj.matchMode;
-                    if ($(this.rowFilterCompliedTl[filterObj.field]).length) {
-                        const val = filterObj.type === 'integer' ? parseInt(filterObj.value) : filterObj.value;
-                        //$(this.rowFilterCompliedTl[filterObj.field]).find('input').val(filterObj.value);
-                        $(this.rowFilterCompliedTl[filterObj.field]).find('select').val(filterObj.value);
-                        const v = getFormattedDate(this.datePipe, filterObj.value, this.appDefaults.dateFormat);
-                        $(this.rowFilterCompliedTl[filterObj.field]).find('input.app-dateinput').val(v);
+                    const $col = $(this.rowFilterCompliedTl[filterObj.field]);
+                    let val = filterObj.type === 'integer' ? parseInt(filterObj.value) : filterObj.value;
+                    if ($col.length) {
+                        if ($col.hasClass('date')) {
+                            val = getFormattedDate(this.datePipe, filterObj.value, this.appDefaults.dateFormat);
+                            $col.find('div[wmdate]')[0].widget.datavalue = filterObj.value;
+                        } else if ($col.hasClass('time')) {
+                            val = getFormattedDate(this.datePipe, filterObj.value, this.appDefaults.timeFormat);
+                            $col.find('div[wmtime]')[0].widget.datavalue = filterObj.value;
+                        } else if ($col.hasClass('datetime')) {
+                            val = getFormattedDate(this.datePipe, filterObj.value, this.appDefaults.dateTimeFormat);
+                            $col.find('div[wmdatetime]')[0].widget.datavalue = filterObj.value;
+                        } else if ($col.hasClass('select')) {
+                            $col.find('wm-select')[0].widget.datavalue = filterObj.value;
+                        } else if ($col.hasClass('text')) {
+                            $col.find('wm-input')[0].widget.datavalue = filterObj.value;
+                        } else if ($col.hasClass('autocomplete')) {
+                            $col.find('div[wmsearch]')[0].widget.datavalue = filterObj.value;
+                        }
+                        $col.find('input.form-control').val(val);
+
                     }
                 }
             });
