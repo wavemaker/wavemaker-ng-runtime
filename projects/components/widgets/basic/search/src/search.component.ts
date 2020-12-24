@@ -576,6 +576,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
+    private setFocusOnInput() {
+        $(this.nativeElement).find('input').focus();
+    }
+
     // This method returns a promise that provides the filtered data from the datasource.
     public getDataSource(query: Array<string> | string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
         // For default query, searchOnDataField is set to true, then do not make a n/w call when datafield is ALLFIELDS

@@ -17,7 +17,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 const CAPTION_POSITION = {
     left: 'caption-left',
     right: 'caption-right',
-    top: 'caption-top'
+    top: 'caption-top',
+    floating: 'caption-float'
 };
 
 @Directive({

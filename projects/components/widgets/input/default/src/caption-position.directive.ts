@@ -1,61 +1,59 @@
 import { AfterViewInit, Directive, ElementRef, Injector } from '@angular/core';
 
 declare const $;
-
 @Directive({
     selector: '[captionPosition]'
 })
 export class CaptionPositionDirective implements AfterViewInit {
     private elementRef: ElementRef;
-    private inputEl: JQuery;
-    private labelEl: JQuery;
+    private inputEl;
+    private nativeEl;
+    private classList;
     constructor(inj: Injector) {
         this.elementRef = inj.get(ElementRef);
+        this.nativeEl = this.elementRef.nativeElement;
+        this.classList = this.nativeEl.classList;
     }
 
-    private onBlurCb() {
+    private onBlurCb() { // on blur event
         if (!this.inputEl.val()) {
-            this.labelEl.removeClass('active');
-            this.labelEl.parent().removeClass('label-grp-margin');
+            this.classList.remove('float-active');
             this.inputEl.removeAttr('placeholder');
-        }
+        } 
     }
 
-    private onFocusCb(placeholder) {
-        this.labelEl.addClass('active');
-        this.labelEl.parent().addClass('label-grp-margin');
+    private onFocusCb(placeholder) { //  on focus event
+        this.classList.add('float-active');
         this.inputEl.attr('placeholder', placeholder);
     }
 
-    private setDefaultValueAnimation() {
+    private setDefaultValueAnimation() { // set animation when default values are present
         this.inputEl.removeAttr('placeholder');
-        if (this.inputEl.parent().attr('datavalue') || $(this.elementRef.nativeElement).parent().attr('defaultvalue') ||
-            $(this.elementRef.nativeElement).find('select option:selected').text()) {
-            this.labelEl.addClass('active');
-            this.labelEl.parent().addClass('label-grp-margin');
+        if (this.inputEl.parent().attr('datavalue') || this.nativeEl.parentNode.getAttribute('defaultvalue') ||
+           $(this.nativeEl).find('select option:selected').text()) {
+            this.classList.add('float-active');
         }
     }
 
     ngAfterViewInit() {
-        const isCaptionFloating: boolean = $(this.elementRef.nativeElement).hasClass('caption-floating');
-        const captionPosition: string = $(this.elementRef.nativeElement).attr('captionposition');
+        const isCaptionFloating: boolean = this.classList.contains('caption-floating'); // const for form-fields
+        const captionPosition: string = this.nativeEl.getAttribute('captionposition'); // const for composite widgets
         // skip floating caption for the below form fields
-        const skipFloatPositionWidgets: string[] = ['autocomplete', 'radioset', 'checkboxset', 'richtext', 'switch', 'chips', 'checkbox', 'slider', 'rating', 'toggle', 'upload'];
+        const skipFloatPositionWidgets: string[] = ['radioset', 'checkboxset', 'richtext', 'switch', 'chips', 'checkbox', 'slider', 'rating', 'toggle', 'upload'];
         if (captionPosition === 'floating' || isCaptionFloating) {
-            if (isCaptionFloating) {
-                const widgetType: string = $(this.elementRef.nativeElement).parent().attr('widgettype');
-                $(this.elementRef.nativeElement).removeClass('caption-floating');
+            if (isCaptionFloating) { // for form-fields remove caption-floating and replace it with caption-float or caption-top
+                const widgetType: string = this.nativeEl.parentNode.getAttribute('widgettype'); // fetches the form field type
+                this.classList.remove('caption-floating');
                 if (skipFloatPositionWidgets.indexOf(widgetType) > -1) {
-                    $(this.elementRef.nativeElement).addClass('caption-top')
+                    this.classList.add('caption-top')
                 } else {
-                    $(this.elementRef.nativeElement).addClass('caption-float')
+                    this.classList.add('caption-float')
                 }
             }
-            this.inputEl = $(this.elementRef.nativeElement).find('input, select, textarea');
-            this.labelEl = $(this.elementRef.nativeElement).find('.control-label');
-            if ($(this.elementRef.nativeElement).hasClass('caption-float') || captionPosition === 'floating') {
+            this.inputEl = $(this.nativeEl).find('input, select, textarea');
+            if (this.classList.contains('caption-float') || captionPosition === 'floating') {
                 const placeholder = this.inputEl.attr('placeholder');
-                this.inputEl.attr('placeholdertxt', placeholder);
+                this.inputEl.attr('placeholdertxt', placeholder); //  maintaining a new attribute to store placeholder value
                 setTimeout(this.setDefaultValueAnimation.bind(this), 0);
                 this.inputEl.focus(this.onFocusCb.bind(this, placeholder));
                 this.inputEl.blur(this.onBlurCb.bind(this));
