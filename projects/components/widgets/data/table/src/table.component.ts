@@ -884,6 +884,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.searchStateHandler(widgetState);
                 }, 500);
                 options.options.filterFields = this.getFilterFields(widgetState.search);
+                this.filterInfo = widgetState.search;
             }
         } else {
             options.options.page = 1;
@@ -892,6 +893,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.searchStateHandler(widgetState);
                 }, 500);
                 options.options.filterFields = this.getFilterFields(widgetState.search);
+                this.filterInfo = widgetState.search;
             }
             if (_.get(widgetState, 'sort')) {
                 this.sortStateHandler(widgetState);
