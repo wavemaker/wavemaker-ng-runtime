@@ -4,7 +4,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
-import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, hasCordova } from '@wm/core';
+import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, isMobile } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
@@ -123,7 +123,7 @@ export class DateComponent extends BaseDateTimeComponent {
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
         if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat) === this.displayValue) {
-            $(this.nativeElement).find('.app-dateinput').val(this.displayValue);
+            $(this.nativeElement).find('.display-input').val(this.displayValue);
         }
         if (newVal) {
             this.bsDataValue = newVal;
@@ -177,7 +177,7 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method used to toggle the dropdown of the date widget
      */
     toggleDpDropdown($event) {
-        if (hasCordova()) {
+        if (isMobile()) {
             this.onDateTimeInputFocus();
             return;
         }

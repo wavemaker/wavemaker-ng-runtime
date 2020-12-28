@@ -96,6 +96,6 @@
         [required]="required"
         [disabled]="disabled || readonly || isCurrentDate"
         (change)="onDateChange($event, true)"
-        (focus)="invokeOnFocus($event)"
-        (blur)="invokeOnTouched($event)">
+        (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
+        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
 </ng-template>

@@ -59,6 +59,6 @@
         [required]="required"
         [disabled]="disabled || readonly"
         (change)="onDisplayDateChange($event, true)"
-        (focus)="invokeOnFocus($event)"
-        (blur)="invokeOnTouched($event)">
+        (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
+        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
 </ng-template>
