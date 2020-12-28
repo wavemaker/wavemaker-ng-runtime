@@ -53,7 +53,7 @@
         class="form-control app-textbox app-dateinput mobile-input"
         role="input"
         step="any"
-        placeholder="yyyy-mm-dd"
+        placeholder="yyyy-mm-dd" [min]="mindate | date:'yyyy-MM-dd'" [max]="maxdate | date:'yyyy-MM-dd'"
         [value]="nativeDisplayValue"
         [tabindex]="tabindex"
         [required]="required"

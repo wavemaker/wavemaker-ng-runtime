@@ -50,6 +50,8 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     outputformat: string;
 
     public showdropdownon: string;
+    public mintime;
+    public maxtime;
 
     private deregisterEventListener;
 

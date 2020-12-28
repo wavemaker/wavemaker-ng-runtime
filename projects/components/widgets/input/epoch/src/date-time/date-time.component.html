@@ -91,7 +91,7 @@
         class="form-control app-textbox mobile-input"
         role="input"
         step="any"
-        [value]="nativeDisplayValue"
+        [value]="nativeDisplayValue" [min]="mindate | date:'yyyy-MM-ddTHH:mm:ss'" [max]="maxdate  | date:'yyyy-MM-ddTHH:mm:ss'"
         [tabindex]="tabindex"
         [required]="required"
         [disabled]="disabled || readonly || isCurrentDate"
