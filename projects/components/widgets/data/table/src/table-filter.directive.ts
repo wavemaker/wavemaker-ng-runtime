@@ -381,6 +381,9 @@ export class TableFilterSortDirective {
             if (!statePersistenceTriggered) {
                 this.table.statePersistence.removeWidgetState(this.table, 'pagination');
                 this.table.statePersistence.removeWidgetState(this.table, 'selectedItem');
+                if (this.table.gridOptions.rowExpansionEnabled) {
+                    this.removeExpandedRowFromState();
+                }
             }
         }
         let filterFields = getClonedObject(searchSortObj);
@@ -437,12 +440,20 @@ export class TableFilterSortDirective {
                 this.table.statePersistence.removeWidgetState(this.table, 'sort');
             }
             this.table.statePersistence.removeWidgetState(this.table, 'selectedItem');
+            if (this.table.gridOptions.rowExpansionEnabled) {
+                this.removeExpandedRowFromState();
+            }
         }
         if (dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
             this.handleSeverSideSort(searchSortObj, e, statePersistenceTriggered);
         } else {
             this.handleClientSideSortSearch(searchSortObj, e, type);
         }
+    }
+
+    // since we are using row indices to maintain expanded row details, we need to remove them when rearrangement(filter,sort) happens
+    removeExpandedRowFromState() {
+        this.table.statePersistence.removePartialState(this.table);
     }
 
     // This method is triggered by jquery table
