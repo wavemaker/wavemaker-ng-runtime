@@ -816,15 +816,14 @@ export const decodeData = (responseContent) => {
     if (!responseContent) {
         return responseContent;
     }
-    const domParser = new DOMParser();
     if (_.isArray(responseContent)) {
         _.forEach(responseContent, data => {
             if (_.isString(data)) {
-                data = domParser.parseFromString(data, 'text/html').body.textContent;
+                data = htmlDecode(data);
             } else if (_.isObject(data)) {
                 _.forEach(data, (value, key) => {
                     if (value && _.isString(value)) {
-                        data[key] = domParser.parseFromString(value, 'text/html').body.textContent;
+                        data[key] = htmlDecode(value);
                     } else if (_.isObject(value)) {
                         decodeData(value);
                     }
@@ -834,13 +833,19 @@ export const decodeData = (responseContent) => {
     } else if (_.isObject(responseContent)) {
         _.forEach(responseContent, (value, key) => {
             if (value && _.isString(value)) {
-                responseContent[key] = domParser.parseFromString(value, 'text/html').body.textContent;
+                responseContent[key] = htmlDecode(value);
             } else if (_.isObject(value)) {
                 decodeData(value);
             }
         });
     } else if (_.isString(responseContent)) {
-        responseContent = domParser.parseFromString(responseContent, 'text/html').body.textContent;
+        responseContent = htmlDecode(responseContent);
         return responseContent;
     }
 };
+
+function htmlDecode(input) {
+    let e = document.createElement('textarea');
+    e.innerHTML = input;
+    return e.childNodes.length === 0 ? '' : e.childNodes[0].nodeValue;
+}

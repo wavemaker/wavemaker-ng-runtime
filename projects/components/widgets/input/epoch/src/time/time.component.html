@@ -40,11 +40,11 @@
 <ng-template [ngIf]="loadNativeDateInput">
     <input type="time" class="form-control app-textbox display-input mobile-input"
            role="input"
-           [value]="displayValue"
+           [value]="nativeDisplayValue" [min]="mintime" [max]="maxtime"
            [tabindex]="tabindex"
            [required]="required"
            [disabled]="disabled || readonly || isCurrentTime"
            (change)="onTimeChange($event, true)"
-           (focus)="invokeOnFocus($event)"
-           (blur)="invokeOnTouched($event)">
+           (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
+           (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
 </ng-template>

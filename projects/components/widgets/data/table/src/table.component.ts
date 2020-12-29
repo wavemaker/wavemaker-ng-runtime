@@ -925,6 +925,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (this.rowFilter[filterObj.field]) {
                     this.rowFilter[filterObj.field].value = filterObj.value;
                     this.rowFilter[filterObj.field].matchMode = filterObj.matchMode;
+                    this.rowFilter[filterObj.field].type = filterObj.type;
                     const $col = $(this.rowFilterCompliedTl[filterObj.field]);
                     let val = filterObj.type === 'integer' ? parseInt(filterObj.value) : filterObj.value;
                     if ($col.length) {
@@ -1352,7 +1353,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this._selectedItemsExist = false;
                 // if an item is already selected, don't trigger onSelect event for it again
                 if (currentPageItems.length && this.selecteditem.length !== widgetState.selectedItem.length) {
-                    this.selecteditem = currentPageItems.map(function(val) {return val.index; });
+                    // don't reassign this.selecteditem if selected items already exist.
+                    if (_.isArray(this.selecteditem)) {
+                        currentPageItems.forEach((item) => {
+                            this.selectItem(item.index, undefined);
+                        });
+                    } else {
+                        this.selecteditem = currentPageItems.map(function(val) {return val.index; });
+                    }
                 }
             }
         }

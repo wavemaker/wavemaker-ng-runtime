@@ -5,7 +5,7 @@ import { getLocaleDayPeriods, FormStyle, TranslationWidth } from '@angular/commo
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { TimepickerComponent, TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, getDateObj, getFormattedDate, getNativeDateObject, hasCordova, isString, setAttr } from '@wm/core';
+import { AbstractI18nService, getDateObj, getFormattedDate, getNativeDateObject, hasCordova, isMobile, isString, setAttr} from '@wm/core';
 
 import { getContainerTargetClass, ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
@@ -33,9 +33,18 @@ export function getTimepickerConfig(i18nService): TimepickerConfig {
 
 @Directive()
 export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
+    public required: boolean;
+    public disabled: boolean;
+    public tabindex: any;
+    public name: string;
+    public autofocus: boolean;
+    public readonly: boolean;
+    public placeholder: string;
+    public shortcutkey: string;
+
     public excludedays: string;
-    protected excludedDaysToDisable: Array<number>;
-    protected excludedDatesToDisable: Array<Date>;
+    public excludedDaysToDisable: Array<number>;
+    public excludedDatesToDisable: Array<Date>;
     public excludedates;
     public outputformat;
     public mindate;
@@ -51,13 +60,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected meridians: any;
     protected datePipe;
     protected i18nService;
-    protected isReadOnly = false;
+    public isReadOnly = false;
     protected selectedLocale: string;
     public selectfromothermonth: boolean;
     public todaybutton: boolean;
     public clearbutton: boolean;
     public removeKeyupListener;
-    private loadNativeDateInput;
+    public loadNativeDateInput;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -68,7 +77,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     /**
      * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
      */
-    protected _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
+    public _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
     protected bsDatePickerDirective: BsDatepickerDirective;
 
     @ViewChild(BsDropdownDirective) protected bsDropdown;
@@ -83,7 +92,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this.selectedLocale = this.i18nService.getSelectedLocale();
 
         this.meridians = getLocaleDayPeriods(this.selectedLocale, FormStyle.Format, TranslationWidth.Abbreviated);
-        this.loadNativeDateInput = hasCordova();
+        this.loadNativeDateInput = isMobile();
     }
 
 
@@ -790,8 +799,30 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         return this.nativeElement.querySelector('.mobile-input') as HTMLElement;
     }
 
-    onDateTimeInputFocus(): void {
+    onDateTimeInputBlur() {
+        // removing the opacity on blur of the mobile widget
         let displayInputElem = this.getMobileInput();
+        if (displayInputElem && !hasCordova()) {
+            let children = this.nativeElement.children;
+            for (let i=0; i < children.length; i++) {
+                children[i].classList.remove('add-opacity');
+            }
+            displayInputElem.classList.remove('remove-opacity');
+        }
+    }
+
+    onDateTimeInputFocus(skipFocus: boolean = false): void {
+        let displayInputElem = this.getMobileInput();
+        // toggling the classes to show and hide the native widget using opacity
+        if (skipFocus && !hasCordova()) {
+            let children = this.nativeElement.children;
+            for (let i=0; i < children.length; i++) {
+                children[i].classList.add('add-opacity');
+            }
+            displayInputElem.classList.add('remove-opacity');
+            return;
+        }
+
         if (displayInputElem) {
             displayInputElem.focus();
             displayInputElem.click();

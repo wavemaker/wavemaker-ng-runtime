@@ -53,12 +53,12 @@
         class="form-control app-textbox app-dateinput mobile-input"
         role="input"
         step="any"
-        placeholder="yyyy-mm-dd"
-        [value]="displayValue"
+        placeholder="yyyy-mm-dd" [min]="mindate | date:'yyyy-MM-dd'" [max]="maxdate | date:'yyyy-MM-dd'"
+        [value]="nativeDisplayValue"
         [tabindex]="tabindex"
         [required]="required"
         [disabled]="disabled || readonly"
         (change)="onDisplayDateChange($event, true)"
-        (focus)="invokeOnFocus($event)"
-        (blur)="invokeOnTouched($event)">
+        (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
+        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
 </ng-template>
