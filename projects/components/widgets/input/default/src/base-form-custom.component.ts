@@ -5,10 +5,10 @@ import { BaseFormComponent } from './base-form.component';
 
 /*
  * WMS-18269
- * custom 'required' validator for components, 
+ * custom 'required' validator for components,
  * as the bound values are resolved at runtime
  * Called on 'required' property change
- * 
+ *
  * Note: Component needs NG_VALIDATOR provider for this to work
  */
 function isValidValue(val):Boolean {
@@ -55,7 +55,7 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
             this.onPropertyChange('datavalue', value);
             this.updatePrevDatavalue(value);
         }
-        /* 
+        /*
          * WMS:18246
          * Call onChange on default value, so that the Component Model is updated
          * Do only When the Model Value is different from datavalue
@@ -80,7 +80,7 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
         }
     }
 
-    protected invokeOnFocus($event: Event) {
+    public invokeOnFocus($event: Event) {
         this.invokeEventCallback('focus', {$event});
     }
     /* WMS-18269 */
