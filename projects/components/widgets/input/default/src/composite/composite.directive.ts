@@ -18,7 +18,7 @@ const CAPTION_POSITION = {
     left: 'caption-left',
     right: 'caption-right',
     top: 'caption-top',
-    floating: 'caption-float'
+    floating: 'caption-floating'
 };
 
 @Directive({

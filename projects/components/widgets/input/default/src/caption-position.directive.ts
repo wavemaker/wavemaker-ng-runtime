@@ -8,56 +8,58 @@ export class CaptionPositionDirective implements AfterViewInit {
     private elementRef: ElementRef;
     private inputEl;
     private nativeEl;
-    private classList;
+    private compositeEle;
+    
+    // skip floating caption for the below form fields
+    private skipFloatPositionWidgets: string[] = ['radioset', 'checkboxset', 'richtext', 'switch', 'chips', 'checkbox', 'slider', 'rating', 'toggle', 'upload'];
+
     constructor(inj: Injector) {
         this.elementRef = inj.get(ElementRef);
         this.nativeEl = this.elementRef.nativeElement;
-        this.classList = this.nativeEl.classList;
     }
 
-    private onBlurCb() { // on blur event
+    private onBlurCb() { // on blur, remove animation and placeholder if there is no value
         if (!this.inputEl.val()) {
-            this.classList.remove('float-active');
+            this.compositeEle.classList.remove('float-active');
             this.inputEl.removeAttr('placeholder');
         } 
     }
 
-    private onFocusCb(placeholder) { //  on focus event
-        this.classList.add('float-active');
+    private onFocusCb(placeholder) { //  on focus, add animation class and the place holder
+        this.compositeEle.classList.add('float-active');
         this.inputEl.attr('placeholder', placeholder);
     }
 
     private setDefaultValueAnimation() { // set animation when default values are present
         this.inputEl.removeAttr('placeholder');
-        if (this.inputEl.parent().attr('datavalue') || this.nativeEl.parentNode.getAttribute('defaultvalue') ||
+        // check for datavalue attribute in composite element and defaultvalue attribute in form field element
+        if ($(this.inputEl.parent('[widget-id]')).attr('datavalue') || this.nativeEl.getAttribute('defaultvalue') ||
            $(this.nativeEl).find('select option:selected').text()) {
-            this.classList.add('float-active');
+            this.compositeEle.classList.add('float-active');
         }
     }
 
     ngAfterViewInit() {
-        const isCaptionFloating: boolean = this.classList.contains('caption-floating'); // const for form-fields
-        const captionPosition: string = this.nativeEl.getAttribute('captionposition'); // const for composite widgets
-        // skip floating caption for the below form fields
-        const skipFloatPositionWidgets: string[] = ['radioset', 'checkboxset', 'richtext', 'switch', 'chips', 'checkbox', 'slider', 'rating', 'toggle', 'upload'];
-        if (captionPosition === 'floating' || isCaptionFloating) {
-            if (isCaptionFloating) { // for form-fields remove caption-floating and replace it with caption-float or caption-top
-                const widgetType: string = this.nativeEl.parentNode.getAttribute('widgettype'); // fetches the form field type
-                this.classList.remove('caption-floating');
-                if (skipFloatPositionWidgets.indexOf(widgetType) > -1) {
-                    this.classList.add('caption-top')
-                } else {
-                    this.classList.add('caption-float')
+        this.compositeEle = this.nativeEl;
+        const widget = this.nativeEl.widget;
+        let captionPosition: string = widget.$attrs.get('captionposition');
+        if (widget.form) {
+            captionPosition = widget.form.$attrs.get('captionposition');
+            this.compositeEle = this.nativeEl.querySelector('.app-composite-widget');
+        }
+        if (captionPosition === 'floating') {
+            if (widget.form) { // for form-fields remove caption-floating and replace it with caption-float or caption-top
+                const widgetType: string = this.nativeEl.getAttribute('widgettype'); // fetches the form field type
+                if (this.skipFloatPositionWidgets.indexOf(widgetType) > -1) {
+                    this.compositeEle.classList.remove('caption-floating');
+                    this.compositeEle.classList.add('caption-top');
                 }
             }
             this.inputEl = $(this.nativeEl).find('input, select, textarea');
-            if (this.classList.contains('caption-float') || captionPosition === 'floating') {
-                const placeholder = this.inputEl.attr('placeholder');
-                this.inputEl.attr('placeholdertxt', placeholder); //  maintaining a new attribute to store placeholder value
-                setTimeout(this.setDefaultValueAnimation.bind(this), 0);
-                this.inputEl.focus(this.onFocusCb.bind(this, placeholder));
-                this.inputEl.blur(this.onBlurCb.bind(this));
-            }
+            // call the below function to apply float-active class when there are default values to the fields
+            setTimeout(this.setDefaultValueAnimation.bind(this), 0);
+            this.inputEl.focus(this.onFocusCb.bind(this, this.inputEl.attr('placeholder')));
+            this.inputEl.blur(this.onBlurCb.bind(this));
         }
     }
 }
