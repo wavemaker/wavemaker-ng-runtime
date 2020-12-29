@@ -697,16 +697,21 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }) || null;
     }
 
-    private updateSelectedItemsWidgets() {
+    private updateSelectedItemsWidgets(statePersistenceTriggered?) {
         let obj = {}, widgetState;
         const pageNum = _.get(this.dataNavigator, 'dn.currentPage') || 1;
         if (this.getConfiguredState() !== 'none') {
             // remove previously configured selected items for current page and construct new ones later below.
             widgetState = this.statePersistence.getWidgetState(this) || {};
             if (_.get(widgetState, 'selectedItem')) {
-                _.remove(widgetState.selectedItem, function(selectedItem) {
-                    return selectedItem.page === pageNum;
-                });
+                // when multiselect is on and an item is selected without pressing CTRL, previously selected items in state should be empty.
+                if (this.multiselect && this.selecteditem.length === 1) {
+                    widgetState.selectedItem = [];
+                } else {
+                    _.remove(widgetState.selectedItem, function(selectedItem) {
+                        return selectedItem.page === pageNum;
+                    });
+                }
             }
         }
         if (this.multiselect) {
@@ -729,7 +734,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 }
             }
         });
-        if (this.getConfiguredState() !== 'none') {
+        if (this.getConfiguredState() !== 'none' && !statePersistenceTriggered) {
             if (unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
                 this.statePersistence.removeWidgetState(this, 'selectedItem');
                 this.statePersistence.setWidgetState(this, {'selectedItem': widgetState.selectedItem});
@@ -744,7 +749,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      * If the listItem is already a selected item then deselects the item.
      * @param {ListItemDirective} $listItem: Item to be selected of deselected.
      */
-    private toggleListItemSelection($listItem: ListItemDirective) {
+    private toggleListItemSelection($listItem: ListItemDirective, statePersistenceTriggered?) {
         // item is not allowed to get selected if it is disabled.
         if ($listItem && !$listItem.disableItem) {
             let item = $listItem.item;
@@ -765,7 +770,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.invokeEventCallback('select', {widget: $listItem, $data: item});
                 $listItem.isActive = true;
             }
-            this.updateSelectedItemsWidgets();
+            this.updateSelectedItemsWidgets(statePersistenceTriggered);
         }
     }
 
@@ -784,14 +789,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = false;
+                const selectedItemsLength = _.isArray(this.selecteditem) ? this.selecteditem.length : _.toNumber(!_.isEmpty(this.selecteditem));
                 const currentPage = _.get(this.dataNavigator, 'dn.currentPage') || 1;
-                setTimeout( () => {
+                widgetState.pagination = widgetState.pagination || 1;
+                // to prevent item selection from being triggered more than once
+                if (selectedItemsLength !== widgetState.selectedItem.length && widgetState.pagination === currentPage) {
                     widgetState.selectedItem.forEach((item) => {
                         if (item.page === currentPage) {
-                            this.selectItem(item.index);
+                            this.selectItem(item.index, true);
                         }
                     });
-                }, 100);
+                }
             }
         }
         const selectedItems = _.isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];
@@ -1129,13 +1137,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      * selects item in the list.
      * @param val: index | model of the list item.
      */
-    public selectItem(val) {
+    public selectItem(val, statePersistenceTriggered?) {
         const listItem = this.getItemRefByIndexOrModel(val);
         if (!listItem) {
             return;
         }
         if (!listItem.isActive) {
-            this.toggleListItemSelection(listItem);
+            this.toggleListItemSelection(listItem, statePersistenceTriggered);
         }
         // focus the element.
         listItem.nativeElement.focus();
