@@ -35,7 +35,21 @@ export class StatePersistence {
         if (viewParent && (viewParent.prefabName || viewParent.partialName)) {
             out = out.length > 0 ? out + '.' + (viewParent.prefabName || viewParent.partialName) : (viewParent.prefabName || viewParent.partialName);
             // same partial/prefab can be dropped multiple times in a page. Appending container's name for uniqueness.
-            out = out + '.' + viewParent.containerWidget.name;
+            if (viewParent.containerWidget && viewParent.containerWidget.name) {
+                out = out + '.' + viewParent.containerWidget.name;
+            }
+            if (viewParent.containerWidget && viewParent.containerWidget.$element) {
+                const $expandedRow = viewParent.containerWidget.$element.closest('tr.app-datagrid-detail-row');
+                const $table = viewParent.containerWidget.$element.closest('[wmTable]');
+                if ($expandedRow.length && $table.length) {
+                    const tableWidget = $table[0].widget;
+                    let page = parseInt($expandedRow.attr('data-row-id'));
+                    if (tableWidget.dataNavigator) {
+                        page = page + ((tableWidget.dataNavigator.dn.currentPage - 1) * tableWidget.dataNavigator.pagination.size);
+                    }
+                    out = out + '.row' + page + '.' + tableWidget.name;
+                }
+            }
             return this.getNestedPath(viewParent.containerWidget.viewParent, widgetName, out);
         }
         return out.split('.').reverse().join('.');
@@ -46,8 +60,9 @@ export class StatePersistence {
      * @param mode : optional parameter if the widget/variable uses a state handling mode(url, local storage, session storage)
      * other than the project level mode
      */
-    public getStateInformation(mode) {
+    public getStateInformation(mode?) {
         let parsedStateInfo, stateInfo;
+        mode = mode || this.computeMode();
         if (mode.toLowerCase() === 'url') {
             const decodedURI = decodeURIComponent(window.location.href);
             stateInfo = decodedURI.match(/(wm_state=).*?(&|$)/);
@@ -91,7 +106,7 @@ export class StatePersistence {
         return;
     }
 
-    public computeMode(widgetStateHandler) {
+    public computeMode(widgetStateHandler?) {
         if (!widgetStateHandler) {
             return 'url';
         } else if (widgetStateHandler && widgetStateHandler.toLowerCase() === 'none') {
@@ -346,6 +361,7 @@ export class StatePersistence {
      */
     public removeStateParam(stateParam, key, subParam?, mode?, widget?) {
         let url = '', parsedObj;
+        mode = mode || this.computeMode();
         const stateObj = this.getStateInformation(mode);
         if (widget && stateObj && widget.getAppInstance().activePageName && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
             parsedObj = stateObj[widget.getAppInstance().activePageName];
@@ -355,7 +371,7 @@ export class StatePersistence {
         if (!_.get(parsedObj, [stateParam]) && !_.get(parsedObj, key)) {
             return;
         }
-        if (_.get(parsedObj, stateParam + '.' + key)) {
+        if (_.get(parsedObj[stateParam], key)) {
             if (subParam) {
                 delete parsedObj[stateParam][key][subParam];
             } else {
@@ -400,6 +416,35 @@ export class StatePersistence {
         }
 
         window.history.replaceState({ path: url }, '', url);
+    }
+
+    /**
+     * Removes the state information for a partial present inside a widget(say row expansion in a table widget)
+     * @param widget : parent widget inside which the partial resides
+     */
+    private removePartialState(widget) {
+        const $partial = widget.$element.find('[wmpartial]');
+        if ($partial.length) {
+            const partialWidgets = _.get($partial[0], 'widget.viewParent.Widgets');
+            if (partialWidgets) {
+                _.forEach(partialWidgets, (partialWidget) => {
+                    if (partialWidget.statehandler) {
+                        let stateInfo = this.getStateInformation(partialWidget.statehandler);
+                        if (stateInfo && widget  && widget.getAppInstance().activePageName && (partialWidget.statehandler.toLowerCase() === 'localstorage' || partialWidget.statehandler.toLowerCase() === 'sessionstorage')) {
+                            stateInfo = stateInfo[widget.getAppInstance().activePageName];
+                        }
+                        if (stateInfo) {
+                            const widgetStateInfo = stateInfo[this.WIDGET_STATE_KEY] || {};
+                            _.forEach(widgetStateInfo, (widgetVal, widgetKey) => {
+                                if (widgetKey.startsWith(widget.name + '.row')) {
+                                    this.removeStateParam(this.WIDGET_STATE_KEY, widgetKey, undefined, partialWidget.statehandler, widget);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
     }
 
     /**
