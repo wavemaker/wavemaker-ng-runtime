@@ -1366,7 +1366,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     } else {
                         this.selecteditem = currentPageItems.map(function(val) {return val.index; });
                     }
-
                 }
             }
         }
