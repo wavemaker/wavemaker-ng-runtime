@@ -1473,44 +1473,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     watchVariableDataSet(newVal) {
         let result;
-        // State handling for static variables
-        if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
+        // State handling for Static variables, Service and Rest CRUD Variables(Client Side Searching, Sorting, Pagination and Item Selection)
+        if (_.get(this.datasource, 'category') !== 'wm.LiveVariable' && this._pageLoad && this.getConfiguredState() !== 'none') {
             const widgetState = this.statePersistence.getWidgetState(this);
-            this._pageLoad = false;
-            if (_.get(widgetState, 'selectedItem')) {
-                this._selectedItemsExist = true;
-            } else {
-                this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
+            if (newVal.length) {
+                this._pageLoad = false;
             }
-            if (_.get(widgetState, 'search')) {
-                this.searchStateHandler(widgetState);
-                this.searchSortHandler(widgetState.search, undefined, 'search', true);
-            }
-            if (_.get(widgetState, 'sort')) {
-               this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
-                this.sortStateHandler(widgetState);
-            }
-        }
-        if ((_.get(this.datasource, 'category') === 'wm.ServiceVariable' || _.get(this.datasource, 'category') === 'wm.CrudVariable') && this._pageLoad && this.getConfiguredState() !== 'none') {
-            const widgetState = this.statePersistence.getWidgetState(this);
-            this._pageLoad = false;
-            if (_.get(widgetState, 'selectedItem')) {
-                this._selectedItemsExist = true;
-            } else {
-                this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
-            }
-            if (_.get(widgetState, 'search')) {
-                this.searchStateHandler(widgetState);
-                this.searchSortHandler(widgetState.search, undefined, 'search', true);
-            }
-            if (_.get(widgetState, 'sort')) {
-                this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
-                this.sortStateHandler(widgetState);
-            }
-        }
-        if ((_.get(this.datasource, 'category') === 'wm.ServiceVariable' || _.get(this.datasource, 'category') === 'wm.CrudVariable') && this._pageLoad && this.getConfiguredState() !== 'none') {
-            const widgetState = this.statePersistence.getWidgetState(this);
-            this._pageLoad = false;
             if (_.get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = true;
             } else {

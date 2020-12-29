@@ -188,7 +188,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             currentPage = this.dn.currentPage || 1;
         }
         // For Service variables with client side pagination and State persistence, set the correct page from state
-        if ((this.parent.widgetType === 'wm-table' || this.parent.widgetType === 'wm-list') && newVal.length && this.datasource && !this.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
+        if (newVal.length && this.datasource && !this.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
             const widgetState = this.parent.statePersistence.getWidgetState(this.parent);
             if (widgetState && widgetState.pagination) {
                 currentPage = widgetState.pagination;
@@ -287,7 +287,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     goToPage(event?, callback?) {
         this.firstRow = (this.dn.currentPage - 1) * this.maxResults;
         const mode = this.parent.statePersistence.computeMode(this.statehandler);
-        if (mode && mode.toLowerCase() !== 'none' && (this.parent.widgetType === 'wm-table' || this.parent.widgetType === 'wm-list')) {
+        if (mode && mode.toLowerCase() !== 'none') {
             this.parent._selectedItemsExist = true;
             if (this.isFirstPage()) {
                 this.parent.statePersistence.removeWidgetState(this.parent, 'pagination');
