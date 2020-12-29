@@ -919,6 +919,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (this.rowFilter[filterObj.field]) {
                     this.rowFilter[filterObj.field].value = filterObj.value;
                     this.rowFilter[filterObj.field].matchMode = filterObj.matchMode;
+                    this.rowFilter[filterObj.field].type = filterObj.type;
                     if ($(this.rowFilterCompliedTl[filterObj.field]).length) {
                         const val = filterObj.type === 'integer' ? parseInt(filterObj.value) : filterObj.value;
                         $(this.rowFilterCompliedTl[filterObj.field]).find('input').val(filterObj.value);
