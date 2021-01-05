@@ -259,13 +259,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         ];
     }
 
-    private getConfiguredState() {
-        const mode = this.statePersistence.computeMode(this.statehandler);
-        return mode && mode.toLowerCase();
-    }
-
     private handleStateParams(options) {
-        if (this._pageLoad && this.getConfiguredState() !== 'none') {
+        if (this._pageLoad && this.statehandler !== 'none') {
             this._pageLoad = false;
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'pagination')) {
@@ -647,7 +642,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     private onDataSetChange(newVal) {
-        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none' && this._pageLoad) {
+        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.statehandler !== 'none' && this._pageLoad) {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
             if (_.get(widgetState, 'pagination')) {
@@ -703,7 +698,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private updateSelectedItemsWidgets(statePersistenceTriggered?) {
         let obj = {}, widgetState;
         const pageNum = _.get(this.dataNavigator, 'dn.currentPage') || 1;
-        if (this.getConfiguredState() !== 'none') {
+        if (this.statehandler !== 'none') {
             // remove previously configured selected items for current page and construct new ones later below.
             widgetState = this.statePersistence.getWidgetState(this) || {};
             if (_.get(widgetState, 'selectedItem')) {
@@ -737,7 +732,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 }
             }
         });
-        if (this.getConfiguredState() !== 'none' && !statePersistenceTriggered) {
+        if (this.statehandler !== 'none' && !statePersistenceTriggered) {
             if (unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
                 this.statePersistence.removeWidgetState(this, 'selectedItem');
                 this.statePersistence.setWidgetState(this, {'selectedItem': widgetState.selectedItem});
@@ -788,7 +783,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             $invokeWatchers(true);
             this.invokeEventCallback('render', {$data: this.fieldDefs});
         }
-        if (this.isDataChanged && this.getConfiguredState() !== 'none' && listItems.length && this._selectedItemsExist) {
+        if (this.isDataChanged && this.statehandler !== 'none' && listItems.length && this._selectedItemsExist) {
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = false;
@@ -826,7 +821,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.clearSelectedItems();
                 this.firstSelectedItem = this.lastSelectedItem = $firstItem;
                 // selecting the first record
-                this.selectItem(0);
+                this.selectItem(0, true);
             }
         } else {
             this.deselectListItems();
@@ -893,7 +888,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const newIndex = ui.item.index();
         const oldIndex = this.$ulEle.data('oldIndex');
 
-        if (this.getConfiguredState() !== 'none') {
+        if (this.statehandler !== 'none') {
             this.statePersistence.removeWidgetState(this, 'selectedItem');
         }
 
