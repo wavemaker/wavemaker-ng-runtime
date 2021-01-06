@@ -1334,6 +1334,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                         currentPageItems.forEach((item) => {
                             this.selectItem(item.index, undefined);
                         });
+                        // WMS-19675: to check Select All checkbox state after row selection is done through State Persistence
+                        setTimeout(() => {
+                            this.callDataGridMethod('updateSelectAllCheckboxState');
+                        });
                     } else {
                         this.selecteditem = currentPageItems.map(function(val) {return val.index; });
                     }
