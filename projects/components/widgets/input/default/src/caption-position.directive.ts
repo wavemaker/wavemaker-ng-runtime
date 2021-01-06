@@ -1,21 +1,25 @@
-import { AfterViewInit, Directive, ElementRef, Injector } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, Injector, OnInit, OnDestroy } from '@angular/core';
+import { App } from '@wm/core';
 
 declare const $;
 @Directive({
     selector: '[captionPosition]'
 })
-export class CaptionPositionDirective implements AfterViewInit {
+export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestroy{
     private elementRef: ElementRef;
     private inputEl;
     private nativeEl;
     private compositeEle;
-    
+    private app: App;
+    private labelAnimationSubscription;
+
     // skip floating caption for the below form fields
     private skipFloatPositionWidgets: string[] = ['radioset', 'checkboxset', 'richtext', 'switch', 'chips', 'checkbox', 'slider', 'rating', 'toggle', 'upload'];
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, app: App) {
         this.elementRef = inj.get(ElementRef);
         this.nativeEl = this.elementRef.nativeElement;
+        this.app = app;
     }
 
     private onBlurCb() { // on blur, remove animation and placeholder if there is no value
@@ -60,6 +64,20 @@ export class CaptionPositionDirective implements AfterViewInit {
             setTimeout(this.setDefaultValueAnimation.bind(this), 0);
             this.inputEl.focus(this.onFocusCb.bind(this, this.inputEl.attr('placeholder')));
             this.inputEl.blur(this.onBlurCb.bind(this));
+        }
+    }
+
+    ngOnInit() {
+        this.labelAnimationSubscription = this.app.subscribe('captionPositionAnimate', (data) => {
+            if (data.displayVal) {
+                $(data.nativeEl).parent().parent().addClass('float-active');
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        if (this.labelAnimationSubscription) {
+            this.labelAnimationSubscription();
         }
     }
 }

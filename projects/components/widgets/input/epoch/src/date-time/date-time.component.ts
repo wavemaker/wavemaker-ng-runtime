@@ -5,7 +5,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, hasCordova } from '@wm/core';
+import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, hasCordova, App } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
@@ -38,6 +38,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     public bsDateValue;
     private bsTimeValue;
     private proxyModel;
+    private app: App;
 
     public showdropdownon: string;
     private keyEventPlugin;
@@ -119,11 +120,13 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         private ngZone: NgZone,
         private cdRef: ChangeDetectorRef,
         private appDefaults: AppDefaults,
+        app: App,
         @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
     ) {
         super(inj, WIDGET_CONFIG);
         this.registerDestroyListener(() => this.clearTimeInterval());
         styler(this.nativeElement, this);
+        this.app = app;
         // KeyEventsPlugin
         this.keyEventPlugin = evtMngrPlugins[1];
         this.dateContainerCls = `app-date-${this.widgetId}`;
@@ -199,6 +202,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.deregisterTimepickeEventListener) {
             this.deregisterTimepickeEventListener();
         }
+        this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: this.nativeElement});
     }
 
     /**
@@ -268,7 +272,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         this._debouncedOnChange(this.datavalue, {}, true);
         this.cdRef.detectChanges();
-        $(this.nativeElement).find('input').focus();
     }
 
     /**
@@ -318,6 +321,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.deregisterDatepickerEventListener) {
             this.deregisterDatepickerEventListener();
         }
+        this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: this.nativeElement});
     }
 
     public onDateChange($event, isNativePicker?: boolean) {

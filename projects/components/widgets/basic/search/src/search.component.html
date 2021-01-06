@@ -13,7 +13,7 @@
     <ul #ulElement class="app-search dropdown-menu" scrollable>
         <li #liElements *ngFor="let match of matches" [wmItemTemplate]="content" [userComponentParams]="match.item"  partialContainer [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match)}"
             (mouseenter)="typeaheadContainer.selectActive(match);"
-            (click)="typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; setFocusOnInput();">
+            (click)="typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; notifySubscriber()">
             <!-- itemTemplate comes from the <input> -->
             <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate"
                           [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">

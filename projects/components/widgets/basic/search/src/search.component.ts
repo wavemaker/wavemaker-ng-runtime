@@ -6,7 +6,7 @@ import { mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
-import { addClass, adjustContainerPosition, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
+import { addClass, adjustContainerPosition, App, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
 import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, provideAs, provideAsWidgetRef, styler, transformFormData, getContainerTargetClass } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 
@@ -39,6 +39,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public navsearchbar: any;
     public debouncetime: number;
 
+    private app: App;
     private typeaheadDataSource: Observable<any>;
     private pagesize: any;
     private page = 1;
@@ -93,13 +94,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     constructor(
         inj: Injector,
+        app: App,
         @Attribute('datavalue.bind') public binddatavalue,
         @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
         // this flag will not allow the empty datafield values.
         this.allowempty = false;
-
+        this.app = app;
         addClass(this.nativeElement, 'app-search', true);
 
         /**
@@ -576,8 +578,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
-    private setFocusOnInput() {
-        $(this.nativeElement).find('input').focus();
+    public notifySubscriber() {
+        this.app.notify('captionPositionAnimate', {displayVal: true, nativeEl: this.nativeElement});
     }
 
     // This method returns a promise that provides the filtered data from the datasource.

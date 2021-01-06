@@ -8,6 +8,7 @@ import {
     addClass,
     addEventListenerOnElement,
     adjustContainerPosition,
+    App,
     AppDefaults,
     EVENT_LIFE,
     FormWidgetType,
@@ -52,6 +53,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     public showdropdownon: string;
 
     private deregisterEventListener;
+    private app: App;
 
     get timestamp() {
         return this.bsTimeValue ? this.bsTimeValue.valueOf() : undefined;
@@ -126,6 +128,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         inj: Injector,
         private ngZone: NgZone,
         private appDefaults: AppDefaults,
+        app: App,
         @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
     ) {
         super(inj, WIDGET_CONFIG);
@@ -141,6 +144,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
         this.timepattern = this.appDefaults.timeFormat || getDisplayDateTimeFormat(FormWidgetType.TIME);
         this.updateFormat('timepattern');
+        this.app = app;
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
@@ -205,6 +209,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     private preventTpClose($event) {
         $event.stopImmediatePropagation();
+        this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: this.nativeElement});
     }
 
     private addBodyClickListener(skipListener) {
@@ -291,7 +296,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, {}, true);
-        $(this.nativeElement).find('input').focus();
     }
 
     /**
@@ -341,6 +345,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             this.deregisterEventListener();
         }
         this.removeKeyupListener();
+        this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: this.nativeElement});
     }
 
     private isValid(event) {
