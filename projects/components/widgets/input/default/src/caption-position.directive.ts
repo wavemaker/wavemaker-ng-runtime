@@ -69,8 +69,9 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
 
     ngOnInit() {
         this.labelAnimationSubscription = this.app.subscribe('captionPositionAnimate', (data) => {
-            if (data.displayVal) {
-                $(data.nativeEl).parent().parent().addClass('float-active');
+            const parentEl = $(data.nativeEl).parent().parent();
+            if (data.displayVal && parentEl.hasClass('caption-floating')) {
+                parentEl.addClass('float-active');
             }
         });
     }
