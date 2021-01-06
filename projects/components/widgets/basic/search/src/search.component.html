@@ -99,7 +99,7 @@
            [attr.name]="name">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
-    <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" (click)="clearSearch($event, true)"></span>
+    <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"></span>
     <span class="sr-only">Clear button</span>
     <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
         <form>

@@ -188,6 +188,22 @@ describe('SearchComponent', () => {
         });
     }));
 
+    it('should show clear icon and on click should call clearsearch function when search type is autocomplete', async(done) => {
+        wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
+        wmComponent.getWidget().type = 'autocomplete';
+        wmComponent.getWidget().showclear = true;
+        const testValue = 'te';
+        spyOn((wmComponent as any), 'clearSearch').and.callThrough();
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
+            let searchBtnEle = fixture.debugElement.query(By.css('.clear-btn'));
+            searchBtnEle.nativeElement.click();
+            fixture.whenStable().then(() => {
+                done();
+                expect((wmComponent as any).clearSearch).toHaveBeenCalled();
+            });
+        });
+    });
+
     /******************************** EVents end ***************************************** */
 
 
