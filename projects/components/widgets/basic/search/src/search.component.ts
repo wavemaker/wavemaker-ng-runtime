@@ -579,7 +579,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     public notifySubscriber() {
-        this.app.notify('captionPositionAnimate', {displayVal: true, nativeEl: this.nativeElement});
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: true, nativeEl: parentEl});
+        }
     }
 
     // This method returns a promise that provides the filtered data from the datasource.

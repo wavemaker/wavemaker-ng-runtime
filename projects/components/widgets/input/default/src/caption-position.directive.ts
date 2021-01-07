@@ -67,11 +67,13 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         }
     }
 
+    // captionPositionAnimate is only notified for date-time, time and search widgets as input el is not updated with value on selection of dropdown/popups
     ngOnInit() {
-        this.labelAnimationSubscription = this.app.subscribe('captionPositionAnimate', (data) => {
-            const parentEl = $(data.nativeEl).parent().parent();
-            if (data.displayVal && parentEl.hasClass('caption-floating')) {
-                parentEl.addClass('float-active');
+        this.labelAnimationSubscription = this.app.subscribe('captionPositionAnimate', (data) => { 
+            if (data.displayVal) {
+                data.nativeEl.addClass('float-active');
+            } else {
+                data.nativeEl.removeClass('float-active');
             }
         });
     }

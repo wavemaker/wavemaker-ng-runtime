@@ -202,7 +202,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.deregisterTimepickeEventListener) {
             this.deregisterTimepickeEventListener();
         }
-        this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: this.nativeElement});
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+        }
     }
 
     /**
@@ -321,7 +324,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.deregisterDatepickerEventListener) {
             this.deregisterDatepickerEventListener();
         }
-        this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: this.nativeElement});
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+        }
     }
 
     public onDateChange($event, isNativePicker?: boolean) {

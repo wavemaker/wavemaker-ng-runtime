@@ -209,7 +209,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     private preventTpClose($event) {
         $event.stopImmediatePropagation();
-        this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: this.nativeElement});
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+        }
     }
 
     private addBodyClickListener(skipListener) {
@@ -345,7 +348,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             this.deregisterEventListener();
         }
         this.removeKeyupListener();
-        this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: this.nativeElement});
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+        }
     }
 
     private isValid(event) {
