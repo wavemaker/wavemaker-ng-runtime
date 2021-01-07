@@ -168,7 +168,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
-        $($evt.target).closest('.live-field').removeClass('selected-field');
         this._activeField = false;
         this._triggeredByUser = false;
     }
