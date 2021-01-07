@@ -96,7 +96,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private _activeField: boolean;
     private notifyForFields: any;
     private fieldValidations;
-<<<<<<< HEAD
     private _triggeredByUser: boolean;
     private app: App;
 
@@ -104,9 +103,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this._triggeredByUser = true;
     }
 
-=======
-    private isFocused;
->>>>>>> NgxBootstrap upgrade changes
     constructor(
         inj: Injector,
         form: FormComponent,
