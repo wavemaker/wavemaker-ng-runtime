@@ -96,7 +96,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private _activeField: boolean;
     private notifyForFields: any;
     private fieldValidations;
-    private isFocused;
     constructor(
         inj: Injector,
         form: FormComponent,
@@ -154,15 +153,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     _onFocusField($evt) {
         this._activeField = true;
         $($evt.target).closest('.live-field').addClass('active');
-        if (!this.isFocused) {
-            $($evt.target).closest('.live-field').addClass('selected-field');
-        }
-     
+   
     }
 
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
-        $($evt.target).closest('.live-field').removeClass('selected-field');
         this._activeField = false;
     }
 
@@ -382,7 +377,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (!this.isDestroyed) {
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
-            if (this.$element.find('.selected-field').length > 0 || this.form.touched) {
+            if (this.$element.find('.active').length > 0 || this.form.touched) {
                 this.ngform.controls[this._fieldName].markAsTouched();
                 this.fieldValidations.setCustomValidationMessage();
             }
