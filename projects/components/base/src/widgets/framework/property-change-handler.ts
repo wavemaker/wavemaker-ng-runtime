@@ -70,7 +70,7 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
             }
             if (ref._parentPrefab_) {
                 nv = `./app/prefabs/${ref._parentPrefab_}/${nv}`;
-            } else if(nv != propInfo.value) {
+            } else if(propInfo && nv != propInfo.value) {
                 nv = './' + nv;
             }
         }
