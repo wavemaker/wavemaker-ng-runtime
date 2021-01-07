@@ -78,6 +78,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private listenQuery: boolean;
     private _domUpdated: boolean;
     private searchon: string;
+    private showclear: boolean;
     public matchmode: string;
 
     // getter setter is added to pass the datasource to searchcomponent.
@@ -306,6 +307,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         return this.type === 'autocomplete' && isMobile();
     }
 
+    // Check if the query is entered in the input and the view is not mobile
+    public isQueryEntered() {
+        return this.showclear && this.showClosebtn && !isMobile();
+    }
+
     private loadMoreData(incrementPage?: boolean) {
         if (this.dataProvider.isLastPage) {
             return;
@@ -391,7 +397,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // Triggerred when typeahead option is selected.
     private onSearchSelect($event: Event) {
         let item;
-        if(this.typeaheadContainer && this.typeaheadContainer.active){
+        if (this.typeaheadContainer && this.typeaheadContainer.active) {
             item = this.typeaheadContainer.active.item;
         }
         $event = this.eventData($event, item || {});
@@ -736,8 +742,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.containerTarget = getContainerTargetClass(this.nativeElement);
     }
 
-    private eventData($event, item){
-        if($event){
+    private eventData($event, item) {
+        if ($event) {
             $event['data'] = {
                 item  : item.dataObject,
                 model : item.value,

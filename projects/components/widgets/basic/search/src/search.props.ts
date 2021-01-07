@@ -36,6 +36,7 @@ export const searchProps = new Map(
         ['searchon', { value: 'typing', ...PROP_STRING }],
         ['shortcutkey', PROP_STRING],
         ['show', { value: true, ...PROP_BOOLEAN }],
+        ['showclear', { value: false, ...PROP_BOOLEAN }],
         ['showsearchicon', PROP_BOOLEAN],
         ['tabindex', { value: 0, ...PROP_NUMBER }],
         ['type', { value: 'search', ...PROP_STRING }],

@@ -176,7 +176,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         // if the number is negative then calculate the number as number - decimal
         // Ex: number = -123 and decimal = 0.45 then number - decimal = -123-045 = -123.45
-        return number >= 0 ? number + decimal : number - decimal;
+        return number >= 0 ? (Math.round((number + decimal) * 1e12) / 1e12) : number - decimal;
     }
 
     // updates the widgets text value.
