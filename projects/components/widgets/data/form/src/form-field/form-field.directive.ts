@@ -96,12 +96,15 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private _activeField: boolean;
     private notifyForFields: any;
     private fieldValidations;
+<<<<<<< HEAD
     private _triggeredByUser: boolean;
 
     @HostListener('keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
         this._triggeredByUser = true;
     }
 
+=======
+>>>>>>> Reverting the validation fix as it happening in prevous build also
     constructor(
         inj: Injector,
         form: FormComponent,
@@ -158,12 +161,12 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     _onFocusField($evt) {
         this._activeField = true;
-        $($evt.target).closest('.live-field').addClass('active');     
+        $($evt.target).closest('.live-field').addClass('active');
+   
     }
 
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
-        $($evt.target).closest('.live-field').removeClass('selected-field');
         this._activeField = false;
         this._triggeredByUser = false;
     }
@@ -384,10 +387,14 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (!this.isDestroyed) {
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
+<<<<<<< HEAD
             // Do mark as touched, only incase when user has entered an input but not through the script. Hence added mousedown event check
             // active class checks whether user is on the current field, if so marking the field as touched. And form field validation happens once a field is touched
             // _triggeredByUser checks whether the field is touched by the user or triggered from external script
             if ((this.$element.find('.active').length > 0 && this._triggeredByUser) || this.form.touched) {
+=======
+            if (this.$element.find('.active').length > 0 || this.form.touched) {
+>>>>>>> Reverting the validation fix as it happening in prevous build also
                 this.ngform.controls[this._fieldName].markAsTouched();
                 this.fieldValidations.setCustomValidationMessage();
             }
