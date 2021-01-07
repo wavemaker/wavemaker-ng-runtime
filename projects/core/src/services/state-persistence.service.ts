@@ -425,26 +425,29 @@ export class StatePersistence {
      */
     private removePartialState(widget) {
         const $partial = widget.$element.find('[wmpartial]');
+        let partialWidgets;
         if ($partial.length) {
-            const partialWidgets = _.get($partial[0], 'widget.viewParent.Widgets');
-            if (partialWidgets) {
-                _.forEach(partialWidgets, (partialWidget) => {
-                    if (partialWidget.statehandler) {
-                        let stateInfo = this.getStateInformation(partialWidget.statehandler);
-                        if (stateInfo && widget  && widget.getAppInstance().activePageName && (partialWidget.statehandler.toLowerCase() === 'localstorage' || partialWidget.statehandler.toLowerCase() === 'sessionstorage')) {
-                            stateInfo = stateInfo[widget.getAppInstance().activePageName];
+            _.each($partial, (currentPartial) => {
+                partialWidgets = _.get(currentPartial, 'widget.viewParent.Widgets');
+                if (partialWidgets) {
+                    _.forEach(partialWidgets, (partialWidget) => {
+                        if (partialWidget.statehandler) {
+                            let stateInfo = this.getStateInformation(partialWidget.statehandler);
+                            if (stateInfo && widget  && widget.getAppInstance().activePageName && (partialWidget.statehandler.toLowerCase() === 'localstorage' || partialWidget.statehandler.toLowerCase() === 'sessionstorage')) {
+                                stateInfo = stateInfo[widget.getAppInstance().activePageName];
+                            }
+                            if (stateInfo) {
+                                const widgetStateInfo = stateInfo[this.WIDGET_STATE_KEY] || {};
+                                _.forEach(widgetStateInfo, (widgetVal, widgetKey) => {
+                                    if (widgetKey.startsWith(widget.name + '.row')) {
+                                        this.removeStateParam(this.WIDGET_STATE_KEY, widgetKey, undefined, partialWidget.statehandler, widget);
+                                    }
+                                });
+                            }
                         }
-                        if (stateInfo) {
-                            const widgetStateInfo = stateInfo[this.WIDGET_STATE_KEY] || {};
-                            _.forEach(widgetStateInfo, (widgetVal, widgetKey) => {
-                                if (widgetKey.startsWith(widget.name + '.row')) {
-                                    this.removeStateParam(this.WIDGET_STATE_KEY, widgetKey, undefined, partialWidget.statehandler, widget);
-                                }
-                            });
-                        }
-                    }
-                });
-            }
+                    });
+                }
+            });
         }
     }
 
