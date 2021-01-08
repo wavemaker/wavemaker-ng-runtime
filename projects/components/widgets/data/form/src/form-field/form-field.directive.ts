@@ -96,10 +96,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private _activeField: boolean;
     private notifyForFields: any;
     private fieldValidations;
-    private triggeredByUser: boolean;
+    private _triggeredByUser: boolean;
 
     @HostListener('keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
-        this.triggeredByUser = true;
+        this._triggeredByUser = true;
     }
 
     constructor(
@@ -164,7 +164,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
         this._activeField = false;
-        this.triggeredByUser = false;
+        this._triggeredByUser = false;
     }
 
     // Expression to be evaluated in view mode of form field
@@ -385,8 +385,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.notifyChanges();
             // Do mark as touched, only incase when user has entered an input but not through the script. Hence added mousedown event check
             // active class checks whether user is on the current field, if so marking the field as touched. And form field validation happens once a field is touched
-            // triggeredByUser checks whether the field is touched by the user or triggered from external script
-            if ((this.$element.find('.active').length > 0 && this.triggeredByUser) || this.form.touched) {
+            // _triggeredByUser checks whether the field is touched by the user or triggered from external script
+            if ((this.$element.find('.active').length > 0 && this._triggeredByUser) || this.form.touched) {
                 this.ngform.controls[this._fieldName].markAsTouched();
                 this.fieldValidations.setCustomValidationMessage();
             }
