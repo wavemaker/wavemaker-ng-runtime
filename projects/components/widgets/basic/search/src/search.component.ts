@@ -309,7 +309,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // Check if the query is entered in the input and the view is not mobile
     public isQueryEntered() {
-        return this.showclear && this.showClosebtn && !isMobile();
+        return this.showclear && this.showClosebtn;
     }
 
     private loadMoreData(incrementPage?: boolean) {
@@ -507,6 +507,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this._lastQuery = this.query = this.queryModel[0].label || '';
                 this._modelByValue = this.queryModel[0].value;
                 this._modelByKey = this.queryModel[0].key;
+                this.showClosebtn = (this.query !== '');
             } else {
                 this._modelByValue = undefined;
                 this.queryModel = undefined;
@@ -761,6 +762,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.queryModel = item;
         item.selected = true;
         this.query = item.label;
+        this.showClosebtn = (this.query !== '');
         $event = $event || this.$typeaheadEvent;
 
         // As item.key can vary from key in the datasetItems
