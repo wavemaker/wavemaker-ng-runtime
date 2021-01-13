@@ -90,10 +90,6 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     
     focusFirstInput() {
        const $firstInput = $(this.form.$element).find('[role="input"]').first();
-       const selectedField = $firstInput.closest('[data-role="form-field"]')[0].widget;
-        if (selectedField) {
-            selectedField.isFocused = true;
-        }
         $firstInput.focus();
         $firstInput.select();
     }

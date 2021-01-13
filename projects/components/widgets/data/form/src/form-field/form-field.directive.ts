@@ -159,10 +159,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     _onFocusField($evt) {
         this._activeField = true;
         $($evt.target).closest('.live-field').addClass('active');
-        if (!this.isFocused) {
-            $($evt.target).closest('.live-field').addClass('selected-field');
-        }
-     
+   
     }
 
     _onBlurField($evt) {
