@@ -8,6 +8,7 @@ import {
     addClass,
     addEventListenerOnElement,
     adjustContainerPosition,
+    App,
     AppDefaults,
     EVENT_LIFE,
     FormWidgetType,
@@ -54,6 +55,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     public maxtime;
 
     private deregisterEventListener;
+    private app: App;
 
     get timestamp() {
         return this.bsTimeValue ? this.bsTimeValue.valueOf() : undefined;
@@ -128,6 +130,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         inj: Injector,
         private ngZone: NgZone,
         private appDefaults: AppDefaults,
+        app: App,
         @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
     ) {
         super(inj, WIDGET_CONFIG);
@@ -143,6 +146,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
         this.timepattern = this.appDefaults.timeFormat || getDisplayDateTimeFormat(FormWidgetType.TIME);
         this.updateFormat('timepattern');
+        this.app = app;
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
@@ -207,6 +211,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     private preventTpClose($event) {
         $event.stopImmediatePropagation();
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+        }
     }
 
     private addBodyClickListener(skipListener) {
@@ -342,6 +350,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             this.deregisterEventListener();
         }
         this.removeKeyupListener();
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+        }
     }
 
     private isValid(event) {

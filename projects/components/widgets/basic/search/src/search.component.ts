@@ -6,7 +6,7 @@ import { mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
-import { addClass, adjustContainerPosition, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
+import { addClass, adjustContainerPosition, App, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
 import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, provideAs, provideAsWidgetRef, styler, transformFormData, getContainerTargetClass } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 
@@ -39,6 +39,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public navsearchbar: any;
     public debouncetime: number;
 
+    private app: App;
     private typeaheadDataSource: Observable<any>;
     private pagesize: any;
     private page = 1;
@@ -94,13 +95,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     constructor(
         inj: Injector,
+        app: App,
         @Attribute('datavalue.bind') public binddatavalue,
         @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
         // this flag will not allow the empty datafield values.
         this.allowempty = false;
-
+        this.app = app;
         addClass(this.nativeElement, 'app-search', true);
 
         /**
@@ -579,6 +581,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private handleFocus($event) {
         if (this.type === 'search' && this.query === this._lastQuery && this._lastResult) {
             (this.typeahead as any).keyUpEventEmitter.emit(this.query);
+        }
+    }
+
+    public notifySubscriber() {
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: true, nativeEl: parentEl});
         }
     }
 
