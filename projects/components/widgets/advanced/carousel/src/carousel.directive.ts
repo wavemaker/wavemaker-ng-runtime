@@ -98,7 +98,7 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     }
 
     // Calculating animation interval if animation is enabled
-    setanimationinterval(){
+    setanimationinterval() {
         this.interval = this.animation === 'auto' ? this.animationinterval * 1000 : 0 ;
     }
 
@@ -117,7 +117,8 @@ export class CarouselDirective extends StylableComponent implements AfterContent
             // For showing controls
             this.navigationClass = navigationClassMap[this.controls];
         }  else if (key === 'animation' || key === 'animationinterval') {
-            if(key === 'animationinterval'){
+            if (key === 'animationinterval') {
+                this.stopAnimation();
                 this.setanimationinterval();
             }
             this.animation === 'none' ? this.stopAnimation() :  this.startAnimation();
