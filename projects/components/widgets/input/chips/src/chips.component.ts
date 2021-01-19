@@ -207,10 +207,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             }
             if (itemFound) {
                 this.chipsList.push(itemFound);
-                const itemExist = _.find(this.globalChipList, item => item.value === itemFound.value);
-                if (!itemExist) {
-                    this.globalChipList.push(itemFound); // add chip object into "globalChipList"
-                }
+                this.addChipToGlobalList(itemFound);
             } else if (this.datafield !== ALLFIELDS) {
                 searchQuery.push(val);
             } else if (this.datafield === ALLFIELDS) {
@@ -239,10 +236,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                     (chipObj as any).iscustom = isCustom;
                 }
                 this.chipsList.push(chipObj);
-                const itemExist = _.find(this.globalChipList, item => chipObj.value === item.value);
-                if (!itemExist) {
-                    this.globalChipList.push(chipObj); // add chip object into "globalChipList"
-                }
+                this.addChipToGlobalList(chipObj);
             }
         });
 
@@ -268,10 +262,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                             const chipObj = transformedData[0];
                             (chipObj as any).iscustom = true;
                             this.chipsList.push(chipObj);
-                            const itemExist = _.find(this.globalChipList, item => chipObj.value === item.value);
-                            if (!itemExist) {
-                                this.globalChipList.push(chipObj); // add chip object into "globalChipList"
-                            }
+                            this.addChipToGlobalList(chipObj);
                         }
                     });
                 }));
@@ -353,10 +344,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
         this.registerChipItemClass(chipObj, this.chipsList.length);
         this.chipsList.push(chipObj);
-        const itemExist = _.find(this.globalChipList, item => chipObj.value === item.value);
-        if (!itemExist) {
-            this.globalChipList.push(chipObj); // add chip object into "globalChipList"
-        }
+        this.addChipToGlobalList(chipObj);
         if (!this.datavalue) {
             this._modelByValue = [chipObj.value];
         } else {
@@ -388,6 +376,20 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             const customObj = {};
             customObj[key] = val;
             return customObj;
+        }
+    }
+
+    // add chips to globalChipList array
+    private addChipToGlobalList(chipObj: DataSetItem) {
+        const customChipIndex: number = _.findIndex(this.globalChipList, {index: chipObj.index, iscustom: true});
+        // remove chip which has same index as the current chipObj and has custom flag
+        // Eg: When default value is given as empId and display value is first name such scenario occurs
+        if (customChipIndex > -1) {
+            this.globalChipList.splice(customChipIndex, 1);
+        }
+        const itemExist: boolean = _.find(this.globalChipList, item => (chipObj.value === item.value));
+        if (!itemExist) {
+            this.globalChipList.push(chipObj);
         }
     }
 
