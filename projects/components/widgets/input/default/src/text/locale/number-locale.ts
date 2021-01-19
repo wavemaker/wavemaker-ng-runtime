@@ -57,10 +57,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         // if the widget has default value and if we change the locale, the value should be in selected locale format.
         if (this.isDefaultQuery) {
-            // The default value should be in english language
-            const parts = _.isString(value) && (value as any).split('.');
+            const isLocalizedNumber = _.isString(value) && _.includes(value, this.DECIMAL);
+            const parts = isLocalizedNumber ?  (value as any).split(this.DECIMAL) : _.isString(value) && (value as any).split('.');
             this.decimalValue = parts[1] || '';
-            (value as any) =  _.isString(value) ? this.transformNumber((value as any).split(this.GROUP).join('')) : this.transformNumber(value);
+            (value as any) = isLocalizedNumber ? value : this.transformNumber(value);
         }
 
         // get a valid number form the text.
@@ -176,7 +176,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         // if the number is negative then calculate the number as number - decimal
         // Ex: number = -123 and decimal = 0.45 then number - decimal = -123-045 = -123.45
-        return number >= 0 ? number + decimal : number - decimal;
+        return number >= 0 ? (Math.round((number + decimal) * 1e12) / 1e12) : number - decimal;
     }
 
     // updates the widgets text value.

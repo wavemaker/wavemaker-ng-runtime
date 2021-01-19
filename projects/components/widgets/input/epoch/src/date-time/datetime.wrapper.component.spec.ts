@@ -261,8 +261,7 @@ describe("DatetimeComponent", () => {
 
 
     it('should show the date patten as yyyy-MM-ddTHH:mm:ss format ', async(() => {
-
-        datepatternTest(fixture, '.app-datetime', '.app-textbox');
+        datepatternTest(fixture, '.app-datetime', '.app-textbox', '', true);
 
     }));
 

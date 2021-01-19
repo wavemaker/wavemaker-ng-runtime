@@ -8,12 +8,14 @@ import {
     addClass,
     addEventListenerOnElement,
     adjustContainerPosition,
+    App,
     AppDefaults,
     EVENT_LIFE,
     FormWidgetType,
     getDisplayDateTimeFormat,
     getFormattedDate,
-    getNativeDateObject
+    getNativeDateObject,
+    isMobile
 } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
@@ -49,8 +51,11 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     outputformat: string;
 
     public showdropdownon: string;
+    public mintime;
+    public maxtime;
 
     private deregisterEventListener;
+    private app: App;
 
     get timestamp() {
         return this.bsTimeValue ? this.bsTimeValue.valueOf() : undefined;
@@ -90,8 +95,12 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         return getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern) || '';
     }
 
+    get nativeDisplayValue() {
+        return getFormattedDate(this.datePipe, this.bsTimeValue, 'hh:mm:ss') || '';
+    }
+
     /* Internal property to have a flag to check the given datavalue is of Current time*/
-    private isCurrentTime: boolean;
+    public isCurrentTime: boolean;
 
     private timeinterval: any;
 
@@ -108,7 +117,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This is an internal property used to toggle the timepicker dropdown
      */
-    private status = { isopen: false };
+    public status = { isopen: false };
 
     /**
      * This is an internal property used to map the main model to the time widget
@@ -121,6 +130,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         inj: Injector,
         private ngZone: NgZone,
         private appDefaults: AppDefaults,
+        app: App,
         @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
     ) {
         super(inj, WIDGET_CONFIG);
@@ -136,6 +146,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
         this.timepattern = this.appDefaults.timeFormat || getDisplayDateTimeFormat(FormWidgetType.TIME);
         this.updateFormat('timepattern');
+        this.app = app;
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
@@ -178,7 +189,11 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This is an internal method used to toggle the dropdown of the time widget
      */
-    private toggleDropdown($event): void {
+    public toggleDropdown($event): void {
+        if (isMobile()) {
+            this.onDateTimeInputFocus();
+            return;
+        }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', {$event: $event});
         }
@@ -196,6 +211,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     private preventTpClose($event) {
         $event.stopImmediatePropagation();
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+        }
     }
 
     private addBodyClickListener(skipListener) {
@@ -214,7 +233,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This is an internal method triggered when pressing key on the time input
      */
-    private onDisplayKeydown(event) {
+    public onDisplayKeydown(event) {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
@@ -324,13 +343,17 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
     }
 
-    private hideTimepickerDropdown() {
+    public hideTimepickerDropdown() {
         this.invokeOnTouched();
         this.status.isopen = false;
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
         }
         this.removeKeyupListener();
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+        }
     }
 
     private isValid(event) {

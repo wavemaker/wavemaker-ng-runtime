@@ -21,10 +21,12 @@ import { InputEmailComponent } from './text/email/input-email.component';
 import { InputNumberComponent } from './text/number/input-number.component';
 import { InputTextComponent } from './text/text/input-text.component';
 import { TextareaComponent } from './textarea/textarea.component';
+import { CaptionPositionDirective } from './caption-position.directive';
 
 const components = [
     ButtonComponent,
     ButtonGroupDirective,
+    CaptionPositionDirective,
     CheckboxComponent,
     CheckboxsetComponent,
     CompositeDirective,

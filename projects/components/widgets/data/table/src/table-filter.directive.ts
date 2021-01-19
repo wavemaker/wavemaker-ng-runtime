@@ -373,7 +373,8 @@ export class TableFilterSortDirective {
             obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
         }
         if (this.table.getConfiguredState() !== 'none') {
-            if ((_.isArray(searchSortObj) && obj.length) || searchSortObj.value) {
+            if ((_.isArray(searchSortObj) && obj.length) || (searchSortObj.value && searchSortObj.field)) {
+                this.table.statePersistence.removeWidgetState(this.table, 'search');
                 this.table.statePersistence.setWidgetState(this.table, {search: obj});
             } else {
                 this.table.statePersistence.removeWidgetState(this.table, 'search');

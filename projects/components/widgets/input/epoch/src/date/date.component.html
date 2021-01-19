@@ -1,5 +1,3 @@
-<ng-container *ngIf="useDatapicker; then dataPickerTemplate else nativeDateTemplate"></ng-container>
-<ng-template #dataPickerTemplate>
     <input class="form-control app-textbox app-dateinput display-input"
         aria-label="Select date"
         focus-target
@@ -49,16 +47,18 @@
                 class="app-icon wi wi-calendar"></i>
         </button>
     </span>
-</ng-template>
-<ng-template #nativeDateTemplate>
+
+<ng-template [ngIf]="loadNativeDateInput">
     <input type="date"
-        class="form-control app-textbox app-dateinput"
+        class="form-control app-textbox app-dateinput mobile-input"
         role="input"
         step="any"
-        [value]="displayValue"
+        placeholder="yyyy-mm-dd" [min]="mindate | date:'yyyy-MM-dd'" [max]="maxdate | date:'yyyy-MM-dd'"
+        [value]="nativeDisplayValue"
+        [tabindex]="tabindex"
         [required]="required"
         [disabled]="disabled || readonly"
         (change)="onDisplayDateChange($event, true)"
-        (focus)="invokeOnFocus($event)"
-        (blur)="invokeOnTouched($event)">
+        (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
+        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
 </ng-template>

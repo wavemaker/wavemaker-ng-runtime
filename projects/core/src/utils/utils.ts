@@ -46,7 +46,8 @@ const REGEX = {
     VALID_PASSWORD: /^[0-9a-zA-Z-_.@&*!#$%]+$/,
     SPECIAL_CHARACTERS: /[^A-Z0-9a-z_]+/i,
     APP_SERVER_URL_FORMAT: /^(http[s]?:\/\/)(www\.){0,1}[a-zA-Z0-9\.\-]+([:]?[0-9]{2,5}|\.[a-zA-Z]{2,5}[\.]{0,1})\/+[^?#&=]+$/,
-    JSON_DATE_FORMAT: /\d{4}-[0-1]\d-[0-3]\d(T[0-2]\d:[0-5]\d:[0-5]\d.\d{1,3}Z$)?/
+    JSON_DATE_FORMAT: /\d{4}-[0-1]\d-[0-3]\d(T[0-2]\d:[0-5]\d:[0-5]\d.\d{1,3}Z$)?/,
+    DATA_URL: /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*)\s*$/i
 },
     compareBySeparator = ':';
 
@@ -225,6 +226,11 @@ export const isInsecureContentRequest = (url: string): boolean => {
         return false;
     }
 
+    // If the inputted source is a base64 url, do not throw insecure content error
+    if (REGEX.DATA_URL.test(url)) {
+        return false;
+    }
+
     if (stringStartsWith(location.href, 'https://')) {
         return parser.protocol !== 'https:' && parser.protocol !== 'wss:';
     }
@@ -332,7 +338,8 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
 export const getDateObj = (value, options?): Date => {
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        const pattern = momentPattern(options.pattern);
+        // Fix for WMS-19601, invalid date is returned on date selection.
+        const pattern = isMobile() ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
         value = moment(value, pattern).toDate();
     }
 
@@ -631,7 +638,8 @@ export const getValidDateObject = (val, options?) => {
     }
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        const pattern = momentPattern(options.pattern);
+        // Fix for WMS-19601, invalid date is returned on date selection.
+        const pattern = isMobile() ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
         val = moment(val, pattern).toDate();
     }
 
