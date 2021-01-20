@@ -6,7 +6,7 @@ import { mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
-import { addClass, adjustContainerPosition, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
+import { addClass, adjustContainerPosition, App, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
 import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, provideAs, provideAsWidgetRef, styler, transformFormData, getContainerTargetClass } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 
@@ -39,6 +39,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public navsearchbar: any;
     public debouncetime: number;
 
+    private app: App;
     private typeaheadDataSource: Observable<any>;
     private pagesize: any;
     private page = 1;
@@ -78,6 +79,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private listenQuery: boolean;
     private _domUpdated: boolean;
     private searchon: string;
+    private showclear: boolean;
     public matchmode: string;
 
     // getter setter is added to pass the datasource to searchcomponent.
@@ -93,13 +95,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     constructor(
         inj: Injector,
+        app: App,
         @Attribute('datavalue.bind') public binddatavalue,
         @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
         // this flag will not allow the empty datafield values.
         this.allowempty = false;
-
+        this.app = app;
         addClass(this.nativeElement, 'app-search', true);
 
         /**
@@ -306,6 +309,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         return this.type === 'autocomplete' && isMobile();
     }
 
+    // Check if the query is entered in the input and the view is not mobile
+    public isQueryEntered() {
+        return this.showclear && this.showClosebtn && !isMobile();
+    }
+
     private loadMoreData(incrementPage?: boolean) {
         if (this.dataProvider.isLastPage) {
             return;
@@ -391,7 +399,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // Triggerred when typeahead option is selected.
     private onSearchSelect($event: Event) {
         let item;
-        if(this.typeaheadContainer && this.typeaheadContainer.active){
+        if (this.typeaheadContainer && this.typeaheadContainer.active) {
             item = this.typeaheadContainer.active.item;
         }
         $event = this.eventData($event, item || {});
@@ -576,6 +584,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
     }
 
+    public notifySubscriber() {
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: true, nativeEl: parentEl});
+        }
+    }
+
     // This method returns a promise that provides the filtered data from the datasource.
     public getDataSource(query: Array<string> | string, searchOnDataField?: boolean, nextItemIndex?: number): Promise<DataSetItem[]> {
         // For default query, searchOnDataField is set to true, then do not make a n/w call when datafield is ALLFIELDS
@@ -736,8 +751,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.containerTarget = getContainerTargetClass(this.nativeElement);
     }
 
-    private eventData($event, item){
-        if($event){
+    private eventData($event, item) {
+        if ($event) {
             $event['data'] = {
                 item  : item.dataObject,
                 model : item.value,

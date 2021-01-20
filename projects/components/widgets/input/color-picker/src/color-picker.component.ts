@@ -50,7 +50,9 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     // To remove space occupied by colorpicker when it is closed
     public colorPickerToggleChange(isOpen: boolean) {
         const colorPickerContainer = this.nativeElement.querySelector(`.color-picker`) as HTMLElement;
-        (!isOpen) ? addClass(colorPickerContainer, 'hidden') : removeClass(colorPickerContainer, 'hidden');
+        if (colorPickerContainer) {
+            (!isOpen) ? addClass(colorPickerContainer, 'hidden') : removeClass(colorPickerContainer, 'hidden');
+        }
     }
 
     colorPickerOpen(value: string) {

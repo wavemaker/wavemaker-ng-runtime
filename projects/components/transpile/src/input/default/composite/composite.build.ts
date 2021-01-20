@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-composite', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmComposite role="group" ${setChildAttrs(attrs)} ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmComposite captionPosition role="group" ${setChildAttrs(attrs)} ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}${clearChildAttrs()}>`
     };
 });
