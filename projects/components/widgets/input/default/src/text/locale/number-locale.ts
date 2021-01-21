@@ -306,6 +306,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
     }
 
+    onBackspace($event) {
+        this.isDefaultQuery = false;
+    }
+
     onEnter($event) {
         this.datavalue = $event.target.value;
     }
