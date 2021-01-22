@@ -845,7 +845,5 @@ export const decodeData = (responseContent) => {
 };
 
 function htmlDecode(input) {
-    let e = document.createElement('textarea');
-    e.innerHTML = input;
-    return e.childNodes.length === 0 ? '' : e.childNodes[0].nodeValue;
+    return _.unescape(input);
 }
