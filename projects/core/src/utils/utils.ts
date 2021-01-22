@@ -636,14 +636,15 @@ export const getValidDateObject = (val, options?) => {
             }
         });
     }
+
+    const pattern = isMobile() ? (_.get(options, 'pattern') ||  'YYYY/MM/DD HH:mm:ss') : momentPattern(options.pattern) || '';
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
         // Fix for WMS-19601, invalid date is returned on date selection.
-        const pattern = isMobile() ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
         val = moment(val, pattern).toDate();
     }
 
-    if (moment(val).isValid()) {
+    if (moment(val, pattern).isValid()) {
         // date with +5 hours is returned in safari browser which is not a valid date.
         // Hence converting the date to the supported format "YYYY/MM/DD HH:mm:ss" in IOS
         if (isIos()) {
