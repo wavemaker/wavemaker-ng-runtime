@@ -81,6 +81,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private searchon: string;
     private showclear: boolean;
     public matchmode: string;
+    private clearData: boolean;
+
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -429,6 +431,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     private onDropdownOpen() {
+        if (this.clearData) {
+            this.typeahead.hide();
+        }
         // setting the ulElements, liElement on typeaheadContainer.
         // as we are using customOption template, liElements are not available on typeaheadContainer so append them explicitly.
         const fn = _.debounce(() => {
@@ -514,6 +519,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this._modelByValue = undefined;
                 this.queryModel = undefined;
                 this.query = '';
+            }
+            if (this.clearData) {
+                if ((this.typeahead as any)._typeahead.isShown) {
+                    this.typeahead.hide();
+                }
             }
         });
     }
@@ -812,6 +822,19 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (key === 'displaylabel' && this.dataoptions && this.binddisplaylabel === null) {
             this.query = _.get(this._modelByValue, nv) || this._modelByValue;
         }
+
+        // when search is disabled, do not load any more data or just clear the data that is already in process or loaded.
+        if (key === 'disabled') {
+            if (nv === false) {
+                this.clearData = false;
+            } else {
+                this.clearData = true;
+                if ((this.typeahead as any)._typeahead.isShown) {
+                    this.typeahead.hide();
+                }
+            }
+        }
+
         super.onPropertyChange(key, nv, ov);
     }
 }
