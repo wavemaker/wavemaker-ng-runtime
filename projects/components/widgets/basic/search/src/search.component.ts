@@ -521,7 +521,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.query = '';
             }
             if (this.clearData) {
-                if ((this.typeahead as any)._typeahead.isShown) {
+                if (_.get((this.typeahead as any), '_typeahead.isShown')) {
                     this.typeahead.hide();
                 }
             }
@@ -829,7 +829,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.clearData = false;
             } else {
                 this.clearData = true;
-                if ((this.typeahead as any)._typeahead.isShown) {
+                if (_.get((this.typeahead as any), '_typeahead.isShown')) {
                     this.typeahead.hide();
                 }
             }
