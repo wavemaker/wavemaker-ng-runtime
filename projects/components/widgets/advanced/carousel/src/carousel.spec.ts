@@ -100,7 +100,7 @@ describe('wm-carousel: Widget specific test cases', () => {
         });
     }));
 
-    it('should update the animation interval dynamically', async() => {
+    it('should update the animation interval dynamically', (done) => {
         let interval = 5;
         fixture.componentInstance.carousel.setProperty('animation', 'auto');
         fixture.componentInstance.carousel.setProperty('animationinterval', interval);
@@ -112,7 +112,7 @@ describe('wm-carousel: Widget specific test cases', () => {
             fixture.componentInstance.carousel.setProperty('animationinterval', interval);
             fixture.detectChanges();
             expect((fixture.componentInstance.carousel as any).animator.interval).toEqual(interval * 1000);
+            done();
         }, 50);
     });
-
 });
