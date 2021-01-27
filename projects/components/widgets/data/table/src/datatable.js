@@ -1648,6 +1648,7 @@ $.widget('wm.datatable', {
                 });
                 $newRowButton.hide();
             } else {
+                $('typeahead-container').removeClass('open');
                 $gridActions.find('.cancelNewRow').remove();
                 $gridActions.find('.saveNewRow').remove();
                 $newRowButton.show();
@@ -1879,14 +1880,17 @@ $.widget('wm.datatable', {
         $editableElements.off('click');
         $editableElements.each(function () {
             var $el = $(this),
-                value = $el.data('originalValue');
+                value = $el.data('originalValue'),
+                colDef = self.preparedHeaderData[$el.attr('data-col-id')],
+                text = self.getTextValue(colDef.field);
             $el.removeClass('datetime-wrapper cell-editing required-field form-group');
             if (!value) {
-                $el.text($el.data('originalText') || '');
+                $el.html(text || '');
             } else {
                 $el.html(self.options.getCustomExpression(value.fieldName, value.rowIndex));
             }
         });
+        $('typeahead-container').removeClass('open');
         $editButton.removeClass('hidden');
         $cancelButton.addClass('hidden');
         $saveButton.addClass('hidden');
