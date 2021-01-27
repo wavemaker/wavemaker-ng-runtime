@@ -386,7 +386,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             // Do mark as touched, only incase when user has entered an input but not through the script. Hence added mousedown event check
             // active class checks whether user is on the current field, if so marking the field as touched. And form field validation happens once a field is touched
             // _triggeredByUser checks whether the field is touched by the user or triggered from external script
-            if ((this.$element.find('.active').length > 0 && this._triggeredByUser) || this.form.touched) {
+            if (this._triggeredByUser && (this.$element.find('.active').length > 0 || this.form.touched)) {
                 this.ngform.controls[this._fieldName].markAsTouched();
                 this.fieldValidations.setCustomValidationMessage();
             }
