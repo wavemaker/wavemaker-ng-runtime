@@ -285,9 +285,6 @@ describe('TimeFromNow pipe', () => {
     it('should show the timestamp from now as 2 days ago', () => {
         let date = new Date();
         date.setDate(date.getDate() - 2);
-        date.setHours(12);
-        date.setMinutes(34);
-        date.setSeconds(0);
         const result = pipe.transform(date.getTime());
         expect(result).toBe('2 days ago');
     });

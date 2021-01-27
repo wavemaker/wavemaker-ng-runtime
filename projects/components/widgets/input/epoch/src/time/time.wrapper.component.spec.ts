@@ -442,9 +442,9 @@ describe('TimeComponent with localization', () => {
     it ('should display the defult value in de format', async(() => {
         const time = '02:00 PM', timepattern = 'hh:mm a';
         wmComponent.getWidget().timepattern = timepattern;
-        wmComponent.datavalue = time;
+        wmComponent.datavalue = '02:00:00';
         fixture.detectChanges();
-        const dateObj = getNativeDateObject(time);
+        const dateObj = getNativeDateObject(time, { pattern: wmComponent.outputformat });
         expect(getFormattedDate((wmComponent as any).datePipe, dateObj, timepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
     }));
 
