@@ -56,6 +56,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     private deregisterEventListener;
     private app: App;
+    private displayInputElem: HTMLElement;
 
     get timestamp() {
         return this.bsTimeValue ? this.bsTimeValue.valueOf() : undefined;
@@ -376,5 +377,12 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         this.focusTimePickerPopover(this);
         this.bindTimePickerKeyboardEvents();
         adjustContainerPosition($('bs-dropdown-container'), this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
+    }
+
+    public assignModel() {
+        if (!this.displayInputElem) {
+            this.displayInputElem = this.getMobileInput();
+        }
+        (this.displayInputElem as any).value = _.get(this, 'nativeDisplayValue');
     }
 }

@@ -336,7 +336,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             return;
         }
         let newVal = $event.target.value.trim();
-        newVal = newVal ? getNativeDateObject(newVal, {pattern: this.datepattern, meridians: this.meridians}) : undefined;
+        newVal = newVal ? getNativeDateObject(newVal, {pattern: isMobile() ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
         // datetime pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
@@ -360,7 +360,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             let newVal = event.target.value.trim();
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             if (action === 'enter' || action === 'arrowdown') {
-                newVal = newVal ? getNativeDateObject(newVal, {pattern: this.datepattern, meridians: this.meridians}) : undefined;
+                newVal = newVal ? getNativeDateObject(newVal, {pattern: isMobile() ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat);
                 const inputVal = event.target.value.trim();
@@ -391,7 +391,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private isValid(event) {
         if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
-            const newVal = getNativeDateObject(enteredDate, {pattern: this.datepattern, meridians: this.meridians});
+            const newVal = getNativeDateObject(enteredDate, {pattern: isMobile() ? this.outputformat : this.datepattern, meridians: this.meridians});
             if (!this.formatValidation(newVal, enteredDate)) {
                 return;
             }
