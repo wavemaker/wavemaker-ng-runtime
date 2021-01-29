@@ -1884,6 +1884,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     ngOnDetach() {
         super.ngOnDetach();
-        this._pageLoad = true;
+        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none') {
+            this._pageLoad = false;
+        } else {
+            this._pageLoad = true;
+        }
     }
 }
