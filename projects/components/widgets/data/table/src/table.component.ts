@@ -1366,7 +1366,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     }
                 }
             });
-            tmpl += `<wm-table-column ${attrsTmpl} tableName="${this.name}">${customTmpl}</wm-table-column>`;
+            tmpl += `<wm-table-column ${attrsTmpl} tableName="${this.name}${(this as any).$attrs.get('table_reference')}">${customTmpl}</wm-table-column>`;
         });
         this.dynamicTableRef.clear();
         if (!this._dynamicContext) {
