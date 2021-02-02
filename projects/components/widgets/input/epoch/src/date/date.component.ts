@@ -183,6 +183,7 @@ export class DateComponent extends BaseDateTimeComponent {
         }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', { $event: $event });
+            this.focusOnInputEl();
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             $event.stopPropagation();
