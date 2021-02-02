@@ -1,9 +1,10 @@
-import {Component, ElementRef, Injector, ViewChild} from '@angular/core';
+import {Component, ElementRef, Injector, OnInit, ViewChild} from '@angular/core';
 import {NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS} from '@angular/forms';
 
 import {IWidgetConfig, provideAs, provideAsWidgetRef} from '@wm/components/base';
 import {registerProps} from './input-text.props';
 import {BaseInput} from '../base/base-input';
+import { IMaskDirective } from 'angular-imask';
 
 declare const _;
 
@@ -21,7 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(InputTextComponent)
     ]
 })
-export class InputTextComponent extends BaseInput {
+export class InputTextComponent extends BaseInput implements OnInit{
     static initializeProps = registerProps();
 
     public required: boolean;
@@ -38,9 +39,11 @@ export class InputTextComponent extends BaseInput {
     public autofocus: boolean;
     public autocomplete: any;
     public maskVal: any;
+    public isFocused: boolean;
 
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
+    @ViewChild('input', {read: IMaskDirective}) imask: IMaskDirective<any>;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
@@ -52,6 +55,7 @@ export class InputTextComponent extends BaseInput {
         switch (key) {
             case 'displayformat':
                 this.maskVal = this.displayformat;
+                this.checkForDisplayFormat();
                 break;
             default:
                 super.onPropertyChange(key, nv, ov);
@@ -59,7 +63,7 @@ export class InputTextComponent extends BaseInput {
     }
 
     get mask() {
-        if (this.displayformat) {
+        if (this.displayformat && (!this.placeholder || (this.placeholder && this.isFocused))) {
             return {
                 mask: this.maskVal,
                 lazy: false,
@@ -73,6 +77,23 @@ export class InputTextComponent extends BaseInput {
         } else {
             return false;
         }
+    }
 
+    // show display format on focus or when it has a data value present. Else show the placeholder
+    public checkForDisplayFormat($event?) {
+        if (this.displayformat) {
+            this.isFocused = (($event && $event.type === 'focus') || this.datavalue) ? true : false;
+            // Do not show format placeholder when no value is present on blur
+            if (!this.isFocused && this.imask && this.imask.maskRef) {
+                this.imask.maskRef.updateOptions({ lazy: true });
+            }
+        } else if (this.imask && this.imask.maskRef) { // When display format is bound via condition, remove the placeholder when the format is not applicable
+            this.imask.maskRef.updateOptions({ lazy: true });
+        }
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        this.isFocused = !!this.datavalue;
     }
 }
