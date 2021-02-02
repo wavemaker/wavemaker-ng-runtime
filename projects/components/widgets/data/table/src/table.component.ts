@@ -1640,6 +1640,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 } else {
                     this.invokeEventCallback('hide');
                 }
+            case 'pagesize':
+                this.dataNavigator.widget.maxResults = this.pagesize;
+                this.dataNavigator.options = {
+                    maxResults: this.pagesize
+                };
+
             default:
                 super.onPropertyChange(key, nv, ov);
         }

@@ -1046,6 +1046,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 // Adding setTimeout because in pagination component updateNavSize method is overriding navigationclass
                 setTimeout( () => this.dataNavigator.navigationClass = nv);
             }
+        } else if (key === 'pagesize') {
+            this.dataNavigator.widget.maxResults = this.pagesize;
+            this.dataNavigator.options = {
+                maxResults: this.pagesize
+            };
         } else {
             super.onPropertyChange(key, nv, ov);
         }
