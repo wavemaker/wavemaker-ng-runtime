@@ -2,7 +2,6 @@ import { AfterViewInit, Directive, ElementRef, Injector, OnInit, OnDestroy } fro
 import { App } from '@wm/core';
 
 declare const $;
-declare const _;
 @Directive({
     selector: '[captionPosition]'
 })
@@ -13,6 +12,9 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     private compositeEle;
     private app: App;
     private labelAnimationSubscription;
+    private placeholder;
+    private attrObserver;
+    private bindedPlaceholder;
 
     // skip floating caption for the below form fields
     private skipFloatPositionWidgets: string[] = ['radioset', 'checkboxset', 'richtext', 'switch', 'chips', 'checkbox', 'slider', 'rating', 'toggle', 'upload'];
@@ -30,13 +32,16 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         }
     }
 
-    private onFocusCb(placeholder) { //  on focus, add animation class and the place holder
+    private onFocusCb() { //  on focus, add animation class and the place holder
         this.compositeEle.classList.add('float-active');
-        this.inputEl.attr('placeholder', placeholder);
+        this.inputEl.attr('placeholder', this.placeholder);
     }
 
     private setDefaultValueAnimation() { // set animation when default values are present
-        this.inputEl.removeAttr('placeholder');
+        if (!this.bindedPlaceholder) {
+            this.placeholder = this.inputEl.attr('placeholder');
+            this.inputEl.removeAttr('placeholder');
+        }
         // check for datavalue attribute in composite element and defaultvalue attribute in form field element
         // check for datavalue.bind attribute to see whether default value is binded via expression or a variable
         // check for displayformat attribute, as in form fields user can set display format to the field
@@ -54,6 +59,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         if (widget.form) {
             captionPosition = widget.form.$attrs.get('captionposition');
             this.compositeEle = this.nativeEl.querySelector('.app-composite-widget');
+            this.bindedPlaceholder = this.nativeEl.getAttribute('placeholder.bind');
         }
         if (captionPosition === 'floating') {
             if (widget.form) { // for form-fields remove caption-floating and replace it with caption-float or caption-top
@@ -64,10 +70,28 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
                 }
             }
             this.inputEl = $(this.nativeEl).find('input, select, textarea');
+            if (!this.bindedPlaceholder) {
+                this.bindedPlaceholder = this.inputEl.closest('[widget-id]').attr('placeholder.bind');
+            }
             // call the below function to apply float-active class when there are default values to the fields
             setTimeout(this.setDefaultValueAnimation.bind(this), 0);
-            this.inputEl.focus(this.onFocusCb.bind(this, this.inputEl.attr('placeholder')));
+
+            this.inputEl.focus(this.onFocusCb.bind(this));
             this.inputEl.blur(this.onBlurCb.bind(this));
+
+            // observe for placeholder attribute change when placeholder is binded
+            if (this.bindedPlaceholder) {
+                this.attrObserver = new MutationObserver(mutations => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.attributeName === 'placeholder' && this.inputEl.attr('placeholder') && !this.compositeEle.classList.contains('float-active')) {
+                            this.placeholder = this.inputEl.attr('placeholder');
+                            this.inputEl.removeAttr('placeholder');
+                        }
+                    });
+                });
+                const config = { attributes: true, childList: true, characterData: true };
+                this.attrObserver.observe(this.inputEl[0], config);   
+            }
         }
     }
 
@@ -85,6 +109,9 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     ngOnDestroy() {
         if (this.labelAnimationSubscription) {
             this.labelAnimationSubscription();
+        }
+        if (this.attrObserver) {
+            this.attrObserver.disconnect();
         }
     }
 }
