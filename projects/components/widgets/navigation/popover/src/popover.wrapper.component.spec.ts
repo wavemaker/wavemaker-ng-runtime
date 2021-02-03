@@ -2,7 +2,7 @@ import { async, ComponentFixture } from '@angular/core/testing';
 import { App } from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { PopoverComponent } from './popover.component';
-import { PopoverConfig, PopoverModule } from 'ngx-bootstrap';
+import { PopoverConfig, PopoverModule } from 'ngx-bootstrap/popover';
 import { compileTestComponent, getHtmlSelectorElement } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { AnchorComponent } from '../../../basic/default/src/anchor/anchor.component';
