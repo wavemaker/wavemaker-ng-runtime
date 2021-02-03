@@ -86,6 +86,14 @@ export class InputTextComponent extends BaseInput implements OnInit{
             // Do not show format placeholder when no value is present on blur
             if (!this.isFocused && this.imask && this.imask.maskRef) {
                 this.imask.maskRef.updateOptions({ lazy: true });
+            } else {
+                // when display format is dynamically populated, cursor position is at the end of the format, readjusting the cursor position based on input value
+                // Adding timeout, as the below code should be on hold until imask model is generated
+                setTimeout(() => {
+                    if (this.imask && this.imask.maskRef && this.datavalue && this.datavalue.length + 1 !== this.imask.maskRef.cursorPos) {
+                        this.imask.maskRef.updateCursor(this.datavalue.length + 1);
+                    }
+                }, 50);
             }
         } else if (this.imask && this.imask.maskRef) { // When display format is bound via condition, remove the placeholder when the format is not applicable
             this.imask.maskRef.updateOptions({ lazy: true });
