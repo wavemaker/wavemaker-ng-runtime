@@ -1880,12 +1880,10 @@ $.widget('wm.datatable', {
         $editableElements.off('click');
         $editableElements.each(function () {
             var $el = $(this),
-                value = $el.data('originalValue'),
-                colDef = self.preparedHeaderData[$el.attr('data-col-id')],
-                text = self.getTextValue(colDef.field);
+                value = $el.data('originalValue');
             $el.removeClass('datetime-wrapper cell-editing required-field form-group');
             if (!value) {
-                $el.html(text || '');
+                $el.text($el.data('originalText') || '');
             } else {
                 $el.html(self.options.getCustomExpression(value.fieldName, value.rowIndex));
             }
