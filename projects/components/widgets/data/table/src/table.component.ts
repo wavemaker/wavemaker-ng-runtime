@@ -1634,18 +1634,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 enableNewRow = nv || _.some(this.actions, act => _.includes(act.action, 'addNewRow()'));
                 this.callDataGridMethod('option', 'actionsEnabled.new', enableNewRow);
                 break;
+            case 'pagesize':
+                this.dataNavigator.widget.maxResults = this.pagesize;
+                this.dataNavigator.options = {
+                    maxResults: this.pagesize
+                };
+                break;
             case 'show':
                 if (nv) {
                     this.invokeEventCallback('show');
                 } else {
                     this.invokeEventCallback('hide');
                 }
-            case 'pagesize':
-                this.dataNavigator.widget.maxResults = this.pagesize;
-                this.dataNavigator.options = {
-                    maxResults: this.pagesize
-                };
-
             default:
                 super.onPropertyChange(key, nv, ov);
         }
