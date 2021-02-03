@@ -1047,10 +1047,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 setTimeout( () => this.dataNavigator.navigationClass = nv);
             }
         } else if (key === 'pagesize') {
-            this.dataNavigator.widget.maxResults = this.pagesize;
             this.dataNavigator.options = {
-                maxResults: this.pagesize
+                maxResults: nv
             };
+            this.dataNavigator.widget.maxResults = nv;
+            this.dataNavigator.maxResults = nv;
         } else {
             super.onPropertyChange(key, nv, ov);
         }
