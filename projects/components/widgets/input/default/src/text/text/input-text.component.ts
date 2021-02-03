@@ -90,20 +90,12 @@ export class InputTextComponent extends BaseInput implements OnInit{
             // Do not show format placeholder when no value is present on blur
             if (!this.isFocused && this.imask && this.imask.maskRef) {
                 this.imask.maskRef.updateOptions({ lazy: true });
-                // on blur, when no value is present assign maskref to null, as in some cases (where format palceholder starts with pranthesis) the format placeholder is still shown. WMS-20124
-                if (!this.datavalue && this.imask.maskRef.value) {
-                    this.imask.maskRef.value = this.datavalue;
-                }
             } else {
-                // when display format is dynamically populated, cursor position is at the end of the format, readjusting the cursor position based on masked input value
+                // when display format is dynamically populated, cursor position is at the end of the format, readjusting the cursor position based on input value
                 // Adding timeout, as the below code should be on hold until imask model is generated
                 setTimeout(() => {
-                    if (this.imask && this.imask.maskRef && this.imask.maskRef.value) {
-                        const maskValIndex = this.imask.maskRef.value.indexOf('_');
-                        const enteredMaskVal = maskValIndex >= 0 ? this.imask.maskRef.value.slice(0, maskValIndex).length : this.imask.maskRef.value.length;
-                        if (enteredMaskVal !== this.imask.maskRef.cursorPos) {
-                            this.imask.maskRef.updateCursor(enteredMaskVal);
-                        }
+                    if (this.imask && this.imask.maskRef && this.datavalue && this.datavalue.length + 1 !== this.imask.maskRef.cursorPos) {
+                        this.imask.maskRef.updateCursor(this.datavalue.length + 1);
                     }
                 }, 50);
             }
