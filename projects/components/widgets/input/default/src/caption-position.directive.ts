@@ -102,6 +102,9 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
                 data.nativeEl.addClass('float-active');
             } else {
                 data.nativeEl.removeClass('float-active');
+                if (this.inputEl) {
+                    this.inputEl.removeAttr('placeholder');
+                }
             }
         });
     }
