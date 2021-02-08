@@ -386,7 +386,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (!this.isDestroyed) {
             const captionEl =  $(this.nativeElement).find('.caption-floating');
             if (captionEl.length > 0) {
-                this.app.notify('captionPositionAnimate', {displayVal: !!val, nativeEl: captionEl});
+                this.app.notify('captionPositionAnimate', {displayVal: !!val, nativeEl: captionEl, isFocused: this._activeField});
             }
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
