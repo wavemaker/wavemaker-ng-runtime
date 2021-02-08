@@ -26,6 +26,8 @@
             "@ionic-native/file": "ionicNative.plugins",
             "@ionic-native/network": "ionicNative.plugins",
             "@ionic-native/calendar": "ionicNative.plugins",
+            "@ionic-native/location-accuracy": "ionicNative.plugins", 
+            "@ionic-native/diagnostic": "ionicNative.plugins", 
 
             "@wm/core": "wm.core",
             "@wm/components/base": "wm.components.base"
