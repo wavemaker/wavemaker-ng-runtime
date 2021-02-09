@@ -15,7 +15,7 @@ const argv = require("yargs")
     "isProd": {
         type: "boolean"
     },
-    "version": {
+    "publishVersion": {
         alias: "v",
         type: "string"
     }
@@ -43,9 +43,9 @@ const generateNpmVersion = (version) => {
 const updateWMVersion = () => {
     const path = './libraries/package.json';
     const wmPackageJSON = require(path);
-    wmPackageJSON.version = generateNpmVersion(argv.version);
+    wmPackageJSON.version = generateNpmVersion(argv.publishVersion);
     fs.writeFileSync(path, JSON.stringify(wmPackageJSON, null, 4));
-    console.log(`Updated package.json wm:${argv.version} for publishing to npm`);
+    console.log(`Updated package.json wm:${argv.publishVersion} for publishing to npm`);
 };
 
 const addWMDependency = (wm_pkg_name=`@wavemaker/app-ng-runtime`) => {
@@ -53,8 +53,8 @@ const addWMDependency = (wm_pkg_name=`@wavemaker/app-ng-runtime`) => {
     const packageJSON = require(path);
 
     if(argv.useNpm){
-        packageJSON.dependencies[wm_pkg_name] = generateNpmVersion(argv.version);
-        console.log(`Added ${wm_pkg_name}:${argv.version} dependency to angular app`);
+        packageJSON.dependencies[wm_pkg_name] = generateNpmVersion(argv.publishVersion);
+        console.log(`Added ${wm_pkg_name}:${argv.publishVersion} dependency to angular app`);
     } 
 
     // if (argv.useS3) {
