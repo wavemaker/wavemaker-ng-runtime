@@ -37,11 +37,18 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
 
     private setDefaultValueAnimation() { // set animation when default values are present
         this.inputEl.removeAttr('placeholder');
+        
+        // Do not show placeholder as selected by default
+        if ($(this.nativeEl).find('select option:selected').text() && !$(this.inputEl.closest('[widget-id]')).attr('datavalue') ) {
+            $(this.nativeEl).find('select option:selected').text('');
+        }
+
         // check for datavalue attribute in composite element and defaultvalue attribute in form field element
         // check for datavalue.bind attribute to see whether default value is binded via expression or a variable
         // check for displayformat attribute, as in form fields user can set display format to the field
         // check for formdata/bindformdata attribute to see if any default value is binded to the form 
         // check for select tag with multiple attribute enabled 
+
         if ($(this.inputEl.closest('[widget-id]')).attr('datavalue') || $(this.inputEl.parent('[widget-id]')).attr('datavalue.bind') || this.nativeEl.getAttribute('defaultvalue')
             || this.nativeEl.getAttribute('displayformat') || $(this.nativeEl).find('select option:selected').text() || $(this.nativeEl).find('select').attr('multiple')) {
             this.compositeEle.classList.add('float-active');

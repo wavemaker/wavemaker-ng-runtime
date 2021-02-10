@@ -85,4 +85,16 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         } 
         super.onPropertyChange(key, nv, ov);
     }
+
+    checkFoFloatingLabel($event) {
+        const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (this.placeholder && captionEl.length > 0 && !this.datavalue) {
+            if ($event.type === 'focus') {
+                $(this.selectEl.nativeElement).find('option:selected').text(this.placeholder);   
+            } else {
+                $(this.selectEl.nativeElement).find('option:selected').text('');
+                captionEl.removeClass('float-active');
+            }
+        } 
+    }
 }
