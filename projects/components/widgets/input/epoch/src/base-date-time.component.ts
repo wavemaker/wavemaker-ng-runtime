@@ -653,6 +653,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         });
     }
 
+    protected focusOnInputEl() {
+        if ($(this.nativeElement).closest('.caption-floating').length > 0) {
+            setTimeout(() => {
+                $(this.nativeElement).find('.app-textbox').focus();
+            }, 100);
+        }
+    }
+
     /**
      * This function checks whether the given date is valid or not
      * @returns boolean value, true if date is valid else returns false

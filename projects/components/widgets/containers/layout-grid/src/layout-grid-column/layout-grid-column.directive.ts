@@ -33,10 +33,10 @@ export class LayoutGridColumnDirective extends StylableComponent {
 
     onPropertyChange(key, nv, ov?) {
         const prefix = this.viewport.isMobileType ? 'xs' : 'sm';
-        if (key === 'xscolumnwidth' && this.viewport.isMobileType) {
+        if (key === 'xscolumnwidth' && this.viewport.isMobileType && isMobileApp()) {
             switchClass(this.nativeElement, `col-${prefix}-${nv}`, ov ? `col-${prefix}-${ov}` : '');
         } else if (key === 'columnwidth') {
-            if ((this.viewport.isMobileType && !this.getAttr('xscolumnwidth')) || !this.viewport.isMobileType) {
+            if (!isMobileApp() || (this.viewport.isMobileType && !this.getAttr('xscolumnwidth')) || !this.viewport.isMobileType) {
                 switchClass(this.nativeElement, `col-${prefix}-${nv}`, ov ? `col-${prefix}-${ov}` : '');
             }
         } else {

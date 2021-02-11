@@ -1,11 +1,14 @@
 import { AppVersion } from '@ionic-native/app-version';
 import { Device } from '@ionic-native/device';
-import { Geolocation, GeolocationOptions } from '@ionic-native/geolocation';
+import { Geolocation } from '@ionic-native/geolocation';
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
+import { Diagnostic } from '@ionic-native/diagnostic';
 import { Vibration } from '@ionic-native/vibration';
 
 import { $appDigest, App, isSpotcues } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 import { DeviceVariableService, IDeviceVariableOperation, initiateCallback } from '@wm/variables';
+import { CurrentGeoPositionOperation } from './location-service';
 
 declare const navigator, $;
 /**
@@ -20,10 +23,13 @@ export class DeviceService extends DeviceVariableService {
         device: Device,
         geoLocation: Geolocation,
         networkService: NetworkService,
-        vibrateService: Vibration) {
+        vibrateService: Vibration,
+        locationAccuracyService: LocationAccuracy,
+        diagnosticService: Diagnostic
+        ) {
         super();
         this.operations.push(new AppInfoOperation(device, appVersion),
-            new CurrentGeoPositionOperation(geoLocation),
+            new CurrentGeoPositionOperation(app, geoLocation, locationAccuracyService, diagnosticService),
             new DeviceInfoOperation(device),
             new GetNetworkInfoOperation(app, networkService),
             new GoOfflineOperation(networkService),
@@ -76,104 +82,6 @@ class AppInfoOperation implements IDeviceVariableOperation {
         });
     }
 }
-
-/**
- * This class handles 'getCurrentGeoPosition' device operation.
- */
-class CurrentGeoPositionOperation implements IDeviceVariableOperation {
-    public readonly name = 'getCurrentGeoPosition';
-    public readonly model = {
-        coords: {
-            latitude: 0,
-            longitude: 0,
-            altitude: 0,
-            accuracy: 0,
-            altitudeAccuracy: 0,
-            heading: 0,
-            speed: 0
-        },
-        timestamp: 0
-    };
-    public readonly properties = [
-        {target: 'startUpdate', type: 'boolean', value: true, hide : true},
-        {target: 'autoUpdate', type: 'boolean', value: true, hide : true},
-        {target: 'geolocationHighAccuracy', type: 'boolean', value: true, dataBinding: true},
-        {target: 'geolocationMaximumAge', type: 'number', value: 3, dataBinding: true},
-        {target: 'geolocationTimeout', type: 'number', value: 5, dataBinding: true}
-    ];
-    public readonly requiredCordovaPlugins = ['GEOLOCATION'];
-
-    private lastKnownPosition;
-    private waitingQueue = [];
-    private watchId;
-    private options = {
-        maximumAge: 3000,
-        timeout: (2 * 60) * 1000,
-        enableHighAccuracy: true
-    };
-
-    constructor (private geoLocation: Geolocation) {}
-
-    private watchPosition() {
-        if (this.watchId) {
-            navigator.geolocation.clearWatch(this.watchId);
-            this.watchId = null;
-        }
-        const options = window['WM_GEO_LOCATION_OPTIONS'] || this.options;
-        this.watchId = navigator.geolocation.watchPosition(position => {
-            this.lastKnownPosition = {
-                coords: {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                    altitude: position.coords.altitude,
-                    accuracy: position.coords.accuracy,
-                    altitudeAccuracy: position.coords.altitudeAccuracy,
-                    heading: position.coords.heading,
-                    speed: position.coords.speed
-                },
-                timestamp: position.timestamp
-            };
-            if (this.waitingQueue.length > 0) {
-                this.waitingQueue.forEach(fn => fn(this.lastKnownPosition));
-                this.waitingQueue.length = 0;
-            }
-            $(document).off('touchend.usergesture');
-        }, () => {
-            this.watchId = null;
-        }, options);
-    }
-
-    public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
-        if (!this.watchId || !this.lastKnownPosition) {
-            this.watchPosition();
-            $(document).on('touchend.usergesture', () => this.watchPosition());
-        }
-        const geoLocationOptions: GeolocationOptions = {
-            maximumAge: dataBindings.get('geolocationMaximumAge') * 1000,
-            timeout: dataBindings.get('geolocationTimeout') * 1000,
-            enableHighAccuracy: dataBindings.get('geolocationHighAccuracy')
-        };
-        if (this.lastKnownPosition) {
-            return Promise.resolve(this.lastKnownPosition);
-        }
-        return new Promise(resolve => {
-            const c = position => {
-                resolve(position);
-            };
-            setTimeout(() => {
-                const index = this.waitingQueue.indexOf(c);
-                if (index > -1) {
-                    this.waitingQueue.splice(index, 1);
-                    resolve(this.model);
-                }
-            }, this.options.timeout);
-
-            this.waitingQueue.push(c);
-        });
-    }
-}
-
-
 
 /**
  * This class handles 'getDeviceInfo' device operation.

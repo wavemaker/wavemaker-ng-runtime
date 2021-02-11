@@ -12,3 +12,5 @@ export * from '../../../node_modules/@ionic-native/media-capture/index';
 export * from '../../../node_modules/@ionic-native/network/index';
 export * from '../../../node_modules/@ionic-native/sqlite/index';
 export * from '../../../node_modules/@ionic-native/vibration/index';
+export * from '../../../node_modules/@ionic-native/location-accuracy/index';
+export * from '../../../node_modules/@ionic-native/diagnostic/index';

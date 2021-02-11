@@ -289,6 +289,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
         const validity = new RegExp(`^[\\d\\s-,.e+${this.GROUP}${this.DECIMAL}]$`, 'i');
         const inputValue = $event.target.value;
+        // validates entering of decimal values only when user provides decimal limit(i.e step contains decimal values).
+        if (inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step))) {
+            return false;
+        }
         // validates if user entered an invalid character.
         if (!validity.test($event.key)) {
             return false;

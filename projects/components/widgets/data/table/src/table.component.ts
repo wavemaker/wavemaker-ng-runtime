@@ -1366,7 +1366,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     }
                 }
             });
-            tmpl += `<wm-table-column ${attrsTmpl} tableName="${this.name}">${customTmpl}</wm-table-column>`;
+            tmpl += `<wm-table-column ${attrsTmpl} tableName="${this.name}${(this as any).$attrs.get('table_reference')}">${customTmpl}</wm-table-column>`;
         });
         this.dynamicTableRef.clear();
         if (!this._dynamicContext) {
@@ -1634,6 +1634,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 enableNewRow = nv || _.some(this.actions, act => _.includes(act.action, 'addNewRow()'));
                 this.callDataGridMethod('option', 'actionsEnabled.new', enableNewRow);
                 break;
+            case 'pagesize':
+                this.dataNavigator.widget.maxResults = this.pagesize;
+                this.dataNavigator.options = {
+                    maxResults: this.pagesize
+                };
+                break;
             case 'show':
                 if (nv) {
                     this.invokeEventCallback('show');
@@ -1884,6 +1890,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     ngOnDetach() {
         super.ngOnDetach();
-        this._pageLoad = true;
+        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none') {
+            this._pageLoad = false;
+        } else {
+            this._pageLoad = true;
+        }
     }
 }

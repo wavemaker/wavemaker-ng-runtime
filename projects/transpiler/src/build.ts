@@ -356,7 +356,7 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
                 // For table node, assigning parent provide map to the child, as child requires some parent provide attrs.
                 if (node.name === 'wm-table') {
                     const tableColNodeDefn = registry.get('wm-table-column');
-                    tableColNodeDefn[_.find(node.attrs, (el) => el.name === 'name').value] = provideInfo.provide;
+                    tableColNodeDefn[_.find(node.attrs, (el) => el.name === 'name').value + provideInfo.provide.get('table_reference')] = provideInfo.provide;
                     registry.set('wm-table-column', tableColNodeDefn);
                 }
                 providers.push(provideInfo);
