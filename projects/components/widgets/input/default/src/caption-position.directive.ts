@@ -35,13 +35,19 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         this.inputEl.attr('placeholder', placeholder);
     }
 
+    // For select widget, display placeholder only on focus else remove the text of the option selected.
+    private checkForSelectPlaceholder() {
+        if ($(this.nativeEl).find('select option:selected').text() && !$(this.nativeEl).find('select').is(':focus') &&
+            !$(this.inputEl.closest('[widget-id]')).attr('datavalue') ) {
+            $(this.nativeEl).find('select option:selected').text('');
+        }
+    }
+
     private setDefaultValueAnimation() { // set animation when default values are present
         this.inputEl.removeAttr('placeholder');
         
         // Do not show placeholder as selected by default
-        if ($(this.nativeEl).find('select option:selected').text() && !$(this.inputEl.closest('[widget-id]')).attr('datavalue') ) {
-            $(this.nativeEl).find('select option:selected').text('');
-        }
+        this.checkForSelectPlaceholder();
 
         // check for datavalue attribute in composite element and defaultvalue attribute in form field element
         // check for datavalue.bind attribute to see whether default value is binded via expression or a variable
