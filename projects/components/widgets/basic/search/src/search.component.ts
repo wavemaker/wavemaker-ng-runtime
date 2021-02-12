@@ -161,6 +161,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 // update the query model with the values we have
                 this.updateByDatavalue(val);
             }
+
+            // turn on showCloseBtn when a default value is given
+            this.showClosebtn = (this.query !== '');
         });
         this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
 
