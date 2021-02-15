@@ -177,7 +177,12 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         const sum = parts.length > 1 ? parseFloat((number + decimal).toFixed(parts[1].length)) : number + decimal;
         // if the number is negative then calculate the number as number - decimal
         // Ex: number = -123 and decimal = 0.45 then number - decimal = -123-045 = -123.45
-        return number >= 0 ? sum : number - decimal;
+        // If entered number is -0.1 to -0.9 then the number is -0 and decimal is 0.1 to 0.9. Now calaculate the number as number-decimal
+        // Ex: number = -0 and decimal = 0.1 then number-decimal = -0-0.1 = -0.1
+        if (number === 0) {
+            return Object.is(0, number) ? sum : number - decimal;
+        }
+        return number > 0 ? sum : number - decimal;
     }
 
     // updates the widgets text value.
