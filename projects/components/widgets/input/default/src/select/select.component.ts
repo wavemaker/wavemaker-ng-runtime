@@ -86,7 +86,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         super.onPropertyChange(key, nv, ov);
     }
 
-    checkFoFloatingLabel($event) {
+    checkForFloatingLabel($event) {
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
         if (this.placeholder && captionEl.length > 0 && !this.datavalue) {
             if ($event.type === 'focus') {

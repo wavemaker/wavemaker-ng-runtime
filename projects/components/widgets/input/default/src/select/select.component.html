@@ -7,8 +7,8 @@
         [(ngModel)]="modelByKey"
         [multiple]="multiple"
         (change)="onSelectValueChange($event)"
-        (focus)="checkFoFloatingLabel($event)"
-        (blur)="invokeOnTouched($event); checkFoFloatingLabel($event)"
+        (focus)="checkForFloatingLabel($event)"
+        (blur)="invokeOnTouched($event); checkForFloatingLabel($event)"
         [attr.name]="name"
         [autofocus]="autofocus"
 >
