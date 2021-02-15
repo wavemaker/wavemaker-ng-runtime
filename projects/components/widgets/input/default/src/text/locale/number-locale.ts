@@ -70,7 +70,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             this.proxyModel = model;
             // update the display value in the text box.
             this.updateDisplayText();
-            this.handleChange(model);
+            // Do not trigger onchange event for default value
+            if (!this.isDefaultQuery) {
+                this.handleChange(model);
+            }
         } else {
             this.displayValue = value.toString();
             this.proxyModel = null;
