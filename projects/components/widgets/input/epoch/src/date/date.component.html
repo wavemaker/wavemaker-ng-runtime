@@ -6,7 +6,7 @@
         [tabindex]="tabindex"
         [value]="displayValue"
         (click)="toggleDpDropdown($event)"
-        (focus)="invokeOnFocus($event)"
+        (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
         (blur)="onInputBlur($event)"
         [disabled]="disabled || readonly"
         [autofocus]="autofocus"
