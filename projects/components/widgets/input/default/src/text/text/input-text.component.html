@@ -19,6 +19,6 @@
        (ngModelChange)="handleChange($event)"
        (blur)="handleBlur($event); checkForDisplayFormat($event)"
        (focus)="checkForDisplayFormat($event)"
-       [autocomplete]="autocomplete ? 'on' : 'off'"
+       [autocomplete]="autocomplete ? 'on' : 'new-password'"
        (keyup.enter)="flushViewChanges(input.value)"
        #input>
