@@ -820,6 +820,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     onDateTimeInputFocus(skipFocus: boolean = false): void {
+        if (!isMobile()) {
+            return;
+        }
         let displayInputElem = this.getMobileInput();
         // toggling the classes to show and hide the native widget using opacity
         if (skipFocus && !hasCordova()) {
