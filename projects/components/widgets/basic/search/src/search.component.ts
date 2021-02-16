@@ -82,7 +82,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private showclear: boolean;
     public matchmode: string;
     private clearData: boolean;
-
+    public nodatamessage: string;
+    public hasNoData: boolean = false;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -430,6 +431,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.invokeEventCallback('beforeservicecall', { inputData });
     }
 
+    // return the width of the input box and set the same for the dropdown. The dropdown here would be loading text
+    public getInputBoxWidth() {
+        return this.$element.find('input').first().outerWidth() + 'px';
+    }
+
     private onDropdownOpen() {
         if (this.clearData) {
             this.typeahead.hide();
@@ -692,6 +698,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 }
                 this._loadingItems = false;
                 this._lastResult = result;
+
+                // When the query resultant is null, show no data message in the dropdown
+                if (result.length === 0) {
+                    result = [{label: this.nodatamessage}];
+                    this.hasNoData = true;
+                } else {
+                    this.hasNoData = false;
+                }
                 return result;
             });
     }

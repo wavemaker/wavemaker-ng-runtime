@@ -11,20 +11,22 @@
 
 <ng-template #customListTemplate let-matches="matches" let-itemTemplate="itemTemplate" let-query="query">
     <ul #ulElement class="app-search dropdown-menu" scrollable>
-        <li #liElements *ngFor="let match of matches" [wmItemTemplate]="content" [userComponentParams]="match.item"  partialContainer [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match)}"
-            (mouseenter)="typeaheadContainer.selectActive(match);"
-            (click)="typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; notifySubscriber()">
-            <!-- itemTemplate comes from the <input> -->
-            <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate"
-                          [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
-            </ng-container>
-        </li>
-        <div class="status" [hidden]="_loadingItems || !(datacompletemsg && dataProvider.isLastPage)">
-            <span [textContent]="datacompletemsg"></span>
+        <ng-container *ngIf="!hasNoData && (showloadingspinner || (!showloadingspinner && !_loadingItems))">
+            <li #liElements *ngFor="let match of matches" [wmItemTemplate]="content" [userComponentParams]="match.item"
+                partialContainer [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match)}"
+                (mouseenter)="typeaheadContainer.selectActive(match);"
+                (click)="typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; notifySubscriber()">
+                <!-- itemTemplate comes from the <input> -->
+                <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate"
+                    [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
+                </ng-container>
+            </li>
+        </ng-container>
+        <div *ngIf="hasNoData && !_loadingItems" class="status">
+            <span [textContent]="nodatamessage"></span>
         </div>
-        <div class="status" [hidden]="!_loadingItems">
-            <i class="fa fa-circle-o-notch fa-spin"></i>
-            <span [textContent]="loadingdatamsg"></span>
+        <div class="status" [hidden]="_loadingItems || !(datacompletemsg && dataProvider.isLastPage && !hasNoData)">
+            <span [textContent]="datacompletemsg"></span>
         </div>
     </ul>
 </ng-template>
@@ -98,7 +100,13 @@
            [dropup]="dropup"
            [attr.name]="name">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1">
-    <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
+    <span *ngIf="_loadingItems && showloadingspinner" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
+    <div *ngIf="_loadingItems && !showloadingspinner" class="app-search dropdown-menu" [ngStyle]="{'display': 'block', width: getInputBoxWidth()}">
+        <div class="status">
+            <i class="fa fa-circle-o-notch fa-spin"></i>
+            <span [textContent]="loadingdatamsg"></span>
+        </div>
+    </div>
     <span class="wi wi-close form-control-feedback clear-btn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"></span>
     <span class="sr-only">Clear button</span>
     <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
