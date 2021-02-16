@@ -84,6 +84,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private clearData: boolean;
     public nodatamessage: string;
     public hasNoData: boolean = false;
+    public showloadingspinner: boolean;
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {

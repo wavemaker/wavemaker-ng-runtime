@@ -452,6 +452,37 @@ describe('SearchComponent', () => {
         });
     });
 
+    it('should show no data message when user search results nothing and when loading spinner is on should have spinner on input el', async(() => {
+        const testValue = 'check';
+        wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
+            let ulElement = getUlElement();
+            expect(ulElement.length).toBe(1);
+            let liElement = getLIElement();
+            expect(liElement.length).toBe(0);
+            expect(document.getElementsByClassName('status')[0].getElementsByTagName('span')[0].innerHTML).toBe('No data found');
+
+            wmComponent._loadingItems = true;
+            fixture.detectChanges();
+            expect(document.getElementsByClassName('fa-circle-o-notch').length).toBe(1);
+        });
+    }));
+
+    it('should show loading message in the dropdown when showloadingspinner is turned off', async(() => {
+        const testValue = 'check';
+        wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
+        wmComponent.showloadingspinner = false;
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
+            let ulElement = getUlElement();
+            expect(ulElement.length).toBe(1);
+            let liElement = getLIElement();
+            expect(liElement.length).toBe(0);
+            wmComponent._loadingItems = true;
+            fixture.detectChanges();
+            expect(document.getElementsByClassName('status')[0].getElementsByTagName('span')[0].innerHTML).toBe('Loading items...');
+        });
+    }));
+
     xit('should invoke getTransformedData method ', async(() => {
         const testValue = 'te';
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
