@@ -16,7 +16,8 @@ import {
     DataSource,
     AbstractDialogService,
     DataType,
-    $invokeWatchers
+    $invokeWatchers,
+    isMobileApp
 } from '@wm/core';
 import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
 import { PrefabDirective } from '@wm/components/prefab';
@@ -594,6 +595,21 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 this.statusMessage = {'caption': template || '', type: type};
                 if (this.messageRef) {
                     this.messageRef.showMessage(this.statusMessage.caption, this.statusMessage.type);
+                }
+                // when message layout is inline on save, scroll the view to top of the form to see the status of the operation
+                const formPosition = this.$element.offset().top;
+                if (!isMobileApp()) {
+                    window.scroll({
+                        top: formPosition, 
+                        left: 0, 
+                        behavior: 'smooth' 
+                    });
+                } else {
+                    const $scrollParent = this.$element.closest('[wmsmoothscroll="true"]');
+                    const iScroll = _.get($scrollParent[0], 'iscroll');
+                    let to = -(formPosition - iScroll.y);
+                    to = (iScroll.maxScrollY > to) ? iScroll.maxScrollY : to;
+                    iScroll.scrollTo(0, to);
                 }
             } else {
                 this.app.notifyApp(template, type, header);
