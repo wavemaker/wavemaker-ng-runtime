@@ -598,18 +598,18 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 }
                 // when message layout is inline on save, scroll the view to top of the form to see the status of the operation
                 const formPosition = this.$element.offset().top;
-                if (!isMobileApp()) {
+                const $scrollParent = this.$element.closest('[wmsmoothscroll="true"]');
+                if (isMobileApp() && $scrollParent.length) {
+                    const iScroll = _.get($scrollParent[0], 'iscroll');
+                    let to = -(formPosition - iScroll.y);
+                    to = (iScroll.maxScrollY > to) ? iScroll.maxScrollY : to;
+                    iScroll.scrollTo(0, to);
+                } else {
                     window.scroll({
                         top: formPosition, 
                         left: 0, 
                         behavior: 'smooth' 
                     });
-                } else {
-                    const $scrollParent = this.$element.closest('[wmsmoothscroll="true"]');
-                    const iScroll = _.get($scrollParent[0], 'iscroll');
-                    let to = -(formPosition - iScroll.y);
-                    to = (iScroll.maxScrollY > to) ? iScroll.maxScrollY : to;
-                    iScroll.scrollTo(0, to);
                 }
             } else {
                 this.app.notifyApp(template, type, header);
