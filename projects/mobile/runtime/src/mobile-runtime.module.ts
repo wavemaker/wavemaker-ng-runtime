@@ -14,7 +14,8 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { Network } from '@ionic-native/network';
 import { SQLite } from '@ionic-native/sqlite';
 import { Vibration } from '@ionic-native/vibration';
-
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
+import { Diagnostic } from '@ionic-native/diagnostic';
 
 import {
     App,
@@ -64,7 +65,9 @@ const ionicServices = [
     MediaCapture,
     Network,
     SQLite,
-    Vibration
+    Vibration,
+    LocationAccuracy,
+    Diagnostic
 ];
 
 @NgModule({
