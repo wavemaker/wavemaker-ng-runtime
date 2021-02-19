@@ -35,14 +35,28 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         this.inputEl.attr('placeholder', placeholder);
     }
 
+    // For select widget, display placeholder only on focus else remove the text of the option selected.
+    private checkForSelectPlaceholder() {
+        if ($(this.nativeEl).find('select option:selected').text() && !$(this.nativeEl).find('select').is(':focus') &&
+            !$(this.inputEl.closest('[widget-id]')).attr('datavalue') ) {
+            $(this.nativeEl).find('select option:selected').text('');
+        }
+    }
+
     private setDefaultValueAnimation() { // set animation when default values are present
         this.inputEl.removeAttr('placeholder');
+        
+        // Do not show placeholder as selected by default
+        this.checkForSelectPlaceholder();
+
         // check for datavalue attribute in composite element and defaultvalue attribute in form field element
         // check for datavalue.bind attribute to see whether default value is binded via expression or a variable
         // check for displayformat attribute, as in form fields user can set display format to the field
         // check for formdata/bindformdata attribute to see if any default value is binded to the form 
-        if ($(this.inputEl.closest('[widget-id]')).attr('datavalue') || $(this.inputEl.parent('[widget-id]')).attr('datavalue.bind') ||
-            this.nativeEl.getAttribute('defaultvalue') || this.nativeEl.getAttribute('displayformat') || $(this.nativeEl).find('select option:selected').text()) {
+        // check for select tag with multiple attribute enabled 
+
+        if ($(this.inputEl.closest('[widget-id]')).attr('datavalue') || $(this.inputEl.parent('[widget-id]')).attr('datavalue.bind') || this.nativeEl.getAttribute('defaultvalue')
+            || this.nativeEl.getAttribute('displayformat') || $(this.nativeEl).find('select option:selected').text() || $(this.nativeEl).find('select').attr('multiple')) {
             this.compositeEle.classList.add('float-active');
         }
     }
@@ -74,7 +88,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     // captionPositionAnimate is only notified for date-time, time and search widgets as input el is not updated with value on selection of dropdown/popups
     ngOnInit() {
         this.labelAnimationSubscription = this.app.subscribe('captionPositionAnimate', (data) => {
-            if (data.displayVal || data.isFocused) {
+            if (data.displayVal || data.isFocused || data.isSelectMultiple) {
                 data.nativeEl.addClass('float-active');
             } else {
                 data.nativeEl.removeClass('float-active');
