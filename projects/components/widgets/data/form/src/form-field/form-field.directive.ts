@@ -386,7 +386,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         if (!this.isDestroyed) {
             const captionEl =  $(this.nativeElement).find('.caption-floating');
             if (captionEl.length > 0) {
-                this.app.notify('captionPositionAnimate', {displayVal: !!val, nativeEl: captionEl, isSelectMultiple: this.formWidget && this.formWidget.multiple, isFocused: this._activeField});
+                // WMS-20084, truthy check fails when value entered is 0. Hence added manual check
+                this.app.notify('captionPositionAnimate', {displayVal: (!!val || val === 0), nativeEl: captionEl, isSelectMultiple: this.formWidget && this.formWidget.multiple, isFocused: this._activeField});
             }
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
