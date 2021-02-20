@@ -30,7 +30,8 @@ import {
     isObject,
     loadStyleSheet,
     noop,
-    removeNode
+    removeNode,
+    getWmProjectProperties
 } from '@wm/core';
 import { FileExtensionFromMimePipe } from '@wm/components/base';
 import { DeviceFileOpenerService, DeviceService, ExtAppMessageService, MobileCoreModule, NetworkService } from '@wm/mobile/core';
@@ -228,12 +229,20 @@ export class MobileRuntimeModule {
 
     public applyOSTheme(os) {
         let oldStyleSheet = $('link[theme="wmtheme"]').first();
-        const themeUrl = oldStyleSheet.attr('href').replace(new RegExp('/[a-z]*/style.css$'), `/${os.toLowerCase()}/style.css`),
+        let themeName = getWmProjectProperties().activeTheme;
+        const themeUrl = oldStyleSheet.attr('href').includes('/style.css') ? oldStyleSheet.attr('href') : oldStyleSheet.attr('href').replace(new RegExp(`assets/themes/${themeName}/${os.toLowerCase()}/style.css$`), `mobile_${getWmProjectProperties().activeTheme}_${os.toLowerCase()}.css`),
             newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
         oldStyleSheet = oldStyleSheet.length > 0 && oldStyleSheet[0];
         if (newStyleSheet && oldStyleSheet) {
             insertAfter(newStyleSheet, oldStyleSheet);
             removeNode(oldStyleSheet);
+        }
+        // In development, styleSheet will point to .js files
+        // In production, styleSheet will point to 'mobile_{themeName}_{os}.css
+        let removeTheme = os.toLowerCase() === 'android' ? '_ios' : '_android';
+        let unusedStyleSheet = $('link[theme="wmtheme"][href *="/mobile_"][href *=' + removeTheme + ']').first();
+        if (unusedStyleSheet) {
+            removeNode(unusedStyleSheet);
         }
     }
 
