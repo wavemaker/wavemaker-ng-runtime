@@ -168,9 +168,30 @@ const addScriptForWMStylesPath = () => {
                     `<script> const WMStylesPath = "${deployUrl}/${fileName}.${hash}.css" </script>`
                 );
             }
-        }
-        addScriptForWMStylesPath();
-
+        let styles = angularJson['projects']['angular-app']['architect']['build']['options']['styles'];
+        for (const style of styles) {
+            let isStyleObject = typeof (style) === "object";
+            if (isStyleObject && style.input && style.bundleName) {
+                if (style.input.includes('themes') && style.bundleName.startsWith('mobile_')) {
+                    if(isDevBuild) {
+                        let themePathName = 'WMAndroidThemesPath';
+                        if (style.bundleName.endsWith('_ios')) {
+                            themePathName = 'WMiOSThemesPath';
+                        }
+                        $("head").append(
+                            `<script> const ${themePathName} = "${deployUrl}/${style.bundleName}.js" </script>`
+                        )
+                    }
+                    if (isProdBuild) {
+                        const hash = await generateHash(`${opPath}/${style.bundleName}.css`);
+                        copyMobileCssFiles(hash, style.bundleName);
+                        $("body").append(
+                            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}/${style.bundleName}.${hash}.css" >`
+                        )
+                    }
+                }
+            }
+        };
         await writeFile(`./dist/index.html`, $.html());
         generateHashForScripts();
     } catch (e) {
