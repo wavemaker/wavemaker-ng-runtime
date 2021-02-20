@@ -12,6 +12,12 @@ const copyCssFiles = (hash)=>{
     // copyFile(`${opPath}/wm-styles.br.css`,`${opPath}/wm-styles.${hash}.br.css`);
     // copyFile(`${opPath}/wm-styles.gzip.css`,`${opPath}/wm-styles.${hash}.gzip.css`);
 };
+const copyMobileCssFiles = (hash, fileName)=>{
+    // const name = filePath.split('.css')[0];
+    copyFile(`${opPath}/${fileName}.css`,`${opPath}/${fileName}.${hash}.css`);
+    // copyFile(`${opPath}/wm-styles.br.css`,`${opPath}/wm-styles.${hash}.br.css`);
+    // copyFile(`${opPath}/wm-styles.gzip.css`,`${opPath}/wm-styles.${hash}.gzip.css`);
+};
 const generateHash = async (filepath)=>{
     const cssContent = await readFile(filepath);
     let hash = crypto.createHash('md5');
@@ -74,6 +80,30 @@ const generateHashForScripts = () => {
                     `<script> const WMStylesPath = "${deployUrl}/wm-styles.${hash}.css" </script>`
                 );
             }
+        let styles = angularJson['projects']['angular-app']['architect']['build']['options']['styles'];
+        for (const style of styles) {
+            let isStyleObject = typeof (style) === "object";
+            if (isStyleObject && style.input && style.bundleName) {
+                if (style.input.includes('themes') && style.bundleName.startsWith('mobile_')) {
+                    if(isDevBuild) {
+                        let themePathName = 'WMAndroidThemesPath';
+                        if (style.bundleName.endsWith('_ios')) {
+                            themePathName = 'WMiOSThemesPath';
+                        }
+                        $("head").append(
+                            `<script> const ${themePathName} = "${deployUrl}/${style.bundleName}.js" </script>`
+                        )
+                    }
+                    if (isProdBuild) {
+                        const hash = await generateHash(`${opPath}/${style.bundleName}.css`);
+                        copyMobileCssFiles(hash, style.bundleName);
+                        $("body").append(
+                            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}/${style.bundleName}.${hash}.css" >`
+                        )
+                    }
+                }
+            }
+        };
         await writeFile(`./dist/index.html`, $.html());
         generateHashForScripts();
     } catch (e) {
