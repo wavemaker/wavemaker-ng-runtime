@@ -120,12 +120,21 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     // captionPositionAnimate is only notified for date-time, time and search widgets as input el is not updated with value on selection of dropdown/popups
     ngOnInit() {
         this.labelAnimationSubscription = this.app.subscribe('captionPositionAnimate', (data) => {
-            if (data.displayVal || data.isFocused || data.isSelectMultiple) {
+            // displayVal is true when there is a value entered in the input field
+            // In case of form fields, when the field is in focus, isFocused will be set as true
+            // isSelectMultiple is set to true when for select widget, multiple option is enabled
+            // Checking inputEl focus - when form is represented as dialog and the first field is automatically in focus
+            if (data.displayVal || data.isFocused || data.isSelectMultiple || this.inputEl.is(':focus')) {
                 data.nativeEl.addClass('float-active');
+                if (!data.displayVal && this.inputEl.is(':focus')) {
+                    this.inputEl.attr('placeholder', this.placeholder);
+                }
             } else {
                 data.nativeEl.removeClass('float-active');
                 // Remove placeholder on removing float-active, if not the label and placeholder are collided
-                if (this.inputEl) {
+                // before place is removed assign it to the placeholder variable
+                if (this.inputEl && this.inputEl.attr('placeholder')) {
+                    this.placeholder = this.inputEl.attr('placeholder');
                     this.inputEl.removeAttr('placeholder');
                 }
             }
