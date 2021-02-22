@@ -212,8 +212,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('datasource.bind') binddatasource: string,
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
-        statePersistence: StatePersistence,
-        paginationService: PaginationService,
+        statePersistence: StatePersistence
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
@@ -806,18 +805,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     // configures reordering the list items.
     private configureDnD() {
-        let appendTo;
-        const modalEl = $(document).find('.modal');
-        if (modalEl.length) { // In case of dialog, appendTo should be the modal ele
-            appendTo = modalEl[modalEl.length - 1];
-        } else if (this.getAttr('height')) { // when height is applied to the list, append should be the ul's parent as scroll is applied to the parent
-            appendTo = 'parent';
-        } else { // As default append to should be body
-            appendTo = 'body';
-        }
-            
         const options = isMobileApp() ? {} : {
-            appendTo: appendTo,
+            appendTo: 'body',
         };
 
         const $el = $(this.nativeElement);
