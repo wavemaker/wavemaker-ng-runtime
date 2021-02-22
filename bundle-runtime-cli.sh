@@ -51,6 +51,8 @@ mkdir -p libraries/scripts/iscroll/build
 cp ./node_modules/iscroll/build/iscroll.js libraries/scripts/iscroll/build/
 mkdir -p libraries/scripts/swipey
 cp ./projects/swipey/src/swipey.jquery.plugin.js libraries/scripts/swipey/
+mkdir -p libraries/scripts/jquery.ui.touch-punch
+cp ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js libraries/scripts/jquery.ui.touch-punch/
 
 
 node_modules/.bin/rollup -c rollup.build-task.js

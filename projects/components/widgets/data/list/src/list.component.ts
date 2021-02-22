@@ -130,6 +130,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private _pageLoad;
     private _selectedItemsExist;
 
+    private touching;
+    private touched;
+
     public get selecteditem() {
         if (this.multiselect) {
             return getClonedObject(this._items);
@@ -208,7 +211,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('datasource.bind') binddatasource: string,
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
-        statePersistence: StatePersistence,
+        statePersistence: StatePersistence
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
@@ -920,7 +923,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     // configures reordering the list items.
     private configureDnD() {
-        const options = {
+        const options = isMobileApp() ? {} : {
             appendTo: 'body',
         };
 
@@ -930,6 +933,48 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         configureDnD(this.$ulEle, options, this.onReorderStart.bind(this), this.onUpdate.bind(this));
 
         this.$ulEle.droppable({'accept': '.app-list-item'});
+
+        if (isMobileApp()) {
+            this.$ulEle.sortable('disable');
+            this.$ulEle.on('touchstart', function(event) {
+                let self = this;
+                if (!self.touching) {
+                    if (self.touched) {
+                        clearTimeout(self.touched);
+                    }
+                    setTimeout(() => {
+                        //Prevent context menu on mobile (IOS/ANDROID)
+                        if (event.cancelable) {
+                            event.preventDefault();
+                        }
+                    }, 50);
+                    self.touched = setTimeout(() => {
+                        $(event.currentTarget).addClass('no-selection');
+                        //Enable draggable
+                        $(event.currentTarget).sortable('enable');
+
+                        //Set internal flag
+                        self.touching = true;
+
+                        //trigger touchstart again to enable draggable through touch punch
+                        $(self).trigger(event);
+
+                        //Choose preferred duration for taphold
+                    }, 350);
+                }
+            }).on('touchend', function (event) {
+                this.touching = false;
+                $(event.currentTarget).removeClass('no-selection');
+
+                //Disable draggable to enable default behaviour
+                $(event.currentTarget).sortable('disable');
+
+                clearTimeout(this.touched);
+            }).on('touchmove', function () {
+                clearTimeout(this.touched);
+            });
+        }
+
     }
 
     // returns true if the selection limit is reached.
