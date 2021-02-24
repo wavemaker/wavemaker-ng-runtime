@@ -46,7 +46,8 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     }
 
     private setDefaultValueAnimation() { // set animation when default values are present
-        if (!this._isPlaceholderBound) {
+        // remove placeholder when the input el has placeholder and the placeholder is not bound to any variable
+        if (!this._isPlaceholderBound && this.inputEl.attr('placeholder')) {
             this.placeholder = this.inputEl.attr('placeholder');
             this.inputEl.removeAttr('placeholder');
         }
