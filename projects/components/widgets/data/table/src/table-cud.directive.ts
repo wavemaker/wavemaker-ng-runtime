@@ -383,7 +383,7 @@ export class TableCUDDirective {
             return;
         }
         if (evt && evt.target) {
-            this.table.callDataGridMethod('toggleEditRow', evt, {'selectRow': true, action: 'edit'});
+            this.table.callDataGridMethod('toggleEditRow', evt, {'selectRow': true, action: 'edit', skipFocus: _.get(this.table.gridOptions, 'skipFocus')});
         } else {
             // For live form, call the update function with selected item
             if (this.table.editmode === 'form' || this.table.editmode === 'dialog') {
