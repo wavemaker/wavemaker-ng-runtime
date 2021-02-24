@@ -133,7 +133,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
             } else {
                 data.nativeEl.removeClass('float-active');
                 // Remove placeholder on removing float-active, if not the label and placeholder are collided
-                // before place is removed assign it to the placeholder variable
+                // before placeholder is removed assign it to the placeholder variable
                 if (this.inputEl && this.inputEl.attr('placeholder')) {
                     this.placeholder = this.inputEl.attr('placeholder');
                     this.inputEl.removeAttr('placeholder');
