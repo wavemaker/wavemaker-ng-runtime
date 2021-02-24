@@ -83,6 +83,19 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         this._attrObserver.observe(this.inputEl[0], config);   
     }
 
+    // when a form is right aligned and have input-group-btn's like date picker, time picker etc. adjust the css to not overlap the label on the icon
+    private checkForRightAlignedForm() {
+        const $compositeEle = $(this.compositeEle);
+        if ($compositeEle.closest('.align-right').length && $compositeEle.find('.input-group-btn').length) {
+            const $label = $compositeEle.find('label');
+            if ($compositeEle.find('[wmdatetime]').length) { // for datetime picker, as there will be 2 icons css is different
+                $label.addClass('input-grp-dt-icon');
+            } else {
+                $label.addClass('input-grp-icon');
+            }
+        }
+    }
+
     ngAfterViewInit() {
         this.compositeEle = this.nativeEl;
         const widget = this.nativeEl.widget;
@@ -99,6 +112,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
                     this.compositeEle.classList.remove('caption-floating');
                     this.compositeEle.classList.add('caption-top');
                 }
+                this.checkForRightAlignedForm();
             }
             this.inputEl = $(this.nativeEl).find('input, select, textarea');
             if (!this._isPlaceholderBound) {
