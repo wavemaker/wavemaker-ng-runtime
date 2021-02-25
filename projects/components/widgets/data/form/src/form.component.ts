@@ -17,7 +17,9 @@ import {
     AbstractDialogService,
     DataType,
     removeAttr,
-    $invokeWatchers
+    $invokeWatchers,
+    scrollToElement,
+    isElementInViewport
 } from '@wm/core';
 import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
 import { PrefabDirective } from '@wm/components/prefab';
@@ -597,6 +599,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 this.statusMessage = {'caption': template || '', type: type};
                 if (this.messageRef) {
                     this.messageRef.showMessage(this.statusMessage.caption, this.statusMessage.type);
+                }
+                // when message layout is inline on save, scroll the view to top of the form to see the status of the operation
+                if (!isElementInViewport(this.$element[0])) {
+                    scrollToElement(this.$element[0]);
                 }
             } else {
                 this.app.notifyApp(template, type, header);
