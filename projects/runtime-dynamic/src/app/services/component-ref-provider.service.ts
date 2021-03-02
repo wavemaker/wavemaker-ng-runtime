@@ -218,7 +218,8 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         const componentFactoryMap = componentFactoryRefCache.get(componentType);
         let componentFactoryRef;
         if (componentFactoryMap) {
-            componentFactoryRef = componentFactoryMap.get(componentName);
+            const updatedComponentName = (options && options['prefab']) ? options['prefab'] +  componentName : componentName;
+            componentFactoryRef = componentFactoryMap.get(updatedComponentName);
 
             if (componentFactoryRef) {
                 return componentFactoryRef;
@@ -235,8 +236,8 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                     .compileModuleAndAllComponentsSync(moduleDef)
                     .componentFactories
                     .filter(factory => factory.componentType === componentDef)[0];
-
-                componentFactoryRefCache.get(componentType).set(componentName, componentFactoryRef);
+                const updatedComponentName = (options && options['prefab']) ? options['prefab'] +  componentName : componentName;
+                componentFactoryRefCache.get(componentType).set(updatedComponentName, componentFactoryRef);
 
                 return componentFactoryRef;
             }, (err) => {
