@@ -182,6 +182,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // on clear, trigger search with page size 1
     private clearSearch($event, loadOnClear) {
+        this.invokeEventCallback('clear', { $event });
         this.query = '';
         this.onInputChange($event);
         this.dataProvider.isLastPage = false;
