@@ -1635,10 +1635,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.callDataGridMethod('option', 'actionsEnabled.new', enableNewRow);
                 break;
             case 'pagesize':
+                this.dataNavigator.setBindDataSet(this.binddataset, this.viewParent, this.datasource, this.dataset, this.binddatasource, undefined, this.statehandler);
                 this.dataNavigator.options = {
                     maxResults: nv
                 };
-                this.dataNavigator.widget.maxResults = nv;
                 this.dataNavigator.maxResults = nv;
                 break;
             case 'show':
