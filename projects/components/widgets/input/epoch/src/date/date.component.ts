@@ -4,7 +4,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
-import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges } from '@wm/core';
+import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, isMobile } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
@@ -30,10 +30,10 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class DateComponent extends BaseDateTimeComponent {
     static initializeProps = registerProps();
 
-    private bsDataValue;
+    public bsDataValue;
     public showdropdownon: string;
     private dateContainerCls: string;
-    private isOpen: boolean;
+    public isOpen: boolean;
     private isEnterPressedOnDateInput = false;
 
     private keyEventPlugin;
@@ -43,8 +43,16 @@ export class DateComponent extends BaseDateTimeComponent {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
     }
 
+    get dateInputFormat() {
+        return this._dateOptions.dateInputFormat || 'yyyy-MM-dd';
+    }
+
     get displayValue() {
-        return getFormattedDate(this.datePipe, this.bsDataValue, this._dateOptions.dateInputFormat) || '';
+        return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat) || '';
+    }
+
+    get nativeDisplayValue() {
+        return getFormattedDate(this.datePipe, this.bsDataValue, 'yyyy-MM-dd') || '';
     }
 
     get datavalue() {
@@ -114,8 +122,8 @@ export class DateComponent extends BaseDateTimeComponent {
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
-        if (getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
-            $(this.nativeElement).find('.app-dateinput').val(this.displayValue);
+        if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat) === this.displayValue) {
+            $(this.nativeElement).find('.display-input').val(this.displayValue);
         }
         if (newVal) {
             this.bsDataValue = newVal;
@@ -149,7 +157,7 @@ export class DateComponent extends BaseDateTimeComponent {
         }
     }
 
-    private hideDatepickerDropdown() {
+    public hideDatepickerDropdown() {
         this.invokeOnTouched();
         this.isOpen = false;
         this.isEnterPressedOnDateInput = false;
@@ -169,8 +177,13 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method used to toggle the dropdown of the date widget
      */
     toggleDpDropdown($event) {
+        if (isMobile()) {
+            this.onDateTimeInputFocus();
+            return;
+        }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', { $event: $event });
+            this.focusOnInputEl();
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             $event.stopPropagation();
@@ -196,14 +209,14 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method triggered when pressing key on the date input
      */
-    private onDisplayKeydown(event) {
+    public onDisplayKeydown(event) {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             if (action === 'enter' || action === 'arrowdown') {
                 const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
                 event.preventDefault();
-                const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {

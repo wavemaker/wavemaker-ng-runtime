@@ -293,7 +293,6 @@ bundleMobile() {
         ./libraries/mobile/components/containers/segmented-control/bundles/index.umd.js \
         ./libraries/mobile/components/device/barcode-scanner/bundles/index.umd.js \
         ./libraries/mobile/components/device/camera/bundles/index.umd.js \
-        ./libraries/mobile/components/input/epoch/bundles/index.umd.js \
         ./libraries/mobile/components/input/file-upload/bundles/index.umd.js \
         ./libraries/mobile/components/page/default/bundles/index.umd.js \
         ./libraries/mobile/components/page/left-panel/bundles/index.umd.js \
@@ -402,7 +401,6 @@ buildApp() {
     ngBuild mobile-components-device-barcodescanner projects/mobile/components/device/barcode-scanner '@wm/mobile/components/device/barcode-scanner'
     ngBuild mobile-components-device-camera projects/mobile/components/device/camera '@wm/mobile/components/device/camera'
 
-    ngBuild mobile-components-input-epoch projects/mobile/components/input/epoch '@wm/mobile/components/input/epoch'
     ngBuild mobile-components-input-fileupload projects/mobile/components/input/file-upload '@wm/mobile/components/input/file-upload'
 
     ngBuild mobile-components-page projects/mobile/components/page '@wm/mobile/components/page'
@@ -567,6 +565,7 @@ bundleWebLibs() {
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
+        ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ./node_modules/imask/dist/imask.min.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
@@ -633,6 +632,7 @@ bundleMobileLibs() {
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
+        ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ./node_modules/imask/dist/imask.min.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
@@ -682,7 +682,7 @@ buildLibs() {
         fi
     else
         hasLibJsChanges
-        
+
         if [[ "$?" -eq "0" ]]; then
         bundleWebLibs
         bundleMobileLibs

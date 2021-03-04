@@ -147,6 +147,20 @@ describe('ListComponent', () => {
         expect(listComponent.selecteditem).toEqual(listComponent.dataset[1]);
     });
 
+    it('should render items depending on the page size provided', (done) => {
+        spyOn(wrapperComponent, 'onRender');
+        listComponent.setProperty('pagesize', 1);
+        fixture.detectChanges();
+        expect(wrapperComponent.onRender).toHaveBeenCalledTimes(1);
+
+        // 1 item should be selected
+        setTimeout(()=>{
+            expect(listComponent.fieldDefs.length).toEqual(1);
+            done();
+        }, 1000);
+    });
+
+
     /*
     it('should invoke on-before-render and on-render in sequence', fakeAsync(() => {
         spyOn(wrapperComponent, 'onBeforeRender');

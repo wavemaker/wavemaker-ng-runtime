@@ -12,7 +12,7 @@ import { WmComponentsModule } from '@wm/components/base';
 ($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
 
 const mockApp = {
-    subscribe: ()=>{}
+    subscribe: () => {}
 };
 
 const markup = `
@@ -50,7 +50,7 @@ class CarouselSpec {
 describe('wm-carousel: Widget specific test cases', () => {
     let fixture: ComponentFixture<CarouselSpec>;
 
-    beforeEach(async(()=>{
+    beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [CarouselModule, BasicModule, WmComponentsModule.forRoot()],
             declarations: [CarouselSpec, CarouselDirective, CarouselTemplateDirective],
@@ -99,4 +99,20 @@ describe('wm-carousel: Widget specific test cases', () => {
             });
         });
     }));
+
+    it('should update the animation interval dynamically', (done) => {
+        let interval = 5;
+        fixture.componentInstance.carousel.setProperty('animation', 'auto');
+        fixture.componentInstance.carousel.setProperty('animationinterval', interval);
+        fixture.detectChanges();
+        // setTimeout is used because animator is initialized after 50 seconds
+        setTimeout(() => {
+            expect((fixture.componentInstance.carousel as any).animator.interval).toEqual(interval * 1000);
+            interval = 10;
+            fixture.componentInstance.carousel.setProperty('animationinterval', interval);
+            fixture.detectChanges();
+            expect((fixture.componentInstance.carousel as any).animator.interval).toEqual(interval * 1000);
+            done();
+        }, 50);
+    });
 });

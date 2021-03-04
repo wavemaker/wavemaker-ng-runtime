@@ -46,7 +46,8 @@ const REGEX = {
     VALID_PASSWORD: /^[0-9a-zA-Z-_.@&*!#$%]+$/,
     SPECIAL_CHARACTERS: /[^A-Z0-9a-z_]+/i,
     APP_SERVER_URL_FORMAT: /^(http[s]?:\/\/)(www\.){0,1}[a-zA-Z0-9\.\-]+([:]?[0-9]{2,5}|\.[a-zA-Z]{2,5}[\.]{0,1})\/+[^?#&=]+$/,
-    JSON_DATE_FORMAT: /\d{4}-[0-1]\d-[0-3]\d(T[0-2]\d:[0-5]\d:[0-5]\d.\d{1,3}Z$)?/
+    JSON_DATE_FORMAT: /\d{4}-[0-1]\d-[0-3]\d(T[0-2]\d:[0-5]\d:[0-5]\d.\d{1,3}Z$)?/,
+    DATA_URL: /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*)\s*$/i
 },
     compareBySeparator = ':';
 
@@ -225,6 +226,11 @@ export const isInsecureContentRequest = (url: string): boolean => {
         return false;
     }
 
+    // If the inputted source is a base64 url, do not throw insecure content error
+    if (REGEX.DATA_URL.test(url)) {
+        return false;
+    }
+
     if (stringStartsWith(location.href, 'https://')) {
         return parser.protocol !== 'https:' && parser.protocol !== 'wss:';
     }
@@ -332,7 +338,8 @@ export const getFormattedDate = (datePipe, dateObj, format: string): any => {
 export const getDateObj = (value, options?): Date => {
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        const pattern = momentPattern(options.pattern);
+        // Fix for WMS-19601, invalid date is returned on date selection.
+        const pattern = isMobile() ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
         value = moment(value, pattern).toDate();
     }
 
@@ -562,6 +569,36 @@ export const isEmptyObject = (obj: any): boolean => {
     return false;
 };
 
+// Function expects an element on which the scrolling should be applied, Depending on the offset of the element scrollbar will be adjusted
+export const scrollToElement = (element) => {
+    const $element = $(element);
+    const formPosition = $element.offset().top;
+    const $scrollParent = $element.closest('[wmsmoothscroll="true"]');
+    if (isMobileApp() && $scrollParent.length) {
+        const iScroll = _.get($scrollParent[0], 'iscroll');
+        let to = -(formPosition - iScroll.y);
+        to = (iScroll.maxScrollY > to) ? iScroll.maxScrollY : to;
+        iScroll.scrollTo(0, to);
+    } else {
+        window.scroll({
+            top: formPosition, 
+            left: 0, 
+            behavior: 'smooth' 
+        });
+    }
+}
+
+// Function will return whether the given element is in viewport or not
+export const isElementInViewport = (element) => {
+    var rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+
 /*Function to check whether the specified object is a pageable object or not.*/
 export const isPageable = (obj: any): boolean => {
     const pageable = {
@@ -629,13 +666,15 @@ export const getValidDateObject = (val, options?) => {
             }
         });
     }
+
+    const pattern = isMobile() ? (_.get(options, 'pattern') ||  'YYYY/MM/DD HH:mm:ss') : (momentPattern(_.get(options, 'pattern')) || '');
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        const pattern = momentPattern(options.pattern);
+        // Fix for WMS-19601, invalid date is returned on date selection.
         val = moment(val, pattern).toDate();
     }
 
-    if (moment(val).isValid()) {
+    if (moment(val, pattern).isValid()) {
         // date with +5 hours is returned in safari browser which is not a valid date.
         // Hence converting the date to the supported format "YYYY/MM/DD HH:mm:ss" in IOS
         if (isIos()) {

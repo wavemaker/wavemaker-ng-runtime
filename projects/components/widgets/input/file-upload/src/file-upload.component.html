@@ -1,7 +1,7 @@
 <div class="app-fileupload" init-widget>
     <!-- drag and drop files UI in web -->
     <div class="app-multi-file-upload" *ngIf="!_isMobileType && multiple">
-        <div class="drop-box" (dragover)="dragOverHandler($event)" (drop)="onFileDrop($event)" >
+        <div class="drop-box" (click)="triggerFileSelect()" (dragover)="dragOverHandler($event)" (drop)="onFileDrop($event)">
             <i class="{{iconclass}}"></i>
             <div class="message">
                 <label [innerHtml]="caption" class="caption"></label>

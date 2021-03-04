@@ -541,7 +541,7 @@ $.widget('wm.datatable', {
                 customExpressionHtml = cellPreloader;
                 $htm.html(customExpressionHtml);
             } else {
-                innerTmpl = (_.isUndefined(columnValue) || columnValue === null) ? '' : this.options.securityUtils.pipeTransform.transform(columnValue, 1);
+                innerTmpl = (_.isUndefined(columnValue) || columnValue === null) ? '' : columnValue;
                 $htm.html(innerTmpl);
             }
         } else if (colExpression) {
@@ -557,7 +557,7 @@ $.widget('wm.datatable', {
                 }
                 $htm.attr('title', columnValue);
                 //Add empty quote, to convert boolean false to 'false', so that value is rendered
-                $htm.html("" + this.options.securityUtils.pipeTransform.transform(columnValue, 1));
+                $htm.html("" + columnValue);
             } else {
                 switch (colDef.field) {
                     case 'checkbox':
@@ -579,7 +579,7 @@ $.widget('wm.datatable', {
                         innerTmpl = '';
                         break;
                     default:
-                        innerTmpl = (_.isUndefined(columnValue) || columnValue === null) ? '' : this.options.securityUtils.pipeTransform.transform(columnValue, 1);
+                        innerTmpl = (_.isUndefined(columnValue) || columnValue === null) ? '' : columnValue;
                 }
                 $htm.html(innerTmpl);
             }
@@ -1648,6 +1648,7 @@ $.widget('wm.datatable', {
                 });
                 $newRowButton.hide();
             } else {
+                $('typeahead-container').removeClass('open');
                 $gridActions.find('.cancelNewRow').remove();
                 $gridActions.find('.saveNewRow').remove();
                 $newRowButton.show();
@@ -1887,6 +1888,7 @@ $.widget('wm.datatable', {
                 $el.html(self.options.getCustomExpression(value.fieldName, value.rowIndex));
             }
         });
+        $('typeahead-container').removeClass('open');
         $editButton.removeClass('hidden');
         $cancelButton.addClass('hidden');
         $saveButton.addClass('hidden');

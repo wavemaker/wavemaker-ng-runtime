@@ -17,7 +17,8 @@
        [attr.accesskey]="shortcutkey"
        [autofocus]="autofocus"
        (ngModelChange)="handleChange($event)"
-       (blur)="handleBlur($event)"
+       (blur)="handleBlur($event); checkForDisplayFormat($event)"
+       (focus)="checkForDisplayFormat($event)"
        [autocomplete]="autocomplete ? 'on' : 'off'"
        (keyup.enter)="flushViewChanges(input.value)"
        #input>

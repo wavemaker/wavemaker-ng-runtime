@@ -4,7 +4,7 @@ const tagName = 'aside';
 
 register('wm-left-panel', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmLeftPanel partialContainer data-role="page-left-panel" role="complementary" wmSmoothscroll="${attrs.get('smoothscroll') || 'true'}" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmLeftPanel partialContainer data-role="page-left-panel" role="complementary" wmSmoothscroll="${attrs.get('smoothscroll') || 'false'}" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

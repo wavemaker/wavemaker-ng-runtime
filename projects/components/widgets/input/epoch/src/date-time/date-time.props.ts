@@ -41,9 +41,6 @@ export const dateTimeProps = new Map(
 );
 
 export const registerProps = () => {
-    if (isMobileApp()) {
-        dateTimeProps.set('datepattern', { value: 'yyyy-MM-ddTHH:mm:ss', ...PROP_STRING });
-    }
     register(
         'wm-datetime',
         dateTimeProps

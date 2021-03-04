@@ -85,4 +85,22 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         } 
         super.onPropertyChange(key, nv, ov);
     }
+
+    /**
+     * When caption floating is enabled and placeholder is given, do not show placeholder until user focuses on the field
+     * When focused add the placeholder to the option which is selected
+     * On blur, remove the placeholder and do not animate the label
+     * @param $event event received will be either a blur or focus event
+     */
+    checkForFloatingLabel($event) {
+        const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (this.placeholder && captionEl.length > 0 && !this.datavalue) {
+            if ($event.type === 'focus') {
+                $(this.selectEl.nativeElement).find('option:selected').text(this.placeholder);   
+            } else {
+                $(this.selectEl.nativeElement).find('option:selected').text('');
+                captionEl.removeClass('float-active');
+            }
+        } 
+    }
 }

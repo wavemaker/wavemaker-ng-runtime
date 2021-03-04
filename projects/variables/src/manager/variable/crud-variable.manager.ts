@@ -173,10 +173,21 @@ export class CrudVariableManager extends ServiceVariableManager {
             _.merge(inputFields, bindingFields);
         }
         if ((options.operation === 'create' || options.operation === 'update') && (!bodyParam || !inputFields[bodyParam.name])) {
+            let bodyTypeKeys = [], nonBodyParam;
+            // only merge body/formData type params to the requestBody.
+            for (const fieldName in inputFields) {
+                nonBodyParam = opInfo.parameters.filter(function(param) {
+                    return param.name === fieldName && param.parameterType !== 'body' && param.parameterType !== 'formData';
+                });
+                if (nonBodyParam.length) {
+                    bodyTypeKeys.push(fieldName);
+                }
+            }
+            const reqBodyFields = _.omit(inputFields, bodyTypeKeys);
             if (bodyParam) {
-                inputFields[bodyParam.name] = getClonedObject(inputFields);
+                inputFields[bodyParam.name] = getClonedObject(reqBodyFields);
             } else {
-                inputFields.RequestBody = getClonedObject(inputFields);
+                inputFields.RequestBody = getClonedObject(reqBodyFields);
             }
         }
         let paginationInfo;
@@ -312,7 +323,7 @@ export class CrudVariableManager extends ServiceVariableManager {
     }
 
     public getInputParms(variable) {
-        const wmServiceOperationInfo = _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
+        const wmServiceOperationInfo = _.get(metadataService.getByOperationId(variable.operationId, variable.getPrefabName()), 'wmServiceOperationInfo');
         return _.get(wmServiceOperationInfo, 'parameters');
     }
 

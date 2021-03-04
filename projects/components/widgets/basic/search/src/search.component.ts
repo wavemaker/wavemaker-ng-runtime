@@ -6,7 +6,7 @@ import { mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
-import { addClass, adjustContainerPosition, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
+import { addClass, adjustContainerPosition, App, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
 import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, provideAs, provideAsWidgetRef, styler, transformFormData, getContainerTargetClass } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 
@@ -39,6 +39,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public navsearchbar: any;
     public debouncetime: number;
 
+    private app: App;
     private typeaheadDataSource: Observable<any>;
     private pagesize: any;
     private page = 1;
@@ -78,7 +79,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private listenQuery: boolean;
     private _domUpdated: boolean;
     private searchon: string;
+    private showclear: boolean;
     public matchmode: string;
+    private clearData: boolean;
+
 
     // getter setter is added to pass the datasource to searchcomponent.
     get datasource() {
@@ -93,13 +97,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     constructor(
         inj: Injector,
+        app: App,
         @Attribute('datavalue.bind') public binddatavalue,
         @Attribute('dataset.bind') public binddataset
     ) {
         super(inj, WIDGET_CONFIG);
         // this flag will not allow the empty datafield values.
         this.allowempty = false;
-
+        this.app = app;
         addClass(this.nativeElement, 'app-search', true);
 
         /**
@@ -156,6 +161,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 // update the query model with the values we have
                 this.updateByDatavalue(val);
             }
+
+            // turn on showCloseBtn when a default value is given
+            this.showClosebtn = (this.query !== '');
         });
         this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
 
@@ -306,6 +314,11 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         return this.type === 'autocomplete' && isMobile();
     }
 
+    // Check if the query is entered in the input and the view is not mobile
+    public isQueryEntered() {
+        return this.showclear && this.showClosebtn;
+    }
+
     private loadMoreData(incrementPage?: boolean) {
         if (this.dataProvider.isLastPage) {
             return;
@@ -391,7 +404,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // Triggerred when typeahead option is selected.
     private onSearchSelect($event: Event) {
         let item;
-        if(this.typeaheadContainer && this.typeaheadContainer.active){
+        if (this.typeaheadContainer && this.typeaheadContainer.active) {
             item = this.typeaheadContainer.active.item;
         }
         $event = this.eventData($event, item || {});
@@ -421,6 +434,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     private onDropdownOpen() {
+        if (this.clearData) {
+            this.typeahead.hide();
+        }
         // setting the ulElements, liElement on typeaheadContainer.
         // as we are using customOption template, liElements are not available on typeaheadContainer so append them explicitly.
         const fn = _.debounce(() => {
@@ -501,10 +517,16 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this._lastQuery = this.query = this.queryModel[0].label || '';
                 this._modelByValue = this.queryModel[0].value;
                 this._modelByKey = this.queryModel[0].key;
+                this.showClosebtn = (this.query !== '');
             } else {
                 this._modelByValue = undefined;
                 this.queryModel = undefined;
                 this.query = '';
+            }
+            if (this.clearData) {
+                if (_.get((this.typeahead as any), '_typeahead.isShown')) {
+                    this.typeahead.hide();
+                }
             }
         });
     }
@@ -573,6 +595,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private handleFocus($event) {
         if (this.type === 'search' && this.query === this._lastQuery && this._lastResult) {
             (this.typeahead as any).keyUpEventEmitter.emit(this.query);
+        }
+    }
+
+    public notifySubscriber() {
+        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (parentEl.length > 0) {
+            this.app.notify('captionPositionAnimate', {displayVal: true, nativeEl: parentEl});
         }
     }
 
@@ -736,8 +765,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.containerTarget = getContainerTargetClass(this.nativeElement);
     }
 
-    private eventData($event, item){
-        if($event){
+    private eventData($event, item) {
+        if ($event) {
             $event['data'] = {
                 item  : item.dataObject,
                 model : item.value,
@@ -755,6 +784,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.queryModel = item;
         item.selected = true;
         this.query = item.label;
+        this.showClosebtn = (this.query !== '');
         $event = $event || this.$typeaheadEvent;
 
         // As item.key can vary from key in the datasetItems
@@ -795,6 +825,19 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (key === 'displaylabel' && this.dataoptions && this.binddisplaylabel === null) {
             this.query = _.get(this._modelByValue, nv) || this._modelByValue;
         }
+
+        // when search is disabled, do not load any more data or just clear the data that is already in process or loaded.
+        if (key === 'disabled') {
+            if (nv === false) {
+                this.clearData = false;
+            } else {
+                this.clearData = true;
+                if (_.get((this.typeahead as any), '_typeahead.isShown')) {
+                    this.typeahead.hide();
+                }
+            }
+        }
+
         super.onPropertyChange(key, nv, ov);
     }
 }

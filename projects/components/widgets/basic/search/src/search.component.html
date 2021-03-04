@@ -13,7 +13,7 @@
     <ul #ulElement class="app-search dropdown-menu" scrollable>
         <li #liElements *ngFor="let match of matches" [wmItemTemplate]="content" [userComponentParams]="match.item"  partialContainer [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match)}"
             (mouseenter)="typeaheadContainer.selectActive(match);"
-            (click)="typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event;">
+            (click)="typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; notifySubscriber()">
             <!-- itemTemplate comes from the <input> -->
             <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate"
                           [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
@@ -99,7 +99,7 @@
            [attr.name]="name">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
-    <span class="wi wi-close form-control-feedback clear-btn" [hidden]="!showClosebtn" (click)="clearSearch($event, true)"></span>
+    <span class="wi wi-close form-control-feedback clear-btn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"></span>
     <span class="sr-only">Clear button</span>
     <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
         <form>
