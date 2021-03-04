@@ -398,7 +398,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // Triggered for enter event
     private handleEnterEvent($event) {
         // submit event triggered when there is no search results
-        if (!this.typeahead._container) {
+        if (!_.get(this.typeahead, 'matches.length')) {
             this.onSearchSelect($event);
         }
     }
