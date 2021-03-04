@@ -3,27 +3,17 @@ const fs = require('fs');
 
 const argv = require("yargs")
 .options({
-    "updateWmVersion": {
-        type: "boolean"
-    },
-    "useS3": {
-        type: "boolean"
-    },
-    "useNpm": {
-        type: "boolean"
-    },
     "isProd": {
         type: "boolean"
     },
-    "version": {
-        alias: "v",
+    "publishVersion": {
         type: "string"
     }
 }).argv;
 
-const generateNpmVersion = (version) => {
-    version = version || '';
-    const splits = version.split('.');
+const generateNpmVersion = (publishVersion) => {
+    publishVersion = publishVersion || '';
+    const splits = publishVersion.split('.');
     while (splits.length < 4) {
         splits.push('0');
     }
@@ -43,27 +33,17 @@ const generateNpmVersion = (version) => {
 const updateWMVersion = () => {
     const path = './libraries/package.json';
     const wmPackageJSON = require(path);
-    wmPackageJSON.version = generateNpmVersion(argv.version);
+    wmPackageJSON.version = generateNpmVersion(argv.publishVersion);
     fs.writeFileSync(path, JSON.stringify(wmPackageJSON, null, 4));
-    console.log(`Updated package.json wm:${argv.version} for publishing to npm`);
+    console.log(`Updated package.json wm:${argv.publishVersion} for publishing to npm`);
 };
 
 const addWMDependency = (wm_pkg_name=`@wavemaker/app-ng-runtime`) => {
     const path = './dist/runtime-cli/angular-app/package.json';
     const packageJSON = require(path);
 
-    if(argv.useNpm){
-        packageJSON.dependencies[wm_pkg_name] = generateNpmVersion(argv.version);
-        console.log(`Added ${wm_pkg_name}:${argv.version} dependency to angular app`);
-    } 
-
-    // if (argv.useS3) {
-    //     packageJSON.dependencies.wm = `https://s3.amazonaws.com/npm.wavemaker.com/release/wm/${argv.version}/wm.tar.gz`;
-    //     console.log(`Added wm dependency on s3 to angular app.`);
-    // } else {
-    //     packageJSON.dependencies.wm = generateNpmVersion(argv.version);
-    //     console.log(`Added wm:${argv.version} dependency to angular app`);
-    // }
+    packageJSON.dependencies[wm_pkg_name] = generateNpmVersion(argv.publishVersion);
+    console.log(`Added ${wm_pkg_name}:${argv.publishVersion} dependency to angular app`);
 
     fs.writeFileSync(path, JSON.stringify(packageJSON, null, 4));
 };
@@ -95,16 +75,13 @@ const updateTSConfig = (path, wm_pkg_name=`@wavemaker/app-ng-runtime`) => {
 };
 
 const processRequest = () => {
-    if (argv.updateWmVersion) {
         const wm_pkg_name = `@wavemaker/app-ng-runtime`;
         updateWMVersion();
         addWMDependency(wm_pkg_name);
         updateAngularJSON(wm_pkg_name);
         updateTSConfig('./dist/runtime-cli/angular-app/tsconfig.json',wm_pkg_name);
         updateTSConfig('./dist/runtime-cli/angular-app/tsconfig.web-app.json',wm_pkg_name);
-    } else {
-        console.log('There is no task to execute for the given command.');
-    }
+
 };
 
 processRequest();

@@ -1,26 +1,17 @@
 #!/usr/bin/env bash
-
+set -x
 BASEDIR=$(dirname "$0")
 cd $BASEDIR
 dev=true
 publish=false
-useS3=false
-version='x.x.x'
+publishVersion='x.x.x'
 while [ "$1" != "" ]; do
     case $1 in
-        --use-s3)
+        --publish-version)
             shift
-            useS3=$1
-        ;;
-        --pom-version)
-            shift
-            version=$1
+            publishVersion=$1
             dev=false
             publish=true
-        ;;
-        --use-npm)
-            shift
-            useNpm=$1
         ;;
         --is-prod)
             shift
@@ -72,8 +63,7 @@ cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.js
 cp ./wm.package.json libraries/package.json
 
 if [[ "${publish}" == true ]]; then
-    # node bundle-runtime-cli.js -v "${version}" --useS3=${useS3} --updateWmVersion
-    node bundle-runtime-cli.js -v "${version}" --useNpm=${useNpm} --updateWmVersion --isProd=${isProd}
+    node bundle-runtime-cli.js --publishVersion=${publishVersion} --isProd=${isProd}
 fi
 mkdir -p dist/npm-packages/wm
 cp -r libraries/. dist/npm-packages/wm
