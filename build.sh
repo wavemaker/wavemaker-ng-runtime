@@ -8,7 +8,7 @@ docs=false
 locale=false
 forcelibs=false
 
-isSourceModified=false
+sourceModified=false
 
 for arg in "$@"
 do
@@ -105,30 +105,22 @@ hasLibJsChanges(){
 	fi
     return 0
 }
-hasSourceChanges() {
-
+buildNeeded() {
     if [[ ${force} == true ]]; then
-        return 0
+        return 1
     fi
-
+    
     local bundle=$1
     local sourceLocation=$2
     local successFile="./dist/tmp/${bundle}_${SUCCESS_FILE}"
 
     if ! [[ -e ${successFile} ]]; then
-        return 0
+        return 1
     fi
 
-    local updateTime=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -printf "%T@\n" | sort | tail -1 | cut -d. -f1`
-    local buildTime=`date -r ${successFile} +%s`
-
-	if [[ ${updateTime} -le ${buildTime} ]]; then
-		return 1
-	else
-		return 0
-	fi
-    return 0
-}
+    local modifiedSourceFilesCount=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -newer $successFile | wc -l`
+    return $modifiedSourceFilesCount
+}	
 
 rollup() {
     local bundle=$1
@@ -139,13 +131,13 @@ ngBuild() {
     local bundle=$1
     local sourceLocation=$2
     local ngModuleName=$3;
-    hasSourceChanges ${bundle} ${sourceLocation}
-    if [[ "$?" -eq "0" ]]; then
+    buildNeeded ${bundle} ${sourceLocation}
+    if [[ "$?" -ne 0 ]]; then
         execCommand ng-build ${ngModuleName} "$NG build --prod $ngModuleName"
-        isSourceModified=true
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
         fi
+        sourceModified=true
     else
         echo "No changes in $bundle"
     fi
@@ -319,9 +311,6 @@ bundleMobile() {
 }
 
 buildApp() {
-    hasSourceChanges components-transpilation projects/components/transpile
-    local hasChangesInComponentsTranpilation=$?
-
     ngBuild core projects/core '@wm/core'
     ngBuild transpiler projects/transpiler '@wm/transpiler'
     ngBuild swipey projects/swipey '@wm/swipey'
@@ -416,18 +405,19 @@ buildApp() {
     ngBuild mobile-placeholder-runtime projects/mobile/placeholder/runtime '@wm/mobile/placeholder/runtime'
     ngBuild mobile-placeholder-runtimedynamic projects/mobile/placeholder/runtime-dynamic '@wm/mobile/placeholder/runtime/dynamic'
 
-    if [[ ${hasChangesInComponentsTranpilation} -eq "0" ]]; then
+    buildNeeded components-transpilation projects/components/transpile
+    if [[ $? -ne 0 ]]; then
         ./node_modules/.bin/ng-packagr -p projects/components/transpile/ng-package.json -c ./projects/components/transpile/tsconfig.lib.prod.json
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/components-transpilation_${SUCCESS_FILE}
         fi
-        isSourceModified=true
+        sourceModified=true
     fi
 
     ngBuild runtime-base projects/runtime-base '@wm/runtime/base'
     ngBuild runtime-dynamic projects/runtime-dynamic '@wm/runtime/dynamic'
 
-    if [[ "${isSourceModified}" == true ]]; then
+    if [[ "${sourceModified}" == true ]]; then
         bundleWeb
         bundleMobile
     fi
