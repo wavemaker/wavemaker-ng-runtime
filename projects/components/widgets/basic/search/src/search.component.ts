@@ -115,10 +115,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.typeaheadDataSource = Observable
             .create((observer: any) => {
                 // Runs on every search
-                if (this.listenQuery && (this.minchars === 0 || (this.minchars > 0 && this.query))) {
+                if (this.listenQuery  && (this.minchars === 0 || (this.minchars > 0 && this.query.length >= this.minchars))) {
                     this._defaultQueryInvoked = false;
                     this._loadingItems = true;
                     observer.next(this.query);
+                } else {
+                    this._loadingItems = false;
                 }
                 // on keydown, while scrolling the dropdown items, when last item is reached next call is triggered
                 // unless the call is resolved, we are able to scroll next to first item and soon
