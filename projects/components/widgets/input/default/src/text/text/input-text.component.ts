@@ -40,6 +40,7 @@ export class InputTextComponent extends BaseInput implements OnInit{
     public autocomplete: any;
     public maskVal: any;
     public isFocused: boolean;
+    private lazy: boolean = false;
 
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
@@ -57,6 +58,9 @@ export class InputTextComponent extends BaseInput implements OnInit{
                 this.maskVal = this.displayformat;
                 this.checkForDisplayFormat();
                 break;
+            case 'showdisplayformaton':
+                this.lazy = nv === 'keypress' ? true : false;
+                break;
             default:
                 super.onPropertyChange(key, nv, ov);
         }
@@ -66,7 +70,7 @@ export class InputTextComponent extends BaseInput implements OnInit{
         if (this.displayformat && (!this.placeholder || (this.placeholder && this.isFocused))) {
             return {
                 mask: this.maskVal,
-                lazy: false,
+                lazy: this.lazy,
                 definitions: {
                     '9': /\d/,
                     'A': /[a-zA-Z]/,
