@@ -393,10 +393,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             if (captionEl.length > 0) {
                 // hasValue check whether form-field has a value from passed val attribute
                 // Added sanity check on val to support values liked 0, false etc as input val - WMS-20084
-                // explicitly checking for input value or -webkit-autofill to see whether there are any autofilled fields - WMS-20141
-
-                const hasValue = ((isDefined(val) && val !== '' && val !== null) || captionEl.find('input').val()) || captionEl.find('input:-webkit-autofill').length;
-
+                // explicitly checking for input value to see whether there are anu autofilled fields - WMS-20141
+                const hasValue = ((isDefined(val) && val !== '' && val !== null) || captionEl.find('input').val());
                 this.app.notify('captionPositionAnimate', {displayVal: hasValue, nativeEl: captionEl, isSelectMultiple: this.formWidget && this.formWidget.multiple, isFocused: this._activeField});
             }
             this.form.onFieldValueChange(this, val);
