@@ -102,7 +102,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     initUserScript() {
         try {
             if (this.getContainerWidgetInjector().view.component.prefabName) {
-                this.Prefab = this.injector.get(PrefabDirective);
+                this.Prefab = this.getContainerWidgetInjector().view.component;
             }
             this.evalUserScript(this, this.App, this.injector.get(UtilsService));
         } catch (e) {
