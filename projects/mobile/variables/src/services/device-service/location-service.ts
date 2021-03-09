@@ -191,18 +191,14 @@ export class CurrentGeoPositionOperation implements IDeviceVariableOperation {
         }else if(isAndroid() && parseInt(getAndroidVersion(), 10) <= 10 
             && this.previousPermissionStatus === PERMISSION_DENIED_ONCE 
             && this.currentPermissionStatus === this.diagnosticService.permissionStatus.GRANTED_WHEN_IN_USE){
-                location.reload();
-            return this.requestLocationService(variable, options, dataBindings);
+                //Below Android 11, Chrome webview of Cordova is not updating the permission status from "denied" to "allowed" and throwing the below message
+                //"application does not have sufficient geolocation permissions" For navigator.geolocation.watchPosition method
+                //Hence we are reloading the webview manually
+                location.reload();            
         }else{
             return this.requestLocationService(variable, options, dataBindings);
         }
     }
-
-    private onLocationGrantedAndroid(variable: any, options: any, dataBindings: Map<string, any>): Promise<any>{
-        return this.requestLocationService(variable, options, dataBindings);
-    }
-
-
 
     public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
         if(cordova['plugins'] && cordova['plugins']['locationAccuracy']){
