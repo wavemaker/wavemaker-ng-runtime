@@ -13,7 +13,7 @@
                [required]="required"
                [readOnly]="isReadOnly"
                (click)="toggleDropdown($event)"
-               (focus)="invokeOnFocus($event)"
+               (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
                (blur)="onInputBlur($event)"
                (change)="onDisplayTimeChange($event)"
                (keydown)="onDisplayKeydown($event)">

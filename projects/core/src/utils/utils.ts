@@ -569,6 +569,36 @@ export const isEmptyObject = (obj: any): boolean => {
     return false;
 };
 
+// Function expects an element on which the scrolling should be applied, Depending on the offset of the element scrollbar will be adjusted
+export const scrollToElement = (element) => {
+    const $element = $(element);
+    const formPosition = $element.offset().top;
+    const $scrollParent = $element.closest('[wmsmoothscroll="true"]');
+    if (isMobileApp() && $scrollParent.length) {
+        const iScroll = _.get($scrollParent[0], 'iscroll');
+        let to = -(formPosition - iScroll.y);
+        to = (iScroll.maxScrollY > to) ? iScroll.maxScrollY : to;
+        iScroll.scrollTo(0, to);
+    } else {
+        window.scroll({
+            top: formPosition, 
+            left: 0, 
+            behavior: 'smooth' 
+        });
+    }
+}
+
+// Function will return whether the given element is in viewport or not
+export const isElementInViewport = (element) => {
+    var rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+
 /*Function to check whether the specified object is a pageable object or not.*/
 export const isPageable = (obj: any): boolean => {
     const pageable = {

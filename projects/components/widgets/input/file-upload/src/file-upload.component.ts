@@ -274,6 +274,11 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         }
     }
 
+    // this function triggers file select window, when clicked anywhere on the file upload widget in case of multi select
+    triggerFileSelect() {
+        this.$element.find('.file-input').trigger('click');
+    }
+
     /**
      * Aborts a file upload request
      * @param $file, the file for which the request is to be aborted

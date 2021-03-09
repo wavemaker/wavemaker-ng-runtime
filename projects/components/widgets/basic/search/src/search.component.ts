@@ -161,6 +161,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 // update the query model with the values we have
                 this.updateByDatavalue(val);
             }
+
+            // turn on showCloseBtn when a default value is given
+            this.showClosebtn = (this.query !== '');
         });
         this.registerDestroyListener(() => datavalueSubscription.unsubscribe());
 
@@ -380,6 +383,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             if ($event && $event.which !== 9) {
                 this.invokeEventCallback('submit', { $event });
             }
+            this.invokeEventCallback('clear', { $event });
         } else {
             // invoking change event on every input value change.
             this.invokeEventCallback('change', {
@@ -394,7 +398,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // Triggered for enter event
     private handleEnterEvent($event) {
         // submit event triggered when there is no search results
-        if (!this.typeahead._container) {
+        if (!_.get(this.typeahead, 'matches.length')) {
             this.onSearchSelect($event);
         }
     }

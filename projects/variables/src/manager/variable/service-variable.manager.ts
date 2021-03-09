@@ -557,7 +557,7 @@ export class ServiceVariableManager extends BaseVariableManager {
     }
 
     public getInputParms(variable) {
-        const wmServiceOperationInfo = _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
+        const wmServiceOperationInfo = _.get(metadataService.getByOperationId(variable.operationId, variable.getPrefabName()), 'wmServiceOperationInfo');
         return _.get(wmServiceOperationInfo, 'parameters');
     }
 

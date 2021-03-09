@@ -49,15 +49,6 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     ngAfterViewInit() {
         super.ngAfterViewInit();
         styler(this.selectEl.nativeElement as HTMLElement, this);
-        setTimeout(() => {
-            if (this.placeholder && !this.datavalue) {
-                const parentEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
-                if (parentEl.length > 0) {
-                    this.placeholder = null;
-                    parentEl.removeClass('float-active');
-                }
-            }
-        }, 50);
     }
 
     // Change event is registered from the template, Prevent the framework from registering one more event
@@ -93,5 +84,23 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
              (nv === true) ? setAttr(this.selectEl.nativeElement, 'readonly', 'readonly') : removeAttr(this.selectEl.nativeElement, 'readonly') ;
         } 
         super.onPropertyChange(key, nv, ov);
+    }
+
+    /**
+     * When caption floating is enabled and placeholder is given, do not show placeholder until user focuses on the field
+     * When focused add the placeholder to the option which is selected
+     * On blur, remove the placeholder and do not animate the label
+     * @param $event event received will be either a blur or focus event
+     */
+    checkForFloatingLabel($event) {
+        const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (captionEl.length > 0 && !this.datavalue) {
+            if ($event.type === 'focus') {
+                $(this.selectEl.nativeElement).find('option:selected').text(this.placeholder);   
+            } else {
+                $(this.selectEl.nativeElement).find('option:selected').text('');
+                captionEl.removeClass('float-active');
+            }
+        } 
     }
 }

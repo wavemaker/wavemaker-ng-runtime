@@ -77,6 +77,8 @@ export {
     extractType,
     isNumberType,
     isEmptyObject,
+    scrollToElement,
+    isElementInViewport,
     isPageable,
     replace,
     isDateTimeType,
