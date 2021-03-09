@@ -150,13 +150,15 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
                 // Remove placeholder on removing float-active, if not the label and placeholder are collided
                 // before placeholder is removed assign it to the placeholder variable
                 // check for placeholder in inputel and selectel
-                const selectEl = this.inputEl.find('option:selected');
-                if (this.inputEl && (this.inputEl.attr('placeholder') || selectEl.text())) {
-                    if (selectEl.length) {
-                        selectEl.text(''); 
-                    } else {
-                        this.placeholder = this.inputEl.attr('placeholder');
-                        this.inputEl.removeAttr('placeholder');
+                if (this.inputEl) {
+                    const selectEl = this.inputEl.find('option:selected');
+                    if (this.inputEl.attr('placeholder') || selectEl.text()) {
+                        if (selectEl.length) {
+                            selectEl.text(''); 
+                        } else {
+                            this.placeholder = this.inputEl.attr('placeholder');
+                            this.inputEl.removeAttr('placeholder');
+                        }
                     }
                 }
             }
