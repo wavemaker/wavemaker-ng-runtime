@@ -95,11 +95,15 @@ export class InputTextComponent extends BaseInput implements OnInit{
                     this.imask.maskRef.value = this.datavalue;
                 }
             } else {
-                // when display format is dynamically populated, cursor position is at the end of the format, readjusting the cursor position based on input value
+                // when display format is dynamically populated, cursor position is at the end of the format, readjusting the cursor position based on masked input value
                 // Adding timeout, as the below code should be on hold until imask model is generated
                 setTimeout(() => {
-                    if (this.imask && this.imask.maskRef && this.datavalue && this.datavalue.length + 1 !== this.imask.maskRef.cursorPos) {
-                        this.imask.maskRef.updateCursor(this.datavalue.length + 1);
+                    if (this.imask && this.imask.maskRef && this.imask.maskRef.value) {
+                        const maskValIndex = this.imask.maskRef.value.indexOf('_');
+                        const enteredMaskVal = this.imask.maskRef.value.slice(0, maskValIndex).length;
+                        if (enteredMaskVal !== this.imask.maskRef.cursorPos) {
+                            this.imask.maskRef.updateCursor(enteredMaskVal);
+                        }
                     }
                 }, 50);
             }
