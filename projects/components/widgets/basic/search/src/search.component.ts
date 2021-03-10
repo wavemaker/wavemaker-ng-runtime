@@ -379,11 +379,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this._modelByValue = '';
             this.invokeOnChange(this._modelByValue, {}, true);
 
+            this.invokeEventCallback('clear', { $event });
+
             // trigger onSubmit only when the search input is cleared off and do not trigger when tab is pressed.
             if ($event && $event.which !== 9) {
                 this.invokeEventCallback('submit', { $event });
             }
-            this.invokeEventCallback('clear', { $event });
         } else {
             // invoking change event on every input value change.
             this.invokeEventCallback('change', {
