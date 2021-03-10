@@ -101,8 +101,14 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     initUserScript() {
         try {
+            // partials inside prefab should have access to Prefab properties and events
             if (this.getContainerWidgetInjector().view.component.prefabName) {
-                this.Prefab = this.injector.get(PrefabDirective);
+                // for partial within partial within prefabs, just assign the parent partial's prefab object
+                if (this.getContainerWidgetInjector().view.component.Prefab) {
+                    this.Prefab = this.getContainerWidgetInjector().view.component.Prefab;
+                } else {
+                    this.Prefab = this.getContainerWidgetInjector().view.component;
+                }
             }
             this.evalUserScript(this, this.App, this.injector.get(UtilsService));
         } catch (e) {
