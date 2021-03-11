@@ -400,7 +400,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             // active class checks whether user is on the current field, if so marking the field as touched. And form field validation happens once a field is touched
             // _triggeredByUser checks whether the field is touched by the user or triggered from external script
             if (this._triggeredByUser && (this.$element.find('.active').length > 0 || this.form.touched)) {
-            if (this.$element.find('.selected-field').length > 0 || this.form.touched) {
                 this.ngform.controls[this._fieldName].markAsTouched();
                 this.fieldValidations.setCustomValidationMessage();
             }
