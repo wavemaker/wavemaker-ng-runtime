@@ -18,7 +18,9 @@ import {
     getTimePickerElement,
     localizedTimePickerTest, localizedValueOnInputTest, MockAbstractI18nService
 } from '../../../../../base/src/test/util/date-test-util';
-import { TimepickerModule, BsDropdownModule, deLocale } from 'ngx-bootstrap';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import {  BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import {  deLocale } from 'ngx-bootstrap/locale';
 import { By } from '@angular/platform-browser';
 import { async, ComponentFixture } from '@angular/core/testing';
 import {
