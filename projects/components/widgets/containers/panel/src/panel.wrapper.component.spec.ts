@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { UserDefinedExecutionContext } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { DatasetAwareNavComponent, NavNode } from '../../../../base/src/widgets/common/base/dataset-aware-nav.component';
-import { BsDropdownModule, BsDropdownDirective } from 'ngx-bootstrap';
+import { BsDropdownModule, BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
 import { ComponentsTestModule } from "../../../../base/src/test/components.test.module";
 import { compileTestComponent } from "../../../../base/src/test/util/component-test-util";

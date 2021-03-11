@@ -33,9 +33,10 @@ export class DateComponent extends BaseDateTimeComponent {
     public bsDataValue;
     public showdropdownon: string;
     private dateContainerCls: string;
-    public isOpen: boolean;
+    public isOpen: boolean = false;
     private isEnterPressedOnDateInput = false;
-
+    private _bsDefaultLoadCheck: boolean;
+   
     private keyEventPlugin;
     private deregisterEventListener;
 
@@ -89,7 +90,7 @@ export class DateComponent extends BaseDateTimeComponent {
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
-
+        this._bsDefaultLoadCheck = true;
         this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
         this.updateFormat('datepattern');
     }
@@ -229,7 +230,7 @@ export class DateComponent extends BaseDateTimeComponent {
                 } else {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
-                    this.bsDatePickerDirective.bsValue = newVal;
+                    this.bsDatePickerDirective.bsValue =  event.target.value ? newVal : '';
                 }
                 this.toggleDpDropdown(event);
             } else {
@@ -244,6 +245,18 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when the date selection changes
      */
     onDateChange(newVal): void {
+
+        /**
+         *  Ngx-bootstrap upgrade : To avoid the page load datechange event;
+         *  TODO:
+         *  https://github.com/valor-software/ngx-bootstrap/issues/6016
+         *  For above issue, once we get the solution from Ngx-Bootstrap team,  remove the _bsDefaultLoadCheck check and update accordingly. 
+         * */ 
+        if (this._bsDefaultLoadCheck) {
+            this._bsDefaultLoadCheck = false;
+            return;
+        }
+
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         if (this.isOpen) {
             setTimeout(() => displayInputElem.focus());

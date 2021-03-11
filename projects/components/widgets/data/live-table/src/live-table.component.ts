@@ -87,9 +87,9 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     closeDialog() {
         this.dialogService.close(this.dialogId);
     }
-
+    
     focusFirstInput() {
-        const $firstInput = $(this.form.$element).find('[role="input"]').first();
+       const $firstInput = $(this.form.$element).find('[role="input"]').first();
         $firstInput.focus();
         $firstInput.select();
     }
