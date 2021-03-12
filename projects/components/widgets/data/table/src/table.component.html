@@ -17,8 +17,21 @@
     </h3>
 </div>
 <div class="app-datagrid" #datagridElement></div>
-<div class="panel-footer clearfix" [hidden]="!_actions.footer.length && (!shownavigation || dataNavigator?.dataSize <= pagesize)">
-    <div class="app-datagrid-paginator" [hidden]="!dataNavigator?.dataSize || !shownavigation || dataNavigator?.dataSize <= pagesize">
+<div class="on-demand-datagrid" *ngIf="onDemandLoad">
+    <a *ngIf="onDemandLoad && !isDataLoading && !dataNavigator.isDisableNext" href="javascript:void(0);"
+        (click)="dataNavigator.navigatePage('next', $event); isDataLoading = true;"
+        class="app-button btn btn-block on-demand-load-btn"
+        [textContent]="ondemandmsg"></a>
+    <div class="loading-data-msg spin-icon-in-center" *ngIf="isDataLoading">
+        <span>
+            <i class="app-icon panel-icon fa-spin" aria-hidden="true" [ngClass]="loadingicon"></i>
+            <span class="sr-only">Loading</span>
+            <span class="loading-text" [textContent]="loadingdatamsg"></span>
+        </span>
+    </div>
+</div>
+<div class="panel-footer clearfix" [hidden]="!_actions.footer.length && (!shownavigation || (onDemandLoad && dataNavigator.isDisableNext) || dataNavigator?.dataSize <= pagesize)">
+    <div class="app-datagrid-paginator" [hidden]="!dataNavigator?.dataSize || !shownavigation || (onDemandLoad && dataNavigator.isDisableNext) || dataNavigator?.dataSize <= pagesize">
         <nav wmPagination show.bind="shownavigation" navigationalign.bind="navigationalign"
              navigationsize.bind="navigationSize"
              navigation.bind="navControls" showrecordcount.bind="showrecordcount" maxsize.bind="maxsize"

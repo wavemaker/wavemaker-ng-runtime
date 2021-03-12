@@ -22,7 +22,8 @@ import {
     triggerFn,
     DynamicComponentRefProvider,
     extendProto,
-    $invokeWatchers
+    $invokeWatchers,
+    updateFieldsOnPagination
 } from '@wm/core';
 import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe, extractDataSourceName } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
@@ -125,6 +126,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     gridclass;
     gridfirstrowselect;
     iconclass;
+    onDemandLoad;
+    infScroll;
+    isDataLoading;
+    currentPage;
+    ondemandmsg;
     isGridEditMode;
     loadingdatamsg;
     multiselect;
@@ -724,11 +730,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _gridData;
     private _selectedItemsExist = false;
     set gridData(newValue) {
-        this._gridData = newValue;
+        if (this.onDemandLoad) {
+            [this._gridData, this.currentPage] = updateFieldsOnPagination(this._gridData, this.dataNavigator, this.currentPage, this.pagesize, newValue);
+            this.isDataLoading = false;
+        } else {
+            this._gridData = newValue;
+        }
         let startRowIndex = 0;
         let gridOptions;
 
-        this._onChange(newValue);
+        this._onChange(this._gridData);
         this._onTouched();
 
         if (isDefined(newValue)) {
@@ -751,9 +762,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
             // If data and colDefs are present, call on before data render event
             if (!this.isdynamictable && !_.isEmpty(newValue) && gridOptions.colDefs.length) {
-                this.invokeEventCallback('beforedatarender', {$data: newValue, $columns: this.columns, data: newValue, columns: this.columns});
+                this.invokeEventCallback('beforedatarender', {$data: this._gridData, $columns: this.columns, data: this._gridData, columns: this.columns});
             }
-            this.setDataGridOption('data', getClonedObject(newValue));
+            this.setDataGridOption('data', getClonedObject(this._gridData));
         }
     }
 
@@ -1592,6 +1603,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (nv !== 'None') {
                     this.shownavigation = true;
                 }
+                this.onDemandLoad = (nv === 'On Demand' || nv === 'On-demand') ? true : false;
                 this.navControls = nv;
                 break;
             case 'gridfirstrowselect':

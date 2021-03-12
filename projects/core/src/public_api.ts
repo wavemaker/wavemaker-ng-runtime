@@ -79,6 +79,7 @@ export {
     isEmptyObject,
     scrollToElement,
     isElementInViewport,
+    updateFieldsOnPagination,
     isPageable,
     replace,
     isDateTimeType,
