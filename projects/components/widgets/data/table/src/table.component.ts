@@ -1,6 +1,6 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Viewport, StatePersistence } from '@wm/core';
+import { Viewport, StatePersistence, PaginationService } from '@wm/core';
 
 import { Observable, Subject } from 'rxjs';
 
@@ -22,8 +22,7 @@ import {
     triggerFn,
     DynamicComponentRefProvider,
     extendProto,
-    $invokeWatchers,
-    updateFieldsOnPagination
+    $invokeWatchers
 } from '@wm/core';
 import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe, extractDataSourceName } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
@@ -731,7 +730,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _selectedItemsExist = false;
     set gridData(newValue) {
         if (this.onDemandLoad) {
-            [this._gridData, this.currentPage] = updateFieldsOnPagination(this._gridData, this.dataNavigator, this.currentPage, this.pagesize, newValue);
+            [this._gridData, this.currentPage] = this.paginationService.updateFieldsOnPagination(this._gridData, this.dataNavigator, this.currentPage, this.pagesize, newValue);
             this.isDataLoading = false;
         } else {
             this._gridData = newValue;
@@ -800,6 +799,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
         private statePersistence: StatePersistence,
+        private paginationService: PaginationService,
         private viewport: Viewport,
         @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
@@ -1603,7 +1603,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (nv !== 'None') {
                     this.shownavigation = true;
                 }
-                this.onDemandLoad = (nv === 'On Demand' || nv === 'On-demand') ? true : false;
+                this.onDemandLoad = nv === 'On Demand' ? true : false;
                 this.navControls = nv;
                 break;
             case 'gridfirstrowselect':

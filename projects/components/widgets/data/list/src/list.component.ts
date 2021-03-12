@@ -18,7 +18,7 @@ import {
     noop,
     switchClass,
     StatePersistence,
-    updateFieldsOnPagination,
+    PaginationService,
     setListClass
 } from '@wm/core';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef, extractDataSourceName } from '@wm/components/base';
@@ -72,6 +72,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private appDefaults: any;
     private ngZone: NgZone;
     private statePersistence: StatePersistence;
+    private paginationService: PaginationService;
 
     public lastSelectedItem: ListItemDirective;
     public fieldDefs: Array<any>;
@@ -212,7 +213,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('datasource.bind') binddatasource: string,
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
-        statePersistence: StatePersistence
+        statePersistence: StatePersistence,
+        paginationService: PaginationService,
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
@@ -224,6 +226,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.ngZone = ngZone;
         this.datePipe = datePipe;
         this.statePersistence = statePersistence;
+        this.paginationService = paginationService;
         this._pageLoad = true;
 
         this.binditemclass = binditemclass;
@@ -520,7 +523,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      */
     private updateFieldDefs(newVal: Array<any>) {
         if (this.infScroll || this.onDemandLoad) {
-            [this.fieldDefs, this.currentPage] = updateFieldsOnPagination(this.fieldDefs, this.dataNavigator, this.currentPage, this.pagesize, newVal);
+            [this.fieldDefs, this.currentPage] = this.paginationService.updateFieldsOnPagination(this.fieldDefs, this.dataNavigator, this.currentPage, this.pagesize, newVal);
         } else {
             this.fieldDefs = newVal;
         }
