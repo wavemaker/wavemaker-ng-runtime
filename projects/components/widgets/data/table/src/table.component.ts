@@ -729,9 +729,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _gridData;
     private _selectedItemsExist = false;
     set gridData(newValue) {
+        this.isDataLoading = false;
         if (this.onDemandLoad || this.infScroll) {
             [this._gridData, this.currentPage] = this.paginationService.updateFieldsOnPagination(this._gridData, this.dataNavigator, this.currentPage, this.pagesize, newValue);
-            this.isDataLoading = false;
         } else {
             this._gridData = newValue;
         }
@@ -744,7 +744,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (isDefined(newValue)) {
             if (this._gridData.length && this.infScroll) {
                 // smoothscroll events will be binded.
-                // Added timeout as the table html is rendered in runtime
+                // Added timeout as the table html is rendered at runtime
                 setTimeout(() => {
                     this.paginationService.bindScrollEvt(this.$element, 'tbody', this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
                 }, 0);
