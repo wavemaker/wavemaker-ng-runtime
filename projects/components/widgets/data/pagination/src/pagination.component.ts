@@ -381,7 +381,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
 
     /*Function to navigate to the respective pages.*/
     navigatePage(index, event, isRefresh, callback) {
-        if (isDefined( this.parent.isDataLoading)) {
+        if (isDefined(this.parent.isDataLoading) && !this.isDisableNext) {
             this.parent.isDataLoading = true;
         }
         this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
