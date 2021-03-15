@@ -474,7 +474,7 @@ $.widget('wm.datatable', {
             self = this,
             gridOptions = self.options;
 
-        $htm = $('<tr tabindex="0" class="' + gridOptions.cssClassNames.tableRow + ' ' + (gridOptions.rowClass || '') + '" data-row-id="' + row.$$pk + '"></tr>');
+        $htm = $('<tr tabindex="0" wmSmoothscroll="false" class="' + gridOptions.cssClassNames.tableRow + ' ' + (gridOptions.rowClass || '') + '" data-row-id="' + row.$$pk + '"></tr>');
         this.preparedHeaderData.forEach(function (current, colIndex) {
             $htm.append(self._getColumnTemplate(row, colIndex, current, rowIndex, summaryRow));
         });

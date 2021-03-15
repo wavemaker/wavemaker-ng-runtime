@@ -66,7 +66,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private datasource: any;
     private showNavigation: boolean;
     public noDataFound: boolean;
-    private debouncedFetchNextDatasetOnScroll: Function;
     private reorderProps: any;
     private app: any;
     private appDefaults: any;
@@ -410,112 +409,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
 
-    private fetchNextDatasetOnScroll() {
-        this.dataNavigator.navigatePage('next');
-    }
-
-    private setIscrollHandlers(el) {
-        let lastScrollTop = 0;
-        const wrapper = _.get(el.iscroll, 'wrapper');
-        const self = el.iscroll;
-
-        el.iscroll.on('scrollEnd', () => {
-            const clientHeight = wrapper.clientHeight,
-                totalHeight = wrapper.scrollHeight,
-                scrollTop = Math.abs(el.iscroll.y);
-
-            if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
-                this.debouncedFetchNextDatasetOnScroll();
-                if (self.indicatorRefresh) {
-                    self.indicatorRefresh();
-                }
-            }
-
-            lastScrollTop = scrollTop;
-        });
-    }
-
-    // Applying iscroll event to invoke the next calls for infinte scroll.
-    private bindIScrollEvt() {
-        const $scrollParent = this.$element.closest('[wmsmoothscroll="true"]');
-
-        const iScroll = _.get($scrollParent[0], 'iscroll');
-
-        // when iscroll is not initialised the notify the smoothscroll and subscribe to the iscroll update
-        if (!iScroll) {
-            const iScrollSubscription = this.app.subscribe('iscroll-update', (_el) => {
-                if (!_.isEmpty(_el) && _el.isSameNode($scrollParent[0])) {
-                    this.setIscrollHandlers($scrollParent[0]);
-                    iScrollSubscription();
-                }
-            });
-            this.app.notify('no-iscroll', $scrollParent[0]);
-            return;
-        }
-        this.setIscrollHandlers($scrollParent[0]);
-    }
-
-    private bindScrollEvt() {
-        const $el = this.$element;
-        const $ul = $el.find('> ul');
-        const $firstChild = $ul.children().first();
-        const self = this;
-
-        let $scrollParent;
-        let scrollNode;
-        let lastScrollTop = 0;
-
-        if (!$firstChild.length) {
-            return;
-        }
-
-        $scrollParent = $firstChild.scrollParent(false);
-
-        if ($scrollParent[0] === document) {
-            scrollNode = document.body;
-        } else {
-            scrollNode = $scrollParent[0];
-        }
-
-        // has scroll
-        if (scrollNode.scrollHeight > scrollNode.clientHeight) {
-            $scrollParent
-                .each((index: number, node: HTMLElement | Document) =>  {
-                    // scrollTop property is 0 or undefined for body in IE, safari.
-                    lastScrollTop = node === document ? (node.body.scrollTop || $(window).scrollTop()) : (node as HTMLElement).scrollTop;
-                })
-                .off('scroll.scroll_evt')
-                .on('scroll.scroll_evt', function (evt) {
-                    let target = evt.target;
-                    let clientHeight;
-                    let totalHeight;
-                    let scrollTop;
-                    // scrollingElement is undefined for IE, safari. use body as target Element
-                    target =  target === document ? (target.scrollingElement || document.body) : target;
-
-                    clientHeight = target.clientHeight;
-                    totalHeight = target.scrollHeight;
-                    scrollTop = target === document.body ? $(window).scrollTop() : target.scrollTop;
-
-                    if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
-                        $(this).off('scroll.scroll_evt');
-                        self.debouncedFetchNextDatasetOnScroll();
-                    }
-
-                    lastScrollTop = scrollTop;
-                });
-            $ul.off('wheel.scroll_evt');
-        } else {
-            // if there is no scrollable element register wheel event on ul element
-            $ul.on('wheel.scroll_evt', e => {
-                if (e.originalEvent.deltaY > 0) {
-                    $ul.off('wheel.scroll_evt');
-                    this.debouncedFetchNextDatasetOnScroll();
-                }
-            });
-        }
-    }
-
     /**
      * Update fieldDefs property, fieldDefs is the model of the List Component.
      * fieldDefs is an Array type.
@@ -823,9 +716,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             // if smoothscroll is set to false, then native scroll has to be applied
             // otherwise smoothscroll events will be binded.
             if (isMobileApp() && smoothScrollEl.length && smoothScrollEl.attr('wmsmoothscroll') === 'true') {
-                this.bindIScrollEvt();
+                this.paginationService.bindIScrollEvt(this.$element, this.app, this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
             } else {
-                this.bindScrollEvt();
+                this.paginationService.bindScrollEvt(this.$element, '> ul', this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
             }
         }
 
@@ -1218,8 +1111,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.handleHeaderClick = noop;
         this._items = [];
         this.fieldDefs = [];
-        // When pagination is infinite scroll dataset is applying after debounce time(250ms) so making next call after previous data has rendered
-        this.debouncedFetchNextDatasetOnScroll = _.debounce(this.fetchNextDatasetOnScroll, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
         this.reorderProps = {
             minIndex: null,
             maxIndex: null

@@ -24,7 +24,7 @@ import {
     extendProto,
     $invokeWatchers
 } from '@wm/core';
-import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe, extractDataSourceName } from '@wm/components/base';
+import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe, extractDataSourceName, DEBOUNCE_TIMES } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 
 import { ListComponent } from '@wm/components/data/list';
@@ -729,7 +729,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _gridData;
     private _selectedItemsExist = false;
     set gridData(newValue) {
-        if (this.onDemandLoad) {
+        if (this.onDemandLoad || this.infScroll) {
             [this._gridData, this.currentPage] = this.paginationService.updateFieldsOnPagination(this._gridData, this.dataNavigator, this.currentPage, this.pagesize, newValue);
             this.isDataLoading = false;
         } else {
@@ -742,6 +742,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this._onTouched();
 
         if (isDefined(newValue)) {
+            if (this._gridData.length && this.infScroll) {
+                // smoothscroll events will be binded.
+                // Added timeout as the table html is rendered in runtime
+                setTimeout(() => {
+                    this.paginationService.bindScrollEvt(this.$element, 'tbody', this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+                }, 0);
+            }
+
             /*Setting the serial no's only when show navigation is enabled and data navigator is compiled
              and its current page is set properly*/
             if (this.isNavigationEnabled() && this.dataNavigator.dn.currentPage) {
@@ -1604,6 +1612,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.shownavigation = true;
                 }
                 this.onDemandLoad = nv === 'On Demand' ? true : false;
+                this.infScroll = nv === 'Infinite Scroll' ? true : false;
                 this.navControls = nv;
                 break;
             case 'gridfirstrowselect':
