@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, Quer
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { Observable, from, of } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { filter, mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
@@ -115,12 +115,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.typeaheadDataSource = Observable
             .create((observer: any) => {
                 // Runs on every search
-                if (this.listenQuery  && (this.minchars === 0 || (this.minchars > 0 && this.query.length >= this.minchars))) {
+                if (this.listenQuery) {
                     this._defaultQueryInvoked = false;
                     this._loadingItems = true;
                     observer.next(this.query);
-                } else {
-                    this._loadingItems = false;
                 }
                 // on keydown, while scrolling the dropdown items, when last item is reached next call is triggered
                 // unless the call is resolved, we are able to scroll next to first item and soon
@@ -130,6 +128,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     this.typeahead._container = undefined;
                 }
             }).pipe(
+                filter(() => { 
+                    this._loadingItems = false;
+                    return this.query.length >= this.minchars;
+                }),
                 mergeMap((token: string) => this.getDataSourceAsObservable(token))
             );
 
