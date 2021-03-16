@@ -263,7 +263,7 @@ export class MobileRuntimeModule {
             } else {
                 newStyleSheet = $('link[href *=' + useTheme + ']').first();
                 newStyleSheet = newStyleSheet[0];
-                loadStyleSheet(newStyleSheet.src, {name: 'theme', value: 'wmtheme'});
+                loadStyleSheet(newStyleSheet.href, {name: 'theme', value: 'wmtheme'});
                 removeNode(unusedStyleSheet[0]);
             }
         }
