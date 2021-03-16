@@ -151,7 +151,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
                 // before placeholder is removed assign it to the placeholder variable
                 // check for placeholder in inputel and selectel
                 if (this.inputEl) {
-                    const selectEl = this.inputEl.find('option:selected');
+                    const selectEl = this.inputEl.find('option:first');
                     if (this.inputEl.attr('placeholder') || selectEl.text()) {
                         if (selectEl.length) {
                             selectEl.text(''); 
