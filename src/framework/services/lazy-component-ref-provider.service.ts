@@ -25,8 +25,13 @@ export class LazyComponentRefProviderService extends PartialRefProvider {
     ) {
         super();
     }
-    private getModulePath(componentName: string, componentType: ComponentType): string {
+    private getModulePath(componentName: string, componentType: ComponentType, options?: any): string {
         if (componentName.length > 0) {
+            if (componentType === ComponentType.PARTIAL && options && options.prefab) {
+                return `src/app/prefabs/${options.prefab}/partials/${componentName}/${componentName}.module#${componentName
+                    .charAt(0)
+                    .toUpperCase()}${componentName.slice(1)}Module`;
+            }
             if (componentType === ComponentType.PARTIAL) {
                 return `src/app/partials/${componentName}/${componentName}.module#${componentName
                     .charAt(0)
@@ -39,11 +44,11 @@ export class LazyComponentRefProviderService extends PartialRefProvider {
         }
         return null;
     }
-    public async getComponentFactoryRef(componentName: string, componentType: ComponentType) {
+    public async getComponentFactoryRef(componentName: string, componentType: ComponentType, options?: {}) {
         let moduleFactory: NgModuleFactory<any>;
         try {
             moduleFactory = await this.loader.load(
-                this.getModulePath(componentName, componentType)
+                this.getModulePath(componentName, componentType, options)
             );
             this.moduleRef = moduleFactory.create(this.injector);
             const rootComponent = (moduleFactory.moduleType as ModuleWithRoot)
