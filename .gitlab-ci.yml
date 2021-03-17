@@ -1,3 +1,5 @@
+
+image: node:10.15.3
 stages:
         - jira_feature_dev
         - jira_next_release
