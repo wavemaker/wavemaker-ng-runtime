@@ -196,6 +196,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.loadMoreData();
         }
         this.invokeEventCallback('clearsearch');
+        this._loadingItems = false;
     }
 
     // function to  clear the input value
