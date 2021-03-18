@@ -100,7 +100,7 @@ export class InputTextComponent extends BaseInput implements OnInit{
                 setTimeout(() => {
                     if (this.imask && this.imask.maskRef && this.imask.maskRef.value) {
                         const maskValIndex = this.imask.maskRef.value.indexOf('_');
-                        const enteredMaskVal = this.imask.maskRef.value.slice(0, maskValIndex).length;
+                        const enteredMaskVal = maskValIndex >= 0 ? this.imask.maskRef.value.slice(0, maskValIndex).length : this.imask.maskRef.value.length;
                         if (enteredMaskVal !== this.imask.maskRef.cursorPos) {
                             this.imask.maskRef.updateCursor(enteredMaskVal);
                         }
