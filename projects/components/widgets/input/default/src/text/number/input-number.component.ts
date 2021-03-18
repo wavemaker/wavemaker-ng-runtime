@@ -34,6 +34,7 @@ export class InputNumberComponent extends BaseInput {
     public shortcutkey: string;
     public autofocus: boolean;
     public autocomplete: any;
+    public type: string;
 
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
