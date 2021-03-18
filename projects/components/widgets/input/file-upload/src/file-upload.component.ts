@@ -187,9 +187,10 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         });
     }
 
-    onFileElemClick() {
+    onFileElemClick($event) {
         //The file upload widget value should be set to null to reupload the same file.
         this.$element.find('.file-input')[0].value = null;
+        $event.stopPropagation()
     }
 
     /*this function to append upload status dom elements to widget */
