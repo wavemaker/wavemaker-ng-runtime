@@ -806,10 +806,9 @@ export const formatDate = (value, type) => {
 };
 
 /**
- * This method decodes the live variable data which is encoded from backend before showing in the widgets.
+ * This method decodes the variable data which is encoded from backend before showing in the widgets.
  * It takes variable response content as input and iterates recursively,
  * if the value is string type then it will decode the data.
- * Used DOMParser().parseFromString() with mime type text/html to decode the data.
  * @param responseContent (Array of objects)
  */
 export const decodeData = (responseContent) => {
@@ -845,5 +844,5 @@ export const decodeData = (responseContent) => {
 };
 
 function htmlDecode(input) {
-    return _.unescape(input);
+    return $('<div />').html(input).text();
 }
