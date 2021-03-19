@@ -130,7 +130,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }).pipe(
                 filter(() => { 
                     this._loadingItems = false;
-                    return this.query.length >= this.minchars;
+                    return (this.minchars === 0 || (this.query && this.query.length >= this.minchars));
                 }),
                 mergeMap((token: string) => this.getDataSourceAsObservable(token))
             );
