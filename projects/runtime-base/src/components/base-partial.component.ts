@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { $invokeWatchers, AbstractI18nService, AbstractNavigationService, App, noop, Viewport, ScriptLoaderService, UtilsService } from '@wm/core';
 import { PartialDirective, WidgetRef} from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';
+import {PrefabDirective} from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
 
 import { FragmentMonitor } from '../util/fragment-monitor';
@@ -34,6 +35,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     appLocale: any;
     @ViewChild(PartialDirective) partialDirective;
     pageDirective: PageDirective;
+    Prefab: PrefabDirective;
     scriptLoaderService: ScriptLoaderService;
     Viewport: Viewport;
     compileContent = false;
@@ -73,7 +75,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.viewInit$.subscribe(noop, noop, () => {
             this.pageParams = this.containerWidget.partialParams;
         });
-        
+
         this.pageDirective = this.injector.get(PageDirective, null);
         if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
@@ -99,6 +101,15 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     initUserScript() {
         try {
+            // partials inside prefab should have access to Prefab properties and events
+            if (this.getContainerWidgetInjector().view.component.prefabName) {
+                // for partial within partial within prefabs, just assign the parent partial's prefab object
+                if (this.getContainerWidgetInjector().view.component.Prefab) {
+                    this.Prefab = this.getContainerWidgetInjector().view.component.Prefab;
+                } else {
+                    this.Prefab = this.getContainerWidgetInjector().view.component;
+                }
+            }
             this.evalUserScript(this, this.App, this.injector.get(UtilsService));
         } catch (e) {
             console.error(`Error in evaluating partial (${this.partialName}) script\n`, e);

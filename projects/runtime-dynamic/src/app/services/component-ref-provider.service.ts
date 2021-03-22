@@ -19,7 +19,8 @@ import {
     ComponentRefProvider,
     ComponentType,
     RuntimeBaseModule,
-    getPrefabMinJsonUrl
+    getPrefabMinJsonUrl,
+    getPrefabPartialJsonUrl
 } from '@wm/runtime/base';
 
 import { AppResourceManagerService } from './app-resource-manager.service';
@@ -46,9 +47,9 @@ componentFactoryRefCache.set(ComponentType.PREFAB, new Map<string, any>());
 
 const _decodeURIComponent = (str: string) => decodeURIComponent(str.replace(/\+/g, ' '));
 
-const getFragmentUrl = (fragmentName: string, type: ComponentType) => {
+const getFragmentUrl = (fragmentName: string, type: ComponentType, options?) => {
     if (type === ComponentType.PAGE || type === ComponentType.PARTIAL) {
-        return `./pages/${fragmentName}/page.min.json`;
+        return options && options.prefab ? getPrefabPartialJsonUrl(options.prefab, fragmentName) : `./pages/${fragmentName}/page.min.json`;
     } else if (type === ComponentType.PREFAB) {
         return getPrefabMinJsonUrl(fragmentName);
     }
@@ -173,8 +174,8 @@ const getDynamicComponent = (
 @Injectable()
 export class ComponentRefProviderService extends ComponentRefProvider {
 
-    private loadResourcesOfFragment(componentName, componentType): Promise<IPageMinJSON> {
-        const url = getFragmentUrl(componentName, componentType);
+    private loadResourcesOfFragment(componentName, componentType, options?): Promise<IPageMinJSON> {
+        const url = getFragmentUrl(componentName, componentType, options);
 
         const resource = fragmentCache.get(url);
 
@@ -212,19 +213,20 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         super();
     }
 
-    public async getComponentFactoryRef(componentName: string, componentType: ComponentType): Promise<any> {
+    public async getComponentFactoryRef(componentName: string, componentType: ComponentType, options?: {}): Promise<any> {
         // check in the cache.
         const componentFactoryMap = componentFactoryRefCache.get(componentType);
         let componentFactoryRef;
         if (componentFactoryMap) {
-            componentFactoryRef = componentFactoryMap.get(componentName);
+            const updatedComponentName = (options && options['prefab']) ? options['prefab'] +  componentName : componentName;
+            componentFactoryRef = componentFactoryMap.get(updatedComponentName);
 
             if (componentFactoryRef) {
                 return componentFactoryRef;
             }
         }
 
-        return this.loadResourcesOfFragment(componentName, componentType)
+        return this.loadResourcesOfFragment(componentName, componentType, options)
             .then(({markup, script, styles, variables})  => {
 
                 const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, JSON.stringify(variables));
@@ -234,8 +236,8 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                     .compileModuleAndAllComponentsSync(moduleDef)
                     .componentFactories
                     .filter(factory => factory.componentType === componentDef)[0];
-
-                componentFactoryRefCache.get(componentType).set(componentName, componentFactoryRef);
+                const updatedComponentName = (options && options['prefab']) ? options['prefab'] +  componentName : componentName;
+                componentFactoryRefCache.get(componentType).set(updatedComponentName, componentFactoryRef);
 
                 return componentFactoryRef;
             }, (err) => {
