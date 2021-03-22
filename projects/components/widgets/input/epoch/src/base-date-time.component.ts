@@ -195,6 +195,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     protected minDateMaxDateValidationOnInput(newVal, $event?: Event, displayValue?: string, isNativePicker?: boolean) {
         if (newVal) {
+            const dateTimeVal = newVal;
             newVal = moment(newVal).startOf('day').toDate();
             const minDate = moment(getDateObj(this.mindate)).startOf('day').toDate();
             const maxDate = moment(getDateObj(this.maxdate)).startOf('day').toDate();
@@ -220,7 +221,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     excludeDatesArray = this.excludedates;
                 }
                 excludeDatesArray = excludeDatesArray.map(d => getFormattedDate(this.datePipe, d, this.datepattern));
-                if (excludeDatesArray.indexOf(getFormattedDate(this.datePipe, newVal, this.datepattern)) > -1) {
+                if (excludeDatesArray.indexOf(getFormattedDate(this.datePipe, dateTimeVal, this.datepattern)) > -1) {
                     this.dateNotInRange = true;
                     this.validateType = 'excludedates';
                     this.invokeOnChange(this.datavalue, undefined, false);
@@ -229,7 +230,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
             if (this.excludedays) {
                 const excludeDaysArray = _.split(this.excludedays, ',');
-                if (excludeDaysArray.indexOf(newVal.getDay().toString()) > -1) {
+                if (excludeDaysArray.indexOf(dateTimeVal.getDay().toString()) > -1) {
                     this.dateNotInRange = true;
                     this.validateType = 'excludedays';
                     this.invokeOnChange(this.datavalue, undefined, false);
