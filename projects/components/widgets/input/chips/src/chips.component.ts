@@ -279,13 +279,6 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this._unsubscribeDv = false;
     }
 
-    // Triggerred when typeahead option is selected by enter keypress.
-    public onSelect($event: Event) {
-        if (!this.searchComponent.liElements.length) {
-            this.addItem($event);
-        }
-    }
-
     // Add the newItem to the list
     private addItem($event: Event, widget?: SearchComponent) {
         const searchComponent = widget;
@@ -413,7 +406,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     }
 
     // To avoid form submit on pressing enter key
-    private stopEvent($event: Event) {
+    public stopEvent($event: Event) {
         $event.stopPropagation();
         $event.preventDefault();
     }

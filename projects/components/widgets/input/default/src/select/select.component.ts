@@ -94,10 +94,10 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
      */
     checkForFloatingLabel($event) {
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
-        if (this.placeholder && captionEl.length > 0 && !this.datavalue) {
-            if ($event.type === 'focus') {
-                $(this.selectEl.nativeElement).find('option:selected').text(this.placeholder);   
-            } else {
+        if (captionEl.length > 0) {
+            if ($event.type === 'focus' && (!this.datavalue || (this.datavalue && $(this.selectEl).find('select option:selected').text() === '' && this.placeholder))) {
+                $(this.selectEl.nativeElement).find('option:first').text(this.placeholder);   
+            } else if (!this.datavalue) {
                 $(this.selectEl.nativeElement).find('option:selected').text('');
                 captionEl.removeClass('float-active');
             }

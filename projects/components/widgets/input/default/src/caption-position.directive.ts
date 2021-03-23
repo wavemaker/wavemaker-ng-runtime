@@ -46,7 +46,8 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     }
 
     private setDefaultValueAnimation() { // set animation when default values are present
-        if (!this._isPlaceholderBound) {
+        // remove placeholder when the input el has placeholder and the placeholder is not bound to any variable
+        if (!this._isPlaceholderBound && this.inputEl.attr('placeholder')) {
             this.placeholder = this.inputEl.attr('placeholder');
             this.inputEl.removeAttr('placeholder');
         }
@@ -83,6 +84,19 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         this._attrObserver.observe(this.inputEl[0], config);   
     }
 
+    // when a form is right aligned and have input-group-btn's like date picker, time picker etc. adjust the css to not overlap the label on the icon
+    private checkForRightAlignedForm() {
+        const $compositeEle = $(this.compositeEle);
+        if ($compositeEle.closest('.align-right').length && $compositeEle.find('.input-group-btn').length) {
+            const $label = $compositeEle.find('label');
+            if ($compositeEle.find('[wmdatetime]').length) { // for datetime picker, as there will be 2 icons css is different
+                $label.addClass('input-grp-dt-icon');
+            } else {
+                $label.addClass('input-grp-icon');
+            }
+        }
+    }
+
     ngAfterViewInit() {
         this.compositeEle = this.nativeEl;
         const widget = this.nativeEl.widget;
@@ -99,6 +113,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
                     this.compositeEle.classList.remove('caption-floating');
                     this.compositeEle.classList.add('caption-top');
                 }
+                this.checkForRightAlignedForm();
             }
             this.inputEl = $(this.nativeEl).find('input, select, textarea');
             if (!this._isPlaceholderBound) {
@@ -120,13 +135,31 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     // captionPositionAnimate is only notified for date-time, time and search widgets as input el is not updated with value on selection of dropdown/popups
     ngOnInit() {
         this.labelAnimationSubscription = this.app.subscribe('captionPositionAnimate', (data) => {
-            if (data.displayVal || data.isFocused || data.isSelectMultiple) {
+            // displayVal is true when there is a value entered in the input field
+            // In case of form fields, when the field is in focus, isFocused will be set as true
+            // isSelectMultiple is set to true when for select widget, multiple option is enabled
+            // Checking inputEl focus - when form is represented as dialog and the first field is automatically in focus
+            const isInputElFocused = this.inputEl && this.inputEl.is(':focus');
+            if (data.displayVal || data.isFocused || data.isSelectMultiple || isInputElFocused) {
                 data.nativeEl.addClass('float-active');
+                if (!data.displayVal && isInputElFocused) {
+                    this.inputEl.attr('placeholder', this.placeholder);
+                }
             } else {
                 data.nativeEl.removeClass('float-active');
                 // Remove placeholder on removing float-active, if not the label and placeholder are collided
+                // before placeholder is removed assign it to the placeholder variable
+                // check for placeholder in inputel and selectel
                 if (this.inputEl) {
-                    this.inputEl.removeAttr('placeholder');
+                    const selectEl = this.inputEl.find('option:first');
+                    if (this.inputEl.attr('placeholder') || selectEl.text()) {
+                        if (selectEl.length) {
+                            selectEl.text(''); 
+                        } else {
+                            this.placeholder = this.inputEl.attr('placeholder');
+                            this.inputEl.removeAttr('placeholder');
+                        }
+                    }
                 }
             }
         });

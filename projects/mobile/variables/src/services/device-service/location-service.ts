@@ -3,7 +3,7 @@ import { Geolocation, GeolocationOptions } from '@ionic-native/geolocation';
 import { Diagnostic } from '@ionic-native/diagnostic';
 
 import { IDeviceVariableOperation } from '@wm/variables';
-import { $appDigest, App, isIos, isSpotcues } from '@wm/core';
+import { $appDigest, App, isAndroid, isIos, isSpotcues, getAndroidVersion} from '@wm/core';
 
 declare const cordova;
 const PERMISSION_DENIED_ONCE = "DENIED_ONCE";
@@ -38,6 +38,10 @@ export class CurrentGeoPositionOperation implements IDeviceVariableOperation {
     private waitingQueue = [];
     private watchId;
     private locationRequestedAlready = false;
+    
+    private previousPermissionStatus;
+    private currentPermissionStatus;
+
     private options = {
         maximumAge: 3000,
         timeout: (2 * 60) * 1000,
@@ -104,7 +108,6 @@ export class CurrentGeoPositionOperation implements IDeviceVariableOperation {
     }
 
     private requestLocationService(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
-        //Request to turn on location services
         return this.locationAccuracyService.canRequest()
         .then((canRequest: boolean) => {
                 if(canRequest && !this.locationRequestedAlready) {
@@ -131,19 +134,15 @@ export class CurrentGeoPositionOperation implements IDeviceVariableOperation {
                 }   
                 return Promise.resolve(this.lastKnownPosition ? this.lastKnownPosition : this.model);    
             });
-    }    
+    }
 
     private handleLocationAuthorizationStatus(variable: any, options: any, dataBindings: Map<string, any>, permissionStatus: string): Promise<any> {        
+        this.previousPermissionStatus = this.currentPermissionStatus;
+        this.currentPermissionStatus = permissionStatus;
             switch(permissionStatus){            
                 case this.diagnosticService.permissionStatus.GRANTED_WHEN_IN_USE:
                 case this.diagnosticService.permissionStatus.GRANTED:{
-                    //iOS updates 'Granted' Only if Location service is turned On
-                    //Android updates 'Granted' even if Location service is turned Off
-                    if(isIos()){
-                        return this.geoLocationService(variable, options, dataBindings)                        
-                    }else{
-                        return this.requestLocationService(variable, options, dataBindings);
-                    }
+                    return this.onLocationGranted(variable, options, dataBindings);                    
                 }
                 case PERMISSION_DENIED_ONCE:{
                     return this.requestLocationService(variable, options, dataBindings);
@@ -178,9 +177,28 @@ export class CurrentGeoPositionOperation implements IDeviceVariableOperation {
                 return this.handleLocationAuthorizationStatus(variable, options, dataBindings, permissionStatus)                
             })
             .catch((e) => {   
-                //In case of device older than Android 6, Due to absence of API fallback.
+                //In case of device older than Android 6, Due to absence of Permission Check API.
                 return this.geoLocationService(variable, options, dataBindings);
             });
+    }
+
+    private onLocationGranted(variable: any, options: any, dataBindings: Map<string, any>): Promise<any>{
+        //iOS updates 'Granted' Only if Location service is turned On
+        //Android updates 'Granted' even if Location service is turned Off
+        if(isIos()){
+            return this.geoLocationService(variable, options, dataBindings)                        
+        }else if(isAndroid() 
+            && parseInt(getAndroidVersion(), 10) <= 10 
+            && this.previousPermissionStatus === PERMISSION_DENIED_ONCE 
+            && this.currentPermissionStatus === this.diagnosticService.permissionStatus.GRANTED_WHEN_IN_USE
+            && !this.lastKnownPosition){
+                //Below Android 11, Chrome webview of Cordova is not updating the permission status from "denied" to "allowed" and throwing the below message
+                //"application does not have sufficient geolocation permissions" For navigator.geolocation.watchPosition method
+                //Hence we are reloading the webview manually
+                location.reload();            
+        }else{
+            return this.requestLocationService(variable, options, dataBindings);
+        }
     }
 
     public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
