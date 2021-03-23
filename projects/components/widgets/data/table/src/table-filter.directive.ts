@@ -263,7 +263,7 @@ export class TableFilterSortDirective {
         data = this.getSearchResult(data, this.table.filterInfo);
         data = this.getSortResult(data, this.table.sortInfo);
         this.table.serverData = data;
-        // update sorted data in pagination component's dataset well. When data is sorted and page size is modified sorted data should not be lost.
+        // update sorted data in pagination component's dataset as well. When data is sorted and page size is modified sorted data should not be lost.
         this.table.dataNavigator.dataset = data;
 
         if (type === 'sort') {
