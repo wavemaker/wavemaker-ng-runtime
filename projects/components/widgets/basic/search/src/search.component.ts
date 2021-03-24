@@ -78,6 +78,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private elIndex: number;
     private listenQuery: boolean;
     private _domUpdated: boolean;
+    private _isTriggeredFromClear: boolean;
     private searchon: string;
     private showclear: boolean;
     public matchmode: string;
@@ -191,6 +192,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.dataProvider.isLastPage = false;
         this.listenQuery = false;
         if (loadOnClear) {
+            this._isTriggeredFromClear = true;
             this.listenQuery = true;
             this._unsubscribeDv = false;
             this.loadMoreData();
@@ -500,7 +502,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     private triggerSearch() {
-        if (this.dataProvider.isLastPage || !this.$element.hasClass('full-screen')) {
+        if (this.dataProvider.isLastPage || !this.$element.hasClass('full-screen') || this._isTriggeredFromClear) {
+            this._isTriggeredFromClear = false;
             return;
         }
         const typeAheadDropDown = this.dropdownEl;
