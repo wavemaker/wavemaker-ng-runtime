@@ -230,7 +230,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
             if (this.excludedays) {
                 const excludeDaysArray = _.split(this.excludedays, ',');
-                if (excludeDaysArray.indexOf(dateTimeVal.getDay().toString()) > -1) {
+                const day = _.get(dateTimeVal, 'getDay') ? dateTimeVal.getDay() : dateTimeVal;
+                if (excludeDaysArray.indexOf(day.toString()) > -1) {
                     this.dateNotInRange = true;
                     this.validateType = 'excludedays';
                     this.invokeOnChange(this.datavalue, undefined, false);
