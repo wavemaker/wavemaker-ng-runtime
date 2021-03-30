@@ -39,6 +39,7 @@ export {
     provideAs,
     provideAsWidgetRef,
     provideAsDialogRef,
+    unsupportedStatePersistenceTypes,
     NAVIGATION_TYPE,
     AUTOCLOSE_TYPE,
     getWatchIdentifier,
