@@ -127,7 +127,7 @@ export class PaginationService {
      * This function calls fetchNextDatasetOnScroll fn on debounced time 
      * @param {object} dataNavigator pagination instance
      * @param {number} debounceNum provided to lodash debounce
-     * @returns null
+     * @returns debounced function definition
      */
     public debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum) {
         return _.debounce(() => this.fetchNextDatasetOnScroll(dataNavigator), debounceNum);
