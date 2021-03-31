@@ -441,8 +441,9 @@ export const handleHeaderClick = ($event: Event) => {
  * @param options object containing the sortable options.
  * @param startCb callback on drag start on the element.
  * @param updateCb callback triggerred when sorting is stopped and the DOM position has changed.
+ * @param sortCb callback triggerred during the sorting of an element.
  */
-export const configureDnD = ($el: any, options: object, startCb: Function, updateCb: Function) => {
+export const configureDnD = ($el: any, options: object, startCb: Function, updateCb: Function, sortCb?: Function) => {
     const sortOptions = Object.assign({
         containment: $el,
         delay: 100,
@@ -451,7 +452,8 @@ export const configureDnD = ($el: any, options: object, startCb: Function, updat
         zIndex: 1050,
         tolerance: 'pointer',
         start: startCb,
-        update: updateCb
+        update: updateCb,
+        sort: sortCb
     }, options);
 
     $el.sortable(sortOptions);

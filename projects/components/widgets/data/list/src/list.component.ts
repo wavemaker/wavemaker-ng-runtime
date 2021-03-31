@@ -756,6 +756,20 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.$ulEle.data('oldIndex', ui.item.index());
     }
 
+    // Triggers during sorting
+    private onSort(evt, ui) {
+        // In case of infinite scroll, when the element doesn't have scroll enabled
+        // on dragging the element to last item's position manually trigger loading of next items
+        if (this.infScroll) {
+            const lastItemOffset = this.$ulEle.find(`[listitemindex=${this.fieldDefs.length - 1}]`).offset();
+            if (lastItemOffset && lastItemOffset.top < ui.offset.top) {
+                this.bindScrollEvt();
+                this.debouncedFetchNextDatasetOnScroll();            
+            }
+        }
+    }
+
+
     // Triggers after the sorting.
     private onUpdate(evt, ui) {
         const data = this.fieldDefs;
@@ -789,14 +803,24 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     // configures reordering the list items.
     private configureDnD() {
+        let appendTo;
+        const modalEl = $(document).find('.modal');
+        if (modalEl.length) { // In case of dialog, appendTo should be the modal ele
+            appendTo = modalEl[modalEl.length - 1];
+        } else if (this.getAttr('height')) { // when height is applied to the list, append should be the ul's parent as scroll is applied to the parent
+            appendTo = 'parent';
+        } else { // As default append to should be body
+            appendTo = 'body';
+        }
+            
         const options = isMobileApp() ? {} : {
-            appendTo: 'body',
+            appendTo: appendTo,
         };
 
         const $el = $(this.nativeElement);
         this.$ulEle = $el.find('.app-livelist-container');
 
-        configureDnD(this.$ulEle, options, this.onReorderStart.bind(this), this.onUpdate.bind(this));
+        configureDnD(this.$ulEle, options, this.onReorderStart.bind(this), this.onUpdate.bind(this), this.onSort.bind(this));
 
         this.$ulEle.droppable({'accept': '.app-list-item'});
 
