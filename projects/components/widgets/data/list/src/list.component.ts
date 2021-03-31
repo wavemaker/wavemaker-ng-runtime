@@ -118,6 +118,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private _listAnimator: ListAnimator;
     public pulltorefresh: boolean;
     private _listenerDestroyers: Array<any>;
+    private debouncedFetchNextDatasetOnScroll: Function;
 
     public title: string;
     public subheading: string;
@@ -763,8 +764,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (this.infScroll) {
             const lastItemOffset = this.$ulEle.find(`[listitemindex=${this.fieldDefs.length - 1}]`).offset();
             if (lastItemOffset && lastItemOffset.top < ui.offset.top) {
-                this.bindScrollEvt();
-                this.debouncedFetchNextDatasetOnScroll();            
+                this.paginationService.bindScrollEvt(this, '> ul', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+                this.debouncedFetchNextDatasetOnScroll();
             }
         }
     }
@@ -1132,6 +1133,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     ngOnInit() {
         super.ngOnInit();
         this.handleHeaderClick = noop;
+        setTimeout(() => {
+            this.debouncedFetchNextDatasetOnScroll = this.paginationService.debouncedFetchNextDatasetOnScroll(this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+        }, 0);
         this._items = [];
         this.fieldDefs = [];
         this.reorderProps = {

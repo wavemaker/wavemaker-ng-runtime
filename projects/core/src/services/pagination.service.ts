@@ -105,7 +105,7 @@ export class PaginationService {
 
                     if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
                         $(this).off('scroll.scroll_evt');
-                        self.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum);
+                        self.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum)();
                     }
 
                     lastScrollTop = scrollTop;
@@ -116,7 +116,7 @@ export class PaginationService {
             $rootEl.on('wheel.scroll_evt', e => {
                 if (e.originalEvent.deltaY > 0) {
                     $rootEl.off('wheel.scroll_evt');
-                    this.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum);
+                    this.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum)();
                 }
             });
         }
@@ -130,7 +130,7 @@ export class PaginationService {
      * @returns null
      */
     public debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum) {
-        _.debounce(() => this.fetchNextDatasetOnScroll(dataNavigator), debounceNum)();
+        return _.debounce(() => this.fetchNextDatasetOnScroll(dataNavigator), debounceNum);
     }
 
     /**
@@ -192,7 +192,7 @@ export class PaginationService {
                 scrollTop = Math.abs(el.iscroll.y);
 
             if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
-                this.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum);
+                this.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum)();
                 if (self.indicatorRefresh) {
                     self.indicatorRefresh();
                 }
