@@ -82,7 +82,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
             return;
         } else if (key === 'readonly') {
              (nv === true) ? setAttr(this.selectEl.nativeElement, 'readonly', 'readonly') : removeAttr(this.selectEl.nativeElement, 'readonly') ;
-        } 
+        }
         super.onPropertyChange(key, nv, ov);
     }
 
@@ -96,11 +96,11 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
         if (captionEl.length > 0) {
             if ($event.type === 'focus' && (!this.datavalue || (this.datavalue && $(this.selectEl).find('select option:selected').text() === '' && this.placeholder))) {
-                $(this.selectEl.nativeElement).find('option:first').text(this.placeholder);   
+                $(this.selectEl.nativeElement).find('option:first').text(this.placeholder);
             } else if (!this.datavalue) {
                 $(this.selectEl.nativeElement).find('option:selected').text('');
                 captionEl.removeClass('float-active');
             }
-        } 
+        }
     }
 }

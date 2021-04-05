@@ -1,8 +1,8 @@
-import { Attribute, Component, Injector, OnInit } from '@angular/core';
+import { Attribute, Component, Injector } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { AppDefaults, noop, setListClass, switchClass} from '@wm/core';
-import { convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAs, provideAsWidgetRef, styler, ToDatePipe, toggleAllHeaders } from '@wm/components/base';
+import { convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAs, provideAsWidgetRef, styler, toggleAllHeaders } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from '../checkboxset/checkboxset.props';
@@ -23,7 +23,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: D
     ]
 })
 
-export class CheckboxsetComponent extends DatasetAwareFormComponent implements OnInit {
+export class CheckboxsetComponent extends DatasetAwareFormComponent {
     static initializeProps = registerProps();
 
     public layout = '';
@@ -33,23 +33,14 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
     protected dateformat: string;
     protected groupedData: any[];
 
-    public handleHeaderClick: ($event) => void;
-    private toggleAllHeaders: void;
-
     public disabled: boolean;
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(
-        inj: Injector,
-        @Attribute('groupby') public groupby: string,
-        private appDefaults: AppDefaults,
-        public datePipe: ToDatePipe
-    ) {
+    constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         this.multiple = true;
-        this.handleHeaderClick = noop;
     }
 
     onCheckboxLabelClick($event, key) {
@@ -89,18 +80,6 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
             super.handleEvent(node, eventName, callback, locals);
         }
     }
-
-    private getGroupedData() {
-        return this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject', this.appDefaults) : [];
-    }
-
-    private datasetSubscription() {
-        const datasetSubscription = this.dataset$.subscribe(() => {
-            this.groupedData = this.getGroupedData();
-        });
-        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
-    }
-
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'tabindex') {
@@ -112,26 +91,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent implements O
         }
         if (key === 'itemsperrow') {
             setListClass(this);
-        } else if (key === 'groupby' || key === 'match') {
-            this.datasetSubscription();
-            // If groupby is set, get the groupedData from the datasetItems.
-            this.groupedData = this.getGroupedData();
         } else {
             super.onPropertyChange(key, nv, ov);
-        }
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        if (this.groupby) {
-            this.datasetSubscription();
-            // If groupby is set, get the groupedData from the datasetItems.
-            this.groupedData = this.getGroupedData();
-        }
-        // adding the handler for header click and toggle headers.
-        if (this.groupby && this.collapsible) {
-            this.handleHeaderClick = handleHeaderClick;
-            this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
         }
     }
 }
