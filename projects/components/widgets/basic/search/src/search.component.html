@@ -11,10 +11,11 @@
 
 <ng-template #customListTemplate let-matches="matches" let-itemTemplate="itemTemplate" let-query="query">
     <ul #ulElement class="app-search dropdown-menu" scrollable>
-        <li #liElements *ngFor="let match of matches" [wmItemTemplate]="content" [userComponentParams]="match.item"  partialContainer [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match)}"
+        <li #liElements *ngFor="let match of matches" [wmItemTemplate]="content" [userComponentParams]="match.item"  partialContainer [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match), 'list-group-header': match && match.isHeader()}"
             (mouseenter)="typeaheadContainer.selectActive(match);"
             (click)="typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; notifySubscriber()">
             <!-- itemTemplate comes from the <input> -->
+            <h4 *ngIf="match.isHeader()" class="group-title">{{match.value}}</h4>
             <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate"
                           [ngTemplateOutletContext]="{item: match.item, index: i, match: match, query: query}">
             </ng-container>
@@ -56,6 +57,7 @@
            (typeaheadLoading)="_loadingItems"
            (typeaheadOnSelect)="typeaheadOnSelect($event)"
            typeaheadOptionField="label"
+           typeaheadGroupField="groupby"
            [typeaheadAsync]="true"
            [typeaheadScrollable]="true"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
@@ -91,6 +93,7 @@
            (typeaheadLoading)="_loadingItems"
            (typeaheadOnSelect)="typeaheadOnSelect($event)"
            typeaheadOptionField="label"
+           typeaheadGroupField="groupby"
            [typeaheadAsync]="true"
            [typeaheadScrollable]="true"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
