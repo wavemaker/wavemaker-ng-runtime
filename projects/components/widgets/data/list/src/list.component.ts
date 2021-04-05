@@ -777,29 +777,31 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const newIndex = ui.item.index();
         const oldIndex = this.$ulEle.data('oldIndex');
 
-        if (this.getConfiguredState() !== 'none') {
-            this.statePersistence.removeWidgetState(this, 'selectedItem');
-        }
-
         const minIndex = _.min([newIndex, oldIndex]);
         const maxIndex = _.max([newIndex, oldIndex]);
 
         const draggedItem = _.pullAt(data, oldIndex)[0];
+        // Modify the data list only if we find a draggedItem
+        if (draggedItem) {
+            if (this.getConfiguredState() !== 'none') {
+                this.statePersistence.removeWidgetState(this, 'selectedItem');
+            }
 
-        this.reorderProps.minIndex = _.min([minIndex, this.reorderProps.minIndex]);
-        this.reorderProps.maxIndex = _.max([maxIndex, this.reorderProps.maxIndex]);
-
-        data.splice(newIndex, 0, draggedItem);
-
-        this.cdRef.markForCheck();
-        this.cdRef.detectChanges();
-        const $changedItem = {
-            oldIndex: oldIndex,
-            newIndex: newIndex,
-            item: data[newIndex]
-        };
-        this.invokeEventCallback('reorder', {$event: evt, $data: data, $changedItem});
-        this.$ulEle.removeData('oldIndex');
+            this.reorderProps.minIndex = _.min([minIndex, this.reorderProps.minIndex]);
+            this.reorderProps.maxIndex = _.max([maxIndex, this.reorderProps.maxIndex]);
+    
+            data.splice(newIndex, 0, draggedItem);
+    
+            this.cdRef.markForCheck();
+            this.cdRef.detectChanges();
+            const $changedItem = {
+                oldIndex: oldIndex,
+                newIndex: newIndex,
+                item: data[newIndex]
+            };
+            this.invokeEventCallback('reorder', {$event: evt, $data: data, $changedItem});
+            this.$ulEle.removeData('oldIndex');
+        }
     }
 
     // configures reordering the list items.
