@@ -774,34 +774,58 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     // Triggers after the sorting.
     private onUpdate(evt, ui) {
         const data = this.fieldDefs;
-        const newIndex = ui.item.index();
-        const oldIndex = this.$ulEle.data('oldIndex');
+
+        let newIndex = ui.item.index();
+        let oldIndex = this.$ulEle.data('oldIndex');
+
+        const $liElem = this.$ulEle.find('li');
+
+        if (this.getConfiguredState() !== 'none') {
+            this.statePersistence.removeWidgetState(this, 'selectedItem');
+        }
+
+        if ($liElem.length === data.length && !ui.sender) {
+            // execute the below code when the element is sorted with in the same list
+            const draggedItem = _.pullAt(data, oldIndex)[0];
+            data.splice(newIndex, 0, draggedItem);   
+        } else if ($liElem.length < data.length) { 
+            /** 
+             * When an element is sorted between 2 lists, execute this on dragged sortable  
+             * Save the newIndex and draggedItem which will be used by the dropped sortable
+             * remove the item from the data set 
+             * set newIndex to undefined, as the element is dropped in a new sortable
+            */
+            this.$ulEle.data({'newIndex': newIndex,'draggedItem': _.cloneDeep(data[oldIndex])});
+            data.splice(oldIndex, 1);
+            newIndex = undefined;
+        } else if (ui.sender) {
+            /** 
+             * When an element is sorted between 2 lists, execute this on dropped sortable
+             * Remove the newIndex and draggedItem which is on the dragged sortable
+             * Add the item from the data set 
+             * set oldIndex to undefined, as the element is dragged from a different sortable and set newIndex appropriately
+            */
+            data.splice(ui.sender.data('newIndex'), 0, ui.sender.data('draggedItem'));
+            newIndex = ui.sender.data('newIndex');
+            oldIndex = undefined;
+            ui.sender.removeData(['newIndex', 'draggedItem']);
+        }
 
         const minIndex = _.min([newIndex, oldIndex]);
         const maxIndex = _.max([newIndex, oldIndex]);
 
-        const draggedItem = _.pullAt(data, oldIndex)[0];
-        // Modify the data list only if we find a draggedItem
-        if (draggedItem) {
-            if (this.getConfiguredState() !== 'none') {
-                this.statePersistence.removeWidgetState(this, 'selectedItem');
-            }
+        this.reorderProps.minIndex = _.min([minIndex, this.reorderProps.minIndex]);
+        this.reorderProps.maxIndex = _.max([maxIndex, this.reorderProps.maxIndex]); 
 
-            this.reorderProps.minIndex = _.min([minIndex, this.reorderProps.minIndex]);
-            this.reorderProps.maxIndex = _.max([maxIndex, this.reorderProps.maxIndex]);
-    
-            data.splice(newIndex, 0, draggedItem);
-    
-            this.cdRef.markForCheck();
-            this.cdRef.detectChanges();
-            const $changedItem = {
-                oldIndex: oldIndex,
-                newIndex: newIndex,
-                item: data[newIndex]
-            };
-            this.invokeEventCallback('reorder', {$event: evt, $data: data, $changedItem});
-            this.$ulEle.removeData('oldIndex');
-        }
+        this.cdRef.markForCheck();
+        this.cdRef.detectChanges();
+        const $changedItem = {
+            oldIndex: oldIndex,
+            newIndex: newIndex,
+            item: data[newIndex]
+        };
+        this.invokeEventCallback('reorder', {$event: evt, $data: data, $changedItem});
+        this.$ulEle.removeData('oldIndex');
     }
 
     // configures reordering the list items.
