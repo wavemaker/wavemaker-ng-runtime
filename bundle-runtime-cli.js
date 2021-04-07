@@ -10,6 +10,7 @@
  */
 'use strict';
 const fs = require('fs');
+const { generateNpmVersion } = require('../wavemaker-ng-codegen/build-util');
 
 const argv = require("yargs")
     .options({
@@ -23,29 +24,6 @@ const argv = require("yargs")
 
 const DEBUG_LOG = 'NG-RUNTIME: ';
 
-/**
- * Generate the npm package version to publish into the npm package.
- * @param {*} publishVersion  
- * @returns string foramt npm version
- */
-const generateNpmVersion = (publishVersion) => {
-    publishVersion = publishVersion || '';
-    const splits = publishVersion.split('.');
-    while (splits.length < 4) {
-        splits.push('0');
-    }
-    let npmVer = '';
-    splits.forEach((v, i) => {
-        if (i === 3) {
-            npmVer += `-${(argv.isProd ? 'rc' : 'next')}.`;
-        } else if (i > 0) {
-            npmVer += '.';
-        }
-        npmVer += v;
-    });
-    return npmVer;
-};
-
 
 /**
  * To update the wavemaker version in package.json
@@ -53,7 +31,7 @@ const generateNpmVersion = (publishVersion) => {
 const updateWMVersion = () => {
     const path = './libraries/package.json';
     const wmPackageJSON = require(path);
-    wmPackageJSON.version = generateNpmVersion(argv.publishVersion);
+    wmPackageJSON.version = generateNpmVersion(argv.publishVersion, argv.isProd);
     fs.writeFileSync(path, JSON.stringify(wmPackageJSON, null, 4));
     console.log(`${DEBUG_LOG} Updated package.json wm:${argv.publishVersion} for publishing to npm`);
 };
@@ -66,7 +44,7 @@ const addWMDependency = (wm_pkg_name = `@wavemaker/app-ng-runtime`) => {
     const path = './dist/runtime-cli/angular-app/package.json';
     const packageJSON = require(path);
 
-    packageJSON.dependencies[wm_pkg_name] = generateNpmVersion(argv.publishVersion);
+    packageJSON.dependencies[wm_pkg_name] = generateNpmVersion(argv.publishVersion, argv.isProd);
     console.log(`${DEBUG_LOG} Added ${wm_pkg_name}:${argv.publishVersion} dependency to angular app`);
 
     fs.writeFileSync(path, JSON.stringify(packageJSON, null, 4));
