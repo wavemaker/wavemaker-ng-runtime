@@ -197,7 +197,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private isdynamictable;
     private _dynamicContext;
     private noOfColumns;
-    private onDemandLoad;
+    public onDemandLoad;
     private infScroll;
     private isDataLoading;
     private currentPage;
