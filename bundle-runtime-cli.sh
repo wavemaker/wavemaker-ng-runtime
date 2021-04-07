@@ -66,10 +66,10 @@ cp ./wm.package.json libraries/package.json
 if [[ "${publish}" == true ]]; then
     node bundle-runtime-cli.js --publishVersion=${publishVersion} --isProd=${isProd}
 fi
-mkdir -p dist/npm-packages/wm
-cp -r libraries/. dist/npm-packages/wm
-tar -zcf dist/npm-packages/wm.tar.gz -C dist/npm-packages wm
-rm -r dist/npm-packages/wm
+mkdir -p dist/npm-packages/app-ng-runtime
+cp -r libraries/. dist/npm-packages/app-ng-runtime
+tar -zcf dist/npm-packages/app-ng-runtime.tar.gz -C dist/npm-packages app-ng-runtime
+rm -r dist/npm-packages/app-ng-runtime
 
 cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/runtime-cli/dependencies
 cd -
