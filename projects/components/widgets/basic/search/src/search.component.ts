@@ -49,6 +49,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private formattedDataset: any;
     private isformfield: boolean;
     private $typeaheadEvent: Event;
+    private oldValue: string;
 
     public tabindex: number;
     public startIndex: number;
@@ -186,6 +187,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // on clear, trigger search with page size 1
     private clearSearch($event, loadOnClear) {
+        this.oldValue = this.query;
         this.query = '';
         this.onInputChange($event);
         this.dataProvider.isLastPage = false;
@@ -384,8 +386,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this._modelByValue = '';
             this.invokeOnChange(this._modelByValue, {}, true);
 
-            this.invokeEventCallback('clear', { $event });
-
+            this.invokeEventCallback('clear', {                 
+                $event: $event,
+                oldValue: this.oldValue
+            });
             // trigger onSubmit only when the search input is cleared off and do not trigger when tab is pressed.
             if ($event && $event.which !== 9) {
                 this.invokeEventCallback('submit', { $event });
