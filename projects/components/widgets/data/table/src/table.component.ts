@@ -176,6 +176,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     _liveTableParent;
     isPartOfLiveGrid;
     gridElement;
+    isNewRowInserted;
     isMobile;
     isLoading;
     documentClickBind = noop;
@@ -201,7 +202,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private infScroll;
     private isDataLoading;
     private currentPage;
-
     private applyProps = new Map();
 
     redraw = _.debounce(this._redraw, 150);

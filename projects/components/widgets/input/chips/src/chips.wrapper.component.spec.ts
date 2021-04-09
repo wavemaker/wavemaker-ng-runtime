@@ -8,7 +8,7 @@ import { App } from '@wm/core';
 import { ChipsComponent } from './chips.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue } from '../../../../base/src/test/util/component-test-util';
-import { WmComponentsModule } from '@wm/components/base';
+import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
 import { SearchComponent } from '@wm/components/basic/search';
 import { PartialRefProvider } from '@wm/core';
 
@@ -38,6 +38,8 @@ const testModuleDef: ITestModuleDef = {
     declarations: [ChipsWrapperComponent, ChipsComponent, SearchComponent],
     providers: [
         { provide: App, useValue: mockApp },
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe },
         { provide: PartialRefProvider, useClass: PartialRefProvider }
     ]
 };

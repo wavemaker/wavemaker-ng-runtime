@@ -808,10 +808,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private configureDnD() {
         let appendTo;
         const modalEl = $(document).find('.modal');
-        if (modalEl.length) { // In case of dialog, appendTo should be the modal ele
+        if (this.getAttr('height')) { // when height is applied to the list, append should be the ul's parent as scroll is applied to the parent
+          appendTo = 'parent';
+        } else if (modalEl.length) { // In case of dialog, appendTo should be the modal ele
             appendTo = modalEl[modalEl.length - 1];
-        } else if (this.getAttr('height')) { // when height is applied to the list, append should be the ul's parent as scroll is applied to the parent
-            appendTo = 'parent';
         } else { // As default append to should be body
             appendTo = 'body';
         }
@@ -1003,8 +1003,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             // Setting selectCount value based number of items selected.
             selectCount = _.isArray(this.selecteditem) ? this.selecteditem.length : (_.isObject(this.selecteditem) ? 1 : 0);
 
-            // Handling multiselect for mobile applications
-            if (this.multiselect && isMobileApp()) {
+            // Handling multiselect for mobile device
+            if (this.multiselect && isMobile()) {
                 if (this.checkSelectionLimit(selectCount) || $listItem.isActive) {
                     this.toggleListItemSelection($listItem);
                 } else {

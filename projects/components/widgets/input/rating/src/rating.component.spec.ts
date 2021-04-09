@@ -6,6 +6,8 @@ import {
 } from "../../../../base/src/test/common-widget.specs";
 import { ComponentsTestModule } from "../../../../base/src/test/components.test.module";
 import { FormsModule } from "@angular/forms";
+import { DatePipe } from '@angular/common';
+import { ToDatePipe } from '@wm/components/base';
 import { RatingComponent } from "./rating.component";
 import { ComponentFixture } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
@@ -21,7 +23,11 @@ class TestComponent {
 
 const testModuleDef: ITestModuleDef = {
     declarations: [RatingComponent, TestComponent],
-    imports: [FormsModule, ComponentsTestModule]
+    imports: [FormsModule, ComponentsTestModule],
+    providers: [
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe }
+    ]
 };
 const componentDef: ITestComponentDef = {
     $unCompiled: $(markup),

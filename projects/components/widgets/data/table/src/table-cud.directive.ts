@@ -51,6 +51,11 @@ export class TableCUDDirective {
     }
 
     initiateSelectItem(index, row, skipSelectItem?, isStaticVariable?, callBack?) {
+        // In case of on demand pagination, when new row is inserted show it in the last page and continue with current flow instead of navigating user to the last page
+        if (this.table.navigation === 'On-Demand' && !this.table.dataNavigator.isDisableNext && this.table.isNewRowInserted) {
+            this.table.isNewRowInserted = false;
+            return;
+        }
         /*index === "last" indicates that an insert operation has been successfully performed and navigation to the last page is required.
          * Hence increment the "dataSize" by 1.*/
         if (index === 'last') {
@@ -105,6 +110,9 @@ export class TableCUDDirective {
             }
             triggerFn(options.error, response);
         } else {
+            if (this.table.navigation === 'On-Demand') {
+                this.table.isNewRowInserted = true;
+            }
             if (options.event) {
                 const row = $(options.event.target).closest('tr');
                 this.table.callDataGridMethod('hideRowEditMode', row);
@@ -160,7 +168,6 @@ export class TableCUDDirective {
             skipNotification : true,
             period: options.period
         };
-
         if (dataSource.execute(DataSource.Operation.SUPPORTS_CRUD) || !dataSource.execute(DataSource.Operation.IS_API_AWARE) || dataSource.category === 'wm.CrudVariable') {
             if (!dataSource.execute(DataSource.Operation.IS_API_AWARE)) {
                 const extraOptions = this.generatePath(this.table.binddataset);
