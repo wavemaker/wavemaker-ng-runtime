@@ -166,7 +166,7 @@ export const transformFormData = (context: any, dataSet: any, myDataField?: stri
         _.forEach(dataSet, (value, key) => {
             const dataSetItem = {key: _.trim(key), value: key, label: (isDefined(value) && value !== null) ? value.toString() : '', index: startIndex, dataObject: dataSet};
             setGroupbyKey(scope, value, dataSetItem, 'value');
-            data.push();
+            data.push(dataSetItem);
         });
     } else {
         if (!myDataField) { // consider the datafield as 'ALLFIELDS' when datafield is not given.
