@@ -390,8 +390,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             if (captionEl.length > 0) {
                 // hasValue check whether form-field has a value from passed val attribute
                 // Added sanity check on val to support values liked 0, false etc as input val - WMS-20084
-                // explicitly checking for input value to see whether there are anu autofilled fields - WMS-20141
-                const hasValue = ((isDefined(val) && val !== '' && val !== null) || captionEl.find('input').val());
+                // explicitly checking for input value or -webkit-autofill to see whether there are any autofilled fields - WMS-20141
+
+                const hasValue = ((isDefined(val) && val !== '' && val !== null) || captionEl.find('input').val()) || captionEl.find('input:-webkit-autofill').length;
+
                 this.app.notify('captionPositionAnimate', {displayVal: hasValue, nativeEl: captionEl, isSelectMultiple: this.formWidget && this.formWidget.multiple, isFocused: this._activeField});
             }
             this.form.onFieldValueChange(this, val);
@@ -399,8 +401,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             // Do mark as touched, only incase when user has entered an input but not through the script. Hence added mousedown event check
             // active class checks whether user is on the current field, if so marking the field as touched. And form field validation happens once a field is touched
             // _triggeredByUser checks whether the field is touched by the user or triggered from external script
-            if (this._triggeredByUser && (this.$element.find('.active').length > 0 || this.form.touched)) {
-                this.ngform.controls[this._fieldName].markAsTouched();
+            if (this.$element.find('.active').length > 0 || this.form.touched) {
+                if (this._triggeredByUser) {
+                    this.ngform.controls[this._fieldName].markAsTouched();
+                }
                 this.fieldValidations.setCustomValidationMessage();
             }
         }

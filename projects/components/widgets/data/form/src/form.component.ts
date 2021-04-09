@@ -763,6 +763,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         const formFields = innerFormFields || this.formFields;
         formFields.forEach(field => {
             this.setFieldValue(field, data, innerFormdata);
+            if (field.fieldValidations) {
+                field.fieldValidations.setCustomValidationMessage();
+            }
         });
         this.constructDataObject();
     }

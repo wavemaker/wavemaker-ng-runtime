@@ -208,5 +208,5 @@ export abstract class DynamicComponentRefProvider {
 }
 
 export abstract class PartialRefProvider {
-    abstract async getComponentFactoryRef(partialName: string, componentType: ComponentType): Promise<any>;
+    abstract async getComponentFactoryRef(partialName: string, componentType: ComponentType, options?: any): Promise<any>;
 }

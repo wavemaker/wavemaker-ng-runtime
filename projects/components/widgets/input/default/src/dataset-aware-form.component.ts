@@ -278,6 +278,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     protected setTemplate(partialName) {
         this.content = partialName;
+        if (this.viewParent && this.viewParent.prefabName) {
+            this['prefabName'] = this.viewParent.prefabName;
+        }
     }
 
 

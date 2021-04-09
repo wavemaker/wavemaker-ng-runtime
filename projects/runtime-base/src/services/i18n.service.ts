@@ -232,12 +232,24 @@ export class I18nServiceImpl extends AbstractI18nService {
     private deduceAppLocale() {
         // computation to find app default locale
         const _acceptLang = this.getAcceptedLanguages();
-        _acceptLang.push(getWmProjectProperties().defaultLanguage);
+        const _defaultLanguage = getWmProjectProperties().defaultLanguage;
+        _acceptLang.push(_defaultLanguage);
+
+        // checks whether user preference is based on browser set languages or default language set in project  
+        let preferBrowserLang = getWmProjectProperties().preferBrowserLang;
+        if (!preferBrowserLang) { // when preferBrowserLang is not defined, set to its default value
+            preferBrowserLang  = true;
+        } else { // convert stringified boolean values recieved from BE to booleans
+            preferBrowserLang= (preferBrowserLang === 'true' || preferBrowserLang === true) ? true : false;
+        }
 
         let _supportedLang = Object.keys(getWmProjectProperties().supportedLanguages) || [this.defaultSupportedLocale];
 
+        // when preference is given to browser set languages, do not populate _selectedDefaultLang variable
+        let _selectedDefaultLang = preferBrowserLang ? undefined : _defaultLanguage;
+
         // check for the session storage to load any pre-requested locale
-        const _defaultLang = getSessionStorageItem('selectedLocale') || _.intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
+        const _defaultLang = getSessionStorageItem('selectedLocale') || _selectedDefaultLang || _.intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
 
         // if the supportedLocale is not available set it to defaultLocale
         _supportedLang = _supportedLang || [_defaultLang];

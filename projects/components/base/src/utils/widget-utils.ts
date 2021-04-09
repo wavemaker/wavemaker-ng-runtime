@@ -228,6 +228,7 @@ export const AUTOCLOSE_TYPE = {
     DISABLED: 'disabled'
 }
 
+export const unsupportedStatePersistenceTypes = ['On-Demand', 'Scroll'];
 
 export const getWatchIdentifier = (...args) => args.join('_');
 
