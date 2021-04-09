@@ -938,6 +938,62 @@ $.widget('wm.datatable', {
         }
     },
 
+    /* Inserts a load more button at the end of the table when the pagination selected is on demand */
+    addLoadMoreBtn : function (onDemandMsg, loadingdatamsg, cb) {
+        var self = this;
+        var $parenEl = $('<div class="on-demand-datagrid"><a class="app-button btn btn-block on-demand-load-btn"></a></div>'); 
+        var $btnEl = $parenEl.find('a');
+        $btnEl.append(onDemandMsg);
+        // Adding load more button in case of on demand pagination
+        this.element.find('.app-grid-content').append($parenEl);
+        // Adding click event to the button
+        $btnEl.on('click', function (e) {
+            if (cb && typeof cb === 'function') {
+                cb(e);
+                // when the button is clicked, hide the button and show loading indicator
+                $btnEl.hide();
+                self.showLoadingIndicator(loadingdatamsg, false);
+            }
+        });
+    },
+
+    /* Shows loading indicator when clicked on load more button or in case of infinite scroll event is triggered */
+    showLoadingIndicator: function (loadingdatamsg, infScroll) {
+        var hasLoadingEl = this.element.find('.loading-data-msg');
+        var $dataGrid = this.element.find('.on-demand-datagrid');
+        if (hasLoadingEl.length && !infScroll) {
+            // in case of on demand pagination, show the loading ele which was hidden
+            hasLoadingEl.show();
+        } else if (infScroll && $dataGrid.length) { 
+            // in case of infinite scroll show the demand-grid ele which was hidden
+            $dataGrid.show();
+        } else {
+            // if the loading indicator ele is not created, create it and append it to grid ele if it is already present. 
+            // If not create grid ele and then append the loading indicator to grid ele
+            var $loadingEl = $('<div class="loading-data-msg spin-icon-in-center"><span><i class="app-icon panel-icon fa-spin ' + this.options.loadingicon + '"></i>' + 
+            '<span class="sr-only">Loading</span><span class="loading-text"></span></span></div>');
+            $loadingEl.find('.loading-text').html(loadingdatamsg);
+            if ($dataGrid.length) {
+                $dataGrid.append($loadingEl);
+            } else {
+                var gridEl = $('<div class="on-demand-datagrid">' + $loadingEl[0].outerHTML + '</div>');
+                this.element.find('.app-grid-content').append(gridEl);
+            }
+        }
+    },
+
+    /* Hides loading indicator and shows load more button */
+    hideLoadingIndicator: function (showLoadBtn, infScroll) {
+        if (!showLoadBtn && !infScroll) {
+            // In case of on demand pagination, when the next page is not disabled hide the individual elements
+            this.element.find('.loading-data-msg').hide();
+            this.element.find('.on-demand-load-btn').show();
+        } else {
+            // In case of infinite scroll or when next page is disable hide the grid element which is the parent. If we don't the parent ele border will be shown
+            this.element.find('.on-demand-datagrid').hide();
+        }
+    },
+
     /* Returns the selected rows in the table. */
     getSelectedRows: function () {
         this.getSelectedColumns();

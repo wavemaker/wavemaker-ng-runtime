@@ -2,7 +2,7 @@ import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, Quer
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { Observable, from, of } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { filter, mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
@@ -128,6 +128,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     this.typeahead._container = undefined;
                 }
             }).pipe(
+                filter(() => { 
+                    this._loadingItems = false;
+                    return (this.minchars === 0 || (this.query && this.query.length >= this.minchars));
+                }),
                 mergeMap((token: string) => this.getDataSourceAsObservable(token))
             );
 
@@ -192,6 +196,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.loadMoreData();
         }
         this.invokeEventCallback('clearsearch');
+        this._loadingItems = false;
     }
 
     // function to  clear the input value
@@ -378,6 +383,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             this.queryModel = '';
             this._modelByValue = '';
             this.invokeOnChange(this._modelByValue, {}, true);
+
+            this.invokeEventCallback('clear', { $event });
 
             // trigger onSubmit only when the search input is cleared off and do not trigger when tab is pressed.
             if ($event && $event.which !== 9) {
@@ -724,7 +731,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 bindDisplayImgSrc: this.binddisplayimagesrc,
                 displayImgSrc: this.displayimagesrc
             },
-            itemIndex
+            itemIndex,
+            this
         );
         return getUniqObjsByDataField(transformedData, this.datafield, this.displayfield || this.displaylabel, toBoolean(this.allowempty));
     }

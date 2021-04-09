@@ -1,25 +1,65 @@
-<li [ngClass]="['radio', 'app-radio', itemclass, itemsPerRowClass]"
-    [class.active]="item.selected"
-    *ngFor="let item of datasetItems;let i = index"
-    [wmItemTemplate]="content" [userComponentParams]="item" partialContainer
-    (click)="onRadioLabelClick($event, item.key)">
-    <!-- Default item template -->
-    <label *ngIf="!content" class="app-radioset-label"
-           [ngClass]="{'disabled':disabled || readonly}"
-           [title]="item.label">
-        <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
-               [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
-        <span class="caption" [textContent]="item.label"></span>
-    </label>
-    <!-- Custom partial template -->
-    <label *ngIf="content" class="app-radioset-label"
-           [ngClass]="{'disabled':disabled || readonly}"
-           [title]="item.label">
-        <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
-               [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
-        <span class="caption customTemplate" partial-container-target></span>
-    </label>
-</li>
+<ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
+    <li [ngClass]="['radio', 'app-radio', itemclass, itemsPerRowClass]"
+        [class.active]="item.selected"
+        *ngFor="let item of datasetItems;let i = index"
+        [wmItemTemplate]="content" [userComponentParams]="item" partialContainer
+        (click)="onRadioLabelClick($event, item.key)">
+        <!-- Default item template -->
+        <label *ngIf="!content" class="app-radioset-label"
+               [ngClass]="{'disabled':disabled || readonly}"
+               [title]="item.label">
+            <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
+                   [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
+            <span class="caption" [textContent]="item.label"></span>
+        </label>
+        <!-- Custom partial template -->
+        <label *ngIf="content" class="app-radioset-label"
+               [ngClass]="{'disabled':disabled || readonly}"
+               [title]="item.label">
+            <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
+                   [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
+            <span class="caption customTemplate" partial-container-target></span>
+        </label>
+    </li>
+</ng-template>
 
 <input [disabled]="disabled || readonly" hidden class="model-holder">
 <div *ngIf="readonly || disabled" aria-readonly="true" class="readonly-wrapper"></div>
+
+<!-- This template will be displayed when groupby is specified. -->
+<ng-template #groupedListTemplate>
+    <li *ngFor="let groupObj of groupedData" class="app-list-item-group">
+        <ul class="item-group">
+            <li class="list-group-header" (click)="handleHeaderClick($event)" [title]="groupObj.key" [ngClass]="{'collapsible-content': collapsible}">
+                <h4 class="group-title">{{groupObj.key}}
+                    <div class="header-action">
+                        <i class="app-icon wi action wi-chevron-up" *ngIf="collapsible" title="{{appLocale.LABEL_COLLAPSE}}/{{appLocale.LABEL_EXPAND}}"></i>
+                        <span *ngIf="showcount" class="label label-default" [textContent]="groupObj.data.length"></span>
+                    </div>
+                </h4>
+            </li>
+            <li *ngFor="let item of groupObj.data; let i = index;"
+                [ngClass]="['radio', 'app-radio', 'group-list-item', itemclass, itemsPerRowClass]"
+                [class.active]="item.selected"
+                [wmItemTemplate]="content" [userComponentParams]="item" partialContainer
+                (click)="onRadioLabelClick($event, item)">
+                <!-- Default item template -->
+                <label *ngIf="!content" class="app-radioset-label"
+                       [ngClass]="{'disabled':disabled || readonly}"
+                       [title]="item.label">
+                    <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
+                           [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
+                    <span class="caption" [textContent]="item.label"></span>
+                </label>
+                <!-- Custom partial template -->
+                <label *ngIf="content" class="app-radioset-label"
+                       [ngClass]="{'disabled':disabled || readonly}"
+                       [title]="item.label">
+                    <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
+                           [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
+                    <span class="caption customTemplate" partial-container-target></span>
+                </label>
+            </li>
+        </ul>
+    </li>
+</ng-template>

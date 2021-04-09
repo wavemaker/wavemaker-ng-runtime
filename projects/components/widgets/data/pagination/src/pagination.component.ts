@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit } from '@angular/core';
 
 import { $appDigest, $watch, AppConstants, DataSource, debounce, isDefined, switchClass, triggerFn } from '@wm/core';
-import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, styler, WidgetRef } from '@wm/components/base';
+import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, styler, WidgetRef, unsupportedStatePersistenceTypes} from '@wm/components/base';
 import { registerProps } from './pagination.props';
 
 declare const _;
@@ -23,9 +23,6 @@ const sizeClasses = {
         'large': 'pagination-lg'
     }
 };
-
-const unsupportedStatePersistenceTypes = ['On-Demand', 'Scroll'];
-
 @Component({
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html',
@@ -286,7 +283,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             } else {
                 if (unsupportedStatePersistenceTypes.indexOf(this.parent.navigation) < 0) {
                     this.parent.statePersistence.setWidgetState(this.parent, {pagination: this.dn.currentPage});
-                } else if (this.parent.widgetType === 'wm-list') {
+                } else if (this.parent.widgetType === 'wm-list' ||this.parent.widgetType === 'wm-table' ) {
                     console.warn('Retain State handling on Widget ' + this.parent.name + ' is not supported for current pagination type.');
                 }
             }
@@ -381,6 +378,14 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
 
     /*Function to navigate to the respective pages.*/
     navigatePage(index, event, isRefresh, callback) {
+        // when navigated to next page turn on the isDataLoading flag to show the loading indicator
+        if (isDefined(this.parent.isDataLoading) && !this.isDisableNext) {
+            this.parent.isDataLoading = true;
+            // In case of infinite scroll calling the showLoadingIndicator method to update the loading message immediately when navigated to next page
+            if (this.parent.infScroll) {
+                this.parent.callDataGridMethod('showLoadingIndicator', this.parent.loadingdatamsg, true);
+            }
+        }
         this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
 
         // Convert the current page to a valid page number.

@@ -61,7 +61,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         // check for formdata/bindformdata attribute to see if any default value is binded to the form 
         // check for select tag with multiple attribute enabled 
 
-        if ($(this.inputEl.closest('[widget-id]')).attr('datavalue') || $(this.inputEl.parent('[widget-id]')).attr('datavalue.bind') || this.nativeEl.getAttribute('defaultvalue')
+        if (this.inputEl.val() || $(this.inputEl.closest('[widget-id]')).attr('datavalue') || $(this.inputEl.parent('[widget-id]')).attr('datavalue.bind') || this.nativeEl.getAttribute('defaultvalue')
             || this.nativeEl.getAttribute('displayformat') || $(this.nativeEl).find('select option:selected').text() || $(this.nativeEl).find('select').attr('multiple')) {
             this.compositeEle.classList.add('float-active');
         }
@@ -149,9 +149,17 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
                 data.nativeEl.removeClass('float-active');
                 // Remove placeholder on removing float-active, if not the label and placeholder are collided
                 // before placeholder is removed assign it to the placeholder variable
-                if (this.inputEl && this.inputEl.attr('placeholder')) {
-                    this.placeholder = this.inputEl.attr('placeholder');
-                    this.inputEl.removeAttr('placeholder');
+                // check for placeholder in inputel and selectel
+                if (this.inputEl) {
+                    const selectEl = this.inputEl.find('option:first');
+                    if (this.inputEl.attr('placeholder') || selectEl.text()) {
+                        if (selectEl.length) {
+                            selectEl.text(''); 
+                        } else {
+                            this.placeholder = this.inputEl.attr('placeholder');
+                            this.inputEl.removeAttr('placeholder');
+                        }
+                    }
                 }
             }
         });

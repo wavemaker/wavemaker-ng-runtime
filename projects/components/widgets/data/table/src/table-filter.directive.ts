@@ -1,7 +1,7 @@
 import { Directive, Inject, Self } from '@angular/core';
 
 import { $appDigest, DataSource, DataType, FormWidgetType, getClonedObject, isDefined, isNumberType, adjustContainerRightEdges } from '@wm/core';
-import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget, refreshDataSource } from '@wm/components/base';
+import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget, refreshDataSource, unsupportedStatePersistenceTypes } from '@wm/components/base';
 
 import { TableComponent } from './table.component';
 
@@ -372,7 +372,7 @@ export class TableFilterSortDirective {
         } else {
             obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
         }
-        if (this.table.getConfiguredState() !== 'none') {
+        if (this.table.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.table.navigation) < 0) {
             if ((_.isArray(searchSortObj) && obj.length) || (searchSortObj.value && searchSortObj.field)) {
                 this.table.statePersistence.removeWidgetState(this.table, 'search');
                 this.table.statePersistence.setWidgetState(this.table, {search: obj});
@@ -383,6 +383,8 @@ export class TableFilterSortDirective {
                 this.table.statePersistence.removeWidgetState(this.table, 'pagination');
                 this.table.statePersistence.removeWidgetState(this.table, 'selectedItem');
             }
+        } else {
+            console.warn('Retain State handling on Widget ' + this.table.name + ' is not supported for current pagination type.');
         }
         let filterFields = getClonedObject(searchSortObj);
         const dataSource = this.table.datasource;
@@ -430,7 +432,7 @@ export class TableFilterSortDirective {
         if (!dataSource) {
             return;
         }
-        if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
+        if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.table.navigation) < 0) {
             const obj = {direction: searchSortObj.direction, field: searchSortObj.field};
             if (searchSortObj.direction) {
                 this.table.statePersistence.setWidgetState(this.table, {sort: obj});
@@ -438,6 +440,8 @@ export class TableFilterSortDirective {
                 this.table.statePersistence.removeWidgetState(this.table, 'sort');
             }
             this.table.statePersistence.removeWidgetState(this.table, 'selectedItem');
+        } else {
+            console.warn('Retain State handling on Widget ' + this.table.name + ' is not supported for current pagination type.');
         }
         if (dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
             this.handleSeverSideSort(searchSortObj, e, statePersistenceTriggered);

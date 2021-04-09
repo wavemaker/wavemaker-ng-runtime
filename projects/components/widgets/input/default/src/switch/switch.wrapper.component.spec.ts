@@ -2,9 +2,11 @@ import { Component, ViewChild } from '@angular/core';
 import { SwitchComponent } from './switch.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
 import { App } from '@wm/core';
+import { ToDatePipe } from '@wm/components/base';
 
 let mockApp = {};
 const markup = `<div wmSwitch datavalue="yes" show="true" width="800" height="200" hint="test switch" tabindex="1" disabled="false" name="switch1"></div>`;
@@ -21,7 +23,9 @@ const testModuleDef: ITestModuleDef = {
     ],
     declarations: [SwitchWrapperComponent, SwitchComponent],
     providers: [
-        { provide: App, useValue: mockApp }
+        { provide: App, useValue: mockApp },
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe }
     ]
 };
 

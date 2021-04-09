@@ -28,6 +28,7 @@ import {
     isIphone,
     isIpod,
     isObject,
+    loadScript,
     loadStyleSheet,
     noop,
     removeNode,
@@ -228,21 +229,43 @@ export class MobileRuntimeModule {
     }
 
     public applyOSTheme(os) {
-        let oldStyleSheet = $('link[theme="wmtheme"]').first();
-        let themeName = getWmProjectProperties().activeTheme;
-        const themeUrl = oldStyleSheet.attr('href').includes('/style.css') ? oldStyleSheet.attr('href') : oldStyleSheet.attr('href').replace(new RegExp(`assets/themes/${themeName}/${os.toLowerCase()}/style.css$`), `mobile_${getWmProjectProperties().activeTheme}_${os.toLowerCase()}.css`),
-            newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
-        oldStyleSheet = oldStyleSheet.length > 0 && oldStyleSheet[0];
-        if (newStyleSheet && oldStyleSheet) {
-            insertAfter(newStyleSheet, oldStyleSheet);
-            removeNode(oldStyleSheet);
+        let oldStyleSheet = $('link[theme="wmtheme"][href ^="themes"][href $="/style.css"]').first();
+        if (oldStyleSheet.length) {
+            const themeUrl = oldStyleSheet.attr('href').replace(new RegExp('/[a-z]*/style.css$'), `/${os.toLowerCase()}/style.css`),
+                newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
+            oldStyleSheet = oldStyleSheet.length > 0 && oldStyleSheet[0];
+            if (newStyleSheet && oldStyleSheet) {
+                insertAfter(newStyleSheet, oldStyleSheet);
+                removeNode(oldStyleSheet);
+            }
         }
-        // In development, styleSheet will point to .js files
-        // In production, styleSheet will point to 'mobile_{themeName}_{os}.css
-        let removeTheme = os.toLowerCase() === 'android' ? '_ios' : '_android';
-        let unusedStyleSheet = $('link[theme="wmtheme"][href *="/mobile_"][href *=' + removeTheme + ']').first();
-        if (unusedStyleSheet) {
-            removeNode(unusedStyleSheet);
+
+        // In angular development, styleSheet will point to .js files
+        // In angular production, styleSheet will point to 'wm-android-styles.css' or 'wm-ios-styles.css'
+        const removeTheme = os.toLowerCase() === 'android' ? 'wm-ios-styles' : 'wm-android-styles';
+        let isDevBuild;
+        const useTheme = 'wm-' + os.toLowerCase() + '-styles';
+        let unusedStyleSheet = $('link[href *=' + removeTheme + ']').first();
+        if (!unusedStyleSheet.length) {
+            isDevBuild = true;
+            unusedStyleSheet = $('script[src *=' + removeTheme + ']').first();
+        }
+        if (unusedStyleSheet.length) {
+            let newStyleSheet;
+            if (isDevBuild) {
+                newStyleSheet = unusedStyleSheet.clone();
+                newStyleSheet = newStyleSheet[0];
+                newStyleSheet.src = newStyleSheet.src.replace(removeTheme, useTheme);
+                loadScript(newStyleSheet.src, false);
+                unusedStyleSheet = unusedStyleSheet[0];
+                insertAfter(newStyleSheet, unusedStyleSheet);
+                removeNode(unusedStyleSheet);
+            } else {
+                newStyleSheet = $('link[href *=' + useTheme + ']').first();
+                newStyleSheet = newStyleSheet[0];
+                loadStyleSheet(newStyleSheet.href, {name: 'theme', value: 'wmtheme'});
+                removeNode(unusedStyleSheet[0]);
+            }
         }
     }
 
