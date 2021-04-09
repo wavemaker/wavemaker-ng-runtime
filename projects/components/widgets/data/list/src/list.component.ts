@@ -1003,8 +1003,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             // Setting selectCount value based number of items selected.
             selectCount = _.isArray(this.selecteditem) ? this.selecteditem.length : (_.isObject(this.selecteditem) ? 1 : 0);
 
-            // Handling multiselect for mobile applications
-            if (this.multiselect && isMobileApp()) {
+            // Handling multiselect for mobile device
+            if (this.multiselect && isMobile()) {
                 if (this.checkSelectionLimit(selectCount) || $listItem.isActive) {
                     this.toggleListItemSelection($listItem);
                 } else {
