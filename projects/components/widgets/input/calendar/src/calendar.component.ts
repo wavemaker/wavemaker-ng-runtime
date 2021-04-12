@@ -426,7 +426,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     constructor(inj: Injector, i18nService: AbstractI18nService) {
         super(inj, WIDGET_CONFIG);
 
-        this.mobileCalendar = isMobileApp();
+        this.mobileCalendar = false; //isMobileApp();
         this.eventSources.push(this.dataSetEvents);
         const FullCalendar = window['FullCalendar'];
         if (!FullCalendar.__wm_locale_initialized) {
