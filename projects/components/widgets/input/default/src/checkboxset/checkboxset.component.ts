@@ -31,7 +31,6 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
 
     protected match: string;
     protected dateformat: string;
-    protected groupedData: any[];
 
     public disabled: boolean;
     public itemsperrow: string;
