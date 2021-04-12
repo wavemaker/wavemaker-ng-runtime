@@ -5,18 +5,13 @@
  * Update the TS config and TS config web app json with package version
  *  
  * CONSOLE ARGUMENTS:-
- *  isProd:         To decide the version format (10.6.4-next.139401 / 10.6.4-rc.139401)
  *  publishVersion: To generate the given version package.json file
  */
 'use strict';
 const fs = require('fs');
-const { generateNpmVersion } = require('../wavemaker-ng-codegen/build-util');
 
 const argv = require("yargs")
     .options({
-        "isProd": {
-            type: "boolean"
-        },
         "publishVersion": {
             type: "string"
         }
@@ -31,7 +26,7 @@ const DEBUG_LOG = 'NG-RUNTIME: ';
 const updateWMVersion = () => {
     const path = './libraries/package.json';
     const wmPackageJSON = require(path);
-    wmPackageJSON.version = generateNpmVersion(argv.publishVersion, argv.isProd);
+    wmPackageJSON.version = argv.publishVersion;
     fs.writeFileSync(path, JSON.stringify(wmPackageJSON, null, 4));
     console.log(`${DEBUG_LOG} Updated package.json wm:${argv.publishVersion} for publishing to npm`);
 };
@@ -44,7 +39,7 @@ const addWMDependency = (wm_pkg_name = `@wavemaker/app-ng-runtime`) => {
     const path = './dist/runtime-cli/angular-app/package.json';
     const packageJSON = require(path);
 
-    packageJSON.dependencies[wm_pkg_name] = generateNpmVersion(argv.publishVersion, argv.isProd);
+    packageJSON.dependencies[wm_pkg_name] = argv.publishVersion;
     console.log(`${DEBUG_LOG} Added ${wm_pkg_name}:${argv.publishVersion} dependency to angular app`);
 
     fs.writeFileSync(path, JSON.stringify(packageJSON, null, 4));

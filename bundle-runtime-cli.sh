@@ -12,10 +12,6 @@ while [ "$1" != "" ]; do
             dev=false
             publish=true
         ;;
-        --is-prod)
-            shift
-            isProd=$1
-        ;;
     esac
     shift
 done
@@ -64,7 +60,7 @@ cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.js
 cp ./wm.package.json libraries/package.json
 
 if [[ "${publish}" == true ]]; then
-    node bundle-runtime-cli.js --publishVersion=${publishVersion} --isProd=${isProd}
+    node bundle-runtime-cli.js --publishVersion=${publishVersion}
 fi
 mkdir -p dist/npm-packages/app-ng-runtime
 cp -r libraries/. dist/npm-packages/app-ng-runtime
