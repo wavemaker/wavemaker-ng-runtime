@@ -673,8 +673,11 @@ export const getValidDateObject = (val, options?) => {
     const pattern = isMobile() ? (_.get(options, 'pattern') ||  'YYYY/MM/DD HH:mm:ss') : (momentPattern(_.get(options, 'pattern')) || '');
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        // Fix for WMS-19601, invalid date is returned on date selection.
-        val = moment(val, pattern).toDate();
+       const newValue = moment(val, pattern);
+       if (newValue.isValid()) {
+            // Fix for WMS-19601, invalid date is returned on date selection.
+            val = newValue.toDate();
+       }
     }
 
     if (moment(val, pattern).isValid()) {
