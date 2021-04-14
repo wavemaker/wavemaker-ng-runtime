@@ -24,7 +24,6 @@ const REGEX = {
     IPHONE: /iPhone/i,
     IPOD: /iPod/i,
     IPAD: /iPad/i,
-    MAC: /Mac/i,
     ANDROID_TABLET: /android|android 3.0|xoom|sch-i800|playbook|tablet|kindle/i,
     MOBILE: /Mobile/i,
     WINDOWS: /Windows Phone/i,
@@ -79,9 +78,7 @@ export const isAndroidTablet = () => REGEX.ANDROID_TABLET.test(userAgent) && !((
 
 export const isIphone = () => REGEX.IPHONE.test(userAgent);
 export const isIpod = () => REGEX.IPOD.test(userAgent);
-export const isIpad = () => {
-    return REGEX.IPAD.test(userAgent) || (window.navigator.maxTouchPoints && window.navigator.maxTouchPoints > 2 && REGEX.MAC.test(window.navigator.platform));
-};
+export const isIpad = () => REGEX.IPAD.test(userAgent);
 export const isIos = () => isIphone() || isIpod() || isIpad();
 
 export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('#wm-mobile-display:visible').length > 0;
