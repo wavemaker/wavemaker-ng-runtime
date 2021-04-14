@@ -1,15 +1,15 @@
-import { Injector, Attribute, OnInit } from '@angular/core';
+import { Injector } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
-import {$appDigest, debounce, isDefined, isEqualWithFields, toBoolean, AppDefaults, noop} from '@wm/core';
+import { $appDigest, debounce, isDefined, isEqualWithFields, toBoolean } from '@wm/core';
 
-import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, handleHeaderClick, toggleAllHeaders, transformFormData, transformDataWithKeys, groupData, ToDatePipe } from '@wm/components/base';
+import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, transformFormData, transformDataWithKeys } from '@wm/components/base';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 
 declare const _;
 
-export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent implements OnInit {
+export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent {
     public dataset: any;
     public datafield: string;
     public displayfield: string;
@@ -21,11 +21,6 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     public multiple: boolean;
     public readonly: boolean;
     public content: string;
-    public collapsible: boolean;
-    public datePipe;
-
-    public handleHeaderClick: ($event) => void;
-    private toggleAllHeaders: void;
 
     public binddisplayexpression: string;
     public binddisplayimagesrc: string;
@@ -37,10 +32,6 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     public acceptsArray = false; // set to true if proxyModel on widget accepts array type.
     protected dataset$ = new Subject();
     protected datavalue$ = new Subject();
-
-    protected match: string;
-    protected dateformat: string;
-    protected groupedData: any[];
 
     protected _modelByKey: any;
     public _modelByValue: any;
@@ -84,10 +75,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.invokeOnChange(val, undefined, true);
     }
 
-    protected constructor(inj: Injector, WIDGET_CONFIG, @Attribute('groupby') public groupby?: string,
-        private appDefaults?: AppDefaults) {
+    protected constructor(inj: Injector, WIDGET_CONFIG) {
         super(inj, WIDGET_CONFIG);
-        this.datePipe = this.inj.get(ToDatePipe);
+
         this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');
         this.binddisplayimagesrc = this.nativeElement.getAttribute('displayimagesrc.bind');
         this.binddisplaylabel = this.nativeElement.getAttribute('displaylabel.bind');
@@ -96,7 +86,6 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             this.initDatasetItems();
             $appDigest();
         }, 150);
-        this.handleHeaderClick = noop;
     }
 
     /**
@@ -295,24 +284,6 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     }
 
 
-    private getGroupedData() {
-        return this.datasetItems.length ? groupData(this, convertDataToObject(this.datasetItems), this.groupby, this.match, this.orderby, this.dateformat, this.datePipe, 'dataObject', this.appDefaults) : [];
-    }
-
-    private datasetSubscription() {
-        const datasetSubscription = this.dataset$.subscribe(() => {
-            this.groupedData = this.getGroupedData();
-        });
-        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
-    }
-
-    protected setGroupData() {
-        this.datasetSubscription();
-        // If groupby is set, get the groupedData from the datasetItems.
-        this.groupedData = this.getGroupedData();
-    }
-
-
     onPropertyChange(key: string, nv: any, ov?: any) {
         super.onPropertyChange(key, nv, ov);
         switch (key) {
@@ -329,23 +300,6 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             case 'datavalue':
                 this._onChange(this.datavalue);
                 break;
-            case 'groupby':
-            case 'match':
-                this.setGroupData();
-            break;
-        }
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        // &&  this.widgetType !== 'wm-search'
-        if (this.groupby) {
-            this.setGroupData();
-        }
-        // adding the handler for header click and toggle headers.
-        if (this.groupby && this.collapsible) {
-            this.handleHeaderClick = handleHeaderClick;
-            this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
         }
     }
 }

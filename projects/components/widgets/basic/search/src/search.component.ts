@@ -730,8 +730,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 bindDisplayImgSrc: this.binddisplayimagesrc,
                 displayImgSrc: this.displayimagesrc
             },
-            itemIndex,
-            this
+            itemIndex
         );
         return getUniqObjsByDataField(transformedData, this.datafield, this.displayfield || this.displaylabel, toBoolean(this.allowempty));
     }

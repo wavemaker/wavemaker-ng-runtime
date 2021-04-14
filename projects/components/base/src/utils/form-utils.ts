@@ -107,25 +107,6 @@ export const convertDataToObject = dataResult => {
     return dataResult;
 };
 
-// This function used to check the search type widget
-const isSeachWidget = (widgetType) => {
-    return widgetType === 'wm-search';
-};
-
-// This function is used to set the groupby field for search/autocomplete
-const setGroupbyKey = (scope, option, dataSetItem, innerItem) => {
-    if (scope && isSeachWidget(scope.widgetType)) {
-        if (scope.groupby) {
-            scope.groupedData.forEach((val, index) => {
-                var element =  _.find(val.data, (test) =>  _.isEqual(test[innerItem], option));
-                (dataSetItem as any).groupby = element ?  val.key : !(dataSetItem as any).groupby ? 'Others' : (dataSetItem as any).groupby;
-            });
-        } else {
-            (dataSetItem as any).groupby =  '';
-        }
-    }
-}
-
 /**
  * The first step in datasetItems creation is data transformation:
  *
@@ -136,7 +117,7 @@ const setGroupbyKey = (scope, option, dataSetItem, innerItem) => {
  * 3) an object eg: {name: 'A', age: 20} => [ {key: 'name', value: 'A'}, {key: 'age', value: 20}]
  * 4) an array of objects...eg: [ {name: 'A', age: 20}, {name: 'B', age: 20}] ==> returns [{key: _DATAFIELD_, value: _DISPLAYFIELD, label: _DISPLAYVALUE}]
  */
-export const transformFormData = (context: any, dataSet: any, myDataField?: string, displayOptions?, startIndex?: number, scope?: any): Array<DataSetItem> => {
+export const transformFormData = (context: any, dataSet: any, myDataField?: string, displayOptions?, startIndex?: number): Array<DataSetItem> => {
     const data = [];
     if (!dataSet) {
         return;
@@ -151,38 +132,25 @@ export const transformFormData = (context: any, dataSet: any, myDataField?: stri
     if (_.isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());
         dataSet.forEach((option, index) => {
-            const dataSetItem = {key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index};
-            setGroupbyKey(scope, option, dataSetItem, 'value');
-            data.push(dataSetItem);
+            data.push({key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index});
         });
     } else if (_.isArray(dataSet) && !_.isObject(dataSet[0])) { // array of primitive values only
         dataSet.forEach((option, index) => {
-            const dataSetItem = {key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index};
-            setGroupbyKey(scope, option, dataSetItem, 'value');
-            data.push(dataSetItem);
+            data.push({key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index});
         });
     } else if (!(dataSet instanceof Array) && _.isObject(dataSet)) {
         const i = 0;
         _.forEach(dataSet, (value, key) => {
-            const dataSetItem = {key: _.trim(key), value: key, label: (isDefined(value) && value !== null) ? value.toString() : '', index: startIndex, dataObject: dataSet};
-            setGroupbyKey(scope, value, dataSetItem, 'value');
-            data.push();
+            data.push({key: _.trim(key), value: key, label: (isDefined(value) && value !== null) ? value.toString() : '', index: startIndex, dataObject: dataSet});
         });
     } else {
         if (!myDataField) { // consider the datafield as 'ALLFIELDS' when datafield is not given.
             myDataField = ALLFIELDS;
         }
-        // ordering the data based on groupby field
-        if (scope && isSeachWidget(scope.widgetType)) {
-            dataSet = _.orderBy(dataSet, (function(fieldDef) {
-                var groupKey = _.get(fieldDef, scope && scope.groupby);
-                if (groupKey) {
-                    return _.toLower(groupKey);
-                }
-            }));
-        }
+
         dataSet.forEach((option, index) => {
             const key = myDataField === ALLFIELDS ? startIndex + index : getObjValueByKey(option, myDataField);
+
             // Omit all the items whose datafield (key) is null or undefined.
             if (!_.isUndefined(key) && !_.isNull(key)) {
                 const label = getEvaluatedData(option, {
@@ -203,8 +171,6 @@ export const transformFormData = (context: any, dataSet: any, myDataField?: stri
                         bindExpression: displayOptions.bindDisplayImgSrc
                     }, context);
                 }
-                setGroupbyKey(scope, option, dataSetItem, 'dataObject');
-
                 data.push(dataSetItem);
             }
         });
