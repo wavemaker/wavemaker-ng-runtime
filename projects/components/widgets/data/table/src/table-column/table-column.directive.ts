@@ -11,7 +11,7 @@ declare const _;
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
-let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'matchmode', 'displaylabel', 'groupby', 'match', 'dateformat', 'showcount', 'collapsible',
+let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'matchmode', 'displaylabel',
                             'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataentrymode', 'autoclose', 'dataset'];
 const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'step', 'required', 'mindate', 'maxdate',
                             'excludedates', 'excludedays', 'mintime', 'maxtime'];
