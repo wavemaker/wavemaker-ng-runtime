@@ -581,9 +581,9 @@ export const scrollToElement = (element) => {
         iScroll.scrollTo(0, to);
     } else {
         window.scroll({
-            top: formPosition, 
-            left: 0, 
-            behavior: 'smooth' 
+            top: formPosition,
+            left: 0,
+            behavior: 'smooth'
         });
     }
 }
@@ -670,11 +670,18 @@ export const getValidDateObject = (val, options?) => {
     const pattern = isMobile() ? (_.get(options, 'pattern') ||  'YYYY/MM/DD HH:mm:ss') : (momentPattern(_.get(options, 'pattern')) || '');
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-       const newValue = moment(val, pattern);
-       if (newValue.isValid()) {
-            // Fix for WMS-19601, invalid date is returned on date selection.
-            val = newValue.toDate();
-       }
+        // Fix for WMS-19601, invalid date is returned on date selection.
+        // check whether val is a valid date or not
+        if (isIos()) {
+            // For iOS, explicitly setting the format to consider even the seconds.
+            val = moment(new Date(val)).format('YYYY-MM-DDTHH:mm:ss');
+        }
+        if (!isNaN((new Date(val)).getTime())) {
+            val = moment(new Date(val), pattern);
+        } else {
+            val = moment(val, pattern);
+        }
+        val = val.toDate();
     }
 
     if (moment(val, pattern).isValid()) {
