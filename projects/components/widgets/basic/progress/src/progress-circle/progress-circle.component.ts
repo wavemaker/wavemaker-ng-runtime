@@ -79,6 +79,14 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
         this.options = Object.assign(this.circleRef.options, this.options);
     }
 
+    getDefualtOptions() {
+        return this.options;
+    }
+
+    getLib() {
+        return 'ng-circle-progress';
+    }
+
     overrideDefaults(options) {
         _.extend(this.options, options);
     }
