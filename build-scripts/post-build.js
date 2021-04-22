@@ -192,6 +192,7 @@ const addScriptForWMStylesPath = () => {
                 }
             }
         };
+        addScriptForWMStylesPath();
         await writeFile(`./dist/index.html`, $.html());
         generateHashForScripts();
     }
