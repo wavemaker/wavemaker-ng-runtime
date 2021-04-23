@@ -40,7 +40,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     protected match: string;
     protected dateformat: string;
-    protected groupedData: any[];
+    public groupedData: any[];
 
     protected _modelByKey: any;
     public _modelByValue: any;

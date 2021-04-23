@@ -2,7 +2,7 @@ import { extractType, DataType, DEFAULT_FORMATS, $parseEvent, $watch, findValueO
 
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 
-declare const window, _, $, moment;
+declare const window, _, $, moment, he;
 
 const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};
 
@@ -844,5 +844,5 @@ export const decodeData = (responseContent) => {
 };
 
 function htmlDecode(input) {
-    return $('<div />').html(input).text();
+    return he.unescape(input);
 }

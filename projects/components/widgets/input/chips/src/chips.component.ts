@@ -91,7 +91,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }, 150);
 
         const datasetSubscription = this.dataset$.subscribe(() => {
-            this.searchComponent.dataset = this.dataset;
+            this.searchComponent.dataset = this.dataset
+            this.searchComponent.datasetItems = this.datasetItems;
+            this.searchComponent.groupedData = (this as any).getGroupedData();
             // clearing the last results when dataset is reassigned
             (this.searchComponent as any)._lastResult = undefined;
             this.nextItemIndex = this.datasetItems.length;
@@ -650,6 +652,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
         if (key === 'matchmode') {
             this.searchComponent.matchmode = this.matchmode;
+        }
+        if (key === 'groupby') {
+            this.searchComponent.groupby = this.groupby;
         }
         if (key === 'enablereorder') {
             if (this.$element.hasClass('ui-sortable')) {

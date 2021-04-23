@@ -42,6 +42,8 @@ export {
     isIpod,
     isIpad,
     isIos,
+    isLargeTabletLandscape,
+    isLargeTabletPortrait,
     isMobile,
     isMobileApp,
     getAndroidVersion,

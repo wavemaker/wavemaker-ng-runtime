@@ -5,13 +5,14 @@
         <span [title]="model.label" [innerHtml]="highlight(match, query) || model.label"></span>
     </a>
     <!-- Custom partial template -->
-    <a *ngIf="content" class="customTemplate" partial-container-target>
+    <a *ngIf="content" class="customTemplate" partialContainer [wmItemTemplate]="content" [userComponentParams]="match.item">
+        <div partial-container-target></div>
     </a>
 </ng-template>
 
 <ng-template #customListTemplate let-matches="matches" let-itemTemplate="itemTemplate" let-query="query">
     <ul #ulElement class="app-search dropdown-menu" scrollable>
-        <li #liElements *ngFor="let match of matches" [wmItemTemplate]="content" [userComponentParams]="match.item"  partialContainer [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match), 'list-group-header': match && match.isHeader()}"
+        <li #liElements *ngFor="let match of matches" [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match), 'list-group-header': match && match.isHeader()}"
             (mouseenter)="typeaheadContainer.selectActive(match);"
             (click)="typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; notifySubscriber()">
             <!-- itemTemplate comes from the <input> -->
@@ -57,7 +58,7 @@
            (typeaheadLoading)="_loadingItems"
            (typeaheadOnSelect)="typeaheadOnSelect($event)"
            typeaheadOptionField="label"
-           typeaheadGroupField="groupby"
+           [typeaheadGroupField]="groupby ? 'groupby' : null"
            [typeaheadAsync]="true"
            [typeaheadScrollable]="true"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
@@ -93,7 +94,7 @@
            (typeaheadLoading)="_loadingItems"
            (typeaheadOnSelect)="typeaheadOnSelect($event)"
            typeaheadOptionField="label"
-           typeaheadGroupField="groupby"
+           [typeaheadGroupField]="groupby ? 'groupby' : null"
            [typeaheadAsync]="true"
            [typeaheadScrollable]="true"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"

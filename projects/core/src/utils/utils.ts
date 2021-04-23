@@ -24,6 +24,7 @@ const REGEX = {
     IPHONE: /iPhone/i,
     IPOD: /iPod/i,
     IPAD: /iPad/i,
+    MAC: /Mac/i,
     ANDROID_TABLET: /android|android 3.0|xoom|sch-i800|playbook|tablet|kindle/i,
     MOBILE: /Mobile/i,
     WINDOWS: /Windows Phone/i,
@@ -78,8 +79,15 @@ export const isAndroidTablet = () => REGEX.ANDROID_TABLET.test(userAgent) && !((
 
 export const isIphone = () => REGEX.IPHONE.test(userAgent);
 export const isIpod = () => REGEX.IPOD.test(userAgent);
-export const isIpad = () => REGEX.IPAD.test(userAgent);
+export const isIpad = () => {
+    return REGEX.IPAD.test(userAgent) || (window.navigator.maxTouchPoints && window.navigator.maxTouchPoints > 2 && REGEX.MAC.test(window.navigator.platform));
+};
+
 export const isIos = () => isIphone() || isIpod() || isIpad();
+
+export const isLargeTabletLandscape = () => window.matchMedia("only screen and (min-device-width : 1366px) and (max-device-width : 1366px) and (min-device-height : 1024px) and (max-device-height : 1024px) and (min-width: 1366px) and (max-width: 1366px)").matches;
+
+export const isLargeTabletPortrait = () => window.matchMedia("only screen and (min-device-width : 1024px) and (max-device-width : 1024px) and (min-device-height : 1366px) and (max-device-height : 1366px) and (min-width: 1024px) and (max-width: 1024px)").matches;
 
 export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('#wm-mobile-display:visible').length > 0;
 
@@ -581,9 +589,9 @@ export const scrollToElement = (element) => {
         iScroll.scrollTo(0, to);
     } else {
         window.scroll({
-            top: formPosition, 
-            left: 0, 
-            behavior: 'smooth' 
+            top: formPosition,
+            left: 0,
+            behavior: 'smooth'
         });
     }
 }
@@ -670,8 +678,11 @@ export const getValidDateObject = (val, options?) => {
     const pattern = isMobile() ? (_.get(options, 'pattern') ||  'YYYY/MM/DD HH:mm:ss') : (momentPattern(_.get(options, 'pattern')) || '');
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        // Fix for WMS-19601, invalid date is returned on date selection.
-        val = moment(val, pattern).toDate();
+       const newValue = moment(val, pattern);
+       if (newValue.isValid()) {
+            // Fix for WMS-19601, invalid date is returned on date selection.
+            val = newValue.toDate();
+       }
     }
 
     if (moment(val, pattern).isValid()) {

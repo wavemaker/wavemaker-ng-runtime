@@ -26,7 +26,7 @@ interface IProviderInfo {
 const OVERRIDES = {
     'accessroles': '*accessroles',
     'ng-if': '*ngIf',
-    'showindevice': 'showInDevice',
+    'showindevice': '*showInDevice',
     'ng-class': '[ngClass]',
     'data-ng-class': '[ngClass]',
     'data-ng-src': 'src',
@@ -100,7 +100,7 @@ const processAttr = attr => {
          * since accessroles is a structural directive, it will be transpiled to [accessroles]
          * hence, the value against it should be a computed string
          */
-        if (attr.name === 'accessroles') {
+        if (attr.name === 'accessroles' || attr.name === 'showindevice') {
             return [overridden, `'${value}'`];
         }
         return [overridden, quoteAttr(value)];
@@ -169,8 +169,19 @@ export const getFormMarkupAttr = attrs => {
 
 const getAttrMap = attrs => {
     const attrMap = new Map<string, string>();
+    /* since there can't be more than one structural directive for an element,
+       the priority order is accessroles > showindevice > deferload */
+    const accessRolesExist = attrs.filter(function(attribute) {
+        return attribute.name === 'accessroles'
+    }).length;
+    const showInDeviceExists = attrs.filter(function(attribute) {
+        return attribute.name === 'showindevice'
+    }).length;
     attrs.forEach(attr => {
-        const [attrName, attrValue] = processAttr(attr);
+        let [attrName, attrValue] = processAttr(attr);
+        if (((attrName === OVERRIDES['showindevice'] || attrName === 'deferload') && accessRolesExist) || (attrName === 'deferload' && showInDeviceExists)) {
+            return;
+        }
         attrMap.set(attrName, attrValue);
     });
 
