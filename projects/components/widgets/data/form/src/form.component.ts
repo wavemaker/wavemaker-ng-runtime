@@ -576,8 +576,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     // Event callbacks on success/error
-    onResultCb(data, status, event?) {
-        const params = {$event: event, $data: data, $operation: this.operationType};
+    onResultCb(data, status, event?, xhr?) {
+        const params = {$event: event, $data: data, $operation: this.operationType, xhrObj: xhr};
         // whether service call success or failure call this method
         this.invokeEventCallback('result', params);
         if (status) {
@@ -590,10 +590,13 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     // Display or hide the inline message/ toaster
-    toggleMessage(show: boolean, msg?: string, type?: string, header?: string) {
+    toggleMessage(show: boolean, msg?: string, type?: string, header?: string, userTriggered?) {
         let template;
         if (show && msg) {
             template = (type === 'error' && this.errormessage) ? this.errormessage : msg;
+            if (userTriggered) {
+                template = msg;
+            }
             if (this.messagelayout === 'Inline') {
                 template = this.checkAppServiceErrorMsg(type) || template;
                 this.statusMessage = {'caption': template || '', type: type};
@@ -619,6 +622,11 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             return notificationAction.getMessage();
         }
         return;
+    }
+
+    // User can call this method to set any custom message on Form onSuccess/onError/any other event
+    setMessage(msg, type) {
+        this.toggleMessage(true, msg, type, undefined, true);
     }
 
     // Hide the inline message/ toaster
@@ -948,7 +956,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                             'result': result,
                             'status': true,
                             'message': this.postmessage,
-                            'type': 'success'
+                            'type': 'success',
+                            'xhr': data
                         };
                     }, (error) => {
                         template = this.errormessage || error.error || error;
@@ -957,14 +966,15 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                             'result': _.get(error, 'error') || error,
                             'status': false,
                             'message': template,
-                            'type': 'error'
+                            'type': 'error',
+                            'xhr':  _.get(error, 'details')
                         };
                     }).then(response => {
                     if ((response.type === 'error' && !this.onError) || (response.type === 'success' && !this.onSuccess)) {
                         this.toggleMessage(true, response.message, response.type);
                     }
                     this.invokeEventCallback('submit', getParams());
-                    this.onResultCb(response.result, response.status, $event);
+                    this.onResultCb(response.result, response.status, $event, response['xhr']);
                 });
             } else {
                 this.invokeEventCallback('submit', getParams());
