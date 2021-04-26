@@ -281,18 +281,18 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
     // select next tab relative to the current active tab
-    public next() {
+    public next($event?: Event) {
         const pane = this.getSelectableTabAfterIndex(this.getActiveTabIndex());
         if (pane) {
-            pane.select();
+            pane.select($event);
         }
     }
 
     // select prev tab relative to the current active tab
-    public prev() {
+    public prev($event?: Event) {
         const pane = this.getSelectableTabBeforeIndex(this.getActiveTabIndex());
         if (pane) {
-            pane.select();
+            pane.select($event);
         }
     }
 
