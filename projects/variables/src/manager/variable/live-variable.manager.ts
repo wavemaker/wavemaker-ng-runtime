@@ -136,13 +136,9 @@ export class LiveVariableManager extends BaseVariableManager {
             }
         };
         const errorHandler = (error, reject) => {
-            const errMsg = httpService.getErrMessage(error);
             // notify variable error
             this.notifyInflight(variable, false);
-            reject({
-                error: errMsg,
-                details: error
-            });
+            reject(error);
         };
         return new Promise((resolve, reject) => {
             let reqParams = generateConnectionParams(params, dbOperation);
