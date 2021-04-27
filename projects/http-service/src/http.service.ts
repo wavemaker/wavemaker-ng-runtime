@@ -97,7 +97,7 @@ export class HttpServiceImpl extends AbstractHttpService {
         if (errorDetails && errorDetails.errors) {
             errMsg = this.parseErrors(errorDetails.errors) || errMsg || 'Service Call Failed';
         } else {
-            errMsg = errMsg || 'Service Call Failed';
+            errMsg = errMsg || errorDetails || 'Service Call Failed';
         }
         return errMsg;
     }
