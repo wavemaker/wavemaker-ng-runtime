@@ -570,13 +570,14 @@ window.requestAnimationFrame = (function () {
                 });
             });
         });
+        
         setTimeout(function () {
             window.requestAnimationFrame(function () {
                 if (metaData.$D === metaData.bounds.lower) {
-                    settings.onLower.call($el);
+                    settings.onLower.call($el, e);
                 }
                 else if (metaData.$D === metaData.bounds.upper) {
-                    settings.onUpper.call($el);
+                    settings.onUpper.call($el, e);
                 }
                 settings.onAnimation(e, distanceMoved);
             });

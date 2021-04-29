@@ -2,7 +2,7 @@
        [ngClass]="{'step-hidden': step === 0}"
        focus-target
        role="input"
-       type="number"
+       [type]="type"
        [attr.name]="name"
        [(ngModel)]="datavalue"
        [ngModelOptions]="ngModelOptions"

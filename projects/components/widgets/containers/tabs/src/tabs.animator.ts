@@ -65,13 +65,13 @@ export class TabsAnimator extends SwipeAnimation {
         setCSS(this._$el[0], 'transform', `translate3d(${-1 *  activeTabIndex / this._noOfTabs * 100}%, 0, 0)`);
     }
 
-    public onUpper() {
-        this.tabs.prev();
+    public onUpper($event?: Event) {
+        this.tabs.prev($event);
         $appDigest();
     }
 
-    public onLower() {
-        this.tabs.next();
+    public onLower($event?: Event) {
+        this.tabs.next($event);
         $appDigest();
     }
 
