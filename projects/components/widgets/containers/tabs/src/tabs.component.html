@@ -13,3 +13,7 @@
 <div class="tab-content" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
     <ng-content ngProjectAs="div[wmTabPane]"></ng-content>
 </div>
+<div class="tab-content" *ngIf="type === 'dynamic'" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
+    <div *ngIf="!fieldDefs">{{nodatamessage}}</div>
+    <ng-content select="div[wmRepeatTemplate]"></ng-content>
+</div>
