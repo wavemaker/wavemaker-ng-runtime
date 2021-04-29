@@ -1,7 +1,14 @@
 import { AfterContentInit, AfterViewInit, Attribute, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
 
 import { addClass, appendNode, DynamicComponentRefProvider, noop, removeClass, StatePersistence } from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
+import {
+    APPLY_STYLES_TYPE,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    styler,
+    StylableComponent,
+    createArrayFrom
+} from '@wm/components/base';
 
 import { TabsAnimator } from './tabs.animator';
 import { registerProps } from './tabs.props';
@@ -18,6 +25,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Component({
     selector: 'div[wmTabs]',
     templateUrl: './tabs.component.html',
+    exportAs: 'wmTabs',
     providers: [
         provideAsWidgetRef(TabsComponent)
     ]
@@ -42,6 +50,9 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     private _dynamicContext;
     private dynamicPaneIndex;
     public dynamicTabs;
+    public fieldDefs;
+    public type;
+    public nodatamessage;
 
     @ContentChildren(TabPaneComponent) panes: QueryList<TabPaneComponent>;
 
@@ -327,10 +338,16 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         }
     }
 
+    private onDataChange(newVal) {
+        this.fieldDefs = createArrayFrom(newVal);
+    }
+
     onPropertyChange(key: string, nv: any, ov) {
 
         if (key === 'defaultpaneindex') {
             this.defaultpaneindex = nv;
+        } else if (key === 'dataset') {
+            this.onDataChange(nv);
         } else if (key === 'statehandler') {
             this.isPageLoadCall = true;
             const widgetState = this.statePersistence.getWidgetState(this);
@@ -376,6 +393,11 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.promiseResolverFn();
         super.ngAfterContentInit();
         this.setTabsPosition();
+        this.panes.changes.subscribe( slides => {
+            if (this.panes.length) {
+                this.selectDefaultPaneByIndex(this.defaultpaneindex || 0);
+            }
+        });
     }
 
     ngAfterViewInit() {

@@ -69,6 +69,7 @@ export * from './widgets/common/progress-bar/progress-bar.build';
 export * from './widgets/common/progress-bar/progress-circle/progress-circle.build';
 export * from './widgets/common/radioset/radioset.build';
 export * from './widgets/common/rating/rating.build';
+export * from './widgets/common/repeat-template/repeat-template.build';
 export * from './widgets/common/rich-text-editor/rich-text-editor.build';
 export * from './widgets/common/right-panel/right-panel.build';
 export * from './widgets/common/search/search.build';
