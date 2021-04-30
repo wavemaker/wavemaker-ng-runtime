@@ -67,8 +67,8 @@ export class DynamicComponentRefProviderService {
     public async getComponentFactoryRef(selector: string, markup: string, options: any = {}): Promise<any> {
         // check in the cache.
         let componentFactoryRef = componentFactoryRefCache.get(selector);
-
-        markup = options.transpile ? transpile(markup).markup : markup;
+       
+        markup = options.transpile ? transpile(markup, options).markup : markup;
         if (!componentFactoryRef || options.noCache) {
             const componentDef = getDynamicComponent(selector, markup, options.styles);
             const moduleDef = getDynamicModule(componentDef);

@@ -1408,13 +1408,25 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this._dynamicContext = Object.create(this.viewParent);
             this._dynamicContext[this.getAttr('wmTable')] = this;
         }
+        
+        let attributes = (<any>this).$attrs;
+        // For table node, assigning parent provide map to the child, as child requires some parent provide attrs.
+        const provider = new Map();
+        provider.set('table_reference', attributes.get('table_reference'));
+        provider.set('name', attributes.get('name') + attributes.get('table_reference'));
+        provider.set('filtermode', attributes.get('filtermode'));
+        provider.set('errorstyle', attributes.get('errorstyle'));
+        provider.set('editmode', attributes.get('editmode'));
+        provider.set('shownewrow', attributes.get('shownewrow'));
         this.noOfColumns = columns.length;
         const componentFactoryRef = await this.dynamicComponentProvider.getComponentFactoryRef(
             'app-table-dynamic-' + this.widgetId,
             tmpl,
             {
                 noCache: true,
-                transpile: true
+                transpile: true,
+                isDynamicNode: this.isdynamictable,
+                provide: provider
             });
         const component = this.dynamicTableRef.createComponent(componentFactoryRef, 0, this.inj);
         extendProto(component.instance, this._dynamicContext);

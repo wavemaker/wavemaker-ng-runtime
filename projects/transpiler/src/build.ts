@@ -353,12 +353,6 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
                     nodeName: node.name,
                     provide: _.isFunction(nodeDef.provide) ? nodeDef.provide(attrMap, shared, ...requiredProviders) : nodeDef.provide
                 };
-                // For table node, assigning parent provide map to the child, as child requires some parent provide attrs.
-                if (node.name === 'wm-table') {
-                    const tableColNodeDefn = registry.get('wm-table-column');
-                    tableColNodeDefn[_.find(node.attrs, (el) => el.name === 'name').value + provideInfo.provide.get('table_reference')] = provideInfo.provide;
-                    registry.set('wm-table-column', tableColNodeDefn);
-                }
                 providers.push(provideInfo);
             }
         } else {
@@ -462,7 +456,7 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
     return markup;
 };
 
-export const transpile = (markup: string = '') => {
+export const transpile = (markup: string = '', options: any) => {
     if (!markup.length) {
         return;
     }
@@ -473,13 +467,29 @@ export const transpile = (markup: string = '') => {
         return;
     }
 
-    let output = '';
+    let output = ''; 
     for (const node of nodes.rootNodes) {
+        
+        let  provide;
+        if(options && options.isDynamicNode){
+            let nodeName = (<any>node).name;
+                nodeName = nodeName ? getNodeName((<any>node).name) : undefined;
+            let nodeDef = registry.get(nodeName);
+            provide = [{
+                nodeName: nodeName,
+                provide: options.provide,
+  
+            }];
+            if(nodeDef && !nodeDef[options.provide.get('name')]){
+                nodeDef[options.provide.get('name')] = options.provide;
+                registry.set(nodeName, nodeDef);
+            }         
+        }
         output += processNode(node, (imports: ImportDef[]) => {
             if (imports) {
                 requiredWMComponents = requiredWMComponents.concat(imports);
             }
-        });
+        }, provide);
     }
     requiredWMComponents = _.uniqWith(requiredWMComponents, _.isEqual);
     requiredWMComponents = _.sortBy(requiredWMComponents, ['from', 'name']);
