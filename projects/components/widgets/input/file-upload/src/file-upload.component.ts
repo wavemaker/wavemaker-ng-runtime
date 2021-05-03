@@ -1,4 +1,4 @@
-import { AfterViewInit, Attribute, Component, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Attribute, Component, Injector, OnInit, OnDestroy } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
@@ -23,7 +23,7 @@ const WIDGET_CONFIG = {
     ]
 })
 
-export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit {
+export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
     selectedFiles: any = [];
     selectedFolders: any = [];
@@ -64,6 +64,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         length: '',
         status: ''
     };
+    highlightDropArea;
     /*_hasOnSuccessEvt = WM.isDefined(attrs.onSuccess);
      _hasOnErrorEvt = WM.isDefined(attrs.onError);*/
 
@@ -188,9 +189,19 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     }
 
     onFileElemClick($event) {
+        this.highlightDropArea = true;
+
         //The file upload widget value should be set to null to reupload the same file.
         this.$element.find('.file-input')[0].value = null;
         $event.stopPropagation()
+
+        // when the filepicker is not there on the window, remove the dropzone highlight
+        window.addEventListener('focus', this.disableDropZone.bind(this));
+    }
+
+    disableDropZone() {
+        this.highlightDropArea = false;
+        window.removeEventListener('focus', this.disableDropZone);
     }
 
     /*this function to append upload status dom elements to widget */
@@ -275,6 +286,15 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         }
     }
 
+    dragOverCb(e) {
+        e.preventDefault();
+        $(this.nativeElement).find('#dropzone').addClass('highlight-drop-box');
+    }
+
+    dropCb() {
+        $(this.nativeElement).find('#dropzone').removeClass('highlight-drop-box');
+    }
+
     // this function triggers file select window, when clicked anywhere on the file upload widget in case of multi select
     triggerFileSelect() {
         this.$element.find('.file-input').trigger('click');
@@ -317,9 +337,18 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
 
     ngOnInit() {
         super.ngOnInit();
+        // adding, dragover and drop on the document as when file is dragged on to the page highlight the dropzones and remove highlight on file drop
+        document.addEventListener('dragover', this.dragOverCb.bind(this));
+        document.addEventListener('drop', this.dropCb.bind(this));
     }
 
     ngAfterViewInit() {
         styler( this.nativeElement.querySelector('.app-button, .drop-box'), this);
+    }
+
+    ngOnDestroy() {
+        document.removeEventListener('dragover', this.dragOverCb);
+        document.removeEventListener('drop', this.dropCb);
+        super.ngOnDestroy();
     }
 }
