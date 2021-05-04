@@ -40,7 +40,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     // For select widget, display placeholder only on focus else remove the text of the option selected.
     private checkForSelectPlaceholder() {
         if ($(this.nativeEl).find('select option:selected').text() && !$(this.nativeEl).find('select').is(':focus') &&
-            !$(this.inputEl.closest('[widget-id]')).attr('datavalue') ) {
+            !$(this.inputEl.closest('[widget-id]')).attr('datavalue')) {
             $(this.nativeEl).find('select option:selected').text('');
         }
     }
@@ -61,7 +61,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         // check for formdata/bindformdata attribute to see if any default value is binded to the form 
         // check for select tag with multiple attribute enabled 
 
-        if (this.inputEl.val() || $(this.inputEl.closest('[widget-id]')).attr('datavalue') || $(this.inputEl.parent('[widget-id]')).attr('datavalue.bind') || this.nativeEl.getAttribute('defaultvalue')
+        if ((this.inputEl.val() && !this.inputEl.is('select')) || $(this.inputEl.closest('[widget-id]')).attr('datavalue') || $(this.inputEl.parent('[widget-id]')).attr('datavalue.bind') || this.nativeEl.getAttribute('defaultvalue')
             || this.nativeEl.getAttribute('displayformat') || $(this.nativeEl).find('select option:selected').text() || $(this.nativeEl).find('select').attr('multiple')) {
             this.compositeEle.classList.add('float-active');
         }
