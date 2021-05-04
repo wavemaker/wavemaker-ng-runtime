@@ -11,5 +11,5 @@
     </li>
 </ul>
 <div class="tab-content" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
-    <ng-content select="div[wmTabPane]"></ng-content>
+    <ng-content ngProjectAs="div[wmTabPane]"></ng-content>
 </div>
