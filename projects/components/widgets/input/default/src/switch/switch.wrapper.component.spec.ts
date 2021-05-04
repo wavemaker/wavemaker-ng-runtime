@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
-import { App } from '@wm/core';
+import { App, AppDefaults } from '@wm/core';
 import { ToDatePipe } from '@wm/components/base';
 
 let mockApp = {};
@@ -25,7 +25,8 @@ const testModuleDef: ITestModuleDef = {
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
-        { provide: DatePipe, useClass: DatePipe }
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AppDefaults, useClass: AppDefaults }
     ]
 };
 
