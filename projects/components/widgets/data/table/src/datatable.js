@@ -1965,6 +1965,7 @@ $.widget('wm.datatable', {
     hideRowEditMode: function ($row) {
         var $editableElements = $row.find('td.cell-editing'),
             $editButton = $row.find('.edit-row-button'),
+            $deleteButton = $row.find('.delete-row-button'),
             $cancelButton = $row.find('.cancel-edit-row-button'),
             $saveButton = $row.find('.save-edit-row-button'),
             self = this;
@@ -1986,6 +1987,7 @@ $.widget('wm.datatable', {
                 $el.html(self.options.getCustomExpression(value.fieldName, value.rowIndex));
             }
         });
+        $deleteButton.show();
         $editButton.removeClass('hidden');
         $cancelButton.addClass('hidden');
         $saveButton.addClass('hidden');
