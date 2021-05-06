@@ -11,7 +11,7 @@
 </ng-template>
 
 <ng-template #customListTemplate let-matches="matches" let-itemTemplate="itemTemplate" let-query="query">
-    <ul #ulElement class="app-search dropdown-menu" scrollable>
+    <ul #ulElement class="app-search search-listoptions dropdown-menu" scrollable>
         <li #liElements *ngFor="let match of matches" [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match), 'list-group-header': match && match.isHeader()}"
             (mouseenter)="typeaheadContainer.selectActive(match);"
             (click)="match && !match.isHeader() && typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; notifySubscriber();">
