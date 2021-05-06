@@ -79,7 +79,7 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
         this.options = Object.assign(this.circleRef.options, this.options);
     }
 
-    getDefualtOptions() {
+    getDefaultOptions() {
         return this.options;
     }
 
