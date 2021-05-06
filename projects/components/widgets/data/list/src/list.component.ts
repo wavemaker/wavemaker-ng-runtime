@@ -1136,7 +1136,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         super.ngOnInit();
         this.handleHeaderClick = noop;
         setTimeout(() => {
-            this.debouncedFetchNextDatasetOnScroll = this.paginationService.debouncedFetchNextDatasetOnScroll(this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+            this.debouncedFetchNextDatasetOnScroll = this.paginationService.debouncedFetchNextDatasetOnScroll(this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME, this);
         }, 0);
         this._items = [];
         this.fieldDefs = [];
