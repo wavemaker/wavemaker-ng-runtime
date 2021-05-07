@@ -37,7 +37,7 @@
            focus-target
            container="body"
            [disabled]="disabled"
-           autocomplete="new-password"
+           autocomplete="off"
            [(ngModel)]="query"
            [readonly]="readonly"
            [disabled]="disabled"
@@ -75,7 +75,7 @@
            focus-target
            [container]="containerTarget || 'body'"
            [disabled]="disabled"
-           autocomplete="new-password"
+           autocomplete="off"
            [(ngModel)]="query"
            [readonly]="readonly"
            [typeahead]="typeaheadDataSource"
