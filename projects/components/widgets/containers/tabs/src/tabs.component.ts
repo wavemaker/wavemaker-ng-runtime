@@ -192,7 +192,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
         let headerElement;
         // invoke deselect event callback on the preset active tab
-        if (this.activeTab) {
+        if (!_.isEmpty(this.activeTab)) {
             this.activeTab.deselect();
         }
 
