@@ -24,6 +24,7 @@ export class PaginationService {
         } else if (!currentPage && !dataNavigator.isFirstPage() && newVal) {
             // In case of dialog, when dialog is opened fetch the records from first page 
             dataNavigator.navigatePage('first');
+            newVal = [];
         } else if (fieldDefs.length / pagesize <= dataNavigator.pageCount) {
             let itemsLength,
                 itemsToPush = [];
