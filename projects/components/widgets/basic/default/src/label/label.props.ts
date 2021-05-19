@@ -10,7 +10,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['conditionalclass', PROP_ANY],
                 ['conditionalstyle', PROP_ANY],
-                ['hint', PROP_STRING],
+                ['hint', {value: 'Label', ...PROP_STRING}],
                 ['name', PROP_STRING],
                 ['required', PROP_BOOLEAN],
                 ['show', {value: true, ...PROP_BOOLEAN}]

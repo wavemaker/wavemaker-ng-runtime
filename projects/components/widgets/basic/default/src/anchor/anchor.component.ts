@@ -114,6 +114,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     init() {
         if (this.hasNavigationToCurrentPageExpr) {
             addClass(this.nativeElement, 'active');
+            setAttr(this.nativeElement, 'aria-current', this.caption);
         }
         if (this.hyperlink && getRouteNameFromLink(this.hyperlink) === `/${this.app.activePageName}`
             || this.hasNavigationToCurrentPageExpr) {
@@ -128,7 +129,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
 
     ngOnAttach() {
         this.init();
-        super.ngOnAttach(); 
+        super.ngOnAttach();
     }
 
     public ngOnDestroy() {

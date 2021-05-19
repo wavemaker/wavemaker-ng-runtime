@@ -1,4 +1,4 @@
-<div *ngIf="!mobileCalendar" #calendar></div>
+<div *ngIf="!mobileCalendar" #calendar [attr.aria-label]="view || 'month'"></div>
 
 <datepicker *ngIf="mobileCalendar" #datepicker [(ngModel)]="proxyModel"
             [initDate]="getDefaultDate()"
@@ -6,6 +6,7 @@
             [datepickerMode]="view"
             [showWeeks]="false"
             [customClass]="dayClass"
+            [attr.aria-label]="view || 'month'"
             (selectionDone)="onValueChange($event)">
 </datepicker>
 

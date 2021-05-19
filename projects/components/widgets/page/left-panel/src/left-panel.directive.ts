@@ -98,6 +98,12 @@ export class LeftPanelDirective extends StylableComponent {
         return this.expanded;
     }
 
+    ngOnInit() {
+        super.ngOnInit();
+        if(!this.widget.hint) {
+            this.widget.hint = this.appLocale.LABEL_LEFT_NAVIGATION;
+        }
+    }
     public onPropertyChange(key, nv, ov) {
         switch (key) {
             case 'animation' :

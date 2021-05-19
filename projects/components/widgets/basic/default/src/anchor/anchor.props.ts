@@ -12,7 +12,7 @@ export const registerProps = () => {
                 ['conditionalclass', PROP_ANY],
                 ['conditionalstyle', PROP_ANY],
                 ['encodeurl', PROP_BOOLEAN],
-                ['hint', PROP_STRING],
+                ['hint', {value: 'Link', ...PROP_STRING}],
                 ['hyperlink', {value: '', ...PROP_STRING}],
                 ['iconclass', PROP_STRING],
                 ['iconheight', PROP_STRING],

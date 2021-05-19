@@ -80,5 +80,8 @@ export class PictureDirective extends StylableComponent implements OnInit {
     ngOnInit() {
         this.setImgSource();
         super.ngOnInit();
+        if (!this.widget.hint){
+            this.widget.hint = this.appLocale.LABEL_PICTURE_PLACEHOLDER;
+        }
     }
 }

@@ -20,4 +20,10 @@ export class TopNavDirective extends StylableComponent {
 
         styler(this.nativeElement, this);
     }
+    ngOnInit() {
+        super.ngOnInit();
+        if(!this.widget.hint) {
+            this.widget.hint = this.appLocale.LABEL_TOP_NAVIGATION;
+        }
+    }
 }

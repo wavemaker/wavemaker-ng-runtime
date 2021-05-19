@@ -1,6 +1,6 @@
 <img data-identifier="img" alt="button image" class="button-image-icon" [src]="iconurl | image" *ngIf="iconurl" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
 <i class="app-icon {{iconclass}}" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}" *ngIf="iconclass"></i>
 <span class="sr-only" *ngIf="iconclass">{{caption | trustAs:'html'}} {{appLocale.LABEL_ICON}}</span>
-<span class="btn-caption" [innerHTML]="caption | trustAs:'html'"></span>
+<span class="btn-caption" [innerHTML]="caption | trustAs:'html'" role="gridcell"></span>
 <ng-content select=".caret"></ng-content>
 <span *ngIf="badgevalue" class="badge pull-right" [textContent]="badgevalue"></span>

@@ -1,4 +1,4 @@
-<div class="spinner-message" aria-label="loading gif">
+<div class="spinner-message" [attr.aria-label]="caption || 'Loading...'">
     <span class="spinner-image animated infinite" [ngClass]="animation" aria-hidden="true"
         [ngStyle]="{width: imagewidth, height: imageheight, backgroundImage: 'url(' + picture + ')', backgroundSize: imagewidth}"
         *ngIf="type === 'image'"></span>

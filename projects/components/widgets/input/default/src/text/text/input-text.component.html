@@ -3,6 +3,8 @@
        role="input"
        [type]="type"
        [attr.name]="name"
+       [attr.aria-label]="hint"
+       [attr.aria-autocomplete]="autocomplete ? 'on' : 'off'"
        [(ngModel)]="datavalue"
        [imask]="mask"
        [unmask]="true"

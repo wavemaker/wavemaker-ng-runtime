@@ -11,7 +11,7 @@ export const checkboxProps = new Map(
         ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
-        ['hint', PROP_STRING],
+        ['hint', {value: 'Label', ...PROP_STRING}],
         ['name', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],

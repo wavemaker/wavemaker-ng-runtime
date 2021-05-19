@@ -25,6 +25,13 @@ export class RightPanelDirective extends StylableComponent {
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 
+    ngOnInit() {
+        super.ngOnInit();
+        if(!this.widget.hint) {
+            this.widget.hint = this.appLocale.LABEL_RIGHT_NAVIGATION;
+        }
+    }
+
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'columnwidth') {
             switchClass(this.nativeElement, `col-sm-${nv}`, ov ? ` col-sm-${ov}` : '');

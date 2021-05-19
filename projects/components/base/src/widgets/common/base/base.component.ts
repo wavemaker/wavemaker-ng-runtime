@@ -336,8 +336,13 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             this.nativeElement.hidden = !nv;
         } else if (key === 'hint') {
             setAttr(this.nativeElement, 'title', nv);
+            setAttr(this.nativeElement, 'aria-label', nv);
         } else if (key === 'class') {
             switchClass(this.nativeElement, nv, ov);
+            let result = nv.match(/(\W|^)(h[0-6])(?=\s|$)/);
+            if (result) {
+                setAttr(this.nativeElement, 'aria-label', 'heading ' + result[0].split('')[2]);
+            }
         } else if (key === 'name' || key === 'tabindex') {
             setAttr(this.nativeElement, key, nv);
             if (key === 'name' && nv) {
