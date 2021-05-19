@@ -259,7 +259,7 @@ export class I18nServiceImpl extends AbstractI18nService {
             _.forEach(_acceptLang, function(lang) {
                 let matchedLang = _.find(_supportedLang, (val) => lang.startsWith(val));
                 if (matchedLang) {
-                    supportedLang.push(lang);
+                    supportedLang.push(matchedLang);
                 }
              })
             _appSupportedLang = supportedLang[0];
