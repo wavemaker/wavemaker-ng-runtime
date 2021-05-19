@@ -7,7 +7,8 @@ export const registerProps = () => {
             [
                 ['name', PROP_STRING],
                 ['class', PROP_STRING],
-                ['content', PROP_STRING]
+                ['content', PROP_STRING],
+                ['hint', {value: 'Page header', ...PROP_STRING}]
             ]
         )
     );

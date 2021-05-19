@@ -5,6 +5,7 @@
         frameborder="0"
         [name]="name"
         [attr.src]="_iframesrc"
+        [attr.aria-label]="caption"
         seamless="seamless">
 </iframe>
 <div class="wm-content-info readonly-wrapper" *ngIf="showContentLoadError">

@@ -15,7 +15,7 @@
         </a>
     </li>
     <li class="pagecount disabled">
-        <a><input type="number" [disabled]="isDisableCurrent" [(ngModel)]="dn.currentPage"
+        <a><input type="number" [disabled]="isDisableCurrent" [(ngModel)]="dn.currentPage" [attr.aria-label]="'Page Navigation ' + dn.currentPage"
                   (keydown)="onKeyDown($event)" (change)="onModelChange($event)" class="form-control"/></a>
     </li>
     <li class="disabled">
@@ -59,6 +59,7 @@
 <pagination class="pagination basic" [ngClass]="navigationClass" *ngIf="navcontrols === 'Basic'"
             [itemsPerPage]="maxResults" [totalItems]="dataSize"
             [ngModel]="dn.currentPage" (pageChanged)="pageChanged($event)"
+            [attr.aria-label]="'Page Navigation ' + dn.currentPage"
             [boundaryLinks]="boundarylinks" [maxSize]="maxsize"
             [directionLinks]="directionlinks" previousText="." nextText="." firstText="." lastText="."></pagination>
 

@@ -11,7 +11,8 @@ export const registerProps = () => {
                 ['content', PROP_STRING],
                 ['gestures', {value: 'on', ... PROP_STRING}],
                 ['name', PROP_STRING],
-                ['xscolumnwidth', { value: 10, ...PROP_NUMBER}]
+                ['xscolumnwidth', { value: 10, ...PROP_NUMBER}],
+                ['hint', {value: 'Left navigation', ...PROP_STRING}]
             ]
         )
     );

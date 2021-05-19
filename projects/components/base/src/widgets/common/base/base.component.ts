@@ -360,6 +360,34 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             // WMS-19321: In IE, widget is in disabled state when disabled="false" attribute is present
             (nv === true) ? setAttr(this.nativeElement, 'disabled', 'true', true) : removeAttr(this.nativeElement, 'disabled', true);
         }
+
+        if (key === 'hint' || key === 'class') {
+            let headings = {
+                h1: 'heading 1',
+                h2: 'heading 2',
+                h3: 'heading 3',
+                h4: 'heading 4',
+                h5: 'heading 5',
+                h6: 'heading 6'
+            };
+            let classes = nv.split(' ');
+            let heading;
+            _.forEach(classes, function (cls) {
+                if (cls in headings) {
+                    heading = cls;
+                }
+            });
+            if (heading && key === 'class') {
+                for (let i=1; i<=6; i++) {
+                    if(_.endsWith(heading, i)) {
+                        setAttr(this.nativeElement, 'aria-label', 'heading ' + i);
+                    }
+                }
+            }
+            if (key !== 'class') {
+                setAttr(this.nativeElement, 'aria-label', nv);
+            }
+        }
     }
 
     /**

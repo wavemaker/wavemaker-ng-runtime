@@ -6,7 +6,8 @@ export const registerProps = () => {
         new Map(
             [
                 ['name', PROP_STRING],
-                ['content', PROP_STRING]
+                ['content', PROP_STRING],
+                ['hint', {value: 'Second level navigation', ...PROP_STRING}]
             ]
         )
     );

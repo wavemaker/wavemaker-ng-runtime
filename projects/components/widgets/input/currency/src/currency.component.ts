@@ -42,7 +42,8 @@ export class CurrencyComponent extends NumberLocale {
 
     constructor(inj: Injector,  private appDefaults: AppDefaults, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe) {
         super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe);
-        this.currencySymbol = CURRENCY_INFO[this.appDefaults.currencyCode || 'USD'].symbol;
+        this.currency = this.appDefaults.currencyCode || 'USD'
+        this.currencySymbol = CURRENCY_INFO[this.currency].symbol;
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {

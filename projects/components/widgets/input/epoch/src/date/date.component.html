@@ -1,5 +1,4 @@
     <input class="form-control app-textbox app-dateinput display-input"
-        aria-label="Select date"
         focus-target
         type="text"
         [name]="name"
@@ -14,9 +13,10 @@
         [readOnly]="isReadOnly"
         [attr.placeholder]="placeholder"
         [attr.accesskey]="shortcutkey"
+        [attr.aria-label]="datavalue ? 'Selected date' : 'Select date'"
         (change)="onDisplayDateChange($event)"
         (keydown)="onDisplayKeydown($event)">
- 
+
     <span class="input-group-btn">
         <button type="button"
             class="btn btn-default btn-time"

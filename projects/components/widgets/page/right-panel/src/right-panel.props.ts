@@ -8,7 +8,8 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['columnwidth', PROP_NUMBER],
                 ['content', PROP_STRING],
-                ['name', PROP_STRING]
+                ['name', PROP_STRING],
+                ['hint', {value: 'Right navigation', ...PROP_STRING}]
             ]
         )
     );

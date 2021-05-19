@@ -14,7 +14,7 @@ export const registerProps = () => {
                 ['contentanimation', PROP_STRING],
                 ['contentsource', {value: 'partial', ...PROP_STRING}],
                 ['encodeurl', PROP_BOOLEAN],
-                ['hint', PROP_STRING],
+                ['hint', {value: 'Link', ...PROP_STRING}],
                 ['hyperlink', PROP_STRING],
                 ['iconclass', PROP_STRING],
                 ['iconheight', PROP_STRING],

@@ -1,4 +1,4 @@
-<div class="panel-heading {{helpClass}}" *ngIf="showHeader" #panelHeading>
+<div class="panel-heading {{helpClass}}" aria-label="panel-header" *ngIf="showHeader" #panelHeading>
     <h3 class="panel-title">
         <a href="javascript:void(0)" class="panel-toggle" (click)="toggle($event)">
             <div class="pull-left">
@@ -33,7 +33,7 @@
         </div>
     </h3>
 </div>
-<div class="panel-content" [hidden]="!expanded" #panelContent>
+<div class="panel-content" aria-label="panel-content" [hidden]="!expanded" #panelContent>
     <!-- Todo Bandhavya - implement smooth scroll -->
     <div partial-container-target #panelBody [ngClass]="['panel-body', helpClass]">
         <ng-content></ng-content>
@@ -43,6 +43,6 @@
         <div class="panel-help-content" [innerHTML]="helptext | trustAs : 'html'"></div>
     </aside>
 </div>
-<div class="app-panel-footer panel-footer clearfix" [hidden]="hideFooter">
+<div class="app-panel-footer panel-footer clearfix" aria-label="panel-footer" [hidden]="hideFooter">
     <ng-content select="[wmPanelFooter]"></ng-content>
 </div>
