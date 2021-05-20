@@ -342,6 +342,25 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.fieldDefs = createArrayFrom(newVal);
     }
 
+    applyStatePersistence(state) {
+        this.isPageLoadCall = true;
+        const widgetState = this.statePersistence.getWidgetState(this);
+        if (state !== 'none' && widgetState) {
+            const paneToSelect: any = this.panes.filter(function(pane) {
+                return widgetState === pane.name;
+            });
+            if (!paneToSelect.length) {
+                console.warn('Tab pane name ' + widgetState + ' in State is incorrect. Falling back to the default pane');
+                setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
+            } else {
+                const index = this.getPaneIndexByRef(paneToSelect[0]);
+                setTimeout(() => this.selectDefaultPaneByIndex(index), 20);
+            }
+        } else {
+            setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
+        }
+    }
+
     onPropertyChange(key: string, nv: any, ov) {
 
         if (key === 'defaultpaneindex') {
@@ -349,22 +368,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         } else if (key === 'dataset') {
             this.onDataChange(nv);
         } else if (key === 'statehandler') {
-            this.isPageLoadCall = true;
-            const widgetState = this.statePersistence.getWidgetState(this);
-            if (nv !== 'none' && widgetState) {
-                const paneToSelect: any = this.panes.filter(function(pane) {
-                    return widgetState === pane.name;
-                });
-                if (!paneToSelect.length) {
-                    console.warn('Tab pane name ' + widgetState + ' in State is incorrect. Falling back to the default pane');
-                    setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
-                } else {
-                    const index = this.getPaneIndexByRef(paneToSelect[0]);
-                    setTimeout(() => this.selectDefaultPaneByIndex(index), 20);
-                }
-            } else {
-                setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
-            }
+            this.applyStatePersistence(nv);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -395,7 +399,13 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.setTabsPosition();
         this.panes.changes.subscribe( slides => {
             if (this.panes.length) {
-                this.selectDefaultPaneByIndex(this.defaultpaneindex || 0);
+                let counter = 1;
+                this.panes.toArray().forEach((pane) => {
+                    pane.name = `${pane.name}_${counter}`;
+                    counter++;
+                });
+                this.isPageLoadCall = false;
+                this.applyStatePersistence(this.statePersistence);
             }
         });
     }

@@ -217,30 +217,34 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         this.fieldDefs = createArrayFrom(newVal);
     }
 
+    applyStatePersistence(state) {
+        const widgetState = this.statePersistence.getWidgetState(this);
+        let paneToSelect: any = [];
+        if (state !== 'none' && _.isArray(widgetState)) {
+            widgetState.forEach(paneName => {
+                paneToSelect = this.panes.filter(function(pane) {
+                    return paneName === pane.name;
+                });
+                if (!paneToSelect.length) {
+                    console.warn('Accordion pane name ' + paneName + ' in State is incorrect.');
+                } else {
+                    this.expandPane(this.getPaneIndexByRef(paneToSelect[0]));
+                }
+            });
+        } else {
+            if (this.isValidPaneIndex(this.defaultpaneindex)) {
+                this.expandPane(this.defaultpaneindex);
+            }
+        }
+    }
+
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'defaultpaneindex') {
             this.defaultpaneindex = nv;
         } else if (key === 'dataset') {
             this.onDataChange(nv);
         } else if (key === 'statehandler') {
-            const widgetState = this.statePersistence.getWidgetState(this);
-            let paneToSelect: any = [];
-            if (nv !== 'none' && _.isArray(widgetState)) {
-                widgetState.forEach(paneName => {
-                    paneToSelect = this.panes.filter(function(pane) {
-                        return paneName === pane.name;
-                    });
-                    if (!paneToSelect.length) {
-                        console.warn('Accordion pane name ' + paneName + ' in State is incorrect.');
-                    } else {
-                        this.expandPane(this.getPaneIndexByRef(paneToSelect[0]));
-                    }
-                });
-            } else {
-                if (this.isValidPaneIndex(this.defaultpaneindex)) {
-                    this.expandPane(this.defaultpaneindex);
-                }
-            }
+           this.applyStatePersistence(nv);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -251,7 +255,12 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         this.promiseResolverFn();
         this.panes.changes.subscribe( slides => {
             if (this.panes.length) {
-                this.expandPane(this.defaultpaneindex);
+                let counter = 1;
+                this.panes.toArray().forEach((pane) => {
+                    pane.name = `${pane.name}_${counter}`;
+                    counter++;
+                });
+                this.applyStatePersistence(this.statePersistence);
             }
         });
     }
