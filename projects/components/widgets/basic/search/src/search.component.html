@@ -5,7 +5,7 @@
         <span [title]="model.label" [innerHtml]="highlight(match, query) || model.label"></span>
     </a>
     <!-- Custom partial template -->
-    <a *ngIf="content" class="customTemplate" partialContainer [wmItemTemplate]="content" [userComponentParams]="match.item">
+    <a *ngIf="content" [ngClass]="{customTemplate: content}" partialContainer [wmItemTemplate]="content" [userComponentParams]="match.item">
         <div partial-container-target></div>
     </a>
 </ng-template>
@@ -14,7 +14,7 @@
     <ul #ulElement class="app-search dropdown-menu" scrollable>
         <li #liElements *ngFor="let match of matches" [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match), 'list-group-header': match && match.isHeader()}"
             (mouseenter)="typeaheadContainer.selectActive(match);"
-            (click)="typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; notifySubscriber()">
+            (click)="match && !match.isHeader() && typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; notifySubscriber();">
             <!-- itemTemplate comes from the <input> -->
             <h4 *ngIf="match.isHeader()" class="group-title">{{match.value}}</h4>
             <ng-container *ngIf="!match.isHeader()" [ngTemplateOutlet]="itemTemplate"

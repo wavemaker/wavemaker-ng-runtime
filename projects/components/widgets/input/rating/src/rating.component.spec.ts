@@ -12,6 +12,7 @@ import { RatingComponent } from "./rating.component";
 import { ComponentFixture } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { Component, ViewChild } from "@angular/core";
+import { AppDefaults } from "@wm/core";
 
 const markup = `<div hint="Help text for rating widget" tabindex="1"  wmRating  name="rating1"></div>`;
 @Component({
@@ -26,7 +27,8 @@ const testModuleDef: ITestModuleDef = {
     imports: [FormsModule, ComponentsTestModule],
     providers: [
         { provide: ToDatePipe, useClass: ToDatePipe },
-        { provide: DatePipe, useClass: DatePipe }
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AppDefaults, useClass: AppDefaults }
     ]
 };
 const componentDef: ITestComponentDef = {

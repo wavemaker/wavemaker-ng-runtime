@@ -103,6 +103,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this._triggeredByUser = true;
     }
 
+    private isFocused;
     constructor(
         inj: Injector,
         form: FormComponent,
@@ -162,6 +163,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     _onFocusField($evt) {
         this._activeField = true;
         $($evt.target).closest('.live-field').addClass('active');
+   
     }
 
     _onBlurField($evt) {

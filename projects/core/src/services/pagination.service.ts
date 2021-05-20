@@ -105,7 +105,7 @@ export class PaginationService {
 
                     if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
                         $(this).off('scroll.scroll_evt');
-                        self.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum)();
+                        self.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum, parent)();
                     }
 
                     lastScrollTop = scrollTop;
@@ -116,7 +116,7 @@ export class PaginationService {
             $rootEl.on('wheel.scroll_evt', e => {
                 if (e.originalEvent.deltaY > 0) {
                     $rootEl.off('wheel.scroll_evt');
-                    this.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum)();
+                    this.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum, parent)();
                 }
             });
         }
@@ -129,8 +129,8 @@ export class PaginationService {
      * @param {number} debounceNum provided to lodash debounce
      * @returns debounced function definition
      */
-    public debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum) {
-        return _.debounce(() => this.fetchNextDatasetOnScroll(dataNavigator), debounceNum);
+    public debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum, parent) {
+        return _.debounce(() => this.fetchNextDatasetOnScroll(dataNavigator, parent), debounceNum);
     }
 
     /**
@@ -139,8 +139,11 @@ export class PaginationService {
      * @param {object} dataNavigator pagination instance
      * @returns null
      */
-    public fetchNextDatasetOnScroll(dataNavigator) {
-        dataNavigator.navigatePage('next');
+    public fetchNextDatasetOnScroll(dataNavigator, parent) {
+        // Load next set of data only after the success of current call
+        if (!parent.variableInflight) {
+            dataNavigator.navigatePage('next');
+        }
     }
 
     /**
@@ -192,7 +195,7 @@ export class PaginationService {
                 scrollTop = Math.abs(el.iscroll.y);
 
             if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
-                this.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum)();
+                this.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum, parent)();
                 if (self.indicatorRefresh) {
                     self.indicatorRefresh();
                 }

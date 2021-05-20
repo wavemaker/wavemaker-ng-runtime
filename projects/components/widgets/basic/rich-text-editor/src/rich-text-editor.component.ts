@@ -143,6 +143,14 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
 
     }
 
+    getDefaultOptions() {
+        return this.EDITOR_DEFAULT_OPTIONS;
+    }
+
+    getLib() {
+        return 'summernote';
+    }
+
     overrideDefaults(options) {
         _.extend(this.EDITOR_DEFAULT_OPTIONS, options);
     }

@@ -6,13 +6,13 @@ import { Component, ViewChild } from '@angular/core';
 import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 
-import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap';
+import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 import { By } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 import { ScrollableDirective } from './scrollable.directive';
 import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
-import { PartialRefProvider } from '@wm/core';
+import { PartialRefProvider, AppDefaults } from '@wm/core';
 import { BaseFormComponent } from 'projects/components/widgets/input/default/src/base-form.component';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck, getHtmlSelectorElement } from 'projects/components/base/src/test/util/component-test-util';
@@ -86,6 +86,7 @@ const testModuleDef: ITestModuleDef = {
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
+        { provide: AppDefaults, useClass: AppDefaults },
         { provide: TypeaheadMatch, useValue: TypeaheadMatch },
         { provide: ComponentFixtureAutoDetect, useValue: true },
         { provide: PartialRefProvider, useClass: PartialRefProvider }

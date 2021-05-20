@@ -25,11 +25,11 @@
    <img wmPicture class="card-image" picturesource.bind="picturesource" hint.bind="picturetitle" />
 </div>
 <div #cardContainerWrapper>
-    <ng-content select="[wmCardContent]"></ng-content>
+    <ng-content ngProjectAs="[wmCardContent]"></ng-content>
 </div>
 <div>
-    <ng-content select="[wmCardActions]"></ng-content>
+    <ng-content ngProjectAs="[wmCardActions]"></ng-content>
 </div>
 <div>
-    <ng-content select="[wmCardFooter]"></ng-content>
+    <ng-content ngProjectAs="[wmCardFooter]"></ng-content>
 </div>

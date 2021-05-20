@@ -1,7 +1,14 @@
 import { AfterContentInit, ContentChildren, Directive, Injector, QueryList } from '@angular/core';
 
 import { DynamicComponentRefProvider, isNumber, noop, StatePersistence } from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {
+    APPLY_STYLES_TYPE,
+    createArrayFrom,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler
+} from '@wm/components/base';
 
 import { registerProps } from './accordion.props';
 import { AccordionPaneComponent } from './accordion-pane/accordion-pane.component';
@@ -16,6 +23,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: 'div[wmAccordion]',
+    exportAs: 'wmAccordion',
     providers: [
         provideAsWidgetRef(AccordionDirective)
     ]
@@ -35,6 +43,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     private _dynamicContext;
     private dynamicPaneIndex;
     private dynamicPanes;
+    public fieldDefs;
 
     @ContentChildren(AccordionPaneComponent) panes: QueryList<AccordionPaneComponent>;
 
@@ -204,10 +213,15 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         this.closePanesExcept(index);
         this.panes.toArray()[index].expand();
     }
+    private onDataChange(newVal) {
+        this.fieldDefs = createArrayFrom(newVal);
+    }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'defaultpaneindex') {
             this.defaultpaneindex = nv;
+        } else if (key === 'dataset') {
+            this.onDataChange(nv);
         } else if (key === 'statehandler') {
             const widgetState = this.statePersistence.getWidgetState(this);
             let paneToSelect: any = [];
@@ -235,5 +249,10 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     ngAfterContentInit() {
         super.ngAfterContentInit();
         this.promiseResolverFn();
+        this.panes.changes.subscribe( slides => {
+            if (this.panes.length) {
+                this.expandPane(this.defaultpaneindex);
+            }
+        });
     }
 }
