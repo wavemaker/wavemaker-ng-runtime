@@ -3,7 +3,7 @@ import {
     Element,
     Text,
     Comment,
-    getHtmlTagDefinition
+    getHtmlTagDefinition, ParseSourceSpan
 } from '@angular/compiler';
 import { WIDGET_IMPORTS } from './imports';
 import { isMobileApp } from '@wm/core';
@@ -169,19 +169,8 @@ export const getFormMarkupAttr = attrs => {
 
 const getAttrMap = attrs => {
     const attrMap = new Map<string, string>();
-    /* since there can't be more than one structural directive for an element,
-       the priority order is accessroles > showindevice > deferload */
-    const accessRolesExist = attrs.filter(function(attribute) {
-        return attribute.name === 'accessroles'
-    }).length;
-    const showInDeviceExists = attrs.filter(function(attribute) {
-        return attribute.name === 'showindevice'
-    }).length;
     attrs.forEach(attr => {
         let [attrName, attrValue] = processAttr(attr);
-        if (((attrName === OVERRIDES['showindevice'] || attrName === 'deferload') && accessRolesExist) || (attrName === 'deferload' && showInDeviceExists)) {
-            return;
-        }
         attrMap.set(attrName, attrValue);
     });
 
@@ -376,7 +365,70 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
             markup = `<${nodeName} ${getAttrMarkup(attrMap)}>`;
         }
 
-        node.children.forEach(child => markup += processNode(child, importCollector, providers));
+        node.children.forEach((child) => {
+            if(child.attrs) {
+                let showInDeviceAttr, accessRolesAttr, deferLoadAttr, showAttr;
+                child.attrs.forEach(function(attr){
+                    if (attr.name === 'showindevice') {
+                        showInDeviceAttr = attr;
+                    } else if (attr.name === 'accessroles') {
+                        accessRolesAttr = attr;
+                    } else if (attr.name === 'deferload') {
+                        deferLoadAttr = attr;
+                    } else if (attr.name === 'show') {
+                        showAttr = attr;
+                    }
+                });
+                if((showInDeviceAttr && accessRolesAttr) || (showInDeviceAttr && deferLoadAttr) || (accessRolesAttr && deferLoadAttr)) {
+                    /* If more than one out of showindevice, accessroles and deferload exist for a widget, add ng-container wrappers to fix angular limitation
+                       of applying only one structural directive to an element.
+                    *  */
+                    const noSpan = ({} as ParseSourceSpan);
+                    const showInDeviceContainer:any = showInDeviceAttr ? new Element('ng-container', [], [], noSpan, noSpan, noSpan) : '';
+                    const accessRolesContainer:any = accessRolesAttr ? new Element('ng-container', [], [], noSpan, noSpan, noSpan) : '';
+                    const deferLoadContainer:any = deferLoadAttr ? new Element('ng-container', [], [], noSpan, noSpan, noSpan) : '';
+                    if (showInDeviceContainer) {
+                        showInDeviceContainer.attrs.push(showInDeviceAttr);
+                    }
+                    if (accessRolesContainer) {
+                        accessRolesContainer.attrs.push(accessRolesAttr);
+                    }
+                    if (deferLoadContainer) {
+                        deferLoadContainer.attrs.push(deferLoadAttr);
+                        if (showAttr) {
+                            deferLoadContainer.attrs.push(showAttr);
+                        }
+                    }
+                    _.remove(child.attrs, function(attr) {
+                        return attr.name === 'showindevice' || attr.name === 'accessroles' || attr.name === 'deferload'
+                    });
+                    let childContainer, parentContainer;
+                    if (showInDeviceAttr && accessRolesAttr) {
+                        childContainer = showInDeviceContainer;
+                        parentContainer = accessRolesContainer;
+                    } else if (showInDeviceAttr && deferLoadAttr) {
+                        childContainer = showInDeviceContainer;
+                        parentContainer = deferLoadContainer;
+                    } else if (accessRolesAttr && deferLoadAttr) {
+                        childContainer = deferLoadContainer;
+                        parentContainer = accessRolesContainer;
+                    }
+                    // wrap current node elements inside first ng-container(childContainer) and that container's elements inside another ng-container(parentContainer)
+                    childContainer.children = [child];
+                    parentContainer.children = [childContainer];
+                    // if all three directives exist, create another wrapper for third ng-container(grandParentContainer)
+                    if (showInDeviceAttr && accessRolesAttr && deferLoadAttr) {
+                        const grandParentContainer = deferLoadContainer;
+                        grandParentContainer.children = [parentContainer];
+                        child = grandParentContainer;
+                    } else {
+                        child = parentContainer;
+                    }
+
+                }
+            }
+            return markup += processNode(child, importCollector, providers);
+        });
 
         if (nodeDef) {
             if (provideInfo) {

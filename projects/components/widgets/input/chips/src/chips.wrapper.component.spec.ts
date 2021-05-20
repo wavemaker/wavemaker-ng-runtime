@@ -2,10 +2,10 @@ import { ComponentFixture } from '@angular/core/testing';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { TypeaheadModule } from 'ngx-bootstrap';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { DatePipe } from '@angular/common';
 
-import { App } from '@wm/core';
+import { App, AppDefaults } from '@wm/core';
 import { ChipsComponent } from './chips.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue } from '../../../../base/src/test/util/component-test-util';
@@ -41,6 +41,7 @@ const testModuleDef: ITestModuleDef = {
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
+        { provide: AppDefaults, useClass: AppDefaults },
         { provide: PartialRefProvider, useClass: PartialRefProvider }
     ]
 };
