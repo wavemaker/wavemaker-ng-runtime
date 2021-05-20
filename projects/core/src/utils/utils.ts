@@ -347,7 +347,8 @@ export const getDateObj = (value, options?): Date => {
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
         // Fix for WMS-19601, invalid date is returned on date selection.
-        const pattern = isMobile() ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
+        const isNativePicker = (options && options.hasOwnProperty('isNativePicker')) ? _.get(options, 'isNativePicker') : isMobile();
+        const pattern =  isNativePicker ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
         value = moment(value, pattern).toDate();
     }
 
@@ -674,8 +675,8 @@ export const getValidDateObject = (val, options?) => {
             }
         });
     }
-
-    const pattern = isMobile() ? (_.get(options, 'pattern') ||  'YYYY/MM/DD HH:mm:ss') : (momentPattern(_.get(options, 'pattern')) || '');
+    const isNativePicker = (options && options.hasOwnProperty('isNativePicker')) ? _.get(options, 'isNativePicker') : isMobile();
+    const pattern = isNativePicker ? (_.get(options, 'pattern') ||  'YYYY/MM/DD HH:mm:ss') : (momentPattern(_.get(options, 'pattern')) || '');
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
         if (!isNaN((new Date(val)).getTime())) {

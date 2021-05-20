@@ -77,6 +77,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public clearbutton: boolean;
     public removeKeyupListener;
     public loadNativeDateInput;
+    public showcustompicker;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -103,7 +104,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this._dateOptions.todayPosition = 'left';
         this._dateOptions.clearPosition = 'right';
         this.meridians = getLocaleDayPeriods(this.selectedLocale, FormStyle.Format, TranslationWidth.Abbreviated);
-        this.loadNativeDateInput = isMobile();
+        this.loadNativeDateInput = isMobile() && !this.showcustompicker;
     }
 
 
@@ -841,7 +842,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     onDateTimeInputFocus(skipFocus: boolean = false): void {
-        if (!isMobile()) {
+        if (!this.loadNativeDateInput) {
             return;
         }
         let displayInputElem = this.getMobileInput();
@@ -905,6 +906,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this._dateOptions.todayButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
         } else if (key === 'clearbuttonlabel'){
             this._dateOptions.clearButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
+        } else if (key === 'showcustompicker') {
+            this.loadNativeDateInput = isMobile() && !this.showcustompicker;
         } else {
             super.onPropertyChange(key, nv, ov);
         }

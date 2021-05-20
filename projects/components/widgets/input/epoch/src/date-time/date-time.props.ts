@@ -27,6 +27,7 @@ export const dateTimeProps = new Map(
         ['show', { value: true, ...PROP_BOOLEAN }],
         ['showdropdownon', { value: 'default', ...PROP_STRING }],
         ['showbuttonbar', PROP_BOOLEAN],
+        ['showcustompicker', { value: false, ...PROP_BOOLEAN }],
         ['showindevice', { displayType: 'inline-block', value: 'all', ...PROP_STRING }],
         ['showweeks', PROP_BOOLEAN],
         ['tabindex', { value: 0, ...PROP_NUMBER }],

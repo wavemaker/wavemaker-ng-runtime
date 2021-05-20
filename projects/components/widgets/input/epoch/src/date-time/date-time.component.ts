@@ -5,7 +5,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, isMobile, App } from '@wm/core';
+import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, App } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
@@ -107,7 +107,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             this.isCurrentDate = true;
             this.setTimeInterval();
         } else {
-            this.proxyModel = newVal ? getDateObj(newVal) : undefined;
+            this.proxyModel = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}) : undefined;
             this.clearTimeInterval();
             this.isCurrentDate = false;
         }
@@ -164,7 +164,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method to toggle the time picker
      */
     public toggleTimePicker(newVal, $event?: any) {
-        if (isMobile()) {
+        if (this.loadNativeDateInput) {
             this.onDateTimeInputFocus();
             return;
         }
@@ -288,7 +288,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method used to toggle the dropdown of the date widget
      */
     public toggleDpDropdown($event) {
-        if (isMobile()) {
+        if (this.loadNativeDateInput) {
             this.onDateTimeInputFocus();
             return;
         }
@@ -337,7 +337,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             return;
         }
         let newVal = $event.target.value.trim();
-        newVal = newVal ? getNativeDateObject(newVal, {pattern: isMobile() ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
+        newVal = newVal ? getNativeDateObject(newVal, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians, isNativePicker: this.loadNativeDateInput}) : undefined;
         // datetime pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
@@ -361,7 +361,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             let newVal = event.target.value.trim();
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             if (action === 'enter' || action === 'arrowdown') {
-                newVal = newVal ? getNativeDateObject(newVal, {pattern: isMobile() ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
+                newVal = newVal ? getNativeDateObject(newVal, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat);
                 const inputVal = event.target.value.trim();
@@ -392,7 +392,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private isValid(event) {
         if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
-            const newVal = getNativeDateObject(enteredDate, {pattern: isMobile() ? this.outputformat : this.datepattern, meridians: this.meridians});
+            const newVal = getNativeDateObject(enteredDate, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians, isNativePicker: this.loadNativeDateInput});
             if (!this.formatValidation(newVal, enteredDate)) {
                 return;
             }
