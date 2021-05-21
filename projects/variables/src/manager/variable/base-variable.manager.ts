@@ -41,7 +41,12 @@ export abstract class BaseVariableManager {
                         response => resolve(response),
                         e => reject(e));
                 } else {
-                    reject(err);
+                    const errMsg = httpService.getErrMessage(err);
+                    reject({
+                        error: errMsg,
+                        details: err
+                    });
+
                 }
             });
         });

@@ -483,14 +483,11 @@ export class ServiceVariableManager extends BaseVariableManager {
         };
 
         errorHandler = (err, reject) => {
-            const errMsg = httpService.getErrMessage(err);
+            const errMsg = err.error;
             // notify variable error
             this.notifyInflight(variable, false);
-            this.processErrorResponse(variable, errMsg, error, err, options.skipNotification);
-            reject({
-                error: errMsg,
-                details: err
-            });
+            this.processErrorResponse(variable, errMsg, error, err.details, options.skipNotification);
+            reject(err);
         };
 
         // make the call and return a promise to the user to support script calls made by users
@@ -499,8 +496,6 @@ export class ServiceVariableManager extends BaseVariableManager {
             this.httpCall(requestParams, variable).then((response) => {
                 successHandler(response, resolve);
             }, err => {
-                const validJSON = getValidJSON(err.error);
-                err.error = isDefined(validJSON) ? validJSON : err.error;
                 errorHandler(err, reject);
             });
             // the _observable property on variable is used store the observable using which the network call is made

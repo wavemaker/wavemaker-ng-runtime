@@ -286,14 +286,12 @@ export class CrudVariableManager extends ServiceVariableManager {
         };
 
         errorHandler = (err, reject) => {
-            const errMsg = httpService.getErrMessage(err);
+            const errMsg = err.error;
             // notify variable error
             this.notifyInflight(variable, false);
-            this.processErrorResponse(variable, errMsg, error, err, options.skipNotification);
-            reject({
-                error: errMsg,
-                details: err
-            });
+            this.processErrorResponse(variable, errMsg, error, err.details, options.skipNotification);
+            reject(err);
+
         };
 
         // make the call and return a promise to the user to support script calls made by users
