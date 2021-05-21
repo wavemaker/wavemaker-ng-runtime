@@ -189,9 +189,12 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This is an internal method used to toggle the dropdown of the time widget
      */
-    public toggleDropdown($event): void {
+     public toggleDropdown($event, skipFocus: boolean = false): void {
         if (this.loadNativeDateInput) {
-            this.onDateTimeInputFocus();
+            //Fixes click event getting triggred twice in Mobile devices.
+            if(!skipFocus){
+                this.onDateTimeInputFocus();
+            }
             return;
         }
         if ($event.type === 'click') {

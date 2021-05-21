@@ -177,9 +177,12 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method used to toggle the dropdown of the date widget
      */
-    toggleDpDropdown($event) {
+     public toggleDpDropdown($event, skipFocus: boolean = false) {
         if (this.loadNativeDateInput) {
-            this.onDateTimeInputFocus();
+            //Fixes click event getting triggred twice in Mobile devices.
+            if(!skipFocus){
+                this.onDateTimeInputFocus();
+            }
             return;
         }
         if ($event.type === 'click') {
