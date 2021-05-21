@@ -309,8 +309,17 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             startIndex;
 
         if (this.isDataSourceHasPaging()) {
+            /**
+             * In table component, in case of on demand and scroll pagination
+             * When there is a change in data item which is not in current page
+             * Fetch the items of the page where the change is made
+             * */
+            let pageIndex = this.dn.currentPage;
+            if (this.checkForPrevPageNavigation()) {
+                pageIndex = this.parent.actionRowPage;
+            }   
             this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
-                'page': this.dn.currentPage,
+                'page': pageIndex,
                 'filterFields': this.filterFields,
                 'orderBy': this.sortOptions,
                 'matchMode': 'anywhereignorecase'
@@ -330,6 +339,13 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             this.setResult(data);
             this.onPageDataReady(event, data, callback);
         }
+    }
+
+    /*Function to check if there is a previous page data change in table*/
+    checkForPrevPageNavigation() {
+        const pageIndex = this.dn.currentPage;
+        return this.parent.widgetType === 'wm-table' && pageIndex === this.parent.currentPage &&
+            this.parent.actionRowPage && this.parent.actionRowPage < pageIndex;
     }
 
     invokeSetRecord(event, data) {
@@ -491,7 +507,12 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             } else {
                 data = nv;
             }
-            this.setPagingValues(data);
+            // When the dataset is not in current page, but in previous ones directly set the result without setting page values
+            if (this.checkForPrevPageNavigation()) {
+                this.setResult(data);
+            } else {
+                this.setPagingValues(data);
+            }
         } else if (key === 'navigation') {
             if (nv === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
                 this.navigation = 'Classic';

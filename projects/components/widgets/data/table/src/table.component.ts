@@ -155,6 +155,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     onRowupdate;
     onRowdelete;
     statehandler;
+    pagedDataSet = {};
     selectedItemChange = new Subject();
     selectedItemChange$: Observable<any> = this.selectedItemChange.asObservable();
 
@@ -177,9 +178,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     isPartOfLiveGrid;
     gridElement;
     isNewRowInserted;
+    isRowDeleted;
     isMobile;
     isLoading;
     documentClickBind = noop;
+    actionRowIndex;
+    actionRowPage;
 
     fieldDefs = [];
     rowDef: any = {};
@@ -199,7 +203,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _dynamicContext;
     private noOfColumns;
     public onDemandLoad;
-    private infScroll;
+    public infScroll;
     private isDataLoading;
     private currentPage;
     private applyProps = new Map();
@@ -246,7 +250,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     cancelRow: Function;
     private _pageLoad = true;
 
-    private gridOptions = {
+    public gridOptions = {
         data: [],
         colDefs: [],
         startRowIndex: 1,
@@ -266,6 +270,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         rowDef: {
             position: '0'
         },
+        navigation: '',
         name: '',
         messages: {
             selectField: 'Select Field'
@@ -672,6 +677,22 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         setGridState: (val) => {
             this.isLoading = val === 'loading';
         },
+        setActionRowIndex: (val) => {
+            if (this.infScroll || this.onDemandLoad) {
+                // actionRowIndex will have the item index in the dataset on which edit/delete operation is being performed
+                this.actionRowIndex = parseInt(val);
+                if (!_.isNaN(this.actionRowIndex)) {
+                    // actionRowPage will have in which page the item is present 
+                    this.actionRowPage = Math.floor(this.actionRowIndex / this.pagesize) + 1;
+                }
+            }
+            
+        },
+        clearActionRowIndex: () => {
+            if (!this.isRowDeleted && (this.infScroll || this.onDemandLoad)) {
+                this.clearActionRowVars();
+            }
+        },
         noChangesDetected: () => {
             this.toggleMessage(true, 'info', 'No Changes Detected', '');
         },
@@ -735,9 +756,49 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     set gridData(newValue) {
         this.isDataLoading = false;
         if (this.onDemandLoad || this.infScroll) {
+            let isCurrPageUpdated = this.currentPage === this.dataNavigator.dn.currentPage;
+            let isPrevPageUpdated = this.actionRowPage < this.currentPage;
             // update the _gridData field with the next set of items and modify the current page
             [this._gridData, this.currentPage] = this.paginationService.updateFieldsOnPagination(this, newValue);
+            
+            // update pagedDataSet with page index against their updated values
+            if (this.currentPage && this._gridData.length) {
+                this.pagedDataSet[this.currentPage] = newValue;
+            }
 
+            // When previous page data is modified, updated the modified ddata in the _gridData variable 
+            if ((isCurrPageUpdated || isPrevPageUpdated) && newValue.length) {
+                const pageIndex = isPrevPageUpdated ? this.actionRowPage : this.currentPage;
+                const startIndex = ((pageIndex - 1) * this.pagesize);
+                this._gridData.splice(startIndex, this.pagesize, ...this.pagedDataSet[this.currentPage]);
+            } 
+
+            /**
+             * When a row is deleted, and the deleted row is in previous page
+             * From the succeeding pages (n), remove the first element and from (n + 1)th page fetch the first element and push it as last item in the nth page
+             * Skip pushing the last element to the nth page, if the nth page index is equal to the current page
+             * If the nth page index is equal to the current page, fetch new records of the current page
+             */
+            if (this.isRowDeleted && isPrevPageUpdated) {
+                const pages = _.keys(this.pagedDataSet);
+                const lastPageIndex = pages.length;
+                _.forEach(pages, (page) => {
+                    page = parseInt(page);
+                    if (page > this.actionRowPage) {
+                        this.pagedDataSet[page].splice(0, 1);
+                        if (page !== lastPageIndex) {       
+                            const lastItemToBePushed = this.pagedDataSet[page + 1][0];
+                            this.pagedDataSet[page].splice(this.pagesize - 1, 0, lastItemToBePushed);
+                        } else {
+                            this.clearActionRowVars();
+                            this.dataNavigator.navigatePage('current');
+                        }
+                    }
+                })
+            } else {
+                this.clearActionRowVars();
+            }
+            this.isRowDeleted = false;
             // In case of on demand pagination, create the load more button only once and show the button until next page is not disabled
             if (!this.$element.find('.on-demand-datagrid').length && !this.dataNavigator.isDisableNext && this.onDemandLoad) {
                 this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
@@ -892,6 +953,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.deletecanceltext = this.appLocale.LABEL_CANCEL;
     }
 
+    private clearActionRowVars() {
+        this.actionRowIndex = undefined;
+        this.actionRowPage = undefined;
+    }
+
     private getConfiguredState() {
         const mode = this.statePersistence.computeMode(this.statehandler);
         return mode && mode.toLowerCase();
@@ -1013,6 +1079,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.headerConfig = this.headerConfig;
         this.gridOptions.rowClass = this.rowclass;
         this.gridOptions.editmode = this.editmode;
+        this.gridOptions.navigation = this.navigation;
         this.gridOptions.formPosition = this.formposition;
         this.gridOptions.filtermode = this.filtermode;
         this.gridOptions.searchLabel = this.searchlabel;

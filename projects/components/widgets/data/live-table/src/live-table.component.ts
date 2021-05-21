@@ -180,6 +180,10 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
 
     onCancel() {
         this.form.isUpdateMode = false;
+        // When the cancel is triggered on the edited form, clear the actionrow variables in table component
+        if (this.table.onDemandLoad || this.table.infScroll) {
+            this.table.gridOptions.clearActionRowIndex();
+        }   
         if (this.isLayoutDialog) {
             this.closeDialog();
         }

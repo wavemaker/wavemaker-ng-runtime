@@ -312,6 +312,10 @@ export class TableCUDDirective {
         if (!dataSource) {
             return;
         }
+        // when delete operation is executed, turn on isRowDeleted flag to perform the next operations in table component
+        if (this.table.onDemandLoad || this.table.infScroll) {
+            this.table.isRowDeleted = true;
+        }
         if (dataSource.category === 'wm.CrudVariable') {
             this.triggerWMEvent('resetEditMode');
             if (dataSource.pagination) {
@@ -341,6 +345,10 @@ export class TableCUDDirective {
                     });
                 }
             }, error => {
+                // In case of deletion failure, turn isRowDeleted flag off to prevent executing code in table comp
+                if (this.table.isRowDeleted) {
+                    this.table.isRowDeleted = false;
+                }
                 triggerFn(options.callBack, undefined, true);
                 this.table.invokeEventCallback('error', {$event: options.evt, $operation: OPERATION.DELETE, $data: error});
                 if (!this.table.onError) {

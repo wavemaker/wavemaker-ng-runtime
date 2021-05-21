@@ -57,6 +57,7 @@ $.widget('wm.datatable', {
         loadingicon: '',
         startRowIndex: 1,
         editmode: '',
+        navigation: '',
         actionsEnabled: {
             'edit': true,
             'new': true
@@ -1740,6 +1741,9 @@ $.widget('wm.datatable', {
             advancedEdit = self.options.editmode === self.CONSTANTS.QUICK_EDIT,
             editOptions = {};
 
+        // when a row is edited set actionrow variables
+        this.options.setActionRowIndex($row.attr('data-row-id'));
+
         //On success of update or delete
         function onSaveSuccess(skipFocus, error) {
             if ($.isFunction(options.success)) {
@@ -1896,6 +1900,15 @@ $.widget('wm.datatable', {
                         }
                         this.options.onRowInsert(rowData, e, onSaveSuccess, editOptions);
                         self.toggleNewRowActions(false);
+
+                        /**
+                         * In case of on demand and scroll paginations in inline edit mode
+                         * Once the new row is added remove it from the view 
+                         * As the newly added data will be shown as the last record of the whole dataset
+                         */
+                        if (!$row.hasClass('always-new-row') && (self.options.navigation === 'On-Demand' || self.options.navigation === 'Scroll')) {
+                            self.removeNewRow($row);
+                        }
                     } else {
                         if ($.isFunction(this.options.onBeforeRowUpdate)) {
                             isValid = this.options.onBeforeRowUpdate(rowData, e, editOptions);
@@ -1931,6 +1944,9 @@ $.widget('wm.datatable', {
             $cancelButton = $row.find('.cancel-edit-row-button'),
             $saveButton = $row.find('.save-edit-row-button'),
             $editButton = $row.find('.edit-row-button');
+        
+        // when edit action is cancelled on the row clear actionrow variables
+        this.options.clearActionRowIndex();
         this.disableActions(false);
         $row.removeClass('row-editing');
         $editableElements.off('click');
@@ -1963,6 +1979,15 @@ $.widget('wm.datatable', {
         }
     },
     hideRowEditMode: function ($row) {
+        /**
+         * In case of on demand and scroll paginations in quick edit mode
+         * Once the new row is added, reset the row values
+         * Row will always be shown to have a provision of inserting new reccords
+         */
+        if ($row.hasClass('always-new-row') && (this.options.navigation === 'On-Demand' || this.options.navigation === 'Scroll')) {
+            this.resetNewRow($row);
+            return;
+        }
         var $editableElements = $row.find('td.cell-editing'),
             $editButton = $row.find('.edit-row-button'),
             $cancelButton = $row.find('.cancel-edit-row-button'),
@@ -2003,6 +2028,9 @@ $.widget('wm.datatable', {
             isValid,
             options = {},
             self = this;
+        
+        // when delete is clicked on the row set actionrow variables
+        this.options.setActionRowIndex(rowId);
         if ($.isFunction(this.options.beforeRowDelete)) {
             this.options.beforeRowDelete(rowData, e);
         }
@@ -2036,6 +2064,9 @@ $.widget('wm.datatable', {
                 if (isActiveRow) {
                     $row.addClass('active');
                 }
+                
+                // when edit action is cancelled on the row clear actionrow variables
+                self.options.clearActionRowIndex();
                 $row.removeClass(className);
                 self.addOrRemoveScroll();
             }, e, function (skipFocus, error) {
