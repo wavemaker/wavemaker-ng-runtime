@@ -291,13 +291,17 @@ export class MobileRuntimeModule {
             } else {
                 fetchContent('json', './config.json', true, (response => {
                     if (!response.error && response.baseUrl) {
-                        deployedUrl = response.baseUrl;
+                        if (response.baseUrl === 'http://NOSERVERREQUIRED.com') {
+                            deployedUrl = 'NONE';
+                        } else {
+                            deployedUrl = response.baseUrl;
+                        }
                         this.app.customUrlScheme = response.customUrlScheme;
                     }
                 }));
             }
         }
-        if (!deployedUrl.endsWith('/')) {
+        if (deployedUrl !== 'NONE' && !deployedUrl.endsWith('/')) {
             deployedUrl = deployedUrl + '/';
         }
         $rootScope.project.deployedUrl = deployedUrl;
