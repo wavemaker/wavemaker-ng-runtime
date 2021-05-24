@@ -273,7 +273,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.proxyModel) {
             this.bsDateValue = this.bsTimeValue = this.proxyModel;
         }
-        this._debouncedOnChange(this.datavalue, {}, true);
+        if (newVal != this.datavalue) {
+            this._debouncedOnChange(this.datavalue, {}, true);
+        }
         this.cdRef.detectChanges();
     }
 
