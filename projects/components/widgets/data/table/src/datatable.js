@@ -2783,13 +2783,14 @@ $.widget('wm.datatable', {
         if (!this.tableId) {
             this.tableId = this.Utils.generateGuid();
         }
+        var overflow = (this.options.navigation === 'Scroll' && (this.options.height === '100%' || this.options.height === 'auto')) ? 'hidden' : 'auto';
         var statusContainer =
             '<div class="overlay" style="display: none;">' +
             '<div class="status"><i class="' + this.options.loadingicon + '"></i><span class="message"></span></div>' +
             '</div>',
             table = '<div class="table-container table-responsive"><div class="app-grid-header ' +
                 '"><div class="app-grid-header-inner"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_header_' + this.tableId + '">' +
-                '</table></div></div><div class="app-grid-content" style="height:' + this.options.height + ';"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_' + this.tableId + '">' +
+                '</table></div></div><div class="app-grid-content" style="height:' + this.options.height + '; overflow: ' + overflow + ';"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_' + this.tableId + '">' +
                 '</table></div>' +
                 '</div>';
         this.gridContainer = $(table);
@@ -2873,6 +2874,9 @@ $.widget('wm.datatable', {
         this.options[key] = value;
         if (key === 'height') {
             this.gridContainer.find('.app-grid-content').css(key, value);
+            if (this.options.navigation === 'Scroll' && (this.options.height != '100%' && this.options.height != 'auto')) {
+                this.gridContainer.find('.app-grid-content').css('overflow', 'auto');
+            }
             this.dataStatusContainer.css(key, value);
         }
         this.addOrRemoveScroll();
