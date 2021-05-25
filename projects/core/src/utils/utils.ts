@@ -1290,15 +1290,18 @@ export const addForIdAttributes = (element: HTMLElement) => {
  */
 export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) => {
     const zoneRef = ref._ngZone || ref.ngZone;
-    zoneRef.onStable.subscribe(() => {
-        const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
-        if (containerEleTransformations.m41 < 0) {
-             containerEleTransformations.m41 = 0;
-         } else {
-             return;
-         }
-         setTranslation3dPosition(containerElem, containerEleTransformations);
-     });
+    zoneRef.runOutsideAngular((function() {
+        zoneRef.onStable.subscribe(() => {
+            if (!document.body.contains(containerElem[0])) {
+                return;
+            }
+            const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
+            if (containerEleTransformations.m41 < 0) {
+                containerEleTransformations.m41 = 0;
+            }
+            setTranslation3dPosition(containerElem, containerEleTransformations);
+        });
+    }));
    };
 
 
@@ -1317,20 +1320,34 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
         const parentRight = parentDimesion.right + window.scrollX;
         let newLeft;
         const zoneRef = ref._ngZone || ref.ngZone;
-        zoneRef.onStable.subscribe(() => {
-            const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
-
-            if (viewPortWidth - (parentRight + parentDimesion.width) < containerWidth) {
-                newLeft = parentRight - containerWidth;
-                if (newLeft < 0) {
-                    newLeft = 0;
+        zoneRef.runOutsideAngular((function() {
+             zoneRef.onStable.subscribe(() => {
+                if (!document.body.contains(containerElem[0])) {
+                    return;
                 }
-                containerEleTransformations.m41 = newLeft;
-            } else {
-                return;
-            }
-            setTranslation3dPosition(containerElem, containerEleTransformations);
-        });
+                const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
+                const visibleContainerWidth = viewPortWidth - (containerElem[0].getBoundingClientRect().x);
+                const containerWidth = containerElem.find('.dropdown-menu').length ? containerElem.find('.dropdown-menu').width() : containerElem.width();
+                const remainingHiddenWidth = containerWidth - visibleContainerWidth;
+                if (remainingHiddenWidth > 0) {
+                    newLeft = containerElem[0].getBoundingClientRect().left - remainingHiddenWidth;
+                    containerEleTransformations.m41 = newLeft;
+                } else {
+                    newLeft = containerElem[0].getBoundingClientRect().left - remainingHiddenWidth;
+                    newLeft = newLeft / 2 ;
+                    if (newLeft > parentDimesion.x) {
+                        if (newLeft > parentDimesion.x + parentDimesion.width) {
+                            const offset = (parentDimesion.width / 3);
+                            newLeft = parentDimesion.x + offset;
+                        } else {
+                            newLeft = parentDimesion.x;
+                        }
+                    }
+                    containerEleTransformations.m41 = newLeft;
+                }
+                setTranslation3dPosition(containerElem, containerEleTransformations);
+            });
+        }));
    };
 
   /**
