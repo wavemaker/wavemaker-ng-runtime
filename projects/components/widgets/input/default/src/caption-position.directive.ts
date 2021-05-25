@@ -1,7 +1,7 @@
 import { AfterViewInit, Directive, ElementRef, Injector, OnInit, OnDestroy } from '@angular/core';
 import { App } from '@wm/core';
 
-declare const $;
+declare const _, $;
 @Directive({
     selector: '[captionPosition]'
 })
@@ -26,7 +26,16 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     }
 
     private onBlurCb() { // on blur, remove animation and placeholder if there is no value
-        if (!this.inputEl.val()) {
+        let mobileInputVal;
+        // In case of mobile date / time picker check for input element's value which has 'mobile-input' class
+        if (this.inputEl.length > 1 && this.inputEl.hasClass('mobile-input')) { 
+            _.forEach(this.inputEl, (el) => {
+                if ($(el).hasClass('mobile-input') && el.value) {
+                    mobileInputVal = el.value;
+                }
+            });
+        }
+        if (!this.inputEl.val() && !mobileInputVal) {
             this.compositeEle.classList.remove('float-active');
             this.inputEl.removeAttr('placeholder');
         }
