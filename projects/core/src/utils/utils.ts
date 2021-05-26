@@ -1304,33 +1304,47 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
 
 /**
  * This method is used to adjust the container position
- * For example: 1. When datepicker control placed closed to the screen right edges, it is going to out of the viewport values which is  cutting the container.
+ * For example: 1. When datepicker control placed closed to the screen right/bottom edges, it is going to out of the viewport values which is  cutting the container.
  * @param containerElem  picker/dropdown container element(jquery)
  * @param parentElem widget native element
  * @param ref  scope of particular library directive
  * @param ele Child element(jquery). For some of the widgets(time, search) containerElem doesn't have height. The inner element(dropdown-menu) has height so passing it as optional.
  */
-   export const adjustContainerRightEdges = (containerElem, parentElem, ref, ele?) => {
-        const containerWidth = ele ? _.parseInt(ele.css('width')) : _.parseInt(containerElem.css('width'));
-        const viewPortWidth = $(window).width() + window.scrollX;
-        const parentDimesion = parentElem.getBoundingClientRect();
-        const parentRight = parentDimesion.right + window.scrollX;
-        let newLeft;
-        const zoneRef = ref._ngZone || ref.ngZone;
-        zoneRef.onStable.subscribe(() => {
-            const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
+   export const adjustContainerRightEdges = (containerElem, parentElem, ref, ele?) => {    
+    const parentDimesion =  parentElem.getBoundingClientRect();
+    const parentHeight = parentDimesion.height;
+    const parentWidth = parentDimesion.width;
 
-            if (viewPortWidth - (parentRight + parentDimesion.width) < containerWidth) {
-                newLeft = parentRight - containerWidth;
-                if (newLeft < 0) {
-                    newLeft = 0;
-                }
-                containerEleTransformations.m41 = newLeft;
-            } else {
-                return;
+    //Bottom Edges Variables
+    const containerHeight = ele ? _.parseInt(ele.css('height')) : _.parseInt(containerElem.css('height'));
+    const viewPortHeight = $(window).height() + window.scrollY;
+    const parentTop = parentDimesion.top + window.scrollY;
+    let newTop;
+
+    //Right Edges Variables
+    const containerWidth = ele ? _.parseInt(ele.css('width')) : _.parseInt(containerElem.css('width'));
+    const viewPortWidth = $(window).width() + window.scrollX;
+    const parentRight = parentDimesion.right + window.scrollX;
+    let newLeft;
+    const zoneRef = ref._ngZone || ref.ngZone;
+    zoneRef.onStable.subscribe(() => {
+        const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
+
+        //Check Right Edges
+        if (viewPortWidth - (parentRight + parentWidth) < containerWidth) {
+            newLeft = parentRight - containerWidth;
+            if (newLeft < 0) {
+                newLeft = 0;
             }
-            setTranslation3dPosition(containerElem, containerEleTransformations);
-        });
+            containerEleTransformations.m41 = newLeft;
+        }
+        //Check Bottom Edges       
+        if (viewPortHeight - (parentTop + parentHeight) < containerHeight) {
+            newTop = parentTop - containerHeight;
+            containerEleTransformations.m42 = newTop;
+        } 
+        setTranslation3dPosition(containerElem, containerEleTransformations);    
+    });
    };
 
   /**
