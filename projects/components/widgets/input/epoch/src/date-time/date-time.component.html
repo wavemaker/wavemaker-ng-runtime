@@ -5,7 +5,7 @@
         (onShown)="onTimepickerOpen()"
         style="display: inherit;">
         <input class="form-control app-textbox display-input"
-            aria-label="Set the date and time"
+            [attr.aria-label]="hint || 'Date and time field'"
             focus-target
             [name]="name"
             [tabindex]="tabindex"
@@ -22,7 +22,7 @@
             [attr.placeholder]="placeholder"
             [attr.accesskey]="shortcutkey"
             (keydown)="onDisplayKeydown($event)">
-     
+
         <span class="input-group-btn">
             <button type="button"
                 class="btn btn-default btn-date"

@@ -4,7 +4,7 @@ const tagName = 'footer';
 
 register('wm-footer', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmFooter partialContainer data-role="page-footer" role="contentinfo" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmFooter partialContainer data-role="page-footer" role="contentinfo" aria-label="${attrs.get('hint') || 'Page footer'}" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

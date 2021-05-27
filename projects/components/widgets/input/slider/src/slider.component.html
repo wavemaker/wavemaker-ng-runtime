@@ -1,6 +1,6 @@
 <span class="app-slider-value pull-left" [attr.aria-valuemin]="minvalue" [textContent]="minvalue"></span>
 <span class="app-slider-value pull-right" [attr.aria-valuemax]="maxvalue" [textContent]="maxvalue"></span>
-<input class="range-input" aria-label="slider range" aria-orientation="horizontal"
+<input class="range-input" aria-orientation="horizontal"
        focus-target
        type="range" [title]="datavalue"
        [attr.min]="minvalue"
@@ -9,6 +9,7 @@
        [(ngModel)]="datavalue"
        [disabled]="disabled"
        [attr.accesskey]="shortcutkey"
+       [attr.aria-label]="hint || 'Slider'"
        [tabindex]="tabindex"
        (blur)="invokeOnTouched($event)"
        (ngModelChange)="handleChange($event)"

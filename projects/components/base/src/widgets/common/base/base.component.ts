@@ -338,6 +338,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             setAttr(this.nativeElement, 'title', nv);
         } else if (key === 'class') {
             switchClass(this.nativeElement, nv, ov);
+            let result = nv.match(/(\W|^)(h([0-6]))(?=\s|$)/);
+            if (result) {
+                setAttr(this.nativeElement, 'role', 'heading');
+                setAttr(this.nativeElement, 'aria-level', result[3]);
+            }
         } else if (key === 'name' || key === 'tabindex') {
             setAttr(this.nativeElement, key, nv);
             if (key === 'name' && nv) {

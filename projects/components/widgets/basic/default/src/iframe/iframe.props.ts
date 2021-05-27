@@ -11,7 +11,8 @@ export const registerProps = () => {
                 ['iframesrc', PROP_STRING],
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['width', {value: '300px', ...PROP_STRING}]
+                ['width', {value: '300px', ...PROP_STRING}],
+                ['hint', PROP_STRING]
             ]
         )
     );

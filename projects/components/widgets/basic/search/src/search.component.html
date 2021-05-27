@@ -64,7 +64,8 @@
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [dropup]="dropup"
            [tabindex]="tabindex"
-           [attr.name]="name"/>
+           [attr.name]="name"
+           [attr.aria-label]="hint || 'Search field'"/>
     <i class="btn-close wi wi-cancel" [hidden]="!showClosebtn" (click)="clearSearch($event);"></i>
 </ng-container>
 <!--This template is for both web and fullscreen mode in mobile.-->
@@ -100,7 +101,8 @@
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [tabindex]="tabindex"
            [dropup]="dropup"
-           [attr.name]="name">
+           [attr.name]="name"
+           [attr.aria-label]="hint">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
     <span class="wi wi-close form-control-feedback clear-btn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"></span>

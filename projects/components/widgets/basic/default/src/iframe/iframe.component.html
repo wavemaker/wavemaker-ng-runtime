@@ -1,10 +1,11 @@
-<iframe title="" class="embed-responsive-item iframe-content" role="document"
+<iframe  class="embed-responsive-item iframe-content" role="document"
         scrolling="auto"
         marginheight="0"
         marginwidth="0"
         frameborder="0"
         [name]="name"
         [attr.src]="_iframesrc"
+        [attr.aria-label]="hint || 'iframe'"
         seamless="seamless">
 </iframe>
 <div class="wm-content-info readonly-wrapper" *ngIf="showContentLoadError">

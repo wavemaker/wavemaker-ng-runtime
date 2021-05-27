@@ -61,7 +61,7 @@ register('wm-page', (): IBuildTaskDef => {
                 }
             }
         },
-        pre: attrs => `<${tagName} wmPage data-role="pageContainer" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmPage data-role="pageContainer" aria-label="${attrs.get('hint') || 'Main page content'}" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

@@ -11,6 +11,7 @@
        [attr.tabindex]="tabindex"
        [attr.placeholder]="placeholder"
        [attr.accesskey]="shortcutkey"
+       [attr.aria-label]="hint || 'Colorpicker'"
        [autofocus]="autofocus"
        (blur)="handleBlur($event)"
        (ngModelChange)="handleChange($event)"

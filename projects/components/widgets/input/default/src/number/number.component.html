@@ -11,6 +11,7 @@
        [attr.tabindex]="tabindex"
        [attr.placeholder]="placeholder"
        [attr.accesskey]="shortcutkey"
+       [attr.aria-label]="hint || 'Number field'"
        [autofocus]="autofocus"
        (ngModelChange)="datavalue=$event"
        (blur)="handleBlur($event)"

@@ -27,7 +27,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class CurrencyComponent extends NumberLocale {
     static initializeProps = registerProps();
 
-    currency: string;
+    currencyCode: string;
     currencySymbol: string;
     public required: boolean;
     public regexp: any;
@@ -42,12 +42,13 @@ export class CurrencyComponent extends NumberLocale {
 
     constructor(inj: Injector,  private appDefaults: AppDefaults, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe) {
         super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe);
-        this.currencySymbol = CURRENCY_INFO[this.appDefaults.currencyCode || 'USD'].symbol;
+        this.currencyCode = this.appDefaults.currencyCode || 'USD'
+        this.currencySymbol = CURRENCY_INFO[this.currencyCode].symbol;
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'currency') {
-            this.currencySymbol = CURRENCY_INFO[this.currency || this.appDefaults.currencyCode].symbol;
+            this.currencySymbol = CURRENCY_INFO[this.currencyCode || this.appDefaults.currencyCode].symbol;
         } else {
             super.onPropertyChange(key, nv, ov);
         }

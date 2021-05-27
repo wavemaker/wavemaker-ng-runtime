@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-html', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmHtml ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmHtml aria-label=${attrs.get('hint') || 'HTML content'} ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });
