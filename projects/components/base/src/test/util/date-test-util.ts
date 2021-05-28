@@ -1,17 +1,24 @@
 import { getElementByTagOnDocQuery, getHtmlSelectorElement, onClickCheckTaglengthOnBody } from "./component-test-util";
-import { defineLocale, deLocale } from "ngx-bootstrap";
+import { deLocale } from "ngx-bootstrap/locale";
 import { getFormattedDate, getNativeDateObject } from "@wm/core";
+import { defineLocale } from "ngx-bootstrap/chronos";
 declare const moment;
 
 export const datepatternTest = (fixture, selector: string, inputSelector: string, attr?: string, isLower?: boolean) => {
     fixture.whenStable().then(() => {
-        let dateControl = getHtmlSelectorElement(fixture, selector)
+        let dateControl = getHtmlSelectorElement(fixture, selector);
         let dateInputControl = getHtmlSelectorElement(fixture, inputSelector);
         let attrVal = dateControl.nativeElement.getAttribute(attr || 'datepattern');
         if (!isLower) {
             attrVal = attrVal.toUpperCase();
+            let splitHrmMin = attrVal.split('T');
+            if(splitHrmMin && splitHrmMin.length > 1) {
+                let hrsmin = splitHrmMin[1].replaceAll('M','m');
+                attrVal = splitHrmMin[0] + 'T' + hrsmin; 
+            }
         } else {
             attrVal = attrVal.replaceAll('y', 'Y').replaceAll('d', 'D');
+           
         }
         expect(moment(dateInputControl.nativeElement.value, attrVal, true).isValid()).toBe(true);
     })

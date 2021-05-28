@@ -14,8 +14,7 @@ import {
     FormWidgetType,
     getDisplayDateTimeFormat,
     getFormattedDate,
-    getNativeDateObject,
-    isMobile
+    getNativeDateObject
 } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
@@ -79,7 +78,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
                 this.setTimeInterval();
             } else {
                 this.clearTimeInterval();
-                this.bsTimeValue = getNativeDateObject(newVal, { pattern: isMobile() ? this.outputformat : undefined });
+                this.bsTimeValue = getNativeDateObject(newVal, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput});
                 this.isCurrentTime = false;
                 this.mintimeMaxtimeValidation();
             }
@@ -158,10 +157,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
            this.updateFormat('timepattern');
         }
         if (key === 'mintime') {
-            this.minTime = getNativeDateObject(nv, { pattern: isMobile() ? this.outputformat : undefined }); // TODO it is supposed to be time conversion, not to the day
+            this.minTime = getNativeDateObject(nv, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput }); // TODO it is supposed to be time conversion, not to the day
             this.mintimeMaxtimeValidation();
         } else if (key === 'maxtime') {
-            this.maxTime = getNativeDateObject(nv, { pattern: isMobile() ? this.outputformat : undefined });
+            this.maxTime = getNativeDateObject(nv, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
             this.mintimeMaxtimeValidation();
         } else {
             super.onPropertyChange(key, nv, ov);
@@ -190,9 +189,12 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This is an internal method used to toggle the dropdown of the time widget
      */
-    public toggleDropdown($event): void {
-        if (isMobile()) {
-            this.onDateTimeInputFocus();
+     public toggleDropdown($event, skipFocus: boolean = false): void {
+        if (this.loadNativeDateInput) {
+            //Fixes click event getting triggred twice in Mobile devices.
+            if(!skipFocus){
+                this.onDateTimeInputFocus();
+            }
             return;
         }
         if ($event.type === 'click') {
@@ -254,7 +256,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method triggered when the time input changes
      */
     onDisplayTimeChange($event) {
-        const newVal = getNativeDateObject($event.target.value, {meridians: this.meridians, pattern: isMobile() ? this.outputformat : undefined });
+        const newVal = getNativeDateObject($event.target.value, {meridians: this.meridians, pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
         // time pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value)) {
@@ -281,7 +283,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             maxTimeMeridian;
         // For nativePicker, newVal is event, get the dateobject from the event.
         if (isNativePicker) {
-            newVal = getNativeDateObject(newVal.target.value, { pattern: isMobile() ? this.outputformat : undefined });
+            newVal = getNativeDateObject(newVal.target.value, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
         }
         if (newVal) {
             this.bsTimeValue = newVal;
@@ -294,7 +296,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
                 minTimeMeridian = moment(new Date(this.bsTimePicker.min)).format('A');
                 maxTimeMeridian = moment(new Date(this.bsTimePicker.max)).format('A');
                 timeValue = this.bsTimePicker.hours + ':' + (this.bsTimePicker.minutes || 0) + ':' + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian) : '');
-                timeInputValue =  getNativeDateObject(timeValue, { pattern: isMobile() ? this.outputformat : undefined });
+                timeInputValue =  getNativeDateObject(timeValue, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
                 this.bsTimePicker.meridian = minTimeMeridian;
                 this.timeNotInRange = (this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue);
                 this.setValidateType(this.bsTimePicker.min, this.bsTimePicker.max, timeInputValue);
@@ -361,7 +363,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     private isValid(event) {
         if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
-            const newVal = getNativeDateObject(enteredDate, {meridians: this.meridians, pattern: isMobile() ? this.outputformat : undefined });
+            const newVal = getNativeDateObject(enteredDate, {meridians: this.meridians, pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
             if (!this.formatValidation(newVal, enteredDate)) {
                 return;
             }

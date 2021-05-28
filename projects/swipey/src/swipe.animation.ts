@@ -29,8 +29,8 @@ export abstract class SwipeAnimation {
         this._$ele.swipeAnimation('gotoUpper', time);
     }
     public onAnimation(e, distanceMoved: number) {}
-    public onUpper() {}
-    public onLower() {}
+    public onUpper(event?) {}
+    public onLower(event?) {}
     public threshold() { return 30; }
 
     public constructor() {

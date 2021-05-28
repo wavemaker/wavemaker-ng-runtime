@@ -12,10 +12,13 @@ import { WmComponentsModule } from '@wm/components/base';
 import { SecurityService } from '@wm/security';
 import {
     BsDatepickerModule,
-    TimepickerModule,
-    BsDropdownModule,
+
     BsLocaleService
-} from 'ngx-bootstrap';
+} from 'ngx-bootstrap/datepicker';
+import {
+    TimepickerModule
+} from 'ngx-bootstrap/timepicker';
+import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
 import { DatetimeComponent } from './date-time.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
 import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
@@ -261,7 +264,8 @@ describe("DatetimeComponent", () => {
 
 
     it('should show the date patten as yyyy-MM-ddTHH:mm:ss format ', async(() => {
-        datepatternTest(fixture, '.app-datetime', '.app-textbox', '', true);
+
+        datepatternTest(fixture, '.app-datetime', '.app-textbox');
 
     }));
 

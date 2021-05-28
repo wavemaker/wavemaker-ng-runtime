@@ -248,9 +248,24 @@ export class I18nServiceImpl extends AbstractI18nService {
         // when preference is given to browser set languages, do not populate _selectedDefaultLang variable
         let _selectedDefaultLang = preferBrowserLang ? undefined : _defaultLanguage;
 
+        let _appSupportedLang;
+        /**
+         * for cordova, check for language ignoring the locale 
+         * As the navigator.languages always returns the language with locale (en-us)
+         * The supportedLanguages from BE doesn't include locale (en) which leads to mismatch
+         */
+        if (CONSTANTS.hasCordova) {  
+            let supportedLang = [];
+            _.forEach(_acceptLang, function(lang) {
+                let matchedLang = _.find(_supportedLang, (val) => lang.startsWith(val));
+                if (matchedLang) {
+                    supportedLang.push(matchedLang);
+                }
+             })
+            _appSupportedLang = supportedLang[0];
+        }
         // check for the session storage to load any pre-requested locale
-        const _defaultLang = getSessionStorageItem('selectedLocale') || _selectedDefaultLang || _.intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
-
+        const _defaultLang = getSessionStorageItem('selectedLocale') || _selectedDefaultLang || _appSupportedLang || _.intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
         // if the supportedLocale is not available set it to defaultLocale
         _supportedLang = _supportedLang || [_defaultLang];
 

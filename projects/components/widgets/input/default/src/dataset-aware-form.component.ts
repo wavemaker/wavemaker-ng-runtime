@@ -2,7 +2,7 @@ import { Injector, Attribute, OnInit } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
-import {$appDigest, debounce, isDefined, isEqualWithFields, toBoolean, AppDefaults, noop} from '@wm/core';
+import { AppDefaults, $appDigest, debounce, isDefined, isEqualWithFields, noop, toBoolean } from '@wm/core';
 
 import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, handleHeaderClick, toggleAllHeaders, transformFormData, transformDataWithKeys, groupData, ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from './base-form-custom.component';
@@ -26,6 +26,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     public handleHeaderClick: ($event) => void;
     private toggleAllHeaders: void;
+    public appDefaults;
 
     public binddisplayexpression: string;
     public binddisplayimagesrc: string;
@@ -40,7 +41,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     protected match: string;
     protected dateformat: string;
-    protected groupedData: any[];
+    public groupedData: any[];
 
     protected _modelByKey: any;
     public _modelByValue: any;
@@ -84,10 +85,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.invokeOnChange(val, undefined, true);
     }
 
-    protected constructor(inj: Injector, WIDGET_CONFIG, @Attribute('groupby') public groupby?: string,
-        private appDefaults?: AppDefaults) {
+    protected constructor(inj: Injector, WIDGET_CONFIG, @Attribute('groupby') public groupby?: string) {
         super(inj, WIDGET_CONFIG);
         this.datePipe = this.inj.get(ToDatePipe);
+        this.appDefaults = this.inj.get(AppDefaults);
         this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');
         this.binddisplayimagesrc = this.nativeElement.getAttribute('displayimagesrc.bind');
         this.binddisplaylabel = this.nativeElement.getAttribute('displaylabel.bind');
@@ -331,15 +332,16 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
                 break;
             case 'groupby':
             case 'match':
-                this.setGroupData();
+                if (this.widgetType !== 'wm-search' && this.widgetType !== 'wm-chips') {
+                    this.setGroupData();
+                }
             break;
         }
     }
 
     ngOnInit() {
         super.ngOnInit();
-        // &&  this.widgetType !== 'wm-search'
-        if (this.groupby) {
+        if (this.groupby && (this.widgetType !== 'wm-search' && this.widgetType !== 'wm-chips')) {
             this.setGroupData();
         }
         // adding the handler for header click and toggle headers.

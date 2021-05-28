@@ -949,10 +949,10 @@ $.widget('wm.datatable', {
         // Adding click event to the button
         $btnEl.on('click', function (e) {
             if (cb && typeof cb === 'function') {
-                cb(e);
                 // when the button is clicked, hide the button and show loading indicator
                 $btnEl.hide();
                 self.showLoadingIndicator(loadingdatamsg, false);
+                cb(e);
             }
         });
     },

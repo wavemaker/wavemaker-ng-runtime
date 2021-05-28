@@ -61,6 +61,7 @@ export {
 export * from './widgets/common/base/partial-container.directive';
 export * from './widgets/common/base/base-field-validations';
 export * from './widgets/common/item-template/item-template.directive';
+export * from './widgets/common/repeat-template/repeat-template.directive';
 export * from './widgets/common/base/stylable.component';
 export * from './widgets/common/message/message.component';
 export * from './widgets/common/pull-to-refresh/pull-to-refresh';

@@ -291,7 +291,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         this.isDefaultQuery = false;
 
         // allow actions if control key is pressed or if backspace is pressed. (for Mozilla).
-        if ($event.ctrlKey || _.includes(['Backspace', 'ArrowRight', 'ArrowLeft', 'Tab', 'Enter'], $event.key)) {
+        if ($event.ctrlKey || _.includes(['Backspace', 'ArrowRight', 'ArrowLeft', 'Tab', 'Enter', 'Delete'], $event.key)) {
             return;
         }
 

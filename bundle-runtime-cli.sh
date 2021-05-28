@@ -1,30 +1,16 @@
 #!/usr/bin/env bash
-
 BASEDIR=$(dirname "$0")
 cd $BASEDIR
 dev=true
 publish=false
-useS3=false
 publishVersion='x.x.x'
 while [ "$1" != "" ]; do
     case $1 in
-        --use-s3)
-            shift
-            useS3=$1
-        ;;
         --publish-version)
             shift
             publishVersion=$1
             dev=false
             publish=true
-        ;;
-        --use-npm)
-            shift
-            useNpm=$1
-        ;;
-        --is-prod)
-            shift
-            isProd=$1
         ;;
     esac
     shift
@@ -74,13 +60,12 @@ cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.js
 cp ./wm.package.json libraries/package.json
 
 if [[ "${publish}" == true ]]; then
-    # node bundle-runtime-cli.js -v "${version}" --useS3=${useS3} --updateWmVersion
-    node bundle-runtime-cli.js --publishVersion="${publishVersion}" --useNpm=${useNpm} --updateWmVersion --isProd=${isProd}
+    node bundle-runtime-cli.js --publishVersion=${publishVersion}
 fi
-mkdir -p dist/npm-packages/wm
-cp -r libraries/. dist/npm-packages/wm
-tar -zcf dist/npm-packages/wm.tar.gz -C dist/npm-packages wm
-rm -r dist/npm-packages/wm
+mkdir -p dist/npm-packages/app-ng-runtime
+cp -r libraries/. dist/npm-packages/app-ng-runtime
+tar -zcf dist/npm-packages/app-ng-runtime.tar.gz -C dist/npm-packages app-ng-runtime
+rm -r dist/npm-packages/app-ng-runtime
 
 cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/runtime-cli/dependencies
 cd -

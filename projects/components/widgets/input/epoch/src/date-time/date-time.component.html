@@ -11,7 +11,7 @@
             [tabindex]="tabindex"
             type="text"
             [value]="displayValue"
-            (click)="toggleDpDropdown($event)"
+            (click)="toggleDpDropdown($event, true)"
             (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
             (blur)="onInputBlur($event)"
             (change)="onDateChange($event)"
@@ -22,25 +22,7 @@
             [attr.placeholder]="placeholder"
             [attr.accesskey]="shortcutkey"
             (keydown)="onDisplayKeydown($event)">
-        <div style="width: 0;display: inline-block;"
-            aria-label="datepicker dropdownmenu"
-            aria-controls="date">
-            <input class="model-holder"
-                focus-target
-                [container]="containerTarget || 'body'"
-                [bsConfig]="_dateOptions"
-                [isOpen]="isDateOpen"
-                 placement="bottom right"
-                (onShown)="onDatePickerOpen()"
-                (onHidden)="hideDatepickerDropdown()"
-                [daysDisabled]="excludedDaysToDisable"
-                [datesDisabled]="excludedDatesToDisable"
-                #datepicker=bsDatepicker
-                bsDatepicker
-                [isDisabled]="disabled || readonly || isCurrentDate"
-                [bsValue]="bsDateValue"
-                (bsValueChange)="onModelUpdate($event, 'date')">
-        </div>
+     
         <span class="input-group-btn">
             <button type="button"
                 class="btn btn-default btn-date"
@@ -49,7 +31,7 @@
                 aria-label="Select date"
                 aria-haspopup="true"
                 aria-expanded="false"
-                (click)="toggleDpDropdown($event)">
+                (click)="toggleDpDropdown($event, false)">
                 <i aria-hidden="true"
                     class="app-icon wi wi-calendar"></i>
             </button>
@@ -65,6 +47,25 @@
                     class="app-icon wi wi-access-time"></i>
             </button>
         </span>
+        <div style="width: 0;display: inline-block;"
+        aria-label="datepicker dropdownmenu"
+        aria-controls="date">
+        <input class="model-holder"
+            focus-target
+            [container]="containerTarget || 'body'"
+            [bsConfig]="_dateOptions"
+            [isOpen]="isDateOpen"
+             placement="bottom right"
+            (onShown)="onDatePickerOpen()"
+            (onHidden)="hideDatepickerDropdown()"
+            [daysDisabled]="excludedDaysToDisable"
+            [datesDisabled]="excludedDatesToDisable"
+            #datepicker=bsDatepicker
+            bsDatepicker
+            [isDisabled]="disabled || readonly || isCurrentDate"
+            [bsValue]="bsDateValue"
+            (bsValueChange)="onModelUpdate($event, 'date')">
+    </div>
         <div *dropdownMenu
             class="dropdown-menu"
             aria-label="timepicker dropdown"

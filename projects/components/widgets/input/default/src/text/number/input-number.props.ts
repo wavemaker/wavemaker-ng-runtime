@@ -22,7 +22,7 @@ export const inputNumberTypeProps = new Map(
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['step', PROP_NUMBER],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['type', PROP_STRING],
+        ['type', {value: 'number', ...PROP_STRING}],
         ['updateon', PROP_STRING]
     ]
 );

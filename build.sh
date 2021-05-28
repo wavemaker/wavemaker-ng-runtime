@@ -109,7 +109,7 @@ buildNeeded() {
     if [[ ${force} == true ]]; then
         return 1
     fi
-    
+
     local bundle=$1
     local sourceLocation=$2
     local successFile="./dist/tmp/${bundle}_${SUCCESS_FILE}"
@@ -120,7 +120,7 @@ buildNeeded() {
 
     local modifiedSourceFilesCount=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -newer $successFile | wc -l`
     return $modifiedSourceFilesCount
-}	
+}
 
 rollup() {
     local bundle=$1
@@ -534,6 +534,7 @@ bundleWebLibs() {
         ./node_modules/moment/moment.js \
         ./node_modules/x2js/x2js.js \
         ./node_modules/d3/d3.min.js \
+        ./node_modules/he/he.js \
         ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
@@ -599,6 +600,7 @@ bundleMobileLibs() {
         ./node_modules/moment/moment.js \
         ./node_modules/x2js/x2js.js \
         ./node_modules/d3/d3.min.js \
+        ./node_modules/he/he.js \
         ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \

@@ -651,6 +651,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (key === 'matchmode') {
             this.searchComponent.matchmode = this.matchmode;
         }
+        if (key === 'groupby') {
+            this.searchComponent.groupby = this.groupby;
+        }
         if (key === 'enablereorder') {
             if (this.$element.hasClass('ui-sortable')) {
                 this.$element.sortable('option', 'disabled', !nv );

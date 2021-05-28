@@ -72,7 +72,7 @@ export class AppManagerService {
                 }
             }
         });
-        this.$app.subscribe('userLoggedIn', () => { 
+        this.$app.subscribe('userLoggedIn', () => {
             this.setLandingPage();
             if (this.lastLoggedUserId) {
                 this.$security.getConfig(config => {
