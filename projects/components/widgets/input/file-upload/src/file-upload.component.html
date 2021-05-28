@@ -1,7 +1,7 @@
 <div class="app-fileupload" init-widget>
     <!-- drag and drop files UI in web -->
     <div class="app-multi-file-upload" *ngIf="!_isMobileType && multiple">
-        <div class="drop-box" (click)="triggerFileSelect()" (dragover)="dragOverHandler($event)" (drop)="onFileDrop($event)">
+        <div id="dropzone" class="drop-box" (click)="triggerFileSelect()" [ngClass]="{'highlight-drop-box' : highlightDropArea}" (dragover)="dragOverHandler($event);" (drop)="onFileDrop($event);">
             <i class="{{iconclass}}"></i>
             <div class="message">
                 <label [innerHtml]="caption" class="caption"></label>
@@ -19,7 +19,7 @@
                 <!-- support for file upload in Mobileapp in its runmode (Web) -->
                 <input class="file-input" aria-label="Select files" type="file" name="files" *ngIf="multiple" [disabled]="disabled" [accept]="chooseFilter" (click)="onFileElemClick($event)" (change)="onFileSelect($event, $event.target.files)" multiple>
                 <input class="file-input" aria-label="Select Files" type="file" name="files" *ngIf="!multiple" [disabled]="disabled" [accept]="chooseFilter" (click)="onFileElemClick($event)" (change)="onFileSelect($event, $event.target.files)" >
-                <button focus-target class="app-button btn btn-default">
+                <button id="dropzone" focus-target class="app-button btn btn-default" [ngClass]="{'highlight-drop-box' : highlightDropArea}">
                     <i class="{{iconclass}}" aria-hidden="true"></i>
                     <span class="caption">{{caption}}</span>
                 </button>
