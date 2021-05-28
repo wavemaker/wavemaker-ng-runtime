@@ -11,7 +11,7 @@
             [tabindex]="tabindex"
             type="text"
             [value]="displayValue"
-            (click)="toggleDpDropdown($event)"
+            (click)="toggleDpDropdown($event, true)"
             (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
             (blur)="onInputBlur($event)"
             (change)="onDateChange($event)"
@@ -31,7 +31,7 @@
                 aria-label="Select date"
                 aria-haspopup="true"
                 aria-expanded="false"
-                (click)="toggleDpDropdown($event)">
+                (click)="toggleDpDropdown($event, false)">
                 <i aria-hidden="true"
                     class="app-icon wi wi-calendar"></i>
             </button>

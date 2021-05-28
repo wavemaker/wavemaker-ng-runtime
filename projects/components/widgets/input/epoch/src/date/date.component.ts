@@ -4,7 +4,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
-import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, isMobile } from '@wm/core';
+import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
@@ -36,7 +36,7 @@ export class DateComponent extends BaseDateTimeComponent {
     public isOpen: boolean = false;
     private isEnterPressedOnDateInput = false;
     private _bsDefaultLoadCheck: boolean;
-   
+
     private keyEventPlugin;
     private deregisterEventListener;
 
@@ -66,7 +66,7 @@ export class DateComponent extends BaseDateTimeComponent {
         if (newVal === CURRENT_DATE) {
             this.bsDataValue = new Date();
         } else {
-            this.bsDataValue = newVal ? getDateObj(newVal) : undefined;
+            this.bsDataValue = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}) : undefined;
         }
         // update the previous datavalue.
         this.invokeOnChange(this.datavalue, undefined, true);
@@ -98,12 +98,12 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method triggered when the date input changes
      */
-    onDisplayDateChange($event, isNativePicker?) {
+    onDisplayDateChange($event, isNativePicker: boolean = false) {
         if (this.isEnterPressedOnDateInput) {
             this.isEnterPressedOnDateInput = false;
             return;
         }
-        const newVal = getDateObj($event.target.value, {pattern: this.datepattern});
+        const newVal = getDateObj($event.target.value, {pattern: this.datepattern, isNativePicker: isNativePicker});
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
@@ -177,9 +177,12 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method used to toggle the dropdown of the date widget
      */
-    toggleDpDropdown($event) {
-        if (isMobile()) {
-            this.onDateTimeInputFocus();
+     public toggleDpDropdown($event, skipFocus: boolean = false) {
+        if (this.loadNativeDateInput) {
+            //Fixes click event getting triggred twice in Mobile devices.
+            if(!skipFocus){
+                this.onDateTimeInputFocus();
+            }
             return;
         }
         if ($event.type === 'click') {
@@ -250,8 +253,8 @@ export class DateComponent extends BaseDateTimeComponent {
          *  Ngx-bootstrap upgrade : To avoid the page load datechange event;
          *  TODO:
          *  https://github.com/valor-software/ngx-bootstrap/issues/6016
-         *  For above issue, once we get the solution from Ngx-Bootstrap team,  remove the _bsDefaultLoadCheck check and update accordingly. 
-         * */ 
+         *  For above issue, once we get the solution from Ngx-Bootstrap team,  remove the _bsDefaultLoadCheck check and update accordingly.
+         * */
         if (this._bsDefaultLoadCheck) {
             this._bsDefaultLoadCheck = false;
             return;

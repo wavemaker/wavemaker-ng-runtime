@@ -143,7 +143,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
 
     }
 
-    getDefualtOptions() {
+    getDefaultOptions() {
         return this.EDITOR_DEFAULT_OPTIONS;
     }
 

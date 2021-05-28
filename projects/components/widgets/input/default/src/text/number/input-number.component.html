@@ -19,7 +19,7 @@
        [autofocus]="autofocus"
        (blur)="handleBlur($event)"
        (ngModelChange)="handleChange($event)"
-       [autocomplete]="autocomplete ? 'on' : 'new-password'"
+       [autocomplete]="autocomplete ? 'on' : 'off'"
        (keyup.enter)="flushViewChanges(input.value)"
        (keydown.ArrowUp)="onArrowPress($event)"
        (keydown.ArrowDown)="onArrowPress($event)"

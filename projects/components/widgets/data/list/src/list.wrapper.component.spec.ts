@@ -160,6 +160,35 @@ describe('ListComponent', () => {
         }, 1000);
     });
 
+    it('should return index of the list item when an object / directive is sent to getIndex function', () => {
+        // object exists in the testdata
+        const item = {name: 'Peter', age: 21};
+        const index = listComponent.getIndex(item);
+        fixture.detectChanges();
+
+        expect(index).toEqual(0);
+
+        // object does not exist in test data      
+        const obj = {name: 'Jack', age: 24};
+        const val = listComponent.getIndex(obj);
+        fixture.detectChanges();
+
+        expect(val).toEqual(-1);
+
+        // pass selectedItem to getIndex function
+        listComponent.selectItem(1);
+        const selectedIndex = listComponent.getIndex(listComponent.selecteditem);
+        fixture.detectChanges();
+
+        expect(selectedIndex).toEqual(1);
+
+        // pass listItemDirective
+        const directiveIndex = listComponent.getIndex(listComponent.listItems.last);
+        fixture.detectChanges();
+
+        expect(directiveIndex).toEqual(1);
+    });
+
 
     /*
     it('should invoke on-before-render and on-render in sequence', fakeAsync(() => {

@@ -569,7 +569,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
     }
 
-    getDefualtOptions() {
+    getDefaultOptions() {
         return this.calendarOptions;
     }
 

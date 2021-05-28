@@ -26,7 +26,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     public handleHeaderClick: ($event) => void;
     private toggleAllHeaders: void;
-    private appDefaults;
+    public appDefaults;
 
     public binddisplayexpression: string;
     public binddisplayimagesrc: string;
@@ -332,15 +332,16 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
                 break;
             case 'groupby':
             case 'match':
-                this.setGroupData();
+                if (this.widgetType !== 'wm-search' && this.widgetType !== 'wm-chips') {
+                    this.setGroupData();
+                }
             break;
         }
     }
 
     ngOnInit() {
         super.ngOnInit();
-        // &&  this.widgetType !== 'wm-search'
-        if (this.groupby) {
+        if (this.groupby && (this.widgetType !== 'wm-search' && this.widgetType !== 'wm-chips')) {
             this.setGroupData();
         }
         // adding the handler for header click and toggle headers.

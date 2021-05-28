@@ -182,9 +182,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         return this.getListItemByIndex(index);
     }
 
-    // return index of listItem(listItemDirective). This refers to the same method getListItemIndex.
-    public getIndex(item: ListItemDirective) {
-        return this.getListItemIndex(item);
+    /** 
+     * Returns index of listItem(listItemDirective / listItemObject)
+     * If item is a directive, index is fetched from listItems
+     * If item is an object, index is fetched from fieldDefs
+    */
+    public getIndex(item: any) {
+        if (item instanceof ListItemDirective) {
+            return this.getListItemIndex(item);
+        } else if (item) {
+            return this.fieldDefs.findIndex((obj) => _.isEqual(obj, item));
+        }
     }
 
     public set selecteditem(items) {
@@ -789,9 +797,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
             this.reorderProps.minIndex = _.min([minIndex, this.reorderProps.minIndex]);
             this.reorderProps.maxIndex = _.max([maxIndex, this.reorderProps.maxIndex]);
-    
+
             data.splice(newIndex, 0, draggedItem);
-    
+
             this.cdRef.markForCheck();
             this.cdRef.detectChanges();
             const $changedItem = {
@@ -815,7 +823,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         } else { // As default append to should be body
             appendTo = 'body';
         }
-            
+
         const options = isMobileApp() ? {} : {
             appendTo: appendTo,
         };
@@ -990,6 +998,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             };
             this.dataNavigator.widget.maxResults = nv;
             this.dataNavigator.maxResults = nv;
+        } else if (key === 'enablereorder') {
+            if (nv) {
+                this.configureDnD();
+                this.$ulEle.sortable('enable');
+            } else if (this.$ulEle && !nv) {
+                this.$ulEle.sortable('disable');
+            }
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -1136,7 +1151,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         super.ngOnInit();
         this.handleHeaderClick = noop;
         setTimeout(() => {
-            this.debouncedFetchNextDatasetOnScroll = this.paginationService.debouncedFetchNextDatasetOnScroll(this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+            this.debouncedFetchNextDatasetOnScroll = this.paginationService.debouncedFetchNextDatasetOnScroll(this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME, this);
         }, 0);
         this._items = [];
         this.fieldDefs = [];
