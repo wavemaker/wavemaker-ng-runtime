@@ -1293,6 +1293,7 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
     zoneRef.onStable.subscribe(() => {
         const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
         if (containerEleTransformations.m41 < 0) {
+            debugger;
              containerEleTransformations.m41 = 0;
          } else {
              return;
@@ -1311,24 +1312,27 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
  * @param ele Child element(jquery). For some of the widgets(time, search) containerElem doesn't have height. The inner element(dropdown-menu) has height so passing it as optional.
  */
    export const adjustContainerRightEdges = (containerElem, parentElem, ref, ele?) => {    
-    const parentDimesion =  parentElem.getBoundingClientRect();
-    const parentHeight = parentDimesion.height;
-    const parentWidth = parentDimesion.width;
-
-    //Bottom Edges Variables
-    const containerHeight = ele ? _.parseInt(ele.css('height')) : _.parseInt(containerElem.css('height'));
-    const viewPortHeight = $(window).height() + window.scrollY;
-    const parentTop = parentDimesion.top + window.scrollY;
-    let newTop;
-
-    //Right Edges Variables
-    const containerWidth = ele ? _.parseInt(ele.css('width')) : _.parseInt(containerElem.css('width'));
-    const viewPortWidth = $(window).width() + window.scrollX;
-    const parentRight = parentDimesion.right + window.scrollX;
-    let newLeft;
+    
     const zoneRef = ref._ngZone || ref.ngZone;
     zoneRef.onStable.subscribe(() => {
+        const parentDimesion =  parentElem.getBoundingClientRect();
+        const parentHeight = parentDimesion.height;
+        const parentWidth = parentDimesion.width;
+
+        //Bottom Edges Variables
+        const containerHeight = ele ? _.parseInt(ele.css('height')) : _.parseInt(containerElem.css('height'));
+        let newTop;
+
+        //Right Edges Variables
+        const containerWidth = ele ? _.parseInt(ele.css('width')) : _.parseInt(containerElem.css('width'));
+        const parentRight = parentDimesion.right + window.scrollX;
+        let newLeft;
+
         const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
+        const viewPortHeight = $(window).height() + window.scrollY;
+        const viewPortWidth = $(window).width() + window.scrollX;
+
+        const parentTop = parentDimesion.top + window.scrollY;
 
         //Check Right Edges
         if (viewPortWidth - (parentRight + parentWidth) < containerWidth) {
@@ -1338,11 +1342,31 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
             }
             containerEleTransformations.m41 = newLeft;
         }
-        //Check Bottom Edges       
+        // Check Bottom Edges       
         if (viewPortHeight - (parentTop + parentHeight) < containerHeight) {
+            debugger;
             newTop = parentTop - containerHeight;
-            containerEleTransformations.m42 = newTop;
+            //Check can be placed in top
+            if(newTop > 0){
+                containerEleTransformations.m42 = top;
+            }else{
+                //Place it to right
+                if(viewPortWidth - (parentRight + parentWidth) < containerWidth){
+                    newLeft = parentRight;
+                    newLeft = parentRight - (parentWidth + containerWidth);
+
+                }else{
+                    //Place it to left
+                    newLeft = parentRight;
+                }
+                containerEleTransformations.m41 = newLeft;
+                containerEleTransformations.m42 = ((viewPortHeight - containerHeight) / 2);
+            }
         } 
+        if(viewPortWidth >  viewPortHeight && isMobile()){
+
+        }
+
         setTranslation3dPosition(containerElem, containerEleTransformations);    
     });
    };
