@@ -1293,7 +1293,6 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
     zoneRef.onStable.subscribe(() => {
         const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
         if (containerEleTransformations.m41 < 0) {
-            debugger;
              containerEleTransformations.m41 = 0;
          } else {
              return;
@@ -1313,27 +1312,27 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
  */
    export const adjustContainerRightEdges = (containerElem, parentElem, ref, ele?) => {    
     
+    const viewPortHeight = $(window).height() + window.scrollY;
+    const viewPortWidth = $(window).width() + window.scrollX;
+
+    const parentDimesion =  parentElem.getBoundingClientRect();
+    const parentHeight = parentDimesion.height;
+    const parentWidth = parentDimesion.width;
+    const parentRight = parentDimesion.right + window.scrollX;
+    const parentTop = parentDimesion.top + window.scrollY;
+
+    const containerHeight = ele ? _.parseInt(ele.css('height')) : _.parseInt(containerElem.css('height'));
+    const containerWidth = ele ? _.parseInt(ele.css('width')) : _.parseInt(containerElem.css('width'));
+
+    let newTop;
+    let newLeft;
+
     const zoneRef = ref._ngZone || ref.ngZone;
     zoneRef.onStable.subscribe(() => {
-        const parentDimesion =  parentElem.getBoundingClientRect();
-        const parentHeight = parentDimesion.height;
-        const parentWidth = parentDimesion.width;
-
-        //Bottom Edges Variables
-        const containerHeight = ele ? _.parseInt(ele.css('height')) : _.parseInt(containerElem.css('height'));
-        let newTop;
-
-        //Right Edges Variables
-        const containerWidth = ele ? _.parseInt(ele.css('width')) : _.parseInt(containerElem.css('width'));
-        const parentRight = parentDimesion.right + window.scrollX;
-        let newLeft;
+        
 
         const containerEleTransformations = getWebkitTraslationMatrix(containerElem);
-        const viewPortHeight = $(window).height() + window.scrollY;
-        const viewPortWidth = $(window).width() + window.scrollX;
-
-        const parentTop = parentDimesion.top + window.scrollY;
-
+        
         //Check Right Edges
         if (viewPortWidth - (parentRight + parentWidth) < containerWidth) {
             newLeft = parentRight - containerWidth;
@@ -1344,29 +1343,22 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
         }
         // Check Bottom Edges       
         if (viewPortHeight - (parentTop + parentHeight) < containerHeight) {
-            debugger;
             newTop = parentTop - containerHeight;
             //Check can be placed in top
             if(newTop > 0){
-                containerEleTransformations.m42 = top;
+                containerEleTransformations.m42 = newTop;
             }else{
-                //Place it to right
+               //Check can be placed in right center
                 if(viewPortWidth - (parentRight + parentWidth) < containerWidth){
                     newLeft = parentRight;
-                    newLeft = parentRight - (parentWidth + containerWidth);
-
                 }else{
-                    //Place it to left
-                    newLeft = parentRight;
+                    //Place it in left center
+                    newLeft = parentRight - (parentWidth + containerWidth);
                 }
                 containerEleTransformations.m41 = newLeft;
                 containerEleTransformations.m42 = ((viewPortHeight - containerHeight) / 2);
             }
-        } 
-        if(viewPortWidth >  viewPortHeight && isMobile()){
-
-        }
-
+        }         
         setTranslation3dPosition(containerElem, containerEleTransformations);    
     });
    };
