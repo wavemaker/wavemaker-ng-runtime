@@ -261,7 +261,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             } else {
                 this.bsDateValue = this.bsTimeValue = this.proxyModel = undefined;
             }
-            this._debouncedOnChange(this.datavalue, {}, true);
+            if (newVal !== this.datavalue) {
+                this._debouncedOnChange(this.datavalue, {}, true);
+            }
             return;
         }
         if (type === 'date') {
