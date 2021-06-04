@@ -14,6 +14,8 @@
        [autofocus]="autofocus"
        (ngModelChange)="datavalue=$event"
        (blur)="handleBlur($event)"
+       (focus)="onFocus()"
+       (input)="onInputChange($event.target.value)"
        [ngModelOptions]="ngModelOptions"
        [required]="required"
        (keypress)="validateInputEntry($event)"

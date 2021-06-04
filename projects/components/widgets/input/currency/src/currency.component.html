@@ -17,9 +17,11 @@
        [ngModel]="displayValue"
        [ngModelOptions]="ngModelOptions"
 
+       (focus)="onFocus()"
+       (input)="onInputChange($event.target.value)"
        (blur)="handleBlur($event)"
        (ngModelChange)="datavalue=$event"
-       (keydown)="validateInputEntry($event)"
+       (keydown)="validateInputEntry($event);"
        (keydown.enter)="onEnter($event)"
        (keydown.ArrowUp)="onArrowPress($event, 'UP')"
        (keydown.ArrowDown)="onArrowPress($event, 'DOWN')">

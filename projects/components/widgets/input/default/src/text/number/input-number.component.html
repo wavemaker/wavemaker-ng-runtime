@@ -18,6 +18,8 @@
        [attr.accesskey]="shortcutkey"
        [autofocus]="autofocus"
        (blur)="handleBlur($event)"
+       (focus)="onFocus()"
+       (input)="onInputChange($event.target.value)"
        (ngModelChange)="handleChange($event)"
        [autocomplete]="autocomplete ? 'on' : 'off'"
        (keyup.enter)="flushViewChanges(input.value)"
