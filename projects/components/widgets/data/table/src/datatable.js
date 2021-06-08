@@ -2802,6 +2802,12 @@ $.widget('wm.datatable', {
         // Remove the grid table element.
         this.element.find('.table-container').remove();
         this.element.append(this.gridContainer);
+        if (this.options.navigation === 'On-Demand') {
+            this.options.addLoadMoreBtn();
+        }
+        if (this.options.navigation === 'Scroll') {
+            this.options.bindScrollEvt();
+        }
         this.dataStatusContainer = $(statusContainer);
         this.gridContainer.append(this.dataStatusContainer);
         this._renderHeader();
