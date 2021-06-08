@@ -24,6 +24,7 @@ export const inputNumberTypeProps = new Map(
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', {value: 'number', ...PROP_STRING}],
         ['updateon', PROP_STRING],
+        ['trailingzero', {value: false, ...PROP_BOOLEAN}],
         ['inputmode', {value: 'natural', ...PROP_STRING}]
 
     ]
