@@ -14,13 +14,13 @@
                [attr.aria-atomic]="isCurrentTime ? 'true' : 'false'"
                [required]="required"
                [readOnly]="isReadOnly"
-               (click)="toggleDropdown($event)"
+               (click)="toggleDropdown($event, true)"
                (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
                (blur)="onInputBlur($event)"
                (change)="onDisplayTimeChange($event)"
                (keydown)="onDisplayKeydown($event)">
         <span class="input-group-btn dropdown-toggle">
-          <button type="button" class="btn btn-default btn-date" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentTime" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
+            <button type="button" class="btn btn-default btn-date" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentTime" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event, false)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
         </span>
         <div *dropdownMenu class="dropdown-menu" (click)="preventTpClose($event)">
             <timepicker class="model-holder"
@@ -42,7 +42,7 @@
 <ng-template [ngIf]="loadNativeDateInput">
     <input type="time" class="form-control app-textbox display-input mobile-input"
            role="input"
-           value="nativeDisplayValue" [min]="mintime" [max]="maxtime"
+           [value]="nativeDisplayValue" [min]="mintime" [max]="maxtime"
            [tabindex]="tabindex"
            [required]="required"
            [disabled]="disabled || readonly || isCurrentTime"

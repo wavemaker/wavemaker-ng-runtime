@@ -23,6 +23,7 @@ export const timeProps = new Map(
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['showdropdownon', {value: 'default', ...PROP_STRING}],
+        ['showcustompicker', { value: false, ...PROP_BOOLEAN }],
         ['secondsstep', {value: 1, ...PROP_NUMBER}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['timepattern', PROP_STRING],

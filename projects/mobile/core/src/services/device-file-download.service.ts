@@ -126,8 +126,10 @@ export class DeviceFileDownloadService {
         }
         let hasFileExtension;
         // one or more file extensions can have same mimeType then loop over the file extensions.
-        if (_.isArray(fileExtension)) {
+        if (_.isArray(fileExtension) && !_.isEmpty(fileExtension)) {
             hasFileExtension = _.find(fileExtension, extension => _.endsWith(filename, extension));
+            //File extension will be array for some file formats
+            fileExtension = fileExtension[0];
         }
         if (!hasFileExtension && !_.endsWith(filename, fileExtension)) {
             filename = filename + fileExtension;
