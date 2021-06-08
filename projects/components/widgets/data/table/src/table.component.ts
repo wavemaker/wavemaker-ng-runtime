@@ -649,6 +649,23 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const control = this.ngform.controls && this.ngform.controls[fieldName];
             return control && control.value;
         },
+        // function to add load more button to table
+        addLoadMoreBtn: () => {
+            this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
+                this.dataNavigator.navigatePage('next', $event); 
+                this.isDataLoading = true;
+            });
+        },
+        // function to bind scroll event
+        bindScrollEvt: () => {
+            if (this._gridData && this._gridData.length && this.infScroll) {
+                // smoothscroll events will be binded.
+                // Added timeout as the table html is rendered at runtime
+                setTimeout(() => {
+                    this.paginationService.bindScrollEvt(this, 'tbody', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+                }, 0);
+            }
+        },
         generateFilterRow: () => {
             // Clear the view container ref
             this.filterViewRef.clear();
@@ -755,6 +772,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _selectedItemsExist = false;
     set gridData(newValue) {
         this.isDataLoading = false;
+        this.variableInflight = false;
+
         if (this.onDemandLoad || this.infScroll) {
             let isCurrPageUpdated = this.currentPage === this.dataNavigator.dn.currentPage;
             let isPrevPageUpdated = this.actionRowPage < this.currentPage;
@@ -801,11 +820,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.isRowDeleted = false;
             // In case of on demand pagination, create the load more button only once and show the button until next page is not disabled
             if (!this.$element.find('.on-demand-datagrid').length && !this.dataNavigator.isDisableNext && this.onDemandLoad) {
-                this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
-                    this.dataNavigator.navigatePage('next', $event); 
-                    this.isDataLoading = true;
-                });
-            } else if (this.dataNavigator.isDisableNext || !this.isDataLoading) { 
+                this.gridOptions.addLoadMoreBtn();
+            } else if ((this._gridData && this._gridData.length) && (this.dataNavigator.isDisableNext || !this.isDataLoading)) { 
                 // when the next page is disabled or when the data is not loading remove the loading/load more button accordingly
                 this.callDataGridMethod('hideLoadingIndicator', this.dataNavigator.isDisableNext, this.infScroll);
             }
@@ -819,13 +835,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this._onTouched();
 
         if (isDefined(newValue)) {
-            if (this._gridData.length && this.infScroll) {
-                // smoothscroll events will be binded.
-                // Added timeout as the table html is rendered at runtime
-                setTimeout(() => {
-                    this.paginationService.bindScrollEvt(this, 'tbody', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
-                }, 0);
-            }
+            this.gridOptions.bindScrollEvt();
 
             /*Setting the serial no's only when show navigation is enabled and data navigator is compiled
              and its current page is set properly*/
@@ -1596,7 +1606,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return;
         }
         // If variable is in loading state, show loading icon
-        if (this.variableInflight) {
+        if (this.variableInflight && !this.infScroll) {
             this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
         }
 

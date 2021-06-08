@@ -163,7 +163,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         this.isDisableNext = this.isDisableLast = isCurrentPageLast;
         this.isDisableCurrent = isCurrentPageFirst && isCurrentPageLast;
         // In case of client side pagination, when load more reaches last page hide the on-demand grid ele
-        if (this.isDisableNext && this.parent.onDemandLoad && this.parent.widgetType === 'wm-table') {
+        if (this.dataset && this.dataset.length && this.isDisableNext && this.parent.onDemandLoad && this.parent.widgetType === 'wm-table') {
             this.parent.callDataGridMethod('hideLoadingIndicator', this.isDisableNext, false);
         }
     }
@@ -403,6 +403,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             this.parent.isDataLoading = true;
             // In case of infinite scroll calling the showLoadingIndicator method to update the loading message immediately when navigated to next page
             if (this.parent.infScroll) {
+                this.parent.variableInflight = true;
                 this.parent.callDataGridMethod('showLoadingIndicator', this.parent.loadingdatamsg, true);
             }
         }
