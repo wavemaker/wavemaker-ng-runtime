@@ -33,7 +33,7 @@ import { MockAbstractI18nService } from 'projects/components/base/src/test/util/
 import { compileTestComponent, mockApp, mockViewport } from "projects/components/base/src/test/util/component-test-util";
 
 const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="quickedit"
-                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false">
+                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false" rowselect.event="UserTable1Rowselect($event, widget, row)">
 
                                 <div wmTableColumn index="0" headerIndex="0" binding="firstname" caption="Firstname" edit-widget-type="text" type="string"
                                     mobiledisplay="false" searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
@@ -923,6 +923,10 @@ describe("DataTable", () => {
                 class QuickEditTableWrapperComponent {
                     @ViewChild(TableComponent, /* TODO: add static flag */ {static: true})
                     wmComponent: TableComponent;
+                    UserTable1Rowselect($event, widget, row) {
+                        console.log('Row Selected');
+                        console.log(row);
+                    }
                 }
 
                 const quickeditTestModuleDef: ITestModuleDef = {
@@ -1050,6 +1054,20 @@ describe("DataTable", () => {
                         validTestValue
                     );
                 }));
+
+                /* TODO: Need to add testcase for WMS-20545 Trigger select event when only one column is editable */
+                it("Should make row editable when clicked on a column having customExpression", () => {
+                    spyOn(wrapperComponent, 'UserTable1Rowselect');
+                    const debugEl = quick_edit_fixture.debugElement.nativeElement;
+                    const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
+                    const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row:first-child");
+                    const tableColEls = tableRowEls[0].querySelectorAll("td.app-datagrid-cell > div");
+                    tableColEls[0].click();
+                    expect(wrapperComponent.UserTable1Rowselect).toHaveBeenCalledTimes(1);
+                    expect(
+                        tableRowEls[0].matches(".app-datagrid-row.row-editing")
+                    ).toBeTruthy();
+                });
 
                 xit('should trigger default maxvalue validator', async(() => {
                     const invalidTestValue = 20;

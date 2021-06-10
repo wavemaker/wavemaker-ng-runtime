@@ -1409,7 +1409,9 @@ $.widget('wm.datatable', {
 
         $row = $row || $target.closest('tr.app-datagrid-row');
 
-        if (action || (isQuickEdit && $target.hasClass('app-datagrid-cell') && !$row.hasClass('always-new-row'))) {
+        // Fix for [WMS-20546]: If column has a value expression, an extra div is getting added inside <td>.
+        // so checking if target or its parent element has the class '.app-datagrid-cell'
+        if (action || (isQuickEdit && ($target.hasClass('app-datagrid-cell') || $target.parent().hasClass('app-datagrid-cell')) && !$row.hasClass('always-new-row'))) {
             //In case of advanced edit, Edit the row on click of a row
             options.action = options.action || 'edit';
 
@@ -2284,7 +2286,8 @@ $.widget('wm.datatable', {
             }
             return;
         }
-        if (!isSameRow) {
+        // Fix for [WMS-20545]: The deselect/select event is being triggered twice when isSameRow is undefined
+        if (!isSameRow && !_.isUndefined(isSameRow)) {
             rowID++;
         }
         $nextRow = self.gridBody.find('tr.app-datagrid-row[data-row-id="' + rowID + '"]');
