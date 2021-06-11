@@ -62,6 +62,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public name: string;
     public adaptiveposition:boolean;
     public containerTarget: string;
+    public _ariaLabel: string = 'Popover menu';
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;

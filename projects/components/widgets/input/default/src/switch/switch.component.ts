@@ -31,6 +31,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     public required: boolean;
     private _debounceSetSelectedValue: Function;
     public name: string;
+    public _ariaLabel: string = 'Switch button';
 
     constructor(inj: Injector, ) {
         super(inj, WIDGET_CONFIG);

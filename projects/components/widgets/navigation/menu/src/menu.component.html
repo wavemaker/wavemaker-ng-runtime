@@ -3,7 +3,7 @@
             dropdownToggle
             aria-haspopup="true"
             aria-expanded="false"
-            [attr.aria-label]="hint || 'Menu'"
+            [attr.aria-label]="hint || _ariaLabel"
             class="btn app-button dropdown-toggle {{menuclass}}"
             hint.bind="hint"
             shortcutkey.bind="shortcutkey"

@@ -55,6 +55,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public binddisplaylabel: string;
     public typeaheadContainer: TypeaheadContainerComponent;
     public containerTarget: string;
+    public _ariaLabel: string = 'Search field';
 
     @ViewChild(TypeaheadDirective) typeahead: TypeaheadDirective;
     @ViewChild('ulElement') ulElement: ElementRef;
@@ -128,7 +129,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     this.typeahead._container = undefined;
                 }
             }).pipe(
-                filter(() => { 
+                filter(() => {
                     this._loadingItems = false;
                     return (this.minchars === 0 || (this.query && this.query.length >= this.minchars));
                 }),

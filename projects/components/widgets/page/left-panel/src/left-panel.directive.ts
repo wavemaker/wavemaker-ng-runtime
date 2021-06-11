@@ -23,7 +23,8 @@ export enum AnimationType {
     selector: '[wmLeftPanel]',
     providers: [
         provideAsWidgetRef(LeftPanelDirective)
-    ]
+    ],
+    exportAs: 'wmLeftPanel'
 })
 export class LeftPanelDirective extends StylableComponent {
     static initializeProps = registerProps();
@@ -33,6 +34,7 @@ export class LeftPanelDirective extends StylableComponent {
     public expanded: boolean;
     public gestures: string;
     public xscolumnwidth: number;
+    public _ariaLabel: string = 'Left navigation';
 
     public $ele;
     public $page;

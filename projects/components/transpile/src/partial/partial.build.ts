@@ -20,7 +20,7 @@ register('wm-partial', (): IBuildTaskDef => {
             node.children.length = 0;
             node.children.push(conditionalNode);
         },
-        pre: attrs => `<${tagName} wmPartial data-role="partial" role="region" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmPartial data-role="partial" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

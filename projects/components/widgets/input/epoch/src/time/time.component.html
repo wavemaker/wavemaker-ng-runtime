@@ -1,5 +1,5 @@
     <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" (onHidden)="hideTimepickerDropdown()" [container]="'body'" style="display: inherit">
-        <input class="form-control app-textbox display-input" [attr.aria-label]="hint || 'Time field'"
+        <input class="form-control app-textbox display-input" [attr.aria-label]="hint || _ariaLabel"
                focus-target
                [tabindex]="tabindex"
                [name]="name"
@@ -10,7 +10,6 @@
                [autofocus]="autofocus"
                [attr.placeholder]="placeholder"
                [attr.accesskey]="shortcutkey"
-               [attr.aria-autocomplete]="datavalue ? 'on' : 'off'"
                [attr.aria-atomic]="isCurrentTime ? 'true' : 'false'"
                [required]="required"
                [readOnly]="isReadOnly"

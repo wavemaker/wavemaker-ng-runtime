@@ -30,6 +30,7 @@ export class TextareaComponent extends BaseInput {
     public placeholder: any;
     public shortcutkey: string;
     public autofocus: boolean;
+    public _ariaLabel:string = 'Textarea field';
     @ViewChild('textarea', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 

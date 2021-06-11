@@ -13,7 +13,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};
     selector: '[wmPage]',
     providers: [
         provideAsWidgetRef(PageDirective)
-    ]
+    ],
+    exportAs: 'wmPage'
 })
 export class PageDirective extends StylableComponent implements AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
@@ -21,6 +22,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
     private _eventNotifier = new EventNotifier(false);
     public refreshdataonattach = true;
     public pagetitle: string;
+    public _ariaLabel: string = 'Main page content';
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'pagetitle') {

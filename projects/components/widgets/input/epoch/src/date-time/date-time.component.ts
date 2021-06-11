@@ -45,6 +45,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
     private isEnterPressedOnDateInput = false;
+    public _ariaLabel: string = 'Date and time field';
 
     get timestamp() {
         return this.proxyModel ? this.proxyModel.valueOf() : undefined;

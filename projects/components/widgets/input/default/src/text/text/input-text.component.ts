@@ -41,6 +41,7 @@ export class InputTextComponent extends BaseInput implements OnInit{
     public maskVal: any;
     public isFocused: boolean;
     private lazy: boolean = false;
+    public _ariaLabel: string = 'Text field';
 
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;

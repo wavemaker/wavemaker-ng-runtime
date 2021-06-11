@@ -56,6 +56,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     private deregisterEventListener;
     private app: App;
     private displayInputElem: HTMLElement;
+    public _ariaLabel: string = 'Time field';
 
     get timestamp() {
         return this.bsTimeValue ? this.bsTimeValue.valueOf() : undefined;

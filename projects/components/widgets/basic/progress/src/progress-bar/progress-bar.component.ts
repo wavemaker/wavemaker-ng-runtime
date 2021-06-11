@@ -49,6 +49,7 @@ export class ProgressBarComponent extends StylableComponent {
     public maxvalue: number;
     public type: string;
     public dataset: Array<any>;
+    public _ariaLabel: string = 'Progress bar';
 
     private _prepareData: Function;
     private readonly hasDataset: boolean;

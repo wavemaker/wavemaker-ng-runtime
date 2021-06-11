@@ -13,10 +13,12 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmFooter]',
     providers: [
         provideAsWidgetRef(FooterDirective)
-    ]
+    ],
+    exportAs: 'wmFooter'
 })
 export class FooterDirective extends StylableComponent {
     static initializeProps = registerProps();
+    public _ariaLabel: string = 'Page footer';
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 

@@ -18,10 +18,12 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmLabel]',
     providers: [
         provideAsWidgetRef(LabelDirective)
-    ]
+    ],
+    exportAs: 'wmLabel'
 })
 export class LabelDirective extends StylableComponent {
     static initializeProps = registerProps();
+    public _ariaLabel: string = 'Label text';
 
     constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
         super(inj, WIDGET_CONFIG);

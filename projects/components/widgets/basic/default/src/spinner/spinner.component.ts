@@ -15,7 +15,8 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAU
     templateUrl: './spinner.component.html',
     providers: [
         provideAsWidgetRef(SpinnerComponent)
-    ]
+    ],
+    exportAs: 'wmSpinner'
 })
 export class SpinnerComponent extends StylableComponent implements OnInit {
     static initializeProps = registerProps();
@@ -30,6 +31,7 @@ export class SpinnerComponent extends StylableComponent implements OnInit {
     private _spinnerMessages;
     public showCaption = true;
     public type: any;
+    public _ariaLabel = 'Loading...';
 
     public get spinnerMessages() {
         return this._spinnerMessages;

@@ -13,7 +13,7 @@
        [attr.tabindex]="tabindex"
        [attr.placeholder]="placeholder"
        [attr.accesskey]="shortcutkey"
-       [attr.aria-label]="hint || 'Datepicker'"
+       [attr.aria-label]="hint || _ariaLabel"
        [autofocus]="autofocus"
        (blur)="handleBlur($event)"
        (ngModelChange)="handleChange($event)"

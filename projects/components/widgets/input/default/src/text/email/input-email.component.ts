@@ -35,6 +35,7 @@ export class InputEmailComponent extends BaseInput {
     public regexp: string;
     public placeholder: any;
     public type: string;
+    public _ariaLabel: string = 'Email address field';
 
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;

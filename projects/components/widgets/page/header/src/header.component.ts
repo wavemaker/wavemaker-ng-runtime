@@ -14,10 +14,12 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './header.component.html',
     providers: [
         provideAsWidgetRef(HeaderComponent)
-    ]
+    ],
+    exportAs: 'wmHeader'
 })
 export class HeaderComponent extends StylableComponent {
     static initializeProps = registerProps();
+    public _ariaLabel: string = 'Page header';
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 

@@ -2,9 +2,8 @@
     <input type="checkbox"
            #checkbox
            [attr.name]="name"
-           [attr.aria-label]="hint || 'checkbox'"
-           [attr.aria-checked]="type === 'toggle' ? null : (datavalue ? 'checked' : 'not checked')"
-           [attr.aria-state]="type === 'toggle' ? (datavalue ? 'checked' : 'not checked') : null"
+           [attr.aria-label]="hint || _ariaLabel"
+           [attr.aria-checked]="!!proxyModel"
            focus-target
            [(ngModel)]="proxyModel"
            [readonly]="readonly"
@@ -17,4 +16,4 @@
     <span class="caption" [innerHtml]="_caption"></span>
     <img alt="Checkbox Image" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="switch"/>
 </label>
-<input type="hidden" class="ng-hide model-holder" [disabled]="disabled" [value]="proxyModel">
+<input type="hidden" class="ng-hide model-holder" aria-hidden="true" tabindex="-1" [disabled]="disabled" [value]="proxyModel">

@@ -33,6 +33,7 @@ export class InputColorComponent extends BaseInput {
     public disabled: boolean;
     public placeholder: any;
     public type: string;
+    public _ariaLabel: string = 'Colorpicker';
 
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;

@@ -31,6 +31,8 @@ export class NumberComponent extends NumberLocale {
     public tabindex: any;
     public shortcutkey: string;
     public autofocus: boolean;
+    public _ariaLabel: string = 'Number field';
+
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel, {static: true}) ngModel: NgModel;
 

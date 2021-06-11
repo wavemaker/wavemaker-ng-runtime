@@ -1,10 +1,16 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import {IDGenerator} from "@wm/core";
 
 const tagName = 'aside';
+const idGen = new IDGenerator('wm_right_panel');
 
 register('wm-right-panel', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmRightPanel partialContainer data-role="page-right-panel" role="complementary" aria-label="${attrs.get('hint') || 'Right navigation panel'}" ${getAttrMarkup(attrs)}>`,
+        pre: (attrs) => {
+            const counter = idGen.nextUid()
+            const ariaLabel = attrs.get('hint') || '';
+            return `<${tagName} wmRightPanel #${counter}="wmRightPanel" partialContainer data-role="page-right-panel" role="complementary" [attr.aria-label]="'${ariaLabel}' || ${counter}._ariaLabel" ${getAttrMarkup(attrs)}>`;
+        },
         post: () => `</${tagName}>`
     };
 });

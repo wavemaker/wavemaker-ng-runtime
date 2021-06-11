@@ -31,6 +31,8 @@ export class IframeComponent extends StylableComponent {
 
     public caption: any;
     public name: string;
+    public _ariaLabel: string = 'iframe';
+
     /**
      * this property member is set to true when the content request url doesn't match windows protocol
      */

@@ -39,6 +39,7 @@ export class DateComponent extends BaseDateTimeComponent {
 
     private keyEventPlugin;
     private deregisterEventListener;
+    public _ariaLabel: string = 'Date field';
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;

@@ -15,11 +15,13 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmHtml]',
     providers: [
         provideAsWidgetRef(HtmlDirective)
-    ]
+    ],
+    exportAs: 'wmHtml'
 })
 export class HtmlDirective extends StylableComponent implements OnInit {
     static initializeProps = registerProps();
     public content: string;
+    public _ariaLabel: string = 'HTML content';
 
     constructor(
         inj: Injector,

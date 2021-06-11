@@ -16,7 +16,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './button.component.html',
     providers: [
         provideAsWidgetRef(ButtonComponent)
-    ]
+    ],
+    exportAs: 'wmButton'
 })
 export class ButtonComponent extends StylableComponent {
     static initializeProps = registerProps();
@@ -25,6 +26,7 @@ export class ButtonComponent extends StylableComponent {
     public iconclass: string;
     public caption: string;
     public badgevalue: string;
+    public _ariaLabel: string = 'Button'
     @HostBinding('type') type: string;
     @HostBinding('tabIndex') tabindex: number;
     @HostBinding('disabled') disabled: boolean;

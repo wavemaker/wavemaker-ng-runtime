@@ -35,6 +35,7 @@ export class InputNumberComponent extends BaseInput {
     public autofocus: boolean;
     public autocomplete: any;
     public type: string;
+    public _ariaLabel: string = 'Number field';
 
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;

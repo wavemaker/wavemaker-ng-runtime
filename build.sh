@@ -361,7 +361,7 @@ buildApp() {
     ngBuild components-page-footer projects/components/widgets/page/footer '@wm/components/page/footer'
     ngBuild components-page-header projects/components/widgets/page/header '@wm/components/page/header'
     ngBuild components-page-leftpanel projects/components/widgets/page/left-panel '@wm/components/page/left-panel'
-    ngBuild components-page-rightpanel projects/components/widgets/page/footer '@wm/components/page/right-panel'
+    ngBuild components-page-rightpanel projects/components/widgets/page/right-panel '@wm/components/page/right-panel'
     ngBuild components-page-topnav projects/components/widgets/page/top-nav '@wm/components/page/top-nav'
 
     ngBuild components-prefab projects/components/widgets/prefab '@wm/components/prefab'
