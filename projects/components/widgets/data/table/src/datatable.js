@@ -28,6 +28,7 @@ $.widget('wm.datatable', {
         enableColumnSelection: false,
         multiselect: false,
         filterNullRecords: true,
+        navigation: '',
         cssClassNames: {
             'tableRow': 'app-datagrid-row',
             'headerCell': 'app-datagrid-header-cell',
