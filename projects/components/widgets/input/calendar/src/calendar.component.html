@@ -1,13 +1,1 @@
-<div *ngIf="!mobileCalendar" #calendar></div>
-
-<datepicker *ngIf="mobileCalendar" #datepicker [(ngModel)]="proxyModel"
-            [initDate]="getDefaultDate()"
-            [minDate]="minDate"
-            [datepickerMode]="view"
-            [showWeeks]="false"
-            [customClass]="dayClass"
-            (selectionDone)="onValueChange($event)">
-</datepicker>
-
-
-
+<div #calendar id="calendar"></div>

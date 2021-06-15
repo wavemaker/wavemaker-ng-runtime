@@ -2,7 +2,7 @@ import { DatePickerInnerComponent } from 'ngx-bootstrap/datepicker/datepicker-in
 
 import { AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
-import {$watch, getClonedObject, getSessionStorageItem, AbstractI18nService, isMobileApp} from '@wm/core';
+import {getClonedObject, getSessionStorageItem, AbstractI18nService, isMobileApp, isMobile} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, createArrayFrom, getEvaluatedData, IWidgetConfig, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
@@ -13,9 +13,9 @@ declare const _, $, moment;
 const DEFAULT_CLS = 'app-calendar';
 const dateFormats = ['yyyy-MM-dd', 'yyyy-M-dd', 'M-dd-yyyy', 'MM-dd-yy', 'yyyy, dd MMMM', 'yyyy, MMM dd', 'MM/dd/yyyy', 'M/d/yyyy', 'EEE, dd MMM yyyy', 'EEE MMM dd yyyy', 'EEEE, MMMM dd, yyyy', 'timestamp'];
 const defaultHeaderOptions = {
-    left: 'prev next today',
+    start: 'prev next today',
     center: 'title',
-    right: 'month basicWeek basicDay'
+    end: 'dayGridMonth dayGridWeek dayGridDay'
 };
 const VIEW_TYPES = {
     BASIC: 'basic',
@@ -57,7 +57,7 @@ const getEventMomentValue = (value, key) => {
     return moment(value);
 };
 const getUTCDateTime = (dateObj) => {
-    dateObj = _.isObject(dateObj) ? dateObj : moment(dateObj);
+    dateObj = moment(dateObj);
     const year = dateObj.format('YYYY'),
         // javascript starts the month count from '0' where as moment returns the human count
         month = dateObj.format('MM') - 1,
@@ -68,16 +68,12 @@ const getUTCDateTime = (dateObj) => {
     return new Date(year, month, day, hours, minutes, seconds);
 };
 const WIDGET_CONFIG = {widgetType: 'wm-calendar', hostClass: DEFAULT_CLS};
-// mobile calendar class names
-const multipleEventClass = 'app-calendar-event';
-const doubleEventClass = multipleEventClass + ' two';
-const singleEventClass = multipleEventClass + ' one';
 const dateFormat = 'YYYY/MM/DD';
 
 @Component({
     selector: '[wmCalendar]',
     templateUrl: './calendar.component.html',
-    styleUrls: ['../../../../../../node_modules/fullcalendar/dist/fullcalendar.css'],
+    styleUrls: ['../../../../../../node_modules/fullcalendar/main.css'],
     providers: [
         provideAsWidgetRef(CalendarComponent)
     ],
@@ -127,11 +123,12 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             editable: true,
             locale: getSessionStorageItem('selectedLocale') || 'en',
             selectable: false,
-            header: defaultHeaderOptions,
+            longPressDelay: isMobile() ? 1 : 1000,
+            headerToolbar: defaultHeaderOptions,
             nextDayThreshold: NEXT_DAY_THRESHOLD,
             views: {
                 month: {
-                    eventLimit: 0
+                    dayMaxEvents: 0
                 }
             },
             unselectAuto: false,
@@ -139,13 +136,12 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             eventResizeStart: this.onEventChangeStart.bind(this),
             eventDragStart: this.onEventChangeStart.bind(this),
             eventResize: this.eventResize.bind(this),
-            eventClick: this.eventClick.bind(this),
+            eventClick: this.eventClick.bind(this),           
             select: this.select.bind(this),
-            eventRender: this.eventRender.bind(this),
-            viewRender: this.viewRender.bind(this)
+            eventDidMount: this.eventRender.bind(this),
+            datesSet: this.viewRender.bind(this)            
         }
     };
-    public mobileCalendar: boolean;
     private view: string;
     private dayClass: Array<any> = [];
 
@@ -159,23 +155,24 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             start = moment(this.datavalue);
             end   = moment(this.datavalue).add(1, 'day').startOf('day');
         }
-        this.$fullCalendar.fullCalendar('gotoDate', start); // after selecting the date go to the date.
-        this.$fullCalendar.fullCalendar('select', start, end);
+        
+        this.$fullCalendar.gotoDate( moment(start)._d);// after selecting the date go to the date.
+        this.$fullCalendar.select(start, end);
     }
 
     // changes the calendar view to the default date given for the calendar.
     public gotoDate() {
-        this.$fullCalendar.fullCalendar('gotoDate', moment(this.datavalue));
+        this.$fullCalendar.gotoDate( moment(this.datavalue)._d);
     }
 
     // this function takes the calendar view to the a year ahead
     public gotoNextYear() {
-        this.$fullCalendar.fullCalendar('nextYear');
+        this.$fullCalendar.nextYear()
     }
 
     // this function takes the calendar view to the a year before
     public gotoPrevYear() {
-        this.$fullCalendar.fullCalendar('prevYear');
+        this.$fullCalendar.prevYear()
     }
 
     /**
@@ -183,31 +180,31 @@ export class CalendarComponent extends StylableComponent implements AfterContent
      * @param monthVal, 1-12 value of month
      */
     public gotoMonth(monthVal) {
-        const presentDay = this.$fullCalendar.fullCalendar('getDate');
-        const presentMonthVal = new Date(presentDay).getMonth();
+        const presentDay = this.$fullCalendar.getDate();
+        const presentMonthVal =presentDay.getMonth();
         if (presentMonthVal < monthVal) {
-            this.$fullCalendar.fullCalendar('gotoDate', presentDay.add(monthVal - presentMonthVal - 1, 'M'));
+            this.$fullCalendar.gotoDate(presentDay.add(monthVal - presentMonthVal - 1, 'M'));
         } else {
-            this.$fullCalendar.fullCalendar('gotoDate', presentDay.subtract( presentMonthVal - monthVal + 1, 'M'));
+            this.$fullCalendar.gotoDate(presentDay.subtract( presentMonthVal - monthVal + 1, 'M'));
         }
     }
 
     // this function takes the calendar view to the a month ahead
     public gotoNextMonth() {
-        const presentDay = this.$fullCalendar.fullCalendar('getDate');
-        this.$fullCalendar.fullCalendar('gotoDate', presentDay.add(1, 'M'));
+        const presentDay = this.$fullCalendar.getDate();
+        this.$fullCalendar.gotoDate(presentDay.add(1, 'M'));
     }
 
     // this function takes the calendar view to the a month before
     public gotoPrevMonth() {
-        const presentDay = this.$fullCalendar.fullCalendar('getDate');
-        this.$fullCalendar.fullCalendar('gotoDate', presentDay.subtract(1, 'M'));
+        const presentDay = this.$fullCalendar.getDate();
+        this.$fullCalendar.gotoDate(presentDay.subtract(1, 'M'));
     }
 
 
     // this function re-renders the events assigned to the calendar.
-    private rerenderEvents() {
-        this.$fullCalendar.fullCalendar('rerenderEvents');
+    public rerenderEvents() {
+        this.$fullCalendar.render();
     }
 
     private setSelectedData(start, end) {
@@ -241,10 +238,10 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         this.invokeEventCallback('eventdrop', {$event, $newData, $oldData: this.oldData, $delta, $revertFunc, $ui, $view});
     }
 
-    private select(start, end, jsEvent, $view) {
-        this.selecteddates = {start: getUTCDateTime(start), end: getUTCDateTime(end)};
-        this.selecteddata = this.setSelectedData(start, end);
-        this.invokeEventCallback('select', {$start: start.valueOf(), $end: end.valueOf(), $view, $data: this.selecteddata});
+    private select($selectionInfo) {
+        this.selecteddates = {start: getUTCDateTime($selectionInfo.start), end: getUTCDateTime($selectionInfo.end)};
+        this.selecteddata = this.setSelectedData($selectionInfo.start, $selectionInfo.end);        
+        this.invokeEventCallback('select', {$start: $selectionInfo.start.valueOf(), $end: $selectionInfo.end.valueOf(), $view: $selectionInfo.view, $data: this.selecteddata});
     }
 
     private eventResize($newData, $delta, $revertFunc, $event, $ui, $view) {
@@ -267,7 +264,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     private viewRender($view) {
-        this.currentview = {start: $view.start.format(), end: $view.end.subtract(1, 'days').format()};
+        this.currentview = {start: moment($view.start).format(), end: moment($view.end).subtract(1, 'days').format()};
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$fullCalendar.find('.fc-list-table').addClass('table');
         }
@@ -277,7 +274,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     // update the calendar header options once the controls changes
     private updateCalendarHeaderOptions() {
         const ctrls = this.controls, viewType = this.calendartype,
-            regEx = new RegExp('\\bday\\b', 'g');
+        regEx = new RegExp('\\bday\\b', 'g');
         let left = '', right = '';
         if (ctrls && viewType) {
             if (_.includes(ctrls, 'navigation')) {
@@ -293,18 +290,23 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             }
 
             if (_.includes(ctrls, 'month')) {
-                right += (viewType === VIEW_TYPES.LIST) ? ' listMonth' : ' month';
+                right += (viewType === VIEW_TYPES.LIST) ? ' listMonth' : ' dayGridMonth';
             }
 
             if (_.includes(ctrls, 'week')) {
-                right += (viewType === VIEW_TYPES.BASIC) ?  ' basicWeek' : (viewType === VIEW_TYPES.LIST) ? ' listWeek' : ' agendaWeek';
+                right += (viewType === VIEW_TYPES.BASIC) ?  ' dayGridWeek' : (viewType === VIEW_TYPES.LIST) ? ' listWeek' : ' timeGridWeek';
             }
 
             if (regEx.test(ctrls)) {
-                right += (viewType === VIEW_TYPES.BASIC) ?  ' basicDay' : (viewType === VIEW_TYPES.LIST) ? ' listDay' : ' agendaDay';
+                right += (viewType === VIEW_TYPES.BASIC) ?  ' dayGridDay' : (viewType === VIEW_TYPES.LIST) ? ' listDay' : ' timeGridDay';
             }
-
-            _.extend(this.calendarOptions.calendar.header, {'left': left, 'right': right});
+            if(left.charAt(0) === ' '){
+                left = left.substring(1);
+            }
+            if(right.charAt(0) === ' '){
+                right = right.substring(1);
+            }
+            _.extend(this.calendarOptions.calendar.headerToolbar, {'start': left, 'end': right});
         }
     }
 
@@ -326,55 +328,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
         this.calendarOptions.calendar.views.month.eventLimit = parseInt('' + computedHeight / 200, 10) + 1;
         return computedHeight;
-    }
-
-    private triggerMobileCalendarChange() {
-        this.prepareCalendarEvents();
-        // change the model so that the view is rendered again with the events , after the dataset is changed.
-        this.proxyModel = this.proxyModel || moment().valueOf();
-        this.selecteddates = {
-            start: moment(this.proxyModel).valueOf(),
-            end  : moment(this.proxyModel).endOf('day').valueOf()
-        };
-        this.invokeEventCallback('eventrender', {$data: this.eventData});
-    }
-
-    // prepares events for the mobie calendar
-    private prepareCalendarEvents () {
-        let eventDay,
-            dataset;
-        this.eventData = {};
-        this.dayClass = [];
-        if (!this.dataset) {
-            return;
-        }
-        dataset = this.dataset;
-        dataset = _.isArray(dataset) ? dataset : (_.isObject(dataset) ? [dataset] : []);
-        this.events = dataset || this.constructCalendarDataset(dataset);
-        this.events.forEach((event) => {
-            const eventStart = event.start || event[this.eventstart];
-            if (eventStart) {
-                eventDay = moment(eventStart).startOf('day').format(dateFormat);
-                if (this.eventData[eventDay]) {
-                    this.eventData[eventDay].push(event);
-                } else {
-                    this.eventData[eventDay] = [event];
-                }
-
-                if (this.mobileCalendar) {
-                    // custom class on the date in the date picker.
-                    this.dayClass.push({
-                        date: new Date(eventStart).setHours(0, 0, 0, 0),
-                        mode: 'day',
-                        clazz: this.getDayClass({eventDay: eventDay})
-                    });
-                }
-            }
-        });
-        // add the eventData on the calendar by calling refreshView
-        if (this.mobileCalendar && this._datepickerInnerComponent) {
-            this._datepickerInnerComponent.refreshView();
-        }
     }
 
     // constructs the calendar dataset by mapping the eventstart, eventend, eventtitle etc.,
@@ -426,7 +379,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     constructor(inj: Injector, i18nService: AbstractI18nService) {
         super(inj, WIDGET_CONFIG);
 
-        this.mobileCalendar = isMobileApp();
         this.eventSources.push(this.dataSetEvents);
         const FullCalendar = window['FullCalendar'];
         if (!FullCalendar.__wm_locale_initialized) {
@@ -438,15 +390,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     ngOnInit() {
         super.ngOnInit();
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
-
-        if (this.mobileCalendar) {
-            if (!this.view || this.view === 'week') {
-                this.view = 'day';
-            }
-            this.triggerMobileCalendarChange();
-        } else {
-            this.setLocale();
-        }
+        this.setLocale();
     }
 
     onStyleChange(key, nv, ov?) {
@@ -466,8 +410,8 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                     this.updateCalendarOptions('option', 'selectable', true);
                     if (nv === SELECTION_MODES.SINGLE) {
                         this.calendarOptions.calendar.selectConstraint = {
-                            start: '00:00',
-                            end: '24:00'
+                            startTime: '00:00',
+                            endTime: '24:00'
                         };
                         this.updateCalendarOptions('option', 'selectConstraint', this.calendarOptions.calendar.selectConstraint);
                     } else {
@@ -487,7 +431,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                 this.updateCalendarOptions('changeView', this.calendarOptions.calendar.defaultView);
                 break;
             case 'calendartype':
-                this.calendartype = nv || 'basic';
+                this.calendartype = nv || 'dayGrid';
             case 'controls':
                 this.updateCalendarHeaderOptions();
                 break;
@@ -503,13 +447,16 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                     }
                 });
 
-                if (this.mobileCalendar) {
-                    this.triggerMobileCalendarChange();
-                } else {
-                    this.updateCalendarOptions('removeEvents');
-                    this.updateCalendarOptions('addEventSource', this.dataSetEvents.events);
-                    this.updateCalendarOptions('rerenderEvents');
-                }
+                
+                this.$fullCalendar.batchRendering(function() {
+                    let events = this.$fullCalendar.getEvents();
+                    _.each( events, function( event){
+                        var event = this.$fullCalendar.getEventById(event.id);
+                        event.remove();
+                    });
+                    this.$fullCalendar.addEvent(this.dataSetEvents.events);                    
+                    this.$fullCalendar.render();
+                  });                         
                 break;
         }
     }
@@ -523,47 +470,17 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-
-        if (this.mobileCalendar && this._datepicker) {
-            let lastActiveDate = (this._datepicker as any).activeDate;
-            // renderview when active date changes
-            (this._datepicker as any).activeDateChange.subscribe((dt) => {
-                const prevYear = lastActiveDate.getYear();
-                const prevMonth = lastActiveDate.getMonth();
-                const selectedYear = dt.getYear();
-                const selectedMonth = dt.getMonth();
-
-                // invoke renderView only when month is changed.
-                if (prevMonth !== selectedMonth || prevYear !== selectedYear) {
-                    lastActiveDate = dt;
-                    this.renderMobileView(dt);
-                }
-            });
-
-            this._datepickerInnerComponent = (this._datepicker as any)._datePicker;
-            this.renderMobileView(moment(this.datavalue));
-            this.registerDestroyListener(
-                $watch(
-                    '_datepickerInnerComponent.datepickerMode',
-                    this,
-                    {},
-                    (nv, ov) => {
-                        if (ov && !_.isEmpty(ov)) {
-                            this.invokeOnViewRenderback();
-                        }
-                    }
-                )
-            );
-            return;
-        }
-
-        this.$fullCalendar = $(this._calendar.nativeElement);
+        var calendarEl = this._calendar.nativeElement;
+        const FullCalendar = window['FullCalendar'];
         this.invokeEventCallback('beforerender', {'$event' : {}});
-        this.$fullCalendar.fullCalendar(this.calendarOptions.calendar);
+        var calendar = new FullCalendar.Calendar(calendarEl,this.calendarOptions.calendar);
+        calendar.render();
+        this.$fullCalendar =  calendar;
         // if the changes are already stacked before calendar renders then execute them when needed
         if (this.changesStack.length) {
             this.changesStack.forEach((changeObj) => {
-                this.$fullCalendar.fullCalendar(changeObj.operationType, changeObj.argumentKey, changeObj.argumentValue);
+                debugger;
+                this.applyCalendarOptions(changeObj.operationType, changeObj.argumentKey, changeObj.argumentValue);
             });
             this.changesStack.length = 0;
         }
@@ -581,7 +498,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         _.extend(this.calendarOptions.calendar, options);
     }
 
-    updateCalendarOptions(operationType: string, argumentKey?: any, argumentValue?: any): void {
+    updateCalendarOptions(operationType: string, argumentKey?: any, argumentValue?: any): void {//
         if (!this.$fullCalendar) {
             this.changesStack.push({
                 operationType: operationType,
@@ -590,8 +507,23 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             });
             return;
         }
-        this.$fullCalendar.fullCalendar(operationType, argumentKey, argumentValue);
+        this.applyCalendarOptions(operationType, argumentKey, argumentValue);    
     }
+
+    applyCalendarOptions(operationType: string, argumentKey?: any, argumentValue?: any): void {
+        switch (operationType) {
+            case 'render':
+                this.$fullCalendar.render()
+                break;
+            case 'option':
+                this.$fullCalendar.setOption(argumentKey, argumentValue);                
+                break;
+            case 'changeView':
+                this.$fullCalendar.changeView(argumentKey);                
+                break;
+          }
+    }
+
 
     redraw() {
         this.updateCalendarOptions('render');
@@ -615,36 +547,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
     }
 
-    // returns the custom class for the events depending on the length of the events for that day.
-    private getDayClass(data) {
-        const eventDay = data.eventDay;
-
-        if (!_.isEmpty(this.eventData) && this.eventData[eventDay]) {
-            const eventsLength = this.eventData[eventDay].length;
-            if (eventsLength === 1) {
-                return singleEventClass;
-            }
-            if (eventsLength === 2) {
-                return doubleEventClass;
-            }
-            return multipleEventClass;
-        }
-        return '';
-    }
-
-    // sets the current view and invokes the viewrender method.
-    private renderMobileView(viewObj) {
-        let startDate,
-            endDate;
-        if (!viewObj) {
-            return;
-        }
-        startDate = moment(viewObj).startOf('month').valueOf();
-        endDate = moment(viewObj).endOf('month').valueOf();
-        this.currentview = {start: startDate, end: endDate};
-        this.invokeOnViewRenderback();
-    }
-
     // This function will receive an object containing source of calendar, apikey and calendarId and will integrate the respective calendar with fullcalendar.
     public addEventSource(eventObject) {
         if (_.isEmpty(eventObject)) {
@@ -656,11 +558,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                 console.warn('For google calendar integration, \'googleCalendarApiKey\' and \'googleCalendarId\' should be passed in the parameter object.');
                 return;
             }
-            $.getScript('https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.0/gcal.js', () => {
-                this.$fullCalendar.fullCalendar('option', 'googleCalendarApiKey', eventObject.googleCalendarApiKey);
-                this.$fullCalendar.fullCalendar('addEventSource', {
+            this.$fullCalendar.setOption('googleCalendarApiKey', eventObject.googleCalendarApiKey)
+                this.$fullCalendar.addEventSource({
                     googleCalendarId: eventObject.googleCalendarId
-                });
             });
         }
     }
