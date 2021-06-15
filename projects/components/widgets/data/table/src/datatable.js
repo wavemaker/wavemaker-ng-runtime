@@ -2805,8 +2805,7 @@ $.widget('wm.datatable', {
         this.element.append(this.gridContainer);
         if (this.options.navigation === 'On-Demand') {
             this.options.addLoadMoreBtn();
-        }
-        if (this.options.navigation === 'Scroll') {
+        } else if (this.options.navigation === 'Scroll') {
             this.options.bindScrollEvt();
         }
         this.dataStatusContainer = $(statusContainer);
