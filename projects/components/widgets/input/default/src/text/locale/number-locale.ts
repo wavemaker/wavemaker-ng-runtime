@@ -262,7 +262,16 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (this.readonly || this.step === 0) {
             return;
         }
-        let proxyModel = this.proxyModel;
+        const targetVal = $event.target.value;
+
+        // proxyModel to be updated from $event.target.value if present to support arrow keys when input changes else pick up from this.proxymodel
+        let proxyModel;
+        if (targetVal && !_.isNaN(parseFloat(targetVal))) {
+            proxyModel = parseFloat(targetVal);
+        } else {
+            proxyModel = this.proxyModel;
+        }
+    
         let value;
 
         // if the number is not in range and when arrow buttons are pressed need to get appropriate number value.

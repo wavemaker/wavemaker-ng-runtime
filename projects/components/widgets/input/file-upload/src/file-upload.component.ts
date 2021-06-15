@@ -340,6 +340,9 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         // adding, dragover and drop on the document as when file is dragged on to the page highlight the dropzones and remove highlight on file drop
         document.addEventListener('dragover', this.dragOverCb.bind(this));
         document.addEventListener('drop', this.dropCb.bind(this));
+
+        // adding mouseleave evnt to remove highlight when file is dropped outside the window
+        document.addEventListener('mouseleave', this.dropCb.bind(this));
     }
 
     ngAfterViewInit() {
@@ -349,6 +352,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     ngOnDestroy() {
         document.removeEventListener('dragover', this.dragOverCb);
         document.removeEventListener('drop', this.dropCb);
+        document.removeEventListener('mouseleave', this.dropCb);
         super.ngOnDestroy();
     }
 }
