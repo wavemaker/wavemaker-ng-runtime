@@ -55,7 +55,6 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     public name: string;
     public shortcutkey: string;
     public tabindex: any;
-    public hint:string;
     public _caption = '&nbsp';
     private _checkedvalue;
     private _uncheckedvalue;
@@ -77,7 +76,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         inj: Injector,
         @Attribute('checkedvalue') checkedVal,
         @Attribute('uncheckedvalue') uncheckedVal,
-        @Attribute('type') public type
+        @Attribute('type') type
     ) {
         super(inj, WIDGET_CONFIG);
 
