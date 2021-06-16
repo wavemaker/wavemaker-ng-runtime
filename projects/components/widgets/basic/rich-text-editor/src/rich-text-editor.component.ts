@@ -52,7 +52,8 @@ const overrideSummerNote = () => {
     providers: [
         provideAs(RichTextEditorComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(RichTextEditorComponent)
-    ]
+    ],
+    exportAs: 'wmRichTextEditor'
 })
 export class RichTextEditorComponent extends BaseFormCustomComponent implements OnInit, OnDestroy {
     static initializeProps = registerProps();

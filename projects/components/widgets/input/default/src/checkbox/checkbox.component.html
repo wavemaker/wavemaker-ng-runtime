@@ -2,7 +2,7 @@
     <input type="checkbox"
            #checkbox
            [attr.name]="name"
-           [attr.aria-label]="hint || 'checkbox'"
+           [attr.aria-label]="hint || type === 'toggle' ? 'Toggle' : 'Checkbox'"
            [attr.aria-checked]="!!proxyModel"
            focus-target
            [(ngModel)]="proxyModel"

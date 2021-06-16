@@ -18,7 +18,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmLabel]',
     providers: [
         provideAsWidgetRef(LabelDirective)
-    ]
+    ],
+    exportAs: 'wmLabel'
 })
 export class LabelDirective extends StylableComponent {
     static initializeProps = registerProps();

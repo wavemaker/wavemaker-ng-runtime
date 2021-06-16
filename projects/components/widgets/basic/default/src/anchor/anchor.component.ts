@@ -22,7 +22,8 @@ export const disableContextMenu = ($event: Event) => {
     templateUrl: './anchor.component.html',
     providers: [
         provideAsWidgetRef(AnchorComponent)
-    ]
+    ],
+    exportAs: 'wmAnchor'
 })
 export class AnchorComponent extends StylableComponent implements AfterViewInit, OnDestroy {
     static initializeProps = registerProps();

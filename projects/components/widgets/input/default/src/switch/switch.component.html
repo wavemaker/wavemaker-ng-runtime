@@ -17,4 +17,4 @@
        class="app-icon {{(selectedItem && selectedItem.dataObject) && selectedItem.dataObject[iconclass]}}"></i>
     {{selectedItem ? selectedItem.label : modelByKey}}
 </span>
-<input [name]="name" class="model-holder ng-hide" [disabled]="disabled" [value]="modelByKey" [required]="required">
+<input [name]="name" class="model-holder ng-hide" [disabled]="disabled" [value]="modelByKey" [required]="required" aria-hidden="true">

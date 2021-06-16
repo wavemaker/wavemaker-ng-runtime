@@ -76,7 +76,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         inj: Injector,
         @Attribute('checkedvalue') checkedVal,
         @Attribute('uncheckedvalue') uncheckedVal,
-        @Attribute('type') type
+        @Attribute('type') public type
     ) {
         super(inj, WIDGET_CONFIG);
 
