@@ -201,8 +201,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         const stepVal = this.stepLength();
         if (this.inputmode === 'financial' && stepVal) {
-            const parsedVal = this.transformNumber(this.proxyModel, '1.2-2');
-            this.displayValue = input.value = parsedVal;
+            this.displayValue = input.value = this.transformNumber(this.proxyModel, '1.2-2');
             this.decimalValue = this.decimalValue.replace(/\D/g,'');
         } else {
             this.displayValue = input.value = this.transformNumber(this.proxyModel);
