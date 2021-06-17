@@ -201,7 +201,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         const stepVal = this.stepLength();
         if (this.inputmode === 'financial' && stepVal) {
-            this.displayValue = input.value = this.transformNumber(this.proxyModel, '1.2-2');
+            this.displayValue = input.value = this.transformNumber(this.proxyModel, `1.${stepVal}-${stepVal}`);
             this.decimalValue = this.decimalValue.replace(/\D/g,'');
         } else {
             this.displayValue = input.value = this.transformNumber(this.proxyModel);
@@ -250,7 +250,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public checkForTrailingZeros($event) {
         const stepVal = this.stepLength();
         if (stepVal && this.datavalue && !this.trailingzero && this.inputmode === 'financial') {
-            const numberfilter = $event.type === 'focus' ? '1.2-2' : undefined;
+            const numberfilter = $event.type === 'focus' ? `1.${stepVal}-${stepVal}` : undefined;
             this.displayValue = this.transformNumber(this.datavalue, numberfilter);
         }
     }
@@ -359,6 +359,14 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
         // when input mode is financial, do not restrict user on entering the value when step value limit is reached. 
         const skipStepValidation = this.inputmode === 'financial';
+
+        // Validates if user eneters more than 16 digits
+        if (skipStepValidation && inputValue) {
+            const parsedVal =  parseInt(inputValue.toString().replace(/\D/g,''));
+            if (parsedVal.toString().length > 15) {
+                return false;
+            }
+        }
 
         // validates entering of decimal values only when user provides decimal limit(i.e step contains decimal values).
         if (!skipStepValidation && inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step))) {
