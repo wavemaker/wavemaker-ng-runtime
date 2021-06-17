@@ -52,6 +52,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (_.includes([null, undefined, ''], value)) {
             const input = this.inputEl.nativeElement;
             this.displayValue = input.value = this.proxyModel = null;
+            this.handleChange(value);
             this.resetValidations();
             this._onChange();
             return;
