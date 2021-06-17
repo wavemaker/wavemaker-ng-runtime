@@ -1,4 +1,4 @@
-import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Attribute, Component, ElementRef, Injector, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { Observable, from, of } from 'rxjs';
@@ -27,6 +27,7 @@ const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
     ]
 })
 export class SearchComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
+    @Input() dataset;
     static initializeProps = registerProps();
     public casesensitive: boolean;
     public searchkey: string;

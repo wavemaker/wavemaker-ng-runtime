@@ -16,13 +16,16 @@ import {
     Chain,
     PropertyWrite
 } from '@angular/compiler';
+import { PipeUtilProvider } from '@wm/components/base/utils/pipe-provider-util';
+
+
 
 const isString = v => typeof v === 'string';
 const isDef = v => v !== void 0;
 const ifDef = (v, d) => v === void 0 ? d : v;
 const plus = (a, b) => void 0 === a ? b : void 0 === b ? a : a + b;
 const minus = (a, b) => ifDef(a, 0) - ifDef(b, 0);
-const noop = () => {};
+const noop = () => { };
 
 export type ParseExprResult = (data?: any, locals?: any) => any;
 
@@ -108,7 +111,7 @@ const getPurePipeVal = (pipe, cache, identifier, ...args) => {
         }
     }
     result = pipe.transform(...args);
-    lastResult = {args, result};
+    lastResult = { args, result };
     cache.set(identifier, lastResult);
     return result;
 };
@@ -423,12 +426,38 @@ class ASTCompiler {
 
     addReturnStmt(result) {
         // if (this.exprType === ExpressionType.Binding) {
-            this.stmts.push(`return ${result};`);
+        this.stmts.push(`return ${result};`);
         // }
     }
 
     cleanup() {
         this.ast = this.cAst = this.stmts = this.cStmts = this.declarations = this.pipes = this.pipeNameVsIsPureMap = undefined;
+    }
+
+    processGenFn(fn) {
+        // this.extendCtxWithLocals();
+        this.addReturnStmt(this.build(this.ast));
+
+        // const fn = new Function(this.fnArgs(), this.fnBody());
+        let boundFn;
+        if (this.exprType === ExpressionType.Binding) {
+            boundFn = fn.bind(undefined, plus, minus, isDef, getPurePipeVal);
+            boundFn.usedPipes = this.pipes.slice(0); // clone
+        } else {
+            boundFn = fn.bind(undefined, plus, minus, isDef);
+        }
+
+        this.cleanup();
+        return boundFn;
+    }
+
+    getStringTypeFunction(expr) {
+        // const parser = new Parser(new Lexer);
+        // const ast = parser.parseBinding(expr, '', 0);
+        // this.ast = ast.ast;
+        this.extendCtxWithLocals();
+        this.addReturnStmt(this.build(this.ast));
+        return this.fnBody();
     }
 
     compile() {
@@ -466,6 +495,87 @@ enum ExpressionType {
     Action
 }
 
+export function expresionParserFunctionBody(expr) {
+    const parser = new Parser(new Lexer);
+    const ast = parser.parseBinding(expr, '', 0);
+    const pipeNameVsIsPureMap =  new PipeUtilProvider().getPipeNameVsIsPureMap();
+    const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Binding, pipeNameVsIsPureMap);
+    return astCompiler.getStringTypeFunction(expr);
+}
+
+export function bindPipeFn(expr, fn) {
+
+    if (!pipeProvider) {
+        console.log('set pipe provider');
+        return noop;
+    }
+
+    if (!isString(expr)) {
+        return noop;
+    }
+
+    expr = expr.trim();
+
+    if (expr.endsWith(';')) {
+        expr = expr.slice(0, -1); // remove the trailing semicolon
+    }
+
+    if (!expr.length) {
+        return noop;
+    }
+
+    // fn = exprFnCache.get(expr);
+
+    // if (fn) {
+    //     return fn;
+    // }
+    const parser = new Parser(new Lexer);
+    const ast = parser.parseBinding(expr, '', 0);
+    let boundFn;
+
+    if (ast.errors.length) {
+        fn = noop;
+        boundFn = fn;
+    } else {
+        const pipeNameVsIsPureMap = pipeProvider.getPipeNameVsIsPureMap();
+        const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Binding, pipeNameVsIsPureMap);
+        fn = astCompiler.processGenFn(fn);
+        if (fn.usedPipes.length) {
+            const pipeArgs = [];
+            let hasPurePipe = false;
+            for (const [pipeName] of fn.usedPipes) {
+                const pipeInfo = pipeProvider.meta(pipeName);
+                let pipeInstance;
+                if (!pipeInfo) {
+                    pipeInstance = nullPipe;
+                } else {
+                    if (pipeInfo.pure) {
+                        hasPurePipe = true;
+                        pipeInstance = purePipes.get(pipeName);
+                    }
+
+                    if (!pipeInstance) {
+                        pipeInstance = pipeProvider.getInstance(pipeName);
+                    }
+
+                    if (pipeInfo.pure) {
+                        purePipes.set(pipeName, pipeInstance);
+                    }
+                }
+                pipeArgs.push(pipeInstance);
+            }
+
+            pipeArgs.unshift(hasPurePipe ? new Map() : undefined);
+            boundFn = fn.bind(undefined, ...pipeArgs);
+        } else {
+            boundFn = fn.bind(undefined, undefined);
+        }
+    }
+    exprFnCache.set(expr, boundFn);
+
+    return boundFn;
+}
+
 export function $parseExpr(expr: string): ParseExprResult {
 
     if (!pipeProvider) {
@@ -493,7 +603,7 @@ export function $parseExpr(expr: string): ParseExprResult {
         return fn;
     }
     const parser = new Parser(new Lexer);
-    const ast = parser.parseBinding(expr, '',0);
+    const ast = parser.parseBinding(expr, '', 0);
     let boundFn;
 
     if (ast.errors.length) {
@@ -556,7 +666,7 @@ export function $parseEvent(expr): ParseExprResult {
         return fn;
     }
     const parser = new Parser(new Lexer);
-    const ast = parser.parseAction(expr, '',0);
+    const ast = parser.parseAction(expr, '', 0);
 
     if (ast.errors.length) {
         return noop;

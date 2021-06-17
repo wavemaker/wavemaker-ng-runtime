@@ -28,7 +28,9 @@ export {
     ParseExprResult,
     setPipeProvider,
     $parseExpr,
-    $parseEvent
+    bindPipeFn,
+    $parseEvent,
+    expresionParserFunctionBody
 } from './utils/expression-parser';
 export {
     EVENT_LIFE,

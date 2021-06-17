@@ -1,22 +1,5 @@
 <ng-container *ngIf="startApp">
     <router-outlet></router-outlet>
-    <div wmContainer partialContainer content="Common" hidden class="ng-hide" *ngIf="isApplicationType"></div>
-    <app-spinner name="globalspinner" classname="global-spinner" [show]="spinner.show" [spinnermessages]="spinner.messages"></app-spinner>
-    <div wmDialog name="oAuthLoginDialog" title.bind="'Application is requesting you to sign in with'"
-         close.event="closeOAuthDialog()">
-        <ng-template #dialogBody>
-            <ul class="list-items">
-                <li class="list-item" *ngFor="let provider of providersConfig">
-                    <button class="btn" (click)="provider.invoke()">{{provider.name}}</button>
-                </li>
-            </ul>
-        </ng-template>
-    </div>
-    <div wmConfirmDialog name="_app-confirm-dialog" title.bind="title" message.bind="message" oktext.bind="oktext"
-         canceltext.bind="canceltext" closable="false" iconclass.bind="iconclass" 
-         escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
-    <div wmAppExt></div>
-    <i id="wm-mobile-display"></i>
 </ng-container>
 <!--Dummy container to create the component dynamically-->
 <ng-container #dynamicComponent></ng-container>

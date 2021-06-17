@@ -1,4 +1,4 @@
-import { Directive, Injector, SecurityContext } from '@angular/core';
+import { Directive, Injector, Input, SecurityContext } from '@angular/core';
 
 import { setProperty, toggleClass } from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
@@ -21,6 +21,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ]
 })
 export class LabelDirective extends StylableComponent {
+    @Input() caption;
+
     static initializeProps = registerProps();
 
     constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
@@ -28,17 +30,16 @@ export class LabelDirective extends StylableComponent {
 
         styler(this.nativeElement, this);
     }
+    ngOnInit() {
+        if (_.isObject(this.caption)) {
+            setProperty(this.nativeElement, 'textContent', JSON.stringify(this.caption));
+        } else {
+            setProperty(this.nativeElement, 'innerHTML', this.trustAsPipe.transform(this.caption, SecurityContext.HTML));
+        }
+    }
 
     onPropertyChange(key, nv, ov?) {
-
-        if (key === 'caption') {
-            if (_.isObject(nv)) {
-                setProperty(this.nativeElement, 'textContent', JSON.stringify(nv));
-            } else {
-                setProperty(this.nativeElement, 'innerHTML', this.trustAsPipe.transform(nv, SecurityContext.HTML));
-            }
-
-        } else if (key === 'required') {
+        if (key === 'required') {
             toggleClass(this.nativeElement, 'required', nv);
         } else {
             super.onPropertyChange(key, nv, ov);

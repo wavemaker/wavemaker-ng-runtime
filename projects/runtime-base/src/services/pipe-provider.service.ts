@@ -1,111 +1,34 @@
-import { Compiler, Injectable, Injector, ChangeDetectorRef, InjectionToken, KeyValueDiffers, Pipe, Inject } from '@angular/core';
-import {
-    AsyncPipe,
-    UpperCasePipe,
-    LowerCasePipe,
-    JsonPipe,
-    SlicePipe,
-    DecimalPipe,
-    PercentPipe,
-    TitleCasePipe,
-    CurrencyPipe,
-    DatePipe,
-    I18nPluralPipe,
-    I18nSelectPipe,
-    KeyValuePipe,
-    NgLocalization
-} from '@angular/common'
-import {
-    SuffixPipe,
-    ToDatePipe,
-    FileIconClassPipe,
-    FileExtensionFromMimePipe,
-    FilterPipe,
-    FileSizePipe,
-    ToNumberPipe,
-    ToCurrencyPipe,
-    PrefixPipe,
-    TimeFromNowPipe,
-    NumberToStringPipe,
-    StateClassPipe,
-    StringToNumberPipe,
-    CustomPipe
-} from '@wm/components/base';
-import { getSessionStorageItem, CustomPipeManager } from '@wm/core';
+import { Compiler, Injectable, Injector } from '@angular/core';
+import { PipeUtilProvider } from '@wm/components/base/utils/pipe-provider-util';
+// import { PipeUtilProvider } from '@wm/runtime/base';
+
+// import {PipeUtilProvider} from '@wm/core';
+
 
 @Injectable({
     providedIn: 'root'
 })
 export class PipeProvider {
     _pipeMeta;
-    _locale = getSessionStorageItem('selectedLocale') || 'en';
-    preparePipeMeta = (
-        reference: Pipe,
-        name: string,
-        pure: boolean,
-        diDeps = []
-    ) => ({
-        type: { reference, diDeps },
-        name,
-        pure
-    })
-    _pipeData = [
-        // TODO | NEED TO BE TESTED
-        this.preparePipeMeta(AsyncPipe, 'async', false, [ChangeDetectorRef]),
-        this.preparePipeMeta(SlicePipe, 'slice', false),
-        this.preparePipeMeta(PercentPipe, 'percent', true, [this._locale]),
-        this.preparePipeMeta(I18nPluralPipe, 'i18nPlural', true, [
-            NgLocalization
-        ]),
-        this.preparePipeMeta(I18nSelectPipe, 'i18nSelect', true),
-        this.preparePipeMeta(KeyValuePipe, 'keyvalue', false, [
-            KeyValueDiffers
-        ]),
-        this.preparePipeMeta(FileIconClassPipe, 'fileIconClass', true),
-        this.preparePipeMeta(
-            FileExtensionFromMimePipe,
-            'fileExtensionFromMime',
-            true
-        ),
-        this.preparePipeMeta(StateClassPipe, 'stateClass', true),
-        this.preparePipeMeta(FileSizePipe, 'filesize', true),
-        // TESTED
-        this.preparePipeMeta(FilterPipe, 'filter', true),
-        this.preparePipeMeta(UpperCasePipe, 'uppercase', true),
-        this.preparePipeMeta(LowerCasePipe, 'lowercase', true),
-        this.preparePipeMeta(JsonPipe, 'json', false),
-        this.preparePipeMeta(DecimalPipe, 'number', true, [this._locale]),
-        this.preparePipeMeta(TitleCasePipe, 'titlecase', true),
-        this.preparePipeMeta(CurrencyPipe, 'currency', true, [this._locale]),
-        this.preparePipeMeta(DatePipe, 'date', true, [this._locale]),
-        this.preparePipeMeta(ToDatePipe, 'toDate', true, [
-            new DatePipe(this._locale)
-        ]),
-        this.preparePipeMeta(ToNumberPipe, 'toNumber', true, [
-            new DecimalPipe(this._locale)
-        ]),
-        this.preparePipeMeta(ToCurrencyPipe, 'toCurrency', true, [
-            new DecimalPipe(this._locale)
-        ]),
-        this.preparePipeMeta(PrefixPipe, 'prefix', true),
-        this.preparePipeMeta(SuffixPipe, 'suffix', true),
-        this.preparePipeMeta(TimeFromNowPipe, 'timeFromNow', true),
-        this.preparePipeMeta(NumberToStringPipe, 'numberToString', true, [
-            new DecimalPipe(this._locale)
-        ]),
-        this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true),
-        this.preparePipeMeta(CustomPipe, 'custom', true, [this.injector.get(CustomPipeManager)])
-    ];
+
+    _pipeData;
+    _pipeUtil
+    // setPipeMeta(){
+    //     this._pipeMeta = new Map();
+    //     this._pipeData.forEach(v => {
+    //         this._pipeMeta.set(v.name, v);
+    //     });
+    // }
 
     unknownPipe(name) {
         throw Error(`The pipe '${name}' could not be found`);
     }
 
+
+
     constructor(private compiler: Compiler, private injector: Injector) {
-        this._pipeMeta = new Map();
-        this._pipeData.forEach(v => {
-            this._pipeMeta.set(v.name, v);
-        });
+        this._pipeUtil = new PipeUtilProvider();
+        this._pipeMeta =  this._pipeUtil.getPipeMeta();
     }
 
     meta(name) {
@@ -117,11 +40,12 @@ export class PipeProvider {
     }
 
     getPipeNameVsIsPureMap() {
-        const _map = new Map();
-        this._pipeMeta.forEach((v, k) => {
-            _map.set(k, v.pure);
-        });
-        return _map;
+        // const _map = new Map();
+        // this._pipeMeta.forEach((v, k) => {
+        //     _map.set(k, v.pure);
+        // });
+        // return _map;
+      return  this._pipeUtil.getPipeNameVsIsPureMap();
     }
 
     resolveDep(dep) {

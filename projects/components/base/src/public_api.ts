@@ -103,3 +103,4 @@ export {
 } from './pipes/custom-pipes';
 export * from './pipes/trust-as.pipe';
 export * from './pipes/image.pipe';
+export {PipeUtilProvider} from './utils/pipe-provider-util';
