@@ -1678,6 +1678,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.dataNavigator.widget.maxResults = nv;
                 this.dataNavigator.maxResults = nv;
                 break;
+            case 'ondemandmessage':
+                if (nv) {
+                    this.$element.find('.on-demand-datagrid > a').text(nv);
+                }
+                break;
             case 'show':
                 if (nv) {
                     this.invokeEventCallback('show');
