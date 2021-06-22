@@ -326,6 +326,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.isDateOpen = false;
         this.invokeOnTouched();
         this.bsDatePickerDirective.hide();
+
+        // To open the timepicker menu when user wants to update time without changing the date.
+        if(this.bsDateValue) {
+            this.toggleTimePicker(true);
+        }
         this.isEnterPressedOnDateInput = false;
         if (this.deregisterDatepickerEventListener) {
             this.deregisterDatepickerEventListener();
