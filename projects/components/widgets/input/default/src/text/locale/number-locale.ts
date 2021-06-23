@@ -3,7 +3,7 @@ import { AbstractControl, Validator } from '@angular/forms';
 import { getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
 import { AbstractI18nService } from '@wm/core';
-import { IWidgetConfig, TrailingZeroDecimalPipe } from '@wm/components/base';
+import { IWidgetConfig, TrailingZeroDecimalPipe, INPUTMODE } from '@wm/components/base';
 
 import { BaseInput } from '../base/base-input';
 
@@ -201,7 +201,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             this.decimalValue = parts[1] || '';
         }
         const stepVal = this.stepLength();
-        if (this.inputmode === 'financial' && stepVal) {
+        if (this.inputmode === INPUTMODE.FINANCIAL && stepVal) {
             this.displayValue = input.value = this.transformNumber(this.proxyModel, `1.${stepVal}-${stepVal}`);
             this.decimalValue = this.decimalValue.replace(/\D/g,'');
         } else {
@@ -231,12 +231,22 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        if (!stepVal || this.inputmode !== 'financial') {
+        if (!stepVal || this.inputmode !== INPUTMODE.FINANCIAL) {
             return;
         }
 
-        const valInWholeNum = parseInt(value.toString().replace(/\D/g,''));
-        const financialVal = valInWholeNum *  this.step;
+        let financialVal;
+
+        /**
+         * If the value is entered by the user, format the input 
+         * If the value is provided as default value, skip formatting
+         */
+        if (this.isDefaultQuery) {
+            financialVal = parseFloat(value);
+        } else {
+            const valInWholeNum = parseInt(value.toString().replace(/\D/g,''));
+            financialVal = valInWholeNum *  this.step;
+        }
 
         if (!_.isNaN(financialVal)) {
             this.datavalue = parseFloat(financialVal.toFixed(stepVal));
@@ -250,7 +260,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     // On blur strip trailing zeros
     public checkForTrailingZeros($event) {
         const stepVal = this.stepLength();
-        if (stepVal && this.datavalue && !this.trailingzero && this.inputmode === 'financial') {
+        if (stepVal && this.datavalue && !this.trailingzero && this.inputmode === INPUTMODE.FINANCIAL) {
             const numberfilter = $event.type === 'focus' ? `1.${stepVal}-${stepVal}` : undefined;
             this.displayValue = this.transformNumber(this.datavalue, numberfilter);
         }
@@ -359,7 +369,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         const inputValue = $event.target.value;
 
         // when input mode is financial, do not restrict user on entering the value when step value limit is reached. 
-        const skipStepValidation = this.inputmode === 'financial';
+        const skipStepValidation = this.inputmode === INPUTMODE.FINANCIAL;
 
         // Validates if user eneters more than 16 digits
         if (skipStepValidation && inputValue) {
@@ -399,7 +409,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     }
 
     onModelChange($event) {
-        if (this.inputmode === 'natural') {
+        if (this.inputmode === INPUTMODE.NATURAL) {
             this.datavalue = $event;
         }
     }
