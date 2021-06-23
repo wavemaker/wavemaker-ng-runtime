@@ -267,6 +267,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             position: '0'
         },
         name: '',
+        navigation: '',
+        statehandler: '',
         messages: {
             selectField: 'Select Field'
         },
@@ -1019,6 +1021,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.isMobile = isMobile();
         this.gridOptions.name = this.name;
         this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
+        this.gridOptions.statehandler = this.statehandler;
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
         if (!_.isEmpty(this.gridData)) {
@@ -1620,8 +1623,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.setDataGridOption('searchLabel', nv);
                 break;
             case 'navigation':
+                console.warn('navigation', nv);
                 if (nv === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
-                    this.navigation = 'Classic';
+                    this.navigation = this.gridOptions.navigation = 'Classic';
                     return;
                 }
                 if (nv !== 'None') {
@@ -1630,6 +1634,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.onDemandLoad = nv === NAVIGATION_TYPE.ONDEMAND ? true : false;
                 this.infScroll = nv === NAVIGATION_TYPE.SCROLL ? true : false;
                 this.navControls = nv;
+                this.gridOptions.navigation = nv;
                 break;
             case 'gridfirstrowselect':
                 this.setDataGridOption('selectFirstRow', nv);

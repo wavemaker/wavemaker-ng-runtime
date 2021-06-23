@@ -47,7 +47,7 @@ export class TableCUDDirective {
                 this.table.selectItem(row, this.table.dataset);
             }
             triggerFn(callBack);
-        }, 250);
+        }, 300);
     }
 
     initiateSelectItem(index, row, skipSelectItem?, isStaticVariable?, callBack?) {
@@ -74,6 +74,12 @@ export class TableCUDDirective {
         this.table.dataNavigator.navigatePage(index, null, true, () => {
             if (this.table.isNavigationEnabled() || isStaticVariable) {
                 this.selectItemOnSuccess(row, skipSelectItem, callBack);
+            }
+            if (!this.table.isNavigationEnabled()) { // this.table.editmode === 'quickedit' && && this.table.statehandler === 'none'
+                this.selectItemOnSuccess(row, skipSelectItem, undefined);
+                // setTimeout(() => {
+               //     this.table.callDataGridMethod('selectRow', row, true);
+               // }, 300);
             }
         });
     }

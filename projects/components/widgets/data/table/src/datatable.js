@@ -1297,6 +1297,7 @@ $.widget('wm.datatable', {
         var rowIndex = _.isNumber(row) ? row : this.Utils.getObjectIndex(this.options.data, row),
             selector,
             $row;
+        console.log(rowIndex);
         if (rowIndex !== -1) {
             selector = 'tr.app-datagrid-row[data-row-id=' + rowIndex + ']';
             $row = this.gridBody.find(selector);
@@ -1310,6 +1311,11 @@ $.widget('wm.datatable', {
                 this.options.callOnRowDeselectEvent(this.preparedData[rowIndex]);
             }
         }
+        this.focusActiveRow();
+        // if (this.options.editmode === 'quickedit' && this.options.navigation === 'None') {
+        //     console.log('focus active row');
+        //     this.focusActiveRow();
+        // }
     },
     /**
      * deselect a row
@@ -1544,6 +1550,8 @@ $.widget('wm.datatable', {
     },
     //Focus the active row
     focusActiveRow: function () {
+        console.warn('FOcus ()');
+        console.log(this.gridBody.find('tr.app-datagrid-row.active'));
         this.gridBody.find('tr.app-datagrid-row.active').focus();
     },
     focusNewRow: function () {
@@ -1750,6 +1758,7 @@ $.widget('wm.datatable', {
             if (!advancedEdit || self.options.actionsEnabled.edit) {
                 self.focusActiveRow();
             }
+            self.attachEventHandlers($row);
         }
 
         if ($row.attr('data-removed') === 'true') {
@@ -2218,6 +2227,7 @@ $.widget('wm.datatable', {
       },
     // Handles keydown event on row items.
     onKeyDown: function (event) {
+        console.log('keyevents');
         var $target = $(event.target),
             $row = $target.closest('tr.app-datagrid-row'),
             self = this,
