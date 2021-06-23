@@ -261,6 +261,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         rowClass: '',
         editmode: '',
         navigation: '',
+        isdynamictable: '',
         formPosition: '',
         isMobile: false,
         rowExpansionEnabled: false,
@@ -1030,6 +1031,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.isMobile = isMobile();
         this.gridOptions.name = this.name;
         this.gridOptions.navigation = this.navigation;
+        this.gridOptions.isdynamictable = this.isdynamictable;
         this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.

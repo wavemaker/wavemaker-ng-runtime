@@ -29,6 +29,7 @@ $.widget('wm.datatable', {
         multiselect: false,
         filterNullRecords: true,
         navigation: '',
+        isdynamictable: '',
         cssClassNames: {
             'tableRow': 'app-datagrid-row',
             'headerCell': 'app-datagrid-header-cell',
@@ -2803,11 +2804,19 @@ $.widget('wm.datatable', {
         // Remove the grid table element.
         this.element.find('.table-container').remove();
         this.element.append(this.gridContainer);
-        if (this.options.navigation === 'On-Demand') {
-            this.options.addLoadMoreBtn();
-        } else if (this.options.navigation === 'Scroll') {
-            this.options.bindScrollEvt();
+
+        /**
+         * bind on demand / scroll events to the table in case of dynamictable in render fn
+         * Render is called everytime when there is a change in dataset and the previously binded events are lost
+         */
+        if (this.options.isdynamictable) {
+            if (this.options.navigation === 'On-Demand') {
+                this.options.addLoadMoreBtn();
+            } else if (this.options.navigation === 'Scroll') {
+                this.options.bindScrollEvt();
+            }
         }
+
         this.dataStatusContainer = $(statusContainer);
         this.gridContainer.append(this.dataStatusContainer);
         this._renderHeader();
