@@ -52,6 +52,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (_.includes([null, undefined, ''], value)) {
             const input = this.inputEl.nativeElement;
             this.displayValue = input.value = this.proxyModel = null;
+            this.handleChange(value);
             this.resetValidations();
             this._onChange();
             return;
@@ -136,8 +137,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @param number
      * @returns {string}
      */
-    private transformNumber(number): string {
-        return this.trailingZeroDecimalPipe.transform(number, this.selectedLocale, this.numberfilter, this.localefilter, this.trailingzero, this.decimalValue);
+    private transformNumber(number, numberfilter?): string {
+        const filterVal = numberfilter ? numberfilter : this.numberfilter;
+        return this.trailingZeroDecimalPipe.transform(number, this.selectedLocale, filterVal, this.localefilter, this.trailingzero, this.decimalValue, !!numberfilter);
     }
 
     /**
@@ -198,11 +200,27 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             const parts = preValue.split(this.DECIMAL);
             this.decimalValue = parts[1] || '';
         }
-        this.displayValue = input.value = this.transformNumber(this.proxyModel);
+        const stepVal = this.stepLength();
+        if (this.inputmode === 'financial' && stepVal) {
+            this.displayValue = input.value = this.transformNumber(this.proxyModel, `1.${stepVal}-${stepVal}`);
+            this.decimalValue = this.decimalValue.replace(/\D/g,'');
+        } else {
+            this.displayValue = input.value = this.transformNumber(this.proxyModel);
+        }
         // in safari browser, setSelectionRange will focus the input by default, which may invoke the focus event on widget.
         // Hence preventing the setSelectionRange when default value is set i.e. widget is not focused.
         if (this.updateon === 'default' && !this.isDefaultQuery) {
             this.resetCursorPosition(preValue.length - position);
+        }
+    }
+
+    // This function returns the step length set in the studio
+    private stepLength() {
+        const stepLen = this.step.toString().split('.');
+        if (stepLen.length === 1 ) {
+            return; 
+        } else {
+            return stepLen[1].length;
         }
     }
 
@@ -212,30 +230,29 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * Number starts from highest precesion decimal, on typing number shifts to the left
      */
     public onInputChange(value: any) {
-        const stepLen = this.step.toString().split('.');
-        if (stepLen.length === 1 || this.inputmode !== 'financial') {
+        const stepVal = this.stepLength();
+        if (!stepVal || this.inputmode !== 'financial') {
             return;
         }
 
-        const stepVal = stepLen[1].length;
-  
         const valInWholeNum = parseInt(value.toString().replace(/\D/g,''));
         const financialVal = valInWholeNum *  this.step;
 
-
         if (!_.isNaN(financialVal)) {
             this.datavalue = parseFloat(financialVal.toFixed(stepVal));
-            this.displayValue = this.datavalue.toFixed(stepVal);
         } else {
             this.datavalue = undefined;
         }
     }
     
-    // In case of input mode is financial and trailing zero is set to false, on focus set display val to fixed point notation
-    public onFocus() {
-        const stepLen = this.step.toString().split('.');
-        if (stepLen.length > 1 && !this.trailingzero && this.inputmode === 'financial') {
-            this.displayValue = this.datavalue.toFixed(stepLen[1].length);
+    // In case of input mode is financial and trailing zero is set to false, 
+    // On focus set display val to fixed point notation
+    // On blur strip trailing zeros
+    public checkForTrailingZeros($event) {
+        const stepVal = this.stepLength();
+        if (stepVal && this.datavalue && !this.trailingzero && this.inputmode === 'financial') {
+            const numberfilter = $event.type === 'focus' ? `1.${stepVal}-${stepVal}` : undefined;
+            this.displayValue = this.transformNumber(this.datavalue, numberfilter);
         }
     }
 
@@ -344,6 +361,14 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         // when input mode is financial, do not restrict user on entering the value when step value limit is reached. 
         const skipStepValidation = this.inputmode === 'financial';
 
+        // Validates if user eneters more than 16 digits
+        if (skipStepValidation && inputValue) {
+            const parsedVal =  parseInt(inputValue.toString().replace(/\D/g,''));
+            if (parsedVal.toString().length > 15) {
+                return false;
+            }
+        }
+
         // validates entering of decimal values only when user provides decimal limit(i.e step contains decimal values).
         if (!skipStepValidation && inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step))) {
             return false;
@@ -371,6 +396,12 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
     onEnter($event) {
         this.datavalue = $event.target.value;
+    }
+
+    onModelChange($event) {
+        if (this.inputmode === 'natural') {
+            this.datavalue = $event;
+        }
     }
 
     onPropertyChange(key, nv, ov?) {

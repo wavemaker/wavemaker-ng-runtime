@@ -3,6 +3,7 @@
        #input
        role="input"
        type="text"
+       inputmode="numeric"
        focus-target
        [autofocus]="autofocus"
        [readonly]="readonly"
@@ -17,10 +18,10 @@
        [ngModel]="displayValue"
        [ngModelOptions]="ngModelOptions"
 
-       (focus)="onFocus()"
+       (focus)="checkForTrailingZeros($event)"
        (input)="onInputChange($event.target.value)"
-       (blur)="handleBlur($event)"
-       (ngModelChange)="datavalue=$event"
+       (blur)="handleBlur($event); checkForTrailingZeros($event);"
+       (ngModelChange)="onModelChange($event)"
        (keydown)="validateInputEntry($event);"
        (keydown.enter)="onEnter($event)"
        (keydown.ArrowUp)="onArrowPress($event, 'UP')"
