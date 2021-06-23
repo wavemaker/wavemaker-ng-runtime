@@ -289,7 +289,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (this.readonly || this.step === 0) {
             return;
         }
-        const targetVal = $event.target.value;
+        const targetVal = $event.target.value.replace(/,/g, '');
 
         // proxyModel to be updated from $event.target.value if present to support arrow keys when input changes else pick up from this.proxymodel
         let proxyModel;
