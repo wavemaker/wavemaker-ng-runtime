@@ -40,7 +40,7 @@
     </div>
 <ng-template [ngIf]="loadNativeDateInput">
     <input type="time" class="form-control app-textbox display-input mobile-input"
-           role="input"
+           role="timer" [attr.aria-label]="hint || 'Time field'"
            [value]="nativeDisplayValue" [min]="mintime" [max]="maxtime"
            [tabindex]="tabindex"
            [required]="required"

@@ -3,7 +3,7 @@ import { EventManager } from '@angular/platform-browser';
 
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, setCSS, setCSSFromObj, App, isDefined, removeAttr, removeClass, setAttr, switchClass } from '@wm/core';
+import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, setCSS, setCSSFromObj, App, isDefined, removeAttr, removeClass, setAttr, switchClass, isMobileApp } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { isStyle } from '../../framework/styler';
@@ -335,7 +335,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         if (key === 'show') {
             this.nativeElement.hidden = !nv;
         } else if (key === 'hint') {
-            setAttr(this.nativeElement, 'title', nv);
+            if (!isMobileApp()) {
+                setAttr(this.nativeElement, 'title', nv);
+            }
         } else if (key === 'class') {
             switchClass(this.nativeElement, nv, ov);
             let result = nv.match(/(\W|^)(h([0-6]))(?=\s|$)/);

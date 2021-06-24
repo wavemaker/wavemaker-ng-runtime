@@ -115,7 +115,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     init() {
         if (this.hasNavigationToCurrentPageExpr) {
             addClass(this.nativeElement, 'active');
-            setAttr(this.nativeElement, 'aria-current', this.caption);
+            setAttr(this.nativeElement, 'aria-current', 'page');
         }
         if (this.hyperlink && getRouteNameFromLink(this.hyperlink) === `/${this.app.activePageName}`
             || this.hasNavigationToCurrentPageExpr) {
