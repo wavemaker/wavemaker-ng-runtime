@@ -1411,7 +1411,7 @@ $.widget('wm.datatable', {
 
         // Fix for [WMS-20546]: If column has a value expression, an extra div is getting added inside <td>.
         // so checking if target or its parent element has the class '.app-datagrid-cell'
-        if (action || (isQuickEdit && ($target.hasClass('app-datagrid-cell') || $target.parent().hasClass('app-datagrid-cell')) && !$row.hasClass('always-new-row'))) {
+        if (action || (isQuickEdit && ($target.hasClass('app-datagrid-cell') || $target.closest("td.app-datagrid-cell").length) && !$row.hasClass('always-new-row'))) {
             //In case of advanced edit, Edit the row on click of a row
             options.action = options.action || 'edit';
 
