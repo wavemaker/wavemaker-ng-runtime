@@ -198,7 +198,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.invokeEventCallback('clearsearch');
         this._loadingItems = false;
         // when search input is cleared, focus on the input field
-        this.$element.find('.app-search-input').focus();
+        if ($event) {
+            this.$element.find('.app-search-input').focus();
+        }
     }
 
     // function to  clear the input value
