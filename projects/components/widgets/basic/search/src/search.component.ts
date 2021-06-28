@@ -386,6 +386,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (this.query === '') {
             this.queryModel = '';
             this._modelByValue = '';
+            this.updatePrevDatavalue(this._lastQuery);
             this.invokeOnChange(this._modelByValue, {}, true);
 
             this.invokeEventCallback('clear', { $event });
@@ -394,7 +395,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             if ($event && $event.which !== 9) {
                 this.invokeEventCallback('submit', { $event });
             }
-            this.invokeEventCallback('clear', { $event });
         } else {
             // invoking change event on every input value change.
             this.invokeEventCallback('change', {
