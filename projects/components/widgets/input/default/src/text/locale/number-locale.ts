@@ -224,6 +224,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
     }
 
+    // This function checks if the currency widget has input mode as natural and trailing zero is defined or not
+    public isNaturalCurrency() {
+        return this.inputmode === INPUTMODE.NATURAL && this.widgetType === 'wm-currency' && !!this.trailingzero;
+    }
+
        /**
      * @param value contains the value entered in the input box
      * This function modifies the user input value, into financial mode. 
@@ -231,7 +236,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        if (!stepVal || this.inputmode !== INPUTMODE.FINANCIAL) {
+        if (!stepVal || this.inputmode !== INPUTMODE.FINANCIAL || !value) {
             return;
         }
 
@@ -249,19 +254,30 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
 
         if (!_.isNaN(financialVal)) {
-            this.datavalue = parseFloat(financialVal.toFixed(stepVal));
+            // When update on key is set keypress, update the datavalue else update only the display value
+            if (this.ngModelOptions.updateOn === 'change') {
+                this.datavalue = parseFloat(financialVal.toFixed(stepVal));
+            } else {
+                this.displayValue = financialVal.toFixed(stepVal);
+            }
         } else {
             this.datavalue = undefined;
         }
     }
     
-    // In case of input mode is financial and trailing zero is set to false, 
-    // On focus set display val to fixed point notation
-    // On blur strip trailing zeros
+    // Input mode is financial and trailing zero is set to false, On focus set display val to fixed point notation and On blur strip trailing zeros
+    // In currency, inputmode is natural and trailing zero and step are defined, on blur display val to fixed point notation and on focus strip the zeros
     public checkForTrailingZeros($event) {
         const stepVal = this.stepLength();
-        if (stepVal && this.datavalue && !this.trailingzero && this.inputmode === INPUTMODE.FINANCIAL) {
-            const numberfilter = $event.type === 'focus' ? `1.${stepVal}-${stepVal}` : undefined;
+        const financialMode = !this.trailingzero && this.inputmode === INPUTMODE.FINANCIAL;
+        if (!financialMode && !this.isNaturalCurrency()) {
+            return;
+        }
+        if (stepVal && this.datavalue) {
+            let numberfilter;
+            if ((financialMode && $event.type === 'focus') || (this.isNaturalCurrency() && $event.type === 'blur')) {
+                numberfilter = `1.${stepVal}-${stepVal}`;
+            } 
             this.displayValue = this.transformNumber(this.datavalue, numberfilter);
         }
     }
@@ -372,7 +388,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         const skipStepValidation = this.inputmode === INPUTMODE.FINANCIAL;
 
         // Validates if user eneters more than 16 digits
-        if (skipStepValidation && inputValue) {
+        if (inputValue) {
             const parsedVal =  parseInt(inputValue.toString().replace(/\D/g,''));
             if (parsedVal.toString().length > 15) {
                 return false;
@@ -409,7 +425,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     }
 
     onModelChange($event) {
-        if (this.inputmode === INPUTMODE.NATURAL) {
+        if (this.inputmode === INPUTMODE.NATURAL || (this.inputmode === INPUTMODE.FINANCIAL && this.ngModelOptions.updateOn === 'blur')) {
             this.datavalue = $event;
         }
     }
