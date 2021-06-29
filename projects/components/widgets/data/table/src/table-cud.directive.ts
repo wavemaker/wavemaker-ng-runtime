@@ -74,8 +74,9 @@ export class TableCUDDirective {
         this.table.dataNavigator.navigatePage(index, null, true, () => {
             if (this.table.isNavigationEnabled() || isStaticVariable) {
                 this.selectItemOnSuccess(row, skipSelectItem, callBack);
-            } else if (!this.table.isNavigationEnabled() && this.table.editmode === 'quickedit' && !skipSelectItem && this.table.statehandler === 'none') {
-                // In case of quickeditmode, where navigation is not enabled and state persistence is none manually set active row to attach event handlers and focus the row
+            }
+            if (this.table.editmode === 'quickedit' && !skipSelectItem) {
+                // In case of quickeditmode, manually set active row to attach event handlers and focus the row
                 this.table.callDataGridMethod('setActiveRow', row);
             }
         });

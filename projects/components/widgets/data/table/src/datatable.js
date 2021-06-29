@@ -2847,13 +2847,10 @@ $.widget('wm.datatable', {
 
             // In case of quickeditmode, if active row is found, focus the row and bind the event listeners to the row
             if (this.options.editmode === this.CONSTANTS.QUICK_EDIT) {
-                var row = this.gridContainer.find('tr.app-datagrid-row.active');
-                if (row.length) {
-                    this.attachHandlersToActiveRow(row, undefined);
-                } else if (this.options.activeRow) {
-                    this.attachHandlersToActiveRow(undefined, this.options.activeRow);
-                    this.options.activeRow = undefined;
+                if (this.options.activeRow) {
+                    this.attachHandlersToActiveRow(this.options.activeRow);
                 }
+                this.options.activeRow = undefined;
             }
         }
         if (!isCreated) {
@@ -2863,21 +2860,17 @@ $.widget('wm.datatable', {
     },
     /**
      * 
-     * @param {*} row Contains html node
      * @param {*} rowObj Contains the object which is part of options.data
      * In this method, active row will be focused and event handlers are attached.
-     * If row is recieved, operation will be directly done on the row
      * If object is recieved, node extraction will be done and if found operations on the row are performed
      */
-    attachHandlersToActiveRow(row, rowObj) {
-        if (rowObj) {
-            var rowIndex = this.Utils.getObjectIndex(this.options.data, rowObj);
-            row = this.gridBody.find('tr.app-datagrid-row[data-row-id=' + rowIndex + ']');
-            if (row.length) {
-                row.addClass('active');
-            } else {
-                return;
-            }
+    attachHandlersToActiveRow(rowObj) {
+        var rowIndex = this.Utils.getObjectIndex(this.options.data, rowObj);
+        row = this.gridBody.find('tr.app-datagrid-row[data-row-id=' + rowIndex + ']');
+        if (row.length) {
+            row.addClass('active');
+        } else {
+            return;
         }
         this.focusActiveRow();
         this.attachEventHandlers(row);
