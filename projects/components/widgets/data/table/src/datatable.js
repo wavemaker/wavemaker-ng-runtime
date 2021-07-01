@@ -2867,10 +2867,10 @@ $.widget('wm.datatable', {
     attachHandlersToActiveRow(rowObj) {
         var rowIndex = this.Utils.getObjectIndex(this.options.data, rowObj);
         row = this.gridBody.find('tr.app-datagrid-row[data-row-id=' + rowIndex + ']');
-        if (row.length) {
-            row.addClass('active');
-        } else {
+        if (!row.length) {
             return;
+        } else if (!row.hasClass('active')) {
+            row.addClass('active');
         }
         this.focusActiveRow();
         this.attachEventHandlers(row);
