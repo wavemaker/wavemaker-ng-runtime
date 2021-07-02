@@ -261,7 +261,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             } else {
                 this.bsDateValue = this.bsTimeValue = this.proxyModel = undefined;
             }
-            if (newVal !== this.datavalue) {
+            // When the datavalue is manually cleared, both newval and datavalue are undefined but prevDataValue exists - trigger change cb
+            if (newVal !== this.datavalue || (!this.datavalue && (this as any).prevDatavalue)) {
                 this._debouncedOnChange(this.datavalue, {}, true);
             }
             return;
