@@ -196,8 +196,6 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             this.activeTab.deselect();
         }
 
-        // invoke select callback on the selected tab
-        paneRef.invokeOnSelectCallback(evt);
 
         this.activeTab = paneRef.getWidget();
         const newPaneIndex = this.getPaneIndexByRef(paneRef);
@@ -208,6 +206,9 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             this.defaultpaneindex = this.getPaneIndexByRef(paneRef);
             this.isPageLoadCall = false;
         }
+
+        // invoke select callback on the selected tab
+        paneRef.invokeOnSelectCallback(evt);
 
         // invoke change callback if the evt is present, select a tab programmatically will not have the event
         if (evt) {
@@ -340,6 +341,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
     private onDataChange(newVal) {
         this.fieldDefs = createArrayFrom(newVal);
+        setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0));
     }
 
     onPropertyChange(key: string, nv: any, ov) {
