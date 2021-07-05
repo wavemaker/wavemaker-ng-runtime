@@ -14,7 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAU
     selector: '[wmSpinner]',
     templateUrl: './spinner.component.html',
     providers: [
-        provideAsWidgetRef(SpinnerComponent)
+        provideAsWidgetRef(SpinnerComponent), ImagePipe
     ],
     exportAs: 'wmSpinner'
 })

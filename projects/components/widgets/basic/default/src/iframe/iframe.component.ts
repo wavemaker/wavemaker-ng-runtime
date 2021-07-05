@@ -16,7 +16,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmIframe]',
     templateUrl: './iframe.component.html',
     providers: [
-        provideAsWidgetRef(IframeComponent)
+        provideAsWidgetRef(IframeComponent), TrustAsPipe
     ]
 })
 export class IframeComponent extends StylableComponent {

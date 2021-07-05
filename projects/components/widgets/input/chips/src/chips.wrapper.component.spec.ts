@@ -59,6 +59,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 
 describe('wm-chips: Component Specific Tests', () => {
     let wrapperComponent: ChipsWrapperComponent;

@@ -14,7 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Directive({
     selector: '[wmHtml]',
     providers: [
-        provideAsWidgetRef(HtmlDirective)
+        provideAsWidgetRef(HtmlDirective), TrustAsPipe
     ],
     exportAs: 'wmHtml'
 })

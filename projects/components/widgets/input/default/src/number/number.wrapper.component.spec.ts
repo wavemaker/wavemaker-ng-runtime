@@ -1,21 +1,25 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { App, AbstractI18nService, setPipeProvider} from '@wm/core';
-import { Component, ViewChild } from '@angular/core';
-import { NumberComponent } from './number.component';
-import { FormsModule } from '@angular/forms';
-import { DecimalPipe, registerLocaleData } from '@angular/common';
-import { TrailingZeroDecimalPipe } from '@wm/components/base';
-import { PipeProvider } from '../../../../../../runtime-base/src/services/pipe-provider.service';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {AbstractI18nService, App, setPipeProvider} from '@wm/core';
+import {Component, ViewChild} from '@angular/core';
+import {NumberComponent} from './number.component';
+import {FormsModule} from '@angular/forms';
+import {DecimalPipe, registerLocaleData} from '@angular/common';
+import {TrailingZeroDecimalPipe} from '@wm/components/base';
+import {PipeProvider} from '../../../../../../runtime-base/src/services/pipe-provider.service';
 import localePT from '@angular/common/locales/pt.js';
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
+import {compileTestComponent} from "../../../../../base/src/test/util/component-test-util";
 
+let mockApp = {};
 
-let mockApp =  {};
+const markup = `<div wmNumber hint="Number" name="testnumber" ngModel></div>`;
 
 class MockAbstractI18nService {
     public getSelectedLocale() {
-       return 'en';
+        return 'en';
     }
 }
+
 class MockAbstractI18nServicePt {
     public getSelectedLocale() {
         return 'pt';
@@ -23,17 +27,43 @@ class MockAbstractI18nServicePt {
 }
 
 @Component({
-    template: `<div wmNumber textalign="right" name="testnumber" ngModel></div>`
+    template: markup
 })
 
 class NumberWrapperComponent {
-    @ViewChild(NumberComponent, /* TODO: add static flag */ {static: true})
-    numberComponent: NumberComponent;
+    @ViewChild(NumberComponent, /* TODO: add static flag */ {static: true}) wmComponent: NumberComponent;
     public testDefaultValue = 123.4;
+
     constructor(_pipeProvider: PipeProvider) {
         setPipeProvider(_pipeProvider);
     }
 }
+
+const testModuleDef: ITestModuleDef = {
+    imports: [FormsModule],
+    declarations: [NumberWrapperComponent, NumberComponent],
+    providers: [
+        {provide: App, useValue: mockApp},
+        {provide: AbstractI18nService, useClass: MockAbstractI18nService},
+        {provide: DecimalPipe, useClass: DecimalPipe},
+        {provide: TrailingZeroDecimalPipe, useClass: TrailingZeroDecimalPipe}
+    ]
+};
+
+const componentDef: ITestComponentDef = {
+    $unCompiled: $(markup),
+    type: 'wm-number',
+    widgetSelector: '[wmNumber]',
+    testModuleDef: testModuleDef,
+    testComponent: NumberWrapperComponent,
+    inputElementSelector: 'input.app-textbox'
+};
+
+const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
+TestBase.verifyPropsInitialization();
+TestBase.verifyCommonProperties();
+TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 
 describe('NumberComponent', () => {
     let wrapperComponent: NumberWrapperComponent;
@@ -41,23 +71,9 @@ describe('NumberComponent', () => {
     let fixture: ComponentFixture<NumberWrapperComponent>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                FormsModule
-            ],
-            declarations: [NumberWrapperComponent, NumberComponent],
-            providers: [
-                {provide: App, useValue: mockApp},
-                {provide: AbstractI18nService, useClass: MockAbstractI18nService},
-                {provide: DecimalPipe, useClass: DecimalPipe},
-                {provide: TrailingZeroDecimalPipe, useClass: TrailingZeroDecimalPipe}
-            ]
-        })
-            .compileComponents();
-
-        fixture = TestBed.createComponent(NumberWrapperComponent);
+        fixture = compileTestComponent(testModuleDef, NumberWrapperComponent);
         wrapperComponent = fixture.componentInstance;
-        numberComponent = wrapperComponent.numberComponent;
+        numberComponent = wrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
 
@@ -80,24 +96,11 @@ describe('NumberComponent with Localization', () => {
 
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                FormsModule
-            ],
-            declarations: [NumberWrapperComponent, NumberComponent],
-            providers: [
-                {provide: App, useValue: mockApp},
-                {provide: AbstractI18nService, useClass: MockAbstractI18nServicePt},
-                {provide: DecimalPipe, useClass: DecimalPipe},
-                {provide: TrailingZeroDecimalPipe, useClass: TrailingZeroDecimalPipe}
-            ]
-        })
-            .compileComponents();
         // register the selected locale language
         registerLocaleData(localePT);
-        fixture = TestBed.createComponent(NumberWrapperComponent);
+        fixture = compileTestComponent(testModuleDef, NumberWrapperComponent);
         wrapperComponent = fixture.componentInstance;
-        numberComponent = wrapperComponent.numberComponent;
+        numberComponent = wrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
 

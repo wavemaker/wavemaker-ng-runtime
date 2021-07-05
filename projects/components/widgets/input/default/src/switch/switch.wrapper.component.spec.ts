@@ -9,7 +9,7 @@ import { App, AppDefaults } from '@wm/core';
 import { ToDatePipe } from '@wm/components/base';
 
 let mockApp = {};
-const markup = `<div wmSwitch datavalue="yes" show="true" width="800" height="200" hint="test switch" tabindex="1" disabled="false" name="switch1"></div>`;
+const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switch1.hint || 'Switch button'" datavalue="yes" show="true" width="800" height="200" hint="test switch" tabindex="0" disabled="false" name="switch1"></div>`;
 
 @Component({
     template: markup
@@ -42,6 +42,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 
 describe('wm-switch: Component specific tests: ', () => {
     let wrapperComponent: SwitchWrapperComponent;

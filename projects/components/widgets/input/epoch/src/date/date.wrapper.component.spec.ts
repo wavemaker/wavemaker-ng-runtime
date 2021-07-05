@@ -139,6 +139,7 @@ TestBase.verifyEvents([
         eventName: 'blur'
     }
 ]);
+TestBase.verifyAccessibility();
 
 
 describe('DateComponent', () => {
