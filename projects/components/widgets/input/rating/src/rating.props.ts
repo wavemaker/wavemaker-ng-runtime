@@ -11,7 +11,6 @@ export const ratingProps = new Map(
         ['datavalue', PROP_STRING],
         ['displayexpression', PROP_STRING],
         ['displayfield', PROP_STRING],
-        ['hint', PROP_STRING],
         ['iconcolor', PROP_STRING],
         ['iconsize', PROP_STRING],
         ['maxvalue', {value: 5, ...PROP_NUMBER}],

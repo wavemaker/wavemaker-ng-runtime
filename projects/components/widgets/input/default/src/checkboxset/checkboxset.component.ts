@@ -1,4 +1,4 @@
-import { Attribute, Component, Injector } from '@angular/core';
+import { Attribute, Component, HostListener, Injector } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { AppDefaults, noop, setListClass, switchClass} from '@wm/core';
@@ -79,6 +79,13 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
             super.handleEvent(node, eventName, callback, locals);
         }
     }
+
+    @HostListener('keydown.enter', ['$event', '"ENTER"'])
+    onKeyDown($event) {
+        $event.preventDefault();
+        $event.target.click();
+    }
+
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'tabindex') {

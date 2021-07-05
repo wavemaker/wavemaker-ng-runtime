@@ -130,6 +130,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(dateComponentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 TestBase.verifyEvents([
     {
         clickableEle: '.btn-date',
