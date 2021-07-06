@@ -31,6 +31,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public trailingzero: boolean;
     private validateType: string;
     public inputmode: string;
+    private lastValIsDecimal: boolean;
 
     constructor(
         inj: Injector,
@@ -48,6 +49,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
     // Setter for the datavalue.
     set datavalue(value: number) {
+        this.lastValIsDecimal = false;
+
         // set text value to null if data value is empty.
         if (_.includes([null, undefined, ''], value)) {
             const input = this.inputEl.nativeElement;
@@ -74,9 +77,14 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         } else {
             model = NaN;
         }
+
+        // On keypress, if the user types a decimal and is still active on the input do not throw error. 
+        if (_.isNaN(model) && strVal[strVal.length - 1] === this.DECIMAL && this.ngModelOptions.updateOn === 'change' && this.$element.find('input:focus').length) {
+            this.lastValIsDecimal = true;
+        }
         // get a valid number form the text.
         // if the number is valid or if number is not in range update the model value.
-        if (this.isValid(model)) {
+        if (!this.lastValIsDecimal && this.isValid(model)) {
             this.proxyModel = model;
             // update the display value in the text box.
             this.updateDisplayText();
@@ -278,6 +286,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public checkForTrailingZeros($event) {
         const stepVal = this.stepLength();
         const financialMode = !this.trailingzero && this.inputmode === INPUTMODE.FINANCIAL;
+
+        // If the user's last input is a decimal and not active on input field, throw error
+        if (this.lastValIsDecimal) {
+            this.onModelChange(this.displayValue);
+        }
         if (!financialMode && !this.isNaturalCurrency()) {
             return;
         }
