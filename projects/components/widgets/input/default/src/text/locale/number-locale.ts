@@ -434,7 +434,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (key === 'minvalue' || key === 'maxvalue') {
             this.isValid(nv);
         } else if (key === 'datavalue' && !ov) {
-            this.onInputChange(nv);
+            if (this.isNaturalCurrency()) {
+                this.checkForTrailingZeros({type: 'blur'});
+            } else {
+                this.onInputChange(nv);
+            }
         } else {
             super.onPropertyChange(key, nv, ov);
         }
