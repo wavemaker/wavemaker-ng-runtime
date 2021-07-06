@@ -1678,7 +1678,7 @@ $.widget('wm.datatable', {
         });
         $editableElements.on('keydown', function (e) {
             //To prevent up and down arrows, navigating to other rows in edit mode
-            if (e.which === 38 || e.which === 40) {
+            if ((e.which === 38 || e.which === 40) && (e.currentTarget && !e.currentTarget.closest('.always-new-row'))) {
                 e.stopPropagation();
             }
         });
@@ -2151,7 +2151,8 @@ $.widget('wm.datatable', {
     //Method to handle up and next key presses
     processUpDownKeys: function (event, $row, direction) {
         var self = this;
-        if ($row.hasClass('row-editing') && self.options.editmode === self.CONSTANTS.QUICK_EDIT) {
+        var rowData = $row.find('input').val();
+        if ($row.hasClass('row-editing') && self.options.editmode === self.CONSTANTS.QUICK_EDIT && rowData) {
             self.toggleEditRow(event, {
                 'action': 'save',
                 'noMsg': true,
@@ -2210,6 +2211,10 @@ $.widget('wm.datatable', {
             });
           } else {
             $row.trigger('click');
+            // When enter event is recived on the new row focus the row to enter text
+            if (quickEdit && $target.hasClass('always-new-row') && $target.hasClass('row-editing')) {
+                self.focusNewRow();
+            }
           }
         }
         //Stop the enter keypress from submitting any parent form. If target is button, event should not be stopped as this stops click event on button
