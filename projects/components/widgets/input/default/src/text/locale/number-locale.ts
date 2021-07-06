@@ -65,8 +65,16 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             (value as any) = isLocalizedNumber ? value : this.transformNumber(value);
         }
 
+        const numberReg = /\d/;
+        const strVal = value.toString();
+        let model;
+        // When the input value only contains seperator, do not convert the sepertaor into 0
+        if (numberReg.test(strVal)) {
+            model = this.parseNumber(strVal);
+        } else {
+            model = NaN;
+        }
         // get a valid number form the text.
-        const model = this.parseNumber(value.toString());
         // if the number is valid or if number is not in range update the model value.
         if (this.isValid(model)) {
             this.proxyModel = model;
@@ -414,6 +422,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if ((_.includes(inputValue, '+') || _.includes(inputValue, '-')) && ($event.key === '+' || $event.key === '-')) {
             return false;
         }
+        // Do not allow user to enter only space without any input value
+        if (!inputValue && $event.code === 'Space') {
+            return false;
+        } 
     }
 
     onBackspace($event) {
