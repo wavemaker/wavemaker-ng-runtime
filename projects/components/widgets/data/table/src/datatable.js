@@ -1409,7 +1409,9 @@ $.widget('wm.datatable', {
 
         $row = $row || $target.closest('tr.app-datagrid-row');
 
-        if (action || (isQuickEdit && $target.hasClass('app-datagrid-cell') && !$row.hasClass('always-new-row'))) {
+        // Fix for [WMS-20546]: If column has a value expression, an extra div is getting added inside <td>.
+        // so checking if target or its parent element has the class '.app-datagrid-cell'
+        if (action || (isQuickEdit && ($target.hasClass('app-datagrid-cell') || $target.parent().hasClass('app-datagrid-cell')) && !$row.hasClass('always-new-row'))) {
             //In case of advanced edit, Edit the row on click of a row
             options.action = options.action || 'edit';
 
@@ -2284,7 +2286,8 @@ $.widget('wm.datatable', {
             }
             return;
         }
-        if (!isSameRow) {
+        // Fix for [WMS-20545]: The deselect/select event is being triggered twice when isSameRow is undefined
+        if (!isSameRow && !_.isUndefined(isSameRow)) {
             rowID++;
         }
         $nextRow = self.gridBody.find('tr.app-datagrid-row[data-row-id="' + rowID + '"]');
@@ -2783,13 +2786,14 @@ $.widget('wm.datatable', {
         if (!this.tableId) {
             this.tableId = this.Utils.generateGuid();
         }
+        var overflow = (this.options.navigation === 'Scroll' && (this.options.height === '100%' || this.options.height === 'auto')) ? 'hidden' : 'auto';
         var statusContainer =
             '<div class="overlay" style="display: none;">' +
             '<div class="status"><i class="' + this.options.loadingicon + '"></i><span class="message"></span></div>' +
             '</div>',
             table = '<div class="table-container table-responsive"><div class="app-grid-header ' +
                 '"><div class="app-grid-header-inner"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_header_' + this.tableId + '">' +
-                '</table></div></div><div class="app-grid-content" style="height:' + this.options.height + ';"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_' + this.tableId + '">' +
+                '</table></div></div><div class="app-grid-content" style="height:' + this.options.height + '; overflow: ' + overflow + ';"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_' + this.tableId + '">' +
                 '</table></div>' +
                 '</div>';
         this.gridContainer = $(table);
@@ -2873,6 +2877,9 @@ $.widget('wm.datatable', {
         this.options[key] = value;
         if (key === 'height') {
             this.gridContainer.find('.app-grid-content').css(key, value);
+            if (this.options.navigation === 'Scroll' && (this.options.height != '100%' && this.options.height != 'auto')) {
+                this.gridContainer.find('.app-grid-content').css('overflow', 'auto');
+            }
             this.dataStatusContainer.css(key, value);
         }
         this.addOrRemoveScroll();

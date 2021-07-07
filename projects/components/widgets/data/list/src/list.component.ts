@@ -182,9 +182,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         return this.getListItemByIndex(index);
     }
 
-    // return index of listItem(listItemDirective). This refers to the same method getListItemIndex.
-    public getIndex(item: ListItemDirective) {
-        return this.getListItemIndex(item);
+    /** 
+     * Returns index of listItem(listItemDirective / listItemObject)
+     * If item is a directive, index is fetched from listItems
+     * If item is an object, index is fetched from fieldDefs
+    */
+    public getIndex(item: any) {
+        if (item instanceof ListItemDirective) {
+            return this.getListItemIndex(item);
+        } else if (item) {
+            return this.fieldDefs.findIndex((obj) => _.isEqual(obj, item));
+        }
     }
 
     public set selecteditem(items) {

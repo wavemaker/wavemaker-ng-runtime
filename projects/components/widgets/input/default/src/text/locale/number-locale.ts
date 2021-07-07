@@ -30,6 +30,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public step: number;
     public trailingzero: boolean;
     private validateType: string;
+    public inputmode: string;
 
     constructor(
         inj: Injector,
@@ -205,6 +206,39 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
     }
 
+       /**
+     * @param value contains the value entered in the input box
+     * This function modifies the user input value, into financial mode. 
+     * Number starts from highest precesion decimal, on typing number shifts to the left
+     */
+    public onInputChange(value: any) {
+        const stepLen = this.step.toString().split('.');
+        if (stepLen.length === 1 || this.inputmode !== 'financial') {
+            return;
+        }
+
+        const stepVal = stepLen[1].length;
+  
+        const valInWholeNum = parseInt(value.toString().replace(/\D/g,''));
+        const financialVal = valInWholeNum *  this.step;
+
+
+        if (!_.isNaN(financialVal)) {
+            this.datavalue = parseFloat(financialVal.toFixed(stepVal));
+            this.displayValue = this.datavalue.toFixed(stepVal);
+        } else {
+            this.datavalue = undefined;
+        }
+    }
+    
+    // In case of input mode is financial and trailing zero is set to false, on focus set display val to fixed point notation
+    public onFocus() {
+        const stepLen = this.step.toString().split('.');
+        if (stepLen.length > 1 && !this.trailingzero && this.inputmode === 'financial') {
+            this.displayValue = this.datavalue.toFixed(stepLen[1].length);
+        }
+    }
+
     /**
      * returns the number of decimal places a number have.
      * @param value: number
@@ -228,7 +262,16 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (this.readonly || this.step === 0) {
             return;
         }
-        let proxyModel = this.proxyModel;
+        const targetVal = $event.target.value;
+
+        // proxyModel to be updated from $event.target.value if present to support arrow keys when input changes else pick up from this.proxymodel
+        let proxyModel;
+        if (targetVal && !_.isNaN(parseFloat(targetVal))) {
+            proxyModel = parseFloat(targetVal);
+        } else {
+            proxyModel = this.proxyModel;
+        }
+    
         let value;
 
         // if the number is not in range and when arrow buttons are pressed need to get appropriate number value.
@@ -297,8 +340,12 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
         const validity = new RegExp(`^[\\d\\s-,.e+${this.GROUP}${this.DECIMAL}]$`, 'i');
         const inputValue = $event.target.value;
+
+        // when input mode is financial, do not restrict user on entering the value when step value limit is reached. 
+        const skipStepValidation = this.inputmode === 'financial';
+
         // validates entering of decimal values only when user provides decimal limit(i.e step contains decimal values).
-        if (inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step))) {
+        if (!skipStepValidation && inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step))) {
             return false;
         }
         // validates if user entered an invalid character.
@@ -329,6 +376,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     onPropertyChange(key, nv, ov?) {
         if (key === 'minvalue' || key === 'maxvalue') {
             this.isValid(nv);
+        } else if (key === 'datavalue' && !ov) {
+            this.onInputChange(nv);
         } else {
             super.onPropertyChange(key, nv, ov);
         }

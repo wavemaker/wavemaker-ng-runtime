@@ -23,7 +23,8 @@ export const numberProps = new Map(
         ['step', {value: 1, ...PROP_NUMBER}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['trailingzero', {value: false, ...PROP_BOOLEAN}],
-        ['updateon', PROP_STRING]
+        ['updateon', PROP_STRING],
+        ['inputmode', {value: 'natural', ...PROP_STRING}]
     ]
 );
 
