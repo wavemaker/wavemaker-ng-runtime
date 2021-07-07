@@ -19,6 +19,7 @@ $.widget('wm.datatable', {
         isMobile: false,
         enableSort: true,
         filtermode: '',
+        activeRow: undefined,
         height: '100%',
         showHeader: true,
         selectFirstRow: false,
@@ -1411,7 +1412,7 @@ $.widget('wm.datatable', {
 
         // Fix for [WMS-20546]: If column has a value expression, an extra div is getting added inside <td>.
         // so checking if target or its parent element has the class '.app-datagrid-cell'
-        if (action || (isQuickEdit && ($target.hasClass('app-datagrid-cell') || $target.parent().hasClass('app-datagrid-cell')) && !$row.hasClass('always-new-row'))) {
+        if (action || (isQuickEdit && ($target.hasClass('app-datagrid-cell') || $target.closest("td.app-datagrid-cell").length) && !$row.hasClass('always-new-row'))) {
             //In case of advanced edit, Edit the row on click of a row
             options.action = options.action || 'edit';
 
@@ -1677,7 +1678,7 @@ $.widget('wm.datatable', {
         });
         $editableElements.on('keydown', function (e) {
             //To prevent up and down arrows, navigating to other rows in edit mode
-            if (e.which === 38 || e.which === 40) {
+            if ((e.which === 38 || e.which === 40) && (e.currentTarget && !e.currentTarget.closest('.always-new-row'))) {
                 e.stopPropagation();
             }
         });
@@ -2150,7 +2151,8 @@ $.widget('wm.datatable', {
     //Method to handle up and next key presses
     processUpDownKeys: function (event, $row, direction) {
         var self = this;
-        if ($row.hasClass('row-editing') && self.options.editmode === self.CONSTANTS.QUICK_EDIT) {
+        var rowData = $row.find('input').val();
+        if ($row.hasClass('row-editing') && self.options.editmode === self.CONSTANTS.QUICK_EDIT && rowData) {
             self.toggleEditRow(event, {
                 'action': 'save',
                 'noMsg': true,
@@ -2209,6 +2211,10 @@ $.widget('wm.datatable', {
             });
           } else {
             $row.trigger('click');
+            // When enter event is recived on the new row focus the row to enter text
+            if (quickEdit && $target.hasClass('always-new-row') && $target.hasClass('row-editing')) {
+                self.focusNewRow();
+            }
           }
         }
         //Stop the enter keypress from submitting any parent form. If target is button, event should not be stopped as this stops click event on button
@@ -2843,11 +2849,40 @@ $.widget('wm.datatable', {
             this.gridContainer.addClass('show-msg');
         } else {
             this.gridContainer.removeClass('show-msg');
+
+            // In case of quickeditmode, if active row is found, focus the row and bind the event listeners to the row
+            if (this.options.editmode === this.CONSTANTS.QUICK_EDIT) {
+                if (this.options.activeRow) {
+                    this.attachHandlersToActiveRow(this.options.activeRow);
+                }
+                this.options.activeRow = undefined;
+            }
         }
         if (!isCreated) {
             this.setColGroupWidths();
         }
         this.addOrRemoveScroll();
+    },
+    /**
+     * 
+     * @param {*} rowObj Contains the object which is part of options.data
+     * In this method, active row will be focused and event handlers are attached.
+     * If object is recieved, node extraction will be done and if found operations on the row are performed
+     */
+    attachHandlersToActiveRow(rowObj) {
+        var rowIndex = this.Utils.getObjectIndex(this.options.data, rowObj);
+        row = this.gridBody.find('tr.app-datagrid-row[data-row-id=' + rowIndex + ']');
+        if (!row.length) {
+            return;
+        } else if (!row.hasClass('active')) {
+            row.addClass('active');
+        }
+        this.focusActiveRow();
+        this.attachEventHandlers(row);
+    },
+    // This method sets the activerow on which save operation is performed in quickeditmode
+    setActiveRow(row) {
+        this.options.activeRow = row;
     },
     //This method is used to show or hide data loading/ no data found overlay
     setStatus: function (state, message, isCreated) {

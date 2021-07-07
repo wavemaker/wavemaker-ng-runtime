@@ -41,6 +41,7 @@ export {
     provideAsDialogRef,
     unsupportedStatePersistenceTypes,
     NAVIGATION_TYPE,
+    INPUTMODE,
     AUTOCLOSE_TYPE,
     getWatchIdentifier,
     getMatchModeTypesMap,

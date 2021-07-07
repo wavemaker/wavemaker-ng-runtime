@@ -20,8 +20,8 @@ const getEpochValue = data => {
     name: 'trailingZeroDecimalPipe'
 })
 export class TrailingZeroDecimalPipe implements PipeTransform {
-    transform(value: any, selectedLocale: string, numberfilter: string, localefilter: any, trailingzero: boolean, decimalValue: string): any {
-        numberfilter = trailingzero ? `1.${decimalValue.length}-16`: numberfilter;
+    transform(value: any, selectedLocale: string, numberfilter: string, localefilter: any, trailingzero: boolean, decimalValue: string, skipTrailingZeroCheck?: boolean): any {
+        numberfilter = trailingzero && !skipTrailingZeroCheck ? `1.${decimalValue.length}-16`: numberfilter;
         return this.decimalPipe.transform(value, numberfilter, localefilter || selectedLocale);
     }
 
