@@ -417,7 +417,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
 
         // validates entering of decimal values only when user provides decimal limit(i.e step contains decimal values).
-        if (!skipStepValidation && inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step))) {
+        // Restrict user from entering only if the decimal limit is reached and the new digit is entered in decimal place
+        if (!skipStepValidation && inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step)) && $event.target.selectionStart >= inputValue.length - 1) {
             return false;
         }
         // validates if user entered an invalid character.
