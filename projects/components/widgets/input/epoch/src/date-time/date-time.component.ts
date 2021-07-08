@@ -39,6 +39,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private bsTimeValue;
     private proxyModel;
     private app: App;
+    public hint: string;
 
     public showdropdownon: string;
     private keyEventPlugin;

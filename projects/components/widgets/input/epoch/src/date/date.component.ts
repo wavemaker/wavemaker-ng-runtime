@@ -36,6 +36,7 @@ export class DateComponent extends BaseDateTimeComponent {
     public isOpen: boolean = false;
     private isEnterPressedOnDateInput = false;
     private _bsDefaultLoadCheck: boolean;
+    public hint: string;
 
     private keyEventPlugin;
     private deregisterEventListener;

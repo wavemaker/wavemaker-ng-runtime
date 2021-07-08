@@ -53,6 +53,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     public readonly: boolean;
     public required: boolean;
     public name: string;
+    public hint: string;
     public shortcutkey: string;
     public tabindex: any;
     public _caption = '&nbsp';

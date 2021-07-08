@@ -36,6 +36,7 @@ export class CurrencyComponent extends NumberLocale {
     public name: string;
     public tabindex: any;
     public shortcutkey: string;
+    public hint: string;
 
     @ViewChild(NgModel, {static: true}) ngModel: NgModel;
     @ViewChild('input', { static: true, read: ElementRef }) inputEl: ElementRef;

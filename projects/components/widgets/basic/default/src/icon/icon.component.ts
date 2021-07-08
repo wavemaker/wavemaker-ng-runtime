@@ -21,6 +21,7 @@ export class IconComponent extends StylableComponent {
 
     public iconclass: any;
     public caption: string;
+    public hint: string;
     @HostBinding('attr.icon-position') iconposition: string;
     @HostBinding('style.fontSize') iconsize: string;
 
