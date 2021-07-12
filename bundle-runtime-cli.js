@@ -1,9 +1,9 @@
 
 /**
- * To update the @wavemaker/app-ng-runtime package.json version 
+ * To update the @wavemaker/app-ng-runtime package.json version
  * Add the dependency of @wavemaker/app-ng-runtime in package.json file
  * Update the TS config and TS config web app json with package version
- *  
+ *
  * CONSOLE ARGUMENTS:-
  *  publishVersion: To generate the given version package.json file
  */
@@ -44,7 +44,7 @@ const addWMDependency = (wm_pkg_name) => {
 };
 
 /**
- * To replace the libraries with node_modules path in angular.json   
+ * To replace the libraries with node_modules path in angular.json
  * @param {*} wm_pkg_name  ng runtime pm package name @wavemaker/app-ng-runtime
  */
 const updateAngularJSON = (wm_pkg_name) => {

@@ -9,7 +9,8 @@
                [ngClass]="{'disabled':disabled || readonly}"
                [title]="item.label">
             <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
-                   [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
+                   [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"
+                   [attr.aria-label]="item.key"/>
             <span class="caption" [textContent]="item.label"></span>
         </label>
         <!-- Custom partial template -->
@@ -17,7 +18,8 @@
                [ngClass]="{'disabled':disabled || readonly}"
                [title]="item.label">
             <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
-                   [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
+                   [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"
+                   [attr.aria-label]="item.key"/>
             <span class="caption customTemplate" partial-container-target></span>
         </label>
     </li>

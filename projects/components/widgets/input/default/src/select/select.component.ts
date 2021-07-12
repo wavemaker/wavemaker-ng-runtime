@@ -32,6 +32,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     public tabindex: any;
     public name: string;
     public autofocus: boolean;
+    public hint: string;
 
     @ViewChild('select', { static: true, read: ElementRef }) selectEl: ElementRef;
 

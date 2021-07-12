@@ -15,7 +15,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmRightPanel]',
     providers: [
         provideAsWidgetRef(RightPanelDirective)
-    ]
+    ],
+    exportAs: 'wmRightPanel'
 })
 export class RightPanelDirective extends StylableComponent {
     static initializeProps = registerProps();

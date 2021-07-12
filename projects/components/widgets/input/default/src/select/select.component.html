@@ -1,4 +1,4 @@
-<select role="input" aria-haspopup="true" aria-expanded="false" #select
+<select role="listbox" aria-haspopup="true" aria-expanded="false" #select
         focus-target
         [ngClass]="['app-select form-control', class]"
         [disabled]="disabled"
@@ -10,6 +10,8 @@
         (focus)="checkForFloatingLabel($event)"
         (blur)="invokeOnTouched($event); checkForFloatingLabel($event)"
         [attr.name]="name"
+        [attr.aria-label]="hint || 'Select options'"
+        [attr.aria-multiselectable]="multiple"
         [autofocus]="autofocus"
 >
     <option selected
@@ -23,7 +25,8 @@
             <option *ngFor="let item of groupObj.data;"
                 [value]="item.key"
                 [selected]="item.selected"
-                [textContent]="item.label"></option>
+                [textContent]="item.label"
+                role="option"></option>
         </optgroup>
     </ng-container>
 
@@ -31,6 +34,7 @@
         <option *ngFor="let item of datasetItems"
             [value]="item.key"
             [selected]="item.selected"
-            [textContent]="item.label"></option>
+            [textContent]="item.label"
+            role="option"></option>
     </ng-container>
 </select>

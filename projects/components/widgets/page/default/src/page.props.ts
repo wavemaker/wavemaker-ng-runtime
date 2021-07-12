@@ -7,7 +7,8 @@ export const registerProps = () => {
             [
                 ['cache', {value: false, ...PROP_BOOLEAN}],
                 ['refreshdataonattach', {value: true, ...PROP_BOOLEAN}],
-                ['pagetitle', PROP_STRING]
+                ['pagetitle', PROP_STRING],
+                ['hint', PROP_STRING]
             ]
         )
     );

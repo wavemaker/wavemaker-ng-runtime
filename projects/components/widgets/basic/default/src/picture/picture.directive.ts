@@ -16,7 +16,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: 'img[wmPicture]',
     providers: [
         provideAsWidgetRef(PictureDirective)
-    ]
+    ],
+    exportAs: 'wmPicture'
 })
 export class PictureDirective extends StylableComponent implements OnInit {
     static initializeProps = registerProps();

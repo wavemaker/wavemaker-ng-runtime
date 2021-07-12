@@ -1,7 +1,10 @@
 <label [ngClass]="{'unchecked': !proxyModel, 'disabled': (disabled || readonly), 'required': (required && _caption)}" role="button">
-    <input type="checkbox" aria-describedby="checkbox"
+    <input type="checkbox"
+           role="checkbox"
            #checkbox
            [attr.name]="name"
+           [attr.aria-label]="hint || (type === 'toggle' ? 'Toggle' : 'Checkbox')"
+           [attr.aria-checked]="!!proxyModel"
            focus-target
            [(ngModel)]="proxyModel"
            [readonly]="readonly"
@@ -14,4 +17,4 @@
     <span class="caption" [innerHtml]="_caption"></span>
     <img alt="Checkbox Image" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="switch"/>
 </label>
-<input type="hidden" class="ng-hide model-holder" [disabled]="disabled" [value]="proxyModel">
+<input type="hidden" class="ng-hide model-holder" aria-hidden="true" tabindex="-1" [disabled]="disabled" [value]="proxyModel">

@@ -16,7 +16,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './button.component.html',
     providers: [
         provideAsWidgetRef(ButtonComponent)
-    ]
+    ],
+    exportAs: 'wmButton'
 })
 export class ButtonComponent extends StylableComponent {
     static initializeProps = registerProps();

@@ -52,6 +52,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     public showdropdownon: string;
     public mintime;
     public maxtime;
+    public hint: string;
 
     private deregisterEventListener;
     private app: App;

@@ -1,8 +1,9 @@
 <input class="form-control app-textbox"
        focus-target
-       role="input"
+       role="textbox"
        [type]="type"
        [attr.name]="name"
+       [attr.aria-label]="hint || type + ' field'"
        [(ngModel)]="datavalue"
        [imask]="mask"
        [unmask]="true"

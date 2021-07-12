@@ -5,7 +5,7 @@
         (onShown)="onTimepickerOpen()"
         style="display: inherit;">
         <input class="form-control app-textbox display-input"
-            aria-label="Set the date and time"
+            [attr.aria-label]="hint || 'Date and time field'"
             focus-target
             [name]="name"
             [tabindex]="tabindex"
@@ -22,7 +22,7 @@
             [attr.placeholder]="placeholder"
             [attr.accesskey]="shortcutkey"
             (keydown)="onDisplayKeydown($event)">
-     
+
         <span class="input-group-btn">
             <button type="button"
                 class="btn btn-default btn-date"
@@ -90,12 +90,13 @@
 <ng-template [ngIf]="loadNativeDateInput">
     <input type="datetime-local"
         class="form-control app-textbox mobile-input"
-        role="input"
+        role="textbox"
         step="any"
         [value]="nativeDisplayValue" [min]="mindate | date:'yyyy-MM-ddTHH:mm:ss'" [max]="maxdate  | date:'yyyy-MM-ddTHH:mm:ss'"
         [tabindex]="tabindex"
         [required]="required"
         [disabled]="disabled || readonly || isCurrentDate"
+        [attr.aria-label]="hint || 'Date and time field'"
         (change)="onDateChange($event, true)"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">

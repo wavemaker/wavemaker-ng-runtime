@@ -28,6 +28,7 @@ export class NumberComponent extends NumberLocale {
     public regexp: string;
     public disabled: boolean;
     public name: string;
+    public hint: string;
     public tabindex: any;
     public shortcutkey: string;
     public autofocus: boolean;

@@ -14,7 +14,7 @@ import { By } from "@angular/platform-browser";
 import { Component, ViewChild } from "@angular/core";
 import { AppDefaults } from "@wm/core";
 
-const markup = `<div hint="Help text for rating widget" tabindex="1"  wmRating  name="rating1"></div>`;
+const markup = `<div tabindex="1"  wmRating  name="rating1"></div>`;
 @Component({
     template: markup
 })

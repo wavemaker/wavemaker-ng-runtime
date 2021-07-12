@@ -38,6 +38,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public type: string;
     public navsearchbar: any;
     public debouncetime: number;
+    public hint: string;
 
     private app: App;
     private typeaheadDataSource: Observable<any>;
@@ -128,7 +129,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     this.typeahead._container = undefined;
                 }
             }).pipe(
-                filter(() => { 
+                filter(() => {
                     this._loadingItems = false;
                     return (this.minchars === 0 || (this.query && this.query.length >= this.minchars));
                 }),

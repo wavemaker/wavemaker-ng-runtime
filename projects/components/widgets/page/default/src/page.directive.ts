@@ -13,7 +13,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};
     selector: '[wmPage]',
     providers: [
         provideAsWidgetRef(PageDirective)
-    ]
+    ],
+    exportAs: 'wmPage'
 })
 export class PageDirective extends StylableComponent implements AfterViewInit, OnDestroy {
     static initializeProps = registerProps();

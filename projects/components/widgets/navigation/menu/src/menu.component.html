@@ -3,7 +3,7 @@
             dropdownToggle
             aria-haspopup="true"
             aria-expanded="false"
-
+            [attr.aria-label]="hint || 'Menu'"
             class="btn app-button dropdown-toggle {{menuclass}}"
             hint.bind="hint"
             shortcutkey.bind="shortcutkey"
@@ -42,4 +42,4 @@
     </a>
 </ng-container>
 
-<ul wmMenuDropdown [items]="nodes" [ngClass]="menulayout" class="icon-position-{{iconposition}}" *dropdownMenu aria-labelledby="dropdownmenu"></ul>
+<ul wmMenuDropdown [items]="nodes" [ngClass]="menulayout" class="icon-position-{{iconposition}}" *dropdownMenu aria-labelledby="dropdownmenu" role="menubar"></ul>

@@ -1,6 +1,6 @@
 <textarea class="form-control app-textarea"
           focus-target
-          role="input"
+          role="textbox"
           [attr.name]="name"
           [(ngModel)]="datavalue"
           [ngModelOptions]="ngModelOptions"
@@ -11,6 +11,8 @@
           [attr.tabindex]="tabindex"
           [attr.placeholder]="placeholder"
           [attr.accesskey]="shortcutkey"
+          [attr.aria-label]="hint || 'Textarea field'"
+          aria-multiline="true"
           [autofocus]="autofocus"
           (blur)="handleBlur($event)"
           (ngModelChange)="handleChange($event)"
