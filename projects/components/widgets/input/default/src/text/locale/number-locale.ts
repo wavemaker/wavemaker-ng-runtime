@@ -54,10 +54,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         // set text value to null if data value is empty.
         if (_.includes([null, undefined, ''], value)) {
             const input = this.inputEl.nativeElement;
+            const prevDataValue =  (this as any).prevDatavalue;
             this.displayValue = input.value = this.proxyModel = null;
-            this.handleChange(value);
             this.resetValidations();
-            this._onChange();
+            if (prevDataValue) {
+                this.handleChange(value);
+                this._onChange();
+            }
             return;
         }
         // if the widget has default value and if we change the locale, the value should be in selected locale format.

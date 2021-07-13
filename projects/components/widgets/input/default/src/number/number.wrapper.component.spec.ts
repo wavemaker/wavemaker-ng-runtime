@@ -9,10 +9,11 @@ import {PipeProvider} from '../../../../../../runtime-base/src/services/pipe-pro
 import localePT from '@angular/common/locales/pt.js';
 import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
 import {compileTestComponent} from "../../../../../base/src/test/util/component-test-util";
+import { By } from '@angular/platform-browser';
 
 let mockApp = {};
 
-const markup = `<div wmNumber hint="Number" name="testnumber" tabindex="1" ngModel></div>`;
+const markup = `<div wmNumber hint="Number" name="testnumber" tabindex="1" ngModel change.event="onChange($event, widget, newVal, oldVal)"></div>`;
 
 class MockAbstractI18nService {
     public getSelectedLocale() {
@@ -34,6 +35,9 @@ class NumberWrapperComponent {
     @ViewChild(NumberComponent, /* TODO: add static flag */ {static: true}) wmComponent: NumberComponent;
     public testDefaultValue = 123.4;
 
+    public onChange($event, widget, newVal, oldVal) {
+        console.log('Change callback triggered');
+    }
     constructor(_pipeProvider: PipeProvider) {
         setPipeProvider(_pipeProvider);
     }
@@ -88,6 +92,29 @@ describe('NumberComponent', () => {
         expect((numberComponent as any).transformNumber(numberComponent.datavalue)).toEqual(fixture.debugElement.nativeElement.querySelector('input').value);
     });
 
+    it('should not invoke change callback when datavalue is set null and does not have previous value', () => {
+        numberComponent.datavalue = null;
+        spyOn(wrapperComponent, 'onChange');
+        expect((numberComponent as any).prevDatavalue).toEqual(undefined);
+        expect(wrapperComponent.onChange).not.toHaveBeenCalled();
+    });
+
+    it('should invoke change callback when datavalue is modified', () => {
+        spyOn(wrapperComponent, 'onChange');
+
+        const input = fixture.debugElement.query(By.css('.app-number-input')).nativeElement;
+        const options = { 'key': '2', 'keyCode': 50, 'code': 'Digit2' };
+        input.dispatchEvent(new KeyboardEvent('keypress', options));
+
+        // previous value undefined, current value is present
+        numberComponent.datavalue = 123;        
+        expect(wrapperComponent.onChange).toHaveBeenCalledTimes(1);
+
+        // previous value present, current value is undefined
+        numberComponent.datavalue = null; 
+        expect(wrapperComponent.onChange).toHaveBeenCalledTimes(2);
+
+    });
 });
 describe('NumberComponent with Localization', () => {
     let wrapperComponent: NumberWrapperComponent;
