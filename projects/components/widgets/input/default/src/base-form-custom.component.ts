@@ -1,5 +1,5 @@
 import { ControlValueAccessor, FormControlName, Validator, ValidatorFn, AbstractControl } from '@angular/forms';
-import { OnInit } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 
 import { BaseFormComponent } from './base-form.component';
 
@@ -27,6 +27,7 @@ function validateRequiredBind(required: boolean): ValidatorFn {
             : null;
 }
 
+@Injectable()
 export abstract class BaseFormCustomComponent extends BaseFormComponent implements ControlValueAccessor, OnInit, Validator {
 
     private _formControl: FormControlName;

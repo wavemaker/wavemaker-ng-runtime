@@ -17,5 +17,8 @@
                 "@wm/mobile/components/page/mobile-navbar": "wm.mobile.components.page.mobilenavbar"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

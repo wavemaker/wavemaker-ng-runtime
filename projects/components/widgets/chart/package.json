@@ -14,5 +14,8 @@
                 "@wm/components/basic": "wm.components.basic"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

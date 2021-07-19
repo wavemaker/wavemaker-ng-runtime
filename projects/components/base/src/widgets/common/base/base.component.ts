@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewInit, ElementRef, Injector, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, ElementRef, Inject, Injectable, Injector, OnDestroy, OnInit } from '@angular/core';
 import { EventManager } from '@angular/platform-browser';
 
 import { ReplaySubject, Subject } from 'rxjs';
@@ -40,6 +40,7 @@ const updateStyles = (nv, ov, el) => {
 
 };
 
+@Injectable()
 export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
 
     /**
@@ -160,7 +161,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     protected constructor(
         protected inj: Injector,
-        config: IWidgetConfig,
+        @Inject('IWidgetConfig') config: IWidgetConfig,
         initPromise?: Promise<any> // Promise on which the initialization has to wait
     ) {
         const elementRef = inj.get(ElementRef);
