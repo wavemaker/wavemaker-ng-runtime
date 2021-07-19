@@ -86,6 +86,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(menuComponentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 
 describe('MenuComponent', () => {
     let menuWrapperComponent: MenuWrapperComponent;

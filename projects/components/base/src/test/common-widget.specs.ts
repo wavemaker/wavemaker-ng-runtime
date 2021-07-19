@@ -67,7 +67,9 @@ export class ComponentTestBase {
                     processedAttrValue = attrValue;
 
                 // ignore the event related attributes and attributes having hyphen(-) in them(custom attrs) and attributes which do not have value
-                if (attrName.indexOf('.event') !== -1 || attrName.indexOf('on-') === 1 || attrName.indexOf('-') !== -1 || attrName === widgetAttr || !attrValue) {
+                let ignoredAttrsMeta = ['.event', 'on-', '-', '#', widgetAttr];
+                let attrResult = ignoredAttrsMeta.find(el => (el === attrName || attrName.indexOf(el) >= 0));
+                if (!attrValue || attrResult) {
                     return;
                 }
 
@@ -379,5 +381,38 @@ export class ComponentTestBase {
 
         });
 
+    }
+
+    public verifyAccessibility():void {
+        describe(this.widgetDef.type + ': Accessibility tests: ', () => {
+
+            let component,
+                fixture,
+                widgetProps,
+                $element,
+                $inputEl;
+
+            beforeEach(async(() => {
+                fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
+                component = fixture.componentInstance.wmComponent;
+                widgetProps = component.widgetProps;
+                $element = fixture.nativeElement.querySelector(this.widgetDef.widgetSelector);
+                fixture.detectChanges();
+                $inputEl = this.widgetDef.inputElementSelector ? fixture.nativeElement.querySelector(this.widgetDef.inputElementSelector) : $element;
+            }));
+
+            it(this.widgetDef.type + ': aria-label should not be empty without hint',() => {
+               expect($inputEl.getAttribute('aria-label')).toBeDefined();
+            });
+
+            it(this.widgetDef.type + ': aria-label property change should be reflected based on hint', () => {
+                if (!widgetProps.get('hint')) {
+                    return;
+                }
+                component.getWidget().hint = 'updated hint';
+                fixture.detectChanges();
+                expect($inputEl.getAttribute('aria-label')).toBe(component.getWidget().hint);
+            });
+        });
     }
 }

@@ -29,6 +29,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     selectedFolders: any = [];
     progressObservable;
     name;
+    hint
     multiple;
     fileTransfers = {};
     caption = 'Upload';

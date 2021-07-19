@@ -38,6 +38,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public type: string;
     public navsearchbar: any;
     public debouncetime: number;
+    public hint: string;
 
     private app: App;
     private typeaheadDataSource: Observable<any>;
@@ -128,7 +129,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     this.typeahead._container = undefined;
                 }
             }).pipe(
-                filter(() => { 
+                filter(() => {
                     this._loadingItems = false;
                     return (this.minchars === 0 || (this.query && this.query.length >= this.minchars));
                 }),
@@ -198,7 +199,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.invokeEventCallback('clearsearch');
         this._loadingItems = false;
         // when search input is cleared, focus on the input field
-        this.$element.find('.app-search-input').focus();
+        if ($event) {
+            this.$element.find('.app-search-input').focus();
+        }
     }
 
     // function to  clear the input value
@@ -384,6 +387,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (this.query === '') {
             this.queryModel = '';
             this._modelByValue = '';
+            this.updatePrevDatavalue(this._lastQuery);
             this.invokeOnChange(this._modelByValue, {}, true);
 
             this.invokeEventCallback('clear', { $event });
@@ -392,7 +396,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             if ($event && $event.which !== 9) {
                 this.invokeEventCallback('submit', { $event });
             }
-            this.invokeEventCallback('clear', { $event });
         } else {
             // invoking change event on every input value change.
             this.invokeEventCallback('change', {

@@ -5,7 +5,7 @@ const tagName = 'div';
 
 register('wm-checkbox', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmCheckbox role="input" ${getFormMarkupAttr(attrs)} ${getChildAttrs(attrs)} ${getNgModelAttr(attrs)}>`,
+        pre: attrs => `<${tagName} wmCheckbox ${getFormMarkupAttr(attrs)} ${getChildAttrs(attrs)} ${getNgModelAttr(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

@@ -5,11 +5,12 @@ import { ComponentsTestModule } from '../../../../base/src/test/components.test.
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 
-const  markup = `<div wmRichTextEditor
-                      hint="Help text for test richtext editor"
-                      placeholder="test placeholder"
-                      readonly="false" show="true" showpreview="false"
-                      tabindex="1" class="text-success" name="richtexteditor1">
+const  markup = `<div wmRichTextEditor #wm_richtexteditor1="wmRichTextEditor"
+                        [attr.aria-label]="wm_richtexteditor1.hint || 'Richtext editor'"
+                        hint="Help text for test richtext editor"
+                        placeholder="test placeholder"
+                        readonly="false" show="true" showpreview="false"
+                        tabindex="1" class="text-success" name="richtexteditor1">
                 </div>`;
 
 @Component({
@@ -34,6 +35,7 @@ const testBase: ComponentTestBase = new ComponentTestBase(componentDef);
 
 testBase.verifyPropsInitialization();
 testBase.verifyCommonProperties();
+testBase.verifyAccessibility();
 
 describe('wm-richtexteditor: Component Spectific Tests',  () => {
     let fixture: ComponentFixture<RichTextEditorWrapperComponent>;

@@ -222,6 +222,11 @@ export const NAVIGATION_TYPE = {
     SCROLL: 'Scroll'
 };
 
+export const INPUTMODE = {
+    FINANCIAL: 'financial',
+    NATURAL: 'natural'
+};
+
 export const AUTOCLOSE_TYPE = {
     OUTSIDECLICK: 'outsideClick',
     ALWAYS: 'always',

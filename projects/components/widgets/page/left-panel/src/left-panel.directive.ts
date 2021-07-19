@@ -23,7 +23,8 @@ export enum AnimationType {
     selector: '[wmLeftPanel]',
     providers: [
         provideAsWidgetRef(LeftPanelDirective)
-    ]
+    ],
+    exportAs: 'wmLeftPanel'
 })
 export class LeftPanelDirective extends StylableComponent {
     static initializeProps = registerProps();

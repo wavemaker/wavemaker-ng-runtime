@@ -32,6 +32,7 @@ export class SliderComponent extends BaseFormCustomComponent {
     public tabindex: any;
     public name: string;
     public readonly: boolean;
+    public hint: string;
 
     @ViewChild(NgModel) ngModel: NgModel;
 

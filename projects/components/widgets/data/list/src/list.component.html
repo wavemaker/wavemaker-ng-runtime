@@ -21,7 +21,7 @@
     </ul>
 </nav>
 
-<ul tabindex="0" class="app-livelist-container clearfix {{listclass}}"
+<ul tabindex="0" class="app-livelist-container clearfix {{listclass}}" role="list"
     (keydown.enter)="handleKeyDown($event, 'select')"
 
     (keydown.arrowup)="handleKeyDown($event, 'focusPrev')"
@@ -39,7 +39,8 @@
         <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
             [wmListItem]="item"
             #listItemRef="listItemRef"
-            tabindex="0">
+            tabindex="0"
+            role="listitem">
             <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
         </li>
     </ng-template>

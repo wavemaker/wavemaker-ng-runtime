@@ -9,6 +9,7 @@ declare const _;
 export abstract class BaseInput extends BaseFormCustomComponent implements AfterViewInit {
     public class: string;
     public autotrim: boolean;
+    public imask;
 
     // possible values for ngModelOptions are 'blur' and 'change'
     // default is 'blur'
@@ -73,6 +74,9 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
 
     // Update the model on enter key press
     flushViewChanges(val) {
+        // when val contains masked value, update the model with unmasked value
+        const unMaskedVal = _.get(this.imask, 'maskRef.unmaskedValue');
+        val = unMaskedVal ? unMaskedVal : val;
         this.ngModel.update.next(val);
         $appDigest();
     }

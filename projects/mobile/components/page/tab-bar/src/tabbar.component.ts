@@ -33,7 +33,7 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
     public bottom: any;
     public morebuttoniconclass: any;
     public morebuttonlabel: any;
-    public showMoreMenu: any;
+    public showMoreMenu: boolean = false;
 
     private readonly _layouts = [
         {minwidth: 2048, max: 12},

@@ -16,7 +16,8 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['type', {value: 'icon', ...PROP_STRING}],
-                ['servicevariabletotrack', PROP_STRING]
+                ['servicevariabletotrack', PROP_STRING],
+                ['hint', PROP_STRING]
             ]
         )
     );

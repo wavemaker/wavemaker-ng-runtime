@@ -726,6 +726,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             if (isMobileApp() && smoothScrollEl.length && smoothScrollEl.attr('wmsmoothscroll') === 'true') {
                 this.paginationService.bindIScrollEvt(this, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
             } else {
+                // In case of mobile app when modal exists, and list items height is greater than the modal content provide ccontainer a scrollable height
+                const modalBody = this.$element.closest('.modal-body');
+                const listHt = this.$element.find('ul').height();
+                const modalHt = window.innerHeight - 140;
+                if (isMobile() && modalBody.length && listHt > modalHt) {
+                    this.$element.css('height', modalHt + 'px');
+                }
                 this.paginationService.bindScrollEvt(this, '> ul', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
             }
         }

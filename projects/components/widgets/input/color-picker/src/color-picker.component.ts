@@ -36,6 +36,7 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     public shortcutkey: string;
     public outsideclick: boolean;
     public autoclose: string;
+    public hint: string;
 
 
     @ViewChild(NgModel) ngModel: NgModel;

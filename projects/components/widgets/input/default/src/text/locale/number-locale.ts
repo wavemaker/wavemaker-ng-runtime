@@ -3,7 +3,7 @@ import { AbstractControl, Validator } from '@angular/forms';
 import { getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
 import { AbstractI18nService } from '@wm/core';
-import { IWidgetConfig, TrailingZeroDecimalPipe } from '@wm/components/base';
+import { IWidgetConfig, TrailingZeroDecimalPipe, INPUTMODE } from '@wm/components/base';
 
 import { BaseInput } from '../base/base-input';
 
@@ -31,6 +31,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public trailingzero: boolean;
     private validateType: string;
     public inputmode: string;
+    private lastValIsDecimal: boolean;
 
     constructor(
         inj: Injector,
@@ -48,12 +49,18 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
     // Setter for the datavalue.
     set datavalue(value: number) {
+        this.lastValIsDecimal = false;
+
         // set text value to null if data value is empty.
         if (_.includes([null, undefined, ''], value)) {
             const input = this.inputEl.nativeElement;
+            const prevDataValue =  (this as any).prevDatavalue;
             this.displayValue = input.value = this.proxyModel = null;
             this.resetValidations();
-            this._onChange();
+            if (prevDataValue) {
+                this.handleChange(value);
+                this._onChange();
+            }
             return;
         }
         // if the widget has default value and if we change the locale, the value should be in selected locale format.
@@ -64,10 +71,23 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             (value as any) = isLocalizedNumber ? value : this.transformNumber(value);
         }
 
+        const numberReg = /\d/;
+        const strVal = value.toString();
+        let model;
+        // When the input value only contains seperator, do not convert the sepertaor into 0
+        if (numberReg.test(strVal)) {
+            model = this.parseNumber(strVal);
+        } else {
+            model = NaN;
+        }
+
+        // On keypress, if the user types a decimal and is still active on the input do not throw error. 
+        if (_.isNaN(model) && strVal[strVal.length - 1] === this.DECIMAL && this.ngModelOptions.updateOn === 'change' && this.$element.find('input:focus').length) {
+            this.lastValIsDecimal = true;
+        }
         // get a valid number form the text.
-        const model = this.parseNumber(value.toString());
         // if the number is valid or if number is not in range update the model value.
-        if (this.isValid(model)) {
+        if (!this.lastValIsDecimal && this.isValid(model)) {
             this.proxyModel = model;
             // update the display value in the text box.
             this.updateDisplayText();
@@ -200,7 +220,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             this.decimalValue = parts[1] || '';
         }
         const stepVal = this.stepLength();
-        if (this.inputmode === 'financial' && stepVal) {
+        if (this.inputmode === INPUTMODE.FINANCIAL && stepVal) {
             this.displayValue = input.value = this.transformNumber(this.proxyModel, `1.${stepVal}-${stepVal}`);
             this.decimalValue = this.decimalValue.replace(/\D/g,'');
         } else {
@@ -223,6 +243,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
     }
 
+    // This function checks if the currency widget has input mode as natural and trailing zero is defined or not
+    public isNaturalCurrency() {
+        return this.inputmode === INPUTMODE.NATURAL && this.widgetType === 'wm-currency' && !!this.trailingzero;
+    }
+
        /**
      * @param value contains the value entered in the input box
      * This function modifies the user input value, into financial mode. 
@@ -230,27 +255,53 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        if (!stepVal || this.inputmode !== 'financial') {
+        if (!stepVal || this.inputmode !== INPUTMODE.FINANCIAL || !value) {
             return;
         }
 
-        const valInWholeNum = parseInt(value.toString().replace(/\D/g,''));
-        const financialVal = valInWholeNum *  this.step;
+        let financialVal;
+
+        /**
+         * If the value is entered by the user, format the input 
+         * If the value is provided as default value, skip formatting
+         */
+        if (this.isDefaultQuery) {
+            financialVal = parseFloat(value);
+        } else {
+            const valInWholeNum = parseInt(value.toString().replace(/\D/g,''));
+            financialVal = valInWholeNum *  this.step;
+        }
 
         if (!_.isNaN(financialVal)) {
-            this.datavalue = parseFloat(financialVal.toFixed(stepVal));
+            // When update on key is set keypress, update the datavalue else update only the display value
+            if (this.ngModelOptions.updateOn === 'change') {
+                this.datavalue = parseFloat(financialVal.toFixed(stepVal));
+            } else {
+                this.displayValue = financialVal.toFixed(stepVal);
+            }
         } else {
             this.datavalue = undefined;
         }
     }
     
-    // In case of input mode is financial and trailing zero is set to false, 
-    // On focus set display val to fixed point notation
-    // On blur strip trailing zeros
+    // Input mode is financial and trailing zero is set to false, On focus set display val to fixed point notation and On blur strip trailing zeros
+    // In currency, inputmode is natural and trailing zero and step are defined, on blur display val to fixed point notation and on focus strip the zeros
     public checkForTrailingZeros($event) {
         const stepVal = this.stepLength();
-        if (stepVal && this.datavalue && !this.trailingzero && this.inputmode === 'financial') {
-            const numberfilter = $event.type === 'focus' ? `1.${stepVal}-${stepVal}` : undefined;
+        const financialMode = !this.trailingzero && this.inputmode === INPUTMODE.FINANCIAL;
+
+        // If the user's last input is a decimal and not active on input field, throw error
+        if (this.lastValIsDecimal) {
+            this.onModelChange(this.displayValue);
+        }
+        if (!financialMode && !this.isNaturalCurrency()) {
+            return;
+        }
+        if (stepVal && this.datavalue) {
+            let numberfilter;
+            if ((financialMode && $event.type === 'focus') || (this.isNaturalCurrency() && $event.type === 'blur')) {
+                numberfilter = `1.${stepVal}-${stepVal}`;
+            } 
             this.displayValue = this.transformNumber(this.datavalue, numberfilter);
         }
     }
@@ -278,7 +329,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (this.readonly || this.step === 0) {
             return;
         }
-        const targetVal = $event.target.value;
+        const targetVal = $event.target.value.replace(/,/g, '');
 
         // proxyModel to be updated from $event.target.value if present to support arrow keys when input changes else pick up from this.proxymodel
         let proxyModel;
@@ -358,10 +409,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         const inputValue = $event.target.value;
 
         // when input mode is financial, do not restrict user on entering the value when step value limit is reached. 
-        const skipStepValidation = this.inputmode === 'financial';
+        const skipStepValidation = this.inputmode === INPUTMODE.FINANCIAL;
 
         // Validates if user eneters more than 16 digits
-        if (skipStepValidation && inputValue) {
+        if (inputValue) {
             const parsedVal =  parseInt(inputValue.toString().replace(/\D/g,''));
             if (parsedVal.toString().length > 15) {
                 return false;
@@ -369,7 +420,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
 
         // validates entering of decimal values only when user provides decimal limit(i.e step contains decimal values).
-        if (!skipStepValidation && inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step))) {
+        // Restrict user from entering only if the decimal limit is reached and the new digit is entered in decimal place
+        if (!skipStepValidation && inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step)) && $event.target.selectionStart >= inputValue.length - 1) {
             return false;
         }
         // validates if user entered an invalid character.
@@ -387,6 +439,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if ((_.includes(inputValue, '+') || _.includes(inputValue, '-')) && ($event.key === '+' || $event.key === '-')) {
             return false;
         }
+        // Do not allow user to enter only space without any input value
+        if (!inputValue && $event.code === 'Space') {
+            return false;
+        } 
     }
 
     onBackspace($event) {
@@ -398,7 +454,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     }
 
     onModelChange($event) {
-        if (this.inputmode === 'natural') {
+        if (this.inputmode === INPUTMODE.NATURAL || (this.inputmode === INPUTMODE.FINANCIAL && this.ngModelOptions.updateOn === 'blur')) {
             this.datavalue = $event;
         }
     }
@@ -407,7 +463,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (key === 'minvalue' || key === 'maxvalue') {
             this.isValid(nv);
         } else if (key === 'datavalue' && !ov) {
-            this.onInputChange(nv);
+            if (this.isNaturalCurrency()) {
+                this.checkForTrailingZeros({type: 'blur'});
+            } else {
+                this.onInputChange(nv);
+            }
         } else {
             super.onPropertyChange(key, nv, ov);
         }

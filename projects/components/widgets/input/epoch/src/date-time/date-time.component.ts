@@ -39,6 +39,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private bsTimeValue;
     private proxyModel;
     private app: App;
+    public hint: string;
 
     public showdropdownon: string;
     private keyEventPlugin;
@@ -261,7 +262,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             } else {
                 this.bsDateValue = this.bsTimeValue = this.proxyModel = undefined;
             }
-            if (newVal !== this.datavalue) {
+            // When the datavalue is manually cleared, both newval and datavalue are undefined but prevDataValue exists - trigger change cb
+            if (newVal !== this.datavalue || (!this.datavalue && (this as any).prevDatavalue)) {
                 this._debouncedOnChange(this.datavalue, {}, true);
             }
             return;
@@ -326,6 +328,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.isDateOpen = false;
         this.invokeOnTouched();
         this.bsDatePickerDirective.hide();
+
+        // To open the timepicker menu when user wants to update time without changing the date.
+        if(this.bsDateValue) {
+            this.toggleTimePicker(true);
+        }
         this.isEnterPressedOnDateInput = false;
         if (this.deregisterDatepickerEventListener) {
             this.deregisterDatepickerEventListener();

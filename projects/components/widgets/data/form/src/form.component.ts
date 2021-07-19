@@ -252,7 +252,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         @Attribute('formdata.bind') private bindformdata,
         @Attribute('wmLiveForm') isLiveForm,
         @Attribute('wmLiveFilter') isLiveFilter,
-        @Attribute('role') role,
+        @Attribute('data-role') role,
         @Attribute('key') key,
         @Attribute('name') name
     ) {

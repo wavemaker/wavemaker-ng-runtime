@@ -82,7 +82,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const classProp = attrs.get('formlayout') === 'page' ? 'app-device-liveform panel liveform-inline' : '';
             const dialogAttributes = ['title', 'title.bind', 'iconclass', 'iconclass.bind', 'width'];
             attrs.delete('dependson');
-            const liveFormTmpl = `<${tagName} wmForm role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
+            const liveFormTmpl = `<${tagName} wmForm data-role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
                     class="${classProp}" [class]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
             attrs.set('numberOfFields', `${numberOfFields}`);
             shared.set('counter', counter);

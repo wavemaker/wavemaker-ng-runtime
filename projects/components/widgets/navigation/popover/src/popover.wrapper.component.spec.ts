@@ -100,6 +100,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 
 describe('PopoverComponent', () => {
     let popoverWrapperComponent: PopoverwrapperComponent;
