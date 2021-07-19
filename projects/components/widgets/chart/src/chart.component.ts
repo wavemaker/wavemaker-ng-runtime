@@ -660,7 +660,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 this.selecteditem = dataObj;
                 this.invokeEventCallback('select', {$event: d3.event, selectedChartItem: data, selectedItem: this.selecteditem});
             });
-            
+
     }
 
     /*  Returns Y Scale min value
@@ -785,6 +785,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     // Plotting the chart with set of the properties set to it
     plotChart() {
         const element = this.$element;
+        const dataSource = this.app.Variables;
         // call user-transformed function
         this.chartData = (this.invokeEventCallback('transform')) || this.chartData;
 
@@ -844,7 +845,19 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 }
 
             }
-            this.plotChart();
+            if (this.type === 'Donut' && this.app.Variables.centerLabelVariable) {
+                this.processDataForDonut();
+            } else {
+                this.plotChart();
+            }
+        }
+    }
+    processDataForDonut() {
+        const dataSource = this.app.Variables.centerLabelVariable;
+        if (dataSource) {
+            dataSource.invoke().then(response => {
+                this.plotChart();
+            });
         }
     }
 
@@ -1069,7 +1082,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     ngOnDestroy() {
         // destroy all subscriptions to prevent memory leak.
-        this._subsciptions.forEach((subscription)=>{
+        this._subsciptions.forEach((subscription) => {
             subscription();
         });
         super.ngOnDestroy();
