@@ -15,5 +15,8 @@
                 "@wm/components/navigation/menu": "wm.components.navigation.menu"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

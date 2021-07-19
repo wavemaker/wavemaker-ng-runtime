@@ -17,5 +17,8 @@
                 "@wm/components/base": "wm.components.base"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

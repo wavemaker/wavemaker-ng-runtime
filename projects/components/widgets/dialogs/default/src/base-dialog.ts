@@ -1,4 +1,4 @@
-import { Injector, OnDestroy, TemplateRef } from '@angular/core';
+import { Injector, OnDestroy, TemplateRef, Injectable, Inject } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
@@ -32,6 +32,7 @@ const invokeClosedCallback = (ref) => {
     }
 };
 
+@Injectable()
 export abstract class BaseDialog extends BaseComponent implements IDialog, OnDestroy {
 
     public name: string;
@@ -43,7 +44,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
 
     protected constructor(
         inj: Injector,
-        widgetConfig: IWidgetConfig,
+        @Inject('IWidgetConfig') widgetConfig: IWidgetConfig,
         protected modalOptions: ModalOptions
     ) {
         super(inj, widgetConfig);

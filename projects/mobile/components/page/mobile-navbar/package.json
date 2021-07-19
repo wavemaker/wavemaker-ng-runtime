@@ -17,5 +17,8 @@
                 "@wm/components/basic/search": "wm.components.basic.search"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

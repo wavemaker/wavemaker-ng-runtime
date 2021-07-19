@@ -122,18 +122,18 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
     headerName: getWmProjectProperties().xsrf_header_name
 });
 
-export const modalModule: ModuleWithProviders = ModalModule.forRoot();
-export const bsDatePickerModule: ModuleWithProviders = BsDatepickerModule.forRoot();
-export const datepickerModule: ModuleWithProviders = ngxDatepickerModule.forRoot();
-export const timepickerModule: ModuleWithProviders = ngxTimepickerModule.forRoot();
-export const bsDropdownModule: ModuleWithProviders = BsDropdownModule.forRoot();
-export const paginationModule: ModuleWithProviders = ngxPaginationModule.forRoot();
-export const typeaheadModule: ModuleWithProviders = TypeaheadModule.forRoot();
-export const progressbarModule: ModuleWithProviders = ProgressbarModule.forRoot();
-export const carouselModule: ModuleWithProviders = ngxCarouselModule.forRoot();
-export const popoverModule: ModuleWithProviders = ngxPopoverModule.forRoot();
-export const ngCircleProgressModule: ModuleWithProviders = NgCircleProgressModule.forRoot({});
-export const tooltipModule: ModuleWithProviders = TooltipModule.forRoot();
+export const modalModule: ModuleWithProviders<any> = ModalModule.forRoot();
+export const bsDatePickerModule: ModuleWithProviders<any> = BsDatepickerModule.forRoot();
+export const datepickerModule: ModuleWithProviders<any> = ngxDatepickerModule.forRoot();
+export const timepickerModule: ModuleWithProviders<any> = ngxTimepickerModule.forRoot();
+export const bsDropdownModule: ModuleWithProviders<any> = BsDropdownModule.forRoot();
+export const paginationModule: ModuleWithProviders<any> = ngxPaginationModule.forRoot();
+export const typeaheadModule: ModuleWithProviders<any> = TypeaheadModule.forRoot();
+export const progressbarModule: ModuleWithProviders<any> = ProgressbarModule.forRoot();
+export const carouselModule: ModuleWithProviders<any> = ngxCarouselModule.forRoot();
+export const popoverModule: ModuleWithProviders<any> = ngxPopoverModule.forRoot();
+export const ngCircleProgressModule: ModuleWithProviders<any> = NgCircleProgressModule.forRoot({});
+export const tooltipModule: ModuleWithProviders<any> = TooltipModule.forRoot();
 
 const componentsModule = [
     // NGX Bootstrap
