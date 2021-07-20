@@ -58,17 +58,6 @@ import { PrefabPreviewComponent } from './components/prefab-preview.component';
 import { DynamicComponentRefProviderService } from './services/dynamic-component-ref-provider.service';
 import { CanDeactivatePageGuard } from './guards/can-deactivate-page.guard';
 import { MAX_CACHE_AGE, MAX_CACHE_SIZE } from './util/wm-route-reuse-strategy';
-import { BasicModule } from '@wm/mobile/components/basic';
-import { CameraModule } from '@wm/mobile/components/device/camera';
-import { LeftPanelModule } from '@wm/mobile/components/page/left-panel';
-import { PageModule } from '@wm/mobile/components/page';
-import { FileUploadModule } from '@wm/mobile/components/input/file-upload';
-import { SegmentedControlModule } from '@wm/mobile/components/containers/segmented-control';
-import { TabBarModule } from '@wm/mobile/components/page/tab-bar';
-import { SearchModule } from '@wm/mobile/components/basic/search';
-import { MediaListModule } from '@wm/mobile/components/data/media-list';
-import { BarcodeScannerModule } from '@wm/mobile/components/device/barcode-scanner';
-import { MobileNavbarModule } from '@wm/mobile/components/page/mobile-navbar';
 
 const initializeProjectDetails = () => {
     _WM_APP_PROJECT.id = location.href.split('/')[3];
@@ -110,7 +99,7 @@ const definitions = [
     EmptyPageComponent
 ];
 
-export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
+export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS:any[] = [
     ConfirmDialogModule,
     DesignDialogModule,
     DialogModule

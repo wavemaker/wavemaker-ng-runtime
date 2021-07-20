@@ -11,14 +11,12 @@ import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { PaginationModule as ngxPaginationModule } from 'ngx-bootstrap/pagination';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 
 
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { DatepickerModule as ngxDatepickerModule, } from 'ngx-bootstrap/datepicker';
 
 
-import { defineLocale } from 'ngx-bootstrap/chronos'
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { PopoverModule as ngxPopoverModule } from 'ngx-bootstrap/popover';
 
