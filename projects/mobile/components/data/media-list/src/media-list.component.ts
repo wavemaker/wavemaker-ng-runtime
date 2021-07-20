@@ -122,8 +122,8 @@ export class MediaListComponent extends StylableComponent {
     private updateFieldDefs(data: any[]) {
         this.fieldDefs = data;
         data.forEach(field => {
-            field.mediaUrlVal     = $parseExpr(this.mediaurl)(field);
-            field.thumbnailUrlVal = $parseExpr(this.thumbnailurl)(field);
+            field.mediaUrlVal     = $parseExpr(this.mediaurl, field);
+            field.thumbnailUrlVal = $parseExpr(this.thumbnailurl,field);
         });
         this.fieldDefs = data;
     }

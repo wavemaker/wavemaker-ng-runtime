@@ -3,7 +3,7 @@ import { EventManager } from '@angular/platform-browser';
 
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, setCSS, setCSSFromObj, App, isDefined, removeAttr, removeClass, setAttr, switchClass, isMobileApp } from '@wm/core';
+import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, setCSS, setCSSFromObj, App, isDefined, removeAttr, removeClass, setAttr, switchClass, isMobileApp, setAndGetPrototypeObject } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { isStyle } from '../../framework/styler';
@@ -416,10 +416,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * @param {string} expr
      */
     protected processEventAttr(eventName: string, expr: string, meta?: string) {
-        const fn = $parseEvent(expr);
         const locals = this.context;
         locals.widget = this.widget;
-        const boundFn = fn.bind(undefined, this.viewParent, locals);
+        let viewParent = this.viewParent;
 
         const eventCallback = () => {
             let boundFnVal;
@@ -428,7 +427,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 locals.$event = locals.$event || new window.CustomEvent(eventName);
                 // If the event is bound directly to the variable then we need to internally handle
                 // the promise returned by the variable call.
-                boundFnVal = boundFn();
+                
+         
+                boundFnVal =  $parseEvent(expr, setAndGetPrototypeObject(viewParent, locals));
                 if (boundFnVal instanceof Promise) {
                     boundFnVal.then( response => response, err => err);
                 } else {
@@ -459,7 +460,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     protected processBindAttr(propName: string, expr: string) {
 
         this.initState.delete(propName);
-
         this.registerDestroyListener(
             $watch(
                 expr,

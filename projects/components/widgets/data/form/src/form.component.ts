@@ -19,7 +19,8 @@ import {
     removeAttr,
     $invokeWatchers,
     scrollToElement,
-    isElementInViewport
+    isElementInViewport,
+    setAndGetPrototypeObject
 } from '@wm/core';
 import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
 import { PrefabDirective } from '@wm/components/prefab';
@@ -1218,8 +1219,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     invokeActionEvent($event, expression: string) {
-        const fn = $parseEvent(expression);
-        fn(this.viewParent, Object.assign(this.context, {$event}));
+  
+        $parseEvent(expression, setAndGetPrototypeObject(this.viewParent, Object.assign(this.context, {$event})));
     }
 
     ngOnDestroy() {

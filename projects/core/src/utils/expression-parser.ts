@@ -121,144 +121,102 @@ const stringEscapeFn = str => {
 
 class ASTCompiler {
     ast; // ast to be compiled
-    declarations; // variable names
-    stmts; // function body statements
-    pipes; // used pipes
-    vIdx; // variable name index
     cAst; // current AST node in the process
-    cStmts;
     pipeNameVsIsPureMap;
-    exprType: ExpressionType;
+    context:any;
 
-    constructor(ast, exprType, pipeNameVsIsPureMap?) {
+    constructor(ast,  pipeNameVsIsPureMap?, ctx?) {
         this.ast = ast;
-        this.declarations = [];
-        this.stmts = [];
-        this.pipes = [];
-        this.vIdx = 0;
-        this.exprType = exprType;
         this.pipeNameVsIsPureMap = pipeNameVsIsPureMap;
+        this.context = ctx;
     }
 
-    createVar() {
-        const v = `v${this.vIdx++}`;
-        this.declarations.push(v);
-        return v;
-    }
 
     processImplicitReceiver() {
-        return 'ctx';
+        return this.context;
     }
 
     processLiteralPrimitive() {
         const ast = this.cAst;
-        return isString(ast.value) ? `"${ast.value.replace(/"/g, '\"').replace(STR_ESCAPE_REGEX, stringEscapeFn)}"` : ast.value;
+        return ast.value;
     }
 
     processLiteralArray() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
-        const v = this.createVar();
         const s = [];
         for (const item of ast.expressions) {
-            s.push(this.build(item, stmts));
+            s.push(this.build(item));
         }
-        stmts.push(`${v}=[${s.join(',')}]`);
-        return v;
+        return [...s];
     }
 
     processLiteralMap() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
-        const v = this.createVar();
         const _values = [];
         for (const _value of ast.values) {
-            _values.push(this.build(_value, stmts));
+            _values.push(this.build(_value));
         }
-        stmts.push(`${v}={${ast.keys.map((k, i) => `'${k.key}':${_values[i]}`)}}`);
-        return v;
+        let liternalMap = {};
+         ast.keys.map((k, i) => {
+            return liternalMap[k.key] = _values[i];
+        });
+        return liternalMap;
     }
 
     processPropertyRead() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
-        const r = this.build(ast.receiver, stmts);
-        const v = this.createVar();
-        stmts.push(`${v}=${r}&&${r}.${ast.name}`);
-        return v;
+        const r = this.build(ast.receiver);
+        if(!r){
+            return r;
+        }
+        return r[ast.name];
     }
 
     processKeyedRead() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
-        const k = this.build(ast.key, stmts);
-        const o = this.build(ast.obj, stmts);
-        const v = this.createVar();
-        stmts.push(`${v}=${o}&&${o}[${k}]`);
-        return v;
+        const k = this.build(ast.key);
+        const o = this.build(ast.obj);
+        return o[k];
     }
 
     processPrefixNot() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
-        const r = this.build(ast.expression, stmts);
-        stmts.push(`${r}=!${r}`);
-        return r;
+        const r = this.build(ast.expression);
+        return !r;
     }
 
     handleBinaryPlus_Minus() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
-        const l = this.build(ast.left, stmts);
-        const r = this.build(ast.right, stmts);
-        const v = this.createVar();
-        const m = ast.operation === '+' ? '_plus' : '_minus';
-        stmts.push(`${v}=${m}(${l},${r})`);
-        return v;
+        const l = this.build(ast.left);
+        const r = this.build(ast.right);
+        if(ast.operation === '+'){
+          return  plus(l, r)
+        }else if(ast.operation === '-'){
+           return minus(l, r)
+        }
     }
 
     handleBinaryAND_OR() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
-        const _s1 = [];
-        const _sl = [];
-        const _sr = [];
-        const l = this.build(ast.left, _sl);
-        const r = this.build(ast.right, _sr);
-
-        const v = this.createVar();
+        const l = this.build(ast.left);
+        const r = this.build(ast.right);
 
         if (ast.operation === '&&') {
-            _s1.push(
-                _sl.join(';'),
-                `;${v}=false`,
-                `;if(${l}){`,
-                _sr.join(';'),
-                `;${v}=${r};`,
-                `}`
-            );
+            return l === true ? r : false;
         } else {
-            _s1.push(
-                _sl.join(';'),
-                `;${v}=${l}`,
-                `;if(!${l}){`,
-                _sr.join(';'),
-                `;${v}=${r};`,
-                `}`
-            );
+            return !l  ? r : l;
         }
-        stmts.push(_s1.join(''));
-        return v;
     }
 
     handleBinaryDefault() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
-        const l = this.build(ast.left, stmts);
-        const r = this.build(ast.right, stmts);
-        const v = this.createVar();
-        stmts.push(`${v}=${l}${ast.operation}${r}`);
-        return v;
+        const l = this.build(ast.left);
+        const r = this.build(ast.right);
+        if(ast.operation === '!==' || ast.operation === '!='){
+            return l !== r;
+        }else if(ast.operation === '==' || ast.operation === '==='){
+            return l === r;
+        }
     }
 
     processBinary() {
@@ -276,92 +234,83 @@ class ASTCompiler {
 
     processConditional() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
-        const condition = this.build(ast.condition, stmts);
-        const v = this.createVar();
-        const _s1 = [];
-        const _s2 = [];
-        const _s3 = [];
-        const trueExp = this.build(ast.trueExp, _s2);
-        const falseExp = this.build(ast.falseExp, _s3);
+        const condition = this.build(ast.condition);
+        const trueExp = this.build(ast.trueExp);
+        const falseExp = this.build(ast.falseExp);
 
-        _s1.push(
-            `if(${condition}){`,
-            _s2.join(';'),
-            `;${v}=${trueExp};`,
-            `}else{`,
-            _s3.join(';'),
-            `;${v}=${falseExp};`,
-            `}`
-        );
-
-        stmts.push(_s1.join(' '));
-        return v;
+        if(condition){
+            return trueExp;
+        }else{
+            return falseExp;
+        }
     }
 
     processMethodCall() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
         const _args = [];
         for (const arg of ast.args) {
-            _args.push(this.build(arg, stmts));
+            _args.push(this.build(arg));
         }
-        const fn = this.build(ast.receiver, stmts);
-        const v = this.createVar();
+        const reciever = this.build(ast.receiver);
         const isImplicitReceiver = ast.receiver instanceof ImplicitReceiver;
-        stmts.push(`${v}= ${fn}&&${fn}.${ast.name}&&${fn}.${ast.name}${isImplicitReceiver ? '.bind(_ctx)' : ''}(${_args.join(',')})`);
-        return v;
+        if(!reciever || !reciever[ast.name]){
+            return;
+        }
+        if(isImplicitReceiver){
+           return reciever[ast.name].bind(this.context)(..._args);
+        }else{
+            return  reciever[ast.name](..._args);
+        }
     }
 
     processChain() {
         const ast = this.cAst;
-        return ast.expressions.map(e => this.build(e)).join(';');
+        let exprsn =  ast.expressions.map(e => this.build(e));
+        return exprsn.join(';');
     }
 
     processPropertyWrite() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
         let receiver, lhs;
         if (ast.receiver instanceof ImplicitReceiver) {
-            lhs = `_ctx.${ast.name}`;
+            lhs =   this.context[ast.name];
         } else {
-            receiver = this.build(ast.receiver, stmts);
-            lhs = `${receiver}${receiver.length ? '.' : ''}${ast.name}`;
+            receiver = this.build(ast.receiver);
+            lhs = receiver && receiver.length ? receiver[ast.name] :ast.name; 
         }
 
-        const rhs = this.build(ast.value, stmts);
-        stmts.push(`${lhs}=${rhs}`);
+        const rhs = this.build(ast.value);
+        return rhs;
     }
 
     processPipe() {
         const ast = this.cAst;
-        const stmts = this.cStmts;
-        const t = this.createVar();
         const _args = [];
-        const _s1 = [];
-        const _s2 = [];
-        const exp = this.build(ast.exp, stmts);
+        const exp = this.build(ast.exp);
         for (const arg of ast.args) {
-            _args.push(this.build(arg, _s2));
+            _args.push(this.build(arg));
         }
 
-        const p = `_p${this.pipes.length}`;
-        this.pipes.push([ast.name, p]);
-
         _args.unshift(exp);
-
-        _s1.push(
-            _s2.length ? _s2.join(';') + ';' : '',
-            this.pipeNameVsIsPureMap.get(ast.name) ? `${t}=getPPVal(${p},_ppc,"${p}",${_args})` : `${t}=${p}.transform(${_args})`
-        );
-
-        stmts.push(_s1.join(''));
-        return t;
+        const pipeInstance = pipeProvider.getInstance(ast.name);
+        if(this.pipeNameVsIsPureMap.get(ast.name)){
+            const pipeInfo = pipeProvider.meta(ast.name);
+            return getPurePipeVal(
+                pipeInstance,
+                pipeInfo.pure ? new Map() : undefined, 
+                ast.name, 
+                ..._args
+                );
+           
+        } else {
+           return pipeInstance.transform(..._args);
+        }
+       
     }
 
-    build(ast, cStmts?) {
+  
+    build(ast) {
         this.cAst = ast;
-        this.cStmts = cStmts || this.stmts;
 
         if (ast instanceof ImplicitReceiver) {
             return this.processImplicitReceiver();
@@ -392,60 +341,10 @@ class ASTCompiler {
         }
     }
 
-    extendCtxWithLocals() {
-        const v1 = this.createVar();
-        this.stmts.push(
-            `${v1}=Object.assign({}, locals)`,
-            `Object.setPrototypeOf(${v1}, _ctx)`,
-            `ctx=${v1}`
-        );
-    }
-
-    fnBody() {
-        this.declarations.push('ctx');
-        return '"use strict";\nvar ' + this.declarations.join(',') + ';\n' + this.stmts.join(';');
-    }
-
-    fnArgs() {
-        const args = ['_plus', '_minus', '_isDef'];
-
-        if (this.exprType === ExpressionType.Binding) {
-            args.push('getPPVal', '_ppc');
-            for (const [, pipeVar] of this.pipes) {
-                args.push(pipeVar);
-            }
-        }
-
-        args.push('_ctx', 'locals');
-
-        return args.join(',');
-    }
-
-    addReturnStmt(result) {
-        // if (this.exprType === ExpressionType.Binding) {
-            this.stmts.push(`return ${result};`);
-        // }
-    }
-
-    cleanup() {
-        this.ast = this.cAst = this.stmts = this.cStmts = this.declarations = this.pipes = this.pipeNameVsIsPureMap = undefined;
-    }
 
     compile() {
-        this.extendCtxWithLocals();
-        this.addReturnStmt(this.build(this.ast));
-
-        const fn = new Function(this.fnArgs(), this.fnBody());
-        let boundFn;
-        if (this.exprType === ExpressionType.Binding) {
-            boundFn = fn.bind(undefined, plus, minus, isDef, getPurePipeVal);
-            boundFn.usedPipes = this.pipes.slice(0); // clone
-        } else {
-            boundFn = fn.bind(undefined, plus, minus, isDef);
-        }
-
-        this.cleanup();
-        return boundFn;
+        let result = this.build(this.ast);
+        return result;
     }
 }
 
@@ -466,7 +365,7 @@ enum ExpressionType {
     Action
 }
 
-export function $parseExpr(expr: string): ParseExprResult {
+export function $parseExpr(expr: string, ctx?): ParseExprResult {
 
     if (!pipeProvider) {
         console.log('set pipe provider');
@@ -487,59 +386,24 @@ export function $parseExpr(expr: string): ParseExprResult {
         return noop;
     }
 
-    let fn = exprFnCache.get(expr);
+    let exprValue = undefined; 
 
-    if (fn) {
-        return fn;
-    }
     const parser = new Parser(new Lexer);
     const ast = parser.parseBinding(expr, '',0);
-    let boundFn;
 
     if (ast.errors.length) {
-        fn = noop;
-        boundFn = fn;
+        exprValue = undefined;
     } else {
         const pipeNameVsIsPureMap = pipeProvider.getPipeNameVsIsPureMap();
-        const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Binding, pipeNameVsIsPureMap);
-        fn = astCompiler.compile();
-        if (fn.usedPipes.length) {
-            const pipeArgs = [];
-            let hasPurePipe = false;
-            for (const [pipeName] of fn.usedPipes) {
-                const pipeInfo = pipeProvider.meta(pipeName);
-                let pipeInstance;
-                if (!pipeInfo) {
-                    pipeInstance = nullPipe;
-                } else {
-                    if (pipeInfo.pure) {
-                        hasPurePipe = true;
-                        pipeInstance = purePipes.get(pipeName);
-                    }
-
-                    if (!pipeInstance) {
-                        pipeInstance = pipeProvider.getInstance(pipeName);
-                    }
-
-                    if (pipeInfo.pure) {
-                        purePipes.set(pipeName, pipeInstance);
-                    }
-                }
-                pipeArgs.push(pipeInstance);
-            }
-
-            pipeArgs.unshift(hasPurePipe ? new Map() : undefined);
-            boundFn = fn.bind(undefined, ...pipeArgs);
-        } else {
-            boundFn = fn.bind(undefined, undefined);
-        }
+        const astCompiler = new ASTCompiler(ast.ast,  pipeNameVsIsPureMap, ctx);
+        exprValue = astCompiler.compile();
+        return exprValue;
+       
     }
-    exprFnCache.set(expr, boundFn);
-
-    return boundFn;
+   
 }
 
-export function $parseEvent(expr): ParseExprResult {
+export function $parseEvent(expr, ctx): ParseExprResult {
     if (!isString(expr)) {
         return noop;
     }
@@ -550,10 +414,10 @@ export function $parseEvent(expr): ParseExprResult {
         return noop;
     }
 
-    let fn = eventFnCache.get(expr);
+    let exprValue = eventFnCache.get(expr);
 
-    if (fn) {
-        return fn;
+    if (exprValue) {
+        return exprValue;
     }
     const parser = new Parser(new Lexer);
     const ast = parser.parseAction(expr, '',0);
@@ -561,8 +425,8 @@ export function $parseEvent(expr): ParseExprResult {
     if (ast.errors.length) {
         return noop;
     }
-    const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Action);
-    fn = astCompiler.compile();
-    eventFnCache.set(expr, fn);
-    return fn;
+    const astCompiler = new ASTCompiler(ast.ast,  null, ctx);
+    exprValue = astCompiler.compile();
+    eventFnCache.set(expr, exprValue);
+    return exprValue;
 }

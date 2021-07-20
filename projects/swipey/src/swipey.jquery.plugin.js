@@ -447,13 +447,13 @@ window.requestAnimationFrame = (function () {
                 script = script.substring(match.index + expression.length);
                 expression = expression.substring(3, expression.length - 2);
                 tArr.push(prefix);
-                tArr.push($parse(expression).bind({}));
+                tArr.push(expression);
             }
             tArr.push(script);
             return function () {
                 var args = arguments;
                 return _.map(tArr, function (v) {
-                    return _.isFunction(v) ? v.apply(undefined, args) : v;
+                    return $parse(v, args);
                 }).join('');
             };
         }

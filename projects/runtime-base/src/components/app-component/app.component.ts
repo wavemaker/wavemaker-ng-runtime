@@ -108,6 +108,10 @@ export class AppComponent implements DoCheck, AfterViewInit {
     providersConfig;
     isOAuthDialogOpen = false;
 
+    isAppComponentInstance () {
+        return true;
+    }
+
     showOAuthDialog() {
         if (!this.isOAuthDialogOpen) {
             this.isOAuthDialogOpen = true;

@@ -1,6 +1,6 @@
 import { forwardRef } from '@angular/core';
 
-import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr, getClonedObject, prettifyLabel, initCaps, deHyphenate, checkIsCustomPipeExpression } from '@wm/core';
+import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr, getClonedObject, prettifyLabel, initCaps, deHyphenate, checkIsCustomPipeExpression, setAndGetPrototypeObject } from '@wm/core';
 import { DialogRef, WidgetRef } from '../widgets/framework/types';
 
 declare const _;
@@ -124,7 +124,7 @@ export const getEvaluatedData = (dataObj: any, options: any, context?: any) => {
         return _.get(dataObj, field);
     }
 
-    return $parseExpr(expressionValue)(context, Object.assign({}, dataObj, {__1: dataObj}));
+    return $parseExpr(expressionValue, setAndGetPrototypeObject(context, Object.assign({}, dataObj, {__1: dataObj})));
 };
 
 export const isActiveNavItem = (link, routeName) => {

@@ -1389,11 +1389,7 @@ export const triggerItemAction = (scope, item) => {
     const itemAction = item.action;
     const linkTarget = item.target;
     if (itemAction) {
-        if (!scope.itemActionFn) {
-            scope.itemActionFn = $parseEvent(itemAction);
-        }
-
-        scope.itemActionFn(scope.userDefinedExecutionContext, Object.create(item));
+        scope.itemActionFn = $parseEvent(itemAction, setAndGetPrototypeObject(scope.userDefinedExecutionContext, Object.create(item)));
     }
     if (itemLink) {
         if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
@@ -1526,3 +1522,14 @@ export const setListClass = (scope) => {
         scope.itemsPerRowClass = 'col-xs-12';
     }
 };
+
+export const setAndGetPrototypeObject = (context, locale, isLocaleRef?) => {
+
+    if(isLocaleRef){
+        return Object.assign(locale, context);
+    }
+
+    let exprContext  = Object.assign({},locale);
+    Object.setPrototypeOf(exprContext, context);
+    return exprContext;
+}
