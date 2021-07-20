@@ -27,7 +27,7 @@ export class MenuDropdownItemComponent implements OnInit {
 
     public menualign: string;
 
-    private itemActionFn: Function;
+    private itemActionVal: any;
 
     @Input() item;
 

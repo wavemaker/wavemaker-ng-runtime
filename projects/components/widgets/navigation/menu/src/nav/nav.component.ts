@@ -33,7 +33,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
     public layout;
 
     private activeNavLINode: HTMLElement;
-    private itemActionFn: Function;
+    private itemActionVal: any;
     private pageScope: any;
     private get activePageName() {
         return this.app.activePageName;

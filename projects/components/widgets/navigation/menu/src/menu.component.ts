@@ -75,7 +75,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public autoopen: string;
     public hint: string;
 
-    private itemActionFn: Function;
+    private itemActionVal: any;
     private menuCaret = 'fa-caret-down';
     private _selectFirstItem = false;
 

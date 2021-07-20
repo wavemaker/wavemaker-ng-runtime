@@ -124,7 +124,7 @@ export const getEvaluatedData = (dataObj: any, options: any, context?: any) => {
         return _.get(dataObj, field);
     }
 
-    return $parseExpr(expressionValue)(context, Object.assign({}, dataObj, {__1: dataObj}));
+    return $parseExpr(expressionValue, context, Object.assign({}, dataObj, {__1: dataObj}));
 };
 
 export const isActiveNavItem = (link, routeName) => {

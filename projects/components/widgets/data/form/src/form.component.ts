@@ -1218,8 +1218,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     invokeActionEvent($event, expression: string) {
-        const fn = $parseEvent(expression);
-        fn(this.viewParent, Object.assign(this.context, {$event}));
+  
+        $parseEvent(expression, this.viewParent, Object.assign(this.context, {$event}));
     }
 
     ngOnDestroy() {

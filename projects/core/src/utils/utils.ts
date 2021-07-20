@@ -1389,11 +1389,7 @@ export const triggerItemAction = (scope, item) => {
     const itemAction = item.action;
     const linkTarget = item.target;
     if (itemAction) {
-        if (!scope.itemActionFn) {
-            scope.itemActionFn = $parseEvent(itemAction);
-        }
-
-        scope.itemActionFn(scope.userDefinedExecutionContext, Object.create(item));
+        scope.itemActionVal = $parseEvent(itemAction, scope.userDefinedExecutionContext, Object.create(item));
     }
     if (itemLink) {
         if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
@@ -1526,3 +1522,28 @@ export const setListClass = (scope) => {
         scope.itemsPerRowClass = 'col-xs-12';
     }
 };
+
+
+/**
+ * 
+ * @param context Expression scope
+ * @param locale 
+ * @param isLocaleRef  Should assign properties to scope or create a new object for local and set as prototype
+ * @returns  context
+ */
+export const getScopePrototypeObject = (context, locale, isLocaleRef?) => {
+    if(!locale){
+        locale = {};
+    }
+    if(!context){
+        context = {};
+    }
+
+    if(isLocaleRef){
+        return Object.assign(locale, context);
+    }
+
+    let exprContext  = Object.assign({},locale);
+    Object.setPrototypeOf(exprContext, context);
+    return exprContext;
+}

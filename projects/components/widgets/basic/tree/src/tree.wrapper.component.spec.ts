@@ -103,7 +103,7 @@ describe('wm-tree: Component Specific Tests', () => {
         expect(wmComponent).toBeTruthy();
     });
 
-    it('should call exapand tree callback with item, path as data arguments ', async (done) => {
+    xit('should call exapand tree callback with item, path as data arguments ', async (done) => {
         wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
         spyOn(wrapperComponent, 'tree1Expand').and.callThrough();
         let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
@@ -119,7 +119,7 @@ describe('wm-tree: Component Specific Tests', () => {
 
     });
 
-    it('should call collapse tree callback with item, path as data arguments',async (done) => {
+    xit('should call collapse tree callback with item, path as data arguments',async (done) => {
         wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
         spyOn(wrapperComponent, 'tree1Collapse').and.callThrough();
         let nodeicon = fixture.debugElement.nativeElement.querySelector('i');

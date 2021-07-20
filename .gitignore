@@ -42,3 +42,4 @@ Thumbs.db
 
 # Karma test report: UI unit tests
 karma-test-report.txt
+/projects/coverage

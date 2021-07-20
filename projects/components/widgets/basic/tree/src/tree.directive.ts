@@ -52,7 +52,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     private _selectNode: HTMLElement;
     private nodes: Array<any>;
 
-    public datavalue: string;
+    public datavalue: any;
     public treeicons: string;
     public selecteditem: any;
     public nodeid: string;
@@ -142,7 +142,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
                     $li.attr('id', nodeIdValue);
                 }
             } else if (this.binddatavalue) { // evaluate the expression only if it is bound (useExpression)
-                isNodeMatched = !!$parseExpr(_expr)(this, node);
+                isNodeMatched = !!$parseExpr(_expr, this, node);
             }
             // Perform LastNode check only at level 0.(ie, deep = 0);
             if (!this._selectNode) {
@@ -325,7 +325,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
 
         if (target) {
             if (this.nodeid) {
-                this.datavalue = $parseExpr(this.nodeid)(this, data);
+                this.datavalue = $parseExpr(this.nodeid, this, data);
             } else if (this.bindnodeid) {
                 this.datavalue = getEvaluatedData(data, {expression: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent);
             } else {
@@ -334,7 +334,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         }
 
         if (nodeAction) {
-            $parseEvent(nodeAction)(this);
+            $parseEvent(nodeAction, this);
         }
 
         this.invokeEventCallback('select', {$event: evt, $item: data, $path: path});

@@ -1892,8 +1892,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     invokeActionEvent($event, expression: string) {
-        const fn = $parseEvent(expression);
-        fn(this.viewParent, Object.assign(this.context, {$event}));
+         $parseEvent(expression, this.viewParent, Object.assign(this.context, {$event}));
     }
 
     // change and blur events are added from the template

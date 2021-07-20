@@ -135,7 +135,8 @@ export {
     transformFileURI,
     appendScriptToHead,
     getAppSetting,
-    setListClass
+    setListClass,
+    getScopePrototypeObject
 } from './utils/utils';
 export {
     FIRST_TIME_WATCH,
