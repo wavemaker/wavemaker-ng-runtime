@@ -1,4 +1,4 @@
-import { extractType, DataType, DEFAULT_FORMATS, $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
+import { extractType, DataType, DEFAULT_FORMATS, $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn, setAndGetPrototypeObject } from '@wm/core';
 
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 
@@ -123,7 +123,7 @@ export const setDependency = (type: string, ref: any) => {
     }
 };
 
-export const initiateCallback = (type: string, variable: any, data: any, options?: any, skipDefaultNotification?: boolean) => {
+export const initiateCallback = (type: string, variable: any, data: any, options?: any, skipDefaultNotification?: boolean):any => {
 
     /*checking if event is available and variable has event property and variable event property bound to function*/
     const eventValues = variable[type],
@@ -148,16 +148,19 @@ export const initiateCallback = (type: string, variable: any, data: any, options
             }
         }
     }
+    if(!variable[type]){
+        return;
+    }
     // TODO: [Vibhu], check whether to support legacy event calling mechanism (ideally, it should have been migrated)
-    const fn = $parseEvent(variable[type]);
     if (type === VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE) {
         if (variable.category === 'wm.LiveVariable' && variable.operation === 'read') {
-            return fn(variable._context, {variable: variable, dataFilter: data, options: options});
+            return $parseEvent(variable[type], setAndGetPrototypeObject( variable._context, {variable: variable, dataFilter: data, options: options}));
         } else {
-            return fn(variable._context, {variable: variable, inputData: data, options: options});
+    
+            return $parseEvent(variable[type], setAndGetPrototypeObject(variable._context, {variable: variable, inputData: data, options: options}));
         }
     } else {
-        return fn(variable._context, {variable: variable, data: data, options: options});
+        return $parseEvent(variable[type], setAndGetPrototypeObject(variable._context, {variable: variable, data: data, options: options}));
     }
 };
 

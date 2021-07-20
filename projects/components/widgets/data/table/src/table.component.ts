@@ -1,6 +1,6 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Viewport, StatePersistence, PaginationService } from '@wm/core';
+import { Viewport, StatePersistence, PaginationService, setAndGetPrototypeObject } from '@wm/core';
 
 import { Observable, Subject } from 'rxjs';
 
@@ -1892,8 +1892,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     invokeActionEvent($event, expression: string) {
-        const fn = $parseEvent(expression);
-        fn(this.viewParent, Object.assign(this.context, {$event}));
+         $parseEvent(expression, setAndGetPrototypeObject(this.viewParent, Object.assign(this.context, {$event})));
     }
 
     // change and blur events are added from the template

@@ -1,8 +1,7 @@
 import { IDGenerator } from './id-generator';
 
 import { $parseExpr } from './expression-parser';
-import { findValueOf } from './utils';
-
+import { findValueOf, setAndGetPrototypeObject } from './utils';
 declare const _;
 
 const registry = new Map<string, any>();
@@ -83,16 +82,20 @@ const getUpdatedWatcInfo = (expr, acceptsArray, listener) => {
     };
 };
 
-export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false, config:any={}, isMuted?: () => boolean) => {
+export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGenerator.nextUid(), doNotClone = false, config: any = {}, isMuted?: () => boolean) => {
     if (expr.indexOf('[$i]') !== -1) {
         let watchInfo = getUpdatedWatcInfo(expr, config && config.arrayType, listener);
         expr = watchInfo.expr;
         listener = watchInfo.listener;
     }
-    const fn = $parseExpr(expr);
+    let isLocaleAsRef;
+    if($scope.constructor && $scope.constructor.name === 'AppComponent'){
+        isLocaleAsRef = true;
+    }
+    let exprContext =  setAndGetPrototypeObject($scope, $locals, isLocaleAsRef); 
 
     registry.set(identifier, {
-        fn: fn.bind(expr, $scope, $locals),
+        exprContext: exprContext,
         listener,
         expr,
         last: FIRST_TIME_WATCH,
@@ -127,13 +130,12 @@ const triggerWatchers = (ignoreMuted?: boolean) => {
             if(watchInfo.isMuted && watchInfo.isMuted()) {
                 return;
             }
-            const fn = watchInfo.fn;
             const listener = watchInfo.listener;
             const ov = watchInfo.last;
             let nv;
 
             try {
-                nv = fn();
+                   nv = $parseExpr(watchInfo.expr,  watchInfo.exprContext);
             } catch (e) {
                 console.warn(`error in executing expression: '${watchInfo.expr}'`);
             }
@@ -142,7 +144,6 @@ const triggerWatchers = (ignoreMuted?: boolean) => {
                 changeDetected = true;
                 changedByWatch = true;
                 watchInfo.last = nv;
-
                 if (_.isObject(nv) && !watchInfo.doNotClone && nv.__cloneable__ !== false) {
                     watchInfo.last = _.clone(nv);
                 }
