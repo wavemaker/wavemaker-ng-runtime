@@ -1,4 +1,4 @@
-import { AfterViewInit, ElementRef, Inject, Injectable, Injector } from '@angular/core';
+import { AfterViewInit, ElementRef, Injectable, Injector } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { $appDigest, addClass, switchClass } from '@wm/core';
@@ -93,8 +93,8 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
     }
 
     constructor(
-        @Inject('Injector') inj: Injector,
-        @Inject('IWidgetConfig') config: IWidgetConfig
+        inj: Injector,
+        config: IWidgetConfig
     ) {
         super(inj, config);
         let updateOn = this.nativeElement.getAttribute('updateon') || 'blur';

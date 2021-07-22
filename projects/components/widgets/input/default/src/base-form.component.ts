@@ -1,4 +1,4 @@
-import { Injector, AfterViewInit, Injectable, Inject } from '@angular/core';
+import { Injector, AfterViewInit, Injectable } from '@angular/core';
 
 import { DataSource } from '@wm/core';
 
@@ -15,7 +15,7 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
 
     protected constructor(
         protected inj: Injector,
-        @Inject('IWidgetConfig') config: IWidgetConfig,
+        config: IWidgetConfig,
         initPromise?: Promise<any>
     ) {
         super(inj, config, initPromise);

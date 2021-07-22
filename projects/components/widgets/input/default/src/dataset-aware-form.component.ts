@@ -1,4 +1,4 @@
-import { Injector, Attribute, OnInit, Injectable, Inject } from '@angular/core';
+import { Injector, Attribute, OnInit, Injectable } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
@@ -88,7 +88,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.invokeOnChange(val, undefined, true);
     }
 
-    protected constructor(inj: Injector, @Inject('IWidgetConfig') WIDGET_CONFIG, @Attribute('groupby') public groupby?: string) {
+    protected constructor(inj: Injector, WIDGET_CONFIG, @Attribute('groupby') public groupby?: string) {
         super(inj, WIDGET_CONFIG);
         this.datePipe = this.inj.get(ToDatePipe);
         this.appDefaults = this.inj.get(AppDefaults);

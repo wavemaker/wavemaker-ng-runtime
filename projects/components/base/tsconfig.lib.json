@@ -21,7 +21,7 @@
     },
     "angularCompilerOptions": {
         "skipTemplateCodegen": true,
-        "strictMetadataEmit": true,
+        "strictMetadataEmit": false,
         "fullTemplateTypeCheck": false,
         "strictInjectionParameters": true,
         "enableResourceInlining": true

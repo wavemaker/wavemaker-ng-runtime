@@ -99,7 +99,7 @@ const definitions = [
     EmptyPageComponent
 ];
 
-export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS:any[] = [
+export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     ConfirmDialogModule,
     DesignDialogModule,
     DialogModule
@@ -245,12 +245,12 @@ export class RuntimeBaseModule {
 }
 
 export const WM_MODULES_FOR_ROOT = [
-    WmComponentsModule,
-    MobileRuntimeModule,
-    CoreModule,
-    SecurityModule,
-    OAuthModule,
-    VariablesModule,
-    HttpServiceModule,
-    RuntimeBaseModule
+    WmComponentsModule.forRoot(),
+    MobileRuntimeModule.forRoot(),
+    CoreModule.forRoot(),
+    SecurityModule.forRoot(),
+    OAuthModule.forRoot(),
+    VariablesModule.forRoot(),
+    HttpServiceModule.forRoot(),
+    RuntimeBaseModule.forRoot()
 ];

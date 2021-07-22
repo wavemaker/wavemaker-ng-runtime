@@ -1,4 +1,4 @@
-import { Injector, OnDestroy, TemplateRef, Injectable, Inject } from '@angular/core';
+import { Injector, OnDestroy, TemplateRef, Injectable } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
@@ -44,7 +44,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
 
     protected constructor(
         inj: Injector,
-        @Inject('IWidgetConfig') widgetConfig: IWidgetConfig,
+        widgetConfig: IWidgetConfig,
         protected modalOptions: ModalOptions
     ) {
         super(inj, widgetConfig);
