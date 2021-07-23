@@ -11,12 +11,11 @@ import {compileTestComponent, setInputValue} from "../../../../base/src/test/uti
 
 let mockApp = {};
 
-const markup = `<div class="input-group app-currency" datavalue="1234" 
-                 blur.event="onBlur($event, widget)"
+const markup = `<div blur.event="onBlur($event, widget)"
                  focus.event="onFocus($event, widget)"
                  change.event="onChange($event, widget, newVal, oldVal)" 
                  wmCurrency name="currency1" step="0.01" hint="currency" inputmode="natural" 
-                 trailingzero="true" updateon="default" tabindex="1"></div>`;
+                 trailingzero="true" tabindex="1"></div>`;
 
 class MockAbstractI18nService {
     public getSelectedLocale() {
@@ -113,6 +112,9 @@ describe('CurrencyComponent', () => {
     });
 
     it('should show formatted value when default value is provided and on focus should remove step formatting. Test focus and blur cb', () => {
+        currencyComp.datavalue = 1234;
+        currencyComp.ngModelOptions.updateOn = 'change';
+    
         spyOn(wrapperComponent, 'onFocus');
         spyOn(wrapperComponent, 'onBlur');
 
@@ -126,7 +128,9 @@ describe('CurrencyComponent', () => {
 
         // On blur should show '.00' formatting
         validateOnEvt('blur', '1,234.00');
-        expect(currencyComp.displayValue).toEqual(getInputEl().value);
+        setInputValue(fixture, '.app-currency-input', '1234').then(() => {
+            expect(currencyComp.displayValue).toEqual(getInputEl().value);
+        });
 
         // on blur, check blur callback is triggered
         expect(wrapperComponent.onBlur).toHaveBeenCalledTimes(1);         
@@ -161,6 +165,8 @@ describe('CurrencyComponent', () => {
     it('should show financial format on the inputted value when currency is financial', () => {
         currencyComp.inputmode = 'financial';
         currencyComp.step = 0.01;
+        currencyComp.datavalue = 1234;
+
 
         // when a default value is provided, add trailing zeros and do not format it to financial currency
         expect(currencyComp.displayValue).toEqual('1,234.00');
@@ -189,6 +195,7 @@ describe('CurrencyComponent', () => {
 
 
     it('should check formatting of display value happends based on update on value', () => {
+        currencyComp.ngModelOptions.updateOn = 'change';
         currencyComp.inputmode = 'financial';
         currencyComp.step = 0.01;
         
