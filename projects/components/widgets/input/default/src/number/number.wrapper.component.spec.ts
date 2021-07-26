@@ -99,6 +99,14 @@ describe('NumberComponent', () => {
         expect(wrapperComponent.onChange).not.toHaveBeenCalled();
     });
 
+    it('should not invoke change callback when datavalue is set null, has previous value and isDefaultQuery is true - WMS-20953', () => {
+        (numberComponent as any).prevDatavalue = 123
+        numberComponent.datavalue = null;
+        spyOn(wrapperComponent, 'onChange');
+
+        expect(wrapperComponent.onChange).not.toHaveBeenCalled();
+    });
+
     it('should invoke change callback when datavalue is modified', () => {
         spyOn(wrapperComponent, 'onChange');
 
