@@ -65,7 +65,7 @@
     "summernote": "0.8.11",
     "tslib": "^2.0.0",
     "x2js": "3.2.6",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.10.3"
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.8.5",
