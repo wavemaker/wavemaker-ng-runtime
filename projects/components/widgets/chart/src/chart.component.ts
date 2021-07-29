@@ -1,6 +1,19 @@
 import { AfterViewInit, OnDestroy, Component, HostBinding, Injector, ViewEncapsulation } from '@angular/core';
 
-import { App, DataSource, getClonedObject, isDataSourceEqual, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn, isMobileApp, noop } from '@wm/core';
+import {
+    App,
+    DataSource,
+    getClonedObject,
+    isDataSourceEqual,
+    isEmptyObject,
+    isNumberType,
+    prettifyLabels,
+    removeAttr,
+    triggerFn,
+    isMobileApp,
+    noop,
+    getDatasourceFromExpr
+} from '@wm/core';
 import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler,  } from '@wm/components/base';
 
 import { registerProps } from './chart.props';
@@ -660,7 +673,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 this.selecteditem = dataObj;
                 this.invokeEventCallback('select', {$event: d3.event, selectedChartItem: data, selectedItem: this.selecteditem});
             });
-            
+
     }
 
     /*  Returns Y Scale min value
@@ -844,7 +857,25 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 }
 
             }
-            this.plotChart();
+            if (this.type === 'Donut' && this.nativeElement.getAttribute('centerlabel.bind')) {
+                this.processCenterLabelForDonut();
+            } else {
+                this.plotChart();
+            }
+        }
+    }
+    processCenterLabelForDonut() {
+        let dataVariable, dataExpression;
+        dataExpression = this.nativeElement.getAttribute('centerlabel.bind');
+        if (dataExpression) {
+            dataVariable = getDatasourceFromExpr(dataExpression, this);
+            if (dataVariable) {
+                dataVariable.invoke().then(response => {
+                    this.plotChart();
+                });
+            } else {
+                this.plotChart();
+            }
         }
     }
 
@@ -1069,7 +1100,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     ngOnDestroy() {
         // destroy all subscriptions to prevent memory leak.
-        this._subsciptions.forEach((subscription)=>{
+        this._subsciptions.forEach((subscription) => {
             subscription();
         });
         super.ngOnDestroy();
