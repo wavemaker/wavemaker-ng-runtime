@@ -864,6 +864,8 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             }
         }
     }
+
+    // sets the center label for donut chart type
     processCenterLabelForDonut() {
         let dataVariable, dataExpression;
         dataExpression = this.nativeElement.getAttribute('centerlabel.bind');
