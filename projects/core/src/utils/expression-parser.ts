@@ -123,13 +123,15 @@ const stringEscapeFn = str => {
 class ASTCompiler {
     ast; // ast to be compiled
     cAst; // current AST node in the process
-    pipeNameVsIsPureMap;
-    context:any;
+    pipeNameVsIsPureMap; // List of pipes map
+    context:any;  // It has scope and locale object properties
+    exprScope:any; // Component or expression specific scope for method call
 
-    constructor(ast,  pipeNameVsIsPureMap?, ctx?) {
+    constructor(ast,  pipeNameVsIsPureMap, ctx, scope) {
         this.ast = ast;
         this.pipeNameVsIsPureMap = pipeNameVsIsPureMap;
         this.context = ctx;
+        this.exprScope = scope;
     }
 
 
@@ -258,7 +260,7 @@ class ASTCompiler {
             return;
         }
         if(isImplicitReceiver){
-           return reciever[ast.name].bind(this.context)(..._args);
+           return reciever[ast.name].bind(this.exprScope)(..._args);
         }else{
             return  reciever[ast.name](..._args);
         }
@@ -406,7 +408,7 @@ export function $parseExpr(expr: string, scope, locale?): ParseExprResult {
         exprValue = undefined;
     } else {
         const pipeNameVsIsPureMap = pipeProvider.getPipeNameVsIsPureMap();
-        const astCompiler = new ASTCompiler(ast.ast,  pipeNameVsIsPureMap, ctx);
+        const astCompiler = new ASTCompiler(ast.ast,  pipeNameVsIsPureMap, ctx, scope);
         exprValue = astCompiler.compile();
         return exprValue;
        
@@ -448,7 +450,7 @@ export function $parseEvent(expr, scope, locale?): ParseExprResult {
     if (ast.errors.length) {
         return;
     }
-    const astCompiler = new ASTCompiler(ast.ast,  null, ctx);
+    const astCompiler = new ASTCompiler(ast.ast,  null, ctx, scope);
     exprValue = astCompiler.compile();
     eventFnCache.set(expr, exprValue);
     return exprValue;
