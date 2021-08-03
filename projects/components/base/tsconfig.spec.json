@@ -2,7 +2,8 @@
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../out-tsc/spec",
-    "types": [
+      "skipLibCheck": true,
+      "types": [
       "jasmine",
       "node",
       "jquery"
