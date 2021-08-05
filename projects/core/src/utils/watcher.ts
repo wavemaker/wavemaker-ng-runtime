@@ -89,7 +89,7 @@ export const $watch = (expr, $scope, $locals, listener, identifier = watchIdGene
         listener = watchInfo.listener;
     }
     let isLocaleAsRef;
-    if($scope.constructor && $scope.constructor.name === 'AppComponent'){
+    if($scope.isAppComponentInstance && $scope.isAppComponentInstance()){
         isLocaleAsRef = true;
     }
     let exprContext =  getScopePrototypeObject($scope, $locals, isLocaleAsRef); 

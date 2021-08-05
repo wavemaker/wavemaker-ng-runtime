@@ -122,6 +122,10 @@ export class AppComponent implements DoCheck, AfterViewInit {
         }
     }
 
+    isAppComponentInstance() {
+        return true;
+    }
+
     private start() {
         this.startApp = true;
         setTimeout(() => {
