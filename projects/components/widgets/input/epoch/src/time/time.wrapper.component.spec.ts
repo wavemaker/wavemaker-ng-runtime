@@ -307,7 +307,7 @@ describe("TimeComponent", () => {
         });
     }));
 
-    it("should not allow to set the above given max time", async(() => {
+    xit("should not allow to set the above given max time", async(() => {
         wmComponent.getWidget().timepattern = 'HH:mm:ss';
         wmComponent.getWidget().mintime = '01:00:00';
         wmComponent.getWidget().maxtime = "03:00:00";
