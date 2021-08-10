@@ -16,8 +16,7 @@
         ],
         "lib": [
             "es2018",
-            "dom",
-            "dom.iterable"
+            "dom"
         ],
         "paths": {
             "@wm/build-task": [
