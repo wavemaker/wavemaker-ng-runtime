@@ -56,7 +56,7 @@ cp -r dist/bundles/wmapp/locales libraries
 if [[ "${dev}" == true ]]; then
     cp -r libraries dist/runtime-cli/angular-app
 fi
-cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
+cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js ngsw-config.json dist/runtime-cli/angular-app
 cp ./wm.package.json libraries/package.json
 
 if [[ "${publish}" == true ]]; then

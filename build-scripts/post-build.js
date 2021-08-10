@@ -122,14 +122,43 @@ const addScriptForWMStylesPath = () => {
             </script>`);
 }
 
+const copyPwaAssets = () => {
+    // copy service worker and its config to root directory
+    fs.copyFileSync('./dist/ng-bundle/ngsw-worker.js', './dist/ngsw-worker.js');
+    fs.copyFileSync('./dist/ng-bundle/ngsw.json', './dist/ngsw.json');
+    fs.copyFileSync('./dist/ng-bundle/manifest.json', './dist/manifest.json');
+
+    // edit service worker config to include ng-bundle in the path of cached files
+    const suffix = '/ng-bundle';
+    const fileName = './dist/ngsw.json';
+    const ngswData = JSON.parse(fs.readFileSync(fileName).toString());
+    ngswData.assetGroups = ngswData.assetGroups
+        .map(group => ({ ...group, urls: group.urls.map(url => suffix + url) }));
+    ngswData.hashTable = Object.keys(ngswData.hashTable).reduce((prev, current) => {
+        return {
+            ...prev,
+            [suffix + current]: ngswData.hashTable[current],
+        }
+    }, {})
+    fs.writeFileSync(fileName, JSON.stringify(ngswData, null, 4));
+}
+
 (async () => {
     try {
         const angularJson = require(`${process.cwd()}/angular.json`);
-        let deployUrl = angularJson['projects']['angular-app']['architect']['build']['options']['deployUrl'];
+        const build = angularJson['projects']['angular-app']['architect']['build'];
+        let deployUrl = build['options']['deployUrl'];
         if (deployUrl.endsWith('/')) {
             deployUrl = deployUrl.substr(0, deployUrl.length - 1);
         }
         fs.copyFileSync('./dist/ng-bundle/index.html', './dist/index.html');
+
+        // if service worker is enabled, make changes related to PWA
+        const serviceWorkerEnabled = build['configurations']['production']['serviceWorker'];
+        if (serviceWorkerEnabled) {
+            copyPwaAssets()
+        }
+
         const contents = await readFile(`./dist/index.html`, `utf8`);
         $ = cheerio.load(contents);
         $('script').attr('defer', 'true');
