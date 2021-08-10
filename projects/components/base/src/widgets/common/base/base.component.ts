@@ -287,7 +287,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         }
 
         if (parentContexts) {
-            this.context = Object.assign({}, <Array<any>>parentContexts, this.context);
+            let parentContextObj = {};
+            _.forEach(parentContexts, (contextObj) => {
+                Object.assign(parentContextObj, contextObj);
+            });
+            this.context = Object.assign({}, parentContextObj, this.context);
         }
     }
 
