@@ -845,7 +845,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                xit('should respect the mindate validation', async(() => {
+                it('should respect the mindate validation', async(() => {
                     const invalidTestValue = '2019-11-02';
                     const validTestValue = '2019-12-05';
                     dateValidators(
@@ -875,7 +875,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                xit('should respect the excludedays validation', async(() => {
+                it('should respect the excludedays validation', async(() => {
                     const invalidTestValue = '2019-12-30';
                     const validTestValue = '2019-12-29';
                     dateValidators(
@@ -890,7 +890,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                xit('should respect the excludedate validation', async(() => {
+                it('should respect the excludedate validation', async(() => {
                     const invalidTestValue = '2020-01-01';
                     const validTestValue = '2020-01-02';
                     dateValidators(
