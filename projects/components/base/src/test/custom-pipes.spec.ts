@@ -36,6 +36,7 @@ const testModuleDef: ITestModuleDef = {
         CustomPipeManager]
 };
 
+declare const moment;
 
 describe('ToNumber pipe', () => {
     let fixture: ComponentFixture<PipeWrapperComponent>;
@@ -275,6 +276,7 @@ describe('TimeFromNow pipe', () => {
     let pipe: TimeFromNowPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
+        moment.locale('en');
         pipe = new TimeFromNowPipe();
     });
 
@@ -282,21 +284,21 @@ describe('TimeFromNow pipe', () => {
         expect(pipe).toBeTruthy();
     });
 
-    xit('should show the timestamp from now as 2 days ago', () => {
+    it('should show the timestamp from now as 2 days ago', () => {
         let date = new Date();
         date.setDate(date.getDate() - 2);
         const result = pipe.transform(date.getTime());
         expect(result).toBe('2 days ago');
     });
 
-    xit('should show the date from now as a day ago', () => {
+    it('should show the date from now as a day ago', () => {
         let date = new Date();
         date.setDate(date.getDate() - 1);
         const result = pipe.transform(date);
         expect(result).toBe('a day ago');
     });
 
-    xit('should show the date from now "in 2 days"', () => {
+    it('should show the date from now "in 2 days"', () => {
         let date = new Date();
         date.setDate(date.getDate() + 2);
         const result = pipe.transform(date);
