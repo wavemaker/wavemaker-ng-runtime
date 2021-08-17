@@ -857,27 +857,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 }
 
             }
-            if (this.type === 'Donut' && this.nativeElement.getAttribute('centerlabel.bind')) {
-                this.processCenterLabelForDonut();
-            } else {
-                this.plotChart();
-            }
-        }
-    }
-
-    // sets the center label for donut chart type
-    processCenterLabelForDonut() {
-        let dataVariable, dataExpression;
-        dataExpression = this.nativeElement.getAttribute('centerlabel.bind');
-        if (dataExpression) {
-            dataVariable = getDatasourceFromExpr(dataExpression, this);
-            if (dataVariable) {
-                dataVariable.invoke().then(response => {
-                    this.plotChart();
-                });
-            } else {
-                this.plotChart();
-            }
+            this.plotChart();
         }
     }
 
@@ -1007,6 +987,9 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         switch (key) {
             case 'dataset':
                 this.handleDataSet(newVal);
+                break;
+            case 'centerlabel':
+                this.chart.title(newVal);
                 break;
             case 'type':
                 // Based on the change in type deciding the default margins
