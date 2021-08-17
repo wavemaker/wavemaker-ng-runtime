@@ -77,9 +77,10 @@ export function getSettingProvider(key: string, defaultValue: any) {
     };
 };
 
-export function InitializeApp(I18nService) {
-    return () => {
+export function InitializeApp(I18nService, AppJSResolve) {
+    return async () => {
         initializeProjectDetails();
+         await AppJSResolve.resolve();
         return I18nService.loadDefaultLocale();
     };
 }
@@ -176,7 +177,7 @@ export class RuntimeBaseModule {
                 {
                     provide: APP_INITIALIZER,
                     useFactory: InitializeApp,
-                    deps: [AbstractI18nService],
+                    deps: [AbstractI18nService, AppJSResolve],
                     multi: true
                 },
                 {
