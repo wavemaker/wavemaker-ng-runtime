@@ -32,8 +32,7 @@ export class VariablesModule {
             providers: [
                 VariablesService,
                 MetadataService,
-                Location,
-                {provide: LocationStrategy, useClass: HashLocationStrategy}
+                Location
             ]
         };
     }

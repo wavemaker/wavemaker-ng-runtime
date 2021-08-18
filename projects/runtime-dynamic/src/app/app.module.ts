@@ -1,7 +1,7 @@
 import { Injector, ModuleWithProviders, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { RouteReuseStrategy, RouterModule } from '@angular/router';
+import { ExtraOptions, RouteReuseStrategy, RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -115,11 +115,19 @@ import { PrefabConfigProviderService } from './services/prefab-config-provider.s
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
+let  projectProperties = getWmProjectProperties();
+projectProperties.isHashRoutingStrategy = true;
+let routeConfig:ExtraOptions = { scrollPositionRestoration: 'top' };
+
+if(projectProperties.isHashRoutingStrategy){
+    routeConfig.useHash = true;
+}
+
+export const routerModule = RouterModule.forRoot(routes, routeConfig);
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
 export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
     cookieName: 'wm_xsrf_token',
-    headerName: getWmProjectProperties().xsrf_header_name
+    headerName: projectProperties.xsrf_header_name
 });
 
 export const modalModule: ModuleWithProviders = ModalModule.forRoot();
