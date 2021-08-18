@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, HostBinding, Injector, OnDestroy, Optional } from '@angular/core';
+import { AfterViewInit, Component, HostBinding, HostListener, Injector, OnDestroy, Optional } from '@angular/core';
 
 import {addClass, App, encodeUrl, EventNotifier, getRouteNameFromLink, setAttr} from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './anchor.props';
+import { Router } from '@angular/router';
 
 const DEFAULT_CLS = 'app-anchor';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -46,7 +47,8 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
 
     constructor(
         inj: Injector,
-        private app: App
+        private app: App,
+        private router:Router
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
@@ -91,6 +93,16 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
         );
     }
 
+    @HostListener('click')
+    onclick() {
+        // If hash based URL added as hyperlink then navigate to the page route
+        if(this.hyperlink && this.hyperlink.startsWith('#')) {
+            let pageName = this.hyperlink.split('#/')[1];
+            this.router.navigateByUrl(pageName);
+        }
+        
+    }
+
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'hyperlink') {
             if (!nv) {
@@ -105,7 +117,9 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
             if (nv.startsWith('www.')) {
                 nv = `//${nv}`;
             }
-            setAttr(this.nativeElement, 'href', nv);
+            if(!nv.startsWith('#')){
+                setAttr(this.nativeElement, 'href', nv);
+            }
             this.nativeElement.removeEventListener('contextmenu', disableContextMenu);
         } else {
             super.onPropertyChange(key, nv, ov);
