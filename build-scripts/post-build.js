@@ -141,6 +141,7 @@ const addScriptForWMStylesPath = () => {
         } else {
             isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.js`);
             isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.css`);
+            $('script').attr('type', 'text/javascript');
         }
 
             if(isProdBuild){
