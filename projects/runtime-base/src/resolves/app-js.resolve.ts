@@ -10,15 +10,17 @@ let appJsLoaded = false;
 
 @Injectable()
 export class AppJSResolve implements Resolve<any> {
+    private appManager;
 
     // AppManagerService: To be make sure this instance available for locale(en.json) calls request to track inside intercepter
     constructor(
         private inj: Injector,
         private app: App,
         private utilService: UtilsService,
-        private appJsProvider: AppJSProvider,
-        private appManager: AppManagerService,
-    ) {}
+        private appJsProvider: AppJSProvider
+    ) {
+        this.appManager = this.inj.get(AppManagerService);
+    }
 
     async resolve() {
         if (appJsLoaded) {
