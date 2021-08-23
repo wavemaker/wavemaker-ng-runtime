@@ -2338,9 +2338,9 @@ $.widget('wm.datatable', {
             // add js click handler for capture phase in order to first listen on grid and
             // assign selectedItems so that any child actions can have access to the selectedItems.
             $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this), true);
-            $htm.on('click', this.rowSelectionHandler.bind(this));
-            $htm.on('dblclick', this.rowDblClickHandler.bind(this));
-            $htm.on('keydown', this.onKeyDown.bind(this));
+            $htm.find('tr.app-datagrid-row').on('click', this.rowSelectionHandler.bind(this));
+            $htm.find('tr.app-datagrid-row').on('dblclick', this.rowDblClickHandler.bind(this));
+            $htm.find('tr.app-datagrid-row').on('keydown', this.onKeyDown.bind(this));
         }
 
         if ($header) {
