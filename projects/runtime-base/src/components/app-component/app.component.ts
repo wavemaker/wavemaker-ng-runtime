@@ -123,7 +123,12 @@ export class AppComponent implements DoCheck, AfterViewInit {
     }
 
     private start() {
-        this.startApp = true;
+        //to fix the issue that happens only in the development mode
+        //ExpressionChangedAfterItHasBeenCheckedError
+        //fix: https://blog.angular-university.io/angular-debugging/
+        setTimeout(() => {
+            this.startApp = true;
+        });
         setTimeout(() => {
             this.app.dynamicComponentContainerRef = this.dynamicComponentContainerRef;
             this.overrideRouterOutlet();
