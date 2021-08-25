@@ -64,10 +64,12 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     @ViewChild('checkbox', { static: true, read: ElementRef }) checkboxEl: ElementRef;
 
     // if the checkbox is checked, return checkedvalue else return uncheckedvalue
+    // @ts-ignore
     public get datavalue() {
         return isDefined(this.proxyModel) ? (this.proxyModel ? this._checkedvalue : this._uncheckedvalue) : undefined;
     }
     // when the datavalue is set, update the checked state
+    // @ts-ignore
     public set datavalue(v) {
         this.proxyModel = (isDefined(v) && v !== '') ? v === this._checkedvalue : undefined;
         this.updatePrevDatavalue(this.datavalue);

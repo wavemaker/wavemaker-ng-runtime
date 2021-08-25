@@ -57,12 +57,14 @@ export class DateComponent extends BaseDateTimeComponent {
         return getFormattedDate(this.datePipe, this.bsDataValue, 'yyyy-MM-dd') || '';
     }
 
+    // @ts-ignore
     get datavalue() {
         return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat) || '';
     }
 
     // Todo[Shubham]: needs to be redefined
     // sets the dataValue and computes the display model values
+    // @ts-ignore
     set datavalue(newVal) {
         if (newVal === CURRENT_DATE) {
             this.bsDataValue = new Date();

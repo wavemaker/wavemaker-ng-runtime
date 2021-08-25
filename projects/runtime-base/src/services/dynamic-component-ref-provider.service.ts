@@ -22,7 +22,9 @@ const componentFactoryRefCache = new Map<string, any>();
 
 const getDynamicModule = (componentRef: any) => {
     @NgModule({
-        declarations: [componentRef],
+        declarations: [
+            componentRef
+        ],
         imports: [
             RuntimeBaseModule
         ],

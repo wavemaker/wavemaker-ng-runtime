@@ -444,11 +444,14 @@ const defaultValidators = (
     invalidTestValue, 
     validTestValue
 ) => {
-    formField.setValidators([{
+    const validatorObj = {
         type: validatorType,
         validator: validator,
         errorMessage: errorMsg
-    }]);
+    };
+
+    formField.setValidators([validatorObj]);
+    formField.applyValidations([validatorObj]);
 
     if (isNewRow) {
         formField.applyNewRowValidations();
@@ -488,22 +491,20 @@ const dateValidators = (
     validTestValue
 ) => {
     let formField =  (wmComponent as any).fullFieldDefs[3];
-    formField.setValidators([{
+    const validatorObj = {
         type: validatorType,
         validator: validator,
         errorMessage: errorMsg
-    }]);
+    };
+
+    formField.setValidators([validatorObj]);
+    formField.applyValidations([validatorObj]);
 
     clickEditElement(isNewRow, fixture);
     
     fixture.detectChanges();
     fixture.whenStable().then(() => {
         let formFieldControl = formField.getFormControl();
-        formField.setValidators([{
-            type: validatorType,
-            validator: validator,
-            errorMessage: errorMsg
-        }]);
         fixture.detectChanges();
         fixture.whenStable().then(() => {
             // Positive case
@@ -533,6 +534,7 @@ const customValidatorSync = (isNewRow, wmComponent, fixture) => {
     const validTestValue = 'test12345';
     let formField = (wmComponent as any).fullFieldDefs[0];
     formField.setValidators([fullNameValidator]);
+    formField.applyValidations([fullNameValidator]);
 
     if (isNewRow) {
         formField.applyNewRowValidations();
@@ -569,12 +571,15 @@ const defaultAndCustomValidator = (isNewRow, wmComponent, fixture) => {
     const invalidTestValue = 'test';
     const validTestValue = 'test12345';
     let formField = (wmComponent as any).fullFieldDefs[0];
-    formField.setValidators([{
+    const validatorObj = {
         type: VALIDATOR.REQUIRED,
         validator: true,
         errorMessage: "This field cannot be empty."
-    }, fullNameValidator]);
-    
+    };
+
+    formField.setValidators([validatorObj, fullNameValidator]);
+    formField.applyValidations([validatorObj, fullNameValidator]);
+
     if (isNewRow) {
         formField.applyNewRowValidations();
         // New row
@@ -674,7 +679,8 @@ const customValidatorAsync = (isNewRow, wmComponent, fixture) => {
     const validTestValue = 'valid';
     let formField = (wmComponent as any).fullFieldDefs[0];
     formField.setAsyncValidators([registerFullNameValidator]);
-    
+    formField.applyValidations([registerFullNameValidator]);
+
     if (isNewRow) {
         formField.applyNewRowValidations();
         // New row
@@ -898,6 +904,7 @@ describe("DataTable", () => {
                         validTestValue
                     );
                 }));
+                
 
                 it('should trigger custom validator(sync)', async(() => {
                     customValidatorSync(false, wmComponent, inline_edit_fixture);

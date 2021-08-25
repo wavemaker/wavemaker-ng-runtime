@@ -21,5 +21,8 @@
                 "@wm/components/data/pagination": "wm.components.data.pagination"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

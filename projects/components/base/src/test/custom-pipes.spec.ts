@@ -36,13 +36,14 @@ const testModuleDef: ITestModuleDef = {
         CustomPipeManager]
 };
 
+declare const moment;
 
 describe('ToNumber pipe', () => {
     let fixture: ComponentFixture<PipeWrapperComponent>;
     let pipe: ToNumberPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new ToNumberPipe(TestBed.get(DecimalPipe));
+        pipe = new ToNumberPipe(TestBed.inject(DecimalPipe));
     });
 
     it('create an instance', () => {
@@ -63,7 +64,7 @@ describe('Trailingzero pipe', () => {
     let pipe:TrailingZeroDecimalPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new TrailingZeroDecimalPipe(TestBed.get(DecimalPipe));
+        pipe = new TrailingZeroDecimalPipe(TestBed.inject(DecimalPipe));
     });
 
     it('create an instance', () => {
@@ -90,7 +91,7 @@ describe('ToDate pipe', () => {
     let pipe: ToDatePipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new ToDatePipe(TestBed.get(DatePipe));
+        pipe = new ToDatePipe(TestBed.inject(DatePipe));
     });
 
     it('create an instance', () => {
@@ -178,7 +179,7 @@ describe('NumberToString pipe', () => {
     let pipe: NumberToStringPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new NumberToStringPipe(TestBed.get(DecimalPipe));
+        pipe = new NumberToStringPipe(TestBed.inject(DecimalPipe));
     });
 
     it('create an instance', () => {
@@ -248,7 +249,7 @@ describe('ToCurrency pipe', () => {
     let pipe: ToCurrencyPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new ToCurrencyPipe(TestBed.get(DecimalPipe));
+        pipe = new ToCurrencyPipe(TestBed.inject(DecimalPipe));
     });
 
     it('create an instance', () => {
@@ -275,6 +276,7 @@ describe('TimeFromNow pipe', () => {
     let pipe: TimeFromNowPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
+        moment.locale('en');
         pipe = new TimeFromNowPipe();
     });
 
@@ -611,7 +613,7 @@ describe('TrustAs pipe', () => {
     let pipe: TrustAsPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new TrustAsPipe(TestBed.get(DomSanitizer));
+        pipe = new TrustAsPipe(TestBed.inject(DomSanitizer));
     });
 
     it('create an instance', () => {
@@ -639,7 +641,7 @@ describe('Custom pipe', () => {
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
         wrapperComponent = fixture.componentInstance;
-        pipe = new CustomPipe(TestBed.get(CustomPipeManager));
+        pipe = new CustomPipe(TestBed.inject(CustomPipeManager));
     });
 
     it('create an instance', () => {

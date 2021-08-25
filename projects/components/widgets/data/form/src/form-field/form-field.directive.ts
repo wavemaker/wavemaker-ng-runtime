@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport, App } from '@wm/core';
+import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport, App, noop } from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
@@ -130,8 +130,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             hostClass: '',
             widgetSubType: 'wm-form-field-' + (_widgetType || FormWidgetType.TEXT).trim()
         };
+        let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => this._initPropsRes = res));
+        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        this._initPropsRes = resolveFn;
         this.app = app;
         this.fieldDefConfig = {};
         this.class = '';

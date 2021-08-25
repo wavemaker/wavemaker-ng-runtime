@@ -41,7 +41,7 @@ mkdir -p libraries/scripts/jquery.ui.touch-punch
 cp ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js libraries/scripts/jquery.ui.touch-punch/
 
 
-node_modules/.bin/rollup -c rollup.build-task.js
+node --trace-warnings node_modules/.bin/rollup -c rollup.build-task.js
 
 node_modules/.bin/rimraf dist/runtime-cli
 

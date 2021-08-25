@@ -1,4 +1,4 @@
-import { Injector, Attribute, OnInit } from '@angular/core';
+import { Injector, Attribute, OnInit, Injectable } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
@@ -9,6 +9,7 @@ import { BaseFormCustomComponent } from './base-form-custom.component';
 
 declare const _;
 
+@Injectable()
 export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent implements OnInit {
     public dataset: any;
     public datafield: string;
@@ -65,11 +66,13 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.invokeOnChange(this._modelByValue);
     }
 
+    // @ts-ignore
     public get datavalue() {
         return this._modelByValue;
     }
 
     // triggers on setting the datavalue. This function extracts the model value.
+    // @ts-ignore
     public set datavalue(val: any) {
         if (this.multiple) {
             val = extractDataAsArray(val);

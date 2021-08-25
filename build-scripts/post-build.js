@@ -134,13 +134,14 @@ const addScriptForWMStylesPath = () => {
         $ = cheerio.load(contents);
         $('script').attr('defer', 'true');
         setMobileProjectType(angularJson);
-
         if (!isMobileProject) {
             isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-styles.css`);
             isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-styles.js`);
         } else {
             isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.js`);
             isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.css`);
+            $("script[type='module']").remove();
+            $('script[nomodule]').removeAttr('nomodule');
         }
 
             if(isProdBuild){

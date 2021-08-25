@@ -98,7 +98,7 @@
               "namedChunks": true,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": true,
+              "vendorChunk": false,
               "buildOptimizer": true,
               "budgets": [
                 {
@@ -269,6 +269,8 @@
             "polyfills": "projects/components/base/polyfills.ts",
             "tsConfig": "projects/components/base/tsconfig.spec.json",
             "karmaConfig": "projects/components/base/karma.conf.js",
+            "codeCoverage": true,
+            "watch": false,
             "styles": [
               "../wavemaker-app-runtime-angularjs/application/styles/css/wm-style.css"
             ],
@@ -2014,6 +2016,8 @@
             "polyfills": "projects/variables/polyfills.ts",
             "tsConfig": "projects/variables/tsconfig.spec.json",
             "karmaConfig": "projects/variables/karma.conf.js",
+            "codeCoverage": true,
+            "watch": false,
             "styles": [],
             "scripts": [],
             "assets": []
@@ -2090,6 +2094,8 @@
             "polyfills": "projects/mobile/components/polyfills.ts",
             "tsConfig": "projects/mobile/components/tsconfig.spec.json",
             "karmaConfig": "projects/mobile/components/karma.conf.js",
+            "codeCoverage": true,
+            "watch": false,
             "styles": [],
             "scripts": [],
             "assets": []
