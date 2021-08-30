@@ -976,7 +976,9 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 this.handleDataSet(newVal);
                 break;
             case 'centerlabel':
-                this.chart.title(newVal);
+                if (this.chart) {
+                    this.chart.title(newVal);
+                }
                 break;
             case 'type':
                 // Based on the change in type deciding the default margins
