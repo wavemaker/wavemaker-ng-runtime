@@ -18,7 +18,7 @@ const DEFAULT_VALIDATOR = {
 
 export class BaseFieldValidations {
     private hasValidators;
-    
+
     // Instance of the directive table-column, form-field..
     private instance;
     // Inline form widget
@@ -48,17 +48,35 @@ export class BaseFieldValidations {
             this.tableFieldType = tableFieldType;
         }
     }
-    
+
+    // On change of any validation property, set the angular form validators
+    setUpValidators(customValidator?) {
+        if (this.hasValidators) {
+            return;
+        }
+        this.instance._validators = this.getDefaultValidators();
+
+        if (customValidator) {
+            this.instance._validators.push(customValidator);
+        }
+
+        if (this.widgetContext.ngform) {
+            this.widgetControl.setValidators(this.instance._validators);
+            const opt = {};
+            // updating the value only when prevData is not equal to current value.
+            // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
+            if (this.formwidget && this.instance.value === this.formwidget.prevDatavalue) {
+                opt['emitEvent'] = false;
+            }
+            this.widgetControl.updateValueAndValidity(opt);
+        }
+    }
+
     // this method returns the collection of supported default validators
     private getDefaultValidators() {
         const _validator = [];
         if (this.instance.required && this.instance.show !== false) {
-            // For checkbox/toggle widget, required validation should consider true value only
-            if (this.widgettype === FormWidgetType.CHECKBOX || this.widgettype === FormWidgetType.TOGGLE) {
-                _validator.push(Validators.requiredTrue);
-            } else {
-                _validator.push(Validators.required);
-            }
+            _validator.push(Validators.required);
         }
         if (this.instance.maxchars) {
             _validator.push(Validators.maxLength(this.instance.maxchars));
@@ -76,29 +94,6 @@ export class BaseFieldValidations {
             _validator.push(this.formwidget.validate.bind(this.formwidget));
         }
         return _validator;
-    }
-
-    // On change of any validation property, set the angular form validators
-    setUpValidators(customValidator?) {
-        if (this.hasValidators) {
-            return;
-        }
-        this.instance._validators = this.getDefaultValidators();
-
-        if (customValidator) {
-            this.instance._validators.push(customValidator);
-        }
-        
-        if (this.widgetContext.ngform) {
-            this.widgetControl.setValidators(this.instance._validators);
-            const opt = {};
-            // updating the value only when prevData is not equal to current value.
-            // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
-            if (this.formwidget && this.instance.value === this.formwidget.prevDatavalue) {
-                opt['emitEvent'] = false;
-            }
-            this.widgetControl.updateValueAndValidity(opt);
-        }
     }
 
     getPromiseList(validators) {
@@ -236,7 +231,7 @@ export class BaseFieldValidations {
             this.applyDefaultValidators();
         }, watchName));
     }
-    
+
     // invokes both custom sync validations and default validations.
     applyDefaultValidators() {
         const validators = this.getDefaultValidators();
