@@ -7,8 +7,11 @@ const exec = util.promisify(require('child_process').exec);
 const cheerio = require(`cheerio`);
 const crypto = require(`crypto`);
 const opPath = `${process.cwd()}/dist/ng-bundle`;
-const copyCssFiles = (hash) => {
-    copyFile(`${opPath}/wm-styles.css`, `${opPath}/wm-styles.${hash}.css`);
+const copyCssFiles = (hash, updatedFilenames) => {
+    const filename = 'wm-styles.css';
+    const updatedFilename = `wm-styles.${hash}.css`
+    copyFile(`${opPath}/${filename}`, `${opPath}/${updatedFilename}`);
+    updatedFilenames[filename] = updatedFilename;
     // copyFile(`${opPath}/wm-styles.br.css`,`${opPath}/wm-styles.${hash}.br.css`);
     // copyFile(`${opPath}/wm-styles.gzip.css`,`${opPath}/wm-styles.${hash}.gzip.css`);
 };
@@ -24,7 +27,7 @@ const generateHash = async (filepath) => {
     hash.update(cssContent);
     return hash.digest('hex');
 };
-const generateHashForScripts = () => {
+const generateHashForScripts = (updatedFilenames) => {
     const scriptsMap = {};
     return new Promise(resolve => {
         fs.readdir(opPath, (err, items) => {
@@ -33,9 +36,12 @@ const generateHashForScripts = () => {
                 if (nohashIndex > 0) {
                     const key = i.substring(0, nohashIndex);
                     return generateHash(`${opPath}/${i}`).then(hash => {
-                        scriptsMap[`${key}.js`] = `${key}.${hash}.js`;
+                        const filename = `${key}-NOHASH.js`;
+                        const updatedFilename = `${key}.${hash}.js`
+                        scriptsMap[`${key}.js`] = updatedFilename;
+                        updatedFilenames[filename] = updatedFilename;
                         return Promise.all([
-                            copyFile(`${opPath}/${key}-NOHASH.js`, `${opPath}/${key}.${hash}.js`),
+                            copyFile(`${opPath}/${filename}`, `${opPath}/${updatedFilename}`),
                             // copyFile(`${opPath}/${key}-NOHASH.br.js`, `${opPath}/${key}.${hash}.br.js`),
                             // copyFile(`${opPath}/${key}-NOHASH.gzip.js`, `${opPath}/${key}.${hash}.gzip.js`)
                         ]);
@@ -192,6 +198,17 @@ const updatePwaAssets = (updatedFileNames, updatedFileHashes) => {
     fs.writeFileSync(fileName, ngswContent);
 }
 
+/**
+ * Generated sha1 hash for the content supplied.
+ * 
+ * @param {string} content the content to be hashed
+ * @returns {string} the hash value
+ */
+const generateSha1 = (content) => {
+    const buffer = Buffer.from(content, 'utf8');
+    return crypto.createHash('sha1').update(buffer).digest("hex");
+}
+
 (async () => {
     try {
         const angularJson = require(`${process.cwd()}/angular.json`);
@@ -226,7 +243,7 @@ const updatePwaAssets = (updatedFileNames, updatedFileHashes) => {
         }
         // if service worker is enabled the app is a PWA
         const serviceWorkerEnabled = build['configurations']['production']['serviceWorker'];
-        const updatedFileNames = { }
+        const updatedFilenames = { }
         const updatedFileHashes = { }
 
         if (isMobileProject) {
@@ -239,12 +256,11 @@ const updatePwaAssets = (updatedFileNames, updatedFileHashes) => {
             } else {
                 const fileName = 'wm-styles';
                 const hash = await generateHash(`${opPath}/${fileName}.css`);
-                copyCssFiles(hash);
+                copyCssFiles(hash, updatedFilenames);
                 const updatedFileName = `${fileName}.${hash}.css`
                 $("head").append(
                     `<script> const WMStylesPath = "${deployUrl}/${updatedFileName}" </script>`
                 );
-                updatedFileNames[`${fileName}.css`] = updatedFileName;
             }
         }
 
@@ -252,14 +268,13 @@ const updatePwaAssets = (updatedFileNames, updatedFileHashes) => {
         const htmlContent = $.html();
         await writeFile(`./dist/index.html`, htmlContent);
 
+        await generateHashForScripts(updatedFilenames);
+
         if (serviceWorkerEnabled) {
             // re-generate hash for index.html since its been modified
-            const buffer = Buffer.from(htmlContent, 'utf8');
-            updatedFileHashes['index.html'] = crypto.createHash('sha1').update(buffer).digest("hex");
-            updatePwaAssets(updatedFileNames, updatedFileHashes);
+            updatedFileHashes['index.html'] = generateSha1(htmlContent);
+            updatePwaAssets(updatedFilenames, updatedFileHashes);
         }
-
-        generateHashForScripts();
     } catch (e) {
         console.error(`Error in Post ng build Script | ${e}`);
     }
