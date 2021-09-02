@@ -976,8 +976,20 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 this.handleDataSet(newVal);
                 break;
             case 'centerlabel':
+                let chartSvg, pieGroups, chartId, fontSize;
                 if (this.chart) {
                     this.chart.title(newVal);
+                    fontSize = parseInt(this.fontsize, 10) || 12;
+                    chartSvg = d3.select('#wmChart' + this.$id + ' svg');
+                    chartId = this.chart.id();
+
+                    pieGroups = chartSvg.select('.nv-chart-' + chartId).select('.nv-pie');
+                    pieGroups.append('text')
+                        .attr('dy', '.35em')
+                        .attr('text-anchor', 'middle')
+                        .attr('style', 'font-size: ' + fontSize + 'px')
+                        .attr('class', 'nv-pie-title')
+                        .text(newVal);
                 }
                 break;
             case 'type':
