@@ -397,7 +397,7 @@ export class LiveFormDirective {
         if (!this.form.datasource) {
             return;
         }
-        let data, prevData, operationType, isValid;
+        let data, prevData, operationType, isValid, isEqualData;
         const requestData: any = {};
 
         operationType = this.form.operationType = this.form.operationType || this.findOperationType();
@@ -425,9 +425,28 @@ export class LiveFormDirective {
             }
         }
 
+        isEqualData = _.isEqual(data, prevData);
+        const dataKeys = _.keys(data);
+        const prevDataKeys = _.keys(prevData);
+
+        // WMS-21032 In form as dialog, if there is an other widget along with form and there is no change in form data show no changes detected message
+        if (!isEqualData && dataKeys.length !== prevDataKeys.length) {
+            const diffKeys = dataKeys.filter(x => !prevDataKeys.includes(x));
+            if (diffKeys.length > 0 ) {
+                const cloneData = _.omit(data, diffKeys);
+                _.forEach(diffKeys, (key) => {
+                    if (this.form.formWidgets && this.form.formWidgets[key] && this.form.formWidgets[key].widgetType !== 'wm-form-field' && _.isEqual(cloneData, prevData)) {
+                        this.form.ngform.markAsPristine();
+                        isEqualData = true;
+                        return;
+                    }
+                })
+            }
+        }
+
         // If operation is update, form is not touched and current data and previous data is same, Show no changes detected message
         if (this.form.operationType === Live_Operations.UPDATE && this.form.ngform && this.form.ngform.pristine &&
-                (this.form.isSelected && _.isEqual(data, prevData))) {
+                (this.form.isSelected && isEqualData)) {
             this.form.toggleMessage(true, this.form.appLocale.MESSAGE_NO_CHANGES, 'info', '');
             $appDigest();
             return;
