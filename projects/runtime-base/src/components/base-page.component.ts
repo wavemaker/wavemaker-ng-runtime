@@ -215,7 +215,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     private restoreLastPageSnapshot() {
-        if (BasePageComponent.lastPageSnapShot && this.$page) {
+        if (isMobileApp() && BasePageComponent.lastPageSnapShot && this.$page) {
             this.$page.parent().prepend(BasePageComponent.lastPageSnapShot);
         }
     }
@@ -224,7 +224,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         if (BasePageComponent.lastPageSnapShot) {
             BasePageComponent.lastPageSnapShot.remove();
         }
-        if (this.$page) {
+        if (isMobileApp() && this.$page) {
             BasePageComponent.lastPageSnapShot = this.$page.clone();
             this.$page.parents('app-root').prepend(BasePageComponent.lastPageSnapShot);
         }
