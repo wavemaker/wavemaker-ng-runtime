@@ -66,7 +66,7 @@ export class AppManagerService {
                     if (variable._spinnerId && variable._spinnerId.length) {
                         _.forEach(variable._spinnerId, (item) => {
                             if (item.split('_')[0] === variable._id && (this.$spinner as any).messagesByContext && (this.$spinner as any).messagesByContext[variable.spinnerContext] && 
-                            variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext]["finalMessage"]) {
+                                (variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext]["finalMessage"] || variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext][item])) {
                                 spinnerExists = true;
                                 return;
                             }
