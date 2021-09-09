@@ -61,12 +61,25 @@ export class AppManagerService {
                 active = data.active;
             if (!_.isEmpty(_.trim(variable.spinnerContext))) {
                 if (active) {
-                    variable._spinnerId = variable._spinnerId || [];
-                    const spinnerId = this.$spinner.show(variable.spinnerMessage,
-                        variable._id + '_' + Date.now(),
-                        variable.spinnerclass,
-                        variable.spinnerContext);
-                    variable._spinnerId.push(spinnerId);
+                    let spinnerExists;
+                    // WMS-21117 : Do not trigger spinner, if the current variable is same as spinner which is in context
+                    if (variable._spinnerId && variable._spinnerId.length) {
+                        _.forEach(variable._spinnerId, (item) => {
+                            if (item.split('_')[0] === variable._id && (this.$spinner as any).messagesByContext && (this.$spinner as any).messagesByContext[variable.spinnerContext] && 
+                            variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext]["finalMessage"]) {
+                                spinnerExists = true;
+                                return;
+                            }
+                        });
+                    }
+                    if (!spinnerExists) {
+                        variable._spinnerId = variable._spinnerId || [];
+                        const spinnerId = this.$spinner.show(variable.spinnerMessage,
+                            variable._id + '_' + Date.now(),
+                            variable.spinnerclass,
+                            variable.spinnerContext);
+                        variable._spinnerId.push(spinnerId);
+                    }
                 } else {
                     this.$spinner.hide(variable._spinnerId.shift());
                 }
