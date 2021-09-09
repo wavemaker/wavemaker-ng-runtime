@@ -80,12 +80,12 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     openDialog() {
-        this.dialogService.open(this.dialogId);
+        this.dialogService.open(this.dialogId, this.viewParent);
         $appDigest();
     }
 
     closeDialog() {
-        this.dialogService.close(this.dialogId);
+        this.dialogService.close(this.dialogId, this.viewParent);
     }
 
     focusFirstInput() {
