@@ -128,28 +128,52 @@ const addScriptForWMStylesPath = () => {
             </script>`);
 }
 
+/**
+ * Read the console arguments and prepare the key value pairs.
+ * @returns Object console arguments as key value pairs
+ */
+ const getArgs = (customArgs) => {
+    const args = {};
+    let arguments = customArgs || process.argv; 
+    arguments.slice(2, process.argv.length)
+        .forEach(arg => {
+            if (arg.slice(0, 2) === '--') {
+                const longArg = arg.split('=');
+                const longArgFlag = longArg[0].slice(2, longArg[0].length);
+                const longArgValue = longArg.length > 2 ? longArg.slice(1, longArg.length).join('=') : longArg[1];
+                args[longArgFlag] = longArgValue;
+            }
+        });
+    return args;
+}
+
+const args = getArgs();
+
 // Files that are moved out of ng-bundle and hence not to be updated.
 const SKIP_UPDATE = ['index.html', 'manifest.json'];
 // Suffix to be appended to all file names except the ones to skip.
-const SUFFIX = './ng-bundle';
+const SUFFIX = 'ng-bundle';
 
 /**
  * Checks if a file's name has been changed during the build process
  * and if changed, returns an updated file path.
  * 
+ * @param {string} cdnUrl deployment url
  * @param {string} url an absolute url to check if its filename has changed 
  * @param {object} updatedFileNames a map from old filenames to new filenames
  * @returns {string} an updated file path
  */
-const getUpdatedFileName = (url, updatedFileNames) => {
+const getUpdatedFileName = (cdnUrl, url, updatedFileNames) => {
+    const deployUrl = cdnUrl ? new URL(SUFFIX, cdnUrl).href : `./${SUFFIX}`;
     const absUrl = url.substring(1); // remove leading '/'
     if (SKIP_UPDATE.includes(absUrl)) {
         return `.${url}`;
     }
+    
     if (absUrl in updatedFileNames) {
-        return `${SUFFIX}/${updatedFileNames[absUrl]}` // add the leading '/' back
+        return `${deployUrl}/${updatedFileNames[absUrl]}` // add the leading '/' back
     }
-    return `${SUFFIX}${url}`;
+    return `${deployUrl}${url}`;
 }
 
 /**
@@ -171,10 +195,11 @@ const getUpdatedFileHashes = (url, oldHash, updatedFileHashes) => {
 /**
  * Updates name, location and content of PWA related assets.
  * 
+ * @param {string} cdnUrl deployment url
  * @param {object} updatedFileNames a map from old filenames to new filenames
  * @returns {void}
  */
-const updatePwaAssets = (updatedFileNames, updatedFileHashes) => {
+const updatePwaAssets = (cdnUrl, updatedFileNames, updatedFileHashes) => {
     // copy service worker and its config to root directory
     fs.copyFileSync('./dist/ng-bundle/ngsw-worker.js', './dist/ngsw-worker.js');
     fs.copyFileSync('./dist/ng-bundle/ngsw.json', './dist/ngsw.json');
@@ -187,11 +212,11 @@ const updatePwaAssets = (updatedFileNames, updatedFileHashes) => {
 
     ngswData.assetGroups = ngswData.assetGroups.map(group => ({
         ...group,
-        urls: group.urls.map(url => getUpdatedFileName(url, updatedFileNames))
+        urls: group.urls.map(url => getUpdatedFileName(cdnUrl, url, updatedFileNames))
     }));
     ngswData.hashTable = Object.keys(ngswData.hashTable).reduce((prev, current) => ({
         ...prev,
-        [getUpdatedFileName(current, updatedFileNames)]: getUpdatedFileHashes(current, ngswData.hashTable[current], updatedFileHashes),
+        [getUpdatedFileName(cdnUrl, current, updatedFileNames)]: getUpdatedFileHashes(current, ngswData.hashTable[current], updatedFileHashes),
     }), { });
 
     const ngswContent = JSON.stringify(ngswData, null, 4);
@@ -209,6 +234,8 @@ const generateSha1 = (content) => {
     return crypto.createHash('sha1').update(buffer).digest("hex");
 }
 
+let cdnUrl;
+
 (async () => {
     try {
         const angularJson = require(`${process.cwd()}/angular.json`);
@@ -217,6 +244,8 @@ const generateSha1 = (content) => {
         if (deployUrl.endsWith('/')) {
             deployUrl = deployUrl.substr(0, deployUrl.length - 1);
         }
+        
+        cdnUrl = args['deploy-url'] ? args['deploy-url'] : null;
         fs.copyFileSync('./dist/ng-bundle/index.html', './dist/index.html');
         const contents = await readFile(`./dist/index.html`, `utf8`);
         $ = cheerio.load(contents);
@@ -273,7 +302,7 @@ const generateSha1 = (content) => {
         if (serviceWorkerEnabled) {
             // re-generate hash for index.html since its been modified
             updatedFileHashes['index.html'] = generateSha1(htmlContent);
-            updatePwaAssets(updatedFilenames, updatedFileHashes);
+            updatePwaAssets(cdnUrl, updatedFilenames, updatedFileHashes);
         }
     } catch (e) {
         console.error(`Error in Post ng build Script | ${e}`);
