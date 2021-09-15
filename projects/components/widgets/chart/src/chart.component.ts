@@ -969,6 +969,22 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     _plotChartProxy = _.debounce(this.plotChartProxy.bind(this), 100);
 
+    // sets the center label for donut chart type
+    setDonutCenterLabel(labelValue) {
+        let chartSvg, pieGroups, chartId, fontSize;
+        fontSize = parseInt(this.fontsize, 10) || 12;
+        chartSvg = d3.select('#wmChart' + this.$id + ' svg');
+        chartId = this.chart.id();
+
+        pieGroups = chartSvg.select('.nv-chart-' + chartId).select('.nv-pie');
+        pieGroups.append('text')
+            .attr('dy', '.35em')
+            .attr('text-anchor', 'middle')
+            .attr('style', 'font-size: ' + fontSize + 'px')
+            .attr('class', 'nv-pie-title')
+            .text(labelValue);
+    }
+
     onPropertyChange(key, newVal, oldVal?) {
         super.onPropertyChange(key, newVal, oldVal);
         switch (key) {
@@ -978,6 +994,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             case 'centerlabel':
                 if (this.chart) {
                     this.chart.title(newVal);
+                    this.setDonutCenterLabel(newVal);
                 }
                 break;
             case 'type':
