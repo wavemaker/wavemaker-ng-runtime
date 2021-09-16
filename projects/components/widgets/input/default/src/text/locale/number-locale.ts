@@ -48,6 +48,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     }
 
     // Setter for the datavalue.
+    // @ts-ignore
     set datavalue(value: number) {
         this.lastValIsDecimal = false;
 

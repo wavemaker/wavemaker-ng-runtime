@@ -41,7 +41,7 @@ mkdir -p libraries/scripts/jquery.ui.touch-punch
 cp ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js libraries/scripts/jquery.ui.touch-punch/
 
 
-node_modules/.bin/rollup -c rollup.build-task.js
+node --trace-warnings node_modules/.bin/rollup -c rollup.build-task.js
 
 node_modules/.bin/rimraf dist/runtime-cli
 
@@ -53,6 +53,7 @@ mkdir -p dist/runtime-cli/dependencies
 cp -r src dist/runtime-cli/angular-app
 cp -r build-scripts dist/runtime-cli/angular-app
 cp -r dist/bundles/wmapp/locales libraries
+cp -r pwa-assets dist/runtime-cli
 if [[ "${dev}" == true ]]; then
     cp -r libraries dist/runtime-cli/angular-app
 fi

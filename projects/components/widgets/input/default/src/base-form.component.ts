@@ -1,4 +1,4 @@
-import { Injector, AfterViewInit } from '@angular/core';
+import { Injector, AfterViewInit, Injectable } from '@angular/core';
 
 import { DataSource } from '@wm/core';
 
@@ -6,6 +6,7 @@ import { IWidgetConfig, StylableComponent } from '@wm/components/base';
 
 declare const _;
 
+@Injectable()
 export abstract class BaseFormComponent extends StylableComponent implements AfterViewInit{
     public datavalue;
     private prevDatavalue;

@@ -1,4 +1,4 @@
-import { ContentChildren, Directive } from "@angular/core";
+import { ContentChildren, Directive } from '@angular/core';
 import { StylableComponent } from "./stylable.component";
 import { RedrawableDirective } from "../redraw/redrawable.directive";
 declare const _;

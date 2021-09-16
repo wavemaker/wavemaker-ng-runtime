@@ -1,4 +1,4 @@
-import { AfterViewInit, ElementRef, Injector } from '@angular/core';
+import { AfterViewInit, ElementRef, Injectable, Injector } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import { $appDigest, addClass, switchClass } from '@wm/core';
@@ -6,6 +6,7 @@ import { IWidgetConfig, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '../../base-form-custom.component';
 declare const _;
 
+@Injectable()
 export abstract class BaseInput extends BaseFormCustomComponent implements AfterViewInit {
     public class: string;
     public autotrim: boolean;

@@ -186,7 +186,7 @@ describe("DatetimeComponent", () => {
     it('should autofocus the date control ', async(() => {
         let inputEle = getHtmlSelectorElement(fixture, '.app-textbox');
         fixture.whenStable().then(() => {
-            expect(inputEle).toBe(document.activeElement);
+            expect(inputEle).toEqual(document.activeElement);
         });
 
     }));

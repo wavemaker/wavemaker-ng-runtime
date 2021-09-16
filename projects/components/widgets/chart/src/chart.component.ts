@@ -660,7 +660,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 this.selecteditem = dataObj;
                 this.invokeEventCallback('select', {$event: d3.event, selectedChartItem: data, selectedItem: this.selecteditem});
             });
-            
+
     }
 
     /*  Returns Y Scale min value
@@ -974,6 +974,11 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         switch (key) {
             case 'dataset':
                 this.handleDataSet(newVal);
+                break;
+            case 'centerlabel':
+                if (this.chart) {
+                    this.chart.title(newVal);
+                }
                 break;
             case 'type':
                 // Based on the change in type deciding the default margins

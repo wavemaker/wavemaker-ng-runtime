@@ -133,6 +133,7 @@ ngBuild() {
     local ngModuleName=$3;
     buildNeeded ${bundle} ${sourceLocation}
     if [[ "$?" -ne 0 ]]; then
+        echo "--------------------prod build--------------------"
         execCommand ng-build ${ngModuleName} "$NG build --prod $ngModuleName"
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
@@ -157,7 +158,7 @@ bundleWeb() {
         ./libraries/build-task/bundles/index.umd.js \
         ./libraries/components/input/default/bundles/index.umd.js \
         ./libraries/components/basic/default/bundles/index.umd.js \
-        ./libraries/components/basic/progress//bundles/index.umd.js \
+        ./libraries/components/basic/progress/bundles/index.umd.js \
         ./libraries/components/basic/rich-text-editor/bundles/index.umd.js \
         ./libraries/components/basic/search/bundles/index.umd.js \
         ./libraries/components/basic/tree/bundles/index.umd.js \
@@ -507,7 +508,7 @@ buildAngularWebSocket() {
 }
 
 buildNgCircleProgressbar() {
-    execCommand "tsc" "ng-circle-progress" "${TSC} ./node_modules/ng-circle-progress/index.js --target es5 --outDir dist/tmp/libs/ng-circle-progress --allowJs --skipLibCheck --module es2015"
+    execCommand "tsc" "ng-circle-progress" "${TSC} ./node_modules/ng-circle-progress/fesm2015/ng-circle-progress.js --target es5 --outDir dist/tmp/libs/ng-circle-progress --allowJs --skipLibCheck --module es2015"
     execCommand "rollup" "ng-circle-progress" "${ROLLUP} -c ./config/rollup.ng-circle-progress.config.js --silent"
 }
 

@@ -1,7 +1,7 @@
 import { rollupGlobals } from '../rollup-utils';
 
 export default {
-    input: './dist/tmp/libs/ng-circle-progress/index.js',
+    input: './dist/tmp/libs/ng-circle-progress/ng-circle-progress.js',
     output: {
         file: './dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js',
         format: 'umd',

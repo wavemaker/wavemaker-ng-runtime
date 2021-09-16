@@ -22,5 +22,8 @@
                 "@wm/mobile/components/page/tab-bar": "wm.mobile.components.page.tabbar"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

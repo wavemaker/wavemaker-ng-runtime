@@ -15,5 +15,8 @@
                 "@wm/components/input/file-upload": "wm.components.input.fileupload"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }
