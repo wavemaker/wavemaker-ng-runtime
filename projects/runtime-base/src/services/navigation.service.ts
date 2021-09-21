@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 
 import { App, NavigationOptions, AbstractNavigationService } from '@wm/core';
@@ -14,7 +14,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
     private transition: string;
     private isPageAddedToHistory = false;
 
-    constructor(private app: App, private router: Router) {
+    constructor(private app: App, private router: Router, public zone: NgZone) {
         this.router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
                 const url = event.url;
@@ -85,7 +85,16 @@ export class NavigationServiceImpl implements AbstractNavigationService {
                 + strQuery;
             return;
         }
-        return this.router.navigate([`/${pageName}`], { queryParams: options.urlParams});
+      /**
+       *  BrowserAnimcation module has issue with RouterOutlet
+          In the result every route appending to previous route instead of replace.
+          To fix the issue we are navigating inside the ngZones
+       * 
+       *  */  
+        this.zone.run(() => {
+            return this.router.navigate([`/${pageName}`], { queryParams: options.urlParams});
+        });
+
     }
 
     /**
