@@ -20,7 +20,6 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import {
     App,
     AbstractHttpService,
-    fetchContent,
     hasCordova,
     isSpotcues,
     insertAfter,
@@ -291,16 +290,13 @@ export class MobileRuntimeModule {
                 // TODO: Temporary Fix for WMS-13072, baseUrl is {{DEVELOPMENT_URL}} in wavelens
                 deployedUrl = waveLensAppUrl;
             } else {
-                fetchContent('json', './config.json', true, (response => {
-                    if (!response.error && response.baseUrl) {
-                        if (response.baseUrl === 'http://NOSERVERREQUIRED.com') {
-                            deployedUrl = 'NONE';
-                        } else {
-                            deployedUrl = response.baseUrl;
-                        }
-                        this.app.customUrlScheme = response.customUrlScheme;
-                    }
-                }));
+                const config = this.deviceService.getConfig();
+                if (config.baseUrl === 'http://NOSERVERREQUIRED.com') {
+                    deployedUrl = 'NONE';
+                } else {
+                    deployedUrl = config.baseUrl;
+                }
+                this.app.customUrlScheme = config.customUrlScheme;
             }
         }
         if (deployedUrl !== 'NONE' && !deployedUrl.endsWith('/')) {
