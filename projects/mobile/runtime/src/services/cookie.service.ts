@@ -23,12 +23,12 @@ export class CookieService implements IDeviceStartUpService {
     public serviceName = 'CookeService';
 
     public persistCookie(hostname: string, cookieName: string, cookieValue?: string): Promise<void> {
-        return new Promise<string>(resolve => {
+        return new Promise<string>((resolve, reject) => {
                 if (cookieValue) {
                     resolve(cookieValue);
                 } else {
                     this.getCookie(hostname, cookieName)
-                        .then(data => resolve(data.cookieValue));
+                        .then(data => resolve(data.cookieValue), reject);
                 }
             }).then(value => {
                 this.cookieInfo[hostname + '-' + cookieName] = {
@@ -90,10 +90,11 @@ export class CookieService implements IDeviceStartUpService {
             const cookieInfo = JSON.parse(cookieInfoStr) as Map<string, CookieInfo>;
             _.forEach(cookieInfo, c => {
                 if (c.name && c.value) {
-                    const promise = new Promise((resolve, reject) => {
-                        window['cookieEmperor'].setCookie(c.hostname, c.name, this.rotateRTL(c.value), resolve, reject);
-                    });
-                    promises.push(promise);
+                    promises.push(this.getCookie(c.hostname, c.name).catch(() => {
+                        return new Promise((resolve, reject) => {
+                            window['cookieEmperor'].setCookie(c.hostname, c.name, this.rotateRTL(c.value), resolve, reject);
+                        });
+                    }));
                 }
             });
         }
