@@ -353,7 +353,11 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     validateCurrentPage(event, callback?) {
         /*If the value entered is greater than the last page number or invalid value, then highlighting the field showing error.*/
         if ( event && (isNaN(this.dn.currentPage) || this.dn.currentPage <= 0 || (this.pageCount && (this.dn.currentPage > this.pageCount || _.isNull(this.dn.currentPage))))) {
-            $(event.target).closest('a').addClass('ng-invalid');
+            if (this.dn.currentPage <= 0) {
+                this.dn.currentPage = 1;
+            } else if (this.dn.currentPage > this.pageCount) {
+                this.dn.currentPage = this.pageCount;
+            }
             return false;
         }
         return true;
