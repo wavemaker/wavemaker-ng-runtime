@@ -46,6 +46,11 @@ register('wm-table', (): IBuildTaskDef => {
                 });
                 assignColumnIndex(node.children);
                 shared.set('isdynamictable', isColumnsPresent ? 'false' : 'true');
+                // If table have row expansion enabled, set isrowexpansionenabled to true
+                const isRowsPresent = node.children.some(childNode => {
+                    return (<any>childNode).name === 'wm-table-row';
+                });
+                shared.set('isrowexpansionenabled', isRowsPresent ? 'true' : 'false');
             } else {
                 shared.set('isdynamictable', 'true');
             }
@@ -67,6 +72,7 @@ register('wm-table', (): IBuildTaskDef => {
             const counter = idGen.nextUid();
             shared.set('counter', counter);
             attrs.set('isdynamictable', shared.get('isdynamictable'));
+            attrs.set('isrowexpansionenabled', shared.get('isrowexpansionenabled'));
             attrs.set('table_reference', counter);
             return `<${tagName} wmTable="${counter}" wmTableFilterSort wmTableCUD #${counter} data-identifier="table" role="table" ${getAttrMarkup(attrs)}>`;
         },
