@@ -220,7 +220,7 @@ const updatePwaAssets = (deployUrl, updatedFileNames, updatedFileHashes) => {
     const manifest = JSON.parse(fs.readFileSync(manifestPath).toString());
     const updatedManifest = {
         ...manifest,
-        icons: manifest.icons.map(icon => ({ ...icon, src: `${deployUrl}/${getIconName(icon.src)}` })),
+        icons: manifest.icons.map(icon => ({ ...icon, src: `${deployUrl}/${getIconPath(icon.src)}` })),
     }
     const manifestContent = JSON.stringify(updatedManifest, null, 4);
     fs.writeFileSync(manifestPath, manifestContent);
