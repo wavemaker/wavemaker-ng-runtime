@@ -213,6 +213,7 @@ const updatePwaAssets = (deployUrl, updatedFileNames, updatedFileHashes) => {
 
     // copy service worker and its config to root directory
     fs.copyFileSync('./dist/ng-bundle/ngsw-worker.js', './dist/ngsw-worker.js');
+    fs.copyFileSync('./dist/ng-bundle/wmsw-worker.js', './dist/wmsw-worker.js');
     fs.copyFileSync('./dist/ng-bundle/ngsw.json', ngswPath);
     fs.copyFileSync('./dist/ng-bundle/manifest.json', manifestPath);
 
