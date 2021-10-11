@@ -225,6 +225,7 @@ const updatePwaAssets = (deployUrl, updatedFileNames, updatedFileHashes) => {
     }
     const manifestContent = JSON.stringify(updatedManifest, null, 4);
     fs.writeFileSync(manifestPath, manifestContent);
+    updatedFileHashes['manifest.json'] = generateSha1(manifestContent);
 
     // edit service worker config to include ./ng-bundle to the path of files to be cached
     // also update the urls to files whose names are modified to include file hash (wm-styles)
