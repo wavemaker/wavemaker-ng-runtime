@@ -257,7 +257,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         if (CONSTANTS.hasCordova) {  
             let supportedLang = [];
             _.forEach(_acceptLang, function(lang) {
-                let matchedLang = _.find(_supportedLang, (val) => lang.startsWith(val));
+                let matchedLang = _.find(_supportedLang, (val) => lang === val) || _.find(_supportedLang, (val) => lang.startsWith(val));
                 if (matchedLang) {
                     supportedLang.push(matchedLang);
                 }
