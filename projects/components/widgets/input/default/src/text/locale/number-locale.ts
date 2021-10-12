@@ -463,13 +463,14 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     onPropertyChange(key, nv, ov?) {
         if (key === 'minvalue' || key === 'maxvalue') {
             this.isValid(nv);
-        } else if (key === 'datavalue' && !ov) {
-            if (this.isNaturalCurrency()) {
-                this.checkForTrailingZeros({type: 'blur'});
-            } else {
-                this.onInputChange(nv);
-            }
         } else {
+            if (key === 'datavalue' && !ov) {
+                if (this.isNaturalCurrency()) {
+                    this.checkForTrailingZeros({type: 'blur'});
+                } else {
+                    this.onInputChange(nv);
+                }
+            }
             super.onPropertyChange(key, nv, ov);
         }
     }
