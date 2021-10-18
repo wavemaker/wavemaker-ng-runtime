@@ -257,6 +257,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
         if (!stepVal || this.inputmode !== INPUTMODE.FINANCIAL || !value) {
+            if (value) {
+                this.handleChange(value);
+            }
             return;
         }
 
@@ -277,11 +280,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             // When update on key is set keypress, update the datavalue else update only the display value
             if (this.ngModelOptions.updateOn === 'change') {
                 this.datavalue = parseFloat(financialVal.toFixed(stepVal));
+                this.handleChange(this.datavalue);
             } else {
                 this.displayValue = financialVal.toFixed(stepVal);
             }
         } else {
             this.datavalue = undefined;
+            this.handleChange(null);
         }
     }
     
@@ -463,14 +468,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     onPropertyChange(key, nv, ov?) {
         if (key === 'minvalue' || key === 'maxvalue') {
             this.isValid(nv);
-        } else {
-            if (key === 'datavalue' && !ov) {
-                if (this.isNaturalCurrency()) {
-                    this.checkForTrailingZeros({type: 'blur'});
-                } else {
-                    this.onInputChange(nv);
-                }
+        } else if (key === 'datavalue' && !ov) {
+            if (this.isNaturalCurrency()) {
+                this.checkForTrailingZeros({type: 'blur'});
+            } else {
+                this.onInputChange(nv);
             }
+        } else {
             super.onPropertyChange(key, nv, ov);
         }
     }
