@@ -8,6 +8,6 @@ import { IRedrawableComponent, WidgetRef } from '../../framework/types';
 export class RedrawableDirective implements IRedrawableComponent {
     redraw: Function;
     constructor(@Self() @Inject(WidgetRef) widget) {
-        this.redraw = () => widget.redraw();
+        this.redraw = () => widget.redraw && widget.redraw();
     }
 }
