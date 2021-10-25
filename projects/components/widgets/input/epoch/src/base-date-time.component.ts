@@ -910,6 +910,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this._dateOptions.clearButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
         } else if (key === 'showcustompicker') {
             this.loadNativeDateInput = isMobile() && !this.showcustompicker;
+        } else if(key === 'adaptiveposition'){
+            this._dateOptions.adaptivePosition = nv;
         } else {
             super.onPropertyChange(key, nv, ov);
         }
