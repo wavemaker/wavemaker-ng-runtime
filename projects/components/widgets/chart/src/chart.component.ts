@@ -971,16 +971,14 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     // sets the center label for donut chart type
     setDonutCenterLabel(labelValue) {
-        let chartSvg, pieGroups, chartId, fontSize;
-        fontSize = parseInt(this.fontsize, 10) || 12;
+        let chartSvg, pieGroups;
         chartSvg = d3.select('#wmChart' + this.$id + ' svg');
-        chartId = this.chart.id();
 
-        pieGroups = chartSvg.select('.nv-chart-' + chartId).select('.nv-pie');
+        pieGroups = chartSvg.select('.nv-wrap.nv-pie').select('.nv-pie');
         pieGroups.append('text')
             .attr('dy', '.35em')
             .attr('text-anchor', 'middle')
-            .attr('style', 'font-size: ' + fontSize + 'px')
+            .attr('style', 'font-size: ' + 'inherit !important')
             .attr('class', 'nv-pie-title')
             .text(labelValue);
     }
