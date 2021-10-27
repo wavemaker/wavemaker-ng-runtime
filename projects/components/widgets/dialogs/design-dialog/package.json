@@ -15,5 +15,8 @@
                 "@wm/components/input": "wm.components.input"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

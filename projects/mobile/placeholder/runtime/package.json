@@ -10,5 +10,12 @@
                 "@angular/core": "ng.core"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
+    },
+    "peerDependencies": {
+        "@angular/common": "^10.2.5",
+        "@angular/core": "^10.2.5"
     }
 }

@@ -1,5 +1,5 @@
 import { async, ComponentFixture, fakeAsync, TestBed, tick, discardPeriodicTasks } from '@angular/core/testing';
-import { App, AppDefaults, DynamicComponentRefProvider, AbstractI18nService, UserDefinedExecutionContext } from '@wm/core';
+import { App, AppDefaults, DynamicComponentRefProvider, AbstractI18nService, UserDefinedExecutionContext, Viewport } from '@wm/core';
 import { FormComponent } from './form.component';
 import { FormWidgetDirective } from './form-widget.directive';
 import { InputModule } from '@wm/components/input';
@@ -8,7 +8,7 @@ import { Component, ViewChild } from '@angular/core';
 import { IMaskModule } from 'angular-imask';
 import { FormActionDirective } from './form-action/form-action.directive';
 import { FormFieldDirective } from './form-field/form-field.directive';
-import { compileTestComponent, setInputValue, onClickCheckTaglengthOnBody, checkCustomElementClass } from '../../../../base/src/test/util/component-test-util';
+import { compileTestComponent, setInputValue, onClickCheckTaglengthOnBody, checkCustomElementClass, mockViewport } from '../../../../base/src/test/util/component-test-util';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { WmComponentsModule } from '@wm/components/base';
@@ -235,6 +235,7 @@ const testModuleDef: ITestModuleDef = {
     ],
     providers: [
         { provide: App, useValue: mockApp },
+        { provide: Viewport, useValue: mockViewport },
         { provide: AppDefaults, useClass: AppDefaults },
         { provide: FormBuilder, useClass: FormBuilder },
         { provide: DynamicComponentRefProvider, useValue: mockApp },

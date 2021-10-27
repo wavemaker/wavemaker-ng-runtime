@@ -20,7 +20,8 @@ import {
     isIphone,
     isIpod,
     isIpad,
-    Viewport
+    Viewport,
+    hasCordova
 } from '@wm/core';
 import { WmComponentsModule } from '@wm/components/base';
 import { DialogModule } from '@wm/components/dialogs';
@@ -59,8 +60,10 @@ import { DynamicComponentRefProviderService } from './services/dynamic-component
 import { CanDeactivatePageGuard } from './guards/can-deactivate-page.guard';
 import { MAX_CACHE_AGE, MAX_CACHE_SIZE } from './util/wm-route-reuse-strategy';
 
+declare const _WM_APP_PROPERTIES;
+
 const initializeProjectDetails = () => {
-    _WM_APP_PROJECT.id = location.href.split('/')[3];
+    _WM_APP_PROJECT.id = hasCordova() ? _WM_APP_PROPERTIES.displayName : location.href.split('/')[3];
     _WM_APP_PROJECT.cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
     _WM_APP_PROJECT.ngDest = 'ng-bundle/';
 };
@@ -77,9 +80,10 @@ export function getSettingProvider(key: string, defaultValue: any) {
     };
 };
 
-export function InitializeApp(I18nService) {
-    return () => {
+export function InitializeApp(I18nService, AppJSResolve) {
+    return async () => {
         initializeProjectDetails();
+         await AppJSResolve.resolve();
         return I18nService.loadDefaultLocale();
     };
 }
@@ -176,7 +180,7 @@ export class RuntimeBaseModule {
                 {
                     provide: APP_INITIALIZER,
                     useFactory: InitializeApp,
-                    deps: [AbstractI18nService],
+                    deps: [AbstractI18nService, AppJSResolve],
                     multi: true
                 },
                 {

@@ -48,6 +48,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     }
 
     // Setter for the datavalue.
+    // @ts-ignore
     set datavalue(value: number) {
         this.lastValIsDecimal = false;
 
@@ -255,7 +256,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        if (!stepVal || this.inputmode !== INPUTMODE.FINANCIAL || !value) {
+        if (value) {
+            this.handleChange(value);
+        } else {
+            return;
+        }
+
+        if (!stepVal || this.inputmode !== INPUTMODE.FINANCIAL) {
             return;
         }
 
@@ -276,11 +283,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             // When update on key is set keypress, update the datavalue else update only the display value
             if (this.ngModelOptions.updateOn === 'change') {
                 this.datavalue = parseFloat(financialVal.toFixed(stepVal));
+                this.handleChange(this.datavalue);
             } else {
                 this.displayValue = financialVal.toFixed(stepVal);
             }
         } else {
             this.datavalue = undefined;
+            this.handleChange(null);
         }
     }
     

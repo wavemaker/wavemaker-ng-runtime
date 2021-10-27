@@ -47,11 +47,19 @@ export class MobileCoreModule {
         networkService: NetworkService
     ) {
         MobileCoreModule.addStartupServices(deviceService, deviceFileService, fileCacheService, fileOpener, networkService);
-        if (isIos() && hasCordova() && cordova.plugin && cordova.plugin.http) {
+        const isSSLPinningEnabled = deviceService.getConfig().enableSSLPinning;
+        if ((isIos() || isSSLPinningEnabled) && hasCordova() && cordova.plugin && cordova.plugin.http) {
             document.addEventListener('wmDeviceReady', () => {
                 // ### ANGULAR9TODO###
                 // Adding type as any to avoid error TS2739:
                 (<any>window)['XMLHttpRequest'] = NativeXMLHttpRequest;
+                if (isSSLPinningEnabled) {
+                    cordova.plugin.http.setServerTrustMode('pinned', () => {
+                        console.log('SSL Pinning enabled.!');
+                      }, e => {
+                        console.log('Failed to enable SSL Pinning. Due to: ' + e);
+                      });                      
+                }
                 this.overrideResolveLocalFileSystemURL();
             }, false);
         }

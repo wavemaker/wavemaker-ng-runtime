@@ -2,7 +2,7 @@
     <span *ngIf="item.children.length" class="pull-right fa caret {{menualign}}"></span>
     <i class="app-icon {{item.icon}}"></i>
     <span class="anchor-caption">{{item.label}}</span>
-
+    <span *ngIf="item.badge" class="badge pull-right" [textContent]="item.badge"></span>
 </a>
 <ng-container [ngTemplateOutlet]="nestedMenuDropdown" *ngIf="item.children.length" [ngTemplateOutletContext]="{item: item}"></ng-container>
 

@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewInit, ElementRef, Injector, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, ElementRef, Injectable, Injector, OnDestroy, OnInit } from '@angular/core';
 import { EventManager } from '@angular/platform-browser';
 
 import { ReplaySubject, Subject } from 'rxjs';
@@ -40,6 +40,7 @@ const updateStyles = (nv, ov, el) => {
 
 };
 
+@Injectable()
 export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
 
     /**
@@ -286,7 +287,15 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         }
 
         if (parentContexts) {
-            this.context = Object.assign({}, ...(<Array<any>>parentContexts), this.context);
+            let parentContextObj = {};
+            if (_.isArray(parentContexts)) {
+                _.forEach(parentContexts, (contextObj) => {
+                    Object.assign(parentContextObj, contextObj);
+                });
+            } else {
+                parentContextObj = parentContexts;
+            }
+            this.context = Object.assign({}, parentContextObj, this.context);
         }
     }
 

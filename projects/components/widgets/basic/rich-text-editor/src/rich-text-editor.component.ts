@@ -111,10 +111,12 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         return this.performEditorOperation('code');
     }
 
+    // @ts-ignore
     get datavalue() {
         return this.htmlcontent;
     }
 
+    // @ts-ignore
     set datavalue(nv) {
         if (nv !== undefined && nv !== null) {
             this.$hiddenInputEle.val(nv);

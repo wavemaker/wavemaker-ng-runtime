@@ -11,7 +11,7 @@ import { OAuthModule } from '@wm/oAuth';
 import { VariablesService } from './service/variables.service';
 import { MetadataService } from './service/metadata-service/metadata.service';
 
-export const toastrModule: ModuleWithProviders = ToastrModule.forRoot({maxOpened: 1, autoDismiss: true});
+export const toastrModule: ModuleWithProviders<any> = ToastrModule.forRoot({maxOpened: 1, autoDismiss: true});
 
 @NgModule({
     imports: [

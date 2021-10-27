@@ -14,8 +14,8 @@ export default [
         plugins: [
             alias({
                 'rxjs/Subject': 'node_modules/rxjs/_esm5/internal/Subject.js',
-                '@wm/core': 'libraries/core/fesm5/index.js',
-                '@wm/transpiler': 'libraries/transpiler/fesm5/index.js'
+                '@wm/core': 'libraries/core/fesm2015/index.js',
+                '@wm/transpiler': 'libraries/transpiler/fesm2015/index.js'
             }),
             nodeResolve({
                 jsnext: true,
@@ -24,9 +24,6 @@ export default [
             commonJS({
                 include: 'node_modules/**',
                 ignoreGlobal: true
-            }),
-            compiler({
-                formatting: 'PRETTY_PRINT'
             })
         ]
     },
@@ -43,8 +40,8 @@ export default [
             multiEntry(),
             alias({
                 'rxjs/Subject': 'node_modules/rxjs/_esm5/internal/Subject.js',
-                '@wm/core': 'libraries/core/fesm5/index.js',
-                '@wm/transpiler': 'libraries/transpiler/fesm5/index.js'
+                '@wm/core': 'libraries/core/fesm2015/index.js',
+                '@wm/transpiler': 'libraries/transpiler/fesm2015/index.js'
             }),
             nodeResolve({
                 jsnext: true,
@@ -53,9 +50,6 @@ export default [
             commonJS({
                 include: 'node_modules/**',
                 ignoreGlobal: true
-            }),
-            compiler({
-                formatting: 'PRETTY_PRINT'
             })
         ]
     }

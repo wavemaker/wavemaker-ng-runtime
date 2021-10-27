@@ -660,7 +660,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 this.selecteditem = dataObj;
                 this.invokeEventCallback('select', {$event: d3.event, selectedChartItem: data, selectedItem: this.selecteditem});
             });
-            
+
     }
 
     /*  Returns Y Scale min value
@@ -969,11 +969,31 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     _plotChartProxy = _.debounce(this.plotChartProxy.bind(this), 100);
 
+    // sets the center label for donut chart type
+    setDonutCenterLabel(labelValue) {
+        let chartSvg, pieGroups;
+        chartSvg = d3.select('#wmChart' + this.$id + ' svg');
+
+        pieGroups = chartSvg.select('.nv-wrap.nv-pie').select('.nv-pie');
+        pieGroups.append('text')
+            .attr('dy', '.35em')
+            .attr('text-anchor', 'middle')
+            .attr('style', 'font-size: ' + 'inherit !important')
+            .attr('class', 'nv-pie-title')
+            .text(labelValue);
+    }
+
     onPropertyChange(key, newVal, oldVal?) {
         super.onPropertyChange(key, newVal, oldVal);
         switch (key) {
             case 'dataset':
                 this.handleDataSet(newVal);
+                break;
+            case 'centerlabel':
+                if (this.chart) {
+                    this.chart.title(newVal);
+                    this.setDonutCenterLabel(newVal);
+                }
                 break;
             case 'type':
                 // Based on the change in type deciding the default margins

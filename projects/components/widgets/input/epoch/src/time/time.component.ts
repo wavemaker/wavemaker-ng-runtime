@@ -62,6 +62,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         return this.bsTimeValue ? this.bsTimeValue.valueOf() : undefined;
     }
 
+    // @ts-ignore
     get datavalue(): any {
         if (this.isCurrentTime && !this.bsTimeValue) {
             return CURRENT_TIME;
@@ -72,6 +73,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**Todo[Shubham]: needs to be redefined
      * This property sets the default value for the time selection
      */
+    // @ts-ignore
     set datavalue(newVal: any) {
         if (newVal) {
             if (newVal === CURRENT_TIME) {

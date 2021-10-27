@@ -1381,10 +1381,14 @@ $.widget('wm.datatable', {
     // sets the selected rowdata on click.
     rowClickHandlerOnCapture: function (e, $row, options) {
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
-        var rowId = $row.attr('data-row-id');
-        var rowData = this.preparedData[rowId];
-        var data = this.options.data[rowId];
-        this.options.assignSelectedItems(data, e);
+        var gridRow = this.gridBody.find($row);
+        // WMS-21139 trigger selectedItems change when the captured click is on the current table but not on child table
+        if (gridRow.length && gridRow.closest('table').attr('id') === this.gridElement.attr('id')) {
+            var rowId = $row.attr('data-row-id');
+            var rowData = this.preparedData[rowId];
+            var data = this.options.data[rowId];
+            this.options.assignSelectedItems(data, e);
+        }
     },
 
     /* Handles row selection. */
@@ -2871,7 +2875,7 @@ $.widget('wm.datatable', {
      */
     attachHandlersToActiveRow(rowObj) {
         var rowIndex = this.Utils.getObjectIndex(this.options.data, rowObj);
-        row = this.gridBody.find('tr.app-datagrid-row[data-row-id=' + rowIndex + ']');
+        var row = this.gridBody.find('tr.app-datagrid-row[data-row-id=' + rowIndex + ']');
         if (!row.length) {
             return;
         } else if (!row.hasClass('active')) {

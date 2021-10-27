@@ -16,5 +16,8 @@
                 "@wm/components/page/left-panel": "wm.components.page.leftpanel"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

@@ -22,5 +22,8 @@
                 "@wm/components/prefab": "wm.components.prefab"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }
