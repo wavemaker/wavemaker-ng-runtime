@@ -718,7 +718,7 @@ export class LiveVariableManager extends BaseVariableManager {
             paramObj[key] = val;
         }
 
-        if (!variable.filterExpressions) {
+        if (!variable.filterExpressions || _.isEmpty(variable.filterExpressions)) {
             variable.filterExpressions = {'condition': 'AND', 'rules': []};
         }
         targetObj = variable.filterExpressions;

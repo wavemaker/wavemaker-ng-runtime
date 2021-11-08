@@ -830,6 +830,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 children[i].classList.remove('add-opacity');
             }
             displayInputElem.classList.remove('remove-opacity');
+            let allDateTimeElements = this.nativeElement.getElementsByTagName('*');
+            for (let i=0; i < allDateTimeElements.length; i++) {
+                allDateTimeElements[i].setAttribute('tabindex', this.tabindex);
+            }
+            displayInputElem.removeAttribute('tabindex');
         }
     }
 
@@ -845,6 +850,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 children[i].classList.add('add-opacity');
             }
             displayInputElem.classList.add('remove-opacity');
+            let allDateTimeElements = this.nativeElement.getElementsByTagName('*');
+            for (let i=0; i < allDateTimeElements.length; i++) {
+                allDateTimeElements[i].setAttribute('tabindex', '-1');
+            }
+            displayInputElem.setAttribute('tabindex', this.tabindex);
             return;
         }
 
@@ -900,6 +910,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this._dateOptions.clearButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
         } else if (key === 'showcustompicker') {
             this.loadNativeDateInput = isMobile() && !this.showcustompicker;
+        } else if(key === 'adaptiveposition'){
+            this._dateOptions.adaptivePosition = nv;
         } else {
             super.onPropertyChange(key, nv, ov);
         }

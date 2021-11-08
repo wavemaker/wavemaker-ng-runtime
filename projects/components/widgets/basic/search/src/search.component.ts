@@ -602,6 +602,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         // Show the label value on input.
         this._lastQuery = this.query = isDefined(this.queryModel) && this.queryModel.length ? _.get(this.queryModel[0], 'label') : '';
+        this.showClosebtn = (this.query !== '');
     }
 
     // If we have last search results then open dropdown on focus

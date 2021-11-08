@@ -263,7 +263,7 @@ const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 d
                             </div>`;
 
 const summary_row_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="quickedit"
-                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false" 
+                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false"
                                 beforedatarender.event="UserTable1Beforedatarender(widget, data, columns)">
 
                                 <div wmTableColumn index="0" headerIndex="0" binding="exam" caption="Exam" edit-widget-type="text" type="string"
@@ -436,12 +436,12 @@ const clickEditElement = (isNewRow, fixture) => {
 const defaultValidators = (
     isNewRow,
     validatorType,
-    errorType, 
-    validator, 
+    errorType,
+    validator,
     errorMsg,
     formField,
     fixture,
-    invalidTestValue, 
+    invalidTestValue,
     validTestValue
 ) => {
     const validatorObj = {
@@ -482,12 +482,12 @@ const defaultValidators = (
 
 const dateValidators = (
     isNewRow,
-    validatorType, 
-    validator, 
-    errorMsg, 
+    validatorType,
+    validator,
+    errorMsg,
     wmComponent,
-    fixture, 
-    invalidTestValue, 
+    fixture,
+    invalidTestValue,
     validTestValue
 ) => {
     let formField =  (wmComponent as any).fullFieldDefs[3];
@@ -501,7 +501,7 @@ const dateValidators = (
     formField.applyValidations([validatorObj]);
 
     clickEditElement(isNewRow, fixture);
-    
+
     fixture.detectChanges();
     fixture.whenStable().then(() => {
         let formFieldControl = formField.getFormControl();
@@ -904,7 +904,7 @@ describe("DataTable", () => {
                         validTestValue
                     );
                 }));
-                
+
 
                 it('should trigger custom validator(sync)', async(() => {
                     customValidatorSync(false, wmComponent, inline_edit_fixture);
@@ -1205,7 +1205,7 @@ describe("DataTable", () => {
 
                         columns.exam.setSummaryRowData([
                             'Sum',
-                            'Average', 
+                            'Average',
                             'Count',
                             'Minimum',
                             'Maximum',
@@ -1328,7 +1328,7 @@ describe("DataTable", () => {
                     expect(summaryColumns[1].innerText).toEqual('20');
                     expect(summaryColumns[2].innerText).toEqual('5');
                 });
-                
+
                 it("Maximum aggregate function", () => {
                     const tableSummaryEl = getSummaryContainer(summary_row_fixture);
                     const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(5)");

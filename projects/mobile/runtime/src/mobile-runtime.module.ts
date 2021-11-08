@@ -20,7 +20,6 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import {
     App,
     AbstractHttpService,
-    fetchContent,
     hasCordova,
     isSpotcues,
     insertAfter,
@@ -130,11 +129,13 @@ export class MobileRuntimeModule {
             if (!isSpotcues) {
                 app.subscribe('userLoggedIn', () => {
                     let url = $rootScope.project.deployedUrl;
-                    if (url.endsWith('/')) {
-                        url = url.substr(0, url.length - 1);
+                    if (!url.endsWith('/')) {
+                        url = url + '/';
                     }
-                    cookieService.persistCookie(url, 'JSESSIONID').catch(noop);
-                    cookieService.persistCookie(url, 'SPRING_SECURITY_REMEMBER_ME_COOKIE').catch(noop);
+                    
+                    cookieService.persistCookie(url.substr(0, url.length - 1), 'wm_xsrf_token').catch(noop);
+                    cookieService.persistCookie(url, 'SESSION').catch(noop);
+                    cookieService.persistCookie(url, 'remember-me').catch(noop);
                 });
             }
             app.subscribe('device-file-download', (data) => {
@@ -289,16 +290,13 @@ export class MobileRuntimeModule {
                 // TODO: Temporary Fix for WMS-13072, baseUrl is {{DEVELOPMENT_URL}} in wavelens
                 deployedUrl = waveLensAppUrl;
             } else {
-                fetchContent('json', './config.json', true, (response => {
-                    if (!response.error && response.baseUrl) {
-                        if (response.baseUrl === 'http://NOSERVERREQUIRED.com') {
-                            deployedUrl = 'NONE';
-                        } else {
-                            deployedUrl = response.baseUrl;
-                        }
-                        this.app.customUrlScheme = response.customUrlScheme;
-                    }
-                }));
+                const config = this.deviceService.getConfig();
+                if (config.baseUrl === 'http://NOSERVERREQUIRED.com') {
+                    deployedUrl = 'NONE';
+                } else {
+                    deployedUrl = config.baseUrl;
+                }
+                this.app.customUrlScheme = config.customUrlScheme;
             }
         }
         if (deployedUrl !== 'NONE' && !deployedUrl.endsWith('/')) {
