@@ -44,12 +44,12 @@
               "src/assets/styles/css/wm-responsive.css",
               {
                 "input": "src/assets/themes/material/style.css",
-                "lazy": true,
+                "inject": false,
                 "bundleName": "wm-styles"
               },
               {
                 "input": "src/assets/app.css",
-                "lazy": true,
+                "inject": false,
                 "bundleName": "wm-styles"
               }
             ],

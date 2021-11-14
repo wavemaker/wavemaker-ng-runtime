@@ -395,7 +395,7 @@ export class SecurityService {
      * @returns {*} promise
      */
     public onUserLogin(): Promise<any> {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             this.getConfig(config => {
                 if (config.securityEnabled) {
                     if (config.authenticated) {
