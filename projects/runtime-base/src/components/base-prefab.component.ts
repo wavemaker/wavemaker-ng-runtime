@@ -185,7 +185,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     }
 
     private loadScripts() {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             const scriptsRequired = this.prefabContainerDirective.$element.attr('scripts-to-load');
             if (scriptsRequired) {
                 this.scriptLoaderService

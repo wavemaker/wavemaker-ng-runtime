@@ -168,7 +168,7 @@ class RemoteSyncInterceptor implements RequestInterceptor {
             path = _.replace(pageUrl, fileName, ''),
             folderPath = 'remote' + _.replace(path, this.app.deployedUrl, ''),
             downloadsParent = cordova.file.dataDirectory;
-        return new Promise((resolve, reject) => {
+        return new Promise<void | boolean>((resolve, reject) => {
                 if (this.checkRemoteDirectory) {
                     return this.deviceService.getAppBuildTime().then(buildTime => {
                         const remoteSyncInfo = this.deviceService.getEntry('remote-sync') || {};

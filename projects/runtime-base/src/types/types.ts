@@ -5,20 +5,20 @@ export enum ComponentType {
 }
 
 export abstract class ComponentRefProvider {
-    abstract async getComponentFactoryRef(componentName: string, componentType: ComponentType): Promise<any>;
+    abstract getComponentFactoryRef(componentName: string, componentType: ComponentType): Promise<any>;
     clearComponentFactoryRefCache(): void {};
 }
 
 export abstract class PrefabConfigProvider {
-    abstract async getConfig(prefabName: string): Promise<any>;
+    abstract getConfig(prefabName: string): Promise<any>;
 }
 
 export abstract class AppJSProvider {
-    abstract async getAppScriptFn(): Promise<Function>;
+    abstract getAppScriptFn(): Promise<Function>;
 }
 
 export abstract class AppVariablesProvider {
-    abstract async getAppVariables(): Promise<any>;
+    abstract getAppVariables(): Promise<any>;
 }
 export abstract class AppExtensionProvider {
     abstract  loadFormatterConfigScript(callback:Function): void;

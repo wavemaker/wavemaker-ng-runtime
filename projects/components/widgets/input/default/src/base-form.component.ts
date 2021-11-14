@@ -8,7 +8,7 @@ declare const _;
 
 @Injectable()
 export abstract class BaseFormComponent extends StylableComponent implements AfterViewInit{
-    public datavalue;
+
     private prevDatavalue;
     protected binddatavalue: string;
     private datavaluesource: any;
@@ -20,6 +20,14 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
     ) {
         super(inj, config, initPromise);
         this.binddatavalue = this.$element.attr('datavalue.bind');
+    }
+
+    set datavalue(datavalue) {
+        this.datavalue = datavalue;
+    }
+
+    get datavalue() {
+        return this.datavalue;
     }
 
     /**

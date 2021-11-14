@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "aot": true,
             "customWebpackConfig": {
               "path": "./wm-custom-webpack.config.js"
             },
@@ -221,7 +222,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/core/tsconfig.lib.json",
             "project": "projects/core/ng-package.json"
@@ -253,7 +254,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/base/tsconfig.lib.json",
             "project": "projects/components/base/ng-package.json"
@@ -304,7 +305,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/basic/default/package.json"
@@ -336,7 +337,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/basic/progress/package.json"
@@ -368,7 +369,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/basic/rich-text-editor/package.json"
@@ -400,7 +401,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/basic/search/package.json"
@@ -432,7 +433,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/basic/tree/package.json"
@@ -464,7 +465,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/input/default/package.json"
@@ -496,7 +497,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/input/calendar/package.json"
@@ -528,7 +529,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/input/chips/package.json"
@@ -560,7 +561,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/input/color-picker/package.json"
@@ -592,7 +593,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/input/currency/package.json"
@@ -624,7 +625,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/input/epoch/package.json"
@@ -656,7 +657,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/input/file-upload/package.json"
@@ -688,7 +689,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/input/rating/package.json"
@@ -720,7 +721,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/input/slider/package.json"
@@ -752,7 +753,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/data/card/package.json"
@@ -784,7 +785,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/data/form/package.json"
@@ -816,7 +817,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/data/list/package.json"
@@ -848,7 +849,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/data/pagination/package.json"
@@ -880,7 +881,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/data/live-table/package.json"
@@ -912,7 +913,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/data/table/package.json"
@@ -944,7 +945,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/chart/package.json"
@@ -976,7 +977,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/containers/accordion/package.json"
@@ -1008,7 +1009,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/containers/layout-grid/package.json"
@@ -1040,7 +1041,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/containers/panel/package.json"
@@ -1072,7 +1073,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/containers/tabs/package.json"
@@ -1104,7 +1105,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/containers/tile/package.json"
@@ -1136,7 +1137,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/containers/wizard/package.json"
@@ -1168,7 +1169,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/navigation/breadcrumb/package.json"
@@ -1200,7 +1201,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/navigation/menu/package.json"
@@ -1232,7 +1233,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/navigation/navbar/package.json"
@@ -1264,7 +1265,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/navigation/popover/package.json"
@@ -1296,7 +1297,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/dialogs/default/package.json"
@@ -1328,7 +1329,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/dialogs/alert-dialog/package.json"
@@ -1360,7 +1361,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/dialogs/confirm-dialog/package.json"
@@ -1392,7 +1393,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/dialogs/design-dialog/package.json"
@@ -1424,7 +1425,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/dialogs/iframe-dialog/package.json"
@@ -1456,7 +1457,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/dialogs/login-dialog/package.json"
@@ -1488,7 +1489,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/dialogs/partial-dialog/package.json"
@@ -1520,7 +1521,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/advanced/carousel/package.json"
@@ -1552,7 +1553,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/advanced/marquee/package.json"
@@ -1584,7 +1585,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/advanced/login/package.json"
@@ -1616,7 +1617,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/page/default/package.json"
@@ -1648,7 +1649,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/page/footer/package.json"
@@ -1680,7 +1681,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/page/header/package.json"
@@ -1712,7 +1713,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/page/left-panel/package.json"
@@ -1744,7 +1745,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/page/right-panel/package.json"
@@ -1776,7 +1777,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/page/top-nav/package.json"
@@ -1808,7 +1809,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/prefab/package.json"
@@ -1840,7 +1841,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/transpiler/tsconfig.lib.json",
             "project": "projects/transpiler/ng-package.json"
@@ -1872,7 +1873,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/security/tsconfig.lib.json",
             "project": "projects/security/ng-package.json"
@@ -1904,7 +1905,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/swipey/tsconfig.lib.json",
             "project": "projects/swipey/ng-package.json"
@@ -1936,7 +1937,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/http-service/tsconfig.lib.json",
             "project": "projects/http-service/ng-package.json"
@@ -1968,7 +1969,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/oAuth/tsconfig.lib.json",
             "project": "projects/oAuth/ng-package.json"
@@ -2000,7 +2001,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/variables/tsconfig.lib.json",
             "project": "projects/variables/ng-package.json"
@@ -2046,7 +2047,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/core/tsconfig.lib.json",
             "project": "projects/mobile/core/ng-package.json"
@@ -2078,7 +2079,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/basic/default/package.json"
@@ -2124,7 +2125,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/basic/search/package.json"
@@ -2156,7 +2157,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/containers/segmented-control/package.json"
@@ -2188,7 +2189,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/data/media-list/package.json"
@@ -2232,7 +2233,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/device/barcode-scanner/package.json"
@@ -2264,7 +2265,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/device/camera/package.json"
@@ -2296,7 +2297,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/input/file-upload/package.json"
@@ -2328,7 +2329,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/page/default/package.json"
@@ -2360,7 +2361,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/page/left-panel/package.json"
@@ -2392,7 +2393,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/page/mobile-navbar/package.json"
@@ -2424,7 +2425,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/components/tsconfig.lib.json",
             "project": "projects/mobile/components/page/tab-bar/package.json"
@@ -2468,7 +2469,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/offline/tsconfig.lib.json",
             "project": "projects/mobile/offline/ng-package.json"
@@ -2500,7 +2501,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/variables/tsconfig.lib.json",
             "project": "projects/mobile/variables/ng-package.json"
@@ -2532,7 +2533,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/runtime-base/tsconfig.lib.json",
             "project": "projects/runtime-base/ng-package.json"
@@ -2564,7 +2565,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/runtime-dynamic/tsconfig.lib.json",
             "project": "projects/runtime-dynamic/ng-package.json"
@@ -2596,7 +2597,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/runtime/tsconfig.lib.json",
             "project": "projects/mobile/runtime/ng-package.json"
@@ -2628,7 +2629,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/runtime-dynamic/tsconfig.lib.json",
             "project": "projects/mobile/runtime-dynamic/package.json"
@@ -2660,7 +2661,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/placeholder/tsconfig.lib.json",
             "project": "projects/mobile/placeholder/runtime/package.json"
@@ -2692,7 +2693,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/mobile/placeholder/tsconfig.lib.json",
             "project": "projects/mobile/placeholder/runtime-dynamic/package.json"
