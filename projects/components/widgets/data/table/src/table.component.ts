@@ -296,7 +296,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
                 this.selectedItemChange.next(this.selectedItems);
                 const rowData = this.addRowIndex(row);
-                if (rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
+                const unsupportedPaginationTypeIndex = unsupportedStatePersistenceTypes.indexOf(this.navigation);
+                if (rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator && unsupportedPaginationTypeIndex < 0) {
                     const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
@@ -307,7 +308,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     } else {
                         this.statePersistence.setWidgetState(this, {'selectedItem': [obj]});
                     }
-                } else {
+                } else if (unsupportedPaginationTypeIndex > 0) {
                     console.warn('Retain State handling on Widget ' + this.name + ' is not supported for current pagination type.');
                 }
                 this.invokeEventCallback('rowselect', {$data: rowData, $event: e, row: rowData});
