@@ -14,8 +14,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "optimizecss": "gulp --gulpfile build-scripts/optimize-css.gulpfile.js",
-    "postbuild": "node build-scripts/post-build.js",
-    "postinstall": "ngcc"
+    "postbuild": "node build-scripts/post-build.js"
   },
   "private": true,
   "dependencies": {
