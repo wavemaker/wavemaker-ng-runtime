@@ -16,7 +16,7 @@ const createElement = name => {
 };
 
 const addAtrribute = (node: Element, name: string, value: string) => {
-    const attr = new Attribute(name, value, noSpan, noSpan);
+    const attr = new Attribute(name, value, noSpan, noSpan, noSpan);
     node.attrs.push(attr);
 };
 
