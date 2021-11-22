@@ -48,7 +48,7 @@ export class MobileCoreModule {
     ) {
         MobileCoreModule.addStartupServices(deviceService, deviceFileService, fileCacheService, fileOpener, networkService);
         const isSSLPinningEnabled = deviceService.getConfig().enableSSLPinning;
-        if ((isIos() || isSSLPinningEnabled) && hasCordova() && cordova.plugin && cordova.plugin.http) {
+        if (hasCordova()) {
             document.addEventListener('wmDeviceReady', () => {
                 // ### ANGULAR9TODO###
                 // Adding type as any to avoid error TS2739:

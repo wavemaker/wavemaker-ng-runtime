@@ -291,4 +291,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             this.adaptiveposition = false;
         }
     }
+
+    ngOnDetach() {
+        // Hide the popover container while attaching the next component as part of page reuse strategy.
+        this.bsPopoverDirective.hide();
+    }
 }
