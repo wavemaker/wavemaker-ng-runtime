@@ -2,7 +2,7 @@ import { Injector } from '@angular/core';
 import { AbstractControl, Validator } from '@angular/forms';
 import { getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
-import { AbstractI18nService } from '@wm/core';
+import { AbstractI18nService, isDefined } from '@wm/core';
 import { IWidgetConfig, TrailingZeroDecimalPipe, INPUTMODE } from '@wm/components/base';
 
 import { BaseInput } from '../base/base-input';
@@ -256,7 +256,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        if (value) {
+        if (isDefined(value)) {
             this.handleChange(value);
         } else {
             return;

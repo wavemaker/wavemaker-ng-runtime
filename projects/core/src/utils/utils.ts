@@ -16,6 +16,7 @@ declare const $;
 declare const WM_CUSTOM_FORMATTERS;
 declare const MSCSSMatrix;
 declare const _WM_APP_PROPERTIES;
+declare const cordova;
 
 const userAgent = window.navigator.userAgent;
 const REGEX = {
@@ -1479,8 +1480,16 @@ export const VALIDATOR = {
 };
 
 export const transformFileURI = (url) => {
-    if (url && hasCordova() && isIos() && url.startsWith('file://')) {
-        return url.replace('file://', '/_app_file_');
+    if (url && hasCordova() && url.startsWith('file://')) {
+        if (isIos()) {
+            return url.replace('file://', '/_app_file_');
+        } else if (isAndroid() && location.href.startsWith('http')) {
+            if (url.startsWith(cordova.file.applicationDirectory)) {
+                return url.replace(cordova.file.applicationDirectory + 'www', '');
+            } else if (url.startsWith('file://')) {
+                return url.replace('file://', '/_app_file_');
+            }
+        }
     }
     return url;
 };

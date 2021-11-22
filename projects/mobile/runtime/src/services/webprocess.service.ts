@@ -3,8 +3,6 @@ import { Injectable } from '@angular/core';
 import { App, AbstractHttpService } from '@wm/core';
 import { ExtAppMessageService } from '@wm/mobile/core';
 
-import { CookieService } from './cookie.service';
-
 declare const cordova;
 
 @Injectable()
@@ -12,7 +10,6 @@ export class WebProcessService {
 
     constructor(
         private app: App,
-        private cookieService: CookieService,
         private httpService: AbstractHttpService,
         private extAppMessageService: ExtAppMessageService
     ) {}
@@ -59,13 +56,6 @@ export class WebProcessService {
                     reject('Login process is stopped');
                 }
             });
-        }).then((output) => {
-            let url = this.app.deployedUrl;
-            if (url.endsWith('/')) {
-                url = url.substr(0, url.length - 1);
-            }
-            return this.cookieService.setCookie(url, 'WM_WEB_PROCESS', processInfo)
-                .then(() => output);
         });
     }
 
