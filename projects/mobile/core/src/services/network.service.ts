@@ -38,7 +38,7 @@ const blockUrl = url => {
 };
 
 const getXMLHttpRequestToUse = (() => {
-    const clazz = (isIos() && hasCordova() && cordova.plugin && cordova.plugin.http) ? NativeXMLHttpRequest : XMLHttpRequest;
+    const clazz = (hasCordova() && cordova.plugin && cordova.plugin.http) ? NativeXMLHttpRequest : XMLHttpRequest;
     const orig = clazz.prototype.open;
     // Intercept all XHR calls
     clazz.prototype.open = function (method: string, url: string, async: boolean = true, user?: string, password?: string) {
