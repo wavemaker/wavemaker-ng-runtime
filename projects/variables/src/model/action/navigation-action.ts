@@ -12,6 +12,10 @@ export class NavigationAction extends BaseAction {
 
     constructor(variable: any) {
         super();
+        variable.pathParams = {
+            id:321,
+            userid:'rirani'
+        }
         Object.assign(this as any, variable);
     }
 

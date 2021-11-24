@@ -42,6 +42,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     navigationService: AbstractNavigationService;
     router: Router;
     pageParams: any;
+    pathParams: any;
     showPageContent: boolean;
     i18nService: AbstractI18nService;
     appLocale: any;
@@ -82,6 +83,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.activePageName = this.pageName; // Todo: remove this
 
         this.registerPageParams();
+        this.registerPathParam();
         this.defineI18nProps();
         super.init();
     }
@@ -104,6 +106,11 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     registerPageParams() {
         const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = _.extend({}, params));
+        this.registerDestroyListener(() => subscription.unsubscribe());
+    }
+
+    registerPathParam(){
+        const subscription = this.route.params.subscribe(params => this.pathParams = (this.App as any).pathParams = _.extend({}, params));
         this.registerDestroyListener(() => subscription.unsubscribe());
     }
 

@@ -186,6 +186,7 @@ export interface NavigationOptions {
     transition?: string;
     urlParams?: any;
     viewName?: string;
+    pathParams?: any;
 }
 
 export abstract class AbstractNavigationService {

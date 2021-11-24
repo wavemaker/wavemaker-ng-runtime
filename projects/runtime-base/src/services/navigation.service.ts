@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 
 import { App, NavigationOptions, AbstractNavigationService } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
@@ -14,7 +14,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
     private transition: string;
     private isPageAddedToHistory = false;
 
-    constructor(private app: App, private router: Router, public zone: NgZone) {
+    constructor(private app: App, private router: Router, public zone: NgZone, private acivatedRoute:ActivatedRoute) {
         this.router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
                 const url = event.url;
@@ -92,7 +92,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
        * 
        *  */  
         this.zone.run(() => {
-            return this.router.navigate([`/${pageName}`], { queryParams: options.urlParams});
+            return this.router.navigate([`/${pageName}`, options.pathParams.userid], { queryParams: options.urlParams, relativeTo: this.acivatedRoute});
         });
 
     }
@@ -144,7 +144,8 @@ export class NavigationServiceImpl implements AbstractNavigationService {
                         viewName: viewName,
                         $event: $event,
                         transition: transition,
-                        urlParams: options.urlParams
+                        urlParams: options.urlParams,
+                        pathParams: options.pathParams
                     });
                     // subscribe to an event named pageReady which notifies this subscriber
                     // when all widgets in page are loaded i.e when page is ready

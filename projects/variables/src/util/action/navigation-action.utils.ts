@@ -11,6 +11,7 @@ export const navigate = (variable, options) => {
     const pageName = variable.dataBinding.pageName || variable.pageName,
         operation = variable.operation,
         urlParams = variable.dataSet;
+    const pathParams = variable.pathParams;
 
     options = options || {};
 
@@ -23,7 +24,8 @@ export const navigate = (variable, options) => {
             navigationService.goToPage(pageName, {
                 transition: variable.pageTransitions,
                 $event: options.$event,
-                urlParams: urlParams
+                urlParams: urlParams,
+                pathParams: pathParams
             });
             break;
         case 'gotoView':
@@ -46,7 +48,8 @@ export const navigate = (variable, options) => {
             pageName: pageName,
             transition: variable.pageTransitions,
             $event: options.$event,
-            urlParams: urlParams
+            urlParams: urlParams,
+            pathParams: pathParams
         }, variable);
     }
 };

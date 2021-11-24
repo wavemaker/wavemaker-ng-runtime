@@ -28,5 +28,12 @@ export const routes = [
         resolve: appDependenciesResolve,
         component: PageWrapperComponent,
         canDeactivate: [CanDeactivatePageGuard]
+    },
+    {
+        path: ':pageName/:userid',
+        pathMatch: 'full',
+        resolve: appDependenciesResolve,
+        component: PageWrapperComponent,
+        canDeactivate: [CanDeactivatePageGuard]
     }
 ];
