@@ -39,6 +39,8 @@ import {
 } from './pipes/custom-pipes';
 import { TrustAsPipe } from './pipes/trust-as.pipe';
 import { DialogServiceImpl } from './widgets/common/dialog/dialog.service';
+import { dummyWidgetConfig } from './widgets/framework/types';
+import { WIDGET_CONFIG } from './widgets/framework/constants';
 
 const wmComponents = [
     ContainerDirective,
@@ -97,7 +99,8 @@ export class WmComponentsModule {
                 ImagePipe,
                 CustomPipe,
                 Location,
-                {provide: AbstractDialogService, useClass: DialogServiceImpl}
+                {provide: AbstractDialogService, useClass: DialogServiceImpl}, 
+                {provide: WIDGET_CONFIG, useValue: dummyWidgetConfig}
             ]
         };
     }

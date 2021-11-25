@@ -1,6 +1,6 @@
 import { Directive, Injector, OnInit, Optional, SkipSelf } from '@angular/core';
 
-import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
+import { BaseComponentDirective, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './table-row.props';
 import { TableComponent } from '../table.component';
@@ -13,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-row', hostClass: ''};
         provideAsWidgetRef(TableRowDirective)
     ]
 })
-export class TableRowDirective extends BaseComponent implements OnInit {
+export class TableRowDirective extends BaseComponentDirective implements OnInit {
     static initializeProps = registerProps();
 
     config;

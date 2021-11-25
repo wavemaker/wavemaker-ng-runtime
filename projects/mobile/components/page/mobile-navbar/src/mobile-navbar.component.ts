@@ -1,7 +1,7 @@
 import { AfterViewInit, Attribute, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 import { AbstractNavigationService, App } from '@wm/core';
-import { BaseComponent, getImageUrl, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
+import { BaseComponentDirective, getImageUrl, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';
 import { LeftPanelDirective } from '@wm/components/page/left-panel';
 import { SearchComponent } from '@wm/components/basic/search';
@@ -19,7 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-navbar', hostClass:
         provideAsWidgetRef(MobileNavbarComponent)
     ]
 })
-export class MobileNavbarComponent extends BaseComponent implements OnDestroy, AfterViewInit {
+export class MobileNavbarComponent extends BaseComponentDirective implements OnDestroy, AfterViewInit {
     static initializeProps = registerProps();
 
     private _isReady = false;

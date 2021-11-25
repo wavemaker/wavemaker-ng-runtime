@@ -1,7 +1,7 @@
 import { ContentChildren, Directive, HostBinding, Injector, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { BaseComponent, IWidgetConfig, provideAsWidgetRef, RedrawableDirective } from '@wm/components/base';
+import { BaseComponentDirective, IWidgetConfig, provideAsWidgetRef, RedrawableDirective } from '@wm/components/base';
 import { WizardComponent } from '../wizard.component';
 
 import { registerProps } from './wizard-step.props';
@@ -25,7 +25,7 @@ const enum STEP_STATUS {
     ],
     exportAs: 'wmWizardStep'
 })
-export class WizardStepDirective extends BaseComponent {
+export class WizardStepDirective extends BaseComponentDirective {
     static initializeProps = registerProps();
 
     public show: boolean;

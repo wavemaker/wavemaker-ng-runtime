@@ -1,6 +1,6 @@
 import { $appDigest, $unwatch, isChangeFromWatch, isObject, resetChangeFromWatch, toBoolean, toDimension } from '@wm/core';
 
-import { BaseComponent } from '../common/base/base.component';
+import { BaseComponentDirective } from '../common/base/base.component';
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
 import { isStyle } from './styler';
 import { getConditionalClasses, getWatchIdentifier } from '../../utils/widget-utils';
@@ -38,7 +38,7 @@ const parseValue = (key: string, value: any, type: PROP_TYPE): any => {
  * This method invokes the defaultPropertyChange handler where the common widget properties like name, class are handled
  * Notifies the component about the style/property change
  */
-export const globalPropertyChangeHandler = (component: BaseComponent, key: string, nv: any) => {
+export const globalPropertyChangeHandler = (component: BaseComponentDirective, key: string, nv: any) => {
     const widgetId = component.widgetId;
     const ov = component[key];
 

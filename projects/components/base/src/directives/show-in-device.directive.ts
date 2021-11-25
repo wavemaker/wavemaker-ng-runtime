@@ -12,7 +12,7 @@ import {
 import { isLargeTabletLandscape, isLargeTabletPortrait } from '@wm/core';
 
 import { WidgetRef } from '../widgets/framework/types';
-import { BaseComponent } from '../widgets/common/base/base.component';
+import { BaseComponentDirective } from '../widgets/common/base/base.component';
 declare const _, $;
 
 @Directive({
@@ -24,7 +24,7 @@ export class ShowInDeviceDirective implements OnDestroy {
     private embeddedView;
     constructor(
         private elRef: ElementRef,
-        @Inject(WidgetRef) private widget: BaseComponent,
+        @Inject(WidgetRef) private widget: BaseComponentDirective,
         private viewContainerRef: ViewContainerRef,
         inj: Injector,
         private templateRef: TemplateRef<any>

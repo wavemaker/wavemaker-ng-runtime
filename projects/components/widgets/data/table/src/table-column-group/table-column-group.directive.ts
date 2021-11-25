@@ -1,6 +1,6 @@
 import { Directive, Injector, OnInit, Optional, SkipSelf } from '@angular/core';
 
-import { BaseComponent,  provideAsWidgetRef, setHeaderConfigForTable} from '@wm/components/base';
+import { BaseComponentDirective,  provideAsWidgetRef, setHeaderConfigForTable} from '@wm/components/base';
 import { registerProps } from './table-column-group.props';
 import { TableComponent } from '../table.component';
 
@@ -12,7 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
         provideAsWidgetRef(TableColumnGroupDirective)
     ]
 })
-export class TableColumnGroupDirective extends BaseComponent implements OnInit {
+export class TableColumnGroupDirective extends BaseComponentDirective implements OnInit {
     static initializeProps = registerProps();
 
     accessroles;

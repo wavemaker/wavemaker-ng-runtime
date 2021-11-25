@@ -1,6 +1,6 @@
 import { Directive, Injector } from '@angular/core';
 
-import { BaseComponent, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
+import { BaseComponentDirective, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
 import { registerProps } from './dialog-footer.props';
 
 const WIDGET_INFO: IWidgetConfig = {
@@ -14,7 +14,7 @@ const WIDGET_INFO: IWidgetConfig = {
         provideAsWidgetRef(DialogFooterDirective)
     ]
 })
-export class DialogFooterDirective extends BaseComponent {
+export class DialogFooterDirective extends BaseComponentDirective {
     static initializeProps = registerProps();
 
     constructor(inj: Injector) {

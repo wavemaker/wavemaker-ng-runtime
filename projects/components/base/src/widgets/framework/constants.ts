@@ -1,3 +1,5 @@
+import { InjectionToken } from "@angular/core";
+import { IWidgetConfig } from "../framework/types";
 
 export const EVENTS_MAP = new Map<string, string>([
     // ['enterkeypress', 'keypress.enter']
@@ -42,3 +44,5 @@ export const isDimensionProp = (key: string): boolean => DIMENSION_PROPS.has(key
 export const DEBOUNCE_TIMES = {
     PAGINATION_DEBOUNCE_TIME : 250
 };
+
+export const WIDGET_CONFIG = new InjectionToken<IWidgetConfig>('widget.config');

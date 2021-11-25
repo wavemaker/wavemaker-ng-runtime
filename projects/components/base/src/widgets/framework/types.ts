@@ -1,12 +1,16 @@
 import { InjectionToken } from '@angular/core';
 
-import { BaseComponent } from '../common/base/base.component';
+import { BaseComponentDirective } from '../common/base/base.component';
 
 export interface IWidgetConfig {
     widgetType: string;
     widgetSubType?: string;
     hostClass?: string;
     displayType?: string;
+}
+
+export const dummyWidgetConfig = {
+    widgetType: "test-widget"
 }
 
 export interface IRedrawableComponent {
@@ -17,7 +21,7 @@ export type ChangeListener = (key: string, nv: any, ov?: any) => void;
 
 export abstract class WidgetRef {}
 
-export abstract class DialogRef<T extends BaseComponent> {
+export abstract class DialogRef<T extends BaseComponentDirective> {
    bsModal: any;
 }
 

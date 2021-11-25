@@ -3,7 +3,7 @@
  */
 import { propNameCSSKeyMap } from './styler';
 import { globalPropertyChangeHandler } from './property-change-handler';
-import { BaseComponent } from '../common/base/base.component';
+import { BaseComponentDirective } from '../common/base/base.component';
 
 declare const _;
 
@@ -11,11 +11,11 @@ declare const _;
  *  proxy handler for the components
  */
 export const proxyHandler = {
-    set: (target: BaseComponent, key: string, value: any): boolean => {
+    set: (target: BaseComponentDirective, key: string, value: any): boolean => {
         globalPropertyChangeHandler(target, key, value);
         return true;
     },
-    get: (target: BaseComponent, key: string): any => {
+    get: (target: BaseComponentDirective, key: string): any => {
         const v = target[key];
         if (_.isFunction(v)) { // bind the proper context for the methods
             return v.bind(target);
@@ -38,7 +38,7 @@ const invokeLater = fn => {
 };
 
 export class WidgetProxyProvider {
-    public static create(instance: BaseComponent, widgetSubType: string, propsByWidgetSubType: Map<string, any>) {
+    public static create(instance: BaseComponentDirective, widgetSubType: string, propsByWidgetSubType: Map<string, any>) {
         // If the native Proxy is supported
         if ((window as any).Proxy) {
             return new Proxy(instance, proxyHandler);

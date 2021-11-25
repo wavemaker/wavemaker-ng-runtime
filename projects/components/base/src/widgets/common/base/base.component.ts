@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewInit, ElementRef, Injectable, Injector, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Directive, ElementRef, Inject, Injectable, Injector, OnDestroy, OnInit } from '@angular/core';
 import { EventManager } from '@angular/platform-browser';
 
 import { ReplaySubject, Subject } from 'rxjs';
@@ -13,6 +13,7 @@ import { widgetIdGenerator } from '../../framework/widget-id-generator';
 import { DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
 import { WidgetProxyProvider } from '../../framework/widget-proxy-provider';
 import { getWatchIdentifier } from '../../../utils/widget-utils';
+import { WIDGET_CONFIG } from '../../framework/constants';
 
 declare const $, _;
 
@@ -40,8 +41,8 @@ const updateStyles = (nv, ov, el) => {
 
 };
 
-@Injectable()
-export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
+@Directive()
+export abstract class BaseComponentDirective implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
 
     /**
      * unique identifier for the widget
@@ -161,7 +162,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     protected constructor(
         protected inj: Injector,
-        config: IWidgetConfig,
+        @Inject(WIDGET_CONFIG) config: IWidgetConfig,
         initPromise?: Promise<any> // Promise on which the initialization has to wait
     ) {
         const elementRef = inj.get(ElementRef);

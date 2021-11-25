@@ -1,6 +1,6 @@
 import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
+import { BaseComponentDirective, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './form-action.props';
 import { FormComponent } from '../form.component';
@@ -15,7 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
         provideAsWidgetRef(FormActionDirective)
     ]
 })
-export class FormActionDirective extends BaseComponent implements OnInit {
+export class FormActionDirective extends BaseComponentDirective implements OnInit {
     static initializeProps = registerProps();
 
     accessroles;

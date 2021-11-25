@@ -52,7 +52,7 @@ export {
     extractDataSourceName
 } from './utils/widget-utils';
 export {
-    BaseComponent
+    BaseComponentDirective
 } from './widgets/common/base/base.component';
 export * from './widgets/common/base/base-container.component';
 export {

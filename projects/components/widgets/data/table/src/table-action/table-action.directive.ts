@@ -1,6 +1,6 @@
 import { Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
+import { BaseComponentDirective, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './table-action.props';
 import { TableComponent } from '../table.component';
@@ -15,7 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
         provideAsWidgetRef(TableActionDirective)
     ]
 })
-export class TableActionDirective extends BaseComponent implements OnInit {
+export class TableActionDirective extends BaseComponentDirective implements OnInit {
     static initializeProps = registerProps();
 
     accessroles;

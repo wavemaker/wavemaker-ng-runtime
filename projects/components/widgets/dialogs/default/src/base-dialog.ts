@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 
 import { AbstractDialogService, closePopover, findRootContainer } from '@wm/core';
 
-import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
+import { BaseComponentDirective, IDialog, IWidgetConfig } from '@wm/components/base';
 
 declare const _;
 
@@ -33,7 +33,7 @@ const invokeClosedCallback = (ref) => {
 };
 
 @Injectable()
-export abstract class BaseDialog extends BaseComponent implements IDialog, OnDestroy {
+export abstract class BaseDialog extends BaseComponentDirective implements IDialog, OnDestroy {
 
     public name: string;
 
