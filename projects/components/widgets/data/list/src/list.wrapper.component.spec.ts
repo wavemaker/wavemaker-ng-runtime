@@ -1,4 +1,4 @@
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import {App, AppDefaults, setPipeProvider} from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -55,7 +55,7 @@ describe('ListComponent', () => {
    let listComponent: ListComponent;
    let fixture: ComponentFixture<ListWrapperComponent>;
 
-   beforeEach(async(() => {
+   beforeEach(waitForAsync(() => {
        TestBed.configureTestingModule({
            imports: [
                FormsModule,
@@ -216,7 +216,7 @@ describe('ListComponent With groupby', () => {
     let listComponent: ListComponent;
     let fixture: ComponentFixture<ListWrapperComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
                 FormsModule,

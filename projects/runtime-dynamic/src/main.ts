@@ -16,7 +16,7 @@ console.time('bootstrap');
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    new Promise( resolve => {
+    new Promise<void|Event>( resolve => {
         if (isSpotcues) {
             initSpotCues().then(resolve);
         } else if (window['cordova']) {

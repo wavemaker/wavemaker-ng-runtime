@@ -1,4 +1,4 @@
-import { async, ComponentFixture } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { PanelComponent } from './panel.component';
 import { Component, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';

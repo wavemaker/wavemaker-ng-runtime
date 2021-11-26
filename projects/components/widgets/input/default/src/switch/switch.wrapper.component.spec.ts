@@ -3,7 +3,7 @@ import { SwitchComponent } from './switch.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { async, ComponentFixture } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
 import { App, AppDefaults } from '@wm/core';
 import { ToDatePipe } from '@wm/components/base';
@@ -49,7 +49,7 @@ describe('wm-switch: Component specific tests: ', () => {
     let wmComponent: SwitchComponent;
     let fixture: ComponentFixture<SwitchWrapperComponent>;
 
-    beforeEach(async(async() => {
+    beforeEach(waitForAsync(() => {
         fixture  = compileTestComponent(testModuleDef, SwitchWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
@@ -64,11 +64,11 @@ describe('wm-switch: Component specific tests: ', () => {
         expect(wmComponent.datavalue).toBe('yes');
     });
 
-    it('should have datavalue as no', async(done) => {
+    it('should have datavalue as no', done => {
         setDatavalue(fixture, done, 'no', 'no');
     });
 
-    it('should have datavalue as yes when switch is in disabled state', async(done) => {
+    it('should have datavalue as yes when switch is in disabled state', done => {
         wmComponent.setProperty('disabled', true);
         fixture.detectChanges();
         setDatavalue(fixture, done, 'no', 'yes');
@@ -85,6 +85,6 @@ describe('wm-switch: Component specific tests: ', () => {
             }, 200);
         });
     }
-})
+});
 
 

@@ -22,7 +22,7 @@ import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import {  BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import {  deLocale } from 'ngx-bootstrap/locale';
 import { By } from '@angular/platform-browser';
-import { async, ComponentFixture } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import {
     UserDefinedExecutionContext,
     AppDefaults,
@@ -177,12 +177,11 @@ describe("TimeComponent", () => {
 
 
     /************************* Properties starts ****************************************** **/
-    it('should not add the hidden property, element always visible', async(() => {
-        notHavingTheAttribute(fixture, '.app-timeinput', 'hidden');
-
+    it('should not add the hidden property, element always visible', waitForAsync(async () => {
+        await notHavingTheAttribute(fixture, '.app-timeinput', 'hidden');
     }));
 
-    it('should autofocus the date control ', async(() => {
+    it('should autofocus the date control ', waitForAsync(() => {
         let inputEle = getHtmlSelectorElement(fixture, '.app-textbox');
         fixture.whenStable().then(() => {
             expect(inputEle.nativeElement.hasAttribute('autofocus')).toBeTruthy();
@@ -202,12 +201,12 @@ describe("TimeComponent", () => {
 
     // });
 
-    it('should assign the shortkey to the input control as attribute accesskey ', async(() => {
+    it('should assign the shortkey to the input control as attribute accesskey ', waitForAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.app-textbox');
         expect(dateInputControl.nativeElement.getAttribute('accesskey')).toEqual('g');
     }));
 
-    it("should set the hours step as 1hour on click on top arrow button", async(() => {
+    it("should set the hours step as 1hour on click on top arrow button", waitForAsync(() => {
         wmComponent.getWidget().hourstep = 2;
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-date');
         dateInputControl.nativeElement.click();
@@ -220,7 +219,7 @@ describe("TimeComponent", () => {
     }));
 
 
-    it("should set the min step as 30min on click on the second top arrow button", async(() => {
+    it("should set the min step as 30min on click on the second top arrow button", waitForAsync(() => {
         wmComponent.getWidget().minutestep = 25;
 
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-date');
@@ -233,12 +232,12 @@ describe("TimeComponent", () => {
         });
     }));
 
-    it('should set the current date as default value ', async(() => {
+    it('should set the current date as default value ', waitForAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.app-textbox');
         expect(dateInputControl.nativeElement.value).toEqual(currentTime);
     }));
 
-    it('should set the given date as default value and timepattern check ', async(() => {
+    it('should set the given date as default value and timepattern check ', waitForAsync(() => {
         wmComponent.getWidget().timepattern = 'hh:mm a';
         wmComponent.getWidget().datavalue = '12:10';
         fixture.detectChanges();
@@ -251,36 +250,36 @@ describe("TimeComponent", () => {
     //     fixture.detectChanges();
     //     hasAttributeCheck(fixture, '.app-textbox', 'readonly');
     // });
-    it('should be disabled mode ', async(() => {
+    it('should be disabled mode ', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
         hasAttributeCheck(fixture, '.app-textbox', 'disabled');
 
     }));
-    it('should be disabled mode (picker button)', async(() => {
+    it('should be disabled mode (picker button)', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
         hasAttributeCheck(fixture, '.btn-date', 'disabled');
 
     }));
 
-    it("should show the timer panel on click the time button ", async(() => {
+    it("should show the timer panel on click the time button ", waitForAsync(() => {
         onClickCheckTaglengthOnBody(fixture, '.btn-date', null, null);
         fixture.whenStable().then(() => {
             expect(document.getElementsByTagName('timepicker').length).toBe(1);
         });
     }));
 
-    it("should not show the timer panel on click the input control ", async(() => {
+    it("should not show the timer panel on click the input control ", waitForAsync(() => {
         onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'timepicker', 0);
     }));
 
 
-    it('should show the time patten as hh:mm:ss format ', async(() => {
+    it('should show the time patten as hh:mm:ss format ', waitForAsync(() => {
         datepatternTest(fixture, '.app-timeinput', '.app-textbox', 'timepattern', true);
     }));
 
-    it('should get the time outputformat as hh:mm:ss ', async(() => {
+    it('should get the time outputformat as hh:mm:ss ', waitForAsync(() => {
         outputpatternTest(fixture, '.app-timeinput', wmComponent.datavalue, true);
     }));
 
@@ -291,13 +290,13 @@ describe("TimeComponent", () => {
 
     /************************* Validations starts ****************************************** **/
 
-    it('should be apply required validation ', async(() => {
+    it('should be apply required validation ', waitForAsync(() => {
         fixture.whenStable().then(() => {
             hasAttributeCheck(fixture, '.app-textbox', 'required')
         });
     }));
 
-    it("should not allow to set the above max time", async(() => {
+    it("should not allow to set the above max time", waitForAsync(() => {
 
         onClickCheckTaglengthOnBody(fixture, '.btn-date', null, null);
 
@@ -307,7 +306,7 @@ describe("TimeComponent", () => {
         });
     }));
 
-    it("should not allow to set the above given max time", async(() => {
+    it("should not allow to set the above given max time", waitForAsync(() => {
         wmComponent.getWidget().timepattern = 'HH:mm:ss';
         wmComponent.getWidget().mintime = '01:00:00';
         wmComponent.getWidget().maxtime = "03:00:00";
@@ -325,7 +324,7 @@ describe("TimeComponent", () => {
     }));
 
 
-    it("should not allow to set the below min time", async(() => {
+    it("should not allow to set the below min time", waitForAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-date');
         dateInputControl.nativeElement.click();
         fixture.whenStable().then(() => {
@@ -334,7 +333,7 @@ describe("TimeComponent", () => {
         });
     }));
 
-    it("should not allow to set the above given min time", async(() => {
+    it("should not allow to set the above given min time", waitForAsync(() => {
         wmComponent.getWidget().timepattern = 'HH:mm:ss';
         wmComponent.getWidget().mintime = '01:00:00';
         wmComponent.getWidget().maxtime = "03:00:00";
@@ -355,7 +354,7 @@ describe("TimeComponent", () => {
 
     /************************* Scenarios starts ***************************************** */
 
-    it('should show the timepicker panel when we click on the input control and onclick outside it should close ', async(() => {
+    it('should show the timepicker panel when we click on the input control and onclick outside it should close ', waitForAsync(() => {
         wmComponent.getWidget().showdropdownon = 'default';
         onClickCheckTaglengthOnBody(fixture, '.app-textbox', null, null);
         fixture.whenStable().then(() => {
@@ -368,7 +367,7 @@ describe("TimeComponent", () => {
         });
     }));
 
-    it("should be able to select the time between the min and max time", async(() => {
+    it("should be able to select the time between the min and max time", waitForAsync(() => {
         wmComponent.getWidget().timepattern = 'HH:mm:ss';
         wmComponent.getWidget().mintime = '01:00:00';
         wmComponent.getWidget().maxtime = "03:00:00";
@@ -388,7 +387,7 @@ describe("TimeComponent", () => {
 
     /************************* Events starts ****************************************** **/
 
-    it('Should trigger the date control change event', async(() => {
+    it('Should trigger the date control change event', waitForAsync(() => {
         wmComponent.getWidget().timepattern = 'HH:mm:ss';
         wmComponent.getWidget().mintime = '01:00:00';
         wmComponent.getWidget().maxtime = "03:00:00";
@@ -438,11 +437,11 @@ describe('TimeComponent with localization', () => {
         expect(timeWrapperComponent).toBeTruthy() ;
     });
 
-    it ('should display localized meriains in time picker', async(() => {
+    it ('should display localized meriains in time picker', waitForAsync(() => {
          localizedTimePickerTest(fixture,  (wmComponent as any).meridians, '.btn-date');
     }));
 
-    it ('should display the defult value in de format', async(() => {
+    it ('should display the defult value in de format', waitForAsync(() => {
         const time = '02:00 PM', timepattern = 'hh:mm a';
         wmComponent.getWidget().timepattern = timepattern;
         wmComponent.datavalue = '02:00:00';
@@ -451,14 +450,14 @@ describe('TimeComponent with localization', () => {
         expect(getFormattedDate((wmComponent as any).datePipe, dateObj, timepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
     }));
 
-    it('should update the datavalue without error when we type "de" format time in inputbox with "12H" format', async(() => {
+    it('should update the datavalue without error when we type "de" format time in inputbox with "12H" format', waitForAsync(() => {
         const  timepattern = 'hh:mm:ss a';
         wmComponent.getWidget().timepattern = timepattern;
         localizedValueOnInputTest(fixture, '03:15:00 AM', wmComponent);
     }));
 
 
-    it('should update the datavalue without error when we type "de" format time in inputbox with "24H" format', async(() => {
+    it('should update the datavalue without error when we type "de" format time in inputbox with "24H" format', waitForAsync(() => {
         const time = '15:15:00', timepattern = 'HH:mm:ss';
         wmComponent.getWidget().timepattern = timepattern;
         localizedValueOnInputTest(fixture, '15:15:00', wmComponent);
@@ -492,7 +491,7 @@ describe('TimeComponent with ro (Romania) localization', () => {
         fixture.detectChanges();
     }));
 
-    it('should update the datavalue without error when we type "ro" format time in inputbox with "12H" format', async(() => {
+    it('should update the datavalue without error when we type "ro" format time in inputbox with "12H" format', waitForAsync(() => {
         const  timepattern = 'hh:mm:ss a';
         wmComponent.getWidget().timepattern = timepattern;
         localizedValueOnInputTest(fixture, '03:15:00 a.m.', wmComponent);

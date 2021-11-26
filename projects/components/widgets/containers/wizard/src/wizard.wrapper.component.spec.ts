@@ -3,7 +3,7 @@ import { WizardComponent } from './wizard.component';
 import { WizardStepDirective } from './wizard-step/wizard-step.directive';
 import { WmComponentsModule } from '@wm/components/base';
 import { FormsModule } from '@angular/forms';
-import { async, ComponentFixture } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { App } from '@wm/core';
@@ -75,7 +75,7 @@ describe('wm-wizard: Component Specific Tests', () => {
     let wrapperComponent: WizardWrapperComponent;
     let wmComponent: WizardComponent;
     let fixture: ComponentFixture<WizardWrapperComponent>;
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         fixture = compileTestComponent(testModuleDef, WizardWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;

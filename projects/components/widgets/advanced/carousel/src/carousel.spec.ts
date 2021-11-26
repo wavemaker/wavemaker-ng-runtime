@@ -1,4 +1,4 @@
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import {CarouselDirective} from "./carousel.directive";
@@ -50,7 +50,7 @@ class CarouselSpec {
 describe('wm-carousel: Widget specific test cases', () => {
     let fixture: ComponentFixture<CarouselSpec>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [CarouselModule, BasicModule, WmComponentsModule.forRoot()],
             declarations: [CarouselSpec, CarouselDirective, CarouselTemplateDirective],
@@ -77,7 +77,7 @@ describe('wm-carousel: Widget specific test cases', () => {
         expect(fixture.componentInstance.carousel.currentslide).toEqual(testData[0]);
     });
 
-    it('Left and Right controls on carousel should navigate to previous and next slides respectively', async(() => {
+    it('Left and Right controls on carousel should navigate to previous and next slides respectively', waitForAsync(() => {
         const testData = fixture.componentInstance.testdata;
         // not working without this
         fixture.detectChanges();

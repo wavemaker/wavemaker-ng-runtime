@@ -41,7 +41,7 @@ const addNgModelStandalone = (children = []) => {
                     return;
                 }
             }
-            childNode.attrs.push(new Attribute('[ngModelOptions]', '{standalone: true}', <any>1, <any>1));
+            childNode.attrs.push(new Attribute('[ngModelOptions]', '{standalone: true}', <any>1, <any>1, <any>1));
         }
         addNgModelStandalone(childNode.children);
     });

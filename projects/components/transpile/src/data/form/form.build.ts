@@ -50,8 +50,8 @@ const addFormControlName = (children = []) => {
                     }
                 }
             }
-            childNode.attrs.push(new Attribute('formControlName', key, <any>1, <any>1));
-            childNode.attrs.push(new Attribute('wmFormWidget', '', <any>1, <any>1));
+            childNode.attrs.push(new Attribute('formControlName', key, <any>1, <any>1, <any>1));
+            childNode.attrs.push(new Attribute('wmFormWidget', '', <any>1, <any>1, <any>1));
         }
         addFormControlName(childNode.children);
     });
