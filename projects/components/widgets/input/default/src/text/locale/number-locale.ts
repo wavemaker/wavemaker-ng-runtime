@@ -256,7 +256,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        if (isDefined(value)) {
+        if (isDefined(value) && value !== '') {
             this.handleChange(value);
         } else {
             return;
