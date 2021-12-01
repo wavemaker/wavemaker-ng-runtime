@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewInit, Directive, ElementRef, Inject, Injectable, Injector, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Directive, ElementRef, Inject, Injector, OnDestroy, OnInit } from '@angular/core';
 import { EventManager } from '@angular/platform-browser';
 
 import { ReplaySubject, Subject } from 'rxjs';

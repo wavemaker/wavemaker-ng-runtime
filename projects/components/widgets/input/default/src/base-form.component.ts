@@ -2,9 +2,7 @@ import { Injector, AfterViewInit, Injectable, Inject } from '@angular/core';
 
 import { DataSource } from '@wm/core';
 
-import { IWidgetConfig, StylableComponent } from '@wm/components/base';
-import { WIDGET_CONFIG } from 'projects/components/base';
-
+import { IWidgetConfig, StylableComponent, WIDGET_CONFIG } from '@wm/components/base';
 declare const _;
 
 @Injectable()

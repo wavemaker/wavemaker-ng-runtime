@@ -22,7 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(InputTextComponent)
     ]
 })
-export class InputTextComponent extends BaseInput implements OnInit{
+export class InputTextComponent extends BaseInput implements OnInit {
     static initializeProps = registerProps();
 
     public required: boolean;
