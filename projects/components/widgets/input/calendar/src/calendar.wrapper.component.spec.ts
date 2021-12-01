@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { CalendarComponent } from './calendar.component';
-import { async, ComponentFixture } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
 import { FormsModule } from '@angular/forms';
@@ -83,19 +83,19 @@ describe('CalendarComponent', () => {
         expect(CalendarWrapperComponent).toBeTruthy();
     })
 
-    it('should apply the view to be month view', async(() => {
+    it('should apply the view to be month view', waitForAsync(() => {
         fixture.whenStable().then(() => {
             expect(document.getElementsByClassName('fc-month-view').length).toBe(1);
         })
     }))
 
-    it('should apply as agenda week button', async(() => {
+    it('should apply as agenda week button', waitForAsync(() => {
         fixture.whenStable().then(() => {
             expect(document.getElementsByClassName('fc-agendaWeek-button').length).toBe(1);
         })
     }))
 
-    xit('should apply events data to the calendar', async(() => {
+    xit('should apply events data to the calendar', waitForAsync(() => {
         fixture.whenStable().then(() => {
             wmComponent.getWidget().dataset = calenderWrapperComponent.testData1;
             fixture.detectChanges();

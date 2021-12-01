@@ -1,6 +1,6 @@
-import { ComponentsTestModule } from "../components.test.module";
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { DebugElement } from "@angular/core";
 
 export const compileTestComponent = (moduleDef, componentInstance): ComponentFixture<any> => {
     TestBed.configureTestingModule(moduleDef)
@@ -18,7 +18,7 @@ export const setInputValue = async (fixture, selector: string, value: string) =>
 };
 
 
-export const getHtmlSelectorElement = (fixture, selector: string) => {
+export const getHtmlSelectorElement = <T>(fixture: ComponentFixture<T>, selector: string): DebugElement => {
     return fixture.debugElement.query(By.css(selector));
 }
 
@@ -78,11 +78,10 @@ export const hasAttributeCheck = (fixture, selector: string, attribute: string) 
     });
 }
 
-export const notHavingTheAttribute = (fixture, selector: string, attribute: string) => {
-    fixture.whenStable().then(() => {
-        let element = getHtmlSelectorElement(fixture, selector);
-        expect(element.nativeElement.hasAttribute(attribute)).toBe(false);
-    });
+export const notHavingTheAttribute = async <T>(fixture: ComponentFixture<T>, selector: string, attribute: string) => {
+    await fixture.whenStable()
+    let element = getHtmlSelectorElement(fixture, selector);
+    expect(element.nativeElement.hasAttribute(attribute)).toBe(false);
 }
 
 export const mockApp = { 

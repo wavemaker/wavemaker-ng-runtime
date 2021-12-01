@@ -10,6 +10,7 @@ declare const _;
 @Injectable()
 export abstract class BaseFormComponent extends StylableComponent implements AfterViewInit{
 
+    private dataval;
     private prevDatavalue;
     protected binddatavalue: string;
     private datavaluesource: any;
@@ -24,11 +25,11 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
     }
 
     set datavalue(datavalue) {
-        this.datavalue = datavalue;
+        this.dataval = datavalue;
     }
 
     get datavalue() {
-        return this.datavalue;
+        return this.dataval;
     }
 
     /**

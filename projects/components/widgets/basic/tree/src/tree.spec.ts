@@ -1,4 +1,4 @@
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
@@ -61,7 +61,7 @@ class TreeSpec {
 describe('wm-tree: Widget specific test cases', () => {
     let fixture: ComponentFixture<TreeSpec>;
 
-    beforeEach(async(()=>{
+    beforeEach(waitForAsync(()=>{
         TestBed.configureTestingModule({
             declarations: [TreeSpec, TreeDirective],
             providers: [
@@ -82,7 +82,7 @@ describe('wm-tree: Widget specific test cases', () => {
         expect(fixture.componentInstance).toBeTruthy();
     });
 
-    it('should pass proper parameters in onSelect event', async(() => {
+    it('should pass proper parameters in onSelect event', waitForAsync(() => {
         spyOn(fixture.componentInstance, 'onNodeSelect').and.callFake(function () {
             const path = arguments[3];
             const firstLeafNodePath = "/a val/a child1";

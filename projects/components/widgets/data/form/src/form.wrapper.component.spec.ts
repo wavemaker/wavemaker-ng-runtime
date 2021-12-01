@@ -1,4 +1,4 @@
-import { async, ComponentFixture, fakeAsync, TestBed, tick, discardPeriodicTasks } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { App, AppDefaults, DynamicComponentRefProvider, AbstractI18nService, UserDefinedExecutionContext, Viewport } from '@wm/core';
 import { FormComponent } from './form.component';
 import { FormWidgetDirective } from './form-widget.directive';
@@ -324,7 +324,7 @@ describe('FormComponent', () => {
         return fixture.nativeElement.querySelector('.app-textbox');
     };
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         fixture = compileTestComponent(testModuleDef, FormWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
@@ -470,7 +470,7 @@ describe('FormComponent', () => {
         );
     });
 
-    it('should respect the mindate validation', async(() => {
+    it('should respect the mindate validation', waitForAsync(() => {
         const invalidTestValue = '2019-11-02';
         const validTestValue = '2019-12-05';
         dateValidations(
@@ -483,7 +483,7 @@ describe('FormComponent', () => {
         );
     }));
 
-    it('should respect the maxdate validation', async(() => {
+    it('should respect the maxdate validation', waitForAsync(() => {
         const invalidTestValue = '2019-12-05';
         const validTestValue = '2019-11-02';
         dateValidations(
@@ -496,7 +496,7 @@ describe('FormComponent', () => {
         );
     }));
 
-    it('should respect the excludedays validation', async(() => {
+    it('should respect the excludedays validation', waitForAsync(() => {
         const invalidTestValue = '2019-12-30';
         const validTestValue = '2019-12-29';
         dateValidations(
@@ -509,7 +509,7 @@ describe('FormComponent', () => {
         );
     }));
 
-    it('should respect the excludedate validation', async(() => {
+    it('should respect the excludedate validation', waitForAsync(() => {
         const invalidTestValue = '2020-01-01';
         const validTestValue = '2020-01-02';
         dateValidations(
@@ -522,7 +522,7 @@ describe('FormComponent', () => {
         );
     }));
 
-    xit('should respect the mintime validation', async(() => {
+    xit('should respect the mintime validation', waitForAsync(() => {
         let formField = wmComponent.formfields['timeofbirth'];
         let timeWidget = formField.getWidget().formWidget;
         timeWidget.timepattern = 'HH:mm:ss';
@@ -542,7 +542,7 @@ describe('FormComponent', () => {
         });
     }));
 
-    xit('should respect the maxtime validation', async(() => {
+    xit('should respect the maxtime validation', waitForAsync(() => {
         let formField = wmComponent.formfields['timeofbirth'];
         let timeWidget = formField.getWidget().formWidget;
         timeWidget.timepattern = 'HH:mm:ss';
