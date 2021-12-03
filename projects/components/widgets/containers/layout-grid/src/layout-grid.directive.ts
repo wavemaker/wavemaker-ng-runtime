@@ -1,6 +1,6 @@
 import { Directive, Injector } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, BaseContainerComponent } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, BaseContainerComponentDirective } from '@wm/components/base';
 
 import { registerProps } from './layout-grid.props';
 
@@ -16,7 +16,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(LayoutgridDirective)
     ]
 })
-export class LayoutgridDirective extends BaseContainerComponent {
+export class LayoutgridDirective extends BaseContainerComponentDirective {
     static initializeProps = registerProps();
 
     constructor(inj: Injector) {

@@ -1,4 +1,4 @@
-import { Injector, OnDestroy, TemplateRef, Injectable } from '@angular/core';
+import { Injector, OnDestroy, TemplateRef, Injectable, Inject } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 
 import { AbstractDialogService, closePopover, findRootContainer } from '@wm/core';
 
-import { BaseComponentDirective, IDialog, IWidgetConfig } from '@wm/components/base';
+import { BaseComponentDirective, IDialog, IWidgetConfig, WIDGET_CONFIG } from '@wm/components/base';
 
 declare const _;
 
@@ -44,7 +44,7 @@ export abstract class BaseDialog extends BaseComponentDirective implements IDial
 
     protected constructor(
         inj: Injector,
-        widgetConfig: IWidgetConfig,
+        @Inject(WIDGET_CONFIG) widgetConfig: IWidgetConfig,
         protected modalOptions: ModalOptions
     ) {
         super(inj, widgetConfig);

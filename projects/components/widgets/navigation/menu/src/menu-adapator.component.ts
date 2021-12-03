@@ -2,14 +2,14 @@ import { AfterViewInit, QueryList, ViewChildren, Directive } from '@angular/core
 
 import { StylableComponent } from '@wm/components/base';
 import { MenuComponent } from './menu.component';
-import {BaseContainerComponent} from '@wm/components/base';
+import {BaseContainerComponentDirective} from '@wm/components/base';
 
 declare const _;
 
 const menuProps = ['itemlabel', 'itemicon', 'itemlink', 'itemaction', 'itemchildren', 'userrole'];
 
 @Directive()
-export class MenuAdapterComponent extends BaseContainerComponent implements AfterViewInit {
+export class MenuAdapterComponent extends BaseContainerComponentDirective implements AfterViewInit {
 
     private itemlabel;
     private menuRef;
