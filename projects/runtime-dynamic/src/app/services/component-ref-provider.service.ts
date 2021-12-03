@@ -65,7 +65,8 @@ const execScript = (
     utils: any
 ) => {
     let fn = scriptCache.get(identifier);
-    if (!fn) {
+    // Fix for [WMS-21196]: Incorrect script is being assigned,  when 2 prefabs have same partial name (i.e. same identifier).
+    if ((ctx === 'Partial' && !_.isUndefined(instance.Prefab)) || !fn) {
         fn = new Function(ctx, 'App', 'Utils', script);
         scriptCache.set(identifier, fn);
     }
