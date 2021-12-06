@@ -15,7 +15,7 @@ if (environment.production) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new Promise( resolve => {
+    new Promise<Event | void>( resolve => {
         if (isSpotcues) {
             initSpotCues().then(resolve);
         } else if (window['cordova']) {

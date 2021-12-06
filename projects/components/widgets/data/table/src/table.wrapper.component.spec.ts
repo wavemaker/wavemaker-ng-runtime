@@ -1,5 +1,5 @@
 import { By } from "@angular/platform-browser";
-import { TestBed, async, ComponentFixture, fakeAsync, tick, discardPeriodicTasks } from "@angular/core/testing";
+import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, discardPeriodicTasks } from "@angular/core/testing";
 import { Component, ViewChild } from "@angular/core";
 import { TrustAsPipe } from "../../../../base/src/pipes/trust-as.pipe";;
 import { FormBuilder } from "@angular/forms";
@@ -753,7 +753,7 @@ describe("DataTable", () => {
                 let wmComponent: TableComponent;
                 let inline_edit_fixture: ComponentFixture<InlineTableWrapperComponent>;
 
-                beforeEach(async(() => {
+                beforeEach(waitForAsync(() => {
                     inline_edit_fixture = compileTestComponent(inlineTestModuleDef, InlineTableWrapperComponent);
                     wrapperComponent = inline_edit_fixture.componentInstance;
                     wmComponent = wrapperComponent.wmComponent;
@@ -765,7 +765,7 @@ describe("DataTable", () => {
                     expect(wmComponent).toBeDefined();
                 });
 
-                it('should trigger default required validator', async(() => {
+                it('should trigger default required validator', waitForAsync(() => {
                     const invalidTestValue = '';
                     const validTestValue = 'test';
                     defaultValidators(
@@ -781,7 +781,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should trigger default regexp validator', async(() => {
+                it('should trigger default regexp validator', waitForAsync(() => {
                     const invalidTestValue = 'test';
                     const validTestValue = 'test@test.com';
                     defaultValidators(
@@ -797,7 +797,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should trigger default maxchars validator', async(() => {
+                it('should trigger default maxchars validator', waitForAsync(() => {
                     const invalidTestValue = 'test12345';
                     const validTestValue = 'test';
                     defaultValidators(
@@ -813,7 +813,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should trigger default minvalue validator', async(() => {
+                it('should trigger default minvalue validator', waitForAsync(() => {
                     const invalidTestValue = 15;
                     const validTestValue = 18;
                     defaultValidators(
@@ -829,7 +829,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should trigger default maxvalue validator', async(() => {
+                it('should trigger default maxvalue validator', waitForAsync(() => {
                     const invalidTestValue = 20;
                     const validTestValue = 18;
                     defaultValidators(
@@ -845,7 +845,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should respect the mindate validation', async(() => {
+                it('should respect the mindate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-11-02';
                     const validTestValue = '2019-12-05';
                     dateValidators(
@@ -860,7 +860,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                xit('should respect the maxdate validation', async(() => {
+                xit('should respect the maxdate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-12-05';
                     const validTestValue = '2019-11-02';
                     dateValidators(
@@ -875,7 +875,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should respect the excludedays validation', async(() => {
+                it('should respect the excludedays validation', waitForAsync(() => {
                     const invalidTestValue = '2019-12-30';
                     const validTestValue = '2019-12-29';
                     dateValidators(
@@ -890,7 +890,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should respect the excludedate validation', async(() => {
+                it('should respect the excludedate validation', waitForAsync(() => {
                     const invalidTestValue = '2020-01-01';
                     const validTestValue = '2020-01-02';
                     dateValidators(
@@ -906,11 +906,11 @@ describe("DataTable", () => {
                 }));
 
 
-                it('should trigger custom validator(sync)', async(() => {
+                it('should trigger custom validator(sync)', waitForAsync(() => {
                     customValidatorSync(false, wmComponent, inline_edit_fixture);
                 }));
 
-                it('should trigger default and custom validator', async(() => {
+                it('should trigger default and custom validator', waitForAsync(() => {
                     defaultAndCustomValidator(false, wmComponent, inline_edit_fixture);
                 }));
 
@@ -946,7 +946,7 @@ describe("DataTable", () => {
                 let wmComponent: TableComponent;
                 let quick_edit_fixture: ComponentFixture<QuickEditTableWrapperComponent>;
 
-                beforeEach(async(() => {
+                beforeEach(waitForAsync(() => {
                     quick_edit_fixture = compileTestComponent(quickeditTestModuleDef, QuickEditTableWrapperComponent);
                     wrapperComponent = quick_edit_fixture.componentInstance;
                     wmComponent = wrapperComponent.wmComponent;
@@ -998,7 +998,7 @@ describe("DataTable", () => {
                     );
                 });
 
-                it('should trigger default required validator', async(() => {
+                it('should trigger default required validator', waitForAsync(() => {
                     const invalidTestValue = '';
                     const validTestValue = 'test';
                     defaultValidators(
@@ -1014,7 +1014,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should trigger default regexp validator', async(() => {
+                it('should trigger default regexp validator', waitForAsync(() => {
                     const invalidTestValue = 'test';
                     const validTestValue = 'test@test.com';
                     defaultValidators(
@@ -1030,7 +1030,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should trigger default maxchars validator', async(() => {
+                it('should trigger default maxchars validator', waitForAsync(() => {
                     const invalidTestValue = 'test12345';
                     const validTestValue = 'test';
                     defaultValidators(
@@ -1046,7 +1046,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should trigger default minvalue validator', async(() => {
+                it('should trigger default minvalue validator', waitForAsync(() => {
                     const invalidTestValue = 15;
                     const validTestValue = 18;
                     defaultValidators(
@@ -1076,7 +1076,7 @@ describe("DataTable", () => {
                     ).toBeTruthy();
                 });
 
-                xit('should trigger default maxvalue validator', async(() => {
+                xit('should trigger default maxvalue validator', waitForAsync(() => {
                     const invalidTestValue = 20;
                     const validTestValue = 18;
                     defaultValidators(
@@ -1092,7 +1092,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should respect the mindate validation', async(() => {
+                it('should respect the mindate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-11-02';
                     const validTestValue = '2019-12-05';
                     dateValidators(
@@ -1107,7 +1107,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                xit('should respect the maxdate validation', async(() => {
+                xit('should respect the maxdate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-12-05';
                     const validTestValue = '2019-11-02';
                     dateValidators(
@@ -1122,7 +1122,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should respect the excludedays validation', async(() => {
+                it('should respect the excludedays validation', waitForAsync(() => {
                     const invalidTestValue = '2019-12-30';
                     const validTestValue = '2019-12-29';
                     dateValidators(
@@ -1137,7 +1137,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should respect the excludedate validation', async(() => {
+                it('should respect the excludedate validation', waitForAsync(() => {
                     const invalidTestValue = '2020-01-01';
                     const validTestValue = '2020-01-02';
                     dateValidators(
@@ -1152,11 +1152,11 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should trigger custom validator(sync)', async(() => {
+                it('should trigger custom validator(sync)', waitForAsync(() => {
                     customValidatorSync(true, wmComponent, quick_edit_fixture);
                 }));
 
-                it('should trigger default and custom validator', async(() => {
+                it('should trigger default and custom validator', waitForAsync(() => {
                     defaultAndCustomValidator(true, wmComponent, quick_edit_fixture);
                 }));
 
@@ -1275,7 +1275,7 @@ describe("DataTable", () => {
                 let wmComponent: TableComponent;
                 let summary_row_fixture: ComponentFixture<SummaryRowWrapperComponent>;
 
-                beforeEach(async(() => {
+                beforeEach(waitForAsync(() => {
                     summary_row_fixture = compileTestComponent(summaryRowTestModuleDef, SummaryRowWrapperComponent);
                     wrapperComponent = summary_row_fixture.componentInstance;
                     summary_row_fixture.detectChanges();

@@ -25,8 +25,8 @@ function assignColumnIndex(node, parentIndex?: number) {
         const nodeName = (<any>childNode).name;
         const newheaderIndex = parentIndex !== undefined ? parentIndex : headerIndex;
         if (nodeName === 'wm-table-column' || nodeName === 'wm-table-column-group') {
-            (childNode as any).attrs.push(new Attribute('index', '' + columnIndex, <any>1, <any>1));
-            (childNode as any).attrs.push(new Attribute('headerIndex', '' + newheaderIndex, <any>1, <any>1));
+            (childNode as any).attrs.push(new Attribute('index', '' + columnIndex, <any>1, <any>1, <any>1));
+            (childNode as any).attrs.push(new Attribute('headerIndex', '' + newheaderIndex, <any>1, <any>1, <any>1));
             if (nodeName === 'wm-table-column-group') {
                 assignColumnIndex(childNode.children, headerIndex);
             }

@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {waitForAsync, ComponentFixture, TestBed} from '@angular/core/testing';
 import {AbstractI18nService, App, setPipeProvider} from '@wm/core';
 import {Component, ViewChild} from '@angular/core';
 import {NumberComponent} from './number.component';
@@ -74,7 +74,7 @@ describe('NumberComponent', () => {
     let numberComponent: NumberComponent;
     let fixture: ComponentFixture<NumberWrapperComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         fixture = compileTestComponent(testModuleDef, NumberWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         numberComponent = wrapperComponent.wmComponent;
@@ -130,7 +130,7 @@ describe('NumberComponent with Localization', () => {
     let fixture: ComponentFixture<NumberWrapperComponent>;
 
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         // register the selected locale language
         registerLocaleData(localePT);
         fixture = compileTestComponent(testModuleDef, NumberWrapperComponent);

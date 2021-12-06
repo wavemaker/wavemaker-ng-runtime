@@ -161,7 +161,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     runPageTransition(transition?: string): Promise<void> {
         transition = transition || this.navigationService.getPageTransition();
         const lastPage = BasePageComponent.lastPageSnapShot
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             if (transition
                 && !transition.startsWith('none')
                 && lastPage) {
@@ -202,7 +202,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     private loadScripts() {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             const scriptsRequired = this.pageDirective && this.pageDirective.$element.attr('scripts-to-load');
             if (scriptsRequired) {
                 this.scriptLoaderService
