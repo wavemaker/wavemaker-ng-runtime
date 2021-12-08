@@ -406,16 +406,26 @@ export class TableFilterSortDirective {
         if (output === false) {
             return;
         }
-        // Transform back the filter fields from object to array
+
         filterFields = [];
-        _.forEach(userFilters, (val, key) => {
+        if (_.isEmpty(userFilters) && obj.value) {
             filterFields.push({
-                field: key,
-                matchMode: val.matchMode,
-                type: val.type,
-                value: val.value
+                field: '',
+                matchMode: obj.matchMode,
+                type: obj.type,
+                value: obj.value
             });
-        });
+        } else {
+            // Transform back the filter fields from object to array
+            _.forEach(userFilters, (val, key) => {
+                filterFields.push({
+                    field: key,
+                    matchMode: val.matchMode,
+                    type: val.type,
+                    value: val.value
+                });
+            });
+        }
         if (dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
             this.handleServerSideSearch(filterFields);
             return;
