@@ -386,7 +386,7 @@ $.widget('wm.datatable', {
             searchLabel = (this.Utils.isDefined(this.options.searchLabel) &&
                 this.options.searchLabel.length) ? this.options.searchLabel : '';
         this.options.colDefs.forEach(function (colDef, index) {
-            if (colDef.field !== 'none' && colDef.field !== 'rowOperations' && colDef.searchable) {
+            if (colDef.field !== 'none' && colDef.field !== 'rowOperations' && colDef.searchable && colDef.show) {
                 sel += '<option value="' + colDef.field +
                     '" data-coldef-index="' + index + '">' +
                     (colDef.displayName || colDef.field) + '</option>';
@@ -942,7 +942,7 @@ $.widget('wm.datatable', {
     /* Inserts a load more button at the end of the table when the pagination selected is on demand */
     addLoadMoreBtn : function (onDemandMsg, loadingdatamsg, cb) {
         var self = this;
-        var $parenEl = $('<div class="on-demand-datagrid"><a class="app-button btn btn-block on-demand-load-btn"></a></div>'); 
+        var $parenEl = $('<div class="on-demand-datagrid"><a class="app-button btn btn-block on-demand-load-btn"></a></div>');
         var $btnEl = $parenEl.find('a');
         $btnEl.append(onDemandMsg);
         // Adding load more button in case of on demand pagination
@@ -965,13 +965,13 @@ $.widget('wm.datatable', {
         if (hasLoadingEl.length && !infScroll) {
             // in case of on demand pagination, show the loading ele which was hidden
             hasLoadingEl.show();
-        } else if (infScroll && $dataGrid.length) { 
+        } else if (infScroll && $dataGrid.length) {
             // in case of infinite scroll show the demand-grid ele which was hidden
             $dataGrid.show();
         } else {
-            // if the loading indicator ele is not created, create it and append it to grid ele if it is already present. 
+            // if the loading indicator ele is not created, create it and append it to grid ele if it is already present.
             // If not create grid ele and then append the loading indicator to grid ele
-            var $loadingEl = $('<div class="loading-data-msg spin-icon-in-center"><span><i class="app-icon panel-icon fa-spin ' + this.options.loadingicon + '"></i>' + 
+            var $loadingEl = $('<div class="loading-data-msg spin-icon-in-center"><span><i class="app-icon panel-icon fa-spin ' + this.options.loadingicon + '"></i>' +
             '<span class="sr-only">Loading</span><span class="loading-text"></span></span></div>');
             $loadingEl.find('.loading-text').html(loadingdatamsg);
             if ($dataGrid.length) {
@@ -2868,7 +2868,7 @@ $.widget('wm.datatable', {
         this.addOrRemoveScroll();
     },
     /**
-     * 
+     *
      * @param {*} rowObj Contains the object which is part of options.data
      * In this method, active row will be focused and event handlers are attached.
      * If object is recieved, node extraction will be done and if found operations on the row are performed
