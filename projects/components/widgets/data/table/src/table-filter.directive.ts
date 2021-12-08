@@ -245,12 +245,36 @@ export class TableFilterSortDirective {
         return data;
     }
 
+    // Returns the displayed Columns data of the table
+    getDisplayedColumnsData(data, hiddenCols) {
+        _.forEach(data, (obj, index) => {
+            for (const colName of hiddenCols) {
+                if (obj[colName]) {
+                    delete obj[colName];
+                }
+            }
+        });
+        return data;
+    }
+
     // This method handles the client side sort and search
     private handleClientSideSortSearch(searchSortObj, e, type) {
         this.table._isClientSearch = true;
 
+        // Get the hidden columns in the table
+        const hiddenCols = [];
+        _.forEach(this.table.columns, (val, col) => {
+            if (val.show === false) {
+                hiddenCols.push(col);
+            }
+        });
         let data;
-        data = this.table.isNavigationEnabled() ? getClonedObject(this.table.__fullData) : getClonedObject(this.table.dataset);
+        if (hiddenCols.length === 0) {
+            data = this.table.isNavigationEnabled() ? getClonedObject(this.table.__fullData) : getClonedObject(this.table.dataset);
+        } else {
+            data = this.table.isNavigationEnabled() ? this.getDisplayedColumnsData(getClonedObject(this.table.__fullData), hiddenCols) : this.getDisplayedColumnsData(getClonedObject(this.table.dataset), hiddenCols);
+        }
+
         if (type === 'search') {
             this.table.filterInfo = searchSortObj;
         } else {
