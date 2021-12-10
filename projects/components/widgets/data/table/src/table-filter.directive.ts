@@ -452,10 +452,15 @@ export class TableFilterSortDirective {
 
     // This method is triggered by jquery table
     searchSortHandler(searchSortObj, e, type, statePersistenceTriggered?) {
-        if (type === 'search') {
-            this.searchHandler(searchSortObj, e, type, statePersistenceTriggered);
+        const event_type = e ? e.type : '';
+        if (event_type === 'change' && this.table.filtermode !== 'multicolumn') {
+            e.preventDefault();
         } else {
-            this.sortHandler(searchSortObj, e, type, statePersistenceTriggered);
+            if (type === 'search') {
+                this.searchHandler(searchSortObj, e, type, statePersistenceTriggered);
+            } else {
+                this.sortHandler(searchSortObj, e, type, statePersistenceTriggered);
+            }
         }
     }
 
