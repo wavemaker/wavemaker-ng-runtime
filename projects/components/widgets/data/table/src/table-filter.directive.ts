@@ -363,24 +363,6 @@ export class TableFilterSortDirective {
         this.table.callDataGridMethod('updateSelectAllCheckboxState');
     }
 
-    refreshData(isSamePage) {
-        if (!this.table.datasource) {
-            return;
-        }
-        const page = isSamePage ? this.table.dataNavigator.dn.currentPage : 1;
-        const sortInfo     = this.table.sortInfo;
-        const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
-        const filterInfo = this.getFilterFields(this.table.filterInfo);
-        const filterFields = filterInfo['filterData'];
-        const condition = filterInfo['condition'] || '';
-        refreshDataSource(this.table.datasource, {
-            page: page,
-            filterFields : filterFields,
-            orderBy : sortOptions,
-            condition : condition
-        });
-    }
-
     // This method handles the search for server side variables
     private handleServerSideSearch(searchObj) {
         this.table.filterInfo = searchObj;
@@ -403,6 +385,24 @@ export class TableFilterSortDirective {
             $appDigest();
         }, () => {
             this.table.toggleMessage(true, 'error', this.table.nodatamessage);
+        });
+    }
+
+    refreshData(isSamePage) {
+        if (!this.table.datasource) {
+            return;
+        }
+        const page = isSamePage ? this.table.dataNavigator.dn.currentPage : 1;
+        const sortInfo     = this.table.sortInfo;
+        const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
+        const filterInfo = this.getFilterFields(this.table.filterInfo);
+        const filterFields = filterInfo['filterData'];
+        const condition = filterInfo['condition'] || '';
+        refreshDataSource(this.table.datasource, {
+            page: page,
+            filterFields : filterFields,
+            orderBy : sortOptions,
+            condition : condition
         });
     }
 
