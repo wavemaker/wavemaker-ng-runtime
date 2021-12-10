@@ -1,4 +1,4 @@
-import { getClonedObject, hasCordova, isDefined, isNumberType, replace, triggerFn } from '@wm/core';
+import { getClonedObject, hasCordova, isDefined, isNumberType, isDateTimeType, replace, triggerFn } from '@wm/core';
 
 import { $rootScope, DB_CONSTANTS, SWAGGER_CONSTANTS } from '../../constants/variables.constants';
 import { formatDate, getEvaluatedOrderBy } from './variables.utils';
@@ -371,7 +371,7 @@ export class LiveVariableUtils {
                 paramValue;
             // If value is an empty array, do not generate the query
             // If values is NaN and number type, do not generate query for this field
-            if ((isValArray && _.isEmpty(value)) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType))) {
+            if ((isValArray && _.isEmpty(value)) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType)) || (!isValArray && isNaN(value) && isDateTimeType(_.toLower(fieldValue.attributeType)))) {
                 return;
             }
             if (isValArray) {
@@ -435,7 +435,7 @@ export class LiveVariableUtils {
 
         // If value is an empty array, do not generate the query
         // If values is NaN and number type, do not generate query for this field
-        if ((isValArray && _.isEmpty(value)) || (isValArray && _.some(value, val => (_.isNull(val) || _.isNaN(val) || val === ''))) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType))) {
+        if ((isValArray && _.isEmpty(value)) || (isValArray && _.some(value, val => (_.isNull(val) || _.isNaN(val) || val === ''))) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType)) || (!isValArray && !value && isDateTimeType(_.toLower(fieldValue.attributeType)))) {
             return;
         }
         if (isValArray) {

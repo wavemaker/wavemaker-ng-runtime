@@ -90,19 +90,36 @@ const getFilteredData = (data, searchObj) => {
     return data;
 };
 
+const generateFilterData = function(filterFields, searchObj, visibleCols) {
+    visibleCols.forEach(function(field) {
+        filterFields['filterData'][field] = {
+            'value': searchObj.value,
+            'type' : searchObj.value.type,
+            'logicalOp': 'OR'
+        };
+        if (searchObj.matchMode) {
+            filterFields['filterData'][field].matchMode = searchObj.matchMode;
+        }
+    });
+};
+
 // Set the filter fields as required by datasource
-const setFilterFields = (filterFields, searchObj) => {
+const setFilterFields = (filterFields, searchObj, visibleCols = []) => {
     const field = searchObj && searchObj.field;
     /*Set the filter options only when a field/column has been selected.*/
     if (field) {
-        filterFields[field] = {
+        filterFields['filterData'][field] = {
             'value'     : searchObj.value,
             'logicalOp' : 'AND'
         };
         if (searchObj.matchMode) {
-            filterFields[field].matchMode = searchObj.matchMode;
+            filterFields['filterData'][field].matchMode = searchObj.matchMode;
         }
-    }
+        filterFields['condition'] = 'AND';
+    } else if (visibleCols.length) {
+            generateFilterData(filterFields, searchObj, visibleCols);
+            filterFields['condition'] = 'OR';
+        }
 };
 
 // Transform filter fields from array to object having field names as keys
@@ -152,15 +169,25 @@ export class TableFilterSortDirective {
                     _.includes(this.table.primaryKey, this.table.sortInfo.field) ? 'first' : 'last';
     }
 
+    getTableVisibleCols(columns, visibleCols) {
+        _.forEach(this.table.columns, (val, col) => {
+            if (val.show === true && col !== 'rowOperations' && val.searchable) {
+                visibleCols.push(col);
+            }
+        });
+    }
+
     // Get the filter fields as required by datasource
     getFilterFields(searchObj) {
-        const filterFields = {};
+        const filterFields = {'filterData': {}};
+        const visibleCols = [];
+        this.getTableVisibleCols(this.table.columns, visibleCols);
         if (_.isArray(searchObj)) {
             _.forEach(searchObj,  obj => {
-                setFilterFields(filterFields, obj);
+                setFilterFields(filterFields, obj, visibleCols);
             });
         } else {
-            setFilterFields(filterFields, searchObj);
+            setFilterFields(filterFields, searchObj, visibleCols);
         }
         return filterFields;
     }
@@ -336,6 +363,24 @@ export class TableFilterSortDirective {
         this.table.callDataGridMethod('updateSelectAllCheckboxState');
     }
 
+    refreshData(isSamePage) {
+        if (!this.table.datasource) {
+            return;
+        }
+        const page = isSamePage ? this.table.dataNavigator.dn.currentPage : 1;
+        const sortInfo     = this.table.sortInfo;
+        const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
+        const filterInfo = this.getFilterFields(this.table.filterInfo);
+        const filterFields = filterInfo['filterData'];
+        const condition = filterInfo['condition'] || '';
+        refreshDataSource(this.table.datasource, {
+            page: page,
+            filterFields : filterFields,
+            orderBy : sortOptions,
+            condition : condition
+        });
+    }
+
     // This method handles the search for server side variables
     private handleServerSideSearch(searchObj) {
         this.table.filterInfo = searchObj;
@@ -346,44 +391,18 @@ export class TableFilterSortDirective {
 
         const sortInfo     = this.table.sortInfo;
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
-        const filterFields = this.getFilterFields(searchObj);
+        const filterInfo = this.getFilterFields(searchObj);
+        const filterFields = filterInfo['filterData'];
+        const condition = filterInfo['condition'] || '';
         refreshDataSource(this.table.datasource, {
             page: 1,
             filterFields : filterFields,
-            orderBy : sortOptions
+            orderBy : sortOptions,
+            condition : condition
         }).then(() => {
             $appDigest();
         }, () => {
             this.table.toggleMessage(true, 'error', this.table.nodatamessage);
-        });
-    }
-
-    // This method handles the sort for server side variables
-    private handleSeverSideSort(sortObj, e, statePersistenceTriggered?) {
-        // Update the sort info for passing to datagrid
-        this.table.gridOptions.sortInfo.field = sortObj.field;
-        this.table.gridOptions.sortInfo.direction = sortObj.direction;
-        this.table.sortInfo = getClonedObject(sortObj);
-
-        const sortOptions  = sortObj && sortObj.direction ? (sortObj.field + ' ' + sortObj.direction) : '';
-        const filterFields = this.getFilterFields(this.table.filterInfo);
-
-        if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
-            this.table.statePersistence.removeWidgetState(this.table, 'pagination');
-        }
-
-        refreshDataSource(this.table.datasource, {
-            page : 1,
-            filterFields : filterFields,
-            orderBy : sortOptions
-        }).then((response) => {
-            $appDigest();
-            const data = (response && response.data) ? response.data : response;
-            this.table.invokeEventCallback('sort', {$event: e, $data: {
-                    data,
-                    sortDirection: sortObj.direction,
-                    colDef: this.table.columns[sortObj.field]
-                }});
         });
     }
 
@@ -591,18 +610,34 @@ export class TableFilterSortDirective {
         }
     }
 
-    refreshData(isSamePage) {
-        if (!this.table.datasource) {
-            return;
+    // This method handles the sort for server side variables
+    private handleSeverSideSort(sortObj, e, statePersistenceTriggered?) {
+        // Update the sort info for passing to datagrid
+        this.table.gridOptions.sortInfo.field = sortObj.field;
+        this.table.gridOptions.sortInfo.direction = sortObj.direction;
+        this.table.sortInfo = getClonedObject(sortObj);
+
+        const sortOptions  = sortObj && sortObj.direction ? (sortObj.field + ' ' + sortObj.direction) : '';
+        const filterInfo = this.getFilterFields(this.table.filterInfo);
+        const filterFields = filterInfo['filterData'];
+        const condition = filterInfo['condition'] || '';
+        if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
+            this.table.statePersistence.removeWidgetState(this.table, 'pagination');
         }
-        const page = isSamePage ? this.table.dataNavigator.dn.currentPage : 1;
-        const sortInfo     = this.table.sortInfo;
-        const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
-        const filterFields = this.getFilterFields(this.table.filterInfo);
+
         refreshDataSource(this.table.datasource, {
-            page: page,
+            page : 1,
             filterFields : filterFields,
-            orderBy : sortOptions
+            orderBy : sortOptions,
+            condition : condition
+        }).then((response) => {
+            $appDigest();
+            const data = (response && response.data) ? response.data : response;
+            this.table.invokeEventCallback('sort', {$event: e, $data: {
+                    data,
+                    sortDirection: sortObj.direction,
+                    colDef: this.table.columns[sortObj.field]
+                }});
         });
     }
 }
