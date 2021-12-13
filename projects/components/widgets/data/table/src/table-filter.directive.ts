@@ -278,18 +278,6 @@ export class TableFilterSortDirective {
         return data;
     }
 
-    // Returns the displayed Columns data of the table
-    getDisplayedColumnsData(data, hiddenCols) {
-        _.forEach(data, (obj, index) => {
-            for (const colName of hiddenCols) {
-                if (obj[colName]) {
-                    delete obj[colName];
-                }
-            }
-        });
-        return data;
-    }
-
     refreshData(isSamePage) {
         if (!this.table.datasource) {
             return;
