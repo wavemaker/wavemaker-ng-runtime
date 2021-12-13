@@ -25,7 +25,7 @@ const getSearchValue = (value, type) => {
 };
 
 // Filter the data based on the search value and conditions
-const getFilteredData = (data, searchObj) => {
+const getFilteredData = (data, searchObj, visibleCols = []) => {
     const searchVal = getSearchValue(searchObj.value, searchObj.type);
     let currentVal;
     // Return whole data if
@@ -39,6 +39,11 @@ const getFilteredData = (data, searchObj) => {
         if (searchObj.field) {
             currentVal = getSearchValue(_.get(obj, searchObj.field), searchObj.type);
         } else {
+            _.forEach(obj, (val, key) => {
+                if (!(_.includes(visibleCols, key))) {
+                    delete obj[key];
+                }
+            });
             currentVal = _.values(obj).join(' ').toLowerCase(); // If field is not there, search on all the columns
         }
         switch (searchObj.matchMode) {
@@ -115,10 +120,10 @@ const setFilterFields = (filterFields, searchObj, visibleCols = []) => {
         if (searchObj.matchMode) {
             filterFields['filterData'][field].matchMode = searchObj.matchMode;
         }
-        filterFields['condition'] = 'AND';
+        filterFields['logicalOp'] = 'AND';
     } else if (visibleCols.length) {
             generateFilterData(filterFields, searchObj, visibleCols);
-            filterFields['condition'] = 'OR';
+            filterFields['logicalOp'] = 'OR';
         }
 };
 
@@ -169,6 +174,7 @@ export class TableFilterSortDirective {
                     _.includes(this.table.primaryKey, this.table.sortInfo.field) ? 'first' : 'last';
     }
 
+    // Returns all the visible columns of the table
     getTableVisibleCols(columns, visibleCols) {
         _.forEach(this.table.columns, (val, col) => {
             if (val.show === true && col !== 'rowOperations' && val.searchable) {
@@ -250,16 +256,16 @@ export class TableFilterSortDirective {
     }
 
     // Returns data filtered using searchObj
-    getSearchResult(data, searchObj) {
+    getSearchResult(data, searchObj, visibleCols) {
         if (!searchObj) {
             return data;
         }
         if (_.isArray(searchObj)) {
             searchObj.forEach((obj) => {
-                data = getFilteredData(data, obj);
+                data = getFilteredData(data, obj, visibleCols);
             });
         } else {
-            data = getFilteredData(data, searchObj);
+            data = getFilteredData(data, searchObj, visibleCols);
         }
         return data;
     }
@@ -284,23 +290,33 @@ export class TableFilterSortDirective {
         return data;
     }
 
+    refreshData(isSamePage) {
+        if (!this.table.datasource) {
+            return;
+        }
+        const page = isSamePage ? this.table.dataNavigator.dn.currentPage : 1;
+        const sortInfo     = this.table.sortInfo;
+        const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
+        const filterInfo = this.getFilterFields(this.table.filterInfo);
+        const filterFields = filterInfo['filterData'];
+        const logicalOp = filterInfo['logicalOp'] || '';
+        refreshDataSource(this.table.datasource, {
+            page: page,
+            filterFields : filterFields,
+            orderBy : sortOptions,
+            condition : logicalOp
+        });
+    }
+
     // This method handles the client side sort and search
     private handleClientSideSortSearch(searchSortObj, e, type) {
         this.table._isClientSearch = true;
-
-        // Get the hidden columns in the table
-        const hiddenCols = [];
-        _.forEach(this.table.columns, (val, col) => {
-            if (val.show === false) {
-                hiddenCols.push(col);
-            }
-        });
+        const visibleCols = [];
+        this.getTableVisibleCols(this.table.columns, visibleCols);
         let data;
-        if (hiddenCols.length === 0) {
-            data = this.table.isNavigationEnabled() ? getClonedObject(this.table.__fullData) : getClonedObject(this.table.dataset);
-        } else {
-            data = this.table.isNavigationEnabled() ? this.getDisplayedColumnsData(getClonedObject(this.table.__fullData), hiddenCols) : this.getDisplayedColumnsData(getClonedObject(this.table.dataset), hiddenCols);
-        }
+
+        data = this.table.isNavigationEnabled() ? getClonedObject(this.table.__fullData) : getClonedObject(this.table.dataset);
+
 
         if (type === 'search') {
             this.table.filterInfo = searchSortObj;
@@ -311,7 +327,7 @@ export class TableFilterSortDirective {
             data = [data];
         }
         /*Both the functions return same 'data' if arguments are undefined*/
-        data = this.getSearchResult(data, this.table.filterInfo);
+        data = this.getSearchResult(data, this.table.filterInfo, visibleCols);
         data = this.getSortResult(data, this.table.sortInfo);
         this.table.serverData = data;
 
@@ -336,11 +352,13 @@ export class TableFilterSortDirective {
     // This method handles the search for pageable datasource
     private handleSinglePageSearch(searchObj) {
         this.table._isPageSearch = true;
+        const visibleCols = [];
+        this.getTableVisibleCols(this.table.columns, visibleCols);
 
         let data  = getClonedObject(this.table.gridData);
         const $rows = this.table.datagridElement.find('tbody tr.app-datagrid-row');
         this.table.filterInfo = searchObj;
-        data = this.getSearchResult(data, searchObj);
+        data = this.getSearchResult(data, searchObj, visibleCols);
         // Compared the filtered data and original data, to show or hide the rows
         _.forEach(this.table.gridData, (value, index) => {
             const $row = $($rows[index]);
@@ -375,34 +393,16 @@ export class TableFilterSortDirective {
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
         const filterInfo = this.getFilterFields(searchObj);
         const filterFields = filterInfo['filterData'];
-        const condition = filterInfo['condition'] || '';
+        const logicalOp = filterInfo['logicalOp'] || '';
         refreshDataSource(this.table.datasource, {
             page: 1,
             filterFields : filterFields,
             orderBy : sortOptions,
-            condition : condition
+            condition : logicalOp
         }).then(() => {
             $appDigest();
         }, () => {
             this.table.toggleMessage(true, 'error', this.table.nodatamessage);
-        });
-    }
-
-    refreshData(isSamePage) {
-        if (!this.table.datasource) {
-            return;
-        }
-        const page = isSamePage ? this.table.dataNavigator.dn.currentPage : 1;
-        const sortInfo     = this.table.sortInfo;
-        const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
-        const filterInfo = this.getFilterFields(this.table.filterInfo);
-        const filterFields = filterInfo['filterData'];
-        const condition = filterInfo['condition'] || '';
-        refreshDataSource(this.table.datasource, {
-            page: page,
-            filterFields : filterFields,
-            orderBy : sortOptions,
-            condition : condition
         });
     }
 
@@ -620,7 +620,7 @@ export class TableFilterSortDirective {
         const sortOptions  = sortObj && sortObj.direction ? (sortObj.field + ' ' + sortObj.direction) : '';
         const filterInfo = this.getFilterFields(this.table.filterInfo);
         const filterFields = filterInfo['filterData'];
-        const condition = filterInfo['condition'] || '';
+        const condition = filterInfo['logicalOp'] || '';
         if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
             this.table.statePersistence.removeWidgetState(this.table, 'pagination');
         }
