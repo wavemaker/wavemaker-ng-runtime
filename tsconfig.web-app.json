@@ -19,6 +19,15 @@
             "dom"
         ],
         "paths": {
+            "rxjs/observable/throw": [
+                "node_modules/rxjs-compat/_esm2015/observable/throw"
+            ],
+            "rxjs/observable/*": [
+                "node_modules/rxjs-compat/_esm2015/observable/*"
+            ],
+            "rxjs/Observable": [
+                "node_modules/rxjs-compat/_esm2015/Observable"
+            ],
             "@wm/build-task": [
                 "libraries/build-task/"
             ],
