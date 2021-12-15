@@ -97,13 +97,13 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
 
 const generateFilterData = function(filterFields, searchObj, visibleCols) {
     visibleCols.forEach(function(field) {
-        filterFields['filterData'][field] = {
+        filterFields[field] = {
             'value': searchObj.value,
             'type' : searchObj.value.type,
             'logicalOp': 'OR'
         };
         if (searchObj.matchMode) {
-            filterFields['filterData'][field].matchMode = searchObj.matchMode;
+            filterFields[field].matchMode = searchObj.matchMode;
         }
     });
 };
@@ -113,17 +113,15 @@ const setFilterFields = (filterFields, searchObj, visibleCols = []) => {
     const field = searchObj && searchObj.field;
     /*Set the filter options only when a field/column has been selected.*/
     if (field) {
-        filterFields['filterData'][field] = {
+        filterFields[field] = {
             'value'     : searchObj.value,
             'logicalOp' : 'AND'
         };
         if (searchObj.matchMode) {
-            filterFields['filterData'][field].matchMode = searchObj.matchMode;
+            filterFields[field].matchMode = searchObj.matchMode;
         }
-        filterFields['logicalOp'] = 'AND';
     } else if (visibleCols.length) {
             generateFilterData(filterFields, searchObj, visibleCols);
-            filterFields['logicalOp'] = 'OR';
         }
 };
 
@@ -162,8 +160,8 @@ export class TableFilterSortDirective {
         table.adjustContainer =this.adjustContainer.bind(this);
     }
 
-    adjustContainer(fieldName){
-        setTimeout(()=>{
+    adjustContainer(fieldName) {
+        setTimeout(() => {
             adjustContainerRightEdges($('bs-dropdown-container'), this.table.rowFilterCompliedTl[fieldName], this.table, $('bs-dropdown-container .dropdown-menu'));
         });
     }
@@ -185,7 +183,7 @@ export class TableFilterSortDirective {
 
     // Get the filter fields as required by datasource
     getFilterFields(searchObj) {
-        const filterFields = {'filterData': {}};
+        const filterFields = {};
         const visibleCols = [];
         this.getTableVisibleCols(this.table.columns, visibleCols);
         if (_.isArray(searchObj)) {
@@ -196,6 +194,16 @@ export class TableFilterSortDirective {
             setFilterFields(filterFields, searchObj, visibleCols);
         }
         return filterFields;
+    }
+
+    // Get the logical operator for the search filter
+    getLogicalOperator(filterFields) {
+        let operator = '';
+        for (const field in filterFields) {
+            operator = filterFields[field]['logicalOp'] || '';
+            break;
+        }
+       return operator;
     }
 
     // Reset the sort based on sort returned by the call
@@ -278,24 +286,6 @@ export class TableFilterSortDirective {
         return data;
     }
 
-    refreshData(isSamePage) {
-        if (!this.table.datasource) {
-            return;
-        }
-        const page = isSamePage ? this.table.dataNavigator.dn.currentPage : 1;
-        const sortInfo     = this.table.sortInfo;
-        const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
-        const filterInfo = this.getFilterFields(this.table.filterInfo);
-        const filterFields = filterInfo['filterData'];
-        const logicalOp = filterInfo['logicalOp'] || '';
-        refreshDataSource(this.table.datasource, {
-            page: page,
-            filterFields : filterFields,
-            orderBy : sortOptions,
-            condition : logicalOp
-        });
-    }
-
     // This method handles the client side sort and search
     private handleClientSideSortSearch(searchSortObj, e, type) {
         this.table._isClientSearch = true;
@@ -369,6 +359,23 @@ export class TableFilterSortDirective {
         this.table.callDataGridMethod('updateSelectAllCheckboxState');
     }
 
+    refreshData(isSamePage) {
+        if (!this.table.datasource) {
+            return;
+        }
+        const page = isSamePage ? this.table.dataNavigator.dn.currentPage : 1;
+        const sortInfo     = this.table.sortInfo;
+        const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
+        const filterFields = this.getFilterFields(this.table.filterInfo);
+        const logicalOp = this.getLogicalOperator(filterFields);
+        refreshDataSource(this.table.datasource, {
+            page: page,
+            filterFields : filterFields,
+            orderBy : sortOptions,
+            condition : logicalOp
+        });
+    }
+
     // This method handles the search for server side variables
     private handleServerSideSearch(searchObj) {
         this.table.filterInfo = searchObj;
@@ -379,9 +386,8 @@ export class TableFilterSortDirective {
 
         const sortInfo     = this.table.sortInfo;
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
-        const filterInfo = this.getFilterFields(searchObj);
-        const filterFields = filterInfo['filterData'];
-        const logicalOp = filterInfo['logicalOp'] || '';
+        const filterFields = this.getFilterFields(searchObj);
+        const logicalOp = this.getLogicalOperator(filterFields);
         refreshDataSource(this.table.datasource, {
             page: 1,
             filterFields : filterFields,
@@ -394,78 +400,34 @@ export class TableFilterSortDirective {
         });
     }
 
-    private searchHandler(searchSortObj, e, type, statePersistenceTriggered?) {
-        let obj;
-        if (_.isArray(searchSortObj)) {
-            obj = searchSortObj.filter(function(searchObject) {
-                return searchObject.matchMode !== undefined && searchObject.value !== undefined;
-            });
-        } else {
-            obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
-        }
-        if (this.table.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.table.navigation) < 0) {
-            if ((_.isArray(searchSortObj) && obj.length) || (searchSortObj.value && searchSortObj.field)) {
-                this.table.statePersistence.removeWidgetState(this.table, 'search');
-                this.table.statePersistence.setWidgetState(this.table, {search: obj});
-            } else {
-                this.table.statePersistence.removeWidgetState(this.table, 'search');
-            }
-            if (!statePersistenceTriggered) {
-                this.table.statePersistence.removeWidgetState(this.table, 'pagination');
-                this.table.statePersistence.removeWidgetState(this.table, 'selectedItem');
-            }
-        } else {
-            console.warn('Retain State handling on Widget ' + this.table.name + ' is not supported for current pagination type.');
-        }
-        let filterFields = getClonedObject(searchSortObj);
-        const dataSource = this.table.datasource;
-        if (!dataSource) {
-            return;
-        }
-        let output;
-        const userFilters = {};
-        // Transform filter fields from array to object having field names as keys
-        if (_.isArray(filterFields)) {
-            filterFields.forEach(filterField => {
-                transformFilterField(userFilters, filterField);
-            });
-        } else {
-            transformFilterField(userFilters, filterFields);
-        }
-        output = this.table.invokeEventCallback('beforefilter', {$event: e, $data: userFilters, columns: userFilters});
-        // If callback returns false, don't trigger the filter call
-        if (output === false) {
-            return;
+    // This method handles the sort for server side variables
+    private handleSeverSideSort(sortObj, e, statePersistenceTriggered?) {
+        // Update the sort info for passing to datagrid
+        this.table.gridOptions.sortInfo.field = sortObj.field;
+        this.table.gridOptions.sortInfo.direction = sortObj.direction;
+        this.table.sortInfo = getClonedObject(sortObj);
+
+        const sortOptions  = sortObj && sortObj.direction ? (sortObj.field + ' ' + sortObj.direction) : '';
+        const filterFields = this.getFilterFields(this.table.filterInfo);
+        const condition = this.getLogicalOperator(filterFields);
+        if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
+            this.table.statePersistence.removeWidgetState(this.table, 'pagination');
         }
 
-        filterFields = [];
-        if (_.isEmpty(userFilters) && obj.value) {
-            filterFields.push({
-                field: '',
-                matchMode: obj.matchMode,
-                type: obj.type,
-                value: obj.value
-            });
-        } else {
-            // Transform back the filter fields from object to array
-            _.forEach(userFilters, (val, key) => {
-                filterFields.push({
-                    field: key,
-                    matchMode: val.matchMode,
-                    type: val.type,
-                    value: val.value
-                });
-            });
-        }
-        if (dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
-            this.handleServerSideSearch(filterFields);
-            return;
-        }
-        if (dataSource.execute(DataSource.Operation.IS_API_AWARE) && dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
-            this.handleSinglePageSearch(filterFields);
-        } else {
-            this.handleClientSideSortSearch(filterFields, e, type);
-        }
+        refreshDataSource(this.table.datasource, {
+            page : 1,
+            filterFields : filterFields,
+            orderBy : sortOptions,
+            condition : condition
+        }).then((response) => {
+            $appDigest();
+            const data = (response && response.data) ? response.data : response;
+            this.table.invokeEventCallback('sort', {$event: e, $data: {
+                    data,
+                    sortDirection: sortObj.direction,
+                    colDef: this.table.columns[sortObj.field]
+                }});
+        });
     }
 
     private sortHandler(searchSortObj, e, type, statePersistenceTriggered?) {
@@ -598,34 +560,77 @@ export class TableFilterSortDirective {
         }
     }
 
-    // This method handles the sort for server side variables
-    private handleSeverSideSort(sortObj, e, statePersistenceTriggered?) {
-        // Update the sort info for passing to datagrid
-        this.table.gridOptions.sortInfo.field = sortObj.field;
-        this.table.gridOptions.sortInfo.direction = sortObj.direction;
-        this.table.sortInfo = getClonedObject(sortObj);
-
-        const sortOptions  = sortObj && sortObj.direction ? (sortObj.field + ' ' + sortObj.direction) : '';
-        const filterInfo = this.getFilterFields(this.table.filterInfo);
-        const filterFields = filterInfo['filterData'];
-        const condition = filterInfo['logicalOp'] || '';
-        if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
-            this.table.statePersistence.removeWidgetState(this.table, 'pagination');
+    private searchHandler(searchSortObj, e, type, statePersistenceTriggered?) {
+        let obj;
+        if (_.isArray(searchSortObj)) {
+            obj = searchSortObj.filter(function(searchObject) {
+                return searchObject.matchMode !== undefined && searchObject.value !== undefined;
+            });
+        } else {
+            obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
+        }
+        if (this.table.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.table.navigation) < 0) {
+            if ((_.isArray(searchSortObj) && obj.length) || (searchSortObj.value)) {
+                this.table.statePersistence.removeWidgetState(this.table, 'search');
+                this.table.statePersistence.setWidgetState(this.table, {search: obj});
+            } else {
+                this.table.statePersistence.removeWidgetState(this.table, 'search');
+            }
+            if (!statePersistenceTriggered) {
+                this.table.statePersistence.removeWidgetState(this.table, 'pagination');
+                this.table.statePersistence.removeWidgetState(this.table, 'selectedItem');
+            }
+        } else {
+            console.warn('Retain State handling on Widget ' + this.table.name + ' is not supported for current pagination type.');
+        }
+        let filterFields = getClonedObject(searchSortObj);
+        const dataSource = this.table.datasource;
+        if (!dataSource) {
+            return;
+        }
+        let output;
+        const userFilters = {};
+        // Transform filter fields from array to object having field names as keys
+        if (_.isArray(filterFields)) {
+            filterFields.forEach(filterField => {
+                transformFilterField(userFilters, filterField);
+            });
+        } else {
+            transformFilterField(userFilters, filterFields);
+        }
+        output = this.table.invokeEventCallback('beforefilter', {$event: e, $data: userFilters, columns: userFilters});
+        // If callback returns false, don't trigger the filter call
+        if (output === false) {
+            return;
         }
 
-        refreshDataSource(this.table.datasource, {
-            page : 1,
-            filterFields : filterFields,
-            orderBy : sortOptions,
-            condition : condition
-        }).then((response) => {
-            $appDigest();
-            const data = (response && response.data) ? response.data : response;
-            this.table.invokeEventCallback('sort', {$event: e, $data: {
-                    data,
-                    sortDirection: sortObj.direction,
-                    colDef: this.table.columns[sortObj.field]
-                }});
-        });
+        filterFields = [];
+        if (_.isEmpty(userFilters) && obj.value) {
+            filterFields.push({
+                field: '',
+                matchMode: obj.matchMode,
+                type: obj.type,
+                value: obj.value
+            });
+        } else {
+            // Transform back the filter fields from object to array
+            _.forEach(userFilters, (val, key) => {
+                filterFields.push({
+                    field: key,
+                    matchMode: val.matchMode,
+                    type: val.type,
+                    value: val.value
+                });
+            });
+        }
+        if (dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
+            this.handleServerSideSearch(filterFields);
+            return;
+        }
+        if (dataSource.execute(DataSource.Operation.IS_API_AWARE) && dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
+            this.handleSinglePageSearch(filterFields);
+        } else {
+            this.handleClientSideSortSearch(filterFields, e, type);
+        }
     }
 }

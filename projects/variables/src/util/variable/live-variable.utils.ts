@@ -509,7 +509,12 @@ export class LiveVariableUtils {
         // merge live filter runtime values
         let filterRules: any = {};
         if (!_.isEmpty(options.filterFields)) {
-            filterRules = {'condition': options.logicalOp || 'AND', 'rules': []};
+            let operator = '';
+            for (const field in options.filterFields) {
+                operator = options.filterFields[field]['logicalOp'] || '';
+                break;
+            }
+            filterRules = {'condition': options.logicalOp || operator || 'AND', 'rules': []};
             _.forEach(options.filterFields, (filterObj, filterName) => {
                 const filterCondition = matchModes[filterObj.matchMode] || matchModes[filterObj.filterCondition] || filterObj.filterCondition;
                 if (_.includes(DB_CONSTANTS.DATABASE_EMPTY_MATCH_MODES, filterCondition) ||
