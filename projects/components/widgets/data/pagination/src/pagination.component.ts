@@ -67,6 +67,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     options;
     statehandler;
     filterFields;
+    logicalOp;
     sortOptions;
     binddataset;
     pagination;
@@ -196,53 +197,33 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         this.setResult(_.isArray(newVal) ? newVal.slice(startIndex, startIndex + this.maxResults) : newVal);
     }
 
-    /*Function to set the values needed for pagination*/
-    private setPagingValues(newVal) {
-        let dataSize,
-            maxResults,
-            currentPage,
-            dataSource;
-        let variableOptions: any = {};
-        // Store the data in __fullData. This is used for client side searching witvah out modifying the actual dataset.
-        this.__fullData = newVal;
-        /*Check for sanity*/
-        if (this.binddataset) {
-            dataSource = this.datasource || {};
-            variableOptions = dataSource._options || {};
-            /*Check for number of elements in the data set*/
-            if (newVal) {
-                if (this.isDataSourceHasPaging()) {
-                    this.pagination = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS) || {};
-                    // If "filterFields" and "sortOptions" have been set, then set them so that the filters can be retained while fetching data upon page navigation.
-                    this.filterFields = variableOptions.filterFields || {};
-                    this.sortOptions = variableOptions.orderBy ||
-                        (_.isArray(this.pagination.sort) ? getOrderByExpr(this.pagination.sort) : '');
-                    dataSize = this.pagination.totalElements;
-                    maxResults = this.pagination.size;
-                    if (this.pagination.numberOfElements > 0) {
-                        if (isDefined(this.pagination.number)) { // number is page number received from backend
-                            this.dn.currentPage = this.pagination.number + 1;
-                        }
-                        currentPage = this.dn.currentPage || 1;
-                    } else {
-                        currentPage = 1;
-                    }
-                    /* Sending pageCount undefined to calculate it again for query.*/
-                    this.setDefaultPagingValues(dataSize, maxResults, currentPage);
-                    this.disableNavigation();
-                    this.checkDataSize(dataSize, this.pagination.numberOfElements, this.pagination.size);
-                    this.setResult(newVal);
-                } else if (!_.isString(newVal)) {
-                    this.setNonPageableData(newVal);
+    /*Function to get data for the current page*/
+    getPageData(event, callback) {
+        let data,
+            startIndex;
+
+        if (this.isDataSourceHasPaging()) {
+            this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
+                'page': this.dn.currentPage,
+                'filterFields': this.filterFields,
+                'logicalOp': this.logicalOp,
+                'orderBy': this.sortOptions,
+                'matchMode': 'anywhereignorecase'
+            }).then(response => {
+                this.onPageDataReady(event, response && response.data, callback);
+                $appDigest();
+            }, error => {
+                // If error is undefined, do not show any message as this may be discarded request
+                if (error) {
+                    // TODO: Handle Error
+                    // wmToaster.show('error', 'ERROR', 'Unable to get data of page -' + this.dn.currentPage + ':' + error);
                 }
-            } else {
-                this.setResult(newVal);
-                this.resetPageNavigation();
-            }
+            });
         } else {
-            if (newVal && !_.isString(newVal)) {
-                this.setNonPageableData(newVal);
-            }
+            startIndex = (this.dn.currentPage - 1) * this.maxResults;
+            data = _.isArray(this.__fullData) ? this.__fullData.slice(startIndex, startIndex + this.maxResults) : this.__fullData;
+            this.setResult(data);
+            this.onPageDataReady(event, data, callback);
         }
     }
 
@@ -303,32 +284,54 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         triggerFn(callback);
     }
 
-    /*Function to get data for the current page*/
-    getPageData(event, callback) {
-        let data,
-            startIndex;
-
-        if (this.isDataSourceHasPaging()) {
-            this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
-                'page': this.dn.currentPage,
-                'filterFields': this.filterFields,
-                'orderBy': this.sortOptions,
-                'matchMode': 'anywhereignorecase'
-            }).then(response => {
-                this.onPageDataReady(event, response && response.data, callback);
-                $appDigest();
-            }, error => {
-                // If error is undefined, do not show any message as this may be discarded request
-                if (error) {
-                    // TODO: Handle Error
-                    // wmToaster.show('error', 'ERROR', 'Unable to get data of page -' + this.dn.currentPage + ':' + error);
+    /*Function to set the values needed for pagination*/
+    private setPagingValues(newVal) {
+        let dataSize,
+            maxResults,
+            currentPage,
+            dataSource;
+        let variableOptions: any = {};
+        // Store the data in __fullData. This is used for client side searching witvah out modifying the actual dataset.
+        this.__fullData = newVal;
+        /*Check for sanity*/
+        if (this.binddataset) {
+            dataSource = this.datasource || {};
+            variableOptions = dataSource._options || {};
+            /*Check for number of elements in the data set*/
+            if (newVal) {
+                if (this.isDataSourceHasPaging()) {
+                    this.pagination = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS) || {};
+                    // If "filterFields" and "sortOptions" have been set, then set them so that the filters can be retained while fetching data upon page navigation.
+                    this.filterFields = variableOptions.filterFields || {};
+                    this.logicalOp = variableOptions.logicalOp || '';
+                    this.sortOptions = variableOptions.orderBy ||
+                        (_.isArray(this.pagination.sort) ? getOrderByExpr(this.pagination.sort) : '');
+                    dataSize = this.pagination.totalElements;
+                    maxResults = this.pagination.size;
+                    if (this.pagination.numberOfElements > 0) {
+                        if (isDefined(this.pagination.number)) { // number is page number received from backend
+                            this.dn.currentPage = this.pagination.number + 1;
+                        }
+                        currentPage = this.dn.currentPage || 1;
+                    } else {
+                        currentPage = 1;
+                    }
+                    /* Sending pageCount undefined to calculate it again for query.*/
+                    this.setDefaultPagingValues(dataSize, maxResults, currentPage);
+                    this.disableNavigation();
+                    this.checkDataSize(dataSize, this.pagination.numberOfElements, this.pagination.size);
+                    this.setResult(newVal);
+                } else if (!_.isString(newVal)) {
+                    this.setNonPageableData(newVal);
                 }
-            });
+            } else {
+                this.setResult(newVal);
+                this.resetPageNavigation();
+            }
         } else {
-            startIndex = (this.dn.currentPage - 1) * this.maxResults;
-            data = _.isArray(this.__fullData) ? this.__fullData.slice(startIndex, startIndex + this.maxResults) : this.__fullData;
-            this.setResult(data);
-            this.onPageDataReady(event, data, callback);
+            if (newVal && !_.isString(newVal)) {
+                this.setNonPageableData(newVal);
+            }
         }
     }
 

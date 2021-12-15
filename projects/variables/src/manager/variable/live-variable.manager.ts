@@ -57,6 +57,7 @@ export class LiveVariableManager extends BaseVariableManager {
         variable._options = variable._options || {};
         variable._options.orderBy = options && options.orderBy;
         variable._options.filterFields = options && options.filterFields;
+        variable._options.logicalOp = options && options.logicalOp;
     }
 
     private handleError(variable, errorCB, response, options, advancedOptions?) {
