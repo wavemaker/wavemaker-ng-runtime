@@ -50,17 +50,19 @@ export class MobileCoreModule {
         const isSSLPinningEnabled = deviceService.getConfig().enableSSLPinning;
         if (hasCordova()) {
             document.addEventListener('wmDeviceReady', () => {
-                // ### ANGULAR9TODO###
-                // Adding type as any to avoid error TS2739:
-                (<any>window)['XMLHttpRequest'] = NativeXMLHttpRequest;
-                if (isSSLPinningEnabled) {
-                    cordova.plugin.http.setServerTrustMode('pinned', () => {
-                        console.log('SSL Pinning enabled.!');
-                      }, e => {
-                        console.log('Failed to enable SSL Pinning. Due to: ' + e);
-                      });                      
+                if (deviceService.useNativeXHR()) {
+                    // ### ANGULAR9TODO###
+                    // Adding type as any to avoid error TS2739:
+                    (<any>window)['XMLHttpRequest'] = NativeXMLHttpRequest;
+                    if (isSSLPinningEnabled) {
+                        cordova.plugin.http.setServerTrustMode('pinned', () => {
+                            console.log('SSL Pinning enabled.!');
+                        }, e => {
+                            console.log('Failed to enable SSL Pinning. Due to: ' + e);
+                        });                     
+                    }
+                    this.overrideResolveLocalFileSystemURL();
                 }
-                this.overrideResolveLocalFileSystemURL();
             }, false);
         }
     }
