@@ -454,7 +454,7 @@ export class TableFilterSortDirective {
     searchSortHandler(searchSortObj, e, type, statePersistenceTriggered?) {
         const event_type = e ? e.type : '';
         if (event_type === 'change' && this.table.filtermode !== 'multicolumn') {
-            e.preventDefault();
+            e.stopPropagation();
         } else {
             if (type === 'search') {
                 this.searchHandler(searchSortObj, e, type, statePersistenceTriggered);
