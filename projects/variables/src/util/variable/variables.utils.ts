@@ -227,6 +227,7 @@ const downloadFilefromResponse = (response, headers, success, error) => {
             if (!popup) {
                 window.location.href = downloadUrl;
             }
+            triggerOnTimeout(success);
         }
 
         setTimeout(() => { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
