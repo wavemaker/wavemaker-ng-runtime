@@ -1,0 +1,17 @@
+{
+    "name": "@wm/components/containers/linear-layout",
+    "ngPackage": {
+        "dest": "../../../../../libraries/components/containers/linear-layout",
+        "lib": {
+            "flatModuleFile": "index",
+            "entryFile": "./src/public_api.ts",
+            "umdId": "wm.components.containers.linearlayout",
+            "umdModuleIds": {
+                "@angular/core": "ng.core",
+
+                "@wm/core": "wm.core",
+                "@wm/components/base": "wm.components.base"
+            }
+        }
+    }
+}
