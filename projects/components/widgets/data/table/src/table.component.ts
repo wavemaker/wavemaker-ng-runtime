@@ -741,10 +741,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             // In case of on demand pagination, create the load more button only once and show the button until next page is not disabled
             if (!this.$element.find('.on-demand-datagrid').length && !this.dataNavigator.isDisableNext && this.onDemandLoad) {
                 this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
-                    this.dataNavigator.navigatePage('next', $event); 
+                    this.dataNavigator.navigatePage('next', $event);
                     this.isDataLoading = true;
                 });
-            } else if (this.dataNavigator.isDisableNext || !this.isDataLoading) { 
+            } else if (this.dataNavigator.isDisableNext || !this.isDataLoading) {
                 // when the next page is disabled or when the data is not loading remove the loading/load more button accordingly
                 this.callDataGridMethod('hideLoadingIndicator', this.dataNavigator.isDisableNext, this.infScroll);
             }
@@ -1443,6 +1443,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             columnDef.mobileDisplay = true;
             columnDef.tabletDisplay = true;
             columnDef.searchable = true;
+            columnDef.showinfilter = false;
             columnDef.type  = 'string';
             // Fix for [WMS-19668] and [WMS-19669]- Adding index and headerIndex for Dynamic DB columns.
             // Note: we don't have column groups for Dynamic DB
