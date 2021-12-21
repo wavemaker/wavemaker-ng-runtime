@@ -975,6 +975,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         chartSvg = d3.select('#wmChart' + this.$id + ' svg');
 
         pieGroups = chartSvg.select('.nv-wrap.nv-pie').select('.nv-pie');
+        pieGroups.text('');
         pieGroups.append('text')
             .attr('dy', '.35em')
             .attr('text-anchor', 'middle')
