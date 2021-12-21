@@ -85,7 +85,8 @@ export function refreshDataSource(dataSource, options): Promise<any> {
         dataSource.execute(DataSource.Operation.LIST_RECORDS, {
             'filterFields': options.filterFields || {},
             'orderBy': options.orderBy,
-            'page': options.page || 1
+            'page': options.page || 1,
+            'logicalOp' : options.condition || ''
         }).then(res, rej);
     });
 }

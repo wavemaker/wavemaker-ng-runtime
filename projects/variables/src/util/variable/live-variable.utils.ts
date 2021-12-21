@@ -1,4 +1,4 @@
-import { getClonedObject, hasCordova, isDefined, isNumberType, replace, triggerFn } from '@wm/core';
+import { getClonedObject, hasCordova, isDefined, isNumberType, isDateTimeType,  replace, triggerFn } from '@wm/core';
 
 import { $rootScope, DB_CONSTANTS, SWAGGER_CONSTANTS } from '../../constants/variables.constants';
 import { formatDate, getEvaluatedOrderBy } from './variables.utils';
@@ -371,7 +371,7 @@ export class LiveVariableUtils {
                 paramValue;
             // If value is an empty array, do not generate the query
             // If values is NaN and number type, do not generate query for this field
-            if ((isValArray && _.isEmpty(value)) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType))) {
+            if ((isValArray && _.isEmpty(value)) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType)) || (!isValArray && isNaN(value) && isDateTimeType(_.toLower(fieldValue.attributeType)))) {
                 return;
             }
             if (isValArray) {
@@ -435,7 +435,7 @@ export class LiveVariableUtils {
 
         // If value is an empty array, do not generate the query
         // If values is NaN and number type, do not generate query for this field
-        if ((isValArray && _.isEmpty(value)) || (isValArray && _.some(value, val => (_.isNull(val) || _.isNaN(val) || val === ''))) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType))) {
+        if ((isValArray && _.isEmpty(value)) || (isValArray && _.some(value, val => (_.isNull(val) || _.isNaN(val) || val === ''))) || (!isValArray && isNaN(value) && isNumberType(fieldValue.attributeType)) || (!isValArray && !value && isDateTimeType(_.toLower(fieldValue.attributeType)))) {
             return;
         }
         if (isValArray) {
@@ -509,7 +509,12 @@ export class LiveVariableUtils {
         // merge live filter runtime values
         let filterRules: any = {};
         if (!_.isEmpty(options.filterFields)) {
-            filterRules = {'condition': options.logicalOp || 'AND', 'rules': []};
+            let operator = '';
+            for (const field in options.filterFields) {
+                operator = options.filterFields[field]['logicalOp'] || '';
+                break;
+            }
+            filterRules = {'condition': options.logicalOp || operator || 'AND', 'rules': []};
             _.forEach(options.filterFields, (filterObj, filterName) => {
                 const filterCondition = matchModes[filterObj.matchMode] || matchModes[filterObj.filterCondition] || filterObj.filterCondition;
                 if (_.includes(DB_CONSTANTS.DATABASE_EMPTY_MATCH_MODES, filterCondition) ||

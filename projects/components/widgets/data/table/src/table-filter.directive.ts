@@ -25,7 +25,7 @@ const getSearchValue = (value, type) => {
 };
 
 // Filter the data based on the search value and conditions
-const getFilteredData = (data, searchObj) => {
+const getFilteredData = (data, searchObj, visibleCols = []) => {
     const searchVal = getSearchValue(searchObj.value, searchObj.type);
     let currentVal;
     // Return whole data if
@@ -39,6 +39,11 @@ const getFilteredData = (data, searchObj) => {
         if (searchObj.field) {
             currentVal = getSearchValue(_.get(obj, searchObj.field), searchObj.type);
         } else {
+            _.forEach(obj, (val, key) => {
+                if (!(_.includes(visibleCols, key))) {
+                    delete obj[key];
+                }
+            });
             currentVal = _.values(obj).join(' ').toLowerCase(); // If field is not there, search on all the columns
         }
         switch (searchObj.matchMode) {
@@ -90,8 +95,22 @@ const getFilteredData = (data, searchObj) => {
     return data;
 };
 
+// Set the filter fields when the search value is specified and field is not selected
+const generateFilterData = function(filterFields, searchObj, visibleCols) {
+    visibleCols.forEach(function(field) {
+        filterFields[field] = {
+            'value': searchObj.value,
+            'type' : searchObj.value.type,
+            'logicalOp': 'OR'
+        };
+        if (searchObj.matchMode) {
+            filterFields[field].matchMode = searchObj.matchMode;
+        }
+    });
+};
+
 // Set the filter fields as required by datasource
-const setFilterFields = (filterFields, searchObj) => {
+const setFilterFields = (filterFields, searchObj, visibleCols = []) => {
     const field = searchObj && searchObj.field;
     /*Set the filter options only when a field/column has been selected.*/
     if (field) {
@@ -102,6 +121,8 @@ const setFilterFields = (filterFields, searchObj) => {
         if (searchObj.matchMode) {
             filterFields[field].matchMode = searchObj.matchMode;
         }
+    } else if (visibleCols.length) {
+        generateFilterData(filterFields, searchObj, visibleCols);
     }
 };
 
@@ -140,8 +161,8 @@ export class TableFilterSortDirective {
         table.adjustContainer =this.adjustContainer.bind(this);
     }
 
-    adjustContainer(fieldName){
-        setTimeout(()=>{
+    adjustContainer(fieldName) {
+        setTimeout(() => {
             adjustContainerRightEdges($('bs-dropdown-container'), this.table.rowFilterCompliedTl[fieldName], this.table, $('bs-dropdown-container .dropdown-menu'));
         });
     }
@@ -152,17 +173,38 @@ export class TableFilterSortDirective {
                     _.includes(this.table.primaryKey, this.table.sortInfo.field) ? 'first' : 'last';
     }
 
+    // Returns all the visible columns of the table
+    getTableVisibleCols(columns, visibleCols) {
+        _.forEach(this.table.columns, (val, col) => {
+            if (_.toLower(_.toString(val.showinfilter)) === 'true' && col !== 'rowOperations' && val.searchable) {
+                visibleCols.push(col);
+            }
+        });
+    }
+
     // Get the filter fields as required by datasource
     getFilterFields(searchObj) {
         const filterFields = {};
+        const visibleCols = [];
+        this.getTableVisibleCols(this.table.columns, visibleCols);
         if (_.isArray(searchObj)) {
             _.forEach(searchObj,  obj => {
-                setFilterFields(filterFields, obj);
+                setFilterFields(filterFields, obj, visibleCols);
             });
         } else {
-            setFilterFields(filterFields, searchObj);
+            setFilterFields(filterFields, searchObj, visibleCols);
         }
         return filterFields;
+    }
+
+    // Get the logical operator for the search filter
+    getLogicalOperator(filterFields) {
+        let operator = '';
+        for (const field in filterFields) {
+            operator = filterFields[field]['logicalOp'] || '';
+            break;
+        }
+        return operator;
     }
 
     // Reset the sort based on sort returned by the call
@@ -224,15 +266,17 @@ export class TableFilterSortDirective {
 
     // Returns data filtered using searchObj
     getSearchResult(data, searchObj) {
+        const visibleCols = [];
+        this.getTableVisibleCols(this.table.columns, visibleCols);
         if (!searchObj) {
             return data;
         }
         if (_.isArray(searchObj)) {
             searchObj.forEach((obj) => {
-                data = getFilteredData(data, obj);
+                data = getFilteredData(data, obj, visibleCols);
             });
         } else {
-            data = getFilteredData(data, searchObj);
+            data = getFilteredData(data, searchObj, visibleCols);
         }
         return data;
     }
@@ -323,10 +367,12 @@ export class TableFilterSortDirective {
         const sortInfo     = this.table.sortInfo;
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
         const filterFields = this.getFilterFields(searchObj);
+        const logicalOp = this.getLogicalOperator(filterFields);
         refreshDataSource(this.table.datasource, {
             page: 1,
             filterFields : filterFields,
-            orderBy : sortOptions
+            orderBy : sortOptions,
+            condition : logicalOp
         }).then(() => {
             $appDigest();
         }, () => {
@@ -343,7 +389,7 @@ export class TableFilterSortDirective {
 
         const sortOptions  = sortObj && sortObj.direction ? (sortObj.field + ' ' + sortObj.direction) : '';
         const filterFields = this.getFilterFields(this.table.filterInfo);
-
+        const condition = this.getLogicalOperator(filterFields);
         if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
             this.table.statePersistence.removeWidgetState(this.table, 'pagination');
         }
@@ -351,7 +397,8 @@ export class TableFilterSortDirective {
         refreshDataSource(this.table.datasource, {
             page : 1,
             filterFields : filterFields,
-            orderBy : sortOptions
+            orderBy : sortOptions,
+            condition : condition
         }).then((response) => {
             $appDigest();
             const data = (response && response.data) ? response.data : response;
@@ -373,7 +420,7 @@ export class TableFilterSortDirective {
             obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
         }
         if (this.table.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.table.navigation) < 0) {
-            if ((_.isArray(searchSortObj) && obj.length) || (searchSortObj.value && searchSortObj.field)) {
+            if ((_.isArray(searchSortObj) && obj.length) || (searchSortObj.value)) {
                 this.table.statePersistence.removeWidgetState(this.table, 'search');
                 this.table.statePersistence.setWidgetState(this.table, {search: obj});
             } else {
@@ -406,8 +453,25 @@ export class TableFilterSortDirective {
         if (output === false) {
             return;
         }
-        // Transform back the filter fields from object to array
         filterFields = [];
+        if (_.isEmpty(userFilters) && obj.value) {
+            filterFields.push({
+                field: '',
+                matchMode: obj.matchMode,
+                type: obj.type,
+                value: obj.value
+            });
+        } else {
+            // Transform back the filter fields from object to array
+            _.forEach(userFilters, (val, key) => {
+                filterFields.push({
+                    field: key,
+                    matchMode: val.matchMode,
+                    type: val.type,
+                    value: val.value
+                });
+            });
+        }
         _.forEach(userFilters, (val, key) => {
             filterFields.push({
                 field: key,
@@ -570,10 +634,12 @@ export class TableFilterSortDirective {
         const sortInfo     = this.table.sortInfo;
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
         const filterFields = this.getFilterFields(this.table.filterInfo);
+        const logicalOp = this.getLogicalOperator(filterFields);
         refreshDataSource(this.table.datasource, {
             page: page,
             filterFields : filterFields,
-            orderBy : sortOptions
+            orderBy : sortOptions,
+            condition : logicalOp
         });
     }
 }
