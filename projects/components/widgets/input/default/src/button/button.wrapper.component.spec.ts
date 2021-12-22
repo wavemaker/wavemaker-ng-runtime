@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {waitForAsync, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ButtonComponent} from './button.component';
 import { Component, ViewChild } from '@angular/core';
 import {ComponentsTestModule} from '../../../../../base/src/test/components.test.module';
@@ -95,7 +95,7 @@ describe('wm-button: Component specific tests: ', () => {
        return fixture.nativeElement.querySelector('.badge');
    };
 
-   beforeEach(async(() => {
+   beforeEach(waitForAsync(() => {
        fixture  = compileTestComponent(testModuleDef, TestComponent);
        wrapperComponent = fixture.componentInstance;
        captionEl = fixture.nativeElement.querySelector('.btn-caption');

@@ -9,7 +9,7 @@ const dataSetKey = 'dataset';
 function copyAttribute(from: Element, fromAttrName: string, to: Element, toAttrName: string) {
     const fromAttr = from.attrs.find( a => a.name === fromAttrName);
     if (fromAttr) {
-        to.attrs.push(new Attribute(toAttrName, fromAttr.value, fromAttr.sourceSpan, fromAttr.valueSpan));
+        to.attrs.push(new Attribute(toAttrName, fromAttr.value, fromAttr.sourceSpan, fromAttr.keySpan, fromAttr.valueSpan));
     }
 }
 

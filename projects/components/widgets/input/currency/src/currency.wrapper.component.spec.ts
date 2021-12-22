@@ -6,7 +6,7 @@ import {TrailingZeroDecimalPipe} from "@wm/components/base";
 import {DecimalPipe} from "@angular/common";
 import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../base/src/test/common-widget.specs";
 import { PipeProvider } from "../../../../../runtime-base/src/services/pipe-provider.service";
-import {async, ComponentFixture} from '@angular/core/testing';
+import {waitForAsync, ComponentFixture} from '@angular/core/testing';
 import {compileTestComponent, setInputValue} from "../../../../base/src/test/util/component-test-util";
 
 let mockApp = {};
@@ -99,7 +99,7 @@ describe('CurrencyComponent', () => {
         expect(validateVal).toEqual(false);
     }
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         fixture = compileTestComponent(testModuleDef, CurrencyWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         currencyComponent = wrapperComponent.wmComponent;

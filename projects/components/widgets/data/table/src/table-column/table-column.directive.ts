@@ -88,6 +88,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     maxvalue;
     regexp;
     searchable;
+    showinfilter;
     show;
     sortable;
     textalignment;
@@ -653,6 +654,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.ngclass =  this['col-ng-class'];
         this.formatpattern =  this.formatpattern === 'toNumber' ? 'numberToString'  :  this.formatpattern;
         this.searchable =  (this.type === 'blob' || this.type === 'clob') ? false  :  this.searchable;
+        this.showinfilter = this.nativeElement.hasAttribute('showinfilter') ? this.nativeElement.getAttribute('showinfilter') : (this.show);
         this.limit =  this.limit ? +this.limit  :  undefined;
         this.editWidgetType = this['edit-widget-type'] =  this['edit-widget-type'] || getEditModeWidget(this);
         this.filterOn =  this['filter-on'];
@@ -688,6 +690,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 break;
             case 'show':
                 this.table.redraw(true);
+                this.showinfilter = this.nativeElement.hasAttribute('showinfilter') ? this.nativeElement.getAttribute('showinfilter') : nv;
                 break;
             case 'filterdataset':
                 this._filterDataSet = nv;
@@ -696,6 +699,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             case 'editdatepattern':
                 this.setInlineWidgetProp('inlineInstance', 'datepattern', nv);
                 this.setInlineWidgetProp('inlineInstanceNew', 'datepattern', nv);
+                break;
+            case 'showinfilter':
+                this.showinfilter = nv;
                 break;
             default:
                 if (inlineWidgetProps.includes(key)) {

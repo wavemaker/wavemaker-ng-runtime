@@ -1,6 +1,6 @@
 /*global describe, it, WM, beforeEach, expect, module, inject, _, parseInt, document, Hammer*/
 
-import { async } from '@angular/core/testing';
+import { waitForAsync } from '@angular/core/testing';
 import * as _ from '../../../../../node_modules/lodash/lodash.min';
 import { isBooleanAttr, isDimensionProp } from '../widgets/framework/constants';
 import { toDimension } from '../../../../core/src/utils/dom';
@@ -52,7 +52,7 @@ export class ComponentTestBase {
                 widgetProps,
                 widgetAttr = _.replace(this.widgetDef.type, '-', '');
 
-            beforeEach(async(() => {
+            beforeEach(waitForAsync(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
@@ -116,7 +116,7 @@ export class ComponentTestBase {
                 $element,
                 $inputEl;
 
-            beforeEach(async(() => {
+            beforeEach(waitForAsync(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
@@ -224,7 +224,7 @@ export class ComponentTestBase {
                 fixture,
                 widgetProps;
 
-            beforeEach(async(() => {
+            beforeEach(waitForAsync(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
@@ -347,7 +347,7 @@ export class ComponentTestBase {
             _.forEach(eventList, (evtObj) => {
 
                 if (evtObj.clickableEle) {
-                    it('Should trigger the ' + evtObj.eventName + ' event', async(() => {
+                    it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
                         // fixture.whenStable().then(() => {
                         let eleControl = getHtmlSelectorElement(fixture, evtObj.clickableEle);
                         eleControl.nativeElement.click();
@@ -358,7 +358,7 @@ export class ComponentTestBase {
                         // });
                     }))
                 } else if (evtObj.mouseSelectionEle) {
-                    it('Should trigger the ' + evtObj.eventName + ' event', async(() => {
+                    it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
                         fixture.whenStable().then(() => {
                             spyOn(fixture.componentInstance, evtObj.callbackMethod).and.callThrough();
                             let eleControl = getHtmlSelectorElement(fixture, evtObj.mouseSelectionEle);
@@ -367,7 +367,7 @@ export class ComponentTestBase {
                         });
                     }));
                 } else if (evtObj.eventTrigger) {
-                    it('Should trigger the ' + evtObj.eventName + ' event', async(() => {
+                    it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
                         fixture.whenStable().then(() => {
                             spyOn(fixture.componentInstance, evtObj.callbackMethod).and.callThrough();
                             let eleControl = getHtmlSelectorElement(fixture, evtObj.eventTrigger);
@@ -392,7 +392,7 @@ export class ComponentTestBase {
                 $element,
                 $inputEl;
 
-            beforeEach(async(() => {
+            beforeEach(waitForAsync(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;

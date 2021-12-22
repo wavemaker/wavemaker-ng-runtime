@@ -1,55 +1,55 @@
 import {
     Injectable,
-    NgModuleFactoryLoader,
     NgModuleRef,
     Type,
     Injector,
-    SystemJsNgModuleLoader,
-    Inject,
-    NgModuleFactory
+    Compiler,
+    NgModuleFactory,
 } from '@angular/core';
 import { PartialRefProvider } from '@wm/core';
 import { ComponentType } from '@wm/runtime/base';
-
+import { partialLazyModules, prefabLazyModules, prefabPartialLazyModules } from '../util/lazy-module-routes';
 
 type ModuleWithRoot = Type<any> & { rootComponent: Type<any> };
+type Options = {
+    prefab: string
+};
 
 @Injectable({
     providedIn: 'root'
 })
 export class LazyComponentRefProviderService extends PartialRefProvider {
     private moduleRef: NgModuleRef<any>;
-    constructor(
-        @Inject(NgModuleFactoryLoader) private loader: SystemJsNgModuleLoader,
-        private injector: Injector
-    ) {
+    
+    constructor(private injector: Injector, private compiler: Compiler) {
         super();
     }
-    private getModulePath(componentName: string, componentType: ComponentType, options?: any): string {
-        if (componentName.length > 0) {
-            if (componentType === ComponentType.PARTIAL && options && options.prefab) {
-                return `src/app/prefabs/${options.prefab}/partials/${componentName}/${componentName}.module#${componentName
-                    .charAt(0)
-                    .toUpperCase()}${componentName.slice(1)}Module`;
-            }
-            if (componentType === ComponentType.PARTIAL) {
-                return `src/app/partials/${componentName}/${componentName}.module#${componentName
-                    .charAt(0)
-                    .toUpperCase()}${componentName.slice(1)}Module`;
-            } else if (componentType === ComponentType.PREFAB) {
-                return `src/app/prefabs/${componentName}/${componentName}.module#${componentName
-                    .charAt(0)
-                    .toUpperCase()}${componentName.slice(1)}Module`;
-            }
+
+    private getLazyModule(componentName: string, componentType: ComponentType, options?: Options) {
+        if (componentType === ComponentType.PARTIAL && options && options.prefab) {
+           return prefabPartialLazyModules[`${options.prefab}_${componentName}`];
         }
-        return null;
+        if (componentType === ComponentType.PARTIAL) {
+            return partialLazyModules[componentName];
+        }
+        if (componentType === ComponentType.PREFAB) {
+            return prefabLazyModules[componentName];
+        }
     }
-    public async getComponentFactoryRef(componentName: string, componentType: ComponentType, options?: {}) {
-        let moduleFactory: NgModuleFactory<any>;
+
+    private async getModuleFactory(moduleOrFactory: NgModuleFactory<any> | Type<any>): Promise<NgModuleFactory<any>> {
+        if (moduleOrFactory instanceof NgModuleFactory) {
+            return moduleOrFactory;
+        } else {
+            return this.compiler.compileModuleAsync(moduleOrFactory);
+        }
+    }
+
+    public async getComponentFactoryRef(componentName: string, componentType: ComponentType, options?: Options) {
         try {
-            moduleFactory = await this.loader.load(
-                this.getModulePath(componentName, componentType, options)
-            );
+            const moduleOrFactory = await this.getLazyModule(componentName, componentType, options).loadChildren();
+            const moduleFactory = await this.getModuleFactory(moduleOrFactory);
+
             this.moduleRef = moduleFactory.create(this.injector);
             const rootComponent = (moduleFactory.moduleType as ModuleWithRoot)
                 .rootComponent;

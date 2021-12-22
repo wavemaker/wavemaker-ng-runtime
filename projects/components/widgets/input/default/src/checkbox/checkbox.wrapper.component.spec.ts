@@ -1,6 +1,6 @@
 import {Component, ViewChild} from "@angular/core";
 import {CheckboxComponent} from "./checkbox.component";
-import {async, ComponentFixture} from "@angular/core/testing";
+import {waitForAsync, ComponentFixture} from "@angular/core/testing";
 import {compileTestComponent, getHtmlSelectorElement} from "../../../../../base/src/test/util/component-test-util";
 import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
 import {FormsModule} from "@angular/forms";
@@ -45,7 +45,7 @@ describe('Checkbox component', () => {
     let wrapperComponent: CheckboxWrapperComponent;
     let checkboxComponent: CheckboxComponent;
     let fixture: ComponentFixture<CheckboxWrapperComponent>;
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         fixture = compileTestComponent(testModuleDef, CheckboxWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         checkboxComponent = wrapperComponent.wmComponent;

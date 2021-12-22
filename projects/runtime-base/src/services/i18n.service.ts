@@ -142,7 +142,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadAngularLocaleBundle(angLocale) {
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
             if (this.selectedLocale === this.defaultSupportedLocale) {
                 resolve();
