@@ -1039,7 +1039,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/components/widgets/tsconfig.lib.json",
             "project": "projects/components/widgets/containers/linear-layout/package.json"
