@@ -28,7 +28,7 @@ export class DeviceService {
     private _whenReadyPromises = [];
     private _backBtnTapListeners = [];
     private _startUpServices: IDeviceStartUpService[] = [];
-    private _config: Config = null;
+    private _config: Config = {} as Config;
 
     public constructor(private file: File) {
         const maxWaitTime = 10;
@@ -45,8 +45,6 @@ export class DeviceService {
                     this._config = response;
                 }
             }));
-        } else {
-            this._config = {} as Config;
         }
     }
 
