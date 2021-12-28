@@ -96,7 +96,7 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
 };
 
 // Set the filter fields when the search value is specified and field is not selected
-const generateFilterData = function(filterFields, searchObj, visibleCols) {
+const setAllFilterFields = function(filterFields, searchObj, visibleCols) {
     visibleCols.forEach(function(field) {
         filterFields[field] = {
             'value': searchObj.value,
@@ -112,7 +112,7 @@ const generateFilterData = function(filterFields, searchObj, visibleCols) {
 // Set the filter fields as required by datasource
 const setFilterFields = (filterFields, searchObj, visibleCols = []) => {
     const field = searchObj && searchObj.field;
-    /*Set the filter options only when a field/column has been selected.*/
+    /*Set the filter options when a field/column has been selected.*/
     if (field) {
         filterFields[field] = {
             'value'     : searchObj.value,
@@ -121,8 +121,9 @@ const setFilterFields = (filterFields, searchObj, visibleCols = []) => {
         if (searchObj.matchMode) {
             filterFields[field].matchMode = searchObj.matchMode;
         }
-    } else if (visibleCols.length) {
-        generateFilterData(filterFields, searchObj, visibleCols);
+    } else {
+        /*Set the filter options when a field/column hasn't been selected.*/
+        setAllFilterFields(filterFields, searchObj, visibleCols);
     }
 };
 
@@ -158,7 +159,7 @@ export class TableFilterSortDirective {
         table.getNavigationTargetBySortInfo = this.getNavigationTargetBySortInfo.bind(this);
         table.refreshData = this.refreshData.bind(this);
         table.clearFilter = this.clearFilter.bind(this);
-        table.adjustContainer =this.adjustContainer.bind(this);
+        table.adjustContainer = this.adjustContainer.bind(this);
     }
 
     adjustContainer(fieldName) {
@@ -173,7 +174,7 @@ export class TableFilterSortDirective {
                     _.includes(this.table.primaryKey, this.table.sortInfo.field) ? 'first' : 'last';
     }
 
-    // Returns all the visible columns of the table
+    // Returns all the columns of the table wherein, showinfilter is set to true
     getTableVisibleCols(columns, visibleCols) {
         _.forEach(this.table.columns, (val, col) => {
             if (_.toLower(_.toString(val.showinfilter)) === 'true' && col !== 'rowOperations' && val.searchable) {
@@ -182,17 +183,27 @@ export class TableFilterSortDirective {
         });
     }
 
+    // call the set filter fields function based on the field selected or not
+    callSetFieldBasedOnField(searchObj, filterFields) {
+        if (searchObj.field) {
+            setFilterFields(filterFields, searchObj);
+        } else {
+           const visibleCols = [];
+            this.getTableVisibleCols(this.table.columns, visibleCols);
+            setFilterFields(filterFields, searchObj, visibleCols);
+        }
+    }
+
     // Get the filter fields as required by datasource
     getFilterFields(searchObj) {
         const filterFields = {};
         const visibleCols = [];
-        this.getTableVisibleCols(this.table.columns, visibleCols);
         if (_.isArray(searchObj)) {
             _.forEach(searchObj,  obj => {
-                setFilterFields(filterFields, obj, visibleCols);
+               this.callSetFieldBasedOnField(obj, filterFields);
             });
         } else {
-            setFilterFields(filterFields, searchObj, visibleCols);
+            this.callSetFieldBasedOnField(searchObj, filterFields);
         }
         return filterFields;
     }
@@ -454,6 +465,7 @@ export class TableFilterSortDirective {
             return;
         }
         filterFields = [];
+        // if the field is not selected in search filter dropdown, building the filter fields object
         if (_.isEmpty(userFilters) && obj.value) {
             filterFields.push({
                 field: '',
@@ -472,14 +484,6 @@ export class TableFilterSortDirective {
                 });
             });
         }
-        _.forEach(userFilters, (val, key) => {
-            filterFields.push({
-                field: key,
-                matchMode: val.matchMode,
-                type: val.type,
-                value: val.value
-            });
-        });
         if (dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
             this.handleServerSideSearch(filterFields);
             return;
