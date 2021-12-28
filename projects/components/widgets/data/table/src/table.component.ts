@@ -24,7 +24,24 @@ import {
     extendProto,
     $invokeWatchers
 } from '@wm/core';
-import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe, extractDataSourceName, DEBOUNCE_TIMES, NAVIGATION_TYPE, unsupportedStatePersistenceTypes } from '@wm/components/base';
+import {
+    EDIT_MODE,
+    getConditionalClasses,
+    getOrderByExpr,
+    getRowOperationsColumn,
+    prepareFieldDefs,
+    provideAs,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+    transformData,
+    TrustAsPipe,
+    extractDataSourceName,
+    DEBOUNCE_TIMES,
+    NAVIGATION_TYPE,
+    unsupportedStatePersistenceTypes,
+    IRedrawableComponent
+} from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 
 import { ListComponent } from '@wm/components/data/list';
@@ -74,7 +91,7 @@ const isInputBodyWrapper = target => {
         provideAsWidgetRef(TableComponent)
     ]
 })
-export class TableComponent extends StylableComponent implements AfterContentInit, OnDestroy, ControlValueAccessor {
+export class TableComponent extends StylableComponent implements AfterContentInit, OnDestroy, ControlValueAccessor, IRedrawableComponent {
     static initializeProps = registerProps();
     @ViewChild(PaginationComponent, {static: true}) dataNavigator;
 
