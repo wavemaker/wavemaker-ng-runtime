@@ -2863,7 +2863,9 @@ $.widget('wm.datatable', {
             }
         }
         if (!isCreated) {
-            this.setColGroupWidths();
+            this.options.runInNgZone(function () {
+                self.setColGroupWidths();
+            });
         }
         this.addOrRemoveScroll();
     },
