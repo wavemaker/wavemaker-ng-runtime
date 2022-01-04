@@ -175,21 +175,22 @@ export class TableFilterSortDirective {
     }
 
     // Returns all the columns of the table wherein, showinfilter is set to true
-    getTableVisibleCols(columns, visibleCols) {
+    getTableVisibleCols() {
+        const visibleCols = [];
         _.forEach(this.table.columns, (val, col) => {
             if (_.toLower(_.toString(val.showinfilter)) === 'true' && col !== 'rowOperations' && val.searchable) {
                 visibleCols.push(col);
             }
         });
+        return visibleCols;
     }
 
     // call the set filter fields function based on the field selected or not
-    callSetFieldBasedOnField(searchObj, filterFields) {
+    invokeSetFilterfieldBasedOnFieldval(searchObj, filterFields) {
         if (searchObj.field) {
             setFilterFields(filterFields, searchObj);
         } else {
-           const visibleCols = [];
-            this.getTableVisibleCols(this.table.columns, visibleCols);
+           const visibleCols = this.getTableVisibleCols();
             setFilterFields(filterFields, searchObj, visibleCols);
         }
     }
@@ -197,13 +198,12 @@ export class TableFilterSortDirective {
     // Get the filter fields as required by datasource
     getFilterFields(searchObj) {
         const filterFields = {};
-        const visibleCols = [];
         if (_.isArray(searchObj)) {
             _.forEach(searchObj,  obj => {
-               this.callSetFieldBasedOnField(obj, filterFields);
+               this.invokeSetFilterfieldBasedOnFieldval(obj, filterFields);
             });
         } else {
-            this.callSetFieldBasedOnField(searchObj, filterFields);
+            this.invokeSetFilterfieldBasedOnFieldval(searchObj, filterFields);
         }
         return filterFields;
     }
@@ -277,8 +277,7 @@ export class TableFilterSortDirective {
 
     // Returns data filtered using searchObj
     getSearchResult(data, searchObj) {
-        const visibleCols = [];
-        this.getTableVisibleCols(this.table.columns, visibleCols);
+        const visibleCols = this.getTableVisibleCols();
         if (!searchObj) {
             return data;
         }
