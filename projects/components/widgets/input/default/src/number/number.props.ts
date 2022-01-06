@@ -24,7 +24,8 @@ export const numberProps = new Map(
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['trailingzero', {value: false, ...PROP_BOOLEAN}],
         ['updateon', PROP_STRING],
-        ['inputmode', {value: 'natural', ...PROP_STRING}]
+        ['inputmode', {value: 'natural', ...PROP_STRING}],
+        ['precision', {value: 0, ...PROP_NUMBER}]
     ]
 );
 

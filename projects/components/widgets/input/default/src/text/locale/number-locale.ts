@@ -31,7 +31,6 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public trailingzero: boolean;
     private validateType: string;
     public inputmode: string;
-    public iscryptocurrency: boolean;
     public precision: number;
     private lastValIsDecimal: boolean;
 
@@ -123,8 +122,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     private isValid(val: number): boolean {
         // id number is infinite then consider it as invalid value
+        const step = this.stepVal();
         if (_.isNaN(val) || !_.isFinite(val) || (!Number.isInteger(this.step) &&
-            this.countDecimals(val) > this.countDecimals(this.step))) {
+            this.countDecimals(val) > this.countDecimals(step))) {
             this.isInvalidNumber = true;
             return false;
         }
@@ -234,13 +234,15 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (this.updateon === 'default' && !this.isDefaultQuery) {
             this.resetCursorPosition(preValue.length - position);
         }
-    }
+    }   
 
     // This function returns the step length set in the studio
     private stepLength() {
-        if (this.widgetType === 'wm-currency' && this.iscryptocurrency && this.precision) {
+        if (this.precision || this.precision === 0) {
             return this.precision;
         }
+
+        // keeping this for BC
         const stepLen = this.step.toString().split('.');
         if (stepLen.length === 1 ) {
             return; 
@@ -254,6 +256,14 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         return this.inputmode === INPUTMODE.NATURAL && this.widgetType === 'wm-currency' && !!this.trailingzero;
     }
 
+    // This function returns step needs to used further based on precision availablity
+    public stepVal() {
+        if (this.precision || this.precision === 0) {
+            return 1 /  Math.pow(10, this.precision);
+        } else {
+            return this.step;
+        }
+    }
        /**
      * @param value contains the value entered in the input box
      * This function modifies the user input value, into financial mode. 
@@ -261,6 +271,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
+        const step = this.stepVal();
+
         if (isDefined(value) && value !== '') {
             this.handleChange(value);
         } else {
@@ -281,7 +293,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             financialVal = parseFloat(value);
         } else {
             const valInWholeNum = parseInt(value.toString().replace(/\D/g,''));
-            financialVal = valInWholeNum *  this.step;
+            financialVal = valInWholeNum *  step;
         }
 
         if (!_.isNaN(financialVal)) {
@@ -435,7 +447,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
         // validates entering of decimal values only when user provides decimal limit(i.e step contains decimal values).
         // Restrict user from entering only if the decimal limit is reached and the new digit is entered in decimal place
-        if (!skipStepValidation && inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step)) && $event.target.selectionStart >= inputValue.length - 1) {
+        const step = this.stepVal();
+        if (!skipStepValidation && inputValue && this.countDecimals(step) && (this.countDecimals(inputValue) >= this.countDecimals(step)) && $event.target.selectionStart >= inputValue.length - 1) {
             return false;
         }
         // validates if user entered an invalid character.
