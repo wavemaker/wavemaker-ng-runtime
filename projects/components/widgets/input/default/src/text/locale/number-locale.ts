@@ -31,6 +31,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public trailingzero: boolean;
     private validateType: string;
     public inputmode: string;
+    public iscryptocurrency: boolean;
+    public precision: number;
     private lastValIsDecimal: boolean;
 
     constructor(
@@ -236,6 +238,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
     // This function returns the step length set in the studio
     private stepLength() {
+        if (this.widgetType === 'wm-currency' && this.iscryptocurrency && this.precision) {
+            return this.precision;
+        }
         const stepLen = this.step.toString().split('.');
         if (stepLen.length === 1 ) {
             return; 

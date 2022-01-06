@@ -19,7 +19,9 @@ export const currencyProps = new Map(
         ['step', {value: 1, ...PROP_NUMBER}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['trailingzero', {value: false, ...PROP_BOOLEAN}],
-        ['inputmode', {value: 'natural', ...PROP_STRING}]
+        ['inputmode', {value: 'natural', ...PROP_STRING}],
+        ['iscryptocurrency', {value: false, ...PROP_BOOLEAN}],
+        ['precision', {value: 0, ...PROP_NUMBER}]
     ]
 );
 
