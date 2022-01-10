@@ -975,12 +975,25 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         chartSvg = d3.select('#wmChart' + this.$id + ' svg');
 
         pieGroups = chartSvg.select('.nv-wrap.nv-pie').select('.nv-pie');
+        pieGroups.text('');
         pieGroups.append('text')
             .attr('dy', '.35em')
             .attr('text-anchor', 'middle')
-            .attr('style', 'font-size: ' + 'inherit !important')
             .attr('class', 'nv-pie-title')
-            .text(labelValue);
+            .text(labelValue)
+            .each(function (d) {
+                var d3text = d3.select(this),
+                circ = d3.select(this.parentElement),
+                totalWidth = Number(circ.node().getBoundingClientRect().width),
+                // minus the ring width from total width
+                availWidth = totalWidth - 30,
+                textWidth = this.getComputedTextLength();
+                d3text.attr("data-scale", availWidth / textWidth);
+              }).style("font-size", function() {
+                // 16 is the default font size to multiply with the scaled value and 24 is the maximum font size that can be applied
+                var fontSize = 16 * d3.select(this).attr("data-scale");
+                return fontSize > 24 ? 24 : fontSize + "px"; 
+              });
     }
 
     onPropertyChange(key, newVal, oldVal?) {

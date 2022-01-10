@@ -7,6 +7,7 @@ import { App, getAbortableDefer, hasCordova, isIos, noop, retryIfFails } from '@
 
 import { IDeviceStartUpService } from './device-start-up-service';
 import { NativeXMLHttpRequest } from './../native.xhr';
+import { DeviceService } from './device.service';
 
 declare const _, cordova, Connection, navigator;
 
@@ -37,8 +38,8 @@ const blockUrl = url => {
     return block;
 };
 
-const getXMLHttpRequestToUse = (() => {
-    const clazz = (isIos() && hasCordova() && cordova.plugin && cordova.plugin.http) ? NativeXMLHttpRequest : XMLHttpRequest;
+const getXMLHttpRequestToUse = ((useNativeXHR: boolean) => {
+    const clazz = useNativeXHR ? NativeXMLHttpRequest : XMLHttpRequest;
     const orig = clazz.prototype.open;
     // Intercept all XHR calls
     clazz.prototype.open = function (method: string, url: string, async: boolean = true, user?: string, password?: string) {
@@ -61,9 +62,9 @@ export class NetworkService implements IDeviceStartUpService {
     private _lastKnownNetworkState: any;
     private _isCheckingServer = false;
 
-    constructor(private httpClient: HttpClient, private app: App, private network: Network) {
+    constructor(private httpClient: HttpClient, private app: App, private network: Network, private deviceService: DeviceService) {
         networkState.isConnected = localStorage.getItem(IS_CONNECTED_KEY) === 'true';
-        XML_HTTP_REQUEST = XML_HTTP_REQUEST || getXMLHttpRequestToUse();
+        XML_HTTP_REQUEST = XML_HTTP_REQUEST || getXMLHttpRequestToUse(deviceService.useNativeXHR());
     }
 
     /**

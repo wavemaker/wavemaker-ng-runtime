@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { File } from '@ionic-native/file';
 
-import { $appDigest, hasCordova, noop, fetchContent } from '@wm/core';
+import { $appDigest, hasCordova, noop, fetchContent, isIos } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
 
@@ -16,6 +16,7 @@ export interface Config {
     buildTime: number;
     enableSSLPinning: boolean;
     offlineStorage: boolean;
+    useNativeXHR: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -27,7 +28,7 @@ export class DeviceService {
     private _whenReadyPromises = [];
     private _backBtnTapListeners = [];
     private _startUpServices: IDeviceStartUpService[] = [];
-    private _config: Config = null;
+    private _config: Config = {} as Config;
 
     public constructor(private file: File) {
         const maxWaitTime = 10;
@@ -44,8 +45,6 @@ export class DeviceService {
                     this._config = response;
                 }
             }));
-        } else {
-            this._config = {} as Config;
         }
     }
 
@@ -122,6 +121,13 @@ export class DeviceService {
 
     public getConfig(): Config {
         return this._config;
+    }
+
+    public useNativeXHR() {
+        return (isIos() || this._config.useNativeXHR === true)
+            && cordova
+            && cordova.plugin
+            && cordova.plugin.http;
     }
 
     /**

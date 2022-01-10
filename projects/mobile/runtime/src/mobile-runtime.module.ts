@@ -36,7 +36,6 @@ import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope, CONSTANTS } from '@wm/variables';
 import { BasicModule } from '@wm/mobile/components/basic';
 
-import { CookieService } from './services/cookie.service';
 import { MobileHttpInterceptor } from './services/http-interceptor.service';
 import { WebProcessService } from './services/webprocess.service';
 
@@ -98,7 +97,6 @@ export class MobileRuntimeModule {
     // Startup services have to be added only once in the app life-cycle.
     private static initializeRuntime(runtimeModule: MobileRuntimeModule,
                       app: App,
-                      cookieService: CookieService,
                       deviceFileOpenerService: DeviceFileOpenerService,
                       deviceService: DeviceService) {
         if (this.initialized) {
@@ -114,19 +112,6 @@ export class MobileRuntimeModule {
                 unsubscribe();
             });
             runtimeModule.handleKeyBoardClass();
-            deviceService.addStartUpService(cookieService);
-            if (!isSpotcues) {
-                app.subscribe('userLoggedIn', () => {
-                    let url = $rootScope.project.deployedUrl;
-                    if (!url.endsWith('/')) {
-                        url = url + '/';
-                    }
-
-                    cookieService.persistCookie(url.substr(0, url.length - 1), 'wm_xsrf_token').catch(noop);
-                    cookieService.persistCookie(url, 'SESSION').catch(noop);
-                    cookieService.persistCookie(url, 'remember-me').catch(noop);
-                });
-            }
             app.subscribe('device-file-download', (data) => {
                 deviceFileOpenerService.openRemoteFile(data.url, data.extension, data.name, data.headers).then(data.successCb, data.errorCb);
             });
@@ -175,7 +160,6 @@ export class MobileRuntimeModule {
 
     constructor(
         private app: App,
-        private cookieService: CookieService,
         private deviceFileOpenerService: DeviceFileOpenerService,
         private deviceService: DeviceService,
         private securityService: SecurityService,
@@ -195,7 +179,7 @@ export class MobileRuntimeModule {
         app.subscribe('on-viewport-details', os => {
             this.applyOSTheme(os);
         });
-        MobileRuntimeModule.initializeRuntime(this, this.app, this.cookieService, this.deviceFileOpenerService, this.deviceService);
+        MobileRuntimeModule.initializeRuntime(this, this.app, this.deviceFileOpenerService, this.deviceService);
     }
 
     private exposeOAuthService() {
@@ -302,21 +286,10 @@ export class MobileRuntimeModule {
             }
             return this.webProcessService.execute('LOGIN', '/')
                 .then(output => {
-                    let url = this.app.deployedUrl;
-                    if (url.endsWith('/')) {
-                        url = url.substr(0, url.length - 1);
-                    }
                     output = JSON.parse(output);
                     if (output[CONSTANTS.XSRF_COOKIE_NAME]) {
                         localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, output[CONSTANTS.XSRF_COOKIE_NAME]);
                     }
-                    return this.cookieService.clearAll()
-                        .then(() => {
-                            const  promises = _.keys(output).map(k => {
-                                return this.cookieService.setCookie(url, k, output[k]);
-                            });
-                            return Promise.all(promises);
-                        });
                 })
                 .then(() => this.app.notify('userLoggedIn', {}));
         };

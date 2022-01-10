@@ -2,9 +2,8 @@ import { Inject, Injector } from '@angular/core';
 import { AbstractControl, Validator } from '@angular/forms';
 import { getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
-import { AbstractI18nService } from '@wm/core';
+import { AbstractI18nService, isDefined } from '@wm/core';
 import { IWidgetConfig, TrailingZeroDecimalPipe, INPUTMODE, WIDGET_CONFIG } from '@wm/components/base';
-
 import { BaseInput } from '../base/base-input';
 
 declare const _;
@@ -256,7 +255,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        if (value) {
+        if (isDefined(value) && value !== '') {
             this.handleChange(value);
         } else {
             return;
@@ -292,7 +291,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             this.handleChange(null);
         }
     }
-    
+
     // Input mode is financial and trailing zero is set to false, On focus set display val to fixed point notation and On blur strip trailing zeros
     // In currency, inputmode is natural and trailing zero and step are defined, on blur display val to fixed point notation and on focus strip the zeros
     public checkForTrailingZeros($event) {
@@ -347,7 +346,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         } else {
             proxyModel = this.proxyModel;
         }
-    
+
         let value;
 
         // if the number is not in range and when arrow buttons are pressed need to get appropriate number value.
