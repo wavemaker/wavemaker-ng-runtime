@@ -23,15 +23,10 @@ import {
     hasCordova,
     isSpotcues,
     insertAfter,
-    isIpad,
-    isIphone,
-    isIpod,
-    isObject,
     loadScript,
     loadStyleSheet,
     noop,
-    removeNode,
-    getWmProjectProperties
+    removeNode
 } from '@wm/core';
 import { FileExtensionFromMimePipe } from '@wm/components/base';
 import { DeviceFileOpenerService, DeviceService, ExtAppMessageService, MobileCoreModule, NetworkService } from '@wm/mobile/core';
@@ -41,7 +36,6 @@ import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope, CONSTANTS } from '@wm/variables';
 import { BasicModule } from '@wm/mobile/components/basic';
 
-import { AppExtComponent } from './components/app-ext.component';
 import { CookieService } from './services/cookie.service';
 import { MobileHttpInterceptor } from './services/http-interceptor.service';
 import { WebProcessService } from './services/webprocess.service';
@@ -72,12 +66,7 @@ const ionicServices = [
 ];
 
 @NgModule({
-    declarations: [
-        AppExtComponent
-    ],
-    exports: [
-        AppExtComponent
-    ],
+    declarations: [],
     imports: [
         MobileCoreModule,
         VariablesModule,
@@ -132,7 +121,7 @@ export class MobileRuntimeModule {
                     if (!url.endsWith('/')) {
                         url = url + '/';
                     }
-                    
+
                     cookieService.persistCookie(url.substr(0, url.length - 1), 'wm_xsrf_token').catch(noop);
                     cookieService.persistCookie(url, 'SESSION').catch(noop);
                     cookieService.persistCookie(url, 'remember-me').catch(noop);

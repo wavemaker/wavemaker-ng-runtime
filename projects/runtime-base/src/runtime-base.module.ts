@@ -247,14 +247,3 @@ export class RuntimeBaseModule {
         });
     }
 }
-
-export const WM_MODULES_FOR_ROOT = [
-    WmComponentsModule.forRoot(),
-    MobileRuntimeModule.forRoot(),
-    CoreModule.forRoot(),
-    SecurityModule.forRoot(),
-    OAuthModule.forRoot(),
-    VariablesModule.forRoot(),
-    HttpServiceModule.forRoot(),
-    RuntimeBaseModule.forRoot()
-];

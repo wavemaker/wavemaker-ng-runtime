@@ -4,7 +4,7 @@ import { AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnIni
 
 import {$watch, getClonedObject, getSessionStorageItem, AbstractI18nService, isMobileApp} from '@wm/core';
 
-import { APPLY_STYLES_TYPE, createArrayFrom, getEvaluatedData, IWidgetConfig, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, createArrayFrom, getEvaluatedData, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './calendar.props';
 

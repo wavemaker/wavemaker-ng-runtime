@@ -1,3 +1,11 @@
+export { WmComponentsModule } from '@wm/components/base';
+export { MobileRuntimeModule } from '@wm/mobile/runtime';
+export { CoreModule } from '@wm/core';
+export { SecurityModule } from '@wm/security';
+export { OAuthModule } from '@wm/oAuth';
+export { VariablesModule } from '@wm/variables';
+export { HttpServiceModule } from '@wm/http';
+
 export * from './types/types';
 export * from './services/app.manager.service';
 export * from './services/prefab-manager.service';
@@ -9,7 +17,6 @@ export {
     setAngularLocale,
     REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS,
     RuntimeBaseModule,
-    WM_MODULES_FOR_ROOT
 } from './runtime-base.module';
 export {
     initSpotCues

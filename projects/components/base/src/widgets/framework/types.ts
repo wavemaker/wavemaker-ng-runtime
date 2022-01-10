@@ -9,10 +9,6 @@ export interface IWidgetConfig {
     displayType?: string;
 }
 
-export const dummyWidgetConfig = {
-    widgetType: "test-widget"
-}
-
 export interface IRedrawableComponent {
     redraw: Function;
 }

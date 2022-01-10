@@ -98,7 +98,15 @@ import {
     ComponentRefProvider,
     PrefabConfigProvider,
     WmRouteReuseStrategy,
-    WM_MODULES_FOR_ROOT,
+    WmComponentsModule,
+    MobileRuntimeModule,
+    CoreModule,
+    SecurityModule,
+    OAuthModule,
+    VariablesModule,
+    HttpServiceModule,
+    RuntimeBaseModule,
+
     REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS,
     AppExtensionProvider
 } from '@wm/runtime/base';
@@ -132,6 +140,15 @@ export const carouselModule: ModuleWithProviders<any> = ngxCarouselModule.forRoo
 export const popoverModule: ModuleWithProviders<any> = ngxPopoverModule.forRoot();
 export const ngCircleProgressModule: ModuleWithProviders<any> = NgCircleProgressModule.forRoot({});
 export const tooltipModule: ModuleWithProviders<any> = TooltipModule.forRoot();
+
+export const wmComponentsModule: ModuleWithProviders<any> = WmComponentsModule.forRoot();
+export const mobileRuntimeModule: ModuleWithProviders<any> = MobileRuntimeModule.forRoot();
+export const coreModule: ModuleWithProviders<any> = CoreModule.forRoot();
+export const securityModule: ModuleWithProviders<any> = SecurityModule.forRoot();
+export const oAuthModule: ModuleWithProviders<any> = OAuthModule.forRoot();
+export const variablesModule: ModuleWithProviders<any> = VariablesModule.forRoot();
+export const httpServiceModule: ModuleWithProviders<any> = HttpServiceModule.forRoot();
+export const runtimeBaseModule: ModuleWithProviders<any> = RuntimeBaseModule.forRoot();
 
 const componentsModule = [
     // NGX Bootstrap
@@ -243,13 +260,20 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         toastrModule,
         httpClientXsrfModule,
 
-        WM_MODULES_FOR_ROOT
+        wmComponentsModule,
+        mobileRuntimeModule,
+        coreModule,
+        securityModule,
+        oAuthModule,
+        variablesModule,
+        httpServiceModule,
+        runtimeBaseModule,
     ],
     providers: [
         AppResourceManagerService,
         { provide: AppJSProvider, useClass: AppJSProviderService },
         { provide: AppVariablesProvider, useClass: AppVariablesProviderService },
-        {provide: AppExtensionProvider,useClass:AppExtensionProviderService},
+        { provide: AppExtensionProvider, useClass: AppExtensionProviderService },
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
         { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService },

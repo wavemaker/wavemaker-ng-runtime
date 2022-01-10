@@ -1,9 +1,9 @@
-import { Injector } from '@angular/core';
+import { Inject, Injector } from '@angular/core';
 import { AbstractControl, Validator } from '@angular/forms';
 import { getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
 import { AbstractI18nService } from '@wm/core';
-import { IWidgetConfig, TrailingZeroDecimalPipe, INPUTMODE } from '@wm/components/base';
+import { IWidgetConfig, TrailingZeroDecimalPipe, INPUTMODE, WIDGET_CONFIG } from '@wm/components/base';
 
 import { BaseInput } from '../base/base-input';
 
@@ -35,7 +35,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
     constructor(
         inj: Injector,
-        config: IWidgetConfig,
+        @Inject(WIDGET_CONFIG) config: IWidgetConfig,
         i18nService: AbstractI18nService,
         private trailingZeroDecimalPipe: TrailingZeroDecimalPipe
     ) {

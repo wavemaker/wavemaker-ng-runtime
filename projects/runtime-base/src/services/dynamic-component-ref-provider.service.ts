@@ -20,42 +20,6 @@ declare const _;
 
 const componentFactoryRefCache = new Map<string, any>();
 
-const getDynamicModule = (componentRef: any) => {
-    @NgModule({
-        declarations: [
-            componentRef
-        ],
-        imports: [
-            RuntimeBaseModule
-        ],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-    })
-    class DynamicModule {}
-
-    return DynamicModule;
-};
-
-const getDynamicComponent = (
-    selector,
-    template: string,
-    css: string = '') => {
-
-    const componentDef = {
-        template,
-        styles: [css],
-        encapsulation: ViewEncapsulation.None
-    };
-
-    @Component({
-        ...componentDef,
-        selector
-    })
-    class DynamicComponent {
-    }
-
-    return DynamicComponent;
-};
-
 @Injectable()
 export class DynamicComponentRefProviderService {
     private counter = 1;
@@ -72,8 +36,14 @@ export class DynamicComponentRefProviderService {
 
         markup = options.transpile ? transpile(markup).markup : markup;
         if (!componentFactoryRef || options.noCache) {
-            const componentDef = getDynamicComponent(selector, markup, options.styles);
-            const moduleDef = getDynamicModule(componentDef);
+            const componentDef = Component({
+                template: markup,
+                styles: [options.styles],
+                selector,
+                encapsulation: ViewEncapsulation.None})(class { });
+
+            const moduleDef = NgModule({ declarations: [ componentDef ], imports: [ RuntimeBaseModule ], schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]})(class { });
+
 
             componentFactoryRef = this.compiler
                 .compileModuleAndAllComponentsSync(moduleDef)
@@ -100,6 +70,7 @@ export class DynamicComponentRefProviderService {
         options.noCache = isDefined(options.noCache) ? options.noCache : true;
         options.selector = isDefined(options.selector) ? options.selector : 'wm-dynamic-component-' + this.counter++;
         const componentFactoryRef = await this.getComponentFactoryRef(options.selector, markup, options);
+
         const component = this.app.dynamicComponentContainerRef.createComponent(componentFactoryRef, 0, _.get(options, 'inj'));
         extendProto(component.instance, context);
         target.appendChild(component.location.nativeElement);

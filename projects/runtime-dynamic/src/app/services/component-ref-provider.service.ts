@@ -76,101 +76,6 @@ class BaseDynamicComponent {
     init() {}
 }
 
-const getDynamicModule = (componentRef: any) => {
-    @NgModule({
-        declarations: [componentRef],
-        imports: [
-            RuntimeBaseModule
-        ],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-    })
-    class DynamicModule {}
-
-    return DynamicModule;
-};
-
-const getDynamicComponent = (
-    componentName,
-    type: ComponentType,
-    template: string,
-    css: string,
-    script: any,
-    variables: string,
-) => {
-
-    const componentDef = {
-        template,
-        styles: [css],
-        encapsulation: ViewEncapsulation.None
-    };
-
-    let BaseClass: any = BaseDynamicComponent;
-    let selector = '';
-    let context = '';
-
-    switch (type) {
-        case ComponentType.PAGE:
-            BaseClass = BasePageComponent;
-            selector = `app-page-${componentName}`;
-            context = 'Page';
-            break;
-        case ComponentType.PARTIAL:
-            BaseClass = BasePartialComponent;
-            selector = `app-partial-${componentName}`;
-            context = 'Partial';
-            break;
-        case ComponentType.PREFAB:
-            BaseClass = BasePrefabComponent;
-            selector = `app-prefab-${componentName}`;
-            context = 'Prefab';
-            break;
-    }
-
-    @Component({
-        ...componentDef,
-        selector,
-        providers: [
-            {
-                provide: UserDefinedExecutionContext,
-                useExisting: DynamicComponent
-            }
-        ]
-    })
-    class DynamicComponent extends BaseClass {
-        pageName;
-        partialName;
-        prefabName;
-
-        constructor(public injector: Injector) {
-            super();
-
-            switch (type) {
-                case ComponentType.PAGE:
-                    this.pageName = componentName;
-                    break;
-                case ComponentType.PARTIAL:
-                    this.partialName = componentName;
-                    break;
-                case ComponentType.PREFAB:
-                    this.prefabName = componentName;
-                    break;
-            }
-
-            super.init();
-        }
-
-        evalUserScript(instance: any, appContext: any, utils: any) {
-            execScript(script, selector, context, instance, appContext, utils);
-        }
-
-        getVariables() {
-            return JSON.parse(variables);
-        }
-    }
-
-    return DynamicComponent;
-};
-
 @Injectable()
 export class ComponentRefProviderService extends ComponentRefProvider {
 
@@ -229,9 +134,64 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         return this.loadResourcesOfFragment(componentName, componentType, options)
             .then(({markup, script, styles, variables})  => {
 
-                const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, JSON.stringify(variables));
-                const moduleDef = getDynamicModule(componentDef);
+                let BaseClass: any = BaseDynamicComponent;
+                let selector = '';
+                let context = '';
 
+                switch (componentType) {
+                    case ComponentType.PAGE:
+                        BaseClass = BasePageComponent;
+                        selector = `app-page-${componentName}`;
+                        context = 'Page';
+                        break;
+                    case ComponentType.PARTIAL:
+                        BaseClass = BasePartialComponent;
+                        selector = `app-partial-${componentName}`;
+                        context = 'Partial';
+                        break;
+                    case ComponentType.PREFAB:
+                        BaseClass = BasePrefabComponent;
+                        selector = `app-prefab-${componentName}`;
+                        context = 'Prefab';
+                        break;
+                }
+
+                const componentDef = Component({
+                    template: markup,
+                    styles: [styles],
+                    selector,
+                    encapsulation: ViewEncapsulation.None})( class DynamicComponent extends BaseClass {
+                        pageName;
+                        partialName;
+                        prefabName;
+
+                        constructor(public injector: Injector) {
+                            super();
+                            switch (componentType) {
+                                case ComponentType.PAGE:
+                                    this.pageName = componentName;
+                                    break;
+                                case ComponentType.PARTIAL:
+                                    this.partialName = componentName;
+                                    break;
+                                case ComponentType.PREFAB:
+                                    this.prefabName = componentName;
+                                    break;
+                            }
+
+                            super.init();
+                        }
+
+                        evalUserScript(instance: any, appContext: any, utils: any) {
+                            execScript(script, selector, context, instance, appContext, utils);
+                        }
+
+                        getVariables() {
+                            return JSON.parse(variables);
+                        }
+                    });
+
+                const moduleDef = NgModule({ declarations: [ componentDef ], imports: [ RuntimeBaseModule ], schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]})(class { });
                 componentFactoryRef = this.compiler
                     .compileModuleAndAllComponentsSync(moduleDef)
                     .componentFactories
@@ -242,7 +202,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                 return componentFactoryRef;
             }, (err) => {
                 if (err) {
-                    const msg = "Error while loading page";
+                    const msg = 'Error while loading page';
                     // console the error for easy debugging
                     console.log(msg, err);
                     this.appManager.notifyApp(

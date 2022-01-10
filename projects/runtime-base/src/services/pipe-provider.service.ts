@@ -14,7 +14,7 @@ import {
     I18nSelectPipe,
     KeyValuePipe,
     NgLocalization
-} from '@angular/common'
+} from '@angular/common';
 import {
     SuffixPipe,
     ToDatePipe,

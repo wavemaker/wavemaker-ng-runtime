@@ -5,11 +5,12 @@ import { addClass, App, removeClass, triggerItemAction, UserDefinedExecutionCont
 import { APPLY_STYLES_TYPE, DatasetAwareNavComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './nav.props';
+import { IWidgetConfig } from '@wm/components/base';
 
 declare const _;
 
 const DEFAULT_CLS = 'nav app-nav';
-const WIDGET_CONFIG = {widgetType: 'wm-nav', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-nav', hostClass: DEFAULT_CLS};
 
 const NavClassMap = {
     pills: 'nav-pills',

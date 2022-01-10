@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components/base';
-import { BasicModule as MobileBasicModule } from '@wm/mobile/components/basic'
+import { BasicModule as MobileBasicModule } from '@wm/mobile/components/basic';
 import { MobileNavbarModule } from '@wm/mobile/components/page/mobile-navbar';
 import { PageModule } from '@wm/components/page';
 import { BasicModule } from '@wm/components/basic';
