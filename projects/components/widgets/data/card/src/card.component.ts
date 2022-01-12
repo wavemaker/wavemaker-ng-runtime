@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler } from '@wm/components/base';
-import { MenuAdapterComponent } from '@wm/components/navigation/menu';
+import { MenuAdapterComponentDirective } from '@wm/components/navigation/menu';
 
 import { registerProps } from './card.props';
 
@@ -18,7 +18,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(CardComponent)
     ]
 })
-export class CardComponent extends MenuAdapterComponent implements OnInit, AfterViewInit {
+export class CardComponent extends MenuAdapterComponentDirective implements OnInit, AfterViewInit {
     static initializeProps = registerProps();
 
     public showHeader: boolean;

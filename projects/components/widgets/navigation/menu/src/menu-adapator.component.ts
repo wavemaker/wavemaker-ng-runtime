@@ -9,7 +9,7 @@ declare const _;
 const menuProps = ['itemlabel', 'itemicon', 'itemlink', 'itemaction', 'itemchildren', 'userrole'];
 
 @Directive()
-export class MenuAdapterComponent extends BaseContainerComponentDirective implements AfterViewInit {
+export class MenuAdapterComponentDirective extends BaseContainerComponentDirective implements AfterViewInit {
 
     private itemlabel;
     private menuRef;

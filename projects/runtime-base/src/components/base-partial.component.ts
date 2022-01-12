@@ -9,7 +9,7 @@ import { PageDirective } from '@wm/components/page';
 import {PrefabDirective} from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
 
-import { FragmentMonitor } from '../util/fragment-monitor';
+import { FragmentMonitorDirective } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
 
 declare const _;
@@ -17,7 +17,7 @@ declare const _;
 export const commonPartialWidgets = {};
 
 @Directive()
-export abstract class BasePartialComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
+export abstract class BasePartialComponentDirective extends FragmentMonitorDirective implements AfterViewInit, OnDestroy {
     Widgets: any;
     Variables: any;
     Actions: any;

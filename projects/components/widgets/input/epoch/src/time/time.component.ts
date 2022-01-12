@@ -18,7 +18,7 @@ import {
 } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
-import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
+import {BaseDateTimeComponentDirective, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './time.props';
 
 const CURRENT_TIME = 'CURRENT_TIME';
@@ -37,7 +37,7 @@ declare const _, moment, $;
         { provide: TimepickerConfig,  deps: [AbstractI18nService], useFactory: getTimepickerConfig }
     ]
 })
-export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
+export class TimeComponent extends BaseDateTimeComponentDirective implements OnDestroy {
     static initializeProps = registerProps();
     /**
      * This property sets the display pattern of the time selected

@@ -6,7 +6,7 @@ import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
 import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
-import { BaseDateTimeComponent } from './../base-date-time.component';
+import { BaseDateTimeComponentDirective } from './../base-date-time.component';
 import { registerProps } from './date.props';
 
 declare const _, $;
@@ -27,7 +27,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(DateComponent)
     ]
 })
-export class DateComponent extends BaseDateTimeComponent {
+export class DateComponent extends BaseDateTimeComponentDirective {
     static initializeProps = registerProps();
 
     public bsDataValue;

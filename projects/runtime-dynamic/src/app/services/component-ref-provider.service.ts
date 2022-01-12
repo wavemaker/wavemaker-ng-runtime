@@ -13,9 +13,9 @@ import { App, getValidJSON, UserDefinedExecutionContext } from '@wm/core';
 import { transpile, scopeComponentStyles } from '@wm/transpiler';
 import {
     AppManagerService,
-    BasePageComponent,
-    BasePartialComponent,
-    BasePrefabComponent,
+    BasePageComponentDirective,
+    BasePartialComponentDirective,
+    BasePrefabComponentDirective,
     ComponentRefProvider,
     ComponentType,
     RuntimeBaseModule,
@@ -141,17 +141,17 @@ export class ComponentRefProviderService extends ComponentRefProvider {
 
                 switch (componentType) {
                     case ComponentType.PAGE:
-                        BaseClass = BasePageComponent;
+                        BaseClass = BasePageComponentDirective;
                         selector = `app-page-${componentName}`;
                         context = 'Page';
                         break;
                     case ComponentType.PARTIAL:
-                        BaseClass = BasePartialComponent;
+                        BaseClass = BasePartialComponentDirective;
                         selector = `app-partial-${componentName}`;
                         context = 'Partial';
                         break;
                     case ComponentType.PREFAB:
-                        BaseClass = BasePrefabComponent;
+                        BaseClass = BasePrefabComponentDirective;
                         selector = `app-prefab-${componentName}`;
                         context = 'Prefab';
                         break;

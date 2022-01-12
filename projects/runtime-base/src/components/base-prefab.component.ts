@@ -8,12 +8,12 @@ import { PrefabContainerDirective } from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
 
 import { PrefabManagerService } from '../services/prefab-manager.service';
-import { FragmentMonitor } from '../util/fragment-monitor';
+import { FragmentMonitorDirective } from '../util/fragment-monitor';
 
 declare const _;
 
 @Directive()
-export abstract class BasePrefabComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
+export abstract class BasePrefabComponentDirective extends FragmentMonitorDirective implements AfterViewInit, OnDestroy {
     Widgets: any;
     Variables: any;
     Actions: any;

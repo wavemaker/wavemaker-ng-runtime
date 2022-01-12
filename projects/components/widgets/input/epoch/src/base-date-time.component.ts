@@ -42,7 +42,7 @@ export function getTimepickerConfig(i18nService): TimepickerConfig {
 }
 
 @Directive()
-export abstract class BaseDateTimeComponent extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
+export abstract class BaseDateTimeComponentDirective extends BaseFormCustomComponent implements AfterViewInit, OnDestroy, Validator {
     public required: boolean;
     public disabled: boolean;
     public tabindex: any;

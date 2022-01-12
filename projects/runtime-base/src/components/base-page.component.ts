@@ -23,12 +23,12 @@ import { commonPartialWidgets } from './base-partial.component';
 
 import { VariablesService } from '@wm/variables';
 import { AppManagerService } from '../services/app.manager.service';
-import { FragmentMonitor } from '../util/fragment-monitor';
+import { FragmentMonitorDirective } from '../util/fragment-monitor';
 
 declare const $, _;
 
 @Directive()
-export abstract class BasePageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
+export abstract class BasePageComponentDirective extends FragmentMonitorDirective implements AfterViewInit, OnDestroy {
     static lastPageSnapShot = null;
     Widgets: any;
     Variables: any;
@@ -160,7 +160,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     runPageTransition(transition?: string): Promise<void> {
         transition = transition || this.navigationService.getPageTransition();
-        const lastPage = BasePageComponent.lastPageSnapShot
+        const lastPage = BasePageComponentDirective.lastPageSnapShot
         return new Promise<void>(resolve => {
             if (transition
                 && !transition.startsWith('none')
@@ -189,7 +189,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             this.$page && this.$page.removeClass('page-entry');
             if (lastPage) {
                 lastPage.remove();
-                BasePageComponent.lastPageSnapShot = null;
+                BasePageComponentDirective.lastPageSnapShot = null;
             }
             this.pageTransitionCompleted = true;
         });
@@ -215,18 +215,18 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     private restoreLastPageSnapshot() {
-        if (isMobileApp() && BasePageComponent.lastPageSnapShot && this.$page) {
-            this.$page.parent().prepend(BasePageComponent.lastPageSnapShot);
+        if (isMobileApp() && BasePageComponentDirective.lastPageSnapShot && this.$page) {
+            this.$page.parent().prepend(BasePageComponentDirective.lastPageSnapShot);
         }
     }
 
     private savePageSnapShot() {
-        if (BasePageComponent.lastPageSnapShot) {
-            BasePageComponent.lastPageSnapShot.remove();
+        if (BasePageComponentDirective.lastPageSnapShot) {
+            BasePageComponentDirective.lastPageSnapShot.remove();
         }
         if (isMobileApp() && this.$page) {
-            BasePageComponent.lastPageSnapShot = this.$page.clone();
-            this.$page.parents('app-root').prepend(BasePageComponent.lastPageSnapShot);
+            BasePageComponentDirective.lastPageSnapShot = this.$page.clone();
+            this.$page.parents('app-root').prepend(BasePageComponentDirective.lastPageSnapShot);
         }
     }
 
@@ -373,9 +373,9 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     static clear() {
-        if(BasePageComponent.lastPageSnapShot) {
-            BasePageComponent.lastPageSnapShot.remove();
-            BasePageComponent.lastPageSnapShot = null;
+        if(BasePageComponentDirective.lastPageSnapShot) {
+            BasePageComponentDirective.lastPageSnapShot.remove();
+            BasePageComponentDirective.lastPageSnapShot = null;
         }
     }
 }

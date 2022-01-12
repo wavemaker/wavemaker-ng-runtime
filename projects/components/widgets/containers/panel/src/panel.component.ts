@@ -2,7 +2,7 @@ import { AfterContentInit, Component, ContentChildren, ElementRef, Injector, OnI
 
 import { $appDigest, noop, removeAttr, setCSS, toggleClass } from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, styler } from '@wm/components/base';
-import { MenuAdapterComponent } from '@wm/components/navigation/menu';
+import { MenuAdapterComponentDirective } from '@wm/components/navigation/menu';
 import { registerProps } from './panel.props';
 
 const DEFAULT_CLS = 'app-panel panel';
@@ -18,7 +18,7 @@ const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-panel', hostClass: DEFAUL
     exportAs: 'wmPanel'
 })
 
-export class PanelComponent extends MenuAdapterComponent implements OnInit, AfterContentInit {
+export class PanelComponent extends MenuAdapterComponentDirective implements OnInit, AfterContentInit {
     static initializeProps = registerProps();
 
     public $lazyLoad = noop;

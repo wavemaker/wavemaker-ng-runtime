@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { Directive } from "@angular/core";
 
 @Directive()
-export abstract class FragmentMonitor {
+export abstract class FragmentMonitorDirective {
     fragments = 0;
     viewInit$: Subject<any>;
     isViewInitialized: boolean;
@@ -14,7 +14,7 @@ export abstract class FragmentMonitor {
     constructor() {}
 
     init() {
-        // console.log(`inside fragmentMonitor: Page-${(this as any).pageName}, Partial-${(this as any).partialName}`);
+        // console.log(`inside FragmentMonitorDirective: Page-${(this as any).pageName}, Partial-${(this as any).partialName}`);
 
         this.viewInit$.subscribe(noop, noop, () => {
             this.isViewInitialized = true;

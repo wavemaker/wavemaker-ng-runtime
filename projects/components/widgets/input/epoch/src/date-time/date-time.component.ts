@@ -8,7 +8,7 @@ import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, App } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
-import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
+import {BaseDateTimeComponentDirective, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './date-time.props';
 
 declare const moment, $, _;
@@ -28,7 +28,7 @@ const CURRENT_DATE = 'CURRENT_DATE';
         { provide: TimepickerConfig,  deps: [AbstractI18nService], useFactory: getTimepickerConfig }
     ]
 })
-export class DatetimeComponent extends BaseDateTimeComponent implements AfterViewInit, OnDestroy {
+export class DatetimeComponent extends BaseDateTimeComponentDirective implements AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
     /**
      * The below propeties prefixed with "bs" always holds the value that is selected from the datepicker.
