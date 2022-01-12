@@ -16,6 +16,7 @@
        [(ngModel)]="datavalue"
        (ngModelChange)="handleChange($event);"
        [ngModelOptions]="{updateOn: 'change'}"
+       [cpPresetColors]="presetcolors"
        (blur)="invokeOnTouched($event)"
        [attr.accesskey]="shortcutkey">
 <span class="input-group-addon colorpicker-container">

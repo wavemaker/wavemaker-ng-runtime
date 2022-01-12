@@ -14,7 +14,9 @@ export const colorPickerProps = new Map(
         ['required', PROP_BOOLEAN],
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
-        ['tabindex', {value: 0, ...PROP_NUMBER}]
+        ['tabindex', {value: 0, ...PROP_NUMBER}],
+        ['presetcolors', {value: ''}],
+        ['presetcolorposition', {value: 'right'}]
     ]
 );
 

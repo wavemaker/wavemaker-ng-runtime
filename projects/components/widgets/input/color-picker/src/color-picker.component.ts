@@ -6,6 +6,7 @@ import { addClass, removeClass } from '@wm/core';
 import { AUTOCLOSE_TYPE, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
 import { registerProps } from './color-picker.props';
+import * as _ from 'lodash';
 
 
 const DEFAULT_CLS = 'input-group app-colorpicker';
@@ -37,6 +38,8 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     public outsideclick: boolean;
     public autoclose: string;
     public hint: string;
+    public presetcolors: any;
+    public presetcolorposition: any;
 
 
     @ViewChild(NgModel) ngModel: NgModel;
@@ -101,6 +104,35 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
         }
         if (key === 'autoclose') {
             this.outsideclick = (nv === AUTOCLOSE_TYPE.OUTSIDECLICK || nv === AUTOCLOSE_TYPE.ALWAYS) ? true : false;
+        } 
+        if (key === 'presetcolors') {
+            if (nv === "" ){
+                nv = [];
+                this.presetcolors = [];
+            } else if (_.isString(nv) || _.isArray(nv)) {
+                _.isString(nv) ? this.presetcolors = nv.split(',').slice(0,42): this.presetcolors = nv.slice(0,42);
+                if (this.presetcolorposition === "right") {
+                    $(function() {
+                        let colorPickerClass = document.getElementsByClassName('app-colorpicker');
+                        colorPickerClass[0].classList.add("extendright");
+                    });
+                }
+            }
+        }
+        if (key === 'presetcolorposition' && typeof this.presetcolors !== 'undefined' && this.presetcolors.length > 0) {
+            if (nv === 'bottom') {
+                $(function() {
+                    let colorPickerClass = document.getElementsByClassName('app-colorpicker');
+                    if (colorPickerClass[0].classList.contains("extendright")) {
+                        colorPickerClass[0].classList.remove("extendright");
+                    }
+                });
+            } else if (nv === 'right') {
+                $(function() {
+                    let colorPickerClass = document.getElementsByClassName('app-colorpicker');
+                    colorPickerClass[0].classList.add("extendright");
+                });
+            }
         }
         super.onPropertyChange(key, nv, ov);
     }
