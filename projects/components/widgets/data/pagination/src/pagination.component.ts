@@ -70,6 +70,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     sortOptions;
     binddataset;
     pagination;
+    logicalOp;
 
     private _debouncedApplyDataset = debounce(() => this.widget.dataset = this.dataset, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
     private _debouncedPageChanged = debounce(event => {
@@ -215,6 +216,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                     this.pagination = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS) || {};
                     // If "filterFields" and "sortOptions" have been set, then set them so that the filters can be retained while fetching data upon page navigation.
                     this.filterFields = variableOptions.filterFields || {};
+                    this.logicalOp = variableOptions.logicalOp || '';
                     this.sortOptions = variableOptions.orderBy ||
                         (_.isArray(this.pagination.sort) ? getOrderByExpr(this.pagination.sort) : '');
                     dataSize = this.pagination.totalElements;
@@ -313,6 +315,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 'page': this.dn.currentPage,
                 'filterFields': this.filterFields,
                 'orderBy': this.sortOptions,
+                'logicalOp': this.logicalOp,
                 'matchMode': 'anywhereignorecase'
             }).then(response => {
                 this.onPageDataReady(event, response && response.data, callback);

@@ -25,7 +25,7 @@ const getSearchValue = (value, type) => {
 };
 
 // Filter the data based on the search value and conditions
-const getFilteredData = (data, searchObj) => {
+const getFilteredData = (data, searchObj, visibleCols = []) => {
     const searchVal = getSearchValue(searchObj.value, searchObj.type);
     let currentVal;
     // Return whole data if
@@ -39,6 +39,11 @@ const getFilteredData = (data, searchObj) => {
         if (searchObj.field) {
             currentVal = getSearchValue(_.get(obj, searchObj.field), searchObj.type);
         } else {
+            _.forEach(obj, (val, key) => {
+                if (!(_.includes(visibleCols, key))) {
+                    delete obj[key];
+                }
+            });
             currentVal = _.values(obj).join(' ').toLowerCase(); // If field is not there, search on all the columns
         }
         switch (searchObj.matchMode) {
@@ -90,10 +95,24 @@ const getFilteredData = (data, searchObj) => {
     return data;
 };
 
+// Set the filter fields when the search value is specified and field is not selected
+const setAllFilterFields = function(filterFields, searchObj, visibleCols) {
+    visibleCols.forEach(function(field) {
+        filterFields[field] = {
+            'value': searchObj.value,
+            'type' : searchObj.value.type,
+            'logicalOp': 'OR'
+        };
+        if (searchObj.matchMode) {
+            filterFields[field].matchMode = searchObj.matchMode;
+        }
+    });
+};
+
 // Set the filter fields as required by datasource
-const setFilterFields = (filterFields, searchObj) => {
+const setFilterFields = (filterFields, searchObj, visibleCols = []) => {
     const field = searchObj && searchObj.field;
-    /*Set the filter options only when a field/column has been selected.*/
+    /*Set the filter options when a field/column has been selected.*/
     if (field) {
         filterFields[field] = {
             'value'     : searchObj.value,
@@ -102,6 +121,9 @@ const setFilterFields = (filterFields, searchObj) => {
         if (searchObj.matchMode) {
             filterFields[field].matchMode = searchObj.matchMode;
         }
+    } else {
+        /*Set the filter options when a field/column hasn't been selected.*/
+        setAllFilterFields(filterFields, searchObj, visibleCols);
     }
 };
 
@@ -137,11 +159,11 @@ export class TableFilterSortDirective {
         table.getNavigationTargetBySortInfo = this.getNavigationTargetBySortInfo.bind(this);
         table.refreshData = this.refreshData.bind(this);
         table.clearFilter = this.clearFilter.bind(this);
-        table.adjustContainer =this.adjustContainer.bind(this);
+        table.adjustContainer = this.adjustContainer.bind(this);
     }
 
-    adjustContainer(fieldName){
-        setTimeout(()=>{
+    adjustContainer(fieldName) {
+        setTimeout(() => {
             adjustContainerRightEdges($('bs-dropdown-container'), this.table.rowFilterCompliedTl[fieldName], this.table, $('bs-dropdown-container .dropdown-menu'));
         });
     }
@@ -152,17 +174,48 @@ export class TableFilterSortDirective {
                     _.includes(this.table.primaryKey, this.table.sortInfo.field) ? 'first' : 'last';
     }
 
+    // Returns all the columns of the table wherein, showinfilter is set to true
+    getTableVisibleCols() {
+        const visibleCols = [];
+        _.forEach(this.table.columns, (val, col) => {
+            if (_.toLower(_.toString(val.showinfilter)) === 'true' && col !== 'rowOperations' && val.searchable) {
+                visibleCols.push(col);
+            }
+        });
+        return visibleCols;
+    }
+
+    // call the set filter fields function based on the field selected or not
+    invokeSetFilterfieldBasedOnFieldval(searchObj, filterFields) {
+        if (searchObj.field) {
+            setFilterFields(filterFields, searchObj);
+        } else {
+           const visibleCols = this.getTableVisibleCols();
+            setFilterFields(filterFields, searchObj, visibleCols);
+        }
+    }
+
     // Get the filter fields as required by datasource
     getFilterFields(searchObj) {
         const filterFields = {};
         if (_.isArray(searchObj)) {
             _.forEach(searchObj,  obj => {
-                setFilterFields(filterFields, obj);
+               this.invokeSetFilterfieldBasedOnFieldval(obj, filterFields);
             });
         } else {
-            setFilterFields(filterFields, searchObj);
+            this.invokeSetFilterfieldBasedOnFieldval(searchObj, filterFields);
         }
         return filterFields;
+    }
+
+    // Get the logical operator for the search filter
+    getLogicalOperator(filterFields) {
+        let operator = '';
+        for (const field in filterFields) {
+            operator = filterFields[field]['logicalOp'] || '';
+            break;
+        }
+        return operator;
     }
 
     // Reset the sort based on sort returned by the call
@@ -224,15 +277,16 @@ export class TableFilterSortDirective {
 
     // Returns data filtered using searchObj
     getSearchResult(data, searchObj) {
+        const visibleCols = this.getTableVisibleCols();
         if (!searchObj) {
             return data;
         }
         if (_.isArray(searchObj)) {
             searchObj.forEach((obj) => {
-                data = getFilteredData(data, obj);
+                data = getFilteredData(data, obj, visibleCols);
             });
         } else {
-            data = getFilteredData(data, searchObj);
+            data = getFilteredData(data, searchObj, visibleCols);
         }
         return data;
     }
@@ -323,10 +377,12 @@ export class TableFilterSortDirective {
         const sortInfo     = this.table.sortInfo;
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
         const filterFields = this.getFilterFields(searchObj);
+        const logicalOp = this.getLogicalOperator(filterFields);
         refreshDataSource(this.table.datasource, {
             page: 1,
             filterFields : filterFields,
-            orderBy : sortOptions
+            orderBy : sortOptions,
+            condition : logicalOp
         }).then(() => {
             $appDigest();
         }, () => {
@@ -343,7 +399,7 @@ export class TableFilterSortDirective {
 
         const sortOptions  = sortObj && sortObj.direction ? (sortObj.field + ' ' + sortObj.direction) : '';
         const filterFields = this.getFilterFields(this.table.filterInfo);
-
+        const condition = this.getLogicalOperator(filterFields);
         if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
             this.table.statePersistence.removeWidgetState(this.table, 'pagination');
         }
@@ -351,7 +407,8 @@ export class TableFilterSortDirective {
         refreshDataSource(this.table.datasource, {
             page : 1,
             filterFields : filterFields,
-            orderBy : sortOptions
+            orderBy : sortOptions,
+            condition : condition
         }).then((response) => {
             $appDigest();
             const data = (response && response.data) ? response.data : response;
@@ -373,7 +430,7 @@ export class TableFilterSortDirective {
             obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
         }
         if (this.table.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.table.navigation) < 0) {
-            if ((_.isArray(searchSortObj) && obj.length) || (searchSortObj.value && searchSortObj.field)) {
+            if ((_.isArray(searchSortObj) && obj.length) || (searchSortObj.value)) {
                 this.table.statePersistence.removeWidgetState(this.table, 'search');
                 this.table.statePersistence.setWidgetState(this.table, {search: obj});
             } else {
@@ -406,16 +463,26 @@ export class TableFilterSortDirective {
         if (output === false) {
             return;
         }
-        // Transform back the filter fields from object to array
         filterFields = [];
-        _.forEach(userFilters, (val, key) => {
+        // if the field is not selected in search filter dropdown, building the filter fields object
+        if (_.isEmpty(userFilters) && obj.value) {
             filterFields.push({
-                field: key,
-                matchMode: val.matchMode,
-                type: val.type,
-                value: val.value
+                field: '',
+                matchMode: obj.matchMode,
+                type: obj.type,
+                value: obj.value
             });
-        });
+        } else {
+            // Transform back the filter fields from object to array
+            _.forEach(userFilters, (val, key) => {
+                filterFields.push({
+                    field: key,
+                    matchMode: val.matchMode,
+                    type: val.type,
+                    value: val.value
+                });
+            });
+        }
         if (dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
             this.handleServerSideSearch(filterFields);
             return;
@@ -570,10 +637,12 @@ export class TableFilterSortDirective {
         const sortInfo     = this.table.sortInfo;
         const sortOptions  = sortInfo && sortInfo.direction ? (sortInfo.field + ' ' + sortInfo.direction) : '';
         const filterFields = this.getFilterFields(this.table.filterInfo);
+        const logicalOp = this.getLogicalOperator(filterFields);
         refreshDataSource(this.table.datasource, {
             page: page,
             filterFields : filterFields,
-            orderBy : sortOptions
+            orderBy : sortOptions,
+            condition : logicalOp
         });
     }
 }
