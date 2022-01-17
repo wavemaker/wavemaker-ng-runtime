@@ -258,6 +258,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     onPropertyChange(key, nv, ov?) {
+        const isFormDirty = this.form.dirty;
+
         if (key !== 'tabindex') {
             super.onPropertyChange(key, nv, ov);
         }
@@ -295,6 +297,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 this.setMaxFormWidget('placeholder', nv);
                 break;
             case 'required':
+                // WMS-18906 : Do not make form as dirty during required prop initialization
+                if (isFormDirty !== this.form.dirty) {
+                    this.form.markAsPristine();
+                }
             case 'maxchars':
             case 'minvalue':
             case 'maxvalue':
