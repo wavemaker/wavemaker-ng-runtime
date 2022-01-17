@@ -2827,6 +2827,7 @@ $.widget('wm.datatable', {
     },
     __setStatus: function (isCreated) {
         var loadingIndicator = this.dataStatusContainer.find('i'),
+            self = this,
             state = this.dataStatus.state;
         this.dataStatusContainer.find('.message').text(this.dataStatus.message);
         if (state === 'loading') {
@@ -2862,8 +2863,10 @@ $.widget('wm.datatable', {
                 this.options.activeRow = undefined;
             }
         }
-        if (!isCreated) {
-            this.setColGroupWidths();
+        if (!isCreated && this.options.colDefs.length === 0) {
+            this.options.runInNgZone(function () {
+                self.setColGroupWidths();
+            });
         }
         this.addOrRemoveScroll();
     },
