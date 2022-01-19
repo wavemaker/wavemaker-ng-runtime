@@ -1016,7 +1016,7 @@ $.widget('wm.datatable', {
             if (self.preparedData[index] && self.preparedData[index]._selected === true) {
                 $(this).trigger('click', [$(this), {skipSingleCheck: true}]);
             }
-        });
+        }); 
         /*Select the given row. If rows is an array, loop through the array and set the row*/
         if (_.isArray(rows)) {
             _.forEach(rows, function (row) {
@@ -1109,7 +1109,29 @@ $.widget('wm.datatable', {
                             tempWidth = $headerCol[0].style.width;
                             if (tempWidth === '' || tempWidth === '0px' || tempWidth === '90px' || _.includes(tempWidth, '%')) { //If width is not 0px, width is already set. So, set the same width again
                                 width = $header.width();
-                                width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; //columnSanity check to prevent width being too small and Last column, adjust for the scroll width
+                                /*
+                                 * WMS-21545: In case of tabs / accordions / wizard, width of $header is not available for inactive panes
+                                 * In such cases, calculating the width of column cells against the closest parent whose width is available
+                                */ 
+                                if (width <= 0) {
+                                    var headerParents = $header.parents('div');
+                                    for (i = 0; i < headerParents.length; i += 1) {
+                                        parentWidth = $(headerParents[i]).width();
+                                        if (parentWidth > 0) {
+                                            // If the width is provided in % for inactive panes, convert % to pixel
+                                            if (_.includes(tempWidth, '%')) {
+                                                var widthPercent = parseInt(tempWidth);
+                                                var pixelWidth = (parentWidth)*(widthPercent/100);
+                                                width = pixelWidth;
+                                            } else { // Else divide the parent width by the number of columns available
+                                                width = parentWidth / headerCols.length ;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; //columnSanity check to prevent width being too small and Last column, adjust for the scroll width
+                                }
                             } else {
                                 width = tempWidth;
                             }
@@ -2827,6 +2849,7 @@ $.widget('wm.datatable', {
     },
     __setStatus: function (isCreated) {
         var loadingIndicator = this.dataStatusContainer.find('i'),
+        self = this,
             state = this.dataStatus.state;
         this.dataStatusContainer.find('.message').text(this.dataStatus.message);
         if (state === 'loading') {
