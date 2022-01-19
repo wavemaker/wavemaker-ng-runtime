@@ -125,7 +125,7 @@ export class DeviceService {
 
     public useNativeXHR() {
         return (isIos() || this._config.useNativeXHR === true)
-            && cordova
+            && hasCordova()
             && cordova.plugin
             && cordova.plugin.http;
     }
