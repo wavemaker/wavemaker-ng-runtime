@@ -2796,7 +2796,7 @@ $.widget('wm.datatable', {
         if (!this.tableId) {
             this.tableId = this.Utils.generateGuid();
         }
-        var overflow = (this.options.navigation === 'Scroll' && (this.options.height === '100%' || this.options.height === 'auto')) ? 'hidden' : 'auto';
+        var overflow = (this.options.navigation === 'Scroll' && (this.options.height === '100%' || this.options.height === 'auto')) ? 'hidden' : 'initial';
         var statusContainer =
             '<div class="overlay" style="display: none;">' +
             '<div class="status"><i class="' + this.options.loadingicon + '"></i><span class="message"></span></div>' +
