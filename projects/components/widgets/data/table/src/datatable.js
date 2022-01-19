@@ -1016,7 +1016,7 @@ $.widget('wm.datatable', {
             if (self.preparedData[index] && self.preparedData[index]._selected === true) {
                 $(this).trigger('click', [$(this), {skipSingleCheck: true}]);
             }
-        }); 
+        });
         /*Select the given row. If rows is an array, loop through the array and set the row*/
         if (_.isArray(rows)) {
             _.forEach(rows, function (row) {
@@ -2849,7 +2849,6 @@ $.widget('wm.datatable', {
     },
     __setStatus: function (isCreated) {
         var loadingIndicator = this.dataStatusContainer.find('i'),
-        self = this,
             state = this.dataStatus.state;
         this.dataStatusContainer.find('.message').text(this.dataStatus.message);
         if (state === 'loading') {
