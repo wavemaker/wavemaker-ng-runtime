@@ -189,7 +189,7 @@ export class TableFilterSortDirective {
     invokeSetFilterfieldBasedOnFieldval(searchObj, filterFields) {
         if (searchObj.field) {
             setFilterFields(filterFields, searchObj);
-        } else {
+        } else if (!_.isEmpty(searchObj)) {
            const visibleCols = this.getTableVisibleCols();
             setFilterFields(filterFields, searchObj, visibleCols);
         }
