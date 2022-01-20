@@ -1114,19 +1114,24 @@ $.widget('wm.datatable', {
                                  * In such cases, calculating the width of column cells against the closest parent whose width is available
                                 */ 
                                 if (width <= 0) {
-                                    var headerParents = $header.parents('div');
-                                    for (i = 0; i < headerParents.length; i += 1) {
-                                        parentWidth = $(headerParents[i]).width();
-                                        if (parentWidth > 0) {
-                                            // If the width is provided in % for inactive panes, convert % to pixel
-                                            if (_.includes(tempWidth, '%')) {
-                                                var widthPercent = parseInt(tempWidth);
-                                                var pixelWidth = (parentWidth)*(widthPercent/100);
-                                                width = pixelWidth;
-                                            } else { // Else divide the parent width by the number of columns available
-                                                width = parentWidth / headerCols.length ;
-                                            }
-                                            break;
+                                    var currentNode = $header[0].parentElement;
+                                    var nextParentNode;
+                                    var parentWidth = width;
+                                    while (parentWidth <= 0) {
+                                        if (nextParentNode) {
+                                            currentNode = nextParentNode;
+                                        }
+                                        parentWidth = $(currentNode).width();
+                                        nextParentNode = currentNode.parentElement;
+                                    }
+                                    if (parentWidth > 0) {
+                                        // If the width is provided in % for inactive panes, convert % to pixel
+                                        if (_.includes(tempWidth, '%')) {
+                                            var widthPercent = parseInt(tempWidth);
+                                            var pixelWidth = (parentWidth)*(widthPercent/100);
+                                            width = pixelWidth;
+                                        } else { // Else divide the parent width by the number of columns available
+                                            width = parentWidth / headerCols.length ;
                                         }
                                     }
                                 } else {
