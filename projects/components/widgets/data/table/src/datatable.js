@@ -1115,14 +1115,14 @@ $.widget('wm.datatable', {
                                 */ 
                                 if (width <= 0) {
                                     var currentNode = $header;
-                                    var nextParentNode;
+                                    var parentNode;
                                     var elemWidth = width;
                                     while (elemWidth <= 0) {
-                                        if (nextParentNode) {
-                                            currentNode = nextParentNode;
+                                        if (parentNode) {
+                                            currentNode = parentNode;
                                         }
                                         elemWidth = currentNode.width();
-                                        nextParentNode = currentNode.parent();
+                                        parentNode = currentNode.parent();
                                     }
                                     if (elemWidth > 0) {
                                         // If the width is provided in % for inactive panes, convert % to pixel
