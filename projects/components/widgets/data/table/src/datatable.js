@@ -1114,25 +1114,27 @@ $.widget('wm.datatable', {
                                  * In such cases, calculating the width of column cells against the closest parent whose width is available
                                 */ 
                                 if (width <= 0) {
-                                    var currentNode = $header[0].parentElement;
+                                    var currentNode = $header;
                                     var nextParentNode;
-                                    var parentWidth = width;
-                                    while (parentWidth <= 0) {
+                                    var elemWidth = width;
+                                    while (elemWidth <= 0) {
                                         if (nextParentNode) {
                                             currentNode = nextParentNode;
                                         }
-                                        parentWidth = $(currentNode).width();
-                                        nextParentNode = currentNode.parentElement;
+                                        elemWidth = currentNode.width();
+                                        nextParentNode = currentNode.parent();
                                     }
-                                    if (parentWidth > 0) {
+                                    if (elemWidth > 0) {
                                         // If the width is provided in % for inactive panes, convert % to pixel
                                         if (_.includes(tempWidth, '%')) {
                                             var widthPercent = parseInt(tempWidth);
-                                            var pixelWidth = (parentWidth)*(widthPercent/100);
+                                            var pixelWidth = (elemWidth)*(widthPercent/100);
                                             width = pixelWidth;
                                         } else { // Else divide the parent width by the number of columns available
-                                            width = parentWidth / headerCols.length ;
+                                            width = elemWidth / headerCols.length ;
                                         }
+                                    } else {
+                                        width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; // fallback to the older approach
                                     }
                                 } else {
                                     width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; //columnSanity check to prevent width being too small and Last column, adjust for the scroll width
