@@ -1112,7 +1112,7 @@ $.widget('wm.datatable', {
                                 /*
                                  * WMS-21545: In case of tabs / accordions / wizard, width of $header is not available for inactive panes
                                  * In such cases, calculating the width of column cells against the closest parent whose width is available
-                                */ 
+                                */
                                 if (width <= 0) {
                                     var currentNode = $header;
                                     var elemWidth = width;
@@ -1128,6 +1128,7 @@ $.widget('wm.datatable', {
                                             width = pixelWidth;
                                         } else { // Else divide the parent width by the number of columns available
                                             width = elemWidth / headerCols.length ;
+                                            width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; //columnSanity check to prevent width being too small and Last column, adjust for the scroll width
                                         }
                                     } else {
                                         width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; // fallback to the older approach
