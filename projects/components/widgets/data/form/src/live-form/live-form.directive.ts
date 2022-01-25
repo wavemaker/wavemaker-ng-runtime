@@ -330,9 +330,8 @@ export class LiveFormDirective {
     }
 
     reset() {
-        let prevDataValues;
+        const prevDataValues = this.getPrevDataValues();
         this.form.resetFormState();
-        prevDataValues = this.getPrevDataValues();
         this.form.formFields.forEach(field => {
             if (field.type === DataType.BLOB || field.widgettype === 'upload') {
                 this.form.resetFileUploadWidget(field, true);
