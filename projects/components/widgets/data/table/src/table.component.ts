@@ -1443,7 +1443,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             columnDef.mobileDisplay = true;
             columnDef.tabletDisplay = true;
             columnDef.searchable = true;
-            columnDef.showinfilter = false;
+            columnDef.showinfilter = true;
             columnDef.type  = 'string';
             // Fix for [WMS-19668] and [WMS-19669]- Adding index and headerIndex for Dynamic DB columns.
             // Note: we don't have column groups for Dynamic DB

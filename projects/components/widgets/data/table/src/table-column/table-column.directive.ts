@@ -654,7 +654,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.ngclass =  this['col-ng-class'];
         this.formatpattern =  this.formatpattern === 'toNumber' ? 'numberToString'  :  this.formatpattern;
         this.searchable =  (this.type === 'blob' || this.type === 'clob') ? false  :  this.searchable;
-        this.showinfilter = this.nativeElement.hasAttribute('showinfilter') ? this.nativeElement.getAttribute('showinfilter') : (this.show);
+        this.showinfilter = (this.nativeElement.hasAttribute('showinfilter') && !((this as any).table && (this as any).table.isdynamictable)) ? this.nativeElement.getAttribute('showinfilter') : (this.show);
         this.limit =  this.limit ? +this.limit  :  undefined;
         this.editWidgetType = this['edit-widget-type'] =  this['edit-widget-type'] || getEditModeWidget(this);
         this.filterOn =  this['filter-on'];
