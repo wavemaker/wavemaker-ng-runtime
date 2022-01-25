@@ -1050,6 +1050,19 @@ $.widget('wm.datatable', {
         this._setColSpan(this.options.headerConfig);
         // Hide the row filter. As different widgets are present inside row filter, this will effect the column size
         this.toggleRowFilter();
+
+        // Find if cols of colgroup has any width defined, if yes remove those columns from colsLen
+        var definedColWidth = 0;
+        var colsLen = headerCols.length;
+        headerCols.each(function () {
+            var eachColWidth = $(this).width();
+            if (eachColWidth) {
+                definedColWidth = definedColWidth + eachColWidth;
+                colsLen =  colsLen - 1;
+            }
+        });
+        
+
         //First Hide or show the column based on the show property so that width is calculated correctly
         headerCells.each(function () {
             var id = Number($(this).attr('data-col-id')),
@@ -1127,7 +1140,11 @@ $.widget('wm.datatable', {
                                             var pixelWidth = (elemWidth)*(widthPercent/100);
                                             width = pixelWidth;
                                         } else { // Else divide the parent width by the number of columns available
-                                            width = elemWidth / headerCols.length ;
+                                            // If any columns have defined width, remove that width from parent elem width
+                                            var parentWidth = (definedColWidth && definedColWidth > 0) ? elemWidth - definedColWidth : elemWidth;
+                                            // ColsLen has length of columns whose width is undefined
+                                            var totalCols = colsLen ? colsLen : headerCols.length;
+                                            width = parentWidth / totalCols;
                                             width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; //columnSanity check to prevent width being too small and Last column, adjust for the scroll width
                                         }
                                     } else {
