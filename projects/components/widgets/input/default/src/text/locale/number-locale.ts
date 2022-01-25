@@ -293,6 +293,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
     }
     
+     // This function checks if the number widget has input mode as natural and trailing zero is defined or not
+     public isNaturalNumber() {
+        return this.inputmode === INPUTMODE.NATURAL && this.widgetType === 'wm-number' && !!this.trailingzero;
+    }
+
     // Input mode is financial and trailing zero is set to false, On focus set display val to fixed point notation and On blur strip trailing zeros
     // In currency, inputmode is natural and trailing zero and step are defined, on blur display val to fixed point notation and on focus strip the zeros
     public checkForTrailingZeros($event) {
@@ -303,12 +308,12 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (this.lastValIsDecimal) {
             this.onModelChange(this.displayValue);
         }
-        if (!financialMode && !this.isNaturalCurrency()) {
+        if (!financialMode && !this.isNaturalCurrency() && !this.isNaturalNumber()) {
             return;
         }
         if (stepVal && this.datavalue) {
             let numberfilter;
-            if ((financialMode && $event.type === 'focus') || (this.isNaturalCurrency() && $event.type === 'blur')) {
+            if ((financialMode && $event.type === 'focus') || (this.isNaturalCurrency() && $event.type === 'blur') || (this.isNaturalNumber() && $event.type === 'blur')) {
                 numberfilter = `1.${stepVal}-${stepVal}`;
             } 
             this.displayValue = this.transformNumber(this.datavalue, numberfilter);
@@ -472,7 +477,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (key === 'minvalue' || key === 'maxvalue') {
             this.isValid(nv);
         } else if (key === 'datavalue' && !ov) {
-            if (this.isNaturalCurrency()) {
+            if (this.isNaturalCurrency() || this.isNaturalNumber()) {
                 this.checkForTrailingZeros({type: 'blur'});
             } else {
                 this.onInputChange(nv);
