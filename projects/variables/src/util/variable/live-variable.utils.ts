@@ -480,12 +480,9 @@ export class LiveVariableUtils {
                         params.push('(' + query + ')');
                     }
                 } else {
-                    // WMS-21543: For some fields, attribute type and fields are missing. To avoid type format errors in BE excluding those fields in query params.
-                    if (rule.attributeType && rule.attributeValue) {
-                        const searchField = LiveVariableUtils.getSearchField(rule, LiveVariableUtils.getIgnoreCase(rule.filterCondition, ignoreCase), skipEncode);
-                        if (!_.isNil(searchField)) {
-                            params.push(searchField);
-                        }
+                    const searchField = LiveVariableUtils.getSearchField(rule, LiveVariableUtils.getIgnoreCase(rule.filterCondition, ignoreCase), skipEncode);
+                    if (!_.isNil(searchField)) {
+                        params.push(searchField);
                     }
                 }
             }
