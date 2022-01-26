@@ -39,12 +39,13 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
         if (searchObj.field) {
             currentVal = getSearchValue(_.get(obj, searchObj.field), searchObj.type);
         } else {
+            currentVal = [];
             _.forEach(obj, (val, key) => {
-                if (!(_.includes(visibleCols, key))) {
-                    delete obj[key];
+                if ((_.includes(visibleCols, key))) {
+                    currentVal.push(val);
                 }
             });
-            currentVal = _.values(obj).join(' ').toLowerCase(); // If field is not there, search on all the columns
+            currentVal = currentVal.join(' ').toLowerCase(); // If field is not there, search on all the columns
         }
         switch (searchObj.matchMode) {
             case 'start':
@@ -136,6 +137,16 @@ const transformFilterField = (userFilters, filterField) => {
             type: filterField.type
         };
     }
+};
+
+// Build a filter Fields object
+const addToFilterFields = (filterFields, searchObj) => {
+    filterFields.push({
+        field: (searchObj.key) ? searchObj.key : '',
+        matchMode: searchObj.matchMode,
+        type: searchObj.type,
+        value: searchObj.value
+    });
 };
 
 @Directive({
@@ -424,7 +435,7 @@ export class TableFilterSortDirective {
         let obj;
         if (_.isArray(searchSortObj)) {
             obj = searchSortObj.filter(function(searchObject) {
-                return searchObject.matchMode !== undefined && searchObject.value !== undefined;
+                return (searchObject.matchMode !== undefined && searchObject.value !== undefined) || (searchObject.value !== undefined && searchObject.field === '');
             });
         } else {
             obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
@@ -465,13 +476,14 @@ export class TableFilterSortDirective {
         }
         filterFields = [];
         // if the field is not selected in search filter dropdown, building the filter fields object
-        if (_.isEmpty(userFilters) && obj.value) {
-            filterFields.push({
-                field: '',
-                matchMode: obj.matchMode,
-                type: obj.type,
-                value: obj.value
-            });
+        if (_.isEmpty(userFilters) && !_.isEmpty(obj)) {
+            if (_.isArray(obj)) {
+                _.forEach(obj,  searchObj => {
+                    addToFilterFields(filterFields, searchObj);
+                });
+            } else {
+                addToFilterFields(filterFields, obj);
+            }
         } else {
             // Transform back the filter fields from object to array
             _.forEach(userFilters, (val, key) => {
