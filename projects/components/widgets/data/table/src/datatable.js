@@ -1131,11 +1131,14 @@ $.widget('wm.datatable', {
                                     var elemWidth = width;
                                     while (elemWidth <= 0) {
                                         currentNode = currentNode.parent();
-                                        elemWidth = currentNode.width();
+                                        elemWidth = currentNode.width();    
                                     }
                                     if (elemWidth > 0) {
                                         // remove padding from parent elem width
-                                        elemWidth = elemWidth - 40;
+                                        var padding = parseFloat(currentNode.css('padding')) ? parseFloat(currentNode.css('padding-left')) + parseFloat(currentNode.css('padding-right')) :  parseFloat(currentNode.children().css('padding-left')) + parseFloat(currentNode.children().css('padding-right'));
+                                        if (padding) {
+                                            elemWidth = elemWidth - padding;
+                                        }
                                         
                                         // If the width is provided in % for inactive panes, convert % to pixel
                                         if (_.includes(tempWidth, '%')) {
