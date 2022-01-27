@@ -784,6 +784,9 @@ const _formatDate = (dateValue, type) => {
         }
         epoch = dateValue && moment(dateValue).valueOf();
     }
+    if (isNaN(epoch)) {
+        return epoch;
+    }
     if (type === DataType.TIMESTAMP) {
         return epoch;
     }
