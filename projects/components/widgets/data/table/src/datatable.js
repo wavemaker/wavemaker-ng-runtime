@@ -1134,6 +1134,9 @@ $.widget('wm.datatable', {
                                         elemWidth = currentNode.width();
                                     }
                                     if (elemWidth > 0) {
+                                        // remove padding from parent elem width
+                                        elemWidth = elemWidth - 40;
+                                        
                                         // If the width is provided in % for inactive panes, convert % to pixel
                                         if (_.includes(tempWidth, '%')) {
                                             var widthPercent = parseInt(tempWidth);
