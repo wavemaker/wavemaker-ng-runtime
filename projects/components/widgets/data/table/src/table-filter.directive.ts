@@ -208,6 +208,7 @@ export class TableFilterSortDirective {
 
     // Get the filter fields as required by datasource
     getFilterFields(searchObj) {
+        searchObj = searchObj || {};
         const filterFields = {};
         if (_.isArray(searchObj)) {
             _.forEach(searchObj,  obj => {
