@@ -2858,7 +2858,7 @@ $.widget('wm.datatable', {
         this.dataStatusContainer = $(statusContainer);
         this.gridContainer.append(this.dataStatusContainer);
         this._renderHeader();
-        if (this.options.filtermode === this.CONSTANTS.SEARCH) {
+        if (this.options.filtermode === this.CONSTANTS.SEARCH && (_.isEmpty(this.searchObj) || (this.searchObj && !this.searchObj.field && !this.searchObj.value))) {
             this._renderSearch();
         } else if (this.options.filtermode === this.CONSTANTS.MULTI_COLUMN) {
             this._renderRowFilter();
