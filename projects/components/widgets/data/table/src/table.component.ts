@@ -273,6 +273,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         securityUtils: {
             pipeTransform : {}
         },
+        navigation: '',
         onDataRender: () => {
             this.ngZone.run(() => {
                 if (this.gridData.length) {
@@ -1019,6 +1020,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.isMobile = isMobile();
         this.gridOptions.name = this.name;
         this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
+        this.gridOptions.navigation = this.navigation;
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
         if (!_.isEmpty(this.gridData)) {
@@ -1628,6 +1630,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (nv !== 'None') {
                     this.shownavigation = true;
                 }
+                this.setDataGridOption('navigation', this.navigation);
                 this.onDemandLoad = nv === NAVIGATION_TYPE.ONDEMAND ? true : false;
                 this.infScroll = nv === NAVIGATION_TYPE.SCROLL ? true : false;
                 this.navControls = nv;

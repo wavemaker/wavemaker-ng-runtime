@@ -409,13 +409,13 @@ $.widget('wm.datatable', {
     _appendRowExpansionButtons: function ($htm) {
         var self = this;
         $htm.find("[data-identifier='rowExpansionButtons']").each(function (index) {
-            var _rowData, $row, rowId;
+            var _rowData, $row, rowId, rowIndex = self.options.navigation === 'Scroll' ? self.options.startRowIndex + index - 1 : index;
             $row = $(this).closest('tr.app-datagrid-row');
             rowId = parseInt($row.attr('data-row-id'), 10);
             _rowData = _.clone(self.options.data[rowId]);
-            _rowData.$index = index + 1;
-            self.options.generateRowExpansionCell(_rowData, index);
-            $(this).empty().append(self.options.getRowExpansionAction(index));
+            _rowData.$index = rowIndex + 1;
+            self.options.generateRowExpansionCell(_rowData, rowIndex);
+            $(this).empty().append(self.options.getRowExpansionAction(rowIndex));
         });
     },
 
@@ -441,6 +441,29 @@ $.widget('wm.datatable', {
         });
 
         return $tfoot;
+    },
+
+    // get markup for new rows and append it to existing tbody markup
+    _getTempForNewRows: function ($tbody) {
+        var self = this, newRowsTemp = [], rowTemp,
+        data = this.preparedData.slice(self.options.startRowIndex-1);
+        _.forEach(data, function (row, index) {
+            var _row = _.clone(row), rowIndex = self.options.startRowIndex + index -1 ;
+            _row.$index = rowIndex + 1;
+            self.options.generateCustomExpressions(_row, rowIndex);
+            self.options.registerRowNgClassWatcher(_row, rowIndex);
+            rowTemp = self._getRowTemplate(row, rowIndex);
+            $tbody.append(rowTemp);
+            newRowsTemp.push(rowTemp[0]);
+            if (self.options.rowExpansionEnabled) {
+                var heightStyle = self.options.rowDef.height ? ' style="min-height:' + self.options.rowDef.height + '"' : '';
+                var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
+                $tbody.append('<tr class="app-datagrid-detail-row" style="display: none;" tabindex="0" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                    '<div class="row-overlay" ' + heightStyle + '><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section" style="display: none;"></div>' +
+                    '</td></tr>');
+            }
+        });
+        return newRowsTemp;
     },
 
     /* Returns the tbody markup. */
@@ -714,12 +737,14 @@ $.widget('wm.datatable', {
         var data = [],
             colDefs = this.options.colDefs,
             self = this,
+            gridData = [],
             isObject = this.Utils.isObject,
             isDefined = this.Utils.isDefined;
         if (!this.options.colDefs.length && this.options.data.length) {
             this._generateCustomColDefs();
         }
-        this.options.data.forEach(function (item, i) {
+        gridData = this.options.navigation === 'Scroll' ? this.options.data.slice(this.options.startRowIndex-1) : this.options.data;
+        gridData.forEach(function (item, i) {
             var rowData = $.extend(true, {}, item);
             colDefs.forEach(function (colDef) {
                 if (!colDef.field) {
@@ -762,11 +787,14 @@ $.widget('wm.datatable', {
 
             /* Add a unique identifier for each row. */
             rowData.$$index = self.options.startRowIndex + i;
-            rowData.$$pk = i;
+            rowData.$$pk = self.options.navigation === 'Scroll' ? (self.options.startRowIndex + i - 1) : i;
             data.push(rowData);
         });
-
-        this.preparedData = data;
+        if (self.options.navigation === 'Scroll') {
+            this.preparedData.push(...data);
+        } else {
+            this.preparedData = data;
+        }
     },
 
     /* Select previously selected columns after refreshing grid data. */
@@ -850,9 +878,13 @@ $.widget('wm.datatable', {
     /* Re-renders the table body. */
     refreshGridData: function () {
         this._prepareData();
-        this.gridBody.remove();
-        this.gridFooter.remove();
-        this._renderGrid();
+        if (this.options.navigation !== 'Scroll') {
+            this.gridBody.remove();
+            this.gridFooter.remove();
+            this._renderGrid();
+        } else {
+            this.appendNewRowsTemp();
+        }
         this._reselectColumns();
         this.addOrRemoveScroll();
         this._setGridEditMode(false);
@@ -2387,9 +2419,10 @@ $.widget('wm.datatable', {
         return false;
     },
     /* Attaches all event handlers for the table. */
-    attachEventHandlers: function ($htm) {
+    attachEventHandlers: function ($htm, newRowsTemp) {
         var $header = this.gridHeader,
-            self = this;
+            self = this,
+            markup;
 
         if (this.options.enableRowSelection) {
             // add js click handler for capture phase in order to first listen on grid and
@@ -2422,8 +2455,9 @@ $.widget('wm.datatable', {
             }
         }
         if (this.options.rowActions.length) {
-            $htm.find('.cancel-edit-row-button').on('click', {action: 'cancel'}, this.toggleEditRow.bind(this));
-            $htm.find('.save-edit-row-button').on('click', {action: 'save'}, this.toggleEditRow.bind(this));
+           markup = newRowsTemp && newRowsTemp.length ? newRowsTemp : $htm;
+            markup.find('.cancel-edit-row-button').on('click', {action: 'cancel'}, this.toggleEditRow.bind(this));
+            markup.find('.save-edit-row-button').on('click', {action: 'save'}, this.toggleEditRow.bind(this));
         }
         if (self.options.editmode === self.CONSTANTS.QUICK_EDIT) {
             //On tab out of a row, save the current row and make next row editable
@@ -2787,18 +2821,57 @@ $.widget('wm.datatable', {
             this._setActionsEnabled();
             self = this;
             $htm.find("[data-identifier='actionButtons']").each(function (index) {
-                var _rowData, $row, rowId;
+                var _rowData, $row, rowId, rowIndex = self.options.navigation === 'Scroll' ? self.options.startRowIndex + index - 1 : index;
                 if (isNewRow) {
                     _rowData = rowData;
                 } else {
                     $row = $(this).closest('tr.app-datagrid-row');
                     rowId = parseInt($row.attr('data-row-id'), 10);
                     _rowData = _.clone(self.options.data[rowId]);
-                    _rowData.$index = index + 1;
+                    _rowData.$index = rowIndex + 1;
                 }
-                self.options.generateRowActions(_rowData, index);
-                $(this).empty().append(self.options.getRowAction(index));
+                self.options.generateRowActions(_rowData, rowIndex);
+                $(this).empty().append(self.options.getRowAction(rowIndex));
             });
+        }
+    },
+
+    appendNewRowsTemp: function(isCreated) {
+        var $tbody = this.gridElement.find('tbody');
+        // get markup for new rows and append it to tbody
+        var newRowsTemp = $(this._getTempForNewRows($tbody));
+        if (this.options.summaryRow) {
+            var $summaryRowHtm = $(this._getSummaryRowTemplate());
+            this.gridElement.append($summaryRowHtm);
+        }
+        // Set proper data status messages after the grid is rendered.
+        if (!this.options.data.length && this.dataStatus.state === 'nodata') {
+            this.setStatus('nodata');
+        } else {
+            this.dataStatus.state = this.dataStatus.state || 'loading';
+            this.dataStatus.message = this.dataStatus.message || this.options.dataStates.loading;
+            this.setStatus(this.dataStatus.state, this.dataStatus.message, isCreated);
+        }
+        this.gridBody = this.gridElement.find('tbody');
+        this.gridFooter = this.gridElement.find('tfoot');
+        this._findAndReplaceCompiledTemplates();
+        this._appendRowExpansionButtons($tbody);
+        this._appendRowActions($tbody);
+        this.attachEventHandlers($tbody, newRowsTemp);
+        this.__setStatus(isCreated);
+
+        if (isCreated) {
+            this._setColSpan(this.options.headerConfig);
+        }
+        if ($.isFunction(this.options.onDataRender)) {
+            this.options.onDataRender();
+        }
+        if (!isCreated && this.options.selectFirstRow) {
+            if (this.options.multiselect) {
+                //Set selectFirstRow to false, to prevent first item being selected in next page
+                this.options.selectFirstRow = false;
+            }
+            this.selectFirstRow(true, true);
         }
     },
     /* Renders the table body. */
