@@ -144,6 +144,10 @@ export class TableColumn {
      */
     @Input() searchable: string;
     /**
+     * This property determines whether the field should be displayed in search filter dropdown or not
+     */
+    @Input() showinfilter: string;
+    /**
      * This property determines the position at which row actions column has to be rendered.
      */
     @Input() rowactionsposition: string;

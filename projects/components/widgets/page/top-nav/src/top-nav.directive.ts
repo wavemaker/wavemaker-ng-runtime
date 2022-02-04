@@ -10,7 +10,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-top-nav', hostClass: DEFAULT_CLS};
     selector: '[wmTopNav]',
     providers: [
         provideAsWidgetRef(TopNavDirective)
-    ]
+    ],
+    exportAs: 'wmTopNav'
 })
 export class TopNavDirective extends StylableComponent {
     static initializeProps = registerProps();

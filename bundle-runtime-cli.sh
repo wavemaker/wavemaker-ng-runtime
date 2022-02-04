@@ -1,30 +1,16 @@
 #!/usr/bin/env bash
-
 BASEDIR=$(dirname "$0")
 cd $BASEDIR
 dev=true
 publish=false
-useS3=false
-version='x.x.x'
+publishVersion='x.x.x'
 while [ "$1" != "" ]; do
     case $1 in
-        --use-s3)
+        --publish-version)
             shift
-            useS3=$1
-        ;;
-        --pom-version)
-            shift
-            version=$1
+            publishVersion=$1
             dev=false
             publish=true
-        ;;
-        --use-npm)
-            shift
-            useNpm=$1
-        ;;
-        --is-prod)
-            shift
-            isProd=$1
         ;;
     esac
     shift
@@ -51,9 +37,11 @@ mkdir -p libraries/scripts/iscroll/build
 cp ./node_modules/iscroll/build/iscroll.js libraries/scripts/iscroll/build/
 mkdir -p libraries/scripts/swipey
 cp ./projects/swipey/src/swipey.jquery.plugin.js libraries/scripts/swipey/
+mkdir -p libraries/scripts/jquery.ui.touch-punch
+cp ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js libraries/scripts/jquery.ui.touch-punch/
 
 
-node_modules/.bin/rollup -c rollup.build-task.js
+node --trace-warnings node_modules/.bin/rollup -c rollup.build-task.js
 
 node_modules/.bin/rimraf dist/runtime-cli
 
@@ -65,6 +53,7 @@ mkdir -p dist/runtime-cli/dependencies
 cp -r src dist/runtime-cli/angular-app
 cp -r build-scripts dist/runtime-cli/angular-app
 cp -r dist/bundles/wmapp/locales libraries
+cp -r pwa-assets dist/runtime-cli
 if [[ "${dev}" == true ]]; then
     cp -r libraries dist/runtime-cli/angular-app
 fi
@@ -72,13 +61,12 @@ cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.js
 cp ./wm.package.json libraries/package.json
 
 if [[ "${publish}" == true ]]; then
-    # node bundle-runtime-cli.js -v "${version}" --useS3=${useS3} --updateWmVersion
-    node bundle-runtime-cli.js -v "${version}" --useNpm=${useNpm} --updateWmVersion --isProd=${isProd}
+    node bundle-runtime-cli.js --publishVersion=${publishVersion}
 fi
-mkdir -p dist/npm-packages/wm
-cp -r libraries/. dist/npm-packages/wm
-tar -zcf dist/npm-packages/wm.tar.gz -C dist/npm-packages wm
-rm -r dist/npm-packages/wm
+mkdir -p dist/npm-packages/app-ng-runtime
+cp -r libraries/. dist/npm-packages/app-ng-runtime
+tar -zcf dist/npm-packages/app-ng-runtime.tar.gz -C dist/npm-packages app-ng-runtime
+rm -r dist/npm-packages/app-ng-runtime
 
 cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/runtime-cli/dependencies
 cd -

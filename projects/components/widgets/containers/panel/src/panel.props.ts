@@ -35,7 +35,8 @@ export const registerProps = () => {
                 ['show', { value: true, ...PROP_BOOLEAN }],
                 ['subheading', PROP_STRING],
                 ['title', PROP_STRING],
-                ['userrole', PROP_STRING]
+                ['userrole', PROP_STRING],
+                ['hint', PROP_STRING]
             ]
         )
     );

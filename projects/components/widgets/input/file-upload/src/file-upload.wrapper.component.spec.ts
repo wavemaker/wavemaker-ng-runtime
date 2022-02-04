@@ -45,10 +45,11 @@ const componentDef: ITestComponentDef = {
     testComponent: FileUploadWrapperComponent
 };
 
-// const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
+const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
 // TestBase.verifyPropsInitialization();
 // TestBase.verifyCommonProperties();
 // TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 
 describe('Fileupload Component', () => {
     let fixture: ComponentFixture<FileUploadWrapperComponent>;

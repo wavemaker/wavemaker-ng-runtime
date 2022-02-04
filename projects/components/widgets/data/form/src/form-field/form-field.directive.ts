@@ -1,9 +1,9 @@
-import { AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self } from '@angular/core';
+import { AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport } from '@wm/core';
+import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport, App, noop } from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
@@ -96,12 +96,20 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private _activeField: boolean;
     private notifyForFields: any;
     private fieldValidations;
+    private _triggeredByUser: boolean;
+    private app: App;
 
+    @HostListener('keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+        this._triggeredByUser = true;
+    }
+
+    private isFocused;
     constructor(
         inj: Injector,
         form: FormComponent,
         fb: FormBuilder,
         viewport: Viewport,
+        app: App,
         @Optional() parentList: ListComponent,
         @Attribute('chipclass.bind') bindChipclass: string,
         @Attribute('dataset.bind') binddataset,
@@ -122,8 +130,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             hostClass: '',
             widgetSubType: 'wm-form-field-' + (_widgetType || FormWidgetType.TEXT).trim()
         };
+        let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => this._initPropsRes = res));
+        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        this._initPropsRes = resolveFn;
+        this.app = app;
         this.fieldDefConfig = {};
         this.class = '';
         this.binddataset = binddataset;
@@ -154,11 +165,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     _onFocusField($evt) {
         this._activeField = true;
         $($evt.target).closest('.live-field').addClass('active');
+
     }
 
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
         this._activeField = false;
+        this._triggeredByUser = false;
     }
 
     // Expression to be evaluated in view mode of form field
@@ -245,6 +258,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     onPropertyChange(key, nv, ov?) {
+        const isFormDirty = this.form.dirty;
+
         if (key !== 'tabindex') {
             super.onPropertyChange(key, nv, ov);
         }
@@ -282,6 +297,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 this.setMaxFormWidget('placeholder', nv);
                 break;
             case 'required':
+                // WMS-18906 : Do not make form as dirty during required prop initialization
+                if (isFormDirty !== this.form.dirty) {
+                    this.form.markAsPristine();
+                }
             case 'maxchars':
             case 'minvalue':
             case 'maxvalue':
@@ -375,9 +394,25 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     // On field value change, propagate event to parent form
     onValueChange(val) {
         if (!this.isDestroyed) {
+            const captionEl =  $(this.nativeElement).find('.caption-floating');
+            if (captionEl.length > 0) {
+                // hasValue check whether form-field has a value from passed val attribute
+                // Added sanity check on val to support values liked 0, false etc as input val - WMS-20084
+                // explicitly checking for input value or -webkit-autofill to see whether there are any autofilled fields - WMS-20141
+
+                const hasValue = ((isDefined(val) && val !== '' && val !== null) || captionEl.find('input').val()) || captionEl.find('input:-webkit-autofill').length;
+
+                this.app.notify('captionPositionAnimate', {displayVal: hasValue, nativeEl: captionEl, isSelectMultiple: this.formWidget && this.formWidget.multiple, isFocused: this._activeField});
+            }
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
-            if (this.form.touched) {
+            // Do mark as touched, only incase when user has entered an input but not through the script. Hence added mousedown event check
+            // active class checks whether user is on the current field, if so marking the field as touched. And form field validation happens once a field is touched
+            // _triggeredByUser checks whether the field is touched by the user or triggered from external script
+            if (this.$element.find('.active').length > 0 || this.form.touched) {
+                if (this._triggeredByUser) {
+                    this.ngform.controls[this._fieldName].markAsTouched();
+                }
                 this.fieldValidations.setCustomValidationMessage();
             }
         }

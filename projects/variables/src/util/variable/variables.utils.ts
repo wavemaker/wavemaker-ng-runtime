@@ -2,7 +2,7 @@ import { extractType, DataType, DEFAULT_FORMATS, $parseEvent, $watch, findValueO
 
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
 
-declare const window, _, $, moment;
+declare const window, _, $, moment, he;
 
 const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};
 
@@ -227,6 +227,7 @@ const downloadFilefromResponse = (response, headers, success, error) => {
             if (!popup) {
                 window.location.href = downloadUrl;
             }
+            triggerOnTimeout(success);
         }
 
         setTimeout(() => { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
@@ -783,6 +784,9 @@ const _formatDate = (dateValue, type) => {
         }
         epoch = dateValue && moment(dateValue).valueOf();
     }
+    if (isNaN(epoch)) {
+        return epoch;
+    }
     if (type === DataType.TIMESTAMP) {
         return epoch;
     }
@@ -806,23 +810,23 @@ export const formatDate = (value, type) => {
 };
 
 /**
- * This method decodes the live variable data which is encoded from backend before showing in the widgets.
+ * This method decodes the variable data which is encoded from backend before showing in the widgets.
  * It takes variable response content as input and iterates recursively,
  * if the value is string type then it will decode the data.
- * Used DOMParser().parseFromString() with mime type text/html to decode the data.
  * @param responseContent (Array of objects)
  */
 export const decodeData = (responseContent) => {
     if (!responseContent) {
-        return;
+        return responseContent;
     }
-    const domParser = new DOMParser();
     if (_.isArray(responseContent)) {
         _.forEach(responseContent, data => {
-            if (data) {
+            if (_.isString(data)) {
+                data = htmlDecode(data);
+            } else if (_.isObject(data)) {
                 _.forEach(data, (value, key) => {
                     if (value && _.isString(value)) {
-                        data[key] = domParser.parseFromString(value, 'text/html').body.textContent;
+                        data[key] = htmlDecode(value);
                     } else if (_.isObject(value)) {
                         decodeData(value);
                     }
@@ -832,13 +836,17 @@ export const decodeData = (responseContent) => {
     } else if (_.isObject(responseContent)) {
         _.forEach(responseContent, (value, key) => {
             if (value && _.isString(value)) {
-                responseContent[key] = domParser.parseFromString(value, 'text/html').body.textContent;
+                responseContent[key] = htmlDecode(value);
             } else if (_.isObject(value)) {
                 decodeData(value);
             }
         });
     } else if (_.isString(responseContent)) {
-        responseContent = domParser.parseFromString(responseContent, 'text/html').body.textContent;
+        responseContent = htmlDecode(responseContent);
         return responseContent;
     }
+};
+
+function htmlDecode(input) {
+    return he.unescape(input);
 }

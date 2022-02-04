@@ -17,8 +17,9 @@
     </h3>
 </div>
 <div class="app-datagrid" #datagridElement></div>
-<div class="panel-footer clearfix" [hidden]="!_actions.footer.length && (!shownavigation || dataNavigator?.dataSize <= pagesize)">
-    <div class="app-datagrid-paginator" [hidden]="!dataNavigator?.dataSize || !shownavigation || dataNavigator?.dataSize <= pagesize">
+
+<div class="panel-footer clearfix" [hidden]="!_actions.footer.length && (!shownavigation || (onDemandLoad && dataNavigator.isDisableNext) || dataNavigator?.dataSize <= pagesize)">
+    <div class="app-datagrid-paginator" [hidden]="!dataNavigator?.dataSize || !shownavigation || (onDemandLoad && dataNavigator.isDisableNext) || dataNavigator?.dataSize <= pagesize">
         <nav wmPagination show.bind="shownavigation" navigationalign.bind="navigationalign"
              navigationsize.bind="navigationSize"
              navigation.bind="navControls" showrecordcount.bind="showrecordcount" maxsize.bind="maxsize"
@@ -35,7 +36,7 @@
 <ng-template #buttonRef let-btn="btn">
     <button wmButton caption.bind="btn.displayName" show.bind="btn.show" class.bind="btn.class"  iconclass.bind="btn.iconclass" (click)="invokeActionEvent($event, btn.action)"
             [ngClass]="{'btn-sm': spacing === 'condensed', 'disabled-new': btn.key === 'addNewRow' && (isGridEditMode || isLoading)}"
-            type="button" shortcutkey.bind="btn.shortcutkey" tabindex.bind="btn.tabindex" hint.bind="btn.title" disabled.bind="btn.disabled" conditionalclass.bind="btn.conditionalclass" conditionalstyle.bind="btn.conditionalstyle"></button>
+            type="button" shortcutkey.bind="btn.shortcutkey" tabindex.bind="btn.tabindex" hint.bind="btn.title" [attr.aria-label]="btn.displayName" disabled.bind="btn.disabled" conditionalclass.bind="btn.conditionalclass" conditionalstyle.bind="btn.conditionalstyle"></button>
 </ng-template>
 
 <ng-template #anchorRef let-btn="btn">

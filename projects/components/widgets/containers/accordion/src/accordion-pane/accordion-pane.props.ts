@@ -16,7 +16,7 @@ export const registerProps = () => {
                 ['isdynamic', PROP_STRING], // internal property
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['smoothscroll', {value: true, ...PROP_BOOLEAN}],
+                ['smoothscroll', {value: false, ...PROP_BOOLEAN}],
                 ['subheading', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', {value: 'Title', ...PROP_STRING}]

@@ -18,9 +18,10 @@ import {
     noop,
     switchClass,
     StatePersistence,
+    PaginationService,
     setListClass
 } from '@wm/core';
-import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, unsupportedStatePersistenceTypes, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef, extractDataSourceName } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 import { ButtonComponent } from '@wm/components/input';
 
@@ -33,7 +34,6 @@ declare const $;
 
 const DEFAULT_CLS = 'app-livelist app-panel';
 const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
-const unsupportedStatePersistenceTypes = ['On-Demand', 'Scroll'];
 
 @Component({
     selector: 'div[wmList]',
@@ -65,12 +65,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private datasource: any;
     private showNavigation: boolean;
     public noDataFound: boolean;
-    private debouncedFetchNextDatasetOnScroll: Function;
     private reorderProps: any;
     private app: any;
     private appDefaults: any;
     private ngZone: NgZone;
     private statePersistence: StatePersistence;
+    private paginationService: PaginationService;
 
     public lastSelectedItem: ListItemDirective;
     public fieldDefs: Array<any>;
@@ -118,6 +118,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private _listAnimator: ListAnimator;
     public pulltorefresh: boolean;
     private _listenerDestroyers: Array<any>;
+    private debouncedFetchNextDatasetOnScroll: Function;
 
     public title: string;
     public subheading: string;
@@ -129,6 +130,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     _isDependent;
     private _pageLoad;
     private _selectedItemsExist;
+
+    private touching;
+    private touched;
 
     public get selecteditem() {
         if (this.multiselect) {
@@ -178,9 +182,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         return this.getListItemByIndex(index);
     }
 
-    // return index of listItem(listItemDirective). This refers to the same method getListItemIndex.
-    public getIndex(item: ListItemDirective) {
-        return this.getListItemIndex(item);
+    /** 
+     * Returns index of listItem(listItemDirective / listItemObject)
+     * If item is a directive, index is fetched from listItems
+     * If item is an object, index is fetched from fieldDefs
+    */
+    public getIndex(item: any) {
+        if (item instanceof ListItemDirective) {
+            return this.getListItemIndex(item);
+        } else if (item) {
+            return this.fieldDefs.findIndex((obj) => _.isEqual(obj, item));
+        }
     }
 
     public set selecteditem(items) {
@@ -209,6 +221,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
         statePersistence: StatePersistence,
+        paginationService: PaginationService,
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
@@ -220,6 +233,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.ngZone = ngZone;
         this.datePipe = datePipe;
         this.statePersistence = statePersistence;
+        this.paginationService = paginationService;
         this._pageLoad = true;
 
         this.binditemclass = binditemclass;
@@ -238,7 +252,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         // Updates pagination, filter, sort etc options for service and crud variables
         this._listenerDestroyers = [
             this.app.subscribe('check-state-persistence-options', options => {
-                if (_.get(options, 'variable.name') !== _.get(this.datasource, 'name')) {
+                let dataSourceName = _.get(this.datasource, 'name');
+                // in Prefabs, this.datasource is not resolved at the time of variable invocation, so additional check is required.
+                if (!dataSourceName) {
+                    dataSourceName = extractDataSourceName(this.binddatasource);
+                }
+                if (_.get(options, 'variable.name') !== dataSourceName) {
                     return;
                 }
                 this.handleStateParams(options);
@@ -264,6 +283,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this._pageLoad = false;
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'pagination')) {
+                options.options = options.options || {};
                 options.options.page = widgetState.pagination;
             }
             if (_.get(widgetState, 'selectedItem')) {
@@ -397,112 +417,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
 
-    private fetchNextDatasetOnScroll() {
-        this.dataNavigator.navigatePage('next');
-    }
-
-    private setIscrollHandlers(el) {
-        let lastScrollTop = 0;
-        const wrapper = _.get(el.iscroll, 'wrapper');
-        const self = el.iscroll;
-
-        el.iscroll.on('scrollEnd', () => {
-            const clientHeight = wrapper.clientHeight,
-                totalHeight = wrapper.scrollHeight,
-                scrollTop = Math.abs(el.iscroll.y);
-
-            if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
-                this.debouncedFetchNextDatasetOnScroll();
-                if (self.indicatorRefresh) {
-                    self.indicatorRefresh();
-                }
-            }
-
-            lastScrollTop = scrollTop;
-        });
-    }
-
-    // Applying iscroll event to invoke the next calls for infinte scroll.
-    private bindIScrollEvt() {
-        const $scrollParent = this.$element.closest('[wmsmoothscroll="true"]');
-
-        const iScroll = _.get($scrollParent[0], 'iscroll');
-
-        // when iscroll is not initialised the notify the smoothscroll and subscribe to the iscroll update
-        if (!iScroll) {
-            const iScrollSubscription = this.app.subscribe('iscroll-update', (_el) => {
-                if (!_.isEmpty(_el) && _el.isSameNode($scrollParent[0])) {
-                    this.setIscrollHandlers($scrollParent[0]);
-                    iScrollSubscription();
-                }
-            });
-            this.app.notify('no-iscroll', $scrollParent[0]);
-            return;
-        }
-        this.setIscrollHandlers($scrollParent[0]);
-    }
-
-    private bindScrollEvt() {
-        const $el = this.$element;
-        const $ul = $el.find('> ul');
-        const $firstChild = $ul.children().first();
-        const self = this;
-
-        let $scrollParent;
-        let scrollNode;
-        let lastScrollTop = 0;
-
-        if (!$firstChild.length) {
-            return;
-        }
-
-        $scrollParent = $firstChild.scrollParent(false);
-
-        if ($scrollParent[0] === document) {
-            scrollNode = document.body;
-        } else {
-            scrollNode = $scrollParent[0];
-        }
-
-        // has scroll
-        if (scrollNode.scrollHeight > scrollNode.clientHeight) {
-            $scrollParent
-                .each((index: number, node: HTMLElement | Document) =>  {
-                    // scrollTop property is 0 or undefined for body in IE, safari.
-                    lastScrollTop = node === document ? (node.body.scrollTop || $(window).scrollTop()) : (node as HTMLElement).scrollTop;
-                })
-                .off('scroll.scroll_evt')
-                .on('scroll.scroll_evt', function (evt) {
-                    let target = evt.target;
-                    let clientHeight;
-                    let totalHeight;
-                    let scrollTop;
-                    // scrollingElement is undefined for IE, safari. use body as target Element
-                    target =  target === document ? (target.scrollingElement || document.body) : target;
-
-                    clientHeight = target.clientHeight;
-                    totalHeight = target.scrollHeight;
-                    scrollTop = target === document.body ? $(window).scrollTop() : target.scrollTop;
-
-                    if ((lastScrollTop < scrollTop) && (totalHeight * 0.9 < scrollTop + clientHeight)) {
-                        $(this).off('scroll.scroll_evt');
-                        self.debouncedFetchNextDatasetOnScroll();
-                    }
-
-                    lastScrollTop = scrollTop;
-                });
-            $ul.off('wheel.scroll_evt');
-        } else {
-            // if there is no scrollable element register wheel event on ul element
-            $ul.on('wheel.scroll_evt', e => {
-                if (e.originalEvent.deltaY > 0) {
-                    $ul.off('wheel.scroll_evt');
-                    this.debouncedFetchNextDatasetOnScroll();
-                }
-            });
-        }
-    }
-
     /**
      * Update fieldDefs property, fieldDefs is the model of the List Component.
      * fieldDefs is an Array type.
@@ -510,37 +424,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      */
     private updateFieldDefs(newVal: Array<any>) {
         if (this.infScroll || this.onDemandLoad) {
-            if (!isDefined(this.fieldDefs) || this.dataNavigator.isFirstPage()) {
-                this.fieldDefs = [];
-                this.currentPage = 1;
-            } else if (this.fieldDefs.length / this.pagesize <= this.dataNavigator.pageCount) {
-                let itemsLength,
-                    itemsToPush = [];
-                // we push the newVal only when dn.currentPage gets incremented because that is when new items gets added to newVal
-                if (this.fieldDefs.length === this.currentPage * this.pagesize && (this.currentPage + 1 ) === this.dataNavigator.dn.currentPage) {
-                    itemsToPush = newVal;
-                    this.currentPage ++;
-                } else if (this.fieldDefs.length < this.currentPage * this.pagesize) {
-                    if ((this.fieldDefs.length === (this.currentPage - 1) * this.pagesize) && ((this.currentPage - 1) === this.dataNavigator.dn.currentPage)) {
-                        // if dn.currentPage is not incremented still only old newVal is present hence we push empty array
-                        newVal = [];
-                    } else if (this.dataNavigator.dataSize < this.currentPage * this.pagesize) {
-                        // if number of elements added to datanavigator is less than  product of currentpage and pagesize we only add elements extra elements added
-                        itemsLength = this.dataNavigator.dataSize - this.fieldDefs.length;
-                    } else {
-                         // if number of elements added to datanavigator is greater than  product of currentpage and pagesize we add elements the extra elements in newVal
-                        itemsLength = this.currentPage * this.pagesize - this.fieldDefs.length;
-                        this.currentPage ++;
-                    }
-                    const startIndex = newVal.length - itemsLength;
-                    itemsToPush = newVal.slice(startIndex);
-                } else if (this.fieldDefs.length === this.currentPage * this.pagesize && this.currentPage === this.dataNavigator.dn.currentPage) {
-                    // if dn.currentPage is not incremented still only old newVal is present hence we push empty array
-                    itemsToPush = [];
-                }
-                newVal = itemsToPush;
-            }
-            this.fieldDefs = [...this.fieldDefs, ...newVal];
+            [this.fieldDefs, this.currentPage] = this.paginationService.updateFieldsOnPagination(this, newVal);
         } else {
             this.fieldDefs = newVal;
         }
@@ -694,16 +578,21 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }) || null;
     }
 
-    private updateSelectedItemsWidgets() {
+    private updateSelectedItemsWidgets(statePersistenceTriggered?) {
         let obj = {}, widgetState;
         const pageNum = _.get(this.dataNavigator, 'dn.currentPage') || 1;
         if (this.getConfiguredState() !== 'none') {
             // remove previously configured selected items for current page and construct new ones later below.
             widgetState = this.statePersistence.getWidgetState(this) || {};
             if (_.get(widgetState, 'selectedItem')) {
-                _.remove(widgetState.selectedItem, function(selectedItem) {
-                    return selectedItem.page === pageNum;
-                });
+                // when multiselect is on and an item is selected without pressing CTRL, previously selected items in state should be empty.
+                if (this.multiselect && this.selecteditem.length === 1) {
+                    widgetState.selectedItem = [];
+                } else {
+                    _.remove(widgetState.selectedItem, function(selectedItem) {
+                        return selectedItem.page === pageNum;
+                    });
+                }
             }
         }
         if (this.multiselect) {
@@ -726,7 +615,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 }
             }
         });
-        if (this.getConfiguredState() !== 'none') {
+        if (this.getConfiguredState() !== 'none' && !statePersistenceTriggered) {
             if (unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
                 this.statePersistence.removeWidgetState(this, 'selectedItem');
                 this.statePersistence.setWidgetState(this, {'selectedItem': widgetState.selectedItem});
@@ -741,7 +630,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      * If the listItem is already a selected item then deselects the item.
      * @param {ListItemDirective} $listItem: Item to be selected of deselected.
      */
-    private toggleListItemSelection($listItem: ListItemDirective) {
+    private toggleListItemSelection($listItem: ListItemDirective, statePersistenceTriggered?) {
         // item is not allowed to get selected if it is disabled.
         if ($listItem && !$listItem.disableItem) {
             let item = $listItem.item;
@@ -762,7 +651,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.invokeEventCallback('select', {widget: $listItem, $data: item});
                 $listItem.isActive = true;
             }
-            this.updateSelectedItemsWidgets();
+            this.updateSelectedItemsWidgets(statePersistenceTriggered);
         }
     }
 
@@ -781,14 +670,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             const widgetState = this.statePersistence.getWidgetState(this);
             if (_.get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = false;
+                const selectedItemsLength = _.isArray(this.selecteditem) ? this.selecteditem.length : _.toNumber(!_.isEmpty(this.selecteditem));
                 const currentPage = _.get(this.dataNavigator, 'dn.currentPage') || 1;
-                setTimeout( () => {
+                widgetState.pagination = widgetState.pagination || 1;
+                // to prevent item selection from being triggered more than once
+                if (selectedItemsLength !== widgetState.selectedItem.length && widgetState.pagination === currentPage) {
                     widgetState.selectedItem.forEach((item) => {
                         if (item.page === currentPage) {
-                            this.selectItem(item.index);
+                            this.selectItem(item.index, true);
                         }
                     });
-                }, 100);
+                }
             }
         }
         const selectedItems = _.isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];
@@ -832,9 +724,16 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             // if smoothscroll is set to false, then native scroll has to be applied
             // otherwise smoothscroll events will be binded.
             if (isMobileApp() && smoothScrollEl.length && smoothScrollEl.attr('wmsmoothscroll') === 'true') {
-                this.bindIScrollEvt();
+                this.paginationService.bindIScrollEvt(this, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
             } else {
-                this.bindScrollEvt();
+                // In case of mobile app when modal exists, and list items height is greater than the modal content provide ccontainer a scrollable height
+                const modalBody = this.$element.closest('.modal-body');
+                const listHt = this.$element.find('ul').height();
+                const modalHt = window.innerHeight - 140;
+                if (isMobile() && modalBody.length && listHt > modalHt) {
+                    this.$element.css('height', modalHt + 'px');
+                }
+                this.paginationService.bindScrollEvt(this, '> ul', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
             }
         }
 
@@ -873,49 +772,117 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.$ulEle.data('oldIndex', ui.item.index());
     }
 
+    // Triggers during sorting
+    private onSort(evt, ui) {
+        // In case of infinite scroll, when the element doesn't have scroll enabled
+        // on dragging the element to last item's position manually trigger loading of next items
+        if (this.infScroll) {
+            const lastItemOffset = this.$ulEle.find(`[listitemindex=${this.fieldDefs.length - 1}]`).offset();
+            if (lastItemOffset && lastItemOffset.top < ui.offset.top) {
+                this.paginationService.bindScrollEvt(this, '> ul', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+                this.debouncedFetchNextDatasetOnScroll();
+            }
+        }
+    }
+
+
     // Triggers after the sorting.
     private onUpdate(evt, ui) {
         const data = this.fieldDefs;
         const newIndex = ui.item.index();
         const oldIndex = this.$ulEle.data('oldIndex');
 
-        if (this.getConfiguredState() !== 'none') {
-            this.statePersistence.removeWidgetState(this, 'selectedItem');
-        }
-
         const minIndex = _.min([newIndex, oldIndex]);
         const maxIndex = _.max([newIndex, oldIndex]);
 
         const draggedItem = _.pullAt(data, oldIndex)[0];
+        // Modify the data list only if we find a draggedItem
+        if (draggedItem) {
+            if (this.getConfiguredState() !== 'none') {
+                this.statePersistence.removeWidgetState(this, 'selectedItem');
+            }
 
-        this.reorderProps.minIndex = _.min([minIndex, this.reorderProps.minIndex]);
-        this.reorderProps.maxIndex = _.max([maxIndex, this.reorderProps.maxIndex]);
+            this.reorderProps.minIndex = _.min([minIndex, this.reorderProps.minIndex]);
+            this.reorderProps.maxIndex = _.max([maxIndex, this.reorderProps.maxIndex]);
 
-        data.splice(newIndex, 0, draggedItem);
+            data.splice(newIndex, 0, draggedItem);
 
-        this.cdRef.markForCheck();
-        this.cdRef.detectChanges();
-        const $changedItem = {
-            oldIndex: oldIndex,
-            newIndex: newIndex,
-            item: data[newIndex]
-        };
-        this.invokeEventCallback('reorder', {$event: evt, $data: data, $changedItem});
-        this.$ulEle.removeData('oldIndex');
+            this.cdRef.markForCheck();
+            this.cdRef.detectChanges();
+            const $changedItem = {
+                oldIndex: oldIndex,
+                newIndex: newIndex,
+                item: data[newIndex]
+            };
+            this.invokeEventCallback('reorder', {$event: evt, $data: data, $changedItem});
+            this.$ulEle.removeData('oldIndex');
+        }
     }
 
     // configures reordering the list items.
     private configureDnD() {
-        const options = {
-            appendTo: 'body',
+        let appendTo;
+        const modalEl = $(document).find('.modal');
+        if (this.getAttr('height')) { // when height is applied to the list, append should be the ul's parent as scroll is applied to the parent
+          appendTo = 'parent';
+        } else if (modalEl.length) { // In case of dialog, appendTo should be the modal ele
+            appendTo = modalEl[modalEl.length - 1];
+        } else { // As default append to should be body
+            appendTo = 'body';
+        }
+
+        const options = isMobileApp() ? {} : {
+            appendTo: appendTo,
         };
 
         const $el = $(this.nativeElement);
         this.$ulEle = $el.find('.app-livelist-container');
 
-        configureDnD(this.$ulEle, options, this.onReorderStart.bind(this), this.onUpdate.bind(this));
+        configureDnD(this.$ulEle, options, this.onReorderStart.bind(this), this.onUpdate.bind(this), this.onSort.bind(this));
 
         this.$ulEle.droppable({'accept': '.app-list-item'});
+
+        if (isMobileApp()) {
+            this.$ulEle.sortable('disable');
+            this.$ulEle.on('touchstart', function(event) {
+                let self = this;
+                if (!self.touching) {
+                    if (self.touched) {
+                        clearTimeout(self.touched);
+                    }
+                    setTimeout(() => {
+                        //Prevent context menu on mobile (IOS/ANDROID)
+                        if (event.cancelable) {
+                            event.preventDefault();
+                        }
+                    }, 50);
+                    self.touched = setTimeout(() => {
+                        $(event.currentTarget).addClass('no-selection');
+                        //Enable draggable
+                        $(event.currentTarget).sortable('enable');
+
+                        //Set internal flag
+                        self.touching = true;
+
+                        //trigger touchstart again to enable draggable through touch punch
+                        $(self).trigger(event);
+
+                        //Choose preferred duration for taphold
+                    }, 350);
+                }
+            }).on('touchend', function (event) {
+                this.touching = false;
+                $(event.currentTarget).removeClass('no-selection');
+
+                //Disable draggable to enable default behaviour
+                $(event.currentTarget).sortable('disable');
+
+                clearTimeout(this.touched);
+            }).on('touchmove', function () {
+                clearTimeout(this.touched);
+            });
+        }
+
     }
 
     // returns true if the selection limit is reached.
@@ -1032,6 +999,19 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 // Adding setTimeout because in pagination component updateNavSize method is overriding navigationclass
                 setTimeout( () => this.dataNavigator.navigationClass = nv);
             }
+        } else if (key === 'pagesize') {
+            this.dataNavigator.options = {
+                maxResults: nv
+            };
+            this.dataNavigator.widget.maxResults = nv;
+            this.dataNavigator.maxResults = nv;
+        } else if (key === 'enablereorder') {
+            if (nv) {
+                this.configureDnD();
+                this.$ulEle.sortable('enable');
+            } else if (this.$ulEle && !nv) {
+                this.$ulEle.sortable('disable');
+            }
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -1045,8 +1025,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             // Setting selectCount value based number of items selected.
             selectCount = _.isArray(this.selecteditem) ? this.selecteditem.length : (_.isObject(this.selecteditem) ? 1 : 0);
 
-            // Handling multiselect for mobile applications
-            if (this.multiselect && isMobileApp()) {
+            // Handling multiselect for mobile device
+            if (this.multiselect && isMobile()) {
                 if (this.checkSelectionLimit(selectCount) || $listItem.isActive) {
                     this.toggleListItemSelection($listItem);
                 } else {
@@ -1126,13 +1106,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      * selects item in the list.
      * @param val: index | model of the list item.
      */
-    public selectItem(val) {
+    public selectItem(val, statePersistenceTriggered?) {
         const listItem = this.getItemRefByIndexOrModel(val);
         if (!listItem) {
             return;
         }
         if (!listItem.isActive) {
-            this.toggleListItemSelection(listItem);
+            this.toggleListItemSelection(listItem, statePersistenceTriggered);
         }
         // focus the element.
         listItem.nativeElement.focus();
@@ -1177,10 +1157,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     ngOnInit() {
         super.ngOnInit();
         this.handleHeaderClick = noop;
+        setTimeout(() => {
+            this.debouncedFetchNextDatasetOnScroll = this.paginationService.debouncedFetchNextDatasetOnScroll(this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME, this);
+        }, 0);
         this._items = [];
         this.fieldDefs = [];
-        // When pagination is infinite scroll dataset is applying after debounce time(250ms) so making next call after previous data has rendered
-        this.debouncedFetchNextDatasetOnScroll = _.debounce(this.fetchNextDatasetOnScroll, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
         this.reorderProps = {
             minIndex: null,
             maxIndex: null

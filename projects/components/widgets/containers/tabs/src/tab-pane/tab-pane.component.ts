@@ -67,6 +67,10 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         this.notifyParent($event);
     }
 
+    tabpaneHeaderClick($event, paneIndex) {
+        this.invokeEventCallback('headerclick', {$event, paneIndex});
+    }
+
     public deselect() {
         if (this.isActive) {
             this.isActive = false;

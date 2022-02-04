@@ -16,7 +16,10 @@ import {
     DataSource,
     AbstractDialogService,
     DataType,
-    $invokeWatchers
+    removeAttr,
+    $invokeWatchers,
+    scrollToElement,
+    isElementInViewport
 } from '@wm/core';
 import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
 import { PrefabDirective } from '@wm/components/prefab';
@@ -249,7 +252,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         @Attribute('formdata.bind') private bindformdata,
         @Attribute('wmLiveForm') isLiveForm,
         @Attribute('wmLiveFilter') isLiveFilter,
-        @Attribute('role') role,
+        @Attribute('data-role') role,
         @Attribute('key') key,
         @Attribute('name') name
     ) {
@@ -257,6 +260,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
         styler(this.nativeElement, this);
 
+        // remove title property as attribute as it is causing unnecessary tooltip
+        removeAttr(this.nativeElement, 'title');
         this.isUpdateMode = true;
         this.dialogId = this.nativeElement.getAttribute('dialogId');
         this.ngform = fb.group({});
@@ -595,6 +600,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 if (this.messageRef) {
                     this.messageRef.showMessage(this.statusMessage.caption, this.statusMessage.type);
                 }
+                // when message layout is inline on save, scroll the view to top of the form to see the status of the operation
+                if (!isElementInViewport(this.$element[0])) {
+                    scrollToElement(this.$element[0]);
+                }
             } else {
                 this.app.notifyApp(template, type, header);
             }
@@ -754,6 +763,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         const formFields = innerFormFields || this.formFields;
         formFields.forEach(field => {
             this.setFieldValue(field, data, innerFormdata);
+            if (field.fieldValidations) {
+                field.fieldValidations.setCustomValidationMessage();
+            }
         });
         this.constructDataObject();
     }

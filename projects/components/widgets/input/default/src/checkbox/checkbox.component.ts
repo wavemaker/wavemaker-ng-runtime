@@ -1,4 +1,4 @@
-import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Attribute, Component, ElementRef, HostListener, Injector, OnInit, ViewChild } from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { isDefined, toggleClass } from '@wm/core';
@@ -53,6 +53,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     public readonly: boolean;
     public required: boolean;
     public name: string;
+    public hint: string;
     public shortcutkey: string;
     public tabindex: any;
     public _caption = '&nbsp';
@@ -63,10 +64,12 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     @ViewChild('checkbox', { static: true, read: ElementRef }) checkboxEl: ElementRef;
 
     // if the checkbox is checked, return checkedvalue else return uncheckedvalue
+    // @ts-ignore
     public get datavalue() {
         return isDefined(this.proxyModel) ? (this.proxyModel ? this._checkedvalue : this._uncheckedvalue) : undefined;
     }
     // when the datavalue is set, update the checked state
+    // @ts-ignore
     public set datavalue(v) {
         this.proxyModel = (isDefined(v) && v !== '') ? v === this._checkedvalue : undefined;
         this.updatePrevDatavalue(this.datavalue);
@@ -76,7 +79,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         inj: Injector,
         @Attribute('checkedvalue') checkedVal,
         @Attribute('uncheckedvalue') uncheckedVal,
-        @Attribute('type') type
+        @Attribute('type') public type
     ) {
         super(inj, WIDGET_CONFIG);
 
@@ -125,6 +128,12 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
 
     handleChange(newVal: boolean) {
         this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
+    }
+
+    @HostListener('keydown.enter', ['$event', '"ENTER"'])
+    onKeyDown($event) {
+        $event.preventDefault();
+        this.checkboxEl.nativeElement.click();
     }
 
 

@@ -29,6 +29,7 @@ export * as lgBuild from './containers/layout-grid/layout-grid.build';
 export * as panelBuild from './containers/panel/panel.build';
 export * as segControlBuild from './containers/segmented-control/segmented-control.build';
 export * as segContentBuild from './containers/segmented-control/segment-content/segment-content.build';
+export * as repeatTemplateBuild from './containers/repeat-template.build';
 export * as tabsBuild from './containers/tabs/tabs.build';
 export * as tabPaneBuild from './containers/tabs/tab-pane/tab-pane.build';
 export * as tileBuild from './containers/tile/tile.build';

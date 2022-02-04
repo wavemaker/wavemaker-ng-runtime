@@ -1,4 +1,4 @@
-import { async, ComponentFixture } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { PanelComponent } from './panel.component';
 import { Component, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -10,12 +10,12 @@ import { Router } from '@angular/router';
 import { UserDefinedExecutionContext } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { DatasetAwareNavComponent, NavNode } from '../../../../base/src/widgets/common/base/dataset-aware-nav.component';
-import { BsDropdownModule, BsDropdownDirective } from 'ngx-bootstrap';
+import { BsDropdownModule, BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
 import { ComponentsTestModule } from "../../../../base/src/test/components.test.module";
 import { compileTestComponent } from "../../../../base/src/test/util/component-test-util";
 
-const markup = `<div wmPanel badgevalue="Test val" partialContainer aria-label="panel"  wm-navigable-element="true"  subheading="subheading"  iconclass="wi wi-account-circle"  title="Title" name="panel1" actions="testData" autoclose="outsideClick"  actionsclick.event="panel1Actionsclick($item)"></div>`;
+const markup = `<div wmPanel badgevalue="Test val" #wm_panel1="wmPanel" partialContainer [attr.aria-label]="wm_panel1.hint || 'Panel'" wm-navigable-element="true"  subheading="subheading" iconclass="wi wi-account-circle" actions="testData" autoclose="outsideClick" title="Title" name="panel1" hint="panel hint" actionsclick.event="panel1Actionsclick($item)">`;
 @Component({
     template: markup
 })
@@ -51,6 +51,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(panelComponentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 
 describe("PanelComponent", () => {
     let panelWrapperComponent: PanelWrapperComponent;

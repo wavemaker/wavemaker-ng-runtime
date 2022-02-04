@@ -1,4 +1,4 @@
-import { async, ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import {Component, LOCALE_ID, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -12,10 +12,13 @@ import { WmComponentsModule } from '@wm/components/base';
 import { SecurityService } from '@wm/security';
 import {
     BsDatepickerModule,
-    TimepickerModule,
-    BsDropdownModule,
+
     BsLocaleService
-} from 'ngx-bootstrap';
+} from 'ngx-bootstrap/datepicker';
+import {
+    TimepickerModule
+} from 'ngx-bootstrap/timepicker';
+import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
 import { DatetimeComponent } from './date-time.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
 import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
@@ -127,6 +130,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(dateComponentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 TestBase.verifyEvents([
     {
         clickableEle: '.btn-date',
@@ -173,41 +177,48 @@ describe("DatetimeComponent", () => {
 
 
     /************************* Properties starts ****************************************** **/
-    it('should not add the hidden property, element always visible', async(() => {
-        notHavingTheAttribute(fixture, '.app-datetime', 'hidden');
-
+    it('should not add the hidden property, element always visible', waitForAsync(async () => {
+        await notHavingTheAttribute(fixture, '.app-datetime', 'hidden');
     }));
 
 
-    it('should autofocus the date control ', async(() => {
-        let inputEle = getHtmlSelectorElement(fixture, '.app-textbox');
+    it('should autofocus the date control ', waitForAsync(() => {
+        let inputEle = getHtmlSelectorElement(fixture, '.app-textbox').nativeElement;
         fixture.whenStable().then(() => {
-            expect(inputEle).toBe(document.activeElement);
+            expect(inputEle).toEqual(document.activeElement);
         });
 
     }));
 
 
-    it("should show the calendar panel on click the date button (date entry mode) ", async(() => {
+    it("should show the calendar panel on click the date button (date entry mode) ", waitForAsync(() => {
 
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1);
 
     }));
-    it("should not show the calendar panel on click the input control (show date picker on only button click) ", async(() => {
+    it("should not show the calendar panel on click the input control (show date picker on only button click) ", waitForAsync(() => {
         fixture.whenStable().then(() => {
             onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'bs-datepicker-container', 0);
         });
 
     }));
 
-    it("should show the timer panel on click the time button ", async(() => {
+    it("should show the timer panel on click the time button ", (done) => {
         fixture.whenStable().then(() => {
-            onClickCheckTaglengthOnBody(fixture, '.btn-time', 'timepicker', 1);
+            let elem = getHtmlSelectorElement(fixture, '.btn-time');
+            elem.nativeElement.click();
+
+            fixture.detectChanges();
+            setTimeout(() => {
+                let element = document.getElementsByTagName('timepicker');
+                expect(element.length).toBe(1);
+                done();
+            });
 
         });
-    }));
+    });
 
-    it("should set the hours step as 1hour on click on top arrow button", async(() => {
+    it("should set the hours step as 1hour on click on top arrow button", waitForAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-time');
         dateInputControl.nativeElement.click();
         fixture.whenStable().then(() => {
@@ -219,7 +230,7 @@ describe("DatetimeComponent", () => {
     }));
 
 
-    it("should set the min step as 30min on click on the second top arrow button", async(() => {
+    it("should set the min step as 30min on click on the second top arrow button", waitForAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-time');
         dateInputControl.nativeElement.click();
         fixture.whenStable().then(() => {
@@ -230,46 +241,46 @@ describe("DatetimeComponent", () => {
         });
     }));
 
-    it("should not show the calendar panel on click the input control ", async(() => {
+    it("should not show the calendar panel on click the input control ", waitForAsync(() => {
 
         onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'bs-datepicker-container', 0);
     }));
 
-    it("should show the week numbers on the calendar pan ", async(() => {
+    it("should show the week numbers on the calendar pan ", waitForAsync(() => {
 
         onClickCheckClassEleLengthOnBody(fixture, '.btn-time', 'table.weeks', 1);
     }));
 
-    it('should assign the shortkey to the input control as attribute accesskey ', async(() => {
+    it('should assign the shortkey to the input control as attribute accesskey ', waitForAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.app-textbox');
         expect(dateInputControl.nativeElement.getAttribute('accesskey')).toEqual('t');
     }));
 
 
-    it('should set the current date as default value ', async(() => {
+    it('should set the current date as default value ', waitForAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.app-textbox');
         expect(dateInputControl.nativeElement.value).toEqual(currentDate);
     }));
 
 
-    it('should show the date patten as yyyy-MM-ddTHH:mm:ss format ', async(() => {
+    it('should show the date patten as yyyy-MM-ddTHH:mm:ss format ', waitForAsync(() => {
 
         datepatternTest(fixture, '.app-datetime', '.app-textbox');
 
     }));
 
-    it('should get the date outputformat as yyyy-MM-ddTHH:mm:ss ', async(() => {
+    it('should get the date outputformat as yyyy-MM-ddTHH:mm:ss ', waitForAsync(() => {
         outputpatternTest(fixture, '.app-datetime', dateWrapperComponent.wmComponent.datavalue, false, true);
 
     }));
 
-    it('should be disabled mode ', async(() => {
+    it('should be disabled mode ', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
         hasAttributeCheck(fixture, '.app-textbox', 'disabled');
 
     }));
-    it('should be disabled mode (picker button)', async(() => {
+    it('should be disabled mode (picker button)', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
         hasAttributeCheck(fixture, '.btn-time', 'disabled');
@@ -299,21 +310,21 @@ describe("DatetimeComponent", () => {
 
     /************************* Validation starts ****************************************** **/
 
-    it('should be required validation ', async(() => {
+    it('should be required validation ', waitForAsync(() => {
         fixture.whenStable().then(() => {
             let dateInputControl = getHtmlSelectorElement(fixture, '.app-textbox');
             expect(dateInputControl.nativeElement.hasAttribute('required')).toBe(true);
         });
     }));
 
-    it('should respect the mindate validation', async(() => {
+    it('should respect the mindate validation', waitForAsync(() => {
         wmComponent.getWidget().datavalue = getFormatedDate('2019-11-01');
 
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
 
     }));
 
-    it('should be able to set the mindate and disable the below mindate on calendar', async(() => {
+    it('should be able to set the mindate and disable the below mindate on calendar', waitForAsync(() => {
         wmComponent.getWidget().mindate = '2019-11-02';
         wmComponent.getWidget().datavalue = '2019-11-02';
         checkElementClass(fixture, '.app-datetime', 'ng-valid');
@@ -322,7 +333,7 @@ describe("DatetimeComponent", () => {
         });
     }));
 
-    it('should respect the maxdate validation', async(() => {
+    it('should respect the maxdate validation', waitForAsync(() => {
         wmComponent.getWidget().maxdate = '2020-01-03';
         wmComponent.getWidget().datavalue = '2020-01-04';
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
@@ -332,13 +343,13 @@ describe("DatetimeComponent", () => {
 
     }));
 
-    it('should ignore the  excluded days', async(() => {
+    it('should ignore the  excluded days', waitForAsync(() => {
         wmComponent.getWidget().excludedays = '1,6';
         wmComponent.getWidget().datavalue = getFormatedDate('2019-12-30');
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
 
     }));
-    it('should disable the excluded days on the calendar panel', async(() => {
+    it('should disable the excluded days on the calendar panel', waitForAsync(() => {
         wmComponent.getWidget().excludedays = '1,6';
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1, (ele) => {
             fixture.whenStable().then(() => {
@@ -349,13 +360,13 @@ describe("DatetimeComponent", () => {
 
     }));
 
-    it('should ignore the  excluded date', async(() => {
+    it('should ignore the  excluded date', waitForAsync(() => {
         dateWrapperComponent.wmComponent.getWidget().datavalue = getFormatedDate('2020-01-01');
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
 
     }));
 
-    it('should disable the excluded date on the calendar panel', async(() => {
+    it('should disable the excluded date on the calendar panel', waitForAsync(() => {
         wmComponent.getWidget().excludedates = '2020-01-01';
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1, (ele) => {
             let datePickerRows = ele[0].querySelectorAll('tbody tr');
@@ -375,7 +386,7 @@ describe("DatetimeComponent", () => {
 
     /************************ Scenarios starts **************************************** */
 
-    it("should close the caledar as soon as select the date and should select the date and opens the timepicker panel", async(() => {
+    it("should close the caledar as soon as select the date and should select the date and opens the timepicker panel", waitForAsync(() => {
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1, (el) => {
             let datePickerRows = el[0].querySelectorAll('tbody tr');
             var eleRow = datePickerRows[0];
@@ -392,12 +403,12 @@ describe("DatetimeComponent", () => {
         });
     }));
 
-    it('should show the calendar panel when we click on the input control ', async(() => {
+    it('should show the calendar panel when we click on the input control ', waitForAsync(() => {
         wmComponent.getWidget().showdropdownon = 'default';
         onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'bs-datepicker-container', 1);
     }));
 
-    it('should toggle the AM/PM', async(() => {
+    it('should toggle the AM/PM', waitForAsync(() => {
         wmComponent.getWidget().datepattern = 'MMM d, yyyy h:mm:ss a';
         fixture.whenStable().then(() => {
             onClickCheckTaglengthOnBody(fixture, '.btn-time', null, null);
@@ -424,7 +435,7 @@ describe("DatetimeComponent", () => {
 
     /************************* Events starts ****************************************** **/
 
-    it('Should trigger the date control change event', async(() => {
+    it('Should trigger the date control change event', waitForAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-time');
         dateInputControl.nativeElement.click();
         spyOn(dateWrapperComponent, 'datetime1Change').and.callThrough();
@@ -471,20 +482,20 @@ describe(('Datetime Component with Localization'), () => {
         fixture.detectChanges();
     }));
 
-    it('should create the datetime Component with de locale', async (() => {
+    it('should create the datetime Component with de locale', waitForAsync(() => {
         expect(dateWrapperComponent).toBeTruthy();
     }));
 
-    it ('should display localized dates in date picker', async(() => {
+    it ('should display localized dates in date picker', waitForAsync(() => {
         localizedDatePickerTest(fixture, '.btn-date');
 
     }));
 
-    it ('should display localized meriains in time picker', async(() => {
+    it ('should display localized meriains in time picker', waitForAsync(() => {
         localizedTimePickerTest(fixture,  (wmComponent as any).meridians, '.btn-time');
     }));
 
-    it ('should display the defult value in de format',  async(() => {
+    it ('should display the defult value in de format',  waitForAsync(() => {
         const datetime = '2020-02-20 02:00 PM', datepattern = 'yyyy-MM-dd hh:mm a';
         wmComponent.getWidget().datepattern = datepattern;
         wmComponent.datavalue = datetime;
@@ -493,13 +504,13 @@ describe(('Datetime Component with Localization'), () => {
         expect(getFormattedDate((wmComponent as any).datePipe, dateObj, datepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
     }));
 
-    it('should update the datavalue without error when we type "de" format datetime in inputbox with "12H" format ',  async(() => {
+    it('should update the datavalue without error when we type "de" format datetime in inputbox with "12H" format ',  waitForAsync(() => {
         const datepattern = 'yyyy, dd MMMM hh:mm:ss a';
         wmComponent.getWidget().datepattern = datepattern;
         localizedValueOnInputTest(fixture, '2020, 21 Februar 03:15:00 AM', wmComponent, datepattern);
     }));
 
-    it('should update the datavalue without error when we type "de" format datetime in inputbox with "24H" format',  async(() => {
+    it('should update the datavalue without error when we type "de" format datetime in inputbox with "24H" format',  waitForAsync(() => {
         const datetime = '2020, 21 Februar 15:15:00', datepattern = 'yyyy, dd MMMM HH:mm:ss';
         wmComponent.getWidget().datepattern = datepattern;
         localizedValueOnInputTest(fixture, '2020, 21 Februar 15:15:00', wmComponent, datepattern);
@@ -539,7 +550,7 @@ describe(('Datetime Component with ro(Romania) Localization'), () => {
     }));
 
 
-    it('should update the datavalue without error when we type "ro" format datetime in inputbox with "12H" format ',  async(() => {
+    it('should update the datavalue without error when we type "ro" format datetime in inputbox with "12H" format ',  waitForAsync(() => {
         const  datepattern = 'yyyy, dd MMMM hh:mm:ss a';
         wmComponent.getWidget().datepattern = datepattern;
         localizedValueOnInputTest(fixture, '2020, 21 februarie 03:15:00 a.m.', wmComponent, datepattern);

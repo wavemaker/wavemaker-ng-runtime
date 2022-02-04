@@ -14,12 +14,12 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { Network } from '@ionic-native/network';
 import { SQLite } from '@ionic-native/sqlite';
 import { Vibration } from '@ionic-native/vibration';
-
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
+import { Diagnostic } from '@ionic-native/diagnostic';
 
 import {
     App,
     AbstractHttpService,
-    fetchContent,
     hasCordova,
     isSpotcues,
     insertAfter,
@@ -27,9 +27,11 @@ import {
     isIphone,
     isIpod,
     isObject,
+    loadScript,
     loadStyleSheet,
     noop,
-    removeNode
+    removeNode,
+    getWmProjectProperties
 } from '@wm/core';
 import { FileExtensionFromMimePipe } from '@wm/components/base';
 import { DeviceFileOpenerService, DeviceService, ExtAppMessageService, MobileCoreModule, NetworkService } from '@wm/mobile/core';
@@ -40,7 +42,6 @@ import { $rootScope, CONSTANTS } from '@wm/variables';
 import { BasicModule } from '@wm/mobile/components/basic';
 
 import { AppExtComponent } from './components/app-ext.component';
-import { CookieService } from './services/cookie.service';
 import { MobileHttpInterceptor } from './services/http-interceptor.service';
 import { WebProcessService } from './services/webprocess.service';
 
@@ -48,10 +49,6 @@ declare const $, navigator, _;
 
 export const MAX_WAIT_TIME_4_OAUTH_MESSAGE = 60000;
 
-enum OS {
-    IOS = 'ios',
-    ANDROID = 'android'
-}
 const MINIMUM_TAB_WIDTH = 768;
 const KEYBOARD_CLASS = 'keyboard';
 
@@ -68,7 +65,9 @@ const ionicServices = [
     MediaCapture,
     Network,
     SQLite,
-    Vibration
+    Vibration,
+    LocationAccuracy,
+    Diagnostic
 ];
 
 @NgModule({
@@ -109,7 +108,6 @@ export class MobileRuntimeModule {
     // Startup services have to be added only once in the app life-cycle.
     private static initializeRuntime(runtimeModule: MobileRuntimeModule,
                       app: App,
-                      cookieService: CookieService,
                       deviceFileOpenerService: DeviceFileOpenerService,
                       deviceService: DeviceService) {
         if (this.initialized) {
@@ -117,12 +115,6 @@ export class MobileRuntimeModule {
         }
         this.initialized = true;
         app.deployedUrl = runtimeModule.getDeployedUrl();
-        runtimeModule.getDeviceOS().then(os => {
-            app.selectedViewPort = {
-                os: os
-            };
-            runtimeModule.applyOSTheme(os);
-        });
         if (hasCordova()) {
             const unsubscribe = app.subscribe('pageReady', (page) => {
                 if (!isSpotcues) {
@@ -131,17 +123,6 @@ export class MobileRuntimeModule {
                 unsubscribe();
             });
             runtimeModule.handleKeyBoardClass();
-            deviceService.addStartUpService(cookieService);
-            if (!isSpotcues) {
-                app.subscribe('userLoggedIn', () => {
-                    let url = $rootScope.project.deployedUrl;
-                    if (url.endsWith('/')) {
-                        url = url.substr(0, url.length - 1);
-                    }
-                    cookieService.persistCookie(url, 'JSESSIONID').catch(noop);
-                    cookieService.persistCookie(url, 'SPRING_SECURITY_REMEMBER_ME_COOKIE').catch(noop);
-                });
-            }
             app.subscribe('device-file-download', (data) => {
                 deviceFileOpenerService.openRemoteFile(data.url, data.extension, data.name, data.headers).then(data.successCb, data.errorCb);
             });
@@ -190,7 +171,6 @@ export class MobileRuntimeModule {
 
     constructor(
         private app: App,
-        private cookieService: CookieService,
         private deviceFileOpenerService: DeviceFileOpenerService,
         private deviceService: DeviceService,
         private securityService: SecurityService,
@@ -206,7 +186,11 @@ export class MobileRuntimeModule {
         } else {
             this._$appEl.addClass('wm-mobile-app');
         }
-        MobileRuntimeModule.initializeRuntime(this, this.app, this.cookieService, this.deviceFileOpenerService, this.deviceService);
+        // applying os theme on getting os details
+        app.subscribe('on-viewport-details', os => {
+            this.applyOSTheme(os);
+        });
+        MobileRuntimeModule.initializeRuntime(this, this.app, this.deviceFileOpenerService, this.deviceService);
     }
 
     private exposeOAuthService() {
@@ -229,14 +213,44 @@ export class MobileRuntimeModule {
         handleOpenURL(handleOpenURL.lastURL);
     }
 
-    private applyOSTheme(os) {
-        let oldStyleSheet = $('link[theme="wmtheme"]').first();
-        const themeUrl = oldStyleSheet.attr('href').replace(new RegExp('/[a-z]*/style.css$'), `/${os.toLowerCase()}/style.css`),
-            newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
-        oldStyleSheet = oldStyleSheet.length > 0 && oldStyleSheet[0];
-        if (newStyleSheet && oldStyleSheet) {
-            insertAfter(newStyleSheet, oldStyleSheet);
-            removeNode(oldStyleSheet);
+    public applyOSTheme(os) {
+        let oldStyleSheet = $('link[theme="wmtheme"][href ^="themes"][href $="/style.css"]').first();
+        if (oldStyleSheet.length) {
+            const themeUrl = oldStyleSheet.attr('href').replace(new RegExp('/[a-z]*/style.css$'), `/${os.toLowerCase()}/style.css`),
+                newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
+            oldStyleSheet = oldStyleSheet.length > 0 && oldStyleSheet[0];
+            if (newStyleSheet && oldStyleSheet) {
+                insertAfter(newStyleSheet, oldStyleSheet);
+                removeNode(oldStyleSheet);
+            }
+        }
+
+        // In angular development, styleSheet will point to .js files
+        // In angular production, styleSheet will point to 'wm-android-styles.css' or 'wm-ios-styles.css'
+        const removeTheme = os.toLowerCase() === 'android' ? 'wm-ios-styles' : 'wm-android-styles';
+        let isDevBuild;
+        const useTheme = 'wm-' + os.toLowerCase() + '-styles';
+        let unusedStyleSheet = $('link[href *=' + removeTheme + ']').first();
+        if (!unusedStyleSheet.length) {
+            isDevBuild = true;
+            unusedStyleSheet = $('script[src *=' + removeTheme + ']').first();
+        }
+        if (unusedStyleSheet.length) {
+            let newStyleSheet;
+            if (isDevBuild) {
+                newStyleSheet = unusedStyleSheet.clone();
+                newStyleSheet = newStyleSheet[0];
+                newStyleSheet.src = newStyleSheet.src.replace(removeTheme, useTheme);
+                loadScript(newStyleSheet.src, false);
+                unusedStyleSheet = unusedStyleSheet[0];
+                insertAfter(newStyleSheet, unusedStyleSheet);
+                removeNode(unusedStyleSheet);
+            } else {
+                newStyleSheet = $('link[href *=' + useTheme + ']').first();
+                newStyleSheet = newStyleSheet[0];
+                loadStyleSheet(newStyleSheet.href, {name: 'theme', value: 'wmtheme'});
+                removeNode(unusedStyleSheet[0]);
+            }
         }
     }
 
@@ -260,40 +274,20 @@ export class MobileRuntimeModule {
                 // TODO: Temporary Fix for WMS-13072, baseUrl is {{DEVELOPMENT_URL}} in wavelens
                 deployedUrl = waveLensAppUrl;
             } else {
-                fetchContent('json', './config.json', true, (response => {
-                    if (!response.error && response.baseUrl) {
-                        deployedUrl = response.baseUrl;
-                        this.app.customUrlScheme = response.customUrlScheme;
-                    }
-                }));
+                const config = this.deviceService.getConfig();
+                if (config.baseUrl === 'http://NOSERVERREQUIRED.com') {
+                    deployedUrl = 'NONE';
+                } else {
+                    deployedUrl = config.baseUrl;
+                }
+                this.app.customUrlScheme = config.customUrlScheme;
             }
         }
-        if (!deployedUrl.endsWith('/')) {
+        if (deployedUrl !== 'NONE' && !deployedUrl.endsWith('/')) {
             deployedUrl = deployedUrl + '/';
         }
         $rootScope.project.deployedUrl = deployedUrl;
         return deployedUrl;
-    }
-
-    private getDeviceOS(): Promise<string> {
-        return new Promise<string>(function (resolve, reject) {
-            const msgContent = {key: 'on-load'};
-            // Notify preview window that application is ready. Otherwise, identify the OS.
-            if (window.top !== window) {
-                window.top.postMessage(msgContent, '*');
-                // This is for preview page
-                window.onmessage = function (msg) {
-                    const data = msg.data;
-                    if (isObject(data) && data.key === 'switch-device') {
-                        resolve(data.device.os);
-                    }
-                };
-            } else if (isIphone() || isIpod() || isIpad()) {
-                resolve(OS.IOS);
-            } else {
-                resolve(OS.ANDROID);
-            }
-        });
     }
 
     private addAuthInBrowser() {
@@ -303,21 +297,10 @@ export class MobileRuntimeModule {
             }
             return this.webProcessService.execute('LOGIN', '/')
                 .then(output => {
-                    let url = this.app.deployedUrl;
-                    if (url.endsWith('/')) {
-                        url = url.substr(0, url.length - 1);
-                    }
                     output = JSON.parse(output);
                     if (output[CONSTANTS.XSRF_COOKIE_NAME]) {
                         localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, output[CONSTANTS.XSRF_COOKIE_NAME]);
                     }
-                    return this.cookieService.clearAll()
-                        .then(() => {
-                            const  promises = _.keys(output).map(k => {
-                                return this.cookieService.setCookie(url, k, output[k]);
-                            });
-                            return Promise.all(promises);
-                        });
                 })
                 .then(() => this.app.notify('userLoggedIn', {}));
         };

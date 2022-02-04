@@ -20,7 +20,8 @@
             "@ionic-native/media-capture": "ionicNative.plugins",
             "@ionic-native/geolocation": "ionicNative.plugins",
             "@ionic-native/vibration": "ionicNative.plugins",
-
+            "@ionic-native/location-accuracy": "ionicNative.plugins",
+            "@ionic-native/diagnostic": "ionicNative.plugins",  
             "@wm/mobile/core": "wm.mobile.core",
             "@wm/mobile/offline": "wm.mobile.offline",
             "@wm/security":  "wm.security",

@@ -12,6 +12,7 @@ import { PipeProvider } from '../../services/pipe-provider.service';
 interface SPINNER {
     show: boolean;
     messages: Array<string>;
+    arialabel: string;
 }
 
 @Component({
@@ -27,7 +28,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
 
     @ViewChild('dynamicComponent', {read: ViewContainerRef}) dynamicComponentContainerRef: ViewContainerRef;
 
-    spinner: SPINNER = {show: false, messages: []};
+    spinner: SPINNER = {show: false, messages: [], arialabel: ''};
     constructor(
         _pipeProvider: PipeProvider,
         _appRef: ApplicationRef,
@@ -62,6 +63,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
             setTimeout(() => {
                 this.spinner.show = data.show;
                 this.spinner.messages = data.messages;
+                this.spinner.arialabel = data.messages.toString();
             });
         });
 
@@ -123,7 +125,12 @@ export class AppComponent implements DoCheck, AfterViewInit {
     }
 
     private start() {
-        this.startApp = true;
+        //to fix the issue that happens only in the development mode
+        //ExpressionChangedAfterItHasBeenCheckedError
+        //fix: https://blog.angular-university.io/angular-debugging/
+        setTimeout(() => {
+            this.startApp = true;
+        });
         setTimeout(() => {
             this.app.dynamicComponentContainerRef = this.dynamicComponentContainerRef;
             this.overrideRouterOutlet();

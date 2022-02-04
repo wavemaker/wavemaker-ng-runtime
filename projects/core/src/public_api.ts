@@ -42,6 +42,8 @@ export {
     isIpod,
     isIpad,
     isIos,
+    isLargeTabletLandscape,
+    isLargeTabletPortrait,
     isMobile,
     isMobileApp,
     getAndroidVersion,
@@ -77,6 +79,8 @@ export {
     extractType,
     isNumberType,
     isEmptyObject,
+    scrollToElement,
+    isElementInViewport,
     isPageable,
     replace,
     isDateTimeType,
@@ -158,6 +162,7 @@ export * from './services/field-widget.service';
 export * from './services/script-loader.service';
 export * from './services/user-custom-pipe-manager.service';
 export { StatePersistence } from './services/state-persistence.service';
+export { PaginationService } from './services/pagination.service';
 export * from './core.module';
 export * from './utils/wm-project-properties';
 export * from './utils/lru-cache';

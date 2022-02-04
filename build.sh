@@ -8,7 +8,7 @@ docs=false
 locale=false
 forcelibs=false
 
-isSourceModified=false
+sourceModified=false
 
 for arg in "$@"
 do
@@ -105,10 +105,9 @@ hasLibJsChanges(){
 	fi
     return 0
 }
-hasSourceChanges() {
-
+buildNeeded() {
     if [[ ${force} == true ]]; then
-        return 0
+        return 1
     fi
 
     local bundle=$1
@@ -116,18 +115,11 @@ hasSourceChanges() {
     local successFile="./dist/tmp/${bundle}_${SUCCESS_FILE}"
 
     if ! [[ -e ${successFile} ]]; then
-        return 0
+        return 1
     fi
 
-    local updateTime=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -printf "%T@\n" | sort | tail -1 | cut -d. -f1`
-    local buildTime=`date -r ${successFile} +%s`
-
-	if [[ ${updateTime} -le ${buildTime} ]]; then
-		return 1
-	else
-		return 0
-	fi
-    return 0
+    local modifiedSourceFilesCount=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -newer $successFile | wc -l`
+    return $modifiedSourceFilesCount
 }
 
 rollup() {
@@ -139,13 +131,14 @@ ngBuild() {
     local bundle=$1
     local sourceLocation=$2
     local ngModuleName=$3;
-    hasSourceChanges ${bundle} ${sourceLocation}
-    if [[ "$?" -eq "0" ]]; then
+    buildNeeded ${bundle} ${sourceLocation}
+    if [[ "$?" -ne 0 ]]; then
+        echo "--------------------prod build--------------------"
         execCommand ng-build ${ngModuleName} "$NG build --prod $ngModuleName"
-        isSourceModified=true
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
         fi
+        sourceModified=true
     else
         echo "No changes in $bundle"
     fi
@@ -165,7 +158,7 @@ bundleWeb() {
         ./libraries/build-task/bundles/index.umd.js \
         ./libraries/components/input/default/bundles/index.umd.js \
         ./libraries/components/basic/default/bundles/index.umd.js \
-        ./libraries/components/basic/progress//bundles/index.umd.js \
+        ./libraries/components/basic/progress/bundles/index.umd.js \
         ./libraries/components/basic/rich-text-editor/bundles/index.umd.js \
         ./libraries/components/basic/search/bundles/index.umd.js \
         ./libraries/components/basic/tree/bundles/index.umd.js \
@@ -293,7 +286,6 @@ bundleMobile() {
         ./libraries/mobile/components/containers/segmented-control/bundles/index.umd.js \
         ./libraries/mobile/components/device/barcode-scanner/bundles/index.umd.js \
         ./libraries/mobile/components/device/camera/bundles/index.umd.js \
-        ./libraries/mobile/components/input/epoch/bundles/index.umd.js \
         ./libraries/mobile/components/input/file-upload/bundles/index.umd.js \
         ./libraries/mobile/components/page/default/bundles/index.umd.js \
         ./libraries/mobile/components/page/left-panel/bundles/index.umd.js \
@@ -320,9 +312,6 @@ bundleMobile() {
 }
 
 buildApp() {
-    hasSourceChanges components-transpilation projects/components/transpile
-    local hasChangesInComponentsTranpilation=$?
-
     ngBuild core projects/core '@wm/core'
     ngBuild transpiler projects/transpiler '@wm/transpiler'
     ngBuild swipey projects/swipey '@wm/swipey'
@@ -373,7 +362,7 @@ buildApp() {
     ngBuild components-page-footer projects/components/widgets/page/footer '@wm/components/page/footer'
     ngBuild components-page-header projects/components/widgets/page/header '@wm/components/page/header'
     ngBuild components-page-leftpanel projects/components/widgets/page/left-panel '@wm/components/page/left-panel'
-    ngBuild components-page-rightpanel projects/components/widgets/page/footer '@wm/components/page/right-panel'
+    ngBuild components-page-rightpanel projects/components/widgets/page/right-panel '@wm/components/page/right-panel'
     ngBuild components-page-topnav projects/components/widgets/page/top-nav '@wm/components/page/top-nav'
 
     ngBuild components-prefab projects/components/widgets/prefab '@wm/components/prefab'
@@ -402,7 +391,6 @@ buildApp() {
     ngBuild mobile-components-device-barcodescanner projects/mobile/components/device/barcode-scanner '@wm/mobile/components/device/barcode-scanner'
     ngBuild mobile-components-device-camera projects/mobile/components/device/camera '@wm/mobile/components/device/camera'
 
-    ngBuild mobile-components-input-epoch projects/mobile/components/input/epoch '@wm/mobile/components/input/epoch'
     ngBuild mobile-components-input-fileupload projects/mobile/components/input/file-upload '@wm/mobile/components/input/file-upload'
 
     ngBuild mobile-components-page projects/mobile/components/page '@wm/mobile/components/page'
@@ -418,18 +406,19 @@ buildApp() {
     ngBuild mobile-placeholder-runtime projects/mobile/placeholder/runtime '@wm/mobile/placeholder/runtime'
     ngBuild mobile-placeholder-runtimedynamic projects/mobile/placeholder/runtime-dynamic '@wm/mobile/placeholder/runtime/dynamic'
 
-    if [[ ${hasChangesInComponentsTranpilation} -eq "0" ]]; then
+    buildNeeded components-transpilation projects/components/transpile
+    if [[ $? -ne 0 ]]; then
         ./node_modules/.bin/ng-packagr -p projects/components/transpile/ng-package.json -c ./projects/components/transpile/tsconfig.lib.prod.json
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/components-transpilation_${SUCCESS_FILE}
         fi
-        isSourceModified=true
+        sourceModified=true
     fi
 
     ngBuild runtime-base projects/runtime-base '@wm/runtime/base'
     ngBuild runtime-dynamic projects/runtime-dynamic '@wm/runtime/dynamic'
 
-    if [[ "${isSourceModified}" == true ]]; then
+    if [[ "${sourceModified}" == true ]]; then
         bundleWeb
         bundleMobile
     fi
@@ -516,7 +505,7 @@ buildAngularWebSocket() {
 }
 
 buildNgCircleProgressbar() {
-    execCommand "tsc" "ng-circle-progress" "${TSC} ./node_modules/ng-circle-progress/index.js --target es5 --outDir dist/tmp/libs/ng-circle-progress --allowJs --skipLibCheck --module es2015"
+    execCommand "tsc" "ng-circle-progress" "${TSC} ./node_modules/ng-circle-progress/fesm2015/ng-circle-progress.js --target es5 --outDir dist/tmp/libs/ng-circle-progress --allowJs --skipLibCheck --module es2015"
     execCommand "rollup" "ng-circle-progress" "${ROLLUP} -c ./config/rollup.ng-circle-progress.config.js --silent"
 }
 
@@ -546,6 +535,7 @@ bundleWebLibs() {
         ./node_modules/moment/moment.js \
         ./node_modules/x2js/x2js.js \
         ./node_modules/d3/d3.min.js \
+        ./node_modules/he/he.js \
         ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
@@ -567,6 +557,7 @@ bundleWebLibs() {
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
+        ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ./node_modules/imask/dist/imask.min.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
@@ -610,6 +601,7 @@ bundleMobileLibs() {
         ./node_modules/moment/moment.js \
         ./node_modules/x2js/x2js.js \
         ./node_modules/d3/d3.min.js \
+        ./node_modules/he/he.js \
         ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/dist/fullcalendar.min.js \
@@ -633,6 +625,7 @@ bundleMobileLibs() {
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
+        ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ./node_modules/imask/dist/imask.min.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
@@ -682,7 +675,7 @@ buildLibs() {
         fi
     else
         hasLibJsChanges
-        
+
         if [[ "$?" -eq "0" ]]; then
         bundleWebLibs
         bundleMobileLibs

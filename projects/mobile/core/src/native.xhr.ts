@@ -1,3 +1,5 @@
+import { isIos } from '@wm/core';
+
 const _XMLHttpRequest = window['XMLHttpRequest'];
 const cordova = window['cordova'];
 
@@ -266,7 +268,7 @@ export class NativeXMLHttpRequest {
 
     private sendBlobViaNativePlugin(body: any): void {
         const options = this.prepareOptions(body);
-        const tempfile = cordova.file.tempDirectory + Date.now();
+        const tempfile = (isIos() ? cordova.file.tempDirectory : cordova.file.cacheDirectory) + Date.now();
         const timerId = setTimeout(() => {
             if(this.timeout > 0) {
                 console.error('network call with request %O failed with timeout', this);

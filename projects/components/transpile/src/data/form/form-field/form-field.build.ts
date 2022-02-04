@@ -117,8 +117,8 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const widgetType = attrs.get('widget') || FormWidgetType.TEXT;
             const dataRole = isFormField ? 'form-field' : 'filter-field';
             const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
-                                   class="help-block text-danger"
-                                   [textContent]="${counter}.validationmessage"></p>` : '';
+                                   class="help-block text-danger" aria-hidden="false" [attr.aria-label]="${counter}.validationmessage" role="alert"
+                                   aria-live="assertive" [textContent]="${counter}.validationmessage"></p>` : '';
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             const isInList = pCounter === (parentList && parentList.get('parent_form_reference'));
@@ -133,9 +133,9 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                 setDefaultPlaceholder(attrs, widgetType, 2);
             }
 
-            return `<${tagName} data-role="${dataRole}" [formGroup]="${pCounter}.ngform" wmFormField #${counter}="wmFormField" widgettype="${widgetType}" ${getFormMarkupAttr(attrs)}>
+            return `<${tagName} data-role="${dataRole}" [formGroup]="${pCounter}.ngform" wmFormField captionPosition #${counter}="wmFormField" widgettype="${widgetType}" ${getFormMarkupAttr(attrs)}>
                         <div class="live-field form-group app-composite-widget clearfix caption-{{${pCounter}.captionposition}}" widget="${widgetType}">
-                            <label [hidden]="!${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}" [title]="${counter}.displayname"
+                            <label [hidden]="!${counter}.displayname" class="app-label control-label formfield-label {{${pCounter}._captionClass}}"
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,
                                          required: ${pCounter}.isUpdateMode && ${counter}.required}" [textContent]="${counter}.displayname"> </label>
                             <div [ngClass]="${counter}.displayname ? ${pCounter}._widgetClass : '${controlLayout}'">
@@ -144,7 +144,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                                 ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter, isInList)}
                                 <span aria-hidden="true" *ngIf="${counter}.showPendingSpinner" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span>
                                 <p *ngIf="!(${counter}._control?.invalid && ${counter}._control?.touched) && ${pCounter}.isUpdateMode"
-                                   class="help-block" [textContent]="${counter}.hint"></p>
+                                   class="help-block" aria-hidden="true" role="alert" aria-live="polite" [textContent]="${counter}.hint"></p>
                                 ${validationMsg}
                             </div>
                         </div>`;

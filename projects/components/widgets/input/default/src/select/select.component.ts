@@ -32,6 +32,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     public tabindex: any;
     public name: string;
     public autofocus: boolean;
+    public hint: string;
 
     @ViewChild('select', { static: true, read: ElementRef }) selectEl: ElementRef;
 
@@ -82,7 +83,25 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
             return;
         } else if (key === 'readonly') {
              (nv === true) ? setAttr(this.selectEl.nativeElement, 'readonly', 'readonly') : removeAttr(this.selectEl.nativeElement, 'readonly') ;
-        } 
+        }
         super.onPropertyChange(key, nv, ov);
+    }
+
+    /**
+     * When caption floating is enabled and placeholder is given, do not show placeholder until user focuses on the field
+     * When focused add the placeholder to the option which is selected
+     * On blur, remove the placeholder and do not animate the label
+     * @param $event event received will be either a blur or focus event
+     */
+    checkForFloatingLabel($event) {
+        const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
+        if (captionEl.length > 0) {
+            if ($event.type === 'focus' && (!this.datavalue || (this.datavalue && $(this.selectEl).find('select option:selected').text() === '' && this.placeholder))) {
+                $(this.selectEl.nativeElement).find('option:first').text(this.placeholder);
+            } else if (!this.datavalue) {
+                $(this.selectEl.nativeElement).find('option:selected').text('');
+                captionEl.removeClass('float-active');
+            }
+        }
     }
 }

@@ -13,7 +13,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmFooter]',
     providers: [
         provideAsWidgetRef(FooterDirective)
-    ]
+    ],
+    exportAs: 'wmFooter'
 })
 export class FooterDirective extends StylableComponent {
     static initializeProps = registerProps();

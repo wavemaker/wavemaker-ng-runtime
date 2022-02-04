@@ -27,7 +27,7 @@ const DEFAULT_OPTIONS: CircleProgressOptionsInterface  = {
 };
 
 // map of progress-bar type and classes
-export const TYPE_CLASS_MAP = {
+export const TYPE_CLASS_MAP_PC = {
     'default': '',
     'success': 'progress-circle-success',
     'info': 'progress-circle-info',
@@ -79,6 +79,14 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
         this.options = Object.assign(this.circleRef.options, this.options);
     }
 
+    getDefaultOptions() {
+        return this.options;
+    }
+
+    getLib() {
+        return 'ng-circle-progress';
+    }
+
     overrideDefaults(options) {
         _.extend(this.options, options);
     }
@@ -102,8 +110,8 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     onPropertyChange(key: string, nv: any, ov?: any) {
         switch (key) {
             case 'type':
-                this.$element.removeClass(TYPE_CLASS_MAP[ov]);
-                this.$element.addClass(TYPE_CLASS_MAP[nv]);
+                this.$element.removeClass(TYPE_CLASS_MAP_PC[ov]);
+                this.$element.addClass(TYPE_CLASS_MAP_PC[nv]);
                 break;
             case 'minvalue':
             case 'maxvalue':

@@ -1,5 +1,5 @@
 import { By } from "@angular/platform-browser";
-import { TestBed, async, ComponentFixture, fakeAsync, tick, discardPeriodicTasks } from "@angular/core/testing";
+import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, discardPeriodicTasks } from "@angular/core/testing";
 import { Component, ViewChild } from "@angular/core";
 import { TrustAsPipe } from "../../../../base/src/pipes/trust-as.pipe";;
 import { FormBuilder } from "@angular/forms";
@@ -22,7 +22,9 @@ import { TableColumnGroupDirective } from './table-column-group/table-column-gro
 import { TableRowDirective } from './table-row/table-row.directive';
 import { TableRowActionDirective } from './table-row-action/table-row-action.directive';
 import { VALIDATOR } from '@wm/core';
-import { BsDatepickerModule, TimepickerModule, BsDropdownModule } from 'ngx-bootstrap';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { DateComponent, TimeComponent } from '@wm/components/input/epoch';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
@@ -31,9 +33,9 @@ import { MockAbstractI18nService } from 'projects/components/base/src/test/util/
 import { compileTestComponent, mockApp, mockViewport } from "projects/components/base/src/test/util/component-test-util";
 
 const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="quickedit"
-                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false">
+                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false" rowselect.event="UserTable1Rowselect($event, widget, row)">
 
-                                <div wmTableColumn binding="firstname" caption="Firstname" edit-widget-type="text" type="string"
+                                <div wmTableColumn index="0" headerIndex="0" binding="firstname" caption="Firstname" edit-widget-type="text" type="string"
                                     mobiledisplay="false" searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
                                         let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
@@ -52,7 +54,7 @@ const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 da
                                     </ng-template>
                                 </div>
 
-                                <div wmTableColumn binding="lastname" caption="Lastname" edit-widget-type="text" type="string" mobiledisplay="false"
+                                <div wmTableColumn binding="lastname" index="1" headerIndex="1" caption="Lastname" edit-widget-type="text" type="string" mobiledisplay="false"
                                     searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
                                         let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
@@ -70,7 +72,7 @@ const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 da
                                     </ng-template>
                                 </div>
 
-                                <div wmTableColumn binding="age" caption="Age" edit-widget-type="number" type="number" mobiledisplay="false"
+                                <div wmTableColumn binding="age" index="2" headerIndex="2" caption="Age" edit-widget-type="number" type="number" mobiledisplay="false"
                                     searchable="false" show="true" readonly="undefined" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
                                         let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
@@ -88,7 +90,7 @@ const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 da
                                     </ng-template>
                                 </div>
 
-                                <div wmTableColumn binding="dateofbirth" caption="Dateofbirth" edit-widget-type="date" type="date"
+                                <div wmTableColumn binding="dateofbirth" index="3" headerIndex="3" caption="Dateofbirth" edit-widget-type="date" type="date"
                                     mobiledisplay="false" searchable="false" show="true" readonly="undefined" formatpattern="toDate"
                                     customExpression="true" [formGroup]="table_1.ngform">
 
@@ -114,7 +116,7 @@ const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 da
                                     </ng-template>
                                 </div>
 
-                                <div wmTableColumn binding="timeofbirth" caption="Timeofbirth" edit-widget-type="time" type="time"
+                                <div wmTableColumn binding="timeofbirth" index="4" headerIndex="4" caption="Timeofbirth" edit-widget-type="time" type="time"
                                     mobiledisplay="false" searchable="false" show="true" readonly="undefined" formatpattern="toDate"
                                     customExpression="true" [formGroup]="table_1.ngform">
 
@@ -156,7 +158,7 @@ const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 da
 const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="inline"
                                 name="UserTable1" title="User List" navigation="Basic" isdynamictable="false">
 
-                                <div wmTableColumn binding="firstname" caption="Firstname" edit-widget-type="text" type="string"
+                                <div wmTableColumn index="0" headerIndex="0" binding="firstname" caption="Firstname" edit-widget-type="text" type="string"
                                     mobiledisplay="false" searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
                                         let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
@@ -167,7 +169,7 @@ const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 d
                                     </ng-template>
                                 </div>
 
-                                <div wmTableColumn binding="lastname" caption="Lastname" edit-widget-type="text" type="string" mobiledisplay="false"
+                                <div wmTableColumn binding="lastname" index="1" headerIndex="1" caption="Lastname" edit-widget-type="text" type="string" mobiledisplay="false"
                                     searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
                                         let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
@@ -178,7 +180,7 @@ const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 d
                                     </ng-template>
                                 </div>
 
-                                <div wmTableColumn binding="age" caption="Age" edit-widget-type="number" type="number" mobiledisplay="false"
+                                <div wmTableColumn binding="age" index="2" headerIndex="2" caption="Age" edit-widget-type="number" type="number" mobiledisplay="false"
                                     searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
                                         let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
@@ -189,7 +191,7 @@ const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 d
                                     </ng-template>
                                 </div>
 
-                                <div wmTableColumn binding="dateofbirth" caption="Dateofbirth" edit-widget-type="date" type="date"
+                                <div wmTableColumn binding="dateofbirth" index="3" headerIndex="3" caption="Dateofbirth" edit-widget-type="date" type="date"
                                     mobiledisplay="false" searchable="false" show="true" readonly="undefined" formatpattern="toDate"
                                     customExpression="true" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
@@ -207,7 +209,7 @@ const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 d
                                     </ng-template>
                                 </div>
 
-                                <div wmTableColumn binding="timeofbirth" caption="Timeofbirth" edit-widget-type="time" type="time"
+                                <div wmTableColumn binding="timeofbirth"  index="4" headerIndex="4" caption="Timeofbirth" edit-widget-type="time" type="time"
                                     mobiledisplay="false" searchable="false" show="true" readonly="undefined" formatpattern="toDate"
                                     customExpression="true" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
@@ -261,10 +263,10 @@ const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 d
                             </div>`;
 
 const summary_row_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="quickedit"
-                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false" 
+                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false"
                                 beforedatarender.event="UserTable1Beforedatarender(widget, data, columns)">
 
-                                <div wmTableColumn binding="exam" caption="Exam" edit-widget-type="text" type="string"
+                                <div wmTableColumn index="0" headerIndex="0" binding="exam" caption="Exam" edit-widget-type="text" type="string"
                                     mobiledisplay="false" searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
                                         let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
@@ -283,7 +285,7 @@ const summary_row_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 d
                                     </ng-template>
                                 </div>
 
-                                <div wmTableColumn binding="science" caption="Science" edit-widget-type="number" type="number" mobiledisplay="false"
+                                <div wmTableColumn index="1" headerIndex="1" binding="science" caption="Science" edit-widget-type="number" type="number" mobiledisplay="false"
                                     searchable="false" show="true" readonly="undefined" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
                                         let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
@@ -301,7 +303,7 @@ const summary_row_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 d
                                     </ng-template>
                                 </div>
 
-                                <div wmTableColumn binding="arts" caption="Arts" edit-widget-type="number" type="number" mobiledisplay="false"
+                                <div wmTableColumn index="2" headerIndex="2" binding="arts" caption="Arts" edit-widget-type="number" type="number" mobiledisplay="false"
                                     searchable="false" show="true" readonly="undefined" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
                                         let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
@@ -434,19 +436,22 @@ const clickEditElement = (isNewRow, fixture) => {
 const defaultValidators = (
     isNewRow,
     validatorType,
-    errorType, 
-    validator, 
+    errorType,
+    validator,
     errorMsg,
     formField,
     fixture,
-    invalidTestValue, 
+    invalidTestValue,
     validTestValue
 ) => {
-    formField.setValidators([{
+    const validatorObj = {
         type: validatorType,
         validator: validator,
         errorMessage: errorMsg
-    }]);
+    };
+
+    formField.setValidators([validatorObj]);
+    formField.applyValidations([validatorObj]);
 
     if (isNewRow) {
         formField.applyNewRowValidations();
@@ -477,31 +482,29 @@ const defaultValidators = (
 
 const dateValidators = (
     isNewRow,
-    validatorType, 
-    validator, 
-    errorMsg, 
+    validatorType,
+    validator,
+    errorMsg,
     wmComponent,
-    fixture, 
-    invalidTestValue, 
+    fixture,
+    invalidTestValue,
     validTestValue
 ) => {
-    let formField = wmComponent.columns['dateofbirth'];
-    formField.setValidators([{
+    let formField =  (wmComponent as any).fullFieldDefs[3];
+    const validatorObj = {
         type: validatorType,
         validator: validator,
         errorMessage: errorMsg
-    }]);
+    };
+
+    formField.setValidators([validatorObj]);
+    formField.applyValidations([validatorObj]);
 
     clickEditElement(isNewRow, fixture);
-    
+
     fixture.detectChanges();
     fixture.whenStable().then(() => {
         let formFieldControl = formField.getFormControl();
-        formField.setValidators([{
-            type: validatorType,
-            validator: validator,
-            errorMessage: errorMsg
-        }]);
         fixture.detectChanges();
         fixture.whenStable().then(() => {
             // Positive case
@@ -529,8 +532,9 @@ const dateValidators = (
 const customValidatorSync = (isNewRow, wmComponent, fixture) => {
     const invalidTestValue = 'test';
     const validTestValue = 'test12345';
-    let formField = wmComponent.columns['firstname'];
+    let formField = (wmComponent as any).fullFieldDefs[0];
     formField.setValidators([fullNameValidator]);
+    formField.applyValidations([fullNameValidator]);
 
     if (isNewRow) {
         formField.applyNewRowValidations();
@@ -566,13 +570,16 @@ const customValidatorSync = (isNewRow, wmComponent, fixture) => {
 const defaultAndCustomValidator = (isNewRow, wmComponent, fixture) => {
     const invalidTestValue = 'test';
     const validTestValue = 'test12345';
-    let formField = wmComponent.columns['firstname'];
-    formField.setValidators([{
+    let formField = (wmComponent as any).fullFieldDefs[0];
+    const validatorObj = {
         type: VALIDATOR.REQUIRED,
         validator: true,
         errorMessage: "This field cannot be empty."
-    }, fullNameValidator]);
-    
+    };
+
+    formField.setValidators([validatorObj, fullNameValidator]);
+    formField.applyValidations([validatorObj, fullNameValidator]);
+
     if (isNewRow) {
         formField.applyNewRowValidations();
         // New row
@@ -613,8 +620,8 @@ const defaultAndCustomValidator = (isNewRow, wmComponent, fixture) => {
 const observeValidator = (isNewRow, wmComponent, fixture) => {
     const invalidTestValue = 'test';
     const validTestValue = 'valid';
-    let firstnameFormField = wmComponent.columns['firstname'];
-    let lastnameFormField = wmComponent.columns['lastname'];
+    let firstnameFormField =  (wmComponent as any).fullFieldDefs[0];
+    let lastnameFormField = (wmComponent as any).fullFieldDefs[1];
     firstnameFormField.setValidators([nameComparisionValidator]);
     fixture.detectChanges();
     fixture.whenStable().then(() => {
@@ -670,9 +677,10 @@ const observeValidator = (isNewRow, wmComponent, fixture) => {
 const customValidatorAsync = (isNewRow, wmComponent, fixture) => {
     const invalidTestValue = 'test';
     const validTestValue = 'valid';
-    let formField = wmComponent.columns['firstname'];
+    let formField = (wmComponent as any).fullFieldDefs[0];
     formField.setAsyncValidators([registerFullNameValidator]);
-    
+    formField.applyValidations([registerFullNameValidator]);
+
     if (isNewRow) {
         formField.applyNewRowValidations();
         // New row
@@ -745,7 +753,7 @@ describe("DataTable", () => {
                 let wmComponent: TableComponent;
                 let inline_edit_fixture: ComponentFixture<InlineTableWrapperComponent>;
 
-                beforeEach(async(() => {
+                beforeEach(waitForAsync(() => {
                     inline_edit_fixture = compileTestComponent(inlineTestModuleDef, InlineTableWrapperComponent);
                     wrapperComponent = inline_edit_fixture.componentInstance;
                     wmComponent = wrapperComponent.wmComponent;
@@ -757,7 +765,7 @@ describe("DataTable", () => {
                     expect(wmComponent).toBeDefined();
                 });
 
-                it('should trigger default required validator', async(() => {
+                it('should trigger default required validator', waitForAsync(() => {
                     const invalidTestValue = '';
                     const validTestValue = 'test';
                     defaultValidators(
@@ -766,14 +774,14 @@ describe("DataTable", () => {
                         'required',
                         true,
                         'This field cannot be empty.',
-                        wmComponent.columns['firstname'],
+                        (wmComponent as any).fullFieldDefs[0],
                         inline_edit_fixture,
                         invalidTestValue,
                         validTestValue
                     );
                 }));
 
-                it('should trigger default regexp validator', async(() => {
+                it('should trigger default regexp validator', waitForAsync(() => {
                     const invalidTestValue = 'test';
                     const validTestValue = 'test@test.com';
                     defaultValidators(
@@ -782,14 +790,14 @@ describe("DataTable", () => {
                         'pattern',
                         /\w+@\w+\.\w{2,3}/,
                         'Not a Valid Email.',
-                        wmComponent.columns['firstname'],
+                        (wmComponent as any).fullFieldDefs[0],
                         inline_edit_fixture,
                         invalidTestValue,
                         validTestValue
                     );
                 }));
 
-                it('should trigger default maxchars validator', async(() => {
+                it('should trigger default maxchars validator', waitForAsync(() => {
                     const invalidTestValue = 'test12345';
                     const validTestValue = 'test';
                     defaultValidators(
@@ -798,14 +806,14 @@ describe("DataTable", () => {
                         'maxlength',
                         5,
                         'Text is too long.',
-                        wmComponent.columns['firstname'],
+                        (wmComponent as any).fullFieldDefs[0],
                         inline_edit_fixture,
                         invalidTestValue,
                         validTestValue
                     );
                 }));
 
-                it('should trigger default minvalue validator', async(() => {
+                it('should trigger default minvalue validator', waitForAsync(() => {
                     const invalidTestValue = 15;
                     const validTestValue = 18;
                     defaultValidators(
@@ -814,14 +822,14 @@ describe("DataTable", () => {
                         'min',
                         validTestValue,
                         'Under age.',
-                        wmComponent.columns['age'],
+                        (wmComponent as any).fullFieldDefs[2],
                         inline_edit_fixture,
                         invalidTestValue,
                         validTestValue
                     );
                 }));
 
-                it('should trigger default maxvalue validator', async(() => {
+                it('should trigger default maxvalue validator', waitForAsync(() => {
                     const invalidTestValue = 20;
                     const validTestValue = 18;
                     defaultValidators(
@@ -830,14 +838,14 @@ describe("DataTable", () => {
                         'max',
                         validTestValue,
                         'Over age.',
-                        wmComponent.columns['age'],
+                        (wmComponent as any).fullFieldDefs[2],
                         inline_edit_fixture,
                         invalidTestValue,
                         validTestValue
                     );
                 }));
 
-                it('should respect the mindate validation', async(() => {
+                it('should respect the mindate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-11-02';
                     const validTestValue = '2019-12-05';
                     dateValidators(
@@ -852,7 +860,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                xit('should respect the maxdate validation', async(() => {
+                xit('should respect the maxdate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-12-05';
                     const validTestValue = '2019-11-02';
                     dateValidators(
@@ -867,7 +875,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should respect the excludedays validation', async(() => {
+                it('should respect the excludedays validation', waitForAsync(() => {
                     const invalidTestValue = '2019-12-30';
                     const validTestValue = '2019-12-29';
                     dateValidators(
@@ -882,7 +890,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should respect the excludedate validation', async(() => {
+                it('should respect the excludedate validation', waitForAsync(() => {
                     const invalidTestValue = '2020-01-01';
                     const validTestValue = '2020-01-02';
                     dateValidators(
@@ -897,11 +905,12 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should trigger custom validator(sync)', async(() => {
+
+                it('should trigger custom validator(sync)', waitForAsync(() => {
                     customValidatorSync(false, wmComponent, inline_edit_fixture);
                 }));
 
-                it('should trigger default and custom validator', async(() => {
+                it('should trigger default and custom validator', waitForAsync(() => {
                     defaultAndCustomValidator(false, wmComponent, inline_edit_fixture);
                 }));
 
@@ -921,6 +930,10 @@ describe("DataTable", () => {
                 class QuickEditTableWrapperComponent {
                     @ViewChild(TableComponent, /* TODO: add static flag */ {static: true})
                     wmComponent: TableComponent;
+                    UserTable1Rowselect($event, widget, row) {
+                        console.log('Row Selected');
+                        console.log(row);
+                    }
                 }
 
                 const quickeditTestModuleDef: ITestModuleDef = {
@@ -933,7 +946,7 @@ describe("DataTable", () => {
                 let wmComponent: TableComponent;
                 let quick_edit_fixture: ComponentFixture<QuickEditTableWrapperComponent>;
 
-                beforeEach(async(() => {
+                beforeEach(waitForAsync(() => {
                     quick_edit_fixture = compileTestComponent(quickeditTestModuleDef, QuickEditTableWrapperComponent);
                     wrapperComponent = quick_edit_fixture.componentInstance;
                     wmComponent = wrapperComponent.wmComponent;
@@ -985,7 +998,7 @@ describe("DataTable", () => {
                     );
                 });
 
-                it('should trigger default required validator', async(() => {
+                it('should trigger default required validator', waitForAsync(() => {
                     const invalidTestValue = '';
                     const validTestValue = 'test';
                     defaultValidators(
@@ -994,14 +1007,14 @@ describe("DataTable", () => {
                         'required',
                         true,
                         'This field cannot be empty.',
-                        wmComponent.columns['firstname'],
+                        (wmComponent as any).fullFieldDefs[0],
                         quick_edit_fixture,
                         invalidTestValue,
                         validTestValue
                     );
                 }));
 
-                it('should trigger default regexp validator', async(() => {
+                it('should trigger default regexp validator', waitForAsync(() => {
                     const invalidTestValue = 'test';
                     const validTestValue = 'test@test.com';
                     defaultValidators(
@@ -1010,14 +1023,14 @@ describe("DataTable", () => {
                         'pattern',
                         /\w+@\w+\.\w{2,3}/,
                         'Not a Valid Email.',
-                        wmComponent.columns['firstname'],
+                        (wmComponent as any).fullFieldDefs[0],
                         quick_edit_fixture,
                         invalidTestValue,
                         validTestValue
                     );
                 }));
 
-                it('should trigger default maxchars validator', async(() => {
+                it('should trigger default maxchars validator', waitForAsync(() => {
                     const invalidTestValue = 'test12345';
                     const validTestValue = 'test';
                     defaultValidators(
@@ -1026,14 +1039,14 @@ describe("DataTable", () => {
                         'maxlength',
                         5,
                         'Text is too long.',
-                        wmComponent.columns['firstname'],
+                        (wmComponent as any).fullFieldDefs[0],
                         quick_edit_fixture,
                         invalidTestValue,
                         validTestValue
                     );
                 }));
 
-                it('should trigger default minvalue validator', async(() => {
+                it('should trigger default minvalue validator', waitForAsync(() => {
                     const invalidTestValue = 15;
                     const validTestValue = 18;
                     defaultValidators(
@@ -1042,14 +1055,28 @@ describe("DataTable", () => {
                         'min',
                         validTestValue,
                         'Under age.',
-                        wmComponent.columns['age'],
+                        (wmComponent as any).fullFieldDefs[2],
                         quick_edit_fixture,
                         invalidTestValue,
                         validTestValue
                     );
                 }));
 
-                xit('should trigger default maxvalue validator', async(() => {
+                /* TODO: Need to add testcase for WMS-20545 Trigger select event when only one column is editable */
+                it("Should make row editable when clicked on a column having customExpression", () => {
+                    spyOn(wrapperComponent, 'UserTable1Rowselect');
+                    const debugEl = quick_edit_fixture.debugElement.nativeElement;
+                    const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
+                    const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row:first-child");
+                    const tableColEls = tableRowEls[0].querySelectorAll("td.app-datagrid-cell > div");
+                    tableColEls[0].click();
+                    expect(wrapperComponent.UserTable1Rowselect).toHaveBeenCalledTimes(1);
+                    expect(
+                        tableRowEls[0].matches(".app-datagrid-row.row-editing")
+                    ).toBeTruthy();
+                });
+
+                xit('should trigger default maxvalue validator', waitForAsync(() => {
                     const invalidTestValue = 20;
                     const validTestValue = 18;
                     defaultValidators(
@@ -1058,14 +1085,14 @@ describe("DataTable", () => {
                         'max',
                         validTestValue,
                         'Over age.',
-                        wmComponent.columns['age'],
+                        (wmComponent as any).fullFieldDefs[2],
                         quick_edit_fixture,
                         invalidTestValue,
                         validTestValue
                     );
                 }));
 
-                it('should respect the mindate validation', async(() => {
+                it('should respect the mindate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-11-02';
                     const validTestValue = '2019-12-05';
                     dateValidators(
@@ -1080,7 +1107,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                xit('should respect the maxdate validation', async(() => {
+                xit('should respect the maxdate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-12-05';
                     const validTestValue = '2019-11-02';
                     dateValidators(
@@ -1095,7 +1122,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should respect the excludedays validation', async(() => {
+                it('should respect the excludedays validation', waitForAsync(() => {
                     const invalidTestValue = '2019-12-30';
                     const validTestValue = '2019-12-29';
                     dateValidators(
@@ -1110,7 +1137,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should respect the excludedate validation', async(() => {
+                it('should respect the excludedate validation', waitForAsync(() => {
                     const invalidTestValue = '2020-01-01';
                     const validTestValue = '2020-01-02';
                     dateValidators(
@@ -1125,11 +1152,11 @@ describe("DataTable", () => {
                     );
                 }));
 
-                it('should trigger custom validator(sync)', async(() => {
+                it('should trigger custom validator(sync)', waitForAsync(() => {
                     customValidatorSync(true, wmComponent, quick_edit_fixture);
                 }));
 
-                it('should trigger default and custom validator', async(() => {
+                it('should trigger default and custom validator', waitForAsync(() => {
                     defaultAndCustomValidator(true, wmComponent, quick_edit_fixture);
                 }));
 
@@ -1178,7 +1205,7 @@ describe("DataTable", () => {
 
                         columns.exam.setSummaryRowData([
                             'Sum',
-                            'Average', 
+                            'Average',
                             'Count',
                             'Minimum',
                             'Maximum',
@@ -1248,7 +1275,7 @@ describe("DataTable", () => {
                 let wmComponent: TableComponent;
                 let summary_row_fixture: ComponentFixture<SummaryRowWrapperComponent>;
 
-                beforeEach(async(() => {
+                beforeEach(waitForAsync(() => {
                     summary_row_fixture = compileTestComponent(summaryRowTestModuleDef, SummaryRowWrapperComponent);
                     wrapperComponent = summary_row_fixture.componentInstance;
                     summary_row_fixture.detectChanges();
@@ -1301,7 +1328,7 @@ describe("DataTable", () => {
                     expect(summaryColumns[1].innerText).toEqual('20');
                     expect(summaryColumns[2].innerText).toEqual('5');
                 });
-                
+
                 it("Maximum aggregate function", () => {
                     const tableSummaryEl = getSummaryContainer(summary_row_fixture);
                     const summaryRow = tableSummaryEl.querySelector("tr.app-datagrid-row:nth-child(5)");

@@ -21,7 +21,8 @@ export const registerProps = () => {
                 ['localFilePath', {value: '', ...PROP_STRING}],
                 ['name', PROP_STRING],
                 ['savetogallery', {value: false, ...PROP_BOOLEAN}],
-                ['show', {value: true, ...PROP_BOOLEAN}]
+                ['show', {value: true, ...PROP_BOOLEAN}],
+                ['hint', PROP_STRING]
             ]
         )
     );

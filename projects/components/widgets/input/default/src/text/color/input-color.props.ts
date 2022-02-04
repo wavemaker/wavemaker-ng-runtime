@@ -16,7 +16,7 @@ export const inputColorTypeProps = new Map([
     ['shortcutkey', PROP_STRING],
     ['show', {value: true, ...PROP_BOOLEAN}],
     ['tabindex', {value: 0, ...PROP_NUMBER}],
-    ['type', PROP_STRING],
+    ['type', {value: 'color', ...PROP_STRING}],
     ['updateon', PROP_STRING]
 ]);
 

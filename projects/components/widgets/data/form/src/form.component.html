@@ -23,7 +23,7 @@
         </h3>
     </div>
     <div class="panel-body" [ngClass]="{'form-elements': isLayoutDialog, 'form-body': !isLayoutDialog}" [class.hidden]="!expanded">
-        <p wmMessage [hidden]="!statusMessage.caption.toString()" caption.bind="statusMessage.caption" type.bind="statusMessage.type"></p>
+        <p wmMessage [hidden]="!statusMessage.caption.toString()" [attr.aria-hidden]="!statusMessage.caption" [attr.aria-label]="statusMessage.caption" caption.bind="statusMessage.caption" type.bind="statusMessage.type"></p>
         <div [ngClass]="{'form-elements': !isLayoutDialog, 'form-content': isLayoutDialog}">
             <ng-container *ngTemplateOutlet="content"></ng-container>
         </div>
@@ -42,7 +42,7 @@
 <ng-template #buttonRef let-btn="btn">
     <button  wmButton name="{{btn.key}}" caption.bind="btn.displayName" class.bind="btn.class" iconclass.bind="btn.iconclass" show.bind="btn.show"
              (click)="invokeActionEvent($event, btn.action)" type.bind="btn.type" hint.bind="btn.title" shortcutkey.bind="btn.shortcutkey" disabled.bind="ngform.status === 'PENDING' || btn.disabled"
-             tabindex.bind="btn.tabindex" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
+             tabindex.bind="btn.tabindex" [attr.aria-label]="btn.displayName" [class.hidden]="btn.updateMode ? !isUpdateMode : isUpdateMode"></button>
 </ng-template>
 
 <ng-template #anchorRef let-btn="btn">

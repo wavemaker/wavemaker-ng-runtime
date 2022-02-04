@@ -2,12 +2,14 @@ import { Component, ViewChild } from '@angular/core';
 import { SwitchComponent } from './switch.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
 import { FormsModule } from '@angular/forms';
-import { async, ComponentFixture } from '@angular/core/testing';
+import { DatePipe } from '@angular/common';
+import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
-import { App } from '@wm/core';
+import { App, AppDefaults } from '@wm/core';
+import { ToDatePipe } from '@wm/components/base';
 
 let mockApp = {};
-const markup = `<div wmSwitch datavalue="yes" show="true" width="800" height="200" hint="test switch" tabindex="1" disabled="false" name="switch1"></div>`;
+const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switch1.hint || 'Switch button'" datavalue="yes" show="true" width="800" height="200" hint="test switch" tabindex="0" disabled="false" name="switch1"></div>`;
 
 @Component({
     template: markup
@@ -21,7 +23,10 @@ const testModuleDef: ITestModuleDef = {
     ],
     declarations: [SwitchWrapperComponent, SwitchComponent],
     providers: [
-        { provide: App, useValue: mockApp }
+        { provide: App, useValue: mockApp },
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AppDefaults, useClass: AppDefaults }
     ]
 };
 
@@ -37,13 +42,14 @@ const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 
 describe('wm-switch: Component specific tests: ', () => {
     let wrapperComponent: SwitchWrapperComponent;
     let wmComponent: SwitchComponent;
     let fixture: ComponentFixture<SwitchWrapperComponent>;
 
-    beforeEach(async(async() => {
+    beforeEach(waitForAsync(() => {
         fixture  = compileTestComponent(testModuleDef, SwitchWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
@@ -58,11 +64,11 @@ describe('wm-switch: Component specific tests: ', () => {
         expect(wmComponent.datavalue).toBe('yes');
     });
 
-    it('should have datavalue as no', async(done) => {
+    it('should have datavalue as no', done => {
         setDatavalue(fixture, done, 'no', 'no');
     });
 
-    it('should have datavalue as yes when switch is in disabled state', async(done) => {
+    it('should have datavalue as yes when switch is in disabled state', done => {
         wmComponent.setProperty('disabled', true);
         fixture.detectChanges();
         setDatavalue(fixture, done, 'no', 'yes');
@@ -79,6 +85,6 @@ describe('wm-switch: Component specific tests: ', () => {
             }, 200);
         });
     }
-})
+});
 
 

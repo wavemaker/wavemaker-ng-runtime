@@ -660,7 +660,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 this.selecteditem = dataObj;
                 this.invokeEventCallback('select', {$event: d3.event, selectedChartItem: data, selectedItem: this.selecteditem});
             });
-            
+
     }
 
     /*  Returns Y Scale min value
@@ -969,11 +969,44 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     _plotChartProxy = _.debounce(this.plotChartProxy.bind(this), 100);
 
+    // sets the center label for donut chart type
+    setDonutCenterLabel(labelValue) {
+        let chartSvg, pieGroups;
+        chartSvg = d3.select('#wmChart' + this.$id + ' svg');
+
+        pieGroups = chartSvg.select('.nv-wrap.nv-pie').select('.nv-pie');
+        pieGroups.text('');
+        pieGroups.append('text')
+            .attr('dy', '.35em')
+            .attr('text-anchor', 'middle')
+            .attr('class', 'nv-pie-title')
+            .text(labelValue)
+            .each(function (d) {
+                var d3text = d3.select(this),
+                circ = d3.select(this.parentElement),
+                totalWidth = Number(circ.node().getBoundingClientRect().width),
+                // minus the ring width from total width
+                availWidth = totalWidth - 30,
+                textWidth = this.getComputedTextLength();
+                d3text.attr("data-scale", availWidth / textWidth);
+              }).style("font-size", function() {
+                // 16 is the default font size to multiply with the scaled value and 24 is the maximum font size that can be applied
+                var fontSize = 16 * d3.select(this).attr("data-scale");
+                return fontSize > 24 ? 24 : fontSize + "px"; 
+              });
+    }
+
     onPropertyChange(key, newVal, oldVal?) {
         super.onPropertyChange(key, newVal, oldVal);
         switch (key) {
             case 'dataset':
                 this.handleDataSet(newVal);
+                break;
+            case 'centerlabel':
+                if (this.chart) {
+                    this.chart.title(newVal);
+                    this.setDonutCenterLabel(newVal);
+                }
                 break;
             case 'type':
                 // Based on the change in type deciding the default margins

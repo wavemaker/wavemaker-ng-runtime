@@ -1,6 +1,6 @@
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
-import { CarouselModule } from 'ngx-bootstrap';
+import { CarouselModule } from 'ngx-bootstrap/carousel';
 import {CarouselDirective} from "./carousel.directive";
 import {CarouselTemplateDirective} from "./carousel-template/carousel-template.directive";
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
@@ -12,7 +12,7 @@ import { WmComponentsModule } from '@wm/components/base';
 ($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
 
 const mockApp = {
-    subscribe: ()=>{}
+    subscribe: () => {}
 };
 
 const markup = `
@@ -50,7 +50,7 @@ class CarouselSpec {
 describe('wm-carousel: Widget specific test cases', () => {
     let fixture: ComponentFixture<CarouselSpec>;
 
-    beforeEach(async(()=>{
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [CarouselModule, BasicModule, WmComponentsModule.forRoot()],
             declarations: [CarouselSpec, CarouselDirective, CarouselTemplateDirective],
@@ -77,7 +77,7 @@ describe('wm-carousel: Widget specific test cases', () => {
         expect(fixture.componentInstance.carousel.currentslide).toEqual(testData[0]);
     });
 
-    it('Left and Right controls on carousel should navigate to previous and next slides respectively', async(() => {
+    it('Left and Right controls on carousel should navigate to previous and next slides respectively', waitForAsync(() => {
         const testData = fixture.componentInstance.testdata;
         // not working without this
         fixture.detectChanges();
@@ -99,4 +99,20 @@ describe('wm-carousel: Widget specific test cases', () => {
             });
         });
     }));
+
+    it('should update the animation interval dynamically', (done) => {
+        let interval = 5;
+        fixture.componentInstance.carousel.setProperty('animation', 'auto');
+        fixture.componentInstance.carousel.setProperty('animationinterval', interval);
+        fixture.detectChanges();
+        // setTimeout is used because animator is initialized after 50 seconds
+        setTimeout(() => {
+            expect((fixture.componentInstance.carousel as any).animator.interval).toEqual(interval * 1000);
+            interval = 10;
+            fixture.componentInstance.carousel.setProperty('animationinterval', interval);
+            fixture.detectChanges();
+            expect((fixture.componentInstance.carousel as any).animator.interval).toEqual(interval * 1000);
+            done();
+        }, 50);
+    });
 });

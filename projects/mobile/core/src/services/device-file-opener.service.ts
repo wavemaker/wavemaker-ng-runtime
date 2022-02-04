@@ -83,11 +83,14 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
         return new Promise( (resolve, reject) => {
             return this.cacheService.getLocalPath(url, false, false)
                     .then( filePath => {
-                        let fileName, i, fromDir, fromFile;
+                        let fileName, i, j, fromDir, fromFile;
                         // Is it part of downloaded folder.
                         if (filePath.startsWith(this._downloadsFolder)) {
                             resolve(filePath);
                         } else {
+                            //Extract extension from file downloaded earlier.
+                            j = filePath.lastIndexOf('.');
+                            extension = filePath.substring(j + 1);
                             fileName = filename || this.generateFileName(url, extension);
                             i = filePath.lastIndexOf('/');
                             fromDir = filePath.substring(0, i);

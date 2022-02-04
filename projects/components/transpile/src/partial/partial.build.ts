@@ -8,7 +8,7 @@ const createElement = name => {
 };
 
 const addAtrribute = (node: Element, name: string, value: string) => {
-    const attr = new Attribute(name, value, noSpan, noSpan);
+    const attr = new Attribute(name, value, noSpan, noSpan, noSpan);
     node.attrs.push(attr);
 };
 register('wm-partial', (): IBuildTaskDef => {
@@ -20,7 +20,7 @@ register('wm-partial', (): IBuildTaskDef => {
             node.children.length = 0;
             node.children.push(conditionalNode);
         },
-        pre: attrs => `<${tagName} wmPartial data-role="partial" role="region" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmPartial data-role="partial" role="complementary" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

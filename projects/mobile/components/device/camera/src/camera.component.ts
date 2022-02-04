@@ -26,7 +26,8 @@ export enum ENCODING_TYPE {
     templateUrl: './camera.component.html',
     providers: [
         provideAsWidgetRef(CameraComponent)
-    ]
+    ],
+    exportAs: 'wmCamera'
 })
 export class CameraComponent extends StylableComponent {
     static initializeProps = registerProps();

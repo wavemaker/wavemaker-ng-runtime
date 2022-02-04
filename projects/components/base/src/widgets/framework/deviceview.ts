@@ -1,6 +1,6 @@
 import { isMobile, setCSS } from '@wm/core';
 
-declare const $;
+declare const $, _;
 
 enum CLASS_NAME {
     LEFT_PANEL = 'page-left-panel',
@@ -17,7 +17,7 @@ enum CLASS_NAME {
  * @returns {string}
  */
 const roleSelector = (roleName: string) => `[data-role='${roleName}']`;
-
+const pageSelector = roleSelector("pageContainer");
 /*setup touch event handler*/
 const bindTapEvtHandler = (selector, handler) => {
     /*
@@ -25,7 +25,15 @@ const bindTapEvtHandler = (selector, handler) => {
      * functionalities of other controls like input[type="range"].
      * So, replaced the hammer Js handler with click event handler.
      */
-    $(selector).off('click.deviceview').on('click.deviceview', handler);
+    if (typeof (selector) === 'string') {
+        selector = document.querySelector(selector);
+    }
+    if (!selector) {
+        return;
+    }
+    // Add js event listeners as the event handlers has to be invoked in angular zone.
+    selector.removeEventListener('click', handler);
+    selector.addEventListener('click', handler);
 };
 
 /**

@@ -1,8 +1,8 @@
-import { async, ComponentFixture } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { App } from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { PopoverComponent } from './popover.component';
-import { PopoverConfig, PopoverModule } from 'ngx-bootstrap';
+import { PopoverConfig, PopoverModule } from 'ngx-bootstrap/popover';
 import { compileTestComponent, getHtmlSelectorElement } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { AnchorComponent } from '../../../basic/default/src/anchor/anchor.component';
@@ -100,13 +100,14 @@ const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 
 describe('PopoverComponent', () => {
     let popoverWrapperComponent: PopoverwrapperComponent;
     let wmComponent: PopoverComponent;
     let fixture: ComponentFixture<PopoverwrapperComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         fixture = compileTestComponent(testModuleDef, PopoverwrapperComponent);
         popoverWrapperComponent = fixture.componentInstance;
         wmComponent = popoverWrapperComponent.wmComponent;
@@ -147,7 +148,7 @@ describe('PopoverComponent', () => {
         expect(document.getElementsByClassName('popover-arrow').length).toBe(1);
     })
 
-    it('should apply popover height 360px ', async(() => {
+    it('should apply popover height 360px ', waitForAsync(() => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
         fixture.detectChanges();
         fixture.whenStable().then(() => {
@@ -155,7 +156,7 @@ describe('PopoverComponent', () => {
         })
     }))
 
-    xit('popover width ', async(() => {
+    xit('popover width ', waitForAsync(() => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
         fixture.detectChanges();
         fixture.whenStable().then(() => {
@@ -213,7 +214,7 @@ describe('PopoverComponent', () => {
 
     /************************ Scenarios starts **************************************** */
 
-    it('should open the popover on mouse click', async(() => {
+    it('should open the popover on mouse click', waitForAsync(() => {
         fixture.whenStable().then(() => {
             spyOn(popoverWrapperComponent, 'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
@@ -222,7 +223,7 @@ describe('PopoverComponent', () => {
         })
     }))
 
-    it('should close the popover when user click outside', async(() => {
+    it('should close the popover when user click outside', waitForAsync(() => {
         fixture.whenStable().then(() => {
             spyOn(popoverWrapperComponent, 'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
@@ -236,7 +237,7 @@ describe('PopoverComponent', () => {
         })
     }))
 
-    xit('should open the popover on mouse hover', async(() => {
+    xit('should open the popover on mouse hover', waitForAsync(() => {
 
         fixture.whenStable().then(() => {
             wmComponent.getWidget().nativeElement.interaction = 'hover';

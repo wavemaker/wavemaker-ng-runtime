@@ -13,7 +13,7 @@ export {
     toggleAllHeaders,
     handleHeaderClick,
     configureDnD,
-    DataSetItem    
+    DataSetItem
 } from './utils/form-utils';
 export {
     EDIT_MODE,
@@ -26,7 +26,7 @@ export {
     getFieldTypeWidgetTypesMap,
     getDataTableFilterWidget,
     getEditModeWidget,
-    getDefaultValue    
+    getDefaultValue
 } from './utils/live-utils';
 export {
     getObjValueByKey,
@@ -39,14 +39,17 @@ export {
     provideAs,
     provideAsWidgetRef,
     provideAsDialogRef,
+    unsupportedStatePersistenceTypes,
     NAVIGATION_TYPE,
+    INPUTMODE,
     AUTOCLOSE_TYPE,
     getWatchIdentifier,
     getMatchModeTypesMap,
     getMatchModeMsgs,
     getConditionalClasses,
     prepareFieldDefs ,
-    getContainerTargetClass   
+    getContainerTargetClass,
+    extractDataSourceName
 } from './utils/widget-utils';
 export {
     BaseComponent
@@ -59,6 +62,7 @@ export {
 export * from './widgets/common/base/partial-container.directive';
 export * from './widgets/common/base/base-field-validations';
 export * from './widgets/common/item-template/item-template.directive';
+export * from './widgets/common/repeat-template/repeat-template.directive';
 export * from './widgets/common/base/stylable.component';
 export * from './widgets/common/message/message.component';
 export * from './widgets/common/pull-to-refresh/pull-to-refresh';
@@ -78,7 +82,7 @@ export {
     PROP_STRING,
     PROP_NUMBER,
     PROP_BOOLEAN,
-    PROP_ANY    
+    PROP_ANY
 } from './widgets/framework/widget-props';
 export * from './widgets/common/dialog/dialog.service';
 export {
@@ -96,7 +100,13 @@ export {
     FileIconClassPipe,
     StateClassPipe,
     FileExtensionFromMimePipe,
-    TrailingZeroDecimalPipe   
+    TrailingZeroDecimalPipe
 } from './pipes/custom-pipes';
 export * from './pipes/trust-as.pipe';
 export * from './pipes/image.pipe';
+export * from './widgets/common/container/container.directive';
+export * from './widgets/common/lazy-load/lazy-load.directive';
+export * from './widgets/common/partial-param/partial-param.directive';
+export * from './widgets/common/smooth-scroll/smooth-scroll.directive';
+export * from './widgets/common/base/text-content.directive';
+export * from './directives/show-in-device.directive';

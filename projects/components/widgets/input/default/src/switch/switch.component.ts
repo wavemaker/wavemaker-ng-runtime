@@ -18,7 +18,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-switch', hostClass: DEFAULT_CLS};
     providers: [
         provideAs(SwitchComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(SwitchComponent)
-    ]
+    ],
+    exportAs: 'wmSwitch'
 })
 export class SwitchComponent extends DatasetAwareFormComponent implements AfterViewInit {
     static initializeProps = registerProps();

@@ -7,6 +7,7 @@ import { App, getAbortableDefer, hasCordova, isIos, noop, retryIfFails } from '@
 
 import { IDeviceStartUpService } from './device-start-up-service';
 import { NativeXMLHttpRequest } from './../native.xhr';
+import { DeviceService } from './device.service';
 
 declare const _, cordova, Connection, navigator;
 
@@ -17,7 +18,8 @@ const AUTO_CONNECT_KEY = 'WM.NetworkService._autoConnect',
         isConnecting : false,
         isConnected : true,
         isNetworkAvailable : true,
-        isServiceAvailable : true
+        isServiceAvailable : true,
+        noServiceRequired: false
     };
 
 let XML_HTTP_REQUEST = null;
@@ -36,12 +38,12 @@ const blockUrl = url => {
     return block;
 };
 
-const getXMLHttpRequestToUse = (() => {
-    const clazz = (isIos() && hasCordova() && cordova.plugin && cordova.plugin.http) ? NativeXMLHttpRequest : XMLHttpRequest;
+const getXMLHttpRequestToUse = ((useNativeXHR: boolean) => {
+    const clazz = useNativeXHR ? NativeXMLHttpRequest : XMLHttpRequest;
     const orig = clazz.prototype.open;
     // Intercept all XHR calls
     clazz.prototype.open = function (method: string, url: string, async: boolean = true, user?: string, password?: string) {
-        if (blockUrl(url)) {
+        if (!networkState.noServiceRequired && blockUrl(url)) {
             const urlSplits = url.split('://');
             const pathIndex = urlSplits[1].indexOf('/');
             urlSplits[1] = 'localhost' + (pathIndex > 0 ? urlSplits[1].substr(pathIndex) : '/');
@@ -60,9 +62,9 @@ export class NetworkService implements IDeviceStartUpService {
     private _lastKnownNetworkState: any;
     private _isCheckingServer = false;
 
-    constructor(private httpClient: HttpClient, private app: App, private network: Network) {
+    constructor(private httpClient: HttpClient, private app: App, private network: Network, private deviceService: DeviceService) {
         networkState.isConnected = localStorage.getItem(IS_CONNECTED_KEY) === 'true';
-        XML_HTTP_REQUEST = XML_HTTP_REQUEST || getXMLHttpRequestToUse();
+        XML_HTTP_REQUEST = XML_HTTP_REQUEST || getXMLHttpRequestToUse(deviceService.useNativeXHR());
     }
 
     /**
@@ -208,7 +210,7 @@ export class NetworkService implements IDeviceStartUpService {
                      * If network is available and server is not available,then
                      * try to connect when server is available.
                      */
-                    if (data.isNetworkAvailable && !data.isServiceAvailable && !this._isCheckingServer) {
+                    if (data.isNetworkAvailable && !data.isServiceAvailable && !this._isCheckingServer && !data.noServiceRequired) {
                         this._isCheckingServer = true;
                         this.checkForServiceAvailiblity().then(() => {
                             this._isCheckingServer = false;
@@ -275,6 +277,11 @@ export class NetworkService implements IDeviceStartUpService {
      * Otherwise, the promise is resolved with false.
      */
     private isServiceAvailable(maxTimeout?: number): Promise<boolean> {
+        if (this.app.deployedUrl === 'NONE') {
+            networkState.isServiceAvailable = false;
+            networkState.noServiceRequired = true;
+            return Promise.resolve(false);
+        }
         return this.pingServer(maxTimeout).then(response => {
             networkState.isServiceAvailable = response;
             if (!networkState.isServiceAvailable) {

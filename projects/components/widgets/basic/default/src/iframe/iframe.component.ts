@@ -31,6 +31,7 @@ export class IframeComponent extends StylableComponent {
 
     public caption: any;
     public name: string;
+    public hint: string;
     /**
      * this property member is set to true when the content request url doesn't match windows protocol
      */

@@ -1,9 +1,9 @@
-import { AfterContentInit, AfterViewInit, ElementRef, Injector, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, ElementRef, Injectable, Injector, OnDestroy, OnInit } from '@angular/core';
 import { EventManager } from '@angular/platform-browser';
 
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, setCSS, setCSSFromObj, App, isDefined, removeAttr, removeClass, setAttr, switchClass } from '@wm/core';
+import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, setCSS, setCSSFromObj, App, isDefined, removeAttr, removeClass, setAttr, switchClass, isMobileApp } from '@wm/core';
 
 import { getWidgetPropsByType } from '../../framework/widget-props';
 import { isStyle } from '../../framework/styler';
@@ -40,6 +40,7 @@ const updateStyles = (nv, ov, el) => {
 
 };
 
+@Injectable()
 export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
 
     /**
@@ -286,7 +287,15 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         }
 
         if (parentContexts) {
-            this.context = Object.assign({}, ...(<Array<any>>parentContexts), this.context);
+            let parentContextObj = {};
+            if (_.isArray(parentContexts)) {
+                _.forEach(parentContexts, (contextObj) => {
+                    Object.assign(parentContextObj, contextObj);
+                });
+            } else {
+                parentContextObj = parentContexts;
+            }
+            this.context = Object.assign({}, parentContextObj, this.context);
         }
     }
 
@@ -335,9 +344,16 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         if (key === 'show') {
             this.nativeElement.hidden = !nv;
         } else if (key === 'hint') {
-            setAttr(this.nativeElement, 'title', nv);
+            if (!isMobileApp()) {
+                setAttr(this.nativeElement, 'title', nv);
+            }
         } else if (key === 'class') {
             switchClass(this.nativeElement, nv, ov);
+            let result = nv.match(/(\W|^)(h([0-6]))(?=\s|$)/);
+            if (result) {
+                setAttr(this.nativeElement, 'role', 'heading');
+                setAttr(this.nativeElement, 'aria-level', result[3]);
+            }
         } else if (key === 'name' || key === 'tabindex') {
             setAttr(this.nativeElement, key, nv);
             if (key === 'name' && nv) {

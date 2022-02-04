@@ -22,7 +22,8 @@ export const disableContextMenu = ($event: Event) => {
     templateUrl: './anchor.component.html',
     providers: [
         provideAsWidgetRef(AnchorComponent)
-    ]
+    ],
+    exportAs: 'wmAnchor'
 })
 export class AnchorComponent extends StylableComponent implements AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
@@ -114,6 +115,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     init() {
         if (this.hasNavigationToCurrentPageExpr) {
             addClass(this.nativeElement, 'active');
+            setAttr(this.nativeElement, 'aria-current', 'page');
         }
         if (this.hyperlink && getRouteNameFromLink(this.hyperlink) === `/${this.app.activePageName}`
             || this.hasNavigationToCurrentPageExpr) {
@@ -128,7 +130,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
 
     ngOnAttach() {
         this.init();
-        super.ngOnAttach(); 
+        super.ngOnAttach();
     }
 
     public ngOnDestroy() {

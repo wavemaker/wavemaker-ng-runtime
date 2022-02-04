@@ -14,5 +14,8 @@
                 "@wm/components/page": "wm.components.page"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

@@ -34,6 +34,8 @@ export class InputEmailComponent extends BaseInput {
     public autocomplete: any;
     public regexp: string;
     public placeholder: any;
+    public type: string;
+    public hint: string;
 
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;

@@ -30,11 +30,13 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class DateComponent extends BaseDateTimeComponent {
     static initializeProps = registerProps();
 
-    private bsDataValue;
+    public bsDataValue;
     public showdropdownon: string;
     private dateContainerCls: string;
-    private isOpen: boolean;
+    public isOpen: boolean = false;
     private isEnterPressedOnDateInput = false;
+    private _bsDefaultLoadCheck: boolean;
+    public hint: string;
 
     private keyEventPlugin;
     private deregisterEventListener;
@@ -43,21 +45,31 @@ export class DateComponent extends BaseDateTimeComponent {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
     }
 
-    get displayValue() {
-        return getFormattedDate(this.datePipe, this.bsDataValue, this._dateOptions.dateInputFormat) || '';
+    get dateInputFormat() {
+        return this._dateOptions.dateInputFormat || 'yyyy-MM-dd';
     }
 
+    get displayValue() {
+        return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat) || '';
+    }
+
+    get nativeDisplayValue() {
+        return getFormattedDate(this.datePipe, this.bsDataValue, 'yyyy-MM-dd') || '';
+    }
+
+    // @ts-ignore
     get datavalue() {
         return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat) || '';
     }
 
     // Todo[Shubham]: needs to be redefined
     // sets the dataValue and computes the display model values
+    // @ts-ignore
     set datavalue(newVal) {
         if (newVal === CURRENT_DATE) {
             this.bsDataValue = new Date();
         } else {
-            this.bsDataValue = newVal ? getDateObj(newVal) : undefined;
+            this.bsDataValue = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}) : undefined;
         }
         // update the previous datavalue.
         this.invokeOnChange(this.datavalue, undefined, true);
@@ -81,7 +93,7 @@ export class DateComponent extends BaseDateTimeComponent {
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
-
+        this._bsDefaultLoadCheck = true;
         this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
         this.updateFormat('datepattern');
     }
@@ -89,12 +101,12 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method triggered when the date input changes
      */
-    onDisplayDateChange($event, isNativePicker?) {
+    onDisplayDateChange($event, isNativePicker: boolean = false) {
         if (this.isEnterPressedOnDateInput) {
             this.isEnterPressedOnDateInput = false;
             return;
         }
-        const newVal = getDateObj($event.target.value, {pattern: this.datepattern});
+        const newVal = getDateObj($event.target.value, {pattern: this.datepattern, isNativePicker: isNativePicker});
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
@@ -114,8 +126,8 @@ export class DateComponent extends BaseDateTimeComponent {
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
-        if (getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat) === this.displayValue) {
-            $(this.nativeElement).find('.app-dateinput').val(this.displayValue);
+        if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat) === this.displayValue) {
+            $(this.nativeElement).find('.display-input').val(this.displayValue);
         }
         if (newVal) {
             this.bsDataValue = newVal;
@@ -149,7 +161,7 @@ export class DateComponent extends BaseDateTimeComponent {
         }
     }
 
-    private hideDatepickerDropdown() {
+    public hideDatepickerDropdown() {
         this.invokeOnTouched();
         this.isOpen = false;
         this.isEnterPressedOnDateInput = false;
@@ -168,9 +180,17 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method used to toggle the dropdown of the date widget
      */
-    toggleDpDropdown($event) {
+     public toggleDpDropdown($event, skipFocus: boolean = false) {
+        if (this.loadNativeDateInput) {
+            //Fixes click event getting triggred twice in Mobile devices.
+            if(!skipFocus){
+                this.onDateTimeInputFocus();
+            }
+            return;
+        }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', { $event: $event });
+            this.focusOnInputEl();
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             $event.stopPropagation();
@@ -196,14 +216,14 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method triggered when pressing key on the date input
      */
-    private onDisplayKeydown(event) {
+    public onDisplayKeydown(event) {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             if (action === 'enter' || action === 'arrowdown') {
                 const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
                 event.preventDefault();
-                const formattedDate = getFormattedDate(this.datePipe, newVal, this._dateOptions.dateInputFormat);
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
@@ -216,7 +236,7 @@ export class DateComponent extends BaseDateTimeComponent {
                 } else {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
-                    this.bsDatePickerDirective.bsValue = newVal;
+                    this.bsDatePickerDirective.bsValue =  event.target.value ? newVal : '';
                 }
                 this.toggleDpDropdown(event);
             } else {
@@ -231,6 +251,18 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when the date selection changes
      */
     onDateChange(newVal): void {
+
+        /**
+         *  Ngx-bootstrap upgrade : To avoid the page load datechange event;
+         *  TODO:
+         *  https://github.com/valor-software/ngx-bootstrap/issues/6016
+         *  For above issue, once we get the solution from Ngx-Bootstrap team,  remove the _bsDefaultLoadCheck check and update accordingly.
+         * */
+        if (this._bsDefaultLoadCheck) {
+            this._bsDefaultLoadCheck = false;
+            return;
+        }
+
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         if (this.isOpen) {
             setTimeout(() => displayInputElem.focus());

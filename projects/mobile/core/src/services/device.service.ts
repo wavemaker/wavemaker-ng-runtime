@@ -2,13 +2,22 @@ import { Injectable } from '@angular/core';
 
 import { File } from '@ionic-native/file';
 
-import { $appDigest, hasCordova, noop } from '@wm/core';
+import { $appDigest, hasCordova, noop, fetchContent, isIos } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
 
 declare const cordova, _;
 
 const REGISTRY_FILE_NAME = 'registry.info';
+
+export interface Config {
+    baseUrl: string;
+    customUrlScheme: string;
+    buildTime: number;
+    enableSSLPinning: boolean;
+    offlineStorage: boolean;
+    useNativeXHR: boolean;
+}
 
 @Injectable({ providedIn: 'root' })
 export class DeviceService {
@@ -19,6 +28,7 @@ export class DeviceService {
     private _whenReadyPromises = [];
     private _backBtnTapListeners = [];
     private _startUpServices: IDeviceStartUpService[] = [];
+    private _config: Config = {} as Config;
 
     public constructor(private file: File) {
         const maxWaitTime = 10;
@@ -29,6 +39,13 @@ export class DeviceService {
             }
         }, maxWaitTime * 1000);
         document.addEventListener('backbutton', this.executeBackTapListeners.bind(this));
+        if (hasCordova()) {
+            fetchContent('json', './config.json', true, (response => {
+                if (!response.error && response.baseUrl) {
+                    this._config = response;
+                }
+            }));
+        }
     }
 
     public executeBackTapListeners($event) {
@@ -60,7 +77,7 @@ export class DeviceService {
             this._isReady = true;
             return Promise.resolve();
         } else {
-            return new Promise((resolve) => {
+            return new Promise<void>((resolve) => {
                 if (hasCordova()) {
                     document.addEventListener('deviceready', () => resolve(), false);
                 } else {
@@ -102,12 +119,22 @@ export class DeviceService {
         }
     }
 
+    public getConfig(): Config {
+        return this._config;
+    }
+
+    public useNativeXHR() {
+        return (isIos() || this._config.useNativeXHR === true)
+            && hasCordova()
+            && cordova.plugin
+            && cordova.plugin.http;
+    }
+
     /**
      * @returns {Promise<number>} promise resolved with the app build time
      */
     public getAppBuildTime(): Promise<number> {
-        return this.file.readAsText(cordova.file.applicationDirectory + 'www', 'config.json')
-            .then(appConfig => (JSON.parse(appConfig).buildTime) as number);
+        return Promise.resolve(this._config.buildTime);
     }
 
     /**

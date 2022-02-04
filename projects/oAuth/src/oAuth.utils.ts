@@ -353,7 +353,19 @@ function constructURLForImplicitOrPKCE(providerId, providerInfo, requestSourceTy
     }
     const flow = isPassedFlow(providerInfo, implicitIdentifier) ? implicitIdentifier : pkceIdentifier;
     state = {providerId: providerId, suffix: accessTokenSuffix, requestSourceType: requestSourceType, flow: flow, scheme: customUriScheme};
-    const commonUrl = providerInfo.authorizationUrl + '?client_id=' + clientId + '&redirect_uri=' + redirectUri + '&state=' + encodeURIComponent(JSON.stringify(state)) + '&scope=' + encodeURIComponent(scopes);
+    const authUrlArr = providerInfo.authorizationUrl.split('?');
+    let connector;
+    if (authUrlArr.length === 1) {
+        //query params don't exist
+        connector = '?';
+    } else if (authUrlArr.length > 1 && authUrlArr[1] !== '') {
+        //query params exist. Append & instead of ?.
+        connector = '&';
+    } else {
+        //nothing exists after '?'. client_id can be directly appended;
+        connector = '';
+    }
+    const commonUrl = providerInfo.authorizationUrl + connector + 'client_id=' + clientId + '&redirect_uri=' + redirectUri + '&state=' + encodeURIComponent(JSON.stringify(state)) + '&scope=' + encodeURIComponent(scopes);
     let url;
     if (flow === implicitIdentifier) {
         url = commonUrl + '&response_type=token';

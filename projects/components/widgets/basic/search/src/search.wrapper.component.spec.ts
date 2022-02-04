@@ -1,18 +1,18 @@
 import {
-    async, ComponentFixture, ComponentFixtureAutoDetect
+    waitForAsync, ComponentFixture, ComponentFixtureAutoDetect
 } from '@angular/core/testing';
 import { App } from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 
-import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap';
+import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 import { By } from '@angular/platform-browser';
-
+import { DatePipe } from '@angular/common';
 import { ScrollableDirective } from './scrollable.directive';
-import { WmComponentsModule } from '@wm/components/base';
-import { PartialRefProvider } from '@wm/core';
+import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
+import { PartialRefProvider, AppDefaults } from '@wm/core';
 import { BaseFormComponent } from 'projects/components/widgets/input/default/src/base-form.component';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck, getHtmlSelectorElement } from 'projects/components/base/src/test/util/component-test-util';
@@ -84,6 +84,9 @@ const testModuleDef: ITestModuleDef = {
     declarations: [SearchWrapperComponent, SearchComponent, ScrollableDirective],
     providers: [
         { provide: App, useValue: mockApp },
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AppDefaults, useClass: AppDefaults },
         { provide: TypeaheadMatch, useValue: TypeaheadMatch },
         { provide: ComponentFixtureAutoDetect, useValue: true },
         { provide: PartialRefProvider, useClass: PartialRefProvider }
@@ -103,6 +106,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 TestBase.verifyEvents([
     {
         eventTrigger: '.app-search-input',
@@ -131,34 +135,32 @@ describe('SearchComponent', () => {
         return getUlElement()[0].querySelectorAll('li');
     };
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         fixture = compileTestComponent(testModuleDef, SearchWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
 
-    it('should create the Search Component', async () => {
+    it('should create the Search Component', waitForAsync(async () => {
         await fixture.whenStable();
         expect(wrapperComponent).toBeTruthy();
-    });
+    }));
 
 
 
     /******************************** EVents starts ***************************************** */
 
-    it('should change the input and call the onChange event', async (done) => {
+    it('should change the input and call the onChange event', waitForAsync(async () => {
         const testValue = 'abc';
         spyOn(wrapperComponent, 'onChange');
         await fixture.whenStable();
-        setInputValue(fixture, '.app-search-input', testValue).then(() => {
-            expect(wmComponent.query).toEqual(testValue);
-            expect(wrapperComponent.onChange).toHaveBeenCalledTimes(1);
-            done();
-        });
-    });
+        await setInputValue(fixture, '.app-search-input', testValue);
+        expect(wmComponent.query).toEqual(testValue);
+        expect(wrapperComponent.onChange).toHaveBeenCalledTimes(1);
+    }));
 
-    it('should trigger the onSubmit callback', async(async () => {
+    it('should trigger the onSubmit callback', waitForAsync(() => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         const testValue = 'te';
         spyOn(wrapperComponent, 'search1Submit').and.callThrough();
@@ -174,18 +176,28 @@ describe('SearchComponent', () => {
     }));
 
 
-    it('should trigger the onselect callback', async(async () => {
+    it('should trigger the onselect callback', waitForAsync(async () => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         const testValue = 'te';
         spyOn(wrapperComponent, 'search1Select').and.callThrough();
-        setInputValue(fixture, '.app-search-input', testValue).then(() => {
-            let liElement = getLIElement();
-            liElement[0].click();
-            fixture.whenStable().then(() => {
-                expect(wrapperComponent.search1Select).toHaveBeenCalledTimes(1);
-            });
+        await setInputValue(fixture, '.app-search-input', testValue);
+        let liElement = getLIElement();
+        liElement[0].click();
+        await fixture.whenStable();
+        expect(wrapperComponent.search1Select).toHaveBeenCalledTimes(1);
+    }));
 
-        });
+    it('should show clear icon and on click should call clearsearch function when search type is autocomplete', waitForAsync(async () => {
+        wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
+        wmComponent.getWidget().type = 'autocomplete';
+        wmComponent.getWidget().showclear = true;
+        const testValue = 'te';
+        spyOn((wmComponent as any), 'clearSearch').and.callThrough();
+        await setInputValue(fixture, '.app-search-input', testValue);
+        let searchBtnEle = fixture.debugElement.query(By.css('.clear-btn'));
+        searchBtnEle.nativeElement.click();
+        await fixture.whenStable();
+        expect((wmComponent as any).clearSearch).toHaveBeenCalled();
     }));
 
     /******************************** EVents end ***************************************** */
@@ -195,7 +207,7 @@ describe('SearchComponent', () => {
     /******************************** Dataset starts ********************************** */
 
 
-    it('should be able to search on given key, show the label', async(() => {
+    it('should be able to search on given key, show the label', waitForAsync(() => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().searchkey = 'age';
         wmComponent.getWidget().displaylabel = 'age';
@@ -212,7 +224,7 @@ describe('SearchComponent', () => {
     }));
 
 
-    xit('should be able show the typehead values in descending order', async(() => {
+    xit('should be able show the typehead values in descending order', waitForAsync(() => {
         wmComponent.getWidget().dataset = [{ name: 'Aman', age: 21 }, { name: 'Tony', age: 42 }, { name: 'John', age: 25 }, { name: 'Berf', age: 28 }];
         wmComponent.getWidget().searchkey = 'name';
         wmComponent.getWidget().displaylabel = 'name';
@@ -223,14 +235,14 @@ describe('SearchComponent', () => {
         });
 
     }));
-    it('should set the limit for typehead list', async(() => {
+
+    it('should set the limit for typehead list', waitForAsync(async () => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         wmComponent.getWidget().limit = 2;
         const testValue = 'test';
-        setInputValue(fixture, '.app-search-input', testValue).then(() => {
-            let liElement = getLIElement();
-            expect(liElement.length).toBe(2);
-        });
+        await setInputValue(fixture, '.app-search-input', testValue);
+        let liElement = getLIElement();
+        expect(liElement.length).toBe(2);
     }));
     /******************************** Dataset end ***************************************** */
 
@@ -242,7 +254,7 @@ describe('SearchComponent', () => {
     /******************************** Properties starts ********************************** */
 
 
-    it('should open the typehead list and close when list item selects', async(() => {
+    it('should open the typehead list and close when list item selects', waitForAsync(() => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         const testValue = 'test';
 
@@ -259,25 +271,20 @@ describe('SearchComponent', () => {
 
 
 
-    it('should set the minchar for typehead list', async(() => {
+    it('should set the minchar for typehead list', waitForAsync(async () => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         wmComponent.getWidget().minchars = 3;
         const testValue = 'te';
         fixture.detectChanges();
-        setInputValue(fixture, '.app-search-input', testValue).then(() => {
-            let typeHead = document.getElementsByTagName('typeahead-container');
-            expect(typeHead.length).toBe(0);
-            setInputValue(fixture, '.app-search-input', 'tes').then(() => {
-                let liElement = getLIElement();
-                expect(liElement.length).toBe(4);
-            });
-
-        });
-
-
+        await setInputValue(fixture, '.app-search-input', testValue);
+        let typeHead = document.getElementsByTagName('typeahead-container');
+        expect(typeHead.length).toBe(0);
+        await setInputValue(fixture, '.app-search-input', 'tes');
+        let liElement = getLIElement();
+        expect(liElement.length).toBe(4);
     }));
 
-    it('should set the datacomplete message for typehead list', async(() => {
+    it('should set the datacomplete message for typehead list', waitForAsync(() => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         wmComponent.getWidget().datacompletemsg = 'No more data!';
         const testValue = 'tes';
@@ -291,35 +298,28 @@ describe('SearchComponent', () => {
             let dataCompleteEle = typeHead[0].querySelectorAll('.status')[0];
             expect(dataCompleteEle.querySelectorAll('span')[0].textContent).toBe('No more data!');
         });
-
-
-
     }));
 
-    it('should search when user click on the search icon', async(() => {
+    it('should search when user click on the search icon', waitForAsync(async () => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         wmComponent.getWidget().showsearchicon = true;
         wmComponent.getWidget().searchon = 'onsearchiconclick';
         const testValue = 'tes';
 
-        setInputValue(fixture, '.app-search-input', testValue).then(async () => {
-            let typeHead = typeHeadElement();
-            expect(typeHead.length).toBe(0);
-            let searchBtnEle = fixture.debugElement.query(By.css('.app-search-button'));
-            searchBtnEle.nativeElement.click();
-            await fixture.whenStable();
-            let liElement = getLIElement();
-            expect(liElement.length).toBe(4);
-
-        });
-
+        await setInputValue(fixture, '.app-search-input', testValue);
+        let typeHead = typeHeadElement();
+        expect(typeHead.length).toBe(0);
+        let searchBtnEle = fixture.debugElement.query(By.css('.app-search-button'));
+        searchBtnEle.nativeElement.click();
+        await fixture.whenStable();
+        let liElement = getLIElement();
+        expect(liElement.length).toBe(4);
     }));
 
-    it('should be disabled mode ', async(() => {
+    it('should be disabled mode ', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
         hasAttributeCheck(fixture, '.app-search-input', 'disabled');
-
     }));
 
     it('should be readonly mode ', () => {
@@ -338,7 +338,7 @@ describe('SearchComponent', () => {
 
     /************************************ Scenarios starts ********************************** */
 
-    it('should set the search value on click on the typehead value', async(() => {
+    it('should set the search value on click on the typehead value', waitForAsync(() => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         const testValue = 'te';
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
@@ -365,7 +365,7 @@ describe('SearchComponent', () => {
         fixture.detectChanges();
     }));
 
-    it('should set the datavalue when searchkey is not set', (async (done) => {
+    it('should set the datavalue when searchkey is not set', (waitForAsync((done) => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displaylabel = 'name';
         wmComponent.getWidget().datafield = 'name';
@@ -377,7 +377,7 @@ describe('SearchComponent', () => {
                 expect(wmComponent.query).toEqual('John');
             }
         });
-    }));
+    })));
 
 
     /************************************ Scenarios end ********************************** */
@@ -386,7 +386,7 @@ describe('SearchComponent', () => {
 
     /*********************************** Method invoking starts************************** */
 
-    it('should invoke getDatasource method on entering the query', async(() => {
+    it('should invoke getDatasource method on entering the query', waitForAsync(() => {
         const testValue = 'abc';
         spyOn(wmComponent, 'getDataSource').and.returnValue(Promise.resolve([]));
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
@@ -395,7 +395,7 @@ describe('SearchComponent', () => {
         });
     }));
 
-    it('should invoke onscroll method ', async(() => {
+    it('should invoke onscroll method ', waitForAsync(() => {
         const testValue = 'te';
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
         spyOn(wmComponent, 'onScroll');
@@ -407,7 +407,7 @@ describe('SearchComponent', () => {
         });
     }));
 
-    it('should invoke typeaheadOnSelect method on select of the typehead option', (async (done) => {
+    it('should invoke typeaheadOnSelect method on select of the typehead option', (waitForAsync((done) => {
         const testValue = 'te';
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
         spyOn(wmComponent, 'typeaheadOnSelect');
@@ -421,22 +421,19 @@ describe('SearchComponent', () => {
             }, 50);
 
         });
+    })));
+
+    it('should clear the input value when clearText method is triggered', waitForAsync(async () => {
+        const testValue = 'test';
+        await setInputValue(fixture, '.app-search-input', testValue);
+        const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
+        wmComponent.clearText();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(input.value).toBe('');
     }));
 
-    it('should clear the input value when clearText method is triggered', done => {
-        const testValue = 'test';
-        setInputValue(fixture, '.app-search-input', testValue).then(() => {
-            const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
-            wmComponent.clearText();
-            fixture.detectChanges();
-            setTimeout(()=>{
-                expect(input.value).toBe('');
-                done();
-            });
-        });
-    });
-
-    xit('should invoke getTransformedData method ', async(() => {
+    xit('should invoke getTransformedData method ', waitForAsync(() => {
         const testValue = 'te';
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
         spyOn(wmComponent, 'getTransformedData');
@@ -470,7 +467,6 @@ describe('SearchComponent', () => {
             expect(baseformComponent.__proto__.updateBoundVariable).toHaveBeenCalled();
             done();
         });
-
     }));
 
     /*********************************** Method invoking end ************************** */

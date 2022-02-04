@@ -30,6 +30,7 @@ export const registerProps = () => {
                 ['iconclass', PROP_STRING],
                 ['insertmessage', {value: 'Record added successfully', ...PROP_STRING}],
                 ['isdynamictable', PROP_BOOLEAN], // internal property to determine dynamic table
+                ['isrowexpansionenabled', PROP_BOOLEAN],
                 ['loadingdatamsg', {value: 'Loading...', ...PROP_STRING}],
                 ['loadingicon', {value: 'fa fa-circle-o-notch fa-spin', ...PROP_STRING}],
                 ['maxsize', {value: 5, ...PROP_NUMBER}],
@@ -38,6 +39,7 @@ export const registerProps = () => {
                 ['navigation', {value: 'Basic', ...PROP_STRING}],
                 ['navigationalign', {value: 'left', ...PROP_STRING}],
                 ['nodatamessage', {value: 'No data found.', ...PROP_STRING}],
+                ['ondemandmessage', {value: 'Load More', ...PROP_STRING}],
                 ['pagesize', PROP_NUMBER],
                 ['radioselect', PROP_BOOLEAN],
                 ['rowclass', PROP_STRING],

@@ -1,6 +1,6 @@
-import { BsDropdownModule } from 'ngx-bootstrap';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { By } from '@angular/platform-browser';
-import { async, ComponentFixture, ComponentFixtureAutoDetect } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, ComponentFixtureAutoDetect } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { MenuComponent } from './menu.component';
 import { MenuDropdownComponent } from './menu-dropdown/menu-dropdown.component';
@@ -86,6 +86,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(menuComponentDef);
 TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
+TestBase.verifyAccessibility();
 
 describe('MenuComponent', () => {
     let menuWrapperComponent: MenuWrapperComponent;
@@ -114,7 +115,7 @@ describe('MenuComponent', () => {
 
     /***************************** Properties starts *************************************** */
 
-    it('caption should be my menu ', async(() => {
+    it('caption should be my menu ', waitForAsync(() => {
         const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
         const btnEleInstance: ButtonComponent = buttonEle.componentInstance;
         btnEleInstance.caption = 'My Menu';
@@ -124,7 +125,7 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should apply 300px width ', async(() => {
+    it('should apply 300px width ', waitForAsync(() => {
         wmComponent.getWidget().width = '300px';
         fixture.whenStable().then(() => {
             const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
@@ -132,7 +133,7 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should apply 50px height ', async(() => {
+    it('should apply 50px height ', waitForAsync(() => {
         wmComponent.getWidget().height = '50px';
         fixture.whenStable().then(() => {
             const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
@@ -140,7 +141,7 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should show the dropdown in horizontal layout ', async(() => {
+    it('should show the dropdown in horizontal layout ', waitForAsync(() => {
         buttonClickFunction();
         fixture.whenStable().then(() => {
             const ulEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
@@ -153,7 +154,7 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should show the position in inline  ', async(() => {
+    it('should show the position in inline  ', waitForAsync(() => {
         buttonClickFunction();
         fixture.detectChanges();
         fixture.whenStable().then(() => {
@@ -166,7 +167,7 @@ describe('MenuComponent', () => {
     /***************************** Properties end *************************************** */
 
     /***************************** Behaviour starts *************************************** */
-    it('animation on to content should fadein', async(() => {
+    it('animation on to content should fadein', waitForAsync(() => {
         buttonClickFunction();
         fixture.whenStable().then(() => {
             const ulEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
@@ -175,7 +176,7 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should auto open the dropdown and close (Auto-open always and Auto-close always)', async(() => {
+    it('should auto open the dropdown and close (Auto-open always and Auto-close always)', waitForAsync(() => {
         wmComponent.getWidget().autoopen = 'always';
         wmComponent.getWidget().autoclose = 'always';
 
@@ -210,7 +211,7 @@ describe('MenuComponent', () => {
 
     /***************************** scenarios start ************************************* */
 
-    it('should open the dropdown  on menu button click', async(() => {
+    it('should open the dropdown  on menu button click', waitForAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonClickFunction();
         fixture.detectChanges();
@@ -226,7 +227,7 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should close when user click outside', async(() => {
+    it('should close when user click outside', waitForAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonClickFunction();
         fixture.detectChanges();
@@ -246,7 +247,7 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should trigger the menu select option click event ', async(() => {
+    it('should trigger the menu select option click event ', waitForAsync(() => {
         const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonEle.nativeElement.click();
@@ -267,7 +268,7 @@ describe('MenuComponent', () => {
 
     /***************************** actions start ************************************* */
 
-    it('should open the dropdown  on menu button click', async(() => {
+    it('should open the dropdown  on menu button click', waitForAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testDataforActions;
         buttonClickFunction();
         fixture.detectChanges();
@@ -286,7 +287,7 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should open the dropdown  on keyboard enter', async(() => {
+    it('should open the dropdown  on keyboard enter', waitForAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         const menuElement = getHtmlSelectorElement(fixture, '[wmmenu]');
         menuElement.triggerEventHandler('keydown.enter', { preventDefault: () => {}});

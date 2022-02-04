@@ -24,12 +24,14 @@ export const dateProps = new Map(
         ['show', { value: true, ...PROP_BOOLEAN }],
         ['showdropdownon', { value: 'default', ...PROP_STRING }],
         ['showbuttonbar', { value: true, ...PROP_BOOLEAN }], // TODO not addressed
+        ['showcustompicker', { value: false, ...PROP_BOOLEAN }],
         ['showindevice', { displayType: 'inline-block', value: 'all', ...PROP_STRING }],
         ['showweeks', { value: false, ...PROP_BOOLEAN }],
         ['tabindex', { value: 0, ...PROP_NUMBER }],
         ['selectfromothermonth', { value: true, ...PROP_BOOLEAN }],
         ['todaybutton',  { value: true, ...PROP_BOOLEAN }],
         ['clearbutton',  { value: true, ...PROP_BOOLEAN }],
+        ['adaptiveposition', {value: false, ...PROP_BOOLEAN}],
         ['todaybuttonlabel',  { value: 'LABEL_TODAY_DATE', ...PROP_STRING }],
         ['clearbuttonlabel',  { value: 'LABEL_CLEAR_DATE', ...PROP_STRING }]
 
@@ -37,9 +39,6 @@ export const dateProps = new Map(
 );
 
 export const registerProps = () => {
-    if (isMobileApp()) {
-        dateProps.set('datepattern', { value: 'yyyy-MM-dd', ...PROP_STRING });
-    }
     register(
         'wm-date',
         dateProps

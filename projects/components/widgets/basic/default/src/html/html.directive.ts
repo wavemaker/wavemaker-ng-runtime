@@ -15,7 +15,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmHtml]',
     providers: [
         provideAsWidgetRef(HtmlDirective)
-    ]
+    ],
+    exportAs: 'wmHtml'
 })
 export class HtmlDirective extends StylableComponent implements OnInit {
     static initializeProps = registerProps();

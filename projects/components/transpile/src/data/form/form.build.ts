@@ -39,8 +39,19 @@ const addFormControlName = (children = []) => {
         if (formWidgets.has(childNode.name)) {
             let key = childNode.attrs.find((attr) => attr.name === 'key' || attr.name === 'name');
             key = key && key.value;
-            childNode.attrs.push(new Attribute('formControlName', key, <any>1, <any>1));
-            childNode.attrs.push(new Attribute('wmFormWidget', '', <any>1, <any>1));
+            if (!key) {
+                // for checkbox inside table inside form, key and name attrs are not available. Using datavalue to construct formControlName instead.
+                let dataValue = childNode.attrs.find((attr) => attr.name === 'datavalue');
+                if (dataValue && dataValue.value) {
+                    const regex = /\((.*)\)/;
+                    dataValue = dataValue.value.match(regex);
+                    if (dataValue && dataValue.length > 1) {
+                        key = dataValue[1].replace(/["']/g, '');
+                    }
+                }
+            }
+            childNode.attrs.push(new Attribute('formControlName', key, <any>1, <any>1, <any>1));
+            childNode.attrs.push(new Attribute('wmFormWidget', '', <any>1, <any>1, <any>1));
         }
         addFormControlName(childNode.children);
     });
@@ -71,7 +82,7 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const classProp = attrs.get('formlayout') === 'page' ? 'app-device-liveform panel liveform-inline' : '';
             const dialogAttributes = ['title', 'title.bind', 'iconclass', 'iconclass.bind', 'width'];
             attrs.delete('dependson');
-            const liveFormTmpl = `<${tagName} wmForm role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
+            const liveFormTmpl = `<${tagName} wmForm data-role="${role}" ${directiveAttr} #${counter} ngNativeValidate [formGroup]="${counter}.ngform" [noValidate]="${counter}.validationtype !== 'html'"
                     class="${classProp}" [class]="${counter}.captionAlignClass" [autocomplete]="${counter}.autocomplete ? 'on' : 'off'" captionposition=${attrs.get('captionposition')}`;
             attrs.set('numberOfFields', `${numberOfFields}`);
             shared.set('counter', counter);

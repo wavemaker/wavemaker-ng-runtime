@@ -19,7 +19,7 @@ export const inputEmailTypeProps = new Map(
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['type', PROP_STRING],
+        ['type', {value: 'email', ...PROP_STRING}],
         ['updateon', PROP_STRING]
     ]
 );

@@ -107,6 +107,27 @@ export const convertDataToObject = dataResult => {
     return dataResult;
 };
 
+// This function used to check the search type widget
+const isSeachWidget = (widgetType) => {
+    return widgetType === 'wm-search';
+};
+
+// This function is used to set the groupby field for search/autocomplete
+const setGroupbyKey = (scope, context, dataSetItem, innerItem) => {
+    if (scope && isSeachWidget(scope.widgetType)) {
+        if (scope.groupby) {
+            if (_.includes(scope.groupby, '(')) {
+                const groupDataByUserDefinedFn = $parseEvent(scope.groupby);
+                (dataSetItem as any).groupby = groupDataByUserDefinedFn(context, {'row': dataSetItem.dataObject || dataSetItem});
+            } else {
+                (dataSetItem as any).groupby = groupDataByField(scope.groupby, scope.match, innerItem, scope.dateformat, scope.datePipe, scope.appDefaults, dataSetItem);
+            }
+        } else {
+            (dataSetItem as any).groupby =  '';
+        }
+    }
+};
+
 /**
  * The first step in datasetItems creation is data transformation:
  *
@@ -117,7 +138,7 @@ export const convertDataToObject = dataResult => {
  * 3) an object eg: {name: 'A', age: 20} => [ {key: 'name', value: 'A'}, {key: 'age', value: 20}]
  * 4) an array of objects...eg: [ {name: 'A', age: 20}, {name: 'B', age: 20}] ==> returns [{key: _DATAFIELD_, value: _DISPLAYFIELD, label: _DISPLAYVALUE}]
  */
-export const transformFormData = (context: any, dataSet: any, myDataField?: string, displayOptions?, startIndex?: number): Array<DataSetItem> => {
+export const transformFormData = (context: any, dataSet: any, myDataField?: string, displayOptions?, startIndex?: number, scope?: any): Array<DataSetItem> => {
     const data = [];
     if (!dataSet) {
         return;
@@ -132,25 +153,29 @@ export const transformFormData = (context: any, dataSet: any, myDataField?: stri
     if (_.isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());
         dataSet.forEach((option, index) => {
-            data.push({key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index});
+            const dataSetItem = {key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index};
+            setGroupbyKey(scope, context, dataSetItem, 'value');
+            data.push(dataSetItem);
         });
     } else if (_.isArray(dataSet) && !_.isObject(dataSet[0])) { // array of primitive values only
         dataSet.forEach((option, index) => {
-            data.push({key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index});
+            const dataSetItem = {key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index};
+            setGroupbyKey(scope, context, dataSetItem, 'value');
+            data.push(dataSetItem);
         });
     } else if (!(dataSet instanceof Array) && _.isObject(dataSet)) {
         const i = 0;
         _.forEach(dataSet, (value, key) => {
-            data.push({key: _.trim(key), value: key, label: (isDefined(value) && value !== null) ? value.toString() : '', index: startIndex, dataObject: dataSet});
+            const dataSetItem = {key: _.trim(key), value: key, label: (isDefined(value) && value !== null) ? value.toString() : '', index: startIndex, dataObject: dataSet};
+            setGroupbyKey(scope, context, dataSetItem, 'value');
+            data.push(dataSetItem);
         });
     } else {
         if (!myDataField) { // consider the datafield as 'ALLFIELDS' when datafield is not given.
             myDataField = ALLFIELDS;
         }
-
         dataSet.forEach((option, index) => {
             const key = myDataField === ALLFIELDS ? startIndex + index : getObjValueByKey(option, myDataField);
-
             // Omit all the items whose datafield (key) is null or undefined.
             if (!_.isUndefined(key) && !_.isNull(key)) {
                 const label = getEvaluatedData(option, {
@@ -171,6 +196,8 @@ export const transformFormData = (context: any, dataSet: any, myDataField?: stri
                         bindExpression: displayOptions.bindDisplayImgSrc
                     }, context);
                 }
+                setGroupbyKey(scope, context, dataSetItem, 'dataObject');
+
                 data.push(dataSetItem);
             }
         });
@@ -441,8 +468,9 @@ export const handleHeaderClick = ($event: Event) => {
  * @param options object containing the sortable options.
  * @param startCb callback on drag start on the element.
  * @param updateCb callback triggerred when sorting is stopped and the DOM position has changed.
+ * @param sortCb callback triggerred during the sorting of an element.
  */
-export const configureDnD = ($el: any, options: object, startCb: Function, updateCb: Function) => {
+export const configureDnD = ($el: any, options: object, startCb: Function, updateCb: Function, sortCb?: Function) => {
     const sortOptions = Object.assign({
         containment: $el,
         delay: 100,
@@ -451,7 +479,8 @@ export const configureDnD = ($el: any, options: object, startCb: Function, updat
         zIndex: 1050,
         tolerance: 'pointer',
         start: startCb,
-        update: updateCb
+        update: updateCb,
+        sort: sortCb
     }, options);
 
     $el.sortable(sortOptions);

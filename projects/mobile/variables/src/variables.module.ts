@@ -9,6 +9,8 @@ import { Contacts } from '@ionic-native/contacts';
 import { MediaCapture } from '@ionic-native/media-capture';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Vibration } from '@ionic-native/vibration';
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
+import { Diagnostic } from '@ionic-native/diagnostic';
 
 import { App } from '@wm/core';
 import { DeviceFileOpenerService, DeviceFileUploadService, NetworkService } from '@wm/mobile/core';
@@ -20,7 +22,7 @@ import { CalendarService } from './services/calendar-service';
 import { CameraService } from './services/camera-service';
 import { FileService } from './services/file-service';
 import { DatasyncService } from './services/datasync-service';
-import { DeviceService } from './services/device-service';
+import { DeviceService } from './services/device-service/device-service';
 import { ContactsService } from './services/contacts-service';
 import { ScanService } from './services/scan-service';
 import { FileSelectorService, ProcessManagementService } from '@wm/mobile/components/basic';
@@ -56,7 +58,9 @@ export class VariablesModule {
                               processManagementService: ProcessManagementService,
                               securityService: SecurityService,
                               networkService: NetworkService,
-                              vibrateService: Vibration) {
+                              vibrateService: Vibration,
+                              locationAccuracyService: LocationAccuracy,
+                              diagnosticService: Diagnostic) {
         if (this.initialized) {
             return;
         }
@@ -67,7 +71,7 @@ export class VariablesModule {
         deviceVariableManager.registerService(new FileService(fileOpener, fileUploader));
         deviceVariableManager.registerService(new ContactsService(contacts));
         deviceVariableManager.registerService(new DatasyncService(app, changeLogService, fileSelectorService, localDBManagementService, localDBDataPullService, processManagementService, securityService, networkService));
-        deviceVariableManager.registerService(new DeviceService(app, appVersion, device, geoLocation, networkService, vibrateService));
+        deviceVariableManager.registerService(new DeviceService(app, appVersion, device, geoLocation, networkService, vibrateService, locationAccuracyService, diagnosticService));
         deviceVariableManager.registerService(new ScanService(barcodeScanner));
     }
 
@@ -90,7 +94,9 @@ export class VariablesModule {
         processManagementService: ProcessManagementService,
         securityService: SecurityService,
         networkService: NetworkService,
-        vibrateService: Vibration
+        vibrateService: Vibration,
+        locationAccuracyService: LocationAccuracy,
+        diagnosticService: Diagnostic
     ) {
         VariablesModule.initialize(app,
                                     appVersion,
@@ -110,6 +116,8 @@ export class VariablesModule {
                                     processManagementService,
                                     securityService,
                                     networkService,
-                                    vibrateService);
+                                    vibrateService,
+                                    locationAccuracyService,
+                                    diagnosticService);
     }
 }

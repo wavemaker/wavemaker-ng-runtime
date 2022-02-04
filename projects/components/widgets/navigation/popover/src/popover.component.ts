@@ -62,6 +62,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public name: string;
     public adaptiveposition:boolean;
     public containerTarget: string;
+    public hint: string;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
@@ -284,9 +285,15 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         styler(this.anchorRef.nativeElement, this);
         this.containerTarget = getContainerTargetClass(this.nativeElement);
         let parentElemPopover = $(this.nativeElement).parents();
-        if(parentElemPopover.closest('[wmTable]').length || parentElemPopover.closest('[wmtabs]').length){
+        if (parentElemPopover.closest('[wmTable]').length ||
+            parentElemPopover.closest('[wmtabs]').length ||
+            parentElemPopover.closest('modal-container').length) {
             this.adaptiveposition = false;
-
         }
+    }
+
+    ngOnDetach() {
+        // Hide the popover container while attaching the next component as part of page reuse strategy.
+        this.bsPopoverDirective.hide();
     }
 }

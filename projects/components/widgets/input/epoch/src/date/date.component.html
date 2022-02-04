@@ -1,14 +1,11 @@
-<ng-container *ngIf="useDatapicker; then dataPickerTemplate else nativeDateTemplate"></ng-container>
-<ng-template #dataPickerTemplate>
     <input class="form-control app-textbox app-dateinput display-input"
-        aria-label="Select date"
         focus-target
         type="text"
         [name]="name"
         [tabindex]="tabindex"
         [value]="displayValue"
-        (click)="toggleDpDropdown($event)"
-        (focus)="invokeOnFocus($event)"
+        (click)="toggleDpDropdown($event, true)"
+        (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
         (blur)="onInputBlur($event)"
         [disabled]="disabled || readonly"
         [autofocus]="autofocus"
@@ -16,26 +13,10 @@
         [readOnly]="isReadOnly"
         [attr.placeholder]="placeholder"
         [attr.accesskey]="shortcutkey"
+        [attr.aria-label]="hint || 'Date field'"
         (change)="onDisplayDateChange($event)"
         (keydown)="onDisplayKeydown($event)">
-    <div style="width: 0;display: inline-block;"
-        aria-label="datepicker dropdownmenu"
-        aria-controls="date">
-        <input class="model-holder"
-            [container]="containerTarget || 'body'"
-            [bsConfig]="_dateOptions"
-            [isOpen]="isOpen"
-            #datepicker="bsDatepicker"
-            bsDatepicker
-            [daysDisabled]="excludedDaysToDisable"
-            [datesDisabled]="excludedDatesToDisable"
-            placement="bottom right"
-            [isDisabled]="disabled || readonly"
-            [bsValue]="bsDataValue"
-            (onShown)="onDatePickerOpen()"
-            (onHidden)="hideDatepickerDropdown()"
-            (bsValueChange)="onDateChange($event)">
-    </div>
+
     <span class="input-group-btn">
         <button type="button"
             class="btn btn-default btn-time"
@@ -44,21 +25,42 @@
             aria-label="Select date"
             aria-haspopup="true"
             aria-expanded="false"
-            (click)="toggleDpDropdown($event)">
+            (click)="toggleDpDropdown($event, false)">
             <i aria-hidden="true"
                 class="app-icon wi wi-calendar"></i>
         </button>
     </span>
-</ng-template>
-<ng-template #nativeDateTemplate>
+    <div style="width: 0;display: inline-block;">
+    <input class="model-holder"
+        aria-label="datepicker dropdownmenu"
+        aria-controls="date"
+        [container]="containerTarget || 'body'"
+        [bsConfig]="_dateOptions"
+        [isOpen]="isOpen"
+        #datepicker="bsDatepicker"
+        bsDatepicker
+        [daysDisabled]="excludedDaysToDisable"
+        [datesDisabled]="excludedDatesToDisable"
+        placement="bottom right"
+        [isDisabled]="disabled || readonly"
+        [bsValue]="bsDataValue"
+        (onShown)="onDatePickerOpen()"
+        (onHidden)="hideDatepickerDropdown()"
+        (bsValueChange)="onDateChange($event)">
+</div>
+
+<ng-template [ngIf]="loadNativeDateInput">
     <input type="date"
-        class="form-control app-textbox app-dateinput"
-        role="input"
+        class="form-control app-textbox app-dateinput mobile-input"
+        role="textbox"
         step="any"
-        [value]="displayValue"
+        placeholder="yyyy-mm-dd" [min]="mindate | date:'yyyy-MM-dd'" [max]="maxdate | date:'yyyy-MM-dd'"
+        [value]="nativeDisplayValue"
+        [tabindex]="tabindex"
         [required]="required"
         [disabled]="disabled || readonly"
+        [attr.aria-label]="hint || 'Date field'"
         (change)="onDisplayDateChange($event, true)"
-        (focus)="invokeOnFocus($event)"
-        (blur)="invokeOnTouched($event)">
+        (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
+        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
 </ng-template>

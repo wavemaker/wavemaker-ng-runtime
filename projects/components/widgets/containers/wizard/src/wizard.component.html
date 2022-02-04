@@ -20,7 +20,7 @@
 </div>
 <div class="app-wizard-body panel-body" role="tabpanel">
     <p wmMessage *ngIf="message.caption" caption.bind="message.caption" type.bind="message.type"></p>
-    <ng-content select="form[wmWizardStep]"></ng-content>
+    <ng-content ngProjectAs="form[wmWizardStep]"></ng-content>
 </div>
 <div class="app-wizard-actions panel-footer {{actionsalignment}}">
     <a class="app-wizard-skip" name="skipStep_{{name}}" *ngIf="currentStep?.enableskip" title="Skip step" (click)="skip()">Skip &raquo;</a>

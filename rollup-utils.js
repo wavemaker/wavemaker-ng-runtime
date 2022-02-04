@@ -23,6 +23,8 @@ export const rollupGlobals = {
     '@ionic-native/network': 'ionicNative.plugins',
     '@ionic-native/sqlite': 'ionicNative.plugins',
     '@ionic-native/vibration': 'ionicNative.plugins',
+    '@ionic-native/location-accuracy': 'ionicNative.plugins',
+    '@ionic-native/diagnostic': 'ionicNative.plugins',  
     '@swipey': 'swipey',
     '@wm/core': 'wm.core',
     '@wm/transpiler': 'wm.transpiler',

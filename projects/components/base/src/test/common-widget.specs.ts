@@ -1,6 +1,6 @@
 /*global describe, it, WM, beforeEach, expect, module, inject, _, parseInt, document, Hammer*/
 
-import { async } from '@angular/core/testing';
+import { waitForAsync } from '@angular/core/testing';
 import * as _ from '../../../../../node_modules/lodash/lodash.min';
 import { isBooleanAttr, isDimensionProp } from '../widgets/framework/constants';
 import { toDimension } from '../../../../core/src/utils/dom';
@@ -52,7 +52,7 @@ export class ComponentTestBase {
                 widgetProps,
                 widgetAttr = _.replace(this.widgetDef.type, '-', '');
 
-            beforeEach(async(() => {
+            beforeEach(waitForAsync(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
@@ -67,7 +67,9 @@ export class ComponentTestBase {
                     processedAttrValue = attrValue;
 
                 // ignore the event related attributes and attributes having hyphen(-) in them(custom attrs) and attributes which do not have value
-                if (attrName.indexOf('.event') !== -1 || attrName.indexOf('on-') === 1 || attrName.indexOf('-') !== -1 || attrName === widgetAttr || !attrValue) {
+                let ignoredAttrsMeta = ['.event', 'on-', '-', '#', widgetAttr];
+                let attrResult = ignoredAttrsMeta.find(el => (el === attrName || attrName.indexOf(el) >= 0));
+                if (!attrValue || attrResult) {
                     return;
                 }
 
@@ -114,7 +116,7 @@ export class ComponentTestBase {
                 $element,
                 $inputEl;
 
-            beforeEach(async(() => {
+            beforeEach(waitForAsync(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
@@ -222,7 +224,7 @@ export class ComponentTestBase {
                 fixture,
                 widgetProps;
 
-            beforeEach(async(() => {
+            beforeEach(waitForAsync(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
@@ -345,7 +347,7 @@ export class ComponentTestBase {
             _.forEach(eventList, (evtObj) => {
 
                 if (evtObj.clickableEle) {
-                    it('Should trigger the ' + evtObj.eventName + ' event', async(() => {
+                    it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
                         // fixture.whenStable().then(() => {
                         let eleControl = getHtmlSelectorElement(fixture, evtObj.clickableEle);
                         eleControl.nativeElement.click();
@@ -356,7 +358,7 @@ export class ComponentTestBase {
                         // });
                     }))
                 } else if (evtObj.mouseSelectionEle) {
-                    it('Should trigger the ' + evtObj.eventName + ' event', async(() => {
+                    it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
                         fixture.whenStable().then(() => {
                             spyOn(fixture.componentInstance, evtObj.callbackMethod).and.callThrough();
                             let eleControl = getHtmlSelectorElement(fixture, evtObj.mouseSelectionEle);
@@ -365,7 +367,7 @@ export class ComponentTestBase {
                         });
                     }));
                 } else if (evtObj.eventTrigger) {
-                    it('Should trigger the ' + evtObj.eventName + ' event', async(() => {
+                    it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
                         fixture.whenStable().then(() => {
                             spyOn(fixture.componentInstance, evtObj.callbackMethod).and.callThrough();
                             let eleControl = getHtmlSelectorElement(fixture, evtObj.eventTrigger);
@@ -379,5 +381,38 @@ export class ComponentTestBase {
 
         });
 
+    }
+
+    public verifyAccessibility():void {
+        describe(this.widgetDef.type + ': Accessibility tests: ', () => {
+
+            let component,
+                fixture,
+                widgetProps,
+                $element,
+                $inputEl;
+
+            beforeEach(waitForAsync(() => {
+                fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
+                component = fixture.componentInstance.wmComponent;
+                widgetProps = component.widgetProps;
+                $element = fixture.nativeElement.querySelector(this.widgetDef.widgetSelector);
+                fixture.detectChanges();
+                $inputEl = this.widgetDef.inputElementSelector ? fixture.nativeElement.querySelector(this.widgetDef.inputElementSelector) : $element;
+            }));
+
+            it(this.widgetDef.type + ': aria-label should not be empty without hint',() => {
+               expect($inputEl.getAttribute('aria-label')).toBeDefined();
+            });
+
+            it(this.widgetDef.type + ': aria-label property change should be reflected based on hint', () => {
+                if (!widgetProps.get('hint')) {
+                    return;
+                }
+                component.getWidget().hint = 'updated hint';
+                fixture.detectChanges();
+                expect($inputEl.getAttribute('aria-label')).toBe(component.getWidget().hint);
+            });
+        });
     }
 }

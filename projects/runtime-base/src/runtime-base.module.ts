@@ -15,7 +15,13 @@ import {
     App,
     AppDefaults,
     CoreModule,
-    DynamicComponentRefProvider
+    DynamicComponentRefProvider,
+    isObject,
+    isIphone,
+    isIpod,
+    isIpad,
+    Viewport,
+    hasCordova
 } from '@wm/core';
 import { WmComponentsModule } from '@wm/components/base';
 import { DialogModule } from '@wm/components/dialogs';
@@ -54,11 +60,18 @@ import { DynamicComponentRefProviderService } from './services/dynamic-component
 import { CanDeactivatePageGuard } from './guards/can-deactivate-page.guard';
 import { MAX_CACHE_AGE, MAX_CACHE_SIZE } from './util/wm-route-reuse-strategy';
 
+declare const _WM_APP_PROPERTIES;
+
 const initializeProjectDetails = () => {
-    _WM_APP_PROJECT.id = location.href.split('/')[3];
+    _WM_APP_PROJECT.id = hasCordova() ? _WM_APP_PROPERTIES.displayName : location.href.split('/')[3];
     _WM_APP_PROJECT.cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
     _WM_APP_PROJECT.ngDest = 'ng-bundle/';
 };
+
+enum OS {
+    IOS = 'ios',
+    ANDROID = 'android'
+}
 
 export function getSettingProvider(key: string, defaultValue: any) {
     return {
@@ -67,9 +80,10 @@ export function getSettingProvider(key: string, defaultValue: any) {
     };
 };
 
-export function InitializeApp(I18nService) {
-    return () => {
+export function InitializeApp(I18nService, AppJSResolve) {
+    return async () => {
         initializeProjectDetails();
+         await AppJSResolve.resolve();
         return I18nService.loadDefaultLocale();
     };
 }
@@ -166,7 +180,7 @@ export class RuntimeBaseModule {
                 {
                     provide: APP_INITIALIZER,
                     useFactory: InitializeApp,
-                    deps: [AbstractI18nService],
+                    deps: [AbstractI18nService, AppJSResolve],
                     multi: true
                 },
                 {
@@ -196,8 +210,41 @@ export class RuntimeBaseModule {
         };
     }
 
-    constructor() {
+    constructor(mobileRuntimeModule: MobileRuntimeModule,
+                app: App,
+                viewport: Viewport) {
         RuntimeBaseModule.addCustomEventPolyfill();
+
+        this.getDeviceDetails().then(details => {
+            app.selectedViewPort = {
+                os: details.os,
+                category: details.selectedDeviceCategory
+            };
+            viewport.update(details);
+            app.notify('on-viewport-details', details.os);
+        });
+    }
+
+
+    private getDeviceDetails(): Promise<any> {
+        return new Promise<any>(function (resolve, reject) {
+            const msgContent = {key: 'on-load'};
+            // Notify preview window that application is ready. Otherwise, identify the OS.
+            if (window.top !== window) {
+                window.top.postMessage(msgContent, '*');
+                // This is for preview page
+                window.onmessage = function (msg) {
+                    const data = msg.data;
+                    if (isObject(data) && data.key === 'switch-device') {
+                        resolve(data.device);
+                    }
+                };
+            } else if (isIphone() || isIpod() || isIpad()) {
+                resolve({'os': OS.IOS});
+            } else {
+                resolve({'os': OS.ANDROID});
+            }
+        });
     }
 }
 

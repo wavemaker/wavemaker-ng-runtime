@@ -25,8 +25,8 @@ function assignColumnIndex(node, parentIndex?: number) {
         const nodeName = (<any>childNode).name;
         const newheaderIndex = parentIndex !== undefined ? parentIndex : headerIndex;
         if (nodeName === 'wm-table-column' || nodeName === 'wm-table-column-group') {
-            (childNode as any).attrs.push(new Attribute('index', '' + columnIndex, <any>1, <any>1));
-            (childNode as any).attrs.push(new Attribute('headerIndex', '' + newheaderIndex, <any>1, <any>1));
+            (childNode as any).attrs.push(new Attribute('index', '' + columnIndex, <any>1, <any>1, <any>1));
+            (childNode as any).attrs.push(new Attribute('headerIndex', '' + newheaderIndex, <any>1, <any>1, <any>1));
             if (nodeName === 'wm-table-column-group') {
                 assignColumnIndex(childNode.children, headerIndex);
             }
@@ -46,6 +46,11 @@ register('wm-table', (): IBuildTaskDef => {
                 });
                 assignColumnIndex(node.children);
                 shared.set('isdynamictable', isColumnsPresent ? 'false' : 'true');
+                // If table have row expansion enabled, set isrowexpansionenabled to true
+                const isRowsPresent = node.children.some(childNode => {
+                    return (<any>childNode).name === 'wm-table-row';
+                });
+                shared.set('isrowexpansionenabled', isRowsPresent ? 'true' : 'false');
             } else {
                 shared.set('isdynamictable', 'true');
             }
@@ -67,6 +72,8 @@ register('wm-table', (): IBuildTaskDef => {
             const counter = idGen.nextUid();
             shared.set('counter', counter);
             attrs.set('isdynamictable', shared.get('isdynamictable'));
+            attrs.set('isrowexpansionenabled', shared.get('isrowexpansionenabled'));
+            attrs.set('table_reference', counter);
             return `<${tagName} wmTable="${counter}" wmTableFilterSort wmTableCUD #${counter} data-identifier="table" role="table" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`,

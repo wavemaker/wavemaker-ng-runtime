@@ -1,28 +1,25 @@
-<ng-container *ngIf="useDatapicker; then timePickerTemplate else nativeTimeTemplate">
-</ng-container>
-
-<ng-template #timePickerTemplate>
     <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" (onHidden)="hideTimepickerDropdown()" [container]="'body'" style="display: inherit">
-        <input class="form-control app-textbox display-input" aria-label="Set the time"
+        <input class="form-control app-textbox display-input" [attr.aria-label]="hint || 'Time field'"
                focus-target
                [tabindex]="tabindex"
                [name]="name"
                type="text"
+               role="timer"
                [value]="displayValue"
                [disabled]="disabled || readonly || isCurrentTime"
                [autofocus]="autofocus"
-               [required]="required"
                [attr.placeholder]="placeholder"
                [attr.accesskey]="shortcutkey"
+               [attr.aria-atomic]="isCurrentTime ? 'true' : 'false'"
                [required]="required"
                [readOnly]="isReadOnly"
-               (click)="toggleDropdown($event)"
-               (focus)="invokeOnFocus($event)"
+               (click)="toggleDropdown($event, true)"
+               (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
                (blur)="onInputBlur($event)"
                (change)="onDisplayTimeChange($event)"
                (keydown)="onDisplayKeydown($event)">
         <span class="input-group-btn dropdown-toggle">
-          <button type="button" class="btn btn-default btn-date" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentTime" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
+            <button type="button" class="btn btn-default btn-date" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentTime" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event, false)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
         </span>
         <div *dropdownMenu class="dropdown-menu" (click)="preventTpClose($event)">
             <timepicker class="model-holder"
@@ -41,14 +38,14 @@
                         [showSeconds]="showseconds" (ngModelChange)="onTimeChange($event)"></timepicker>
         </div>
     </div>
-</ng-template>
-<ng-template #nativeTimeTemplate>
-    <input type="time" class="form-control app-textbox"
-           role="input"
-           [value]="displayValue"
+<ng-template [ngIf]="loadNativeDateInput">
+    <input type="time" class="form-control app-textbox display-input mobile-input"
+           role="timer" [attr.aria-label]="hint || 'Time field'"
+           [value]="nativeDisplayValue" [min]="mintime" [max]="maxtime"
+           [tabindex]="tabindex"
            [required]="required"
            [disabled]="disabled || readonly || isCurrentTime"
            (change)="onTimeChange($event, true)"
-           (focus)="invokeOnFocus($event)"
-           (blur)="invokeOnTouched($event)">
+           (focus)="onDateTimeInputFocus(true); invokeOnFocus($event); assignModel()"
+           (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
 </ng-template>

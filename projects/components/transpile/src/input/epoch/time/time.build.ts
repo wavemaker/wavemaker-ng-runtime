@@ -5,7 +5,7 @@ const tagName = 'div';
 
 register('wm-time', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmTime ${getFormMarkupAttr(attrs)} role="input" ${getChildAttrs(attrs)} ${getNgModelAttr(attrs)}>`,
+        pre: attrs => `<${tagName} wmTime ${getFormMarkupAttr(attrs)} ${getChildAttrs(attrs)} ${getNgModelAttr(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

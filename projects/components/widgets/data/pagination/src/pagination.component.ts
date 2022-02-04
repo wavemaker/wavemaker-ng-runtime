@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit } from '@angular/core';
 
 import { $appDigest, $watch, AppConstants, DataSource, debounce, isDefined, switchClass, triggerFn } from '@wm/core';
-import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, styler, WidgetRef } from '@wm/components/base';
+import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, styler, WidgetRef, unsupportedStatePersistenceTypes} from '@wm/components/base';
 import { registerProps } from './pagination.props';
 
 declare const _;
@@ -23,9 +23,6 @@ const sizeClasses = {
         'large': 'pagination-lg'
     }
 };
-
-const unsupportedStatePersistenceTypes = ['On-Demand', 'Scroll'];
-
 @Component({
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html',
@@ -73,6 +70,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     sortOptions;
     binddataset;
     pagination;
+    logicalOp;
 
     private _debouncedApplyDataset = debounce(() => this.widget.dataset = this.dataset, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
     private _debouncedPageChanged = debounce(event => {
@@ -165,6 +163,10 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         this.isDisableFirst = this.isDisablePrevious = isCurrentPageFirst;
         this.isDisableNext = this.isDisableLast = isCurrentPageLast;
         this.isDisableCurrent = isCurrentPageFirst && isCurrentPageLast;
+        // In case of client side pagination, when load more reaches last page hide the on-demand grid ele
+        if (this.isDisableNext && this.parent.onDemandLoad && this.parent.widgetType === 'wm-table') {
+            this.parent.callDataGridMethod('hideLoadingIndicator', this.isDisableNext, false);
+        }
     }
 
     /*Function to check if the variable bound to the data-navigator has paging.*/
@@ -214,6 +216,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                     this.pagination = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS) || {};
                     // If "filterFields" and "sortOptions" have been set, then set them so that the filters can be retained while fetching data upon page navigation.
                     this.filterFields = variableOptions.filterFields || {};
+                    this.logicalOp = variableOptions.logicalOp || '';
                     this.sortOptions = variableOptions.orderBy ||
                         (_.isArray(this.pagination.sort) ? getOrderByExpr(this.pagination.sort) : '');
                     dataSize = this.pagination.totalElements;
@@ -286,7 +289,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             } else {
                 if (unsupportedStatePersistenceTypes.indexOf(this.parent.navigation) < 0) {
                     this.parent.statePersistence.setWidgetState(this.parent, {pagination: this.dn.currentPage});
-                } else if (this.parent.widgetType === 'wm-list') {
+                } else if (this.parent.widgetType === 'wm-list' ||this.parent.widgetType === 'wm-table' ) {
                     console.warn('Retain State handling on Widget ' + this.parent.name + ' is not supported for current pagination type.');
                 }
             }
@@ -312,6 +315,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 'page': this.dn.currentPage,
                 'filterFields': this.filterFields,
                 'orderBy': this.sortOptions,
+                'logicalOp': this.logicalOp,
                 'matchMode': 'anywhereignorecase'
             }).then(response => {
                 this.onPageDataReady(event, response && response.data, callback);
@@ -352,7 +356,11 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     validateCurrentPage(event, callback?) {
         /*If the value entered is greater than the last page number or invalid value, then highlighting the field showing error.*/
         if ( event && (isNaN(this.dn.currentPage) || this.dn.currentPage <= 0 || (this.pageCount && (this.dn.currentPage > this.pageCount || _.isNull(this.dn.currentPage))))) {
-            $(event.target).closest('a').addClass('ng-invalid');
+            if (this.dn.currentPage <= 0) {
+                this.dn.currentPage = 1;
+            } else if (this.dn.currentPage > this.pageCount) {
+                this.dn.currentPage = this.pageCount;
+            }
             return false;
         }
         return true;
@@ -381,6 +389,14 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
 
     /*Function to navigate to the respective pages.*/
     navigatePage(index, event, isRefresh, callback) {
+        // when navigated to next page turn on the isDataLoading flag to show the loading indicator
+        if (isDefined(this.parent.isDataLoading) && !this.isDisableNext) {
+            this.parent.isDataLoading = true;
+            // In case of infinite scroll calling the showLoadingIndicator method to update the loading message immediately when navigated to next page
+            if (this.parent.infScroll) {
+                this.parent.callDataGridMethod('showLoadingIndicator', this.parent.loadingdatamsg, true);
+            }
+        }
         this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
 
         // Convert the current page to a valid page number.
@@ -438,7 +454,15 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                     binddataset,
                     parent,
                     datasetBoundExpr ? dataSource : {},
-                    nv => this.widget.dataset = nv
+                    nv =>  {
+                        if (nv) {
+                            this.dataset = nv;
+                            this._debouncedApplyDataset();
+                        } else {
+                           // WMS-19285: Setting dataset on proxy only to handle propertychange handler call for undefined cases
+                            this.widget.dataset = nv;
+                        }
+                    }
                 )
             );
 

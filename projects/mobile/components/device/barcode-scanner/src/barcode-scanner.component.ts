@@ -15,7 +15,8 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-barcodescanner', hostClass
     templateUrl: './barcode-scanner.component.html',
     providers: [
         provideAsWidgetRef(BarcodeScannerComponent)
-    ]
+    ],
+    exportAs: 'wmBarcodescanner'
 })
 export class BarcodeScannerComponent extends StylableComponent {
     static initializeProps = registerProps();

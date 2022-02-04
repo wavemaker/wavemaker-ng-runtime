@@ -1,9 +1,10 @@
-import {Component, ElementRef, Injector, ViewChild} from '@angular/core';
+import {Component, ElementRef, Injector, OnInit, ViewChild} from '@angular/core';
 import {NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS} from '@angular/forms';
 
 import {IWidgetConfig, provideAs, provideAsWidgetRef} from '@wm/components/base';
 import {registerProps} from './input-text.props';
 import {BaseInput} from '../base/base-input';
+import { IMaskDirective } from 'angular-imask';
 
 declare const _;
 
@@ -21,7 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(InputTextComponent)
     ]
 })
-export class InputTextComponent extends BaseInput {
+export class InputTextComponent extends BaseInput implements OnInit{
     static initializeProps = registerProps();
 
     public required: boolean;
@@ -38,9 +39,13 @@ export class InputTextComponent extends BaseInput {
     public autofocus: boolean;
     public autocomplete: any;
     public maskVal: any;
+    public isFocused: boolean;
+    private lazy: boolean = false;
+    public hint: string;
 
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
+    @ViewChild('input', {read: IMaskDirective}) imask: IMaskDirective<any>;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
@@ -52,6 +57,10 @@ export class InputTextComponent extends BaseInput {
         switch (key) {
             case 'displayformat':
                 this.maskVal = this.displayformat;
+                this.checkForDisplayFormat();
+                break;
+            case 'showdisplayformaton':
+                this.lazy = nv === 'keypress' ? true : false;
                 break;
             default:
                 super.onPropertyChange(key, nv, ov);
@@ -59,10 +68,10 @@ export class InputTextComponent extends BaseInput {
     }
 
     get mask() {
-        if (this.displayformat) {
+        if (this.displayformat && (!this.placeholder || (this.placeholder && this.isFocused))) {
             return {
                 mask: this.maskVal,
-                lazy: false,
+                lazy: this.lazy,
                 definitions: {
                     '9': /\d/,
                     'A': /[a-zA-Z]/,
@@ -73,6 +82,41 @@ export class InputTextComponent extends BaseInput {
         } else {
             return false;
         }
+    }
 
+    // show display format on focus or when it has a data value present. Else show the placeholder
+    public checkForDisplayFormat($event?) {
+        if (this.displayformat) {
+            this.isFocused = (($event && $event.type === 'focus') || this.datavalue) ? true : false;
+            // Do not show format placeholder when no value is present on blur
+            if (!this.isFocused && this.imask && this.imask.maskRef) {
+                this.imask.maskRef.updateOptions({ lazy: true });
+                // on blur, when no value is present assign maskref to null, as in some cases (where format palceholder starts with pranthesis) the format placeholder is still shown. WMS-20124
+                if (!this.datavalue && this.imask.maskRef.value) {
+                    this.imask.maskRef.value = this.datavalue;
+                }
+            } else {
+                // when display format is dynamically populated, cursor position is at the end of the format, readjusting the cursor position based on masked input value
+                // Adding timeout, as the below code should be on hold until imask model is generated
+                setTimeout(() => {
+                    if (this.imask && this.imask.maskRef && this.imask.maskRef.value) {
+                        const maskValIndex = this.imask.maskRef.value.indexOf('_');
+                        const enteredMaskVal = maskValIndex >= 0 ? this.imask.maskRef.value.slice(0, maskValIndex).length : this.imask.maskRef.value.length;
+                        if (enteredMaskVal !== this.imask.maskRef.cursorPos) {
+                            this.imask.maskRef.updateCursor(enteredMaskVal);
+                        }
+                    }
+                }, 50);
+            }
+        } else if (this.imask && this.imask.maskRef) { // When display format is bound via condition, remove the placeholder when the format is not applicable
+            this.imask.maskRef.updateOptions({ lazy: true });
+            // when display format is removed assign input value to the datavalue attr. WMS-20124
+            this.inputEl.nativeElement.value = this.datavalue;
+        }
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        this.isFocused = !!this.datavalue;
     }
 }

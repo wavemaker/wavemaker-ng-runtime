@@ -222,12 +222,18 @@ export const NAVIGATION_TYPE = {
     SCROLL: 'Scroll'
 };
 
+export const INPUTMODE = {
+    FINANCIAL: 'financial',
+    NATURAL: 'natural'
+};
+
 export const AUTOCLOSE_TYPE = {
     OUTSIDECLICK: 'outsideClick',
     ALWAYS: 'always',
     DISABLED: 'disabled'
 }
 
+export const unsupportedStatePersistenceTypes = ['On-Demand', 'Scroll'];
 
 export const getWatchIdentifier = (...args) => args.join('_');
 
@@ -457,9 +463,32 @@ export const prepareFieldDefs = (data, options?) => {
  * To get container target element to append the list for search and datepicker panel when field present in dialog
  */
 export const getContainerTargetClass = (element) => {
-    if (element.closest('.modal-dialog')) {
-        return '.modal-content';
-    } else {
-        return 'body';
+    return 'body';
+
+    // Below code is not working when we have nested dialogs.
+    // Nested dialogs case we will have  multiple '.modal-content' classes on DOM due to that container positions is not working as expected.
+    // Below code to fix the issue ==> WMS-18751
+    // As regression we got ==> WMS-19835
+
+    // if (element.closest('.modal-dialog')) {
+    //     return '.modal-content';
+    // } else {
+    //     return 'body';
+    // }
+
+}
+
+/**
+ * To extract the Variable Name from a Widget's binddatasource attribute
+ */
+export const extractDataSourceName = (bindDataSource) => {
+    if (!bindDataSource) {
+        return;
     }
+    let dataSourceName;
+    const parts = bindDataSource.split('.');
+    if (parts.length > 1 && parts[0] === 'Variables') {
+        dataSourceName = parts[1];
+    }
+    return dataSourceName;
 }

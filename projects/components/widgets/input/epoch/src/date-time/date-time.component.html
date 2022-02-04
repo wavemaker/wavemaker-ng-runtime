@@ -1,6 +1,3 @@
-<ng-container *ngIf="useDatapicker; then dataPickerTemplate else nativeDateTemplate"></ng-container>
-
-<ng-template #dataPickerTemplate>
     <div dropdown
         [isOpen]="isTimeOpen"
         autoClose="false"
@@ -8,14 +5,14 @@
         (onShown)="onTimepickerOpen()"
         style="display: inherit;">
         <input class="form-control app-textbox display-input"
-            aria-label="Set the date and time"
+            [attr.aria-label]="hint || 'Date and time field'"
             focus-target
             [name]="name"
             [tabindex]="tabindex"
             type="text"
             [value]="displayValue"
-            (click)="toggleDpDropdown($event)"
-            (focus)="invokeOnFocus($event)"
+            (click)="toggleDpDropdown($event, true)"
+            (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
             (blur)="onInputBlur($event)"
             (change)="onDateChange($event)"
             [autofocus]="autofocus"
@@ -25,25 +22,7 @@
             [attr.placeholder]="placeholder"
             [attr.accesskey]="shortcutkey"
             (keydown)="onDisplayKeydown($event)">
-        <div style="width: 0;display: inline-block;"
-            aria-label="datepicker dropdownmenu"
-            aria-controls="date">
-            <input class="model-holder"
-                focus-target
-                [container]="containerTarget || 'body'"
-                [bsConfig]="_dateOptions"
-                [isOpen]="isDateOpen"
-                 placement="bottom right"
-                (onShown)="onDatePickerOpen()"
-                (onHidden)="hideDatepickerDropdown()"
-                [daysDisabled]="excludedDaysToDisable"
-                [datesDisabled]="excludedDatesToDisable"
-                #datepicker=bsDatepicker
-                bsDatepicker
-                [isDisabled]="disabled || readonly || isCurrentDate"
-                [bsValue]="bsDateValue"
-                (bsValueChange)="onModelUpdate($event, 'date')">
-        </div>
+
         <span class="input-group-btn">
             <button type="button"
                 class="btn btn-default btn-date"
@@ -52,7 +31,7 @@
                 aria-label="Select date"
                 aria-haspopup="true"
                 aria-expanded="false"
-                (click)="toggleDpDropdown($event)">
+                (click)="toggleDpDropdown($event, false)">
                 <i aria-hidden="true"
                     class="app-icon wi wi-calendar"></i>
             </button>
@@ -68,6 +47,25 @@
                     class="app-icon wi wi-access-time"></i>
             </button>
         </span>
+        <div style="width: 0;display: inline-block;">
+        <input class="model-holder"
+            aria-label="datepicker dropdownmenu"
+            aria-controls="date"
+            focus-target
+            [container]="containerTarget || 'body'"
+            [bsConfig]="_dateOptions"
+            [isOpen]="isDateOpen"
+             placement="bottom right"
+            (onShown)="onDatePickerOpen()"
+            (onHidden)="hideDatepickerDropdown()"
+            [daysDisabled]="excludedDaysToDisable"
+            [datesDisabled]="excludedDatesToDisable"
+            #datepicker=bsDatepicker
+            bsDatepicker
+            [isDisabled]="disabled || readonly || isCurrentDate"
+            [bsValue]="bsDateValue"
+            (bsValueChange)="onModelUpdate($event, 'date')">
+    </div>
         <div *dropdownMenu
             class="dropdown-menu"
             aria-label="timepicker dropdown"
@@ -89,14 +87,17 @@
                 (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
         </div>
     </div>
-</ng-template>
-<ng-template #nativeDateTemplate>
+<ng-template [ngIf]="loadNativeDateInput">
     <input type="datetime-local"
-        class="form-control app-textbox"
-        role="input"
+        class="form-control app-textbox mobile-input"
+        role="textbox"
         step="any"
-        [value]="displayValue"
+        [value]="nativeDisplayValue" [min]="mindate | date:'yyyy-MM-ddTHH:mm:ss'" [max]="maxdate  | date:'yyyy-MM-ddTHH:mm:ss'"
+        [tabindex]="tabindex"
         [required]="required"
         [disabled]="disabled || readonly || isCurrentDate"
-        (change)="onDateChange($event, true)">
+        [attr.aria-label]="hint || 'Date and time field'"
+        (change)="onDateChange($event, true)"
+        (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
+        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
 </ng-template>

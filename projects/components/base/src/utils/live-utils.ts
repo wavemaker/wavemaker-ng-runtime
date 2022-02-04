@@ -66,7 +66,7 @@ export const getFieldLayoutConfig = (captionWidth, captionPosition, os): any => 
 
     captionPosition = captionPosition || 'top';
 
-    if (captionPosition === 'top') {
+    if (captionPosition === 'top' || captionPosition === 'floating') {
         if ((os && os === 'android') || !isMobileApp() || isAndroid()) { // Is android or not a mobile application
             captionCls = widgetCls = 'col-xs-12';
         } else if (isMobileApp()) { // Is a mobile application and not android

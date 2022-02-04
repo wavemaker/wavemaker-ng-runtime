@@ -1,6 +1,6 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Viewport, StatePersistence } from '@wm/core';
+import { Viewport, StatePersistence, PaginationService } from '@wm/core';
 
 import { Observable, Subject } from 'rxjs';
 
@@ -24,7 +24,7 @@ import {
     extendProto,
     $invokeWatchers
 } from '@wm/core';
-import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe } from '@wm/components/base';
+import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe, extractDataSourceName, DEBOUNCE_TIMES, NAVIGATION_TYPE, unsupportedStatePersistenceTypes } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
 
 import { ListComponent } from '@wm/components/data/list';
@@ -125,6 +125,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     gridclass;
     gridfirstrowselect;
     iconclass;
+    ondemandmessage;
     isGridEditMode;
     loadingdatamsg;
     multiselect;
@@ -175,6 +176,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     _liveTableParent;
     isPartOfLiveGrid;
     gridElement;
+    isNewRowInserted;
     isMobile;
     isLoading;
     documentClickBind = noop;
@@ -196,7 +198,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private isdynamictable;
     private _dynamicContext;
     private noOfColumns;
-
+    public onDemandLoad;
+    private infScroll;
+    private isDataLoading;
+    private currentPage;
     private applyProps = new Map();
 
     redraw = _.debounce(this._redraw, 150);
@@ -291,7 +296,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
                 this.selectedItemChange.next(this.selectedItems);
                 const rowData = this.addRowIndex(row);
-                if (rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator) {
+                if (rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
                     const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
@@ -302,6 +307,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     } else {
                         this.statePersistence.setWidgetState(this, {'selectedItem': [obj]});
                     }
+                } else {
+                    console.warn('Retain State handling on Widget ' + this.name + ' is not supported for current pagination type.');
                 }
                 this.invokeEventCallback('rowselect', {$data: rowData, $event: e, row: rowData});
             });
@@ -334,7 +341,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.selectedItems = this.callDataGridMethod('getSelectedRows');
                     this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
                     const rowData = this.addRowIndex(row);
-                    if (this.getConfiguredState() !== 'none') {
+                    if (this.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
                         const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                         const widgetState = this.statePersistence.getWidgetState(this);
                         if (_.get(widgetState, 'selectedItem')) {
@@ -346,6 +353,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                                 this.statePersistence.setWidgetState(this, {'selectedItem': widgetState.selectedItem});
                             }
                         }
+                    } else {
+                        console.warn('Retain State handling on Widget ' + this.name + ' is not supported for current pagination type.');
                     }
                 });
             }
@@ -724,14 +733,39 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _gridData;
     private _selectedItemsExist = false;
     set gridData(newValue) {
-        this._gridData = newValue;
+        this.isDataLoading = false;
+        if (this.onDemandLoad || this.infScroll) {
+            // update the _gridData field with the next set of items and modify the current page
+            [this._gridData, this.currentPage] = this.paginationService.updateFieldsOnPagination(this, newValue);
+
+            // In case of on demand pagination, create the load more button only once and show the button until next page is not disabled
+            if (!this.$element.find('.on-demand-datagrid').length && !this.dataNavigator.isDisableNext && this.onDemandLoad) {
+                this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
+                    this.dataNavigator.navigatePage('next', $event);
+                    this.isDataLoading = true;
+                });
+            } else if (this.dataNavigator.isDisableNext || !this.isDataLoading) {
+                // when the next page is disabled or when the data is not loading remove the loading/load more button accordingly
+                this.callDataGridMethod('hideLoadingIndicator', this.dataNavigator.isDisableNext, this.infScroll);
+            }
+        } else {
+            this._gridData = newValue;
+        }
         let startRowIndex = 0;
         let gridOptions;
 
-        this._onChange(newValue);
+        this._onChange(this._gridData);
         this._onTouched();
 
         if (isDefined(newValue)) {
+            if (this._gridData.length && this.infScroll) {
+                // smoothscroll events will be binded.
+                // Added timeout as the table html is rendered at runtime
+                setTimeout(() => {
+                    this.paginationService.bindScrollEvt(this, 'tbody', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+                }, 0);
+            }
+
             /*Setting the serial no's only when show navigation is enabled and data navigator is compiled
              and its current page is set properly*/
             if (this.isNavigationEnabled() && this.dataNavigator.dn.currentPage) {
@@ -751,9 +785,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
             // If data and colDefs are present, call on before data render event
             if (!this.isdynamictable && !_.isEmpty(newValue) && gridOptions.colDefs.length) {
-                this.invokeEventCallback('beforedatarender', {$data: newValue, $columns: this.columns, data: newValue, columns: this.columns});
+                this.invokeEventCallback('beforedatarender', {$data: this._gridData, $columns: this.columns, data: this._gridData, columns: this.columns});
             }
-            this.setDataGridOption('data', getClonedObject(newValue));
+            this.setDataGridOption('data', getClonedObject(this._gridData));
         }
     }
 
@@ -789,6 +823,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         private app: App,
         private dynamicComponentProvider: DynamicComponentRefProvider,
         private statePersistence: StatePersistence,
+        private paginationService: PaginationService,
         private viewport: Viewport,
         @Optional() public parentList: ListComponent,
         @Attribute('dataset.bind') public binddataset,
@@ -805,7 +840,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         const listenersToRemove = [
             // Updates pagination, filter, sort etc options for service and crud variables
             this.app.subscribe('check-state-persistence-options', options => {
-                if (_.get(options, 'variable.name') !== _.get(this.datasource, 'name')) {
+                let dataSourceName = _.get(this.datasource, 'name');
+                // in Prefabs, this.datasource is not resolved at the time of variable invocation, so additional check is required.
+                if (!dataSourceName) {
+                    dataSourceName = extractDataSourceName(this.binddatasource);
+                }
+                if (_.get(options, 'variable.name') !== dataSourceName) {
                     return;
                 }
                 if (this._pageLoad && this.getConfiguredState() !== 'none') {
@@ -861,6 +901,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (_.get(widgetState, 'selectedItem')) {
             this._selectedItemsExist = true;
         }
+        options.options = options.options || {};
         if (_.get(widgetState, 'pagination')) {
             options.options.page = widgetState.pagination;
             if (_.get(widgetState, 'sort')) {
@@ -913,6 +954,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (this.rowFilter[filterObj.field]) {
                     this.rowFilter[filterObj.field].value = filterObj.value;
                     this.rowFilter[filterObj.field].matchMode = filterObj.matchMode;
+                    this.rowFilter[filterObj.field].type = filterObj.type;
                     if ($(this.rowFilterCompliedTl[filterObj.field]).length) {
                         const val = filterObj.type === 'integer' ? parseInt(filterObj.value) : filterObj.value;
                         $(this.rowFilterCompliedTl[filterObj.field]).find('input').val(filterObj.value);
@@ -1322,7 +1364,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this._selectedItemsExist = false;
                 // if an item is already selected, don't trigger onSelect event for it again
                 if (currentPageItems.length && this.selecteditem.length !== widgetState.selectedItem.length) {
-                    this.selecteditem = currentPageItems.map(function(val) {return val.index; });
+                    // don't reassign this.selecteditem if selected items already exist.
+                    if (_.isArray(this.selecteditem)) {
+                        currentPageItems.forEach((item) => {
+                            this.selectItem(item.index, undefined);
+                        });
+                    } else {
+                        this.selecteditem = currentPageItems.map(function(val) {return val.index; });
+                    }
                 }
             }
         }
@@ -1352,7 +1401,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     }
                 }
             });
-            tmpl += `<wm-table-column ${attrsTmpl} tableName="${this.name}">${customTmpl}</wm-table-column>`;
+            tmpl += `<wm-table-column ${attrsTmpl} tableName="${this.name}${(this as any).$attrs.get('table_reference')}">${customTmpl}</wm-table-column>`;
         });
         this.dynamicTableRef.clear();
         if (!this._dynamicContext) {
@@ -1394,6 +1443,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             columnDef.mobileDisplay = true;
             columnDef.tabletDisplay = true;
             columnDef.searchable = true;
+            columnDef.showinfilter = true;
             columnDef.type  = 'string';
             // Fix for [WMS-19668] and [WMS-19669]- Adding index and headerIndex for Dynamic DB columns.
             // Note: we don't have column groups for Dynamic DB
@@ -1510,13 +1560,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (newVal) {
             if (this.shownavigation && !this.dataNavigatorWatched) {
                 this.enablePageNavigation();
-                /*
-                 * watchVariableDataSet is called with the entire data for Static Variable before being called with
-                 * paginated data. Set pageLoad to true so that State logic can be triggered with paginated data.
-                */
-                if (_.get(this.datasource, 'category') === 'wm.Variable') {
-                    this._pageLoad = true;
-                }
                 return;
             }
         } else {
@@ -1585,6 +1628,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (nv !== 'None') {
                     this.shownavigation = true;
                 }
+                this.onDemandLoad = nv === NAVIGATION_TYPE.ONDEMAND ? true : false;
+                this.infScroll = nv === NAVIGATION_TYPE.SCROLL ? true : false;
                 this.navControls = nv;
                 break;
             case 'gridfirstrowselect':
@@ -1626,6 +1671,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 // Enable new row if shownew is true or addNewRow buton is present
                 enableNewRow = nv || _.some(this.actions, act => _.includes(act.action, 'addNewRow()'));
                 this.callDataGridMethod('option', 'actionsEnabled.new', enableNewRow);
+                break;
+            case 'pagesize':
+                this.dataNavigator.options = {
+                    maxResults: nv
+                };
+                this.dataNavigator.widget.maxResults = nv;
+                this.dataNavigator.maxResults = nv;
+                break;
+            case 'ondemandmessage':
+                if (nv) {
+                    this.$element.find('.on-demand-datagrid > a').text(nv);
+                }
                 break;
             case 'show':
                 if (nv) {
@@ -1877,6 +1934,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     ngOnDetach() {
         super.ngOnDetach();
-        this._pageLoad = true;
+        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none') {
+            this._pageLoad = false;
+        } else {
+            this._pageLoad = true;
+        }
     }
 }

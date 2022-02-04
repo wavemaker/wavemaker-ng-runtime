@@ -168,7 +168,7 @@ class RemoteSyncInterceptor implements RequestInterceptor {
             path = _.replace(pageUrl, fileName, ''),
             folderPath = 'remote' + _.replace(path, this.app.deployedUrl, ''),
             downloadsParent = cordova.file.dataDirectory;
-        return new Promise((resolve, reject) => {
+        return new Promise<void | boolean>((resolve, reject) => {
                 if (this.checkRemoteDirectory) {
                     return this.deviceService.getAppBuildTime().then(buildTime => {
                         const remoteSyncInfo = this.deviceService.getEntry('remote-sync') || {};
@@ -223,13 +223,15 @@ class SecurityInterceptor implements RequestInterceptor {
 
     private initialized = false;
     private static PAGE_URL_PATTERN = new RegExp('page.min.json$');
+    private static PREFAB_URL_PATTERN = new RegExp('^app/prefabs/.*/page.min.json$');
     private publicPages;
 
     constructor(private app: App, private file: File, private securityService: SecurityService) {}
 
     public intercept(request: HttpRequest<any>): Promise<HttpRequest<any>> {
         return new Promise<HttpRequest<any>>((resolve, reject) => {
-            if (SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
+            if (!SecurityInterceptor.PREFAB_URL_PATTERN.test(request.url) 
+                && SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
                 return Promise.resolve().then(() => {
                     if (!this.initialized) {
                         return this.init();

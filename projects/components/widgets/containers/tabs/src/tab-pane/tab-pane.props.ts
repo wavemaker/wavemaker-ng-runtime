@@ -18,7 +18,7 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['paneicon', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
-                ['smoothscroll', {value: true, ...PROP_BOOLEAN}],
+                ['smoothscroll', {value: false, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', {value: 'Tab Title', ...PROP_STRING}]
             ]

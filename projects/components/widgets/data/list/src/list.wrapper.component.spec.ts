@@ -1,4 +1,4 @@
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import {App, AppDefaults, setPipeProvider} from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -55,7 +55,7 @@ describe('ListComponent', () => {
    let listComponent: ListComponent;
    let fixture: ComponentFixture<ListWrapperComponent>;
 
-   beforeEach(async(() => {
+   beforeEach(waitForAsync(() => {
        TestBed.configureTestingModule({
            imports: [
                FormsModule,
@@ -147,6 +147,49 @@ describe('ListComponent', () => {
         expect(listComponent.selecteditem).toEqual(listComponent.dataset[1]);
     });
 
+    it('should render items depending on the page size provided', (done) => {
+        spyOn(wrapperComponent, 'onRender');
+        listComponent.setProperty('pagesize', 1);
+        fixture.detectChanges();
+        expect(wrapperComponent.onRender).toHaveBeenCalledTimes(1);
+
+        // 1 item should be selected
+        setTimeout(()=>{
+            expect(listComponent.fieldDefs.length).toEqual(1);
+            done();
+        }, 1000);
+    });
+
+    it('should return index of the list item when an object / directive is sent to getIndex function', () => {
+        // object exists in the testdata
+        const item = {name: 'Peter', age: 21};
+        const index = listComponent.getIndex(item);
+        fixture.detectChanges();
+
+        expect(index).toEqual(0);
+
+        // object does not exist in test data      
+        const obj = {name: 'Jack', age: 24};
+        const val = listComponent.getIndex(obj);
+        fixture.detectChanges();
+
+        expect(val).toEqual(-1);
+
+        // pass selectedItem to getIndex function
+        listComponent.selectItem(1);
+        const selectedIndex = listComponent.getIndex(listComponent.selecteditem);
+        fixture.detectChanges();
+
+        expect(selectedIndex).toEqual(1);
+
+        // pass listItemDirective
+        const directiveIndex = listComponent.getIndex(listComponent.listItems.last);
+        fixture.detectChanges();
+
+        expect(directiveIndex).toEqual(1);
+    });
+
+
     /*
     it('should invoke on-before-render and on-render in sequence', fakeAsync(() => {
         spyOn(wrapperComponent, 'onBeforeRender');
@@ -173,7 +216,7 @@ describe('ListComponent With groupby', () => {
     let listComponent: ListComponent;
     let fixture: ComponentFixture<ListWrapperComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
                 FormsModule,

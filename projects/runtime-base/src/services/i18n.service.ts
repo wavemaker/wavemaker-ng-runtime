@@ -142,7 +142,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadAngularLocaleBundle(angLocale) {
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
             if (this.selectedLocale === this.defaultSupportedLocale) {
                 resolve();
@@ -232,13 +232,40 @@ export class I18nServiceImpl extends AbstractI18nService {
     private deduceAppLocale() {
         // computation to find app default locale
         const _acceptLang = this.getAcceptedLanguages();
-        _acceptLang.push(getWmProjectProperties().defaultLanguage);
+        const _defaultLanguage = getWmProjectProperties().defaultLanguage;
+        _acceptLang.push(_defaultLanguage);
+
+        // checks whether user preference is based on browser set languages or default language set in project  
+        let preferBrowserLang = getWmProjectProperties().preferBrowserLang;
+        if (!preferBrowserLang) { // when preferBrowserLang is not defined, set to its default value
+            preferBrowserLang  = true;
+        } else { // convert stringified boolean values recieved from BE to booleans
+            preferBrowserLang= (preferBrowserLang === 'true' || preferBrowserLang === true) ? true : false;
+        }
 
         let _supportedLang = Object.keys(getWmProjectProperties().supportedLanguages) || [this.defaultSupportedLocale];
 
-        // check for the session storage to load any pre-requested locale
-        const _defaultLang = getSessionStorageItem('selectedLocale') || _.intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
+        // when preference is given to browser set languages, do not populate _selectedDefaultLang variable
+        let _selectedDefaultLang = preferBrowserLang ? undefined : _defaultLanguage;
 
+        let _appSupportedLang;
+        /**
+         * for cordova, check for language ignoring the locale 
+         * As the navigator.languages always returns the language with locale (en-us)
+         * The supportedLanguages from BE doesn't include locale (en) which leads to mismatch
+         */
+        if (CONSTANTS.hasCordova) {  
+            let supportedLang = [];
+            _.forEach(_acceptLang, function(lang) {
+                let matchedLang = _.find(_supportedLang, (val) => lang === val) || _.find(_supportedLang, (val) => lang.startsWith(val));
+                if (matchedLang) {
+                    supportedLang.push(matchedLang);
+                }
+             })
+            _appSupportedLang = supportedLang[0];
+        }
+        // check for the session storage to load any pre-requested locale
+        const _defaultLang = getSessionStorageItem('selectedLocale') || _selectedDefaultLang || _appSupportedLang || _.intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
         // if the supportedLocale is not available set it to defaultLocale
         _supportedLang = _supportedLang || [_defaultLang];
 

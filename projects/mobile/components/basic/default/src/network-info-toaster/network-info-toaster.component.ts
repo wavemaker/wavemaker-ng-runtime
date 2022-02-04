@@ -50,6 +50,9 @@ export class NetworkInfoToasterComponent extends StylableComponent implements On
         data = data || this.networkService.getState();
         const oldState = this.networkState;
         let autoHide = false;
+        if (data.noServiceRequired) {
+            return false;
+        }
         if (data.isConnected) {
             this.networkState = NetworkState.CONNECTED;
             autoHide = true;

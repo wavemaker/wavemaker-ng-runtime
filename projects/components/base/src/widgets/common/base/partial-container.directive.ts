@@ -25,11 +25,20 @@ export class PartialContainerDirective {
         this.vcRef.clear();
         // when the container-target is inside the component template, it can be queried after viewInit of the component.
         $invokeWatchers(true);
-
-        const componentFactory = await this.partialRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL);
+        // for partials with popovers and page dialogs which are inside a prefab, prefab name needs to be computed and appended
+        const prefab = $(this.elRef.nativeElement).closest('.app-prefab');
+        let prefabName;
+        if (prefab.length) {
+            prefabName = prefab.attr('prefabname');
+        } else if (this.componentInstance.viewParent) {
+            prefabName = this.componentInstance.viewParent.prefabName;
+        }
+        const componentFactory = await this.partialRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL, {prefab: prefabName});
         if (componentFactory) {
             const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);
-
+            if (instanceRef && instanceRef['_component'] && prefabName) {
+                instanceRef['_component'].prefabName = prefabName;
+            }
             if (!this.$target) {
                 this.$target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
             }

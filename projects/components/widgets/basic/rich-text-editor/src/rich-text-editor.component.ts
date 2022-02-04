@@ -52,7 +52,8 @@ const overrideSummerNote = () => {
     providers: [
         provideAs(RichTextEditorComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(RichTextEditorComponent)
-    ]
+    ],
+    exportAs: 'wmRichTextEditor'
 })
 export class RichTextEditorComponent extends BaseFormCustomComponent implements OnInit, OnDestroy {
     static initializeProps = registerProps();
@@ -110,15 +111,17 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         return this.performEditorOperation('code');
     }
 
+    // @ts-ignore
     get datavalue() {
         return this.htmlcontent;
     }
 
+    // @ts-ignore
     set datavalue(nv) {
         if (nv !== undefined && nv !== null) {
             this.$hiddenInputEle.val(nv);
             this.performEditorOperation('reset');
-            this.performEditorOperation('code', this.domSanitizer.sanitize(SecurityContext.HTML, nv));
+            this.performEditorOperation('code', nv);
         }
     }
 
@@ -141,6 +144,14 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
             this.$richTextEditor.summernote(this.EDITOR_DEFAULT_OPTIONS);
         });
 
+    }
+
+    getDefaultOptions() {
+        return this.EDITOR_DEFAULT_OPTIONS;
+    }
+
+    getLib() {
+        return 'summernote';
     }
 
     overrideDefaults(options) {

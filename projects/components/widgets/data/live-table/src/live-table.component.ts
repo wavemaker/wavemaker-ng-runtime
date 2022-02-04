@@ -80,16 +80,16 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     openDialog() {
-        this.dialogService.open(this.dialogId);
+        this.dialogService.open(this.dialogId, this.viewParent);
         $appDigest();
     }
 
     closeDialog() {
-        this.dialogService.close(this.dialogId);
+        this.dialogService.close(this.dialogId, this.viewParent);
     }
 
     focusFirstInput() {
-        const $firstInput = $(this.form.$element).find('[role="input"]').first();
+       const $firstInput = $(this.form.$element).find('[role="textbox"]').first();
         $firstInput.focus();
         $firstInput.select();
     }
@@ -189,6 +189,9 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         this.form.isUpdateMode = isDefined(updateMode) ? updateMode : newForm ? true : false;
         switch (operation) {
             case 'insert':
+                if (this.table.navigation === 'On-Demand') {
+                    this.table.isNewRowInserted = true;
+                }
                 if (newForm) {
                     /*if new form is to be shown after insert, skip the highlight of the row*/
                     this.table.gridfirstrowselect = false;

@@ -144,11 +144,11 @@ export const getRequiredFormWidget = (widgetType): string => {
 };
 
 // This mehtod is used to add datasetboundexpr attribute for node
-const addDatasetBoundExprAttribute = (childNode, attr, attrValue) => {
+const addDatasetBoundExprAttribute = (childNode: Element, attr: Attribute, attrValue: string) => {
     attrValue = attrValue.replace('bind:', '');
     const datasetBoundAttribute = childNode.attrs.find( a => a.name === 'datasetboundexpr');
     if (attr.name === 'dataset' && !datasetBoundAttribute) {
-        childNode.attrs.push(new Attribute('datasetboundexpr', attrValue, attr.sourceSpan, attr.valueSpan));
+        childNode.attrs.push(new Attribute('datasetboundexpr', attrValue, attr.sourceSpan, attr.keySpan, attr.valueSpan));
     }
 };
 

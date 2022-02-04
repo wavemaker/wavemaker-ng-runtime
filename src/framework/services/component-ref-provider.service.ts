@@ -20,12 +20,13 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         super();
     }
 
-    public async getComponentFactoryRef(componentName: string, componentType: ComponentType): Promise<any> {
+    public async getComponentFactoryRef(componentName: string, componentType: ComponentType, options?: {}): Promise<any> {
         const value = componentRefCache.get(componentType).get(componentName);
         if (!value && (componentType === ComponentType.PARTIAL || componentType === ComponentType.PREFAB)) {
             const partialRef = await this.lazyComponentRef.getComponentFactoryRef(
                 componentName,
-                componentType
+                componentType,
+                options
             );
             if (partialRef) {
                 return Promise.resolve(partialRef);

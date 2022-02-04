@@ -18,7 +18,8 @@ export const currencyProps = new Map(
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['step', {value: 1, ...PROP_NUMBER}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['trailingzero', {value: false, ...PROP_BOOLEAN}]
+        ['trailingzero', {value: false, ...PROP_BOOLEAN}],
+        ['inputmode', {value: 'natural', ...PROP_STRING}]
     ]
 );
 

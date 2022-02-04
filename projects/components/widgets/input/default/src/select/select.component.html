@@ -1,4 +1,4 @@
-<select role="input" aria-haspopup="true" aria-expanded="false" #select
+<select role="listbox" aria-haspopup="true" aria-expanded="false" #select
         focus-target
         [ngClass]="['app-select form-control', class]"
         [disabled]="disabled"
@@ -7,12 +7,34 @@
         [(ngModel)]="modelByKey"
         [multiple]="multiple"
         (change)="onSelectValueChange($event)"
-        (blur)="invokeOnTouched($event)"
+        (focus)="checkForFloatingLabel($event)"
+        (blur)="invokeOnTouched($event); checkForFloatingLabel($event)"
         [attr.name]="name"
+        [attr.aria-label]="hint || 'Select options'"
+        [attr.aria-multiselectable]="multiple"
         [autofocus]="autofocus"
 >
-  <option selected value="undefined" [textContent]="placeholder" [hidden]="!placeholder" ></option>
-  <option
-          *ngFor="let item of datasetItems"
-          [value]="item.key" [selected]="item.selected" [textContent]="item.label"></option>
+    <option selected
+    value="undefined"
+    [textContent]="placeholder"
+    [hidden]="!placeholder"></option>
+
+    <ng-container *ngIf="groupby">
+        <optgroup *ngFor="let groupObj of groupedData"
+            [label]="groupObj.key">
+            <option *ngFor="let item of groupObj.data;"
+                [value]="item.key"
+                [selected]="item.selected"
+                [textContent]="item.label"
+                role="option"></option>
+        </optgroup>
+    </ng-container>
+
+    <ng-container *ngIf="!groupby">
+        <option *ngFor="let item of datasetItems"
+            [value]="item.key"
+            [selected]="item.selected"
+            [textContent]="item.label"
+            role="option"></option>
+    </ng-container>
 </select>

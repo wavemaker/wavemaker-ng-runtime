@@ -1,6 +1,6 @@
 import { Attribute, Element, ParseSourceSpan, Text } from '@angular/compiler';
 
-import { isMobileApp } from '@wm/core';
+import {IDGenerator, isMobileApp} from '@wm/core';
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'div';
@@ -16,7 +16,7 @@ const createElement = name => {
 };
 
 const addAtrribute = (node: Element, name: string, value: string) => {
-    const attr = new Attribute(name, value, noSpan, noSpan);
+    const attr = new Attribute(name, value, noSpan, noSpan, noSpan);
     node.attrs.push(attr);
 };
 
@@ -39,6 +39,7 @@ const getElementNode = (name, node) => {
 };
 
 const noSpan = ({} as ParseSourceSpan);
+const idGen = new IDGenerator('wm_page');
 
 register('wm-page', (): IBuildTaskDef => {
     return {
@@ -61,7 +62,10 @@ register('wm-page', (): IBuildTaskDef => {
                 }
             }
         },
-        pre: attrs => `<${tagName} wmPage data-role="pageContainer" ${getAttrMarkup(attrs)}>`,
+        pre: (attrs) => {
+            const counter = idGen.nextUid();
+            return `<${tagName} wmPage #${counter}="wmPage" data-role="pageContainer" [attr.aria-label]="${counter}.hint || 'Main page content'" ${getAttrMarkup(attrs)}>`;
+        },
         post: () => `</${tagName}>`
     };
 });

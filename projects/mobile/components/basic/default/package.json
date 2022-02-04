@@ -20,5 +20,8 @@
                 "@wm/components/basic/progress": "wm.components.basic.progress"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

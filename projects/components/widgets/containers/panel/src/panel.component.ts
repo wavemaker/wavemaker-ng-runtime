@@ -14,7 +14,8 @@ const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-panel', hostClass: DEFAUL
     templateUrl: './panel.component.html',
     providers: [
         provideAsWidgetRef(PanelComponent)
-    ]
+    ],
+    exportAs: 'wmPanel'
 })
 
 export class PanelComponent extends MenuAdapterComponent implements OnInit, AfterContentInit {

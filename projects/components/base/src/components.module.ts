@@ -7,6 +7,7 @@ import { SecurityModule } from '@wm/security';
 import { ContainerDirective } from './widgets/common/container/container.directive';
 import { ImagePipe } from './pipes/image.pipe';
 import { ItemTemplateDirective } from "./widgets/common/item-template/item-template.directive";
+import { RepeatTemplateDirective } from "./widgets/common/repeat-template/repeat-template.directive";
 import { LazyLoadDirective } from './widgets/common/lazy-load/lazy-load.directive';
 import { MessageComponent } from './widgets/common/message/message.component';
 import { PartialDirective } from './widgets/common/partial/partial.directive';
@@ -42,6 +43,7 @@ import { DialogServiceImpl } from './widgets/common/dialog/dialog.service';
 const wmComponents = [
     ContainerDirective,
     ItemTemplateDirective,
+    RepeatTemplateDirective,
     LazyLoadDirective,
     MessageComponent,
     PartialDirective,

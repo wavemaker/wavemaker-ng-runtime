@@ -16,5 +16,8 @@
                 "@wm/components/data/table": "wm.components.data.table"
             }
         }
+    },
+    "dependencies": {
+      "tslib": "^2.0.0"
     }
 }

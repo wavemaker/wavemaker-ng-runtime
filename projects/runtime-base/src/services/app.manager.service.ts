@@ -61,18 +61,31 @@ export class AppManagerService {
                 active = data.active;
             if (!_.isEmpty(_.trim(variable.spinnerContext))) {
                 if (active) {
-                    variable._spinnerId = variable._spinnerId || [];
-                    const spinnerId = this.$spinner.show(variable.spinnerMessage,
-                        variable._id + '_' + Date.now(),
-                        variable.spinnerclass,
-                        variable.spinnerContext);
-                    variable._spinnerId.push(spinnerId);
+                    let spinnerExists;
+                    // WMS-21117 : Do not trigger spinner, if the current variable is same as spinner which is in context
+                    if (variable._spinnerId && variable._spinnerId.length) {
+                        _.forEach(variable._spinnerId, (item) => {
+                            if (item.slice(0, item.lastIndexOf('_')) === variable._id && (this.$spinner as any).messagesByContext && (this.$spinner as any).messagesByContext[variable.spinnerContext] && 
+                                (variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext]["finalMessage"] || variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext][item])) {
+                                spinnerExists = true;
+                                return;
+                            }
+                        });
+                    }
+                    if (!spinnerExists) {
+                        variable._spinnerId = variable._spinnerId || [];
+                        const spinnerId = this.$spinner.show(variable.spinnerMessage,
+                            variable._id + '_' + Date.now(),
+                            variable.spinnerclass,
+                            variable.spinnerContext);
+                        variable._spinnerId.push(spinnerId);
+                    }
                 } else {
                     this.$spinner.hide(variable._spinnerId.shift());
                 }
             }
         });
-        this.$app.subscribe('userLoggedIn', () => { 
+        this.$app.subscribe('userLoggedIn', () => {
             this.setLandingPage();
             if (this.lastLoggedUserId) {
                 this.$security.getConfig(config => {
@@ -83,11 +96,7 @@ export class AppManagerService {
             }
         });
         this.$app.subscribe('userLoggedOut', () => this.setLandingPage().then(() => {
-            this.clearCache();
-            // navigate to the landing page without reloading the window in device.
-            if (window['cordova']) {
-                this.$router.navigate([`/`]);
-            }
+            this.clearCache();            
         }));
         this.$app.subscribe('http401', (d = {}) => this.handle401(d.page, d.options));
     }
