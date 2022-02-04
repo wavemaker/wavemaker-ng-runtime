@@ -48,6 +48,9 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
             // update the oldDataValue when the datavalue is modified programmatically
             this.updatePrevDatavalue(nv);
             this._onChange(this.datavalue);
+            if (this.widgetType === 'wm-textarea' && nv && !ov) {
+                (this as any).onInputChange(true);
+            }
         } else {
             super.onPropertyChange(key, nv, ov);
         }
