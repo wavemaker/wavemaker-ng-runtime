@@ -1,7 +1,16 @@
-import { Directive, HostBinding, Injector, OnInit } from '@angular/core';
+import { Directive, HostBinding, Injector, OnInit, SecurityContext } from '@angular/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
 
 import { setAttr, setCSS, switchClass } from '@wm/core';
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe } from '@wm/components/base';
+import {
+    DISPLAY_TYPE,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+    ImagePipe,
+    TrustAsPipe
+} from '@wm/components/base';
 
 import { registerProps } from './picture.props';
 
@@ -26,16 +35,16 @@ export class PictureDirective extends StylableComponent implements OnInit {
     picturesource;
     pictureplaceholder;
 
-    @HostBinding('src') imgSource: string;
+    @HostBinding('src') imgSource: SafeResourceUrl;
 
-    constructor(inj: Injector, private imagePipe: ImagePipe) {
+    constructor(inj: Injector, private imagePipe: ImagePipe, private trustAsPipe: TrustAsPipe) {
         super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this);
     }
 
     setImgSource() {
-        this.imgSource = this.imagePipe.transform(this.picturesource, this.encodeurl, this.pictureplaceholder);
+        this.imgSource = this.trustAsPipe.transform(this.imagePipe.transform(this.picturesource, this.encodeurl, this.pictureplaceholder), SecurityContext.RESOURCE_URL);
     }
 
     onPropertyChange(key: string, nv: any, ov: any) {
