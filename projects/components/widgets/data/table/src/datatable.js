@@ -1050,19 +1050,6 @@ $.widget('wm.datatable', {
         this._setColSpan(this.options.headerConfig);
         // Hide the row filter. As different widgets are present inside row filter, this will effect the column size
         this.toggleRowFilter();
-
-        // Find if cols of colgroup has any width defined, if yes remove those columns from colsLen
-        var definedColWidth = 0;
-        var colsLen = headerCols.length;
-        headerCols.each(function () {
-            var eachColWidth = $(this).width();
-            if (eachColWidth) {
-                definedColWidth = definedColWidth + eachColWidth;
-                colsLen =  colsLen - 1;
-            }
-        });
-        
-
         //First Hide or show the column based on the show property so that width is calculated correctly
         headerCells.each(function () {
             var id = Number($(this).attr('data-col-id')),
@@ -1122,47 +1109,7 @@ $.widget('wm.datatable', {
                             tempWidth = $headerCol[0].style.width;
                             if (tempWidth === '' || tempWidth === '0px' || tempWidth === '90px' || _.includes(tempWidth, '%')) { //If width is not 0px, width is already set. So, set the same width again
                                 width = $header.width();
-                                /*
-                                 * WMS-21545: In case of tabs / accordions / wizard, width of $header is not available for inactive panes
-                                 * In such cases, calculating the width of column cells against the closest parent whose width is available
-                                */
-                                if (width <= 0) {
-                                    var currentNode = $header;
-                                    var elemWidth = width;
-                                    var padding = 0;
-                                    while (elemWidth <= 0) {
-                                        currentNode = currentNode.parent();
-                                        elemWidth = currentNode.width();   
-                                        // Find padding of all the elements which are on top of table
-                                        if (currentNode.find('table').length) {
-                                            padding = padding + parseFloat(currentNode.css('padding-left')) + parseFloat(currentNode.css('padding-right'));
-                                        }
-                                    }
-                                    if (elemWidth > 0) {
-                                        // remove padding from parent elem width to avoid assign extra width to table columns
-                                        if (padding) {
-                                            elemWidth = elemWidth - padding;
-                                        }
-                                        
-                                        // If the width is provided in % for inactive panes, convert % to pixel
-                                        if (_.includes(tempWidth, '%')) {
-                                            var widthPercent = parseInt(tempWidth);
-                                            var pixelWidth = (elemWidth)*(widthPercent/100);
-                                            width = pixelWidth;
-                                        } else { // Else divide the parent width by the number of columns available
-                                            // If any columns have defined width, remove that width from parent elem width
-                                            var parentWidth = (definedColWidth && definedColWidth > 0) ? elemWidth - definedColWidth : elemWidth;
-                                            // ColsLen has length of columns whose width is undefined
-                                            var totalCols = colsLen ? colsLen : headerCols.length;
-                                            width = parentWidth / totalCols;
-                                            width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; //columnSanity check to prevent width being too small and Last column, adjust for the scroll width
-                                        }
-                                    } else {
-                                        width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; // fallback to the older approach
-                                    }
-                                } else {
-                                    width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; //columnSanity check to prevent width being too small and Last column, adjust for the scroll width
-                                }
+                                width = width > 90 ? ((colLength === id + 1) ? width - 17 : width) : 90; //columnSanity check to prevent width being too small and Last column, adjust for the scroll width
                             } else {
                                 width = tempWidth;
                             }
@@ -2495,6 +2442,10 @@ $.widget('wm.datatable', {
         this.toggleExpandRow(rowId, false)
     },
     _collapseRow: function(e, rowData, rowId, $nextDetailRow, $icon) {
+        var self = this,
+            $tbody = self.gridElement.find('> .app-datagrid-body'),
+            $row = $($tbody.find('> tr.app-datagrid-row[data-row-id="'+ rowId +'"]'));
+        $row.removeClass('expanded-row');
         if (this.options.onBeforeRowCollapse(e, rowData, rowId) === false) {
             return;
         }
@@ -2521,6 +2472,7 @@ $.widget('wm.datatable', {
             return;
         }
         if (isClosed) {
+            $row.addClass('expanded-row');
             if (e && self.preparedData[rowId]._selected) {
                 e.stopPropagation();
             }
@@ -2868,7 +2820,7 @@ $.widget('wm.datatable', {
         this.dataStatusContainer = $(statusContainer);
         this.gridContainer.append(this.dataStatusContainer);
         this._renderHeader();
-        if (this.options.filtermode === this.CONSTANTS.SEARCH && (_.isEmpty(this.searchObj) || (this.searchObj && !this.searchObj.field && !this.searchObj.value))) {
+        if (this.options.filtermode === this.CONSTANTS.SEARCH) {
             this._renderSearch();
         } else if (this.options.filtermode === this.CONSTANTS.MULTI_COLUMN) {
             this._renderRowFilter();
