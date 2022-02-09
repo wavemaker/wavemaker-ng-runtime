@@ -44,7 +44,8 @@ $.widget('wm.datatable', {
             'selectedColumn': 'selected-column',
             'rowExpandIcon': 'wi wi-minus-square',
             'rowCollapseIcon': 'wi wi-plus-square',
-            'gridRowExpansionClass': 'table-row-expansion'
+            'gridRowExpansionClass': 'table-row-expansion',
+            'expandedRowClass' : 'expanded'
         },
         dataStates: {
             'loading': 'Loading...',
@@ -2495,6 +2496,10 @@ $.widget('wm.datatable', {
         this.toggleExpandRow(rowId, false)
     },
     _collapseRow: function(e, rowData, rowId, $nextDetailRow, $icon) {
+        var self = this,
+            $tbody = self.gridElement.find('> .app-datagrid-body'),
+            $row = $($tbody.find('> tr.app-datagrid-row[data-row-id="'+ rowId +'"]'));
+        $row.removeClass(self.options.cssClassNames.expandedRowClass);
         if (this.options.onBeforeRowCollapse(e, rowData, rowId) === false) {
             return;
         }
@@ -2521,6 +2526,7 @@ $.widget('wm.datatable', {
             return;
         }
         if (isClosed) {
+            $row.addClass(self.options.cssClassNames.expandedRowClass);
             if (e && self.preparedData[rowId]._selected) {
                 e.stopPropagation();
             }
