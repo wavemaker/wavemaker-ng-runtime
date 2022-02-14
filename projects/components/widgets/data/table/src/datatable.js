@@ -468,18 +468,28 @@ $.widget('wm.datatable', {
 
     /* Returns the tbody markup. */
     _getGridTemplate: function () {
-        var self = this,
-            $tbody = $('<tbody class="' + this.options.cssClassNames.gridBody + '"></tbody>');
-
-        this.options.clearCustomExpression();
-        this.options.clearRowDetailExpression();
-
-        _.forEach(this.preparedData, function (row, index) {
-            var _row = _.clone(row);
-            _row.$index = index + 1;
-            self.options.generateCustomExpressions(_row, index);
-            self.options.registerRowNgClassWatcher(_row, index);
-            $tbody.append(self._getRowTemplate(row, index));
+        var self = this, preparedData, newRowsAdded = [],
+            $tbody =  this.gridElement.find('tbody').length > 0 ? this.gridElement.find('tbody') : $('<tbody class="' + this.options.cssClassNames.gridBody + '"></tbody>'),
+            isScroll = (this.options.navigation === 'Scroll');
+        if(isScroll) {
+            preparedData = this.preparedData.slice(self.options.startRowIndex-1);
+            preparedData = preparedData.filter(function(row, index) {
+                var isExists = $tbody.find('tr.app-datagrid-row[data-row-id=' + row.$$pk + ']');
+                if (!isExists.length) { return row;}
+            })
+        } else {
+            this.options.clearCustomExpression();
+            this.options.clearRowDetailExpression();
+            preparedData = this.preparedData;
+        }
+        _.forEach(preparedData, function (row, index) {
+            var _row = _.clone(row), rowIndex = (isScroll) ? self.options.startRowIndex + index -1 : index, rowTemplate;
+            _row.$index = rowIndex + 1;
+            self.options.generateCustomExpressions(_row, rowIndex);
+            self.options.registerRowNgClassWatcher(_row, rowIndex);
+            rowTemplate = self._getRowTemplate(row, rowIndex);
+            $tbody.append(rowTemplate);
+            if (isScroll) { newRowsAdded.push(rowTemplate[0]) };
             if (self.options.rowExpansionEnabled) {
                 var heightStyle = self.options.rowDef.height ? ' style="min-height:' + self.options.rowDef.height + '"' : '';
                 var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
@@ -488,8 +498,7 @@ $.widget('wm.datatable', {
                     '</td></tr>');
             }
         });
-
-        return $tbody;
+        return (isScroll && !_.isEmpty(newRowsAdded)) ? newRowsAdded : $tbody;
     },
 
     /* Returns the table row template. */
@@ -790,10 +799,24 @@ $.widget('wm.datatable', {
             rowData.$$pk = self.options.navigation === 'Scroll' ? (self.options.startRowIndex + i - 1) : i;
             data.push(rowData);
         });
-        if (self.options.navigation === 'Scroll') {
-            this.preparedData.push(...data);
+        if (self.options.navigation === 'Scroll' ) {
+            if (self.preparedData.length) {
+                data.forEach(function (rowData, index) {
+                    var rowId = self.options.startRowIndex+index - 1;
+                    console.log(rowId);
+                    // assigning updated value to prepareData list
+                    if (self.preparedData[rowId] && rowData.$$index === self.preparedData[rowId].$$index) {
+                        self.preparedData[rowId] = rowData;
+                    } else {
+                        // appending new values to preparedData
+                        self.preparedData.push(rowData);
+                    }
+                })
+            } else {
+                self.preparedData.push(...data);
+            }
         } else {
-            this.preparedData = data;
+            self.preparedData = data;
         }
     },
 
@@ -883,7 +906,13 @@ $.widget('wm.datatable', {
             this.gridFooter.remove();
             this._renderGrid();
         } else {
-            this.appendNewRowsTemp();
+            var $tbody = this.gridElement.find('tbody');
+            var $alwaysNewRow = this.gridBody.find('> tr.app-datagrid-row.always-new-row');
+            if ($alwaysNewRow.length) {
+                $alwaysNewRow.remove();
+            }
+            this._renderGrid(undefined);
+          //  this.appendNewRowsTemp();
         }
         this._reselectColumns();
         this.addOrRemoveScroll();
@@ -1093,7 +1122,7 @@ $.widget('wm.datatable', {
                 colsLen =  colsLen - 1;
             }
         });
-        
+
 
         //First Hide or show the column based on the show property so that width is calculated correctly
         headerCells.each(function () {
@@ -1164,7 +1193,7 @@ $.widget('wm.datatable', {
                                     var padding = 0;
                                     while (elemWidth <= 0) {
                                         currentNode = currentNode.parent();
-                                        elemWidth = currentNode.width();   
+                                        elemWidth = currentNode.width();
                                         // Find padding of all the elements which are on top of table
                                         if (currentNode.find('table').length) {
                                             padding = padding + parseFloat(currentNode.css('padding-left')) + parseFloat(currentNode.css('padding-right'));
@@ -1175,7 +1204,7 @@ $.widget('wm.datatable', {
                                         if (padding) {
                                             elemWidth = elemWidth - padding;
                                         }
-                                        
+
                                         // If the width is provided in % for inactive panes, convert % to pixel
                                         if (_.includes(tempWidth, '%')) {
                                             var widthPercent = parseInt(tempWidth);
@@ -2131,6 +2160,28 @@ $.widget('wm.datatable', {
                 $row.removeClass(className);
                 self.addOrRemoveScroll();
             }, e, function (skipFocus, error) {
+                if (self.options.navigation === "Scroll") {
+                   var rowId = +$(e.target).closest("tr.app-datagrid-row").attr("data-row-id");
+                  // remove existing row from tbody
+                   var $row = self.gridBody.find('tr.app-datagrid-row[data-row-id="' + rowId + '"]');
+                   // remove data
+                    self.preparedData.splice(rowId,1);
+                    // storing the data of deleted row in "options.deletedRowData"
+                    self.options.data.splice(rowId,1);
+                   // decrementing index values and data-row-id for remaining rows
+                    self.gridBody.find('tr.app-datagrid-row:gt(' + rowId + ')').each(function(index, row) {
+                        if (!$(row).is(':last-child')) {
+                            $(row).attr("data-row-id", rowId);
+                            self.preparedData[rowId].$$pk--;
+                            self.preparedData[rowId].$$index--;
+                            self.preparedData[rowId].$index--;
+                            rowId++;
+                        }
+                    });
+                    $row.remove();
+                }
+
+
                 //For quick edit, on clicking of delete button or DELETE key, edit the next row
                 if (self.options.editmode !== self.CONSTANTS.QUICK_EDIT || !($(e.target).hasClass('delete-row-button') || self.Utils.isDeleteKey(e))) {
                     return;
@@ -2874,10 +2925,21 @@ $.widget('wm.datatable', {
             this.selectFirstRow(true, true);
         }
     },
-    /* Renders the table body. */
+
     _renderGrid: function (isCreated) {
-        var $htm = $(this._getGridTemplate());
-        this.gridElement.append($htm);
+        var $htm, isScroll = (this.options.navigation === 'Scroll');
+        if(isScroll) {
+            var $tbody = this.gridElement.find('tbody');
+            // get markup for new rows and append it to tbody
+            $htm = $(this._getGridTemplate());
+            if (!$tbody.length) {
+                this.gridElement.append($htm);
+            }
+        } else {
+            $htm = $(this._getGridTemplate());
+            this.gridElement.append($htm);
+        }
+
         if (this.options.summaryRow) {
             var $summaryRowHtm = $(this._getSummaryRowTemplate());
             this.gridElement.append($summaryRowHtm);
@@ -2893,7 +2955,9 @@ $.widget('wm.datatable', {
         this.gridBody = this.gridElement.find('tbody');
         this.gridFooter = this.gridElement.find('tfoot');
         this._findAndReplaceCompiledTemplates();
-        this.options.clearRowActions();
+        if (!isScroll) {
+            this.options.clearRowActions();
+        }
         this._appendRowExpansionButtons($htm);
         this._appendRowActions($htm);
         this.attachEventHandlers($htm);

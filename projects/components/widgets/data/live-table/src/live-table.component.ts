@@ -189,7 +189,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         this.form.isUpdateMode = isDefined(updateMode) ? updateMode : newForm ? true : false;
         switch (operation) {
             case 'insert':
-                if (this.table.navigation === 'On-Demand') {
+                if (this.table.navigation === 'On-Demand' || this.table.navigation === 'Scroll') {
                     this.table.isNewRowInserted = true;
                 }
                 if (newForm) {

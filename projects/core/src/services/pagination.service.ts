@@ -17,6 +17,7 @@ export class PaginationService {
         let currentPage = parent.currentPage;
         const dataNavigator = parent.dataNavigator;
         const pagesize = parent.pagesize;
+        var flag = false;
 
         if (!isDefined(fieldDefs) || dataNavigator.isFirstPage()) {
             fieldDefs = [];
@@ -48,7 +49,23 @@ export class PaginationService {
             }
             newVal = itemsToPush;
         }
-        fieldDefs = [...fieldDefs, ...newVal];
+      //  fieldDefs = [...fieldDefs, ...newVal];
+        // Adding only unique values
+        if (!fieldDefs.length) {
+            fieldDefs = newVal;
+        } else {
+            newVal.forEach(function (newObj) {
+                flag = false;
+                fieldDefs.forEach(function (obj) {
+                    if (_.isEqual(newObj, obj)) {
+                        flag = true;
+                    }
+                });
+                if (flag === false) {
+                    fieldDefs.push(newObj);
+                }
+            });
+        }
         return [fieldDefs, currentPage];
     }
 
@@ -61,7 +78,7 @@ export class PaginationService {
      * @returns null
      */
     public bindScrollEvt(parent, nodeName, debounceNum) {
-        const dataNavigator = parent.dataNavigator;        
+        const dataNavigator = parent.dataNavigator;
         const $el = parent.$element;
         const $rootEl = $el.find(nodeName);
         const $firstChild = $rootEl.children().first();
@@ -124,7 +141,7 @@ export class PaginationService {
 
     /**
      * @description
-     * This function calls fetchNextDatasetOnScroll fn on debounced time 
+     * This function calls fetchNextDatasetOnScroll fn on debounced time
      * @param {object} dataNavigator pagination instance
      * @param {number} debounceNum provided to lodash debounce
      * @returns debounced function definition
@@ -135,7 +152,7 @@ export class PaginationService {
 
     /**
      * @description
-     * This function calls next set of data when navigated to next page 
+     * This function calls next set of data when navigated to next page
      * @param {object} dataNavigator pagination instance
      * @returns null
      */
