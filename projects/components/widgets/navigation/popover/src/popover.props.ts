@@ -27,6 +27,7 @@ export const registerProps = () => {
                 ['popoverarrow', {value: true, ...PROP_BOOLEAN}],
                 ['popoverheight', PROP_STRING],
                 ['popoverplacement', {value: 'bottom', ... PROP_STRING}],
+                ['boundarieselement', {value: 'scrollParent', ... PROP_STRING}],
                 ['popoverwidth', PROP_STRING],
                 ['shortcutkey', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],

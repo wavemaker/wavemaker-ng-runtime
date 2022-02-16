@@ -59,7 +59,7 @@
     "jssha": "^3.1.2",
     "lodash": "4.17.19",
     "ng-circle-progress": "1.6.0",
-    "ngx-bootstrap": "6.2.0",
+    "ngx-bootstrap": "npm:@wavemaker/ngx-bootstrap@6.2.0",
     "ngx-color-picker": "10.1.0",
     "ngx-toastr": "13.2.1",
     "rxjs": "6.6.0",
