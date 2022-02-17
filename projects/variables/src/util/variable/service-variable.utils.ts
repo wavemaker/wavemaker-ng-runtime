@@ -357,6 +357,31 @@ export class ServiceVariableUtils {
             url = $rootScope.project.deployedUrl + url;
         }
 
+        // If pagination info exists, process info in request headers based on settings
+        const paginationInfo = operationInfo.paginationInfo;
+        if (paginationInfo && variable.resPaginationInfo) {
+            var reqObj = {};
+            if (paginationInfo.reqInput.offsetValPath) {
+                _.set(reqObj, paginationInfo.reqInput.offsetValPath, variable.resPaginationInfo['offset']);
+            } else {
+                reqObj[paginationInfo.reqInput.offsetKey] = variable.resPaginationInfo['offset'];
+            }
+            if (paginationInfo.reqInput.limitValPath) {
+                _.set(reqObj, paginationInfo.reqInput.limitValPath, variable.resPaginationInfo['size']);
+            } else {
+                reqObj[paginationInfo.reqInput.limitKey] = variable.resPaginationInfo['size'];
+            }
+            if (paginationInfo.requestInfo === 'header') {
+                Object.assign(headers, reqObj);
+            } else if (paginationInfo.requestInfo === 'body') {
+                if (!requestBody) {
+                    requestBody = reqObj;
+                } else {
+                    Object.assign(requestBody, reqObj);
+                }
+            }
+        }
+
         /*creating the params needed to invoke the service. url is generated from the relative path for the operation*/
         invokeParams = {
             'projectID': $rootScope.project.id,

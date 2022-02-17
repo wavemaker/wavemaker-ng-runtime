@@ -10,6 +10,7 @@ import { appManager, formatExportExpression, setInput, decodeData } from './../.
 import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, securityService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 import { AdvancedOptions } from '../../advanced-options';
+import { VariablePaginationMapperUtils } from '../../util/variable/variable-pagination-mapper.utils';
 
 declare const _;
 
@@ -62,7 +63,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param options
      * @param success
      */
-    protected processSuccessResponse(response, variable, options, success) {
+    protected processSuccessResponse(response, variable, options, success, resHeaders?) {
         let dataSet;
         let newDataSet;
         let pagination = {};
@@ -111,6 +112,44 @@ export class ServiceVariableManager extends BaseVariableManager {
             // setting newDataSet as the response to service variable onPrepareSetData
             dataSet = newDataSet;
         }
+        
+        const inputFields = getClonedObject(options.inputFields || variable.dataBinding);
+
+        const operationInfo = this.getMethodInfo(variable, inputFields, options);
+        const paginationInfo = operationInfo.paginationInfo;
+
+        // to be removed, just for testing mock
+            // query
+            response['_meta'] = variable.dataBinding; 
+            if (paginationInfo && paginationInfo.type === 'offset') {
+                response['_meta']['$offset'] = paginationInfo.reqInput.limit * (options['page'] ? options['page'] : 1);
+            } else if (paginationInfo && paginationInfo.type === 'page') {
+                response['_meta']['$offset'] = options['page'] + 1;
+            }
+            response['_meta']['itemCount'] = 30;
+            response['_meta']['hasMoreItems'] = options['page'] ? paginationInfo.reqInput.limit * options['page'] > 20 ? false : true :  true;
+
+            // headers
+            // resHeaders['x-wm-x-soda2-limit'] = 5;
+            // if (paginationInfo) {
+            //     resHeaders['x-wm-x-soda2-offset'] = paginationInfo.reqInput.limit * (options['page'] ? options['page'] : 1);
+            // }
+            // resHeaders['x-wm-x-soda2-itemCount'] = 30;
+            // resHeaders['x-wm-x-soda2-hasMoreItems'] = options['page'] ? paginationInfo.reqInput.limit * options['page'] > 20 ? false : true :  true;
+            resHeaders = {"status":{"message":[{"message_TYPE":"SU","messageDesc":"SUCCESS","messageCode":"0000"}]},
+            "pagination":{"totalRecordCount":"75","nextStartIndex":"11","hasMoreRecords":"Y","numRecReturned":"2"}};
+            //
+
+        let res;
+        if (paginationInfo) {
+            if (paginationInfo.responseInfo === 'body') {
+                res = response;
+            } else if (paginationInfo.responseInfo === 'header' && resHeaders) {
+                res = resHeaders;
+            }
+        }
+
+        VariablePaginationMapperUtils.setVariablePagination(paginationInfo, variable, res, options);
 
         /* update the dataset against the variable, if response is non-object, insert the response in 'value' field of dataSet */
         if (!options.forceRunMode && !options.skipDataSetUpdate) {
@@ -438,8 +477,13 @@ export class ServiceVariableManager extends BaseVariableManager {
             inputFields = output;
         }
 
-        const operationInfo = this.getMethodInfo(variable, inputFields, options),
-            requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields);
+        const operationInfo = this.getMethodInfo(variable, inputFields, options);
+
+        // set query params, if pagination info is present and the info should be present in query
+        if (options['page'] && operationInfo.paginationInfo && !_.isEmpty(variable.dataBinding) && operationInfo.paginationInfo.requestInfo === 'query') {
+            VariablePaginationMapperUtils.setPaginationQueryParams(variable, operationInfo);
+        }
+        const requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields);
 
         // check errors
         if (requestParams.error) {
@@ -475,7 +519,7 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         successHandler = (response, resolve) => {
             if (response && response.type) {
-                const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response}), success);
+                const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response}), success, response.headers);
                 // notify variable success
                 this.notifyInflight(variable, false, data);
                 resolve(response);
