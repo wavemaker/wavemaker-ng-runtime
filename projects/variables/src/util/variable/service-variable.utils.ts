@@ -361,19 +361,13 @@ export class ServiceVariableUtils {
         const paginationInfo = operationInfo.paginationInfo;
         if (paginationInfo && variable.resPaginationInfo) {
             var reqObj = {};
-            if (paginationInfo.reqInput.offsetValPath) {
-                _.set(reqObj, paginationInfo.reqInput.offsetValPath, variable.resPaginationInfo['offset']);
-            } else {
-                reqObj[paginationInfo.reqInput.offsetKey] = variable.resPaginationInfo['offset'];
-            }
-            if (paginationInfo.reqInput.limitValPath) {
-                _.set(reqObj, paginationInfo.reqInput.limitValPath, variable.resPaginationInfo['size']);
-            } else {
-                reqObj[paginationInfo.reqInput.limitKey] = variable.resPaginationInfo['size'];
-            }
-            if (paginationInfo.requestInfo === 'header') {
+            if (_.startsWith(paginationInfo.reqInput.page, '$header')) {
+                _.set(reqObj, paginationInfo.reqInput.page.replace('$header.', ''), variable.resPaginationInfo['page']);
+                _.set(reqObj, paginationInfo.reqInput.size.replace('$header.', ''), variable.resPaginationInfo['size']);
                 Object.assign(headers, reqObj);
-            } else if (paginationInfo.requestInfo === 'body') {
+            } else if (_.startsWith(paginationInfo.reqInput.page, '$body')) {
+                _.set(reqObj, paginationInfo.reqInput.page.replace('$body.', ''), variable.resPaginationInfo['page']);
+                _.set(reqObj, paginationInfo.reqInput.size.replace('$body.', ''), variable.resPaginationInfo['size']);
                 if (!requestBody) {
                     requestBody = reqObj;
                 } else {
@@ -381,6 +375,7 @@ export class ServiceVariableUtils {
                 }
             }
         }
+        // headers['ChannelContext'] =  {"paginationDetails":{"limit":"10","offset":"1"}};
 
         /*creating the params needed to invoke the service. url is generated from the relative path for the operation*/
         invokeParams = {
