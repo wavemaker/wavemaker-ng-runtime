@@ -559,7 +559,7 @@ $.widget('wm.datatable', {
                 }
                 $htm.attr('title', columnValue);
                 //Add empty quote, to convert boolean false to 'false', so that value is rendered
-                $htm.html("" + columnValue);
+                $htm.text("" + columnValue);
             } else {
                 switch (colDef.field) {
                     case 'checkbox':
@@ -1062,7 +1062,7 @@ $.widget('wm.datatable', {
                 colsLen =  colsLen - 1;
             }
         });
-        
+
 
         //First Hide or show the column based on the show property so that width is calculated correctly
         headerCells.each(function () {
@@ -1133,7 +1133,7 @@ $.widget('wm.datatable', {
                                     var padding = 0;
                                     while (elemWidth <= 0) {
                                         currentNode = currentNode.parent();
-                                        elemWidth = currentNode.width();   
+                                        elemWidth = currentNode.width();
                                         // Find padding of all the elements which are on top of table
                                         if (currentNode.find('table').length) {
                                             padding = padding + parseFloat(currentNode.css('padding-left')) + parseFloat(currentNode.css('padding-right'));
@@ -1144,7 +1144,7 @@ $.widget('wm.datatable', {
                                         if (padding) {
                                             elemWidth = elemWidth - padding;
                                         }
-                                        
+
                                         // If the width is provided in % for inactive panes, convert % to pixel
                                         if (_.includes(tempWidth, '%')) {
                                             var widthPercent = parseInt(tempWidth);

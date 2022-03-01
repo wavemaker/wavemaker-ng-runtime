@@ -103,6 +103,7 @@ export {
     TrailingZeroDecimalPipe
 } from './pipes/custom-pipes';
 export * from './pipes/trust-as.pipe';
+export * from './pipes/sanitize.pipe';
 export * from './pipes/image.pipe';
 export * from './widgets/common/container/container.directive';
 export * from './widgets/common/lazy-load/lazy-load.directive';

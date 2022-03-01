@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform, SecurityContext } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import {DomSanitizer, SafeHtml, SafeResourceUrl, SafeScript, SafeStyle, SafeUrl} from '@angular/platform-browser';
 
 @Pipe({
     name: 'trustAs'
@@ -8,19 +8,26 @@ export class TrustAsPipe implements PipeTransform {
 
     constructor(private domSanitizer: DomSanitizer) {}
 
-    transform(content: string, as: string | SecurityContext) {
-        if (as === 'resource' || as === SecurityContext.RESOURCE_URL) {
-            if (!content) {
-                return '';
-            }
-            return this.domSanitizer.bypassSecurityTrustResourceUrl(content);
+    transform(content: string, context: string | SecurityContext) {
+        if (content === null || content === undefined) {
+            return '';
         }
-
-        if (as === 'html' || as === SecurityContext.HTML) {
-            if (content === null || content === undefined) {
-                return '';
-            }
-            return this.domSanitizer.sanitize(SecurityContext.HTML, content);
+        switch (context) {
+            case 'html':
+            case SecurityContext.HTML:
+                return this.domSanitizer.bypassSecurityTrustHtml(content);
+            case 'style':
+            case SecurityContext.STYLE:
+                return this.domSanitizer.bypassSecurityTrustStyle(content);
+            case 'script':
+            case SecurityContext.SCRIPT:
+                return this.domSanitizer.bypassSecurityTrustScript(content);
+            case 'url':
+            case SecurityContext.URL:
+                return this.domSanitizer.bypassSecurityTrustUrl(content);
+            case 'resource':
+            case SecurityContext.RESOURCE_URL:
+                return this.domSanitizer.bypassSecurityTrustResourceUrl(content);
         }
     }
 }

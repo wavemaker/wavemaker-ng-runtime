@@ -1,9 +1,8 @@
 import { Component, Injector, NgZone, OnDestroy, OnInit, SecurityContext } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
 
 import { setAttr, setCSS, setHtml } from '@wm/core';
-import { APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import {APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, SanitizePipe, styler} from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
 
 import { registerProps } from './rich-text-editor.props';
@@ -96,7 +95,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
                 }
             },
             onChange: (contents, editable) => {
-                this.proxyModel = this.domSanitizer.sanitize(SecurityContext.HTML, contents.toString());
+                this.proxyModel = this.sanitizePipe.transform(contents, SecurityContext.HTML);
                 this.invokeOnChange(contents, getChangeEvt(), true);
                 this.invokeOnTouched();
             }
@@ -125,7 +124,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         }
     }
 
-    constructor(inj: Injector, private domSanitizer: DomSanitizer, private ngZone: NgZone) {
+    constructor(inj: Injector, private sanitizePipe: SanitizePipe, private ngZone: NgZone) {
         super(inj, WIDGET_INFO);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
         overrideSummerNote();

@@ -1,7 +1,7 @@
 import { Directive, Injector, SecurityContext } from '@angular/core';
 
 import { setProperty, toggleClass } from '@wm/core';
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
+import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, SanitizePipe } from '@wm/components/base';
 
 import { registerProps } from './label.props';
 
@@ -24,7 +24,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class LabelDirective extends StylableComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
+    constructor(inj: Injector, private sanitizePipe:SanitizePipe) {
         super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this);
@@ -33,10 +33,14 @@ export class LabelDirective extends StylableComponent {
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'caption') {
-            if (_.isObject(nv)) {
+            // Check for trustPipe safe values
+            let safeValue = nv && nv.constructor.name.startsWith('Safe');
+            if (_.isObject(nv) && !safeValue) {
                 setProperty(this.nativeElement, 'textContent', JSON.stringify(nv));
-            } else {
-                setProperty(this.nativeElement, 'innerHTML', this.trustAsPipe.transform(nv, SecurityContext.HTML));
+            } else if (_.isObject(nv) && safeValue) {
+                setProperty(this.nativeElement, 'innerHTML', nv[Object.keys(nv)[0]]);
+            }  else {
+                setProperty(this.nativeElement, 'innerHTML', this.sanitizePipe.transform(nv, SecurityContext.HTML));
             }
 
         } else if (key === 'required') {

@@ -3,7 +3,7 @@
         [ngStyle]="{width: imagewidth, height: imageheight, backgroundImage: 'url(' + picture + ')', backgroundSize: imagewidth}"
         *ngIf="type === 'image'"></span>
     <i class="spinner-image animated infinite" aria-hidden="true" [ngClass]="[iconclass, animation]" [style.fonSize]="iconsize" *ngIf="type === 'icon'"></i>
-    <span class="spinner-text" [innerHTML]="caption | trustAs: 'html'" *ngIf="showCaption"></span>
+    <span class="spinner-text" [innerHTML]="caption" *ngIf="showCaption"></span>
     <div class="spinner-messages" *ngIf="!showCaption && spinnerMessages">
         <p *ngFor="let value of spinnerMessages" [textContent]="value"></p>
     </div>

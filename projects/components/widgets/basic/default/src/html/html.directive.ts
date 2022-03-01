@@ -1,7 +1,7 @@
-import { Attribute, Directive, Injector, SecurityContext, OnInit } from '@angular/core';
+import { Attribute, Directive, Injector, OnInit, SecurityContext } from '@angular/core';
 
 import { setCSS, setProperty } from '@wm/core';
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
+import { IWidgetConfig, provideAsWidgetRef, SanitizePipe, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './html.props';
 
@@ -26,7 +26,7 @@ export class HtmlDirective extends StylableComponent implements OnInit {
         inj: Injector,
         @Attribute('height') height: string,
         @Attribute('content.bind') private boundContent: string,
-        private trustAsPipe: TrustAsPipe,
+        private sanitizePipe:SanitizePipe
     ) {
         super(inj, WIDGET_CONFIG);
 
@@ -50,7 +50,12 @@ export class HtmlDirective extends StylableComponent implements OnInit {
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'content') {
-            setProperty(this.nativeElement, 'innerHTML', this.trustAsPipe.transform(nv, SecurityContext.HTML));
+            let safeValue = nv && nv.constructor.name.startsWith('Safe');
+            if (safeValue) {
+                setProperty(this.nativeElement, 'innerHTML', nv[Object.keys(nv)[0]]);
+            }  else {
+                setProperty(this.nativeElement, 'innerHTML', this.sanitizePipe.transform(nv, SecurityContext.HTML));
+            }
         } else {
             super.onPropertyChange(key, nv, ov);
         }

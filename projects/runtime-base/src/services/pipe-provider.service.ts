@@ -29,9 +29,12 @@ import {
     NumberToStringPipe,
     StateClassPipe,
     StringToNumberPipe,
-    CustomPipe
+    CustomPipe,
+    TrustAsPipe,
+    SanitizePipe
 } from '@wm/components/base';
 import { getSessionStorageItem, CustomPipeManager } from '@wm/core';
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Injectable({
     providedIn: 'root'
@@ -94,14 +97,16 @@ export class PipeProvider {
             new DecimalPipe(this._locale)
         ]),
         this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true),
-        this.preparePipeMeta(CustomPipe, 'custom', true, [this.injector.get(CustomPipeManager)])
+        this.preparePipeMeta(CustomPipe, 'custom', true, [this.injector.get(CustomPipeManager)]),
+        this.preparePipeMeta(TrustAsPipe, 'trustAs', true, [this.domSanitizer]),
+        this.preparePipeMeta(SanitizePipe, 'sanitize', true, [this.domSanitizer])
     ];
 
     unknownPipe(name) {
         throw Error(`The pipe '${name}' could not be found`);
     }
 
-    constructor(private compiler: Compiler, private injector: Injector) {
+    constructor(private compiler: Compiler, private injector: Injector, private domSanitizer:DomSanitizer) {
         this._pipeMeta = new Map();
         this._pipeData.forEach(v => {
             this._pipeMeta.set(v.name, v);
