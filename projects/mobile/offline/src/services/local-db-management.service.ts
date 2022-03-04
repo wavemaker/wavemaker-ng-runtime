@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import { AppVersion } from '@ionic-native/app-version';
-import { File } from '@ionic-native/file';
-import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
+import { AppVersionOriginal as AppVersion } from '@awesome-cordova-plugins/app-version';
+import { FileOriginal as File } from '@awesome-cordova-plugins/file';
+import { SQLiteOriginal as SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite';
 
 import { DataType, DEFAULT_FORMATS, executePromiseChain, extractType, isAndroid, isArray, isIos, noop, toPromise, transformFileURI } from '@wm/core';
 import { DeviceFileService, DeviceService } from '@wm/mobile/core';

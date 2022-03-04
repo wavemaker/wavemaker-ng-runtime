@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef } from '@angular/core';
 
-import { File } from '@ionic-native/file';
-import { FileOpener } from '@ionic-native/file-opener';
+import { FileOriginal as File } from '@awesome-cordova-plugins/file';
+import { FileOpenerOriginal as FileOpener } from '@awesome-cordova-plugins/file-opener';
 
 import { addClass, hasCordova, noop, removeClass, setCSS } from '@wm/core';
 import { DeviceFileDownloadService, DeviceService } from '@wm/mobile/core';

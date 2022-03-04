@@ -1,5 +1,5 @@
-import { File } from '@ionic-native/file';
-import { SQLiteObject } from '@ionic-native/sqlite';
+import { FileOriginal as File } from '@awesome-cordova-plugins/file';
+import { SQLiteObject } from '@awesome-cordova-plugins/sqlite';
 
 import { convertToBlob, isDefined } from '@wm/core';
 import { DeviceFileService } from '@wm/mobile/core';

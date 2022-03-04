@@ -1,6 +1,7 @@
 export * from './core.module';
 
 export * from './services/device-file-cache.service';
+export * from './services/contacts.service';
 export * from './services/device-file-download.service';
 export * from './services/device-file-opener.service';
 export * from './services/device-file.service';

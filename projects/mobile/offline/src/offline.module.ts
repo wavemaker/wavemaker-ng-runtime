@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { File } from '@ionic-native/file';
+import { FileOriginal as File } from '@awesome-cordova-plugins/file';
 
 import { AbstractHttpService, App, hasCordova, noop, isSpotcues } from '@wm/core';
 import { DeviceFileService, DeviceFileUploadService, DeviceService, NetworkService } from '@wm/mobile/core';

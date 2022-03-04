@@ -1,19 +1,18 @@
 import { NgModule } from '@angular/core';
 
-import { AppVersion } from '@ionic-native/app-version';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { Calendar } from '@ionic-native/calendar';
-import { Camera } from '@ionic-native/camera';
-import { Device } from '@ionic-native/device';
-import { Contacts } from '@ionic-native/contacts';
-import { MediaCapture } from '@ionic-native/media-capture';
-import { Geolocation } from '@ionic-native/geolocation';
-import { Vibration } from '@ionic-native/vibration';
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
-import { Diagnostic } from '@ionic-native/diagnostic';
+import { AppVersionOriginal as AppVersion } from '@awesome-cordova-plugins/app-version';
+import { BarcodeScannerOriginal as BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner';
+import { CalendarOriginal as Calendar } from '@awesome-cordova-plugins/calendar';
+import { CameraOriginal as Camera } from '@awesome-cordova-plugins/camera';
+import { DeviceOriginal as Device } from '@awesome-cordova-plugins/device';
+import { MediaCaptureOriginal as MediaCapture } from '@awesome-cordova-plugins/media-capture';
+import { GeolocationOriginal as Geolocation } from '@awesome-cordova-plugins/geolocation';
+import { VibrationOriginal as Vibration } from '@awesome-cordova-plugins/vibration';
+import { LocationAccuracyOriginal as LocationAccuracy } from '@awesome-cordova-plugins/location-accuracy';
+import { DiagnosticOriginal as Diagnostic } from '@awesome-cordova-plugins/diagnostic';
 
 import { App } from '@wm/core';
-import { DeviceFileOpenerService, DeviceFileUploadService, NetworkService } from '@wm/mobile/core';
+import { DeviceFileOpenerService, DeviceFileUploadService, NetworkService, Contacts } from '@wm/mobile/core';
 import { ChangeLogService, LocalDBManagementService, LocalDBDataPullService, OfflineModule } from '@wm/mobile/offline';
 import { SecurityService } from '@wm/security';
 import { DeviceVariableManager, VARIABLE_CONSTANTS, VariableManagerFactory } from '@wm/variables';

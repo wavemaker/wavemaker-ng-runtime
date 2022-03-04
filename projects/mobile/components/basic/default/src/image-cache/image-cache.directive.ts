@@ -1,6 +1,6 @@
 import { Directive, DoCheck, Inject, Input, Self } from '@angular/core';
 
-import { File } from '@ionic-native/file';
+import { FileOriginal as File } from '@awesome-cordova-plugins/file';
 
 import { WidgetRef } from '@wm/components/base';
 import { hasCordova, isSpotcues, noop, transformFileURI } from '@wm/core';

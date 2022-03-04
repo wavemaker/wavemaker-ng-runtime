@@ -8,7 +8,7 @@ import {
     HttpResponse
 } from '@angular/common/http';
 
-import { File } from '@ionic-native/file';
+import { FileOriginal as File } from '@awesome-cordova-plugins/file';
 import { Observer } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 

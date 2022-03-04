@@ -14,11 +14,11 @@
 
             "rxjs": "rxjs",
 
-            "@ionic-native/app-version": "ionicNative.plugins",
-            "@ionic-native/file": "ionicNative.plugins",
-            "@ionic-native/sqlite": "ionicNative.plugins",
-            "@ionic-native/camera": "ionicNative.plugins",
-            "@ionic-native/media-capture": "ionicNative.plugins",
+            "@awesome-cordova-plugins/app-version": "awesomeCordova.plugins",
+            "@awesome-cordova-plugins/file": "awesomeCordova.plugins",
+            "@awesome-cordova-plugins/sqlite": "awesomeCordova.plugins",
+            "@awesome-cordova-plugins/camera": "awesomeCordova.plugins",
+            "@awesome-cordova-plugins/media-capture": "awesomeCordova.plugins",
 
             "@wm/core": "wm.core",
             "@wm/mobile/core": "wm.mobile.core",

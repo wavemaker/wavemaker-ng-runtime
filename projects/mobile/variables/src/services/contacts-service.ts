@@ -1,4 +1,4 @@
-import { Contact, ContactFieldType, Contacts } from '@ionic-native/contacts';
+import { Contact, ContactFieldType, Contacts } from '@wm/mobile/core';
 
 import { DeviceVariableService, IDeviceVariableOperation } from '@wm/variables';
 

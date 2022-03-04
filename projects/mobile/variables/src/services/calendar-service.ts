@@ -1,4 +1,4 @@
-import { Calendar } from '@ionic-native/calendar';
+import { CalendarOriginal as Calendar } from '@awesome-cordova-plugins/calendar';
 
 import { DeviceVariableService, IDeviceVariableOperation } from '@wm/variables';
 

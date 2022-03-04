@@ -1,4 +1,4 @@
-import { File } from '@ionic-native/file';
+import { FileOriginal as File } from '@awesome-cordova-plugins/file';
 
 import { App, noop, triggerFn } from '@wm/core';
 import { DeviceService, NetworkService } from '@wm/mobile/core';

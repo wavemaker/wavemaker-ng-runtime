@@ -1,10 +1,10 @@
 export default [
     {
-        input: './projects/mobile/ionic-native/ionic-native-core.js',
+        input: './projects/mobile/awesome-cordova/awesome-cordova-core.js',
         output: {
-            file : './dist/tmp/libs/ionic-native/ionic-native-core.umd.js',
+            file : './dist/tmp/libs/awesome-cordova/awesome-cordova-core.umd.js',
             format : 'umd',
-            name: 'ionicNative.core',
+            name: 'awesomeCordova.core',
             globals: {
                 'rxjs/observable/fromEvent': 'rxjs',
                 'rxjs/Observable': 'rxjs',
@@ -14,14 +14,14 @@ export default [
         }
     },
     {
-        input: './projects/mobile/ionic-native/ionic-native-plugins.js',
+        input: './projects/mobile/awesome-cordova/awesome-cordova-plugins.js',
         output: {
-            file : './dist/tmp/libs/ionic-native/ionic-native-plugins.umd.js',
+            file : './dist/tmp/libs/awesome-cordova/awesome-cordova-plugins.umd.js',
             format : 'umd',
-            name: 'ionicNative.plugins',
+            name: 'awesomeCordova.plugins',
             globals: {
                 '@angular/core': 'ng.core',
-                '@ionic-native/core': 'ionicNative.core',
+                '@awesome-cordova/core': 'awesomeCordova.core',
                 'rxjs/observable/fromEvent': 'rxjs',
                 'rxjs/Observable': 'rxjs',
                 'rxjs/observable/throw' : 'rxjs',

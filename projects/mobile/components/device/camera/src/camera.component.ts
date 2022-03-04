@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, HostListener, Injector } from '@angular/core';
 
-import { Camera } from '@ionic-native/camera';
-import { MediaCapture } from '@ionic-native/media-capture';
+import { CameraOriginal as Camera } from '@awesome-cordova-plugins/camera';
+import { MediaCaptureOriginal as MediaCapture } from '@awesome-cordova-plugins/media-capture';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { convertToBlob, hasCordova } from '@wm/core';

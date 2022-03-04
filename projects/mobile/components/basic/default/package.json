@@ -10,9 +10,9 @@
                 "@angular/core": "ng.core",
 
                 "rxjs": "rxjs",
-                "@ionic-native/file": "ionicNative.plugins",
-                "@ionic-native/file-opener": "ionicNative.plugins",
-                "@ionic-native/camera": "ionicNative.plugins",
+                "@awesome-cordova-plugins/file": "awesomeCordova.plugins",
+                "@awesome-cordova-plugins/file-opener": "awesomeCordova.plugins",
+                "@awesome-cordova-plugins/camera": "awesomeCordova.plugins",
 
                 "@wm/core": "wm.core",
                 "@wm/mobile/core": "wm.mobile.core",

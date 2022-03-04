@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Network } from '@ionic-native/network';
+import { NetworkOriginal as Network } from '@awesome-cordova-plugins/network';
 
 import { App, getAbortableDefer, hasCordova, isIos, noop, retryIfFails } from '@wm/core';
 
