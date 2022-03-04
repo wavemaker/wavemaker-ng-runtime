@@ -5,7 +5,7 @@ import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { compileTestComponent } from './util/component-test-util';
 import { ITestModuleDef } from './common-widget.specs';
-import { CustomPipe, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe } from '@wm/components/base';
+import { CustomPipe, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe, SanitizePipe } from '@wm/components/base';
 import { CustomPipeManager } from '@wm/core';
 
 @Component({
@@ -22,18 +22,7 @@ const testModuleDef: ITestModuleDef = {
         BrowserModule,
     ],
     declarations: [PipeWrapperComponent],
-    providers: [DecimalPipe, DatePipe, {
-        provide: DomSanitizer,
-        useValue: {
-            sanitize: (html, content) => {
-                return content;
-            },
-            bypassSecurityTrustResourceUrl: (content) => {
-                return content;
-            }
-        }
-    },
-        CustomPipeManager]
+    providers: [DecimalPipe, DatePipe, TrustAsPipe, SanitizePipe, CustomPipeManager]
 };
 
 declare const moment;
@@ -607,29 +596,46 @@ describe('Image pipe', () => {
 });
 
 
-describe('TrustAs pipe', () => {
+describe('TrustAs, Sanitize pipes', () => {
 
     let fixture: ComponentFixture<PipeWrapperComponent>;
-    let pipe: TrustAsPipe;
+    let trustAsPipe: TrustAsPipe;
+    let sanitizePipe: SanitizePipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new TrustAsPipe(TestBed.inject(DomSanitizer));
+        trustAsPipe = new TrustAsPipe(TestBed.inject(DomSanitizer));
+        sanitizePipe = new SanitizePipe(TestBed.inject(DomSanitizer));
     });
 
     it('create an instance', () => {
-        expect(pipe).toBeTruthy();
+        expect(trustAsPipe).toBeTruthy();
+        expect(sanitizePipe).toBeTruthy();
     });
 
     it('should get trusted resource string', () => {
         let logo = "resources/images/logos/wmlogo.png";
-        const result = pipe.transform("resources/images/logos/wmlogo.png", "resource");
-        expect(result).toBe(logo);
+        const result = trustAsPipe.transform("resources/images/logos/wmlogo.png", "resource");
+        expect(result.toString()).toContain('Safe');
+        expect(result[Object.keys(result)[0]]).toBe(logo);
     });
 
-    it('should get trusted html string', () => {
+    it('should get trusted html content', () => {
+        let html = '<span style="background-color: rgb(255, 255, 1);">text with color</span>';
+        const result = trustAsPipe.transform(html, 'html');
+        expect(result.toString()).toContain('Safe');
+        expect(result[Object.keys(result)[0]]).toBe(html);
+    });
+
+    it('should get sanitized html string', () => {
         let html = "<div> <span>Welcome</span> </div>";
-        const result = pipe.transform(html, "html");
+        const result = sanitizePipe.transform(html, "html");
         expect(result).toBe(html);
+    });
+
+    it('should get sanitized html content', () => {
+        let html = '<span style="background-color: rgb(255, 255, 1);">text with color</span>';
+        const result = sanitizePipe.transform(html, 'html');
+        expect(result).toBe('<span>text with color</span>');
     });
 });
 
