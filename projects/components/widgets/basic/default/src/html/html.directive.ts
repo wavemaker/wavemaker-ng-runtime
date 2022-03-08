@@ -50,8 +50,10 @@ export class HtmlDirective extends StylableComponent implements OnInit {
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'content') {
-            let safeValue = nv && nv.constructor.name.startsWith('Safe');
-            if (safeValue) {
+            // Check for trustPipe safe values
+            let bindContent = this.nativeElement.getAttribute('content.bind');
+            let safeValue = bindContent ? nv && bindContent.includes('trustAs:') : false;
+            if (typeof nv === 'object' && safeValue) {
                 setProperty(this.nativeElement, 'innerHTML', nv[Object.keys(nv)[0]]);
             }  else {
                 setProperty(this.nativeElement, 'innerHTML', this.sanitizePipe.transform(nv, SecurityContext.HTML));

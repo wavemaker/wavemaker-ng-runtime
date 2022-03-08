@@ -34,7 +34,8 @@ export class LabelDirective extends StylableComponent {
 
         if (key === 'caption') {
             // Check for trustPipe safe values
-            let safeValue = nv && nv.constructor.name.startsWith('Safe');
+            let bindContent = this.nativeElement.getAttribute('caption.bind');
+            let safeValue = bindContent ? nv && bindContent.includes('trustAs:') : false;
             if (_.isObject(nv) && !safeValue) {
                 setProperty(this.nativeElement, 'textContent', JSON.stringify(nv));
             } else if (_.isObject(nv) && safeValue) {
