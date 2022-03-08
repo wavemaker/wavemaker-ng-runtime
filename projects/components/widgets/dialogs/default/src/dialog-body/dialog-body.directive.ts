@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostBinding, Inject } from '@angular/core';
+import { Directive, ElementRef, HostBinding, Inject, Renderer2 } from '@angular/core';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
 
@@ -18,12 +18,27 @@ export class DialogBodyDirective {
     constructor(
         elRef: ElementRef,
         @Inject(DialogRef) private dialogRef,
-        bsModal: BsModalService
+        bsModal: BsModalService,
+         private renderer: Renderer2
     ) {
         addClass(elRef.nativeElement, DEFAULT_CLS);
 
         const subscription = bsModal.onShown.subscribe(() => {
             const dialogRoot = $(elRef.nativeElement).closest('.app-dialog')[0];
+            let dialogRootContainer = $('body.wm-app')[0];
+            // To identify the microfrontend, if body tag doesn't have wm-app class then app loading as micro-frontend
+            if(!dialogRootContainer) {
+                const dialogBackrop = $('body > .modal-backdrop')[0];
+                const parentContainer = $('body > modal-container')[0];
+                dialogRootContainer = $('.wm-app')[0];
+                if(dialogRootContainer  && parentContainer ){
+                    if(dialogBackrop){
+                        this.renderer.appendChild(dialogRootContainer, dialogBackrop);
+                    }
+                    this.renderer.appendChild(dialogRootContainer, parentContainer);
+             
+               }
+            }
             const width = this.dialogRef.width;
             const height = this.dialogRef.height;
             if(height){
