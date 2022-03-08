@@ -434,6 +434,8 @@ export class TableFilterSortDirective {
 
     private searchHandler(searchSortObj, e, type, statePersistenceTriggered?) {
         let obj;
+        this.table.gridOptions.setLastActionPerformed(this.table.gridOptions.ACTIONS.SEARCH_OR_SORT);
+        this.table.gridOptions.setIsSearchTrigerred(true);
         if (_.isArray(searchSortObj)) {
             obj = searchSortObj.filter(function(searchObject) {
                 return (searchObject.matchMode !== undefined && searchObject.value !== undefined) || (searchObject.value !== undefined && searchObject.field === '');
@@ -509,6 +511,8 @@ export class TableFilterSortDirective {
 
     private sortHandler(searchSortObj, e, type, statePersistenceTriggered?) {
         const dataSource = this.table.datasource;
+        this.table.gridOptions.setLastActionPerformed(this.table.gridOptions.ACTIONS.SEARCH_OR_SORT);
+        this.table.gridOptions.setIsSearchTrigerred(true);
         if (!dataSource) {
             return;
         }
