@@ -463,7 +463,7 @@ export const prepareFieldDefs = (data, options?) => {
  * To get container target element to append the list for search and datepicker panel when field present in dialog
  */
 export const getContainerTargetClass = (element) => {
-    return 'body';
+    return '.wm-app';
 
     // Below code is not working when we have nested dialogs.
     // Nested dialogs case we will have  multiple '.modal-content' classes on DOM due to that container positions is not working as expected.
