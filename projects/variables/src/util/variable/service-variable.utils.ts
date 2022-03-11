@@ -360,20 +360,67 @@ export class ServiceVariableUtils {
         // If pagination info exists, process info in request headers based on settings
         const paginationInfo = operationInfo.paginationInfo;
         if (paginationInfo && variable.resPaginationInfo) {
-            var reqObj = {};
-            if (_.startsWith(paginationInfo.reqInput.page, '$header')) {
-                _.set(reqObj, paginationInfo.reqInput.page.replace('$header.', ''), variable.resPaginationInfo['page']);
-                _.set(reqObj, paginationInfo.reqInput.size.replace('$header.', ''), variable.resPaginationInfo['size']);
+            let reqObj = {};
+            const paramName = paginationInfo.reqInput.page.split('.')[0]; 
+            // operationInfo.parameters.push({
+            //     contentType: null,
+            //     name: "X-WM-offset",
+            //     parameterType: "header",
+            //     readOnly: false,
+            //     required: false,
+            //     sampleValue: "5",
+            //     type: "String"
+            // },
+            // {
+            //     contentType: null,
+            //     name: "X-WM-limit",
+            //     parameterType: "header",
+            //     readOnly: false,
+            //     required: false,
+            //     sampleValue: "5",
+            //     type: "String"
+            // });
+            const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
+            if (paramObj && paramObj.parameterType === 'header') {
+                _.set(reqObj, paginationInfo.reqInput.page, variable.resPaginationInfo['page']);
+                _.set(reqObj, paginationInfo.reqInput.size, variable.resPaginationInfo['size']);
                 Object.assign(headers, reqObj);
-            } else if (_.startsWith(paginationInfo.reqInput.page, '$body')) {
-                _.set(reqObj, paginationInfo.reqInput.page.replace('$body.', ''), variable.resPaginationInfo['page']);
-                _.set(reqObj, paginationInfo.reqInput.size.replace('$body.', ''), variable.resPaginationInfo['size']);
+            } else if (!paramObj) {
+                _.set(reqObj, paginationInfo.reqInput.page, variable.resPaginationInfo['page']);
+                _.set(reqObj, paginationInfo.reqInput.size, variable.resPaginationInfo['size']);
                 if (!requestBody) {
                     requestBody = reqObj;
                 } else {
                     Object.assign(requestBody, reqObj);
                 }
-            }
+            } else if (variable.resPaginationInfo.next && paramObj) {
+                if (paramObj.parameterType === 'path') {
+                    const urlParams = operationInfo.relativePath.split('/'),
+                    paramConfig = '{' + paramObj.name + '}',
+                    paramIndex = urlParams.indexOf(paramConfig);
+                    let urlPath = new URL(url);
+                    const urlPathParmas = urlPath.pathname.split('/');
+                    let invokeUrl;
+                    if (variable.resPaginationInfo.isNext) {
+                        invokeUrl = variable.resPaginationInfo.next.split('/');
+                    } else {
+                        invokeUrl = variable.resPaginationInfo.prev.split('/');
+                    }
+                    urlPathParmas[paramIndex] = invokeUrl[paramIndex];
+                    urlPath.pathname = urlPathParmas.join('/');
+                    url = urlPath.href;
+                } else if (paramObj.parameterType === 'query') {
+                    const urlParams = url.split('?');
+                    let invokeUrl;
+                    if (variable.resPaginationInfo.isNext) {
+                        invokeUrl = variable.resPaginationInfo.next.split('?');
+                    } else {
+                        invokeUrl = variable.resPaginationInfo.prev.split('?');
+                    }
+                    urlParams[1] = invokeUrl[1];
+                    url = urlParams.join('?');
+                }
+            }   
         }
         // headers['ChannelContext'] =  {"paginationDetails":{"limit":"10","offset":"1"}};
 

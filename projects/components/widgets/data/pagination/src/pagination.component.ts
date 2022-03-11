@@ -160,8 +160,13 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     disableNavigation() {
         const isCurrentPageFirst = (this.dn.currentPage === 1),
             isCurrentPageLast = (this.dn.currentPage === this.pageCount);
-        this.isDisableFirst = this.isDisablePrevious = isCurrentPageFirst;
-        this.isDisableNext = this.isDisableLast = isCurrentPageLast;
+        if (!this.pagination?.next) {
+            this.isDisableFirst = this.isDisablePrevious = isCurrentPageFirst;
+            this.isDisableNext = this.isDisableLast = isCurrentPageLast;
+        } else {
+            this.isDisableFirst = this.isDisablePrevious = !this.pagination.prev;
+            this.isDisableNext = this.isDisableLast = !this.pagination.next;
+        }
         this.isDisableCurrent = isCurrentPageFirst && isCurrentPageLast;
         // In case of client side pagination, when load more reaches last page hide the on-demand grid ele
         if (this.isDisableNext && this.parent.onDemandLoad && this.parent.widgetType === 'wm-table') {
@@ -408,16 +413,22 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 return;
             case 'prev':
                 /*Return if already on the first page.*/
-                if (this.isFirstPage() || !this.validateCurrentPage(event, callback)) {
+                if (!this.pagination?.next && (this.isFirstPage() || !this.validateCurrentPage(event, callback))) {
                     return;
+                } else if (this.pagination.next) {
+                    this.datasource.resPaginationInfo.isNext = false;
+                    this.datasource.resPaginationInfo.isPrev = true;
                 }
                 /*Decrement the current page by 1.*/
                 this.dn.currentPage -= 1;
                 break;
             case 'next':
                 /*Return if already on the last page.*/
-                if (this.isLastPage() || !this.validateCurrentPage(event, callback)) {
+                if (!this.pagination?.next && (this.isLastPage() || !this.validateCurrentPage(event, callback))) {
                     return;
+                } else if (this.pagination?.next) {
+                    this.datasource.resPaginationInfo.isNext = true;
+                    this.datasource.resPaginationInfo.isPrev = false;
                 }
                 /*Increment the current page by 1.*/
                 this.dn.currentPage += 1;

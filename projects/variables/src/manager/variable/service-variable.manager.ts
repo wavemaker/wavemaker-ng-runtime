@@ -11,6 +11,8 @@ import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, se
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 import { AdvancedOptions } from '../../advanced-options';
 import { VariablePaginationMapperUtils } from '../../util/variable/variable-pagination-mapper.utils';
+import { jmespath } from '@metrichor/jmespath';
+
 
 declare const _;
 
@@ -117,61 +119,46 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         const operationInfo = this.getMethodInfo(variable, inputFields, options);
         const paginationInfo = operationInfo.paginationInfo;
-
-        // to be removed, just for testing mock
-            // query
-            // response['_meta'] = variable.dataBinding; 
-            // if (paginationInfo) {
-            //     response['_meta']['$offset'] = 5 * (options['page'] ? options['page'] : 1);
-            // }
-            // response['_meta']['itemCount'] = 30;
-            // response['_meta']['hasMoreItems'] = options['page'] ? 5 * options['page'] > 20 ? false : true :  true;
-
-            // headers
-            // resHeaders['x-wm-x-soda2-limit'] = 5;
-            // if (paginationInfo) {
-            //     resHeaders['x-wm-x-soda2-offset'] = 5 * (options['page'] ? options['page'] : 1);
-            // }
-            // resHeaders['x-wm-x-soda2-itemCount'] = 30;
-            // resHeaders['x-wm-x-soda2-hasMoreItems'] = options['page'] ? 5 * options['page'] > 20 ? false : true :  true;
-
-            // ChannelContext:   {"paginationDetails":{"limit":"10","offset":"1"}}
-            // resHeaders = {"status":{"message":[{"message_TYPE":"SU","messageDesc":"SUCCESS","messageCode":"0000"}]},
-            // "pagination":{"totalRecordCount":"75","nextStartIndex":"11","hasMoreRecords":"Y","numRecReturned":"2"}};
             
-
         let res = {};
         if (paginationInfo) {
-            var resOutput = paginationInfo.resOutput;
-            if (resOutput.size) {
-                this.setPaginationItems(resOutput.size, response, res, 'size', resHeaders);
-            } else {       
-                if (_.startsWith(paginationInfo.reqInput.size, '$query')) {
-                    var param = paginationInfo.reqInput.size.split('.')[1];
-                    res['size'] = _.result(_.find(operationInfo.parameters, function(obj) { return obj.name === param }), 'sampleValue');
-                } else if ((variable as any).headerInfo) {
-                    res['size'] = (variable as any).headerInfo.size;
-                }        
-            }
-            if (resOutput.page) {
-                this.setPaginationItems(resOutput.page, response, res, 'page', resHeaders);
-            } else {
-                if (_.startsWith(paginationInfo.reqInput.page, '$query')) {
-                    var param = paginationInfo.reqInput.page.split('.')[1];
-                    res['page'] = _.result(_.find(operationInfo.parameters, function(obj) { return obj.name === param }), 'sampleValue');
-                } else if (options['page']) {
-                    res['page'] = options['page'] + 1;
+            const resOutput = paginationInfo.resOutput;
+            if (!resOutput.next) {
+                if (resOutput.size) {
+                    this.setPaginationItems(resOutput.size, response, res, 'size', resHeaders);
+                } else { 
+                    const param = paginationInfo.reqInput.size.split('.')[0]; 
+                    const sizeObj = _.find(operationInfo.parameters, function(obj) { return obj.name === param });   
+                    res['size'] = _.result(sizeObj, 'sampleValue');                 
                 }
-            }
-            if (resOutput.totalElements) {
-                this.setPaginationItems(resOutput.totalElements, response, res, 'totalElements', resHeaders);
+                if (resOutput.page) {
+                    this.setPaginationItems(resOutput.page, response, res, 'page', resHeaders);
+                } else {
+                    const param = paginationInfo.reqInput.page.split('.')[0]; 
+                    const pageObj = _.find(operationInfo.parameters, function(obj) { return obj.name === param });   
+                    res['page'] = _.result(pageObj, 'sampleValue');
+                }
+                if (_.startsWith(resOutput.totalElements, '$minValue')) {
+                    const totalEl = resOutput.totalElements.replace('$minValue=', '');
+                    const elRendered = res['size'] * res['page'];
+                    if (!variable.resPaginationInfo || variable.resPaginationInfo['totalElements'] > elRendered) {
+                        res['totalElements'] = parseInt(totalEl);
+                    } else {
+                        res['totalElements'] = elRendered + 1;
+                    }
+                } else if (resOutput.totalElements) {
+                    this.setPaginationItems(resOutput.totalElements, response, res, 'totalElements', resHeaders);
+                } else {
+                    res['totalElements'] = (res['size'] * res['page']) + 1;
+                }
+                if (resOutput.hasMoreItems) {
+                    this.setPaginationItems(resOutput.hasMoreItems, response, res, 'hasMoreItems', resHeaders);
+                } else {
+                    res['hasMoreItems'] = '';
+                }
             } else {
-                res['totalElements'] = (res['size'] * res['page']) + 1;
-            }
-            if (resOutput.hasMoreItems) {
-                this.setPaginationItems(resOutput.hasMoreItems, response, res, 'hasMoreItems', resHeaders);
-            } else {
-                res['hasMoreItems'] = '';
+                this.setPaginationItems(resOutput.next, response, res, 'next', resHeaders);
+                this.setPaginationItems(resOutput.prev, response, res, 'prev', resHeaders);
             }
         }
 
@@ -273,11 +260,29 @@ export class ServiceVariableManager extends BaseVariableManager {
         return promise;
     }
 
-    private setPaginationItems(item, response, res, key, headers) {
+    private setPaginationItems(item, response, res, key, resHeaders) {
         if (_.startsWith(item, '$body')) {
-            res[key] = _.get(response, item.replace('$body.', ''));
+            const bodyKey = item.replace('$body.', '');
+            res[key] = jmespath.search(response, bodyKey);
         } else if (_.startsWith(item, '$header')) {
-            res[key] = _.get(headers, item.replace('$header.', ''));
+            const headerKey = item.replace('$header.', '');
+            const headers =  (<any>Object).fromEntries(resHeaders.headers);
+            const headerParams = headerKey.split('.');
+            res[key] = jmespath.search(headers, headerParams[0].toLowerCase());
+            if (res[key]?.length) {
+                let headerVal = res[key].join();
+                if (headerParams.length === 1) {
+                    res[key] = headerVal;
+                } else {
+                    let keyName = headerParams.slice(1).join('.');
+                    const headerResp = JSON.parse(headerVal);
+                    const specialChar = /[!@#$%^&*()+\=\[\]{};':"\\|,<>\/?]+/;
+                    if (specialChar.test(keyName)) {
+                        keyName = 'headerResp.' + keyName;
+                    }
+                    res[key] = jmespath.search(headerResp, keyName);
+                }
+            }
         }
     }
 
@@ -514,19 +519,17 @@ export class ServiceVariableManager extends BaseVariableManager {
         const operationInfo = this.getMethodInfo(variable, inputFields, options);
 
         // set query params, if pagination info is present and the info should be present in query
-        if (options['page'] && operationInfo.paginationInfo && !_.isEmpty(variable.dataBinding) && _.startsWith(operationInfo.paginationInfo.reqInput.page, '$query')) {
-            if (!operationInfo.paginationInfo.resOutput.page) {
-                (variable as any).resPaginationInfo['page'] = options['page'];
+        if (options['page'] && operationInfo.paginationInfo && operationInfo.paginationInfo.reqInput.size) {
+            const paramName = operationInfo.paginationInfo.reqInput.page.split('.')[0]; 
+            const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
+            if (!_.isEmpty(variable.dataBinding) && paramObj && paramObj.parameterType === 'query') {
+                if (!operationInfo.paginationInfo.resOutput.page) {
+                    (variable as any).resPaginationInfo['page'] = options['page'];
+                }
+                VariablePaginationMapperUtils.setPaginationQueryParams(variable, operationInfo);
             }
-            VariablePaginationMapperUtils.setPaginationQueryParams(variable, operationInfo);
         }
         const requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields);
-        if (operationInfo.paginationInfo && _.startsWith(operationInfo.paginationInfo.reqInput.size, '$header') && requestParams.headers) {
-            if (!(variable as any).headerInfo) {
-                (variable as any).headerInfo = {};
-            }
-            (variable as any).headerInfo['size'] =  _.get(requestParams.headers, operationInfo.paginationInfo.reqInput.size.replace('$header.', ''))
-        }
         // check errors
         if (requestParams.error) {
             const info = this.handleRequestMetaError(requestParams, variable, success, error, options);
