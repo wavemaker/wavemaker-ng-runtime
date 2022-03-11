@@ -362,24 +362,6 @@ export class ServiceVariableUtils {
         if (paginationInfo && variable.resPaginationInfo) {
             let reqObj = {};
             const paramName = paginationInfo.reqInput.page.split('.')[0]; 
-            // operationInfo.parameters.push({
-            //     contentType: null,
-            //     name: "X-WM-offset",
-            //     parameterType: "header",
-            //     readOnly: false,
-            //     required: false,
-            //     sampleValue: "5",
-            //     type: "String"
-            // },
-            // {
-            //     contentType: null,
-            //     name: "X-WM-limit",
-            //     parameterType: "header",
-            //     readOnly: false,
-            //     required: false,
-            //     sampleValue: "5",
-            //     type: "String"
-            // });
             const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
             if (paramObj && paramObj.parameterType === 'header') {
                 _.set(reqObj, paginationInfo.reqInput.page, variable.resPaginationInfo['page']);
