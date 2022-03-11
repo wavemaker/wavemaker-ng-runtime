@@ -404,7 +404,6 @@ export class ServiceVariableUtils {
                 }
             }   
         }
-        // headers['ChannelContext'] =  {"paginationDetails":{"limit":"10","offset":"1"}};
 
         /*creating the params needed to invoke the service. url is generated from the relative path for the operation*/
         invokeParams = {
