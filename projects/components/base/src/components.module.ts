@@ -39,6 +39,7 @@ import {
 } from './pipes/custom-pipes';
 import { TrustAsPipe } from './pipes/trust-as.pipe';
 import { DialogServiceImpl } from './widgets/common/dialog/dialog.service';
+import { SanitizePipe } from "./pipes/sanitize.pipe";
 
 const wmComponents = [
     ContainerDirective,
@@ -73,7 +74,8 @@ const PIPES = [
     TrailingZeroDecimalPipe,
     TrustAsPipe,
     ImagePipe,
-    CustomPipe
+    CustomPipe,
+    SanitizePipe
 ];
 
 @NgModule({
@@ -96,6 +98,7 @@ export class WmComponentsModule {
                 TrustAsPipe,
                 ImagePipe,
                 CustomPipe,
+                SanitizePipe,
                 Location,
                 {provide: AbstractDialogService, useClass: DialogServiceImpl}
             ]

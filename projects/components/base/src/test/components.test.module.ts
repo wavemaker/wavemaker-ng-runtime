@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import {SanitizePipe} from "../pipes/sanitize.pipe";
 
 let mockApp = {};
 
@@ -15,7 +16,8 @@ let mockApp = {};
     declarations: [
         ButtonComponent,
         ImagePipe,
-        TrustAsPipe
+        TrustAsPipe,
+        SanitizePipe
     ],
     providers: [
         { provide: App, useValue: mockApp },
@@ -27,6 +29,6 @@ let mockApp = {};
         BrowserAnimationsModule,
         TypeaheadModule.forRoot()
     ],
-    exports: [ButtonComponent, ImagePipe, TrustAsPipe]
+    exports: [ButtonComponent, ImagePipe, TrustAsPipe, SanitizePipe]
 })
 export class ComponentsTestModule { }

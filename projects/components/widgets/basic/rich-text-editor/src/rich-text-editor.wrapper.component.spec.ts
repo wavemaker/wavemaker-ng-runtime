@@ -4,6 +4,7 @@ import { RichTextEditorComponent } from './rich-text-editor.component';
 import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
+import {SanitizePipe} from "@wm/components/base";
 
 const  markup = `<div wmRichTextEditor #wm_richtexteditor1="wmRichTextEditor"
                         [attr.aria-label]="wm_richtexteditor1.hint || 'Richtext editor'"
@@ -22,7 +23,10 @@ class RichTextEditorWrapperComponent {
 
 const testModuleDef: ITestModuleDef = {
     declarations: [RichTextEditorWrapperComponent, RichTextEditorComponent],
-    imports: [ComponentsTestModule]
+    imports: [ComponentsTestModule],
+    providers: [
+        {provide: SanitizePipe, useClass: SanitizePipe},
+    ]
 };
 const componentDef: ITestComponentDef = {
     $unCompiled: $(markup),

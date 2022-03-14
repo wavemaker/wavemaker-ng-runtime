@@ -21,7 +21,7 @@
                 <input class="file-input" [attr.aria-label]="hint || 'File selection field'" type="file" name="files" *ngIf="!multiple" [disabled]="disabled" [accept]="chooseFilter" (click)="onFileElemClick($event)" (change)="onFileSelect($event, $event.target.files)" >
                 <button id="dropzone" focus-target class="app-button btn btn-default" [ngClass]="{'highlight-drop-box' : highlightDropArea}">
                     <i class="{{iconclass}}" aria-hidden="true"></i>
-                    <span class="caption">{{caption}}</span>
+                    <span class="caption" [innerHTML]="caption"></span>
                 </button>
             </form>
         </div>
@@ -30,7 +30,7 @@
     <!-- support for file upload in Mobile Application (device) -->
     <button *ngIf="_isCordova" focus-target class="app-button btn btn-default" (click)="openFileSelector()" [disabled]="disabled">
         <i class="{{iconclass}}"></i>
-        <span class="caption">{{caption}}</span>
+        <span class="caption" [innerHTML]="caption"></span>
     </button>
     <!-- list of selectedfiles UI -->
     <ul class="list-group file-upload" [ngStyle]="{height: filelistheight, overflow: overflow}" *ngIf="selectedFiles.length > 0" >

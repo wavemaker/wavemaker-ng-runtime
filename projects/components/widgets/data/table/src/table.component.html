@@ -4,8 +4,8 @@
             <i class="app-icon panel-icon {{iconclass}}" *ngIf="iconclass"></i>
         </div>
         <div class="pull-left">
-            <div class="heading" [innerHTML]="title | trustAs: 'html'"></div>
-            <div class="description" [innerHTML]="subheading | trustAs: 'html'"></div>
+            <div class="heading" [innerHTML]="title"></div>
+            <div class="description" [innerHTML]="subheading"></div>
         </div>
         <div class="panel-actions app-datagrid-actions" *ngIf="exportOptions.length || _actions.header.length">
             <ng-container *ngFor="let btn of _actions.header"

@@ -2,7 +2,7 @@ import {Component, ViewChild} from "@angular/core";
 import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
 import {LabelDirective} from "./label.directive";
 import {App} from "@wm/core";
-import {TrustAsPipe} from "@wm/components/base";
+import {SanitizePipe} from "@wm/components/base";
 
 let mockApp = {};
 
@@ -22,7 +22,7 @@ const testModuleDef: ITestModuleDef = {
     declarations: [LabelWrapperDirective, LabelDirective],
     providers: [
         {provide: App, useValue: mockApp},
-        {provide: TrustAsPipe, useClass: TrustAsPipe},
+        {provide: SanitizePipe, useClass: SanitizePipe},
     ]
 };
 
