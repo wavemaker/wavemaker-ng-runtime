@@ -380,17 +380,27 @@ export class ServiceVariableUtils {
                     const urlParams = operationInfo.relativePath.split('/'),
                     paramConfig = '{' + paramObj.name + '}',
                     paramIndex = urlParams.indexOf(paramConfig);
-                    let urlPath = new URL(url);
-                    const urlPathParmas = urlPath.pathname.split('/');
                     let invokeUrl;
                     if (variable.resPaginationInfo.isNext) {
                         invokeUrl = variable.resPaginationInfo.next.split('/');
                     } else {
                         invokeUrl = variable.resPaginationInfo.prev.split('/');
                     }
-                    urlPathParmas[paramIndex] = invokeUrl[paramIndex];
-                    urlPath.pathname = urlPathParmas.join('/');
-                    url = urlPath.href;
+
+                    let urlPathParmas;
+                    let urlPath;
+                    if (operationInfo.directPath) { // For direct path, as url has hostname derivate pathname using URL object
+                        urlPath = new URL(url);
+                        urlPathParmas = urlPath.pathname.split('/');
+                        urlPathParmas[paramIndex] = invokeUrl[paramIndex];
+                        urlPath.pathname = urlPathParmas.join('/');
+                        url = urlPath.href;
+                    } else { // Else modify the url with index as +1 (following proxy pattern)
+                        urlPathParmas = url.split('/');
+                        urlPathParmas[paramIndex + 1] = invokeUrl[paramIndex];
+                        url = urlPathParmas.join('/');
+                    }
+
                 } else if (paramObj.parameterType === 'query') {
                     const urlParams = url.split('?');
                     let invokeUrl;
