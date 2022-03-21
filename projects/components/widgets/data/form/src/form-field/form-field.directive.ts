@@ -384,6 +384,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         return this.formWidget && this.formWidget.timestamp;
     }
 
+    //Get the charlength
+    get charlength(){
+        return this.formWidget && this.formWidget.charlength;
+    }
+
     // Create the reactive form control
     createControl() {
         return this.fb.control(undefined, {
