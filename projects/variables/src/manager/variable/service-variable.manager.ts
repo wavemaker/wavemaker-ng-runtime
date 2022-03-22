@@ -523,7 +523,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         const operationInfo = this.getMethodInfo(variable, inputFields, options);
 
         // set query params, if pagination info is present and the info should be present in query
-        if (options['page'] && operationInfo.paginationInfo && operationInfo.paginationInfo.reqInput.size) {
+        if (options['page'] && operationInfo.paginationInfo && operationInfo.paginationInfo.reqInput.size && (variable as any).resPaginationInfo) {
             let inputParam;
             if (operationInfo.paginationInfo.type === 'offset') {
                 inputParam = 'offset';
