@@ -133,7 +133,7 @@ export class ServiceVariableManager extends BaseVariableManager {
                 }
                 if (resOutput.page) {
                     this.setPaginationItems(resOutput.page, response, res, 'page', resHeaders);
-                } else {
+                } else if (paginationInfo.type !== 'offset') {
                     const param = paginationInfo.reqInput.page.split('.')[0]; 
                     const pageObj = _.find(operationInfo.parameters, function(obj) { return obj.name === param });   
                     res['page'] = _.result(pageObj, 'sampleValue');
@@ -149,7 +149,11 @@ export class ServiceVariableManager extends BaseVariableManager {
                 } else if (resOutput.totalElements) {
                     this.setPaginationItems(resOutput.totalElements, response, res, 'totalElements', resHeaders);
                 } else {
-                    res['totalElements'] = (res['size'] * res['page']) + 1;
+                    if (paginationInfo.type === 'offset') {
+                        res['totalElements'] = (res['size'] * (options['page'] ? options['page'] : 1)) + 1;
+                    } else {
+                        res['totalElements'] = (res['size'] * res['page']) + 1;
+                    }
                 }
                 if (resOutput.hasMoreItems) {
                     this.setPaginationItems(resOutput.hasMoreItems, response, res, 'hasMoreItems', resHeaders);
@@ -520,11 +524,19 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         // set query params, if pagination info is present and the info should be present in query
         if (options['page'] && operationInfo.paginationInfo && operationInfo.paginationInfo.reqInput.size) {
-            const paramName = operationInfo.paginationInfo.reqInput.page.split('.')[0]; 
+            let inputParam;
+            if (operationInfo.paginationInfo.type === 'offset') {
+                inputParam = 'offset';
+            } else {
+                inputParam = 'page';
+            }
+            const paramName = operationInfo.paginationInfo.reqInput[inputParam].split('.')[0]; 
             const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
             if (!_.isEmpty(variable.dataBinding) && paramObj && paramObj.parameterType === 'query') {
-                if (!operationInfo.paginationInfo.resOutput.page) {
+                if (!operationInfo.paginationInfo.resOutput.page && operationInfo.paginationInfo.type !== 'offset') {
                     (variable as any).resPaginationInfo['page'] = options['page'];
+                } else {
+                    (variable as any).resPaginationInfo['page'] = (variable as any).resPaginationInfo['size'] * (options['page'] ? options['page'] : 1);
                 }
                 VariablePaginationMapperUtils.setPaginationQueryParams(variable, operationInfo);
             }

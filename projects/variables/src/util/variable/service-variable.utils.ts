@@ -361,14 +361,20 @@ export class ServiceVariableUtils {
         const paginationInfo = operationInfo.paginationInfo;
         if (paginationInfo && variable.resPaginationInfo) {
             let reqObj = {};
-            const paramName = paginationInfo.reqInput.page.split('.')[0]; 
+            let inputParam;
+            if (operationInfo.paginationInfo.type === 'offset') {
+                inputParam = 'offset';
+            } else {
+                inputParam = 'page';
+            }
+            const paramName = paginationInfo.reqInput[inputParam].split('.')[0]; 
             const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
             if (paramObj && paramObj.parameterType === 'header') {
-                _.set(reqObj, paginationInfo.reqInput.page, variable.resPaginationInfo['page']);
+                _.set(reqObj, paginationInfo.reqInput[inputParam], variable.resPaginationInfo['page']);
                 _.set(reqObj, paginationInfo.reqInput.size, variable.resPaginationInfo['size']);
-                Object.assign(headers, reqObj);
+                headers[paramName] = JSON.stringify(reqObj[paramName]);
             } else if (!paramObj) {
-                _.set(reqObj, paginationInfo.reqInput.page, variable.resPaginationInfo['page']);
+                _.set(reqObj, paginationInfo.reqInput[inputParam], variable.resPaginationInfo['page']);
                 _.set(reqObj, paginationInfo.reqInput.size, variable.resPaginationInfo['size']);
                 if (!requestBody) {
                     requestBody = reqObj;

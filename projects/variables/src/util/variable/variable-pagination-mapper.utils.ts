@@ -4,7 +4,13 @@ export class VariablePaginationMapperUtils {
     static setPaginationQueryParams(variable, operationInfo) {
         const paginationInfo = operationInfo.paginationInfo;
                 operationInfo.parameters.forEach(element => {
-                    if (element.name === paginationInfo.reqInput.page.split('.')[0]) {
+                    let inputParam;
+                    if (operationInfo.paginationInfo.type === 'offset') {
+                        inputParam = 'offset';
+                    } else {
+                        inputParam = 'page';
+                    }
+                    if (element.name === paginationInfo.reqInput[inputParam].split('.')[0]) {
                         element.sampleValue = variable.resPaginationInfo['page'];
                     } else if (element.name === paginationInfo.reqInput.size.split('.')[0]) {
                         element.sampleValue = variable.resPaginationInfo['size'];
