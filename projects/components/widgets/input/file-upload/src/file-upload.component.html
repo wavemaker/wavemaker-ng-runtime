@@ -52,8 +52,14 @@
                             <i class="wi wi-close"></i>
                         </a>
                     </div>
+
                     <div class="media-right media-middle"  *ngIf="ft.status === 'success'">
                         <span class="status-icon {{ft.status | stateClass }}"></span>
+                    </div>
+                    <div *ngIf="ft.status === 'success' && showclear" class="media-right media-middle">
+                        <a (click)="clearSelectedFiles(ft)" class="btn btn-transparent btn-default status-icon" type="button">
+                            <i class="{{deleteiconclass}}"></i>
+                        </a>
                     </div>
                     <div class="media-right media-middle"  *ngIf="ft.status === 'error'" title="{{ft.errMsg || this.appLocale.MESSAGE_FILE_UPLOAD_FAILED}}">
                         <span class="status-icon {{ft.status | stateClass }}"></span>

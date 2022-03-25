@@ -57,6 +57,10 @@ export class FileUpload {
      * CSS class of the icon.
      */
     @Input() iconclass: string = 'wi wi-file-upload';
+    /**
+     * CSS class for the delete icon.
+     */
+    @Input() deleteiconclass: string = 'wi wi-trash';
 
     /**
      * Callback function which will be triggered before the file is selected.
