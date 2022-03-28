@@ -60,7 +60,7 @@ export class FileUpload {
     /**
      * CSS class for the delete icon.
      */
-    @Input() deleteiconclass: string = 'wi wi-trash';
+    @Input() deleteiconclass: string;
 
     /**
      * Callback function which will be triggered before the file is selected.

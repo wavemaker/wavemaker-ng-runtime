@@ -31,7 +31,6 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     name;
     hint;
     multiple;
-    showclear;
     fileTransfers = {};
     caption = 'Upload';
     formName = '';
@@ -207,10 +206,12 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         window.removeEventListener('focus', this.disableDropZone);
     }
 
-    clearFiles(fileObj) {
+    /*this function to clear the specified file. if argument is not provided, it clears the complete list  */
+    clear(fileObj) {
         this.selectedFiles = (fileObj) ? this.selectedFiles.filter((file) => file !== fileObj) : [];
     }
 
+    /*this function to set the class names for delete icon */
     setDeleteIconClass(classValue) {
         this.deleteiconclass = classValue;
     }
