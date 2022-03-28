@@ -16,6 +16,7 @@ export const registerProps = () => {
                 ['contenttype', PROP_STRING],
                 ['maxfilesize', PROP_NUMBER],
                 ['iconclass', {value: 'wi wi-file-upload', ...PROP_STRING}],
+                ['deleteiconclass', {value: '', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['uploadpath', {...PROP_STRING}],
                 ['datasource', PROP_STRING],

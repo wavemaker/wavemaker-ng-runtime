@@ -29,12 +29,13 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     selectedFolders: any = [];
     progressObservable;
     name;
-    hint
+    hint;
     multiple;
     fileTransfers = {};
     caption = 'Upload';
     formName = '';
     maxfilesize;
+    deleteiconclass;
     selectedUploadTypePath;
     DEFAULT_CAPTIONS = {
         MULTIPLE_SELECT: 'Drop your files here.',
@@ -194,7 +195,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
 
         //The file upload widget value should be set to null to reupload the same file.
         this.$element.find('.file-input')[0].value = null;
-        $event.stopPropagation()
+        $event.stopPropagation();
 
         // when the filepicker is not there on the window, remove the dropzone highlight
         window.addEventListener('focus', this.disableDropZone.bind(this));
@@ -203,6 +204,16 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     disableDropZone() {
         this.highlightDropArea = false;
         window.removeEventListener('focus', this.disableDropZone);
+    }
+
+    /*this function to clear the specified file. if argument is not provided, it clears the complete list  */
+    clear(fileObj) {
+        this.selectedFiles = (fileObj) ? this.selectedFiles.filter((file) => file !== fileObj) : [];
+    }
+
+    /*this function to set the class names for delete icon */
+    setDeleteIconClass(classValue) {
+        this.deleteiconclass = classValue;
     }
 
     /*this function to append upload status dom elements to widget */
