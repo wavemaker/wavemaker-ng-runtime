@@ -15,6 +15,7 @@ export const registerProps = () => {
             ['pictureaspect', {value: 'None', ...PROP_STRING}],
             ['pictureplaceholder', PROP_STRING],
             ['picturesource', PROP_STRING],
+            ['resizemode', {value: 'fill', ...PROP_STRING}],
             ['shape', PROP_STRING],
             ['show', {value: true, ...PROP_BOOLEAN}],
             ['tabindex', {value: 0, ...PROP_NUMBER}]
