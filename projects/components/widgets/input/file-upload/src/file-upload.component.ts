@@ -207,7 +207,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         window.removeEventListener('focus', this.disableDropZone);
     }
 
-    clearSelectedFiles(fileObj) {
+    clearFiles(fileObj) {
         this.selectedFiles = (fileObj) ? this.selectedFiles.filter((file) => file !== fileObj) : [];
     }
 

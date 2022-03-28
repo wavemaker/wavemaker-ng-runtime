@@ -57,7 +57,7 @@
                         <span class="status-icon {{ft.status | stateClass }}"></span>
                     </div>
                     <div *ngIf="ft.status === 'success' && showclear" class="media-right media-middle">
-                        <a (click)="clearSelectedFiles(ft)" class="btn btn-transparent btn-default status-icon" type="button">
+                        <a (click)="clearFiles(ft)" class="btn btn-transparent btn-default status-icon" type="button">
                             <i class="{{deleteiconclass}}"></i>
                         </a>
                     </div>
