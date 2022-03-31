@@ -1,4 +1,4 @@
-import { File } from '@ionic-native/file';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 
 import { noop } from '@wm/core';
 import { DeviceFileService } from '@wm/mobile/core';

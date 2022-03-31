@@ -118,7 +118,7 @@ buildNeeded() {
         return 1
     fi
 
-    local modifiedSourceFilesCount=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -newer $successFile | wc -l`
+    local modifiedSourceFilesCount=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" -o -name "*.json" \) -newer $successFile | wc -l`
     return $modifiedSourceFilesCount
 }
 
@@ -623,8 +623,8 @@ bundleMobileLibs() {
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
         ./projects/components/widgets/data/table/src/datatable.js \
-        ./dist/tmp/libs/ionic-native/ionic-native-core.umd.js \
-        ./dist/tmp/libs/ionic-native/ionic-native-plugins.umd.js \
+        ./dist/tmp/libs/awesome-cordova/awesome-cordova-core.umd.js \
+        ./dist/tmp/libs/awesome-cordova/awesome-cordova-plugins.umd.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
@@ -656,7 +656,7 @@ buildWebLibs() {
 }
 
 buildIonicNative() {
-    execCommand "rollup" "ionic-native" "${ROLLUP} -c ./projects/mobile/ionic-native/rollup.ionic-native.config.js --silent"
+    execCommand "rollup" "awesome-cordova" "${ROLLUP} -c ./projects/mobile/awesome-cordova/rollup.awesome-cordova.config.js --silent"
 }
 
 buildMobileLibs() {

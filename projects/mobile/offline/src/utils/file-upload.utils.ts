@@ -1,4 +1,4 @@
-import { File } from '@ionic-native/file';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 
 import { DeviceFileService, DeviceFileUploadService, IUploadResponse, NetworkService, UploadRequest } from '@wm/mobile/core';
 
