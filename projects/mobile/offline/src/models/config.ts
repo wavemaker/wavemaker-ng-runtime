@@ -1,4 +1,4 @@
-import { SQLiteObject } from '@ionic-native/sqlite';
+import { SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 
 import { LocalDBStore } from './local-db-store';
 

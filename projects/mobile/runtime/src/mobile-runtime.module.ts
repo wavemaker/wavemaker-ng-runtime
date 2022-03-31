@@ -1,21 +1,20 @@
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
-import { AppVersion } from '@ionic-native/app-version';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { Calendar } from '@ionic-native/calendar';
-import { Camera } from '@ionic-native/camera';
-import { Contacts } from '@ionic-native/contacts';
-import { File } from '@ionic-native/file';
-import { FileOpener } from '@ionic-native/file-opener';
-import { Device } from '@ionic-native/device';
-import { MediaCapture } from '@ionic-native/media-capture';
-import { Geolocation } from '@ionic-native/geolocation';
-import { Network } from '@ionic-native/network';
-import { SQLite } from '@ionic-native/sqlite';
-import { Vibration } from '@ionic-native/vibration';
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
-import { Diagnostic } from '@ionic-native/diagnostic';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
+import { Calendar } from '@awesome-cordova-plugins/calendar/ngx';
+import { Camera } from '@awesome-cordova-plugins/camera/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
+import { MediaCapture } from '@awesome-cordova-plugins/media-capture/ngx';
+import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
+import { Network } from '@awesome-cordova-plugins/network/ngx';
+import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
+import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
+import { LocationAccuracy } from '@awesome-cordova-plugins/location-accuracy/ngx';
+import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
 
 import {
     App,
@@ -52,12 +51,11 @@ export const MAX_WAIT_TIME_4_OAUTH_MESSAGE = 60000;
 const MINIMUM_TAB_WIDTH = 768;
 const KEYBOARD_CLASS = 'keyboard';
 
-const ionicServices = [
+const cordovaServices = [
     AppVersion,
     BarcodeScanner,
     Calendar,
     Camera,
-    Contacts,
     File,
     FileOpener,
     Device,
@@ -97,7 +95,7 @@ export class MobileRuntimeModule {
                     useClass: MobileHttpInterceptor,
                     multi: true
                 },
-                ...ionicServices,
+                ...cordovaServices,
                 FileExtensionFromMimePipe,
                 {provide: PushService, useClass: PushServiceImpl}
             ]
@@ -136,7 +134,7 @@ export class MobileRuntimeModule {
                     localStorage.setItem('remoteSync', flag ? 'true' : 'false');
                 };
             }
-            window.open = window['cordova'].InAppBrowser.open;
+            window.open = window['cordova']['InAppBrowser']['open'];
             runtimeModule.addAuthInBrowser();
         }
         deviceService.start();

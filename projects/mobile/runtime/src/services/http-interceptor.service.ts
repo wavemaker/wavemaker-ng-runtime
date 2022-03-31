@@ -1,7 +1,7 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { File } from '@ionic-native/file';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 import { from } from 'rxjs';
 import { Observable, Subject } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';

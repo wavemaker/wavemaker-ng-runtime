@@ -1,5 +1,5 @@
-import { Camera } from '@ionic-native/camera';
-import { MediaCapture } from '@ionic-native/media-capture';
+import { Camera } from '@awesome-cordova-plugins/camera/ngx';
+import { MediaCapture } from '@awesome-cordova-plugins/media-capture/ngx';
 
 import { isNumber } from '@wm/core';
 import { DeviceVariableService, IDeviceVariableOperation } from '@wm/variables';
