@@ -103,6 +103,9 @@ export class CrudVariable extends ApiAwareVariable implements IDataSource {
                 options.operation = 'delete';
                 returnVal = this.invoke(options);
                 break;
+            case DataSource.Operation.SET_PAGINATION:
+                returnVal = this.setPagination(options);
+                break;
             default :
                 returnVal = {};
                 break;
@@ -170,6 +173,10 @@ export class CrudVariable extends ApiAwareVariable implements IDataSource {
 
     cancel(options?) {
         return getManager().cancel(this, options);
+    }
+
+    setPagination(data) {
+        return getManager().setPagination(this, data);
     }
 
     init() {

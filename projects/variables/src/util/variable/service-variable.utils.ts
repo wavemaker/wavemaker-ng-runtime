@@ -116,7 +116,7 @@ export class ServiceVariableUtils {
      * @param inputFields
      * @returns {any}
      */
-    static constructRequestParams(variable, operationInfo, inputFields) {
+    static constructRequestParams(variable, operationInfo, inputFields, options?) {
         variable = variable || {};
 
         // operationInfo is specifically null for un_authorized access
@@ -362,25 +362,35 @@ export class ServiceVariableUtils {
         if (paginationInfo && variable.resPaginationInfo) {
             let reqObj = {};
             let inputParam;
-            if (operationInfo.paginationInfo.type === 'offset') {
+            if (paginationInfo.type === 'offset' || paginationInfo.input.offset) {
                 inputParam = 'offset';
             } else {
                 inputParam = 'page';
             }
-            const paramName = paginationInfo.reqInput[inputParam].split('.')[0]; 
+            const paramName = paginationInfo.input[inputParam].split('.')[0]; 
             const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
             if (paramObj && paramObj.parameterType === 'header') {
-                _.set(reqObj, paginationInfo.reqInput[inputParam], variable.resPaginationInfo['page']);
-                _.set(reqObj, paginationInfo.reqInput.size, variable.resPaginationInfo['size']);
+                _.set(reqObj, paginationInfo.input[inputParam], variable.resPaginationInfo['page']);
+                _.set(reqObj, paginationInfo.input.size, variable.resPaginationInfo['size']);
                 headers[paramName] = JSON.stringify(reqObj[paramName]);
             } else if (!paramObj) {
-                _.set(reqObj, paginationInfo.reqInput[inputParam], variable.resPaginationInfo['page']);
-                _.set(reqObj, paginationInfo.reqInput.size, variable.resPaginationInfo['size']);
-                if (!requestBody) {
-                    requestBody = reqObj;
-                } else {
-                    Object.assign(requestBody, reqObj);
+                const index = _.findIndex(operationInfo.parameters, function(obj) { return obj.name === 'RequestBody' });   
+                const reqBodyObj = operationInfo.parameters[index];
+                if (reqBodyObj) {
+                    const bodyVal = JSON.parse(reqBodyObj.sampleValue);
+                    if (bodyVal && bodyVal[paramName]) {
+                        if (inputParam !== 'offset') { 
+                            _.set(reqObj, paginationInfo.input[inputParam], variable.resPaginationInfo['page']);
+                        } else {
+                            _.set(reqObj, paginationInfo.input[inputParam], variable.resPaginationInfo['size'] * (options['page'] ? (options['page'] - 1) : 1));
+                            
+                        }
+                        _.set(reqObj, paginationInfo.input.size, variable.resPaginationInfo['size']);
+                        bodyVal[paramName] =  reqObj[paramName];
+                        requestBody = JSON.stringify(bodyVal);
+                    }
                 }
+                
             } else if (variable.resPaginationInfo.next && paramObj) {
                 if (paramObj.parameterType === 'path') {
                     const urlParams = operationInfo.relativePath.split('/'),
@@ -434,7 +444,7 @@ export class ServiceVariableUtils {
             'isExtURL': variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.REST,
             'withCredentials': withCredentials
         };
-
+    
         return invokeParams;
     }
 

@@ -122,45 +122,46 @@ export class ServiceVariableManager extends BaseVariableManager {
             
         let res = {};
         if (paginationInfo) {
-            const resOutput = paginationInfo.resOutput;
-            if (!resOutput.next) {
-                if (resOutput.size) {
+            const resOutput = paginationInfo.output;
+            if (!resOutput?.next) {
+                if (resOutput?.size) {
                     this.setPaginationItems(resOutput.size, response, res, 'size', resHeaders);
                 } else { 
-                    const param = paginationInfo.reqInput.size.split('.')[0]; 
+                    const param = paginationInfo.input.size.split('.')[0]; 
                     const sizeObj = _.find(operationInfo.parameters, function(obj) { return obj.name === param });   
                     res['size'] = _.result(sizeObj, 'sampleValue');                 
                 }
-                if (resOutput.page) {
+                if (resOutput?.page) {
                     this.setPaginationItems(resOutput.page, response, res, 'page', resHeaders);
                 } else if (paginationInfo.type !== 'offset') {
-                    const param = paginationInfo.reqInput.page.split('.')[0]; 
+                    const param = paginationInfo.input.page.split('.')[0]; 
                     const pageObj = _.find(operationInfo.parameters, function(obj) { return obj.name === param });   
                     res['page'] = _.result(pageObj, 'sampleValue');
                 }
-                if (_.startsWith(resOutput.totalElements, '$minValue')) {
+                if (_.startsWith(resOutput?.totalElements, '$minValue')) {
                     const totalEl = resOutput.totalElements.replace('$minValue=', '');
-                    const elRendered = res['size'] * res['page'];
+                    const pageParam = res['page'] ? res['page'] : options['page']
+                    const elRendered = res['size'] * pageParam;
                     if (!variable.resPaginationInfo || variable.resPaginationInfo['totalElements'] > elRendered) {
                         res['totalElements'] = parseInt(totalEl);
                     } else {
                         res['totalElements'] = elRendered + 1;
                     }
-                } else if (resOutput.totalElements) {
+                } else if (resOutput?.totalElements) {
                     this.setPaginationItems(resOutput.totalElements, response, res, 'totalElements', resHeaders);
                 } else {
-                    if (paginationInfo.type === 'offset') {
+                    if (paginationInfo.type === 'offset' || paginationInfo.input.offset) {
                         res['totalElements'] = (res['size'] * (options['page'] ? options['page'] : 1)) + 1;
                     } else {
                         res['totalElements'] = (res['size'] * res['page']) + 1;
                     }
                 }
-                if (resOutput.hasMoreItems) {
+                if (resOutput?.hasMoreItems) {
                     this.setPaginationItems(resOutput.hasMoreItems, response, res, 'hasMoreItems', resHeaders);
                 } else {
                     res['hasMoreItems'] = '';
                 }
-            } else {
+            } else if (resOutput) {
                 this.setPaginationItems(resOutput.next, response, res, 'next', resHeaders);
                 this.setPaginationItems(resOutput.prev, response, res, 'prev', resHeaders);
             }
@@ -424,6 +425,9 @@ export class ServiceVariableManager extends BaseVariableManager {
                 }
             });
         }
+        if (!methodInfo.paginationInfo && variable.paginationConfig) {
+            methodInfo.paginationInfo = variable.paginationConfig;
+        }
         return methodInfo;
     }
 
@@ -523,25 +527,26 @@ export class ServiceVariableManager extends BaseVariableManager {
         const operationInfo = this.getMethodInfo(variable, inputFields, options);
 
         // set query params, if pagination info is present and the info should be present in query
-        if (options['page'] && operationInfo.paginationInfo && operationInfo.paginationInfo.reqInput.size && (variable as any).resPaginationInfo) {
+        const paginationInfo = operationInfo.paginationInfo;
+        if (options['page'] && paginationInfo?.input.size && (variable as any).resPaginationInfo) {
             let inputParam;
-            if (operationInfo.paginationInfo.type === 'offset') {
+            if (paginationInfo.type === 'offset' || paginationInfo.input.offset) {
                 inputParam = 'offset';
             } else {
                 inputParam = 'page';
             }
-            const paramName = operationInfo.paginationInfo.reqInput[inputParam].split('.')[0]; 
+            const paramName = paginationInfo.input[inputParam].split('.')[0]; 
             const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
             if (!_.isEmpty(variable.dataBinding) && paramObj && paramObj.parameterType === 'query') {
-                if (!operationInfo.paginationInfo.resOutput.page && operationInfo.paginationInfo.type !== 'offset') {
+                if (!paginationInfo.output?.page && paginationInfo.type !== 'offset') {
                     (variable as any).resPaginationInfo['page'] = options['page'];
                 } else {
-                    (variable as any).resPaginationInfo['page'] = (variable as any).resPaginationInfo['size'] * (options['page'] ? options['page'] : 1);
+                    (variable as any).resPaginationInfo['page'] = (variable as any).resPaginationInfo['size'] * (options['page'] ? (options['page'] - 1) : 1);
                 }
                 VariablePaginationMapperUtils.setPaginationQueryParams(variable, operationInfo);
             }
         }
-        const requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields);
+        const requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields, options);
         // check errors
         if (requestParams.error) {
             const info = this.handleRequestMetaError(requestParams, variable, success, error, options);
@@ -600,8 +605,8 @@ export class ServiceVariableManager extends BaseVariableManager {
             this.httpCall(requestParams, variable).then((response) => {
                 successHandler(response, resolve);
             }, err => {
-                const validJSON = getValidJSON(err.error);
-                err.error = isDefined(validJSON) ? validJSON : err.error;
+                    const validJSON = getValidJSON(err.error);
+                    err.error = isDefined(validJSON) ? validJSON : err.error;
                 errorHandler(err, reject);
             });
             // the _observable property on variable is used store the observable using which the network call is made
@@ -619,6 +624,10 @@ export class ServiceVariableManager extends BaseVariableManager {
         });
         options.inputFields = options.inputFields || getClonedObject(variable.dataBinding);
         return $queue.submit(variable).then(this._invoke.bind(this, variable, options, success, error), error);
+    }
+
+    public setPagination(variable, data) {
+        variable.paginationConfig = data;
     }
 
     public download(variable, options, successHandler, errorHandler) {

@@ -77,6 +77,9 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.CANCEL:
                 returnVal = this.cancel(options);
                 break;
+            case DataSource.Operation.SET_PAGINATION:
+                returnVal = this.setPagination(options);
+                break;
             default :
                 returnVal = {};
                 break;
@@ -120,6 +123,10 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
         }
 
         return true;
+    }
+
+    setPagination(data) {
+        return getManager().setPagination(this, data);
     }
 
     cancel(options?) {
