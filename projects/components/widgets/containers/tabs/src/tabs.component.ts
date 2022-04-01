@@ -53,6 +53,8 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public fieldDefs;
     public type;
     public nodatamessage;
+    public prevDataSet;
+    public prevPanes;
 
     @ContentChildren(TabPaneComponent) panes: QueryList<TabPaneComponent>;
 
@@ -254,6 +256,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
     private isValidPaneIndex(index: number): boolean {
+        this.prevPanes = _.cloneDeep(this.panes);
         return (index >= 0 && index < this.panes.length);
     }
 
@@ -334,7 +337,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
         removeClass(this.nativeElement, 'inverted');
         if (this.tabsposition === 'bottom' || this.tabsposition === 'right') {
-            appendNode(ul as HTMLElement, this.nativeElement);
+        appendNode(ul as HTMLElement, this.nativeElement);
             addClass(this.nativeElement, 'inverted');
         }
     }
@@ -349,6 +352,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         if (key === 'defaultpaneindex') {
             this.defaultpaneindex = nv;
         } else if (key === 'dataset') {
+            this.prevDataSet = ov;
             this.onDataChange(nv);
         } else if (key === 'statehandler') {
             this.isPageLoadCall = true;
@@ -395,7 +399,11 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.promiseResolverFn();
         super.ngAfterContentInit();
         this.setTabsPosition();
-        this.panes.changes.subscribe( slides => {
+        this.panes.changes.subscribe(slides => {
+            const isDataSetEqual = _.isEqual(this.prevDataSet, (this as any).dataset);
+            if (this.prevPanes.length && (isDataSetEqual || !this.prevDataSet)) {
+                this.panes = this.prevPanes;
+            } 
             if (this.panes.length) {
                 this.selectDefaultPaneByIndex(this.defaultpaneindex || 0);
             }
