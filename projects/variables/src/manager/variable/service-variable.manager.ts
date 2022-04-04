@@ -268,12 +268,20 @@ export class ServiceVariableManager extends BaseVariableManager {
     private setPaginationItems(item, response, res, key, resHeaders) {
         if (_.startsWith(item, '$body')) {
             const bodyKey = item.replace('$body.', '');
-            res[key] = jmespath.search(response, bodyKey);
+            try {
+                res[key] = jmespath.search(response, bodyKey);
+            } catch {
+                console.warn(`${item} expression needs to be corrected as per JMES guidelines`);
+            }
         } else if (_.startsWith(item, '$header')) {
             const headerKey = item.replace('$header.', '');
             const headers =  (<any>Object).fromEntries(resHeaders.headers);
             const headerParams = headerKey.split('.');
-            res[key] = jmespath.search(headers, headerParams[0].toLowerCase());
+            try {
+                res[key] = jmespath.search(headers, headerParams[0].toLowerCase());
+            } catch {
+                console.warn(`${item} expression needs to be corrected as per JMES guidelines`);
+            }
             if (res[key]?.length) {
                 let headerVal = res[key].join();
                 if (headerParams.length === 1) {
@@ -285,7 +293,11 @@ export class ServiceVariableManager extends BaseVariableManager {
                     if (specialChar.test(keyName)) {
                         keyName = 'headerResp.' + keyName;
                     }
-                    res[key] = jmespath.search(headerResp, keyName);
+                    try {
+                        res[key] = jmespath.search(headerResp, keyName);
+                    } catch {
+                        console.warn(`${item} expression needs to be corrected as per JMES guidelines`);
+                    }
                 }
             }
         }

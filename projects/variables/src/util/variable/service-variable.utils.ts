@@ -369,28 +369,24 @@ export class ServiceVariableUtils {
             }
             const paramName = paginationInfo.input[inputParam].split('.')[0]; 
             const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
-            if (paramObj && paramObj.parameterType === 'header') {
+            if (paramObj?.parameterType === 'header') {
                 _.set(reqObj, paginationInfo.input[inputParam], variable.resPaginationInfo['page']);
                 _.set(reqObj, paginationInfo.input.size, variable.resPaginationInfo['size']);
                 headers[paramName] = JSON.stringify(reqObj[paramName]);
-            } else if (!paramObj) {
-                const index = _.findIndex(operationInfo.parameters, function(obj) { return obj.name === 'RequestBody' });   
-                const reqBodyObj = operationInfo.parameters[index];
-                if (reqBodyObj) {
-                    const bodyVal = JSON.parse(reqBodyObj.sampleValue);
-                    if (bodyVal && bodyVal[paramName]) {
-                        if (inputParam !== 'offset') { 
-                            _.set(reqObj, paginationInfo.input[inputParam], variable.resPaginationInfo['page']);
-                        } else {
-                            _.set(reqObj, paginationInfo.input[inputParam], variable.resPaginationInfo['size'] * (options['page'] ? (options['page'] - 1) : 1));
-                            
-                        }
-                        _.set(reqObj, paginationInfo.input.size, variable.resPaginationInfo['size']);
-                        bodyVal[paramName] =  reqObj[paramName];
-                        requestBody = JSON.stringify(bodyVal);
+            } else if (paramObj?.parameterType === 'body') {
+                const bodyVal = JSON.parse(paramObj.sampleValue);
+                const bodyParam = paginationInfo.input[inputParam].split('.')[1]
+                if (bodyVal && bodyVal[bodyParam]) {
+                    const inputBodyParam = paginationInfo.input[inputParam].split('.').splice(1).join('.');               
+                    if (inputParam !== 'offset') { 
+                        _.set(reqObj, inputBodyParam, variable.resPaginationInfo['page']);
+                    } else {
+                        _.set(reqObj, inputBodyParam, variable.resPaginationInfo['size'] * (options['page'] ? (options['page'] - 1) : 1));
                     }
+                    _.set(reqObj, paginationInfo.input.size.split('.').splice(1).join('.'), variable.resPaginationInfo['size']);
+                    bodyVal[bodyParam] =  reqObj[bodyParam];
+                    requestBody = JSON.stringify(bodyVal);
                 }
-                
             } else if (variable.resPaginationInfo.next && paramObj) {
                 if (paramObj.parameterType === 'path') {
                     const urlParams = operationInfo.relativePath.split('/'),

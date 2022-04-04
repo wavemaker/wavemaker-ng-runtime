@@ -415,7 +415,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 /*Return if already on the first page.*/
                 if (!this.pagination?.next && (this.isFirstPage() || !this.validateCurrentPage(event, callback))) {
                     return;
-                } else if (this.pagination.next) {
+                } else if (this.pagination?.next) {
                     this.datasource.resPaginationInfo.isNext = false;
                     this.datasource.resPaginationInfo.isPrev = true;
                 }
