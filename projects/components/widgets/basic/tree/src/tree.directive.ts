@@ -119,8 +119,12 @@ export class TreeDirective extends StylableComponent {
                 $iconNode = $('<i></i>'),
                 nodeLabel = getEvaluatedData(node, {expression: this.nodelabel, bindExpression: this.bindnodelabel}, this.viewParent) || node.label,
                 nodeIcon = getEvaluatedData(node, {expression: this.nodeicon, bindExpression: this.bindnodeicon}, this.viewParent) || node.icon,
-                nodeChildren = getEvaluatedData(node, {expression: this.nodechildren, bindExpression: this.bindnodechildren}, this.viewParent) || node.children,
-                nodeIdValue = getEvaluatedData(node, {expression: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent) || node.children;
+                nodeChildren = getEvaluatedData(node, {expression: this.nodechildren, bindExpression: this.bindnodechildren}, this.viewParent) || node.children;
+            let nodeIdValue = getEvaluatedData(node, {expression: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent);
+            if (nodeIdValue === undefined) {
+                nodeIdValue = node.children;
+            }
+
             let isNodeMatched = false,
                 expandCollapseIcon;
 
@@ -138,7 +142,7 @@ export class TreeDirective extends StylableComponent {
             // if node identifier is present then verify the datavalue is bound expr or static value and compare with the node model
             if (this.bindnodeid || this.nodeid) {
                 isNodeMatched = this.binddatavalue ? nodeIdValue === _evalDataValue : nodeIdValue === _expr;
-                if (nodeIdValue) {
+                if (nodeIdValue !== undefined) {
                     $li.attr('id', nodeIdValue);
                 }
             } else if (this.binddatavalue) { // evaluate the expression only if it is bound (useExpression)
@@ -331,6 +335,8 @@ export class TreeDirective extends StylableComponent {
             } else {
                 this.datavalue = getClonedObject(data) || {};
             }
+        } else {
+            this.datavalue = value;
         }
 
         if (nodeAction) {
