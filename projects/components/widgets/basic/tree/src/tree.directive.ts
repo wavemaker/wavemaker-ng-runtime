@@ -2,7 +2,7 @@ import { Attribute, Directive, Injector } from '@angular/core';
 
 import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/core';
 
-import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
 
 declare const _, $;
@@ -46,7 +46,7 @@ const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
         provideAsWidgetRef(TreeDirective)
     ]
 })
-export class TreeDirective extends StylableComponent implements IRedrawableComponent {
+export class TreeDirective extends StylableComponent {
     static initializeProps = registerProps();
 
     private _selectNode: HTMLElement;
@@ -366,8 +366,5 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
     private deselectById(value?) {
         this.selecteditem = {};
         this.selectById();
-    }
-    public redraw() {
-        this.renderTree(true);
     }
 }
