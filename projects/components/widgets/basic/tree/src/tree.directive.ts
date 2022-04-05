@@ -137,7 +137,7 @@ export class TreeDirective extends StylableComponent {
 
             // if node identifier is present then verify the datavalue is bound expr or static value and compare with the node model
             if (this.bindnodeid || this.nodeid) {
-                isNodeMatched = this.binddatavalue ? nodeIdValue === _evalDataValue : nodeIdValue === _expr;
+                isNodeMatched = this.binddatavalue ? nodeIdValue?.toString() === _evalDataValue?.toString() : nodeIdValue?.toString() === _expr?.toString();
                 if (nodeIdValue) {
                     $li.attr('id', nodeIdValue);
                 }
@@ -262,15 +262,15 @@ export class TreeDirective extends StylableComponent {
             $li = this._selectNode;
             $li.addClass('selected');
             data    = $li.data('nodedata');
-            $liPath = $li.parentsUntil($el, 'li.parent-node.collapsed');
+            $liPath = $li.find('> span.title').parents('.app-tree li');
 
             if (!$liPath.length) {
                 $liPath = $li;
             }
 
             $liPath
-                .each(() => {
-                    const $current = $(this),
+                .each((i, el) => {
+                    const $current = $(el),
                         $i       = $current.children('i.collapsed'),
                         $title   = $current.children('.title');
                     this.toggleExpandCollapseNode(undefined, $i, $current);
