@@ -137,7 +137,7 @@ export class TreeDirective extends StylableComponent {
 
             // if node identifier is present then verify the datavalue is bound expr or static value and compare with the node model
             if (this.bindnodeid || this.nodeid) {
-                isNodeMatched = this.binddatavalue ? nodeIdValue?.toString() === _evalDataValue?.toString() : nodeIdValue?.toString() === _expr?.toString();
+                isNodeMatched = this.binddatavalue ? nodeIdValue === _evalDataValue : nodeIdValue === _expr;
                 if (nodeIdValue) {
                     $li.attr('id', nodeIdValue);
                 }
@@ -210,7 +210,7 @@ export class TreeDirective extends StylableComponent {
 
     private toggleExpandCollapseNode($event, $i, $li) {
         const treeIcons = ICON_CLASSES[this.treeicons || defaultTreeIconClass];
-        const  $liPath =  $li.find('> span.title').parents('.app-tree li');
+        const  $liPath =  this.findSelectedNodeParent($li);
         let path = '';
 
         // construct the path of the node
@@ -262,7 +262,7 @@ export class TreeDirective extends StylableComponent {
             $li = this._selectNode;
             $li.addClass('selected');
             data    = $li.data('nodedata');
-            $liPath = $li.find('> span.title').parents('.app-tree li');
+            $liPath = this.findSelectedNodeParent($li);
 
             if (!$liPath.length) {
                 $liPath = $li;
@@ -303,7 +303,7 @@ export class TreeDirective extends StylableComponent {
         nodeAction = data[this.nodeaction || 'action'];
 
         // if the selectNode is initiated by click event then use the nativeElement target from event
-        $liPath = target ? target.parents('.app-tree li') : $li.find('> span.title').parents('.app-tree li');
+        $liPath = target ? target.parents('.app-tree li') : this.findSelectedNodeParent($li);
 
         // construct the path of the node
         $liPath
@@ -358,6 +358,10 @@ export class TreeDirective extends StylableComponent {
                 this.toggleExpandCollapseNode(evt, $i, li);
             }
         });
+    }
+
+    private findSelectedNodeParent($li) {
+        return $li.find('> span.title').parents('.app-tree li');
     }
 
     private selectById(value?) {
