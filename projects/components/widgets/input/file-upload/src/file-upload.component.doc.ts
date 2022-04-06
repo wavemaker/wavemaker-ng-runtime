@@ -60,8 +60,11 @@ export class FileUpload {
     /**
      * CSS class for the delete icon.
      */
-    @Input() deleteiconclass: string;
-
+    @Input() cleariconclass: string;
+    /**
+     * This property specifies the hint for clear icon
+     */
+    @Input() cleariconhint: string = 'Clear';
     /**
      * Callback function which will be triggered before the file is selected.
      * @param $event        DOM event on which call back is triggered

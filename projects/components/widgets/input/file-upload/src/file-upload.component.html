@@ -56,9 +56,9 @@
                     <div class="media-right media-middle"  *ngIf="ft.status === 'success'">
                         <span class="status-icon {{ft.status | stateClass }}"></span>
                     </div>
-                    <div *ngIf="deleteiconclass !== ''" class="media-right media-middle">
-                        <a (click)="clear(ft)" class="btn btn-transparent btn-default status-icon" type="button">
-                            <i class="{{deleteiconclass}}"></i>
+                    <div *ngIf="cleariconclass !== ''" class="media-right media-middle">
+                        <a (click)="clear(ft)" class="btn btn-transparent btn-default status-icon" title="{{cleariconhint}}" type="button">
+                            <i class="{{cleariconclass}}"></i>
                         </a>
                     </div>
                     <div class="media-right media-middle"  *ngIf="ft.status === 'error'" title="{{ft.errMsg || this.appLocale.MESSAGE_FILE_UPLOAD_FAILED}}">
