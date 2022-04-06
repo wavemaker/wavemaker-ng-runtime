@@ -35,7 +35,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     caption = 'Upload';
     formName = '';
     maxfilesize;
-    deleteiconclass;
+    cleariconclass;
+    cleariconhint;
     selectedUploadTypePath;
     DEFAULT_CAPTIONS = {
         MULTIPLE_SELECT: 'Drop your files here.',
@@ -211,10 +212,15 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         this.selectedFiles = (fileObj) ? this.selectedFiles.filter((file) => file !== fileObj) : [];
     }
 
-    /*this function to set the class names for delete icon */
-    setDeleteIconClass(classValue) {
-        this.deleteiconclass = classValue;
+    /*this function to set the class names for clear icon */
+    setClearIconClass(classValue) {
+        this.cleariconclass = classValue;
     }
+    /*this function to set the hint for clear icon */
+    setClearIconHint(hint) {
+        this.cleariconhint = hint;
+    }
+
 
     /*this function to append upload status dom elements to widget */
     onFileSelect($event, $files) {
