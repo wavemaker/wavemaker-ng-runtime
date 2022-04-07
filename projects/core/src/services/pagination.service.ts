@@ -135,6 +135,9 @@ export class PaginationService {
                     let scrollTop;
                     // scrollingElement is undefined for IE, safari. use body as target Element
                     target = target === document ? (target.scrollingElement || document.body) : target;
+                    if (parent.widgetType === 'wm-table' && parent.gridOptions.isNavTypeScrollOrOndemand()) {
+                        evt.stopPropagation();
+                    }
 
                     clientHeight = target.clientHeight;
                     totalHeight = target.scrollHeight;
@@ -151,6 +154,9 @@ export class PaginationService {
         } else {
             // if there is no scrollable element register wheel event on ul element
             $rootEl.on('wheel.scroll_evt', e => {
+                if (parent.widgetType === 'wm-table' && parent.gridOptions.isNavTypeScrollOrOndemand()) {
+                    e.stopPropagation();
+                }
                 if (e.originalEvent.deltaY > 0) {
                     $rootEl.off('wheel.scroll_evt');
                     this.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum, parent)();
