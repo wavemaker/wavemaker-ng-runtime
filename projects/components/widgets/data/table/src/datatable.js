@@ -499,7 +499,7 @@ $.widget('wm.datatable', {
     _getGridTemplate: function () {
         var self = this, preparedData,
             tbodyExists = this.gridElement.find('tbody').length,
-            $tbody =  tbodyExists > 0 ? this.gridElement.find('tbody') : $('<tbody class="' + this.options.cssClassNames.gridBody + '"></tbody>'),
+            $tbody =  tbodyExists > 0 ? this.gridElement.find('tbody:first') : $('<tbody class="' + this.options.cssClassNames.gridBody + '"></tbody>'),
             isScrollorOnDemand = self.options.isNavTypeScrollOrOndemand(),
             pageStartIndex = self.getPageStartIndex(),
             startRowIndex = self.options.startRowIndex;
