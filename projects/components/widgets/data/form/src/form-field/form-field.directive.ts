@@ -534,6 +534,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             this.setFormWidget('binddisplayexpression', this.binddisplayexpression);
             this.setFormWidget('binddisplayimagesrc', this.binddisplayimagesrc);
             this.setFormWidget('bindChipclass', this.bindChipclass);
+            this.setFormWidget('binddataset', this.binddataset);
         }
 
         this.registerReadyStateListener(() => {
