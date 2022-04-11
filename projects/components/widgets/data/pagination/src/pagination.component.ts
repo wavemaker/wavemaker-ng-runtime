@@ -164,7 +164,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         this.isDisableNext = this.isDisableLast = isCurrentPageLast;
         this.isDisableCurrent = isCurrentPageFirst && isCurrentPageLast;
         // In case of client side pagination, when load more reaches last page hide the on-demand grid ele
-        if (this.isDisableNext && this.parent.onDemandLoad && this.parent.widgetType === 'wm-table') {
+        if (this.dataset && this.dataset.length && this.isDisableNext && this.parent.onDemandLoad && this.parent.widgetType === 'wm-table') {
             this.parent.callDataGridMethod('hideLoadingIndicator', this.isDisableNext, false);
         }
     }
@@ -311,8 +311,17 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             startIndex;
 
         if (this.isDataSourceHasPaging()) {
+            /**
+             * In table component, in case of on demand and scroll pagination
+             * When there is a change in data item which is not in current page
+             * Fetch the items of the page where the change is made
+             * */
+            let pageIndex = this.dn.currentPage;
+            if (this.isEditNotInCurrentPage() && this.parent.gridOptions.lastActionPerformed !== 'delete') {
+                pageIndex = this.parent.actionRowPage;
+            }
             this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
-                'page': this.dn.currentPage,
+                'page': pageIndex,
                 'filterFields': this.filterFields,
                 'orderBy': this.sortOptions,
                 'logicalOp': this.logicalOp,
@@ -328,11 +337,24 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 }
             });
         } else {
-            startIndex = (this.dn.currentPage - 1) * this.maxResults;
+            if (this.isEditNotInCurrentPage()) {
+                startIndex = (this.parent.actionRowPage - 1) * this.maxResults;
+            } else {
+                startIndex = (this.dn.currentPage - 1) * this.maxResults;
+            }
             data = _.isArray(this.__fullData) ? this.__fullData.slice(startIndex, startIndex + this.maxResults) : this.__fullData;
             this.setResult(data);
             this.onPageDataReady(event, data, callback);
         }
+    }
+
+    /*
+    Function to check if the edit action is performed on the previous page data of the table
+    */
+    isEditNotInCurrentPage() {
+        const pageIndex = this.dn.currentPage;
+        return this.parent.widgetType === 'wm-table' && pageIndex === this.parent.currentPage &&
+            this.parent.actionRowPage && this.parent.actionRowPage < pageIndex;
     }
 
     invokeSetRecord(event, data) {
@@ -394,6 +416,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             this.parent.isDataLoading = true;
             // In case of infinite scroll calling the showLoadingIndicator method to update the loading message immediately when navigated to next page
             if (this.parent.infScroll) {
+                this.parent.variableInflight = true;
                 this.parent.callDataGridMethod('showLoadingIndicator', this.parent.loadingdatamsg, true);
             }
         }
@@ -498,7 +521,12 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             } else {
                 data = nv;
             }
-            this.setPagingValues(data);
+            // When the dataset is not in current page, but in previous ones directly set the result without setting page values
+            if (this.isEditNotInCurrentPage()) {
+                this.setResult(data);
+            } else {
+                this.setPagingValues(data);
+            }
         } else if (key === 'navigation') {
             if (nv === 'Advanced') { // Support for older projects where navigation type was advanced instead of clasic
                 this.navigation = 'Classic';

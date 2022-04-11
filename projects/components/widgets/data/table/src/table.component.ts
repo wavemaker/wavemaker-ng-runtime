@@ -179,8 +179,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     isNewRowInserted;
     isMobile;
     isLoading;
+    isRowDeleted;
     documentClickBind = noop;
-
+    actionRowIndex;
+    actionRowPage;
     fieldDefs = [];
     rowDef: any = {};
     rowInstance: any = {};
@@ -199,7 +201,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _dynamicContext;
     private noOfColumns;
     public onDemandLoad;
-    private infScroll;
+    public infScroll;
     private isDataLoading;
     private currentPage;
     private applyProps = new Map();
@@ -246,7 +248,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     cancelRow: Function;
     private _pageLoad = true;
 
-    private gridOptions = {
+    public gridOptions = {
         data: [],
         colDefs: [],
         startRowIndex: 1,
@@ -272,6 +274,44 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         securityUtils: {
             pipeTransform : {}
+        },
+        navigation: '',
+        deletedRowIndex: -1,
+        lastActionPerformed: 'scroll',
+        isSearchTrigerred: false,
+        ACTIONS: {
+            'DELETE': 'delete',
+            'EDIT': 'edit',
+            'SEARCH_OR_SORT': 'search_or_sort',
+            'DEFAULT': 'scroll'
+        },
+        actionRowIndex: undefined,
+        actionRowPage: undefined,
+        // get the current page number
+        getCurrentPage: () => {
+            return _.get(this.dataNavigator, 'dn.currentPage') || 1;
+        },
+        // set the page number
+        setCurrentPage: (pageNum) => {
+            _.set(this.dataNavigator, 'dn.currentPage', pageNum || 1);
+        },
+        // get the page limit
+        getPageSize: () => {
+            return this.pagesize;
+        },
+        // set the deleted row index
+        setDeletedRowIndex: (id) => {
+            this.setDataGridOption('deletedRowIndex', id);
+        },
+        // sets the last action performed like edit, delete etc.
+        setLastActionPerformed: (action) => {
+            this.setDataGridOption('lastActionPerformed', action || this.gridOptions.lastActionPerformed);
+        },
+        isNavTypeScrollOrOndemand: () => {
+            return this.gridOptions.navigation === 'Scroll' || this.gridOptions.navigation === 'On-Demand';
+        },
+        setIsSearchTrigerred: (value) => {
+            this.setDataGridOption('isSearchTrigerred', value);
         },
         onDataRender: () => {
             this.ngZone.run(() => {
@@ -672,6 +712,26 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         setGridState: (val) => {
             this.isLoading = val === 'loading';
         },
+        /*
+            set actionRowIndex and actionRowPage values
+            actionRowIndex will have the row index in the dataset on which edit/delete operation is being performed
+            actionRowPage will have page number in which the action row index is present
+         */
+        setActionRowIndex: (val) => {
+            if (this.gridOptions.isNavTypeScrollOrOndemand()) {
+                this.actionRowIndex = parseInt(val);
+                this.setDataGridOption('actionRowIndex', this.actionRowIndex);
+                if (!_.isNaN(this.actionRowIndex)) {
+                    this.actionRowPage = Math.floor(this.actionRowIndex / this.pagesize) + 1;
+                    this.setDataGridOption('actionRowPage', this.actionRowPage || this.gridOptions.actionRowPage);
+                }
+            }
+        },
+        clearActionRowIndex: () => {
+            if (!this.isRowDeleted && (this.infScroll || this.onDemandLoad)) {
+                this.clearActionRowVars();
+            }
+        },
         noChangesDetected: () => {
             this.toggleMessage(true, 'info', 'No Changes Detected', '');
         },
@@ -734,10 +794,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _selectedItemsExist = false;
     set gridData(newValue) {
         this.isDataLoading = false;
-        if (this.onDemandLoad || this.infScroll) {
+        this.variableInflight = false;
+        if (this.gridOptions.isNavTypeScrollOrOndemand()) {
             // update the _gridData field with the next set of items and modify the current page
             [this._gridData, this.currentPage] = this.paginationService.updateFieldsOnPagination(this, newValue);
 
+            // When edit action is performed on previous page, update the _gridData field with the modified row data
+            if (this.gridOptions.lastActionPerformed === this.gridOptions.ACTIONS.EDIT) {
+                const rowIndex = _.floor(this.actionRowIndex % this.pagesize);
+                this._gridData.splice(this.actionRowIndex, 1 , newValue[rowIndex]);
+            }
             // In case of on demand pagination, create the load more button only once and show the button until next page is not disabled
             if (!this.$element.find('.on-demand-datagrid').length && !this.dataNavigator.isDisableNext && this.onDemandLoad) {
                 this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
@@ -892,6 +958,85 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.deletecanceltext = this.appLocale.LABEL_CANCEL;
     }
 
+    ngAfterContentInit() {
+        super.ngAfterContentInit();
+        this.headerConfig = this.headerConfig.filter(this.filterEmptyValues.bind(this));
+        _.remove(this.fieldDefs, f => f === undefined);
+        const runModeInitialProperties = {
+            showrowindex: 'showRowIndex',
+            multiselect: 'multiselect',
+            radioselect: 'showRadioColumn',
+            filternullrecords: 'filterNullRecords',
+            enablesort: 'enableSort',
+            showheader: 'showHeader',
+            enablecolumnselection: 'enableColumnSelection',
+            shownewrow: 'showNewRow',
+            gridfirstrowselect: 'selectFirstRow'
+        };
+
+        if (this._liveTableParent) {
+            this.isPartOfLiveGrid = true;
+        }
+
+        if (this.readonlygrid || !this.editmode) {
+            if (this.readonlygrid === 'true') {
+                this.editmode = '';
+            } else {
+                if (this.isPartOfLiveGrid) {
+                    this.editmode = this.isPartOfLiveGrid.formlayout === 'inline' ? EDIT_MODE.FORM : EDIT_MODE.DIALOG;
+                } else {
+                    this.editmode = this.readonlygrid ? EDIT_MODE.INLINE : '';
+                }
+            }
+        }
+
+        this.gridOptions.colDefs = this.fullFieldDefs;
+        this.gridOptions.rowActions = this.rowActions;
+        this.gridOptions.headerConfig = this.headerConfig;
+        this.gridOptions.rowClass = this.rowclass;
+        this.gridOptions.editmode = this.editmode;
+        this.gridOptions.formPosition = this.formposition;
+        this.gridOptions.filtermode = this.filtermode;
+        this.gridOptions.searchLabel = this.searchlabel;
+        this.gridOptions.isMobile = isMobile();
+        this.gridOptions.name = this.name;
+        this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
+        this.gridOptions.navigation = this.navigation;
+        // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
+        // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
+        if (!_.isEmpty(this.gridData)) {
+            this.gridOptions.data = getClonedObject(this.gridData);
+        }
+        this.gridOptions.messages = {
+            'selectField': this.appLocale.MESSAGE_SELECT_FIELD
+        };
+        this.datagridElement = $(this._tableElement.nativeElement);
+
+        this.gridElement = this.$element;
+        this.$element.css({'position': 'relative'});
+
+        _.forEach(runModeInitialProperties, (value, key) => {
+            if (isDefined(this[key])) {
+                this.gridOptions[value] = (this[key] === 'true' || this[key] === true);
+            }
+        });
+        if (this.statehandler !== 'none') {
+            this.gridOptions['selectFirstRow'] = false;
+        }
+
+        this.renderOperationColumns();
+        this.gridOptions.colDefs = this.fieldDefs;
+
+        this.datagridElement.datatable(this.gridOptions);
+        this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+
+        this.applyProps.forEach(args => this.callDataGridMethod(...args));
+
+        if (this.editmode === EDIT_MODE.QUICK_EDIT) {
+            this.documentClickBind = this._documentClickBind.bind(this);
+            document.addEventListener('click', this.documentClickBind);
+        }
+    }
     private getConfiguredState() {
         const mode = this.statePersistence.computeMode(this.statehandler);
         return mode && mode.toLowerCase();
@@ -976,82 +1121,88 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         return item !== undefined;
     }
 
-    ngAfterContentInit() {
-        super.ngAfterContentInit();
-        this.headerConfig = this.headerConfig.filter(this.filterEmptyValues.bind(this));
-        _.remove(this.fieldDefs, f => f === undefined);
-        const runModeInitialProperties = {
-            showrowindex: 'showRowIndex',
-            multiselect: 'multiselect',
-            radioselect: 'showRadioColumn',
-            filternullrecords: 'filterNullRecords',
-            enablesort: 'enableSort',
-            showheader: 'showHeader',
-            enablecolumnselection: 'enableColumnSelection',
-            shownewrow: 'showNewRow',
-            gridfirstrowselect: 'selectFirstRow'
-        };
-
-        if (this._liveTableParent) {
-            this.isPartOfLiveGrid = true;
-        }
-
-        if (this.readonlygrid || !this.editmode) {
-            if (this.readonlygrid === 'true') {
-                this.editmode = '';
+    watchVariableDataSet(newVal) {
+        let result;
+        // State handling for static variables
+        if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
+            const widgetState = this.statePersistence.getWidgetState(this);
+            this._pageLoad = false;
+            if (_.get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = true;
             } else {
-                if (this.isPartOfLiveGrid) {
-                    this.editmode = this.isPartOfLiveGrid.formlayout === 'inline' ? EDIT_MODE.FORM : EDIT_MODE.DIALOG;
-                } else {
-                    this.editmode = this.readonlygrid ? EDIT_MODE.INLINE : '';
-                }
+                this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
+            }
+            if (_.get(widgetState, 'search')) {
+                this.searchStateHandler(widgetState);
+                this.searchSortHandler(widgetState.search, undefined, 'search', true);
+            }
+            if (_.get(widgetState, 'sort')) {
+               this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
+                this.sortStateHandler(widgetState);
+            }
+            if (_.get(widgetState, 'pagination')) {
+                this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
             }
         }
-
-        this.gridOptions.colDefs = this.fullFieldDefs;
-        this.gridOptions.rowActions = this.rowActions;
-        this.gridOptions.headerConfig = this.headerConfig;
-        this.gridOptions.rowClass = this.rowclass;
-        this.gridOptions.editmode = this.editmode;
-        this.gridOptions.formPosition = this.formposition;
-        this.gridOptions.filtermode = this.filtermode;
-        this.gridOptions.searchLabel = this.searchlabel;
-        this.gridOptions.isMobile = isMobile();
-        this.gridOptions.name = this.name;
-        this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
-        // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
-        // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
-        if (!_.isEmpty(this.gridData)) {
-            this.gridOptions.data = getClonedObject(this.gridData);
+        // After the setting the watch on navigator, dataset is triggered with undefined. In this case, return here.
+        if (this.dataNavigatorWatched && _.isUndefined(newVal) && this.__fullData) {
+            return;
         }
-        this.gridOptions.messages = {
-            'selectField': this.appLocale.MESSAGE_SELECT_FIELD
-        };
-        this.datagridElement = $(this._tableElement.nativeElement);
+        // If variable is in loading state, show loading icon
+        if (this.variableInflight && !this.infScroll) {
+            this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+        }
 
-        this.gridElement = this.$element;
-        this.$element.css({'position': 'relative'});
+        result = getValidJSON(newVal);
 
-        _.forEach(runModeInitialProperties, (value, key) => {
-            if (isDefined(this[key])) {
-                this.gridOptions[value] = (this[key] === 'true' || this[key] === true);
+        // Converting newval to object if it is an Object that comes as a string "{"data" : 1}"
+        if (result) {
+            newVal = result;
+        }
+
+        const sortExp = this.getSortExpr();
+        const sortExpArr = sortExp.split(' ');
+        if (sortExp && sortExpArr.length) {
+            this.sortInfo = {
+                direction : sortExpArr[1],
+                field:  sortExpArr[0]
+
+            };
+        }
+
+        /*Return if data is invalid.*/
+        if (!this.isDataValid()) {
+            return;
+        }
+
+        // If value is empty or in studio mode, dont enable the navigation
+        if (newVal) {
+            if (this.shownavigation && !this.dataNavigatorWatched) {
+                this.enablePageNavigation();
+                return;
             }
-        });
-        if (this.statehandler !== 'none') {
-            this.gridOptions['selectFirstRow'] = false;
+        } else {
+            this.resetPageNavigation();
+            /*for run mode, disabling the loader and showing no data found message if dataset is not valid*/
+            if (!this.variableInflight) {
+                this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+            }
+            this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
         }
 
-        this.renderOperationColumns();
-        this.gridOptions.colDefs = this.fieldDefs;
+        if (!this.isNavigationEnabled() && newVal) {
+            this.checkFiltersApplied(this.getSortExpr());
+        }
 
-        this.datagridElement.datatable(this.gridOptions);
-        this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
-
-        this.applyProps.forEach(args => this.callDataGridMethod(...args));
-
-        if (this.editmode === EDIT_MODE.QUICK_EDIT) {
-            this.documentClickBind = this._documentClickBind.bind(this);
-            document.addEventListener('click', this.documentClickBind);
+        if (!_.isObject(newVal) || newVal === '' || (newVal && newVal.dataValue === '')) {
+            if (!this.variableInflight) {
+                // If variable has finished loading and resultSet is empty, ender empty data
+                this.setGridData([]);
+            }
+            return;
+        }
+        if (newVal) {
+            this.populateGridData(newVal);
         }
     }
 
@@ -1502,97 +1653,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         return sortExp || '';
     }
 
-    watchVariableDataSet(newVal) {
-        let result;
-        // State handling for static variables
-        if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
-            const widgetState = this.statePersistence.getWidgetState(this);
-            this._pageLoad = false;
-            if (_.get(widgetState, 'selectedItem')) {
-                this._selectedItemsExist = true;
-            } else {
-                this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
-            }
-            if (_.get(widgetState, 'search')) {
-                this.searchStateHandler(widgetState);
-                this.searchSortHandler(widgetState.search, undefined, 'search', true);
-            }
-            if (_.get(widgetState, 'sort')) {
-               this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
-                this.sortStateHandler(widgetState);
-            }
-            if (_.get(widgetState, 'pagination')) {
-                this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
-            }
-        }
-        // After the setting the watch on navigator, dataset is triggered with undefined. In this case, return here.
-        if (this.dataNavigatorWatched && _.isUndefined(newVal) && this.__fullData) {
-            return;
-        }
-        // If variable is in loading state, show loading icon
-        if (this.variableInflight) {
-            this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
-        }
-
-        result = getValidJSON(newVal);
-
-        // Converting newval to object if it is an Object that comes as a string "{"data" : 1}"
-        if (result) {
-            newVal = result;
-        }
-
-        const sortExp = this.getSortExpr();
-        const sortExpArr = sortExp.split(' ');
-        if (sortExp && sortExpArr.length) {
-            this.sortInfo = {
-                direction : sortExpArr[1],
-                field:  sortExpArr[0]
-
-            };
-        }
-
-        /*Return if data is invalid.*/
-        if (!this.isDataValid()) {
-            return;
-        }
-
-        // If value is empty or in studio mode, dont enable the navigation
-        if (newVal) {
-            if (this.shownavigation && !this.dataNavigatorWatched) {
-                this.enablePageNavigation();
-                return;
-            }
-        } else {
-            this.resetPageNavigation();
-            /*for run mode, disabling the loader and showing no data found message if dataset is not valid*/
-            if (!this.variableInflight) {
-                this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
-            }
-            this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
-        }
-
-        if (!this.isNavigationEnabled() && newVal) {
-            this.checkFiltersApplied(this.getSortExpr());
-        }
-
-        if (!_.isObject(newVal) || newVal === '' || (newVal && newVal.dataValue === '')) {
-            if (!this.variableInflight) {
-                // If variable has finished loading and resultSet is empty, ender empty data
-                this.setGridData([]);
-            }
-            return;
-        }
-        if (newVal) {
-            this.populateGridData(newVal);
-        }
-    }
-
-    onDataSourceChange() {
-        this.fieldDefs.forEach(col => {
-           triggerFn(col.onDataSourceChange && col.onDataSourceChange.bind(col));
-        });
-    }
-
     onPropertyChange(key: string, nv: any, ov?: any) {
         let enableNewRow;
         switch (key) {
@@ -1628,6 +1688,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (nv !== 'None') {
                     this.shownavigation = true;
                 }
+                this.setDataGridOption('navigation', this.navigation);
                 this.onDemandLoad = nv === NAVIGATION_TYPE.ONDEMAND ? true : false;
                 this.infScroll = nv === NAVIGATION_TYPE.SCROLL ? true : false;
                 this.navControls = nv;
@@ -1693,6 +1754,19 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             default:
                 super.onPropertyChange(key, nv, ov);
         }
+    }
+
+    onDataSourceChange() {
+        this.fieldDefs.forEach(col => {
+           triggerFn(col.onDataSourceChange && col.onDataSourceChange.bind(col));
+        });
+    }
+
+    private clearActionRowVars() {
+        this.actionRowIndex = undefined;
+        this.actionRowPage = undefined;
+        this.setDataGridOption('actionRowIndex', undefined);
+        this.setDataGridOption('actionRowPage', undefined);
     }
 
     onStyleChange(key, nv, ov) {

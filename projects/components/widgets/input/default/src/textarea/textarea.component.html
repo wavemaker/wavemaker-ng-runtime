@@ -15,6 +15,9 @@
           aria-multiline="true"
           [autofocus]="autofocus"
           (blur)="handleBlur($event)"
-          (ngModelChange)="handleChange($event)"
+          (input)="onInputChange()"
+          (ngModelChange)="handleChange($event); onInputChange();"
           #textarea
 ></textarea>
+
+<div *ngIf="maxchars" class="textarea-count"  >{{limitdisplaytext}}</div>
