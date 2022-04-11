@@ -6,7 +6,7 @@ import { $watch } from '@wm/core';
 
 import { WidgetRef } from '../../../widgets/framework/types';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Directive({
     selector: '[partialContainer]',

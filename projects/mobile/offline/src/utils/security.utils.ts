@@ -4,7 +4,7 @@ import { App, noop, triggerFn } from '@wm/core';
 import { DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 
-declare const _;
+import * as _ from 'lodash-es';
 declare const cordova;
 const SECURITY_FILE = 'logged-in-user.info';
 declare const resolveLocalFileSystemURL;

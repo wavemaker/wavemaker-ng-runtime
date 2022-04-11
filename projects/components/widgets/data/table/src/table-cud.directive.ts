@@ -5,7 +5,9 @@ import { refreshDataSource } from '@wm/components/base';
 
 import { TableComponent } from './table.component';
 
-declare const $, _;
+import * as _ from 'lodash-es';
+
+declare const $;
 
 const OPERATION = {
     'NEW': 'new',

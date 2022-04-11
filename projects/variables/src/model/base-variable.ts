@@ -1,7 +1,7 @@
 import { DataSource } from '@wm/core';
 
 import DatasetUtil from '../util/dataset-util';
-declare const _;
+import * as _ from 'lodash-es';
 
 export abstract class BaseVariable {
 

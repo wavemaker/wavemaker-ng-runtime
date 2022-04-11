@@ -5,7 +5,10 @@ import { getEvaluatedData, getObjValueByKey } from './widget-utils';
 import { ALLFIELDS } from './data-utils';
 import { ToDatePipe } from '../pipes/custom-pipes';
 
-declare const _, $, moment;
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
+
+declare const $;
 
 const momentLocale = moment.localeData();
 const momentCalendarOptions = getClonedObject(momentLocale._calendar);

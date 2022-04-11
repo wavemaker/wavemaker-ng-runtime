@@ -2,7 +2,7 @@ import { httpService, processBinding } from '../../util/variable/variables.utils
 import { appManager} from './../../util/variable/variables.utils';
 import { AdvancedOptions } from '../../advanced-options';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export abstract class BaseVariableManager {
 

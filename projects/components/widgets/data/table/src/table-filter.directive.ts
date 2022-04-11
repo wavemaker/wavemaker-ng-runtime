@@ -5,8 +5,10 @@ import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget, refreshDataSou
 
 import { TableComponent } from './table.component';
 
-declare const _, $;
-declare const moment;
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
+
+declare const $;
 
 const emptyMatchModes = ['null', 'empty', 'nullorempty', 'isnotnull', 'isnotempty'];
 

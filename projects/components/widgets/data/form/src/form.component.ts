@@ -27,7 +27,7 @@ import { ListComponent } from '@wm/components/data/list';
 
 import { registerFormProps } from './form.props';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const WIDGET_CONFIG = {widgetType: 'wm-form', hostClass: 'panel app-panel app-form'};
 const LOGIN_FORM_CONFIG = {widgetType: 'wm-form', hostClass: 'app-form app-login-form'};

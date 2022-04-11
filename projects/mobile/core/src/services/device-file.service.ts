@@ -6,8 +6,8 @@ import { File } from '@ionic-native/file';
 import { isAndroid, isSpotcues, noop } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
+import * as _ from 'lodash-es';
 
-declare const _;
 declare const cordova;
 declare const resolveLocalFileSystemURL;
 declare const FileReader;

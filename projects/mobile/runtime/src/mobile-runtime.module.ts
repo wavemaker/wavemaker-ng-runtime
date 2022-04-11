@@ -45,7 +45,7 @@ import { AppExtComponent } from './components/app-ext.component';
 import { MobileHttpInterceptor } from './services/http-interceptor.service';
 import { WebProcessService } from './services/webprocess.service';
 
-declare const $, navigator, _;
+declare const $, navigator;
 
 export const MAX_WAIT_TIME_4_OAUTH_MESSAGE = 60000;
 

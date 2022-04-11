@@ -9,7 +9,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-prefab-container',
     hostClass: DEFAULT_CLS
 };
-declare const _;
+import * as _ from 'lodash-es';
 
 @Directive({
     selector: '[wmPrefabContainer]',

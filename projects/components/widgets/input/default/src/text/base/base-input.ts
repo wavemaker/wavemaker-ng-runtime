@@ -4,7 +4,7 @@ import { NgModel } from '@angular/forms';
 import { $appDigest, addClass, switchClass } from '@wm/core';
 import { IWidgetConfig, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '../../base-form-custom.component';
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable()
 export abstract class BaseInput extends BaseFormCustomComponent implements AfterViewInit {

@@ -1,6 +1,7 @@
 import { isMobile, setCSS } from '@wm/core';
+import * as _ from 'lodash-es';
 
-declare const $, _;
+declare const $;
 
 enum CLASS_NAME {
     LEFT_PANEL = 'page-left-panel',

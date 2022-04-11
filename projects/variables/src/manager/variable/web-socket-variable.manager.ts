@@ -8,7 +8,7 @@ import { initiateCallback, metadataService } from '../../util/variable/variables
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export class WebSocketVariableManager extends BaseVariableManager {
 

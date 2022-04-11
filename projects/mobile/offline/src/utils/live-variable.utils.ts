@@ -12,7 +12,7 @@ import { LocalDBManagementService } from '../services/local-db-management.servic
 import { LocalDbService } from '../services/local-db.service';
 import { WM_LOCAL_OFFLINE_CALL } from './utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const apiConfiguration = [{
         'name' : 'insertTableData',

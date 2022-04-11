@@ -8,8 +8,6 @@ import { AbstractDialogService, closePopover, findRootContainer } from '@wm/core
 
 import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
 
-declare const _;
-
 let eventsRegistered = false;
 
 const invokeOpenedCallback = (ref) => {

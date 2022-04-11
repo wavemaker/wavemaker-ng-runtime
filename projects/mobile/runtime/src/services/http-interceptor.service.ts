@@ -21,7 +21,7 @@ import { SecurityService } from '@wm/security';
 import { CONSTANTS } from '@wm/variables';
 
 declare const cordova;
-declare const _;
+import * as _ from 'lodash-es';
 
 interface RequestInterceptor {
     intercept(request: HttpRequest<any>): Promise<HttpRequest<any>>;
@@ -230,7 +230,7 @@ class SecurityInterceptor implements RequestInterceptor {
 
     public intercept(request: HttpRequest<any>): Promise<HttpRequest<any>> {
         return new Promise<HttpRequest<any>>((resolve, reject) => {
-            if (!SecurityInterceptor.PREFAB_URL_PATTERN.test(request.url) 
+            if (!SecurityInterceptor.PREFAB_URL_PATTERN.test(request.url)
                 && SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
                 return Promise.resolve().then(() => {
                     if (!this.initialized) {

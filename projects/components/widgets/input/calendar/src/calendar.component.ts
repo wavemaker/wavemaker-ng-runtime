@@ -8,7 +8,10 @@ import { APPLY_STYLES_TYPE, createArrayFrom, getEvaluatedData, IWidgetConfig, IR
 
 import { registerProps } from './calendar.props';
 
-declare const _, $, moment;
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
+
+declare const $;
 
 const DEFAULT_CLS = 'app-calendar';
 const dateFormats = ['yyyy-MM-dd', 'yyyy-M-dd', 'M-dd-yyyy', 'MM-dd-yy', 'yyyy, dd MMMM', 'yyyy, MMM dd', 'MM/dd/yyyy', 'M/d/yyyy', 'EEE, dd MMM yyyy', 'EEE MMM dd yyyy', 'EEEE, MMMM dd, yyyy', 'timestamp'];

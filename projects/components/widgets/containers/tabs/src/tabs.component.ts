@@ -14,7 +14,8 @@ import { TabsAnimator } from './tabs.animator';
 import { registerProps } from './tabs.props';
 import { TabPaneComponent } from './tab-pane/tab-pane.component';
 
-declare const _, $;
+import * as _ from 'lodash-es';
+declare const $;
 
 const DEFAULT_CLS = 'app-tabs clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {

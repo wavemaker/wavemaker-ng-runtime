@@ -6,7 +6,7 @@ import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@w
 import { registerProps } from './progress-bar.props';
 import { getDecimalCount, isPercentageValue } from '../utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const DEFAULT_CLS = 'progress app-progress';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progress-bar', hostClass: DEFAULT_CLS};

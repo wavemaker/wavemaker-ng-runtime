@@ -7,7 +7,7 @@ import { $invokeWatchers, $watch, App } from '@wm/core';
 
 import { ListComponent } from './list.component';
 
-declare const $, _;
+declare const $;
 
 @Directive({
     selector: '[wmListItem]',

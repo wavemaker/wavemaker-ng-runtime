@@ -7,7 +7,7 @@ import { Change, ChangeLogService, LocalDBManagementService, LocalDBDataPullServ
 import { DeviceVariableService, IDeviceVariableOperation, initiateCallback, VARIABLE_CONSTANTS } from '@wm/variables';
 import { SecurityService } from '@wm/security';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const APP_IS_OFFLINE = 'App is offline.';
 const OFFLINE_PLUGIN_NOT_FOUND = 'Offline DB Plugin is required, but missing.';

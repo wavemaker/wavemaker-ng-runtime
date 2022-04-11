@@ -7,7 +7,7 @@ import { LiveTableComponent } from '@wm/components/data/live-table';
 import { registerLiveFormProps } from '../form.props';
 import { FormComponent } from '../form.component';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const isTimeType = field => field.widgettype === DataType.TIME || (field.type === DataType.TIME && !field.widgettype);
 const getValidTime = val => {

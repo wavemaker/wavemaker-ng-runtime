@@ -4,7 +4,9 @@ import { NavigationStart, Router } from '@angular/router';
 import { App, NavigationOptions, AbstractNavigationService } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 
-declare const _, $;
+import * as _ from 'lodash-es';
+
+declare const $;
 
 const parentSelector = 'body >app-root';
 
@@ -89,8 +91,8 @@ export class NavigationServiceImpl implements AbstractNavigationService {
        *  BrowserAnimcation module has issue with RouterOutlet
           In the result every route appending to previous route instead of replace.
           To fix the issue we are navigating inside the ngZones
-       * 
-       *  */  
+       *
+       *  */
         this.zone.run(() => {
             return this.router.navigate([`/${pageName}`], { queryParams: options.urlParams});
         });

@@ -6,7 +6,7 @@ import { AbstractHttpService } from '@wm/core';
 
 import { getAccessToken, performAuthorization, removeAccessToken } from './oAuth.utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable()
 export class OAuthService {

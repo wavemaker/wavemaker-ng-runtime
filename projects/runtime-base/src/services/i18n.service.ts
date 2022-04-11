@@ -18,7 +18,8 @@ import {
 } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 
-declare const _, moment;
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
 const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',
@@ -235,7 +236,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         const _defaultLanguage = getWmProjectProperties().defaultLanguage;
         _acceptLang.push(_defaultLanguage);
 
-        // checks whether user preference is based on browser set languages or default language set in project  
+        // checks whether user preference is based on browser set languages or default language set in project
         let preferBrowserLang = getWmProjectProperties().preferBrowserLang;
         if (!preferBrowserLang) { // when preferBrowserLang is not defined, set to its default value
             preferBrowserLang  = true;
@@ -250,11 +251,11 @@ export class I18nServiceImpl extends AbstractI18nService {
 
         let _appSupportedLang;
         /**
-         * for cordova, check for language ignoring the locale 
+         * for cordova, check for language ignoring the locale
          * As the navigator.languages always returns the language with locale (en-us)
          * The supportedLanguages from BE doesn't include locale (en) which leads to mismatch
          */
-        if (CONSTANTS.hasCordova) {  
+        if (CONSTANTS.hasCordova) {
             let supportedLang = [];
             _.forEach(_acceptLang, function(lang) {
                 let matchedLang = _.find(_supportedLang, (val) => lang === val) || _.find(_supportedLang, (val) => lang.startsWith(val));

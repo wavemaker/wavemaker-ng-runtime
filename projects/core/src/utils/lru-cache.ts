@@ -1,5 +1,4 @@
 
-declare const _;
 
 interface CachedData<T> {
     instance: T;

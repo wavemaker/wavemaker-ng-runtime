@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable({ providedIn: 'root' })
 export class StatePersistence {

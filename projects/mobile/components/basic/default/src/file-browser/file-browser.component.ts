@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core
 import { $appDigest, isIos } from '@wm/core';
 import { DeviceService } from '@wm/mobile/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 declare const cordova;
 declare const resolveLocalFileSystemURL;
 

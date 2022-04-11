@@ -5,7 +5,7 @@ import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe
 
 import { registerProps } from './spinner.props';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const DEFAULT_CLS = 'app-spinner';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAULT_CLS};

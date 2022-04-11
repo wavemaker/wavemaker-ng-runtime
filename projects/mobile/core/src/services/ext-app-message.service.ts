@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { App, getValidJSON } from '@wm/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 interface Message {
     address: string;

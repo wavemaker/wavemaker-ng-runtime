@@ -10,7 +10,7 @@ import { VariablesService } from '@wm/variables';
 import { PrefabManagerService } from '../services/prefab-manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Directive()
 export abstract class BasePrefabComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {

@@ -2,7 +2,7 @@ import { Attribute, Element } from '@angular/compiler';
 
 import { FormWidgetType } from '../enums/enums';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 // For html upload widget, add events on input tag
 const getUploadEventTmpl = (attrs, counter?, fieldName?) => {

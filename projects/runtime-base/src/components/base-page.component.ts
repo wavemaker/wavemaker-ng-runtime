@@ -24,8 +24,9 @@ import { commonPartialWidgets } from './base-partial.component';
 import { VariablesService } from '@wm/variables';
 import { AppManagerService } from '../services/app.manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
+import * as _ from 'lodash-es';
 
-declare const $, _;
+declare const $;
 
 @Directive()
 export abstract class BasePageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {

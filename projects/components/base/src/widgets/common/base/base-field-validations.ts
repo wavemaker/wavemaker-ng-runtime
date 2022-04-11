@@ -2,7 +2,7 @@ import { Validators } from '@angular/forms';
 
 import { VALIDATOR, $watch, $unwatch, FormWidgetType } from '@wm/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const DEFAULT_VALIDATOR = {
     pattern: 'regexp',
@@ -18,7 +18,7 @@ const DEFAULT_VALIDATOR = {
 
 export class BaseFieldValidations {
     private hasValidators;
-    
+
     // Instance of the directive table-column, form-field..
     private instance;
     // Inline form widget
@@ -48,7 +48,7 @@ export class BaseFieldValidations {
             this.tableFieldType = tableFieldType;
         }
     }
-    
+
     // this method returns the collection of supported default validators
     private getDefaultValidators() {
         const _validator = [];
@@ -88,7 +88,7 @@ export class BaseFieldValidations {
         if (customValidator) {
             this.instance._validators.push(customValidator);
         }
-        
+
         if (this.widgetContext.ngform) {
             this.widgetControl.setValidators(this.instance._validators);
             const opt = {};
@@ -236,7 +236,7 @@ export class BaseFieldValidations {
             this.applyDefaultValidators();
         }, watchName));
     }
-    
+
     // invokes both custom sync validations and default validations.
     applyDefaultValidators() {
         const validators = this.getDefaultValidators();

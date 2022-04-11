@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { LocalDBManagementService } from './local-db-management.service';
 import { LocalDBStore } from '../models/local-db-store';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable({providedIn: 'root'})
 export class LocalDbService {

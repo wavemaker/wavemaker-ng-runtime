@@ -1,5 +1,5 @@
 import { ModelVariable} from './model-variable';
-declare const _;
+import * as _ from 'lodash-es';
 describe('Model Variable dataset as list', () => {
     let modelVariable: ModelVariable;
     beforeEach(() => {

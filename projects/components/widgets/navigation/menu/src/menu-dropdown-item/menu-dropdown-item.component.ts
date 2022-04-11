@@ -6,7 +6,8 @@ import { NavComponent } from '../nav/nav.component';
 
 import { KEYBOARD_MOVEMENTS, MENU_POSITION, MenuComponent } from '../menu.component';
 
-declare const _, $;
+import * as _ from 'lodash-es';
+declare const $;
 
 const menuAlignClass = {
     'pull-right' : 'fa-caret-left',

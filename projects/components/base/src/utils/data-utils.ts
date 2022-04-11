@@ -3,7 +3,7 @@ import { FormWidgetType, isDefined, MatchMode } from '@wm/core';
 
 import { isDataSetWidget } from './widget-utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const noop = () => { };
 

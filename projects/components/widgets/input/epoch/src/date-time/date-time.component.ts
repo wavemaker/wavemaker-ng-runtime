@@ -10,8 +10,10 @@ import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './date-time.props';
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
 
-declare const moment, $, _;
+declare const $;
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = { widgetType: 'wm-datetime', hostClass: DEFAULT_CLS };

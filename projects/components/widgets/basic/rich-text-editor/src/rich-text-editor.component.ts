@@ -7,6 +7,8 @@ import { BaseFormCustomComponent } from '@wm/components/input';
 
 import { registerProps } from './rich-text-editor.props';
 
+import * as _ from 'lodash-es';
+
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 
 const getChangeEvt = () => {
@@ -21,7 +23,7 @@ const getChangeEvt = () => {
     return changeEvt;
 };
 
-declare const _, $;
+declare const $;
 
 const overrideSummerNote = () => {
     if (!$.summernote.__overidden) {

@@ -6,7 +6,7 @@ import { isStyle } from './styler';
 import { getConditionalClasses, getWatchIdentifier } from '../../utils/widget-utils';
 import { isBooleanAttr, isDimensionProp } from './constants';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 /**
  * Returns the parsed value based on the provided type

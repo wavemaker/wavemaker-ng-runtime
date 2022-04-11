@@ -13,7 +13,7 @@ import {
 import { registerProps } from './accordion.props';
 import { AccordionPaneComponent } from './accordion-pane/accordion-pane.component';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const DEFAULT_CLS = 'app-accordion panel-group';
 const WIDGET_CONFIG: IWidgetConfig = {

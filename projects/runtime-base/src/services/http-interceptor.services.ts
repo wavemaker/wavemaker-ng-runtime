@@ -7,7 +7,7 @@ import { tap } from 'rxjs/operators';
 import { httpService, appManager } from '@wm/variables';
 import { WmHttpRequest, WmHttpResponse } from '@wm/http';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 /**
  * This Interceptor intercepts all network calls and if a network call fails

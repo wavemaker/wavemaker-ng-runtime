@@ -2,7 +2,7 @@ import { Directive, Input, TemplateRef, ViewContainerRef, Injector } from '@angu
 
 import { SecurityService } from '@wm/security';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 enum USER_ROLE {
     EVERYONE = 'Everyone',

@@ -5,7 +5,7 @@ import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, get
 import { FormComponent } from '../form.component';
 import { registerLiveFilterProps } from '../form.props';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const FILTER_CONSTANTS = {
     'EMPTY_KEY'   : 'EMPTY_NULL_FILTER'

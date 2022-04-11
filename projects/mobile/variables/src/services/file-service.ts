@@ -2,7 +2,7 @@ import { isValidWebURL } from '@wm/core';
 import { DeviceFileOpenerService, DeviceFileUploadService } from '@wm/mobile/core';
 import { $rootScope, DeviceVariableService, IDeviceVariableOperation } from '@wm/variables';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export class FileService extends DeviceVariableService {
     name = 'file';

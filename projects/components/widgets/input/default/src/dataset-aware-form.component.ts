@@ -7,7 +7,7 @@ import { AppDefaults, $appDigest, debounce, isDefined, isEqualWithFields, noop, 
 import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, handleHeaderClick, toggleAllHeaders, transformFormData, transformDataWithKeys, groupData, ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable()
 export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent implements OnInit {

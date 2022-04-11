@@ -6,7 +6,7 @@ and if the user uses script and calls dialog1.close() and then dialog2.close() t
 we cannot be sure if both the dialogs onClose callback will be called or not.*/
 const closeDialogsArray = [];
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable()
 export class DialogServiceImpl {

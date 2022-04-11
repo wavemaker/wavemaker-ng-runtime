@@ -4,7 +4,7 @@ import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { appManager, dialogService, initiateCallback, routerService, securityService } from '../../util/variable/variables.utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export class LoginActionManager extends BaseActionManager {
 

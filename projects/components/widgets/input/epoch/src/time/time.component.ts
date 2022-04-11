@@ -20,12 +20,14 @@ import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './time.props';
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
 
 const CURRENT_TIME = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
 const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
 
-declare const _, moment, $;
+declare const $;
 
 @Component({
     selector: '[wmTime]',

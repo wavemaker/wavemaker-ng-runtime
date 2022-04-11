@@ -8,7 +8,7 @@ import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsW
 
 import { registerProps } from './popover.props';
 
-declare const _, $;
+declare const $;
 
 const DEFAULT_CLS = 'app-popover-wrapper';
 const WIDGET_CONFIG: IWidgetConfig = {

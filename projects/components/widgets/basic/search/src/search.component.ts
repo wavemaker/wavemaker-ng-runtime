@@ -13,7 +13,7 @@ import { DatasetAwareFormComponent } from '@wm/components/input';
 import { registerProps } from './search.props';
 import { DataProvider, IDataProvider, IDataProviderConfig } from './data-provider/data-provider';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
 

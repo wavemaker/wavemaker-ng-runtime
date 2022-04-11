@@ -1,6 +1,9 @@
 import { isEmptyObject, prettifyLabels } from '@wm/core';
 
-declare const _, $, d3, nv, moment;
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
+
+declare const $, d3, nv;
 
 export const chartTypes = ['Column', 'Line', 'Area', 'Cumulative Line', 'Bar', 'Pie', 'Donut', 'Bubble'],
     allShapes = ['circle', 'square', 'diamond', 'cross', 'triangle-up', 'triangle-down'];

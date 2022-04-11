@@ -1,6 +1,6 @@
 import { BaseVariableManager } from './base-variable.manager';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const checkEmptyObject = (obj) => {
     let isEmpty = true;

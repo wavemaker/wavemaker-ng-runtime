@@ -3,7 +3,7 @@ import { AppConstants, DataSource, findValueOf, getClonedObject } from '@wm/core
 import { convertDataToObject, interpolateBindExpressions } from '@wm/components/base';
 import { IDataProvider, IDataProviderConfig } from './data-provider';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export class RemoteDataProvider implements IDataProvider {
     public filter(config: IDataProviderConfig): Promise<any> {

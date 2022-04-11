@@ -6,7 +6,7 @@ import { IWidgetConfig, provideAsWidgetRef, IRedrawableComponent, StylableCompon
 import { registerProps } from './progress-circle.props';
 import { calculatePercent, getDecimalCount, isPercentageValue } from '../utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const DEFAULT_CLS = 'progress app-progress circle';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progress-circle', hostClass: DEFAULT_CLS};

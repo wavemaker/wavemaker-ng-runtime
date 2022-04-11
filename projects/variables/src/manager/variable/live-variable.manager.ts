@@ -9,7 +9,8 @@ import { $rootScope, CONSTANTS, VARIABLE_CONSTANTS, DB_CONSTANTS } from '../../c
 import { AdvancedOptions } from '../../advanced-options';
 import { generateConnectionParams } from '../../util/variable/live-variable.http.utils';
 
-declare const _, window;
+import * as _ from 'lodash-es';
+declare const window;
 const emptyArr = [];
 
 export class LiveVariableManager extends BaseVariableManager {

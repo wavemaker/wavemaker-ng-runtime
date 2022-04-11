@@ -3,8 +3,9 @@ import { AfterViewInit, Component, ViewChild, ViewContainerRef, TemplateRef, OnD
 import { Toast, ToastPackage, ToastrService } from 'ngx-toastr';
 
 import { $watch, $appDigest } from '@wm/core';
+import * as _ from 'lodash-es';
 
-declare const _, $;
+declare const $;
 
 @Component({
     selector: '[custom-toaster-component]',

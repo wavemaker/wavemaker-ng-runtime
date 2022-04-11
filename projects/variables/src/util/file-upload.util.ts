@@ -3,7 +3,7 @@ import { triggerFn } from '@wm/core';
 import { NotifyPromise } from './notify-promise';
 import { httpService } from './variable/variables.utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 enum HTTP_EVENT_TYPE {
     Sent = 0,

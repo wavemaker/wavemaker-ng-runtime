@@ -10,7 +10,8 @@ import { ListComponent } from '@wm/components/data/list';
 import { registerProps } from './form-field.props';
 import { FormComponent } from '../form.component';
 
-declare const _, $;
+import * as _ from 'lodash-es';
+declare const $;
 
 // Custom validator to show validation error, if setValidationMessage method is used
 const customValidatorFn = () => {

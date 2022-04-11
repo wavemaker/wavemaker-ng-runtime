@@ -1,6 +1,6 @@
 import { IDataProvider, IDataProviderConfig } from './data-provider';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export class LocalDataProvider implements IDataProvider {
     private applyFilter(entry, queryText, filtername?) {

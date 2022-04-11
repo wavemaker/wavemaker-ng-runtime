@@ -6,7 +6,7 @@ import { App, $invokeWatchers, noop, ComponentType, PartialRefProvider } from '@
 
 import { WidgetRef } from "../../framework/types";
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Directive({
     selector: '[partialContainer]'

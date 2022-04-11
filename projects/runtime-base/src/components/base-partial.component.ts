@@ -11,8 +11,7 @@ import { VariablesService } from '@wm/variables';
 
 import { FragmentMonitor } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
-
-declare const _;
+import * as _ from 'lodash-es';
 
 export const commonPartialWidgets = {};
 

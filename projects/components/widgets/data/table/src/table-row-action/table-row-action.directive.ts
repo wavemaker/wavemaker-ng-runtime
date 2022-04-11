@@ -5,7 +5,7 @@ import { BaseComponent, Context, provideAsWidgetRef } from '@wm/components/base'
 import { registerProps } from './table-row-action.props';
 import { TableComponent } from '../table.component';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
 

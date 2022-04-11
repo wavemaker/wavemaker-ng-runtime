@@ -17,7 +17,7 @@ import { SecurityService } from '@wm/security';
 import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService } from '@wm/variables';
 import { WmRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 enum POST_MESSAGES {
     HIDE_TEMPLATES_SHOW_CASE = 'hide-templates-show-case',
@@ -65,7 +65,7 @@ export class AppManagerService {
                     // WMS-21117 : Do not trigger spinner, if the current variable is same as spinner which is in context
                     if (variable._spinnerId && variable._spinnerId.length) {
                         _.forEach(variable._spinnerId, (item) => {
-                            if (item.slice(0, item.lastIndexOf('_')) === variable._id && (this.$spinner as any).messagesByContext && (this.$spinner as any).messagesByContext[variable.spinnerContext] && 
+                            if (item.slice(0, item.lastIndexOf('_')) === variable._id && (this.$spinner as any).messagesByContext && (this.$spinner as any).messagesByContext[variable.spinnerContext] &&
                                 (variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext]["finalMessage"] || variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext][item])) {
                                 spinnerExists = true;
                                 return;
@@ -96,7 +96,7 @@ export class AppManagerService {
             }
         });
         this.$app.subscribe('userLoggedOut', () => this.setLandingPage().then(() => {
-            this.clearCache();            
+            this.clearCache();
         }));
         this.$app.subscribe('http401', (d = {}) => this.handle401(d.page, d.options));
     }

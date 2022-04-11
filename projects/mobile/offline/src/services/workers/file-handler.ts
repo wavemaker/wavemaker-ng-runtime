@@ -6,7 +6,7 @@ import { DeviceFileService } from '@wm/mobile/core';
 import { Change, ChangeLogService, FlushContext, Worker } from '../change-log.service';
 import { CallBack, LocalDBManagementService } from '../local-db-management.service';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const STORE_KEY = 'offlineFileUpload';
 

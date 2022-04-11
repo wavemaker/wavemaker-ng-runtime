@@ -7,7 +7,9 @@ import { provideAsWidgetRef, styler, provideAs } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 import { registerProps } from './radioset.props';
 
-declare const $, _;
+import * as _ from 'lodash-es';
+
+declare const $;
 
 const DEFAULT_CLS = 'app-radioset list-group inline';
 const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};

@@ -8,8 +8,9 @@ import { App, getAbortableDefer, hasCordova, isIos, noop, retryIfFails } from '@
 import { IDeviceStartUpService } from './device-start-up-service';
 import { NativeXMLHttpRequest } from './../native.xhr';
 import { DeviceService } from './device.service';
+import * as _ from 'lodash-es';
 
-declare const _, cordova, Connection, navigator;
+declare const cordova, Connection, navigator;
 
 const AUTO_CONNECT_KEY = 'WM.NetworkService._autoConnect',
     IS_CONNECTED_KEY = 'WM.NetworkService.isConnected',

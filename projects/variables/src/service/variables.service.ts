@@ -10,7 +10,7 @@ import { BaseAction } from '../model/base-action';
 import { setDependency } from '../util/variable/variables.utils';
 import { MetadataService } from './metadata-service/metadata.service';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable()
 export class VariablesService {

@@ -2,9 +2,9 @@ import { Attribute, Element, ParseSourceSpan, Text } from '@angular/compiler';
 
 import {IDGenerator, isMobileApp} from '@wm/core';
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import * as _ from 'lodash-es';
 
 const tagName = 'div';
-declare const _;
 
 const findChild = (node: Element, childName: string): Element => {
     const child = node && node.children.find(e => (e instanceof Element && (e as Element).name === childName));

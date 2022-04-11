@@ -6,7 +6,7 @@ import {registerProps} from './input-text.props';
 import {BaseInput} from '../base/base-input';
 import { IMaskDirective } from 'angular-imask';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-text',

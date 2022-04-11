@@ -31,7 +31,10 @@ import { ListComponent } from '@wm/components/data/list';
 import { registerProps } from './table.props';
 import { debounceTime } from 'rxjs/operators';
 
-declare const _, $;
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
+
+declare const $, window;
 
 const DEFAULT_CLS = 'app-grid app-panel panel';
 const WIDGET_CONFIG = {widgetType: 'wm-table', hostClass: DEFAULT_CLS};
@@ -900,7 +903,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
-
+        window.loadDatatable($, _, moment);
         this.ngform = fb.group({});
         this.addEventsToContext(this.context);
         const listenersToRemove = [

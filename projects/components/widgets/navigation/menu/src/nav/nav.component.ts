@@ -6,7 +6,7 @@ import { APPLY_STYLES_TYPE, DatasetAwareNavComponent, provideAsWidgetRef, Stylab
 
 import { registerProps } from './nav.props';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const DEFAULT_CLS = 'nav app-nav';
 const WIDGET_CONFIG = {widgetType: 'wm-nav', hostClass: DEFAULT_CLS};

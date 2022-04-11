@@ -2,8 +2,6 @@ import { Directive, Injector, Input, OnDestroy, TemplateRef, ViewContainerRef } 
 
 import { $watch } from '@wm/core';
 
-declare const _;
-
 @Directive({
     selector: '[lazyLoad]'
 })

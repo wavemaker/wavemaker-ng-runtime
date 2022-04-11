@@ -8,8 +8,7 @@ import { DatasetAwareNavComponent, isActiveNavItem, NavNode, provideAsWidgetRef,
 import { NavComponent } from './nav/nav.component';
 
 import { registerProps } from './menu.props';
-
-declare const _;
+import * as _ from 'lodash-es';
 
 export const KEYBOARD_MOVEMENTS = {
     MOVE_UP: 'UP-ARROW',

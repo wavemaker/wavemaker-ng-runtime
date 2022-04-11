@@ -6,7 +6,7 @@ import { MenuAdapterComponent } from '@wm/components/navigation/menu';
 import { registerProps } from './panel.props';
 
 const DEFAULT_CLS = 'app-panel panel';
-declare const _;
+import * as _ from 'lodash-es';
 const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-panel', hostClass: DEFAULT_CLS };
 
 @Component({

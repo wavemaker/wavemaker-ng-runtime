@@ -4,7 +4,7 @@ import { DataSource } from '@wm/core';
 
 import { IWidgetConfig, StylableComponent } from '@wm/components/base';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable()
 export abstract class BaseFormComponent extends StylableComponent implements AfterViewInit{

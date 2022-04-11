@@ -6,7 +6,7 @@ import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { ServiceVariableManager } from '../../manager/variable/service-variable.manager';
 import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const getManager = (): ServiceVariableManager => {
     return VariableManagerFactory.get(VARIABLE_CONSTANTS.CATEGORY.SERVICE);

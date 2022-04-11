@@ -1,4 +1,4 @@
-declare const _;
+import * as _ from 'lodash-es';
 
 export const setData = (variable: any, dataSet: any) => {
     /* check dataset sanity */

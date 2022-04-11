@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { convertToBlob, AbstractSpinnerService } from '@wm/core';
 import { FileBrowserComponent } from './file-browser.component';
 
-declare const _;
+import * as _ from 'lodash-es';
 declare const window, cordova;
 
 export interface FileContent {

@@ -1,8 +1,11 @@
 import { extractType, DataType, DEFAULT_FORMATS, $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
 
 import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
+import he from 'he';
 
-declare const window, _, $, moment, he;
+declare const window, $;
 
 const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};
 

@@ -8,7 +8,7 @@ import { SearchComponent } from '@wm/components/basic/search';
 
 import { registerProps } from './chips.props';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-chips',

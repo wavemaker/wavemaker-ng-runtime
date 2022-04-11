@@ -11,7 +11,7 @@ import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, se
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 import { AdvancedOptions } from '../../advanced-options';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export class ServiceVariableManager extends BaseVariableManager {
 

@@ -13,8 +13,9 @@ import { widgetIdGenerator } from '../../framework/widget-id-generator';
 import { DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
 import { WidgetProxyProvider } from '../../framework/widget-proxy-provider';
 import { getWatchIdentifier } from '../../../utils/widget-utils';
+import * as _ from 'lodash-es';
 
-declare const $, _;
+declare const $;
 
 // Gets list of classes to add and remove and applies on the $el
 const updateClasses = (toAdd, toRemove, el) => {

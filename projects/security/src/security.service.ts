@@ -12,7 +12,7 @@ import {
     triggerFn
 } from '@wm/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 // Todo[Shubham]: Move below constants to a common file
 const XSRF_COOKIE_NAME = 'wm_xsrf_token',

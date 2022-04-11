@@ -9,7 +9,7 @@ import { ColumnInfo, EntityInfo } from './config';
 import { escapeName } from '../utils/utils';
 import { LocalDBManagementService } from '../services/local-db-management.service';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export interface FilterCriterion {
     attributeName: string;

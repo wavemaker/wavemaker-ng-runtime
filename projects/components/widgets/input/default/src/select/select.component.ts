@@ -7,7 +7,7 @@ import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from './select.props';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'};
 

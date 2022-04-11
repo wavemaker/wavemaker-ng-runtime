@@ -6,7 +6,7 @@ import { AbstractToasterService, isDefined } from '@wm/core';
 
 import { CustomToasterComponent } from '../components/custom-toaster.component';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable()
 export class ToasterServiceImpl extends AbstractToasterService {

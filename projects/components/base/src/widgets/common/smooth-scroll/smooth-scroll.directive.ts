@@ -2,8 +2,10 @@ import {Directive, DoCheck, ElementRef, Injector, Input, OnDestroy, OnInit} from
 
 import { App, debounce, isKitkatDevice, isMobileApp } from '@wm/core';
 
+import * as _ from 'lodash-es';
+
 declare const IScroll;
-declare const _, $;
+declare const $;
 
 @Directive({
     selector: '[wmSmoothscroll]'

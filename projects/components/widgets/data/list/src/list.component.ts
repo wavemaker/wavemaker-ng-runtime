@@ -29,7 +29,7 @@ import { registerProps } from './list.props';
 import { ListItemDirective } from './list-item.directive';
 import { ListAnimator } from './list.animator';
 
-declare const _;
+import * as _ from 'lodash-es';
 declare const $;
 
 const DEFAULT_CLS = 'app-livelist app-panel';
@@ -182,7 +182,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         return this.getListItemByIndex(index);
     }
 
-    /** 
+    /**
      * Returns index of listItem(listItemDirective / listItemObject)
      * If item is a directive, index is fetched from listItems
      * If item is an object, index is fetched from fieldDefs

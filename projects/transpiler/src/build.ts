@@ -8,7 +8,7 @@ import {
 import { WIDGET_IMPORTS } from './imports';
 import { isMobileApp } from '@wm/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const CSS_REGEX = {
     COMMENTS_FORMAT : /\/\*((?!\*\/).|\n)+\*\//g,

@@ -4,8 +4,9 @@ import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
+import * as _ from 'lodash-es';
 
-declare const _, $;
+declare const $;
 const defaultTreeIconClass = 'plus-minus';
 const ICON_CLASSES = {
     'folder': {

@@ -6,7 +6,7 @@ import { MetadataService } from '@wm/variables';
 import { PrefabConfigProvider } from '../types/types';
 import { getPrefabBaseUrl, isPrefabInPreview } from '../util/utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const prefabsWithError = new Set<string>();
 const inProgress = new Map<string, Promise<any>>();

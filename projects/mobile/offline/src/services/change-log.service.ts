@@ -9,7 +9,7 @@ import { LocalDBManagementService } from './local-db-management.service';
 import { LocalKeyValueService } from './local-key-value.service';
 import { LocalDBStore } from '../models/local-db-store';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export interface Change {
     id?: number;

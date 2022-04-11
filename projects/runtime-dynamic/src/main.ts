@@ -5,7 +5,7 @@ import { AppModule } from './app/app.module';
 import { isIos, isSpotcues } from '@wm/core';
 import { initSpotCues } from '@wm/runtime/base';
 
-declare const _;
+import * as _ from 'lodash-es';
 const DEBUG_MODE = 'debugMode';
 
 if (sessionStorage.getItem(DEBUG_MODE) !== 'true') {

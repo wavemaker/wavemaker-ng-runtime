@@ -10,7 +10,7 @@ import { getEvaluatedData } from '../../../utils/widget-utils';
 import { getOrderedDataset } from '../../../utils/form-utils';
 import { StylableComponent } from './stylable.component';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const getValidLink = (link) => {
     const routRegex = /^(\/|#\/|#)(?!\W).*/;

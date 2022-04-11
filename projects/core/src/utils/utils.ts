@@ -7,9 +7,9 @@ import { DataType } from '../enums/enums';
 import { DataSource } from '../types/types';
 import { setAttr } from './dom';
 import { $parseEvent } from './expression-parser';
-
-declare const _, X2JS;
-declare const moment;
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
+declare const X2JS;
 declare const document;
 declare const resolveLocalFileSystemURL;
 declare const $;
@@ -1535,3 +1535,11 @@ export const setListClass = (scope) => {
         scope.itemsPerRowClass = 'col-xs-12';
     }
 };
+
+export const getLodash = () => {
+  return _;
+}
+
+export const getMoment = () => {
+    return moment;
+}

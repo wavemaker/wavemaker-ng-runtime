@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import * as Utils from '../utils/utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable({providedIn: 'root'})
 export class UtilsService {

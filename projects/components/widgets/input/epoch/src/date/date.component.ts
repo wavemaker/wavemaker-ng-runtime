@@ -9,7 +9,9 @@ import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/compon
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
 
-declare const _, $;
+import * as _ from 'lodash-es';
+
+declare const $;
 
 const CURRENT_DATE = 'CURRENT_DATE';
 const DEFAULT_CLS = 'app-date input-group';

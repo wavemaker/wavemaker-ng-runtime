@@ -5,7 +5,7 @@ import { isFileUploadSupported } from './variables.utils';
 import { getAccessToken } from './../oAuth.utils';
 import { formatDate } from '../../util/variable/variables.utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 /**
  * returns true if a Service variable is:

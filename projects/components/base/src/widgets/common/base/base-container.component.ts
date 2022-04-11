@@ -1,7 +1,7 @@
 import { ContentChildren, Directive } from '@angular/core';
 import { StylableComponent } from "./stylable.component";
 import { RedrawableDirective } from "../redraw/redrawable.directive";
-declare const _;
+import * as _ from 'lodash-es';
 
 @Directive()
 export abstract class BaseContainerComponent extends StylableComponent {

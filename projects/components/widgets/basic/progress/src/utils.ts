@@ -1,6 +1,6 @@
 import { isString } from '@wm/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 // This function returns the maximum number of decimal digits allowed.
 export const getDecimalCount = (val: string) => {

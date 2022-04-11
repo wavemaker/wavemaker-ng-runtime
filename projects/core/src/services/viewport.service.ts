@@ -11,7 +11,7 @@ const enum SCREEN_TYPE {
     TABLET,
     LARGE_SCREEN_DEVICES
 }
-declare const _;
+import * as _ from 'lodash-es';
 
 export class IViewportService {
     notify: (eventname: ViewportEvent, options?: Array<any>) => void;

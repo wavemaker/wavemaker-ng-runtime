@@ -15,8 +15,8 @@ import { initComponentsBuildTask } from '@wm/build-task';
 import { AppManagerService } from './app.manager.service';
 import { RuntimeBaseModule } from '../runtime-base.module';
 
+import * as _ from 'lodash-es';
 initComponentsBuildTask();
-declare const _;
 
 const componentFactoryRefCache = new Map<string, any>();
 

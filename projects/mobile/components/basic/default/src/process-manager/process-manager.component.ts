@@ -3,7 +3,7 @@ import { Component, DoCheck, ElementRef } from '@angular/core';
 import { addClass, removeAttr, setAttr } from '@wm/core';
 import { provideAsWidgetRef } from '@wm/components/base';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export interface Process {
     max: number;

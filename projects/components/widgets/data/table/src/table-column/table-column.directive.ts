@@ -7,7 +7,7 @@ import { TableComponent } from '../table.component';
 import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
 import { debounceTime } from 'rxjs/operators';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 

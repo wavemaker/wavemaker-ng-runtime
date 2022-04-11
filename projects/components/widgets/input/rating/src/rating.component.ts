@@ -7,7 +7,7 @@ import { DatasetAwareFormComponent } from '@wm/components/input';
 
 import { registerProps } from './rating.props';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const DEFAULT_CLS = 'app-ratings';
 const WIDGET_CONFIG = {widgetType: 'wm-rating', hostClass: DEFAULT_CLS};
@@ -201,9 +201,9 @@ export class RatingComponent extends DatasetAwareFormComponent {
                 this.ratingsWidth = this.calculateRatingsWidth();
             }
         } else if (key === 'maxvalue') {
-            /** Storing the datavalue in temp variable and assiging back to datavalue 
-             * after default datalist is prepared to trigger Dataset Aware class select cycle 
-             * as the datavalue property change is triggering first rather than maxvalue 
+            /** Storing the datavalue in temp variable and assiging back to datavalue
+             * after default datalist is prepared to trigger Dataset Aware class select cycle
+             * as the datavalue property change is triggering first rather than maxvalue
              * in the rating widget is used inside a datatable
              */
             let tempDataValue = this.datavalue;

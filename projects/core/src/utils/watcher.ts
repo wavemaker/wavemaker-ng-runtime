@@ -3,7 +3,7 @@ import { IDGenerator } from './id-generator';
 import { $parseExpr } from './expression-parser';
 import { findValueOf } from './utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const registry = new Map<string, any>();
 

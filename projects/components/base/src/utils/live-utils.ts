@@ -1,6 +1,6 @@
 import { isNumberType, FormWidgetType, DataType, isMobileApp, isAndroid } from '@wm/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const  VIEW_MODE_OPTIONS = {
     DEFAULT : 'default',

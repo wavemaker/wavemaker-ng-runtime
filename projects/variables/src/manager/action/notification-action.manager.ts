@@ -2,7 +2,7 @@ import { BaseActionManager } from './base-action.manager';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { initiateCallback, toasterService, dialogService } from '../../util/variable/variables.utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export class NotificationActionManager extends BaseActionManager {
 

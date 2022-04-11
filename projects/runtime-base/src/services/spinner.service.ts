@@ -4,7 +4,9 @@ import { Subject } from 'rxjs';
 
 import { AbstractSpinnerService } from '@wm/core';
 
-declare const _, $;
+import * as _ from 'lodash-es';
+
+declare const $;
 
 const spinnerTemplate = `<div class="app-spinner">
                             <div class="spinner-message" aria-label="loading gif">

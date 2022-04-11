@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { IDeviceStartUpService } from '@wm/mobile/core';
 import { isIos } from '@wm/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const STORAGE_KEY = 'wavemaker.persistedcookies';
 

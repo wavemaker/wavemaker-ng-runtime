@@ -6,7 +6,7 @@ import { PageDirective } from '@wm/components/page';
 import { registerProps } from './tabbar.props';
 
 declare const $;
-declare const _;
+import * as _ from 'lodash-es';
 const DEFAULT_CLS = 'app-tabbar app-top-nav';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-tabbar', hostClass: DEFAULT_CLS};
 

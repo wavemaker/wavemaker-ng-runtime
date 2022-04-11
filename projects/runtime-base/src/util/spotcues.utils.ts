@@ -1,6 +1,8 @@
 import { loadScript } from '@wm/core';
 
-declare const _, $;
+import * as _ from 'lodash-es';
+
+declare const $;
 
 const APP_STORE_KEY = "WAVEMAKER_APP_ID";
 const SPOTCUES_SCRIPT_URL = 'https://d2qztbtcmhe1gf.cloudfront.net/demoapps2/1593011200/spotcues-utils.js';

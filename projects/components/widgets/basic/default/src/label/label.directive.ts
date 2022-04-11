@@ -5,7 +5,7 @@ import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, sty
 
 import { registerProps } from './label.props';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const DEFAULT_CLS = 'app-label';
 const WIDGET_CONFIG: IWidgetConfig = {

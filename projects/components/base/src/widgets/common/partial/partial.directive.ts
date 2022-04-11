@@ -7,7 +7,7 @@ import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'app-partial clearfix';
 const WIDGET_CONFIG = {widgetType: 'wm-partial', hostClass: DEFAULT_CLS};
-declare const _;
+import * as _ from 'lodash-es';
 
 @Directive({
     selector: '[wmPartial]',

@@ -5,7 +5,7 @@ import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 import { registerProps } from './form-action.props';
 import { FormComponent } from '../form.component';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
 

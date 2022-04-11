@@ -6,7 +6,9 @@ import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableCo
 import { registerProps } from './chart.props';
 import { allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType, postPlotChartProcess } from './chart.utils';
 
-declare const $, _, d3, nv;
+import * as _ from 'lodash-es';
+
+declare const $, d3, nv;
 
 const WIDGET_CONFIG = {widgetType: 'wm-chart', hostClass: 'app-chart'};
 
@@ -992,7 +994,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
               }).style("font-size", function() {
                 // 16 is the default font size to multiply with the scaled value and 24 is the maximum font size that can be applied
                 var fontSize = 16 * d3.select(this).attr("data-scale");
-                return fontSize > 24 ? 24 : fontSize + "px"; 
+                return fontSize > 24 ? 24 : fontSize + "px";
               });
     }
 

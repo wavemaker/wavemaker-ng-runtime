@@ -4,7 +4,7 @@ import { StylableComponent } from '@wm/components/base';
 import { MenuComponent } from './menu.component';
 import {BaseContainerComponent} from '@wm/components/base';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const menuProps = ['itemlabel', 'itemicon', 'itemlink', 'itemaction', 'itemchildren', 'userrole'];
 

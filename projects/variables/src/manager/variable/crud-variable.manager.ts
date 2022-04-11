@@ -9,7 +9,7 @@ import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, si
 import { getAccessToken } from '../../util/oAuth.utils';
 import {ServiceVariableManager} from './service-variable.manager';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export class CrudVariableManager extends ServiceVariableManager {
 

@@ -2,7 +2,7 @@ import { Directive, HostListener, Inject } from '@angular/core';
 
 import { WidgetRef } from '@wm/components/base';
 
-declare const _;
+import * as _ from 'lodash-es';
 declare const cordova;
 
 @Directive({

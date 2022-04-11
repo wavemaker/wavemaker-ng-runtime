@@ -4,7 +4,7 @@ import { File } from '@ionic-native/file';
 
 import { convertToBlob } from '@wm/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export interface IUploadResponse {
     text: string;

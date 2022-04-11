@@ -9,7 +9,7 @@ const DEFAULT_CLS = 'app-prefab';
 
 const registeredPropsSet = new Set<string>();
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Directive({
     selector: 'section[wmPrefab]',

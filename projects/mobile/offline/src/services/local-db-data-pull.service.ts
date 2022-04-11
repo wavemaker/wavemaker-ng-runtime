@@ -12,7 +12,8 @@ import { PullInfo } from './change-log.service';
 import { LocalKeyValueService } from './local-key-value.service';
 import { DBInfo, EntityInfo, PullType } from '../models/config';
 
-declare const _, moment;
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
 const  LAST_PULL_INFO_KEY = 'localDBManager.lastPullInfo';
 
 /**

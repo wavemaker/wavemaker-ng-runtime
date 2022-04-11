@@ -5,8 +5,9 @@ import { File } from '@ionic-native/file';
 import { $appDigest, hasCordova, noop, fetchContent, isIos } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
+import * as _ from 'lodash-es';
 
-declare const cordova, _;
+declare const cordova;
 
 const REGISTRY_FILE_NAME = 'registry.info';
 

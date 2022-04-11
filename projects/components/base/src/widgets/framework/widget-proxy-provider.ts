@@ -5,7 +5,7 @@ import { propNameCSSKeyMap } from './styler';
 import { globalPropertyChangeHandler } from './property-change-handler';
 import { BaseComponent } from '../common/base/base.component';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 /**
  *  proxy handler for the components

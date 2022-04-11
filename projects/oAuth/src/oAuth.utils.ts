@@ -1,7 +1,9 @@
 import { _WM_APP_PROJECT, hasCordova, isIE, getWmProjectProperties } from '@wm/core';
 import {trigger} from "@angular/animations";
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
 
-declare const moment, _, jsSHA;
+declare const jsSHA;
 
 const accessTokenSuffix = '.access_token', pkceIdentifier = 'pkce', implicitIdentifier = 'implicit';
 

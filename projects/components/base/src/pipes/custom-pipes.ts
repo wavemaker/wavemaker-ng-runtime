@@ -2,8 +2,8 @@ import { Pipe, PipeTransform, Injectable } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { CURRENCY_INFO, isDefined, App, CustomPipeManager } from '@wm/core';
 
-
-declare const moment, _, $;
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
 
 const getEpochValue = data => {
     let epoch;

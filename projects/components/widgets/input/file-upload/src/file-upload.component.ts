@@ -6,8 +6,9 @@ import { App, DataSource, isAudioFile, isImageFile, isVideoFile } from '@wm/core
 import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './file-upload.props';
+import * as _ from 'lodash-es';
 
-declare const _, $;
+declare const $;
 
 const DEFAULT_CLS = 'app-fileupload';
 const WIDGET_CONFIG = {

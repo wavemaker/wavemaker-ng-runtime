@@ -24,6 +24,7 @@ import {
 } from '@wm/runtime/base';
 
 import { AppResourceManagerService } from './app-resource-manager.service';
+import * as _ from 'lodash-es';
 
 interface IPageMinJSON {
     markup: string;
@@ -33,7 +34,7 @@ interface IPageMinJSON {
     config?: string;
 }
 
-declare const window: any, _;
+declare const window: any;
 
 const fragmentCache = new Map<string, any>();
 

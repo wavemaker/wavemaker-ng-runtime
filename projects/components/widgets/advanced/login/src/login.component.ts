@@ -8,7 +8,7 @@ import { registerProps } from './login.props';
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Component({
     selector: 'div[wmLogin]',

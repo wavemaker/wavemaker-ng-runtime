@@ -17,7 +17,7 @@ import { FileExtensionFromMimePipe } from '@wm/components/base';
 import { DeviceFileService } from './device-file.service';
 
 const MAX_CONCURRENT_DOWNLOADS = 2;
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceFileDownloadService {

@@ -11,7 +11,7 @@ import { DeviceFileService } from './device-file.service';
 import { IDeviceStartUpService } from './device-start-up-service';
 
 declare const cordova;
-declare const _;
+import * as _ from 'lodash-es';
 declare const resolveLocalFileSystemURL;
 
 @Injectable({ providedIn: 'root' })

@@ -5,7 +5,7 @@ import { Observable, Subject } from 'rxjs';
 
 import { AbstractHttpService, getValidJSON, replace } from '@wm/core';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 @Injectable()
 export class HttpServiceImpl extends AbstractHttpService {

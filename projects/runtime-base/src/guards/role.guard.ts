@@ -7,7 +7,7 @@ import { SecurityService } from '@wm/security';
 import { AuthGuard } from './auth.guard';
 import { AppManagerService } from '../services/app.manager.service';
 
-declare const _: any;
+import * as _ from 'lodash-es';
 
 @Injectable()
 export class RoleGuard implements CanActivate {

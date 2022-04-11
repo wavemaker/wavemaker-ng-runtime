@@ -53,10 +53,8 @@
               }
             ],
             "scripts": [
-              "./node_modules/lodash/lodash.min.js",
               "./node_modules/x2js/x2js.js",
               "./node_modules/d3/d3.min.js",
-              "./node_modules/he/he.js",
               "./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js",
               "./node_modules/jquery/dist/jquery.min.js",
               "./node_modules/jquery-ui/ui/disable-selection.js",
@@ -73,7 +71,6 @@
               "./libraries/scripts/datatable/datatable.js",
               "./libraries/scripts/swipey/swipey.jquery.plugin.js",
               "./libraries/scripts/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js",
-              "./node_modules/moment/min/moment.min.js",
               "./node_modules/fullcalendar/dist/fullcalendar.min.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
               "./node_modules/hammerjs/hammer.min.js",
@@ -150,10 +147,8 @@
               "src/assets/app.css"
             ],
             "scripts": [
-              "./node_modules/lodash/lodash.min.js",
               "./node_modules/x2js/x2js.js",
               "./node_modules/d3/d3.min.js",
-              "./node_modules/he/he.js",
               "./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js",
               "./node_modules/jquery/dist/jquery.min.js",
               "./node_modules/jquery-ui/ui/disable-selection.js",
@@ -167,7 +162,6 @@
               "./node_modules/jquery-ui/ui/widgets/sortable.js",
               "./node_modules/jquery-ui/ui/widgets/droppable.js",
               "./libraries/scripts/datatable/datatable.js",
-              "./node_modules/moment/min/moment.min.js",
               "./node_modules/fullcalendar/dist/fullcalendar.min.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
               "./node_modules/hammerjs/hammer.min.js",

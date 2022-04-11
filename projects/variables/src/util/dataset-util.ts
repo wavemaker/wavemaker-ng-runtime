@@ -1,4 +1,4 @@
-declare const _;
+import * as _ from 'lodash-es';
 
 export default class DatasetUtil {
 

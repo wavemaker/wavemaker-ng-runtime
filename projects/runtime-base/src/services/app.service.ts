@@ -20,7 +20,7 @@ import {
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 const injectorMap = {
     DialogService: AbstractDialogService,

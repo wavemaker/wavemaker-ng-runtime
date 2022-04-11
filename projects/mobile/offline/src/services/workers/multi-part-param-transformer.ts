@@ -3,7 +3,7 @@ import { DeviceFileService } from '@wm/mobile/core';
 import { Change, Worker } from '../change-log.service';
 import { LocalDBManagementService } from '../local-db-management.service';
 
-declare const _;
+import * as _ from 'lodash-es';
 
 export class MultiPartParamTransformer implements Worker {
 

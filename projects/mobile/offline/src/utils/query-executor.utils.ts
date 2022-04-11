@@ -7,7 +7,7 @@ import { ChangeLogService } from '../services/change-log.service';
 import { LocalDBManagementService } from '../services/local-db-management.service';
 import { WM_LOCAL_OFFLINE_CALL } from './utils';
 
-declare const _;
+import * as _ from 'lodash-es';
 const NUMBER_REGEX = /^\d+(\.\d+)?$/;
 let isOfflineBehaviourAdded = false;
 export class NamedQueryExecutionOfflineBehaviour {

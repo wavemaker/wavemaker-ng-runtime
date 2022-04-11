@@ -14,9 +14,9 @@ import { LocalDBStore } from '../models/local-db-store';
 import { escapeName } from '../utils/utils';
 import { ColumnInfo, DBInfo, EntityInfo, NamedQueryInfo, PullType } from '../models/config';
 
-declare const _;
+import * as _ from 'lodash-es';
+import moment from 'moment/min/moment-with-locales';
 declare const cordova;
-declare const moment;
 declare const Zeep;
 
 const  NEXT_ID_COUNT = 'localDBStore.nextIdCount';

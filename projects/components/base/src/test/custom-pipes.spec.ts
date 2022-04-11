@@ -7,6 +7,7 @@ import { compileTestComponent } from './util/component-test-util';
 import { ITestModuleDef } from './common-widget.specs';
 import { CustomPipe, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe, SanitizePipe } from '@wm/components/base';
 import { CustomPipeManager } from '@wm/core';
+import moment from 'moment/min/moment-with-locales';
 
 @Component({
     template: '<div></div>'
@@ -25,7 +26,6 @@ const testModuleDef: ITestModuleDef = {
     providers: [DecimalPipe, DatePipe, TrustAsPipe, SanitizePipe, CustomPipeManager]
 };
 
-declare const moment;
 
 describe('ToNumber pipe', () => {
     let fixture: ComponentFixture<PipeWrapperComponent>;
