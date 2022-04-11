@@ -57,6 +57,15 @@ export class FileUpload {
      * CSS class of the icon.
      */
     @Input() iconclass: string = 'wi wi-file-upload';
+    /**
+     * CSS class for the clear icon.
+     */
+    @Input() cleariconclass: string;
+    /**
+     * This property specifies the hint for clear icon
+     */
+    @Input() cleariconhint: string = 'Clear';
+
 
     /**
      * Callback function which will be triggered before the file is selected.

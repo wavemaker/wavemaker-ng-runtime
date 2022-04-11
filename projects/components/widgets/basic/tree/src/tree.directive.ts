@@ -2,7 +2,7 @@ import { Attribute, Directive, Injector } from '@angular/core';
 
 import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/core';
 
-import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
 
 declare const _, $;
@@ -46,7 +46,7 @@ const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
         provideAsWidgetRef(TreeDirective)
     ]
 })
-export class TreeDirective extends StylableComponent implements IRedrawableComponent {
+export class TreeDirective extends StylableComponent {
     static initializeProps = registerProps();
 
     private _selectNode: HTMLElement;
@@ -119,8 +119,12 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
                 $iconNode = $('<i></i>'),
                 nodeLabel = getEvaluatedData(node, {expression: this.nodelabel, bindExpression: this.bindnodelabel}, this.viewParent) || node.label,
                 nodeIcon = getEvaluatedData(node, {expression: this.nodeicon, bindExpression: this.bindnodeicon}, this.viewParent) || node.icon,
-                nodeChildren = getEvaluatedData(node, {expression: this.nodechildren, bindExpression: this.bindnodechildren}, this.viewParent) || node.children,
-                nodeIdValue = getEvaluatedData(node, {expression: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent) || node.children;
+                nodeChildren = getEvaluatedData(node, {expression: this.nodechildren, bindExpression: this.bindnodechildren}, this.viewParent) || node.children;
+            let nodeIdValue = getEvaluatedData(node, {expression: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent);
+            if (nodeIdValue === undefined) {
+                nodeIdValue = node.children;
+            }
+
             let isNodeMatched = false,
                 expandCollapseIcon;
 
@@ -138,7 +142,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             // if node identifier is present then verify the datavalue is bound expr or static value and compare with the node model
             if (this.bindnodeid || this.nodeid) {
                 isNodeMatched = this.binddatavalue ? nodeIdValue === _evalDataValue : nodeIdValue === _expr;
-                if (nodeIdValue) {
+                if (nodeIdValue !== undefined) {
                     $li.attr('id', nodeIdValue);
                 }
             } else if (this.binddatavalue) { // evaluate the expression only if it is bound (useExpression)
@@ -210,7 +214,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
 
     private toggleExpandCollapseNode($event, $i, $li) {
         const treeIcons = ICON_CLASSES[this.treeicons || defaultTreeIconClass];
-        const  $liPath =  $li.find('> span.title').parents('.app-tree li');
+        const  $liPath =  this.findSelectedNodeParent($li);
         let path = '';
 
         // construct the path of the node
@@ -262,15 +266,15 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             $li = this._selectNode;
             $li.addClass('selected');
             data    = $li.data('nodedata');
-            $liPath = $li.parentsUntil($el, 'li.parent-node.collapsed');
+            $liPath = this.findSelectedNodeParent($li);
 
             if (!$liPath.length) {
                 $liPath = $li;
             }
 
             $liPath
-                .each(() => {
-                    const $current = $(this),
+                .each((i, el) => {
+                    const $current = $(el),
                         $i       = $current.children('i.collapsed'),
                         $title   = $current.children('.title');
                     this.toggleExpandCollapseNode(undefined, $i, $current);
@@ -303,7 +307,7 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         nodeAction = data[this.nodeaction || 'action'];
 
         // if the selectNode is initiated by click event then use the nativeElement target from event
-        $liPath = target ? target.parents('.app-tree li') : $li.find('> span.title').parents('.app-tree li');
+        $liPath = target ? target.parents('.app-tree li') : this.findSelectedNodeParent($li);
 
         // construct the path of the node
         $liPath
@@ -331,6 +335,8 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
             } else {
                 this.datavalue = getClonedObject(data) || {};
             }
+        } else {
+            this.datavalue = value;
         }
 
         if (nodeAction) {
@@ -360,14 +366,15 @@ export class TreeDirective extends StylableComponent implements IRedrawableCompo
         });
     }
 
+    private findSelectedNodeParent($li) {
+        return $li.find('> span.title').parents('.app-tree li');
+    }
+
     private selectById(value?) {
         this.selectNode(undefined, value);
     }
     private deselectById(value?) {
         this.selecteditem = {};
         this.selectById();
-    }
-    public redraw() {
-        this.renderTree(true);
     }
 }

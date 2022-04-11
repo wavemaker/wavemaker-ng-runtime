@@ -3,12 +3,11 @@ import { TreeDirective } from './tree.directive';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
-import { RedrawableDirective } from '@wm/components/base';
 import { App } from '@wm/core';
 
 let mockApp = {};
 
-const markup = `<div wmTree redrawable name="tree1" class="testClass" height="800" width="200" tabindex="1" show="true"
+const markup = `<div wmTree name="tree1" class="testClass" height="800" width="200" tabindex="1" show="true"
                 collapse.event="tree1Collapse($event, widget, $item, $path)"
                 expand.event="tree1Expand($event, widget, $item, $path)"
                 fontfamily="Segoe UI" color="#0000FF" fontweight="700" fontstyle="italic" fontsize="20"
@@ -68,7 +67,7 @@ class TreeWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [TreeWrapperComponent, TreeDirective, RedrawableDirective],
+    declarations: [TreeWrapperComponent, TreeDirective],
     imports: [],
     providers: [
         { provide: App, useValue: mockApp }

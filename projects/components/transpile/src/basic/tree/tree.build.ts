@@ -4,7 +4,7 @@ const tagName = 'div';
 
 register('wm-tree', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmTree redrawable ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmTree ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

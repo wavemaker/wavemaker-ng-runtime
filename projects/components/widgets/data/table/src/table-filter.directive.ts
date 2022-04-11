@@ -529,6 +529,11 @@ export class TableFilterSortDirective {
             this.handleClientSideSortSearch(searchSortObj, e, type);
         }
     }
+    // set the 'lastAction' performed on the table to 'search_or_sort'
+    setLastActionPerformedToSearchSort() {
+        this.table.gridOptions.setLastActionPerformed(this.table.gridOptions.ACTIONS.SEARCH_OR_SORT);
+        this.table.gridOptions.setIsSearchTrigerred(true);
+    }
 
     // This method is triggered by jquery table
     searchSortHandler(searchSortObj, e, type, statePersistenceTriggered?) {
@@ -536,6 +541,7 @@ export class TableFilterSortDirective {
         if (event_type === 'change' && this.table.filtermode !== 'multicolumn') {
             e.stopPropagation();
         } else {
+            this.setLastActionPerformedToSearchSort();
             if (type === 'search') {
                 this.searchHandler(searchSortObj, e, type, statePersistenceTriggered);
             } else {

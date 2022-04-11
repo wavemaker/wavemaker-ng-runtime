@@ -81,7 +81,7 @@ const listeners = {},
  */
 export const removeAccessToken = (provider) => {
     const accessTokenKey = getAccessTokenPlaceholder(provider);
-    sessionStorage.removeItem(accessTokenKey);
+    localStorage.removeItem(accessTokenKey);
 };
 
 /**
@@ -111,7 +111,7 @@ function performFakeLocalStorageUpdate() {
  */
 function setAccessToken(provider, accesstoken) {
     const accessTokenKey = getAccessTokenPlaceholder(provider);
-    sessionStorage.setItem(accessTokenKey, accesstoken);
+    localStorage.setItem(accessTokenKey, accesstoken);
 }
 
 /**
@@ -426,7 +426,7 @@ export const getAccessToken = (provider, checkLocalStorage) => {
     if (checkLocalStorage) {
         return localStorage.getItem(provider + accessTokenSuffix);
     }
-    return sessionStorage.getItem(accessTokenKey);
+    return localStorage.getItem(accessTokenKey);
 };
 
 

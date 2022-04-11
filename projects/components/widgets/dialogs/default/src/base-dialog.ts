@@ -1,5 +1,5 @@
 import { Injector, OnDestroy, TemplateRef, Injectable } from '@angular/core';
-import { NavigationStart, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { Subscription } from 'rxjs';
@@ -73,7 +73,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
                 }
             }),
             router.events.subscribe(e => {
-                if (e instanceof NavigationStart) {
+                if (e instanceof NavigationEnd) {
                     this.close();
                 }
             })
