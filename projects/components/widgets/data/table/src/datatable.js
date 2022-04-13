@@ -2566,7 +2566,6 @@ $.widget('wm.datatable', {
 
         if ($header) {
             if (this.options.enableColumnSelection) {
-                $header.find('th[data-col-selectable]').off('click');
                 $header.find('th[data-col-selectable]').on('click', this.columnSelectionHandler.bind(this));
             } else {
                 $header.find('th[data-col-selectable]').off('click');
@@ -2574,10 +2573,8 @@ $.widget('wm.datatable', {
 
             if (this.options.enableSort) {
                 if (this.options.enableColumnSelection) {
-                    $header.find('th[data-col-sortable] .header-data').off('click');
                     $header.find('th[data-col-sortable] .header-data').on('click', this.sortHandler.bind(this));
                 } else {
-                    $header.find('th[data-col-sortable]').off('click');
                     $header.find('th[data-col-sortable]').on('click', this.sortHandler.bind(this));
                 }
             } else {
