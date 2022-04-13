@@ -31,10 +31,17 @@ export class TextareaComponent extends BaseInput {
     public shortcutkey: string;
     public autofocus: boolean;
     public hint: string;
+    public limitdisplaytext: string;
+    public charlength: number = 0;
+
     @ViewChild('textarea', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
+    }
+
+    public onInputChange() {
+        this.charlength = this.inputEl.nativeElement.value.length;    
     }
 }

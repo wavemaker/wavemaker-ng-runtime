@@ -14,6 +14,16 @@ export class PaginationService {
      */
     public updateFieldsOnPagination(parent, newVal) {
         let fieldDefs = parent.widgetType === 'wm-table' ? parent.gridData : parent.fieldDefs;
+        // remove the deleted row from the list
+        if (parent.widgetType === 'wm-table' && (parent.gridOptions.isNavTypeScrollOrOndemand()) && parent.gridOptions.deletedRowIndex !== -1) {
+            fieldDefs.splice(parent.gridOptions.deletedRowIndex, 1);
+            parent.gridOptions.setDeletedRowIndex(-1);
+        }
+        // reset fieldDefs if last action performed is search or sort
+        if (parent.widgetType === 'wm-table' && (parent.gridOptions.isNavTypeScrollOrOndemand())  && parent.gridOptions.lastActionPerformed === parent.gridOptions.ACTIONS.SEARCH_OR_SORT) {
+            fieldDefs = [];
+            parent.gridOptions.setCurrentPage(1);
+        }
         let currentPage = parent.currentPage;
         const dataNavigator = parent.dataNavigator;
         const pagesize = parent.pagesize;
@@ -33,10 +43,10 @@ export class PaginationService {
                     // if dn.currentPage is not incremented still only old newVal is present hence we push empty array
                     newVal = [];
                 } else if (dataNavigator.dataSize < currentPage * pagesize) {
-                    // if number of elements added to datanavigator is less than  product of currentpage and pagesize we only add elements extra elements added
+                    // if number of elements added to dataNavigator is less than  product of currentPage and pageSize we only add elements extra elements added
                     itemsLength = dataNavigator.dataSize - fieldDefs.length;
                 } else {
-                    // if number of elements added to datanavigator is greater than  product of currentpage and pagesize we add elements the extra elements in newVal
+                    // if number of elements added to dataNavigator is greater than  product of currentPage and pageSize we add elements the extra elements in newVal
                     itemsLength = currentPage * pagesize - fieldDefs.length;
                     currentPage++;
                 }
@@ -48,8 +58,35 @@ export class PaginationService {
             }
             newVal = itemsToPush;
         }
-        fieldDefs = [...fieldDefs, ...newVal];
+
+        // Add unique records to fieldDefs
+        if (parent.widgetType === 'wm-table' && (parent.gridOptions.lastActionPerformed === parent.gridOptions.ACTIONS.DELETE  || parent.gridOptions.lastActionPerformed === parent.gridOptions.ACTIONS.EDIT)) {
+            fieldDefs = this.getUniqueRecordsInFieldDef(fieldDefs, newVal);
+        } else {
+            fieldDefs = [...fieldDefs, ...newVal];
+        }
         return [fieldDefs, currentPage];
+    }
+
+    // Add the unique records to fieldDefs
+    public getUniqueRecordsInFieldDef(fieldDefs, newVal) {
+        let flag = false;
+        if (!fieldDefs.length) {
+            fieldDefs = newVal;
+        } else {
+            newVal.forEach(function (newObj) {
+                flag = false;
+                fieldDefs.forEach(function (obj) {
+                    if (_.isEqual(newObj, obj)) {
+                        flag = true;
+                    }
+                });
+                if (flag === false) {
+                    fieldDefs.push(newObj);
+                }
+            });
+        }
+        return fieldDefs;
     }
 
     /**
@@ -61,7 +98,7 @@ export class PaginationService {
      * @returns null
      */
     public bindScrollEvt(parent, nodeName, debounceNum) {
-        const dataNavigator = parent.dataNavigator;        
+        const dataNavigator = parent.dataNavigator;
         const $el = parent.$element;
         const $rootEl = $el.find(nodeName);
         const $firstChild = $rootEl.children().first();
@@ -98,6 +135,9 @@ export class PaginationService {
                     let scrollTop;
                     // scrollingElement is undefined for IE, safari. use body as target Element
                     target = target === document ? (target.scrollingElement || document.body) : target;
+                    if (parent.widgetType === 'wm-table' && parent.gridOptions.isNavTypeScrollOrOndemand()) {
+                        evt.stopPropagation();
+                    }
 
                     clientHeight = target.clientHeight;
                     totalHeight = target.scrollHeight;
@@ -114,6 +154,9 @@ export class PaginationService {
         } else {
             // if there is no scrollable element register wheel event on ul element
             $rootEl.on('wheel.scroll_evt', e => {
+                if (parent.widgetType === 'wm-table' && parent.gridOptions.isNavTypeScrollOrOndemand()) {
+                    e.stopPropagation();
+                }
                 if (e.originalEvent.deltaY > 0) {
                     $rootEl.off('wheel.scroll_evt');
                     this.debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum, parent)();
@@ -124,7 +167,7 @@ export class PaginationService {
 
     /**
      * @description
-     * This function calls fetchNextDatasetOnScroll fn on debounced time 
+     * This function calls fetchNextDatasetOnScroll fn on debounced time
      * @param {object} dataNavigator pagination instance
      * @param {number} debounceNum provided to lodash debounce
      * @returns debounced function definition
@@ -135,7 +178,7 @@ export class PaginationService {
 
     /**
      * @description
-     * This function calls next set of data when navigated to next page 
+     * This function calls next set of data when navigated to next page
      * @param {object} dataNavigator pagination instance
      * @returns null
      */
