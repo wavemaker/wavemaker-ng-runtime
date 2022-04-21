@@ -24,7 +24,7 @@ export abstract class BaseVariableManager {
      * @param response
      */
     setRequestTrackId(response, variable) {
-        const requestTrackId = response.headers.get('x-wm-request-track-id');
+        const requestTrackId = response?.headers?.get('x-wm-request-track-id');
         if (requestTrackId) {
             variable._requestTrackId = requestTrackId;
         }
