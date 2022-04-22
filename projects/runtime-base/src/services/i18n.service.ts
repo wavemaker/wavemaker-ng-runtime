@@ -235,7 +235,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         const _defaultLanguage = getWmProjectProperties().defaultLanguage;
         _acceptLang.push(_defaultLanguage);
 
-        // checks whether user preference is based on browser set languages or default language set in project  
+        // checks whether user preference is based on browser set languages or default language set in project
         let preferBrowserLang = getWmProjectProperties().preferBrowserLang;
         if (!preferBrowserLang) { // when preferBrowserLang is not defined, set to its default value
             preferBrowserLang  = true;
@@ -250,11 +250,11 @@ export class I18nServiceImpl extends AbstractI18nService {
 
         let _appSupportedLang;
         /**
-         * for cordova, check for language ignoring the locale 
+         * for cordova, check for language ignoring the locale
          * As the navigator.languages always returns the language with locale (en-us)
          * The supportedLanguages from BE doesn't include locale (en) which leads to mismatch
          */
-        if (CONSTANTS.hasCordova) {  
+        if (CONSTANTS.hasCordova) {
             let supportedLang = [];
             _.forEach(_acceptLang, function(lang) {
                 let matchedLang = _.find(_supportedLang, (val) => lang === val) || _.find(_supportedLang, (val) => lang.startsWith(val));
@@ -288,7 +288,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         if (CONSTANTS.hasCordova) {
             languages = navigator.languages || [navigator.language];
         } else {
-            languages = getWmProjectProperties().preferredLanguage || '';
+            languages = decodeURIComponent(getWmProjectProperties().preferredLanguage || '');
             /**
              * Accept-Language Header will contain set of supported locale, so try splitting the string to proper locale set
              * Ex: en,en-US;q=0.9,de;q=0.6,ar;q=0.2,hi
