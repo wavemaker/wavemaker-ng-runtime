@@ -486,6 +486,8 @@ $.widget('wm.datatable', {
         //When search or sort applied, clear the tbody and render with filtered data
         if (self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT && self.options.isSearchTrigerred) {
             $tbody.html('');
+            if(this.options.navigation === 'On-Demand')
+                this.element.find('.on-demand-datagrid').show();
             self.options.setIsSearchTrigerred(false);
         }
 
