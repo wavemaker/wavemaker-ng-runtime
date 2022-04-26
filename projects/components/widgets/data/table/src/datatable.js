@@ -487,7 +487,7 @@ $.widget('wm.datatable', {
         if (self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT && self.options.isSearchTrigerred) {
             $tbody.html('');
             // In case of on demand pagination, when the next page is not disabled show the loading/load more button accordingly
-            if(this.options.navigation === 'On-Demand')
+            if(this.options.navigation === 'On-Demand' && !this.options.isLastPage)
                 this.element.find('.on-demand-datagrid').show();
             self.options.setIsSearchTrigerred(false);
         }

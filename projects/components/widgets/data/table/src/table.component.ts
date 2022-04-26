@@ -287,6 +287,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         actionRowIndex: undefined,
         actionRowPage: undefined,
+        isLastPage : false,
         // get the current page number
         getCurrentPage: () => {
             return _.get(this.dataNavigator, 'dn.currentPage') || 1;
@@ -804,6 +805,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 const rowIndex = _.floor(this.actionRowIndex % this.pagesize);
                 this._gridData.splice(this.actionRowIndex, 1 , newValue[rowIndex]);
             }
+            this.setDataGridOption('isLastPage', !!(this.dataNavigator.isDisableNext));
             // In case of on demand pagination, create the load more button only once and show the button until next page is not disabled
             if (!this.$element.find('.on-demand-datagrid').length && !this.dataNavigator.isDisableNext && this.onDemandLoad) {
                 this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
