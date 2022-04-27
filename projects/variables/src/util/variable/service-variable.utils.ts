@@ -357,23 +357,28 @@ export class ServiceVariableUtils {
             url = $rootScope.project.deployedUrl + url;
         }
 
-        // If pagination info exists, process info in request headers based on settings
+        // If pagination info exists, process info in request headers or body based on the metadata
         const paginationInfo = operationInfo.paginationInfo;
         if (paginationInfo && variable.resPaginationInfo) {
             let reqObj = {};
             let inputParam;
+            // pagination input information varies based on the type
             if (paginationInfo.type === 'offset' || paginationInfo.input.offset) {
                 inputParam = 'offset';
             } else {
                 inputParam = 'page';
             }
             const paramName = paginationInfo.input[inputParam].split('.')[0]; 
-            const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
+            // check if paramName is present in parameters of operation info 
+            const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName }); 
+            // set page/offset and size from resPaginationInfo if matched parameter's type is header  
             if (paramObj?.parameterType === 'header') {
                 _.set(reqObj, paginationInfo.input[inputParam], variable.resPaginationInfo['page']);
                 _.set(reqObj, paginationInfo.input.size, variable.resPaginationInfo['size']);
                 headers[paramName] = JSON.stringify(reqObj[paramName]);
-            } else if (paramObj?.parameterType === 'body') {
+            } else if (paramObj?.parameterType === 'body') { 
+                // set page/offset and size from resPaginationInfo if matched parameter's type is body 
+                // assign bodyVal to updated pagination info object
                 const bodyVal = JSON.parse(paramObj.sampleValue);
                 const bodyParam = paginationInfo.input[inputParam].split('.')[1]
                 if (bodyVal && bodyVal[bodyParam]) {
@@ -388,6 +393,11 @@ export class ServiceVariableUtils {
                     requestBody = JSON.stringify(bodyVal);
                 }
             } else if (variable.resPaginationInfo.next && paramObj) {
+                /**
+                 * For cursor type pagination, if pagination info is present in the path 
+                 * Based on whether user clicks on the next or prev button modify the url 
+                 */
+                
                 if (paramObj.parameterType === 'path') {
                     const urlParams = operationInfo.relativePath.split('/'),
                     paramConfig = '{' + paramObj.name + '}',
@@ -401,7 +411,7 @@ export class ServiceVariableUtils {
 
                     let urlPathParmas;
                     let urlPath;
-                    if (operationInfo.directPath) { // For direct path, as url has hostname derivate pathname using URL object
+                    if (operationInfo.directPath) { // For direct path, as url has hostname, derivate pathname using URL object
                         urlPath = new URL(url);
                         urlPathParmas = urlPath.pathname.split('/');
                         urlPathParmas[paramIndex] = invokeUrl[paramIndex];
@@ -414,6 +424,10 @@ export class ServiceVariableUtils {
                     }
 
                 } else if (paramObj.parameterType === 'query') {
+                /**
+                 * For cursor type pagination, if pagination info is present in the query 
+                 * Based on whether user clicks on the next or prev button modify the url's query params
+                 */
                     const urlParams = url.split('?');
                     let invokeUrl;
                     if (variable.resPaginationInfo.isNext) {

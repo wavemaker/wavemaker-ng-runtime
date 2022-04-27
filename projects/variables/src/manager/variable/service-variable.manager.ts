@@ -10,9 +10,7 @@ import { appManager, formatExportExpression, setInput, decodeData } from './../.
 import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, securityService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 import { AdvancedOptions } from '../../advanced-options';
-import { VariablePaginationMapperUtils } from '../../util/variable/variable-pagination-mapper.utils';
-import { jmespath } from '@metrichor/jmespath';
-
+import { PaginationUtils } from '../../util/variable/pagination.utils';
 
 declare const _;
 
@@ -119,55 +117,10 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         const operationInfo = this.getMethodInfo(variable, inputFields, options);
         const paginationInfo = operationInfo.paginationInfo;
-            
-        let res = {};
-        if (paginationInfo) {
-            const resOutput = paginationInfo.output;
-            if (!resOutput?.next) {
-                if (resOutput?.size) {
-                    this.setPaginationItems(resOutput.size, response, res, 'size', resHeaders);
-                } else { 
-                    const param = paginationInfo.input.size.split('.')[0]; 
-                    const sizeObj = _.find(operationInfo.parameters, function(obj) { return obj.name === param });   
-                    res['size'] = _.result(sizeObj, 'sampleValue');                 
-                }
-                if (resOutput?.page) {
-                    this.setPaginationItems(resOutput.page, response, res, 'page', resHeaders);
-                } else if (paginationInfo.type !== 'offset') {
-                    const param = paginationInfo.input.page.split('.')[0]; 
-                    const pageObj = _.find(operationInfo.parameters, function(obj) { return obj.name === param });   
-                    res['page'] = _.result(pageObj, 'sampleValue');
-                }
-                if (_.startsWith(resOutput?.totalElements, '$minValue')) {
-                    const totalEl = resOutput.totalElements.replace('$minValue=', '');
-                    const pageParam = res['page'] ? res['page'] : options['page']
-                    const elRendered = res['size'] * pageParam;
-                    if (!variable.resPaginationInfo || variable.resPaginationInfo['totalElements'] > elRendered) {
-                        res['totalElements'] = parseInt(totalEl);
-                    } else {
-                        res['totalElements'] = elRendered + 1;
-                    }
-                } else if (resOutput?.totalElements) {
-                    this.setPaginationItems(resOutput.totalElements, response, res, 'totalElements', resHeaders);
-                } else {
-                    if (paginationInfo.type === 'offset' || paginationInfo.input.offset) {
-                        res['totalElements'] = (res['size'] * (options['page'] ? options['page'] : 1)) + 1;
-                    } else {
-                        res['totalElements'] = (res['size'] * res['page']) + 1;
-                    }
-                }
-                if (resOutput?.hasMoreItems) {
-                    this.setPaginationItems(resOutput.hasMoreItems, response, res, 'hasMoreItems', resHeaders);
-                } else {
-                    res['hasMoreItems'] = '';
-                }
-            } else if (resOutput) {
-                this.setPaginationItems(resOutput.next, response, res, 'next', resHeaders);
-                this.setPaginationItems(resOutput.prev, response, res, 'prev', resHeaders);
-            }
-        }
+        
+        const res = PaginationUtils.generatePaginationRes(operationInfo, paginationInfo, response, resHeaders, options, variable);
 
-        VariablePaginationMapperUtils.setVariablePagination(paginationInfo, variable, res, options);
+        PaginationUtils.setVariablePagination(paginationInfo, variable, res, options);
 
         /* update the dataset against the variable, if response is non-object, insert the response in 'value' field of dataSet */
         if (!options.forceRunMode && !options.skipDataSetUpdate) {
@@ -263,44 +216,6 @@ export class ServiceVariableManager extends BaseVariableManager {
             return data;
         });
         return promise;
-    }
-
-    private setPaginationItems(item, response, res, key, resHeaders) {
-        if (_.startsWith(item, '$body')) {
-            const bodyKey = item.replace('$body.', '');
-            try {
-                res[key] = jmespath.search(response, bodyKey);
-            } catch {
-                console.warn(`${item} expression needs to be corrected as per JMES guidelines`);
-            }
-        } else if (_.startsWith(item, '$header')) {
-            const headerKey = item.replace('$header.', '');
-            const headers =  (<any>Object).fromEntries(resHeaders.headers);
-            const headerParams = headerKey.split('.');
-            try {
-                res[key] = jmespath.search(headers, headerParams[0].toLowerCase());
-            } catch {
-                console.warn(`${item} expression needs to be corrected as per JMES guidelines`);
-            }
-            if (res[key]?.length) {
-                let headerVal = res[key].join();
-                if (headerParams.length === 1) {
-                    res[key] = headerVal;
-                } else {
-                    let keyName = headerParams.slice(1).join('.');
-                    const headerResp = JSON.parse(headerVal);
-                    const specialChar = /[!@#$%^&*()+\=\[\]{};':"\\|,<>\/?]+/;
-                    if (specialChar.test(keyName)) {
-                        keyName = 'headerResp.' + keyName;
-                    }
-                    try {
-                        res[key] = jmespath.search(headerResp, keyName);
-                    } catch {
-                        console.warn(`${item} expression needs to be corrected as per JMES guidelines`);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -437,6 +352,7 @@ export class ServiceVariableManager extends BaseVariableManager {
                 }
             });
         }
+        // WMS-18867: To support DSL method for SSP, adding pagination metadata which is defined on variable to the swagger config  
         if (!methodInfo.paginationInfo && variable.paginationConfig) {
             methodInfo.paginationInfo = variable.paginationConfig;
         }
@@ -539,25 +455,9 @@ export class ServiceVariableManager extends BaseVariableManager {
         const operationInfo = this.getMethodInfo(variable, inputFields, options);
 
         // set query params, if pagination info is present and the info should be present in query
-        const paginationInfo = operationInfo.paginationInfo;
-        if (options['page'] && paginationInfo?.input.size && (variable as any).resPaginationInfo) {
-            let inputParam;
-            if (paginationInfo.type === 'offset' || paginationInfo.input.offset) {
-                inputParam = 'offset';
-            } else {
-                inputParam = 'page';
-            }
-            const paramName = paginationInfo.input[inputParam].split('.')[0]; 
-            const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
-            if (!_.isEmpty(variable.dataBinding) && paramObj && paramObj.parameterType === 'query') {
-                if (!paginationInfo.output?.page && paginationInfo.type !== 'offset') {
-                    (variable as any).resPaginationInfo['page'] = options['page'];
-                } else {
-                    (variable as any).resPaginationInfo['page'] = (variable as any).resPaginationInfo['size'] * (options['page'] ? (options['page'] - 1) : 1);
-                }
-                VariablePaginationMapperUtils.setPaginationQueryParams(variable, operationInfo);
-            }
-        }
+        PaginationUtils.checkPaginationAtQuery(operationInfo, variable, options);
+
+        
         const requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields, options);
         // check errors
         if (requestParams.error) {
@@ -617,8 +517,8 @@ export class ServiceVariableManager extends BaseVariableManager {
             this.httpCall(requestParams, variable).then((response) => {
                 successHandler(response, resolve);
             }, err => {
-                    const validJSON = getValidJSON(err.error);
-                    err.error = isDefined(validJSON) ? validJSON : err.error;
+                const validJSON = getValidJSON(err.error);
+                err.error = isDefined(validJSON) ? validJSON : err.error;
                 errorHandler(err, reject);
             });
             // the _observable property on variable is used store the observable using which the network call is made
@@ -637,7 +537,7 @@ export class ServiceVariableManager extends BaseVariableManager {
         options.inputFields = options.inputFields || getClonedObject(variable.dataBinding);
         return $queue.submit(variable).then(this._invoke.bind(this, variable, options, success, error), error);
     }
-
+    
     public setPagination(variable, data) {
         variable.paginationConfig = data;
     }
