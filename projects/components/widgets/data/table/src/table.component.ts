@@ -1147,6 +1147,29 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
     }
 
+    // Compares the prevFilterCriteria Rules with the new rules
+    compareFilterExpressions(prevFilters, newFilters) {
+        return !!((prevFilters.length === newFilters.length) && (_.isEqual(prevFilters, newFilters)));
+    }
+
+    // Set the table lastActionPerformed to Filter Criteria and maintain the prevFilterExpression
+    setLastActionToFilterCriteria() {
+        this.prevFilterExpression = _.get(this.datasource, 'filterExpressions') ? getClonedObject(this.datasource.filterExpressions.rules) : getClonedObject([].concat(this.datasource.dataBinding));
+        this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.FILTER_CRITERIA);
+        this.gridOptions.setIsSearchTrigerred(true);
+    }
+
+    // Update the lastActionPerformed to Filter_Criteria, when there is change in the Variable filter criteria rules
+    checkIfVarFiltersApplied() {
+        if (_.get(this.datasource, 'filterExpressions') || !_.isEmpty(_.get(this.datasource, 'dataBinding'))) {
+            const currentFilterExpr = _.get(this.datasource, 'filterExpressions') ? this.datasource.filterExpressions.rules : [].concat(this.datasource.dataBinding);
+            const isEqual = this.compareFilterExpressions(this.prevFilterExpression, currentFilterExpr);
+            if (!isEqual) {
+                this.setLastActionToFilterCriteria();
+            }
+        }
+    }
+
     watchVariableDataSet(newVal) {
         let result;
         // Check for Variable filters if applied

@@ -484,14 +484,13 @@ $.widget('wm.datatable', {
         var self = this;
 
         //When search or sort applied, clear the tbody and render with filtered data
-        if ((self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT || self.options.lastActionPerformed === self.options.ACTIONS.FILTER_CRITERIA) && self.options.isSearchTrigerred) {
+        if (self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT && self.options.isSearchTrigerred || self.options.lastActionPerformed === self.options.ACTIONS.FILTER_CRITERIA) {
             $tbody.html('');
             // In case of on demand pagination, when the next page is not disabled show the loading/load more button accordingly
             if(this.options.navigation === 'On-Demand' && !this.options.isLastPage)
                 this.element.find('.on-demand-datagrid').show();
             self.options.setIsSearchTrigerred(false);
         }
-
         //In edit mode, replace the tr with newly updated values
         else if (self.options.lastActionPerformed === self.options.ACTIONS.EDIT && self.options.actionRowIndex !== undefined && self.options.editmode !== this.CONSTANTS.QUICK_EDIT) {
             self._updateTrData($tbody);
@@ -2569,7 +2568,7 @@ $.widget('wm.datatable', {
 
         if ($header) {
             if (this.options.enableColumnSelection) {
-                $header.find('th[data-col-selectable]').off('click');
+                $header.find('th[data-col-selectable]').off('click', this.columnSelectionHandler.bind(this));
                 $header.find('th[data-col-selectable]').on('click', this.columnSelectionHandler.bind(this));
             } else {
                 $header.find('th[data-col-selectable]').off('click');
@@ -2577,10 +2576,10 @@ $.widget('wm.datatable', {
 
             if (this.options.enableSort) {
                 if (this.options.enableColumnSelection) {
-                    $header.find('th[data-col-sortable] .header-data').off('click');
+                    $header.find('th[data-col-sortable] .header-data').off('click', this.sortHandler.bind(this));
                     $header.find('th[data-col-sortable] .header-data').on('click', this.sortHandler.bind(this));
                 } else {
-                    $header.find('th[data-col-sortable]').off('click');
+                    $header.find('th[data-col-sortable]').off('click', this.sortHandler.bind(this));
                     $header.find('th[data-col-sortable]').on('click', this.sortHandler.bind(this));
                 }
             } else {
