@@ -19,7 +19,10 @@
             "indexTransform":"./build-scripts/index-html-transform.js",
             "deployUrl": "ng-bundle/",
             "outputPath": "dist/ng-bundle",
-            "index": "src/index.html",
+            "index": {
+                "input": "src/index.html",
+                "output": "../index.html"
+            },
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -93,7 +96,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -116,7 +118,6 @@
               "optimization": false,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": true,
               "aot": true,
               "extractLicenses": false,
@@ -135,7 +136,10 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist",
-            "index": "src/index.html",
+            "index": {
+                "input": "src/index.html",
+                "output": "../index.html"
+            },
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -174,13 +178,21 @@
               "./node_modules/iscroll/build/iscroll.js",
               "./node_modules/js-cookie/src/js.cookie.js",
               "./node_modules/jssha/dist/sha256.js"
-            ]
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
                 "browserTarget": "angular-app:build:production"
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
