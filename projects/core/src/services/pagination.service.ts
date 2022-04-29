@@ -20,7 +20,7 @@ export class PaginationService {
             parent.gridOptions.setDeletedRowIndex(-1);
         }
         // reset fieldDefs if last action performed is search or sort
-        if (parent.widgetType === 'wm-table' && (parent.gridOptions.isNavTypeScrollOrOndemand())  && (parent.gridOptions.lastActionPerformed === parent.gridOptions.ACTIONS.SEARCH_OR_SORT || parent.gridOptions.lastActionPerformed === parent.gridOptions.ACTIONS.FILTER_CRITERIA)) {
+        if (parent.widgetType === 'wm-table' && (parent.gridOptions.isNavTypeScrollOrOndemand())  && parent.gridOptions.lastActionPerformed === parent.gridOptions.ACTIONS.SEARCH_OR_SORT) {
             fieldDefs = [];
             parent.gridOptions.setCurrentPage(1);
         }
