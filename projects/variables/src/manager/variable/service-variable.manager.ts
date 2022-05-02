@@ -253,7 +253,7 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         switch (err_type) {
             case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.NO_ACCESSTOKEN:
-                performAuthorization(undefined, info.securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY], this.invoke.bind(this, variable, options, null, errorCB), null, this.getProviderInfo(variable, info.securityDefnObj['x-WM-PROVIDER_ID']));
+                performAuthorization(undefined, info.securityDefnObj[VARIABLE_CONSTANTS.REST_SERVICE.OAUTH_PROVIDER_KEY], this.invoke.bind(this, variable, options, success, errorCB), null, this.getProviderInfo(variable, info.securityDefnObj['x-WM-PROVIDER_ID']));
                 this.processErrorResponse(variable, info.error.message, errorCB, options.xhrObj, true, true);
                 break;
             case VARIABLE_CONSTANTS.REST_SERVICE.ERR_TYPE.USER_UNAUTHORISED:

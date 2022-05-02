@@ -48,7 +48,10 @@ export class MobileHttpInterceptor implements HttpInterceptor {
     public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const subject = new Subject<HttpEvent<any>>();
         const token = localStorage.getItem(CONSTANTS.XSRF_COOKIE_NAME);
-        if (token) {
+        if (token 
+            && this.app.deployedUrl 
+            && (request.url.indexOf('://') < 0
+                || request.url.startsWith(this.app.deployedUrl))) {
             // Clone the request to add the new header
             request = request.clone({ headers: request.headers.set(getWmProjectProperties().xsrf_header_name, token) });
         }
