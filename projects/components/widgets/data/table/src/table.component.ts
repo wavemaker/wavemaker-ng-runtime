@@ -183,6 +183,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     documentClickBind = noop;
     actionRowIndex;
     actionRowPage;
+    prevFilterExpression: any = [];
     fieldDefs = [];
     rowDef: any = {};
     rowInstance: any = {};
@@ -283,7 +284,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             'DELETE': 'delete',
             'EDIT': 'edit',
             'SEARCH_OR_SORT': 'search_or_sort',
-            'DEFAULT': 'scroll'
+            'DEFAULT': 'scroll',
+            'FILTER_CRITERIA' : 'filter'
         },
         actionRowIndex: undefined,
         actionRowPage: undefined,
@@ -1122,9 +1124,35 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
         return item !== undefined;
     }
+    // Compares the prevFilterCriteria Rules with the new rules
+    compareFilterExpressions(prevFilters, newFilters) {
+        return !!((prevFilters.length === newFilters.length) && (_.isEqual(prevFilters, newFilters)));
+    }
+
+    // Set the table lastActionPerformed to Filter Criteria and maintain the prevFilterExpression
+    setLastActionToFilterCriteria() {
+        this.prevFilterExpression = _.get(this.datasource, 'filterExpressions.rules') ? getClonedObject(this.datasource.filterExpressions.rules) : getClonedObject([].concat(this.datasource.dataBinding));
+        this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.FILTER_CRITERIA);
+        this.gridOptions.setIsSearchTrigerred(true);
+    }
+
+    // Update the lastActionPerformed to Filter_Criteria, when there is change in the Variable filter criteria rules
+    checkIfVarFiltersApplied() {
+        if (!_.isEmpty(_.get(this.datasource, 'filterExpressions.rules')) || !_.isEmpty(_.get(this.datasource, 'dataBinding'))) {
+            const currentFilterExpr = _.get(this.datasource, 'filterExpressions.rules') ? this.datasource.filterExpressions.rules : [].concat(this.datasource.dataBinding);
+            const isEqual = this.compareFilterExpressions(this.prevFilterExpression, currentFilterExpr);
+            if (!isEqual) {
+                this.setLastActionToFilterCriteria();
+            }
+        }
+    }
 
     watchVariableDataSet(newVal) {
         let result;
+        // Check for Variable filters if applied
+        if (this.gridOptions.isNavTypeScrollOrOndemand()) {
+            this.checkIfVarFiltersApplied();
+        }
         // State handling for static variables
         if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
             const widgetState = this.statePersistence.getWidgetState(this);
