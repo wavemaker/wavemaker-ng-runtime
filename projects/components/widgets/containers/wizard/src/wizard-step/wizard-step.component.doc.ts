@@ -37,6 +37,11 @@ export class WizardStep {
      */
     @Input() iconclass: string;
 
+     /**
+     * This property defines the class of the visited icon that is shown in the title of the step.
+     */
+    @Input() doneiconclass: string;
+
     /**
      * Callback function which will be triggered when the widget is loaded.
      * @param widget  Instance of the wizardstep widget

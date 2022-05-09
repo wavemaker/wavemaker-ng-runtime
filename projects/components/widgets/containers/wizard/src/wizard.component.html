@@ -7,8 +7,10 @@
                 <span class="arrow" *ngIf="class && class.includes('classic')"></span>
                 <span class="wizard-step-number">
                     <span class="count" *ngIf="class && class.includes('number') && !step.isDone">{{i+1}}</span>
-                    <i class="dottedstepper" *ngIf="class && (class.includes('dottedstepper') || class.includes('text-inline')) && !step.isDone"></i>
-                    <i class="app-icon {{step.iconclass}}" *ngIf="step.iconclass && step.isDone"></i>
+                    <i class="dottedstepper" *ngIf="class && (class.includes('dottedstepper') || class.includes('text-inline') && !class.includes('iconstepper')) && !step.isDone"></i>
+                    <i class="app-icon wi wi-done" *ngIf="class && (class.includes('dottedstepper') || class.includes('number')) && step.isDone"></i>
+                    <i class="app-icon {{step.iconclass}}" *ngIf="(class && class.includes('iconstepper')) && ((step.iconclass && !step.isDone) || (step.iconclass && step.isDone && step.doneiconclass ===''))"></i>
+                    <i class="app-icon {{step.doneiconclass}}" *ngIf="step.doneiconclass && step.isDone && (class && class.includes('iconstepper'))"></i>
                 </span>
                 <span class="title-wrapper">
                     <span *ngIf="class && class.includes('text-inline')">{{'0' + (i+1)}}</span>
