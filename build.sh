@@ -45,6 +45,7 @@ if [[ ${force} == true ]]; then
     ${RIMRAF} ./dist/
 fi
 
+mkdir -p ./dist/tmp/libs/core-js
 mkdir -p ./dist/bundles/wmapp/scripts
 mkdir -p ./dist/bundles/wmmobile/scripts
 
@@ -477,6 +478,10 @@ copyLocale() {
     fi
 }
 
+buildCoreJs() {
+    execCommand "build" "core-js" "node ./core-js-builder.js"
+}
+
 buildTsLib() {
     execCommand "rollup" "tslib" "${ROLLUP} ./node_modules/tslib/tslib.es6.js --o ./dist/tmp/libs/tslib/tslib.umd.js -f umd --name tslib --silent"
 }
@@ -511,6 +516,7 @@ bundleWebLibs() {
     echo "uglify: web-libs"
     ${TERSER} \
         ./dist/tmp/libs/tslib/tslib.umd.js \
+        ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/rxjs.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
@@ -576,6 +582,7 @@ bundleMobileLibs() {
     echo "uglify: mobile-libs"
     ${TERSER} \
         ./dist/tmp/libs/tslib/tslib.umd.js \
+        ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/rxjs.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
@@ -639,6 +646,7 @@ bundleMobileLibs() {
 }
 
 buildWebLibs() {
+    buildCoreJs
     buildTsLib
     buildNgxBootstrap
     buildNgxToastr
