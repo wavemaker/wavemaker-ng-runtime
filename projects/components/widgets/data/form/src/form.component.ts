@@ -174,6 +174,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     private formArrayIndex;
     private bindingValue;
     private _formIsInList;
+    private _triggeredByUser: boolean;
+
 
     private _debouncedSubmitForm = debounce(($event) => {
         // calling submit event in ngZone as change detection is not triggered post the submit callback and actions like notification are not shown
@@ -215,6 +217,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this.reset();
     }
 
+    @HostListener('keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+        this._triggeredByUser = true;
+    }
     // returns the formArray control on the parentForm.
     get parentFormArray(): FormArray {
         return this.parentForm && this.isParentList && this.parentForm.ngform.get(this.parentList.name) as FormArray;
@@ -742,6 +747,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 if (fd.hasOwnProperty(_.split(key, '.')[0])) {
                     field.value =  _.get(fd, key);
                 }
+            }
+            // WMS-18906: For default value, do not mark the form as dirty.
+            if (this.dirty && !this._triggeredByUser) {
+                this.markAsPristine();
             }
         }
         const formGroupName = field.form.formGroupName;
