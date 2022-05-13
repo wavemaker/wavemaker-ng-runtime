@@ -12,7 +12,7 @@
                 "@wm/core": "wm.core",
                 "@wm/components/base": "wm.components.base",
 
-                "ng-circle-progress": "ng-circle-progress"
+                "ng-circle-progress": "ngCircleProgress"
             }
         }
     },
