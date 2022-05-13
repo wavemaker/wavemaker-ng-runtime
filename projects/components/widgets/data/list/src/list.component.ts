@@ -341,6 +341,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.ngZone.run(() => {
                 this.handleStateParams(data);
                 this.variableInflight = data.active;
+                if (this.noDataFound) {
+                    this.noDataFound = data.data ? false : true;
+                }
             });
         }
     }
