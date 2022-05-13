@@ -15,7 +15,7 @@ export const registerProps = () => {
                 ['disabled', PROP_BOOLEAN],
                 ['contenttype', PROP_STRING],
                 ['maxfilesize', PROP_NUMBER],
-                ['iconclass', {value: 'wi wi-file-upload', ...PROP_STRING}],
+                ['iconclass', {value: 'wm-sl-l sl-cloud-upload', ...PROP_STRING}],
                 ['cleariconclass', {value: '', ...PROP_STRING}],
                 ['cleariconhint', {value: 'Clear', ...PROP_STRING}],
                 ['class', PROP_STRING],

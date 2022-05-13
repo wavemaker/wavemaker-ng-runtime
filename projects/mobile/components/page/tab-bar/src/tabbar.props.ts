@@ -7,9 +7,9 @@ export const registerProps = () => {
             [
                 ['class', PROP_STRING],
                 ['dataset', PROP_ANY],
-                ['itemicon', PROP_STRING],
-                ['itemlabel', PROP_STRING],
-                ['itemlink', PROP_STRING],
+                ['itemicon', {value: 'icon', ...PROP_STRING}],
+                ['itemlabel', {value: 'label', ...PROP_STRING}],
+                ['itemlink', {value: 'label', ...PROP_STRING}],
                 ['morebuttoniconclass', {value: 'wi wi-more-horiz', ...PROP_STRING}],
                 ['morebuttonlabel', {value: 'more', ...PROP_STRING}],
                 ['name', PROP_STRING],

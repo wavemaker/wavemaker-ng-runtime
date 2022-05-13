@@ -11,7 +11,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['correctorientation', {value: false, ...PROP_BOOLEAN}],
                 ['datavalue', {value: '', ...PROP_STRING}],
-                ['iconclass', {value: 'wi wi-photo-camera', ...PROP_STRING}],
+                ['iconclass', {value: 'wm-sl-l sl-camera', ...PROP_STRING}],
                 ['iconsize', {value: '2em', ...PROP_STRING}],
                 ['imagequality', {value: 80, ...PROP_NUMBER}],
                 ['imageencodingtype', {value: 'JPEG', ...PROP_STRING}],

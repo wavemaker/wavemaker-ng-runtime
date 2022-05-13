@@ -56,7 +56,7 @@ export class MessageComponent extends StylableComponent {
         switch (nv) {
             case 'success':
                 msgCls = 'alert-success';
-                msgIconCls = 'wi wi-done';
+                msgIconCls = 'wm-sl-l sl-check';
                 break;
             case 'error':
                 msgCls = 'alert-danger';
@@ -65,7 +65,7 @@ export class MessageComponent extends StylableComponent {
             case 'warn':  /*To support old projects with type as "warn"*/
             case 'warning':
                 msgCls = 'alert-warning';
-                msgIconCls = 'wi wi-bell';
+                msgIconCls = 'wm-sl-l sl-alarm-bell';
                 break;
             case 'info':
                 msgCls = 'alert-info';

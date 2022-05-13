@@ -9,7 +9,7 @@ export const registerProps = () => {
                 ['canceltext', {value: 'CANCEL', ...PROP_STRING}],
                 ['class', PROP_STRING],
                 ['closable', {value: true, PROP_BOOLEAN}],
-                ['iconclass', {value: 'wi wi-done', PROP_STRING}],
+                ['iconclass', {value: 'wm-sl-l sl-check', PROP_STRING}],
                 ['iconheight', PROP_STRING],
                 ['iconmargin', PROP_STRING],
                 ['iconurl', PROP_STRING],
