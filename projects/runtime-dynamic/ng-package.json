@@ -8,7 +8,6 @@
             "@angular/compiler": "ng.compiler",
             "@angular/core": "ng.core",
             "rxjs": "rxjs",
-            "ng-circle-progress": "ng-circle-progress",
             "ngx-bootstrap/utils": "ngx-bootstrap.utils",
             "ngx-bootstrap/modal": "ngx-bootstrap.modal",
             "ngx-bootstrap/accordion": "ngx-bootstrap.accordion",
