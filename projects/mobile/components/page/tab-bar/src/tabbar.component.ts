@@ -59,10 +59,28 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         if (key === 'dataset') {
             if (nv) {
                 this.tabItems = this.getTabItems(nv);
+            } else {
+                this.tabItems = this.getDefaultItems();
             }
         } else {
             super.onPropertyChange(key, nv, ov);
         }
+    }
+
+    private getDefaultItems() {
+        return [{
+            'label' : 'Home',
+            'icon'  : 'wm-sl-r sl-home'
+        },{
+            'label' : 'Analytics',
+            'icon'  : 'wm-sl-r sl-graph-ascend'
+        },{
+            'label' : 'Alerts',
+            'icon'  : 'wm-sl-r sl-alarm-bell'
+        },{
+            'label' : 'Settings',
+            'icon'  : 'wm-sl-r sl-settings'
+        }];
     }
 
     public ngAfterViewInit() {
