@@ -53,6 +53,7 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         page.notify('wmMobileTabbar:ready', this);
+        this.tabItems = this.getDefaultItems();
     }
 
     public onPropertyChange(key, nv, ov?) {
