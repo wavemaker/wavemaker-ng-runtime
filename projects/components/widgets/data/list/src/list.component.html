@@ -101,12 +101,14 @@
                     </div>
                 </h4>
             </li>
-            <li *ngFor="let item of groupObj.data; index as $index; first as $first; last as $last;" tabindex="0"
-                class="app-list-item group-list-item {{itemsPerRowClass}}"
-                [ngClass]="listItemRef.itemClass"
-                [wmListItem]="item" #listItemRef="listItemRef">
-                <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
-            </li>
+            <ul class="list-group clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}}">
+                <li *ngFor="let item of groupObj.data; index as $index; first as $first; last as $last;" tabindex="0"
+                    class="app-list-item group-list-item {{itemsPerRowClass}}"
+                    [ngClass]="listItemRef.itemClass"
+                    [wmListItem]="item" #listItemRef="listItemRef">
+                    <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
+                </li>
+            </ul>
         </ul>
     </li>
 </ng-template>
