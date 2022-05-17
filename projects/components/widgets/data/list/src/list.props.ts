@@ -13,6 +13,7 @@ export const registerProps = () => {
                 ['dateformat', PROP_STRING],
                 ['dataset', PROP_ANY],
                 ['datasource', PROP_ANY],
+                ['direction', {value: 'vertical', ...PROP_STRING}],
                 ['directionlinks', {value: true, ...PROP_BOOLEAN}],
                 ['disableitem', PROP_BOOLEAN],
                 ['enablereorder', PROP_BOOLEAN],
