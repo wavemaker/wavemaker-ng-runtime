@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { Subscription } from 'rxjs';
 
-import { AbstractDialogService, closePopover, findRootContainer } from '@wm/core';
+import {AbstractDialogService, closePopover, findRootContainer, generateGUId} from '@wm/core';
 
 import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
 
@@ -41,6 +41,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
     private readonly bsModal: BsModalService;
 
     private dialogRef: BsModalRef;
+    public titleId:string = 'wmdialog-' + generateGUId();
 
     protected constructor(
         inj: Injector,
@@ -107,6 +108,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
 
         // extend the context with the initState
         Object.assign(this.context, initState);
+        this.modalOptions.ariaLabelledBy = this.titleId;
         this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
     }
 
