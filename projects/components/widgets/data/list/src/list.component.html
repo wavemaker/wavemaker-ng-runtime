@@ -21,7 +21,7 @@
     </ul>
 </nav>
 
-<ul tabindex="0" class="app-livelist-container clearfix {{listclass}}" role="list"
+<ul tabindex="0" class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
     (keydown.enter)="handleKeyDown($event, 'select')"
 
     (keydown.arrowup)="handleKeyDown($event, 'focusPrev')"
@@ -36,7 +36,7 @@
     [hidden]="noDataFound && !variableInflight"
 >
     <ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
-        <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
+        <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{direction === 'horizontal' ? '' : itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
             [wmListItem]="item"
             #listItemRef="listItemRef"
             tabindex="0"
