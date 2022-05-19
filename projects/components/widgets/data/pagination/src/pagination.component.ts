@@ -160,8 +160,14 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     disableNavigation() {
         const isCurrentPageFirst = (this.dn.currentPage === 1),
             isCurrentPageLast = (this.dn.currentPage === this.pageCount);
-        this.isDisableFirst = this.isDisablePrevious = isCurrentPageFirst;
-        this.isDisableNext = this.isDisableLast = isCurrentPageLast;
+        if (!this.pagination?.next) {
+            this.isDisableFirst = this.isDisablePrevious = isCurrentPageFirst;
+            this.isDisableNext = this.isDisableLast = isCurrentPageLast;
+        } else { 
+            // WMS-18867: In case of server side pagination, for pager type pagination depend on prev and next flags which are set by developer
+            this.isDisableFirst = this.isDisablePrevious = !this.pagination.prev;
+            this.isDisableNext = this.isDisableLast = !this.pagination.next;
+        }
         this.isDisableCurrent = isCurrentPageFirst && isCurrentPageLast;
         // In case of client side pagination, when load more reaches last page hide the on-demand grid ele
         if (this.dataset && this.dataset.length && this.isDisableNext && this.parent.onDemandLoad && this.parent.widgetType === 'wm-table') {
@@ -431,16 +437,22 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 return;
             case 'prev':
                 /*Return if already on the first page.*/
-                if (this.isFirstPage() || !this.validateCurrentPage(event, callback)) {
+                if (!this.pagination?.next && (this.isFirstPage() || !this.validateCurrentPage(event, callback))) {
                     return;
+                } else if (this.pagination?.next) { // WMS-18867: For server side pagination, skipping the regular flow and enabling isNext flag in pagination metadata  
+                    this.datasource.pagination.isNext = false;
+                    this.datasource.pagination.isPrev = true;
                 }
                 /*Decrement the current page by 1.*/
                 this.dn.currentPage -= 1;
                 break;
             case 'next':
                 /*Return if already on the last page.*/
-                if (this.isLastPage() || !this.validateCurrentPage(event, callback)) {
+                if (!this.pagination?.next && (this.isLastPage() || !this.validateCurrentPage(event, callback))) {
                     return;
+                } else if (this.pagination?.next) { // WMS-18867: For server side pagination, skipping the regular flow and enabling isPrev flag in pagination metadata  
+                    this.datasource.pagination.isNext = true;
+                    this.datasource.pagination.isPrev = false;
                 }
                 /*Increment the current page by 1.*/
                 this.dn.currentPage += 1;
