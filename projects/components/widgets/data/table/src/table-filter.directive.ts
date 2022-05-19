@@ -42,6 +42,8 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
             currentVal = [];
             _.forEach(obj, (val, key) => {
                 if ((_.includes(visibleCols, key))) {
+                    // WMS-22271 For object type values, stringify them for comparision
+                    val = typeof val === 'object' ? JSON.stringify(val) : val;
                     currentVal.push(val);
                 }
             });
