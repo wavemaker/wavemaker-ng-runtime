@@ -43,6 +43,7 @@
     "@awesome-cordova-plugins/network": "5.39.1",
     "@awesome-cordova-plugins/sqlite": "5.39.1",
     "@awesome-cordova-plugins/vibration": "5.39.1",
+    "@metrichor/jmespath": "^0.3.1",
     "@wavemaker.com/nvd3": "1.0.0",
     "angular-imask": "6.0.4",
     "angular2-websocket": "0.9.7",

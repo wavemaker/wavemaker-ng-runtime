@@ -47,7 +47,8 @@ enum Operation {
     REMOVE_ITEM = 'removeItem',
     IS_BOUND_TO_LOCALE = 'isBoundToLocale',
     GET_DEFAULT_LOCALE = 'getDefaultLocale',
-    CANCEL = 'cancel'
+    CANCEL = 'cancel',
+    SET_PAGINATION = 'setPagination'
 }
 
 export const DataSource = {
