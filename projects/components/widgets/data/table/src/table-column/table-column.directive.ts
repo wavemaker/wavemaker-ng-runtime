@@ -690,7 +690,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 break;
             case 'show':
                 this.table.redraw(true);
-                this.showinfilter = this.nativeElement.hasAttribute('showinfilter') ? this.nativeElement.getAttribute('showinfilter') : nv;
+                this.showinfilter = (this.nativeElement.hasAttribute('showinfilter') && !((this as any).table && (this as any).table.isdynamictable)) ? this.nativeElement.getAttribute('showinfilter') : nv;
                 break;
             case 'filterdataset':
                 this._filterDataSet = nv;
