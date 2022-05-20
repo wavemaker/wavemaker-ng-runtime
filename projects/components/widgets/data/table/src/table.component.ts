@@ -287,7 +287,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         actionRowIndex: undefined,
         actionRowPage: undefined,
+<<<<<<< HEAD
         isLastPage : false,
+=======
+>>>>>>> 00e1792b (next-release -> feature/wme11-multi-studio)
         // get the current page number
         getCurrentPage: () => {
             return _.get(this.dataNavigator, 'dn.currentPage') || 1;
@@ -805,7 +808,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 const rowIndex = _.floor(this.actionRowIndex % this.pagesize);
                 this._gridData.splice(this.actionRowIndex, 1 , newValue[rowIndex]);
             }
+<<<<<<< HEAD
             this.setDataGridOption('isLastPage', !!(this.dataNavigator.isDisableNext));
+=======
+>>>>>>> 00e1792b (next-release -> feature/wme11-multi-studio)
             // In case of on demand pagination, create the load more button only once and show the button until next page is not disabled
             if (!this.$element.find('.on-demand-datagrid').length && !this.dataNavigator.isDisableNext && this.onDemandLoad) {
                 this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
@@ -1125,24 +1131,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     // Compares the prevFilterCriteria Rules with the new rules
     compareFilterExpressions(prevFilters, newFilters) {
         return !!((prevFilters.length === newFilters.length) && (_.isEqual(prevFilters, newFilters)));
-    }
-
-    // Set the table lastActionPerformed to Filter Criteria and maintain the prevFilterExpression
-    setLastActionToFilterCriteria() {
-        this.prevFilterExpression = _.get(this.datasource, 'filterExpressions.rules') ? getClonedObject(this.datasource.filterExpressions.rules) : getClonedObject([].concat(this.datasource.dataBinding));
-        this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.FILTER_CRITERIA);
-        this.gridOptions.setIsSearchTrigerred(true);
-    }
-
-    // Update the lastActionPerformed to Filter_Criteria, when there is change in the Variable filter criteria rules
-    checkIfVarFiltersApplied() {
-        if (!_.isEmpty(_.get(this.datasource, 'filterExpressions.rules')) || !_.isEmpty(_.get(this.datasource, 'dataBinding'))) {
-            const currentFilterExpr = _.get(this.datasource, 'filterExpressions.rules') ? this.datasource.filterExpressions.rules : [].concat(this.datasource.dataBinding);
-            const isEqual = this.compareFilterExpressions(this.prevFilterExpression, currentFilterExpr);
-            if (!isEqual) {
-                this.setLastActionToFilterCriteria();
-            }
-        }
     }
 
     watchVariableDataSet(newVal) {
