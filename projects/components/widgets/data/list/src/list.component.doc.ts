@@ -28,6 +28,14 @@ export class List {
     @Input() dataset: Array<any> | Object;
 
     /**
+     * This property determines the direction in which list items have to be arranged.
+     * vertical and horizontal are two options available. The default value to this 
+     * property is vertical.
+     */
+     @Input() direction: string = 'vertical';
+
+
+    /**
      * If the disable selection property is true (checked), selection of List item will not be allowed.
      * <p><em>Bindable: </em><code>true</code></p>
      */

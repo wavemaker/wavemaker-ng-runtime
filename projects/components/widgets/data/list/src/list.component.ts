@@ -95,6 +95,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public variableInflight;
     public name;
     public currentPage;
+    public direction;
 
     public handleHeaderClick: Function;
     public toggleAllHeaders: void;
