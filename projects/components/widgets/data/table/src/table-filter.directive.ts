@@ -41,11 +41,13 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
         } else {
             currentVal = [];
             _.forEach(obj, (val, key) => {
+                const colIndex = visibleCols.findIndex(item => item.includes(key));;
                 if ((_.includes(visibleCols, key))) {
-                    // WMS-22271 For object type values, stringify them for comparision
-                    val = typeof val === 'object' ? JSON.stringify(val) : val;
                     currentVal.push(val);
-                }
+                } else if (colIndex > -1) { // WMS-22271 If the key is in nested key format (dot format), extract the value from obj 
+                    const value = _.get(obj, visibleCols[colIndex]); 
+                    currentVal.push(value);
+                }   
             });
             currentVal = currentVal.join(' ').toLowerCase(); // If field is not there, search on all the columns
         }
