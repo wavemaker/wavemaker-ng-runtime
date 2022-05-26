@@ -137,7 +137,7 @@ export class PaginationUtils {
      * @returns {object} This method return pagination metadata
      */
     static getPaginationInfo(operationInfo, variable) {
-        if (operationInfo.paginationInfo) {
+        if (operationInfo?.paginationInfo) {
             return operationInfo.paginationInfo;
         } else {
             return variable._paginationConfig;
@@ -152,9 +152,9 @@ export class PaginationUtils {
      * @returns {void} This method does not return anything
      */
     static checkPaginationAtQuery(operationInfo, variable, options) {        
-        const paginationInfo = PaginationUtils.getPaginationInfo(operationInfo, variable);
+        const paginationInfo = this.getPaginationInfo(operationInfo, variable);
         // If page is not first, pagination is present on the variable and paginationInfo's input meta has size set pagination in query params
-        const hasPagination = options['page'] && paginationInfo?.input.size && variable.pagination;    
+        const hasPagination = options && options['page'] && paginationInfo?.input.size && variable.pagination;    
         if (!hasPagination) {
             return;
         }
@@ -302,7 +302,7 @@ export class PaginationUtils {
      * @returns {void} This method does not return anything
      */
     static setParameterVal(paramName, res, operationInfo, variable) {
-        const paginationInfo = PaginationUtils.getPaginationInfo(operationInfo, variable);
+        const paginationInfo = this.getPaginationInfo(operationInfo, variable);
         const param = paginationInfo.input[paramName].split('.')[0]; 
         const sizeObj = _.find(operationInfo.parameters, function(obj) { return obj.name === param });
         res[paramName] = _.result(sizeObj, 'sampleValue');
