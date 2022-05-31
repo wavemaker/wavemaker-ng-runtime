@@ -263,7 +263,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        if (isDefined(value) && value !== '') {
+        // WMS-22355, Trigger change cb if value exists or value is empty but datavalue exists (when value is selected and deleted). 
+        if (isDefined(value) && (value !== '' || this.datavalue)) {
             this.handleChange(value);
         } else {
             return;
