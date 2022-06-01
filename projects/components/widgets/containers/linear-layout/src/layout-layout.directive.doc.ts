@@ -25,8 +25,10 @@ export class LinearLayout {
     @Input() direction: string;
 
     /**
-     * The amount of space to be maintained between two consecutive childs.
-     * Default value is 1.
+     * The amount of space to be maintained between two consecutive childs. 
+     * If the linear layout is a immediate child of another linear layout, then spacing 
+     * (if not specified or zero) is inherited from the parent linear layout.
+     * Default is inherited from parent or 4 (if parent is not present).
      */
      @Input() spacing: number;
     /**
