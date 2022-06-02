@@ -16,6 +16,8 @@ import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
 import { LocationAccuracy } from '@awesome-cordova-plugins/location-accuracy/ngx';
 import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
 
+import { CookieService } from './services/cookie.service';
+
 import {
     App,
     AbstractHttpService,
@@ -169,6 +171,7 @@ export class MobileRuntimeModule {
 
     constructor(
         private app: App,
+        private cookieService: CookieService,
         private deviceFileOpenerService: DeviceFileOpenerService,
         private deviceService: DeviceService,
         private securityService: SecurityService,
@@ -289,18 +292,35 @@ export class MobileRuntimeModule {
     }
 
     private addAuthInBrowser() {
+        let isAuthenticating = false;
         this.securityService.authInBrowser = (): Promise<any> => {
             if (!this.networkService.isConnected()) {
                 return Promise.reject('In offline, app cannot contact the server.');
             }
+            if (isAuthenticating) {
+                return Promise.reject('Authentication is in process.');
+            }
+            isAuthenticating = true;
             return this.webProcessService.execute('LOGIN', '/')
                 .then(output => {
-                    output = JSON.parse(output);
+                    output = JSON.parse(output && output.replace(/&quot;/g, "\""));
                     if (output[CONSTANTS.XSRF_COOKIE_NAME]) {
                         localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, output[CONSTANTS.XSRF_COOKIE_NAME]);
                     }
+                    isAuthenticating = false;
+                    return this.cookieService.clearAll()
+                        .then(() => {
+                            const  promises = _.keys(output).map(k => {
+                                return this.cookieService.setCookie(this.app.deployedUrl, k, output[k]);
+                            });
+                            return Promise.all(promises);
+                        });
                 })
-                .then(() => this.app.notify('userLoggedIn', {}));
+                .then(() => this.app.notify('userLoggedIn', {}))
+                .catch((e) => {
+                    isAuthenticating = false;
+                    return Promise.reject(e);
+                });
         };
     }
 }
