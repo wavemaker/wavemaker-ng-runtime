@@ -1,0 +1,1 @@
+{"version":3,"file":"advanced-options.js","sourceRoot":"./","sources":["src/advanced-options.ts"],"names":[],"mappings":"","sourcesContent":["export interface AdvancedOptions {\n    xhrObj?: object;\n    pagination?: object;\n}"]}

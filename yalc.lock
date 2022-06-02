@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "@wavemaker/variables": {
+      "signature": "ac3eb73f23154953a2e8d4f7f66633c1",
+      "file": true
+    }
+  }
+}

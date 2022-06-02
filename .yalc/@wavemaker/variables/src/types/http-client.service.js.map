@@ -1,0 +1,1 @@
+{"version":3,"file":"http-client.service.js","sourceRoot":"./","sources":["src/types/http-client.service.ts"],"names":[],"mappings":"","sourcesContent":["export interface HttpClientService {\n    send: (options, variable) => void;\n    sendCallAsObservable?: (options) => void;\n    getErrMessage?: (err: any) => void;\n    sendCall:  (options, variable) => void;\n}\n"]}
