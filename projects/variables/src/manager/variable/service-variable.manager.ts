@@ -63,7 +63,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param options
      * @param success
      */
-    protected processSuccessResponse(response, variable, options, success, resHeaders?) {
+    protected processSuccessResponse(response, variable, options, success, resHeaders?, operationInf?) {
         let dataSet;
         let newDataSet;
         let pagination = {};
@@ -115,7 +115,8 @@ export class ServiceVariableManager extends BaseVariableManager {
         
         const inputFields = getClonedObject(options.inputFields || variable.dataBinding);
 
-        const operationInfo = this.getMethodInfo(variable, inputFields, options);
+        // WMS-22361 : For crud variable, apply operation info recived else deduce for service variables
+        const operationInfo = operationInf ? operationInf : this.getMethodInfo(variable, inputFields, options);
         const paginationInfo = PaginationUtils.getPaginationInfo(operationInfo, variable);
         if (paginationInfo) {
             const res = PaginationUtils.generatePaginationRes(operationInfo, paginationInfo, response, resHeaders, options, variable);

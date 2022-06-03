@@ -278,7 +278,7 @@ export class CrudVariableManager extends ServiceVariableManager {
                     json = getClonedObject(pageable);
                     response.body = JSON.stringify(json);
                 }
-                const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response}), success);
+                const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response}), success, response.headers, operationInfo);
                 // notify variable success
                 this.notifyInflight(variable, false, data);
                 resolve(response);
