@@ -303,7 +303,7 @@ export class MobileRuntimeModule {
                 return Promise.reject('Authentication is in process.');
             }
             isAuthenticating = true;
-            return this.webProcessService.execute('LOGIN', '/')
+            return this.webProcessService.execute('LOGIN', '/', true)
                 .then(output => {
                     output = JSON.parse(output && output.replace(/&quot;/g, "\""));
                     if (output[CONSTANTS.XSRF_COOKIE_NAME]) {
