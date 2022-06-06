@@ -163,7 +163,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         if (!this.pagination?.next) {
             this.isDisableFirst = this.isDisablePrevious = isCurrentPageFirst;
             this.isDisableNext = this.isDisableLast = isCurrentPageLast;
-        } else { 
+        } else {
             // WMS-18867: In case of server side pagination, for pager type pagination depend on prev and next flags which are set by developer
             this.isDisableFirst = this.isDisablePrevious = !this.pagination.prev;
             this.isDisableNext = this.isDisableLast = !this.pagination.next;
@@ -190,7 +190,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         maxResults = (this.options && this.options.maxResults) || dataSize;
 
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
-        if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
+        if (this.datasource && (this.datasource.execute(DataSource.Operation.IS_API_AWARE) || (this.parent.widgetType === 'wm-table' && _.get(this.parent, 'gridOptions.lastActionPerformed') === 'dataset_update'))) {
             currentPage = 1;
         } else {
             currentPage = this.dn.currentPage || 1;
@@ -439,7 +439,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 /*Return if already on the first page.*/
                 if (!this.pagination?.next && (this.isFirstPage() || !this.validateCurrentPage(event, callback))) {
                     return;
-                } else if (this.pagination?.next) { // WMS-18867: For server side pagination, skipping the regular flow and enabling isNext flag in pagination metadata  
+                } else if (this.pagination?.next) { // WMS-18867: For server side pagination, skipping the regular flow and enabling isNext flag in pagination metadata
                     this.datasource.pagination.isNext = false;
                     this.datasource.pagination.isPrev = true;
                 }
@@ -450,7 +450,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 /*Return if already on the last page.*/
                 if (!this.pagination?.next && (this.isLastPage() || !this.validateCurrentPage(event, callback))) {
                     return;
-                } else if (this.pagination?.next) { // WMS-18867: For server side pagination, skipping the regular flow and enabling isPrev flag in pagination metadata  
+                } else if (this.pagination?.next) { // WMS-18867: For server side pagination, skipping the regular flow and enabling isPrev flag in pagination metadata
                     this.datasource.pagination.isNext = true;
                     this.datasource.pagination.isPrev = false;
                 }
