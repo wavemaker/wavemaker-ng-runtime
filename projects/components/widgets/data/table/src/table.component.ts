@@ -285,7 +285,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             'EDIT': 'edit',
             'SEARCH_OR_SORT': 'search_or_sort',
             'DEFAULT': 'scroll',
-            'FILTER_CRITERIA' : 'filter'
+            'FILTER_CRITERIA' : 'filter',
+            'DATASET_UPDATE': 'dataset_update'
         },
         actionRowIndex: undefined,
         actionRowPage: undefined,
@@ -1133,6 +1134,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     setLastActionToFilterCriteria() {
         this.prevFilterExpression = _.get(this.datasource, 'filterExpressions.rules') ? getClonedObject(this.datasource.filterExpressions.rules) : getClonedObject([].concat(this.datasource.dataBinding));
         this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.FILTER_CRITERIA);
+        this.gridOptions.setIsSearchTrigerred(true);
+    }
+
+    // Set the table lastActionPerformed to Dataset update and set is Search triggered to true
+    // Fix for [WMS-22323]-this method needs to be called from script when dataset is being updated for modal variable from script
+    setLastActionToDatasetUpdate() {
+        this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.DATASET_UPDATE);
         this.gridOptions.setIsSearchTrigerred(true);
     }
 
