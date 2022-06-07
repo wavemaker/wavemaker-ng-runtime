@@ -523,7 +523,9 @@ export class TableFilterSortDirective {
         } else {
             console.warn('Retain State handling on Widget ' + this.table.name + ' is not supported for current pagination type.');
         }
-        if (dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
+
+        // WMS-22387: For server side pagination, execute client side sorting
+        if (dataSource.execute(DataSource.Operation.IS_SORTABLE)) {
             this.handleSeverSideSort(searchSortObj, e, statePersistenceTriggered);
         } else {
             this.handleClientSideSortSearch(searchSortObj, e, type);
