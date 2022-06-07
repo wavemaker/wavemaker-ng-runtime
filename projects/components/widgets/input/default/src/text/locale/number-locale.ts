@@ -430,6 +430,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (inputValue) {
             const parsedVal =  parseInt(inputValue.toString().replace(/\D/g,''));
             if (parsedVal.toString().length > 15) {
+                // WMS-22321: If the number is greater than MAX_SAFE_INTEGER (more than 15 numbers).
+                // user selects a range of digits and presses a key.
+                // Do not throw validation of exceeded number as selected range value will be deleted.
+                const selectedVal = window.getSelection();
+                if (selectedVal && selectedVal.toString() && selectedVal.focusNode === this.nativeElement) {
+                    return true;
+                }
                 return false;
             }
         }
@@ -443,6 +450,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (!validity.test($event.key)) {
             return false;
         }
+        // comma cannot be entered consecutively
+        if (_.includes(inputValue, ',') && inputValue[inputValue.length - 1] === ',') {
+            return false;
+        }
+
         // a decimal value can be entered only once in the input.
         if (_.includes(inputValue, this.DECIMAL) && $event.key === this.DECIMAL) {
             return false;
