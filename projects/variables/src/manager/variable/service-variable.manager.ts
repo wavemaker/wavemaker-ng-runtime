@@ -10,6 +10,7 @@ import { appManager, formatExportExpression, setInput, decodeData } from './../.
 import { getEvaluatedOrderBy, httpService, initiateCallback, metadataService, securityService, simulateFileDownload } from '../../util/variable/variables.utils';
 import { getAccessToken, performAuthorization, removeAccessToken } from '../../util/oAuth.utils';
 import { AdvancedOptions } from '../../advanced-options';
+import { PaginationUtils } from '../../util/variable/pagination.utils';
 
 declare const _;
 
@@ -62,7 +63,7 @@ export class ServiceVariableManager extends BaseVariableManager {
      * @param options
      * @param success
      */
-    protected processSuccessResponse(response, variable, options, success) {
+    protected processSuccessResponse(response, variable, options, success, resHeaders?) {
         let dataSet;
         let newDataSet;
         let pagination = {};
@@ -111,10 +112,23 @@ export class ServiceVariableManager extends BaseVariableManager {
             // setting newDataSet as the response to service variable onPrepareSetData
             dataSet = newDataSet;
         }
+        
+        const inputFields = getClonedObject(options.inputFields || variable.dataBinding);
+
+        const operationInfo = this.getMethodInfo(variable, inputFields, options);
+        const paginationInfo = PaginationUtils.getPaginationInfo(operationInfo, variable);
+        if (paginationInfo) {
+            const res = PaginationUtils.generatePaginationRes(operationInfo, paginationInfo, response, resHeaders, options, variable);
+            if (!_.isEmpty(res)) {
+                PaginationUtils.setVariablePagination(variable, res, options);
+            }
+        }
 
         /* update the dataset against the variable, if response is non-object, insert the response in 'value' field of dataSet */
         if (!options.forceRunMode && !options.skipDataSetUpdate) {
-            variable.pagination = pagination;
+            if (!variable._paginationConfig) {
+                variable.pagination = pagination;
+            }
             variable.dataSet = dataSet;
 
             // legacy properties in dataSet, [content]
@@ -438,9 +452,8 @@ export class ServiceVariableManager extends BaseVariableManager {
             inputFields = output;
         }
 
-        const operationInfo = this.getMethodInfo(variable, inputFields, options),
-            requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields);
-
+        const operationInfo = this.getMethodInfo(variable, inputFields, options);
+        const requestParams = ServiceVariableUtils.constructRequestParams(variable, operationInfo, inputFields, options);
         // check errors
         if (requestParams.error) {
             const info = this.handleRequestMetaError(requestParams, variable, success, error, options);
@@ -475,7 +488,7 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         successHandler = (response, resolve) => {
             if (response && response.type) {
-                const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response}), success);
+                const data = this.processSuccessResponse(response.body, variable, _.extend(options, {'xhrObj': response}), success, response.headers);
                 // notify variable success
                 this.notifyInflight(variable, false, data);
                 resolve(response);
@@ -518,6 +531,10 @@ export class ServiceVariableManager extends BaseVariableManager {
         });
         options.inputFields = options.inputFields || getClonedObject(variable.dataBinding);
         return $queue.submit(variable).then(this._invoke.bind(this, variable, options, success, error), error);
+    }
+    
+    public setPagination(variable, data) {
+        variable._paginationConfig = data;
     }
 
     public download(variable, options, successHandler, errorHandler) {

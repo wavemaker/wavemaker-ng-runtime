@@ -182,15 +182,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {number}
      */
     private parseNumber(val: string): number {
-        // WMS-22179: split number based on the decimal seperator in the val
-        let seperator;
-        if (val.indexOf(this.DECIMAL) > -1) {
-            seperator = this.DECIMAL;
-        } else {
-            seperator = '.';
-        }
+        // WMS-22179 / WMS-22268 / WMS-22246: For localization, if decimal is present in the number replace it with the locale decimal
+        if (val.indexOf(this.DECIMAL) < 0 && val.charAt((val.length - this.stepLength()) - 1) === '.') {
+            val = val.toString().replace('.', this.DECIMAL)
+        } 
+
         // splits string into two parts. decimal and number.
-        const parts = val.split(seperator);
+        const parts = val.split(this.DECIMAL);
         if (!parts.length) {
             return null;
         }
@@ -263,7 +261,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        if (isDefined(value) && value !== '') {
+        // WMS-22355, Trigger change cb if value exists or value is empty but datavalue exists (when value is selected and deleted). 
+        if (isDefined(value) && (value !== '' || this.datavalue)) {
             this.handleChange(value);
         } else {
             return;

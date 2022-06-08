@@ -4,6 +4,7 @@ import { $rootScope, CONSTANTS, SWAGGER_CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTA
 import { isFileUploadSupported } from './variables.utils';
 import { getAccessToken } from './../oAuth.utils';
 import { formatDate } from '../../util/variable/variables.utils';
+import { PaginationUtils } from '../../util/variable/pagination.utils';
 
 declare const _;
 
@@ -116,7 +117,7 @@ export class ServiceVariableUtils {
      * @param inputFields
      * @returns {any}
      */
-    static constructRequestParams(variable, operationInfo, inputFields) {
+    static constructRequestParams(variable, operationInfo, inputFields, options?) {
         variable = variable || {};
 
         // operationInfo is specifically null for un_authorized access
@@ -217,6 +218,9 @@ export class ServiceVariableUtils {
                     break;
             }
         }
+        // set query params, if pagination info is present and the info should be present in query
+        PaginationUtils.checkPaginationAtQuery(operationInfo, variable, options);
+
         operationInfo.proxySettings = operationInfo.proxySettings || {web: true, mobile: false};
         method = operationInfo.httpMethod || operationInfo.methodType;
         isProxyCall = (function () {
@@ -357,6 +361,21 @@ export class ServiceVariableUtils {
             url = $rootScope.project.deployedUrl + url;
         }
 
+        // If pagination info exists, process info in request headers or body based on the metadata
+        const paginationInfo = PaginationUtils.getPaginationInfo(operationInfo, variable);        
+        if (paginationInfo && variable.pagination) {
+            const resp = PaginationUtils.setPaginationAtReq(paginationInfo, operationInfo, variable, headers, requestBody, url, options);
+            if (resp) {
+                if (resp['headers']) {
+                    headers = resp['headers'];
+                } else if (resp['requestBody']) {
+                    requestBody = resp['requestBody']
+                } else if (resp['url']) {
+                    url = resp['url']
+                }
+            }
+        }
+
         /*creating the params needed to invoke the service. url is generated from the relative path for the operation*/
         invokeParams = {
             'projectID': $rootScope.project.id,
@@ -370,7 +389,7 @@ export class ServiceVariableUtils {
             'isExtURL': variable.serviceType === VARIABLE_CONSTANTS.SERVICE_TYPE.REST,
             'withCredentials': withCredentials
         };
-
+    
         return invokeParams;
     }
 
