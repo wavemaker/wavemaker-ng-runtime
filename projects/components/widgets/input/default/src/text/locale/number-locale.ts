@@ -293,7 +293,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             } else {
                 this.displayValue = financialVal.toFixed(stepVal);
             }
-        } else {
+        } else if (this.ngModelOptions.updateOn !== 'blur') {
             this.datavalue = undefined;
             this.handleChange(null);
         }
