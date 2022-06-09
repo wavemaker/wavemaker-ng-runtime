@@ -40,13 +40,19 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
             currentVal = getSearchValue(_.get(obj, searchObj.field), searchObj.type);
         } else {
             currentVal = [];
-            _.forEach(obj, (val, key) => {
-                const colIndex = visibleCols.findIndex(item => item.includes(key));;
+            _.forEach(obj, (val, key) => {                
                 if ((_.includes(visibleCols, key))) {
                     currentVal.push(val);
-                } else if (colIndex > -1) { // WMS-22271 If the key is in nested key format (dot format), extract the value from obj 
-                    const value = _.get(obj, visibleCols[colIndex]); 
-                    currentVal.push(value);
+                } else { 
+                    // WMS-22271 If the key is in nested key format (dot format)
+                    // Find all the indexes of the key in visiblecols and extract their values from obj 
+                    const colIndex = _.filter(_.range(visibleCols.length), (i) => visibleCols[i].includes(key));
+                    _.forEach(colIndex, (index) => {
+                        const value = _.get(obj, visibleCols[index]); 
+                        if (currentVal.indexOf(value) < 0) {
+                            currentVal.push(value);
+                        }
+                    });
                 }   
             });
             currentVal = currentVal.join(' ').toLowerCase(); // If field is not there, search on all the columns
