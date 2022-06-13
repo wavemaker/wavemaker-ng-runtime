@@ -1083,6 +1083,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     // On form field default value change. This method is overridden by live form and live filter
     onFieldDefaultValueChange(field, nv) {
         field.value = parseValueByType(nv, undefined, field.widgettype, field.trailingzero);
+        // WMS-22434: For default value set on individual form fields, do not mark the form as dirty.
+        if (this.dirty && !this._triggeredByUser) {
+            this.markAsPristine();
+        }
     }
 
     // On form field value change. This method is overridden by live form and live filter
