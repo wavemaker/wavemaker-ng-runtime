@@ -221,9 +221,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
             if (this.maxdate && newVal > maxDate) {
                 const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
+                this.invokeOnChange(this.datavalue, undefined, false);
+                if (isNativePicker && getFormattedDate(this.datePipe, maxDate, this.datepattern) === displayValue) {
+                    return $($event.target).val(displayValue);
+                }
                 this.dateNotInRange = true;
                 this.validateType = 'maxdate';
-                this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
             if (this.excludedates) {
