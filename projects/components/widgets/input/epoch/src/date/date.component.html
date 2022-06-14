@@ -15,7 +15,7 @@
         [attr.accesskey]="shortcutkey"
         [attr.aria-label]="hint || 'Date field'"
         (change)="onDisplayDateChange($event)"
-        (keydown)="onDisplayKeydown($event)">
+        (keydown)="this._triggeredByUser = true; onDisplayKeydown($event);">
 
     <span class="input-group-btn">
         <button type="button"

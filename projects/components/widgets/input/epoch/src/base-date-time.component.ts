@@ -51,6 +51,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public readonly: boolean;
     public placeholder: string;
     public shortcutkey: string;
+    private _triggeredByUser: boolean;
 
     public excludedays: string;
     public excludedDaysToDisable: Array<number>;
@@ -858,7 +859,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             return;
         }
 
-        if (displayInputElem) {
+        if (displayInputElem && this._triggeredByUser) {
             displayInputElem.focus();
             displayInputElem.click();
         }
