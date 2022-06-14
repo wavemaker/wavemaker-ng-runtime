@@ -17,7 +17,7 @@
                (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
                (blur)="onInputBlur($event)"
                (change)="onDisplayTimeChange($event)"
-               (keydown)="onDisplayKeydown($event)">
+               (keydown)="this._triggeredByUser = true; onDisplayKeydown($event)">
         <span class="input-group-btn dropdown-toggle">
             <button type="button" class="btn btn-default btn-date" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentTime" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event, false)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
         </span>
