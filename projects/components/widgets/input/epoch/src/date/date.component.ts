@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, Injector, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, Inject, Injector, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
@@ -8,6 +8,7 @@ import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
+import { isMobileApp } from '@wm/core';
 
 declare const _, $;
 
@@ -40,6 +41,11 @@ export class DateComponent extends BaseDateTimeComponent {
 
     private keyEventPlugin;
     private deregisterEventListener;
+    private _clickTriggeredByUser;
+
+    @HostListener('click', ['$event']) handleClick(event) {
+        this._clickTriggeredByUser = true;
+    }
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -135,6 +141,12 @@ export class DateComponent extends BaseDateTimeComponent {
             this.bsDataValue = undefined;
         }
         this.invokeOnChange(this.datavalue, {}, true);
+
+        // WMS-22456: when user selects date from picker, mark the field as touched to show validation errors
+        const formControl = (this as any)._formControl;
+        if (isMobileApp() && this._clickTriggeredByUser && formControl && formControl.control) {
+            formControl.control.touched = true;
+        }
     }
 
     onDatePickerOpen() {
