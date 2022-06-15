@@ -143,9 +143,8 @@ export class DateComponent extends BaseDateTimeComponent {
         this.invokeOnChange(this.datavalue, {}, true);
 
         // WMS-22456: when user selects date from picker, mark the field as touched to show validation errors
-        const formControl = (this as any)._formControl;
-        if (isMobileApp() && this._clickTriggeredByUser && formControl && formControl.control) {
-            formControl.control.touched = true;
+        if (isMobileApp() && this._clickTriggeredByUser) {
+            (this as any)._formControl?.control?.markAsTouched();
         }
     }
 
