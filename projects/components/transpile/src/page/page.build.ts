@@ -41,7 +41,7 @@ const getElementNode = (name, node) => {
 const noSpan = ({} as ParseSourceSpan);
 const idGen = new IDGenerator('wm_page');
 
-register('wm-page', (): IBuildTaskDef => {
+register('wm-layout', (): IBuildTaskDef => {
     return {
         template: (node: Element) => {
             let pageContentNode = findChild(findChild(node, 'wm-content'), 'wm-page-content');
