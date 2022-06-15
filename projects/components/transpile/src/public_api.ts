@@ -80,6 +80,7 @@ export * as navBuild from './navigation/nav/nav.build';
 export * as navbarBuild from './navigation/navbar/navbar.build';
 export * as popoverBuild from './navigation/popover/popover.build';
 export * as pageBuild from './page/page.build';
+export * as routerOutletBuild from './page/router-outlet/router-outlet.build';
 export * as paginationBuild from './data/pagination/pagination.build';
 export * as contentBuild from './page/content/content.build';
 export * as footerBuild from './page/footer/footer.build';
