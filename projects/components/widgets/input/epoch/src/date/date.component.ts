@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, Inject, Injector, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Injector, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
@@ -41,11 +41,6 @@ export class DateComponent extends BaseDateTimeComponent {
 
     private keyEventPlugin;
     private deregisterEventListener;
-    private _clickTriggeredByUser;
-
-    @HostListener('click', ['$event']) handleClick(event) {
-        this._clickTriggeredByUser = true;
-    }
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -142,10 +137,6 @@ export class DateComponent extends BaseDateTimeComponent {
         }
         this.invokeOnChange(this.datavalue, {}, true);
 
-        // WMS-22456: when user selects date from picker, mark the field as touched to show validation errors
-        if (isMobileApp() && this._clickTriggeredByUser) {
-            (this as any)._formControl?.control?.markAsTouched();
-        }
     }
 
     onDatePickerOpen() {
