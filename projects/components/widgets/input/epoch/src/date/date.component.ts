@@ -8,7 +8,6 @@ import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
-import { isMobileApp } from '@wm/core';
 
 declare const _, $;
 
@@ -136,7 +135,6 @@ export class DateComponent extends BaseDateTimeComponent {
             this.bsDataValue = undefined;
         }
         this.invokeOnChange(this.datavalue, {}, true);
-
     }
 
     onDatePickerOpen() {
