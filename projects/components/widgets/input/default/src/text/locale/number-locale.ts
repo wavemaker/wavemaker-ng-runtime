@@ -277,9 +277,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         /**
          * If the value is entered by the user, format the input 
          * If the value is provided as default value, skip formatting
-         * WMS-22360 If the value is from formfield, the input field is not active and value doesn't have decimal in it, skip formatting
          */
-        if (this.isDefaultQuery || ((this as any)._formControl && value.toString().indexOf('.') < 0) && !$(this.inputEl.nativeElement).is(':focus')) {
+        if (this.isDefaultQuery) {
             financialVal = parseFloat(value);
         } else {
             const valInWholeNum = parseInt(value.toString().replace(/\D/g,''));
@@ -482,6 +481,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             if (this.isNaturalCurrency()) {
                 this.checkForTrailingZeros({type: 'blur'});
             } else {
+                //  WMS-22360 If the value is from formfield, the input field is not active and value doesn't have decimal in it make it as default query to skip formatting
+                this.isDefaultQuery = ((this as any)._formControl && nv?.toString().indexOf('.') < 0) && !$(this.inputEl?.nativeElement)?.is(':focus');
                 this.onInputChange(nv);
             }
         } else {
