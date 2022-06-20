@@ -1,7 +1,14 @@
 import { Component, ContentChild, ElementRef, Injector, TemplateRef } from '@angular/core';
 
-import { $appDigest, $parseExpr, addClass, isArray, isObject, isString, removeClass } from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { $appDigest, addClass, isArray, isObject, isString, removeClass } from '@wm/core';
+import {
+    APPLY_STYLES_TYPE,
+    getEvaluatedData,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler
+} from '@wm/components/base';
 
 import { registerProps } from './media-list.props';
 
@@ -122,8 +129,8 @@ export class MediaListComponent extends StylableComponent {
     private updateFieldDefs(data: any[]) {
         this.fieldDefs = data;
         data.forEach(field => {
-            field.mediaUrlVal     = $parseExpr(this.mediaurl)(field);
-            field.thumbnailUrlVal = $parseExpr(this.thumbnailurl)(field);
+            field.mediaUrlVal     = getEvaluatedData(field, {field: this.mediaurl}, this.viewParent);
+            field.thumbnailUrlVal = getEvaluatedData(field, this.thumbnailurl, this.viewParent);
         });
         this.fieldDefs = data;
     }

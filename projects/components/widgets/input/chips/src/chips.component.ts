@@ -149,6 +149,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         if (this.bindChipclass) {
             const watchName = `${this.widgetId}_chipItemClass_${$index}`;
             $unwatch(watchName);
+            //[Todo-CSP]: same as list item class
             this.registerDestroyListener($watch(this.bindChipclass, this.viewParent, {item, $index}, (nv, ov) => {
                 this.applyItemClass(getConditionalClasses(nv, ov), $index);
             }, watchName));

@@ -1124,6 +1124,7 @@ export const processFilterExpBindNode = (context, filterExpressions) => {
 
     const bindFilExpObj = (obj, targetNodeKey) => {
         if (stringStartsWith(obj[targetNodeKey], 'bind:')) {
+            // [Todo-CSP]: needs a check, where is this used
             destroyFn(
                 $watch(obj[targetNodeKey].replace('bind:', ''), context, {}, (newVal, oldVal) => {
                     if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
@@ -1391,6 +1392,7 @@ export const triggerItemAction = (scope, item) => {
     const linkTarget = item.target;
     if (itemAction) {
         if (!scope.itemActionFn) {
+            //[Todo-CSP]: This will not work as function will be dynamic
             scope.itemActionFn = $parseEvent(itemAction);
         }
 

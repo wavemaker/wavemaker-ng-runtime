@@ -78,6 +78,7 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     private registerWatch(expression: string, callback: Function) {
         // Removing ngFor context as the same properties are availble on listitem scope.
         // passing viewparent context for accessing varibales and widgets.
+        //[CSP]: expression will be generated in the component as e.g. 'item.className'
         this.destroy$.subscribe($watch(expression, (this.listComponent as any).viewParent, this, callback));
     }
 
