@@ -3,7 +3,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 
-import { $invokeWatchers, AbstractI18nService, AbstractNavigationService, App, noop, Viewport, ScriptLoaderService, UtilsService } from '@wm/core';
+import {
+    $invokeWatchers,
+    AbstractI18nService,
+    AbstractNavigationService,
+    App,
+    noop,
+    Viewport,
+    ScriptLoaderService,
+    UtilsService,
+    registerFnByExpr
+} from '@wm/core';
 import { PartialDirective, WidgetRef} from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';
 import {PrefabDirective} from '@wm/components/prefab';
@@ -46,6 +56,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     abstract evalUserScript(prefabContext: any, appContext: any, utils: any);
 
     abstract getVariables();
+    abstract getExpressions();
 
     getContainerWidgetInjector() {
         return this.containerWidget.inj || this.containerWidget.injector;
@@ -62,6 +73,8 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             this.getContainerWidgetInjector().view.component.registerFragment();
         }
 
+        // register functions for binding evaluation
+        this.registerExpressions();
         this.initUserScript();
 
         this.registerWidgets();
@@ -139,6 +152,18 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             $invokeWatchers(true, true);
             variableCollection.callback(variableCollection.Variables).catch(noop);
             variableCollection.callback(variableCollection.Actions);
+        });
+    }
+
+    /**
+     * function to register bind expressions generated in this partial instance
+     * getExpressions function is defined in the generated page.comp.ts file
+     * @param expressions, map of bind expression vs generated function
+     */
+    registerExpressions() {
+        const expressions = this.getExpressions();
+        _.each(expressions, (fn, expr)=>{
+            registerFnByExpr(expr, fn[0], fn[1]);
         });
     }
 

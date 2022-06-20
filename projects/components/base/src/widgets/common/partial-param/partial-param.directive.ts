@@ -22,6 +22,7 @@ export class PartialParamHandlerDirective {
         this.widgetRef.partialParams[name] = value;
         if (!value && bindExpr) {
             this.widgetRef.registerDestroyListener(
+                //[Todo-CSP]: expr fn should be generated be default
                 $watch(bindExpr, this.widgetRef.getViewParent(), _.get(this.widgetRef, 'context'), nv => {
                     this.widgetRef.partialParams[name] = nv;
 

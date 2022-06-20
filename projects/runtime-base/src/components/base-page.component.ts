@@ -1,7 +1,7 @@
 import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { isAndroid, isIos, Viewport, ScriptLoaderService } from '@wm/core';
+import { isAndroid, isIos, Viewport, ScriptLoaderService, registerFnByExpr } from '@wm/core';
 import { PageDirective } from '@wm/components/page';
 
 import {Subject, Subscription} from 'rxjs';
@@ -57,6 +57,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     abstract evalUserScript(prefabContext: any, appContext: any, utils: any);
     abstract getVariables();
+    abstract getExpressions();
 
     init() {
 
@@ -71,6 +72,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.router = this.injector.get(Router);
         this.Viewport = this.injector.get(Viewport);
 
+        // register functions for binding evaluation
+        this.registerExpressions();
         this.initUserScript();
 
         this.registerWidgets();
@@ -155,6 +158,18 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             variableCollection.callback(variableCollection.Actions);
 
             subscription.unsubscribe();
+        });
+    }
+
+    /**
+     * function to register bind expressions generated in this page instance
+     * getExpressions function is defined in the generated page.comp.ts file
+     * @param expressions, map of bind expression vs generated function
+     */
+    registerExpressions() {
+        const expressions = this.getExpressions();
+        _.each(expressions, (fn, expr)=>{
+            registerFnByExpr(expr, fn[0], fn[1]);
         });
     }
 
