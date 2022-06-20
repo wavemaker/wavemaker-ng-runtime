@@ -68,5 +68,5 @@ cp -r libraries/. dist/npm-packages/app-ng-runtime
 tar -zcf dist/npm-packages/app-ng-runtime.tar.gz -C dist/npm-packages app-ng-runtime
 rm -r dist/npm-packages/app-ng-runtime
 
-cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/runtime-cli/dependencies
+cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/transpilation/expression-parser.cjs.js dist/transpilation/pipe-provider.cjs.js dist/runtime-cli/dependencies
 cd -

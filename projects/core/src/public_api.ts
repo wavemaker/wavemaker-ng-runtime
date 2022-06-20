@@ -26,9 +26,13 @@ export * from './enums/enums';
 export * from './utils/event-notifier';
 export {
     ParseExprResult,
-    setPipeProvider,
     $parseExpr,
-    $parseEvent
+    $parseEvent,
+    registerFnByExpr,
+    setPipeProvider,
+    getFnByExpr,
+    getFnForBindExpr,
+    getFnForEventExpr
 } from './utils/expression-parser';
 export {
     EVENT_LIFE,
