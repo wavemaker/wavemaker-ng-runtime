@@ -881,7 +881,8 @@ export const setSessionStorageItem = (key, value) => {
  * @param key string
  */
 export const getSessionStorageItem = key => {
-    let item = window.sessionStorage.getItem(_WM_APP_PROJECT.id);
+    // sanity check for this to work with ng-codegen
+    let item = window && window.sessionStorage && window.sessionStorage.getItem(_WM_APP_PROJECT.id);
 
     if (item) {
         item = JSON.parse(item);
