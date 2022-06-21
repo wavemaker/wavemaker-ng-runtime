@@ -572,7 +572,7 @@ export function $parseEvent(expr, defOnly?): ParseExprResult {
     }
 
     if (!defOnly) {
-        fn = getFnForEventExpr(expr) || noop;
+        fn = getFnForEventExpr(expr);
     }
 
     // fallback to generate function in runtime. This will break if CSP is enabled
@@ -604,8 +604,8 @@ export const getFnByExpr = (expr) => fnNameMap.get(expr)
 const fnExecutor = (expr, exprType) => {
     let fn = getFnByExpr(expr);
     if (!fn) {
-        console.warn('oops, didnt find fn for this expr', expr);
-        return function(){};
+        console.warn("didn't find fn for the expr: ", expr, ". Falling back to runtime evaluation");
+        return;
     }
     const usedPipes = fn.usedPipes || [];
 
