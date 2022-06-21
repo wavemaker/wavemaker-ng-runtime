@@ -74,8 +74,8 @@ const setMobileProjectType = (angularJson) => {
 const addMobileSpecificStyles = async (deployUrl) => {
     if (isDevBuild) {
         $("body").append(
-            `<script> const WMStylesPath ="${deployUrl}/wm-android-styles.js" </script>`
-        )
+            `<script type="text/javascript" defer="true" src="${deployUrl}/wm-android-styles.js"></script>`
+        );
     }
 
     if (isProdBuild) {
@@ -92,40 +92,20 @@ const addMobileSpecificStyles = async (deployUrl) => {
     }
 }
 
-const addScriptForWMStylesPath = () => {
-    // Add print css on load
-    $("body").append(`<script>
-            (function () {
-                if (typeof WMStylesPath !== "undefined") {
-                    let styleType = WMStylesPath.split(".").pop();
-                    let styleNode;
-                    if(styleType==="css"){
-                        styleNode = document.createElement("link");
-                        styleNode.type = "text/css";
-                        styleNode.rel = "stylesheet";
-                        styleNode.href = WMStylesPath;
-                    }
-                    else if(styleType==="js"){
-                        styleNode = document.createElement("script");
-                        styleNode.type = "text/javascript";
-                        styleNode.src = WMStylesPath;
-                        styleNode.defer = true;
-                    }
-
-                    styleNode && document
-                        .getElementsByTagName("head")[0]
-                        .appendChild(styleNode);
-                }
-            })()
-            window.onload = function() {
-                 var printCssNode = document.createElement('link');
-                 printCssNode.type = 'text/css';
-                 printCssNode.rel = 'stylesheet';
-                 printCssNode.href = 'print.css';
-                 printCssNode.media = 'print';
-                 document.getElementsByTagName("head")[0].appendChild(printCssNode);
-             }
-            </script>`);
+const addScriptForWMStylesPath = (wm_styles_path) => {
+    let styleType = wm_styles_path.split(".").pop();
+    if(styleType==="css"){
+        $("head").append(
+            `<link rel="stylesheet" type="text/css" href="${wm_styles_path}"/>`
+        );
+    } else {
+        $("body").append(
+            `<script type="text/javascript" defer="true" src="${wm_styles_path}"></script>`
+        );
+    }
+    $("head").append(
+        `<link rel="stylesheet" type="text/css" media="print" href="print.css"/>`
+    );
 }
 
 /**
@@ -155,9 +135,9 @@ const SKIP_UPDATE = ['index.html', 'manifest.json'];
 /**
  * Checks if a file's name has been changed during the build process
  * and if changed, returns an updated file path.
- * 
+ *
  * @param {string} deployUrl deployment url
- * @param {string} url an absolute url to check if its filename has changed 
+ * @param {string} url an absolute url to check if its filename has changed
  * @param {object} updatedFileNames a map from old filenames to new filenames
  * @returns {string} an updated file path
  */
@@ -176,8 +156,8 @@ const getUpdatedFileName = (deployUrl, url, updatedFileNames) => {
 /**
  * Checks if a file's content has been changed during the build process
  * and if changed, returns a new hash to be updated in ngsw.json
- * 
- * @param {string} url an absolute url to check if its filename has changed 
+ *
+ * @param {string} url an absolute url to check if its filename has changed
  * @param {object} updatedFileHashes a map from filenames to file hashes
  * @returns {string} an updated file hash
  */
@@ -191,7 +171,7 @@ const getUpdatedFileHashes = (url, oldHash, updatedFileHashes) => {
 
 /**
  * Get the path of the icon without '/ng-bundle'
- * 
+ *
  * @param {string} iconPath path with '/ng-bundle'
  * @returns {string} path of the icon without '/ng-bundle'
  */
@@ -202,7 +182,7 @@ const getIconPath = (iconPath) => {
 
 /**
  * Updates name, location and content of PWA related assets.
- * 
+ *
  * @param {string} deployUrl deployment url
  * @param {object} updatedFileNames a map from old filenames to new filenames
  * @returns {void}
@@ -245,7 +225,7 @@ const updatePwaAssets = (deployUrl, updatedFileNames, updatedFileHashes) => {
 
 /**
  * Generated sha1 hash for the content supplied.
- * 
+ *
  * @param {string} content the content to be hashed
  * @returns {string} the hash value
  */
@@ -291,26 +271,23 @@ const generateSha1 = (content) => {
         const serviceWorkerEnabled = build['configurations']['production']['serviceWorker'];
         const updatedFilenames = {}
         const updatedFileHashes = {}
+        let wm_styles_path;
 
         if (isMobileProject) {
             await addMobileSpecificStyles(deployUrl);
         } else {
             if (isDevBuild) {
-                $("head").append(
-                    `<script> const WMStylesPath = "${deployUrl}/wm-styles.js" </script>`
-                )
+                wm_styles_path = `${deployUrl}/wm-styles.js`;
             } else {
                 const fileName = 'wm-styles';
                 const hash = await generateHash(`${opPath}/${fileName}.css`);
                 copyCssFiles(hash, updatedFilenames);
                 const updatedFileName = `${fileName}.${hash}.css`
-                $("head").append(
-                    `<script> const WMStylesPath = "${deployUrl}/${updatedFileName}" </script>`
-                );
+                wm_styles_path = `${deployUrl}/${updatedFileName}`;
             }
         }
 
-        addScriptForWMStylesPath();
+        addScriptForWMStylesPath(wm_styles_path);
         const htmlContent = $.html();
         await writeFile(`./dist/index.html`, htmlContent);
 
