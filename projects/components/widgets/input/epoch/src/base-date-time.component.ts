@@ -51,7 +51,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public readonly: boolean;
     public placeholder: string;
     public shortcutkey: string;
-    private _triggeredByUser: boolean;
+    public _triggeredByUser: boolean;
 
     public excludedays: string;
     public excludedDaysToDisable: Array<number>;
