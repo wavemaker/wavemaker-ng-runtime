@@ -594,7 +594,6 @@ export function $parseEvent(expr, defOnly?): ParseExprResult {
 const fnNameMap = new Map();
 
 export const registerFnByExpr = (expr, fn, usedPipes) => {
-    console.log('registering function for: ', expr);
     fn.usedPipes = usedPipes || [];
     fnNameMap.set(expr, fn);
 }
