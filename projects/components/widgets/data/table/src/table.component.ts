@@ -280,6 +280,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         deletedRowIndex: -1,
         lastActionPerformed: 'scroll',
         isSearchTrigerred: false,
+        isDatasetUpdated: false,
         ACTIONS: {
             'DELETE': 'delete',
             'EDIT': 'edit',
@@ -316,6 +317,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         setIsSearchTrigerred: (value) => {
             this.setDataGridOption('isSearchTrigerred', value);
+        },
+        setIsDatasetUpdated: (value) => {
+            this.setDataGridOption('isDatasetUpdated', value);
         },
         onDataRender: () => {
             this.ngZone.run(() => {
@@ -1137,11 +1141,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.setIsSearchTrigerred(true);
     }
 
-    // Set the table lastActionPerformed to Dataset update and set is Search triggered to true
-    // Fix for [WMS-22323]-this method needs to be called from script when dataset is being updated for modal variable from script
+    // Set the table lastActionPerformed to Dataset update and set isDatasetUpdated to true
+    // Fix for [WMS-22323]-this method is called when dataset is being updated
     setLastActionToDatasetUpdate() {
         this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.DATASET_UPDATE);
-        this.gridOptions.setIsSearchTrigerred(true);
+        this.gridOptions.setIsDatasetUpdated(true);
     }
 
     // Update the lastActionPerformed to Filter_Criteria, when there is change in the Variable filter criteria rules
