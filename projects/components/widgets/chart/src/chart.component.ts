@@ -1045,6 +1045,10 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             this.isLoadInProgress = data.active;
         }
     }
+    
+    hideTooltip() {
+        d3.selectAll('.nvtooltip').style('opacity', 0);
+    }
 
     onStyleChange(key, newVal, oldVal) {
         const styleObj = {};
@@ -1076,7 +1080,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         // Show loading status based on the variable life cycle
         this._subsciptions.push(this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this)));
         // Will hide tolltip of a chart in mobile when the user scrolls.
-        this._subsciptions.push(this.app.subscribe('iscroll-start', () => { d3.selectAll('.nvtooltip').style('opacity', 0);}));
+        this._subsciptions.push(this.app.subscribe('iscroll-start', () => {this.hideTooltip();}));
     }
 
     ngAfterViewInit() {
@@ -1102,6 +1106,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
     ngOnDestroy() {
         // destroy all subscriptions to prevent memory leak.
+        this.hideTooltip();
         this._subsciptions.forEach((subscription)=>{
             subscription();
         });

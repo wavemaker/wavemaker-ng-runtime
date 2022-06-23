@@ -51,6 +51,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public readonly: boolean;
     public placeholder: string;
     public shortcutkey: string;
+    public _triggeredByUser: boolean;
 
     public excludedays: string;
     public excludedDaysToDisable: Array<number>;
@@ -220,9 +221,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
             if (this.maxdate && newVal > maxDate) {
                 const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
-                this.dateNotInRange = true;
-                this.validateType = 'maxdate';
                 this.invokeOnChange(this.datavalue, undefined, false);
+                if (isNativePicker && getFormattedDate(this.datePipe, maxDate, this.datepattern) === displayValue) {
+                    return $($event.target).val(displayValue);
+                }
+                this.dateNotInRange = true;
+                this.validateType = "maxdate";
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
             if (this.excludedates) {
@@ -858,7 +862,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             return;
         }
 
-        if (displayInputElem) {
+        if (displayInputElem && this._triggeredByUser) {
             displayInputElem.focus();
             displayInputElem.click();
         }
