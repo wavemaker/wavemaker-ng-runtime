@@ -280,12 +280,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         deletedRowIndex: -1,
         lastActionPerformed: 'scroll',
         isSearchTrigerred: false,
+        isDatasetUpdated: false,
         ACTIONS: {
             'DELETE': 'delete',
             'EDIT': 'edit',
             'SEARCH_OR_SORT': 'search_or_sort',
             'DEFAULT': 'scroll',
-            'FILTER_CRITERIA' : 'filter'
+            'FILTER_CRITERIA' : 'filter',
+            'DATASET_UPDATE': 'dataset_update'
         },
         actionRowIndex: undefined,
         actionRowPage: undefined,
@@ -315,6 +317,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         setIsSearchTrigerred: (value) => {
             this.setDataGridOption('isSearchTrigerred', value);
+        },
+        setIsDatasetUpdated: (value) => {
+            this.setDataGridOption('isDatasetUpdated', value);
         },
         onDataRender: () => {
             this.ngZone.run(() => {
@@ -1134,6 +1139,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.prevFilterExpression = _.get(this.datasource, 'filterExpressions.rules') ? getClonedObject(this.datasource.filterExpressions.rules) : getClonedObject([].concat(this.datasource.dataBinding));
         this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.FILTER_CRITERIA);
         this.gridOptions.setIsSearchTrigerred(true);
+    }
+
+    // Set the table lastActionPerformed to Dataset update and set isDatasetUpdated to true
+    // Fix for [WMS-22323]-this method is called when dataset is being updated
+    setLastActionToDatasetUpdate() {
+        this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.DATASET_UPDATE);
+        this.gridOptions.setIsDatasetUpdated(true);
     }
 
     // Update the lastActionPerformed to Filter_Criteria, when there is change in the Variable filter criteria rules

@@ -184,7 +184,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         maxResults = (this.options && this.options.maxResults) || dataSize;
 
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
-        if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
+        if (this.datasource && (this.datasource.execute(DataSource.Operation.IS_API_AWARE) || (this.parent.widgetType === 'wm-table' && _.get(this.parent, 'gridOptions.lastActionPerformed') === this.parent.gridOptions.ACTIONS.DATASET_UPDATE))) {
             currentPage = 1;
         } else {
             currentPage = this.dn.currentPage || 1;
@@ -420,6 +420,11 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 this.parent.callDataGridMethod('showLoadingIndicator', this.parent.loadingdatamsg, true);
             }
         }
+        // reset the last action performed to "scroll" and isDatasetUpdated to false
+        if (this.parent.widgetType === 'wm-table' && this.parent.gridOptions.isNavTypeScrollOrOndemand()) {
+            this.parent.gridOptions.setLastActionPerformed(this.parent.gridOptions.ACTIONS.DEFAULT);
+            this.parent.gridOptions.setIsDatasetUpdated(false);
+        }
         this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
 
         // Convert the current page to a valid page number.
@@ -433,6 +438,9 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 /*Return if already on the first page.*/
                 if (this.isFirstPage() || !this.validateCurrentPage(event, callback)) {
                     return;
+                } else if (this.pagination?.next) { // WMS-18867: For server side pagination, skipping the regular flow and enabling isNext flag in pagination metadata
+                    this.datasource.pagination.isNext = false;
+                    this.datasource.pagination.isPrev = true;
                 }
                 /*Decrement the current page by 1.*/
                 this.dn.currentPage -= 1;
@@ -441,6 +449,9 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 /*Return if already on the last page.*/
                 if (this.isLastPage() || !this.validateCurrentPage(event, callback)) {
                     return;
+                } else if (this.pagination?.next) { // WMS-18867: For server side pagination, skipping the regular flow and enabling isPrev flag in pagination metadata
+                    this.datasource.pagination.isNext = true;
+                    this.datasource.pagination.isPrev = false;
                 }
                 /*Increment the current page by 1.*/
                 this.dn.currentPage += 1;
@@ -520,6 +531,10 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 data = this.parent.onDataNavigatorDataSetChange(nv);
             } else {
                 data = nv;
+            }
+            // Set last action performed to "dataset_update" whenever dataset is changed in table component
+            if (this.parent.widgetType === 'wm-table' && (_.get(this.datasource, 'category') === 'wm.Variable' || _.get(this.datasource, 'category') === 'wm.ServiceVariable')) {
+                this.parent.setLastActionToDatasetUpdate();
             }
             // When the dataset is not in current page, but in previous ones directly set the result without setting page values
             if (this.isEditNotInCurrentPage()) {
