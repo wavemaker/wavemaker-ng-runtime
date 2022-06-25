@@ -180,6 +180,31 @@ $.widget('wm.datatable', {
         }
     },
 
+    /**
+     * used to parse styles expression and apply individual styles to a DOM node
+     * this is done to mitigate CSP unsafe-inline policy on styles
+     * @param $el
+     * @param styleString
+     * @returns {*}
+     * @private
+     */
+    _setStyles: function($el, styleString) {
+        if (!styleString) {
+            return;
+        }
+        var styles = styleString.split(';');
+        styles.forEach(function (styleBit) {
+            var parts = styleBit.split(':');
+            var property, value;
+            if (parts.length === 2) {
+                property = parts[0].trim();
+                value = parts[1].trim();
+                $el.css(property, value);
+            }
+        });
+        return styleString;
+    },
+
     _getColumnSortDirection: function (field) {
         var sortInfo = this.options.sortInfo;
         return field === sortInfo.field ? sortInfo.direction : '';
@@ -264,7 +289,7 @@ $.widget('wm.datatable', {
             headerLabel = (!self.Utils.isDefined(headerLabel) || headerLabel === '') ? '&nbsp;' : headerLabel; //If headername is empty, add an empty space
             $col = $('<col/>');
             if (value.style) {
-                $col.attr('style', value.style);
+                self._setStyles($col, value.style);
             }
             $colgroup.append($col);
             /* thead */
@@ -293,9 +318,9 @@ $.widget('wm.datatable', {
             $th.attr({
                 'data-col-id': id,
                 'data-col-field': field,
-                'title': titleLabel,
-                'style': 'text-align: ' + value.textAlignment
+                'title': titleLabel
             });
+            self._setStyles($th, 'text-align: ' + value.textAlignment)
             $th.addClass(headerClasses);
             /* For custom columns, show display name if provided, else don't show any label. */
             if (field === 'checkbox') {
@@ -312,12 +337,12 @@ $.widget('wm.datatable', {
                 }
                 $th.append($sortSpan.append($sortIcon));
             }
-            return $th.get(0).outerHTML;
+            return $th;
         }
 
         //Method to generate the header row based on the column group config
         function generateRow(cols, i) {
-            var tl = '';
+            var $thList = [];
             _.forEach(cols, function (col) {
                 var index,
                     value,
@@ -332,23 +357,23 @@ $.widget('wm.datatable', {
                     $groupTl.attr({
                         'data-col-group': col.field,
                         'class': classes,
-                        'style': styles,
                         'title': col.displayName
                     });
+                    self._setStyles($groupTl, styles);
                     $groupTl.append('<span class="header-data">' + col.displayName + '</span>');
-                    tl += $groupTl.get(0).outerHTML;
+                    $thList.push($groupTl);
                     generateRow(col.columns, (i + 1));
                 } else {
                     //For non group cells, fetch the relative field definition and generate the template
                     index = _.findIndex(self.preparedHeaderData, {'field': col.field});
                     value = self.preparedHeaderData[index];
                     if (value) {
-                        tl += generateHeaderCell(value, index);
+                        $thList.push(generateHeaderCell(value, index));
                     }
                 }
             });
-            rowTemplates[i] = rowTemplates[i] || '';
-            rowTemplates[i] += tl;
+            rowTemplates[i] = rowTemplates[i] || [];
+            rowTemplates[i] = rowTemplates[i].concat($thList);
         }
 
         //If header config is not present, this is a dynamic grid. Generate headers directly from field defs
@@ -361,25 +386,26 @@ $.widget('wm.datatable', {
         } else {
             generateRow(headerConfig, 0);
             //Combine all the row templates to generate the header
-            $htm.append(_.reduce(rowTemplates, function (template, rowTl, index) {
-                var $rowTl = $(rowTl),
-                    tl = '',
-                    rowSpan = rowTemplates.length - index;
-                if (rowSpan > 1) {
-                    $rowTl.closest('th.app-datagrid-header-cell').attr('rowspan', rowSpan);
-                }
-                $rowTl.each(function () {
-                    tl += $(this).get(0).outerHTML;
+            rowTemplates.forEach(function($thList, index) {
+                $row = $('<tr></tr>');
+                var rowSpan = rowTemplates.length - index;
+                //append all t-heads to the tr
+                $thList.forEach(function($th) {
+                    // if rowspan > 1, apply it to all non-group t-heads
+                    if (rowSpan > 1 && $th.hasClass('app-datagrid-header-cell')) {
+                        $th.attr('rowspan', rowSpan);
+                    }
+                    $row.append($th);
                 });
-                return template + '<tr>' + tl + '</tr>';
-            }, ''));
+                $htm.append($row);
+            });
         }
 
         return {'colgroup': $colgroup, 'header': $htm};
     },
 
     /* Returns the seachbox template. */
-    _getSearchTemplate: function () {
+    _getSearchEl: function () {
         var htm,
             sel = '<select name="wm-datatable" data-element="dgFilterValue" ' +
                 'class="form-control app-select">' +
@@ -397,7 +423,7 @@ $.widget('wm.datatable', {
         sel += '</select>';
         htm =
             '<form class="form-search form-inline" onsubmit="return false;"><div class="form-group">' +
-            '<input type="text" data-element="dgSearchText" class="form-control app-textbox" value="" placeholder="' + searchLabel + '" style="display: inline-block;"/>' +
+            '<input type="text" data-element="dgSearchText" class="form-control app-textbox" value="" placeholder="' + searchLabel + '"/>' +
             '</div><div class="input-append input-group">' +
             sel +
             '<span class="input-group-addon"><button type="button" data-element="dgSearchButton" class="app-search-button" title="' + searchLabel + '">' +
@@ -405,7 +431,9 @@ $.widget('wm.datatable', {
             '</button></span>' +
             '</div>' +
             '</div></form>';
-        return htm;
+        var $htm = $(htm);
+        this._setStyles($htm.find('[data-element="dgSearchText"]'), "display: inline-block;");
+        return $htm;
     },
     _appendRowExpansionButtons: function ($htm) {
         var self = this;
@@ -434,7 +462,8 @@ $.widget('wm.datatable', {
     /* Returns the tbody markup. */
     _getSummaryRowTemplate: function () {
         var self = this,
-            $tfoot = $('<tfoot class="' + this.options.cssClassNames.gridFooter + '" style="border-top: 3px solid #eee;"></tfoot>');
+            $tfoot = $('<tfoot class="' + this.options.cssClassNames.gridFooter + '"></tfoot>');
+        this._setStyles($tfoot, "border-top: 3px solid #eee;");
 
         _.forEach(this.options.summaryRowDefs, function (row, index) {
             row.$$pk = index;
@@ -531,9 +560,11 @@ $.widget('wm.datatable', {
             if (self.options.rowExpansionEnabled) {
                 var heightStyle = self.options.rowDef.height ? ' style="min-height:' + self.options.rowDef.height + '"' : '';
                 var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
-                $tbody.append('<tr class="app-datagrid-detail-row" style="display: none;" tabindex="0" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
-                    '<div class="row-overlay" ' + heightStyle + '><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section" style="display: none;"></div>' +
-                    '</td></tr>');
+                var $tr = '<tr class="app-datagrid-detail-row" style="display: none;" tabindex="0" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                    '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section" style="display: none;"></div>' +
+                    '</td></tr>';
+                self._setStyles($tr.find('div.row-overlay'), heightStyle);
+                $tbody.append($tr);
             }
         });
         // set last action performed to default and clear action row index, after generating templates
@@ -597,9 +628,11 @@ $.widget('wm.datatable', {
             customExpressionHtml,
             innerTmpl,
             classes = this.options.cssClassNames.tableCell + ' ' + (colDef.class || ''),
-            colExpression = colDef.customExpression;
+            colExpression = colDef.customExpression,
+            styles = "text-align: ' + colDef.textAlignment + ';position: relative;"
 
-        $htm = $('<td class="' + classes + '" data-col-id="' + colId + '" style="text-align: ' + colDef.textAlignment + ';position: relative;"></td>');
+        $htm = $('<td class="' + classes + '" data-col-id="' + colId + '"></td>');
+        this._setStyles($htm, styles);
 
         columnValue = _.get(row, colDef.field);
 
@@ -2741,7 +2774,7 @@ $.widget('wm.datatable', {
 
     /* Renders the search box. */
     _renderSearch: function () {
-        var $htm = $(this._getSearchTemplate()),
+        var $htm = $(this._getSearchEl()),
             self = this,
             $searchBox;
 
@@ -3044,14 +3077,18 @@ $.widget('wm.datatable', {
         }
         var overflow = (this.options.isNavTypeScrollOrOndemand() && (this.options.height === '100%' || this.options.height === 'auto')) ? 'hidden' : 'auto';
         var statusContainer =
-            '<div class="overlay" style="display: none;">' +
+            '<div class="overlay">' +
             '<div class="status"><i class="' + this.options.loadingicon + '"></i><span class="message"></span></div>' +
             '</div>',
             table = '<div class="table-container table-responsive"><div class="app-grid-header ' +
                 '"><div class="app-grid-header-inner"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_header_' + this.tableId + '">' +
-                '</table></div></div><div class="app-grid-content" style="height:' + this.options.height + '; overflow-y: ' + overflow + ';"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_' + this.tableId + '">' +
+                '</table></div></div><div class="app-grid-content"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_' + this.tableId + '">' +
                 '</table></div>' +
-                '</div>';
+                '</div>',
+            $statusContainer = $(statusContainer);
+        this._setStyles($statusContainer.find('div.overlay'), "display:none");
+        this._setStyles($statusContainer.find('div.app-grid-content'), 'height:' + this.options.height + '; overflow-y: ' + overflow + ';');
+
         this.gridContainer = $(table);
         this.gridElement = this.gridContainer.find('.app-grid-content table');
         this.gridHeaderElement = this.gridContainer.find('.app-grid-header table');
