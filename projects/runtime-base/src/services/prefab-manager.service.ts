@@ -55,7 +55,7 @@ export class PrefabManagerService {
         const baseUrl = getPrefabBaseUrl(prefabName);
         const _scripts = scripts.map(url => getPrefabResourceUrl(url, baseUrl));
 
-        return loadScripts(_scripts, false);
+        return loadScripts(_scripts, true);
     }
 
     private setInProgress(prefabName: string) {

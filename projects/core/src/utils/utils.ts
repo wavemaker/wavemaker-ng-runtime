@@ -822,10 +822,25 @@ export const loadScript = async (url, loadViaScriptTag, cacheable = false) => {
     }
 
     if (loadViaScriptTag) {
-        return fetchContent('text', _url, false, text => {
-            const script = document.createElement('script');
-            script.textContent = text;
-            document.head.appendChild(script);
+        return new Promise<any>((resolve, reject)=>{
+            let script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = _url;
+            script.async = false;
+            if (script.readyState) {  //IE
+                script.onreadystatechange = () => {
+                    if (script.readyState === "loaded" || script.readyState === "complete") {
+                        script.onreadystatechange = null;
+                        resolve(true);
+                    }
+                };
+            } else {  //Other browsers
+                script.onload = () => {
+                    resolve(true);
+                };
+            }
+            script.onerror = (error: any) => reject(error);
+            document.getElementsByTagName('head')[0].appendChild(script);
         });
     } else if(cacheable) {
         return $.ajax({
@@ -839,14 +854,6 @@ export const loadScript = async (url, loadViaScriptTag, cacheable = false) => {
             .done(response => response)
             .fail(reason => reason);
     }
-
-    // return fetch(_url)
-    //     .then(response => response.text())
-    //     .then(text => {
-    //         const script = document.createElement('script');
-    //         script.textContent = text;
-    //         document.head.appendChild(script);
-    //     });
 };
 
 export const loadScripts = async (urls = [], loadViaScriptTag = true) => {
