@@ -17,6 +17,8 @@ import {
     PropertyWrite
 } from '@angular/compiler';
 
+declare const _;
+
 const isString = v => typeof v === 'string';
 const isDef = v => v !== void 0;
 const ifDef = (v, d) => v === void 0 ? d : v;
@@ -516,9 +518,15 @@ export function $parseExpr(expr: string, defOnly?: boolean): ParseExprResult {
 
     // fallback to generate function in runtime. This will break if CSP is enabled
     if (!boundFn) {
-        // If CSP enabled, avoid multiple browser errors. [What do we say to death, NOT TODAY!]
+        // If CSP enabled, function def not found from the generated fn expressions for the page.
+        // Handle bind expressions used internally inside WM components. e.g. wmAnchor used inside nav.comp.html
         if (isCSPEnabled()) {
-            boundFn = noop;
+            boundFn = function(ctx, locals) {
+                // handle internal bindings for wm widgets used inside a component
+                let _ctx = Object.assign({}, locals);
+                Object.setPrototypeOf(_ctx, ctx);
+                return _.get(_ctx, expr);
+            };
         } else {
             const parser = new Parser(new Lexer);
             const ast = parser.parseBinding(expr, '',0);
@@ -573,6 +581,26 @@ export function $parseExpr(expr: string, defOnly?: boolean): ParseExprResult {
     return boundFn;
 }
 
+function simpleFunctionEvaluator(expr, ctx, locals) {
+    let _ctx = Object.assign({}, locals);
+    Object.setPrototypeOf(_ctx, ctx);
+
+    let parts = expr.split('(');
+    let fnName = parts[0];
+    let computedFn = _.get(ctx, fnName);
+
+    if (computedFn) {
+        let args = parts[1].replace(')', '');
+        args = args.split(',');
+        let computedArgs = [];
+        args.forEach((arg)=> {
+            arg = arg && arg.trim();
+            computedArgs.push(_.get(_ctx, arg));
+        });
+        return computedFn.bind(_ctx)(...computedArgs);
+    }
+}
+
 export function $parseEvent(expr, defOnly?): ParseExprResult {
     if (!isString(expr)) {
         return noop;
@@ -597,7 +625,7 @@ export function $parseEvent(expr, defOnly?): ParseExprResult {
     // fallback to generate function in runtime. This will break if CSP is enabled
     if(!fn) {
         if (isCSPEnabled()) {
-            fn = noop;
+            fn = simpleFunctionEvaluator.bind(undefined, expr);
         } else {
             const parser = new Parser(new Lexer);
             const ast = parser.parseAction(expr, '',0);
@@ -616,7 +644,7 @@ export function $parseEvent(expr, defOnly?): ParseExprResult {
 
 const fnNameMap = new Map();
 
-export const registerFnByExpr = (expr, fn, usedPipes) => {
+export const registerFnByExpr = (expr, fn, usedPipes?) => {
     fn.usedPipes = usedPipes || [];
     fnNameMap.set(expr, fn);
 }
