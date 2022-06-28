@@ -82,18 +82,18 @@ export class DatasetAwareNavComponent extends StylableComponent {
      */
     private getNode(fields, node): NavNode {
         const context = this.viewParent.pageScope || this.viewParent;
-        const children = getEvaluatedData(node, {field: this.itemchildren, bindExpression: this.binditemchildren}, context);
+        const children = getEvaluatedData(node, {field: this.itemchildren, bindExpression: this.binditemchildren}, context) || _.get(node, fields.childrenField);
         const navNode = {
-            action: getEvaluatedData(node, {field: this.itemaction, bindExpression: this.binditemaction}, context),
-            badge: getEvaluatedData(node, {field: this.itembadge, bindExpression: this.binditembadge}, context),
+            action: getEvaluatedData(node, {field: this.itemaction, bindExpression: this.binditemaction}, context) || _.get(node, fields.actionField),
+            badge: getEvaluatedData(node, {field: this.itembadge, bindExpression: this.binditembadge}, context) || _.get(node, fields.badgeField),
             children: Array.isArray(children) ? this.getNodes(children) : [],
             class: _.get(node, fields.classField),
             disabled: node.disabled,
-            icon: getEvaluatedData(node, {field: this.itemicon, bindExpression: this.binditemicon}, context),
-            id: getEvaluatedData(node, {field: this.itemid, bindExpression: this.binditemid}, context),
-            label: getEvaluatedData(node, {field: this.itemlabel, bindExpression: this.binditemlabel}, context),
-            link: getValidLink(getEvaluatedData(node, {field: this.itemlink, bindExpression: this.binditemlink}, context)),
-            target: getValidLink(getEvaluatedData(node, {field: this.itemtarget, bindExpression: this.binditemtarget}, context)),
+            icon: getEvaluatedData(node, {field: this.itemicon, bindExpression: this.binditemicon}, context) || _.get(node, fields.iconField),
+            id: getEvaluatedData(node, {field: this.itemid, bindExpression: this.binditemid}, context) || _.get(node, fields.idField),
+            label: getEvaluatedData(node, {field: this.itemlabel, bindExpression: this.binditemlabel}, context) || _.get(node, fields.labelField),
+            link: getValidLink(getEvaluatedData(node, {field: this.itemlink, bindExpression: this.binditemlink}, context) || _.get(node, fields.linkField)),
+            target: getValidLink(getEvaluatedData(node, {field: this.itemtarget, bindExpression: this.binditemtarget}, context) || _.get(node, fields.targetField)),
             role: getEvaluatedData(node, {field: this.userrole, bindExpression: this.binduserrole}, context),
             isactive: getEvaluatedData(node, {field: this.isactive, bindExpression: this.bindisactive}, context),
             // older projects have display field & data field property for menu.
