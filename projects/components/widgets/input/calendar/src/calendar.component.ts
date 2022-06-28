@@ -142,7 +142,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             datesSet: this.viewRender.bind(this)
         }
     };
-    private view: string;
+    public view: string;
     private dayClass: Array<any> = [];
 
     // this function selects the default date given for the calendar
