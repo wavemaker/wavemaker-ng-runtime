@@ -654,7 +654,6 @@ export const getFnByExpr = (expr) => fnNameMap.get(expr)
 const fnExecutor = (expr, exprType) => {
     let fn = getFnByExpr(expr);
     if (!fn) {
-        console.warn("didn't find fn for the expr: ", expr, ". Falling back to runtime evaluation");
         return;
     }
     const usedPipes = fn.usedPipes || [];
