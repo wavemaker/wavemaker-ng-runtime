@@ -113,7 +113,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     private eventData;
     private events;
     private changesStack = [];
-    private invokeOnViewRenderback = _.debounce(() => this.invokeEventCallback('viewrender', { $view: this.calendarOptions }), 300);
 
     // calendarOptions to the calendar
     private calendarOptions: any = {
@@ -137,10 +136,8 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             eventDragStart: this.onEventChangeStart.bind(this),
             eventResize: this.eventResize.bind(this),
             eventClick: this.eventClick.bind(this),
-            select: this.select.bind(this),
-            eventDidMount: this.eventRender.bind(this),
-            datesSet: this.viewRender.bind(this)
-        }
+            eventDidMount: this.eventDidMount.bind(this),
+            viewDidMount: this.viewDidMount.bind(this)        }
     };
     public view: string;
     private dayClass: Array<any> = [];
@@ -234,8 +231,10 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         return filteredDates;
     }
 
-    private eventDrop($newData, $delta, $revertFunc, $event, $ui, $view) {
-        this.invokeEventCallback('eventdrop', {$event, $newData, $oldData: this.oldData, $delta, $revertFunc, $ui, $view});
+    private eventDrop(eventDropInfo) {
+        let newEventObj = this.convertEventObj(eventDropInfo.event);
+        let oldEventObj = this.convertEventObj(eventDropInfo.oldEvent);
+        this.invokeEventCallback('eventdrop', {$event: eventDropInfo.jsEvent, $newData: newEventObj, $oldData: oldEventObj, $delta: eventDropInfo.delta, $revertFunc: eventDropInfo.revert, $ui: {}, $view: eventDropInfo.view});
     }
 
     // Returns the default date when the datavalue is provided
@@ -253,37 +252,49 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         return 'fullcalendar';
     }
 
-    private select($selectionInfo) {
-        this.selecteddates = {start: getUTCDateTime($selectionInfo.start), end: getUTCDateTime($selectionInfo.end)};
-        this.selecteddata = this.setSelectedData($selectionInfo.start, $selectionInfo.end);
-        this.invokeEventCallback('select', {$start: $selectionInfo.start.valueOf(), $end: $selectionInfo.end.valueOf(), $view: $selectionInfo.view, $data: this.selecteddata});
+    /**
+     * this function is to convert the new event object recieved from fullcalendar lib v-5.0 to
+     * old event object in v-3.x
+     * this is done for backward compatibility
+     * @param eventObj event object as per new version (v5)
+     * @returns eventObj event object as oer the old version (v3)
+     */
+    private convertEventObj(eventObj) {
+        let newEventObj = {
+            start: moment(eventObj.start),
+            end: moment(eventObj.end)
+        }
+        Object.setPrototypeOf(newEventObj, eventObj);
+        return newEventObj;         
     }
 
-    private eventResize($newData, $delta, $revertFunc, $event, $ui, $view) {
-        this.invokeEventCallback('eventresize', {$event, $newData, $oldData: this.oldData, $delta, $revertFunc, $ui, $view});
+    private eventResize(eventResizeInfo) {
+        let newEventObj = this.convertEventObj(eventResizeInfo.event);
+        let oldEventObj = this.convertEventObj(eventResizeInfo.oldEvent);
+        this.invokeEventCallback('eventresize', {$event: eventResizeInfo.jsEvent, $newData: newEventObj, $oldData: oldEventObj, $delta: eventResizeInfo.delta, $revertFunc: eventResizeInfo.revert, $ui: {}, $view: eventResizeInfo.view});
     }
 
     private onEventChangeStart(event) {
         this.oldData = getClonedObject(event);
     }
 
-    private eventClick($data, $event, $view) {
-        this.invokeEventCallback('eventclick', {$event, $data, $view});
+    private eventClick(eventClickInfo) {
+        let eventObj = this.convertEventObj(eventClickInfo.event);
+        this.invokeEventCallback('eventclick', {$event: eventClickInfo.jsEvent, $data: eventObj, $view: eventClickInfo.view});
     }
 
-    private eventRender($data, $event, $view) {
+    private eventDidMount(event) {
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$element.find('.fc-list-table').addClass('table');
         }
-        this.invokeEventCallback('eventrender', {$event, $data, $view});
+        this.invokeEventCallback('eventrender', {$event: event.el, $data: event.event, $view: event.view});
     }
 
-    private viewRender($view) {
-        this.currentview = {start: moment($view.start).format(), end: moment($view.end).subtract(1, 'days').format()};
+    private viewDidMount(view) {
         if (this.calendartype === VIEW_TYPES.LIST) {
-            this.$element.find('.fc-list-table').addClass('table');
+            this.$fullCalendar.find('.fc-list-table').addClass('table');
         }
-        this.invokeEventCallback('viewrender', {$view});
+        this.invokeEventCallback('viewrender', {$view: view});
     }
 
     // update the calendar header options once the controls changes
