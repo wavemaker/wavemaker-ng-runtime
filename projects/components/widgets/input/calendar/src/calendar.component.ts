@@ -136,6 +136,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             eventDragStart: this.onEventChangeStart.bind(this),
             eventResize: this.eventResize.bind(this),
             eventClick: this.eventClick.bind(this),
+            select: this.select.bind(this),
             eventDidMount: this.eventDidMount.bind(this),
             viewDidMount: this.viewDidMount.bind(this)        }
     };
@@ -250,6 +251,12 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
     getLib() {
         return 'fullcalendar';
+    }
+
+    private select($selectionInfo) {
+        this.selecteddates = {start: getUTCDateTime($selectionInfo.start), end: getUTCDateTime($selectionInfo.end)};
+        this.selecteddata = this.setSelectedData($selectionInfo.start, $selectionInfo.end);
+        this.invokeEventCallback('select', {$start: $selectionInfo.start.valueOf(), $end: $selectionInfo.end.valueOf(), $view: $selectionInfo.view, $data: this.selecteddata});
     }
 
     /**
