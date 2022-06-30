@@ -299,7 +299,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
     private viewDidMount(view) {
         if (this.calendartype === VIEW_TYPES.LIST) {
-            this.$fullCalendar.find('.fc-list-table').addClass('table');
+            this.$element.find('.fc-list-table').addClass('table');
         }
         this.invokeEventCallback('viewrender', {$view: view});
     }
