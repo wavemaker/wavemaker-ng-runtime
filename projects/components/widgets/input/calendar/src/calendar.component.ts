@@ -155,7 +155,8 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
 
         this.$fullCalendar.gotoDate( moment(start)._d); // after selecting the date go to the date.
-        this.$fullCalendar.select(start, end);
+        
+        this.$fullCalendar.select(start.valueOf(), end.valueOf());
     }
 
     // changes the calendar view to the default date given for the calendar.
