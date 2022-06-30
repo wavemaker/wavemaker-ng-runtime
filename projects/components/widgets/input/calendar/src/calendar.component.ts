@@ -178,25 +178,26 @@ export class CalendarComponent extends StylableComponent implements AfterContent
      * @param monthVal, 1-12 value of month
      */
     public gotoMonth(monthVal) {
-        const presentDay = this.$fullCalendar.getDate();
+        let presentDay = this.$fullCalendar.getDate();
         const presentMonthVal = presentDay.getMonth();
+        presentDay = moment(presentDay);
         if (presentMonthVal < monthVal) {
-            this.$fullCalendar.gotoDate(presentDay.add(monthVal - presentMonthVal - 1, 'M'));
+            this.$fullCalendar.gotoDate(presentDay.add(monthVal - presentMonthVal - 1, 'M').valueOf());
         } else {
-            this.$fullCalendar.gotoDate(presentDay.subtract( presentMonthVal - monthVal + 1, 'M'));
+            this.$fullCalendar.gotoDate(presentDay.subtract( presentMonthVal - monthVal + 1, 'M').valueOf());
         }
     }
 
     // this function takes the calendar view to the a month ahead
     public gotoNextMonth() {
-        const presentDay = this.$fullCalendar.getDate();
-        this.$fullCalendar.gotoDate(presentDay.add(1, 'M'));
+        const presentDay = moment(this.$fullCalendar.getDate());
+        this.$fullCalendar.gotoDate(presentDay.add(1, 'M').valueOf());
     }
 
     // this function takes the calendar view to the a month before
     public gotoPrevMonth() {
-        const presentDay = this.$fullCalendar.getDate();
-        this.$fullCalendar.gotoDate(presentDay.subtract(1, 'M'));
+        const presentDay = moment(this.$fullCalendar.getDate());
+        this.$fullCalendar.gotoDate(presentDay.subtract(1, 'M').valueOf());
     }
 
 
