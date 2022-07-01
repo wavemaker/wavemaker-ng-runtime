@@ -262,6 +262,13 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     /**
+     *  this functions unselects all the selections in calendar
+     */
+    public unselect() {
+        this.$fullCalendar.unselect();
+    }
+
+    /**
      * this function is to convert the new event object recieved from fullcalendar lib v-5.0 to
      * old event object in v-3.x
      * this is done for backward compatibility
