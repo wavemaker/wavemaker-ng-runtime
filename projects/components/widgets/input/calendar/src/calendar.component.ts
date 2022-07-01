@@ -420,6 +420,8 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
                 this.renderEventDataSet();
                 break;
+            case 'show':
+                this.$fullCalendar?.changeView(this.getViewType(this.view ? this.view : 'dayGridMonth'));
         }
     }
 
@@ -538,6 +540,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
     redraw() {
         this.updateCalendarOptions('render');
+        this.$fullCalendar?.changeView(this.getViewType(this.view ? this.view : 'dayGridMonth'));
     }
 
     // on date change invoke the select event, and if date has event on it then invoke the event click.
