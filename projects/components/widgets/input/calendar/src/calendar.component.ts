@@ -299,11 +299,12 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         this.invokeEventCallback('eventrender', {$event: event.el, $data: event.event, $view: event.view});
     }
 
-    private viewDidMount(view) {
+    private viewDidMount($view) {
+        this.currentview = {start: moment($view.view.activeStart).format("YYYY-MM-DD"), end: moment($view.view.activeEnd).format("YYYY-MM-DD")};
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$element.find('.fc-list-table').addClass('table');
         }
-        this.invokeEventCallback('viewrender', {$view: view});
+        this.invokeEventCallback('viewrender', {$view: $view});
     }
 
     // update the calendar header options once the controls changes
