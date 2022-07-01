@@ -235,9 +235,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     private eventDrop(eventDropInfo) {
-        let newEventObj = this.convertEventObj(eventDropInfo.event);
-        let oldEventObj = this.convertEventObj(eventDropInfo.oldEvent);
-        this.invokeEventCallback('eventdrop', {$event: eventDropInfo.jsEvent, $newData: newEventObj, $oldData: oldEventObj, $delta: eventDropInfo.delta, $revertFunc: eventDropInfo.revert, $ui: {}, $view: eventDropInfo.view});
+        this.invokeEventCallback('eventdrop', {$event: eventDropInfo.jsEvent, $newData: eventDropInfo.event, $oldData: eventDropInfo.oldEvent, $delta: eventDropInfo.delta, $revertFunc: eventDropInfo.revert, $ui: {}, $view: eventDropInfo.view});
     }
 
     // Returns the default date when the datavalue is provided
@@ -269,25 +267,19 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     /**
-     * this function is to convert the new event object recieved from fullcalendar lib v-5.0 to
-     * old event object in v-3.x
+     * this function is to add extendedProps data to the data object.
      * this is done for backward compatibility
      * @param eventObj event object as per new version (v5)
-     * @returns eventObj event object as oer the old version (v3)
+     * @returns _eventMetadata event object as oer the old version (v3)
      */
     private convertEventObj(eventObj) {
-        let newEventObj = {
-            start: moment(eventObj.start),
-            end: moment(eventObj.end)
-        }
-        Object.setPrototypeOf(newEventObj, eventObj);
-        return newEventObj;         
+        const _eventMetadata = eventObj.extendedProps._eventMetadata;
+        Object.setPrototypeOf(_eventMetadata, eventObj);
+        return _eventMetadata;     
     }
 
     private eventResize(eventResizeInfo) {
-        let newEventObj = this.convertEventObj(eventResizeInfo.event);
-        let oldEventObj = this.convertEventObj(eventResizeInfo.oldEvent);
-        this.invokeEventCallback('eventresize', {$event: eventResizeInfo.jsEvent, $newData: newEventObj, $oldData: oldEventObj, $delta: eventResizeInfo.delta, $revertFunc: eventResizeInfo.revert, $ui: {}, $view: eventResizeInfo.view});
+        this.invokeEventCallback('eventresize', {$event: eventResizeInfo.jsEvent, $newData: eventResizeInfo.event, $oldData: eventResizeInfo.oldEvent, $delta: eventResizeInfo.delta, $revertFunc: eventResizeInfo.revert, $ui: {}, $view: eventResizeInfo.view});
     }
 
     private onEventChangeStart(event) {
@@ -300,10 +292,11 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     private eventDidMount(event) {
+        let eventObj = this.convertEventObj(event.event);
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$element.find('.fc-list-table').addClass('table');
         }
-        this.invokeEventCallback('eventrender', {$event: event.el, $data: event.event, $view: event.view});
+        this.invokeEventCallback('eventrender', {$event: event.el, $data: eventObj, $view: event.view});
     }
 
     private viewDidMount($view) {
@@ -483,6 +476,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         };
 
         eventSource.forEach((obj) => {
+            obj._eventMetadata = _.clone(obj);
             _.mapKeys(properties,  (value, key) => {
                 let objVal;
                 if (key === 'title') {
