@@ -236,7 +236,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     private eventDrop(eventDropInfo) {
-        this.invokeEventCallback('eventdrop', {$event: eventDropInfo.jsEvent, $newData: eventDropInfo.event, $oldData: eventDropInfo.oldEvent, $delta: eventDropInfo.delta, $revertFunc: eventDropInfo.revert, $ui: {}, $view: eventDropInfo.view});
+        let newDataObj = this.convertEventObjForOldAndNewData(eventDropInfo.event);
+        let oldDataObj = this.convertEventObjForOldAndNewData(eventDropInfo.oldEvent);
+        this.invokeEventCallback('eventdrop', {$event: eventDropInfo.jsEvent, $newData: newDataObj, $oldData: oldDataObj, $delta: eventDropInfo.delta, $revertFunc: eventDropInfo.revert, $ui: {}, $view: eventDropInfo.view});
     }
 
     // Returns the default date when the datavalue is provided
@@ -271,7 +273,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
      * this function is to add extendedProps data to the data object.
      * this is done for backward compatibility
      * @param eventObj event object as per new version (v5)
-     * @returns _eventMetadata event object as oer the old version (v3)
+     * @returns _eventMetadata event object as per the old version (v3)
      */
     private convertEventObj(eventObj) {
         const _eventMetadata = eventObj.extendedProps._eventMetadata;
@@ -279,8 +281,22 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         return _eventMetadata;     
     }
 
+    /**
+     *  this function is to add extendedProps data to the data object exluding start end title allDay objects if the key name matches.
+     * * this is done for backward compatibility
+     * @param eventObj event object as per new version (v5)
+     * @returns data event object as per the old version (v3)
+     */
+    private convertEventObjForOldAndNewData(eventObj) {
+        const _eventMetadata = eventObj.extendedProps;
+        _.extend(eventObj, _eventMetadata);
+        return eventObj;     
+    }
+
     private eventResize(eventResizeInfo) {
-        this.invokeEventCallback('eventresize', {$event: eventResizeInfo.jsEvent, $newData: eventResizeInfo.event, $oldData: eventResizeInfo.oldEvent, $delta: eventResizeInfo.delta, $revertFunc: eventResizeInfo.revert, $ui: {}, $view: eventResizeInfo.view});
+        let newDataObj = this.convertEventObjForOldAndNewData(eventResizeInfo.event);
+        let oldDataObj = this.convertEventObjForOldAndNewData(eventResizeInfo.oldEvent);
+        this.invokeEventCallback('eventresize', {$event: eventResizeInfo.jsEvent, $newData: newDataObj, $oldData: oldDataObj, $delta: eventResizeInfo.delta, $revertFunc: eventResizeInfo.revert, $ui: {}, $view: eventResizeInfo.view});
     }
 
     private onEventChangeStart(event) {
