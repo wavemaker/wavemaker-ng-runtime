@@ -147,9 +147,10 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     // this function selects the default date given for the calendar
     selectDate() {
         let start, end;
-        if (_.isObject(this.datavalue)) {
-            start = this.datavalue.start;
-            end   = this.datavalue.end;
+        // checks if datavalue is an object and not a Date object 
+        if (_.isObject(this.datavalue) && !_.isDate(this.datavalue)) {
+            start = moment(this.datavalue.start);
+            end   = moment(this.datavalue.end);
         } else {
             start = moment(this.datavalue);
             end   = moment(this.datavalue).add(1, 'day').startOf('day');
