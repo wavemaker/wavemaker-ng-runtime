@@ -138,7 +138,8 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             eventClick: this.eventClick.bind(this),
             select: this.select.bind(this),
             eventDidMount: this.eventDidMount.bind(this),
-            viewDidMount: this.viewDidMount.bind(this)        }
+            viewDidMount: this.viewDidMount.bind(this),
+            datesSet: this.datesSet.bind(this)        }
     };
     public view: string;
     private dayClass: Array<any> = [];
@@ -300,11 +301,18 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     private viewDidMount($view) {
-        this.currentview = {start: moment($view.view.activeStart).format("YYYY-MM-DD"), end: moment($view.view.activeEnd).format("YYYY-MM-DD")};
         if (this.calendartype === VIEW_TYPES.LIST) {
             this.$element.find('.fc-list-table').addClass('table');
         }
         this.invokeEventCallback('viewrender', {$view: $view});
+    }
+
+    /**
+     * This function gets called when the view of the calendar changes.
+     * @param data contains the start end data of the calendar view.
+     */
+    private datesSet(data) {
+        this.currentview = {start: moment(data.start).format("YYYY-MM-DD"), end: moment(data.end).format("YYYY-MM-DD")};
     }
 
     // update the calendar header options once the controls changes
