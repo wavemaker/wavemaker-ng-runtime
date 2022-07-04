@@ -368,7 +368,7 @@ function constructURLForImplicitOrPKCE(providerId, providerInfo, requestSourceTy
     const commonUrl = providerInfo.authorizationUrl + connector + 'client_id=' + clientId + '&redirect_uri=' + redirectUri + '&state=' + encodeURIComponent(JSON.stringify(state)) + '&scope=' + encodeURIComponent(scopes);
     let url;
     if (flow === implicitIdentifier) {
-        url = commonUrl + '&response_type=token';
+        url = commonUrl + '&response_type=' + providerInfo.responseType;
     } else {
         url = commonUrl + '&response_type=code&code_challenge=' + code_challenge + '&code_challenge_method=' + _.get(providerInfo, 'oAuth2Pkce.challengeMethod');
     }
