@@ -489,7 +489,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         //WMS-22412 : change calender's view based on the configuration set from studio
         setTimeout(() => {
             this.$fullCalendar.changeView(this.getViewType(this.view ? this.view : 'dayGridMonth'));
-        });
+        },50);
     }
 
     // constructs the calendar dataset by mapping the eventstart, eventend, eventtitle etc.,
