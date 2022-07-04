@@ -277,6 +277,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
      * @returns _eventMetadata event object as per the old version (v3)
      */
     private convertEventObj(eventObj) {
+        if (!eventObj.extendedProps._eventMetadata) {
+            return eventObj;
+        }
         const _eventMetadata = eventObj.extendedProps._eventMetadata;
         Object.setPrototypeOf(_eventMetadata, eventObj);
         return _eventMetadata;     
