@@ -56,7 +56,7 @@ export class LocalDataProvider implements IDataProvider {
                             a = _.toLower(a);
                             queryText = _.toLower(queryText);
                         }
-                        return this.applyFilter(a, queryText);
+                        return this.applyFilter(a, queryText, matchMode);
                     });
                 } else {
                     filteredData = _.filter(entries, entry => {
