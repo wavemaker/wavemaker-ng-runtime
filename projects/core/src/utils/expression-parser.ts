@@ -194,7 +194,7 @@ class ASTCompiler {
         const ast = this.cAst;
         const stmts = this.cStmts;
         const k = this.build(ast.key, stmts);
-        const o = this.build(ast.obj, stmts);
+        const o = this.build(ast.receiver, stmts);
         const v = this.createVar();
         stmts.push(`${v}=${o}&&${o}[${k}]`);
         return v;
