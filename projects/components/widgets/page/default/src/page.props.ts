@@ -5,10 +5,6 @@ export const registerProps = () => {
         'wm-page',
         new Map(
             [
-                ['cache', {value: false, ...PROP_BOOLEAN}],
-                ['refreshdataonattach', {value: true, ...PROP_BOOLEAN}],
-                ['pagetitle', PROP_STRING],
-                ['hint', PROP_STRING]
             ]
         )
     );

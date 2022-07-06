@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 
 import { $invokeWatchers, AbstractI18nService, AbstractNavigationService, App, noop, Viewport, ScriptLoaderService, UtilsService } from '@wm/core';
 import { PartialDirective, WidgetRef} from '@wm/components/base';
-import { PageDirective } from '@wm/components/page';
+import {PageDirective, PageInfoDirective} from '@wm/components/page';
 import {PrefabDirective} from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
 
@@ -34,7 +34,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     i18nService: AbstractI18nService;
     appLocale: any;
     @ViewChild(PartialDirective) partialDirective;
-    pageDirective: PageDirective;
+    pageInfoDirective: PageInfoDirective;
     Prefab: PrefabDirective;
     scriptLoaderService: ScriptLoaderService;
     Viewport: Viewport;
@@ -76,10 +76,10 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             this.pageParams = this.containerWidget.partialParams;
         });
 
-        this.pageDirective = this.injector.get(PageDirective, null);
-        if (this.pageDirective) {
-            this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
-            this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
+        this.pageInfoDirective = this.injector.get(PageInfoDirective, null);
+        if (this.pageInfoDirective) {
+            this.registerDestroyListener(this.pageInfoDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
+            this.registerDestroyListener(this.pageInfoDirective.subscribe('detach', () => this.ngOnDetach()));
         }
 
         super.init();

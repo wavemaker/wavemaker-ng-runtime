@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 
 import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers, Viewport } from '@wm/core';
 import { WidgetRef} from '@wm/components/base';
-import { PageDirective } from '@wm/components/page';
+import {PageDirective, PageInfoDirective} from '@wm/components/page';
 import { PrefabContainerDirective } from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
 
@@ -28,7 +28,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     @ViewChild(PrefabContainerDirective) prefabContainerDirective;
     scriptLoaderService: ScriptLoaderService;
     compileContent = false;
-    pageDirective: PageDirective;
+    pageInfoDirective: PageInfoDirective;
     Viewport: Viewport;
 
     destroy$ = new Subject();
@@ -53,10 +53,10 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
             this.getContainerWidgetInjector().view.component.registerFragment();
         }
 
-        this.pageDirective = this.injector.get(PageDirective, null);
-        if (this.pageDirective) {
-            this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
-            this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
+        this.pageInfoDirective = this.injector.get(PageInfoDirective, null);
+        if (this.pageInfoDirective) {
+            this.registerDestroyListener(this.pageInfoDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
+            this.registerDestroyListener(this.pageInfoDirective.subscribe('detach', () => this.ngOnDetach()));
         }
 
         this.initUserScript();

@@ -2,7 +2,7 @@ import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive 
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { isAndroid, isIos, Viewport, ScriptLoaderService } from '@wm/core';
-import { PageDirective } from '@wm/components/page';
+import { PageDirective, PageInfoDirective } from '@wm/components/page';
 
 import {Subject, Subscription} from 'rxjs';
 
@@ -48,6 +48,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     startupVariablesLoaded = false;
     pageTransitionCompleted = false;
     @ViewChild(PageDirective) pageDirective;
+    @ViewChild(PageInfoDirective) pageInfoDirective;
     $page;
     scriptLoaderService: ScriptLoaderService;
     Viewport: Viewport;
@@ -203,7 +204,13 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     private loadScripts() {
         return new Promise<void>((resolve) => {
-            const scriptsRequired = this.pageDirective && this.pageDirective.$element.attr('scripts-to-load');
+            let scriptsRequired;
+            if(isMobileApp()) {
+                scriptsRequired = this.pageDirective && this.pageDirective.$element.attr('scripts-to-load');
+            } else {
+                scriptsRequired = this.pageInfoDirective && this.pageInfoDirective.$element.attr('scripts-to-load');
+            }
+
             if (scriptsRequired) {
                 this.scriptLoaderService
                     .load(...scriptsRequired.split(','))
@@ -324,7 +331,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     onPageContentReady() {}
 
     canReuse() {
-        return !!(this.pageDirective && this.pageDirective.cache);
+        return !!(this.pageInfoDirective && this.pageInfoDirective.cache);
     }
 
     mute() {
@@ -352,7 +359,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.unmute();
         // expose current page widgets on app
         (this.App as any).Widgets = Object.create(this.Widgets);
-        if(this.pageDirective && this.pageDirective.refreshdataonattach) {
+        if(this.pageInfoDirective && this.pageInfoDirective.refreshdataonattach) {
             const refresh = v => { v && v.startUpdate && v.invoke && v.invoke(); };
             _.each(this.Variables, refresh);
             _.each(this.Actions, refresh);
