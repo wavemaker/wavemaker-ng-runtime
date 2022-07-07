@@ -370,7 +370,7 @@ export class LiveVariableUtils {
                 paramValue;
             // If value is an empty array, do not generate the query
             // If values is NaN and number type, do not generate query for this field
-            if ((isValArray && _.isEmpty(value)) || (!isValArray && isNaN(value) && (isNumberType(fieldValue.attributeType))) || (!isValArray && (isNaN(value) && !moment(value).isValid() && isDateTimeType(_.toLower(fieldValue.attributeType))))) {
+            if ((isValArray && _.isEmpty(value)) || (!isValArray && isNaN(value) && (isNumberType(fieldValue.attributeType))) || (!isValArray && (isNaN(value) && !moment(value).isValid() && !moment(value, 'HH:mm:ss').isValid() && isDateTimeType(_.toLower(fieldValue.attributeType))))) {
                 return;
             }
             if (isValArray) {
@@ -437,7 +437,7 @@ export class LiveVariableUtils {
         if ((isValArray && _.isEmpty(value)) ||
             (isValArray && _.some(value, val => (_.isNull(val) || _.isNaN(val) || val === ''))) ||
             (!isValArray && (isNaN(value) && (isNumberType(fieldValue.attributeType)))) ||
-            (!isValArray && (isNaN(value) && !moment(value).isValid() && isDateTimeType(_.toLower(fieldValue.attributeType))))) {
+            (!isValArray && (isNaN(value) && !moment(value).isValid() && !moment(value, 'HH:mm:ss').isValid() && isDateTimeType(_.toLower(fieldValue.attributeType))))) {
             return;
         }
         if (isValArray) {
