@@ -93,15 +93,18 @@ const addMobileSpecificStyles = async (deployUrl) => {
 }
 
 const addScriptForWMStylesPath = (wm_styles_path) => {
-    let styleType = wm_styles_path.split(".").pop();
-    if(styleType==="css"){
-        $("head").append(
-            `<link rel="stylesheet" type="text/css" href="${wm_styles_path}"/>`
-        );
-    } else {
-        $("body").append(
-            `<script type="text/javascript" defer="true" src="${wm_styles_path}"></script>`
-        );
+    // wm_styles_path will not be present for mobile apps
+    if (wm_styles_path) {
+        let styleType = wm_styles_path.split(".").pop();
+        if(styleType==="css"){
+            $("head").append(
+                `<link rel="stylesheet" type="text/css" href="${wm_styles_path}"/>`
+            );
+        } else {
+            $("body").append(
+                `<script type="text/javascript" defer="true" src="${wm_styles_path}"></script>`
+            );
+        }
     }
     $("head").append(
         `<link rel="stylesheet" type="text/css" media="print" href="print.css"/>`
