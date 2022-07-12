@@ -629,7 +629,7 @@ $.widget('wm.datatable', {
             innerTmpl,
             classes = this.options.cssClassNames.tableCell + ' ' + (colDef.class || ''),
             colExpression = colDef.customExpression,
-            styles = "text-align: ' + colDef.textAlignment + ';position: relative;"
+            styles = "text-align: " + colDef.textAlignment + ";position: relative;"
 
         $htm = $('<td class="' + classes + '" data-col-id="' + colId + '"></td>');
         this._setStyles($htm, styles);

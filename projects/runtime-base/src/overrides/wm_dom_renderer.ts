@@ -241,7 +241,6 @@ class WMDefaultDomRenderer2 implements Renderer2 {
       }
     } else {
       if (name === 'style') {
-        console.warn('-----setting styles from WMDomRendere2')
         this.resetStyles(el);
         this.applyStyles(el, value);
       } else {
