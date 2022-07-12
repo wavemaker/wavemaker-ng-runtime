@@ -477,10 +477,11 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         super.ngAfterViewInit();
         const calendarEl = this._calendar.nativeElement;
         const FullCalendar = window['FullCalendar'];
-        this.invokeEventCallback('beforerender', {'$event' : {}});
         const calendar = new FullCalendar.Calendar(calendarEl, this.calendarOptions.calendar);
-        calendar.render();
         this.$fullCalendar =  calendar;
+        this.invokeEventCallback('beforerender', {'$event' : {}});
+        calendar.render();
+       
         // if the changes are already stacked before calendar renders then execute them when needed
         if (this.changesStack.length) {
             this.changesStack.forEach((changeObj) => {
@@ -544,7 +545,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
      * @param options
      */
     overrideDefaults(options) {
-        _.extend(this.calendarOptions.calendar, options);
+        if (_.isObject(options)) {
+            Object.entries(options).map(option => this.$fullCalendar.setOption(option[0], option[1]));
+        }
     }
 
     /**
@@ -668,7 +671,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             _.each( self.dataSetEvents.events, function( event) {
                 self.$fullCalendar.addEvent(event);
             });
-            self.$fullCalendar.render();
         });
     }
 }
