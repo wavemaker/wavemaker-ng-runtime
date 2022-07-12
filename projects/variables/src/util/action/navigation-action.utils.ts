@@ -1,5 +1,7 @@
 import { navigationService } from '../variable/variables.utils';
 
+declare const _;
+
 /**
  * Handles variable navigation operations
  * @param variable
@@ -10,9 +12,13 @@ export const navigate = (variable, options) => {
     let viewName;
     const pageName = variable.dataBinding.pageName || variable.pageName,
         operation = variable.operation,
-        urlParams = variable.dataSet;
-
+        urlParams = _.clone(variable.dataSet),
+        cacheable = _.isNil(options?.cacheable) ? variable.cacheable : options.cacheable;
     options = options || {};
+
+    if (!_.isNil(cacheable) && cacheable !== 'default') {
+        urlParams['_cache_page'] = cacheable;
+    }
 
     /* if operation is goToPage, navigate to the pageName */
     switch (operation) {
@@ -23,7 +29,8 @@ export const navigate = (variable, options) => {
             navigationService.goToPage(pageName, {
                 transition: variable.pageTransitions,
                 $event: options.$event,
-                urlParams: urlParams
+                urlParams: urlParams,
+                cacheable: variable.cacheable
             });
             break;
         case 'gotoView':
