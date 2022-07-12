@@ -926,6 +926,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         super.ngAfterViewInit();
         this.containerTarget = getContainerTargetClass(this.nativeElement);
         this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
+
+        // this mobileinput width varies in ios hence setting width here.
+        let mobileInput = this.getMobileInput();
+        if (mobileInput) {
+            mobileInput.style.width = mobileInput.parentElement.clientWidth + 'px';
+        }
     }
 
     ngOnDestroy() {

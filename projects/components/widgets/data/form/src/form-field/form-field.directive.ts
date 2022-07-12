@@ -423,7 +423,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             // WMS-22456: _clicktriggeredByUser checks when user selects datetimetype from picker, mark the field as touched to show validation errors in mobile
 
             if (this.$element.find('.active').length > 0 || this.form.touched) {
-                if (this._triggeredByUser || (isMobileApp() && this._clicktriggeredByUser && isDateTimeType(this.widgettype))) {
+                if (this._triggeredByUser || (isMobile() && this._clicktriggeredByUser && isDateTimeType(this.widgettype))) {
                     this.ngform.controls[this._fieldName].markAsTouched();
                 }
                 this.fieldValidations.setCustomValidationMessage();
