@@ -45,6 +45,9 @@ export class LRUCache<T> {
     }
 
     public set(key: string, dataToCache: T): void {
+        if (_.isNil(dataToCache)) {
+            return;
+        }
         const cachedData = {
             instance: dataToCache,
             lastAccessedTime: Date.now()
