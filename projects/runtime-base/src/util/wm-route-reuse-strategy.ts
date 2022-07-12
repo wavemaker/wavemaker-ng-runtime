@@ -22,6 +22,7 @@ import { LRUCache } from '@wm/core';
 
 declare const _;
 
+export const CACHE_PAGE = '_cache_page';
 export const MAX_CACHE_SIZE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_SIZE';
 export const MAX_CACHE_AGE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_AGE';
 
@@ -30,7 +31,8 @@ class WmDefaultRouteReuseStrategy {
     private cache: LRUCache<DetachedRouteHandle>;
     private currentRouteKey: string;
     private paramsToIgnore = [
-        'wm_state' // state persistence
+        'wm_state', // state persistence,
+        CACHE_PAGE // to use page cache
     ];
 
     constructor(private maxCacheSize: number, private maxCacheAge: number) {
@@ -54,7 +56,7 @@ class WmDefaultRouteReuseStrategy {
         if (route.data.pageName && route.routeConfig.path === '') {
             pageName = route.data.pageName;
         }
-        return pageName && (pageName + '?' + queryParams);
+        return pageName && (pageName + (queryParams ? `?${queryParams}`: ''));
     }
 
     protected getSize = (obj: object | null): number =>
@@ -78,23 +80,41 @@ class WmDefaultRouteReuseStrategy {
             return false;
         }
     }
+
+    private isCacheEnabled(route: ActivatedRouteSnapshot, defaultValue: boolean) {
+        const canReuse = route.queryParams[CACHE_PAGE];
+        if (!_.isNil(canReuse)) {
+            return (canReuse === 'true' || canReuse === true);
+        }
+        return defaultValue;
+    }
+    
     // DefaultRouteReuseStrategy : Begin
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
-        return !!route.data['__wm_page_reuse'];
+        const key = this.getKey(route);
+        if (this.isCacheEnabled(route, !!route.data[CACHE_PAGE])) {
+            return true;
+        }
+        this.cache.delete(key);
+        return false;
     }
 
     shouldAttach(route: ActivatedRouteSnapshot): boolean {
         const key = this.getKey(route);
         this.currentRouteKey = key;
-        return this.cache.has(key);
+        const cachedHandle = this.cache.get(key) as DetachedRouteHandle;
+        if (cachedHandle && this.isCacheEnabled(route, !!(cachedHandle[CACHE_PAGE]))) {
+            return true;
+        }
+        this.cache.delete(key);
+        return false;
     }
 
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
-        if(!!route.data['__wm_page_reuse']) {
+        if (handle) {
             const key = this.getKey(route);
-            if(key) {
-                this.cache.set(key, handle);
-            }
+            handle[CACHE_PAGE] = !!route.data[CACHE_PAGE];
+            this.cache.set(key, handle);
         }
     }
 
