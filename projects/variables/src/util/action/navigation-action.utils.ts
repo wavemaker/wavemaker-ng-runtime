@@ -1,3 +1,4 @@
+import { isString } from '@wm/core';
 import { navigationService } from '../variable/variables.utils';
 
 declare const _;
@@ -16,7 +17,7 @@ export const navigate = (variable, options) => {
         cacheable = _.isNil(options?.cacheable) ? variable.cacheable : options.cacheable;
     options = options || {};
 
-    if (!_.isNil(cacheable) && cacheable !== 'default') {
+    if (!_.isNil(cacheable) && (!isString(cacheable) || cacheable.trim() !== '')) {
         urlParams['_cache_page'] = cacheable;
     }
 
