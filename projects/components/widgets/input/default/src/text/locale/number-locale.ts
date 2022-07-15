@@ -451,7 +451,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             return false;
         }
         // comma cannot be entered consecutively
-        if (_.includes(inputValue, ',') && inputValue[inputValue.length - 1] === ',') {
+        if (_.includes(inputValue, ',') && inputValue[inputValue.length - 1] === ',' && $event.key === ',') {
             return false;
         }
 

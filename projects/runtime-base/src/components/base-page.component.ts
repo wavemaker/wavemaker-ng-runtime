@@ -24,6 +24,7 @@ import { commonPartialWidgets } from './base-partial.component';
 import { VariablesService } from '@wm/variables';
 import { AppManagerService } from '../services/app.manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
+import { CACHE_PAGE } from '../util/wm-route-reuse-strategy';
 
 declare const $, _;
 
@@ -283,7 +284,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     ngAfterViewInit(): void {
-        this.route.snapshot.data['__wm_page_reuse'] = this.canReuse();
+        this.route.snapshot.data[CACHE_PAGE] = this.canReuse();
         if (this.pageDirective) {
             this.$page = this.pageDirective.$element.parent();
             if (isIos()) {
@@ -342,7 +343,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     ngOnAttach() {
-        this.route.snapshot.data['__wm_page_reuse'] = this.canReuse();
+        this.route.snapshot.data[CACHE_PAGE] = this.canReuse();
         this.registerPageParams();
         this.App.lastActivePageName = this.App.activePageName;
         this.App.activePageName = this.pageName;
