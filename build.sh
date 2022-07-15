@@ -133,8 +133,8 @@ ngBuild() {
     local ngModuleName=$3;
     buildNeeded ${bundle} ${sourceLocation}
     if [[ "$?" -ne 0 ]]; then
-        echo "--------------------prod build--------------------"
-        execCommand ng-build ${ngModuleName} "$NG build --prod $ngModuleName"
+        echo "--------------------Production Build--------------------"
+        execCommand ng-build ${ngModuleName} "$NG build --configuration production $ngModuleName"
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
         fi
