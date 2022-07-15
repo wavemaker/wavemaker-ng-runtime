@@ -214,9 +214,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             const maxDate = moment(getDateObj(this.maxdate)).startOf('day').toDate();
             if (this.mindate && newVal < minDate) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
+                this.invokeOnChange(this.datavalue, undefined, false);
+                if (isNativePicker && getFormattedDate(this.datePipe, minDate, this.datepattern) === displayValue) {
+                    return $($event.target).val(displayValue);
+                }
                 this.dateNotInRange = true;
                 this.validateType = 'mindate';
-                this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
             if (this.maxdate && newVal > maxDate) {
