@@ -635,14 +635,14 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     /**
      * After the host page is attached from cache, this function is called.
      */
-    public ngOnAttach() {
+    public ngOnAttach() {debugger;
         this.isAttached = true;
     }
 
     /**
      * Before the host page is detached from dom and stored in cache,  this function is called.
      */
-    public ngOnDetach() {
+    public ngOnDetach() {debugger;
         this.isAttached = false;
     }
 

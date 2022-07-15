@@ -47,7 +47,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     appLocale: any;
     startupVariablesLoaded = false;
     pageTransitionCompleted = false;
-    @ViewChild(PageDirective) pageDirective;
+    pageDirective: PageDirective;
     @ViewChild(PageInfoDirective) pageInfoDirective;
     $page;
     scriptLoaderService: ScriptLoaderService;
@@ -71,6 +71,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.i18nService = this.injector.get(AbstractI18nService);
         this.router = this.injector.get(Router);
         this.Viewport = this.injector.get(Viewport);
+        this.pageDirective = this.injector.get(PageDirective);
 
         this.initUserScript();
 
@@ -198,6 +199,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     invokeOnReady() {
         this.onReady();
+        this.appManager.notify('highlightActiveLink', {'pageName' : this.pageName});
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
         (this.App.onPageReady || noop)(this.pageName, this);
     }
@@ -369,6 +371,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
             _.each(this.Widgets, w => w && w.ngOnAttach && w.ngOnAttach());
             this.appManager.notify('pageAttach', {'name' : this.pageName, instance: this});
         });
+        this.appManager.notify('highlightActiveLink', {'pageName' : this.pageName});
     }
 
     ngOnDetach() {

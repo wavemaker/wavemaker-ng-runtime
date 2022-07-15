@@ -15,14 +15,14 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-info'};
     ],
     exportAs: 'wmPageInfo'
 })
-export class PageInfoDirective extends StylableComponent implements AfterViewInit, OnDestroy {debugger;
+export class PageInfoDirective extends StylableComponent implements AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
 
     private _eventNotifier = new EventNotifier(false);
     public refreshdataonattach = true;
     public pagetitle: string;
 
-    onPropertyChange(key: string, nv: any, ov?: any) {debugger;
+    onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'pagetitle') {
             this.titleService.setTitle(nv);
         } else {
@@ -31,7 +31,7 @@ export class PageInfoDirective extends StylableComponent implements AfterViewIni
     }
 
     constructor(inj: Injector, private titleService: Title, private viewport: Viewport) {
-        super(inj, WIDGET_CONFIG);debugger;
+        super(inj, WIDGET_CONFIG);
     }
 
     /**
