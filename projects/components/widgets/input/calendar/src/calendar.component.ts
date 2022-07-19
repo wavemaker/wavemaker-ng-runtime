@@ -1,6 +1,6 @@
 import { DatePickerInnerComponent } from 'ngx-bootstrap/datepicker/datepicker-inner.component';
 
-import { AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Attribute, AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import {$watch, getClonedObject, getSessionStorageItem, AbstractI18nService, isMobileApp} from '@wm/core';
 
@@ -391,7 +391,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             _.mapKeys(properties,  (value, key) => {
                 let objVal;
                 if (key === 'title') {
-                    objVal = getEvaluatedData(obj, {expression: value}, this.viewParent);
+                    objVal = getEvaluatedData(obj, {field: value, bindExpression: this.bindeventitle}, this.viewParent);
                 } else if (key === 'allDay') {
                     objVal = !!_.get(obj, value);
                 } else {
@@ -423,7 +423,11 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         };
     }
 
-    constructor(inj: Injector, i18nService: AbstractI18nService) {
+    constructor(
+        inj: Injector,
+        i18nService: AbstractI18nService,
+        @Attribute('eventitle.bind') public bindeventitle,
+    ) {
         super(inj, WIDGET_CONFIG);
 
         this.mobileCalendar = isMobileApp();
@@ -542,6 +546,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
             this._datepickerInnerComponent = (this._datepicker as any)._datePicker;
             this.renderMobileView(moment(this.datavalue));
+            //[Todo-CSP]: either look for an alternative or generate this expression fn in page.comp
             this.registerDestroyListener(
                 $watch(
                     '_datepickerInnerComponent.datepickerMode',
