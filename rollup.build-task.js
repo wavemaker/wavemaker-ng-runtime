@@ -52,5 +52,71 @@ export default [
                 ignoreGlobal: true
             })
         ]
+    },
+    {
+        input: [
+            'libraries/core/esm2015/utils/expression-parser.js'
+        ],
+        output: {
+            file: 'dist/transpilation/expression-parser.cjs.js',
+            format: 'cjs'
+        },
+        plugins: [
+            multiEntry(),
+            nodeResolve({
+                jsnext: true,
+                main: true
+            }),
+            commonJS({
+                include: 'node_modules/**',
+                ignoreGlobal: true
+            })
+        ]
+    },
+    {
+        input: [
+            'libraries/components/base/esm2015/pipes/custom-pipes.js',
+            'libraries/components/base/esm2015/pipes/sanitize.pipe.js',
+            'libraries/components/base/esm2015/pipes/trust-as.pipe.js'
+        ],
+        output: {
+            file: 'dist/transpilation/all-pipes.es.js',
+            format: 'es'
+        },
+        plugins: [
+            multiEntry(),
+            nodeResolve({
+                jsnext: true,
+                main: true
+            }),
+            commonJS({
+                include: 'node_modules/**',
+                ignoreGlobal: true
+            })
+        ]
+    },
+    {
+        input: [
+            'libraries/runtime/base/esm2015/services/pipe-provider.service.js'
+        ],
+        output: {
+            file: 'dist/transpilation/pipe-provider.cjs.js',
+            format: 'cjs'
+        },
+        plugins: [
+            multiEntry(),
+            alias({
+                '@wm/components/base': 'dist/transpilation/all-pipes.es.js',
+                '@wm/core': 'libraries/core/fesm2015/index.js'
+            }),
+            nodeResolve({
+                jsnext: true,
+                main: true
+            }),
+            commonJS({
+                include: 'node_modules/**',
+                ignoreGlobal: true
+            })
+        ]
     }
 ]

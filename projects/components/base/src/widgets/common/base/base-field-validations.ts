@@ -18,7 +18,7 @@ const DEFAULT_VALIDATOR = {
 
 export class BaseFieldValidations {
     private hasValidators;
-    
+
     // Instance of the directive table-column, form-field..
     private instance;
     // Inline form widget
@@ -48,7 +48,7 @@ export class BaseFieldValidations {
             this.tableFieldType = tableFieldType;
         }
     }
-    
+
     // this method returns the collection of supported default validators
     private getDefaultValidators() {
         const _validator = [];
@@ -88,7 +88,7 @@ export class BaseFieldValidations {
         if (customValidator) {
             this.instance._validators.push(customValidator);
         }
-        
+
         if (this.widgetContext.ngform) {
             this.widgetControl.setValidators(this.instance._validators);
             const opt = {};
@@ -231,12 +231,13 @@ export class BaseFieldValidations {
     watchDefaultValidatorExpr(fn, key) {
         const watchName = `${this.instance.widgetId}_` + key + '_formField';
         $unwatch(watchName);
+        //[Todo-CSP]: Need clarity generate this expr fn if form is present in the page
         this.instance.registerDestroyListener($watch('boundFn(fn)', _.extend(this.instance, this.instance.viewParent), {fn}, (nv, ov) => {
             this.instance.widget[key] = nv;
             this.applyDefaultValidators();
         }, watchName));
     }
-    
+
     // invokes both custom sync validations and default validations.
     applyDefaultValidators() {
         const validators = this.getDefaultValidators();
