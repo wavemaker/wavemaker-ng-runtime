@@ -181,15 +181,16 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     // Expression to be evaluated in view mode of form field
-    evaluateExpr(object, displayExpr) {
-        if (!displayExpr) {
-            displayExpr = Object.keys(object)[0];
+    evaluateExpr(object, displayField, displayExpr) {
+        if (!displayExpr || !displayField) {
+            displayField = Object.keys(object)[0];
             // If dataset is not ready, display expression will not be defined
-            if (!displayExpr) {
+            if (!displayField) {
                 return;
             }
         }
         return getEvaluatedData(object, {
+            field: displayField,
             expression: displayExpr
         }, this.viewParent);
     }
@@ -198,16 +199,17 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     getDisplayExpr() {
         const caption = [];
         const value = this.value;
-        const displayExpr = this.displayexpression || this.displayfield || this.displaylabel;
+        const displayField = this.displayfield || this.displaylabel
+        const displayExpr = this.displayexpression;
         if (_.isObject(value)) {
             if (_.isArray(value)) {
                 _.forEach(value, obj => {
                     if (_.isObject(obj)) {
-                        caption.push(this.evaluateExpr(obj, displayExpr));
+                        caption.push(this.evaluateExpr(obj, displayField, displayExpr));
                     }
                 });
             } else {
-                caption.push(this.evaluateExpr(value, displayExpr));
+                caption.push(this.evaluateExpr(value, displayField, displayExpr));
             }
             return _.join(caption, ',');
         }

@@ -17,6 +17,8 @@ import {
     PropertyWrite
 } from '@angular/compiler';
 
+declare const _;
+
 const isString = v => typeof v === 'string';
 const isDef = v => v !== void 0;
 const ifDef = (v, d) => v === void 0 ? d : v;
@@ -431,10 +433,12 @@ class ASTCompiler {
         this.ast = this.cAst = this.stmts = this.cStmts = this.declarations = this.pipes = this.pipeNameVsIsPureMap = undefined;
     }
 
-    compile() {
+    compile(defOnly?) {
         this.extendCtxWithLocals();
         this.addReturnStmt(this.build(this.ast));
-
+        if (defOnly) {
+            return {fnBody: this.fnBody(), fnArgs: this.fnArgs(), pipes: this.pipes};
+        }
         const fn = new Function(this.fnArgs(), this.fnBody());
         let boundFn;
         if (this.exprType === ExpressionType.Binding) {
@@ -455,6 +459,20 @@ const nullPipe = () => {
     };
 };
 
+let _cspEnabled;
+const isCSPEnabled = () => {
+    if(typeof _cspEnabled !== 'undefined') {
+        return _cspEnabled;
+    }
+    try {
+        new Function();
+        _cspEnabled = false;
+    } catch(e) {
+        _cspEnabled = true;
+    }
+    return _cspEnabled;
+};
+
 let pipeProvider;
 
 export function setPipeProvider(_pipeProvider) {
@@ -466,7 +484,7 @@ enum ExpressionType {
     Action
 }
 
-export function $parseExpr(expr: string): ParseExprResult {
+export function $parseExpr(expr: string, defOnly?: boolean): ParseExprResult {
 
     if (!pipeProvider) {
         console.log('set pipe provider');
@@ -492,54 +510,98 @@ export function $parseExpr(expr: string): ParseExprResult {
     if (fn) {
         return fn;
     }
-    const parser = new Parser(new Lexer);
-    const ast = parser.parseBinding(expr, '',0);
+
     let boundFn;
+    if (!defOnly) {
+        boundFn = getFnForBindExpr(expr);
+    }
 
-    if (ast.errors.length) {
-        fn = noop;
-        boundFn = fn;
-    } else {
-        const pipeNameVsIsPureMap = pipeProvider.getPipeNameVsIsPureMap();
-        const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Binding, pipeNameVsIsPureMap);
-        fn = astCompiler.compile();
-        if (fn.usedPipes.length) {
-            const pipeArgs = [];
-            let hasPurePipe = false;
-            for (const [pipeName] of fn.usedPipes) {
-                const pipeInfo = pipeProvider.meta(pipeName);
-                let pipeInstance;
-                if (!pipeInfo) {
-                    pipeInstance = nullPipe;
-                } else {
-                    if (pipeInfo.pure) {
-                        hasPurePipe = true;
-                        pipeInstance = purePipes.get(pipeName);
-                    }
-
-                    if (!pipeInstance) {
-                        pipeInstance = pipeProvider.getInstance(pipeName);
-                    }
-
-                    if (pipeInfo.pure) {
-                        purePipes.set(pipeName, pipeInstance);
-                    }
-                }
-                pipeArgs.push(pipeInstance);
-            }
-
-            pipeArgs.unshift(hasPurePipe ? new Map() : undefined);
-            boundFn = fn.bind(undefined, ...pipeArgs);
+    // fallback to generate function in runtime. This will break if CSP is enabled
+    if (!boundFn) {
+        // If CSP enabled, function def not found from the generated fn expressions for the page.
+        // Handle bind expressions used internally inside WM components. e.g. wmAnchor used inside nav.comp.html
+        if (isCSPEnabled()) {
+            boundFn = function(ctx, locals) {
+                // handle internal bindings for wm widgets used inside a component
+                let _ctx = Object.assign({}, locals);
+                Object.setPrototypeOf(_ctx, ctx);
+                return _.get(_ctx, expr);
+            };
         } else {
-            boundFn = fn.bind(undefined, undefined);
+            const parser = new Parser(new Lexer);
+            const ast = parser.parseBinding(expr, '',0);
+
+            if (ast.errors.length) {
+                fn = noop;
+                boundFn = fn;
+            } else {
+                const pipeNameVsIsPureMap = pipeProvider.getPipeNameVsIsPureMap();
+                const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Binding, pipeNameVsIsPureMap);
+                fn = astCompiler.compile(defOnly);
+                if (defOnly) {
+                    return fn;
+                }
+
+                if (fn.usedPipes.length) {
+                    const pipeArgs = [];
+                    let hasPurePipe = false;
+                    for (const [pipeName] of fn.usedPipes) {
+                        const pipeInfo = pipeProvider.meta(pipeName);
+                        let pipeInstance;
+                        if (!pipeInfo) {
+                            pipeInstance = nullPipe;
+                        } else {
+                            if (pipeInfo.pure) {
+                                hasPurePipe = true;
+                                pipeInstance = purePipes.get(pipeName);
+                            }
+
+                            if (!pipeInstance) {
+                                pipeInstance = pipeProvider.getInstance(pipeName);
+                            }
+
+                            if (pipeInfo.pure) {
+                                purePipes.set(pipeName, pipeInstance);
+                            }
+                        }
+                        pipeArgs.push(pipeInstance);
+                    }
+
+                    pipeArgs.unshift(hasPurePipe ? new Map() : undefined);
+                    boundFn = fn.bind(undefined, ...pipeArgs);
+                } else {
+                    boundFn = fn.bind(undefined, undefined);
+                }
+            }
         }
     }
+
     exprFnCache.set(expr, boundFn);
 
     return boundFn;
 }
 
-export function $parseEvent(expr): ParseExprResult {
+function simpleFunctionEvaluator(expr, ctx, locals) {
+    let _ctx = Object.assign({}, locals);
+    Object.setPrototypeOf(_ctx, ctx);
+
+    let parts = expr.split('(');
+    let fnName = parts[0];
+    let computedFn = _.get(ctx, fnName);
+
+    if (computedFn) {
+        let args = parts[1].replace(')', '');
+        args = args.split(',');
+        let computedArgs = [];
+        args.forEach((arg)=> {
+            arg = arg && arg.trim();
+            computedArgs.push(_.get(_ctx, arg));
+        });
+        return computedFn.bind(_ctx)(...computedArgs);
+    }
+}
+
+export function $parseEvent(expr, defOnly?): ParseExprResult {
     if (!isString(expr)) {
         return noop;
     }
@@ -555,14 +617,93 @@ export function $parseEvent(expr): ParseExprResult {
     if (fn) {
         return fn;
     }
-    const parser = new Parser(new Lexer);
-    const ast = parser.parseAction(expr, '',0);
 
-    if (ast.errors.length) {
-        return noop;
+    if (!defOnly) {
+        fn = getFnForEventExpr(expr);
     }
-    const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Action);
-    fn = astCompiler.compile();
+
+    // fallback to generate function in runtime. This will break if CSP is enabled
+    if(!fn) {
+        if (isCSPEnabled()) {
+            fn = simpleFunctionEvaluator.bind(undefined, expr);
+        } else {
+            const parser = new Parser(new Lexer);
+            const ast = parser.parseAction(expr, '',0);
+
+            if (ast.errors.length) {
+                return noop;
+            }
+            const astCompiler = new ASTCompiler(ast.ast, ExpressionType.Action);
+            fn = astCompiler.compile(defOnly);
+        }
+    }
+
     eventFnCache.set(expr, fn);
     return fn;
+}
+
+const fnNameMap = new Map();
+
+export const registerFnByExpr = (expr, fn, usedPipes?) => {
+    fn.usedPipes = usedPipes || [];
+    fnNameMap.set(expr, fn);
+}
+
+export const getFnByExpr = (expr) => fnNameMap.get(expr)
+
+const fnExecutor = (expr, exprType) => {
+    let fn = getFnByExpr(expr);
+    if (!fn) {
+        return;
+    }
+    const usedPipes = fn.usedPipes || [];
+
+    if(exprType === ExpressionType.Binding) {
+        fn = fn.bind(undefined, plus, minus, isDef, getPurePipeVal);
+    } else {
+        fn = fn.bind(undefined, plus, minus, isDef);
+    }
+
+    if (usedPipes.length) {
+        const pipeArgs = [];
+        let hasPurePipe = false;
+        for (const [pipeName] of usedPipes) {
+            const pipeInfo = pipeProvider.meta(pipeName);
+            let pipeInstance;
+            if (!pipeInfo) {
+                pipeInstance = nullPipe;
+            } else {
+                if (pipeInfo.pure) {
+                    hasPurePipe = true;
+                    pipeInstance = purePipes.get(pipeName);
+                }
+
+                if (!pipeInstance) {
+                    pipeInstance = pipeProvider.getInstance(pipeName);
+                }
+
+                if (pipeInfo.pure) {
+                    purePipes.set(pipeName, pipeInstance);
+                }
+            }
+            pipeArgs.push(pipeInstance);
+        }
+
+        pipeArgs.unshift(hasPurePipe ? new Map() : undefined);
+        fn = fn.bind(undefined, ...pipeArgs);
+    } else {
+        if (exprType === ExpressionType.Binding) {
+            fn = fn.bind(undefined, undefined);
+        }
+    }
+
+    return fn;
+}
+
+export const getFnForBindExpr = (expr) => {
+    return fnExecutor(expr, ExpressionType.Binding);
+}
+
+export const getFnForEventExpr = (expr) => {
+    return fnExecutor(expr, ExpressionType.Action);
 }
