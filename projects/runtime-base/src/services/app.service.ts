@@ -16,7 +16,8 @@ import {
     UtilsService,
     DynamicComponentRefProvider,
     StatePersistence,
-    Viewport
+    Viewport,
+    registerFnByExpr
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
@@ -174,5 +175,16 @@ export class AppRef {
         } else {
             console.warn('The default Action "appNotification" doesn\'t exist in the app. App notified following error:\n', template);
         }
+    }
+
+    /**
+     * function to register bind expressions from app variables
+     * it will be called from app.js in generated angular app
+     * @param expressions, map of bind expression vs generated function
+     */
+    public registerExpressions(expressions) {
+        _.each(expressions, (fn, expr)=>{
+            registerFnByExpr(expr, fn[0], fn[1]);
+        });
     }
 }

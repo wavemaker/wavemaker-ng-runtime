@@ -117,10 +117,10 @@ export class TreeDirective extends StylableComponent {
         nodes.forEach((node, idx) => {
             const $li = $('<li></li>'),
                 $iconNode = $('<i></i>'),
-                nodeLabel = getEvaluatedData(node, {expression: this.nodelabel, bindExpression: this.bindnodelabel}, this.viewParent) || node.label,
-                nodeIcon = getEvaluatedData(node, {expression: this.nodeicon, bindExpression: this.bindnodeicon}, this.viewParent) || node.icon,
-                nodeChildren = getEvaluatedData(node, {expression: this.nodechildren, bindExpression: this.bindnodechildren}, this.viewParent) || node.children;
-            let nodeIdValue = getEvaluatedData(node, {expression: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent);
+                nodeLabel = getEvaluatedData(node, {field: this.nodelabel, bindExpression: this.bindnodelabel}, this.viewParent) || node.label,
+                nodeIcon = getEvaluatedData(node, {field: this.nodeicon, bindExpression: this.bindnodeicon}, this.viewParent) || node.icon,
+                nodeChildren = getEvaluatedData(node, {field: this.nodechildren, bindExpression: this.bindnodechildren}, this.viewParent) || node.children;
+            let nodeIdValue = getEvaluatedData(node, {field: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent);
             if (nodeIdValue === undefined) {
                 nodeIdValue = node.children;
             }
@@ -328,10 +328,8 @@ export class TreeDirective extends StylableComponent {
         this.selecteditem.path = path;
 
         if (target) {
-            if (this.nodeid) {
-                this.datavalue = $parseExpr(this.nodeid)(this, data);
-            } else if (this.bindnodeid) {
-                this.datavalue = getEvaluatedData(data, {expression: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent);
+            if (this.nodeid || this.bindnodeid) {
+                this.datavalue = getEvaluatedData(data, {field: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent);
             } else {
                 this.datavalue = getClonedObject(data) || {};
             }
@@ -339,6 +337,7 @@ export class TreeDirective extends StylableComponent {
             this.datavalue = value;
         }
 
+        //[Todo-CSP]: this data will be dynamic, can not generate function upfront
         if (nodeAction) {
             $parseEvent(nodeAction)(this);
         }

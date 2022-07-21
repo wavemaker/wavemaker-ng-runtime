@@ -167,6 +167,11 @@ const getDynamicComponent = (
         getVariables() {
             return JSON.parse(variables);
         }
+
+        // in preview mode, there will be no function registered. functions will be generated dynamically through $parseEvent and $parseExpr
+        getExpressions() {
+            return {}
+        }
     }
 
     return DynamicComponent;

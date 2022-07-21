@@ -27,7 +27,8 @@ window.requestAnimationFrame = (function () {
     var TAG_WHITE_LIST = ['INPUT', 'SELECT', 'OPTION'];
     var SwipeTracer;
     var activeEventProcessor;
-    var swipeMask = $('<div style="background-color:rgba(0, 0, 0, 0);position: fixed; top: 0;width:100vw; height: 100vh;z-index: 100000;"></div>');
+    var swipeMask = $('<div></div>');
+    swipeMask.css({"background-color":"rgba(0, 0, 0, 0)", "position": "fixed", "top": 0, "width":"100vw", "height": "100vh", "z-index": 100000});
     var touchMoveListeners = [];
     var touchEndListeners = [];
     var onTouch = function (e) {
@@ -371,11 +372,12 @@ window.requestAnimationFrame = (function () {
     SwipeTracer = {
         'onSwipeStart': function (e, data) {
             if ($.fn.swipey.trace) {
-                $('body').append('<svg height="100vh" width="100vw" ' +
-                    '   style="position : fixed;top: 0;left: 0; width:100vw; height: 100vh; z-index:10000" id ="canvas">' +
+                var $svg = '<svg height="100vh" width="100vw" id ="canvas">' +
                     '       <path stroke="rgba(0, 0, 0, 0.5)" stroke-linecap="round" stroke-width="20" fill-opacity="0" ' +
                     '           stroke-opacity="0.8" d="M' + data.path[0].x + ' ' + data.path[0].y + ' " />' +
-                    '   </svg>');
+                    '   </svg>';
+                $svg.css({"position" : "fixed","top": 0,"left": 0, "width":"100vw", "height": "100vh", "z-index":10000});
+                $('body').append($svg);
                 data.tracer = {
                     pathd: $('#canvas path')
                 };
@@ -570,7 +572,7 @@ window.requestAnimationFrame = (function () {
                 });
             });
         });
-        
+
         setTimeout(function () {
             window.requestAnimationFrame(function () {
                 if (metaData.$D === metaData.bounds.lower) {
