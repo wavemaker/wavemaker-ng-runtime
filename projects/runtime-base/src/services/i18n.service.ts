@@ -128,7 +128,9 @@ export class I18nServiceImpl extends AbstractI18nService {
             moment.locale(this.selectedLocale);
 
             // For ngx bootstrap locale, get the config from script and apply locale
+            // moment.localeData(momentLocale) will return moment locale instance. _config inside will have actual config
             let _config = moment.localeData(momentLocale);
+            _config = _config && _config._config;
             defineLocale(this.selectedLocale, _config);
             this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
         })

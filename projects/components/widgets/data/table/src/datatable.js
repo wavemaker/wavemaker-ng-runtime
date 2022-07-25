@@ -558,12 +558,16 @@ $.widget('wm.datatable', {
             rowTemplate = self._getRowTemplate(row, rowIndex);
             $tbody.append(rowTemplate);
             if (self.options.rowExpansionEnabled) {
-                var heightStyle = self.options.rowDef.height ? ' style="min-height:' + self.options.rowDef.height + '"' : '';
+                var rowHeight = self.options.rowDef.height;
                 var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
-                var $tr = '<tr class="app-datagrid-detail-row" style="display: none;" tabindex="0" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
-                    '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section" style="display: none;"></div>' +
-                    '</td></tr>';
-                self._setStyles($tr.find('div.row-overlay'), heightStyle);
+                var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                    '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
+                    '</td></tr>');
+                if (rowHeight) {
+                    $tr.find('div.row-overlay').css('min-height', rowHeight);
+                }
+                $tr.css('display', 'none')
+                $tr.find('.details-section').css('display', 'none');
                 $tbody.append($tr);
             }
         });
