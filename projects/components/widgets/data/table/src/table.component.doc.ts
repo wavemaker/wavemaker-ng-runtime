@@ -413,9 +413,4 @@ export class Table {
      * This method is used to hide the current edit/ new row and go back to view mode
      */
     hideEditRow() {}
-
-    /**
-     * This function is called to set last action performed to 'Dataset update'
-     */
-    setLastActionToDatasetUpdate() {}
 }
