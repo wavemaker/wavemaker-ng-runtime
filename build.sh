@@ -477,6 +477,7 @@ copyLocale() {
         done
 
         cp  ${appDest}/angular/*.js  ${mobileDest}/angular/
+        cp  ${appDest}/angular/global/*.js  ${mobileDest}/angular/global/
 
         cp ${fullCalendarSrc}/*.js ${appDest}/fullcalendar/
 
