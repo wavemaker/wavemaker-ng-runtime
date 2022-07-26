@@ -229,7 +229,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     return $($event.target).val(displayValue);
                 }
                 this.dateNotInRange = true;
-                this.validateType = "maxdate";
+                this.validateType = 'maxdate';
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
             if (this.excludedates) {
