@@ -23,8 +23,8 @@ mkdir -p libraries/scripts/d3/
 cp ./node_modules/d3/d3.min.js libraries/scripts/d3/
 mkdir -p libraries/scripts/@wavemaker.com/nvd3/build/
 cp ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js libraries/scripts/@wavemaker.com/nvd3/build/
-mkdir -p libraries/scripts/fullcalendar/dist
-cp ./node_modules/fullcalendar/dist/fullcalendar.min.js libraries/scripts/fullcalendar/dist
+mkdir -p libraries/scripts/fullcalendar/
+cp ./node_modules/fullcalendar/main.min.js libraries/scripts/fullcalendar
 mkdir -p libraries/scripts/summernote/dist/
 cp ./node_modules/summernote/dist/summernote-lite.min.js libraries/scripts/summernote/dist/
 mkdir -p libraries/scripts/jquery-ui/ui/widgets/
@@ -68,5 +68,5 @@ cp -r libraries/. dist/npm-packages/app-ng-runtime
 tar -zcf dist/npm-packages/app-ng-runtime.tar.gz -C dist/npm-packages app-ng-runtime
 rm -r dist/npm-packages/app-ng-runtime
 
-cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/runtime-cli/dependencies
+cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/transpilation/expression-parser.cjs.js dist/transpilation/pipe-provider.cjs.js projects/runtime-base/src/components/app-component/app.component.html dist/runtime-cli/dependencies
 cd -

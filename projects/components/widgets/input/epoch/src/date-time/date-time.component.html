@@ -21,7 +21,7 @@
             [readOnly]="isReadOnly"
             [attr.placeholder]="placeholder"
             [attr.accesskey]="shortcutkey"
-            (keydown)="onDisplayKeydown($event)">
+            (keydown)="this._triggeredByUser = true; onDisplayKeydown($event)">
 
         <span class="input-group-btn">
             <button type="button"
@@ -33,7 +33,7 @@
                 aria-expanded="false"
                 (click)="toggleDpDropdown($event, false)">
                 <i aria-hidden="true"
-                    class="app-icon wi wi-calendar"></i>
+                    class="app-icon wm-sl-l sl-calendar"></i>
             </button>
             <button type="button"
                 class="btn btn-default btn-time"
@@ -44,7 +44,7 @@
                 aria-expanded="false"
                 (click)="toggleTimePicker(!isTimeOpen, $event)">
                 <i aria-hidden="true"
-                    class="app-icon wi wi-access-time"></i>
+                    class="app-icon wm-sl-l sl-time"></i>
             </button>
         </span>
         <div style="width: 0;display: inline-block;">

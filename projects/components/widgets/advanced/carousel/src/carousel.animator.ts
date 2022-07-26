@@ -36,10 +36,18 @@ export class CarouselAnimator extends SwipeAnimation {
             });
         });
         this._$el.find('>.left.carousel-control').on('click', () => {
+            // WMS-22278, If a swipe is already in process do not process other events
+            if (this._swiping) {
+                return;
+            }
             this._pauseCaroselTill = Date.now() + this.interval;
             this.goToUpper();
         });
         this._$el.find('>.right.carousel-control').on('click', () => {
+            // WMS-22278, If a swipe is already in process do not process other events
+            if (this._swiping) {
+                return;
+            }
             this._pauseCaroselTill = Date.now() + this.interval;
             this.goToLower();
         });

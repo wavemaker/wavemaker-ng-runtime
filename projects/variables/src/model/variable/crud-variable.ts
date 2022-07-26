@@ -56,7 +56,10 @@ export class CrudVariable extends ApiAwareVariable implements IDataSource {
                 returnVal = false;
                 break;
             case DataSource.Operation.IS_PAGEABLE:
-                returnVal = (this.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY || !_.isEmpty(this.pagination));
+                returnVal = this.hasPagination();
+                break;
+            case DataSource.Operation.IS_SORTABLE:
+                returnVal = this.hasPagination() && !(this as any)._paginationConfig; 
                 break;
             case DataSource.Operation.SUPPORTS_SERVER_FILTER:
                 returnVal = false;
@@ -103,11 +106,18 @@ export class CrudVariable extends ApiAwareVariable implements IDataSource {
                 options.operation = 'delete';
                 returnVal = this.invoke(options);
                 break;
+            case DataSource.Operation.SET_PAGINATION:
+                returnVal = this.setPagination(options);
+                break;
             default :
                 returnVal = {};
                 break;
         }
         return returnVal;
+    }
+
+    hasPagination() {
+        return this.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY || !_.isEmpty(this.pagination);
     }
 
     invoke(options?, success?, error?) {
@@ -170,6 +180,10 @@ export class CrudVariable extends ApiAwareVariable implements IDataSource {
 
     cancel(options?) {
         return getManager().cancel(this, options);
+    }
+
+    setPagination(data) {
+        return getManager().setPagination(this, data);
     }
 
     init() {

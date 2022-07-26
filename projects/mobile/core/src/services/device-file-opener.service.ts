@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { File } from '@ionic-native/file';
-import { FileOpener } from '@ionic-native/file-opener';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 
 import { isAndroid, isIos, noop } from '@wm/core';
 

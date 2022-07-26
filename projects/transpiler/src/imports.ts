@@ -27,6 +27,7 @@ const PAGINATION_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_PAGINATION_MOD
 const SEARCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_TYPE_HEAD_MODULE, {from: '@wm/components/basic/search', name: 'SearchModule'}];
 
 const ACCORDION_MODULE: ImportDef[] = [{from: '@wm/components/containers/accordion', name: 'AccordionModule'}];
+const LINEAR_LAYOUT_MODULE: ImportDef[] = [{from: '@wm/components/containers/linear-layout', name: 'LinearLayoutModule'}];
 const ALERT_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/alert-dialog', name: 'AlertDialogModule'}];
 const BARCODE_SCANNER_MODULE: ImportDef[] = [{from: '@wm/mobile/components/device/barcode-scanner', name: 'BarcodeScannerModule'}];
 const MENU_MODULE: ImportDef[] = [...BASIC_MODULE, ...NGX_DROP_DOWN_MODULE, ...INPUT_MODULE, {from: '@wm/components/navigation/menu', name: 'MenuModule'}];
@@ -124,6 +125,8 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-label', BASIC_MODULE],
     ['wm-layoutgrid', LAYOUT_GRID_MODULE],
     ['wm-left-panel', LEFT_PANEL_MODULE],
+    ['wm-linearlayout', LINEAR_LAYOUT_MODULE],
+    ['wm-linearlayoutitem', LINEAR_LAYOUT_MODULE],
     ['wm-list', LIST_MODULE],
     ['wm-livetable', LIVE_TABLE_MODULE],
     ['wm-login', LOGIN_MODULE],

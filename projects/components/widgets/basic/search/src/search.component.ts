@@ -417,7 +417,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // Triggerred when typeahead option is selected.
     private onSearchSelect($event: Event) {
         let item;
-        if (this.typeaheadContainer && this.typeaheadContainer.active) {
+        // WMS-22533: Before adding active typeahead el, check if the entered query matches with the active el or not
+        const isQueryMatch = this.typeaheadContainer?.active?.value === this.query;
+
+        if (this.typeaheadContainer && this.typeaheadContainer.active && isQueryMatch) {
             item = this.typeaheadContainer.active.item;
         }
         $event = this.eventData($event, item || {});
@@ -434,7 +437,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             return;
         }
         // when matches are available.
-        if (this.typeaheadContainer && this.liElements.length) {
+        if (this.typeaheadContainer && this.liElements.length && isQueryMatch) {
             this.typeaheadContainer.selectActiveMatch();
         } else {
             this.queryModel = this.query;

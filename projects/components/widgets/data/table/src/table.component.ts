@@ -183,6 +183,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     documentClickBind = noop;
     actionRowIndex;
     actionRowPage;
+    prevFilterExpression: any = [];
     fieldDefs = [];
     rowDef: any = {};
     rowInstance: any = {};
@@ -279,14 +280,18 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         deletedRowIndex: -1,
         lastActionPerformed: 'scroll',
         isSearchTrigerred: false,
+        isDatasetUpdated: false,
         ACTIONS: {
             'DELETE': 'delete',
             'EDIT': 'edit',
             'SEARCH_OR_SORT': 'search_or_sort',
-            'DEFAULT': 'scroll'
+            'DEFAULT': 'scroll',
+            'FILTER_CRITERIA' : 'filter',
+            'DATASET_UPDATE': 'dataset_update'
         },
         actionRowIndex: undefined,
         actionRowPage: undefined,
+        isLastPage : false,
         // get the current page number
         getCurrentPage: () => {
             return _.get(this.dataNavigator, 'dn.currentPage') || 1;
@@ -312,6 +317,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         setIsSearchTrigerred: (value) => {
             this.setDataGridOption('isSearchTrigerred', value);
+        },
+        setIsDatasetUpdated: (value) => {
+            this.setDataGridOption('isDatasetUpdated', value);
         },
         onDataRender: () => {
             this.ngZone.run(() => {
@@ -481,6 +489,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const row = this.getClonedRowObject(rowData);
             const watchName = `${this.widgetId}_rowNgClass_${index}`;
             $unwatch(watchName);
+            //[Todo-CSP]: generate watcher expr in page if rowngclass attr is present for table
             this.registerDestroyListener($watch(this.rowngclass, this.viewParent, {row}, (nv, ov) => {
                 this.callDataGridMethod('applyRowNgClass', getConditionalClasses(nv, ov), index);
             }, watchName));
@@ -492,6 +501,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const row = this.getClonedRowObject(rowData);
             const watchName = `${this.widgetId}_colNgClass_${rowIndex}_${colIndex}`;
             $unwatch(watchName);
+            //[Todo-CSP]: generate watcher expr in page if col-ng-class attr is present for table
             this.registerDestroyListener($watch(colDef['col-ng-class'], this.viewParent, {row}, (nv, ov) => {
                 this.callDataGridMethod('applyColNgClass', getConditionalClasses(nv, ov), rowIndex, colIndex);
             }, watchName));
@@ -804,6 +814,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 const rowIndex = _.floor(this.actionRowIndex % this.pagesize);
                 this._gridData.splice(this.actionRowIndex, 1 , newValue[rowIndex]);
             }
+            this.setDataGridOption('isLastPage', !!(this.dataNavigator.isDisableNext));
             // In case of on demand pagination, create the load more button only once and show the button until next page is not disabled
             if (!this.$element.find('.on-demand-datagrid').length && !this.dataNavigator.isDisableNext && this.onDemandLoad) {
                 this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
@@ -1120,9 +1131,42 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
         return item !== undefined;
     }
+    // Compares the prevFilterCriteria Rules with the new rules
+    compareFilterExpressions(prevFilters, newFilters) {
+        return !!((prevFilters.length === newFilters.length) && (_.isEqual(prevFilters, newFilters)));
+    }
+
+    // Set the table lastActionPerformed to Filter Criteria and maintain the prevFilterExpression
+    setLastActionToFilterCriteria() {
+        this.prevFilterExpression = _.get(this.datasource, 'filterExpressions.rules') ? getClonedObject(this.datasource.filterExpressions.rules) : getClonedObject([].concat(this.datasource.dataBinding));
+        this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.FILTER_CRITERIA);
+        this.gridOptions.setIsSearchTrigerred(true);
+    }
+
+    // Set the table lastActionPerformed to Dataset update and set isDatasetUpdated to true
+    // Fix for [WMS-22323]-this method is called when dataset is being updated
+    setLastActionToDatasetUpdate() {
+        this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.DATASET_UPDATE);
+        this.gridOptions.setIsDatasetUpdated(true);
+    }
+
+    // Update the lastActionPerformed to Filter_Criteria, when there is change in the Variable filter criteria rules
+    checkIfVarFiltersApplied() {
+        if (!_.isEmpty(_.get(this.datasource, 'filterExpressions.rules')) || !_.isEmpty(_.get(this.datasource, 'dataBinding'))) {
+            const currentFilterExpr = _.get(this.datasource, 'filterExpressions.rules') ? this.datasource.filterExpressions.rules : [].concat(this.datasource.dataBinding);
+            const isEqual = this.compareFilterExpressions(this.prevFilterExpression, currentFilterExpr);
+            if (!isEqual) {
+                this.setLastActionToFilterCriteria();
+            }
+        }
+    }
 
     watchVariableDataSet(newVal) {
         let result;
+        // Check for Variable filters if applied
+        if (this.gridOptions.isNavTypeScrollOrOndemand()) {
+            this.checkIfVarFiltersApplied();
+        }
         // State handling for static variables
         if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
             const widgetState = this.statePersistence.getWidgetState(this);

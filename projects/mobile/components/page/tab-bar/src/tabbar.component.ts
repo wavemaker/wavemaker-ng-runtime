@@ -27,6 +27,10 @@ interface TabItem {
 export class MobileTabbarComponent extends StylableComponent implements AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
 
+    public itemlabel: string;
+    public itemlink: string;
+    public itemicon: string;
+
     public tabItems = [];
     public layout: any = {};
     public position: any;
@@ -48,21 +52,40 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         inj: Injector,
         @Attribute('itemlabel.bind') public binditemlabel,
         @Attribute('itemicon.bind') public binditemicon,
-        @Attribute('itemicon.bind') public binditemlink
+        @Attribute('itemlink.bind') public binditemlink
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         page.notify('wmMobileTabbar:ready', this);
+        this.tabItems = this.getDefaultItems();
     }
 
     public onPropertyChange(key, nv, ov?) {
         if (key === 'dataset') {
             if (nv) {
                 this.tabItems = this.getTabItems(nv);
+            } else {
+                this.tabItems = this.getDefaultItems();
             }
         } else {
             super.onPropertyChange(key, nv, ov);
         }
+    }
+
+    private getDefaultItems() {
+        return [{
+            'label' : 'Home',
+            'icon'  : 'wm-sl-r sl-home'
+        },{
+            'label' : 'Analytics',
+            'icon'  : 'wm-sl-r sl-graph-ascend'
+        },{
+            'label' : 'Alerts',
+            'icon'  : 'wm-sl-r sl-alarm-bell'
+        },{
+            'label' : 'Settings',
+            'icon'  : 'wm-sl-r sl-settings'
+        }];
     }
 
     public ngAfterViewInit() {
@@ -99,11 +122,11 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         if (_.isArray(value)) {
             if (_.isObject(value[0])) {
                 return (value as any[]).map(item => {
-                    const link = getEvaluatedData(item, {expression: 'itemlink', 'bindExpression': this.binditemlink}, this.viewParent) || item.link;
+                    const link = getEvaluatedData(item, {field: this.itemlink, 'bindExpression': this.binditemlink}, this.viewParent) || item.link;
                     const activePageName = window.location.hash.substr(2);
                     return {
-                        label: getEvaluatedData(item, {expression: 'itemlabel', bindExpression: this.binditemlabel}, this.viewParent) || item.label,
-                        icon: getEvaluatedData(item, {expression: 'itemicon', bindExpression: this.binditemicon}, this.viewParent) || item.icon,
+                        label: getEvaluatedData(item, {field: this.itemlabel, bindExpression: this.binditemlabel}, this.viewParent) || item.label,
+                        icon: getEvaluatedData(item, {field: this.itemicon, bindExpression: this.binditemicon}, this.viewParent) || item.icon,
                         link: link,
                         active: _.includes([activePageName, '#' + activePageName, '#/' + activePageName], link)
                     };

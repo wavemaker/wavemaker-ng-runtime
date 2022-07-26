@@ -51,6 +51,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public readonly: boolean;
     public placeholder: string;
     public shortcutkey: string;
+    public _triggeredByUser: boolean;
 
     public excludedays: string;
     public excludedDaysToDisable: Array<number>;
@@ -213,16 +214,22 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             const maxDate = moment(getDateObj(this.maxdate)).startOf('day').toDate();
             if (this.mindate && newVal < minDate) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
+                this.invokeOnChange(this.datavalue, undefined, false);
+                if (isNativePicker && getFormattedDate(this.datePipe, minDate, this.datepattern) === displayValue) {
+                    return $($event.target).val(displayValue);
+                }
                 this.dateNotInRange = true;
                 this.validateType = 'mindate';
-                this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
             if (this.maxdate && newVal > maxDate) {
                 const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
+                this.invokeOnChange(this.datavalue, undefined, false);
+                if (isNativePicker && getFormattedDate(this.datePipe, maxDate, this.datepattern) === displayValue) {
+                    return $($event.target).val(displayValue);
+                }
                 this.dateNotInRange = true;
                 this.validateType = 'maxdate';
-                this.invokeOnChange(this.datavalue, undefined, false);
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
             if (this.excludedates) {
@@ -858,7 +865,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             return;
         }
 
-        if (displayInputElem) {
+        if (displayInputElem && this._triggeredByUser) {
             displayInputElem.focus();
             displayInputElem.click();
         }
@@ -922,6 +929,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         super.ngAfterViewInit();
         this.containerTarget = getContainerTargetClass(this.nativeElement);
         this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
+
+        // this mobileinput width varies in ios hence setting width here.
+        let mobileInput = this.getMobileInput();
+        if (mobileInput) {
+            mobileInput.style.width = mobileInput.parentElement.clientWidth + 'px';
+        }
     }
 
     ngOnDestroy() {

@@ -118,7 +118,7 @@ buildNeeded() {
         return 1
     fi
 
-    local modifiedSourceFilesCount=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" \) -newer $successFile | wc -l`
+    local modifiedSourceFilesCount=`find ${sourceLocation} -type f \( -name "*.ts" ! -name "*.doc.ts"  -o -name "*.html" -o -name "*.json" \) -newer $successFile | wc -l`
     return $modifiedSourceFilesCount
 }
 
@@ -133,8 +133,8 @@ ngBuild() {
     local ngModuleName=$3;
     buildNeeded ${bundle} ${sourceLocation}
     if [[ "$?" -ne 0 ]]; then
-        echo "--------------------prod build--------------------"
-        execCommand ng-build ${ngModuleName} "$NG build --prod $ngModuleName"
+        echo "--------------------Production Build--------------------"
+        execCommand ng-build ${ngModuleName} "$NG build --configuration production $ngModuleName"
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
         fi
@@ -197,6 +197,7 @@ bundleWeb() {
         ./libraries/components/dialogs/partial-dialog/bundles/index.umd.js \
         ./libraries/components/containers/accordion/bundles/index.umd.js \
         ./libraries/components/containers/layout-grid/bundles/index.umd.js \
+        ./libraries/components/containers/linear-layout/bundles/index.umd.js \
         ./libraries/components/containers/panel/bundles/index.umd.js \
         ./libraries/components/containers/tabs/bundles/index.umd.js \
         ./libraries/components/containers/tile/bundles/index.umd.js \
@@ -273,6 +274,7 @@ bundleMobile() {
         ./libraries/components/dialogs/partial-dialog/bundles/index.umd.js \
         ./libraries/components/containers/accordion/bundles/index.umd.js \
         ./libraries/components/containers/layout-grid/bundles/index.umd.js \
+        ./libraries/components/containers/linear-layout/bundles/index.umd.js \
         ./libraries/components/containers/panel/bundles/index.umd.js \
         ./libraries/components/containers/tabs/bundles/index.umd.js \
         ./libraries/components/containers/tile/bundles/index.umd.js \
@@ -345,6 +347,7 @@ buildApp() {
     ngBuild components-navigation-popover projects/components/widgets/navigation/popover '@wm/components/navigation/popover'
 
     ngBuild components-containers-accordion projects/components/widgets/containers/accordion '@wm/components/containers/accordion'
+    ngBuild components-containers-linearlayout projects/components/widgets/containers/linear-layout '@wm/components/containers/linear-layout'
     ngBuild components-containers-layoutgrid projects/components/widgets/containers/layout-grid '@wm/components/containers/layout-grid'
     ngBuild components-containers-panel projects/components/widgets/containers/panel '@wm/components/containers/panel'
     ngBuild components-containers-tabs projects/components/widgets/containers/tabs '@wm/components/containers/tabs'
@@ -453,11 +456,13 @@ copyLocale() {
         local mobileDest=./dist/bundles/wmmobile/locales
 
         local angularSrc=./node_modules/@angular/common/locales
-        local fullCalendarSrc=./node_modules/fullcalendar/dist/locale
+        local fullCalendarSrc=./node_modules/fullcalendar/libs/locales
         local momentSrc=./node_modules/moment/locale
 
         mkdir -p ${appDest}/angular
+        mkdir -p ${appDest}/angular/global
         mkdir -p ${mobileDest}/angular
+        mkdir -p ${mobileDest}/angular/global
         mkdir -p ${appDest}/fullcalendar
         mkdir -p ${appDest}/moment
         mkdir -p ${mobileDest}/moment
@@ -466,6 +471,11 @@ copyLocale() {
             local destFileName=`echo $(basename ${file}) | tr 'A-Z' 'a-z'`;
             cp ${file} ${appDest}/angular/${destFileName}
         done
+        for file in ${angularSrc}/global/*.js; do
+            local destFileName=`echo $(basename ${file}) | tr 'A-Z' 'a-z'`;
+            cp ${file} ${appDest}/angular/global/${destFileName}
+        done
+
         cp  ${appDest}/angular/*.js  ${mobileDest}/angular/
 
         cp ${fullCalendarSrc}/*.js ${appDest}/fullcalendar/
@@ -538,7 +548,7 @@ bundleWebLibs() {
         ./node_modules/he/he.js \
         ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
-        ./node_modules/fullcalendar/dist/fullcalendar.min.js \
+        ./node_modules/fullcalendar/main.min.js \
         ./node_modules/jssha/dist/sha256.js \
         ./node_modules/summernote/dist/summernote-lite.js \
         ./node_modules/jquery-ui/ui/disable-selection.js \
@@ -560,6 +570,7 @@ bundleWebLibs() {
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ./node_modules/imask/dist/imask.min.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
+        ./node_modules/@metrichor/jmespath/dist/jmespath.umd.js \
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
 
@@ -604,7 +615,7 @@ bundleMobileLibs() {
         ./node_modules/he/he.js \
         ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
-        ./node_modules/fullcalendar/dist/fullcalendar.min.js \
+        ./node_modules/fullcalendar/main.min.js \
         ./node_modules/jssha/dist/sha256.js \
         ./node_modules/summernote/dist/summernote-lite.js \
         ./node_modules/jquery-ui/ui/disable-selection.js \
@@ -620,13 +631,14 @@ bundleMobileLibs() {
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
         ./projects/components/widgets/data/table/src/datatable.js \
-        ./dist/tmp/libs/ionic-native/ionic-native-core.umd.js \
-        ./dist/tmp/libs/ionic-native/ionic-native-plugins.umd.js \
+        ./dist/tmp/libs/awesome-cordova/awesome-cordova-core.umd.js \
+        ./dist/tmp/libs/awesome-cordova/awesome-cordova-plugins.umd.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ./node_modules/imask/dist/imask.min.js \
+        ./node_modules/@metrichor/jmespath/dist/jmespath.umd.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
 
@@ -653,7 +665,7 @@ buildWebLibs() {
 }
 
 buildIonicNative() {
-    execCommand "rollup" "ionic-native" "${ROLLUP} -c ./projects/mobile/ionic-native/rollup.ionic-native.config.js --silent"
+    execCommand "rollup" "awesome-cordova" "${ROLLUP} -c ./projects/mobile/awesome-cordova/rollup.awesome-cordova.config.js --silent"
 }
 
 buildMobileLibs() {

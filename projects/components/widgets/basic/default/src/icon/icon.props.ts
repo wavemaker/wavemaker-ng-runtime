@@ -11,7 +11,7 @@ export const registerProps = () => {
                 ['conditionalclass', PROP_ANY],
                 ['conditionalstyle', PROP_ANY],
                 ['hint', PROP_STRING],
-                ['iconclass', {value: 'wi wi-star-border', ...PROP_STRING}],
+                ['iconclass', {value: 'wm-sl-l sl-user', ...PROP_STRING}],
                 ['iconposition', {value: 'left', ...PROP_STRING}],
                 ['iconsize', PROP_STRING],
                 ['iconurl', PROP_STRING],

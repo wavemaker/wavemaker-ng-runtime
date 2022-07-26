@@ -1,9 +1,9 @@
-import { AppVersion } from '@ionic-native/app-version';
-import { Device } from '@ionic-native/device';
-import { Geolocation } from '@ionic-native/geolocation';
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
-import { Diagnostic } from '@ionic-native/diagnostic';
-import { Vibration } from '@ionic-native/vibration';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
+import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
+import { LocationAccuracy } from '@awesome-cordova-plugins/location-accuracy/ngx';
+import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
+import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
 
 import { $appDigest, App, isSpotcues } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';

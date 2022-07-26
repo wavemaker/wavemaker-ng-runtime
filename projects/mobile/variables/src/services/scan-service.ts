@@ -1,4 +1,4 @@
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
+import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 
 import { DeviceVariableService, IDeviceVariableOperation } from '@wm/variables';
 

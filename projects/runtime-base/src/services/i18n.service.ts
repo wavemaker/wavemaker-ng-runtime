@@ -12,6 +12,7 @@ import {
     getWmProjectProperties,
     isMobile,
     isMobileApp,
+    loadScripts,
     replace,
     setCSS,
     setSessionStorageItem
@@ -123,22 +124,16 @@ export class I18nServiceImpl extends AbstractI18nService {
             return;
         }
         const path = _cdnUrl + `locales/moment/${momentLocale}.js`;
-        this.$http.get(path, {responseType: 'text'})
-            .toPromise()
-            .then((response: any) => {
-                const fn = new Function(response);
+        loadScripts([path], true).then(()=>{
+            moment.locale(this.selectedLocale);
 
-                // Call the script. In script, moment defines the loaded locale
-                fn();
-                moment.locale(this.selectedLocale);
-
-                // For ngx bootstrap locale, get the config from script and apply locale
-                let _config;
-                fn.apply({moment: {defineLocale: (code, config) => _config = config}});
-                // TODO: Moved ngxBootstrap locale configuration to app.module.ts
-                defineLocale(this.selectedLocale, _config);
-                this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
-            });
+            // For ngx bootstrap locale, get the config from script and apply locale
+            // moment.localeData(momentLocale) will return moment locale instance. _config inside will have actual config
+            let _config = moment.localeData(momentLocale);
+            _config = _config && _config._config;
+            defineLocale(this.selectedLocale, _config);
+            this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
+        })
     }
 
     protected loadAngularLocaleBundle(angLocale) {
@@ -148,19 +143,12 @@ export class I18nServiceImpl extends AbstractI18nService {
                 resolve();
                 return;
             }
-            const path = _cdnUrl + `locales/angular/${angLocale}.js`;
+            const path = _cdnUrl + `locales/angular/global/${angLocale}.js`;
 
-            this.$http.get(path, {responseType: 'text'})
-                .toPromise()
-                .then((response: any) => {
-                    const module: any = {}, exports: any = {};
-                    module.exports = exports;
-                    const fn = new Function('module', 'exports', response);
-                    fn(module, exports);
-                    registerLocaleData(exports.default);
-                    this._isAngularLocaleLoaded = true;
-                    resolve();
-                }, () => resolve());
+            loadScripts([path], true).then(()=>{
+                this._isAngularLocaleLoaded = true;
+                resolve();
+            }, resolve);
         });
     }
 
@@ -178,13 +166,8 @@ export class I18nServiceImpl extends AbstractI18nService {
             return;
         }
 
-        this.$http.get(path, {responseType: 'text'})
-            .toPromise()
-            .then((response: any) => {
-                const fn = new Function(response);
-                // Call the script. In script, moment defines the loaded locale
-                fn();
-            });
+        // Call the script. In script, moment defines the loaded locale
+        return loadScripts([path], true);
     }
 
     protected loadLocaleBundles(libLocale) {
@@ -235,7 +218,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         const _defaultLanguage = getWmProjectProperties().defaultLanguage;
         _acceptLang.push(_defaultLanguage);
 
-        // checks whether user preference is based on browser set languages or default language set in project  
+        // checks whether user preference is based on browser set languages or default language set in project
         let preferBrowserLang = getWmProjectProperties().preferBrowserLang;
         if (!preferBrowserLang) { // when preferBrowserLang is not defined, set to its default value
             preferBrowserLang  = true;
@@ -250,11 +233,11 @@ export class I18nServiceImpl extends AbstractI18nService {
 
         let _appSupportedLang;
         /**
-         * for cordova, check for language ignoring the locale 
+         * for cordova, check for language ignoring the locale
          * As the navigator.languages always returns the language with locale (en-us)
          * The supportedLanguages from BE doesn't include locale (en) which leads to mismatch
          */
-        if (CONSTANTS.hasCordova) {  
+        if (CONSTANTS.hasCordova) {
             let supportedLang = [];
             _.forEach(_acceptLang, function(lang) {
                 let matchedLang = _.find(_supportedLang, (val) => lang === val) || _.find(_supportedLang, (val) => lang.startsWith(val));
@@ -288,7 +271,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         if (CONSTANTS.hasCordova) {
             languages = navigator.languages || [navigator.language];
         } else {
-            languages = getWmProjectProperties().preferredLanguage || '';
+            languages = decodeURIComponent(getWmProjectProperties().preferredLanguage || '');
             /**
              * Accept-Language Header will contain set of supported locale, so try splitting the string to proper locale set
              * Ex: en,en-US;q=0.9,de;q=0.6,ar;q=0.2,hi

@@ -19,7 +19,10 @@
             "indexTransform":"./build-scripts/index-html-transform.js",
             "deployUrl": "ng-bundle/",
             "outputPath": "dist/ng-bundle",
-            "index": "src/index.html",
+            "index": {
+                "input": "src/index.html",
+                "output": "../index.html"
+            },
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -74,7 +77,7 @@
               "./libraries/scripts/swipey/swipey.jquery.plugin.js",
               "./libraries/scripts/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js",
               "./node_modules/moment/min/moment.min.js",
-              "./node_modules/fullcalendar/dist/fullcalendar.min.js",
+              "./node_modules/fullcalendar/main.min.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
               "./node_modules/hammerjs/hammer.min.js",
               "./node_modules/iscroll/build/iscroll.js",
@@ -93,7 +96,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -116,7 +118,6 @@
               "optimization": false,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": true,
               "aot": true,
               "extractLicenses": false,
@@ -135,7 +136,10 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist",
-            "index": "src/index.html",
+            "index": {
+                "input": "src/index.html",
+                "output": "../index.html"
+            },
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -168,19 +172,27 @@
               "./node_modules/jquery-ui/ui/widgets/droppable.js",
               "./libraries/scripts/datatable/datatable.js",
               "./node_modules/moment/min/moment.min.js",
-              "./node_modules/fullcalendar/dist/fullcalendar.min.js",
+              "./node_modules/fullcalendar/main.min.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
               "./node_modules/hammerjs/hammer.min.js",
               "./node_modules/iscroll/build/iscroll.js",
               "./node_modules/js-cookie/src/js.cookie.js",
               "./node_modules/jssha/dist/sha256.js"
-            ]
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
                 "browserTarget": "angular-app:build:production"
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -1015,6 +1027,38 @@
           "configurations": {
             "production": {
               "tsConfig": "projects/components/widgets/containers/layout-grid/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/components/widgets/tsconfig.lib.json",
+              "projects/components/widgets/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "@wm/components/containers/linear-layout": {
+      "root": "projects/components/widgets/containers/linear-layout",
+      "sourceRoot": "projects/components/widgets/containers/linear-layout/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+            "project": "projects/components/widgets/containers/linear-layout/package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/components/widgets/containers/linear-layout/tsconfig.lib.prod.json"
             }
           }
         },

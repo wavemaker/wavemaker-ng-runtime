@@ -445,6 +445,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 }
             } else {
                 // For other datasources, get the data from datasource bound to table
+                //[Todo-CSP]: watch fn should already be generated from table dataset.bind expr
                 this.registerDestroyListener(
                     $watch(
                         this.table.binddataset,

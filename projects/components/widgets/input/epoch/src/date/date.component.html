@@ -15,7 +15,7 @@
         [attr.accesskey]="shortcutkey"
         [attr.aria-label]="hint || 'Date field'"
         (change)="onDisplayDateChange($event)"
-        (keydown)="onDisplayKeydown($event)">
+        (keydown)="this._triggeredByUser = true; onDisplayKeydown($event);">
 
     <span class="input-group-btn">
         <button type="button"
@@ -27,7 +27,7 @@
             aria-expanded="false"
             (click)="toggleDpDropdown($event, false)">
             <i aria-hidden="true"
-                class="app-icon wi wi-calendar"></i>
+                class="app-icon wm-sl-l sl-calendar"></i>
         </button>
     </span>
     <div style="width: 0;display: inline-block;">

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { File } from '@ionic-native/file';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 
 import { convertToBlob } from '@wm/core';
 

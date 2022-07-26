@@ -75,8 +75,7 @@ export class CarouselDirective extends StylableComponent implements AfterContent
 
     private setupHandlers() {
         this.slides.changes.subscribe( slides => {
-            this.stopAnimation();
-            this.onSlidesRender(slides);
+            this.triggerAnimation(slides);
         });
         this.slides.setDirty();
     }
@@ -89,6 +88,7 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     }
 
     ngAfterContentInit() {
+        this.triggerAnimation(this.slides);
         this.setupHandlers();
     }
 
@@ -100,6 +100,11 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     // Calculating animation interval if animation is enabled
     setanimationinterval() {
         this.interval = this.animation === 'auto' ? this.animationinterval * 1000 : 0 ;
+    }
+
+    triggerAnimation(slides) {
+        this.stopAnimation();
+        this.onSlidesRender(slides);
     }
 
     ngOnInit() {

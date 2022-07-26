@@ -1,16 +1,15 @@
 import { NgModule } from '@angular/core';
 
-import { AppVersion } from '@ionic-native/app-version';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { Calendar } from '@ionic-native/calendar';
-import { Camera } from '@ionic-native/camera';
-import { Device } from '@ionic-native/device';
-import { Contacts } from '@ionic-native/contacts';
-import { MediaCapture } from '@ionic-native/media-capture';
-import { Geolocation } from '@ionic-native/geolocation';
-import { Vibration } from '@ionic-native/vibration';
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
-import { Diagnostic } from '@ionic-native/diagnostic';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
+import { Calendar } from '@awesome-cordova-plugins/calendar/ngx';
+import { Camera } from '@awesome-cordova-plugins/camera/ngx';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
+import { MediaCapture } from '@awesome-cordova-plugins/media-capture/ngx';
+import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
+import { Vibration } from '@awesome-cordova-plugins/vibration/ngx';
+import { LocationAccuracy } from '@awesome-cordova-plugins/location-accuracy/ngx';
+import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
 
 import { App } from '@wm/core';
 import { DeviceFileOpenerService, DeviceFileUploadService, NetworkService } from '@wm/mobile/core';
@@ -45,7 +44,6 @@ export class VariablesModule {
                               barcodeScanner: BarcodeScanner,
                               changeLogService: ChangeLogService,
                               calendar: Calendar,
-                              contacts: Contacts,
                               camera: Camera,
                               fileOpener: DeviceFileOpenerService,
                               fileSelectorService: FileSelectorService,
@@ -69,7 +67,7 @@ export class VariablesModule {
         deviceVariableManager.registerService(new CameraService(camera, mediaCapture));
         deviceVariableManager.registerService(new CalendarService(calendar));
         deviceVariableManager.registerService(new FileService(fileOpener, fileUploader));
-        deviceVariableManager.registerService(new ContactsService(contacts));
+        deviceVariableManager.registerService(new ContactsService());
         deviceVariableManager.registerService(new DatasyncService(app, changeLogService, fileSelectorService, localDBManagementService, localDBDataPullService, processManagementService, securityService, networkService));
         deviceVariableManager.registerService(new DeviceService(app, appVersion, device, geoLocation, networkService, vibrateService, locationAccuracyService, diagnosticService));
         deviceVariableManager.registerService(new ScanService(barcodeScanner));
@@ -81,7 +79,6 @@ export class VariablesModule {
         barcodeScanner: BarcodeScanner,
         changeLogService: ChangeLogService,
         calendar: Calendar,
-        contacts: Contacts,
         camera: Camera,
         fileOpener: DeviceFileOpenerService,
         fileSelectorService: FileSelectorService,
@@ -103,7 +100,6 @@ export class VariablesModule {
                                     barcodeScanner,
                                     changeLogService,
                                     calendar,
-                                    contacts,
                                     camera,
                                     fileOpener,
                                     fileSelectorService,

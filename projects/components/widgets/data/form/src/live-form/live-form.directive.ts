@@ -1,4 +1,4 @@
-import { Directive, Inject, Optional, Self, Attribute } from '@angular/core';
+import { Directive, Inject, Optional, Self, Attribute, HostListener } from '@angular/core';
 
 import { $appDigest, AbstractDialogService, DataSource, DataType, debounce, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
 import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField, isDataSetWidget, Live_Operations, parseValueByType, performDataOperation, ToDatePipe } from '@wm/components/base';
@@ -23,9 +23,14 @@ const getValidTime = val => {
 })
 export class LiveFormDirective {
     static  initializeProps = registerLiveFormProps();
+    private _triggeredByUser: boolean;
     private _debouncedSavePrevDataValues = debounce(() => {
         this.savePrevDataValues();
     }, 250);
+
+    @HostListener('keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+        this._triggeredByUser = true;
+    }
 
     constructor(
         @Self() @Inject(FormComponent) private form,
@@ -115,6 +120,11 @@ export class LiveFormDirective {
             field.value = parseValueByType(nv, field.type, field.widgettype, field.trailingzero);
         } else {
             field.value = undefined;
+        }
+
+        // WMS-22434: For default value set on individual form fields, do not mark the form as dirty.
+        if (this.form.dirty && !this._triggeredByUser) {
+            this.form.markAsPristine();
         }
         this._debouncedSavePrevDataValues();
     }

@@ -1,6 +1,6 @@
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
-import { Geolocation, GeolocationOptions } from '@ionic-native/geolocation';
-import { Diagnostic } from '@ionic-native/diagnostic';
+import { LocationAccuracy } from '@awesome-cordova-plugins/location-accuracy/ngx';
+import { Geolocation, GeolocationOptions } from '@awesome-cordova-plugins/geolocation/ngx';
+import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
 
 import { IDeviceVariableOperation } from '@wm/variables';
 import { $appDigest, App, isAndroid, isIos, isSpotcues, getAndroidVersion} from '@wm/core';

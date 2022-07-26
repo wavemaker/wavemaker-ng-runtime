@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { AppVersion } from '@ionic-native/app-version';
-import { File } from '@ionic-native/file';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx'; 
 
 import { isAndroid, isSpotcues, noop } from '@wm/core';
 

@@ -21,7 +21,7 @@
     </ul>
 </nav>
 
-<ul tabindex="0" class="app-livelist-container clearfix {{listclass}}" role="list"
+<ul tabindex="0" class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
     (keydown.enter)="handleKeyDown($event, 'select')"
 
     (keydown.arrowup)="handleKeyDown($event, 'focusPrev')"
@@ -36,7 +36,7 @@
     [hidden]="noDataFound && !variableInflight"
 >
     <ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
-        <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
+        <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{direction === 'horizontal' ? '' : itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
             [wmListItem]="item"
             #listItemRef="listItemRef"
             tabindex="0"
@@ -69,7 +69,7 @@
     </ul>
 </nav>
 
-<div class="panel-footer" *ngIf="navigation !== 'None'" [hidden]="!showNavigation || (onDemandLoad && dataNavigator.isDisableNext) || (dataNavigator.dataSize <= pagesize) || !dataNavigator.dataSize">
+<div class="panel-footer" *ngIf="navigation !== 'None'" [hidden]="!showNavigation || (onDemandLoad && dataNavigator.isDisableNext) || (dataNavigator.dataSize <= pagesize) || (!dataNavigator.dataSize && !dataNavigator.datasource?.pagination?.next)">
     <nav wmPagination
          navigationalign.bind="navigationalign"
          navigation.bind="navControls"
@@ -101,12 +101,14 @@
                     </div>
                 </h4>
             </li>
-            <li *ngFor="let item of groupObj.data; index as $index; first as $first; last as $last;" tabindex="0"
-                class="app-list-item group-list-item {{itemsPerRowClass}}"
-                [ngClass]="listItemRef.itemClass"
-                [wmListItem]="item" #listItemRef="listItemRef">
-                <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
-            </li>
+            <ul class="list-group clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}}">
+                <li *ngFor="let item of groupObj.data; index as $index; first as $first; last as $last;" tabindex="0"
+                    class="app-list-item group-list-item {{itemsPerRowClass}}"
+                    [ngClass]="listItemRef.itemClass"
+                    [wmListItem]="item" #listItemRef="listItemRef">
+                    <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
+                </li>
+            </ul>
         </ul>
     </li>
 </ng-template>

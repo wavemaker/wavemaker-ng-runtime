@@ -182,8 +182,15 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {number}
      */
     private parseNumber(val: string): number {
+        // WMS-22179: split number based on the decimal seperator in the val
+        let seperator;
+        if (val.indexOf(this.DECIMAL) > -1) {
+            seperator = this.DECIMAL;
+        } else {
+            seperator = '.';
+        }
         // splits string into two parts. decimal and number.
-        const parts = val.split(this.DECIMAL);
+        const parts = val.split(seperator);
         if (!parts.length) {
             return null;
         }
@@ -256,7 +263,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        if (isDefined(value) && value !== '') {
+        // WMS-22355, Trigger change cb if value exists or value is empty but datavalue exists (when value is selected and deleted). 
+        if (isDefined(value) && (value !== '' || this.datavalue)) {
             this.handleChange(value);
         } else {
             return;
@@ -287,7 +295,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             } else {
                 this.displayValue = financialVal.toFixed(stepVal);
             }
-        } else {
+        } else if (this.ngModelOptions.updateOn !== 'blur') {
             this.datavalue = undefined;
             this.handleChange(null);
         }
@@ -424,6 +432,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (inputValue) {
             const parsedVal =  parseInt(inputValue.toString().replace(/\D/g,''));
             if (parsedVal.toString().length > 15) {
+                // WMS-22321: If the number is greater than MAX_SAFE_INTEGER (more than 15 numbers).
+                // user selects a range of digits and presses a key.
+                // Do not throw validation of exceeded number as selected range value will be deleted.
+                const selectedVal = window.getSelection();
+                if (selectedVal && selectedVal.toString() && selectedVal.focusNode === this.nativeElement) {
+                    return true;
+                }
                 return false;
             }
         }
@@ -437,6 +452,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (!validity.test($event.key)) {
             return false;
         }
+        // comma cannot be entered consecutively
+        if (_.includes(inputValue, ',') && inputValue[inputValue.length - 1] === ',' && $event.key === ',') {
+            return false;
+        }
+
         // a decimal value can be entered only once in the input.
         if (_.includes(inputValue, this.DECIMAL) && $event.key === this.DECIMAL) {
             return false;

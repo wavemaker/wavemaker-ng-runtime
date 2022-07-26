@@ -1,14 +1,14 @@
-import { Contact, ContactFieldType, Contacts } from '@ionic-native/contacts';
-
 import { DeviceVariableService, IDeviceVariableOperation } from '@wm/variables';
+
+declare const navigator;
 
 export class ContactsService extends DeviceVariableService {
     public readonly name = 'contacts';
     public readonly operations: IDeviceVariableOperation[] = [];
 
-    constructor(contacts: Contacts) {
+    constructor() {
         super();
-        this.operations.push(new GetContactsOperation(contacts));
+        this.operations.push(new GetContactsOperation());
     }
 }
 
@@ -28,11 +28,7 @@ class GetContactsOperation implements IDeviceVariableOperation {
 
     public waitingCalls: (() => void)[] = [];
 
-    constructor(private contacts: Contacts) {
-
-    }
-
-    private extractDisplayName(c: Contact): string {
+    private extractDisplayName(c: any): string {
         const name = c.displayName;
         // In IOS, displayName is undefined, so using the formatted name.
         if (!name || name === '') {
@@ -53,7 +49,9 @@ class GetContactsOperation implements IDeviceVariableOperation {
         return new Promise<any>((resolve, reject) => {
             // Contacts plugin is not processing two simultaneous calls. It is anwsering to only call.
             this.waitingCalls.push(() => {
-                this.contacts.find(requiredFields, findOptions).then(data => {
+                new Promise((resolve: Function, reject: Function) => {
+                    navigator.contacts.find(requiredFields, resolve, reject, findOptions);
+                }).then((data: any[]) => {
                     if (data != null) {
                         const contacts = data.filter(c => {
                             c.displayName = this.extractDisplayName(c);
@@ -73,7 +71,7 @@ class GetContactsOperation implements IDeviceVariableOperation {
     }
 
     public invoke(variable: any, options: any, dataBindings: Map<string, any>): Promise<any> {
-        const requiredFields: ContactFieldType[] = ['displayName', 'name'];
+        const requiredFields = ['displayName', 'name'];
         const findOptions = {
             filter : dataBindings.get('contactFilter'),
             multiple : true

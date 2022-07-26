@@ -42,7 +42,11 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
                 returnVal = false;
                 break;
             case DataSource.Operation.IS_PAGEABLE:
-                returnVal = (this.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY || !_.isEmpty(this.pagination));
+                // Check for both client and server side pagination existence 
+                returnVal = this.hasPagination();
+                break;
+            case DataSource.Operation.IS_SORTABLE:
+                returnVal = this.hasPagination() && !(this as any)._paginationConfig; 
                 break;
             case DataSource.Operation.SUPPORTS_SERVER_FILTER:
                 returnVal = false;
@@ -77,11 +81,18 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.CANCEL:
                 returnVal = this.cancel(options);
                 break;
+            case DataSource.Operation.SET_PAGINATION:
+                returnVal = this.setPagination(options);
+                break;
             default :
                 returnVal = {};
                 break;
         }
         return returnVal;
+    }
+
+    hasPagination() {
+        return this.controller === VARIABLE_CONSTANTS.CONTROLLER_TYPE.QUERY || !_.isEmpty(this.pagination);
     }
 
     invoke(options?, success?, error?) {
@@ -120,6 +131,10 @@ export class ServiceVariable extends ApiAwareVariable implements IDataSource {
         }
 
         return true;
+    }
+
+    setPagination(data) {
+        return getManager().setPagination(this, data);
     }
 
     cancel(options?) {
