@@ -100,4 +100,8 @@
         (change)="onDateChange($event, true)"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
+    <div *ngIf="!!getCordovaPluginDatePickerApi()"
+        class="mobile-input mobile-datepicker-container"
+        (click)="!(disabled || readonly || isCurrentDate) && showCordovaDatePicker()">
+    </div>
 </ng-template>

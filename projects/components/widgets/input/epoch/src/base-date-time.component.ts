@@ -871,6 +871,29 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
+    getCordovaPluginDatePickerApi() {
+        if (isIos()) {
+            return _.get(window, 'cordova.wavemaker.datePicker.selectDate');
+        }
+    }
+
+    showCordovaDatePicker(mode = 'DATE_TIME') {
+        return Promise.resolve()
+            .then(() => this.getCordovaPluginDatePickerApi() || Promise.reject())
+            .then(selectDate => {
+                return new Promise((resolve, reject) => {
+                    selectDate({
+                        selectedDate: this.datavalue || Date.now(),
+                        mode: mode,
+                        minDate: this.mindate,
+                        maxDate: this.maxdate,
+                    }, (result) => {
+                        resolve(result?.date ? new Date(result.date) : null)
+                    }, reject);
+                });
+            });
+    }
+
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'tabindex') {
