@@ -363,6 +363,13 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
     }
 
+    public showCordovaDatePicker() {
+        return super.showCordovaDatePicker('TIME').then((date: Date) => {
+            this.bsTimeValue = date;
+            this.onTimeChange(this.bsTimeValue);
+        });
+    }
+
     private isValid(event) {
         if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
