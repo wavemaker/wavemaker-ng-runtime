@@ -366,6 +366,12 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.onModelUpdate(newVal);
     }
 
+    public showCordovaDatePicker() {
+        return super.showCordovaDatePicker('DATE_TIME').then((date: Date) => {
+            this.bsDateValue = date;
+        });
+    }
+
     /**
      * This is an internal method triggered when pressing key on the datetime input
      */
