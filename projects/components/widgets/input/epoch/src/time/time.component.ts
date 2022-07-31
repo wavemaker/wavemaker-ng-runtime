@@ -364,7 +364,14 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     }
 
     public showCordovaDatePicker() {
-        return super.showCordovaDatePicker('TIME').then((date: Date) => {
+        const minTime = this.minTime?.getTime();
+        const maxTime = this.maxTime?.getTime();
+        return super.showCordovaDatePicker(
+            'TIME',
+            this.bsTimeValue && this.bsTimeValue.getTime(),
+            minTime,
+            maxTime)
+        .then((date: Date) => {
             this.bsTimeValue = date;
             this.onTimeChange(this.bsTimeValue);
         });

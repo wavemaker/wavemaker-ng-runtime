@@ -271,7 +271,12 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     showCordovaDatePicker() {
-        return super.showCordovaDatePicker('DATE').then((date: Date) => {
+        return super.showCordovaDatePicker(
+            'DATE',
+            this.bsDataValue && this.bsDataValue.getTime(),
+            getDateObj(this.mindate)?.getTime(),
+            getDateObj(this.maxdate)?.getTime())
+        .then((date: Date) => {
             this.bsDataValue = date && moment(date).startOf('day').toDate();
         });
     }
