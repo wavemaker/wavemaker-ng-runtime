@@ -877,16 +877,19 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
-    showCordovaDatePicker(mode = 'DATE_TIME') {
+    showCordovaDatePicker(mode = 'DATE_TIME', 
+        selectedDate = Date.now(),
+        minDate?: number,
+        maxDate?: number) {
         return Promise.resolve()
             .then(() => this.getCordovaPluginDatePickerApi() || Promise.reject())
             .then(selectDate => {
                 return new Promise((resolve, reject) => {
                     selectDate({
-                        selectedDate: this.datavalue || Date.now(),
+                        selectedDate: selectedDate,
                         mode: mode,
-                        minDate: this.mindate,
-                        maxDate: this.maxdate,
+                        minDate: minDate,
+                        maxDate: maxDate
                     }, (result) => {
                         resolve(result?.date ? new Date(result.date) : null)
                     }, reject);
