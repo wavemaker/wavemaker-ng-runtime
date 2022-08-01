@@ -458,6 +458,7 @@ copyLocale() {
         local angularSrc=./node_modules/@angular/common/locales
         local fullCalendarSrc=./node_modules/fullcalendar/dist/locale
         local momentSrc=./node_modules/moment/locale
+        local momentTimezoneSrc=./node_modules/moment-timezone/builds/moment-timezone-with-data.js
 
         mkdir -p ${appDest}/angular
         mkdir -p ${appDest}/angular/global
@@ -466,6 +467,8 @@ copyLocale() {
         mkdir -p ${appDest}/fullcalendar
         mkdir -p ${appDest}/moment
         mkdir -p ${mobileDest}/moment
+        mkdir -p ${appDest}/moment-timezone
+        mkdir -p ${mobileDest}/moment-timezone
 
         for file in ${angularSrc}/*.js; do
             local destFileName=`echo $(basename ${file}) | tr 'A-Z' 'a-z'`;
@@ -483,6 +486,9 @@ copyLocale() {
 
         cp ${momentSrc}/*.js ${appDest}/moment/
         cp ${momentSrc}/*.js ${mobileDest}/moment/
+
+        cp ${momentTimezoneSrc} ${appDest}/moment-timezone/
+        cp ${momentTimezoneSrc} ${mobileDest}/moment-timezone/
     fi
 }
 
@@ -544,6 +550,7 @@ bundleWebLibs() {
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
+        ./node_modules/moment-timezone/moment-timezone.js \
         ./node_modules/x2js/x2js.js \
         ./node_modules/d3/d3.min.js \
         ./node_modules/he/he.js \
@@ -611,6 +618,7 @@ bundleMobileLibs() {
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
+        ./node_modules/moment-timezone/moment-timezone.js \
         ./node_modules/x2js/x2js.js \
         ./node_modules/d3/d3.min.js \
         ./node_modules/he/he.js \

@@ -14,7 +14,8 @@ import {
     FormWidgetType,
     getDisplayDateTimeFormat,
     getFormattedDate,
-    getNativeDateObject
+    getNativeDateObject,
+    getMomentLocaleObject
 } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
@@ -67,7 +68,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if (this.isCurrentTime && !this.bsTimeValue) {
             return CURRENT_TIME;
         }
-        return getFormattedDate(this.datePipe, this.bsTimeValue, this.outputformat) || '';
+        return getFormattedDate(this.datePipe, this.bsTimeValue, this.outputformat, this.i18nService.getMomentTimeZone(), true) || '';
     }
 
     /**Todo[Shubham]: needs to be redefined
@@ -95,11 +96,11 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     }
 
     get displayValue() {
-        return getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern) || '';
+        return getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern, this.i18nService.getMomentTimeZone(), true) || '';
     }
 
     get nativeDisplayValue() {
-        return getFormattedDate(this.datePipe, this.bsTimeValue, 'HH:mm:ss') || '';
+        return getFormattedDate(this.datePipe, this.bsTimeValue, 'HH:mm:ss', this.i18nService.getMomentTimeZone(), true) || '';
     }
 
     /* Internal property to have a flag to check the given datavalue is of Current time*/
@@ -318,7 +319,8 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             return;
         }
         this.timeinterval = setInterval( () => {
-            const now = new Date();
+            const timeZone = this.i18nService.getMomentTimeZone();
+            const now = timeZone ? getMomentLocaleObject(timeZone) : new Date();
             now.setSeconds(now.getSeconds() + 1);
             this.datavalue = CURRENT_TIME;
             this.onTimeChange(now);

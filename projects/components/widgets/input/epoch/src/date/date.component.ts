@@ -4,12 +4,12 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
-import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges } from '@wm/core';
+import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, getMomentLocaleObject } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
 
-declare const _, $;
+declare const _, $, moment;
 
 const CURRENT_DATE = 'CURRENT_DATE';
 const DEFAULT_CLS = 'app-date input-group';
@@ -40,6 +40,7 @@ export class DateComponent extends BaseDateTimeComponent {
 
     private keyEventPlugin;
     private deregisterEventListener;
+    private isCurrentDate;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -50,16 +51,16 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     get displayValue() {
-        return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat) || '';
+        return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) || '';
     }
 
     get nativeDisplayValue() {
-        return getFormattedDate(this.datePipe, this.bsDataValue, 'yyyy-MM-dd') || '';
+        return getFormattedDate(this.datePipe, this.bsDataValue, 'yyyy-MM-dd', this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) || '';
     }
 
     // @ts-ignore
     get datavalue() {
-        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat) || '';
+        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) || '';
     }
 
     // Todo[Shubham]: needs to be redefined
@@ -67,9 +68,12 @@ export class DateComponent extends BaseDateTimeComponent {
     // @ts-ignore
     set datavalue(newVal) {
         if (newVal === CURRENT_DATE) {
-            this.bsDataValue = new Date();
+            const timeZone = this.i18nService.getMomentTimeZone();
+            this.bsDataValue = timeZone ? getMomentLocaleObject(timeZone) : new Date();
+            this.isCurrentDate = true;
         } else {
             this.bsDataValue = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}) : undefined;
+            this.isCurrentDate = false;
         }
         // update the previous datavalue.
         this.invokeOnChange(this.datavalue, undefined, true);
@@ -126,7 +130,7 @@ export class DateComponent extends BaseDateTimeComponent {
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
-        if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat) === this.displayValue) {
+        if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) === this.displayValue) {
             $(this.nativeElement).find('.display-input').val(this.displayValue);
         }
         if (newVal) {
@@ -223,7 +227,7 @@ export class DateComponent extends BaseDateTimeComponent {
             if (action === 'enter' || action === 'arrowdown') {
                 const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
                 event.preventDefault();
-                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat);
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {

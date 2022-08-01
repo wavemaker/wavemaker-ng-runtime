@@ -1,11 +1,11 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, HostListener, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, App } from '@wm/core';
+import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, App, getMomentLocaleObject } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
@@ -60,11 +60,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * @returns {any|string}
      */
     get displayValue(): any {
-        return getFormattedDate(this.datePipe, this.proxyModel, this.dateInputFormat) || '';
+        return getFormattedDate(this.datePipe, this.proxyModel, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) || '';
     }
 
     get nativeDisplayValue() {
-        return getFormattedDate(this.datePipe, this.proxyModel, 'yyyy-MM-ddTHH:mm:ss') || '';
+        return getFormattedDate(this.datePipe, this.proxyModel, 'yyyy-MM-ddTHH:mm:ss', this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) || '';
     }
 
     @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
@@ -98,7 +98,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.isCurrentDate && !this.proxyModel) {
             return CURRENT_DATE;
         }
-        return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat);
+        return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat, this.i18nService.getMomentTimeZone());
     }
 
     /**Todo[Shubham]: needs to be redefined
@@ -147,8 +147,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.timeinterval) {
             return;
         }
-        this.timeinterval = setInterval(() => {
-            const currentTime = new Date();
+        this.timeinterval = setTimeout(() => {
+            const timeZone = this.i18nService.getMomentTimeZone();
+            const currentTime = timeZone ? getMomentLocaleObject(timeZone) : new Date();
             this.onModelUpdate(currentTime);
         }, 1000);
     }
@@ -248,9 +249,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method to update the model
      */
     public onModelUpdate(newVal, type?) {
+        console.log('>>>>>>', this.proxyModel);
         if (type === 'date') {
             this.invalidDateTimeFormat = false;
-            if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat) === this.displayValue) {
+            if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) === this.displayValue) {
                 $(this.nativeElement).find('.display-input').val(this.displayValue);
             }
         }
@@ -277,7 +279,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         this.proxyModel = newVal;
         if (this.proxyModel) {
-            this.bsDateValue = this.bsTimeValue = this.proxyModel;
+            this.bsDateValue = this.bsTimeValue = newVal ;
         }
         this._debouncedOnChange(this.datavalue, {}, true);
         this.cdRef.detectChanges();
@@ -377,7 +379,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             if (action === 'enter' || action === 'arrowdown') {
                 newVal = newVal ? getNativeDateObject(newVal, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
                 event.preventDefault();
-                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat);
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {

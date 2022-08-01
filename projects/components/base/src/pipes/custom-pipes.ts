@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform, Injectable } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { CURRENCY_INFO, isDefined, App, CustomPipeManager } from '@wm/core';
+import { CURRENCY_INFO, isDefined, App, CustomPipeManager, AbstractI18nService } from '@wm/core';
 
 
 declare const moment, _, $;
@@ -47,12 +47,21 @@ export class ToDatePipe implements PipeTransform {
             if (format === 'timestamp') {
                 return timestamp;
             }
-            return this.datePipe.transform(timestamp, format);
+            let formattedVal;
+            const timeRegex = /^[0-9]{2}:[0-9]{2}:[0-9]{2}/g;
+            const timeZone = this.i18nService.getMomentTimeZone();
+            // to add if time shouldn't be shown in timezone val !timeRegex.test(data)
+            if (timeZone) {
+                formattedVal = moment(timestamp).tz(timeZone).format(format.replaceAll("y", "Y").replaceAll("d", "D"));
+            } else {
+                formattedVal = this.datePipe.transform(timestamp, format);
+            }
+            return formattedVal;
         }
         return '';
     }
 
-    constructor(private datePipe: DatePipe) { }
+    constructor(private datePipe: DatePipe, private i18nService: AbstractI18nService ) { }
 }
 
 @Pipe({

@@ -35,6 +35,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     private readonly prefabLocale: Map<String, any>;
     private messages: any;
     private _isAngularLocaleLoaded = false;
+    private momentTimeZone;
 
     constructor(
         private $http: HttpClient,
@@ -44,6 +45,8 @@ export class I18nServiceImpl extends AbstractI18nService {
         super();
         this.appLocale = {};
         this.prefabLocale = new Map();
+        moment.tz('Asia/Tokyo');
+        this.momentTimeZone = 'Asia/Tokyo';
     }
 
     private updateLocaleDirection() {
@@ -170,6 +173,18 @@ export class I18nServiceImpl extends AbstractI18nService {
         return loadScripts([path], true);
     }
 
+    protected loadMomentTimeZoneBundle(locale) {
+        return new Promise<void>(resolve => {
+            const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
+            const path = _cdnUrl + `locales/moment-timezone/moment-timezone-with-data.js`;
+
+            loadScripts([path], true).then(()=>{
+                moment.tz.setDefault(locale);
+                resolve();
+            }, resolve);
+        });
+    }
+
     protected loadLocaleBundles(libLocale) {
         if (libLocale.moment) {
             this.loadMomentLocaleBundle(libLocale.moment);
@@ -181,6 +196,16 @@ export class I18nServiceImpl extends AbstractI18nService {
             this.loadAppLocaleBundle();
         }
         return this.loadAngularLocaleBundle(libLocale.angular);
+    }
+
+    public setMomentTimeZone(locale) {
+        console.log('>>>>>>>>>>>>>>');
+        this.loadMomentTimeZoneBundle(locale);
+        this.momentTimeZone = locale;
+    }
+
+    public getMomentTimeZone() {
+        return this.momentTimeZone;
     }
 
     public setSelectedLocale(locale) {

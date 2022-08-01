@@ -114,6 +114,7 @@ export {
     getAbortableDefer,
     createCSSRule,
     getUrlParams,
+    getMomentLocaleObject,
     getRouteNameFromLink,
     isAppleProduct,
     defer,

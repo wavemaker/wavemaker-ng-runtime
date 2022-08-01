@@ -459,6 +459,13 @@ export class AppManagerService {
     }
 
     /**
+     * Triggers the appLoad method defined in app.js of the app
+     */
+    appLoad() {
+        triggerFn(this.$app.onAppLoad);
+    }
+
+    /**
      * Returns the pipe based on the input
      */
     getPipe(pipe) {

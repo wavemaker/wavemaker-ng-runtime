@@ -64,8 +64,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected activeDate;
     private keyEventPluginInstance;
     private elementScope;
-    public datepattern: string;
-    public timepattern: string;
+    public datepattern;
+    public timepattern;
     protected showseconds: boolean;
     protected ismeridian: boolean;
     protected meridians: any;
@@ -174,7 +174,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     protected formatValidation(newVal, inputVal, isNativePicker?: boolean) {
         const pattern = this.datepattern || this.timepattern;
-        const formattedDate = getFormattedDate(this.datePipe, newVal, pattern);
+        const timeZone = this.i18nService.getMomentTimeZone();
+        const formattedDate = timeZone ? moment(newVal).format(pattern.replaceAll('y', 'Y').replaceAll("d", "D")) : getFormattedDate(this.datePipe, newVal, pattern);
         inputVal = inputVal.trim();
         if (inputVal) {
             if (pattern === 'timestamp') {
@@ -187,7 +188,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             } else {
                 if (isNativePicker) {
                     // format the date value only when inputVal is obtained from $event.target.value, as the format doesnt match.
-                    inputVal = getFormattedDate(this.datePipe, inputVal, pattern);
+                    inputVal = getFormattedDate(this.datePipe, inputVal, pattern, timeZone);
                 }
                 if (inputVal !== formattedDate) {
                     this.invalidDateTimeFormat = true;
@@ -215,7 +216,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (this.mindate && newVal < minDate) {
                 const msg = `${this.appLocale.LABEL_MINDATE_VALIDATION_MESSAGE} ${this.mindate}.`;
                 this.invokeOnChange(this.datavalue, undefined, false);
-                if (isNativePicker && getFormattedDate(this.datePipe, minDate, this.datepattern) === displayValue) {
+                if (isNativePicker && getFormattedDate(this.datePipe, minDate, this.datepattern, this.i18nService.getMomentTimeZone()) === displayValue) {
                     return $($event.target).val(displayValue);
                 }
                 this.dateNotInRange = true;
@@ -225,7 +226,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (this.maxdate && newVal > maxDate) {
                 const msg = `${this.appLocale.LABEL_MAXDATE_VALIDATION_MESSAGE} ${this.maxdate}.`;
                 this.invokeOnChange(this.datavalue, undefined, false);
-                if (isNativePicker && getFormattedDate(this.datePipe, maxDate, this.datepattern) === displayValue) {
+                if (isNativePicker && getFormattedDate(this.datePipe, maxDate, this.datepattern, this.i18nService.getMomentTimeZone()) === displayValue) {
                     return $($event.target).val(displayValue);
                 }
                 this.dateNotInRange = true;
@@ -239,8 +240,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 } else {
                     excludeDatesArray = this.excludedates;
                 }
-                excludeDatesArray = excludeDatesArray.map(d => getFormattedDate(this.datePipe, d, this.datepattern));
-                if (excludeDatesArray.indexOf(getFormattedDate(this.datePipe, dateTimeVal, this.datepattern)) > -1) {
+                excludeDatesArray = excludeDatesArray.map(d => getFormattedDate(this.datePipe, d, this.datepattern, this.i18nService.getMomentTimeZone()));
+                if (excludeDatesArray.indexOf(getFormattedDate(this.datePipe, dateTimeVal, this.datepattern, this.i18nService.getMomentTimeZone())) > -1) {
                     this.dateNotInRange = true;
                     this.validateType = 'excludedates';
                     this.invokeOnChange(this.datavalue, undefined, false);
@@ -785,7 +786,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     this.invalidDateTimeFormat = false;
                     this.invokeOnChange(this.datavalue, undefined, false);
                     const pattern = this.datepattern || this.timepattern;
-                    if (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, pattern) === elementScope.displayValue) {
+                    if (getFormattedDate(elementScope.datePipe, elementScope.bsTimeValue, pattern, this.i18nService.getMomentTimeZone()) === elementScope.displayValue) {
                         $(this.nativeElement).find('.display-input').val(elementScope.displayValue);
                     }
                 }

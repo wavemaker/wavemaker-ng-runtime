@@ -1,13 +1,13 @@
 import { Directive, Inject, Optional, Self, Attribute, HostListener } from '@angular/core';
 
-import { $appDigest, AbstractDialogService, DataSource, DataType, debounce, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
+import { $appDigest, AbstractDialogService, DataSource, DataType, debounce, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject, AbstractI18nService } from '@wm/core';
 import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField, isDataSetWidget, Live_Operations, parseValueByType, performDataOperation, ToDatePipe } from '@wm/components/base';
 import { LiveTableComponent } from '@wm/components/data/live-table';
 
 import { registerLiveFormProps } from '../form.props';
 import { FormComponent } from '../form.component';
 
-declare const _;
+declare const _, moment;
 
 const isTimeType = field => field.widgettype === DataType.TIME || (field.type === DataType.TIME && !field.widgettype);
 const getValidTime = val => {
@@ -37,6 +37,7 @@ export class LiveFormDirective {
         @Optional() liveTable: LiveTableComponent,
         public datePipe: ToDatePipe,
         private dialogService: AbstractDialogService,
+        private i18nService: AbstractI18nService,
         @Attribute('formlayout') formlayout: string
     ) {
         // If parent live table is present and this form is first child of live table, set this form instance on livetable
@@ -233,7 +234,14 @@ export class LiveFormDirective {
                     if (field.outputformat === DataType.TIMESTAMP || field.type === DataType.TIMESTAMP) {
                         fieldValue = field.value ? dateTime : null;
                     } else if (field.outputformat) {
-                        fieldValue = this.datePipe.transform(dateTime, field.outputformat);
+                        const timeZone = this.i18nService.getMomentTimeZone();
+                        const timeRegex = /^[0-9]{2}:[0-9]{2}:[0-9]{2}/g;
+                        // to add if time shouldn't be shown in timezone val !timeRegex.test(dateTime)
+                        if (timeZone) {
+                            fieldValue = moment(dateTime).tz(timeZone).format(field.outputformat.replaceAll("y", "Y").replaceAll("d", "D"));
+                        } else {
+                            fieldValue = this.datePipe.transform(dateTime, field.outputformat);
+                        }
                     } else {
                         fieldValue = field.value;
                     }

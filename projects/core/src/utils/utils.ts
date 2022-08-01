@@ -331,13 +331,23 @@ export function triggerFn(fn, ...argmnts) {
 /**
  * This method is used to get the formatted date
  */
-export const getFormattedDate = (datePipe, dateObj, format: string): any => {
+export const getFormattedDate = (datePipe, dateObj, format, timeZone?, isTimeType?, isIntervalDateTime?): any => {
     if (!dateObj) {
         return undefined;
     }
     if (format === 'timestamp') {
         return moment(dateObj).valueOf();
     }
+    const timeRegex = /^[0-9]{2}:[0-9]{2}:[0-9]{2}/g;
+    // to add if time shouldn't be shown in timezone val !timeRegex.test(dateObj)
+    if (timeZone) {
+        if (isTimeType || isIntervalDateTime) { // dates which are of type time widget (value is hh:mm:ss) but returned as date string from time comp
+            return moment(dateObj).format(format.replaceAll('y', 'Y').replaceAll("d", "D"));
+        }
+        dateObj = getMomentLocaleObject(timeZone, dateObj);
+        return moment(dateObj).format(format.replaceAll("y", "Y").replaceAll("d", "D"));
+    }
+
     return datePipe.transform(dateObj, format);
 };
 
@@ -814,6 +824,16 @@ export const loadStyleSheets = (urls = []) => {
 
 // function to check if the script is already loaded
 const isScriptLoaded = src => !!getNode(`script[src="${src}"], script[data-src="${src}"]`);
+
+export const getMomentLocaleObject = (timeZone, dateObj?) => {
+    if (dateObj) {
+        // return new Date('2022-07-01T14:57:06').toLocaleString('en-US', {timeZone: 'Australia/Sydney'})
+        // return moment(dateObj).toDate();
+        return new Date(new Date(moment(dateObj).tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
+    } else {
+        return new Date(new Date(moment().tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
+    }
+}
 
 export const loadScript = async (url, loadViaScriptTag, cacheable = false) => {
     const _url = url.trim();
