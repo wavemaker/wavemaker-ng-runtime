@@ -231,7 +231,6 @@ export class BaseFieldValidations {
     watchDefaultValidatorExpr(fn, key) {
         const watchName = `${this.instance.widgetId}_` + key + '_formField';
         $unwatch(watchName);
-        //[Todo-CSP]: Need clarity generate this expr fn if form is present in the page
         this.instance.registerDestroyListener($watch('boundFn(fn)', _.extend(this.instance, this.instance.viewParent), {fn}, (nv, ov) => {
             this.instance.widget[key] = nv;
             this.applyDefaultValidators();

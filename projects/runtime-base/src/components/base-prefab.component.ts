@@ -129,7 +129,6 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
                             });
 
                             if (expr) {
-                                //[Todo-CSP]: expr will be generated with prefab.comp.expr.ts
                                 this.registerDestroyListener(
                                     $watch(expr, this, {}, nv => this.containerWidget.widget[key] = nv)
                                 );

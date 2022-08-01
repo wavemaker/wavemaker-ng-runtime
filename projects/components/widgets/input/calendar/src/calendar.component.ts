@@ -546,7 +546,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
             this._datepickerInnerComponent = (this._datepicker as any)._datePicker;
             this.renderMobileView(moment(this.datavalue));
-            //[Todo-CSP]: either look for an alternative or generate this expression fn in page.comp
             this.registerDestroyListener(
                 $watch(
                     '_datepickerInnerComponent.datepickerMode',

@@ -485,7 +485,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const row = this.getClonedRowObject(rowData);
             const watchName = `${this.widgetId}_rowNgClass_${index}`;
             $unwatch(watchName);
-            //[Todo-CSP]: generate watcher expr in page if rowngclass attr is present for table
             this.registerDestroyListener($watch(this.rowngclass, this.viewParent, {row}, (nv, ov) => {
                 this.callDataGridMethod('applyRowNgClass', getConditionalClasses(nv, ov), index);
             }, watchName));
@@ -497,7 +496,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const row = this.getClonedRowObject(rowData);
             const watchName = `${this.widgetId}_colNgClass_${rowIndex}_${colIndex}`;
             $unwatch(watchName);
-            //[Todo-CSP]: generate watcher expr in page if col-ng-class attr is present for table
             this.registerDestroyListener($watch(colDef['col-ng-class'], this.viewParent, {row}, (nv, ov) => {
                 this.callDataGridMethod('applyColNgClass', getConditionalClasses(nv, ov), rowIndex, colIndex);
             }, watchName));
