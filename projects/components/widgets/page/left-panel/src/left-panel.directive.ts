@@ -1,9 +1,9 @@
-import { Directive, Injector } from '@angular/core';
+import { Directive, Injector, Optional } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 
 import { App, addClass, removeClass, switchClass, toggleClass } from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { PageDirective } from '@wm/components/page';
+import { LayoutDirective, PageDirective } from '@wm/components/page';
 
 import { registerProps } from './left-panel.props';
 import { LeftPanelAnimator } from './left-panel.animator';
@@ -41,11 +41,12 @@ export class LeftPanelDirective extends StylableComponent {
     private _destroyCollapseActionListener: () => void;
     private _leftPanelAnimator;
 
-    constructor(public app: App, private page: PageDirective, inj: Injector, router: Router) {
+    //If "spa" attribute is set LayoutDirective will present and PageDirective is undefined else PageDirective will present and LayoutDirective is undefined
+    constructor(public app: App, @Optional() private page: PageDirective, @Optional() private layout: LayoutDirective, inj: Injector, router: Router) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.$ele = this.$element;
-        this.$page = page.$element;
+        this.$page = this.getAttr('spa') && layout && layout.$element || page && page.$element;
         addClass(this.$page[0], 'left-panel-collapsed-container');
         if (this.columnwidth) {
             this.setLeftPanelWidth(['md', 'sm'], this.columnwidth);
@@ -73,7 +74,7 @@ export class LeftPanelDirective extends StylableComponent {
         if (this._destroyCollapseActionListener) {
             this._destroyCollapseActionListener();
         }
-        this.page.notify('wmLeftPanel:collapse');
+        (this.getAttr("spa") && this.layout || this.page).notify('wmLeftPanel:collapse');
     }
 
     public expand(): void {
@@ -88,7 +89,7 @@ export class LeftPanelDirective extends StylableComponent {
             this.setPageWidthAndPosition(['md', 'sm'], this.columnwidth);
             this.setPageWidthAndPosition(['xs'], this.xscolumnwidth);
         }
-        this.page.notify('wmLeftPanel:expand');
+        (this.getAttr("spa") && this.layout || this.page).notify('wmLeftPanel:expand');
     }
 
     public isGesturesEnabled(): boolean {

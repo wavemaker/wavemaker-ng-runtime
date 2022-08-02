@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 
 import { $invokeWatchers, AbstractI18nService, AbstractNavigationService, App, noop, Viewport, ScriptLoaderService, UtilsService } from '@wm/core';
 import { PartialDirective, WidgetRef} from '@wm/components/base';
-import { PageDirective } from '@wm/components/page';
+import { PageDirective, SpaPageDirective } from '@wm/components/page';
 import {PrefabDirective} from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
 
@@ -34,11 +34,12 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     i18nService: AbstractI18nService;
     appLocale: any;
     @ViewChild(PartialDirective) partialDirective;
-    pageDirective: PageDirective;
+    pageDirective: PageDirective | SpaPageDirective;
     Prefab: PrefabDirective;
     scriptLoaderService: ScriptLoaderService;
     Viewport: Viewport;
     compileContent = false;
+    spa: boolean;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -76,7 +77,11 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             this.pageParams = this.containerWidget.partialParams;
         });
 
-        this.pageDirective = this.injector.get(PageDirective, null);
+        if(this.spa) {
+            this.pageDirective = this.injector.get(SpaPageDirective, null);
+        } else {
+            this.pageDirective = this.injector.get(PageDirective, null);
+        }
         if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
             this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
