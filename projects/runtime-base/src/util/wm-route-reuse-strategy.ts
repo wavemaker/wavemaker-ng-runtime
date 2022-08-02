@@ -27,7 +27,7 @@ export const MAX_CACHE_SIZE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_SIZE';
 export const MAX_CACHE_AGE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_AGE';
 
 /* Base Strategy with Default implementations */
-class WmDefaultRouteReuseStrategy {
+export class WmDefaultRouteReuseStrategy {
     private cache: LRUCache<DetachedRouteHandle>;
     private currentRouteKey: string;
     private paramsToIgnore = [
@@ -123,8 +123,20 @@ class WmDefaultRouteReuseStrategy {
         return this.cache.get(key);
     }
 
-    reset() {
-        return this.cache.clear();
+    reset(pageName?: string) {
+        if (pageName) {
+            this.cache.delete(pageName);
+            const pageWithParams = pageName += '?';
+            const entriesToDelete = [];
+            for(let k of this.cache.keys()) {
+                if (k.startsWith(pageWithParams)) {
+                    entriesToDelete.push(k);
+                }
+            }
+            entriesToDelete.forEach(k => this.cache.delete(k));
+        } else {
+            return this.cache.clear();
+        }
     }
 }
 /* Custom Strategy specifically for preview & WaveMaker Deployments */
