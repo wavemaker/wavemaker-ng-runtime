@@ -142,6 +142,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-network-info-toaster', BASIC_MODULE],
     ['wm-number', INPUT_MODULE],
     ['wm-page', PAGE_MODULE],
+    ['wm-layout', PAGE_MODULE],
     ['wm-page-content', PAGE_MODULE],
     ['wm-pagedialog', PARTIAL_DIALOG_MODULE],
     ['wm-pagination', PAGINATION_MODULE],

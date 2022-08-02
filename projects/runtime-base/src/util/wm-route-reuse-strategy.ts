@@ -142,7 +142,7 @@ export class WmDefaultRouteReuseStrategy {
 /* Custom Strategy specifically for preview & WaveMaker Deployments */
 export class WmRouteReuseStrategy extends WmDefaultRouteReuseStrategy
     implements RouteReuseStrategy {
-    constructor(@Inject(MAX_CACHE_SIZE) maxCacheSize: number, 
+    constructor(@Inject(MAX_CACHE_SIZE) maxCacheSize: number,
                 @Inject(MAX_CACHE_AGE) maxCacheAge: number) {
         super(maxCacheSize, maxCacheAge);
     }
@@ -180,7 +180,7 @@ export class WmRouteReuseStrategy extends WmDefaultRouteReuseStrategy
 /* Custom Strategy specifically for Angular Deployments */
 export class WmNgRouteReuseStrategy extends WmDefaultRouteReuseStrategy
     implements RouteReuseStrategy {
-    constructor(@Inject(MAX_CACHE_SIZE) maxCacheSize: number, 
+    constructor(@Inject(MAX_CACHE_SIZE) maxCacheSize: number,
                 @Inject(MAX_CACHE_AGE) maxCacheAge: number) {
         super(maxCacheSize, maxCacheAge);
     }
