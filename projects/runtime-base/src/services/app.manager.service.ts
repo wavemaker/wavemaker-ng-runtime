@@ -459,10 +459,10 @@ export class AppManagerService {
     }
 
     /**
-     * Triggers the appLoad method defined in app.js of the app
+     * Triggers the appMount method defined in app.js of the app
      */
-    appLoad() {
-        triggerFn(this.$app.onAppLoad);
+    appMount() {
+        triggerFn(this.$app.onAppMount);
     }
 
     /**

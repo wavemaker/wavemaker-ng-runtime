@@ -47,7 +47,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
 
         this.isApplicationType = getWmProjectProperties().type === 'APPLICATION';
 
-        this.appManager.appLoad(); 
+        this.appManager.appMount(); 
 
         // subscribe to OAuth changes
         oAuthService.getOAuthProvidersAsObservable().subscribe((providers: any) => {

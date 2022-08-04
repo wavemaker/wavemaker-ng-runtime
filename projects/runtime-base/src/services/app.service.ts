@@ -65,7 +65,7 @@ export class AppRef {
     Variables: any = {};
     Actions: any = {};
     onAppVariablesReady = noop;
-    onAppLoad = noop;
+    onAppMount = noop;
     onSessionTimeout = noop;
     onPageReady = noop;
     onBeforePageLeave = noop;

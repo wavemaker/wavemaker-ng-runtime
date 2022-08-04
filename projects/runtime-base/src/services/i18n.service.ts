@@ -176,10 +176,7 @@ export class I18nServiceImpl extends AbstractI18nService {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
             const path = _cdnUrl + `locales/moment-timezone/moment-timezone-with-data.js`;
 
-            loadScripts([path], true).then(()=>{
-                moment.tz.setDefault(locale);
-                resolve();
-            }, resolve);
+            loadScripts([path], true);
         });
     }
 

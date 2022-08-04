@@ -62,7 +62,7 @@ export abstract class App {
     Actions: any;
     onAppVariablesReady: Function;
     onSessionTimeout: Function;
-    onAppLoad: Function;
+    onAppMount: Function;
     onPageReady: Function;
     onBeforePageLeave: Function;
     onBeforeServiceCall: Function;
