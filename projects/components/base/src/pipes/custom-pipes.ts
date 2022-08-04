@@ -33,7 +33,7 @@ export class TrailingZeroDecimalPipe implements PipeTransform {
     name: 'toDate'
 })
 export class ToDatePipe implements PipeTransform {
-    transform(data: any, format: any) {
+    transform(data: any, format: any, timezone?) {
         let timestamp;
         // 'null' is to be treated as a special case, If user wants to enter null value, empty string will be passed to the backend
         if (data === 'null' || data === '') {
@@ -48,11 +48,9 @@ export class ToDatePipe implements PipeTransform {
                 return timestamp;
             }
             let formattedVal;
-            const timeRegex = /^[0-9]{2}:[0-9]{2}:[0-9]{2}/g;
-            const timeZone = this.i18nService.getMomentTimeZone();
-            // to add if time shouldn't be shown in timezone val !timeRegex.test(data)
-            if (timeZone) {
-                formattedVal = moment(timestamp).tz(timeZone).format(format.replaceAll("y", "Y").replaceAll("d", "D"));
+            const timeZone = this.i18nService ? this.i18nService.getMomentTimeZone() : timezone;
+            if (timeZone && data === timestamp) {
+                formattedVal = moment(timestamp).tz(timeZone).format(format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A'));
             } else {
                 formattedVal = this.datePipe.transform(timestamp, format);
             }

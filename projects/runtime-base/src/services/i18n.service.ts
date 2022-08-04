@@ -45,8 +45,6 @@ export class I18nServiceImpl extends AbstractI18nService {
         super();
         this.appLocale = {};
         this.prefabLocale = new Map();
-        moment.tz('Asia/Tokyo');
-        this.momentTimeZone = 'Asia/Tokyo';
     }
 
     private updateLocaleDirection() {
@@ -199,7 +197,6 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     public setMomentTimeZone(locale) {
-        console.log('>>>>>>>>>>>>>>');
         this.loadMomentTimeZoneBundle(locale);
         this.momentTimeZone = locale;
     }

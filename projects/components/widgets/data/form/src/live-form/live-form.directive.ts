@@ -234,14 +234,7 @@ export class LiveFormDirective {
                     if (field.outputformat === DataType.TIMESTAMP || field.type === DataType.TIMESTAMP) {
                         fieldValue = field.value ? dateTime : null;
                     } else if (field.outputformat) {
-                        const timeZone = this.i18nService.getMomentTimeZone();
-                        const timeRegex = /^[0-9]{2}:[0-9]{2}:[0-9]{2}/g;
-                        // to add if time shouldn't be shown in timezone val !timeRegex.test(dateTime)
-                        if (timeZone) {
-                            fieldValue = moment(dateTime).tz(timeZone).format(field.outputformat.replaceAll("y", "Y").replaceAll("d", "D"));
-                        } else {
-                            fieldValue = this.datePipe.transform(dateTime, field.outputformat);
-                        }
+                        fieldValue = this.datePipe.transform(dateTime, field.outputformat);
                     } else {
                         fieldValue = field.value;
                     }

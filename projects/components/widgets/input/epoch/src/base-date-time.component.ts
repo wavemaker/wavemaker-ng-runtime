@@ -175,7 +175,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected formatValidation(newVal, inputVal, isNativePicker?: boolean) {
         const pattern = this.datepattern || this.timepattern;
         const timeZone = this.i18nService.getMomentTimeZone();
-        const formattedDate = timeZone ? moment(newVal).format(pattern.replaceAll('y', 'Y').replaceAll("d", "D")) : getFormattedDate(this.datePipe, newVal, pattern);
+        const formattedDate = getFormattedDate(this.datePipe, newVal, pattern, timeZone);
         inputVal = inputVal.trim();
         if (inputVal) {
             if (pattern === 'timestamp') {

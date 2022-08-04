@@ -68,7 +68,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if (this.isCurrentTime && !this.bsTimeValue) {
             return CURRENT_TIME;
         }
-        return getFormattedDate(this.datePipe, this.bsTimeValue, this.outputformat, this.i18nService.getMomentTimeZone(), true) || '';
+        return getFormattedDate(this.datePipe, this.bsTimeValue, this.outputformat, this.i18nService.getMomentTimeZone()) || '';
     }
 
     /**Todo[Shubham]: needs to be redefined
@@ -96,11 +96,11 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     }
 
     get displayValue() {
-        return getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern, this.i18nService.getMomentTimeZone(), true) || '';
+        return getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern, this.i18nService.getMomentTimeZone()) || '';
     }
 
     get nativeDisplayValue() {
-        return getFormattedDate(this.datePipe, this.bsTimeValue, 'HH:mm:ss', this.i18nService.getMomentTimeZone(), true) || '';
+        return getFormattedDate(this.datePipe, this.bsTimeValue, 'HH:mm:ss', this.i18nService.getMomentTimeZone()) || '';
     }
 
     /* Internal property to have a flag to check the given datavalue is of Current time*/

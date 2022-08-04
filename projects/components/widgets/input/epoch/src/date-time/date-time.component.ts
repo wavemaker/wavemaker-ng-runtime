@@ -46,6 +46,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
     private isEnterPressedOnDateInput = false;
+    private timeZone;
 
     get timestamp() {
         return this.proxyModel ? this.proxyModel.valueOf() : undefined;
@@ -60,11 +61,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * @returns {any|string}
      */
     get displayValue(): any {
-        return getFormattedDate(this.datePipe, this.proxyModel, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) || '';
+        return getFormattedDate(this.datePipe, this.proxyModel, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate) || '';
     }
 
     get nativeDisplayValue() {
-        return getFormattedDate(this.datePipe, this.proxyModel, 'yyyy-MM-ddTHH:mm:ss', this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) || '';
+        return getFormattedDate(this.datePipe, this.proxyModel, 'yyyy-MM-ddTHH:mm:ss', this.timeZone, (this as any).key, this.isCurrentDate) || '';
     }
 
     @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
@@ -98,7 +99,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.isCurrentDate && !this.proxyModel) {
             return CURRENT_DATE;
         }
-        return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat, this.i18nService.getMomentTimeZone());
+        return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat, this.timeZone);
     }
 
     /**Todo[Shubham]: needs to be redefined
@@ -135,7 +136,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
-
+        this.timeZone = this.i18nService.getMomentTimeZone();
         this.datepattern = this.appDefaults.dateTimeFormat || getDisplayDateTimeFormat(FormWidgetType.DATETIME);
         this.updateFormat('datepattern');
     }
@@ -147,9 +148,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.timeinterval) {
             return;
         }
-        this.timeinterval = setTimeout(() => {
-            const timeZone = this.i18nService.getMomentTimeZone();
-            const currentTime = timeZone ? getMomentLocaleObject(timeZone) : new Date();
+        this.timeinterval = setInterval(() => {
+            const currentTime = this.timeZone ? getMomentLocaleObject(this.timeZone) : new Date();
             this.onModelUpdate(currentTime);
         }, 1000);
     }
@@ -249,10 +249,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * This is an internal method to update the model
      */
     public onModelUpdate(newVal, type?) {
-        console.log('>>>>>>', this.proxyModel);
+
         if (type === 'date') {
             this.invalidDateTimeFormat = false;
-            if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) === this.displayValue) {
+            if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate) === this.displayValue) {
                 $(this.nativeElement).find('.display-input').val(this.displayValue);
             }
         }
@@ -279,10 +279,25 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         this.proxyModel = newVal;
         if (this.proxyModel) {
-            this.bsDateValue = this.bsTimeValue = newVal ;
+            this.bsDateValue = this.bsTimeValue = newVal;
         }
         this._debouncedOnChange(this.datavalue, {}, true);
         this.cdRef.detectChanges();
+
+        // Update timepicker with formatted time, when timezone is provided.
+        const timePickerFields = $('.bs-timepicker-field');
+        const meridianField = $('timepicker button.text-center');
+        if (this.timeZone && (this as any).key === 'datetimestamp' && timePickerFields.length) {
+            const formattedDate = getFormattedDate(this.datePipe, newVal, 'hh:mm:ss A', this.timeZone, (this as any).key);
+            const formattedArr = formattedDate.split(' ');
+            const formattedTime = formattedArr[0].split(':');
+            for (let i=0; i<timePickerFields.length; i++) {
+                timePickerFields[i].value = formattedTime[i]
+            }
+            if (meridianField?.html().trim() !== formattedArr[1]) {
+                meridianField.text(formattedArr[1]);
+            } 
+        }
     }
 
     /**
@@ -379,7 +394,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             if (action === 'enter' || action === 'arrowdown') {
                 newVal = newVal ? getNativeDateObject(newVal, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
                 event.preventDefault();
-                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate);
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
