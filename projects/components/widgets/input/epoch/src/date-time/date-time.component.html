@@ -21,7 +21,7 @@
             [readOnly]="isReadOnly"
             [attr.placeholder]="placeholder"
             [attr.accesskey]="shortcutkey"
-            (keydown)="onDisplayKeydown($event)">
+            (keydown)="this._triggeredByUser = true; onDisplayKeydown($event)">
 
         <span class="input-group-btn">
             <button type="button"

@@ -40,10 +40,20 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
             currentVal = getSearchValue(_.get(obj, searchObj.field), searchObj.type);
         } else {
             currentVal = [];
-            _.forEach(obj, (val, key) => {
+            _.forEach(obj, (val, key) => {                
                 if ((_.includes(visibleCols, key))) {
                     currentVal.push(val);
-                }
+                } else { 
+                    // WMS-22271 If the key is in nested key format (dot format)
+                    // Find all the indexes of the key in visiblecols and extract their values from obj 
+                    const colIndex = _.filter(_.range(visibleCols.length), (i) => visibleCols[i].includes(key));
+                    _.forEach(colIndex, (index) => {
+                        const value = _.get(obj, visibleCols[index]); 
+                        if (currentVal.indexOf(value) < 0) {
+                            currentVal.push(value);
+                        }
+                    });
+                }   
             });
             currentVal = currentVal.join(' ').toLowerCase(); // If field is not there, search on all the columns
         }
@@ -523,7 +533,9 @@ export class TableFilterSortDirective {
         } else {
             console.warn('Retain State handling on Widget ' + this.table.name + ' is not supported for current pagination type.');
         }
-        if (dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
+
+        // WMS-22387: For server side pagination, execute client side sorting
+        if (dataSource.execute(DataSource.Operation.IS_SORTABLE)) {
             this.handleSeverSideSort(searchSortObj, e, statePersistenceTriggered);
         } else {
             this.handleClientSideSortSearch(searchSortObj, e, type);

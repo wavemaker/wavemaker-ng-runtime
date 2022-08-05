@@ -45,6 +45,9 @@ export class LiveVariable extends ApiAwareVariable implements IDataSource {
             case DataSource.Operation.IS_PAGEABLE:
                 returnVal = true;
                 break;
+            case DataSource.Operation.IS_SORTABLE:
+                returnVal = true;
+                break;
             case DataSource.Operation.SUPPORTS_SERVER_FILTER:
                 returnVal = true;
                 break;

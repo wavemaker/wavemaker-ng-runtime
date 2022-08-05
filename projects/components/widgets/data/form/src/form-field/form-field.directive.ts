@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport, App, noop } from '@wm/core';
+import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport, App, noop, isDateTimeType, isMobileApp } from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
@@ -97,10 +97,15 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private notifyForFields: any;
     private fieldValidations;
     private _triggeredByUser: boolean;
+    private _clicktriggeredByUser: boolean;
     private app: App;
 
     @HostListener('keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
         this._triggeredByUser = true;
+    }
+
+    @HostListener('click', ['$event']) handleClick(event) {
+        this._clicktriggeredByUser = true;
     }
 
     private isFocused;
@@ -172,18 +177,20 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         $($evt.target).closest('.live-field').removeClass('active');
         this._activeField = false;
         this._triggeredByUser = false;
+        this._clicktriggeredByUser = false;
     }
 
     // Expression to be evaluated in view mode of form field
-    evaluateExpr(object, displayExpr) {
-        if (!displayExpr) {
-            displayExpr = Object.keys(object)[0];
+    evaluateExpr(object, displayField, displayExpr) {
+        if (!displayExpr || !displayField) {
+            displayField = Object.keys(object)[0];
             // If dataset is not ready, display expression will not be defined
-            if (!displayExpr) {
+            if (!displayField) {
                 return;
             }
         }
         return getEvaluatedData(object, {
+            field: displayField,
             expression: displayExpr
         }, this.viewParent);
     }
@@ -192,16 +199,17 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     getDisplayExpr() {
         const caption = [];
         const value = this.value;
-        const displayExpr = this.displayexpression || this.displayfield || this.displaylabel;
+        const displayField = this.displayfield || this.displaylabel
+        const displayExpr = this.displayexpression;
         if (_.isObject(value)) {
             if (_.isArray(value)) {
                 _.forEach(value, obj => {
                     if (_.isObject(obj)) {
-                        caption.push(this.evaluateExpr(obj, displayExpr));
+                        caption.push(this.evaluateExpr(obj, displayField, displayExpr));
                     }
                 });
             } else {
-                caption.push(this.evaluateExpr(value, displayExpr));
+                caption.push(this.evaluateExpr(value, displayField, displayExpr));
             }
             return _.join(caption, ',');
         }
@@ -414,8 +422,10 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             // Do mark as touched, only incase when user has entered an input but not through the script. Hence added mousedown event check
             // active class checks whether user is on the current field, if so marking the field as touched. And form field validation happens once a field is touched
             // _triggeredByUser checks whether the field is touched by the user or triggered from external script
+            // WMS-22456: _clicktriggeredByUser checks when user selects datetimetype from picker, mark the field as touched to show validation errors in mobile
+
             if (this.$element.find('.active').length > 0 || this.form.touched) {
-                if (this._triggeredByUser) {
+                if (this._triggeredByUser || (isMobile() && this._clicktriggeredByUser && isDateTimeType(this.widgettype))) {
                     this.ngform.controls[this._fieldName].markAsTouched();
                 }
                 this.fieldValidations.setCustomValidationMessage();

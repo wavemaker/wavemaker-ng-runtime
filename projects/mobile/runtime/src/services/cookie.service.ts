@@ -76,7 +76,14 @@ export class CookieService implements IDeviceStartUpService {
     }
 
     public clearAll(): Promise<any> {
-        return new Promise<any>((resolve, reject) => window['cookieEmperor'].clearAll(resolve, reject));
+        return new Promise<any>((resolve, reject) => {
+            if (isIos()) {
+                window['cordova'].plugin.http.clearCookies();
+                resolve('');
+            } else {
+                window['cookieEmperor'].clearAll(resolve, reject);
+            }
+        });
     }
 
     /**

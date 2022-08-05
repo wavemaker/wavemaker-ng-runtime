@@ -117,6 +117,7 @@ const setGroupbyKey = (scope, context, dataSetItem, innerItem) => {
     if (scope && isSeachWidget(scope.widgetType)) {
         if (scope.groupby) {
             if (_.includes(scope.groupby, '(')) {
+                //[Todo-CSP]: can generate expr fn in page based on groupby property on widget
                 const groupDataByUserDefinedFn = $parseEvent(scope.groupby);
                 (dataSetItem as any).groupby = groupDataByUserDefinedFn(context, {'row': dataSetItem.dataObject || dataSetItem});
             } else {
@@ -282,6 +283,7 @@ const getSortedGroupedData = (groupedLiData: Object, groupBy: string, orderby: s
 export const groupData = (compRef: any, data: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateformat: string, datePipe: ToDatePipe, innerItem?: string, AppDefaults?: any) => {
     let groupedLiData = {};
     if (_.includes(groupby, '(')) {
+        //[Todo-CSP]: can generate expr fn in page based on groupby property on widget
         const groupDataByUserDefinedFn = $parseEvent(groupby);
         groupedLiData = _.groupBy(data, val => {
             return groupDataByUserDefinedFn(compRef.viewParent, {'row': val.dataObject || val});

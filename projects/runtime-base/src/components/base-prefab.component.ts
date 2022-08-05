@@ -1,7 +1,18 @@
 import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { $watch, AbstractI18nService, App, isIE, noop, ScriptLoaderService, UtilsService, $invokeWatchers, Viewport } from '@wm/core';
+import {
+    $watch,
+    AbstractI18nService,
+    App,
+    isIE,
+    noop,
+    ScriptLoaderService,
+    UtilsService,
+    $invokeWatchers,
+    Viewport,
+    registerFnByExpr
+} from '@wm/core';
 import { WidgetRef} from '@wm/components/base';
 import { PageDirective, SpaPageDirective } from '@wm/components/page';
 import { PrefabContainerDirective } from '@wm/components/prefab';
@@ -37,6 +48,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
 
     abstract evalUserScript(prefabContext: any, appContext: any, utils: any);
     abstract getVariables();
+    abstract getExpressions();
 
     getContainerWidgetInjector() {
         return this.containerWidget.inj || this.containerWidget.injector;
@@ -64,6 +76,8 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
             this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
         }
 
+        // register functions for binding evaluation
+        this.registerExpressions();
         this.initUserScript();
 
         this.registerWidgets();
@@ -120,6 +134,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
                             });
 
                             if (expr) {
+                                //[Todo-CSP]: expr will be generated with prefab.comp.expr.ts
                                 this.registerDestroyListener(
                                     $watch(expr, this, {}, nv => this.containerWidget.widget[key] = nv)
                                 );
@@ -176,6 +191,18 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         this.viewInit$.subscribe(noop, noop, () => {
             variableCollection.callback(variableCollection.Variables).catch(noop);
             variableCollection.callback(variableCollection.Actions);
+        });
+    }
+
+    /**
+     * function to register bind expressions generated in this page instance
+     * getExpressions function is defined in the generated page.comp.ts file
+     * @param expressions, map of bind expression vs generated function
+     */
+    registerExpressions() {
+        const expressions = this.getExpressions();
+        _.each(expressions, (fn, expr)=>{
+            registerFnByExpr(expr, fn[0], fn[1]);
         });
     }
 

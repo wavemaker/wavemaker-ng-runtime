@@ -174,6 +174,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     private formArrayIndex;
     private bindingValue;
     private _formIsInList;
+    private _triggeredByUser: boolean;
+
 
     private _debouncedSubmitForm = debounce(($event) => {
         // calling submit event in ngZone as change detection is not triggered post the submit callback and actions like notification are not shown
@@ -215,6 +217,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         this.reset();
     }
 
+    @HostListener('keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+        this._triggeredByUser = true;
+    }
     // returns the formArray control on the parentForm.
     get parentFormArray(): FormArray {
         return this.parentForm && this.isParentList && this.parentForm.ngform.get(this.parentList.name) as FormArray;
@@ -743,6 +748,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                     field.value =  _.get(fd, key);
                 }
             }
+            // WMS-18906: For default value, do not mark the form as dirty.
+            if (this.dirty && !this._triggeredByUser) {
+                this.markAsPristine();
+            }
         }
         const formGroupName = field.form.formGroupName;
         /**
@@ -1074,6 +1083,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     // On form field default value change. This method is overridden by live form and live filter
     onFieldDefaultValueChange(field, nv) {
         field.value = parseValueByType(nv, undefined, field.widgettype, field.trailingzero);
+        // WMS-22434: For default value set on individual form fields, do not mark the form as dirty.
+        if (this.dirty && !this._triggeredByUser) {
+            this.markAsPristine();
+        }
     }
 
     // On form field value change. This method is overridden by live form and live filter

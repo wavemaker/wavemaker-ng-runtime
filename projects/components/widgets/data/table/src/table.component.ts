@@ -285,7 +285,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             'EDIT': 'edit',
             'SEARCH_OR_SORT': 'search_or_sort',
             'DEFAULT': 'scroll',
-            'FILTER_CRITERIA' : 'filter'
+            'FILTER_CRITERIA' : 'filter',
+            'DATASET_UPDATE': 'dataset_update'
         },
         actionRowIndex: undefined,
         actionRowPage: undefined,
@@ -484,6 +485,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const row = this.getClonedRowObject(rowData);
             const watchName = `${this.widgetId}_rowNgClass_${index}`;
             $unwatch(watchName);
+            //[Todo-CSP]: generate watcher expr in page if rowngclass attr is present for table
             this.registerDestroyListener($watch(this.rowngclass, this.viewParent, {row}, (nv, ov) => {
                 this.callDataGridMethod('applyRowNgClass', getConditionalClasses(nv, ov), index);
             }, watchName));
@@ -495,6 +497,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const row = this.getClonedRowObject(rowData);
             const watchName = `${this.widgetId}_colNgClass_${rowIndex}_${colIndex}`;
             $unwatch(watchName);
+            //[Todo-CSP]: generate watcher expr in page if col-ng-class attr is present for table
             this.registerDestroyListener($watch(colDef['col-ng-class'], this.viewParent, {row}, (nv, ov) => {
                 this.callDataGridMethod('applyColNgClass', getConditionalClasses(nv, ov), rowIndex, colIndex);
             }, watchName));
@@ -1133,6 +1136,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     setLastActionToFilterCriteria() {
         this.prevFilterExpression = _.get(this.datasource, 'filterExpressions.rules') ? getClonedObject(this.datasource.filterExpressions.rules) : getClonedObject([].concat(this.datasource.dataBinding));
         this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.FILTER_CRITERIA);
+        this.gridOptions.setIsSearchTrigerred(true);
+    }
+
+    // Set the table lastActionPerformed to Dataset update and set is Search triggered to true
+    // Fix for [WMS-22323]-this method needs to be called from script when dataset is being updated for modal variable from script
+    setLastActionToDatasetUpdate() {
+        this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.DATASET_UPDATE);
         this.gridOptions.setIsSearchTrigerred(true);
     }
 

@@ -460,7 +460,9 @@ copyLocale() {
         local momentSrc=./node_modules/moment/locale
 
         mkdir -p ${appDest}/angular
+        mkdir -p ${appDest}/angular/global
         mkdir -p ${mobileDest}/angular
+        mkdir -p ${mobileDest}/angular/global
         mkdir -p ${appDest}/fullcalendar
         mkdir -p ${appDest}/moment
         mkdir -p ${mobileDest}/moment
@@ -469,6 +471,11 @@ copyLocale() {
             local destFileName=`echo $(basename ${file}) | tr 'A-Z' 'a-z'`;
             cp ${file} ${appDest}/angular/${destFileName}
         done
+        for file in ${angularSrc}/global/*.js; do
+            local destFileName=`echo $(basename ${file}) | tr 'A-Z' 'a-z'`;
+            cp ${file} ${appDest}/angular/global/${destFileName}
+        done
+
         cp  ${appDest}/angular/*.js  ${mobileDest}/angular/
 
         cp ${fullCalendarSrc}/*.js ${appDest}/fullcalendar/
@@ -631,6 +638,7 @@ bundleMobileLibs() {
         ./projects/swipey/src/swipey.jquery.plugin.js \
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ./node_modules/imask/dist/imask.min.js \
+        ./node_modules/@metrichor/jmespath/dist/jmespath.umd.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
 

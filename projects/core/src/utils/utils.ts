@@ -822,10 +822,25 @@ export const loadScript = async (url, loadViaScriptTag, cacheable = false) => {
     }
 
     if (loadViaScriptTag) {
-        return fetchContent('text', _url, false, text => {
-            const script = document.createElement('script');
-            script.textContent = text;
-            document.head.appendChild(script);
+        return new Promise<any>((resolve, reject)=>{
+            let script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = _url;
+            script.async = false;
+            if (script.readyState) {  //IE
+                script.onreadystatechange = () => {
+                    if (script.readyState === "loaded" || script.readyState === "complete") {
+                        script.onreadystatechange = null;
+                        resolve(true);
+                    }
+                };
+            } else {  //Other browsers
+                script.onload = () => {
+                    resolve(true);
+                };
+            }
+            script.onerror = (error: any) => reject(error);
+            document.getElementsByTagName('head')[0].appendChild(script);
         });
     } else if(cacheable) {
         return $.ajax({
@@ -839,14 +854,6 @@ export const loadScript = async (url, loadViaScriptTag, cacheable = false) => {
             .done(response => response)
             .fail(reason => reason);
     }
-
-    // return fetch(_url)
-    //     .then(response => response.text())
-    //     .then(text => {
-    //         const script = document.createElement('script');
-    //         script.textContent = text;
-    //         document.head.appendChild(script);
-    //     });
 };
 
 export const loadScripts = async (urls = [], loadViaScriptTag = true) => {
@@ -881,7 +888,8 @@ export const setSessionStorageItem = (key, value) => {
  * @param key string
  */
 export const getSessionStorageItem = key => {
-    let item = window.sessionStorage.getItem(_WM_APP_PROJECT.id);
+    // sanity check for this to work with ng-codegen
+    let item = window && window.sessionStorage && window.sessionStorage.getItem(_WM_APP_PROJECT.id);
 
     if (item) {
         item = JSON.parse(item);
@@ -1124,6 +1132,7 @@ export const processFilterExpBindNode = (context, filterExpressions) => {
 
     const bindFilExpObj = (obj, targetNodeKey) => {
         if (stringStartsWith(obj[targetNodeKey], 'bind:')) {
+            // [Todo-CSP]: needs a check, where is this used
             destroyFn(
                 $watch(obj[targetNodeKey].replace('bind:', ''), context, {}, (newVal, oldVal) => {
                     if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
@@ -1391,6 +1400,7 @@ export const triggerItemAction = (scope, item) => {
     const linkTarget = item.target;
     if (itemAction) {
         if (!scope.itemActionFn) {
+            //[Todo-CSP]: This will not work as function will be dynamic
             scope.itemActionFn = $parseEvent(itemAction);
         }
 

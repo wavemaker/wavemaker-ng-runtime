@@ -2,6 +2,8 @@ import {APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule} from '@angula
 import { RouterModule } from '@angular/router';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { ɵDomSharedStylesHost } from '@angular/platform-browser';
+import {ɵDomRendererFactory2} from "@angular/platform-browser";
 
 import { ToastrModule } from 'ngx-toastr';
 
@@ -59,6 +61,10 @@ import { PrefabPreviewComponent } from './components/prefab-preview.component';
 import { DynamicComponentRefProviderService } from './services/dynamic-component-ref-provider.service';
 import { CanDeactivatePageGuard } from './guards/can-deactivate-page.guard';
 import { MAX_CACHE_AGE, MAX_CACHE_SIZE } from './util/wm-route-reuse-strategy';
+
+//angular overrides
+import { WMDomSharedStylesHost } from "./overrides/wm_shared_styles_host";
+import { WMDomRendererFactory2 } from "./overrides/wm_dom_renderer";
 
 declare const _WM_APP_PROPERTIES;
 
@@ -143,6 +149,10 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         VariablesModule,
         HttpServiceModule,
         REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
+    ],
+    providers: [
+        {provide: ɵDomSharedStylesHost, useClass: WMDomSharedStylesHost},
+        {provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2}
     ],
     entryComponents: [CustomToasterComponent]
 })
