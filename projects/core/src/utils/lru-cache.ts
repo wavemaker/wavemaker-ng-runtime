@@ -44,6 +44,10 @@ export class LRUCache<T> {
         }
     }
 
+    public keys() {
+        return this.cache.keys();
+    }
+
     public set(key: string, dataToCache: T): void {
         if (_.isNil(dataToCache)) {
             return;

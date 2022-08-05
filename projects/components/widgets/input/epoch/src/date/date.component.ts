@@ -9,7 +9,7 @@ import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/compon
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
 
-declare const _, $;
+declare const _, $, moment;
 
 const CURRENT_DATE = 'CURRENT_DATE';
 const DEFAULT_CLS = 'app-date input-group';
@@ -268,5 +268,16 @@ export class DateComponent extends BaseDateTimeComponent {
             setTimeout(() => displayInputElem.focus());
         }
         this.setDataValue(newVal);
+    }
+
+    showCordovaDatePicker() {
+        return super.showCordovaDatePicker(
+            'DATE',
+            this.bsDataValue && this.bsDataValue.getTime(),
+            getDateObj(this.mindate)?.getTime(),
+            getDateObj(this.maxdate)?.getTime())
+        .then((date: Date) => {
+            this.bsDataValue = date && moment(date).startOf('day').toDate();
+        });
     }
 }
