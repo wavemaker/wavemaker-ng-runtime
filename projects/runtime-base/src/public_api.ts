@@ -15,9 +15,6 @@ export {
     RuntimeBaseModule,
     WM_MODULES_FOR_ROOT
 } from './runtime-base.module';
-export {
-    initSpotCues
-} from './util/spotcues.utils';
 export * from './util/utils';
 export * from './guards/auth.guard';
 export * from './guards/role.guard';

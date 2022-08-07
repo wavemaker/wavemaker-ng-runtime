@@ -105,7 +105,6 @@ export {
     isNumber,
     convertToBlob,
     hasCordova,
-    isSpotcues,
     AppConstants,
     openLink,
     fetchContent,

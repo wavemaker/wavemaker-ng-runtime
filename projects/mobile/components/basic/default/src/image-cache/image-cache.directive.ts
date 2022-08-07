@@ -3,7 +3,7 @@ import { Directive, DoCheck, Inject, Input, Self } from '@angular/core';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 
 import { WidgetRef } from '@wm/components/base';
-import { hasCordova, isSpotcues, noop, transformFileURI } from '@wm/core';
+import { hasCordova, noop, transformFileURI } from '@wm/core';
 import { DeviceFileCacheService } from '@wm/mobile/core';
 
 const DEFAULT_IMAGE =  'resources/images/imagelists/default-image.png';
@@ -25,7 +25,7 @@ export class ImageCacheDirective implements DoCheck {
     ) {}
 
     public ngDoCheck() {
-        if (!isSpotcues && this.componentInstance.imgSource
+        if (this.componentInstance.imgSource
             && this.componentInstance.imgSource.startsWith('http')) {
             if (this._lastUrl !== this.componentInstance.imgSource) {
                 this._lastUrl = this.componentInstance.imgSource;

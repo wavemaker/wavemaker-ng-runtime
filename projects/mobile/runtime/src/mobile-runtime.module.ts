@@ -22,7 +22,6 @@ import {
     App,
     AbstractHttpService,
     hasCordova,
-    isSpotcues,
     insertAfter,
     isIpad,
     isIphone,
@@ -117,9 +116,7 @@ export class MobileRuntimeModule {
         app.deployedUrl = runtimeModule.getDeployedUrl();
         if (hasCordova()) {
             const unsubscribe = app.subscribe('pageReady', (page) => {
-                if (!isSpotcues) {
-                    navigator.splashscreen.hide();
-                }
+                navigator.splashscreen.hide();
                 unsubscribe();
             });
             runtimeModule.handleKeyBoardClass();
@@ -131,31 +128,14 @@ export class MobileRuntimeModule {
                 // cordova File Reader is required. Otherwise, file operations are failing.
                 window['FileReader'] = __zone_symbol__FileReader;
             }
-            if (!CONSTANTS.isWaveLens) {
-                (window as any).remoteSync = (flag = true) => {
-                    localStorage.setItem('remoteSync', flag ? 'true' : 'false');
-                };
-            }
+            (window as any).remoteSync = (flag = true) => {
+                localStorage.setItem('remoteSync', flag ? 'true' : 'false');
+            };
             window.open = window['cordova']['InAppBrowser']['open'];
             runtimeModule.addAuthInBrowser();
         }
         deviceService.start();
         deviceService.whenReady().then(() => {
-            // To make wavelens work with spotcues environment
-            if (isSpotcues) {
-                const params = location.search.substring(1)
-                    .split('&')
-                    .map(s => s.split('='))
-                    .reduce((a, c, i, s) => {
-                        a[s[i][0]] = s[i][1];
-                        return a;
-                    }, {});
-                if (params && params['wavelens']) {
-                    const $body = $('body');
-                    $body.append(`<script src="${params['wavelens']}/runtime/script.js"></script>`);
-                    $body.append(`<link rel="stylesheet" href="${params['wavelens']}/runtime/styles.css">`);
-                }
-            }
             if (hasCordova()) {
                 runtimeModule._$appEl.addClass('cordova');
                 runtimeModule.exposeOAuthService();
@@ -268,21 +248,18 @@ export class MobileRuntimeModule {
     }
 
     private getDeployedUrl(): string {
-        const waveLensAppUrl = window['WaveLens'] && window['WaveLens']['appUrl'];
         let deployedUrl = $rootScope.project.deployedUrl;
-        if (hasCordova() && !isSpotcues) {
-            if (waveLensAppUrl) {
-                // TODO: Temporary Fix for WMS-13072, baseUrl is {{DEVELOPMENT_URL}} in wavelens
-                deployedUrl = waveLensAppUrl;
+        if (hasCordova()) {
+            const baseUrl = $('meta[name="remoteSync.deployedUrl"]').attr('value');
+            const config = this.deviceService.getConfig();
+            if (baseUrl) {
+                deployedUrl = baseUrl;
+            } else if (config.baseUrl === 'http://NOSERVERREQUIRED.com') {
+                deployedUrl = 'NONE';
             } else {
-                const config = this.deviceService.getConfig();
-                if (config.baseUrl === 'http://NOSERVERREQUIRED.com') {
-                    deployedUrl = 'NONE';
-                } else {
-                    deployedUrl = config.baseUrl;
-                }
-                this.app.customUrlScheme = config.customUrlScheme;
+                deployedUrl = config.baseUrl;
             }
+            this.app.customUrlScheme = config.customUrlScheme;
         }
         if (deployedUrl !== 'NONE' && !deployedUrl.endsWith('/')) {
             deployedUrl = deployedUrl + '/';

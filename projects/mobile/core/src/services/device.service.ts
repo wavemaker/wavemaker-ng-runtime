@@ -17,6 +17,7 @@ export interface Config {
     enableSSLPinning: boolean;
     offlineStorage: boolean;
     useNativeXHR: boolean;
+    enableRemoteSync: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
