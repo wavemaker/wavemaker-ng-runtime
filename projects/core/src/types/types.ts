@@ -70,6 +70,7 @@ export abstract class App {
     projectName: string;
     isPrefabType: boolean;
     isApplicationType: boolean;
+    setNumberLocale: Function;
     isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
     changeLocale: Function;
@@ -150,6 +151,8 @@ export abstract class AbstractI18nService {
     protected abstract loadMomentLocaleBundle(localeLang);
     protected abstract loadLocaleBundles(localeLang);
     public abstract getPrefabLocaleBundle(prefabName: string): any;
+    public abstract setNumberLocale(locale);
+    public abstract getNumberLocale();
 }
 
 export abstract class AbstractToasterService {
