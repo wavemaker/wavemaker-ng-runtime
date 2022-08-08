@@ -254,10 +254,8 @@ export class MobileRuntimeModule {
             const config = this.deviceService.getConfig();
             if (baseUrl) {
                 deployedUrl = baseUrl;
-            } else if (config.baseUrl === 'http://NOSERVERREQUIRED.com') {
-                deployedUrl = 'NONE';
             } else {
-                deployedUrl = config.baseUrl;
+                deployedUrl = this.deviceService.getBaseUrl();
             }
             this.app.customUrlScheme = config.customUrlScheme;
         }

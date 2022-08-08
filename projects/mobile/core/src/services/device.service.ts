@@ -17,7 +17,6 @@ export interface Config {
     enableSSLPinning: boolean;
     offlineStorage: boolean;
     useNativeXHR: boolean;
-    enableRemoteSync: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -118,6 +117,14 @@ export class DeviceService {
                 this._whenReadyPromises.push(resolve);
             });
         }
+    }
+
+    public getBaseUrl() {
+        return this._config.baseUrl === 'http://NOSERVERREQUIRED.com' ? 'NONE' : this._config.baseUrl;
+    }
+
+    public isAppConnectedToPreview() {
+        return this._config.customUrlScheme !== this._config.baseUrl && this.getBaseUrl() !== 'NONE';
     }
 
     public getConfig(): Config {
