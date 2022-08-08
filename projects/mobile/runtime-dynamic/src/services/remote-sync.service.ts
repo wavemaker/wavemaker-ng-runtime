@@ -318,6 +318,10 @@ export class RemoteSyncInterceptor implements HttpInterceptor, IDeviceStartUpSer
                                 window.remoteSync(true);
                             } else if (index === 2) {
                                 hideUI();
+                                navigator.notification.alert(
+                                    `Tap and hold anywhere for five seconds, to view the control again.`,
+                                    () => {},
+                                    'Information');
                             }
                         },
                         'Enable UI Sync', ['Cancel', 'Hide', 'Ok']);
