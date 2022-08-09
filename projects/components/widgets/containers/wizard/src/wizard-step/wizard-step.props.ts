@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['class', PROP_STRING],
                 ['enableskip', {value: false, ...PROP_BOOLEAN}],
-                ['iconclass', {value: 'wm-sl-l sl-check', ...PROP_STRING}],
+                ['iconclass', {value: 'wi wi-person', ...PROP_STRING}],
                 ['doneiconclass', {value: 'wi wi-done', ...PROP_STRING}],
                 ['name', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
