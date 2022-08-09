@@ -83,7 +83,7 @@ export class AppRef {
 
     changeLocale = this.i18nService.setSelectedLocale.bind(this.i18nService);
     getSelectedLocale = this.i18nService.getSelectedLocale.bind(this.i18nService);
-    setNumberLocale = this.i18nService.setNumberLocale.bind(this.i18nService);
+    setFormatsByLocale = this.i18nService.setFormatsByLocale.bind(this.i18nService);
 
     private _eventNotifier = new EventNotifier();
 

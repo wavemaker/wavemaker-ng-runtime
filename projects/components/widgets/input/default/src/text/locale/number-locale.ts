@@ -36,7 +36,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     constructor(
         inj: Injector,
         config: IWidgetConfig,
-        i18nService: AbstractI18nService,
+        private i18nService: AbstractI18nService,
         private trailingZeroDecimalPipe: TrailingZeroDecimalPipe
     ) {
         super(inj, config);
@@ -159,7 +159,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     private transformNumber(number, numberfilter?): string {
         const filterVal = numberfilter ? numberfilter : this.numberfilter;
-        return this.trailingZeroDecimalPipe.transform(number, this.selectedLocale, filterVal, this.localefilter, this.trailingzero, this.decimalValue, !!numberfilter);
+        return this.trailingZeroDecimalPipe.transform(number, this.selectedLocale, filterVal, this.localefilter, this.trailingzero, this.decimalValue, !!numberfilter, this.i18nService.getFormatsByLocale());
     }
 
     /**

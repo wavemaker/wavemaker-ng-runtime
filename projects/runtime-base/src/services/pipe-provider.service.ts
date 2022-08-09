@@ -42,6 +42,7 @@ import {DomSanitizer} from "@angular/platform-browser";
 export class PipeProvider {
     _pipeMeta;
     _locale = getSessionStorageItem('selectedLocale') || 'en';
+    formatsByLocale = this.i18service.getFormatsByLocale();
     preparePipeMeta = (
         reference: Pipe,
         name: string,
@@ -86,11 +87,12 @@ export class PipeProvider {
         ]),
         this.preparePipeMeta(ToNumberPipe, 'toNumber', true, [
             new DecimalPipe(this._locale),
-            this.injector.get(AbstractI18nService)
+            this.formatsByLocale
         ]),
         this.preparePipeMeta(ToCurrencyPipe, 'toCurrency', true, [
             new DecimalPipe(this._locale),
-            this.injector.get(AbstractI18nService)
+            this.formatsByLocale
+
         ]),
         this.preparePipeMeta(PrefixPipe, 'prefix', true),
         this.preparePipeMeta(SuffixPipe, 'suffix', true),
@@ -108,7 +110,7 @@ export class PipeProvider {
         throw Error(`The pipe '${name}' could not be found`);
     }
 
-    constructor(private compiler: Compiler, private injector: Injector, private domSanitizer:DomSanitizer) {
+    constructor(private compiler: Compiler, private injector: Injector, private domSanitizer:DomSanitizer, private i18service: AbstractI18nService) {
         this._pipeMeta = new Map();
         this._pipeData.forEach(v => {
             this._pipeMeta.set(v.name, v);
