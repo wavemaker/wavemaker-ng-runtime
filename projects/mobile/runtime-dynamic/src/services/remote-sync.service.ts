@@ -6,13 +6,13 @@ import { Injectable } from '@angular/core';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 
 import { App, hasCordova, transformFileURI } from '@wm/core';
-import { DeviceService, IDeviceStartUpService } from '@wm/mobile/core';
+import { DeviceService } from '@wm/mobile/core';
 
 declare const window, navigator, location, cordova;
 declare const $, _;
 
 @Injectable()
-export class RemoteSyncInterceptor implements HttpInterceptor, IDeviceStartUpService {
+export class RemoteSyncInterceptor implements HttpInterceptor {
 
     private urlsToSkip: string[] = [];
     private deployedUrl = '';
@@ -58,11 +58,12 @@ export class RemoteSyncInterceptor implements HttpInterceptor, IDeviceStartUpSer
             };
             if (!this.isRemoteSyncEnabled) {
                 if (this.localAppUrl) {
-                    window.navigator.splashscreen.show();
                     location.href = this.localAppUrl;
                 }
                 if (this.deviceService.isAppConnectedToPreview()) {
-                    this.renderUI(false);
+                    this.deviceService.whenReady().then(() => {
+                        this.renderUI(false);
+                    });
                 }
                 return;
             }
@@ -76,16 +77,11 @@ export class RemoteSyncInterceptor implements HttpInterceptor, IDeviceStartUpSer
                 this.patchApp();
                 this.renderUI(true);
             } else {
-                this.deviceService.addStartUpService(this);
+                window.navigator.splashscreen.hide = () => {};
                 this.deployedUrl = app.deployedUrl;
                 this.isRemoteSyncEnabled = false;
+                this.deviceService.whenReady().then(() => this.launch());
             }
-    }
-
-    public start() {
-        return this.launch().then(() => {
-            return new Promise(resolve => setTimeout(resolve, 2000));
-        });
     }
 
     public getServiceName: () => 'RemoteSyncInterceptor';
@@ -131,14 +127,15 @@ export class RemoteSyncInterceptor implements HttpInterceptor, IDeviceStartUpSer
                 error: reject
             });
         }).then((fileContent: string) => {
-            let path = this.localAppUrl || location.pathname;
+            let path = this.localAppUrl || 
+                (`${location.protocol}//${location.hostname}${location.pathname}`);
             let cordovaPath = path;
             if (cordovaPath.endsWith('.html')) {
                 const splits = cordovaPath.split('/').slice(0, );
                 cordovaPath = splits.slice(0, splits.length - 1).join('/');
             }
             cordovaPath += '/cordova.js';
-            const mAppUrl = transformFileURI(localDir + 'remote-index.html');
+            const mAppUrl = `${location.protocol}//${location.hostname}${transformFileURI(localDir + 'remote-index.html')}`;
             fileContent = fileContent.replace('cordova.js', cordovaPath);
             fileContent = fileContent.replace('<head>', `
             <head>
@@ -211,83 +208,55 @@ export class RemoteSyncInterceptor implements HttpInterceptor, IDeviceStartUpSer
 
     public renderUI(enabled: boolean) {
         const $ele = $(
-            ` <div class="wavelensAppLauncher">
-            	<a class="waveLensAnchor app-anchor" role="button" on-tap="waveLensAnchorTap($event, $scope)" href="javascript:void(0)">
-            		<i class="app-icon wi wi-refresh fa-2x"></i>
-            		<span class="anchor-caption"></span>
-            	</a>
+            `<div class="remote-sync-control">
+            	<button class="remote-sync-control-btn" type="button">
+            	</button>
             </div>`);
         const setPosition = () => {
-            const menuIcon = $ele.find('.waveLensAnchor');
+            const menuIcon = $ele.find('.remote-sync-control-btn');
             const position = this.settings.position;
             if(position) {
                 menuIcon.css('left', position.left + 'px');
                 menuIcon.css('top', position.top + 'px');
             }
-        }
-        const hideUI = () => {
-            $ele.hide();
-            this.settings.show = false;
-            this.saveSettings();
+        };
+        const listenForShowEvent = () => {
             $('body').bind('touchstart', () => {
                 const timerId = setTimeout(() => {
-                    $ele.show();
                     this.settings.show = true;
                     this.saveSettings();
+                    showConfirmation();
                 }, 5000);
                 $('body').bind('touchend', () => {
                     clearTimeout(timerId);
                 });
             });
-        }
-        const style = `
-            <style type="text/css">
-                .wm-app .wavelensAppLauncher a,
-                .wm-app .wavelensAppLauncher a:focus,
-                .wm-app .wavelensAppLauncher a:hover,
-                .wm-app .wavelensAppLauncher label {
-                    text-decoration: none;
-                    color: #4F8ACC;
-                    padding: 0;
-                    margin: 0;
-                }
-
-                .wm-app .wavelensmenu .wi {
-                    font-size: 10em;
-                }
-
-                .wm-app .wavelensAppLauncher a.waveLensAnchor,
-                .wm-app .wavelensAppLauncher a.waveLensAnchor:hover .wm-app .wavelensAppLauncher a.waveLensAnchor:focus {
-                    position: fixed;
-                    top: calc(100% - 100pt);
-                    left: calc(100% - 50pt);
-                    padding: 5px;
-                    text-decoration: none;
-                    border-radius: 100px;
-                    background-color: #191919;
-                    color: #4F8ACC;
-                    z-index: 1000;
-                    box-shadow: 1px 2px 5px #000;
-                }
-
-                .wavelensAppLauncher .waveLensAnchor.touched {
-                    opacity: 1;
-                    background-color: #333;
-                    box-shadow: 10px 11px 5px #000;
-                }
-
-                .wavelensAppLauncher .waveLensAnchor .app-icon {
-                    font-size: 3em;
-                    padding: 0;
-                }
-            </style>
-        `;
+        };
+        const showConfirmation = () => {
+            navigator.notification.confirm(
+                'In Sync mode, App UI is pulled from Studio.' +
+                ' Offline functionality is not supported in Sync mode.' +
+                ' Would you like to turn on Sync mode?', 
+                (index) => {
+                    if (index === 2) {
+                        window.remoteSync(true);
+                    } else if (index === 1) {
+                        this.settings.show = false;
+                        this.saveSettings();
+                        navigator.notification.alert(
+                            `To turn on sync mode, tap and hold anywhere for five seconds.`,
+                            () => {},
+                            'Information');
+                    }
+                },
+                'Turn on Sync mode', ['No', 'Yes']);
+        };
         const init = () => {
+            const menuIcon = $ele.find('.remote-sync-control-btn');
             $ele.on('touchstart', (event) => {
                 event.stopPropagation();
-                var menuIcon = $('.wavelensAppLauncher .waveLensAnchor'),
-                    addClass = true;
-                $(document).on('touchmove.wavelens', (event) => {
+                let addClass = true;
+                $(document).on('touchmove.remoteSync', (event) => {
                     var origEvent = event.originalEvent.touches[0];
                     if (origEvent && origEvent.pageX) {
                         this.settings.position = {
@@ -304,37 +273,19 @@ export class RemoteSyncInterceptor implements HttpInterceptor, IDeviceStartUpSer
                 $(document).one('touchend', (event) => {
                     this.saveSettings();
                     menuIcon.removeClass('touched');
-                    $(document).off('touchmove.wavelens');
+                    $(document).off('touchmove.remoteSync');
                 });
             });
-            $ele.find('>.waveLensAnchor').click(function() {
-                if (enabled) {
-                    window.reloadApp();
-                } else {
-                    navigator.notification.confirm(
-                        `Would you like to Sync App UI with changes from studio?`, 
-                        (index) => {
-                            if (index === 3) {
-                                window.remoteSync(true);
-                            } else if (index === 2) {
-                                hideUI();
-                                navigator.notification.alert(
-                                    `Tap and hold anywhere for five seconds, to view the control again.`,
-                                    () => {},
-                                    'Information');
-                            }
-                        },
-                        'Enable UI Sync', ['Cancel', 'Hide', 'Ok']);
-                }
-            });
+            menuIcon.click(() => window.reloadApp());
         };
-        init();
-        $('body').append(style);
-        $('body').append($ele);
         setPosition();
-        if (!this.settings.enabled && !this.settings.show) {
-            hideUI();
+        if (this.settings.enabled) {
+            init();
+            $('body').append($ele);
+        } else if (this.settings.show) {
+            showConfirmation();
         }
+        listenForShowEvent();
     }
 
 }
