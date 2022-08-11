@@ -311,7 +311,7 @@ class LiveSyncComponent {
 
     private showConfirmation() {
         new DialogComponent({
-            title: 'Would you like to enable Live Sync?',
+            title: 'Enable Live Sync?',
             info: 'App UI is pulled from studio. But, offline functionality is turned off.',
             iconClass: 'live-sync-control-icon',
             actions: [{
@@ -334,10 +334,10 @@ class LiveSyncComponent {
     private showHelpInfo() {
         new DialogComponent({
             title: '',
-            info: 'To turn on Live Sync later, tap and hold anywhere for five seconds.',
+            info: 'Tap and hold anywhere for 5 seconds to turn on Live Sync.',
             iconClass: 'live-sync-retrieval-info-icon',
             actions: [{
-                title: 'Ok',
+                title: 'Got it',
                 primary: true
             }]
         }).render();
