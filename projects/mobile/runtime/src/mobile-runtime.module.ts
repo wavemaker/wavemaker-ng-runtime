@@ -128,9 +128,6 @@ export class MobileRuntimeModule {
                 // cordova File Reader is required. Otherwise, file operations are failing.
                 window['FileReader'] = __zone_symbol__FileReader;
             }
-            (window as any).remoteSync = (flag = true) => {
-                localStorage.setItem('remoteSync', flag ? 'true' : 'false');
-            };
             window.open = window['cordova']['InAppBrowser']['open'];
             runtimeModule.addAuthInBrowser();
         }
@@ -250,7 +247,7 @@ export class MobileRuntimeModule {
     private getDeployedUrl(): string {
         let deployedUrl = $rootScope.project.deployedUrl;
         if (hasCordova()) {
-            const baseUrl = $('meta[name="remoteSync.deployedUrl"]').attr('value');
+            const baseUrl = $('meta[name="liveSync.deployedUrl"]').attr('value');
             const config = this.deviceService.getConfig();
             if (baseUrl) {
                 deployedUrl = baseUrl;

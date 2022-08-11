@@ -18,7 +18,7 @@ import { PageModule } from '@wm/mobile/components/page';
 import { LeftPanelModule } from '@wm/mobile/components/page/left-panel';
 import { MobileNavbarModule } from '@wm/mobile/components/page/mobile-navbar';
 import { TabBarModule } from '@wm/mobile/components/page/tab-bar';
-import { RemoteSyncInterceptor } from './services/remote-sync.service';
+import { LiveSyncInterceptor } from './services/live-sync.service';
 
 export const MOBILE_COMPONENT_MODULES_FOR_ROOT = [
     BasicModule,
@@ -37,7 +37,7 @@ export const MOBILE_COMPONENT_MODULES_FOR_ROOT = [
 @NgModule({
     providers: [{
         provide: HTTP_INTERCEPTORS,
-        useClass: RemoteSyncInterceptor,
+        useClass: LiveSyncInterceptor,
         multi: true
     }]
 })
