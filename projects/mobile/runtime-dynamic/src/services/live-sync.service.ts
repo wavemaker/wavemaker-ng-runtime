@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 
 import { App, hasCordova, transformFileURI } from '@wm/core';
-import { DeviceService } from '@wm/mobile/core';
+import { DeviceService, NetworkService } from '@wm/mobile/core';
 
 declare const window, location, cordova;
 declare const $, _;
@@ -17,7 +17,8 @@ interface Settings {
         left: number,
         top: number,
     },
-    show: boolean
+    show: boolean,
+    cordovaPlugins: {}
 }
 
 @Injectable()
@@ -39,32 +40,35 @@ export class LiveSyncInterceptor implements HttpInterceptor {
     private settings: Settings = {
         enabled: false,
         position: null,
-        show: true 
+        show: true,
+        cordovaPlugins: null
     };
 
     constructor(private app: App,
         private deviceService: DeviceService,
+        private networkService: NetworkService,
         private file: File) {
             this.loadSettings();
             this.isLiveSyncEnabled = this.settings.enabled && hasCordova();
             this.deployedUrl = $('meta[name="liveSync.deployedUrl"]').attr('value');
             this.localAppUrl = $('meta[name="liveSync.localAppUrl"]').attr('value');
             this.syncAppUrl = $('meta[name="liveSync.syncAppUrl"]').attr('value');
-            (window as any).liveSync = (flag) => {
-                this.settings.enabled = !!flag;
-                this.saveSettings();
-                setTimeout(() => {
-                    window.navigator.splashscreen.show();
-                    location.reload();
-                }, 100);
-            };
+            this.defineAPI();
             if (!this.isLiveSyncEnabled) {
-                if (this.localAppUrl) {
-                    location.href = this.localAppUrl;
-                }
+                this.goToLocalApp();
                 if (this.deviceService.isAppConnectedToPreview()) {
                     this.deviceService.whenReady().then(() => {
+                        this.deployedUrl = app.deployedUrl;
+                        if (!this.networkService.isConnected()) {
+                            return;
+                        }
                         this.renderUI();
+                        if (!this.localAppUrl && !this.settings.cordovaPlugins) {
+                            this.getPlugins().then(plugins => {
+                                this.settings.cordovaPlugins = plugins;
+                                this.saveSettings();
+                            });
+                        }
                     });
                 }
                 return;
@@ -82,11 +86,32 @@ export class LiveSyncInterceptor implements HttpInterceptor {
                 window.navigator.splashscreen.hide = () => {};
                 this.deployedUrl = app.deployedUrl;
                 this.isLiveSyncEnabled = false;
-                this.deviceService.whenReady().then(() => this.launch());
+                this.deviceService.whenReady().then(() => {
+                    this.networkService.isConnected() && this.launch();
+                });
             }
     }
 
-    public getServiceName: () => 'LiveSyncInterceptor';
+    private goToLocalApp() {
+        if (this.localAppUrl) {
+            location.href = this.localAppUrl;
+        }
+    }
+
+    private defineAPI() {
+        (window as any).liveSync = (flag) => {
+            if (this.settings.enabled === !!flag 
+                || !this.networkService.isConnected()) {
+                return;
+            }
+            this.settings.enabled = !!flag;
+            this.saveSettings();
+            setTimeout(() => {
+                window.navigator.splashscreen.show();
+                location.reload();
+            }, 100);
+        };
+    }
 
     private transformPrefabServicedefinitions(url: string) {
         let isValid = this.prefabServicePattern.test(url),
@@ -151,17 +176,38 @@ export class LiveSyncInterceptor implements HttpInterceptor {
         });
     }
 
+    private getPlugins() {
+        return new Promise((resolve, reject) => {
+            $.get(this.deployedUrl + 'config.xml').done(function (res) {
+                const plugins = {};
+                $(res).find('plugin').each(function(p) { 
+                    plugins[$(this).attr('name')] = $(this).attr('spec');
+                });
+                resolve(plugins);
+            }).fail(reject);
+        });
+    }
+
+    private hasPluginsChanged() {
+        return this.getPlugins().then(plugins => {
+            const pluginsInApk = this.settings.cordovaPlugins || {};
+            return !!Object.keys(plugins)
+                .find(k => !pluginsInApk[k] || pluginsInApk[k] !== plugins[k]);
+        });
+    }
+
     private launch() {
         return this.mashUpHtmlFile()
-            .then((filePath) => {
-                sessionStorage.setItem('WM.NetworkService.isConnected', 'true');
-                sessionStorage.setItem('WM.NetworkService._autoConnect', 'true');
-                sessionStorage.setItem('debugMode', 'true');
-                setTimeout(() => {
-                    window.navigator.splashscreen.show();
-                    window.location.href = filePath;
-                }, 2000);
-            });
+        .then((filePath) => {
+            localStorage.setItem('WM.NetworkService.isConnected', 'true');
+            localStorage.setItem('WM.NetworkService._autoConnect', 'true');
+            sessionStorage.setItem('debugMode', 'true');
+            
+            setTimeout(() => {
+                window.navigator.splashscreen.show();
+                window.location.href = filePath;
+            }, 2000);
+        });
     }
 
     private patchSQLite() {
@@ -171,8 +217,10 @@ export class LiveSyncInterceptor implements HttpInterceptor {
 
     private patchApp() {
         this.app.reload = () => {
-            window.navigator.splashscreen.show();
-            this.launch();
+            if (this.networkService.isConnected()){
+                window.navigator.splashscreen.show();
+                this.launch();
+            }
         };
         window['reloadApp'] = this.app.reload;
     }
@@ -209,6 +257,22 @@ export class LiveSyncInterceptor implements HttpInterceptor {
     }
 
     public renderUI() {
+        if (this.settings.enabled) {
+            this.hasPluginsChanged().then((changed) => {
+                if (changed) {
+                    new DialogComponent({
+                        title: 'Require new build',
+                        info: 'Cordova Plugins in this app do not match with configuration of project in Studio.' + 
+                        ' So, new Cordova Build is required for Live Sync to work properly.',
+                        iconClass: 'fa fa-warning fa-4x live-sync-warning-icon',
+                        actions: [{
+                            title: 'Got it',
+                            primary: true
+                        }]
+                    }).render();
+                }
+            });
+        }
         new LiveSyncComponent(this.settings, () => {
             this.saveSettings();
         }).render();
@@ -240,8 +304,8 @@ class DialogComponent {
         this.$ele = $(
             `<div class="live-sync-modal live-sync-control">
                     <div class="live-sync-info-container">
-                        <button class="${this.options.iconClass}" type="button">
-                        </button>
+                        <span class="${this.options.iconClass}">
+                        </span>
                         <label class="live-sync-title">
                             ${this.options.title}
                         </label>
