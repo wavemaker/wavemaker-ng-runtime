@@ -103,6 +103,7 @@ export {
     isArray,
     isString,
     isNumber,
+    isBoolean,
     convertToBlob,
     hasCordova,
     AppConstants,

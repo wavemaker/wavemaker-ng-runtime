@@ -905,6 +905,8 @@ export const isString = v => typeof v === 'string';
 
 export const isNumber = v => typeof v === 'number';
 
+export const isBoolean = v => typeof v === 'boolean';
+
 /**
  * This function returns a blob object from the given file path
  * @param filepath
