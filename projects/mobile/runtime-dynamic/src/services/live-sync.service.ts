@@ -189,7 +189,9 @@ export class LiveSyncInterceptor implements HttpInterceptor {
     }
 
     private hasPluginsChanged() {
-        return this.getPlugins().then(plugins => {
+        return this.deviceService.whenReady()
+        .then(() => this.getPlugins())
+        .then(plugins => {
             const pluginsInApk = this.settings.cordovaPlugins || {};
             return !!Object.keys(plugins)
                 .find(k => !pluginsInApk[k] || pluginsInApk[k] !== plugins[k]);
