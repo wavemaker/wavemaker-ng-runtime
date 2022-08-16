@@ -648,7 +648,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             limit: this.limit,
             pagesize: this.pagesize,
             page: this.page,
-            onBeforeservicecall: this.invokeOnBeforeServiceCall.bind(this)
+            onBeforeservicecall: this.invokeOnBeforeServiceCall.bind(this),
+            labelValue: this.displaylabel
         };
 
         if (this.dataoptions) {

@@ -10,6 +10,7 @@ export interface IDataProviderConfig {
     viewParent?: any;
     dataset: any;
     datafield: string;
+    labelValue?: string;
     binddataset?: string;
     datasource?: any;
     hasData: boolean;
