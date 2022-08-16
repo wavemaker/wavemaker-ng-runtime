@@ -242,6 +242,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         this.addDatepickerKeyboardEvents(this, true);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
+        this.focusDateInput(this.isDateOpen);
     }
 
     /**
