@@ -51,7 +51,9 @@ export class LocalDataProvider implements IDataProvider {
                 // Iterate over each item and return the filtered data containing the matching string.
                 if (_.isArray(entries) && _.isObject(entries[0])) {
                     filteredData = _.filter(entries, entry => {
-                        let a = _.values(entry).join(' ');
+                        // WMS-22792: If the labelvalue is configured, search the query against the configured key value in entry.
+                        // Else join all the entries and search the query existence.
+                        let a = config.labelValue ? entry[config.labelValue] : _.values(entry).join(' ');
                         if (!casesensitive) {
                             a = _.toLower(a);
                             queryText = _.toLower(queryText);
