@@ -27,10 +27,6 @@ export class PageContentComponent extends StylableComponent {
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
 
-        if(this.getAttr('spa')) {
-            switchClass(this.nativeElement, '', DEFAULT_CLS);
-        }
-
         this.registerDestroyListener(this.app.subscribe('pullToRefresh:enable', () => {
             this.childPullToRefresh = true;
             this.initPullToRefresh();

@@ -5,7 +5,7 @@ import { switchClass } from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 import { registerProps } from './router-outlet.props';
 
-const DEFAULT_CLS = 'app-page-content app-content-column';
+const DEFAULT_CLS = 'app-content-column-wrapper';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-router-outlet',
     hostClass: DEFAULT_CLS

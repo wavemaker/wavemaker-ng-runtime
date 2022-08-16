@@ -18,7 +18,7 @@ register('wm-page-content', (): IBuildTaskDef => {
     return {
         template: (node: Element) => {
             for(let attr of node.attrs) {
-                if(attr.name === 'spa' && attr.value) {
+                if(attr.name === 'spa' && attr.value === 'true') {
                     const conditionalNode = createElement('ng-container');
                     addAtrribute(conditionalNode, '*ngIf', 'compilePageContent');
                     conditionalNode.children = conditionalNode.children.concat(node.children);
