@@ -897,6 +897,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             });
     }
 
+    focusDateInput(isPickerOpen) {
+        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
+        if (isPickerOpen) {
+            setTimeout(() => displayInputElem.focus());
+        }
+    }
+
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'tabindex') {

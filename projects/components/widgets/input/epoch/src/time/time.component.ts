@@ -397,6 +397,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         this.focusTimePickerPopover(this);
         this.bindTimePickerKeyboardEvents();
         adjustContainerPosition($('bs-dropdown-container'), this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
+        this.focusDateInput(true);
     }
 
     public assignModel() {
