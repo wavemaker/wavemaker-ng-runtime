@@ -196,6 +196,10 @@ export class WmNgRouteReuseStrategy extends WmDefaultRouteReuseStrategy
             return false;
         }
         if (future.routeConfig === current.routeConfig) {
+            //No need to compare query params for layout routeConfig
+            if(future.data.layoutName && current.data.layoutName)  {
+                return  true;
+            }
             return this.isSameQueryParams(future, current);
         }
         return true;
