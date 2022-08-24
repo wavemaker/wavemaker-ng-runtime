@@ -605,7 +605,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // If we have last search results then open dropdown on focus
     private handleFocus($event) {
         if (this.type === 'search' && this.query === this._lastQuery && this._lastResult) {
-            console.log('<<<<<<<<<<<<<<');
             (this.typeahead as any).keyUpEventEmitter.emit(this.query);
         }
     }
