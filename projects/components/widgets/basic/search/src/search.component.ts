@@ -362,12 +362,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (!this._domUpdated && this._isOpen) {
             this.listenQuery = false;
 
-            // hide the typeahead only after the item is selected from dropdown.
-            setTimeout(() => {
-                if ((this.typeahead as any)._typeahead.isShown) {
-                    this.typeahead.hide();
-                }
-            }, 200);
         }
         this._isOpen = false;
         // on outside click, typeahead is hidden. To avoid this, when fullscreen is set, overridding isFocused flag on the typeahead container
@@ -611,6 +605,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // If we have last search results then open dropdown on focus
     private handleFocus($event) {
         if (this.type === 'search' && this.query === this._lastQuery && this._lastResult) {
+            console.log('<<<<<<<<<<<<<<');
             (this.typeahead as any).keyUpEventEmitter.emit(this.query);
         }
     }
