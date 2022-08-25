@@ -541,8 +541,11 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 data = nv;
             }
             // Set last action performed to "dataset_update" whenever dataset is changed in table component
-            if (this.parent.widgetType === 'wm-table' && (_.get(this.datasource, 'category') === 'wm.Variable' || _.get(this.datasource, 'category') === 'wm.ServiceVariable')) {
-                this.parent.setLastActionToDatasetUpdate();
+            if (this.parent.widgetType === 'wm-table') {
+                if (!this.parent._triggeredByUser && (_.get(this.datasource, 'category') === 'wm.Variable' || _.get(this.datasource, 'category') === 'wm.ServiceVariable')) {
+                    this.parent.setLastActionToDatasetUpdate();
+                }
+                this.parent._triggeredByUser = false;
             }
             // When the dataset is not in current page, but in previous ones directly set the result without setting page values
             if (this.isEditNotInCurrentPage()) {

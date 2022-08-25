@@ -126,6 +126,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     gridfirstrowselect;
     iconclass;
     ondemandmessage;
+    _triggeredByUser;
     isGridEditMode;
     loadingdatamsg;
     multiselect;
