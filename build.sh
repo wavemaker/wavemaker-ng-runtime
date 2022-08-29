@@ -95,10 +95,11 @@ hasLibJsChanges(){
         return 0
     fi
 
-    local updateTime=`date -r ./projects/components/widgets/data/table/src/datatable.js +%s`
-    local buildTime=`date -r ${successFile} +%s`
+    local updateTime            =`date -r ./projects/components/widgets/data/table/src/datatable.js +%s`
+    local extensionUpdateTime   =`date -r ./projects/extension/extension.js +%s`
+    local buildTime             =`date -r ${successFile} +%s`
 
-	if [[ ${updateTime} -le ${buildTime} ]]; then
+    if [[ ${updateTime} -le ${buildTime} ]] && [[ ${extensionUpdateTime} -le ${buildTime} ]]; then
 		return 1
 	else
 		return 0
@@ -214,6 +215,7 @@ bundleWeb() {
 
     ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-loader.js \
         -c -o ./dist/bundles/wmapp/scripts/wm-loader.min.js -m   -b beautify=false,ascii_only=true
+
 
     if [[ "$?" -eq "0" ]]; then
         echo "uglify: web - success"
@@ -567,6 +569,7 @@ bundleWebLibs() {
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
+        ./projects/extension/extension.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ./node_modules/imask/dist/imask.min.js \
