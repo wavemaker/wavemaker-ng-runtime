@@ -23,7 +23,7 @@ module.exports = function (config) {
         '../../../libraries/swipey/bundles/index.umd.js',
         '../../../../wavemaker-app-runtime-angularjs/application/styles/css/wm-style.css',
         '../../../../wavemaker-artifacts/default/themes/material/style.css',
-        '../../../node_modules/fullcalendar/dist/fullcalendar.min.js'
+        '../../../node_modules/fullcalendar/main.min.js'
     ],
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [

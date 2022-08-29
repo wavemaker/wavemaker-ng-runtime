@@ -8,7 +8,14 @@
             "umdId": "wm.mobile.runtime.dynamic",
             "umdModuleIds": {
                 "@angular/core": "ng.core",
+                "@angular/common/http": "ng.common.http",
 
+                "@awesome-cordova-plugins/file/ngx": "awesomeCordova.plugins",
+
+                "rxjs": "rxjs",
+
+                "@wm/core": "wm.core",
+                "@wm/mobile/core": "wm.mobile.core",
                 "@wm/mobile/components/basic": "wm.mobile.components.basic",
                 "@wm/mobile/components/basic/search": "wm.mobile.components.basic.search",
                 "@wm/mobile/components/containers/segmented-control": "wm.mobile.components.containers.segmentedcontrol",

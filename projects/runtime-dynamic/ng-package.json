@@ -18,6 +18,7 @@
             "ngx-bootstrap/pagination": "ngx-bootstrap.pagination",
             "ngx-bootstrap/popover": "ngx-bootstrap.popover",
             "ngx-bootstrap/timepicker": "ngx-bootstrap.timepicker",
+            "ngx-bootstrap/tooltip": "ngx-bootstrap.tooltip",
             "ngx-bootstrap/typeahead": "ngx-bootstrap.typeahead",
             "ngx-bootstrap/progressbar": "ngx-bootstrap.progressbar",
             "ngx-bootstrap/componentLoader": "ngx-bootstrap.componentLoader",

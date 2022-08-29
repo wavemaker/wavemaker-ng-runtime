@@ -426,6 +426,11 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 this.parent.callDataGridMethod('showLoadingIndicator', this.parent.loadingdatamsg, true);
             }
         }
+        // reset the last action performed to "scroll" and isDatasetUpdated to false
+        if (this.parent.widgetType === 'wm-table' && this.parent.gridOptions.isNavTypeScrollOrOndemand()) {
+            this.parent.gridOptions.setLastActionPerformed(this.parent.gridOptions.ACTIONS.DEFAULT);
+            this.parent.gridOptions.setIsDatasetUpdated(false);
+        }
         this.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
 
         // Convert the current page to a valid page number.
@@ -534,6 +539,13 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 data = this.parent.onDataNavigatorDataSetChange(nv);
             } else {
                 data = nv;
+            }
+            // Set last action performed to "dataset_update" whenever dataset is changed in table component
+            if (this.parent.widgetType === 'wm-table') {
+                if (!this.parent._triggeredByUser && (_.get(this.datasource, 'category') === 'wm.Variable' || _.get(this.datasource, 'category') === 'wm.ServiceVariable')) {
+                    this.parent.setLastActionToDatasetUpdate();
+                }
+                this.parent._triggeredByUser = false;
             }
             // When the dataset is not in current page, but in previous ones directly set the result without setting page values
             if (this.isEditNotInCurrentPage()) {

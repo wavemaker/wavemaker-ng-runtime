@@ -336,7 +336,7 @@ function startoAuthFlow(url, providerId, onSuccess, removeProviderConfigCallBack
  * function to construct the url for implicit flow.
  * @param providerId provider id for which the url has to be set
  * @param providerInfo provider object which contains details such as scope, client id etc
- * @param requestSourceType requesting source is web or mobile or wavelens
+ * @param requestSourceType requesting source is web or mobile
  * @returns url string
  */
 function constructURLForImplicitOrPKCE(providerId, providerInfo, requestSourceType, code_challenge, customUriScheme?, deployedURL?) {
@@ -347,8 +347,7 @@ function constructURLForImplicitOrPKCE(providerId, providerInfo, requestSourceTy
     if (getWmProjectProperties().isTestRuntime === true) {
         redirectUri = location.protocol + '//' + window.location.host + '/studio/oAuthCallback.html';
     }
-    // for mobile apps and wavelens, location.href will not give us the correct url, so fetching it from deployedURL(config.json) instead
-    if (requestSourceType === 'MOBILE' || requestSourceType === 'WAVELENS') {
+    if (requestSourceType === 'MOBILE') {
         redirectUri = deployedURL + 'oAuthCallback.html';
     }
     const flow = isPassedFlow(providerInfo, implicitIdentifier) ? implicitIdentifier : pkceIdentifier;
@@ -446,9 +445,7 @@ export const performAuthorization = (url, providerId, onSuccess, onError, http, 
             postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack, securityObj, requestSourceType, http);
         }
     } else {
-        if (window['WaveLens']) {
-            requestSourceType = 'WAVELENS';
-        } else if (hasCordova()) {
+        if (hasCordova()) {
             requestSourceType = 'MOBILE';
         }
         if (isPassedFlow(securityObj, implicitIdentifier) || isPassedFlow(securityObj, pkceIdentifier)) {

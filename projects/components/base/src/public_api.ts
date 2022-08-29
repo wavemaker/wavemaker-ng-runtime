@@ -1,5 +1,26 @@
+import { Live_Operations } from './utils/data-utils';
+
 export * from './components.module';
-export * from './utils/data-utils';
+export {
+    Live_Operations,
+    ALLFIELDS,
+    LIVE_CONSTANTS,
+    performDataOperation,
+    refreshDataSource,
+    fetchRelatedFieldData,
+    interpolateBindExpressions,
+    getDistinctFieldProperties,
+    getDistinctValues,
+    fetchDistinctValues,
+    getDistinctValuesForField,
+    getRangeFieldValue,
+    getRangeMatchMode,
+    getEnableEmptyFilter,
+    getEmptyMatchMode,
+    createArrayFrom,
+    applyFilterOnField,
+    transformData
+} from './utils/data-utils';
 export {
     getOrderedDataset,
     transformDataWithKeys,

@@ -242,6 +242,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         this.addDatepickerKeyboardEvents(this, true);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
+        this.focusDateInput(this.isDateOpen);
     }
 
     /**
@@ -364,6 +365,17 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         this.invalidDateTimeFormat = false;
         this.onModelUpdate(newVal);
+    }
+
+    public showCordovaDatePicker() {
+        return super.showCordovaDatePicker(
+            'DATE_TIME',
+            this.bsDateValue && this.bsDateValue.getTime(),
+            getDateObj(this.mindate)?.getTime(),
+            getDateObj(this.maxdate)?.getTime())
+        .then((date: Date) => {
+            this.bsDateValue = date;
+        });
     }
 
     /**
