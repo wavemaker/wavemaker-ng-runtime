@@ -377,6 +377,13 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
         this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
     }
 
+    onActivatePage() {
+        const subscription = this.viewInit$.subscribe(noop, noop, () => {
+            this.appManager.notify('refreshPartialVariables', {'name' : this.pageName});
+            subscription.unsubscribe();
+        });
+    }
+
     static clear() {
         if(BaseSpaPageComponent.lastPageSnapShot) {
             BaseSpaPageComponent.lastPageSnapShot.remove();

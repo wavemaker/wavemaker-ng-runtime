@@ -1,13 +1,15 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive, AfterContentInit } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 
 import { PageDirective } from "@wm/components/page";
 
+declare const _;
 
 @Directive()
 export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
     injector: Injector;
     route: ActivatedRoute;
+    private layoutCreated: boolean;
 
     @ViewChild(RouterOutlet) routerOutlet: RouterOutlet;
     @ViewChild(PageDirective) pageDirective: PageDirective;
@@ -29,6 +31,7 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         setTimeout(() => {
             this.overrideRouterOutlet();
+            this.layoutCreated = true;
         }, 10);
     }
 
@@ -47,5 +50,12 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
     }
 
     ngOnDetach() {
+    }
+
+    onActivate(pageComponent: any) {
+        _.extend(this, pageComponent);
+        if(this.layoutCreated) {
+            pageComponent.onActivatePage();
+        }
     }
 }
