@@ -230,7 +230,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     return $($event.target).val(displayValue);
                 }
                 this.dateNotInRange = true;
-                this.validateType = "maxdate";
+                this.validateType = 'maxdate';
                 return this.showValidation($event, displayValue, isNativePicker, msg);
             }
             if (this.excludedates) {
@@ -869,6 +869,39 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         if (displayInputElem && this._triggeredByUser) {
             displayInputElem.focus();
             displayInputElem.click();
+        }
+    }
+
+    getCordovaPluginDatePickerApi() {
+        if (isIos()) {
+            return _.get(window, 'cordova.wavemaker.datePicker.selectDate');
+        }
+    }
+
+    showCordovaDatePicker(mode = 'DATE_TIME', 
+        selectedDate = Date.now(),
+        minDate?: number,
+        maxDate?: number) {
+        return Promise.resolve()
+            .then(() => this.getCordovaPluginDatePickerApi() || Promise.reject())
+            .then(selectDate => {
+                return new Promise((resolve, reject) => {
+                    selectDate({
+                        selectedDate: selectedDate,
+                        mode: mode,
+                        minDate: minDate,
+                        maxDate: maxDate
+                    }, (result) => {
+                        resolve(result?.date ? new Date(result.date) : null)
+                    }, reject);
+                });
+            });
+    }
+
+    focusDateInput(isPickerOpen) {
+        const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
+        if (isPickerOpen) {
+            setTimeout(() => displayInputElem.focus());
         }
     }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router, RouteReuseStrategy } from '@angular/router';
+import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
 import {
@@ -15,8 +15,6 @@ import {
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService } from '@wm/variables';
-import { WmRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
-
 declare const _;
 
 enum POST_MESSAGES {
@@ -49,7 +47,6 @@ export class AppManagerService {
         private $spinner: AbstractSpinnerService,
         private $i18n: AbstractI18nService,
         private $datePipe: DatePipe,
-        private routeReuseStrategy: RouteReuseStrategy
     ) {
         // register method to invoke on session timeout
         this.$http.registerOnSessionTimeout(this.handle401.bind(this));
@@ -90,21 +87,15 @@ export class AppManagerService {
             if (this.lastLoggedUserId) {
                 this.$security.getConfig(config => {
                     if(config && config.userInfo.userId !== this.lastLoggedUserId) {
-                        this.clearCache();
+                        this.$app.clearPageCache();
                     }
                 }, null);
             }
         });
         this.$app.subscribe('userLoggedOut', () => this.setLandingPage().then(() => {
-            this.clearCache();            
+            this.$app.clearPageCache();            
         }));
         this.$app.subscribe('http401', (d = {}) => this.handle401(d.page, d.options));
-    }
-
-    private clearCache() {
-        if(this.routeReuseStrategy instanceof WmRouteReuseStrategy) {
-            (this.routeReuseStrategy as WmRouteReuseStrategy).reset();
-        }
     }
 
     /**

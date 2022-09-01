@@ -3,7 +3,7 @@ import { Geolocation, GeolocationOptions } from '@awesome-cordova-plugins/geoloc
 import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
 
 import { IDeviceVariableOperation } from '@wm/variables';
-import { $appDigest, App, isAndroid, isIos, isSpotcues, getAndroidVersion} from '@wm/core';
+import { $appDigest, App, isAndroid, isIos, getAndroidVersion} from '@wm/core';
 
 declare const cordova;
 const PERMISSION_DENIED_ONCE = "DENIED_ONCE";

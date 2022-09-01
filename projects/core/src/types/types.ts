@@ -87,6 +87,7 @@ export abstract class App {
     selectedViewPort: Object;
     subscribe: (eventName, callback: (data: any) => void) => () => void;
     dynamicComponentContainerRef: any;
+    clearPageCache: (pageName?: string) => void;
 
     activePageName: string;
     activePage: any;

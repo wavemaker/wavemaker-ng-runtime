@@ -133,8 +133,8 @@ ngBuild() {
     local ngModuleName=$3;
     buildNeeded ${bundle} ${sourceLocation}
     if [[ "$?" -ne 0 ]]; then
-        echo "--------------------prod build--------------------"
-        execCommand ng-build ${ngModuleName} "$NG build --prod $ngModuleName"
+        echo "--------------------Production Build--------------------"
+        execCommand ng-build ${ngModuleName} "$NG build --configuration production $ngModuleName"
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
         fi
@@ -456,7 +456,7 @@ copyLocale() {
         local mobileDest=./dist/bundles/wmmobile/locales
 
         local angularSrc=./node_modules/@angular/common/locales
-        local fullCalendarSrc=./node_modules/fullcalendar/dist/locale
+        local fullCalendarSrc=./node_modules/fullcalendar/libs/locales
         local momentSrc=./node_modules/moment/locale
         local momentTimezoneSrc=./node_modules/moment-timezone/builds/moment-timezone-with-data.js
 
@@ -556,7 +556,7 @@ bundleWebLibs() {
         ./node_modules/he/he.js \
         ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
-        ./node_modules/fullcalendar/dist/fullcalendar.min.js \
+        ./node_modules/fullcalendar/main.min.js \
         ./node_modules/jssha/dist/sha256.js \
         ./node_modules/summernote/dist/summernote-lite.js \
         ./node_modules/jquery-ui/ui/disable-selection.js \
@@ -624,7 +624,7 @@ bundleMobileLibs() {
         ./node_modules/he/he.js \
         ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
-        ./node_modules/fullcalendar/dist/fullcalendar.min.js \
+        ./node_modules/fullcalendar/main.min.js \
         ./node_modules/jssha/dist/sha256.js \
         ./node_modules/summernote/dist/summernote-lite.js \
         ./node_modules/jquery-ui/ui/disable-selection.js \
