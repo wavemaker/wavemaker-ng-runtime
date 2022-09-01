@@ -35,7 +35,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     private readonly prefabLocale: Map<String, any>;
     private messages: any;
     private _isAngularLocaleLoaded = false;
-    private momentTimeZone;
+    private formatsByLocale = {'timezone': ''};
 
     constructor(
         private $http: HttpClient,
@@ -175,8 +175,23 @@ export class I18nServiceImpl extends AbstractI18nService {
         return new Promise<void>(resolve => {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
             const path = _cdnUrl + `locales/moment-timezone/moment-timezone-with-data.js`;
-
-            loadScripts([path], true);
+            loadScripts([path], true).then(()=>{
+                // If locale is provided in the form of offset and not timezone name, deduce the name.
+                let localeObj = locale;
+                locale = localeObj['timezone'];
+                const localeIndex = locale.indexOf('+');
+                let localeStr;
+                if (localeIndex > -1) {
+                    if (localeIndex > 0) {
+                        locale = locale.substr(localeIndex);
+                    }
+                    localeObj['timezone'] = _.find(moment.tz.names(), (timezoneName) => {
+                        return locale === moment.tz(timezoneName).format('Z');
+                    });
+                }
+                Object.assign(this.formatsByLocale, localeObj);
+                resolve();
+            }, resolve);
         });
     }
 
@@ -193,13 +208,16 @@ export class I18nServiceImpl extends AbstractI18nService {
         return this.loadAngularLocaleBundle(libLocale.angular);
     }
 
-    public setMomentTimeZone(locale) {
+    public setFormatsByLocale(locale) {
         this.loadMomentTimeZoneBundle(locale);
-        this.momentTimeZone = locale;
     }
 
     public getMomentTimeZone() {
-        return this.momentTimeZone;
+        return this.formatsByLocale['timezone'];
+    }
+
+    public getFormatsByLocale() {
+        return this.formatsByLocale;
     }
 
     public setSelectedLocale(locale) {
