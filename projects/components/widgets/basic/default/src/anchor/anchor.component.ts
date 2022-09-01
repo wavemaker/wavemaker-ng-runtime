@@ -65,12 +65,13 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
                 regex.lastIndex = 0;
                 const matches = regex.exec(fn);
 
-                this.hasGoToPageExpr = matches && (matches.length > 0);
-                if(this.hasGoToPageExpr) {
+                const hasGoToPageExpr = matches && (matches.length > 0);
+                if(hasGoToPageExpr && !this.hasGoToPageExpr) {
+                    this.hasGoToPageExpr = true;
                     this.goToPageName = matches[1];
                 }
 
-                return this.hasGoToPageExpr && matches[1] === app.activePageName;
+                return hasGoToPageExpr && matches[1] === app.activePageName;
             })) {
                 this.hasNavigationToCurrentPageExpr = true;
             }
