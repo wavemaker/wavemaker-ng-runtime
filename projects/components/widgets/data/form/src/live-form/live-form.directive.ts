@@ -1,13 +1,13 @@
 import { Directive, Inject, Optional, Self, Attribute, HostListener } from '@angular/core';
 
-import { $appDigest, AbstractDialogService, DataSource, DataType, debounce, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject, AbstractI18nService } from '@wm/core';
+import { $appDigest, AbstractDialogService, DataSource, DataType, debounce, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
 import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField, isDataSetWidget, Live_Operations, parseValueByType, performDataOperation, ToDatePipe } from '@wm/components/base';
 import { LiveTableComponent } from '@wm/components/data/live-table';
 
 import { registerLiveFormProps } from '../form.props';
 import { FormComponent } from '../form.component';
 
-declare const _, moment;
+declare const _;
 
 const isTimeType = field => field.widgettype === DataType.TIME || (field.type === DataType.TIME && !field.widgettype);
 const getValidTime = val => {
@@ -37,7 +37,6 @@ export class LiveFormDirective {
         @Optional() liveTable: LiveTableComponent,
         public datePipe: ToDatePipe,
         private dialogService: AbstractDialogService,
-        private i18nService: AbstractI18nService,
         @Attribute('formlayout') formlayout: string
     ) {
         // If parent live table is present and this form is first child of live table, set this form instance on livetable
