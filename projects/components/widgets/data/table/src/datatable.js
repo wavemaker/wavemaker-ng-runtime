@@ -518,6 +518,9 @@ $.widget('wm.datatable', {
             // In case of on demand pagination, when the next page is not disabled show the loading/load more button accordingly
             if(this.options.navigation === 'On-Demand' && !this.options.isLastPage)
                 this.element.find('.on-demand-datagrid').show();
+            // Fix for [WMS-22904]- clearing customExpr and RowDetailExpr whenever tbody content is cleared
+            self.options.clearCustomExpression();
+            self.options.clearRowDetailExpression();
             self.options.setIsSearchTrigerred(false);
             self.options.setIsDatasetUpdated(false);
         }
