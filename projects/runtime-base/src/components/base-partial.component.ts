@@ -229,7 +229,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             }, 100);
         });
 
-        this.App.subscribe("refreshPartialVariables", (data) => {
+        this.registerDestroyListener(this.App.subscribe("refreshPartialVariables", (data) => {
             const refresh = v => { v && v.startUpdate && v.invoke && v.invoke(); };
             _.each(this.Variables, refresh);
             _.each(this.Actions, refresh);
@@ -239,7 +239,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
                 params = this.containerWidget.userComponentParams;
             }
             this.onReady(params);
-        });
+        }));
     }
 
     ngOnDestroy(): void {
