@@ -229,6 +229,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             }, 100);
         });
 
+        //Listener is added to update variables and invoke partial onReady when the page is changed in the layout
         this.registerDestroyListener(this.App.subscribe("refreshPartialVariables", (data) => {
             const refresh = v => { v && v.startUpdate && v.invoke && v.invoke(); };
             _.each(this.Variables, refresh);

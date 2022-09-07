@@ -52,7 +52,9 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
     ngOnDetach() {
     }
 
+    // This will be called when child route (Page component in the layout) is activated
     onActivate(pageComponent: any) {
+        //Add page component scope to layout component so that bindings and watchers in the layout will use the page scope
         _.extend(this, pageComponent);
         if(this.layoutCreated) {
             pageComponent.onActivatePage();

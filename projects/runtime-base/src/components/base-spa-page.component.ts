@@ -377,7 +377,9 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
         this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
     }
 
+    //This will be called when new page route is activated in the layout(layout is same and page in the layout got changed)
     onActivatePage() {
+        //Notify the partials in the layout to update the variables and invoke partial onReady
         const subscription = this.viewInit$.subscribe(noop, noop, () => {
             this.appManager.notify('refreshPartialVariables', {'name' : this.pageName});
             subscription.unsubscribe();
