@@ -68,7 +68,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if (this.isCurrentTime && !this.bsTimeValue) {
             return CURRENT_TIME;
         }
-        return getFormattedDate(this.datePipe, this.bsTimeValue, this.outputformat, this.i18nService.getMomentTimeZone()) || '';
+        return getFormattedDate(this.datePipe, this.bsTimeValue, this.outputformat, this.timeZone, null, null, this) || '';
     }
 
     /**Todo[Shubham]: needs to be redefined
@@ -96,11 +96,11 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     }
 
     get displayValue() {
-        return getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern, this.i18nService.getMomentTimeZone()) || '';
+        return getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern, this.timeZone, null, null, this) || '';
     }
 
     get nativeDisplayValue() {
-        return getFormattedDate(this.datePipe, this.bsTimeValue, 'HH:mm:ss', this.i18nService.getMomentTimeZone()) || '';
+        return getFormattedDate(this.datePipe, this.bsTimeValue, 'HH:mm:ss', this.timeZone, null, null, this) || '';
     }
 
     /* Internal property to have a flag to check the given datavalue is of Current time*/
@@ -319,8 +319,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             return;
         }
         this.timeinterval = setInterval( () => {
-            const timeZone = this.i18nService.getMomentTimeZone();
-            const now = timeZone ? getMomentLocaleObject(timeZone) : new Date();
+            const now = this.timeZone ? getMomentLocaleObject(this.timeZone) : new Date();
             now.setSeconds(now.getSeconds() + 1);
             this.datavalue = CURRENT_TIME;
             this.onTimeChange(now);

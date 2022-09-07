@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform, Injectable } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { CURRENCY_INFO, isDefined, App, CustomPipeManager, AbstractI18nService } from '@wm/core';
+import { CURRENCY_INFO, isDefined, App, CustomPipeManager, AbstractI18nService, hasOffsetStr } from '@wm/core';
 
 
 declare const moment, _, $;
@@ -33,7 +33,7 @@ export class TrailingZeroDecimalPipe implements PipeTransform {
     name: 'toDate'
 })
 export class ToDatePipe implements PipeTransform {
-    transform(data: any, format: any, timezone?) {
+    transform(data: any, format: any, timezone?, compInstance?) {
         let timestamp;
         // 'null' is to be treated as a special case, If user wants to enter null value, empty string will be passed to the backend
         if (data === 'null' || data === '') {
@@ -48,8 +48,8 @@ export class ToDatePipe implements PipeTransform {
                 return timestamp;
             }
             let formattedVal;
-            const timeZone = this.i18nService ? this.i18nService.getMomentTimeZone() : timezone;
-            if (timeZone && data === timestamp) {
+            const timeZone = this.i18nService ? this.i18nService.getMomentTimeZone(compInstance) : timezone;
+            if (timeZone && (data === timestamp || hasOffsetStr(data))) {
                 formattedVal = moment(timestamp).tz(timeZone).format(format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A'));
             } else {
                 formattedVal = this.datePipe.transform(timestamp, format);

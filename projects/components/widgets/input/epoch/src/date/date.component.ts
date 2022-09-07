@@ -4,7 +4,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
-import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, getMomentLocaleObject } from '@wm/core';
+import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, getMomentLocaleObject, App } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
@@ -51,16 +51,16 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     get displayValue() {
-        return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) || '';
+        return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this) || '';
     }
 
     get nativeDisplayValue() {
-        return getFormattedDate(this.datePipe, this.bsDataValue, 'yyyy-MM-dd', this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) || '';
+        return getFormattedDate(this.datePipe, this.bsDataValue, 'yyyy-MM-dd', this.timeZone, null, this.isCurrentDate, this) || '';
     }
 
     // @ts-ignore
     get datavalue() {
-        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) || '';
+        return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat, this.timeZone, null, this.isCurrentDate, this) || '';
     }
 
     // Todo[Shubham]: needs to be redefined
@@ -68,8 +68,7 @@ export class DateComponent extends BaseDateTimeComponent {
     // @ts-ignore
     set datavalue(newVal) {
         if (newVal === CURRENT_DATE) {
-            const timeZone = this.i18nService.getMomentTimeZone();
-            this.bsDataValue = timeZone ? getMomentLocaleObject(timeZone) : new Date();
+            this.bsDataValue = this.timeZone ? getMomentLocaleObject(this.timeZone) : new Date();
             this.isCurrentDate = true;
         } else {
             this.bsDataValue = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}) : undefined;
@@ -130,7 +129,7 @@ export class DateComponent extends BaseDateTimeComponent {
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
-        if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate) === this.displayValue) {
+        if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this) === this.displayValue) {
             $(this.nativeElement).find('.display-input').val(this.displayValue);
         }
         if (newVal) {
@@ -227,7 +226,7 @@ export class DateComponent extends BaseDateTimeComponent {
             if (action === 'enter' || action === 'arrowdown') {
                 const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
                 event.preventDefault();
-                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.i18nService.getMomentTimeZone(), null, this.isCurrentDate);
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {

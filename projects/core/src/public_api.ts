@@ -70,6 +70,7 @@ export {
     isValidWebURL,
     getResourceURL,
     triggerFn,
+    hasOffsetStr,
     getFormattedDate,
     getDateObj,
     addEventListenerOnElement,

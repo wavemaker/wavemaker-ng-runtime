@@ -152,9 +152,9 @@ export abstract class AbstractI18nService {
     protected abstract loadAppLocaleBundle();
     protected abstract loadMomentLocaleBundle(localeLang);
     protected abstract loadLocaleBundles(localeLang);
-    public abstract setFormatsByLocale(locale);
+    public abstract setFormatsByLocale(locale, compInstance?);
     public abstract getFormatsByLocale();
-    public abstract getMomentTimeZone();
+    public abstract getMomentTimeZone(compInstance?);
     public abstract getPrefabLocaleBundle(prefabName: string): any;
 }
 

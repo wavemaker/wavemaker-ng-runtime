@@ -49,7 +49,8 @@ const REGEX = {
     SPECIAL_CHARACTERS: /[^A-Z0-9a-z_]+/i,
     APP_SERVER_URL_FORMAT: /^(http[s]?:\/\/)(www\.){0,1}[a-zA-Z0-9\.\-]+([:]?[0-9]{2,5}|\.[a-zA-Z]{2,5}[\.]{0,1})\/+[^?#&=]+$/,
     JSON_DATE_FORMAT: /\d{4}-[0-1]\d-[0-3]\d(T[0-2]\d:[0-5]\d:[0-5]\d.\d{1,3}Z$)?/,
-    DATA_URL: /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*)\s*$/i
+    DATA_URL: /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*)\s*$/i,
+    ISO_DATE_FORMAT: /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})(\.\d+)?([+-]\d{2}:?\d{2}|Z)$/
 },
     compareBySeparator = ':';
 
@@ -331,7 +332,7 @@ export function triggerFn(fn, ...argmnts) {
 /**
  * This method is used to get the formatted date
  */
-export const getFormattedDate = (datePipe, dateObj, format, timeZone?, isTimeStampType?, isIntervalDateTime?): any => {
+export const getFormattedDate = (datePipe, dateObj, format, timeZone?, isTimeStampType?, isIntervalDateTime?, compInstance?): any => {
     if (!dateObj) {
         return undefined;
     }
@@ -350,8 +351,19 @@ export const getFormattedDate = (datePipe, dateObj, format, timeZone?, isTimeSta
         }
     }
 
-    return datePipe.transform(dateObj, format, timeZone);
+    return datePipe.transform(dateObj, format, timeZone, compInstance);
 };
+
+/**
+ * This method is used to check if the date has timezone information or not
+ */
+export const hasOffsetStr = (dateStr) => {
+    if (typeof dateStr !== 'string') return;
+    const matches = dateStr.match(REGEX.ISO_DATE_FORMAT);
+    if (matches && matches[4]) {
+        return true;
+    }
+}
 
 /**
  * method to get the date object from the input received

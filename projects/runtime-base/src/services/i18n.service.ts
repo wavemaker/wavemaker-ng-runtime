@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 import { defineLocale } from 'ngx-bootstrap/chronos';
@@ -15,7 +15,8 @@ import {
     loadScripts,
     replace,
     setCSS,
-    setSessionStorageItem
+    setSessionStorageItem,
+    App
 } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 
@@ -36,11 +37,14 @@ export class I18nServiceImpl extends AbstractI18nService {
     private messages: any;
     private _isAngularLocaleLoaded = false;
     private formatsByLocale = {'timezone': ''};
+    private get app() { return this.inj.get(App) };
+
 
     constructor(
         private $http: HttpClient,
         private bsLocaleService: BsLocaleService,
-        private appDefaults: AppDefaults
+        private appDefaults: AppDefaults,
+        private inj: Injector
     ) {
         super();
         this.appLocale = {};
@@ -171,7 +175,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         return loadScripts([path], true);
     }
 
-    protected loadMomentTimeZoneBundle(locale) {
+    protected loadMomentTimeZoneBundle(locale, compInstance?) {
         return new Promise<void>(resolve => {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
             const path = _cdnUrl + `locales/moment-timezone/moment-timezone-with-data.js`;
@@ -189,7 +193,8 @@ export class I18nServiceImpl extends AbstractI18nService {
                         return locale === moment.tz(timezoneName).format('Z');
                     });
                 }
-                Object.assign(this.formatsByLocale, localeObj);
+                const localeData =  compInstance && compInstance.formatsByLocale ? compInstance.formatsByLocale : this.formatsByLocale;
+                Object.assign(localeData, localeObj);
                 resolve();
             }, resolve);
         });
@@ -208,12 +213,20 @@ export class I18nServiceImpl extends AbstractI18nService {
         return this.loadAngularLocaleBundle(libLocale.angular);
     }
 
-    public setFormatsByLocale(locale) {
-        this.loadMomentTimeZoneBundle(locale);
+    public setFormatsByLocale(locale, compInstance?) {
+        this.loadMomentTimeZoneBundle(locale, compInstance);
     }
 
-    public getMomentTimeZone() {
-        return this.formatsByLocale['timezone'];
+    public getMomentTimeZone(compInstance?) {
+        const pageConfig = _.get(this.app, 'activePage.formatsByLocale.timezone');
+        const compConfig = _.get(compInstance, 'formatsByLocale.timezone');
+        if (compConfig) {
+            return compConfig;
+        } else if (pageConfig) {
+            return pageConfig;
+        } else {
+            return this.formatsByLocale['timezone'];
+        }    
     }
 
     public getFormatsByLocale() {

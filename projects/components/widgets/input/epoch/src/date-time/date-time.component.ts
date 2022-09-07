@@ -46,7 +46,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
     private isEnterPressedOnDateInput = false;
-    private timeZone;
 
     get timestamp() {
         return this.proxyModel ? this.proxyModel.valueOf() : undefined;
@@ -61,11 +60,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * @returns {any|string}
      */
     get displayValue(): any {
-        return getFormattedDate(this.datePipe, this.proxyModel, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate) || '';
+        return getFormattedDate(this.datePipe, this.proxyModel, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate, this) || '';
     }
 
     get nativeDisplayValue() {
-        return getFormattedDate(this.datePipe, this.proxyModel, 'yyyy-MM-ddTHH:mm:ss', this.timeZone, (this as any).key, this.isCurrentDate) || '';
+        return getFormattedDate(this.datePipe, this.proxyModel, 'yyyy-MM-ddTHH:mm:ss', this.timeZone, (this as any).key, this.isCurrentDate, this) || '';
     }
 
     @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
@@ -99,7 +98,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.isCurrentDate && !this.proxyModel) {
             return CURRENT_DATE;
         }
-        return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat, this.timeZone);
+        return getFormattedDate(this.datePipe, this.proxyModel, this.outputformat, this.timeZone, null, null, this);
     }
 
     /**Todo[Shubham]: needs to be redefined
@@ -136,7 +135,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
-        this.timeZone = this.i18nService.getMomentTimeZone();
         this.datepattern = this.appDefaults.dateTimeFormat || getDisplayDateTimeFormat(FormWidgetType.DATETIME);
         this.updateFormat('datepattern');
     }
@@ -253,7 +251,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
         if (type === 'date') {
             this.invalidDateTimeFormat = false;
-            if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate) === this.displayValue) {
+            if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate, this) === this.displayValue) {
                 $(this.nativeElement).find('.display-input').val(this.displayValue);
             }
         }
@@ -289,7 +287,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         const timePickerFields = $('.bs-timepicker-field');
         const meridianField = $('timepicker button.text-center');
         if (this.timeZone && (this as any).key === 'datetimestamp' && timePickerFields.length) {
-            const formattedDate = getFormattedDate(this.datePipe, newVal, 'hh:mm:ss A', this.timeZone, (this as any).key);
+            const formattedDate = getFormattedDate(this.datePipe, newVal, 'hh:mm:ss A', this.timeZone, (this as any).key, null, this);
             const formattedArr = formattedDate.split(' ');
             const formattedTime = formattedArr[0].split(':');
             for (let i=0; i<timePickerFields.length; i++) {
@@ -406,7 +404,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             if (action === 'enter' || action === 'arrowdown') {
                 newVal = newVal ? getNativeDateObject(newVal, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
                 event.preventDefault();
-                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate);
+                const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate, this);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
