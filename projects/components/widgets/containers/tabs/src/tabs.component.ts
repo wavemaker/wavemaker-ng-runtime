@@ -222,7 +222,8 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
         if (evt) {
             headerElement = $(evt.target as HTMLElement).closest('li.tab-header');
-        } else {
+        }
+        if (!evt || !headerElement || !headerElement.length) {
             headerElement = this.nativeElement.querySelector(`li[data-paneid=${paneRef.widgetId}]`);
         }
         this.animateIn(headerElement);
