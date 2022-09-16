@@ -8,7 +8,7 @@ const createElement = name => {
 };
 
 const addAtrribute = (node: Element, name: string, value: string) => {
-    const attr = new Attribute(name, value, noSpan, noSpan, noSpan);
+    const attr = new Attribute(name, value, noSpan, noSpan, noSpan, undefined, undefined);
     node.attrs.push(attr);
 };
 
@@ -22,7 +22,7 @@ register('wm-page-content', (): IBuildTaskDef => {
                     const conditionalNode = createElement('ng-container');
                     addAtrribute(conditionalNode, '*ngIf', 'compilePageContent');
                     conditionalNode.children = conditionalNode.children.concat(node.children);
-                    conditionalNode.children.push(new Text('{{onPageContentReady()}}', null));
+                    conditionalNode.children.push(new Text('{{onPageContentReady()}}', null, undefined, undefined));
                     node.children = [conditionalNode];
                     break;
                 }
