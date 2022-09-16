@@ -2,8 +2,6 @@ import { ApplicationRef, enableProdMode, NgModuleRef } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
-import { isIos, isSpotcues } from '@wm/core';
-import { initSpotCues } from '@wm/runtime/base';
 
 declare const _;
 const DEBUG_MODE = 'debugMode';
@@ -17,9 +15,7 @@ console.time('bootstrap');
 
 document.addEventListener('DOMContentLoaded', () => {
     new Promise<void|Event>( resolve => {
-        if (isSpotcues) {
-            initSpotCues().then(resolve);
-        } else if (window['cordova']) {
+        if (window['cordova']) {
             document.addEventListener('deviceready', resolve);
         } else {
             resolve();

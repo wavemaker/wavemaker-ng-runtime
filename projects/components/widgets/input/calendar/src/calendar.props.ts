@@ -23,8 +23,5 @@ export const registerProps = () => {
                 ['selectionmode', PROP_STRING]
             ]
         );
-    if (isMobileApp()) {
-        props.set('view', {value: 'day', ...PROP_STRING});
-    }
     register('wm-calendar', props);
 };

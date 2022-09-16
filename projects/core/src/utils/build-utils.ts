@@ -148,7 +148,7 @@ const addDatasetBoundExprAttribute = (childNode: Element, attr: Attribute, attrV
     attrValue = attrValue.replace('bind:', '');
     const datasetBoundAttribute = childNode.attrs.find( a => a.name === 'datasetboundexpr');
     if (attr.name === 'dataset' && !datasetBoundAttribute) {
-        childNode.attrs.push(new Attribute('datasetboundexpr', attrValue, attr.sourceSpan, attr.keySpan, attr.valueSpan));
+        childNode.attrs.push(new Attribute('datasetboundexpr', attrValue, attr.sourceSpan, attr.keySpan, attr.valueSpan, undefined, undefined));
     }
 };
 

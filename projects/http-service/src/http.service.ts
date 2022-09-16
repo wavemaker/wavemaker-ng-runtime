@@ -3,7 +3,7 @@ import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpRespon
 
 import { Observable, Subject } from 'rxjs';
 
-import { AbstractHttpService, getValidJSON, replace } from '@wm/core';
+import { AbstractHttpService, getValidJSON, replace, isNumber, isBoolean } from '@wm/core';
 
 declare const _;
 
@@ -50,8 +50,13 @@ export class HttpServiceImpl extends AbstractHttpService {
         }
 
         // headers
-        if (headers) {
-            Object.entries(headers).forEach(([k, v]) => reqHeaders = reqHeaders.append(k, v as string));
+        if (headers) { 
+            Object.entries(headers).forEach(([k, v]) => {
+                if (isNumber(v) || isBoolean(v)) {
+                    v = v.toString();
+                }
+                reqHeaders = reqHeaders.append(k, v as string);
+            })
         }
 
         // params

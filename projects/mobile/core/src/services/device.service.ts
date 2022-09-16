@@ -40,7 +40,8 @@ export class DeviceService {
         }, maxWaitTime * 1000);
         document.addEventListener('backbutton', this.executeBackTapListeners.bind(this));
         if (hasCordova()) {
-            fetchContent('json', './config.json', true, (response => {
+            const configUrl = `${location.protocol}//${location.hostname}${isIos() ? '' : '/_www'}/config.json`; 
+            fetchContent('json', configUrl, true, (response => {
                 if (!response.error && response.baseUrl) {
                     this._config = response;
                 }
@@ -117,6 +118,14 @@ export class DeviceService {
                 this._whenReadyPromises.push(resolve);
             });
         }
+    }
+
+    public getBaseUrl() {
+        return this._config.baseUrl === 'http://NOSERVERREQUIRED.com' ? 'NONE' : this._config.baseUrl;
+    }
+
+    public isAppConnectedToPreview() {
+        return this._config.customUrlScheme !== this._config.baseUrl && this.getBaseUrl() !== 'NONE';
     }
 
     public getConfig(): Config {
