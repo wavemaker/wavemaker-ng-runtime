@@ -40,7 +40,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private proxyModel;
     private app: App;
     public hint: string;
-
     public showdropdownon: string;
     private keyEventPlugin;
     private deregisterDatepickerEventListener;
@@ -284,18 +283,44 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.cdRef.detectChanges();
 
         // Update timepicker with formatted time, when timezone is provided.
-        const timePickerFields = $('.bs-timepicker-field');
-        const meridianField = $('timepicker button.text-center');
+        const timePickerFields = $('.bs-timepicker-field');       
         if (this.timeZone && (this as any).key === 'datetimestamp' && timePickerFields.length) {
-            const formattedDate = getFormattedDate(this.datePipe, newVal, 'hh:mm:ss A', this.timeZone, (this as any).key, null, this);
-            const formattedArr = formattedDate.split(' ');
-            const formattedTime = formattedArr[0].split(':');
-            for (let i=0; i<timePickerFields.length; i++) {
-                timePickerFields[i].value = formattedTime[i]
+            const formattedDate = getFormattedDate(this.datePipe, newVal, this.getTimePattern(), this.timeZone, (this as any).key, null, this);
+            this.updateTimepickerFields(formattedDate, timePickerFields);
+        }
+    }
+
+    // deduces the timepattern from datepattern set in the studio
+    private getTimePattern() {
+        let timepattern;
+        const timePatternStartIndex = this.datepattern.toLowerCase().indexOf('h');
+        let timePatternEndIndex = this.datepattern.toLowerCase().indexOf(':ss');
+        if (timePatternEndIndex > -1) {
+            // adding the index to +3 to incluse :ss
+            timePatternEndIndex += 3;
+        } else {
+            timePatternEndIndex = this.datepattern.toLowerCase().indexOf(':mm');
+            // adding the index to +3 to incluse :mm
+            if (timePatternEndIndex > -1) {
+                timePatternEndIndex += 3;
             }
-            if (meridianField?.html().trim() !== formattedArr[1]) {
-                meridianField.text(formattedArr[1]);
-            } 
+        }
+        const hasMeridian = this.datepattern.toLowerCase().indexOf('a');
+        timepattern = this.datepattern.substr(timePatternStartIndex, timePatternEndIndex);
+        if (hasMeridian > -1)
+            timepattern += ' a';
+        return timepattern;
+    }
+
+    private updateTimepickerFields(date, timePickerFields) {
+        const meridianField = $('timepicker button.text-center');
+        const formattedArr = date.split(' ');
+        const formattedTime = formattedArr[0].split(':');
+        for (let i=0; i<timePickerFields.length; i++) {
+            timePickerFields[i].value = formattedTime[i]
+        }
+        if (meridianField?.html()?.trim() !== formattedArr[1]) {
+            meridianField.text(formattedArr[1]);
         }
     }
 

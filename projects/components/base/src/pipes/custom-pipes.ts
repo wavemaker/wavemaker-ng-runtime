@@ -47,6 +47,9 @@ export class ToDatePipe implements PipeTransform {
             if (format === 'timestamp') {
                 return timestamp;
             }
+            if (format === 'UTC') {
+                return new Date(timestamp).toISOString();
+            }
             let formattedVal;
             const timeZone = this.i18nService ? this.i18nService.getMomentTimeZone(compInstance) : timezone;
             if (timeZone && (data === timestamp || hasOffsetStr(data))) {

@@ -29,6 +29,7 @@ export const registerProps = () => {
                 ['displayfield', PROP_STRING],
                 ['displaylabel', PROP_STRING],
                 ['editdatepattern', PROP_STRING],
+                ['outputformat', PROP_STRING],
                 ['edit-widget-type', PROP_STRING],
                 ['editinputtype', PROP_STRING],
                 ['exportexpression', PROP_STRING],
