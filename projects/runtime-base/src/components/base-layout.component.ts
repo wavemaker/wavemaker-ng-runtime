@@ -1,8 +1,10 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive, AfterContentInit } from '@angular/core';
+import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 
 import { PageDirective } from "@wm/components/page";
+import { registerFnByExpr } from "@wm/core";
 
+declare const _;
 
 @Directive()
 export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
@@ -11,6 +13,20 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
 
     @ViewChild(RouterOutlet) routerOutlet: RouterOutlet;
     @ViewChild(PageDirective) pageDirective: PageDirective;
+
+    abstract getExpressions();
+
+    /**
+     * function to register bind expressions generated in this page instance
+     * getExpressions function is defined in the generated page.comp.ts file
+     * @param expressions, map of bind expression vs generated function
+     */
+    registerExpressions() {
+        const expressions = this.getExpressions();
+        _.each(expressions, (fn, expr)=>{
+            registerFnByExpr(expr, fn[0], fn[1]);
+        });
+    }
 
     private overrideRouterOutlet() {
         //override the attach/detach methods
@@ -34,6 +50,9 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
 
     init() {
         this.route = this.injector.get(ActivatedRoute);
+
+        // register functions for binding evaluation
+        this.registerExpressions();
     }
 
     //TODO: To work cache properly need to implement the below methods and WmRouteReuseStrategy
@@ -47,5 +66,11 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
     }
 
     ngOnDetach() {
+    }
+
+    // This will be called when child route (Page component in the layout) is activated
+    onActivate(pageComponent: any) {
+        //Add page component scope to layout component so that bindings and watchers in the layout will use the page scope
+        _.extend(this, pageComponent);
     }
 }

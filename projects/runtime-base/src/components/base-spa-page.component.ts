@@ -1,7 +1,7 @@
 import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { isAndroid, isIos, Viewport, ScriptLoaderService } from '@wm/core';
+import { isAndroid, isIos, Viewport, ScriptLoaderService, registerFnByExpr } from '@wm/core';
 import { LayoutDirective, SpaPageDirective } from '@wm/components/page';
 
 import {Subject, Subscription} from 'rxjs';
@@ -24,6 +24,7 @@ import { commonPartialWidgets } from './base-partial.component';
 import { VariablesService } from '@wm/variables';
 import { AppManagerService } from '../services/app.manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
+import { CACHE_PAGE } from '../util/wm-route-reuse-strategy';
 
 declare const $, _;
 
@@ -58,6 +59,7 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
 
     abstract evalUserScript(prefabContext: any, appContext: any, utils: any);
     abstract getVariables();
+    abstract getExpressions();
 
     init() {
 
@@ -73,6 +75,8 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
         this.Viewport = this.injector.get(Viewport);
         this.layoutDirective = this.injector.get(LayoutDirective);
 
+        // register functions for binding evaluation
+        this.registerExpressions();
         this.initUserScript();
 
         this.registerWidgets();
@@ -157,6 +161,18 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
             variableCollection.callback(variableCollection.Actions);
 
             subscription.unsubscribe();
+        });
+    }
+
+    /**
+     * function to register bind expressions generated in this page instance
+     * getExpressions function is defined in the generated page.comp.ts file
+     * @param expressions, map of bind expression vs generated function
+     */
+    registerExpressions() {
+        const expressions = this.getExpressions();
+        _.each(expressions, (fn, expr)=>{
+            registerFnByExpr(expr, fn[0], fn[1]);
         });
     }
 
@@ -287,7 +303,7 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
     }
 
     ngAfterViewInit(): void {
-        this.route.snapshot.data['__wm_page_reuse'] = this.canReuse();
+        this.route.snapshot.data[CACHE_PAGE] = this.canReuse();
         if (this.layoutDirective) {
             this.$page = this.layoutDirective.$element.parent();
             if (isIos()) {
@@ -346,7 +362,7 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
     }
 
     ngOnAttach() {
-        this.route.snapshot.data['__wm_page_reuse'] = this.canReuse();
+        this.route.snapshot.data[CACHE_PAGE] = this.canReuse();
         this.registerPageParams();
         this.App.lastActivePageName = this.App.activePageName;
         this.App.activePageName = this.pageName;
