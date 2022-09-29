@@ -905,6 +905,8 @@ export const isString = v => typeof v === 'string';
 
 export const isNumber = v => typeof v === 'number';
 
+export const isBoolean = v => typeof v === 'boolean';
+
 /**
  * This function returns a blob object from the given file path
  * @param filepath
@@ -933,8 +935,6 @@ export const convertToBlob = (filepath): Promise<any> => {
 export const hasCordova = () => {
     return !!window['cordova'];
 };
-
-export const isSpotcues = /Spotcues/i.test(window['navigator'].userAgent);
 
 export const AppConstants = {
     INT_MAX_VALUE: 2147483647

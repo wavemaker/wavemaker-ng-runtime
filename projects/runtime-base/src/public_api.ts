@@ -1,3 +1,7 @@
+import { PrefabManagerService } from './services/prefab-manager.service';
+import { AppRef } from './services/app.service';
+import { DynamicComponentRefProviderService } from './services/dynamic-component-ref-provider.service';
+
 export * from './types/types';
 export * from './services/app.manager.service';
 export * from './services/prefab-manager.service';
@@ -11,9 +15,6 @@ export {
     RuntimeBaseModule,
     WM_MODULES_FOR_ROOT
 } from './runtime-base.module';
-export {
-    initSpotCues
-} from './util/spotcues.utils';
 export * from './util/utils';
 export * from './guards/auth.guard';
 export * from './guards/role.guard';
@@ -37,17 +38,22 @@ export * from './components/custom-toaster.component';
 export * from './directives/accessroles.directive';
 export * from './directives/prefab.directive';
 export * from './guards/page-not-found.gaurd';
-export * from './services/app.service';
+export {
+    AppRef
+} from './services/app.service';
 export * from './services/app-defaults.service';
-export * from './services/dynamic-component-ref-provider.service';
+export {
+    DynamicComponentRefProviderService
+} from './services/dynamic-component-ref-provider.service';
 export * from './services/http-interceptor.services';
 export * from './services/i18n.service';
 export * from './services/navigation.service';
 export * from './services/pipe-provider.service';
-export * from './services/prefab-manager.service';
+export {
+    PrefabManagerService
+} from './services/prefab-manager.service';
 export * from './services/spinner.service';
 export * from './services/toaster.service';
 export * from './types/types';
 export * from './util/fragment-monitor';
-export * from './util/spotcues.utils';
 export * from './util/utils';

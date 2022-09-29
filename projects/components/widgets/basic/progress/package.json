@@ -10,7 +10,9 @@
                 "@angular/core": "ng.core",
 
                 "@wm/core": "wm.core",
-                "@wm/components/base": "wm.components.base"
+                "@wm/components/base": "wm.components.base",
+
+                "ng-circle-progress": "ngCircleProgress"
             }
         }
     },

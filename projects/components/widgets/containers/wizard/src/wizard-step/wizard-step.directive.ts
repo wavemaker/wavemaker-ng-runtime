@@ -54,7 +54,7 @@ export class WizardStepDirective extends BaseComponent {
      * @returns {boolean}
      */
     public get isValid() {
-        return this.ngForm.valid && this.areEmbeddedFormsValid();
+        return (this.ngForm.valid || this.ngForm.disabled) && this.areEmbeddedFormsValid();
     }
 
     /**

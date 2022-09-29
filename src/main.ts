@@ -5,8 +5,6 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 import initWmProjectProperties from './app/wm-project-properties';
-import { isIos, isSpotcues } from '@wm/core';
-import { initSpotCues } from '@wm/runtime/base';
 
 initWmProjectProperties();
 
@@ -16,9 +14,7 @@ if (environment.production) {
 
 document.addEventListener('DOMContentLoaded', () => {
     new Promise<Event | void>( resolve => {
-        if (isSpotcues) {
-            initSpotCues().then(resolve);
-        } else if (window['cordova']) {
+        if (window['cordova']) {
             document.addEventListener('deviceready', resolve);
         } else {
             resolve();

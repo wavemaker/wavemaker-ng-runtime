@@ -8,7 +8,6 @@ import {
     getClonedObject,
     getWmProjectProperties,
     hasCordova,
-    isSpotcues,
     triggerFn
 } from '@wm/core';
 
@@ -131,7 +130,7 @@ export class SecurityService {
             return;
         }
 
-        if (!hasCordova() || isSpotcues) {
+        if (!hasCordova()) {
             // for web project, return config returned from backend API call.
             this.getWebConfig(onSuccess.bind(this), onError.bind(this));
         }

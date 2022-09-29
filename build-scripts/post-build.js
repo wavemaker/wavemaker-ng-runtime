@@ -246,10 +246,8 @@ const generateSha1 = (content) => {
             deployUrl = deployUrl.slice(0, deployUrl.length - 1);
         }
 
-        fs.copyFileSync('./dist/ng-bundle/index.html', './dist/index.html');
         const contents = await readFile(`./dist/index.html`, `utf8`);
         $ = cheerio.load(contents);
-        $('script').attr('defer', 'true');
         setMobileProjectType(angularJson);
         if (!isMobileProject) {
             isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-styles.css`);

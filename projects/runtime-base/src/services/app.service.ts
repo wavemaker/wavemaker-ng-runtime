@@ -1,4 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
+import { RouteReuseStrategy } from '@angular/router';
 
 import {
     AbstractDialogService,
@@ -20,6 +21,8 @@ import {
     registerFnByExpr
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
+
+import { WmDefaultRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
 
 declare const _;
 
@@ -98,7 +101,8 @@ export class AppRef {
         private i18nService: AbstractI18nService,
         private statePersistence: StatePersistence,
         private httpService: AbstractHttpService,
-        private securityService: SecurityService
+        private securityService: SecurityService,
+        private routeReuseStrategy: RouteReuseStrategy
     ) {
 
         const wmProjectProperties = getWmProjectProperties();
@@ -112,6 +116,12 @@ export class AppRef {
 
         this.appLocale = this.i18nService.getAppLocale();
         this.httpService.setLocale(this.appLocale);
+    }
+
+    public clearPageCache(pageName?: string) {
+        if(this.routeReuseStrategy instanceof WmDefaultRouteReuseStrategy) {
+            (this.routeReuseStrategy as WmDefaultRouteReuseStrategy).reset(pageName);
+        }
     }
 
     public notify(eventName: string, ...data: Array<any>) {

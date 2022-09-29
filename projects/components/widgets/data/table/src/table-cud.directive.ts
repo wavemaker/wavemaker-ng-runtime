@@ -410,10 +410,12 @@ export class TableCUDDirective {
                 });
             }
         }
+        this.table._triggeredByUser = true;
     }
 
     addNewRow() {
         if (!this.table.isGridEditMode) { // If grid is already in edit mode, do not add new row
+            this.table._triggeredByUser = true;
             this.table.callDataGridMethod('addNewRow');
             if (this.table._liveTableParent) {
                 this.table._liveTableParent.addNewRow();
@@ -440,6 +442,7 @@ export class TableCUDDirective {
                 this.deleteRecord({row});
             });
         }
+        this.table._triggeredByUser = true;
     }
 
     // Function to hide the edited row

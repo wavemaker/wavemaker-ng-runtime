@@ -512,13 +512,17 @@ $.widget('wm.datatable', {
     _handleCRUDForInfiniteScroll : function ($tbody) {
         var self = this;
 
-        //When search or sort applied, clear the tbody and render with filtered data
-        if ((self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT || self.options.lastActionPerformed === self.options.ACTIONS.FILTER_CRITERIA || self.options.lastActionPerformed === self.options.ACTIONS.DATASET_UPDATE) && self.options.isSearchTrigerred) {
+        //When search or sort applied or dataset is updated, clear the tbody and render with filtered data
+        if ((self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT || self.options.lastActionPerformed === self.options.ACTIONS.FILTER_CRITERIA || self.options.lastActionPerformed === self.options.ACTIONS.DATASET_UPDATE) && (self.options.isSearchTrigerred || self.options.isDatasetUpdated)) {
             $tbody.html('');
             // In case of on demand pagination, when the next page is not disabled show the loading/load more button accordingly
             if(this.options.navigation === 'On-Demand' && !this.options.isLastPage)
                 this.element.find('.on-demand-datagrid').show();
+            // Fix for [WMS-22904]- clearing customExpr and RowDetailExpr whenever tbody content is cleared
+            self.options.clearCustomExpression();
+            self.options.clearRowDetailExpression();
             self.options.setIsSearchTrigerred(false);
+            self.options.setIsDatasetUpdated(false);
         }
 
         //In edit mode, replace the tr with newly updated values
@@ -879,8 +883,8 @@ $.widget('wm.datatable', {
             data.push(rowData);
         });
         if (self.options.isNavTypeScrollOrOndemand()) {
-            // If search action is performed then directly assign data to preparedData
-            if(self.options.isSearchTrigerred){
+            // If search action is performed or dataset is updated, then directly assign data to preparedData
+            if(self.options.isSearchTrigerred || self.options.isDatasetUpdated){
                 self.preparedData = data;
             }
             // else update the existing data (if any edit action is performed) or push data (if the data is not present) to preparedData list.

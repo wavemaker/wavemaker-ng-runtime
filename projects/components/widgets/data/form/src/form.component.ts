@@ -541,6 +541,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 break;
             case 'formdata':
                 // For livelist when multiselect is enabled, formdata will be array of objects. In this case consider the last object as formdata.
+                if (_.isEqual(nv, ov)) {
+                    break;
+                }
                 _.isArray(nv) ? this.setFormData(_.last(nv)) : this.setFormData(nv);
                 // if dataset on the formFields are not set as the datasourceChange is triggered before the formFields are registered.
                 if (!this.isDataSourceUpdated && this.datasource) {

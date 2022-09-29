@@ -48,4 +48,11 @@
            (change)="onTimeChange($event, true)"
            (focus)="onDateTimeInputFocus(true); invokeOnFocus($event); assignModel()"
            (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
+    <div *ngIf="!!getCordovaPluginDatePickerApi()"
+        class="mobile-input mobile-datepicker-container"
+        tabindex="1000000"
+        (focus)="onDateTimeInputFocus(true); invokeOnFocus($event); assignModel()"
+        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
+        (click)="!(disabled || readonly || isCurrentTime) && showCordovaDatePicker()">
+    </div>
 </ng-template>

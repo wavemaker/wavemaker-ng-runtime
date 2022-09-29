@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 
-import { getWmProjectProperties } from '@wm/core';
+import { getWmProjectProperties, isMobileApp } from '@wm/core';
 
 import { AppManagerService } from '../services/app.manager.service';
 
@@ -13,8 +13,10 @@ export class SecurityConfigResolve implements Resolve<any> {
 
     constructor(private appManager: AppManagerService) {
 
-        // if the project type is PREFAB, setting this flag will not trigger security/info call
-        this.loaded = this.appManager.isPrefabType() || this.appManager.isTemplateBundleType() || !getWmProjectProperties().securityEnabled;
+        if (!isMobileApp()) {
+            // if the project type is PREFAB, setting this flag will not trigger security/info call
+            this.loaded = this.appManager.isPrefabType() || this.appManager.isTemplateBundleType() || !getWmProjectProperties().securityEnabled;
+        }
     }
 
     resolve() {
