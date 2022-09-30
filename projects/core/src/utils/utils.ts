@@ -372,7 +372,7 @@ export const hasOffsetStr = (dateStr) => {
 /**
  * method to get the date object from the input received
  */
-export const getDateObj = (value, options?): Date => {
+export const getDateObj = (value, options?, timezone?): Date => {
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
         // Fix for WMS-19601, invalid date is returned on date selection.
@@ -407,7 +407,8 @@ export const getDateObj = (value, options?): Date => {
          * (Ex: If date value is "1990-11-23" and moment(value).format() is "١٩٩٠-١١-٢٣T٠٠:٠٠:٠٠+٠٥:٣٠")
          * and new Date(moment(value).format()) is giving Invalid Date. So frst converting it to timestamp value.
         */
-        dateObj = new Date(moment(moment(value).format()).valueOf());
+       
+        dateObj = !timezone ? new Date(moment(moment(value).format()).valueOf()) : getMomentLocaleObject(timezone, value);;
     }
 
     if (value === CURRENT_DATE || isNaN(dateObj.getDay())) {

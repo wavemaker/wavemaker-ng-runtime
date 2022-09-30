@@ -71,7 +71,7 @@ export class DateComponent extends BaseDateTimeComponent {
             this.bsDataValue = this.timeZone ? getMomentLocaleObject(this.timeZone) : new Date();
             this.isCurrentDate = true;
         } else {
-            this.bsDataValue = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}) : undefined;
+            this.bsDataValue = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}, this.timeZone) : undefined;
             this.isCurrentDate = false;
         }
         // update the previous datavalue.

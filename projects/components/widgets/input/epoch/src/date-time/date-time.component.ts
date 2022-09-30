@@ -109,7 +109,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             this.isCurrentDate = true;
             this.setTimeInterval();
         } else {
-            this.proxyModel = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}) : undefined;
+            this.proxyModel = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}, this.timeZone) : undefined;
             this.clearTimeInterval();
             this.isCurrentDate = false;
         }
