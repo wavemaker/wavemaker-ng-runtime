@@ -450,10 +450,10 @@ export class AppManagerService {
     }
 
     /**
-     * Triggers the appMount method defined in app.js of the app
+     * Triggers the onBeforeAppReady method defined in app.js of the app
      */
-    appMount() {
-        triggerFn(this.$app.onAppMount);
+    beforeAppReady() {
+        triggerFn(this.$app.onBeforeAppReady);
     }
 
     /**

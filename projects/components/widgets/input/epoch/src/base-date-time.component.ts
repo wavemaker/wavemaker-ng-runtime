@@ -984,7 +984,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         super.ngOnDestroy();
     }
 
-    setFormatsByLocale(locale) {
-        this.i18nService.setFormatsByLocale(locale, this);
+    setMomentTimezone(locale) {
+        this.i18nService.setMomentTimezone(locale, this);
     }
 }

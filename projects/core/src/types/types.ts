@@ -62,7 +62,7 @@ export abstract class App {
     Actions: any;
     onAppVariablesReady: Function;
     onSessionTimeout: Function;
-    onAppMount: Function;
+    onBeforeAppReady: Function;
     onPageReady: Function;
     onBeforePageLeave: Function;
     onBeforeServiceCall: Function;
@@ -75,7 +75,7 @@ export abstract class App {
     isTemplateBundleType: boolean;
     changeLocale: Function;
     getSelectedLocale: Function;
-    setFormatsByLocale: Function;
+    setMomentTimezone: Function;
     reload: Function;
     on401: Function;
     notifyApp: Function;
@@ -152,7 +152,7 @@ export abstract class AbstractI18nService {
     protected abstract loadAppLocaleBundle();
     protected abstract loadMomentLocaleBundle(localeLang);
     protected abstract loadLocaleBundles(localeLang);
-    public abstract setFormatsByLocale(locale, compInstance?);
+    public abstract setMomentTimezone(locale, compInstance?);
     public abstract getFormatsByLocale();
     public abstract getMomentTimeZone(compInstance?);
     public abstract getPrefabLocaleBundle(prefabName: string): any;

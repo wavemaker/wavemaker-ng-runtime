@@ -68,7 +68,7 @@ export class AppRef {
     Variables: any = {};
     Actions: any = {};
     onAppVariablesReady = noop;
-    onAppMount = noop;
+    onBeforeAppReady = noop;
     onSessionTimeout = noop;
     onPageReady = noop;
     onBeforePageLeave = noop;
@@ -87,7 +87,7 @@ export class AppRef {
 
     changeLocale = this.i18nService.setSelectedLocale.bind(this.i18nService);
     getSelectedLocale = this.i18nService.getSelectedLocale.bind(this.i18nService);
-    setFormatsByLocale = this.i18nService.setFormatsByLocale.bind(this.i18nService);
+    setMomentTimezone = this.i18nService.setMomentTimezone.bind(this.i18nService);
 
     private _eventNotifier = new EventNotifier();
 
