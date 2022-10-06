@@ -94,6 +94,10 @@ export abstract class App {
     landingPageName: string;
     lastActivePageName: string;
     deviceCategory: string;
+
+    activeLayoutName: string;
+    lastActiveLayoutName: string;
+    layoutPages: string[];
 }
 
 
