@@ -87,7 +87,7 @@ export class AppRef {
 
     changeLocale = this.i18nService.setSelectedLocale.bind(this.i18nService);
     getSelectedLocale = this.i18nService.getSelectedLocale.bind(this.i18nService);
-    setMomentTimezone = this.i18nService.setMomentTimezone.bind(this.i18nService);
+    setTimezone = this.i18nService.setTimezone.bind(this.i18nService);
 
     private _eventNotifier = new EventNotifier();
 

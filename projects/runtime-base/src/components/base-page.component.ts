@@ -164,8 +164,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         });
     }
 
-    setMomentTimezone(locale) {
-        this.i18nService.setMomentTimezone(locale, this);
+    setTimezone(locale) {
+        this.i18nService.setTimezone(locale, this);
     }
 
     /**

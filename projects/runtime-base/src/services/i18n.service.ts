@@ -213,7 +213,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         return this.loadAngularLocaleBundle(libLocale.angular);
     }
 
-    public setMomentTimezone(locale, compInstance?) {
+    public setTimezone(locale, compInstance?) {
         this.loadMomentTimeZoneBundle(locale, compInstance);
     }
 

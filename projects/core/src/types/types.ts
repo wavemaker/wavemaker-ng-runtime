@@ -75,7 +75,7 @@ export abstract class App {
     isTemplateBundleType: boolean;
     changeLocale: Function;
     getSelectedLocale: Function;
-    setMomentTimezone: Function;
+    setTimezone: Function;
     reload: Function;
     on401: Function;
     notifyApp: Function;
@@ -152,7 +152,7 @@ export abstract class AbstractI18nService {
     protected abstract loadAppLocaleBundle();
     protected abstract loadMomentLocaleBundle(localeLang);
     protected abstract loadLocaleBundles(localeLang);
-    public abstract setMomentTimezone(locale, compInstance?);
+    public abstract setTimezone(locale, compInstance?);
     public abstract getFormatsByLocale();
     public abstract getMomentTimeZone(compInstance?);
     public abstract getPrefabLocaleBundle(prefabName: string): any;
