@@ -29,6 +29,7 @@ vAlignValues = {
 export class LinearLayoutDirective extends BaseContainerComponent {
     static initializeProps = registerProps();
 
+    public direction;
     public horizontalalign: string;
     public verticalalign: string;
 
@@ -59,9 +60,17 @@ export class LinearLayoutDirective extends BaseContainerComponent {
 
     protected onStyleChange(key: string, nv: any, ov?: any) {
         if (key === 'horizontalalign') {
-            this.$element.css('justify-content', hAlignValues[nv]);
+            if (this.direction === 'row' || this.direction === 'row-reverse') {
+                this.$element.css('justify-content', hAlignValues[nv]);
+            } else {
+                this.$element.css('align-items', hAlignValues[nv]);
+            }
         } else if (key === 'verticalalign') {
-            this.$element.css('justify-content', vAlignValues[nv]);
+            if (this.direction === 'column' || this.direction === 'column-reverse') {
+                this.$element.css('justify-content', vAlignValues[nv]);
+            } else {
+                this.$element.css('align-items', vAlignValues[nv]);
+            }
         }
         super.onStyleChange(key, nv, ov);
     }
