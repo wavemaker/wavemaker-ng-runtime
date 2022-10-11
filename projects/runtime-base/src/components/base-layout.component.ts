@@ -52,7 +52,6 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
 
     init() {
         this.App = this.injector.get(App);
-        this.App.lastActiveLayoutName = this.App.activeLayoutName;
         this.App.activeLayoutName = this.layoutName;
         this.App.layoutPages = this.layoutPages;
 

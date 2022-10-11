@@ -96,7 +96,6 @@ export abstract class App {
     deviceCategory: string;
 
     activeLayoutName: string;
-    lastActiveLayoutName: string;
     layoutPages: string[];
 }
 

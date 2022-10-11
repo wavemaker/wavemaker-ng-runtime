@@ -79,6 +79,10 @@ export class AppComponent implements DoCheck, AfterViewInit {
                 let page = e.url.split('?')[0];
                 page = page.substring(1);
 
+                if (!page) {
+                    this.app.activeLayoutName = '';
+                    this.app.layoutPages = [];
+                }
                 if(this.app.activeLayoutName && this.app.layoutPages && this.app.layoutPages.length && this.app.layoutPages.includes(page)) {
                     spinnerId = this.spinnerService.show('', 'wmRouterOutlet', '', 'wmRouterOutlet');
                 } else {
