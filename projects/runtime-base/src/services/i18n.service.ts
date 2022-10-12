@@ -35,6 +35,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     private readonly prefabLocale: Map<String, any>;
     private messages: any;
     private _isAngularLocaleLoaded = false;
+    private formatsByLocale = {'number': ''};
 
     constructor(
         private $http: HttpClient,
@@ -295,6 +296,14 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     public isAngularLocaleLoaded() {
         return this._isAngularLocaleLoaded;
+    }
+
+    public setwidgetLocale(locale) {
+        this.formatsByLocale['number'] = locale['number'];
+    }
+
+    public getwidgetLocale() {
+        return this.formatsByLocale;
     }
 
 }
