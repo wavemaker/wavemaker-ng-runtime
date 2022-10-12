@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform, Injectable } from '@angular/core';
+import { Inject, Pipe, PipeTransform } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { CURRENCY_INFO, isDefined, App, CustomPipeManager, AbstractI18nService, hasOffsetStr } from '@wm/core';
 
@@ -20,9 +20,10 @@ const getEpochValue = data => {
     name: 'trailingZeroDecimalPipe'
 })
 export class TrailingZeroDecimalPipe implements PipeTransform {
-    transform(value: any, selectedLocale: string, numberfilter: string, localefilter: any, trailingzero: boolean, decimalValue: string, skipTrailingZeroCheck?: boolean): any {
+    transform(value: any, selectedLocale: string, numberfilter: string, localefilter: any, trailingzero: boolean, decimalValue: string, skipTrailingZeroCheck?: boolean, formattedLocale?): any {
         numberfilter = trailingzero && !skipTrailingZeroCheck ? `1.${decimalValue.length}-16`: numberfilter;
-        return this.decimalPipe.transform(value, numberfilter, localefilter || selectedLocale);
+        const locale = formattedLocale ? formattedLocale['number'] : undefined;
+        return this.decimalPipe.transform(value, numberfilter, localefilter || locale || selectedLocale);
     }
 
     constructor(private decimalPipe: DecimalPipe) { }
@@ -74,10 +75,11 @@ export class ToNumberPipe implements PipeTransform {
             fracSize = '1.' + fracSize + '-' + fracSize;
         }
         if (!_.isNaN(+data)) {
-            return this.decimalPipe.transform(data, fracSize);
+            const formattedLocale = this.locale ? this.locale['number'] : undefined;
+            return this.decimalPipe.transform(data, fracSize, formattedLocale);
         }
     }
-    constructor(private decimalPipe: DecimalPipe) { }
+    constructor(private decimalPipe: DecimalPipe, @Inject("") private locale: any) { }
 }
 
 @Pipe({
@@ -86,7 +88,7 @@ export class ToNumberPipe implements PipeTransform {
 export class ToCurrencyPipe implements PipeTransform {
     transform(data, currencySymbol, fracSize) {
         const _currencySymbol = (CURRENCY_INFO[currencySymbol] || {}).symbol || currencySymbol || '';
-        let _val = new ToNumberPipe(this.decimalPipe).transform(data, fracSize);
+        let _val = new ToNumberPipe(this.decimalPipe, this.locale).transform(data, fracSize);
         const isNegativeNumber = _.startsWith(_val, '-');
         if (isNegativeNumber) {
             _val = _val.replace('-','');
@@ -94,7 +96,8 @@ export class ToCurrencyPipe implements PipeTransform {
         return _val ? isNegativeNumber ? '-'+ _currencySymbol +_val :_currencySymbol + _val : '';
     }
 
-    constructor(private decimalPipe: DecimalPipe) { }
+    constructor(private decimalPipe: DecimalPipe, @Inject("") private locale: any) {
+     }
 }
 
 @Pipe({
