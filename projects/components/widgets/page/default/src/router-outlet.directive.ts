@@ -26,6 +26,8 @@ export class RouterOutletDirective extends StylableComponent {
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'columnwidth') {
             switchClass(this.nativeElement, `col-md-${nv} col-sm-${nv}`, `col-md-${ov} col-sm-${ov}`);
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }

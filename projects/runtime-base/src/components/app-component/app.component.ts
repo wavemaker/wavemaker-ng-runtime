@@ -76,13 +76,24 @@ export class AppComponent implements DoCheck, AfterViewInit {
 
         this.router.events.subscribe(e => {
             if (e instanceof NavigationStart) {
-                spinnerId = this.spinnerService.show('', 'globalSpinner');
+                let page = e.url.split('?')[0];
+                page = page.substring(1);
+
+                if (!page) {
+                    this.app.activeLayoutName = '';
+                    this.app.layoutPages = [];
+                }
+                if(this.app.activeLayoutName && this.app.layoutPages && this.app.layoutPages.length && this.app.layoutPages.includes(page)) {
+                    spinnerId = this.spinnerService.show('', 'wmRouterOutlet', '', 'wmRouterOutlet');
+                } else {
+                    spinnerId = this.spinnerService.show('', 'globalSpinner');
+                }
+
                 const node = document.querySelector('app-page-outlet') as HTMLElement;
                 if (node) {
                     addClass(node, 'page-load-in-progress');
                 }
-                let page = e.url.split('?')[0];
-                page = page.substring(1);
+
                 const pageLoadStartTime = Date.now();
                 onPageRendered = () => {
                     this.spinnerService.hide(spinnerId);

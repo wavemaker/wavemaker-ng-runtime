@@ -1,15 +1,17 @@
 import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 
 import { PageDirective } from "@wm/components/page";
-import { registerFnByExpr } from "@wm/core";
+import { registerFnByExpr, App } from "@wm/core";
 
 declare const _;
 
 @Directive()
 export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
     injector: Injector;
-    route: ActivatedRoute;
+    App: App;
+    layoutName: string;
+    layoutPages: string[];
 
     @ViewChild(RouterOutlet) routerOutlet: RouterOutlet;
     @ViewChild(PageDirective) pageDirective: PageDirective;
@@ -49,7 +51,9 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
     }
 
     init() {
-        this.route = this.injector.get(ActivatedRoute);
+        this.App = this.injector.get(App);
+        this.App.activeLayoutName = this.layoutName;
+        this.App.layoutPages = this.layoutPages;
 
         // register functions for binding evaluation
         this.registerExpressions();
