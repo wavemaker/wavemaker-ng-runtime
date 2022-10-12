@@ -154,7 +154,7 @@ export abstract class AbstractI18nService {
     protected abstract loadLocaleBundles(localeLang);
     public abstract setTimezone(locale, compInstance?);
     public abstract getFormatsByLocale();
-    public abstract getMomentTimeZone(compInstance?);
+    public abstract getTimezone(compInstance?);
     public abstract getPrefabLocaleBundle(prefabName: string): any;
 }
 

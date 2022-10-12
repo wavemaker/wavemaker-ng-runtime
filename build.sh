@@ -458,7 +458,7 @@ copyLocale() {
         local angularSrc=./node_modules/@angular/common/locales
         local fullCalendarSrc=./node_modules/fullcalendar/libs/locales
         local momentSrc=./node_modules/moment/locale
-        local momentTimezoneSrc=./node_modules/moment-timezone/builds/moment-timezone-with-data.js
+        local timezoneSrc=./node_modules/moment-timezone/builds/moment-timezone-with-data.js
 
         mkdir -p ${appDest}/angular
         mkdir -p ${appDest}/angular/global
@@ -487,8 +487,8 @@ copyLocale() {
         cp ${momentSrc}/*.js ${appDest}/moment/
         cp ${momentSrc}/*.js ${mobileDest}/moment/
 
-        cp ${momentTimezoneSrc} ${appDest}/moment-timezone/
-        cp ${momentTimezoneSrc} ${mobileDest}/moment-timezone/
+        cp ${timezoneSrc} ${appDest}/moment-timezone/
+        cp ${timezoneSrc} ${mobileDest}/moment-timezone/
     fi
 }
 

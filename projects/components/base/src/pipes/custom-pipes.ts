@@ -51,7 +51,7 @@ export class ToDatePipe implements PipeTransform {
                 return new Date(timestamp).toISOString();
             }
             let formattedVal;
-            const timeZone = this.i18nService ? this.i18nService.getMomentTimeZone(compInstance) : timezone;
+            const timeZone = this.i18nService ? this.i18nService.getTimezone(compInstance) : timezone;
             if (timeZone && (data === timestamp || hasOffsetStr(data))) {
                 formattedVal = moment(timestamp).tz(timeZone).format(format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A'));
             } else {

@@ -180,7 +180,11 @@ export class I18nServiceImpl extends AbstractI18nService {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
             const path = _cdnUrl + `locales/moment-timezone/moment-timezone-with-data.js`;
             loadScripts([path], true).then(()=>{
-                // If locale is provided in the form of offset and not timezone name, deduce the name.
+                /** 
+                 * If locale is provided in the form of offset and not timezone name, deduce the name.
+                 * If locale is provided as GMT+9, name will be deduced as Asia/Tokyo
+                 */
+
                 let localeObj = locale;
                 locale = localeObj['timezone'];
                 const localeIndex = locale.indexOf('+');
@@ -217,7 +221,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         this.loadMomentTimeZoneBundle(locale, compInstance);
     }
 
-    public getMomentTimeZone(compInstance?) {
+    public getTimezone(compInstance?) {
         const pageConfig = _.get(this.app, 'activePage.formatsByLocale.timezone');
         const compConfig = _.get(compInstance, 'formatsByLocale.timezone');
         if (compConfig) {

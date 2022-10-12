@@ -85,7 +85,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected invalidDateTimeFormat: boolean;
 
     private dateOnShowSubscription: Subscription;
-    public get timeZone() { return this.inj.get(AbstractI18nService).getMomentTimeZone(this) };
+    public get timeZone() { return this.inj.get(AbstractI18nService).getTimezone(this) };
 
     formatsByLocale = {'timezone': ''};
 
