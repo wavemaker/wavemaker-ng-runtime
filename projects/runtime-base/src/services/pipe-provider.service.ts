@@ -42,7 +42,7 @@ import {DomSanitizer} from "@angular/platform-browser";
 export class PipeProvider {
     _pipeMeta;
     _locale = getSessionStorageItem('selectedLocale') || 'en';
-    formatsByLocale = this.i18service.getwidgetLocale();
+    formatsByLocale = this.i18service?.getwidgetLocale();
     preparePipeMeta = (
         reference: Pipe,
         name: string,

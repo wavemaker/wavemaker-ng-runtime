@@ -159,7 +159,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     private transformNumber(number, numberfilter?): string {
         const filterVal = numberfilter ? numberfilter : this.numberfilter;
-        return this.trailingZeroDecimalPipe.transform(number, this.selectedLocale, filterVal, this.localefilter, this.trailingzero, this.decimalValue, !!numberfilter, this.i18nService.getwidgetLocale());
+        return this.trailingZeroDecimalPipe.transform(number, this.selectedLocale, filterVal, this.localefilter, this.trailingzero, this.decimalValue, !!numberfilter, this.i18nService?.getwidgetLocale());
     }
 
     /**
