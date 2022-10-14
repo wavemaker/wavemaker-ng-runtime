@@ -56,6 +56,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public binddisplaylabel: string;
     public typeaheadContainer: TypeaheadContainerComponent;
     public containerTarget: string;
+    private serversidesearch: boolean;
 
     @ViewChild(TypeaheadDirective) typeahead: TypeaheadDirective;
     @ViewChild('ulElement') ulElement: ElementRef;
@@ -644,6 +645,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             matchMode: searchOnDataField ? 'startignorecase' : this.matchmode,
             casesensitive: this.casesensitive,
             isformfield: this.isformfield,
+            isServerSideSearch: this.serversidesearch,
             orderby: this.orderby,
             limit: this.limit,
             pagesize: this.pagesize,
@@ -662,6 +664,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             .then((response: any) => {
                 // response from dataProvider returns always data object.
                 response = response.data || response;
+
+                // call datasetready callback and assign modified response to the response variable
+                const modifiedResp = this.invokeEventCallback('datasetready', {data: response});
+                if (modifiedResp) {
+                    response = modifiedResp;
+                }
                 // for service variable, updating the dataset only if it is not defined or empty
                 if ((!isDefined(this.dataset) || !this.dataset.length) && this.dataProvider.updateDataset) {
                     this.dataset = response;

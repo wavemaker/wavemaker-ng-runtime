@@ -35,6 +35,7 @@ export const searchProps = new Map(
         ['query', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],
+        ['serversidesearch', PROP_BOOLEAN],
         ['searchkey', PROP_STRING],
         ['searchon', { value: 'typing', ...PROP_STRING }],
         ['shortcutkey', PROP_STRING],

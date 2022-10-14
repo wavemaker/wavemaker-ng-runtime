@@ -15,6 +15,7 @@ export interface IDataProviderConfig {
     hasData: boolean;
     query: Array<string> | string;
     isLocalFilter: boolean;
+    isServerSideSearch?: boolean;
     searchKey?: string;
     matchMode?: string;
     casesensitive?: boolean;
@@ -54,7 +55,7 @@ export class DataProvider implements IDataProvider {
         let promise: Promise<any>;
 
         /**
-         * Make call to remoteDataProvider when searchkey is available and data is not from local / model variable.
+         * Make call to remoteDataProvider when server side search is configured, searchkey is available and data is not from local / model variable.
          * Otherwise use localDataProvider
          * If datasource is a serviceVariable with no input params, then perform local search.
          * when there is no dataset on the datasource when first time make a remote call to set the dataset for service variable.
@@ -62,6 +63,7 @@ export class DataProvider implements IDataProvider {
         const hasNoVariableDataset = config.datasource && config.datasource.execute(DataSource.Operation.IS_UPDATE_REQUIRED, config.hasData);
         if (!config.isLocalFilter && (config.dataoptions || ((config.datasource && config.datasource.execute(DataSource.Operation.IS_API_AWARE))
             && config.searchKey
+            && config.isServerSideSearch
             && hasNoVariableDataset))) {
             promise = DataProvider.remoteDataProvider.filter(config);
         } else {
