@@ -55,9 +55,12 @@ class ScanOperation implements IDeviceVariableOperation {
     }
 
     public invoke(variable: any, options: any): Promise<any> {
-        let scanOptions;
+        let scanOptions  = {
+            showFlipCameraButton : true,
+            showTorchButton : true
+        } as any;
         if (variable.barcodeFormat && variable.barcodeFormat !== 'ALL') {
-            scanOptions = {formats : variable.barcodeFormat};
+            scanOptions.formats = variable.barcodeFormat;
         }
         return this.barcodeScanner.scan(scanOptions);
     }
