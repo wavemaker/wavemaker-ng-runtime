@@ -42,12 +42,13 @@ export class BarcodeScannerComponent extends StylableComponent {
     }
 
     private scan(): Promise<string> {
-        let options;
+        let options = {
+            showFlipCameraButton : true,
+            showTorchButton : true
+        } as any;
         if (hasCordova()) {
             if (this.barcodeformat && this.barcodeformat !== 'ALL') {
-                options = {
-                    formats: this.barcodeformat
-                };
+                options.formats = this.barcodeformat;
             }
             return this.scanner.scan(options)
                 .then(data => data.text);
