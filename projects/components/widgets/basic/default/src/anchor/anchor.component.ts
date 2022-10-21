@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, HostBinding, Injector, OnDestroy, Optional } from '@angular/core';
 
-import {addClass, App, encodeUrl, EventNotifier, getRouteNameFromLink, setAttr} from '@wm/core';
+import { addClass, App, encodeUrl, EventNotifier, getRouteNameFromLink, setAttr, removeAttr, removeClass } from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './anchor.props';
@@ -30,6 +30,8 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
 
     private hasNavigationToCurrentPageExpr: boolean;
     private hasGoToPageExpr: boolean;
+    private goToPageName: string;
+    private cancelSubscription: any;
 
     public encodeurl;
     public hyperlink;
@@ -63,9 +65,13 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
                 regex.lastIndex = 0;
                 const matches = regex.exec(fn);
 
-                this.hasGoToPageExpr = matches && (matches.length > 0);
+                const hasGoToPageExpr = matches && (matches.length > 0);
+                if(hasGoToPageExpr && !this.hasGoToPageExpr) {
+                    this.hasGoToPageExpr = true;
+                    this.goToPageName = matches[1];
+                }
 
-                return this.hasGoToPageExpr && matches[1] === app.activePageName;
+                return hasGoToPageExpr && matches[1] === app.activePageName;
             })) {
                 this.hasNavigationToCurrentPageExpr = true;
             }
@@ -126,6 +132,21 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     ngAfterViewInit() {
         super.ngAfterViewInit();
         this.init();
+        if(this.hasGoToPageExpr) {
+            // In SPA, it highlights active page link when we navigate within the same layout
+            this.cancelSubscription = this.app.subscribe("highlightActiveLink", (data) => {
+                if(this.hasNavigationToCurrentPageExpr && this.goToPageName !== this.app.activePageName) {
+                    this.hasNavigationToCurrentPageExpr = false;
+                    removeClass(this.nativeElement, 'active');
+                    removeAttr(this.nativeElement, 'aria-current');
+                }
+                if (this.goToPageName === data.pageName) {
+                    this.hasNavigationToCurrentPageExpr = true;
+                    addClass(this.nativeElement, 'active');
+                    setAttr(this.nativeElement, 'aria-current', 'page');
+                }
+            });
+        }
     }
 
     ngOnAttach() {
@@ -135,6 +156,9 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
 
     public ngOnDestroy() {
         this._eventNotifier.destroy();
+        if(this.cancelSubscription) {
+            this.cancelSubscription();
+        }
         super.ngOnDestroy();
     }
 }
