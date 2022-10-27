@@ -87,12 +87,11 @@ export class PipeProvider {
         ]),
         this.preparePipeMeta(ToNumberPipe, 'toNumber', true, [
             new DecimalPipe(this._locale),
-            this.formatsByLocale
+            this.i18service
         ]),
         this.preparePipeMeta(ToCurrencyPipe, 'toCurrency', true, [
             new DecimalPipe(this._locale),
-            this.formatsByLocale
-
+            this.i18service
         ]),
         this.preparePipeMeta(PrefixPipe, 'prefix', true),
         this.preparePipeMeta(SuffixPipe, 'suffix', true),

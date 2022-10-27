@@ -65,11 +65,13 @@ export class ToNumberPipe implements PipeTransform {
             fracSize = '1.' + fracSize + '-' + fracSize;
         }
         if (!_.isNaN(+data)) {
-            const formattedLocale = this.locale ? this.locale['number'] : undefined;
+            const locale = this.i18Service.getwidgetLocale() ? this.i18Service.getwidgetLocale() : undefined;
+            const formattedLocale = locale ? locale['number'] : undefined;
             return this.decimalPipe.transform(data, fracSize, formattedLocale);
         }
     }
-    constructor(private decimalPipe: DecimalPipe, @Inject("") private locale: any) { }
+    constructor(private decimalPipe: DecimalPipe,  @Inject(AbstractI18nService) private i18Service: AbstractI18nService) { 
+    }
 }
 
 @Pipe({
@@ -78,7 +80,7 @@ export class ToNumberPipe implements PipeTransform {
 export class ToCurrencyPipe implements PipeTransform {
     transform(data, currencySymbol, fracSize) {
         const _currencySymbol = (CURRENCY_INFO[currencySymbol] || {}).symbol || currencySymbol || '';
-        let _val = new ToNumberPipe(this.decimalPipe, this.locale).transform(data, fracSize);
+        let _val = new ToNumberPipe(this.decimalPipe, this.i18Service).transform(data, fracSize);
         const isNegativeNumber = _.startsWith(_val, '-');
         if (isNegativeNumber) {
             _val = _val.replace('-','');
@@ -86,8 +88,8 @@ export class ToCurrencyPipe implements PipeTransform {
         return _val ? isNegativeNumber ? '-'+ _currencySymbol +_val :_currencySymbol + _val : '';
     }
 
-    constructor(private decimalPipe: DecimalPipe, @Inject("") private locale: any) {
-     }
+    constructor(private decimalPipe: DecimalPipe, @Inject(AbstractI18nService) private i18Service: AbstractI18nService) {
+    }
 }
 
 @Pipe({
