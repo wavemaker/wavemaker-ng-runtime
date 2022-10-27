@@ -105,6 +105,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     ) {
         super(inj, WIDGET_CONFIG);
         // this flag will not allow the empty datafield values.
+        if (this.serversidesearch === undefined) {
+            this.serversidesearch = true;
+        }
         this.allowempty = false;
         this.app = app;
         addClass(this.nativeElement, 'app-search', true);
