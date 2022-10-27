@@ -1,4 +1,4 @@
-import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
+import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { isAndroid, isIos, Viewport, ScriptLoaderService, registerFnByExpr } from '@wm/core';
@@ -29,7 +29,7 @@ import { CACHE_PAGE } from '../util/wm-route-reuse-strategy';
 declare const $, _;
 
 @Directive()
-export abstract class BaseSpaPageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
+export abstract class BaseSpaPageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy, AfterContentInit {
     static lastPageSnapShot = null;
     Widgets: any;
     Variables: any;
@@ -56,6 +56,7 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
+    formatsByLocale = {'timezone': ''};
 
     abstract evalUserScript(prefabContext: any, appContext: any, utils: any);
     abstract getVariables();
@@ -162,6 +163,10 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
 
             subscription.unsubscribe();
         });
+    }
+
+    setTimezone(locale) {
+        this.i18nService.setTimezone(locale, this);
     }
 
     /**
@@ -339,6 +344,8 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
 
     onReady() {}
 
+    onBeforePageReady() {}
+
     onBeforePageLeave() {}
 
     onPageContentReady() {}
@@ -391,6 +398,10 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
         this.mute();
         _.each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
         this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
+    }
+
+    ngAfterContentInit() {
+        this.onBeforePageReady();
     }
 
     static clear() {
