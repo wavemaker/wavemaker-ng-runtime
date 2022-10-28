@@ -648,8 +648,23 @@ export class ServiceVariableManager extends BaseVariableManager {
 
         // add the query params mentioned in the searchkey to inputFields
         _.forEach(filterFields, function (value) {
-            if (_.includes(queryParams, value)) {
+
+            if (_.includes(queryParams, value) ) {
                 inputFields[value] = searchValue;
+            } else { // WMS-22477: For Post API, if search key is configured to requestBody params. Update the key value.
+                let hasRequestParam;
+                _.map(queryParams, (param) => {
+                    if (value.includes(param)) {
+                        hasRequestParam = true;
+                    }
+                });
+                if (hasRequestParam) {
+                    var requestBody = inputFields['RequestBody'];
+                    if (typeof requestBody === 'string') {
+                        inputFields['RequestBody'] =  JSON.parse(requestBody);
+                    }
+                    _.set(inputFields, value, searchValue);
+                }
             }
         });
 
