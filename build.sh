@@ -580,6 +580,8 @@ bundleWebLibs() {
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         ./node_modules/@metrichor/jmespath/dist/jmespath.umd.js \
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
+        ./node_modules/tabbable/dist/index.umd.js   \
+        ./node_modules/focus-trap/dist/focus-trap.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
 
          ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-libs.js \
