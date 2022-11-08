@@ -348,7 +348,7 @@ export const getFormattedDate = (datePipe, dateObj, format, timeZone?, isTimeSta
         const momentFormat = format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A');
         if (isIntervalDateTime ) { // dates which are of type time widget (value is hh:mm:ss) but returned as date string from time comp
             return moment(dateObj).format(momentFormat);
-        } 
+        }
         if (isTimeStampType === 'datetimestamp') {
             dateObj = getMomentLocaleObject(timeZone, dateObj);
             return moment(dateObj).format(momentFormat);
@@ -407,7 +407,7 @@ export const getDateObj = (value, options?, timezone?): Date => {
          * (Ex: If date value is "1990-11-23" and moment(value).format() is "١٩٩٠-١١-٢٣T٠٠:٠٠:٠٠+٠٥:٣٠")
          * and new Date(moment(value).format()) is giving Invalid Date. So frst converting it to timestamp value.
         */
-       
+
         dateObj = !timezone ? new Date(moment(moment(value).format()).valueOf()) : getMomentLocaleObject(timezone, value);;
     }
 
@@ -1505,6 +1505,9 @@ export const findRootContainer = ($el) => {
     let root = $el.closest('.app-prefab');
     if (!root.length) {
         root = $el.closest('.app-partial');
+    }
+    if(!root.length) {
+        root = $el.closest('.app-spa-page');
     }
     if (!root.length) {
         root = $el.closest('.app-page');

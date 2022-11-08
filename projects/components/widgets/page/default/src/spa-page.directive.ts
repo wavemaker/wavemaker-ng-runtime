@@ -6,7 +6,8 @@ import { updateDeviceView, provideAsWidgetRef, StylableComponent } from '@wm/com
 
 import { registerProps } from './spa-page.props';
 
-const WIDGET_CONFIG = {widgetType: 'wm-spa-page'};
+const DEFAULT_CLS = 'app-spa-page';
+const WIDGET_CONFIG = {widgetType: 'wm-spa-page', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmSpaPage]',
