@@ -456,7 +456,7 @@ copyLocale() {
         local mobileDest=./dist/bundles/wmmobile/locales
 
         local angularSrc=./node_modules/@angular/common/locales
-        local fullCalendarSrc=./node_modules/fullcalendar/libs/locales
+        local fullCalendarSrc=./node_modules/fullcalendar/locales
         local momentSrc=./node_modules/moment/locale
         local timezoneSrc=./node_modules/moment-timezone/builds/moment-timezone-with-data.js
 
