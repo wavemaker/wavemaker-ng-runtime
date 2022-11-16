@@ -465,6 +465,7 @@ copyLocale() {
         mkdir -p ${mobileDest}/angular
         mkdir -p ${mobileDest}/angular/global
         mkdir -p ${appDest}/fullcalendar
+        mkdir -p ${mobileDest}/fullcalendar
         mkdir -p ${appDest}/moment
         mkdir -p ${mobileDest}/moment
         mkdir -p ${appDest}/moment-timezone
@@ -483,6 +484,7 @@ copyLocale() {
         cp  ${appDest}/angular/global/*.js  ${mobileDest}/angular/global/
 
         cp ${fullCalendarSrc}/*.js ${appDest}/fullcalendar/
+        cp ${fullCalendarSrc}/*.js ${mobileDest}/fullcalendar/
 
         cp ${momentSrc}/*.js ${appDest}/moment/
         cp ${momentSrc}/*.js ${mobileDest}/moment/
