@@ -1,14 +1,9 @@
 import { DeviceVariable } from '../model/variable/device-variable';
-import { LiveVariable } from '../model/variable/live-variable';
-import { CrudVariable } from '../model/variable/crud-variable';
 import { NavigationAction } from '../model/action/navigation-action';
-import { ModelVariable } from '../model/variable/model-variable';
-import { ServiceVariable } from '../model/variable/service-variable';
 import { NotificationAction } from '../model/action/notification-action';
-import { VARIABLE_CONSTANTS } from '../constants/variables.constants';
+import { ModelVariable, ServiceVariable, LiveVariable, CrudVariable, TimerAction, VARIABLE_CONSTANTS } from '@wm/common/variables';
 import { LoginAction } from '../model/action/login-action';
 import { LogoutAction } from '../model/action/logout-action';
-import { TimerAction } from '../model/action/timer-action';
 import { WebSocketVariable } from '../model/variable/web-socket-variable';
 
 export class VariableFactory {

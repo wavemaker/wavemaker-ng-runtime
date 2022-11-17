@@ -1,4 +1,4 @@
-import { ModelVariable} from './model-variable';
+import { ModelVariable} from '@wm/common/variables';
 declare const _;
 describe('Model Variable dataset as list', () => {
     let modelVariable: ModelVariable;

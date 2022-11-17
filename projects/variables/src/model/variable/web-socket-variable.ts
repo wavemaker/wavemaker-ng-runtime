@@ -1,4 +1,4 @@
-import { ApiAwareVariable } from './api-aware-variable';
+import { ApiAwareVariable } from '@wm/common/variables';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 

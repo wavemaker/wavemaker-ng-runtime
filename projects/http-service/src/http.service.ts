@@ -4,11 +4,12 @@ import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpRespon
 import { Observable, Subject } from 'rxjs';
 
 import { AbstractHttpService, getValidJSON, replace, isNumber, isBoolean } from '@wm/core';
+import { HttpClientService } from '@wm/common/variables';
 
 declare const _;
 
 @Injectable()
-export class HttpServiceImpl extends AbstractHttpService {
+export class HttpServiceImpl extends AbstractHttpService implements HttpClientService {
     nonBodyTypeMethods = ['GET', 'DELETE', 'HEAD', 'OPTIONS', 'JSONP'];
     sessionTimeoutObservable = new Subject();
     sessionTimeoutQueue = [];
@@ -50,7 +51,7 @@ export class HttpServiceImpl extends AbstractHttpService {
         }
 
         // headers
-        if (headers) { 
+        if (headers) {
             Object.entries(headers).forEach(([k, v]) => {
                 if (isNumber(v) || isBoolean(v)) {
                     v = v.toString();

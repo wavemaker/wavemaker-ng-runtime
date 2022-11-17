@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AbstractDialogService, AbstractHttpService, AbstractNavigationService, AbstractToasterService } from '@wm/core';
+import {
+    $watch,
+    $parseEvent,
+    AbstractDialogService,
+    AbstractHttpService,
+    AbstractNavigationService,
+    AbstractToasterService, processFilterExpBindNode, $invokeWatchers, getClonedObject
+} from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
 
 import { VariableFactory } from '../factory/variable.factory';
-import { BaseAction } from '../model/base-action';
-import { setDependency } from '../util/variable/variables.utils';
+import { wmSetDependency, BaseAction, getTarget, setValueToNode } from '@wm/common/variables';
+import {setDependency, simulateFileDownload} from '../util/variable/variables.utils';
 import { MetadataService } from './metadata-service/metadata.service';
+import { VARIABLE_CONSTANTS } from '../constants/variables.constants';
 
 declare const _;
 
@@ -34,6 +42,8 @@ export class VariablesService {
         setDependency('oAuth', this.oAuthService);
         setDependency('security', this.securityService);
         setDependency('dialog', this.dialogService);
+        wmSetDependency('oAuth', this.oAuthService);
+        wmSetDependency('security', this.securityService);
     }
 
     /**
@@ -58,9 +68,25 @@ export class VariablesService {
         return Promise.all(
             Object.keys(collection)
                 .map(name => collection[name])
-                .filter( variable => variable.startUpdate && variable.invoke)
+                .filter( variable => variable?.startUpdate && variable.invoke)
                 .map(variable => variable.invoke())
             );
+    }
+
+     processBindExp(d: any, scope: string, variable) {
+        const root = getTarget(variable);
+        let v = _.isArray(d.value) ? d.value[0] : d.value;
+        if (v) {
+            if (v.startsWith && v.startsWith('bind:')) {
+                v = $watch(v.replace('bind:', ''), scope, {}, variable.invokeOnParamChange.bind(variable, d), undefined, undefined, undefined, () => variable.isMuted);
+            } else if (!_.isUndefined(d.value)) {
+                setValueToNode(d.target, d, root, variable, d.value, true);
+            }
+        }
+        return {
+            name: d.target,
+            value: v
+        };
     }
 
     /**
@@ -81,8 +107,38 @@ export class VariablesService {
         let varInstance;
 
         for (const variableName in variablesJson) {
+            const params: any = {};
             varInstance = VariableFactory.create(variablesJson[variableName], scope);
-            varInstance.init();
+           if (variablesJson[variableName].category === 'wm.Variable' || variablesJson[variableName].category === 'wm.ServiceVariable' ||
+               variablesJson[variableName].category === 'wm.LiveVariable' || variablesJson[variableName].category === 'wm.CrudVariable') {
+               if (varInstance.dataBinding) {
+                   _.forEach(varInstance.dataBinding, (d: any) => {
+                       params[d.target] = d.value;
+                       this.processBindExp(d, scope, varInstance);
+                   });
+                   varInstance.dataBinding = params || {};
+               }
+               varInstance.httpService = this.httpService;
+               varInstance.getProviderId = (providerId, prefabName) => getClonedObject(this.metadataService.getByProviderId(providerId, prefabName));
+               varInstance.getByCrudId = (crudId, prefabName) => getClonedObject(this.metadataService.getByCrudId(crudId, prefabName));
+               const serviceDef = getClonedObject(this.metadataService.getByOperationId(varInstance.operationId, varInstance._context.prefabName));
+               varInstance.serviceInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
+               for (const e in VARIABLE_CONSTANTS.EVENT) {
+                   if (varInstance[VARIABLE_CONSTANTS.EVENT[e]]) {
+                       varInstance[VARIABLE_CONSTANTS.EVENT[e]] = $parseEvent(varInstance[VARIABLE_CONSTANTS.EVENT[e]]);
+                   }
+               }
+               varInstance.onDataUpdated = () => $invokeWatchers(true);
+               if (varInstance.category === 'wm.LiveVariable' && varInstance.operation === 'read') {
+                   processFilterExpBindNode(varInstance._context, varInstance.filterExpressions, varInstance);
+               }
+               if (varInstance.category === 'wm.CrudVariable' || varInstance.category === 'wm.ServiceVariable') {
+                   varInstance.simulateFileDownload = simulateFileDownload;
+               }
+
+           } else {
+               varInstance.init();
+           }
             // if action type, put it in Actions namespace
             if (varInstance instanceof BaseAction) {
                 variableInstances.Actions[variableName] = varInstance;
@@ -107,5 +163,6 @@ export class VariablesService {
 
     registerDependency(name, ref) {
         setDependency(name, ref);
+        wmSetDependency(name, ref);
     }
 }
