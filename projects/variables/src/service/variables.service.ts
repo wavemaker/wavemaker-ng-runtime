@@ -128,7 +128,8 @@ export class VariablesService {
                        varInstance[VARIABLE_CONSTANTS.EVENT[e]] = $parseEvent(varInstance[VARIABLE_CONSTANTS.EVENT[e]]);
                    }
                }
-               varInstance.onDataUpdated = () => $invokeWatchers(true);
+               varInstance.subscribe('afterInvoke', () => $invokeWatchers(true));
+               // varInstance.onDataUpdated = () => $invokeWatchers(true);
                if (varInstance.category === 'wm.LiveVariable' && varInstance.operation === 'read') {
                    processFilterExpBindNode(varInstance._context, varInstance.filterExpressions, varInstance);
                }
