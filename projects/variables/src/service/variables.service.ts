@@ -129,7 +129,6 @@ export class VariablesService {
                    }
                }
                varInstance.subscribe('afterInvoke', () => $invokeWatchers(true));
-               // varInstance.onDataUpdated = () => $invokeWatchers(true);
                if (varInstance.category === 'wm.LiveVariable' && varInstance.operation === 'read') {
                    processFilterExpBindNode(varInstance._context, varInstance.filterExpressions, varInstance);
                }
