@@ -74,7 +74,7 @@ register('wm-table', (): IBuildTaskDef => {
             attrs.set('isdynamictable', shared.get('isdynamictable'));
             attrs.set('isrowexpansionenabled', shared.get('isrowexpansionenabled'));
             attrs.set('table_reference', counter);
-            return `<${tagName} wmTable="${counter}" wmTableFilterSort wmTableCUD #${counter} data-identifier="table" role="table" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmTable="${counter}" wmTableFilterSort wmTableCUD #${counter} data-identifier="table" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`,
         provide: (attrs, shared) => {
