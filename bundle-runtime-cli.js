@@ -38,6 +38,7 @@ const addWMDependency = (wm_pkg_name) => {
     const packageJSON = require(path);
 
     packageJSON.dependencies[wm_pkg_name] = argv.publishVersion;
+    packageJSON['dependencies']['@wavemaker/variables'] = argv.publishVersion;
     console.log(`${DEBUG_LOG} Added ${wm_pkg_name}:${argv.publishVersion} dependency to angular app`);
 
     fs.writeFileSync(path, JSON.stringify(packageJSON, null, 4));

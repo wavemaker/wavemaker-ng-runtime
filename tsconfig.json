@@ -38,7 +38,7 @@
                 "libraries/core"
             ],
             "@wm/common/variables": [
-                "../wavemaker-ui-variables/dist/es2015"
+                "node_modules/@wavemaker/variables/"
             ],
             "@wm/components/base": [
                 "libraries/components/base"
