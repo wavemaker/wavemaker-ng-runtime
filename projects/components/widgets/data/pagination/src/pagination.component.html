@@ -56,7 +56,7 @@
     </li>
 </ul>
 
-<pagination class="pagination basic" [ngClass]="navigationClass" *ngIf="navcontrols === 'Basic'"
+<pagination class="pagination basic" [ngClass]="navigationClass" *ngIf="navcontrols === 'Basic'" role="navigation"
             [itemsPerPage]="maxResults" [totalItems]="dataSize"
             [ngModel]="dn.currentPage" (pageChanged)="pageChanged($event)"
             [attr.aria-label]="'Page ' + dn.currentPage + ' of ' + pageCount + ' pages'"

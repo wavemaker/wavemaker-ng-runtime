@@ -9,7 +9,7 @@ register('wm-livetable', (): IBuildTaskDef => {
         pre: (attrs, shared) => {
             const counter = idGen.nextUid();
             shared.set('counter', counter);
-            return `<${tagName} wmLiveTable role="table" ${getAttrMarkup(attrs)} dialogid="${counter}">`;
+            return `<${tagName} wmLiveTable ${getAttrMarkup(attrs)} dialogid="${counter}">`;
         },
         post: () => `</${tagName}>`,
         provide: (attrs, shared) => {
