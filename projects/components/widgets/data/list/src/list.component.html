@@ -10,7 +10,7 @@
     </h3>
 </div>
 
-<nav class="app-datanavigator" aria-label="Page navigation" *ngIf="navigation === 'Inline' && !noDataFound">
+<nav class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisablePrevious" aria-label="Page navigation" *ngIf="navigation === 'Inline' && !noDataFound">
     <ul class="pager">
         <li class="previous" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisablePrevious : true)}">
             <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('prev', $event)">
@@ -58,7 +58,7 @@
     </span>
 </div>
 
-<nav class="app-datanavigator" *ngIf="navigation === 'Inline' && !noDataFound">
+<nav class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisableNext" *ngIf="navigation === 'Inline' && !noDataFound">
     <ul class="pager">
         <li class="next" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisableNext  : true)}">
             <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('next', $event)">

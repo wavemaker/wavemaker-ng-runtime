@@ -263,7 +263,7 @@ $.widget('wm.datatable', {
     _getHeaderTemplate: function () {
 
         var $colgroup = $('<colgroup></colgroup>'),
-            $htm = $('<thead></thead>'),
+            $htm = $('<thead role="rowgroup"></thead>'),
             isDefined = this.Utils.isDefined,
             sortInfo = this.options.sortInfo,
             sortField = sortInfo.field,
@@ -318,7 +318,8 @@ $.widget('wm.datatable', {
             $th.attr({
                 'data-col-id': id,
                 'data-col-field': field,
-                'title': titleLabel
+                'title': titleLabel,
+                'role': 'columnheader'
             });
             self._setStyles($th, 'text-align: ' + value.textAlignment)
             $th.addClass(headerClasses);
@@ -387,7 +388,9 @@ $.widget('wm.datatable', {
             generateRow(headerConfig, 0);
             //Combine all the row templates to generate the header
             rowTemplates.forEach(function($thList, index) {
-                $row = $('<tr></tr>');
+                $row = $('<tr role="row" tabindex="0"></tr>');
+                // To fix ADA issue "Tables headers in datatable must refer to data cells"
+                var $dummyHeaderRow = $('<tr role="row"></tr>');
                 var rowSpan = rowTemplates.length - index;
                 //append all t-heads to the tr
                 $thList.forEach(function($th) {
@@ -396,8 +399,9 @@ $.widget('wm.datatable', {
                         $th.attr('rowspan', rowSpan);
                     }
                     $row.append($th);
+                    $dummyHeaderRow.append('<td role="cell" style="display: none"></td>');
                 });
-                $htm.append($row);
+                $htm.append($row, $dummyHeaderRow);
             });
         }
 
@@ -535,7 +539,7 @@ $.widget('wm.datatable', {
     _getGridTemplate: function () {
         var self = this, preparedData,
             tbodyExists = this.gridElement.find('tbody').length,
-            $tbody =  tbodyExists > 0 ? this.gridElement.find('tbody:first') : $('<tbody class="' + this.options.cssClassNames.gridBody + '"></tbody>'),
+            $tbody =  tbodyExists > 0 ? this.gridElement.find('tbody:first') : $('<tbody role="rowgroup" class="' + this.options.cssClassNames.gridBody + '"></tbody>'),
             isScrollorOnDemand = self.options.isNavTypeScrollOrOndemand(),
             pageStartIndex = self.getPageStartIndex(),
             startRowIndex = self.options.startRowIndex;
@@ -564,7 +568,7 @@ $.widget('wm.datatable', {
             if (self.options.rowExpansionEnabled) {
                 var rowHeight = self.options.rowDef.height;
                 var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
-                var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
                     '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
                     '</td></tr>');
                 if (rowHeight) {
@@ -587,7 +591,7 @@ $.widget('wm.datatable', {
             self = this,
             gridOptions = self.options;
 
-        $htm = $('<tr tabindex="0" class="' + gridOptions.cssClassNames.tableRow + ' ' + (gridOptions.rowClass || '') + '" data-row-id="' + row.$$pk + '"></tr>');
+        $htm = $('<tr role="row" tabindex="0" class="' + gridOptions.cssClassNames.tableRow + ' ' + (gridOptions.rowClass || '') + '" data-row-id="' + row.$$pk + '"></tr>');
         this.preparedHeaderData.forEach(function (current, colIndex) {
             $htm.append(self._getColumnTemplate(row, colIndex, current, rowIndex, summaryRow));
         });
@@ -639,7 +643,7 @@ $.widget('wm.datatable', {
             colExpression = colDef.customExpression,
             styles = "text-align: " + colDef.textAlignment + ";position: relative;"
 
-        $htm = $('<td class="' + classes + '" data-col-id="' + colId + '"></td>');
+        $htm = $('<td class="' + classes + '" data-col-id="' + colId + '" role="cell"></td>');
         this._setStyles($htm, styles);
 
         columnValue = _.get(row, colDef.field);
@@ -3089,8 +3093,8 @@ $.widget('wm.datatable', {
             '<div class="status"><i class="' + this.options.loadingicon + '"></i><span class="message"></span></div>' +
             '</div>',
             table = '<div class="table-container table-responsive"><div class="app-grid-header ' +
-                '"><div class="app-grid-header-inner"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_header_' + this.tableId + '">' +
-                '</table></div></div><div class="app-grid-content"><table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_' + this.tableId + '">' +
+                '"><div class="app-grid-header-inner"><table role="table" class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_header_' + this.tableId + '">' +
+                '</table></div></div><div class="app-grid-content"><table role="table" class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_' + this.tableId + '">' +
                 '</table></div>' +
                 '</div>',
             $statusContainer = $(statusContainer);
