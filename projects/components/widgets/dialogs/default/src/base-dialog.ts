@@ -32,6 +32,7 @@ const invokeOpenedCallback = (ref) => {
                 onActivate: () => container.classList.add('is-active'),
                 onDeactivate: () => container.classList.remove('is-active'),
                 escapeDeactivates : false,
+                allowOutsideClick: true
             });
             focusTrapObj[ref.titleId].activate();
         });
