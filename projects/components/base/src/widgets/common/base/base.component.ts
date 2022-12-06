@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewInit, ElementRef, Injectable, Injector, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, ElementRef, Directive, ViewContainerRef, Injector, Host, Inject, OnDestroy, OnInit } from '@angular/core';
 import { EventManager } from '@angular/platform-browser';
 
 import { ReplaySubject, Subject } from 'rxjs';
@@ -40,7 +40,7 @@ const updateStyles = (nv, ov, el) => {
 
 };
 
-@Injectable()
+@Directive()
 export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
 
     /**
@@ -159,8 +159,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     private isMuted = false;
 
+    public viewContainerRef: ViewContainerRef;
+
     protected constructor(
-        protected inj: Injector,
+        @Inject(Injector) protected inj: Injector,
         config: IWidgetConfig,
         initPromise?: Promise<any> // Promise on which the initialization has to wait
     ) {
@@ -168,9 +170,12 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.nativeElement = elementRef.nativeElement;
         this.widgetType = config.widgetType;
         this.widgetSubType = config.widgetSubType || config.widgetType;
-        this.viewParent = (inj as any).view.component;
+        this.viewContainerRef = inj.get(ViewContainerRef);
+        // this.viewParent = (inj as any).view.component;
+        this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
         this.displayType = config.displayType || DISPLAY_TYPE.BLOCK;
-        this.context = (inj as any).view.context;
+        //this.context = (inj as any).view.context;
+        this.context = (this.viewContainerRef as any)._hostLView.debug.context;
         this.widget = this.createProxy();
         this.eventManager = inj.get(EventManager);
         (this.nativeElement as any).widget = this.widget;
@@ -275,7 +280,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     }
 
     protected initContext() {
-        const context = (this.inj as any).view.context;
+        // const context = (this.inj as any).view.context;
+        const context = this.context;
 
         const parentContexts = this.inj.get(Context, {});
 
@@ -541,9 +547,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Process the attributes
      */
     private processAttrs() {
-        const elDef = (this.inj as any).elDef;
+        // const elDef = (this.inj as any).elDef;
+        const elDef = (this.inj as any)._tNode;
 
-        for (const [, attrName, attrValue] of elDef.element.attrs) {
+        for (const [, attrName, attrValue] of elDef.attrs) {
             this.$attrs.set(attrName, attrValue);
             this.processAttr(attrName, attrValue);
         }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, Injector } from '@angular/core';
 
 import { ToastrService } from 'ngx-toastr';
 
@@ -11,10 +11,13 @@ declare const _;
 @Injectable()
 export class ToasterServiceImpl extends AbstractToasterService {
 
-    constructor(private toaster: ToastrService) {
+    constructor(@Inject(Injector) private injector: Injector) {
         super();
     }
 
+    get toaster(): ToastrService {
+        return this.injector.get(ToastrService);
+    }
     private _showToaster (type: string, title: string, desc: string, options?: any) {
         // backward compatibility (in 9.x, 4th param is timeout value).
         if (_.isNumber(options)) {

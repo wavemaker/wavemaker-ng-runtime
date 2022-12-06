@@ -1,4 +1,4 @@
-import {APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule} from '@angular/core';
+import {APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule, InjectionToken} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -79,7 +79,7 @@ enum OS {
     ANDROID = 'android'
 }
 
-export function getSettingProvider(key: string, defaultValue: any) {
+export function getSettingProvider(key: InjectionToken<string>, defaultValue: any) {
     return {
         provide: key,
         useValue: defaultValue

@@ -1,7 +1,7 @@
 import { BaseComponent } from './base.component';
-import { Injectable } from '@angular/core';
+import { Directive } from '@angular/core';
 
-@Injectable()
+@Directive()
 export abstract class StylableComponent extends BaseComponent {
     backgroundattachment: string;
     backgroundcolor: string;

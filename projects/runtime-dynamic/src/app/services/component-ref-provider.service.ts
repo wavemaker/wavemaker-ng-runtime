@@ -78,16 +78,17 @@ class BaseDynamicComponent {
 }
 
 const getDynamicModule = (componentRef: any) => {
-    @NgModule({
+    const module = NgModule({
         declarations: [componentRef],
         imports: [
             RuntimeBaseModule
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-    })
-    class DynamicModule {}
+    })(class {
 
-    return DynamicModule;
+    });
+
+    return module;
 };
 
 const getDynamicComponent = (
@@ -127,17 +128,7 @@ const getDynamicComponent = (
             break;
     }
 
-    @Component({
-        ...componentDef,
-        selector,
-        providers: [
-            {
-                provide: UserDefinedExecutionContext,
-                useExisting: DynamicComponent
-            }
-        ]
-    })
-    class DynamicComponent extends BaseClass {
+    const DynamicComponent = class DynamicComponent extends BaseClass {
         pageName;
         partialName;
         prefabName;
@@ -167,14 +158,20 @@ const getDynamicComponent = (
         getVariables() {
             return JSON.parse(variables);
         }
+    };
 
-        // in preview mode, there will be no function registered. functions will be generated dynamically through $parseEvent and $parseExpr
-        getExpressions() {
-            return {}
-        }
-    }
+    const component = Component({
+        ...componentDef,
+        selector,
+        providers: [
+            {
+                provide: UserDefinedExecutionContext,
+                useExisting: DynamicComponent
+            }
+        ]
+    })(DynamicComponent);
 
-    return DynamicComponent;
+    return component;
 };
 
 @Injectable()

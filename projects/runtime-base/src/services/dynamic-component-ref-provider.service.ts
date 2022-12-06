@@ -21,18 +21,17 @@ declare const _;
 const componentFactoryRefCache = new Map<string, any>();
 
 const getDynamicModule = (componentRef: any) => {
-    @NgModule({
-        declarations: [
-            componentRef
-        ],
+    const module = NgModule({
+        declarations: [componentRef],
         imports: [
             RuntimeBaseModule
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-    })
-    class DynamicModule {}
+    })(class {
 
-    return DynamicModule;
+    });
+
+    return module;
 };
 
 const getDynamicComponent = (
@@ -46,14 +45,14 @@ const getDynamicComponent = (
         encapsulation: ViewEncapsulation.None
     };
 
-    @Component({
+    const DynamicComponent = class DynamicComponent{};
+
+    const component = Component({
         ...componentDef,
         selector
-    })
-    class DynamicComponent {
-    }
+    })(DynamicComponent);
 
-    return DynamicComponent;
+    return component;
 };
 
 @Injectable()

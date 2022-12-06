@@ -6,9 +6,12 @@
         "outDir": "./dist/out-tsc",
         "sourceMap": true,
         "declaration": false,
-        "target": "es2015",
+        "target": "es2017",
         "module": "es2020",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
         "moduleResolution": "node",
+        "importHelpers": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "typeRoots": [
@@ -97,6 +100,6 @@
         }
     },
     "angularCompilerOptions":{
-        "enableIvy": false
+        "compilationMode": "full"
     }
 }

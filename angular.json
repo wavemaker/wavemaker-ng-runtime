@@ -16,6 +16,9 @@
             "customWebpackConfig": {
               "path": "./wm-custom-webpack.config.js"
             },
+            "allowedCommonJsDependencies": [
+                "angular2-websocket"
+            ],
             "indexTransform":"./build-scripts/index-html-transform.js",
             "deployUrl": "ng-bundle/",
             "outputPath": "dist/ng-bundle",
@@ -130,7 +133,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "build-ng": {
           "builder": "@angular-devkit/build-angular:browser",

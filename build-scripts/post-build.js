@@ -28,14 +28,19 @@ const generateHash = async (filepath) => {
     return hash.digest('hex');
 };
 const generateHashForScripts = (updatedFilenames) => {
+    //from angular 12(IVY), scripts array in angular json, doesn't allow `@` symbol in the name/value
+    //so removed `@` from wavemaker.com in the file name and adding it back in the post-build.js file
     const scriptsMap = {};
     return new Promise(resolve => {
         fs.readdir(opPath, (err, items) => {
             const promises = items.map(i => {
                 const nohashIndex = i.indexOf('-NOHASH.js');
                 if (nohashIndex > 0) {
-                    const key = i.substring(0, nohashIndex);
+                    let key = i.substring(0, nohashIndex);
                     return generateHash(`${opPath}/${i}`).then(hash => {
+                        if(key.indexOf("wavemaker.com") !== -1) {
+                            key = key.replace('wavemaker.com', '@wavemaker.com')
+                        }
                         const filename = `${key}-NOHASH.js`;
                         const updatedFilename = `${key}.${hash}.js`
                         scriptsMap[`${key}.js`] = updatedFilename;

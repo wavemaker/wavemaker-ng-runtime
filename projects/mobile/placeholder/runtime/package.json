@@ -1,11 +1,11 @@
 {
-    "name": "@wm/mobile/runtime",
+    "name": "@wm/mobile/placeholder/runtime",
     "ngPackage": {
         "dest": "../../../../libraries/mobile/placeholder/runtime",
         "lib": {
             "flatModuleFile": "index",
             "entryFile": "./src/public_api.ts",
-            "umdId": "wm.mobile.runtime",
+            "umdId": "wm.mobile.placeholder.runtime",
             "umdModuleIds": {
                 "@angular/core": "ng.core"
             }

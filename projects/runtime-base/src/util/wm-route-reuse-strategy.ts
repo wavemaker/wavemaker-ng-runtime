@@ -1,4 +1,4 @@
-import { Inject } from '@angular/core';
+import { Inject, InjectionToken, Injectable } from '@angular/core';
 /*
 Custom Route Reuse Strategies:
 * WmDefaultRouteReuseStrategy: Base Function & Utils
@@ -23,10 +23,11 @@ import { LRUCache } from '@wm/core';
 declare const _;
 
 export const CACHE_PAGE = '_cache_page';
-export const MAX_CACHE_SIZE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_SIZE';
-export const MAX_CACHE_AGE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_AGE';
+export const MAX_CACHE_SIZE = new InjectionToken<string>('REUSE_ROUTE_STRATEGY.MAX_CACHE_SIZE');
+export const MAX_CACHE_AGE = new InjectionToken<string>('REUSE_ROUTE_STRATEGY.MAX_CACHE_AGE');
 
 /* Base Strategy with Default implementations */
+@Injectable()
 export class WmDefaultRouteReuseStrategy {
     private cache: LRUCache<DetachedRouteHandle>;
     private currentRouteKey: string;
@@ -88,7 +89,7 @@ export class WmDefaultRouteReuseStrategy {
         }
         return defaultValue;
     }
-    
+
     // DefaultRouteReuseStrategy : Begin
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         const key = this.getKey(route);
@@ -140,6 +141,7 @@ export class WmDefaultRouteReuseStrategy {
     }
 }
 /* Custom Strategy specifically for preview & WaveMaker Deployments */
+@Injectable()
 export class WmRouteReuseStrategy extends WmDefaultRouteReuseStrategy
     implements RouteReuseStrategy {
     constructor(@Inject(MAX_CACHE_SIZE) maxCacheSize: number,
@@ -178,6 +180,7 @@ export class WmRouteReuseStrategy extends WmDefaultRouteReuseStrategy
     }
 }
 /* Custom Strategy specifically for Angular Deployments */
+@Injectable()
 export class WmNgRouteReuseStrategy extends WmDefaultRouteReuseStrategy
     implements RouteReuseStrategy {
     constructor(@Inject(MAX_CACHE_SIZE) maxCacheSize: number,
@@ -196,8 +199,8 @@ export class WmNgRouteReuseStrategy extends WmDefaultRouteReuseStrategy
             return false;
         }
         if (future.routeConfig === current.routeConfig) {
-            //No need to compare query params for layout routeConfig
-            if(future.data.layoutName && current.data.layoutName)  {
+            // No need to compare query params for layout routeConfig
+            if (future.data.layoutName && current.data.layoutName)  {
                 return  true;
             }
             return this.isSameQueryParams(future, current);

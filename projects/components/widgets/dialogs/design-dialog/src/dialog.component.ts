@@ -27,7 +27,7 @@ export class DialogComponent extends BaseDialog implements OnInit {
     @ContentChild('dialogFooter', /* TODO: add static flag */ { read: TemplateRef }) dialogFooter: TemplateRef<any>;
 
     constructor(
-        inj: Injector,
+        @Inject(Injector) inj: Injector,
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
         @Attribute('closable') closable: string | boolean,

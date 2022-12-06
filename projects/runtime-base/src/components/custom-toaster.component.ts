@@ -41,7 +41,7 @@ export class CustomToasterComponent extends Toast implements AfterViewInit, OnDe
     generateParams() {
         _.forEach((<any>this.options).partialParams, (param) => {
             if (_.isString(param.value) && param.value.indexOf('bind:') === 0) {
-                //[Todo-CSP]: bind expr fn should be generated in the toaster action for this
+                // [Todo-CSP]: bind expr fn should be generated in the toaster action for this
                 this.watchers.push($watch(
                     param.value.substr(5),
                     (<any>this.options).context,
