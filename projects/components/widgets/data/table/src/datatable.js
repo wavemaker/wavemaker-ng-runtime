@@ -399,7 +399,8 @@ $.widget('wm.datatable', {
                         $th.attr('rowspan', rowSpan);
                     }
                     $row.append($th);
-                    $dummyHeaderRow.append('<td role="cell" style="display: none"></td>');
+                    $dummyHeaderRow.append('<td role="cell"></td>');
+                    self._setStyles($dummyHeaderRow, 'display:none;');
                 });
                 $htm.append($row, $dummyHeaderRow);
             });
