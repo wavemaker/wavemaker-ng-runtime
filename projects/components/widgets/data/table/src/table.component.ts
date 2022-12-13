@@ -127,6 +127,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     iconclass;
     ondemandmessage;
     _triggeredByUser;
+    isDataUpdatedByUser = true;
     isGridEditMode;
     loadingdatamsg;
     multiselect;
@@ -278,6 +279,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             pipeTransform : {}
         },
         navigation: '',
+        isdynamictable: '',
         deletedRowIndex: -1,
         lastActionPerformed: 'scroll',
         isSearchTrigerred: false,
@@ -695,6 +697,26 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const control = this.ngform.controls && this.ngform.controls[fieldName];
             return control && control.value;
         },
+
+        // function to add load more button to table
+        addLoadMoreBtn: () => {
+            this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
+                this.isDataUpdatedByUser = false;
+                this.dataNavigator.navigatePage('next', $event);
+                this.isDataLoading = true;
+            });
+        },
+        // function to bind scroll event
+        bindScrollEvt: () => {
+            if (this._gridData && this._gridData.length && this.infScroll) {
+                // smoothscroll events will be binded.
+                // Added timeout as the table html is rendered at runtime
+                setTimeout(() => {
+                    this.isDataUpdatedByUser = false;
+                    this.paginationService.bindScrollEvt(this, 'tbody', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+                }, 0);
+            }
+        },
         generateFilterRow: () => {
             // Clear the view container ref
             this.filterViewRef.clear();
@@ -818,11 +840,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.setDataGridOption('isLastPage', !!(this.dataNavigator.isDisableNext));
             // In case of on demand pagination, create the load more button only once and show the button until next page is not disabled
             if (!this.$element.find('.on-demand-datagrid').length && !this.dataNavigator.isDisableNext && this.onDemandLoad) {
-                this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
-                    this.dataNavigator.navigatePage('next', $event);
-                    this.isDataLoading = true;
-                });
-            } else if (this.dataNavigator.isDisableNext || !this.isDataLoading) {
+                this.gridOptions.addLoadMoreBtn();
+            } else if ((this._gridData && this._gridData.length) && (this.dataNavigator.isDisableNext || !this.isDataLoading)) {
                 // when the next page is disabled or when the data is not loading remove the loading/load more button accordingly
                 this.callDataGridMethod('hideLoadingIndicator', this.dataNavigator.isDisableNext, this.infScroll);
             }
@@ -836,13 +855,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this._onTouched();
 
         if (isDefined(newValue)) {
-            if (this._gridData.length && this.infScroll) {
-                // smoothscroll events will be binded.
-                // Added timeout as the table html is rendered at runtime
-                setTimeout(() => {
-                    this.paginationService.bindScrollEvt(this, 'tbody', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
-                }, 0);
-            }
+            this.gridOptions.bindScrollEvt();
 
             /*Setting the serial no's only when show navigation is enabled and data navigator is compiled
              and its current page is set properly*/
@@ -1014,6 +1027,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.name = this.name;
         this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
         this.gridOptions.navigation = this.navigation;
+        this.gridOptions.isdynamictable = this.isdynamictable;
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
         if (!_.isEmpty(this.gridData)) {
@@ -1714,6 +1728,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (this.parentList && !this.datasource && _.startsWith(this.binddataset, 'item')) {
                     this.datasource = getDatasourceFromExpr(this.widget.$attrs.get('datasetboundexpr'), this);
                 }
+                // this.isDataUpdatedByUser is true when dataset is updated from script
+                if (this.isDataUpdatedByUser) {
+                    this.setLastActionToDatasetUpdate();
+                }
+                this.isDataUpdatedByUser = true;
                 // for Static Variables with Retain State enabled, prevent Table from rendering more than once
                 if (!(_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none')) {
                     this.watchVariableDataSet(nv);

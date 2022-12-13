@@ -29,6 +29,8 @@ $.widget('wm.datatable', {
         enableColumnSelection: false,
         multiselect: false,
         filterNullRecords: true,
+        navigation: '',
+        isdynamictable: '',
         cssClassNames: {
             'tableRow': 'app-datagrid-row',
             'headerCell': 'app-datagrid-header-cell',
@@ -3098,18 +3100,43 @@ $.widget('wm.datatable', {
                 '</table></div></div><div class="app-grid-content"><table role="table" class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_' + this.tableId + '">' +
                 '</table></div>' +
                 '</div>',
-            $statusContainer = $(statusContainer);
+            $statusContainer = $(statusContainer),
+            $tableContainer = this.element.find('.table-container');
+
         this._setStyles($statusContainer.find('div.overlay'), "display:none");
         this._setStyles($statusContainer.find('div.app-grid-content'), 'height:' + this.options.height + '; overflow-y: ' + overflow + ';');
 
-        this.gridContainer = $(table);
-        this.gridElement = this.gridContainer.find('.app-grid-content table');
-        this.gridHeaderElement = this.gridContainer.find('.app-grid-header table');
+
         // Remove the grid table element.
-        this.element.find('.table-container').remove();
-        this.element.append(this.gridContainer);
-        this.dataStatusContainer = $(statusContainer);
-        this.gridContainer.append(this.dataStatusContainer);
+        if ((this.options.isNavTypeScrollOrOndemand() && $tableContainer.length === 0) || (!this.options.isNavTypeScrollOrOndemand())) {
+            this.gridContainer = $(table);
+            this.gridElement = this.gridContainer.find('.app-grid-content table');
+            this.gridHeaderElement = this.gridContainer.find('.app-grid-header table');
+
+            this.element.find('.table-container').remove();
+            this.element.append(this.gridContainer);
+
+            /**
+             * bind on demand / scroll events to the table in case of dynamictable in render fn
+             * Render is called everytime when there is a change in dataset and the previously binded events are lost
+             */
+            if (this.options.isdynamictable) {
+                if (this.options.navigation === 'On-Demand') {
+                    this.options.addLoadMoreBtn();
+                } else if (this.options.navigation === 'Scroll') {
+                    this.options.bindScrollEvt();
+                }
+            }
+
+            this.dataStatusContainer = $(statusContainer);
+            this.gridContainer.append(this.dataStatusContainer);
+        }
+
+        if (this.options.isdynamictable) {
+            // clear the header html for removing exisitng colgroup
+            this.gridHeaderElement.empty();
+            this.gridElement.find('colgroup').remove();
+        }
         this._renderHeader();
         if (this.options.filtermode === this.CONSTANTS.SEARCH && (_.isEmpty(this.searchObj) || (this.searchObj && !this.searchObj.field && !this.searchObj.value))) {
             this._renderSearch();
