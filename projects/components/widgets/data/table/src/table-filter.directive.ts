@@ -40,20 +40,20 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
             currentVal = getSearchValue(_.get(obj, searchObj.field), searchObj.type);
         } else {
             currentVal = [];
-            _.forEach(obj, (val, key) => {                
+            _.forEach(obj, (val, key) => {
                 if ((_.includes(visibleCols, key))) {
                     currentVal.push(val);
-                } else { 
+                } else {
                     // WMS-22271 If the key is in nested key format (dot format)
-                    // Find all the indexes of the key in visiblecols and extract their values from obj 
+                    // Find all the indexes of the key in visiblecols and extract their values from obj
                     const colIndex = _.filter(_.range(visibleCols.length), (i) => visibleCols[i].includes(key));
                     _.forEach(colIndex, (index) => {
-                        const value = _.get(obj, visibleCols[index]); 
+                        const value = _.get(obj, visibleCols[index]);
                         if (currentVal.indexOf(value) < 0) {
                             currentVal.push(value);
                         }
                     });
-                }   
+                }
             });
             currentVal = currentVal.join(' ').toLowerCase(); // If field is not there, search on all the columns
         }
@@ -467,7 +467,7 @@ export class TableFilterSortDirective {
         }
         let filterFields = getClonedObject(searchSortObj);
         const dataSource = this.table.datasource;
-        if (!dataSource) {
+        if (!dataSource && !this.table.dataset) {
             return;
         }
         let output;
@@ -506,11 +506,11 @@ export class TableFilterSortDirective {
                 });
             });
         }
-        if (dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
+        if (dataSource && dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
             this.handleServerSideSearch(filterFields);
             return;
         }
-        if (dataSource.execute(DataSource.Operation.IS_API_AWARE) && dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
+        if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && dataSource.execute(DataSource.Operation.IS_PAGEABLE)) {
             this.handleSinglePageSearch(filterFields);
         } else {
             this.handleClientSideSortSearch(filterFields, e, type);
@@ -519,7 +519,7 @@ export class TableFilterSortDirective {
 
     private sortHandler(searchSortObj, e, type, statePersistenceTriggered?) {
         const dataSource = this.table.datasource;
-        if (!dataSource) {
+        if (!dataSource && !this.table.dataset) {
             return;
         }
         if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.table.navigation) < 0) {
@@ -535,7 +535,7 @@ export class TableFilterSortDirective {
         }
 
         // WMS-22387: For server side pagination, execute client side sorting
-        if (dataSource.execute(DataSource.Operation.IS_SORTABLE)) {
+        if (dataSource && dataSource.execute(DataSource.Operation.IS_SORTABLE)) {
             this.handleSeverSideSort(searchSortObj, e, statePersistenceTriggered);
         } else {
             this.handleClientSideSortSearch(searchSortObj, e, type);
