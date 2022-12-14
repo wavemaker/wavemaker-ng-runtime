@@ -456,7 +456,7 @@ copyLocale() {
         local mobileDest=./dist/bundles/wmmobile/locales
 
         local angularSrc=./node_modules/@angular/common/locales
-        local fullCalendarSrc=./node_modules/fullcalendar/libs/locales
+        local fullCalendarSrc=./node_modules/fullcalendar/locales
         local momentSrc=./node_modules/moment/locale
         local timezoneSrc=./node_modules/moment-timezone/builds/moment-timezone-with-data.js
 
@@ -465,6 +465,7 @@ copyLocale() {
         mkdir -p ${mobileDest}/angular
         mkdir -p ${mobileDest}/angular/global
         mkdir -p ${appDest}/fullcalendar
+        mkdir -p ${mobileDest}/fullcalendar
         mkdir -p ${appDest}/moment
         mkdir -p ${mobileDest}/moment
         mkdir -p ${appDest}/moment-timezone
@@ -483,6 +484,7 @@ copyLocale() {
         cp  ${appDest}/angular/global/*.js  ${mobileDest}/angular/global/
 
         cp ${fullCalendarSrc}/*.js ${appDest}/fullcalendar/
+        cp ${fullCalendarSrc}/*.js ${mobileDest}/fullcalendar/
 
         cp ${momentSrc}/*.js ${appDest}/moment/
         cp ${momentSrc}/*.js ${mobileDest}/moment/

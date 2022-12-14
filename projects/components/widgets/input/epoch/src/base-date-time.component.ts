@@ -345,20 +345,20 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     * This method sets the mouse events to Datepicker popup. These events are required when we navigate date picker through mouse.
      */
     private addDatepickerMouseEvents() {
-        const datePikcerHead = $(`.bs-datepicker-head`);
-        datePikcerHead.find(`.previous`).click((event) => {
+        const datePickerHead = $(`.bs-datepicker-head`);
+        datePickerHead.find(`.previous`).click((event) => {
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForDate(-1);
             }
         });
-        datePikcerHead.find(`.next`).click((event) => {
+        datePickerHead.find(`.next`).click((event) => {
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForDate(1);
             }
         });
-        datePikcerHead.find(`.current`).click((event) => {
+        datePickerHead.find(`.current`).click((event) => {
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForCurrentMonthOryear();
@@ -371,6 +371,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForMonthOrDay();
             }
         });
+        datePickerHead.find('.next').attr('aria-label', 'Next');
+        datePickerHead.find('.previous').attr('aria-label', 'Previous');
     }
 
     /**
