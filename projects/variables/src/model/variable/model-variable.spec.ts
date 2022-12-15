@@ -1,4 +1,4 @@
-import { ModelVariable} from '@wm/common/variables';
+import { ModelVariable} from '@wavemaker/variables';
 declare const _;
 describe('Model Variable dataset as list', () => {
     let modelVariable: ModelVariable;

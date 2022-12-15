@@ -22,7 +22,7 @@
             "@wm/http": "wm.http",
             "@wm/security":  "wm.security",
             "@wm/oAuth": "wm.oAuth",
-            "@wm/common/variables": "wm_common_variables"
+            "@wavemaker/variables": "wm.variables"
         }
     }
 }

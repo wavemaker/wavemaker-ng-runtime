@@ -4,7 +4,7 @@ import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpRespon
 import { Observable, Subject } from 'rxjs';
 
 import { AbstractHttpService, getValidJSON, replace, isNumber, isBoolean } from '@wm/core';
-import { HttpClientService } from '@wm/common/variables';
+import { HttpClientService } from '@wavemaker/variables';
 
 declare const _;
 

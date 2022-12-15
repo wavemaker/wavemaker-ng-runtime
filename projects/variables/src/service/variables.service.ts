@@ -13,7 +13,7 @@ import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
 
 import { VariableFactory } from '../factory/variable.factory';
-import { wmSetDependency, BaseAction, getTarget, setValueToNode } from '@wm/common/variables';
+import { wmSetDependency, BaseAction, getTarget, setValueToNode } from '@wavemaker/variables';
 import {setDependency, simulateFileDownload} from '../util/variable/variables.utils';
 import { MetadataService } from './metadata-service/metadata.service';
 import { VARIABLE_CONSTANTS } from '../constants/variables.constants';

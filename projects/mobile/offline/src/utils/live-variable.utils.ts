@@ -1,6 +1,6 @@
 import { from } from 'rxjs';
 
-import { LVService } from '@wm/common/variables';
+import { LVService } from '@wavemaker/variables';
 
 import { NetworkService } from '@wm/mobile/core';
 import { AbstractHttpService, noop, triggerFn } from '@wm/core';
