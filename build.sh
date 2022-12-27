@@ -650,6 +650,7 @@ bundleMobileLibs() {
         ./projects/swipey/src/swipey.jquery.plugin.js \
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ./node_modules/imask/dist/imask.min.js \
+        ../wavemaker-ui-variables/dist/umd/index.js \
         ./node_modules/@metrichor/jmespath/dist/jmespath.umd.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
