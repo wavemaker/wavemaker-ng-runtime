@@ -45,7 +45,7 @@ import { AppExtComponent } from './components/app-ext.component';
 import { MobileHttpInterceptor } from './services/http-interceptor.service';
 import { WebProcessService } from './services/webprocess.service';
 
-declare const $, navigator, _;
+declare const $, navigator, _, cordova;
 
 export const MAX_WAIT_TIME_4_OAUTH_MESSAGE = 60000;
 
@@ -118,6 +118,9 @@ export class MobileRuntimeModule {
             const unsubscribe = app.subscribe('pageReady', (page) => {
                 navigator.splashscreen.hide();
                 unsubscribe();
+            });
+            app.subscribe('userLoggedIn', () => {
+                cordova && cordova.wavemaker.syncCookies();
             });
             runtimeModule.handleKeyBoardClass();
             app.subscribe('device-file-download', (data) => {
