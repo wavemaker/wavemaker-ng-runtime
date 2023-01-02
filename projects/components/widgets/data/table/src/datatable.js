@@ -520,7 +520,7 @@ $.widget('wm.datatable', {
         var self = this;
 
         //When search or sort applied or dataset is updated, clear the tbody and render with filtered data
-        // Fix for [WMS-20689] 'isDataUpdatedByUser' flag is true when dataset is updated from script
+        // Fix for [WMS-23263] 'isDataUpdatedByUser' flag is true when dataset is updated from script
         if ((self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT || self.options.lastActionPerformed === self.options.ACTIONS.FILTER_CRITERIA || self.options.lastActionPerformed === self.options.ACTIONS.DATASET_UPDATE) && (self.options.isSearchTrigerred || self.options.isDatasetUpdated || self.options.isDataUpdatedByUser)) {
             $tbody.html('');
             // In case of on demand pagination, when the next page is not disabled show the loading/load more button accordingly
@@ -584,7 +584,7 @@ $.widget('wm.datatable', {
             }
         });
         // set last action performed to default and clear action row index, after generating templates
-        // Fix for [WMS-20689] For Dynamic table _getGridTemplate() is being called twice
+        // Fix for [WMS-23263] For Dynamic table _getGridTemplate() is being called twice
         // so reset the lastActionPerformed flag if it is not dynamic table
         if (!this.options.isdynamictable) {
             this.options.setLastActionPerformed(this.options.ACTIONS.DEFAULT);
@@ -3114,7 +3114,7 @@ $.widget('wm.datatable', {
 
 
         /*
-         *  Fix for [WMS-20689]: Append the table container template only for the first time for on-Demand or scroll pagination
+         *  Fix for [WMS-23263]: Append the table container template only for the first time for on-Demand or scroll pagination
          *  remove the grid table element if dataset is updated from script
          */
         if ((this.options.isNavTypeScrollOrOndemand() && (!$tableContainer.length || !this.options.isNextPageData)) || (!this.options.isNavTypeScrollOrOndemand())) {
@@ -3125,7 +3125,7 @@ $.widget('wm.datatable', {
             this.element.find('.table-container').remove();
             this.element.append(this.gridContainer);
         }
-        //  Fix for [WMS-20689]: reset the 'isNextPageData' flag
+        //  Fix for [WMS-23263]: reset the 'isNextPageData' flag
         this.options.setIsNextPageData(false);
         /**
          * bind on demand / scroll events to the table in case of dynamictable in render fn
@@ -3139,13 +3139,13 @@ $.widget('wm.datatable', {
             }
         }
 
-        // Fix for [WMS-20689]: Adding data status container
+        // Fix for [WMS-23263]: Adding data status container
         if (!this.gridContainer.find('.overlay').length) {
             this.dataStatusContainer = $(statusContainer);
             this.gridContainer.append(this.dataStatusContainer);
         }
 
-        //  Fix for [WMS-20689]: clear the header template for removing existing colgroup in case of dynamictable
+        //  Fix for [WMS-23263]: clear the header template for removing existing colgroup in case of dynamictable
         if (this.gridHeaderElement) {
            this.gridHeaderElement.empty();
            this.gridElement.find('colgroup').remove();

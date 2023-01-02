@@ -325,11 +325,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         setIsDatasetUpdated: (value) => {
             this.setDataGridOption('isDatasetUpdated', value);
         },
-        //  Fix for [WMS-20689]: 'isNextPageData' flag is set to true -> if user fetching the next page data by clicking onLoad more or scroll
+        //  Fix for [WMS-23263]: 'isNextPageData' flag is set to true -> if user fetching the next page data by clicking onLoad more or scroll
         setIsNextPageData: (value) => {
             this.setDataGridOption('isNextPageData', value);
         },
-        //  Fix for [WMS-20689]: 'isDataUpdatedByUser' flag is set to true -> if user changes the dataset from script
+        //  Fix for [WMS-23263]: 'isDataUpdatedByUser' flag is set to true -> if user changes the dataset from script
         setIsDataUpdatedByUser: (value) => {
             this.setDataGridOption('isDataUpdatedByUser', value);
         },
@@ -1172,7 +1172,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     // Fix for [WMS-22323]-this method is called when dataset is being updated
     setLastActionToDatasetUpdate() {
         this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.DATASET_UPDATE);
-        //  Fix for [WMS-20689]: reset currentPage to 1 as dataset is being changed
+        //  Fix for [WMS-23263]: reset currentPage to 1 as dataset is being changed
         this.gridOptions.setCurrentPage(1);
         this.gridOptions.setIsDatasetUpdated(true);
     }
