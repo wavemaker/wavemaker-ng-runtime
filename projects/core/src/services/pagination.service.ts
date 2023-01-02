@@ -185,6 +185,12 @@ export class PaginationService {
     public fetchNextDatasetOnScroll(dataNavigator, parent) {
         // Load next set of data only after the success of current call
         if (!parent.variableInflight) {
+            // Fix for [WMS-20689]: set 'isNextPageData' flag to true & 'isDataUpdatedByUser' to false as next page data is being rendered on Scroll
+            if (parent.widgetType === 'wm-table') {
+                // set isNextPageData flag to true as next page data is being rendered
+                parent.gridOptions.setIsNextPageData(true);
+                parent.gridOptions.setIsDataUpdatedByUser(false);
+            }
             dataNavigator.navigatePage('next');
         }
     }

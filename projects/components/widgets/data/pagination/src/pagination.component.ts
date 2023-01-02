@@ -190,7 +190,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         maxResults = (this.options && this.options.maxResults) || dataSize;
 
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
-        if (this.datasource && (this.datasource.execute(DataSource.Operation.IS_API_AWARE) || (this.parent.widgetType === 'wm-table' && _.get(this.parent, 'gridOptions.lastActionPerformed') === this.parent.gridOptions.ACTIONS.DATASET_UPDATE))) {
+        // Fix for [WMS-20689]: gridOptions.isNextPageData flag is false when dataset is changed from script, so setting current page to 1
+        if (this.datasource && (this.datasource.execute(DataSource.Operation.IS_API_AWARE) || (this.parent.widgetType === 'wm-table' && (_.get(this.parent, 'gridOptions.lastActionPerformed') === this.parent.gridOptions.ACTIONS.DATASET_UPDATE || !_.get(this.parent, 'gridOptions.isNextPageData'))))) {
             currentPage = 1;
         } else {
             currentPage = this.dn.currentPage || 1;

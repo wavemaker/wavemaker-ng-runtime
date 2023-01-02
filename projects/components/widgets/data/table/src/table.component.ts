@@ -127,7 +127,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     iconclass;
     ondemandmessage;
     _triggeredByUser;
-    isDataUpdatedByUser = true;
     isGridEditMode;
     loadingdatamsg;
     multiselect;
@@ -284,6 +283,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         lastActionPerformed: 'scroll',
         isSearchTrigerred: false,
         isDatasetUpdated: false,
+        isDataUpdatedByUser: false,
+        isNextPageData: undefined,
         ACTIONS: {
             'DELETE': 'delete',
             'EDIT': 'edit',
@@ -323,6 +324,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         setIsDatasetUpdated: (value) => {
             this.setDataGridOption('isDatasetUpdated', value);
+        },
+        //  Fix for [WMS-20689]: 'isNextPageData' flag is set to true -> if user fetching the next page data by clicking onLoad more or scroll
+        setIsNextPageData: (value) => {
+            this.setDataGridOption('isNextPageData', value);
+        },
+        //  Fix for [WMS-20689]: 'isDataUpdatedByUser' flag is set to true -> if user changes the dataset from script
+        setIsDataUpdatedByUser: (value) => {
+            this.setDataGridOption('isDataUpdatedByUser', value);
         },
         onDataRender: () => {
             this.ngZone.run(() => {
@@ -701,7 +710,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // function to add load more button to table
         addLoadMoreBtn: () => {
             this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
-                this.isDataUpdatedByUser = false;
+                // set 'isNextPageData' flag to true & 'isDataUpdatedByUser' to false as next page data is being rendered
+                this.gridOptions.setIsNextPageData(true);
+                this.gridOptions.setIsDataUpdatedByUser(false);
                 this.dataNavigator.navigatePage('next', $event);
                 this.isDataLoading = true;
             });
@@ -712,7 +723,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 // smoothscroll events will be binded.
                 // Added timeout as the table html is rendered at runtime
                 setTimeout(() => {
-                    this.isDataUpdatedByUser = false;
                     this.paginationService.bindScrollEvt(this, 'tbody', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
                 }, 0);
             }
@@ -1162,6 +1172,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     // Fix for [WMS-22323]-this method is called when dataset is being updated
     setLastActionToDatasetUpdate() {
         this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.DATASET_UPDATE);
+        //  Fix for [WMS-20689]: reset currentPage to 1 as dataset is being changed
+        this.gridOptions.setCurrentPage(1);
         this.gridOptions.setIsDatasetUpdated(true);
     }
 
@@ -1728,11 +1740,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (this.parentList && !this.datasource && _.startsWith(this.binddataset, 'item')) {
                     this.datasource = getDatasourceFromExpr(this.widget.$attrs.get('datasetboundexpr'), this);
                 }
-                // this.isDataUpdatedByUser is true when dataset is updated from script
-                if (this.isDataUpdatedByUser) {
-                    this.setLastActionToDatasetUpdate();
+                if (this.gridOptions.isNavTypeScrollOrOndemand()) {
+                    if (this.gridOptions.isNextPageData) {
+                        // when fetching next page data
+                        this.gridOptions.setIsDataUpdatedByUser(false);
+                    } else {
+                        // when dataset is updated from script
+                        this.gridOptions.setIsDataUpdatedByUser(true);
+                        this.setLastActionToDatasetUpdate();
+                        this.gridOptions.setIsNextPageData(false);
+                    }
                 }
-                this.isDataUpdatedByUser = true;
                 // for Static Variables with Retain State enabled, prevent Table from rendering more than once
                 if (!(_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none')) {
                     this.watchVariableDataSet(nv);

@@ -419,11 +419,15 @@ export class TableCUDDirective {
             }
         }
         this.table._triggeredByUser = true;
+        //  Fix for [WMS-20689]: set 'isDataUpdatedByUser' flag to false since dataset is not being updated from script
+        this.table.gridOptions.setIsDataUpdatedByUser(false);
     }
 
     addNewRow() {
         if (!this.table.isGridEditMode) { // If grid is already in edit mode, do not add new row
             this.table._triggeredByUser = true;
+            //  Fix for [WMS-20689]: set 'isDataUpdatedByUser' flag to false since dataset is not being updated from script
+            this.table.gridOptions.setIsDataUpdatedByUser(false);
             this.table.callDataGridMethod('addNewRow');
             if (this.table._liveTableParent) {
                 this.table._liveTableParent.addNewRow();
@@ -451,6 +455,8 @@ export class TableCUDDirective {
             });
         }
         this.table._triggeredByUser = true;
+        //  Fix for [WMS-20689]: set 'isDataUpdatedByUser' flag to false since dataset is not being updated from script
+        this.table.gridOptions.setIsDataUpdatedByUser(false);
     }
 
     // Function to hide the edited row
