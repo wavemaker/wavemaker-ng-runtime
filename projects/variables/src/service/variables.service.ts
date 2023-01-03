@@ -136,9 +136,9 @@ export class VariablesService {
                    varInstance.simulateFileDownload = simulateFileDownload;
                }
 
-           } else {
-               varInstance.init();
            }
+           varInstance.init();
+
             // if action type, put it in Actions namespace
             if (varInstance instanceof BaseAction) {
                 variableInstances.Actions[variableName] = varInstance;
