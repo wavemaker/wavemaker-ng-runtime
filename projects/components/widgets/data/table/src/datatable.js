@@ -29,6 +29,8 @@ $.widget('wm.datatable', {
         enableColumnSelection: false,
         multiselect: false,
         filterNullRecords: true,
+        navigation: '',
+        isdynamictable: '',
         cssClassNames: {
             'tableRow': 'app-datagrid-row',
             'headerCell': 'app-datagrid-header-cell',
@@ -518,7 +520,8 @@ $.widget('wm.datatable', {
         var self = this;
 
         //When search or sort applied or dataset is updated, clear the tbody and render with filtered data
-        if ((self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT || self.options.lastActionPerformed === self.options.ACTIONS.FILTER_CRITERIA || self.options.lastActionPerformed === self.options.ACTIONS.DATASET_UPDATE) && (self.options.isSearchTrigerred || self.options.isDatasetUpdated)) {
+        // Fix for [WMS-23263] 'isDataUpdatedByUser' flag is true when dataset is updated from script
+        if ((self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT || self.options.lastActionPerformed === self.options.ACTIONS.FILTER_CRITERIA || self.options.lastActionPerformed === self.options.ACTIONS.DATASET_UPDATE) && (self.options.isSearchTrigerred || self.options.isDatasetUpdated || self.options.isDataUpdatedByUser)) {
             $tbody.html('');
             // In case of on demand pagination, when the next page is not disabled show the loading/load more button accordingly
             if(this.options.navigation === 'On-Demand' && !this.options.isLastPage)
@@ -581,8 +584,13 @@ $.widget('wm.datatable', {
             }
         });
         // set last action performed to default and clear action row index, after generating templates
-        this.options.setLastActionPerformed(this.options.ACTIONS.DEFAULT);
-        this.options.clearActionRowIndex();
+        // Fix for [WMS-23263] For Dynamic table _getGridTemplate() is being called twice
+        // so reset the lastActionPerformed flag if it is not dynamic table
+        if (!this.options.isdynamictable) {
+            this.options.setLastActionPerformed(this.options.ACTIONS.DEFAULT);
+            this.options.setIsDataUpdatedByUser(false);
+            this.options.clearActionRowIndex();
+        }
         return $tbody;
     },
 
@@ -3098,18 +3106,50 @@ $.widget('wm.datatable', {
                 '</table></div></div><div class="app-grid-content"><table role="table" class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '" id="table_' + this.tableId + '">' +
                 '</table></div>' +
                 '</div>',
-            $statusContainer = $(statusContainer);
+            $statusContainer = $(statusContainer),
+            $tableContainer = this.element.find('.table-container');
+
         this._setStyles($statusContainer.find('div.overlay'), "display:none");
         this._setStyles($statusContainer.find('div.app-grid-content'), 'height:' + this.options.height + '; overflow-y: ' + overflow + ';');
 
-        this.gridContainer = $(table);
-        this.gridElement = this.gridContainer.find('.app-grid-content table');
-        this.gridHeaderElement = this.gridContainer.find('.app-grid-header table');
-        // Remove the grid table element.
-        this.element.find('.table-container').remove();
-        this.element.append(this.gridContainer);
-        this.dataStatusContainer = $(statusContainer);
-        this.gridContainer.append(this.dataStatusContainer);
+
+        /*
+         *  Fix for [WMS-23263]: Append the table container template only for the first time for on-Demand or scroll pagination
+         *  remove the grid table element if dataset is updated from script
+         */
+        if ((this.options.isNavTypeScrollOrOndemand() && (!$tableContainer.length || !this.options.isNextPageData)) || (!this.options.isNavTypeScrollOrOndemand())) {
+            this.gridContainer = $(table);
+            this.gridElement = this.gridContainer.find('.app-grid-content table');
+            this.gridHeaderElement = this.gridContainer.find('.app-grid-header table');
+
+            this.element.find('.table-container').remove();
+            this.element.append(this.gridContainer);
+        }
+        //  Fix for [WMS-23263]: reset the 'isNextPageData' flag
+        this.options.setIsNextPageData(false);
+        /**
+         * bind on demand / scroll events to the table in case of dynamictable in render fn
+         * Render is called everytime when there is a change in dataset and the previously binded events are lost
+         */
+        if (this.options.isdynamictable) {
+            if (this.options.navigation === 'On-Demand' && !this.element.find('.on-demand-datagrid').length) {
+                this.options.addLoadMoreBtn();
+            } else if (this.options.navigation === 'Scroll') {
+                this.options.bindScrollEvt();
+            }
+        }
+
+        // Fix for [WMS-23263]: Adding data status container
+        if (!this.gridContainer.find('.overlay').length) {
+            this.dataStatusContainer = $(statusContainer);
+            this.gridContainer.append(this.dataStatusContainer);
+        }
+
+        //  Fix for [WMS-23263]: clear the header template for removing existing colgroup in case of dynamictable
+        if (this.gridHeaderElement) {
+           this.gridHeaderElement.empty();
+           this.gridElement.find('colgroup').remove();
+        }
         this._renderHeader();
         if (this.options.filtermode === this.CONSTANTS.SEARCH && (_.isEmpty(this.searchObj) || (this.searchObj && !this.searchObj.field && !this.searchObj.value))) {
             this._renderSearch();
