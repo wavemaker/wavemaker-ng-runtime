@@ -82,7 +82,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             model = NaN;
         }
 
-        // On keypress, if the user types a decimal and is still active on the input do not throw error. 
+        // On keypress, if the user types a decimal and is still active on the input do not throw error.
         if (_.isNaN(model) && strVal[strVal.length - 1] === this.DECIMAL && this.ngModelOptions.updateOn === 'change' && this.$element.find('input:focus').length) {
             this.lastValIsDecimal = true;
         }
@@ -182,15 +182,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {number}
      */
     private parseNumber(val: string): number {
-        // WMS-22179: split number based on the decimal seperator in the val
-        let seperator;
-        if (val.indexOf(this.DECIMAL) > -1) {
-            seperator = this.DECIMAL;
-        } else {
-            seperator = '.';
-        }
+        // WMS-22179: split number based on the decimal separator in the val
         // splits string into two parts. decimal and number.
-        const parts = val.split(seperator);
+        const parts = val.split(this.inputmode === INPUTMODE.FINANCIAL ? (val.indexOf(this.DECIMAL) > -1 ? this.DECIMAL : '.') : this.DECIMAL);
         if (!parts.length) {
             return null;
         }
@@ -245,7 +239,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     private stepLength() {
         const stepLen = this.step.toString().split('.');
         if (stepLen.length === 1 ) {
-            return; 
+            return;
         } else {
             return stepLen[1].length;
         }
@@ -258,12 +252,12 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
        /**
      * @param value contains the value entered in the input box
-     * This function modifies the user input value, into financial mode. 
+     * This function modifies the user input value, into financial mode.
      * Number starts from highest precesion decimal, on typing number shifts to the left
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
-        // WMS-22355, Trigger change cb if value exists or value is empty but datavalue exists (when value is selected and deleted). 
+        // WMS-22355, Trigger change cb if value exists or value is empty but datavalue exists (when value is selected and deleted).
         if (isDefined(value) && (value !== '' || this.datavalue)) {
             this.handleChange(value);
         } else {
@@ -277,7 +271,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         let financialVal;
 
         /**
-         * If the value is entered by the user, format the input 
+         * If the value is entered by the user, format the input
          * If the value is provided as default value, skip formatting
          */
         if (this.isDefaultQuery) {
@@ -300,7 +294,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             this.handleChange(null);
         }
     }
-    
+
     // Input mode is financial and trailing zero is set to false, On focus set display val to fixed point notation and On blur strip trailing zeros
     // In currency, inputmode is natural and trailing zero and step are defined, on blur display val to fixed point notation and on focus strip the zeros
     public checkForTrailingZeros($event) {
@@ -318,7 +312,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             let numberfilter;
             if ((financialMode && $event.type === 'focus') || (this.isNaturalCurrency() && $event.type === 'blur')) {
                 numberfilter = `1.${stepVal}-${stepVal}`;
-            } 
+            }
             this.displayValue = this.transformNumber(this.datavalue, numberfilter);
         }
     }
@@ -355,7 +349,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         } else {
             proxyModel = this.proxyModel;
         }
-    
+
         let value;
 
         // if the number is not in range and when arrow buttons are pressed need to get appropriate number value.
@@ -425,7 +419,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         const validity = new RegExp(`^[\\d\\s-,.e+${this.GROUP}${this.DECIMAL}]$`, 'i');
         const inputValue = $event.target.value;
 
-        // when input mode is financial, do not restrict user on entering the value when step value limit is reached. 
+        // when input mode is financial, do not restrict user on entering the value when step value limit is reached.
         const skipStepValidation = this.inputmode === INPUTMODE.FINANCIAL;
 
         // Validates if user eneters more than 16 digits
@@ -471,7 +465,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         // Do not allow user to enter only space without any input value
         if (!inputValue && $event.code === 'Space') {
             return false;
-        } 
+        }
     }
 
     onBackspace($event) {
