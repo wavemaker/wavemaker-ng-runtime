@@ -89,7 +89,7 @@
     "cheerio": "1.0.0-rc.2",
     "codelyzer": "5.1.2",
     "compression-webpack-plugin": "4.0.1",
-    "core-js-builder": "2.5.7",
+    "core-js-builder": "3.27.1",
     "fs": "0.0.1-security",
     "fs-extra": "7.0.1",
     "istanbul-api": "1.2.2",
