@@ -1,7 +1,7 @@
-import { Component, Injector, NgZone, OnDestroy, OnInit, SecurityContext } from '@angular/core';
+import {Component, Injector, NgZone, OnDestroy, OnInit, Optional, SecurityContext} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { setAttr, setCSS, setHtml } from '@wm/core';
+import {setAttr, setCSS, setHtml, UserDefinedExecutionContext} from '@wm/core';
 import {APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, SanitizePipe, styler} from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
 
@@ -124,8 +124,8 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         }
     }
 
-    constructor(inj: Injector, private sanitizePipe: SanitizePipe, private ngZone: NgZone) {
-        super(inj, WIDGET_INFO);
+    constructor(inj: Injector, private sanitizePipe: SanitizePipe, private ngZone: NgZone, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_INFO, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
         overrideSummerNote();
     }

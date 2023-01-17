@@ -1,4 +1,13 @@
-import { Attribute, ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
+import {
+    Attribute,
+    ChangeDetectorRef,
+    Component,
+    Injector,
+    OnInit,
+    Optional,
+    SkipSelf,
+    ViewContainerRef
+} from '@angular/core';
 import { Router } from '@angular/router';
 
 import { addClass, App, removeClass, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
@@ -21,7 +30,11 @@ const NavClassMap = {
     selector: '[wmNav]',
     templateUrl: './nav.component.html',
     providers: [
-        provideAsWidgetRef(NavComponent)
+        provideAsWidgetRef(NavComponent),
+        {
+            provide: UserDefinedExecutionContext,
+            useExisting: NavComponent
+        }
     ]
 })
 export class NavComponent extends DatasetAwareNavComponent implements OnInit {
@@ -43,11 +56,11 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         inj: Injector,
         private cdRef: ChangeDetectorRef,
         private route: Router,
-        private userDefinedExecutionContext: UserDefinedExecutionContext,
         private app: App,
-        @Attribute('select.event') selectEventCB
+        @Attribute('select.event') selectEventCB,
+        @SkipSelf() @Optional() _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.disableMenuContext = !!selectEventCB;
         this.pageScope = this.viewParent;

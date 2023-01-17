@@ -153,8 +153,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     providers: [
         {provide: ɵDomSharedStylesHost, useClass: WMDomSharedStylesHost},
         {provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2}
-    ],
-    entryComponents: [CustomToasterComponent]
+    ]
 })
 export class RuntimeBaseModule {
 

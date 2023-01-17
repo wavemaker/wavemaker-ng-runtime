@@ -2,7 +2,7 @@ import { Injector } from '@angular/core';
 import { AbstractControl, Validator } from '@angular/forms';
 import { getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
-import { AbstractI18nService, isDefined } from '@wm/core';
+import {AbstractI18nService, isDefined, UserDefinedExecutionContext} from '@wm/core';
 import { IWidgetConfig, TrailingZeroDecimalPipe, INPUTMODE } from '@wm/components/base';
 
 import { BaseInput } from '../base/base-input';
@@ -36,10 +36,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     constructor(
         inj: Injector,
         config: IWidgetConfig,
+        _viewParent: UserDefinedExecutionContext,
         private i18nService: AbstractI18nService,
         private trailingZeroDecimalPipe: TrailingZeroDecimalPipe
     ) {
-        super(inj, config);
+        super(inj, config, _viewParent);
         this.selectedLocale = i18nService.getSelectedLocale();
         this.DECIMAL = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Decimal);
         this.GROUP = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Group);
@@ -182,9 +183,15 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {number}
      */
     private parseNumber(val: string): number {
-        // WMS-22179: split number based on the decimal separator in the val
+        // WMS-22179: split number based on the decimal seperator in the val
+        let seperator;
+        if (val.indexOf(this.DECIMAL) > -1) {
+            seperator = this.DECIMAL;
+        } else {
+            seperator = '.';
+        }
         // splits string into two parts. decimal and number.
-        const parts = val.split(this.inputmode === INPUTMODE.FINANCIAL ? (val.indexOf(this.DECIMAL) > -1 ? this.DECIMAL : '.') : this.DECIMAL);
+        const parts = val.split(seperator);
         if (!parts.length) {
             return null;
         }

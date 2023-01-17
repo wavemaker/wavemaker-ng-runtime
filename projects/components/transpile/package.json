@@ -1,3 +1,4 @@
 {
-    "name": "@wm/buildTask"
+    "name": "@wm/buildTask",
+    "sideEffects": false
 }

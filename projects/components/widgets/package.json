@@ -1,3 +1,7 @@
 {
-    "name": "@wm/components"
+    "name": "@wm/components",
+    "sideEffects": false,
+    "dependencies": {
+        "tslib": "^2.0.0"
+    }
 }

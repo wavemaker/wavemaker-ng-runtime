@@ -2,8 +2,8 @@
     "extends": "../../../tsconfig.json",
     "compilerOptions": {
         "outDir": "../../../out-tsc/lib",
-        "target": "es2015",
-        "module": "es2015",
+        "target": "es2020",
+        "module": "es2020",
         "moduleResolution": "node",
         "declaration": true,
         "sourceMap": true,
@@ -26,7 +26,8 @@
         "fullTemplateTypeCheck": false,
         "strictInjectionParameters": true,
         "enableResourceInlining": true,
-        "enableIvy": false
+        "enableIvy": true,
+        "compilationMode": "full"
     },
     "exclude": [
         "src/test.ts",

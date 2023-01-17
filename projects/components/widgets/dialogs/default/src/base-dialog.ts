@@ -1,12 +1,18 @@
-import { Injector, OnDestroy, TemplateRef, Injectable } from '@angular/core';
+import {Injector, OnDestroy, TemplateRef, Injectable, Inject, Optional} from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { Subscription } from 'rxjs';
 
-import {AbstractDialogService, closePopover, findRootContainer, generateGUId} from '@wm/core';
+import {
+    AbstractDialogService,
+    closePopover,
+    findRootContainer,
+    generateGUId,
+    UserDefinedExecutionContext
+} from '@wm/core';
 
-import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
+import { BaseComponent, IDialog, IWidgetConfig, WidgetConfig } from '@wm/components/base';
 import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
 
 declare const _;
@@ -59,10 +65,11 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
 
     protected constructor(
         inj: Injector,
-        widgetConfig: IWidgetConfig,
+        @Inject(WidgetConfig) config: IWidgetConfig,
+        _viewParent: UserDefinedExecutionContext,
         protected modalOptions: ModalOptions
     ) {
-        super(inj, widgetConfig);
+        super(inj, config, _viewParent);
         this.dialogService = inj.get(AbstractDialogService);
         this.bsModal = inj.get(BsModalService);
         const router = inj.get(Router);

@@ -1,6 +1,15 @@
-import { AfterContentInit, AfterViewInit, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Component,
+    ContentChildren,
+    Injector,
+    OnInit,
+    Optional,
+    QueryList
+} from '@angular/core';
 
-import { noop } from '@wm/core';
+import {noop, UserDefinedExecutionContext} from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './wizard.props';
@@ -69,10 +78,10 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         return this.currentStep.enableDone && this.currentStep.isValid;
     }
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, _viewParent, new Promise(res => resolveFn = res));
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
 
         this.promiseResolverFn = resolveFn;

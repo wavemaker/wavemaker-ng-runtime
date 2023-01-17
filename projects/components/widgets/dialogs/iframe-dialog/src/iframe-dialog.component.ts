@@ -1,6 +1,6 @@
-import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {Attribute, Component, Injector, OnInit, Optional, SkipSelf, TemplateRef, ViewChild} from '@angular/core';
 
-import { toBoolean } from '@wm/core';
+import {toBoolean, UserDefinedExecutionContext} from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -14,7 +14,11 @@ const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
     templateUrl: './iframe-dialog.component.html',
     providers: [
         provideAsWidgetRef(IframeDialogComponent),
-        provideAsDialogRef(IframeDialogComponent)
+        provideAsDialogRef(IframeDialogComponent),
+        {
+            provide: UserDefinedExecutionContext,
+            useExisting: IframeDialogComponent
+        }
     ]
 })
 export class IframeDialogComponent extends BaseDialog implements OnInit {
@@ -27,6 +31,7 @@ export class IframeDialogComponent extends BaseDialog implements OnInit {
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
         @Attribute('closable') closable: string | boolean,
+        @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
         if (modal === null || modal === undefined) {
             modal = false;
@@ -42,6 +47,7 @@ export class IframeDialogComponent extends BaseDialog implements OnInit {
         super(
             inj,
             WIDGET_INFO,
+            _viewParent,
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,

@@ -1,21 +1,7 @@
 {
     "name": "@wm/components/page",
-    "ngPackage": {
-        "dest": "../../../../../libraries/components/page/default",
-        "lib": {
-            "flatModuleFile": "index",
-            "entryFile": "./src/public_api.ts",
-            "umdId": "wm.components.page",
-            "umdModuleIds": {
-                "@angular/core": "ng.core",
-
-                "@swipey": "swipey",
-                "@wm/core": "wm.core",
-                "@wm/components/base": "wm.components.base"
-            }
-        }
-    },
+    "sideEffects": false,
     "dependencies": {
-      "tslib": "^2.0.0"
+        "tslib": "^2.0.0"
     }
 }

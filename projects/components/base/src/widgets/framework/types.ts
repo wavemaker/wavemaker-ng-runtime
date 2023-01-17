@@ -2,6 +2,8 @@ import { InjectionToken } from '@angular/core';
 
 import { BaseComponent } from '../common/base/base.component';
 
+export const WidgetConfig = new InjectionToken<IWidgetConfig>('WidgetConfig');
+
 export interface IWidgetConfig {
     widgetType: string;
     widgetSubType?: string;

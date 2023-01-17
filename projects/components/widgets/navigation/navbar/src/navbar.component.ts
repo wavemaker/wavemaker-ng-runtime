@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler, StylableComponent, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './navbar.props';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'navbar navbar-default app-navbar';
 const WIDGET_CONFIG = {widgetType: 'wm-navbar', hostClass: DEFAULT_CLS};
@@ -24,8 +25,8 @@ export class NavbarComponent extends StylableComponent implements AfterViewInit 
     public imgsrc: string;
     @ViewChild('navContent', {static: true}) private navContent: ElementRef;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 

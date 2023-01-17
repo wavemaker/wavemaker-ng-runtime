@@ -1,6 +1,6 @@
-import { Attribute, Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {Attribute, Component, ContentChild, Injector, OnInit, Optional, SkipSelf, TemplateRef, ViewChild} from '@angular/core';
 
-import { App, toBoolean } from '@wm/core';
+import {App, toBoolean, UserDefinedExecutionContext} from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -14,7 +14,11 @@ const WIDGET_INFO = {widgetType: 'wm-partialdialog'};
     templateUrl: './partial-dialog.component.html',
     providers: [
         provideAsWidgetRef(PartialDialogComponent),
-        provideAsDialogRef(PartialDialogComponent)
+        provideAsDialogRef(PartialDialogComponent),
+        {
+            provide: UserDefinedExecutionContext,
+            useExisting: PartialDialogComponent
+        }
     ]
 })
 export class PartialDialogComponent extends BaseDialog implements OnInit {
@@ -33,7 +37,8 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
         app: App,
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
-        @Attribute('closable') closable: string | boolean
+        @Attribute('closable') closable: string | boolean,
+        @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
         if (modal === null || modal === undefined) {
             modal = false;
@@ -49,6 +54,7 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
         super(
             inj,
             WIDGET_INFO,
+            _viewParent,
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,

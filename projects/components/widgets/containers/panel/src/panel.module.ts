@@ -20,8 +20,7 @@ const components = [
         WmComponentsModule
     ],
     declarations: [...components],
-    exports: [...components],
-    entryComponents: []
+    exports: [...components]
 })
 export class PanelModule {
 }

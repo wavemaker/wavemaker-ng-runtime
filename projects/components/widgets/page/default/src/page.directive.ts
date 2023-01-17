@@ -1,7 +1,7 @@
-import { AfterViewInit, Directive, Injector, OnDestroy } from '@angular/core';
+import {AfterViewInit, Directive, Injector, OnDestroy, Optional, SkipSelf} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import { EventNotifier, Viewport, ViewportEvent } from '@wm/core';
+import {EventNotifier, UserDefinedExecutionContext, Viewport, ViewportEvent} from '@wm/core';
 import { updateDeviceView, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './page.props';
@@ -31,8 +31,8 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
         }
     }
 
-    constructor(inj: Injector, private titleService: Title, private viewport: Viewport) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private titleService: Title, private viewport: Viewport, @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
     }
 
     /**

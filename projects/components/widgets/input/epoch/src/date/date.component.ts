@@ -1,10 +1,23 @@
-import { ChangeDetectorRef, Component, Inject, Injector, ViewChild } from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
-import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, getMomentLocaleObject, App } from '@wm/core';
+import {
+    adjustContainerPosition,
+    addEventListenerOnElement,
+    AppDefaults,
+    EVENT_LIFE,
+    FormWidgetType,
+    getDateObj,
+    getDisplayDateTimeFormat,
+    getFormattedDate,
+    adjustContainerRightEdges,
+    getMomentLocaleObject,
+    App,
+    UserDefinedExecutionContext
+} from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
@@ -86,9 +99,9 @@ export class DateComponent extends BaseDateTimeComponent {
         inj: Injector,
         private cdRef: ChangeDetectorRef,
         private appDefaults: AppDefaults,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
 
         // KeyEventsPlugin
@@ -266,7 +279,7 @@ export class DateComponent extends BaseDateTimeComponent {
             return;
         }
         this.focusDateInput(this.isOpen);
-        
+
         this.setDataValue(newVal);
     }
 

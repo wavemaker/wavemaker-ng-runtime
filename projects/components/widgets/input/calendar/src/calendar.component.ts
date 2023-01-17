@@ -1,8 +1,24 @@
-import { DatePickerInnerComponent } from 'ngx-bootstrap/datepicker/datepicker-inner.component';
+import {
+    Attribute,
+    AfterViewInit,
+    AfterContentInit,
+    Component,
+    ElementRef,
+    Injector,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation,
+    Optional
+} from '@angular/core';
 
-import { Attribute, AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-
-import {getClonedObject, getSessionStorageItem, AbstractI18nService, isMobileApp, isMobile} from '@wm/core';
+import {
+    getClonedObject,
+    getSessionStorageItem,
+    AbstractI18nService,
+    isMobileApp,
+    isMobile,
+    UserDefinedExecutionContext
+} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, createArrayFrom, getEvaluatedData, IWidgetConfig, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
@@ -84,8 +100,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     // The calendar element reference
     @ViewChild('calendar') _calendar: ElementRef;
     @ViewChild('datepicker') _datepicker: ElementRef;
-
-    public _datepickerInnerComponent: DatePickerInnerComponent;
 
     public selecteddates: any;
     public selecteddata: any;
@@ -374,8 +388,8 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
     }
 
-    constructor(inj: Injector, i18nService: AbstractI18nService) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, i18nService: AbstractI18nService, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         this.eventSources.push(this.dataSetEvents);
         const FullCalendar = window['FullCalendar'];

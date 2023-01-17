@@ -1,0 +1,8 @@
+{
+    "$schema": "../../../../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../../../../libraries/components/data/card",
+    "lib": {
+        "flatModuleFile": "index",
+        "entryFile": "./src/public_api.ts"
+    }
+}

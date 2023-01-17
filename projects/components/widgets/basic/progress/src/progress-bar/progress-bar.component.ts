@@ -1,6 +1,6 @@
-import { Attribute, Component, Injector } from '@angular/core';
+import {Attribute, Component, Injector, Optional} from '@angular/core';
 
-import { findValueOf, isDefined } from '@wm/core';
+import {findValueOf, isDefined, UserDefinedExecutionContext} from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './progress-bar.props';
@@ -61,8 +61,8 @@ export class ProgressBarComponent extends StylableComponent {
         displayValue: '0'
     }];
 
-    constructor(inj: Injector, @Attribute('dataset') dataset: string, @Attribute('dataset.bind') boundDataset: string) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Attribute('dataset') dataset: string, @Attribute('dataset.bind') boundDataset: string, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         // flag which determines whether dataset is provided or not
         this.hasDataset = !!(dataset || boundDataset);

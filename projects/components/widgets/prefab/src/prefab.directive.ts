@@ -1,6 +1,6 @@
-import { Attribute, ChangeDetectorRef, Directive, ElementRef, Injector, OnDestroy } from '@angular/core';
+import {Attribute, ChangeDetectorRef, Directive, ElementRef, Injector, OnDestroy, Optional} from '@angular/core';
 
-import { setCSS, noop } from '@wm/core';
+import {setCSS, noop, UserDefinedExecutionContext} from '@wm/core';
 
 import { PROP_TYPE, register, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { prefabProps } from './prefab.props';
@@ -24,12 +24,12 @@ export class PrefabDirective extends StylableComponent implements OnDestroy {
     name: string;
     propsReady: Function;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('prefabname') prefabName) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('prefabname') prefabName, @Optional() public _viewParent: UserDefinedExecutionContext) {
         const widgetType = `wm-prefab-${prefabName}`;
         const WIDGET_CONFIG = {widgetType, hostClass: DEFAULT_CLS};
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, _viewParent, new Promise(res => resolveFn = res));
         this.propsReady = resolveFn;
         this.prefabName = prefabName;
         this.widgetType = widgetType;

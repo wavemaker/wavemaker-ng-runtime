@@ -1,0 +1,7 @@
+{
+  "dest": "../../../../../libraries/mobile/components/page/left-panel",
+  "lib": {
+    "flatModuleFile": "index",
+    "entryFile": "./src/public_api.ts"
+  }
+}

@@ -1,7 +1,17 @@
-import { AfterViewInit, Attribute, Component, ElementRef, HostListener, Injector, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Attribute,
+    Component,
+    ElementRef,
+    HostListener,
+    Injector,
+    OnInit,
+    Optional,
+    ViewChild
+} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { isDefined, toggleClass } from '@wm/core';
+import {isDefined, toggleClass, UserDefinedExecutionContext} from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '../base-form-custom.component';
 
@@ -79,9 +89,9 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         inj: Injector,
         @Attribute('checkedvalue') checkedVal,
         @Attribute('uncheckedvalue') uncheckedVal,
-        @Attribute('type') public type
+        @Attribute('type') public type, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         this._checkedvalue = unStringify(checkedVal, true);
         this._uncheckedvalue = unStringify(uncheckedVal, false);

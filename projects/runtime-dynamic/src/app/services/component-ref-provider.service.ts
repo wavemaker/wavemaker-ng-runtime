@@ -1,7 +1,7 @@
 import {
     Compiler,
     Component,
-    CUSTOM_ELEMENTS_SCHEMA,
+    CUSTOM_ELEMENTS_SCHEMA, forwardRef,
     Injectable,
     Injector,
     NgModule,
@@ -78,16 +78,13 @@ class BaseDynamicComponent {
 }
 
 const getDynamicModule = (componentRef: any) => {
-    @NgModule({
+    return NgModule({
         declarations: [componentRef],
         imports: [
             RuntimeBaseModule
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-    })
-    class DynamicModule {}
-
-    return DynamicModule;
+    })(class DynamicModule {});
 };
 
 const getDynamicComponent = (
@@ -127,16 +124,6 @@ const getDynamicComponent = (
             break;
     }
 
-    @Component({
-        ...componentDef,
-        selector,
-        providers: [
-            {
-                provide: UserDefinedExecutionContext,
-                useExisting: DynamicComponent
-            }
-        ]
-    })
     class DynamicComponent extends BaseClass {
         pageName;
         partialName;
@@ -170,11 +157,21 @@ const getDynamicComponent = (
 
         // in preview mode, there will be no function registered. functions will be generated dynamically through $parseEvent and $parseExpr
         getExpressions() {
-            return {}
+            return {};
         }
     }
 
-    return DynamicComponent;
+    const component = Component({
+        ...componentDef,
+        selector,
+        providers: [
+            {
+                provide: UserDefinedExecutionContext,
+                useExisting: DynamicComponent
+            }
+        ]
+    });
+    return component;
 };
 
 @Injectable()
@@ -241,7 +238,8 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                 componentFactoryRef = this.compiler
                     .compileModuleAndAllComponentsSync(moduleDef)
                     .componentFactories
-                    .filter(factory => factory.componentType === componentDef)[0];
+                    .filter(factory => // @ts-ignore
+                        factory.componentType === componentDef)[0];
                 const updatedComponentName = (options && options['prefab']) ? options['prefab'] +  componentName : componentName;
                 componentFactoryRefCache.get(componentType).set(updatedComponentName, componentFactoryRef);
 

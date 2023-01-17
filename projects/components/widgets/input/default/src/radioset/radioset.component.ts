@@ -1,7 +1,7 @@
-import { Component, Injector } from '@angular/core';
+import {Component, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { setListClass } from '@wm/core';
+import {setListClass, UserDefinedExecutionContext} from '@wm/core';
 
 import { provideAsWidgetRef, styler, provideAs } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
@@ -30,8 +30,8 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
         this.multiple = false;
     }

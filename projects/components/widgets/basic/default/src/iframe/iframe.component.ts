@@ -1,7 +1,7 @@
-import { Component, Injector, SecurityContext } from '@angular/core';
+import {Component, Injector, Optional, SecurityContext} from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 
-import { encodeUrl, isInsecureContentRequest } from '@wm/core';
+import {encodeUrl, isInsecureContentRequest, UserDefinedExecutionContext} from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
 
 import { registerProps } from './iframe.props';
@@ -37,8 +37,8 @@ export class IframeComponent extends StylableComponent {
      */
     public showContentLoadError = false;
 
-    constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private trustAsPipe: TrustAsPipe, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
     }
 

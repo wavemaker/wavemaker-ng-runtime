@@ -14,8 +14,6 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { DatepickerModule as ngxDatepickerModule, } from 'ngx-bootstrap/datepicker';
-
 
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { PopoverModule as ngxPopoverModule } from 'ngx-bootstrap/popover';
@@ -113,6 +111,9 @@ import { ComponentRefProviderService } from './services/component-ref-provider.s
 import { PrefabConfigProviderService } from './services/prefab-config-provider.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {ConfirmDialogModule} from '@wm/components/dialogs/confirm-dialog';
+import {DesignDialogModule} from '@wm/components/dialogs/design-dialog';
+import {DialogModule} from '@wm/components/dialogs';
 
 export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
@@ -123,7 +124,6 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
 
 export const modalModule: ModuleWithProviders<any> = ModalModule.forRoot();
 export const bsDatePickerModule: ModuleWithProviders<any> = BsDatepickerModule.forRoot();
-export const datepickerModule: ModuleWithProviders<any> = ngxDatepickerModule.forRoot();
 export const timepickerModule: ModuleWithProviders<any> = ngxTimepickerModule.forRoot();
 export const bsDropdownModule: ModuleWithProviders<any> = BsDropdownModule.forRoot();
 export const paginationModule: ModuleWithProviders<any> = ngxPaginationModule.forRoot();
@@ -137,7 +137,6 @@ export const tooltipModule: ModuleWithProviders<any> = TooltipModule.forRoot();
 const componentsModule = [
     // NGX Bootstrap
     BsDatepickerModule,
-    ngxDatepickerModule,
     ngxTimepickerModule,
     BsDropdownModule,
     ngxPaginationModule,
@@ -230,7 +229,6 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
 
         modalModule,
         bsDatePickerModule,
-        datepickerModule,
         timepickerModule,
         bsDropdownModule,
         paginationModule,
@@ -246,7 +244,11 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         httpClientXsrfModule,
 
         MobileRuntimeDynamicModule,
-        WM_MODULES_FOR_ROOT
+        WM_MODULES_FOR_ROOT,
+
+        ConfirmDialogModule,
+        DesignDialogModule,
+        DialogModule
     ],
     providers: [
         AppResourceManagerService,

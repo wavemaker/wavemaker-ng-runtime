@@ -1,6 +1,16 @@
-import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild, HostListener } from '@angular/core';
+import {
+    Attribute,
+    Component,
+    Injector,
+    OnInit,
+    TemplateRef,
+    ViewChild,
+    HostListener,
+    Optional,
+    SkipSelf
+} from '@angular/core';
 
-import { toBoolean } from '@wm/core';
+import {toBoolean, UserDefinedExecutionContext} from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -14,7 +24,11 @@ const WIDGET_INFO = {widgetType: 'wm-confirmdialog'};
     templateUrl: './confirm-dialog.component.html',
     providers: [
         provideAsWidgetRef(ConfirmDialogComponent),
-        provideAsDialogRef(ConfirmDialogComponent)
+        provideAsDialogRef(ConfirmDialogComponent),
+        {
+            provide: UserDefinedExecutionContext,
+            useExisting: ConfirmDialogComponent
+        }
     ]
 })
 export class ConfirmDialogComponent extends BaseDialog implements OnInit {
@@ -26,6 +40,7 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
         @Attribute('closable') closable: string | boolean,
+        @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
         if (modal === null || modal === undefined) {
             modal = false;
@@ -41,6 +56,7 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
         super(
             inj,
             WIDGET_INFO,
+            _viewParent,
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,

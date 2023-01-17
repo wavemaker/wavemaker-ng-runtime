@@ -1,6 +1,6 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 
-import { addClass } from '@wm/core';
+import {addClass, UserDefinedExecutionContext} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -23,8 +23,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class ContainerDirective extends BaseContainerComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         addClass(this.nativeElement, DEFAULT_CLS);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);

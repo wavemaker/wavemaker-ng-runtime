@@ -1,11 +1,37 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    Inject,
+    Injector,
+    NgZone,
+    OnDestroy,
+    Optional,
+    ViewChild
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, App, getMomentLocaleObject } from '@wm/core';
+import {
+    AbstractI18nService,
+    addClass,
+    addEventListenerOnElement,
+    adjustContainerPosition,
+    AppDefaults,
+    EVENT_LIFE,
+    FormWidgetType,
+    getDateObj,
+    getDisplayDateTimeFormat,
+    getFormattedDate,
+    getNativeDateObject,
+    adjustContainerRightEdges,
+    App,
+    getMomentLocaleObject,
+    UserDefinedExecutionContext
+} from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
@@ -123,9 +149,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         private cdRef: ChangeDetectorRef,
         private appDefaults: AppDefaults,
         app: App,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
         this.registerDestroyListener(() => this.clearTimeInterval());
         styler(this.nativeElement, this);
         this.app = app;
@@ -283,7 +309,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.cdRef.detectChanges();
 
         // Update timepicker with formatted time, when timezone is provided.
-        const timePickerFields = $('.bs-timepicker-field');       
+        const timePickerFields = $('.bs-timepicker-field');
         if (this.timeZone && (this as any).key === 'datetimestamp' && timePickerFields.length) {
             const formattedDate = getFormattedDate(this.datePipe, newVal, this.getTimePattern(), this.timeZone, (this as any).key, null, this);
             this.updateTimepickerFields(formattedDate, timePickerFields);

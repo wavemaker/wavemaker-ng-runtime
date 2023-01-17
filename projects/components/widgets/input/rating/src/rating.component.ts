@@ -1,7 +1,7 @@
-import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { generateGUId, setCSS, noop } from '@wm/core';
+import {generateGUId, setCSS, noop, UserDefinedExecutionContext} from '@wm/core';
 import { getOrderedDataset, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 
@@ -50,8 +50,8 @@ export class RatingComponent extends DatasetAwareFormComponent {
         this.calculateRatingsWidth();
     }
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         this._id = generateGUId();
         styler(this.nativeElement, this);
 
@@ -201,9 +201,9 @@ export class RatingComponent extends DatasetAwareFormComponent {
                 this.ratingsWidth = this.calculateRatingsWidth();
             }
         } else if (key === 'maxvalue') {
-            /** Storing the datavalue in temp variable and assiging back to datavalue 
-             * after default datalist is prepared to trigger Dataset Aware class select cycle 
-             * as the datavalue property change is triggering first rather than maxvalue 
+            /** Storing the datavalue in temp variable and assiging back to datavalue
+             * after default datalist is prepared to trigger Dataset Aware class select cycle
+             * as the datavalue property change is triggering first rather than maxvalue
              * in the rating widget is used inside a datatable
              */
             let tempDataValue = this.datavalue;

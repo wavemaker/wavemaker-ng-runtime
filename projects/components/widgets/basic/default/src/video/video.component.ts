@@ -1,6 +1,6 @@
-import { Component, Injector, SecurityContext } from '@angular/core';
+import {Component, Injector, Optional, SecurityContext} from '@angular/core';
 
-import { appendNode, createElement, removeNode, transformFileURI } from '@wm/core';
+import {appendNode, createElement, removeNode, transformFileURI, UserDefinedExecutionContext} from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
 
 import { registerProps } from './video.props';
@@ -36,8 +36,8 @@ export class VideoComponent extends StylableComponent {
     public oggformat: string;
     public videosupportmessage: any;
 
-    constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private trustAsPipe: TrustAsPipe, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
     }
 

@@ -3,6 +3,7 @@ import { Directive, Injector, OnInit, Optional, SkipSelf } from '@angular/core';
 import { BaseComponent,  provideAsWidgetRef, setHeaderConfigForTable} from '@wm/components/base';
 import { registerProps } from './table-column-group.props';
 import { TableComponent } from '../table.component';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
 
@@ -26,9 +27,9 @@ export class TableColumnGroupDirective extends BaseComponent implements OnInit {
     constructor(
         inj: Injector,
         @SkipSelf() @Optional() public group: TableColumnGroupDirective,
-        @Optional() public table: TableComponent
+        @Optional() public table: TableComponent, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
     }
 
     populateConfig() {

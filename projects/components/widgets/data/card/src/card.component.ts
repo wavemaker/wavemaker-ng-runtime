@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Injector, OnInit, Optional, SkipSelf, ViewChild} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler } from '@wm/components/base';
 import { MenuAdapterComponent } from '@wm/components/navigation/menu';
 
 import { registerProps } from './card.props';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-card card app-panel';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -15,7 +16,11 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmCard]',
     templateUrl: './card.component.html',
     providers: [
-        provideAsWidgetRef(CardComponent)
+        provideAsWidgetRef(CardComponent),
+        {
+            provide: UserDefinedExecutionContext,
+            useExisting: CardComponent
+        }
     ]
 })
 export class CardComponent extends MenuAdapterComponent implements OnInit, AfterViewInit {
@@ -27,11 +32,12 @@ export class CardComponent extends MenuAdapterComponent implements OnInit, After
     public iconclass: string;
     public iconurl: string;
     public actions: string;
+    public picturesource;
 
     @ViewChild('cardContainerWrapper', { static: true }) private cardContainerElRef: ElementRef;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
     }
 

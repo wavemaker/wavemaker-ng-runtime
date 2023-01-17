@@ -1,0 +1,7 @@
+{
+  "dest": "../../../../../libraries/mobile/components/page/default",
+  "lib": {
+    "flatModuleFile": "index",
+    "entryFile": "./src/public_api.ts"
+  }
+}

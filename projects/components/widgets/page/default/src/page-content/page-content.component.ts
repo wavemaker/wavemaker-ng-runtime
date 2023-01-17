@@ -1,6 +1,6 @@
-import { Component, Injector } from '@angular/core';
+import {Component, Injector, Optional} from '@angular/core';
 
-import { App, switchClass } from '@wm/core';
+import {App, switchClass, UserDefinedExecutionContext} from '@wm/core';
 import { APPLY_STYLES_TYPE, PullToRefresh, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './page-content.props';
@@ -22,8 +22,8 @@ export class PageContentComponent extends StylableComponent {
     private pulltorefresh: boolean;
     private childPullToRefresh: boolean;
 
-    constructor(inj: Injector, private app: App) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private app: App, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
 

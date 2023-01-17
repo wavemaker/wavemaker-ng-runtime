@@ -1,8 +1,25 @@
-import { AfterContentInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
+import {
+    AfterContentInit,
+    Attribute,
+    ChangeDetectorRef,
+    Component,
+    ContentChild,
+    ElementRef,
+    Injector,
+    Optional
+} from '@angular/core';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { $appDigest, AbstractDialogService, App, getClonedObject, isDefined, triggerFn } from '@wm/core';
+import {
+    $appDigest,
+    AbstractDialogService,
+    App,
+    getClonedObject,
+    isDefined,
+    triggerFn,
+    UserDefinedExecutionContext
+} from '@wm/core';
 import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { TableComponent } from '@wm/components/data/table';
 
@@ -43,9 +60,9 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         private dialogService: AbstractDialogService,
         private app: App,
         @Attribute('formlayout') layoutType: string,
-        @Attribute('dialogid') dialogId: string
+        @Attribute('dialogid') dialogId: string, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
         if (layoutType === 'dialog') {
             this.isLayoutDialog = true;

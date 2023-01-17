@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, Injector, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, Injector, Optional, ViewChild} from '@angular/core';
 import { CircleProgressComponent, CircleProgressOptionsInterface } from 'ng-circle-progress';
 
 
 import { IWidgetConfig, provideAsWidgetRef, IRedrawableComponent, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './progress-circle.props';
 import { calculatePercent, getDecimalCount, isPercentageValue } from '../utils';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 
@@ -62,8 +63,8 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     @ViewChild(CircleProgressComponent, { static: true }) circleRef: CircleProgressComponent;
 
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
         this.options = _.clone(DEFAULT_OPTIONS);
         this.redraw = _.debounce(this._redraw, 100);

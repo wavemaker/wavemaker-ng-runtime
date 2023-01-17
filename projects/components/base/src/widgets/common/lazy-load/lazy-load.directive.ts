@@ -1,6 +1,6 @@
-import { Directive, Injector, Input, OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
+import {Directive, Injector, Input, OnDestroy, Optional, TemplateRef, ViewContainerRef} from '@angular/core';
 
-import { $watch } from '@wm/core';
+import {$watch, UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 
@@ -16,9 +16,10 @@ export class LazyLoadDirective implements OnDestroy {
     constructor(
         inj: Injector,
         private templateRef: TemplateRef<any>,
-        private viewContainer: ViewContainerRef
+        private viewContainer: ViewContainerRef,
+        @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        this.viewParent = (inj as any).view.component;
+        this.viewParent = _viewParent;
         this.context = (inj as any).view.context;
     }
 

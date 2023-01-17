@@ -1,6 +1,6 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import {Component, Injector, OnInit, Optional} from '@angular/core';
 
-import { DataSource, validateDataSourceCtx } from '@wm/core';
+import {DataSource, UserDefinedExecutionContext, validateDataSourceCtx} from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe } from '@wm/components/base';
 
 import { registerProps } from './spinner.props';
@@ -51,8 +51,8 @@ export class SpinnerComponent extends StylableComponent implements OnInit {
         });
     }
 
-    constructor(inj: Injector, private imagePipe: ImagePipe) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private imagePipe: ImagePipe, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
     }
 

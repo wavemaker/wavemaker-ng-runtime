@@ -1,10 +1,11 @@
-import {Component, ElementRef, Injector, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Injector, OnInit, Optional, ViewChild} from '@angular/core';
 import {NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS} from '@angular/forms';
 
 import {IWidgetConfig, provideAs, provideAsWidgetRef} from '@wm/components/base';
 import {registerProps} from './input-text.props';
 import {BaseInput} from '../base/base-input';
 import { IMaskDirective } from 'angular-imask';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 
@@ -47,8 +48,8 @@ export class InputTextComponent extends BaseInput implements OnInit{
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('input', {read: IMaskDirective}) imask: IMaskDirective<any>;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
     }
 
     /* Define the property change handler. This function will be triggered when there is a change in the widget property */

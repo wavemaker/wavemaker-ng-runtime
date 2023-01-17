@@ -50,7 +50,7 @@ export class HttpServiceImpl extends AbstractHttpService {
         }
 
         // headers
-        if (headers) { 
+        if (headers) {
             Object.entries(headers).forEach(([k, v]) => {
                 if (isNumber(v) || isBoolean(v)) {
                     v = v.toString();
@@ -251,7 +251,7 @@ export class HttpServiceImpl extends AbstractHttpService {
      * trigger the registered methods on session timeout
      */
     on401() {
-        this.sessionTimeoutObservable.next();
+        this.sessionTimeoutObservable.next(undefined);
     }
 
     pushToSessionFailureQueue(callback) {

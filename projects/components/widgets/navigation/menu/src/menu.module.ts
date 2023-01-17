@@ -32,11 +32,7 @@ const components = [
         WmComponentsModule
     ],
     declarations: [...components],
-    exports: [...components],
-    entryComponents: [
-        MenuComponent,
-        MenuDropdownComponent
-    ]
+    exports: [...components]
 })
 export class MenuModule {
 }

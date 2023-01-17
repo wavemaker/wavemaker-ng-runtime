@@ -1,4 +1,4 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
+import {AfterViewInit, Injector, OnDestroy, ViewChild, Directive, Optional} from '@angular/core';
 import { Validator, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { getLocaleDayPeriods, FormStyle, TranslationWidth } from '@angular/common';
@@ -14,7 +14,7 @@ import {
     isIos,
     isMobile,
     isString,
-    setAttr
+    setAttr, UserDefinedExecutionContext
 } from '@wm/core';
 
 import { getContainerTargetClass, ToDatePipe } from '@wm/components/base';
@@ -100,8 +100,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private validateType: string;
     containerTarget: string;
 
-    constructor(inj: Injector, WIDGET_CONFIG) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, WIDGET_CONFIG, _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         this.i18nService = this.inj.get(AbstractI18nService);
         this.invokeEventCallback('beforeload');
 

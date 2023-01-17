@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import {Component, Inject, Injector, NgZone, OnDestroy, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
@@ -15,7 +15,7 @@ import {
     getDisplayDateTimeFormat,
     getFormattedDate,
     getNativeDateObject,
-    getMomentLocaleObject
+    getMomentLocaleObject, UserDefinedExecutionContext
 } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
@@ -135,9 +135,9 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         private ngZone: NgZone,
         private appDefaults: AppDefaults,
         app: App,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         // KeyEventsPlugin
         this.keyEventPlugin = evtMngrPlugins[1];

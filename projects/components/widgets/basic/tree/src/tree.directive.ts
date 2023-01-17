@@ -1,6 +1,6 @@
-import { Attribute, Directive, Injector } from '@angular/core';
+import {Attribute, Directive, Injector, Optional} from '@angular/core';
 
-import { $appDigest, $parseEvent, $parseExpr, getClonedObject } from '@wm/core';
+import {$appDigest, $parseEvent, $parseExpr, getClonedObject, UserDefinedExecutionContext} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
@@ -69,9 +69,9 @@ export class TreeDirective extends StylableComponent {
         @Attribute('nodelabel.bind') private bindnodelabel,
         @Attribute('nodeicon.bind') private bindnodeicon,
         @Attribute('nodechildren.bind') private bindnodechildren,
-        @Attribute('nodeid.bind') private bindnodeid
+        @Attribute('nodeid.bind') private bindnodeid, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_INFO);
+        super(inj, WIDGET_INFO, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.bindEvents();
     }

@@ -1,10 +1,11 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import {Component, Injector, Optional, ViewChild} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
 
 import { registerProps } from './slider.props';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 
 const DEFAULT_CLS = 'app-slider slider';
@@ -36,8 +37,8 @@ export class SliderComponent extends BaseFormCustomComponent {
 
     @ViewChild(NgModel) ngModel: NgModel;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
     }
 

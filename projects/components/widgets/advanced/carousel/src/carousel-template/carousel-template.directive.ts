@@ -1,7 +1,8 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 
 import { IWidgetConfig, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './carousel-template.props';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-carousel-item';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -15,8 +16,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class CarouselTemplateDirective extends StylableComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
     }
 }

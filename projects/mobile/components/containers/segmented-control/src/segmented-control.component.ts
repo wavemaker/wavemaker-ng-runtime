@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, Injector } from '@angular/core';
+import {AfterViewInit, Component, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { isNumber, setCSS, setCSSFromObj } from '@wm/core';
+import {isNumber, setCSS, setCSSFromObj, UserDefinedExecutionContext} from '@wm/core';
 
 import { registerProps } from './segmented-control.props';
 import { SegmentContentComponent } from './segment-content/segment-content.component';
@@ -24,8 +24,8 @@ export class SegmentedControlComponent extends StylableComponent implements Afte
     public contents: SegmentContentComponent[] = [];
     public currentSelectedIndex = 0;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 

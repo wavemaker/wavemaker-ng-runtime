@@ -1,6 +1,6 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 
-import { switchClass } from '@wm/core';
+import {switchClass, UserDefinedExecutionContext} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './right-panel.props';
@@ -20,8 +20,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class RightPanelDirective extends StylableComponent {
     static initializeProps = registerProps();
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }

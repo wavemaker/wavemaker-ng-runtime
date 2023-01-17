@@ -4,6 +4,7 @@ import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './table-row.props';
 import { TableComponent } from '../table.component';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-row', hostClass: ''};
 
@@ -27,9 +28,9 @@ export class TableRowDirective extends BaseComponent implements OnInit {
 
     constructor(
         inj: Injector,
-        @Optional() @SkipSelf() public table: TableComponent
+        @Optional() @SkipSelf() public table: TableComponent, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
     }
 
     populateConfig() {

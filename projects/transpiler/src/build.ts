@@ -365,7 +365,7 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
             markup = `<${nodeName} ${getAttrMarkup(attrMap)}>`;
         }
 
-        node.children.forEach((child) => {
+        node.children.forEach((child: Node | any) => {
             if(child.attrs) {
                 let showInDeviceAttr, accessRolesAttr, deferLoadAttr, showAttr;
                 child.attrs.forEach(function(attr){
