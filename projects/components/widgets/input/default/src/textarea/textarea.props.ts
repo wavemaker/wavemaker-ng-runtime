@@ -21,6 +21,7 @@ export const textareaProps = new Map(
         ['updateon', PROP_STRING],
         ['limitdisplaytext', PROP_STRING],
         ['charlength', PROP_NUMBER],
+        ['updatedelay', {value: 0, ...PROP_NUMBER}]
     ]
 );
 

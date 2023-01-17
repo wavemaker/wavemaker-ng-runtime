@@ -29,7 +29,8 @@ export const inputTextTypeProps = new Map(
         ['showdisplayformaton', {value: 'always', ...PROP_ANY}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', {value: 'text', ...PROP_STRING}],
-        ['updateon', PROP_STRING]
+        ['updateon', PROP_STRING],
+        ['updatedelay', {value: 0, ...PROP_NUMBER}]
     ]
 );
 
