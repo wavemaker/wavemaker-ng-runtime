@@ -1,10 +1,10 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
-const tagName = 'div';
+const tagName = 'ul';
 
 register('wm-tree', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmTree ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmTree class="ztree" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });
