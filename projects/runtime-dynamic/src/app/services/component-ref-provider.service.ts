@@ -78,16 +78,13 @@ class BaseDynamicComponent {
 }
 
 const getDynamicModule = (componentRef: any) => {
-    return (() => {
-        @NgModule({
-            declarations: [componentRef],
-            imports: [RuntimeBaseModule],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-        })
-        class DynamicModule {}
-
-        return DynamicModule;
-    })();
+    return NgModule({
+        declarations: [componentRef],
+        imports: [
+            RuntimeBaseModule
+        ],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+    })(class DynamicModule {});
 };
 
 const getDynamicComponent = (
@@ -127,59 +124,54 @@ const getDynamicComponent = (
             break;
     }
 
+    class DynamicComponent extends BaseClass {
+        pageName;
+        partialName;
+        prefabName;
 
-    return (() => {
-        @Component({
-            template,
-            styles: [css],
-            encapsulation: ViewEncapsulation.None,
-            selector,
-            providers: [
-                {
-                    provide: UserDefinedExecutionContext,
-                    useExisting: DynamicComponent
-                }
-            ]
-        })
-        class DynamicComponent extends BaseClass {
-            pageName;
-            partialName;
-            prefabName;
+        constructor(public injector: Injector) {
+            super();
 
-            constructor(public injector: Injector) {
-                super();
-
-                switch (type) {
-                    case ComponentType.PAGE:
-                        this.pageName = componentName;
-                        break;
-                    case ComponentType.PARTIAL:
-                        this.partialName = componentName;
-                        break;
-                    case ComponentType.PREFAB:
-                        this.prefabName = componentName;
-                        break;
-                }
-
-                super.init();
+            switch (type) {
+                case ComponentType.PAGE:
+                    this.pageName = componentName;
+                    break;
+                case ComponentType.PARTIAL:
+                    this.partialName = componentName;
+                    break;
+                case ComponentType.PREFAB:
+                    this.prefabName = componentName;
+                    break;
             }
 
-            evalUserScript(instance: any, appContext: any, utils: any) {
-                execScript(script, selector, context, instance, appContext, utils);
-            }
-
-            getVariables() {
-                return JSON.parse(variables);
-            }
-
-            // in preview mode, there will be no function registered. functions will be generated dynamically through $parseEvent and $parseExpr
-            getExpressions() {
-                return {}
-            }
+            super.init();
         }
 
-        return DynamicComponent;
-    })();
+        evalUserScript(instance: any, appContext: any, utils: any) {
+            execScript(script, selector, context, instance, appContext, utils);
+        }
+
+        getVariables() {
+            return JSON.parse(variables);
+        }
+
+        // in preview mode, there will be no function registered. functions will be generated dynamically through $parseEvent and $parseExpr
+        getExpressions() {
+            return {};
+        }
+    }
+
+    const component = Component({
+        ...componentDef,
+        selector,
+        providers: [
+            {
+                provide: UserDefinedExecutionContext,
+                useExisting: DynamicComponent
+            }
+        ]
+    });
+    return component;
 };
 
 @Injectable()
