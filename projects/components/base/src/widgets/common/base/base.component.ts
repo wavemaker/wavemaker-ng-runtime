@@ -218,7 +218,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             }
         }
         if (!hasImplicitContext || (!this.viewParent.widgetType)) {
-            this.context = (this.viewContainerRef as any)._hostLView.debug.context;
+            this.context = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
         } else {
             this.context = (this.viewContainerRef as any).parentInjector._lView[8];
         }
@@ -334,6 +334,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     protected initContext() {
         // const context = (this.inj as any).view.context;
         const context = this.context;
+
         const parentContexts = this.inj.get(Context, {});
 
         // assign the context property accordingly
@@ -598,12 +599,12 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Process the attributes
      */
     private processAttrs() {
-        const attrs = this.nativeElement.attributes;
-        let i = 0;
-        map(attrs, (attr: Attr) => {
-            this.$attrs.set(attr.name, attr.value);
-            this.processAttr(attr.name, attr.value);
-        });
+        const elDef = this.nativeElement;
+        Array.from(elDef.attributes).forEach(({ name, value }) => {
+            this.$attrs.set(name, value);
+            this.processAttr(name, value);
+        })
+
     }
 
     /**

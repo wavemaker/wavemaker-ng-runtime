@@ -18,7 +18,6 @@
         ]
     },
     "angularCompilerOptions": {
-        "enableIvy": true,
         "compilationMode": "full",
         "skipTemplateCodegen": true,
         "strictMetadataEmit": true,

@@ -1,7 +1,8 @@
-import { rollupGlobals } from '../rollup-utils';
+import rollupGlobals, {rollupExternals} from './rollup-utils.mjs';
 
 export default {
-    input: './dist/tmp/libs/ng-circle-progress/ng-circle-progress.js',
+    input: './node_modules/ng-circle-progress/fesm2015/ng-circle-progress.js',
+    external: [ ...rollupExternals ],
     output: {
         file: './dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js',
         format: 'umd',

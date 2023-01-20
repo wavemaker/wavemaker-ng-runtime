@@ -1,4 +1,5 @@
 {
+    "$schema": "../../../../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../../../../libraries/mobile/components/page/default",
   "lib": {
     "flatModuleFile": "index",

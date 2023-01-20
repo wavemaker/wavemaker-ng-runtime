@@ -25,9 +25,7 @@
         "strictMetadataEmit": true,
         "fullTemplateTypeCheck": false,
         "strictInjectionParameters": true,
-        "enableResourceInlining": true,
-        "enableIvy": true,
-        "compilationMode": "full"
+        "enableResourceInlining": true
     },
     "exclude": [
         "src/test.ts",

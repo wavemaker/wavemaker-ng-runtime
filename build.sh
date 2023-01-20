@@ -36,13 +36,14 @@ ROLLUP=./node_modules/.bin/rollup
 TERSER='./node_modules/.bin/terser -b ascii_only=true'
 NGC=./node_modules/.bin/ngc
 NG=./node_modules/.bin/ng
+NGPACKAGR=./node_modules/.bin/ng-packagr
 TSC=./node_modules/.bin/tsc
 COMPODOC=./node_modules/.bin/compodoc
 
 SUCCESS_FILE="BUILD_SUCCESS"
 
 if [[ ${force} == true ]]; then
-    ${RIMRAF} ./dist/
+    rm -rf ./dist/
 fi
 
 mkdir -p ./dist/tmp/libs/core-js
@@ -135,6 +136,22 @@ ngBuild() {
     if [[ "$?" -ne 0 ]]; then
         echo "--------------------Production Build--------------------"
         execCommand ng-build ${ngModuleName} "$NG build --configuration production $ngModuleName"
+        if [[ "$?" -eq "0" ]]; then
+            touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
+        fi
+        sourceModified=true
+    else
+        echo "No changes in $bundle"
+    fi
+}
+
+ngPackagrBuild() {
+    local bundle=$1
+    local sourceLocation=$2
+    local ngModuleName=$3;
+    buildNeeded ${bundle} ${sourceLocation}
+    if [[ "$?" -ne 0 ]]; then
+        $NGPACKAGR -p $sourceLocation/ng-package.json -c $sourceLocation/tsconfig.lib.prod.json
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/tmp/${bundle}_${SUCCESS_FILE}
         fi
@@ -314,100 +331,100 @@ bundleMobile() {
 }
 
 buildApp() {
-    ngBuild core projects/core '@wm/core'
-    ngBuild transpiler projects/transpiler '@wm/transpiler'
-    ngBuild swipey projects/swipey '@wm/swipey'
-    ngBuild http-service projects/http-service '@wm/http'
-    ngBuild oAuth projects/oAuth '@wm/oAuth'
-    ngBuild security projects/security '@wm/security'
-    ngBuild variables projects/variables '@wm/variables'
-    ngBuild components-base projects/components/base '@wm/components/base'
+    ngPackagrBuild core projects/core '@wm/core'
+    ngPackagrBuild transpiler projects/transpiler '@wm/transpiler'
+    ngPackagrBuild swipey projects/swipey '@wm/swipey'
+    ngPackagrBuild http-service projects/http-service '@wm/http'
+    ngPackagrBuild oAuth projects/oAuth '@wm/oAuth'
+    ngPackagrBuild security projects/security '@wm/security'
+    ngPackagrBuild variables projects/variables '@wm/variables'
+    ngPackagrBuild components-base projects/components/base '@wm/components/base'
 
-    ngBuild components-input projects/components/widgets/input '@wm/components/input'
-    ngBuild components-basic projects/components/widgets/basic '@wm/components/basic'
-    ngBuild components-basic-progress projects/components/widgets/basic/progress '@wm/components/basic/progress'
-    ngBuild components-basic-richtexteditor projects/components/widgets/basic/rich-text-editor '@wm/components/basic/rich-text-editor'
-    ngBuild components-basic-search projects/components/widgets/basic/search '@wm/components/basic/search'
-    ngBuild components-basic-tree projects/components/widgets/basic/tree '@wm/components/basic/tree'
+    ngPackagrBuild components-input projects/components/widgets/input/default '@wm/components/input'
+    ngPackagrBuild components-basic projects/components/widgets/basic/default '@wm/components/basic'
+    ngPackagrBuild components-basic-progress projects/components/widgets/basic/progress '@wm/components/basic/progress'
+    ngPackagrBuild components-basic-richtexteditor projects/components/widgets/basic/rich-text-editor '@wm/components/basic/rich-text-editor'
+    ngPackagrBuild components-basic-search projects/components/widgets/basic/search '@wm/components/basic/search'
+    ngPackagrBuild components-basic-tree projects/components/widgets/basic/tree '@wm/components/basic/tree'
 
-    ngBuild components-input-calendar projects/components/widgets/input/calendar '@wm/components/input/calendar'
-    ngBuild components-input-chips projects/components/widgets/input/chips '@wm/components/input/chips'
-    ngBuild components-input-colorpicker projects/components/widgets/input/color-picker '@wm/components/input/color-picker'
-    ngBuild components-input-currency projects/components/widgets/input/currency '@wm/components/input/currency'
-    ngBuild components-input-epoch projects/components/widgets/input/epoch '@wm/components/input/epoch'
-    ngBuild components-input-fileupload projects/components/widgets/input/file-upload '@wm/components/input/file-upload'
-    ngBuild components-input-rating projects/components/widgets/input/rating '@wm/components/input/rating'
-    ngBuild components-input-slider projects/components/widgets/input/slider '@wm/components/input/slider'
+    ngPackagrBuild components-input-calendar projects/components/widgets/input/calendar '@wm/components/input/calendar'
+    ngPackagrBuild components-input-chips projects/components/widgets/input/chips '@wm/components/input/chips'
+    ngPackagrBuild components-input-colorpicker projects/components/widgets/input/color-picker '@wm/components/input/color-picker'
+    ngPackagrBuild components-input-currency projects/components/widgets/input/currency '@wm/components/input/currency'
+    ngPackagrBuild components-input-epoch projects/components/widgets/input/epoch '@wm/components/input/epoch'
+    ngPackagrBuild components-input-fileupload projects/components/widgets/input/file-upload '@wm/components/input/file-upload'
+    ngPackagrBuild components-input-rating projects/components/widgets/input/rating '@wm/components/input/rating'
+    ngPackagrBuild components-input-slider projects/components/widgets/input/slider '@wm/components/input/slider'
 
-    ngBuild components-charts projects/components/widgets/chart '@wm/components/chart'
+    ngPackagrBuild components-charts projects/components/widgets/chart '@wm/components/chart'
 
-    ngBuild components-navigation-menu projects/components/widgets/navigation/menu '@wm/components/navigation/menu'
-    ngBuild components-navigation-navbar projects/components/widgets/navigation/navbar '@wm/components/navigation/navbar'
-    ngBuild components-navigation-breadcrumb projects/components/widgets/navigation/breadcrumb '@wm/components/navigation/breadcrumb'
-    ngBuild components-navigation-popover projects/components/widgets/navigation/popover '@wm/components/navigation/popover'
+    ngPackagrBuild components-navigation-menu projects/components/widgets/navigation/menu '@wm/components/navigation/menu'
+    ngPackagrBuild components-navigation-navbar projects/components/widgets/navigation/navbar '@wm/components/navigation/navbar'
+    ngPackagrBuild components-navigation-breadcrumb projects/components/widgets/navigation/breadcrumb '@wm/components/navigation/breadcrumb'
+    ngPackagrBuild components-navigation-popover projects/components/widgets/navigation/popover '@wm/components/navigation/popover'
 
-    ngBuild components-containers-accordion projects/components/widgets/containers/accordion '@wm/components/containers/accordion'
-    ngBuild components-containers-linearlayout projects/components/widgets/containers/linear-layout '@wm/components/containers/linear-layout'
-    ngBuild components-containers-layoutgrid projects/components/widgets/containers/layout-grid '@wm/components/containers/layout-grid'
-    ngBuild components-containers-panel projects/components/widgets/containers/panel '@wm/components/containers/panel'
-    ngBuild components-containers-tabs projects/components/widgets/containers/tabs '@wm/components/containers/tabs'
-    ngBuild components-containers-tile projects/components/widgets/containers/tile '@wm/components/containers/tile'
-    ngBuild components-containers-wizard projects/components/widgets/containers/wizard '@wm/components/containers/wizard'
+    ngPackagrBuild components-containers-accordion projects/components/widgets/containers/accordion '@wm/components/containers/accordion'
+    ngPackagrBuild components-containers-linearlayout projects/components/widgets/containers/linear-layout '@wm/components/containers/linear-layout'
+    ngPackagrBuild components-containers-layoutgrid projects/components/widgets/containers/layout-grid '@wm/components/containers/layout-grid'
+    ngPackagrBuild components-containers-panel projects/components/widgets/containers/panel '@wm/components/containers/panel'
+    ngPackagrBuild components-containers-tabs projects/components/widgets/containers/tabs '@wm/components/containers/tabs'
+    ngPackagrBuild components-containers-tile projects/components/widgets/containers/tile '@wm/components/containers/tile'
+    ngPackagrBuild components-containers-wizard projects/components/widgets/containers/wizard '@wm/components/containers/wizard'
 
-    ngBuild components-dialogs projects/components/widgets/dialogs '@wm/components/dialogs'
-    ngBuild components-dialogs-alertdialog projects/components/widgets/dialogs/alert-dialog '@wm/components/dialogs/alert-dialog'
-    ngBuild components-dialogs-confirmdialog projects/components/widgets/dialogs/confirm-dialog '@wm/components/dialogs/confirm-dialog'
-    ngBuild components-dialogs-designdialog projects/components/widgets/dialogs/design-dialog '@wm/components/dialogs/design-dialog'
-    ngBuild components-dialogs-iframedialog projects/components/widgets/dialogs/iframe-dialog '@wm/components/dialogs/iframe-dialog'
-    ngBuild components-dialogs-partialdialog projects/components/widgets/dialogs/partial-dialog '@wm/components/dialogs/partial-dialog'
+    ngPackagrBuild components-dialogs projects/components/widgets/dialogs/default '@wm/components/dialogs'
+    ngPackagrBuild components-dialogs-alertdialog projects/components/widgets/dialogs/alert-dialog '@wm/components/dialogs/alert-dialog'
+    ngPackagrBuild components-dialogs-confirmdialog projects/components/widgets/dialogs/confirm-dialog '@wm/components/dialogs/confirm-dialog'
+    ngPackagrBuild components-dialogs-designdialog projects/components/widgets/dialogs/design-dialog '@wm/components/dialogs/design-dialog'
+    ngPackagrBuild components-dialogs-iframedialog projects/components/widgets/dialogs/iframe-dialog '@wm/components/dialogs/iframe-dialog'
+    ngPackagrBuild components-dialogs-partialdialog projects/components/widgets/dialogs/partial-dialog '@wm/components/dialogs/partial-dialog'
 
-    ngBuild components-page projects/components/widgets/page '@wm/components/page'
-    ngBuild components-page-footer projects/components/widgets/page/footer '@wm/components/page/footer'
-    ngBuild components-page-header projects/components/widgets/page/header '@wm/components/page/header'
-    ngBuild components-page-leftpanel projects/components/widgets/page/left-panel '@wm/components/page/left-panel'
-    ngBuild components-page-rightpanel projects/components/widgets/page/right-panel '@wm/components/page/right-panel'
-    ngBuild components-page-topnav projects/components/widgets/page/top-nav '@wm/components/page/top-nav'
+    ngPackagrBuild components-page projects/components/widgets/page/default '@wm/components/page'
+    ngPackagrBuild components-page-footer projects/components/widgets/page/footer '@wm/components/page/footer'
+    ngPackagrBuild components-page-header projects/components/widgets/page/header '@wm/components/page/header'
+    ngPackagrBuild components-page-leftpanel projects/components/widgets/page/left-panel '@wm/components/page/left-panel'
+    ngPackagrBuild components-page-rightpanel projects/components/widgets/page/right-panel '@wm/components/page/right-panel'
+    ngPackagrBuild components-page-topnav projects/components/widgets/page/top-nav '@wm/components/page/top-nav'
 
-    ngBuild components-prefab projects/components/widgets/prefab '@wm/components/prefab'
+    ngPackagrBuild components-prefab projects/components/widgets/prefab '@wm/components/prefab'
 
-    ngBuild components-data-card projects/components/widgets/data/card '@wm/components/data/card'
-    ngBuild components-data-pagination projects/components/widgets/data/pagination '@wm/components/data/pagination'
-    ngBuild components-data-list projects/components/widgets/data/list '@wm/components/data/list'
-    ngBuild components-data-table projects/components/widgets/data/table '@wm/components/data/table'
-    ngBuild components-data-livetable projects/components/widgets/data/live-table '@wm/components/data/live-table'
-    ngBuild components-data-form projects/components/widgets/data/form '@wm/components/data/form'
+    ngPackagrBuild components-data-card projects/components/widgets/data/card '@wm/components/data/card'
+    ngPackagrBuild components-data-pagination projects/components/widgets/data/pagination '@wm/components/data/pagination'
+    ngPackagrBuild components-data-list projects/components/widgets/data/list '@wm/components/data/list'
+    ngPackagrBuild components-data-table projects/components/widgets/data/table '@wm/components/data/table'
+    ngPackagrBuild components-data-livetable projects/components/widgets/data/live-table '@wm/components/data/live-table'
+    ngPackagrBuild components-data-form projects/components/widgets/data/form '@wm/components/data/form'
 
-    ngBuild components-dialogs-logindialog projects/components/widgets/dialogs/login-dialog '@wm/components/dialogs/login-dialog'
+    ngPackagrBuild components-dialogs-logindialog projects/components/widgets/dialogs/login-dialog '@wm/components/dialogs/login-dialog'
 
-    ngBuild components-advanced-carousel projects/components/widgets/advanced/carousel '@wm/components/advanced/carousel'
-    ngBuild components-advanced-marquee projects/components/widgets/advanced/marquee '@wm/components/advanced/marquee'
-    ngBuild components-advanced-login projects/components/widgets/advanced/login '@wm/components/advanced/login'
+    ngPackagrBuild components-advanced-carousel projects/components/widgets/advanced/carousel '@wm/components/advanced/carousel'
+    ngPackagrBuild components-advanced-marquee projects/components/widgets/advanced/marquee '@wm/components/advanced/marquee'
+    ngPackagrBuild components-advanced-login projects/components/widgets/advanced/login '@wm/components/advanced/login'
 
-    ngBuild mobile-core projects/mobile/core '@wm/mobile/core'
-    ngBuild mobile-offline projects/mobile/offline '@wm/mobile/offline'
+    ngPackagrBuild mobile-core projects/mobile/core '@wm/mobile/core'
+    ngPackagrBuild mobile-offline projects/mobile/offline '@wm/mobile/offline'
 
-    ngBuild mobile-components-basic projects/mobile/components/basic/default '@wm/mobile/components/basic'
-    ngBuild mobile-components-basic-search projects/mobile/components/basic/search '@wm/mobile/components/basic/search'
+    ngPackagrBuild mobile-components-basic projects/mobile/components/basic/default '@wm/mobile/components/basic'
+    ngPackagrBuild mobile-components-basic-search projects/mobile/components/basic/search '@wm/mobile/components/basic/search'
 
-    ngBuild mobile-components-containers-segmented projects/mobile/components/containers/segmented-control '@wm/mobile/components/containers/segmented-control'
+    ngPackagrBuild mobile-components-containers-segmented projects/mobile/components/containers/segmented-control '@wm/mobile/components/containers/segmented-control'
 
-    ngBuild mobile-components-device-barcodescanner projects/mobile/components/device/barcode-scanner '@wm/mobile/components/device/barcode-scanner'
-    ngBuild mobile-components-device-camera projects/mobile/components/device/camera '@wm/mobile/components/device/camera'
+    ngPackagrBuild mobile-components-device-barcodescanner projects/mobile/components/device/barcode-scanner '@wm/mobile/components/device/barcode-scanner'
+    ngPackagrBuild mobile-components-device-camera projects/mobile/components/device/camera '@wm/mobile/components/device/camera'
 
-    ngBuild mobile-components-input-fileupload projects/mobile/components/input/file-upload '@wm/mobile/components/input/file-upload'
+    ngPackagrBuild mobile-components-input-fileupload projects/mobile/components/input/file-upload '@wm/mobile/components/input/file-upload'
 
-    ngBuild mobile-components-page projects/mobile/components/page '@wm/mobile/components/page'
-    ngBuild mobile-components-page-leftpanel projects/mobile/components/page/left-panel '@wm/mobile/components/page/left-panel'
-    ngBuild mobile-components-page-mobilenavbar projects/mobile/components/page/mobile-navbar '@wm/mobile/components/page/mobile-navbar'
-    ngBuild mobile-components-page-tabbar projects/mobile/components/page/tab-bar '@wm/mobile/components/page/tab-bar'
+    ngPackagrBuild mobile-components-page projects/mobile/components/page/default '@wm/mobile/components/page'
+    ngPackagrBuild mobile-components-page-leftpanel projects/mobile/components/page/left-panel '@wm/mobile/components/page/left-panel'
+    ngPackagrBuild mobile-components-page-mobilenavbar projects/mobile/components/page/mobile-navbar '@wm/mobile/components/page/mobile-navbar'
+    ngPackagrBuild mobile-components-page-tabbar projects/mobile/components/page/tab-bar '@wm/mobile/components/page/tab-bar'
 
-    ngBuild mobile-components-data-medialist projects/mobile/components/data/media-list '@wm/mobile/components/data/media-list'
+    ngPackagrBuild mobile-components-data-medialist projects/mobile/components/data/media-list '@wm/mobile/components/data/media-list'
 
-    ngBuild mobile-variables projects/mobile/variables '@wm/mobile/variables'
-    ngBuild mobile-runtime projects/mobile/runtime '@wm/mobile/runtime'
-    ngBuild mobile-runtime-dynamic projects/mobile/runtime-dynamic '@wm/mobile/runtime/dynamic'
-    ngBuild mobile-placeholder-runtime projects/mobile/placeholder/runtime '@wm/mobile/placeholder/runtime'
-    ngBuild mobile-placeholder-runtimedynamic projects/mobile/placeholder/runtime-dynamic '@wm/mobile/placeholder/runtime/dynamic'
+    ngPackagrBuild mobile-variables projects/mobile/variables '@wm/mobile/variables'
+    ngPackagrBuild mobile-runtime projects/mobile/runtime '@wm/mobile/runtime'
+    ngPackagrBuild mobile-runtime-dynamic projects/mobile/runtime-dynamic '@wm/mobile/runtime/dynamic'
+    ngPackagrBuild mobile-placeholder-runtime projects/mobile/placeholder/runtime '@wm/mobile/placeholder/runtime'
+    ngPackagrBuild mobile-placeholder-runtimedynamic projects/mobile/placeholder/runtime-dynamic '@wm/mobile/placeholder/runtime/dynamic'
 
     buildNeeded components-transpilation projects/components/transpile
     if [[ $? -ne 0 ]]; then
@@ -418,10 +435,11 @@ buildApp() {
         sourceModified=true
     fi
 
-    ngBuild runtime-base projects/runtime-base '@wm/runtime/base'
-    ngBuild runtime-dynamic projects/runtime-dynamic '@wm/runtime/dynamic'
+    ngPackagrBuild runtime-base projects/runtime-base '@wm/runtime/base'
+    ngPackagrBuild runtime-dynamic projects/runtime-dynamic '@wm/runtime/dynamic'
 
     if [[ "${sourceModified}" == true ]]; then
+        buildWMComponentUmdLibs
         bundleWeb
         bundleMobile
     fi
@@ -495,7 +513,7 @@ copyLocale() {
 }
 
 buildCoreJs() {
-    execCommand "build" "core-js" "node ./core-js-builder.js"
+    execCommand "build" "core-js" "node ./config/core-js-builder.js"
 }
 
 buildTsLib() {
@@ -503,7 +521,30 @@ buildTsLib() {
 }
 
 buildNgxBootstrap() {
-    arr=(./node_modules/ngx-bootstrap/collapse/bundles/ngx-bootstrap-collapse.umd.js ./node_modules/ngx-bootstrap/chronos/bundles/ngx-bootstrap-chronos.umd.js ./node_modules/ngx-bootstrap/utils/bundles/ngx-bootstrap-utils.umd.js ./node_modules/ngx-bootstrap/positioning/bundles/ngx-bootstrap-positioning.umd.js ./node_modules/ngx-bootstrap/component-loader/bundles/ngx-bootstrap-component-loader.umd.js ./node_modules/ngx-bootstrap/dropdown/bundles/ngx-bootstrap-dropdown.umd.js ./node_modules/ngx-bootstrap/locale/bundles/ngx-bootstrap-locale.umd.js ./node_modules/ngx-bootstrap/buttons/bundles/ngx-bootstrap-buttons.umd.js ./node_modules/ngx-bootstrap/carousel/bundles/ngx-bootstrap-carousel.umd.js ./node_modules/ngx-bootstrap/mini-ngrx/bundles/ngx-bootstrap-mini-ngrx.umd.js ./node_modules/ngx-bootstrap/modal/bundles/ngx-bootstrap-modal.umd.js ./node_modules/ngx-bootstrap/pagination/bundles/ngx-bootstrap-pagination.umd.js ./node_modules/ngx-bootstrap/popover/bundles/ngx-bootstrap-popover.umd.js ./node_modules/ngx-bootstrap/progressbar/bundles/ngx-bootstrap-progressbar.umd.js ./node_modules/ngx-bootstrap/rating/bundles/ngx-bootstrap-rating.umd.js ./node_modules/ngx-bootstrap/sortable/bundles/ngx-bootstrap-sortable.umd.js ./node_modules/ngx-bootstrap/tabs/bundles/ngx-bootstrap-tabs.umd.js ./node_modules/ngx-bootstrap/timepicker/bundles/ngx-bootstrap-timepicker.umd.js ./node_modules/ngx-bootstrap/tooltip/bundles/ngx-bootstrap-tooltip.umd.js ./node_modules/ngx-bootstrap/typeahead/bundles/ngx-bootstrap-typeahead.umd.js ./node_modules/ngx-bootstrap/datepicker/bundles/ngx-bootstrap-datepicker.umd.js ./node_modules/ngx-bootstrap/accordion/bundles/ngx-bootstrap-accordion.umd.js)
+    execCommand "rollup" "ngx-bootstrap-libs" "${ROLLUP} -c ./config/rollup.ngxBootstrap.config.mjs"
+    arr=(./node_modules/ngx-bootstrap/collapse/bundles/ngx-bootstrap-collapse.umd.js \
+    ./node_modules/ngx-bootstrap/chronos/bundles/ngx-bootstrap-chronos.umd.js \
+    ./node_modules/ngx-bootstrap/utils/bundles/ngx-bootstrap-utils.umd.js \
+    ./node_modules/ngx-bootstrap/positioning/bundles/ngx-bootstrap-positioning.umd.js \
+    ./node_modules/ngx-bootstrap/component-loader/bundles/ngx-bootstrap-component-loader.umd.js \
+    ./node_modules/ngx-bootstrap/dropdown/bundles/ngx-bootstrap-dropdown.umd.js \
+    ./node_modules/ngx-bootstrap/locale/bundles/ngx-bootstrap-locale.umd.js \
+    ./node_modules/ngx-bootstrap/buttons/bundles/ngx-bootstrap-buttons.umd.js \
+    ./node_modules/ngx-bootstrap/carousel/bundles/ngx-bootstrap-carousel.umd.js \
+    ./node_modules/ngx-bootstrap/mini-ngrx/bundles/ngx-bootstrap-mini-ngrx.umd.js \
+    ./node_modules/ngx-bootstrap/focus-trap/bundles/ngx-bootstrap-focus-trap.umd.js \
+    ./node_modules/ngx-bootstrap/modal/bundles/ngx-bootstrap-modal.umd.js \
+    ./node_modules/ngx-bootstrap/pagination/bundles/ngx-bootstrap-pagination.umd.js \
+    ./node_modules/ngx-bootstrap/popover/bundles/ngx-bootstrap-popover.umd.js \
+    ./node_modules/ngx-bootstrap/progressbar/bundles/ngx-bootstrap-progressbar.umd.js \
+    ./node_modules/ngx-bootstrap/rating/bundles/ngx-bootstrap-rating.umd.js \
+    ./node_modules/ngx-bootstrap/sortable/bundles/ngx-bootstrap-sortable.umd.js \
+    ./node_modules/ngx-bootstrap/tabs/bundles/ngx-bootstrap-tabs.umd.js \
+    ./node_modules/ngx-bootstrap/timepicker/bundles/ngx-bootstrap-timepicker.umd.js \
+    ./node_modules/ngx-bootstrap/tooltip/bundles/ngx-bootstrap-tooltip.umd.js \
+    ./node_modules/ngx-bootstrap/typeahead/bundles/ngx-bootstrap-typeahead.umd.js \
+    ./node_modules/ngx-bootstrap/datepicker/bundles/ngx-bootstrap-datepicker.umd.js \
+    ./node_modules/ngx-bootstrap/accordion/bundles/ngx-bootstrap-accordion.umd.js)
     # Create the directory to place the concatinated ngx-bootstrap UMD files
     exec $(mkdir -p "./dist/tmp/libs/ngx-bootstrap")
     # Concatinated the all bootstrap umd files
@@ -514,18 +555,19 @@ buildNgxBootstrap() {
 
 }
 
-buildNgxToastr() {
-    execCommand "tsc" "ngx-toastr" "${TSC} --outDir dist/tmp/libs/ngx-toastr --target es5 ./node_modules/ngx-toastr/fesm2015/ngx-toastr.js --allowJs --skipLibCheck --module es2015"
-    execCommand "rollup" "ngx-toastr" "${ROLLUP} -c ./config/rollup.ngx-toastr.config.js --silent"
+buildUmdFiles() {
+    execCommand "rollup" "ngx-toastr" "${ROLLUP} -c ./config/rollup.ngx-toastr.config.mjs"
+    execCommand "rollup" "angular-websocket" "${ROLLUP} -c ./config/rollup.angular-websocket.config.mjs"
+    execCommand "rollup" "ng-circle-progress" "${ROLLUP} -c ./config/rollup.ng-circle-progress.config.mjs"
+    execCommand "rollup" "ngx-libs" "${ROLLUP} -c ./config/rollup.ngx-libs.config.mjs"
 }
 
-buildAngularWebSocket() {
-    execCommand "rollup" "angular-websocket" "${ROLLUP} -c ./config/rollup.angular-websocket.config.js --silent"
+buildAngularUmdLibs() {
+    execCommand "rollup" "ng-libs-umd" "${ROLLUP} -c ./config/rollup.ng-libs.config.mjs"
 }
 
-buildNgCircleProgressbar() {
-    execCommand "tsc" "ng-circle-progress" "${TSC} ./node_modules/ng-circle-progress/fesm2015/ng-circle-progress.js --target es5 --outDir dist/tmp/libs/ng-circle-progress --allowJs --skipLibCheck --module es2015"
-    execCommand "rollup" "ng-circle-progress" "${ROLLUP} -c ./config/rollup.ng-circle-progress.config.js --silent"
+buildWMComponentUmdLibs() {
+    execCommand "rollup" "wm-components-umd" "${ROLLUP} -c ./config/rollup.wm-components.config.mjs"
 }
 
 bundleWebLibs() {
@@ -535,18 +577,18 @@ bundleWebLibs() {
         ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/rxjs.umd.js \
+        ./node_modules/@angular/compiler/bundles/compiler.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
+        ./node_modules/@angular/common/bundles/common.umd.js \
         ./node_modules/@angular/animations/bundles/animations.umd.js \
         ./node_modules/@angular/animations/bundles/animations-browser.umd.js \
-        ./node_modules/@angular/common/bundles/common.umd.js \
-        ./node_modules/@angular/compiler/bundles/compiler.umd.js \
         ./node_modules/@angular/platform-browser/bundles/platform-browser.umd.js \
         ./node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js \
         ./node_modules/@angular/platform-browser/bundles/platform-browser-animations.umd.js \
         ./node_modules/@angular/common/bundles/common-http.umd.js \
-        ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
-        ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
+        ./node_modules/@angular/forms/bundles/forms.umd.js \
+        ./node_modules/ngx-toastr/bundles/ngx-toastr.umd.js \
         ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
         ./dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
@@ -616,7 +658,7 @@ bundleMobileLibs() {
         ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
-        ./dist/tmp/libs/ngx-toastr/ngx-toastr.umd.js \
+        ./node_modules/ngx-toastr/bundles/ngx-toastr.umd.js \
         ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
         ./dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js \
         ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
@@ -672,15 +714,14 @@ buildWebLibs() {
     buildCoreJs
     buildTsLib
     buildNgxBootstrap
-    buildNgxToastr
-    buildAngularWebSocket
-    buildNgCircleProgressbar
+    buildAngularUmdLibs
+    buildUmdFiles
 
     bundleWebLibs
 }
 
 buildIonicNative() {
-    execCommand "rollup" "awesome-cordova" "${ROLLUP} -c ./projects/mobile/awesome-cordova/rollup.awesome-cordova.config.js --silent"
+    execCommand "rollup" "awesome-cordova" "${ROLLUP} -c ./projects/mobile/awesome-cordova/rollup.awesome-cordova.config.mjs"
 }
 
 buildMobileLibs() {

@@ -97,7 +97,6 @@
         }
     },
     "angularCompilerOptions":{
-        "enableIvy": true,
         "compilationMode": "full"
     }
 }

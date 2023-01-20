@@ -1,5 +1,6 @@
 const CompressionPlugin = require(`compression-webpack-plugin`);
 const path = require(`path`);
+
 module.exports = {
     resolve:{
         alias:{

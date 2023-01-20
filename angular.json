@@ -118,8 +118,8 @@
                 }
               ],
               "optimization": false,
-              "outputHashing": "all",
-              "sourceMap": false,
+              "outputHashing": "none",
+              "sourceMap": true,
               "namedChunks": true,
               "aot": true,
               "extractLicenses": false,
@@ -132,7 +132,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "build-ng": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -214,18 +215,6 @@
           "options": {
             "browserTarget": "angular-app:build"
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -245,18 +234,6 @@
             "production": {
               "tsConfig": "projects/core/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/core/tsconfig.lib.json",
-              "projects/core/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -297,18 +274,6 @@
             ],
             "assets": []
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/base/tsconfig.lib.json",
-              "projects/components/base/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -328,18 +293,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/basic/default/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -361,18 +314,6 @@
               "tsConfig": "projects/components/widgets/basic/progress/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -392,18 +333,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/basic/rich-text-editor/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -425,18 +354,6 @@
               "tsConfig": "projects/components/widgets/basic/search/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -456,18 +373,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/basic/tree/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -489,18 +394,6 @@
               "tsConfig": "projects/components/widgets/input/default/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -520,18 +413,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/input/calendar/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -553,18 +434,6 @@
               "tsConfig": "projects/components/widgets/input/chips/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -584,18 +453,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/input/color-picker/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -617,18 +474,6 @@
               "tsConfig": "projects/components/widgets/input/currency/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -648,18 +493,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/input/epoch/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -681,18 +514,6 @@
               "tsConfig": "projects/components/widgets/input/file-upload/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -712,18 +533,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/input/rating/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -745,18 +554,6 @@
               "tsConfig": "projects/components/widgets/input/slider/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -776,18 +573,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/data/card/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -809,18 +594,6 @@
               "tsConfig": "projects/components/widgets/data/form/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -840,18 +613,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/data/list/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -873,18 +634,6 @@
               "tsConfig": "projects/components/widgets/data/pagination/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -904,18 +653,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/data/live-table/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -937,18 +674,6 @@
               "tsConfig": "projects/components/widgets/data/table/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -968,18 +693,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/chart/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1001,18 +714,6 @@
               "tsConfig": "projects/components/widgets/containers/accordion/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1032,18 +733,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/containers/layout-grid/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1065,18 +754,6 @@
               "tsConfig": "projects/components/widgets/containers/linear-layout/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1096,18 +773,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/containers/panel/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1129,18 +794,6 @@
               "tsConfig": "projects/components/widgets/containers/tabs/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1160,18 +813,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/containers/tile/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1193,18 +834,6 @@
               "tsConfig": "projects/components/widgets/containers/wizard/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1224,18 +853,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/navigation/breadcrumb/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1257,18 +874,6 @@
               "tsConfig": "projects/components/widgets/navigation/menu/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1288,18 +893,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/navigation/navbar/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1321,18 +914,6 @@
               "tsConfig": "projects/components/widgets/navigation/popover/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1352,18 +933,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/dialogs/default/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1385,18 +954,6 @@
               "tsConfig": "projects/components/widgets/dialogs/alert-dialog/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1416,18 +973,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/dialogs/confirm-dialog/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1449,18 +994,6 @@
               "tsConfig": "projects/components/widgets/dialogs/design-dialog/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1480,18 +1013,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/dialogs/iframe-dialog/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1513,18 +1034,6 @@
               "tsConfig": "projects/components/widgets/dialogs/login-dialog/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1544,18 +1053,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/dialogs/partial-dialog/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1577,18 +1074,6 @@
               "tsConfig": "projects/components/widgets/advanced/carousel/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1608,18 +1093,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/advanced/marquee/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1641,18 +1114,6 @@
               "tsConfig": "projects/components/widgets/advanced/login/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1672,18 +1133,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/page/default/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1705,18 +1154,6 @@
               "tsConfig": "projects/components/widgets/page/footer/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1736,18 +1173,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/page/header/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1769,18 +1194,6 @@
               "tsConfig": "projects/components/widgets/page/left-panel/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1800,18 +1213,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/page/right-panel/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1833,18 +1234,6 @@
               "tsConfig": "projects/components/widgets/page/top-nav/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1864,18 +1253,6 @@
             "production": {
               "tsConfig": "projects/components/widgets/prefab/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/components/widgets/tsconfig.lib.json",
-              "projects/components/widgets/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1897,18 +1274,6 @@
               "tsConfig": "projects/transpiler/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/transpiler/tsconfig.lib.json",
-              "projects/transpiler/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1928,18 +1293,6 @@
             "production": {
               "tsConfig": "projects/security/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/security/tsconfig.lib.json",
-              "projects/security/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -1961,18 +1314,6 @@
               "tsConfig": "projects/swipey/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/swipey/tsconfig.lib.json",
-              "projects/swipey/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -1993,18 +1334,6 @@
               "tsConfig": "projects/http-service/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/http-service/tsconfig.lib.json",
-              "projects/http-service/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2024,18 +1353,6 @@
             "production": {
               "tsConfig": "projects/oAuth/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/oAuth/tsconfig.lib.json",
-              "projects/oAuth/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -2071,18 +1388,6 @@
             "scripts": [],
             "assets": []
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/variables/tsconfig.lib.json",
-              "projects/variables/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2102,18 +1407,6 @@
             "production": {
               "tsConfig": "projects/mobile/core/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/core/tsconfig.lib.json",
-              "projects/mobile/core/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -2149,18 +1442,6 @@
             "scripts": [],
             "assets": []
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2181,18 +1462,6 @@
               "tsConfig": "projects/mobile/components/basic/search/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2212,18 +1481,6 @@
             "production": {
               "tsConfig": "projects/mobile/components/containers/segmented-control/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -2257,18 +1514,6 @@
             "scripts": [],
             "assets": []
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2288,18 +1533,6 @@
             "production": {
               "tsConfig": "projects/mobile/components/device/barcode-scanner/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -2321,18 +1554,6 @@
               "tsConfig": "projects/mobile/components/device/camera/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2352,18 +1573,6 @@
             "production": {
               "tsConfig": "projects/mobile/components/input/file-upload/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -2385,18 +1594,6 @@
               "tsConfig": "projects/mobile/components/page/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2417,18 +1614,6 @@
               "tsConfig": "projects/mobile/components/page/left-panel/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2448,18 +1633,6 @@
             "production": {
               "tsConfig": "projects/mobile/components/page/mobile-navbar/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -2493,18 +1666,6 @@
             "scripts": [],
             "assets": []
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/components/tsconfig.lib.json",
-              "projects/mobile/components/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2524,18 +1685,6 @@
             "production": {
               "tsConfig": "projects/mobile/offline/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/offline/tsconfig.lib.json",
-              "projects/mobile/offline/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -2557,18 +1706,6 @@
               "tsConfig": "projects/mobile/variables/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/variables/tsconfig.lib.json",
-              "projects/mobile/variables/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2588,18 +1725,6 @@
             "production": {
               "tsConfig": "projects/runtime-base/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/runtime-base/tsconfig.lib.json",
-              "projects/runtime-base/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -2621,18 +1746,6 @@
               "tsConfig": "projects/runtime-dynamic/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/runtime-dynamic/tsconfig.lib.json",
-              "projects/runtime-dynamic/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2652,18 +1765,6 @@
             "production": {
               "tsConfig": "projects/mobile/runtime/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/runtime/tsconfig.lib.json",
-              "projects/mobile/runtime/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
@@ -2685,18 +1786,6 @@
               "tsConfig": "projects/mobile/runtime-dynamic/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/runtime/tsconfig.lib.json",
-              "projects/mobile/runtime/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2717,18 +1806,6 @@
               "tsConfig": "projects/mobile/placeholder/runtime/tsconfig.lib.prod.json"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/placeholder/tsconfig.lib.json",
-              "projects/mobile/placeholder/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     },
@@ -2748,18 +1825,6 @@
             "production": {
               "tsConfig": "projects/mobile/placeholder/runtime-dynamic/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/mobile/placeholder/tsconfig.lib.json",
-              "projects/mobile/placeholder/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
