@@ -1108,21 +1108,24 @@ $.widget('wm.datatable', {
 
     /* Inserts a load more button at the end of the table when the pagination selected is on demand */
     addLoadMoreBtn : function (onDemandMsg, loadingdatamsg, cb) {
-        var self = this;
-        var $parenEl = $('<div class="on-demand-datagrid"><a class="app-button btn btn-block on-demand-load-btn"></a></div>');
-        var $btnEl = $parenEl.find('a');
-        $btnEl.append(onDemandMsg);
-        // Adding load more button in case of on demand pagination
-        this.element.find('.app-grid-content').append($parenEl);
-        // Adding click event to the button
-        $btnEl.on('click', function (e) {
-            if (cb && typeof cb === 'function') {
-                // when the button is clicked, hide the button and show loading indicator
-                $btnEl.hide();
-                self.showLoadingIndicator(loadingdatamsg, false);
-                cb(e);
-            }
-        });
+        // Show Load more button only if it not that last page
+        if (!this.options.isLastPage) {
+            var self = this;
+            var $parenEl = $('<div class="on-demand-datagrid"><a class="app-button btn btn-block on-demand-load-btn"></a></div>');
+            var $btnEl = $parenEl.find('a');
+            $btnEl.append(onDemandMsg);
+            // Adding load more button in case of on demand pagination
+            this.element.find('.app-grid-content').append($parenEl);
+            // Adding click event to the button
+            $btnEl.on('click', function (e) {
+                if (cb && typeof cb === 'function') {
+                    // when the button is clicked, hide the button and show loading indicator
+                    $btnEl.hide();
+                    self.showLoadingIndicator(loadingdatamsg, false);
+                    cb(e);
+                }
+            });
+        }
     },
 
     /* Shows loading indicator when clicked on load more button or in case of infinite scroll event is triggered */
