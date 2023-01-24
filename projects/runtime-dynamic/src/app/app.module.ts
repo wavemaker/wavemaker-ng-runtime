@@ -22,7 +22,7 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
 import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 
-import { App, getWmProjectProperties, PartialRefProvider } from '@wm/core';
+import {App, getWmProjectProperties, PartialRefProvider} from '@wm/core';
 // Basic widgets
 
 import { BasicModule } from '@wm/components/basic';
@@ -111,9 +111,6 @@ import { ComponentRefProviderService } from './services/component-ref-provider.s
 import { PrefabConfigProviderService } from './services/prefab-config-provider.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {ConfirmDialogModule} from '@wm/components/dialogs/confirm-dialog';
-import {DesignDialogModule} from '@wm/components/dialogs/design-dialog';
-import {DialogModule} from '@wm/components/dialogs';
 
 export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
@@ -244,17 +241,13 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         httpClientXsrfModule,
 
         MobileRuntimeDynamicModule,
-        WM_MODULES_FOR_ROOT,
-
-        ConfirmDialogModule,
-        DesignDialogModule,
-        DialogModule
+        WM_MODULES_FOR_ROOT
     ],
     providers: [
         AppResourceManagerService,
         { provide: AppJSProvider, useClass: AppJSProviderService },
         { provide: AppVariablesProvider, useClass: AppVariablesProviderService },
-        {provide: AppExtensionProvider,useClass:AppExtensionProviderService},
+        { provide: AppExtensionProvider,useClass:AppExtensionProviderService},
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
         { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService },

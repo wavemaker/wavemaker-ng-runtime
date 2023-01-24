@@ -74,7 +74,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     init() {
 
         this.App = inject(App);
-        this.containerWidget = inject(WidgetRef);
+        this.containerWidget = this.injector.get(WidgetRef);
         this.i18nService = inject(AbstractI18nService);
         this.scriptLoaderService = inject(ScriptLoaderService);
         this.Viewport = inject(Viewport);

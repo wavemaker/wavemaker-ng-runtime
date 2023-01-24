@@ -13,7 +13,6 @@ import {
 import { EventManager } from '@angular/platform-browser';
 
 import { ReplaySubject, Subject } from 'rxjs';
-import { map } from 'lodash';
 
 import {
     $invokeWatchers,

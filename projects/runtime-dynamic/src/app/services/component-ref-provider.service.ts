@@ -1,7 +1,7 @@
 import {
     Compiler,
     Component,
-    CUSTOM_ELEMENTS_SCHEMA, forwardRef,
+    CUSTOM_ELEMENTS_SCHEMA, forwardRef, Inject,
     Injectable,
     Injector,
     NgModule,
@@ -78,12 +78,12 @@ class BaseDynamicComponent {
 }
 
 const getDynamicModule = (componentRef: any) => {
-    return NgModule({
-        declarations: [componentRef],
-        imports: [
-            RuntimeBaseModule
-        ],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+        return NgModule({
+            declarations: [componentRef],
+            imports: [
+                RuntimeBaseModule,
+            ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
     })(class DynamicModule {});
 };
 
@@ -128,10 +128,9 @@ const getDynamicComponent = (
         pageName;
         partialName;
         prefabName;
-
-        constructor(public injector: Injector) {
+        constructor(@Inject(Injector) public injector: Injector) {
             super();
-
+            this.injector = injector;
             switch (type) {
                 case ComponentType.PAGE:
                     this.pageName = componentName;
@@ -170,7 +169,7 @@ const getDynamicComponent = (
                 useExisting: DynamicComponent
             }
         ]
-    });
+    })(DynamicComponent)
     return component;
 };
 

@@ -1,7 +1,8 @@
 {
-  "dest": "../../../../../libraries/mobile/components/page/mobile-navbar",
-  "lib": {
-    "flatModuleFile": "index",
-    "entryFile": "./src/public_api.ts"
-  }
+    "$schema": "../../../../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../../../../libraries/mobile/components/page/mobile-navbar",
+    "lib": {
+        "flatModuleFile": "index",
+        "entryFile": "./src/public_api.ts"
+    }
 }

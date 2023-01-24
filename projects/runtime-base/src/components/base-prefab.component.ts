@@ -59,7 +59,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     init() {
         this.App = this.injector.get(App);
 
-        this.containerWidget = inject(WidgetRef);
+        this.containerWidget = this.injector.get(WidgetRef);
         this.prefabMngr = inject(PrefabManagerService);
         this.i18nService = inject(AbstractI18nService);
         this.scriptLoaderService = inject(ScriptLoaderService);

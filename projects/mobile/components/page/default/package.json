@@ -1,3 +1,6 @@
 {
-    "name": "@wm/mobile/components/page"
+    "name": "@wm/mobile/components/page",
+    "dependencies": {
+        "tslib": "^2.0.0"
+    }
 }

@@ -14,7 +14,6 @@ export class LoginDialogDirective implements AfterViewInit, OnDestroy {
 
     constructor(@Self() @Inject(Context) private contexts: Array<any>,
                 @Self() private dialogRef: DialogRef<any>) {
-        console.log(dialogRef);
         this.contexts[0].doLogin = () => this.doLogin();
     }
 
