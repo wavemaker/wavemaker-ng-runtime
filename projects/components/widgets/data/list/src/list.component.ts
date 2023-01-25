@@ -95,6 +95,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public variableInflight;
     public name;
     public currentPage;
+    public tabindex;
 
     public handleHeaderClick: Function;
     public toggleAllHeaders: void;
@@ -182,7 +183,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         return this.getListItemByIndex(index);
     }
 
-    /** 
+    /**
      * Returns index of listItem(listItemDirective / listItemObject)
      * If item is a directive, index is fetched from listItems
      * If item is an object, index is fetched from fieldDefs

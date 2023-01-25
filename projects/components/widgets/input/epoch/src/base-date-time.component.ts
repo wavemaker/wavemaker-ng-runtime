@@ -879,7 +879,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
-    showCordovaDatePicker(mode = 'DATE_TIME', 
+    showCordovaDatePicker(mode = 'DATE_TIME',
         selectedDate = Date.now(),
         minDate?: number,
         maxDate?: number) {
@@ -899,10 +899,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             });
     }
 
-    focusDateInput(isPickerOpen) {
+    blurDateInput(isPickerOpen) {
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         if (isPickerOpen) {
-            setTimeout(() => displayInputElem.focus());
+            setTimeout(() => displayInputElem.blur());
         }
     }
 

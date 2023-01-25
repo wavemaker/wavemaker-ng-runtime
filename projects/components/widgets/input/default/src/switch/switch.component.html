@@ -1,6 +1,6 @@
 <div role="group" class="btn-group btn-group-justified">
     <a *ngFor="let opt of datasetItems; let $index = index;"
-       [title]="opt.label" focus-target
+       focus-target
        href="javascript:void(0);"
        class="btn btn-default"
        [name]="'wm-switch-' + opt.key"

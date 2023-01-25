@@ -242,13 +242,13 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         this.addDatepickerKeyboardEvents(this, true);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
-        this.focusDateInput(this.isDateOpen);
     }
 
     /**
      * This is an internal method to update the model
      */
     public onModelUpdate(newVal, type?) {
+
         if (type === 'date') {
             this.invalidDateTimeFormat = false;
             if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat) === this.displayValue) {
@@ -344,6 +344,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (parentEl.length > 0) {
             this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
         }
+        this.blurDateInput(this.isDateOpen);
     }
 
     public onDateChange($event, isNativePicker?: boolean) {
