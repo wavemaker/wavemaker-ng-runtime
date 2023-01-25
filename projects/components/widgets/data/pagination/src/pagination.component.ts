@@ -248,6 +248,11 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 this.setResult(newVal);
                 this.resetPageNavigation();
             }
+            if (this.navigation === 'Basic') {
+                _.forEach(this.nativeElement.getElementsByTagName('a'), (item) => {
+                    item.setAttribute('href', 'javascript:void(0);');
+                });
+            }
         } else {
             if (newVal && !_.isString(newVal)) {
                 this.setNonPageableData(newVal);

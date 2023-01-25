@@ -2729,6 +2729,7 @@ $.widget('wm.datatable', {
             $tbody = self.gridElement.find('> .app-datagrid-body'),
             $row = $($tbody.find('> tr.app-datagrid-row[data-row-id="'+ rowId +'"]'));
         $row.removeClass(self.options.cssClassNames.expandedRowClass);
+        $row.find( 'button, a').attr('aria-expanded', 'false').attr('aria-live', 'polite');
         if (this.options.onBeforeRowCollapse(e, rowData, rowId) === false) {
             return;
         }
@@ -2756,6 +2757,7 @@ $.widget('wm.datatable', {
         }
         if (isClosed) {
             $row.addClass(self.options.cssClassNames.expandedRowClass);
+            $row.find( 'button, a').attr('aria-expanded', 'true');
             if (e && self.preparedData[rowId]._selected) {
                 e.stopPropagation();
             }
