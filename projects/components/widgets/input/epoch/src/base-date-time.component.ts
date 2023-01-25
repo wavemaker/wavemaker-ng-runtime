@@ -905,10 +905,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             });
     }
 
-    focusDateInput(isPickerOpen) {
+    blurDateInput(isPickerOpen) {
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         if (isPickerOpen) {
-            setTimeout(() => displayInputElem.focus());
+            setTimeout(() => displayInputElem.blur());
         }
     }
 

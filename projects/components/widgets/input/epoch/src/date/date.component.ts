@@ -155,7 +155,6 @@ export class DateComponent extends BaseDateTimeComponent {
         this.addDatepickerKeyboardEvents(this, false);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
         adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
-        this.focusDateInput(this.isOpen);
     }
     onInputBlur($event) {
         if (!$($event.relatedTarget).hasClass('current-date')) {
@@ -171,6 +170,7 @@ export class DateComponent extends BaseDateTimeComponent {
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
         }
+        this.blurDateInput(this.isOpen);
     }
 
     // change and blur events are added from the template
@@ -265,8 +265,6 @@ export class DateComponent extends BaseDateTimeComponent {
             this._bsDefaultLoadCheck = false;
             return;
         }
-        this.focusDateInput(this.isOpen);
-        
         this.setDataValue(newVal);
     }
 

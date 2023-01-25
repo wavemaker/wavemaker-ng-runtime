@@ -240,7 +240,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         this.addDatepickerKeyboardEvents(this, true);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
-        this.focusDateInput(this.isDateOpen);
     }
 
     /**
@@ -283,7 +282,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.cdRef.detectChanges();
 
         // Update timepicker with formatted time, when timezone is provided.
-        const timePickerFields = $('.bs-timepicker-field');       
+        const timePickerFields = $('.bs-timepicker-field');
         if (this.timeZone && (this as any).key === 'datetimestamp' && timePickerFields.length) {
             const formattedDate = getFormattedDate(this.datePipe, newVal, this.getTimePattern(), this.timeZone, (this as any).key, null, this);
             this.updateTimepickerFields(formattedDate, timePickerFields);
@@ -384,6 +383,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (parentEl.length > 0) {
             this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
         }
+        this.blurDateInput(this.isDateOpen);
     }
 
     public onDateChange($event, isNativePicker?: boolean) {
