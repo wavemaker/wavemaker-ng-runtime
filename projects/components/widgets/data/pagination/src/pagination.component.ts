@@ -191,7 +191,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
 
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
         // Fix for [WMS-23263]: gridOptions.isNextPageData flag is false when dataset is changed from script, so setting current page to 1
-        if (this.datasource && (this.datasource.execute(DataSource.Operation.IS_API_AWARE) || (this.parent.widgetType === 'wm-table' && (_.get(this.parent, 'gridOptions.lastActionPerformed') === this.parent.gridOptions.ACTIONS.DATASET_UPDATE || !_.get(this.parent, 'gridOptions.isNextPageData'))))) {
+        if (this.datasource && (this.datasource.execute(DataSource.Operation.IS_API_AWARE) || (this.parent.widgetType === 'wm-table' && (this.parent.gridOptions.isNavTypeScrollOrOndemand() && (_.get(this.parent, 'gridOptions.lastActionPerformed') === this.parent.gridOptions.ACTIONS.DATASET_UPDATE || !_.get(this.parent, 'gridOptions.isNextPageData')))))) {
             currentPage = 1;
         } else {
             currentPage = this.dn.currentPage || 1;
