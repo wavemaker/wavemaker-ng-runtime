@@ -58,6 +58,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         if (this.autotrim && this.datavalue && _.isString(this.datavalue)) {
             this.datavalue = this.datavalue.trim();
         }
+
         this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
     }
 
