@@ -55,22 +55,10 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
 
     // invoke the change callback
     handleChange(newValue: any) {
-        // fix for [WMS-23157] Implementing Update Delay Property for text & textarea widgets
-        const debounce = _.toNumber(this.nativeElement.getAttribute('updatedelay')) || 0;
-        if (debounce === 0) {
-            this.datavalue = newValue;
-            if (this.autotrim && this.datavalue && _.isString(this.datavalue)) {
-                this.datavalue = this.datavalue.trim();
-            }
-            this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
-        } else {
-            setTimeout(() => {
-                this.datavalue = newValue;
-                if (this.autotrim && this.datavalue && _.isString(this.datavalue)) {
-                    this.datavalue = this.datavalue.trim();
-                }
-                this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
-            }, debounce);        }
+        if (this.autotrim && this.datavalue && _.isString(this.datavalue)) {
+            this.datavalue = this.datavalue.trim();
+        }
+        this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
     }
 
     // Change event is registered from the template, Prevent the framework from registering one more event

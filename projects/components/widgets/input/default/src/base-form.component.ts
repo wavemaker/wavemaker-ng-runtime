@@ -10,7 +10,6 @@ declare const _;
 export abstract class BaseFormComponent extends StylableComponent implements AfterViewInit{
 
     private dataval;
-    private _dataval;
     private prevDatavalue;
     protected binddatavalue: string;
     private datavaluesource: any;
@@ -26,22 +25,10 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
 
     set datavalue(datavalue) {
         this.dataval = datavalue;
-        // assigning default value of wiget to _dataval
-        if (this._dataval !== datavalue) {
-            this._dataval = datavalue;
-        }
     }
 
     get datavalue() {
         return this.dataval;
-    }
-
-    set _datavalue(datavalue) {
-        this._dataval = datavalue;
-    }
-
-    get _datavalue() {
-        return this._dataval;
     }
 
     /**
