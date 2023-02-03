@@ -27,7 +27,7 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
     set datavalue(datavalue) {
         this.dataval = datavalue;
         // assigning default value of widget to _dataval
-        if ((this.widget.widgetType === 'wm-input-text' || this.widget.widgetType === 'wm-textarea') && _.isUndefined(this._dataval)) {
+        if (_.isUndefined(this._dataval)) {
             this._dataval = datavalue;
         }
     }
