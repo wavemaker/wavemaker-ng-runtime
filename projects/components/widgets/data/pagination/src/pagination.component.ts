@@ -190,7 +190,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         maxResults = (this.options && this.options.maxResults) || dataSize;
 
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
-        if (this.datasource && (this.datasource.execute(DataSource.Operation.IS_API_AWARE) || (this.parent.widgetType === 'wm-table' && _.get(this.parent, 'gridOptions.lastActionPerformed') === this.parent.gridOptions.ACTIONS.DATASET_UPDATE))) {
+        // Fix for [WMS-23263]: gridOptions.isNextPageData flag is false when dataset is changed from script, so setting current page to 1
+        if (this.datasource && (this.datasource.execute(DataSource.Operation.IS_API_AWARE) || (this.parent.widgetType === 'wm-table' && (this.parent.gridOptions.isNavTypeScrollOrOndemand() && (_.get(this.parent, 'gridOptions.lastActionPerformed') === this.parent.gridOptions.ACTIONS.DATASET_UPDATE || !_.get(this.parent, 'gridOptions.isNextPageData')))))) {
             currentPage = 1;
         } else {
             currentPage = this.dn.currentPage || 1;
@@ -246,6 +247,11 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             } else {
                 this.setResult(newVal);
                 this.resetPageNavigation();
+            }
+            if (this.navigation === 'Basic') {
+                _.forEach(this.nativeElement.getElementsByTagName('a'), (item) => {
+                    item.setAttribute('href', 'javascript:void(0);');
+                });
             }
         } else {
             if (newVal && !_.isString(newVal)) {
@@ -542,9 +548,6 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             }
             // Set last action performed to "dataset_update" whenever dataset is changed in table component
             if (this.parent.widgetType === 'wm-table') {
-                if (!this.parent._triggeredByUser && (_.get(this.datasource, 'category') === 'wm.Variable' || _.get(this.datasource, 'category') === 'wm.ServiceVariable')) {
-                    this.parent.setLastActionToDatasetUpdate();
-                }
                 this.parent._triggeredByUser = false;
             }
             // When the dataset is not in current page, but in previous ones directly set the result without setting page values
