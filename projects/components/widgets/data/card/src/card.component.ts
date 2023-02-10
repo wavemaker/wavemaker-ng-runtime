@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Injector, OnInit, Renderer2, ViewChild} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler } from '@wm/components/base';
 import { MenuAdapterComponent } from '@wm/components/navigation/menu';
 
 import { registerProps } from './card.props';
+import {removeAttr, setAttr} from "@wm/core";
 
 const DEFAULT_CLS = 'app-card card app-panel';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -30,7 +31,7 @@ export class CardComponent extends MenuAdapterComponent implements OnInit, After
 
     @ViewChild('cardContainerWrapper', { static: true }) private cardContainerElRef: ElementRef;
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, private render2: Renderer2) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
     }
@@ -38,6 +39,15 @@ export class CardComponent extends MenuAdapterComponent implements OnInit, After
     ngAfterViewInit() {
         super.ngAfterViewInit();
         styler(this.cardContainerElRef.nativeElement, this, APPLY_STYLES_TYPE.INNER_SHELL);
+    }
+    ngOnInit() {
+        super.ngOnInit();
+        removeAttr(this.nativeElement.parentElement, 'tabindex');
+        setAttr(this.nativeElement, 'tabindex', 0);
+        this.render2.listen(this.nativeElement, 'keydown.Enter', (e) => {
+            e.preventDefault();
+            this.nativeElement.click();
+        });
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
