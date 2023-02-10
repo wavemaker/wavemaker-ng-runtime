@@ -7,10 +7,15 @@ import { Subscription } from 'rxjs';
 import {AbstractDialogService, closePopover, findRootContainer, generateGUId} from '@wm/core';
 
 import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
+import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
 
 declare const _;
 
 let eventsRegistered = false;
+
+let focusTrapObj = {
+    activeElement: null
+};
 
 const invokeOpenedCallback = (ref) => {
     if (ref) {
@@ -21,6 +26,25 @@ const invokeOpenedCallback = (ref) => {
                 $('body > modal-container > div').wrap('<' + root + '/>');
             }
             ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
+            // focusTrapObj will create focus trap for the respective dialog according to the titleId assigned to them which is unique.
+            const container = $("[aria-labelledby= "+ ref.titleId + "]")[0];
+
+            const keyboardFocusableElements = [container.querySelectorAll(
+                'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
+              )].filter(el => {
+                return (
+                  !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'))
+              })[0];
+
+            $(keyboardFocusableElements[0]).focus();
+
+            focusTrapObj[ref.titleId] = createFocusTrap(container, {
+                onActivate: () => container.classList.add('is-active'),
+                onDeactivate: () => container.classList.remove('is-active'),
+                allowOutsideClick: true,
+                setReturnFocus: focusTrapObj.activeElement,
+            });
+            focusTrapObj[ref.titleId].activate();
         });
     }
 };
@@ -61,6 +85,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
                     invokeOpenedCallback(ref);
                 }
             }),
+            this.bsModal.onShow.subscribe(() => {
+                focusTrapObj.activeElement = document.activeElement;
+            }),
             this.bsModal.onHidden.subscribe((closeReason) => {
                 const ref = closeReason === 'esc' || closeReason === 'backdrop-click' ? this.dialogService.getLastOpenedDialog() : this.dialogService.getDialogRefFromClosedDialogs();
                 if (ref === this) {
@@ -71,6 +98,13 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
                     if (ref.closeCallBackFn) {
                         ref.closeCallBackFn();
                     }
+                }
+            }),
+            this.bsModal.onHide.subscribe(() => {
+                //  Will de-activate focus trap for the respective dialog when they are closed.
+                const ref = this.dialogService.getLastOpenedDialog();
+                if (focusTrapObj[ref.titleId] !== undefined) {
+                    focusTrapObj[ref.titleId].deactivate();
                 }
             }),
             router.events.subscribe(e => {

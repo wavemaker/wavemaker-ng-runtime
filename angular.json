@@ -82,7 +82,9 @@
               "./node_modules/hammerjs/hammer.min.js",
               "./node_modules/iscroll/build/iscroll.js",
               "./node_modules/js-cookie/src/js.cookie.js",
-              "./node_modules/jssha/dist/sha256.js"
+              "./node_modules/jssha/dist/sha256.js",
+              "./node_modules/tabbable/dist/index.min.js",
+              "./node_modules/@wavemaker/focus-trap/dist/focus-trap.min.js"
             ]
           },
           "configurations": {
@@ -177,7 +179,9 @@
               "./node_modules/hammerjs/hammer.min.js",
               "./node_modules/iscroll/build/iscroll.js",
               "./node_modules/js-cookie/src/js.cookie.js",
-              "./node_modules/jssha/dist/sha256.js"
+              "./node_modules/jssha/dist/sha256.js",
+              "./node_modules/tabbable/dist/index.min.js",
+              "./node_modules/@wavemaker/focus-trap/dist/focus-trap.min.js"
             ],
             "aot": false,
             "vendorChunk": true,
