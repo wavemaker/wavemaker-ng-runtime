@@ -1,6 +1,6 @@
 <div class="panel-heading {{helpClass}}" aria-label="Panel header" *ngIf="showHeader" #panelHeading>
-    <h3 class="panel-title">
-        <a href="javascript:void(0)" class="panel-toggle" (click)="toggle($event)">
+    <div class="panel-title">
+        <a href="javascript:void(0)" class="panel-toggle" (click)="toggle($event)" [attr.aria-expanded]="!!expanded">
             <div class="pull-left">
                 <i class="app-icon panel-icon {{iconclass}}" *ngIf="iconclass && !iconurl"></i>
                 <img data-identifier="img" title="iconurl" alt="Panel icon" class="panel-image-icon"
@@ -22,7 +22,7 @@
             <button type="button" aria-label="Help" class="app-icon panel-action wi" [title]="appLocale.LABEL_HELP"
                     *ngIf="helptext" (click)="toggleHelp()"><i class="wi-question"></i></button>
             <button type="button" aria-label="Collapse/Expand" class="app-icon wi panel-action" *ngIf="collapsible"
-                    [title]="expandCollapseTitle" (click)="toggle($event);"><i
+                    [title]="expandCollapseTitle" (click)="toggle($event);" [attr.aria-expanded]="!!expanded"><i
                    [ngClass]="expanded ? 'wi-minus' : 'wi-plus'"></i></button>
             <button type="button" aria-label="Fullscreen/Exit" class="app-icon panel-action wi" *ngIf="enablefullscreen"
                     [title]="fullScreenTitle" (click)="toggleFullScreen($event);"><i
@@ -31,7 +31,7 @@
                     title="{{appLocale.LABEL_CLOSE}}" *ngIf="closable" (click)="close($event)"><i
                    class="wi wi-close"></i></button>
         </div>
-    </h3>
+    </div>
 </div>
 <div class="panel-content" aria-label="Panel body" [hidden]="!expanded" #panelContent>
     <!-- Todo Bandhavya - implement smooth scroll -->
