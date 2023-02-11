@@ -213,8 +213,7 @@ $.widget('wm.datatable', {
     _toggleSpacingClasses: function (value) {
         switch (value) {
             case 'normal':
-                this.gridElement.removeClass('table-condensed');
-                this.gridHeaderElement.removeClass('table-condensed');
+                this.tableContainer.removeClass('table-condensed');
                 if (this.gridSearch) {
                     this.gridSearch.find('.form-group').removeClass('form-group-sm');
                     this.gridSearch.find('select').removeClass('input-sm');
@@ -222,8 +221,7 @@ $.widget('wm.datatable', {
                 }
                 break;
             case 'condensed':
-                this.gridElement.addClass('table-condensed');
-                this.gridHeaderElement.addClass('table-condensed');
+                this.tableContainer.addClass('table-condensed');
                 if (this.gridSearch) {
                     this.gridSearch.find('.form-group').addClass('form-group-sm');
                     this.gridSearch.find('select').addClass('input-sm');
@@ -1031,7 +1029,7 @@ $.widget('wm.datatable', {
             this.options.beforeRowInsert();
         }
 
-        $gridBody = this.gridElement.find('tbody.app-datagrid-body');
+        $gridBody = this.gridElement;
         $alwaysNewRow = $gridBody.find('> tr.app-datagrid-row.always-new-row');
         //Focus the new row if already present
         if ($alwaysNewRow.length) {
@@ -1192,8 +1190,8 @@ $.widget('wm.datatable', {
     /*Set the default widths for the colgroup*/
     setColGroupWidths: function () {
         var self = this,
-            headerCols = this.options.isMobile ? this.gridElement.find('col') : this.gridHeaderElement.find('col'),
-            bodyCols = this.gridElement.find('col'),
+            headerCols = this.options.isMobile ? this.tableContainer.find('col') : this.tableContainer.find('col'),
+            bodyCols = this.tableContainer.find('col'),
             headerCells = this.options.showHeader ? this.gridContainer.find('th.app-datagrid-header-cell') : this.gridElement.find('tr.app-datagrid-row').first().find('td'),
             colLength = this.preparedHeaderData.length,
             scrollLeft = this.gridElement.parent().prop('scrollLeft'); //Preserve the scroll left to keep the same scroll after setting width
@@ -2710,7 +2708,7 @@ $.widget('wm.datatable', {
     },
     _collapseRow: function(e, rowData, rowId, $nextDetailRow, $icon) {
         var self = this,
-            $tbody = self.gridElement.find('.app-datagrid-body'),
+            $tbody = self.gridElement,
             $row = $($tbody.find('> tr.app-datagrid-row[data-row-id="'+ rowId +'"]'));
         $row.removeClass(self.options.cssClassNames.expandedRowClass);
         if (this.options.onBeforeRowCollapse(e, rowData, rowId) === false) {
@@ -2724,7 +2722,7 @@ $.widget('wm.datatable', {
     },
     toggleExpandRow: function(rowId, isExpand, e) {
         var self = this,
-            $tbody = self.gridElement.find(' .app-datagrid-body'),
+            $tbody = self.gridElement,
             $row = $($tbody.find('> tr.app-datagrid-row[data-row-id="'+ rowId +'"]')),
             rowData = _.clone(self.options.data[rowId]),
             $nextDetailRow = $row.next('tr.app-datagrid-detail-row'),
@@ -3190,7 +3188,7 @@ $.widget('wm.datatable', {
         var $newRow;
         //If state is nodata and always new row is present, change state to ready
         if (state === 'nodata') {
-            $newRow = this.gridElement && this.gridElement.find('tbody.app-datagrid-body tr.app-datagrid-row.always-new-row');
+            $newRow = this.gridElement && this.gridElement.find('tr.app-datagrid-row.always-new-row');
             state = ($newRow && $newRow.length) ? 'ready' : state;
         }
 
