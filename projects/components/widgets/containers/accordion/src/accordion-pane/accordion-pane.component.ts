@@ -14,7 +14,8 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass:
     templateUrl: './accordion-pane.component.html',
     providers: [
         provideAsWidgetRef(AccordionPaneComponent)
-    ]
+    ],
+    exportAs: 'wmAccordionPane'
 })
 export class AccordionPaneComponent extends StylableComponent implements AfterViewInit {
     static initializeProps = registerProps();
