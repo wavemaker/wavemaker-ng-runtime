@@ -307,16 +307,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
         }
         setTimeout(() => {
-            if (newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
-                this.hightlightToday();
-            }
             const newDay = newDate.getDate().toString();
             _.filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
                 if ($(obj).text() === newDay) {
+                    $(obj).attr('aria-label', moment(newDate).format('dddd, MMMM Do YYYY'));
                     $(obj).focus();
                     this.activeDate = newDate;
                 }
             });
+            if (newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
+                this.hightlightToday();
+                $(`span:contains(${new Date().getDate().toString()})`).not('.is-other-month').parent().attr('aria-selected', 'true');
+            }
         });
 
     }
@@ -445,14 +447,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         dateContainer.onkeydown = (event) => {
             const action = this.keyEventPluginInstance.getEventFullKey(event);
             // Check for Shift+Tab key or Tab key or escape
-            if (action === 'shift.tab' || action === 'escape' || (action === 'tab' && !isDateTime)) {
+            if (action === 'escape') {
                 this.elementScope.hideDatepickerDropdown();
                 const displayInputElem = this.elementScope.nativeElement.querySelector('.display-input') as HTMLElement;
                 setTimeout(() => displayInputElem.focus());
-            }
-            if (action === 'tab' && isDateTime) {
-                this.bsDatePickerDirective.hide();
-                this.elementScope.toggleTimePicker(true);
             }
         };
         this.loadDays();
@@ -464,7 +462,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private loadDays() {
         setTimeout(() => {
-            $('.bs-datepicker-body').attr('tabindex', '0');
             $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '0');
             this.addKeyBoardEventsForDays();
             this.addDatepickerMouseEvents();
@@ -524,7 +521,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private loadMonths() {
         setTimeout(() => {
             const datePickerBody = $('.bs-datepicker-body');
-            datePickerBody.attr('tabindex', '0');
             datePickerBody.find('table.months span').attr('tabindex', '0');
             this.addKeyBoardEventsForMonths();
             this.addDatepickerMouseEvents();
@@ -575,7 +571,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private loadYears() {
         setTimeout(() => {
             const datePickerBody = $('.bs-datepicker-body');
-            datePickerBody.attr('tabindex', '0');
             datePickerBody.find('table.years span').attr('tabindex', '0');
             this.addKeyBoardEventsForYears();
             this.addDatepickerMouseEvents();
