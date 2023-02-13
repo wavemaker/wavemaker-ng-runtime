@@ -549,10 +549,6 @@ buildNgxBootstrap() {
     exec $(mkdir -p "./dist/tmp/libs/ngx-bootstrap")
     # Concatinated the all bootstrap umd files
     exec $(cat ${arr[*]} > ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js)
-    # As bootstrap has bug in umd files replacing the module namespace
-    # Check:https://github.com/valor-software/ngx-bootstrap/issues/5609
-    execCommand  "Bootstrap-Module-Replace" "node" "node ./bootstrap-module-replace.js"
-
 }
 
 buildUmdFiles() {
@@ -646,17 +642,17 @@ bundleMobileLibs() {
         ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/dist/zone.js \
         ./node_modules/rxjs/bundles/rxjs.umd.js \
+        ./node_modules/@angular/compiler/bundles/compiler.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
+        ./node_modules/@angular/common/bundles/common.umd.js \
         ./node_modules/@angular/animations/bundles/animations.umd.js \
         ./node_modules/@angular/animations/bundles/animations-browser.umd.js \
-        ./node_modules/@angular/common/bundles/common.umd.js \
-        ./node_modules/@angular/compiler/bundles/compiler.umd.js \
         ./node_modules/@angular/platform-browser/bundles/platform-browser.umd.js \
         ./node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js \
         ./node_modules/@angular/platform-browser/bundles/platform-browser-animations.umd.js \
         ./node_modules/@angular/common/bundles/common-http.umd.js \
-        ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./node_modules/@angular/router/bundles/router.umd.js \
+        ./node_modules/@angular/forms/bundles/forms.umd.js \
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         ./node_modules/ngx-toastr/bundles/ngx-toastr.umd.js \
         ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \

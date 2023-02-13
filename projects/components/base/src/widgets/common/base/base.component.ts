@@ -202,7 +202,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.viewContainerRef = inj.get(ViewContainerRef);
         // this.viewParent = (inj as any).view.component;
         // this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
-        this.viewParent = _viewParent || (this.viewContainerRef as any).parentInjector._lView[8];
+        // this.viewParent = _viewParent || (this.viewContainerRef as any).parentInjector._lView[8];
+        this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
         this.displayType = config.displayType || DISPLAY_TYPE.BLOCK;
         //this.context = (inj as any).view.context;
         // this.context = (this.viewContainerRef as any)._hostLView.debug.context;

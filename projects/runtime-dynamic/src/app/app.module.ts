@@ -11,10 +11,7 @@ import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { PaginationModule as ngxPaginationModule } from 'ngx-bootstrap/pagination';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-
-
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { PopoverModule as ngxPopoverModule } from 'ngx-bootstrap/popover';
 
@@ -119,17 +116,17 @@ export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
     headerName: getWmProjectProperties().xsrf_header_name
 });
 
-export const modalModule: ModuleWithProviders<any> = ModalModule.forRoot();
-export const bsDatePickerModule: ModuleWithProviders<any> = BsDatepickerModule.forRoot();
-export const timepickerModule: ModuleWithProviders<any> = ngxTimepickerModule.forRoot();
-export const bsDropdownModule: ModuleWithProviders<any> = BsDropdownModule.forRoot();
-export const paginationModule: ModuleWithProviders<any> = ngxPaginationModule.forRoot();
-export const typeaheadModule: ModuleWithProviders<any> = TypeaheadModule.forRoot();
-export const progressbarModule: ModuleWithProviders<any> = ProgressbarModule.forRoot();
-export const carouselModule: ModuleWithProviders<any> = ngxCarouselModule.forRoot();
-export const popoverModule: ModuleWithProviders<any> = ngxPopoverModule.forRoot();
-export const ngCircleProgressModule: ModuleWithProviders<any> = NgCircleProgressModule.forRoot({});
-export const tooltipModule: ModuleWithProviders<any> = TooltipModule.forRoot();
+export const modalModule: ModuleWithProviders<ModalModule> = ModalModule.forRoot();
+export const bsDatePickerModule: ModuleWithProviders<BsDatepickerModule> = BsDatepickerModule.forRoot();
+export const timepickerModule: ModuleWithProviders<ngxTimepickerModule> = ngxTimepickerModule.forRoot();
+export const bsDropdownModule: ModuleWithProviders<BsDropdownModule> = BsDropdownModule.forRoot();
+export const paginationModule: ModuleWithProviders<ngxPaginationModule> = ngxPaginationModule.forRoot();
+export const typeaheadModule: ModuleWithProviders<TypeaheadModule> = TypeaheadModule.forRoot();
+export const progressbarModule: ModuleWithProviders<ProgressbarModule> = ProgressbarModule.forRoot();
+export const carouselModule: ModuleWithProviders<ngxCarouselModule> = ngxCarouselModule.forRoot();
+export const popoverModule: ModuleWithProviders<ngxPopoverModule> = ngxPopoverModule.forRoot();
+export const ngCircleProgressModule: ModuleWithProviders<NgCircleProgressModule> = NgCircleProgressModule.forRoot({});
+export const tooltipModule: ModuleWithProviders<TooltipModule> = TooltipModule.forRoot();
 
 const componentsModule = [
     // NGX Bootstrap

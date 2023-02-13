@@ -110,6 +110,16 @@ import {PopoverModule} from "@wm/components/navigation/popover";
 import {CarouselModule} from "@wm/components/advanced/carousel";
 import {LoginModule} from "@wm/components/advanced/login";
 import {MarqueeModule} from "@wm/components/advanced/marquee";
+import {BsDatepickerModule} from "ngx-bootstrap/datepicker";
+import {TimepickerModule as ngxTimepickerModule} from "ngx-bootstrap/timepicker";
+import {BsDropdownModule} from "ngx-bootstrap/dropdown";
+import {PaginationModule as ngxPaginationModule} from "ngx-bootstrap/pagination";
+import {TypeaheadModule} from "ngx-bootstrap/typeahead";
+import {ProgressbarModule} from "ngx-bootstrap/progressbar";
+import {CarouselModule as ngxCarouselModule} from "ngx-bootstrap/carousel";
+import {PopoverModule as ngxPopoverModule} from "ngx-bootstrap/popover";
+import {NgCircleProgressModule} from "ng-circle-progress";
+import {TooltipModule} from "ngx-bootstrap/tooltip";
 
 declare const _WM_APP_PROPERTIES;
 
@@ -158,6 +168,18 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     ConfirmDialogModule,
     DesignDialogModule,
     DialogModule,
+
+    // NGX Bootstrap
+    BsDatepickerModule,
+    ngxTimepickerModule,
+    BsDropdownModule,
+    ngxPaginationModule,
+    TypeaheadModule,
+    ProgressbarModule,
+    ngxCarouselModule,
+    ngxPopoverModule,
+    NgCircleProgressModule,
+    TooltipModule,
 
     // Basic widgets
     BasicModule,
@@ -214,7 +236,6 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     LoginModule,
     MarqueeModule,
 
-    PageModule,
     PageModule,
     FooterModule,
     HeaderModule,
