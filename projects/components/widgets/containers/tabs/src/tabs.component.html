@@ -5,6 +5,7 @@
                 <i [ngClass]="['app-icon', pane.paneicon]" *ngIf="pane.paneicon"></i>
                 <span [textContent]="pane.title"></span>
                 <span *ngIf="pane.badgevalue" class="label label-{{pane.badgetype}}" [textContent]="pane.badgevalue"></span>
+        </a>
     </li>
 </ul>
 <div class="tab-content" *ngIf="type !== 'dynamic'" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
