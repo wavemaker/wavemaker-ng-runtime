@@ -13,7 +13,7 @@
         [readOnly]="isReadOnly"
         [attr.placeholder]="placeholder"
         [attr.accesskey]="shortcutkey"
-        [attr.aria-label]="hint || 'Date field'"
+        [attr.aria-label]="hint"
         (change)="onDisplayDateChange($event)"
         (keydown)="this._triggeredByUser = true; onDisplayKeydown($event);">
 
@@ -59,7 +59,7 @@
         [tabindex]="tabindex"
         [required]="required"
         [disabled]="disabled || readonly"
-        [attr.aria-label]="hint || 'Date field'"
+        [attr.aria-label]="hint"
         (change)="onDisplayDateChange($event, true)"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
