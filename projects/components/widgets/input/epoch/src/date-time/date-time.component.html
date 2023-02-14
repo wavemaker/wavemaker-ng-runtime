@@ -5,7 +5,7 @@
         (onShown)="onTimepickerOpen()"
         style="display: inherit;">
         <input class="form-control app-textbox display-input"
-            [attr.aria-label]="hint || 'Date and time field'"
+            [attr.aria-label]="hint"
             focus-target
             [name]="name"
             [tabindex]="tabindex"
@@ -96,7 +96,7 @@
         [tabindex]="tabindex"
         [required]="required"
         [disabled]="disabled || readonly || isCurrentDate"
-        [attr.aria-label]="hint || 'Date and time field'"
+        [attr.aria-label]="hint"
         (change)="onDateChange($event, true)"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">

@@ -1,5 +1,5 @@
     <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" (onHidden)="hideTimepickerDropdown()" [container]="'body'" style="display: inherit">
-        <input class="form-control app-textbox display-input" [attr.aria-label]="hint || 'Time field'"
+        <input class="form-control app-textbox display-input" [attr.aria-label]="hint"
                focus-target
                [tabindex]="tabindex"
                [name]="name"
@@ -40,7 +40,7 @@
     </div>
 <ng-template [ngIf]="loadNativeDateInput">
     <input type="time" class="form-control app-textbox display-input mobile-input"
-           role="timer" [attr.aria-label]="hint || 'Time field'"
+           role="timer" [attr.aria-label]="hint"
            [value]="nativeDisplayValue" [min]="mintime" [max]="maxtime"
            [tabindex]="tabindex"
            [required]="required"
