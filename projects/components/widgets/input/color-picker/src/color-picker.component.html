@@ -2,7 +2,7 @@
        #input
        focus-target
        [attr.name]="name"
-       [attr.aria-label]="hint || 'Colorpicker'"
+       [attr.aria-label]="hint"
        [(colorPicker)]="datavalue"
        (colorPickerChange)="handleChange($event);"
        (cpToggleChange)="colorPickerToggleChange($event)"
