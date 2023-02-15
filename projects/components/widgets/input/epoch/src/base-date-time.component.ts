@@ -513,6 +513,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 setTimeout(() => displayInputElem.focus());
             }
         });
+        this.focusBlurDatePickerHeadButtons();
+    }
+
+    private focusBlurDatePickerHeadButtons() {
+        const datePickerHeadButton = $('.bs-datepicker-head button');
+        datePickerHeadButton.on('focus', () => { $(this).css('background-color', '#9AA0A3'); });
+        datePickerHeadButton.on('blur', () => { $(this).css('background-color', ''); });
     }
 
     /**
@@ -563,6 +570,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setActiveDateFocus(newDate);
             }
         });
+        this.focusBlurDatePickerHeadButtons();
     }
 
     /**
@@ -626,6 +634,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setActiveMonthFocus(this.activeDate);
             }
         });
+        this.focusBlurDatePickerHeadButtons();
     }
 
     /**
