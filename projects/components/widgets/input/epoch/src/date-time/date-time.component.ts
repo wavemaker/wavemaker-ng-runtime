@@ -340,7 +340,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     public hideDatepickerDropdown() {
         this.isDateOpen = false;
-        this.focusTrap.deactivate();
+        this.focusTrap?.deactivate();
         this.invokeOnTouched();
         this.bsDatePickerDirective.hide();
 

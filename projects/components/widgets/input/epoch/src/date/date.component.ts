@@ -173,7 +173,7 @@ export class DateComponent extends BaseDateTimeComponent {
     public hideDatepickerDropdown() {
         this.invokeOnTouched();
         this.isOpen = false;
-        this.focusTrap.deactivate();
+        this.focusTrap?.deactivate();
         this.isEnterPressedOnDateInput = false;
         if (this.deregisterEventListener) {
             this.deregisterEventListener();

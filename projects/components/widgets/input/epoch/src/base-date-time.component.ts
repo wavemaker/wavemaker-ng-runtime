@@ -512,8 +512,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     private focusBlurDatePickerHeadButtons() {
         const datePickerHeadButton = $('.bs-datepicker-head button');
-        datePickerHeadButton.on('focus', () => { $(this).css('background-color', '#9AA0A3'); });
-        datePickerHeadButton.on('blur', () => { $(this).css('background-color', ''); });
+        datePickerHeadButton.on('focus', function() { $(this).css('background-color', '#9AA0A3'); });
+        datePickerHeadButton.on('blur', function() { $(this).css('background-color', ''); });
     }
 
     /**
