@@ -46,7 +46,6 @@
     "@ionic-native/vibration": "4.10.0",
     "@metrichor/jmespath": "^0.3.1",
     "@wavemaker.com/nvd3": "1.0.0",
-    "@wavemaker/focus-trap": "^1.0.0",
     "angular-imask": "6.0.4",
     "angular2-websocket": "0.9.7",
     "core-js": "2.5.4",
