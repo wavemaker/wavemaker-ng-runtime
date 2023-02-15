@@ -3088,8 +3088,8 @@ $.widget('wm.datatable', {
             table = '<div class="table-container table-responsive">' +
                 '<div class="app-grid-header">' +
                 '<div class="app-grid-header-inner">' +
-                '<table class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '">' +
-                '<thead class="table-header" id="table_header_' + this.tableId + '">' +
+                '<table tabindex="0" class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '">' +
+                '<thead tabindex="0" class="table-header" id="table_header_' + this.tableId + '">' +
                 '</thead><tbody class="app-grid-content app-datagrid-body"  id="table_' + this.tableId + '">' +
                 '</tbody></table>' +
                 '</div></div></div>',
