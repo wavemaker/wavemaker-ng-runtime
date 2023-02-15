@@ -3084,7 +3084,6 @@ $.widget('wm.datatable', {
                 '<div class="overlay">' +
                 '<div class="status"><i class="' + this.options.loadingicon + '"></i><span class="message"></span></div>' +
                 '</div>',
-
             table = '<div class="table-container table-responsive">' +
                 '<div class="app-grid-header">' +
                 '<div class="app-grid-header-inner">' +
