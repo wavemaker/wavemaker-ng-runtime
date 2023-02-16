@@ -139,7 +139,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             select: this.select.bind(this),
             eventDidMount: this.eventDidMount.bind(this),
             viewDidMount: this.viewDidMount.bind(this),
-            datesSet: this.datesSet.bind(this)        }
+            datesSet: this.datesSet.bind(this),
+            dateClick: this.dateClick.bind(this)   
+        }
     };
     public view: string;
     private dayClass: Array<any> = [];
@@ -333,6 +335,11 @@ export class CalendarComponent extends StylableComponent implements AfterContent
      */
     private datesSet(data) {
         this.currentview = {start: moment(data.start).format("YYYY-MM-DD"), end: moment(data.end).format("YYYY-MM-DD")};
+    }
+
+    private dateClick($info) {
+        const dateInfo = getUTCDateTime($info.date).valueOf();
+        this.invokeEventCallback('dateclick', {$dateInfo: dateInfo});
     }
 
     // update the calendar header options once the controls changes
