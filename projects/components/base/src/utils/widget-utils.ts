@@ -2,6 +2,7 @@ import { forwardRef } from '@angular/core';
 
 import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr, getClonedObject, prettifyLabel, initCaps, deHyphenate, checkIsCustomPipeExpression } from '@wm/core';
 import { DialogRef, WidgetRef } from '../widgets/framework/types';
+import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
 
 declare const _;
 
@@ -491,4 +492,13 @@ export const extractDataSourceName = (bindDataSource) => {
         dataSourceName = parts[1];
     }
     return dataSourceName;
+}
+
+export const setFocusTrap = (container, allowOutsideClick, setReturnFocusElement?) => {
+    return createFocusTrap(container, {
+        onActivate: () => container.classList.add('is-active'),
+        onDeactivate: () => container.classList.remove('is-active'),
+        allowOutsideClick: allowOutsideClick,
+        setReturnFocus: setReturnFocusElement,
+    });
 }
