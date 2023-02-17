@@ -6,11 +6,10 @@ import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
 import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, App, getMomentLocaleObject } from '@wm/core';
-import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
+import {provideAsWidgetRef, provideAs, styler, setFocusTrap} from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './date-time.props';
-import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
 
 declare const moment, $, _;
 
@@ -239,11 +238,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         dpContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
         $('.bs-calendar-container').removeAttr('role');
         const datePickerContainer = $('.bs-datepicker-container')[0];
-        this.focusTrap = createFocusTrap(datePickerContainer, {
-            onActivate: () => datePickerContainer.classList.add('is-active'),
-            onDeactivate: () => datePickerContainer.classList.remove('is-active'),
-            allowOutsideClick: true
-        }).activate();
+        this.focusTrap = setFocusTrap(datePickerContainer, true);
+        this.focusTrap.activate();
 
         this.bsDateValue ? this.activeDate = this.bsDateValue : this.activeDate = new Date();
         if (!this.bsDateValue) {
