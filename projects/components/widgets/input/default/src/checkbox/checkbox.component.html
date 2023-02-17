@@ -3,7 +3,7 @@
            role="checkbox"
            #checkbox
            [attr.name]="name"
-           [attr.aria-label]="hint || (type === 'toggle' ? 'Toggle' : 'Checkbox')"
+           [attr.aria-label]="hint"
            [attr.aria-checked]="!!proxyModel"
            focus-target
            [(ngModel)]="proxyModel"
