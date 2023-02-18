@@ -13,7 +13,7 @@
         [readOnly]="isReadOnly"
         [attr.placeholder]="placeholder"
         [attr.accesskey]="shortcutkey"
-        [attr.aria-label]="hint || 'Date field'"
+        [attr.aria-label]="hint"
         (change)="onDisplayDateChange($event)"
         (keydown)="this._triggeredByUser = true; onDisplayKeydown($event);">
 
@@ -22,7 +22,7 @@
             class="btn btn-default btn-time"
             [tabindex]="tabindex"
             [disabled]="disabled || readonly"
-            aria-label="Select date"
+            [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : 'Choose date by pressing enter'"
             aria-haspopup="true"
             aria-expanded="false"
             (click)="toggleDpDropdown($event, false)">
@@ -59,7 +59,7 @@
         [tabindex]="tabindex"
         [required]="required"
         [disabled]="disabled || readonly"
-        [attr.aria-label]="hint || 'Date field'"
+        [attr.aria-label]="hint"
         (change)="onDisplayDateChange($event, true)"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">

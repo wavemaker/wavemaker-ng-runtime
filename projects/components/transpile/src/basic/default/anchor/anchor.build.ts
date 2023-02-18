@@ -8,7 +8,7 @@ register('wm-anchor', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmAnchor #${counter}="wmAnchor" role="link" data-identifier="anchor" [attr.aria-label]="${counter}.hint || ${counter}.caption || 'Link'" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmAnchor #${counter}="wmAnchor" role="link" data-identifier="anchor" [attr.aria-label]="${counter}.hint || ${counter}.caption" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

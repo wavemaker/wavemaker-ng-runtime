@@ -10,7 +10,7 @@
         (focus)="checkForFloatingLabel($event)"
         (blur)="invokeOnTouched($event); checkForFloatingLabel($event)"
         [attr.name]="name"
-        [attr.aria-label]="hint || 'Select options'"
+        [attr.aria-label]="hint"
         [attr.aria-multiselectable]="multiple"
         [autofocus]="autofocus"
 >
