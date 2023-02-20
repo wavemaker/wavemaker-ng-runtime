@@ -84,7 +84,8 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         this.nativeElement = elRef.nativeElement;
         this.listComponent = _viewParent;
         // this.context = (<NgForOfContext<ListItemDirective>>(<any>inj).view.context);
-        this.context = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
+        this.context = (this.inj as any)._lView[8];
+        //this.context = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
         this.itemClassWatcher(this.listComponent);
         this.disableItemWatcher(this.listComponent);
         $(this.nativeElement).data('listItemContext', this);

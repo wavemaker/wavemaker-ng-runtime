@@ -49,7 +49,7 @@ export class ItemTemplateDirective extends StylableComponent {
         super(inj, WIDGET_CONFIG, _viewParent);
         this.nativeElement = elRef.nativeElement;
         // this.context = (<NgForOfContext<ItemTemplateDirective>>(<any>inj).view.context);
-        this.context = (this.viewContainerRef as any)._hostLView.debug.context;
+        this.context = (this.inj as any)._lView[8];
     }
     ngOnInit() {
         super.ngOnInit();

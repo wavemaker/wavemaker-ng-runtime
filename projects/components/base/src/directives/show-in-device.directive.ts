@@ -30,7 +30,8 @@ export class ShowInDeviceDirective implements OnDestroy {
         private templateRef: TemplateRef<any>
     ) {
 
-        this.context = (inj as any).view.context;
+        //this.context = (inj as any).view.context;
+        this.context = (inj as any)._lView[8];
 
         window.addEventListener('resize', this.onResize.bind(this));
     }

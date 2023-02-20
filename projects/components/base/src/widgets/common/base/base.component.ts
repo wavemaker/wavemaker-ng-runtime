@@ -203,15 +203,39 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         // this.viewParent = (inj as any).view.component;
         // this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
         // this.viewParent = _viewParent || (this.viewContainerRef as any).parentInjector._lView[8];
-        this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
+        // https://github.com/angular/angular/blob/main/packages/core/src/render3/interfaces/view.ts
+        this.viewParent = _viewParent;
+        let currentlView = (inj as any)._lView;
+        // console.log("-----widgetType------", this.widgetType);
+        // console.log("-----currentlView------", currentlView);
+        if(currentlView[1].type === 1 || currentlView[1].type === 2) {
+            let parentlView = (inj as any)._lView[3];
+            // console.log("-----parentlView------", parentlView, "type---", currentlView[1].type);
+            if(parentlView[1].type == 1 || parentlView[1].type == 2) {
+                this.viewParent = parentlView[8];
+                // console.log("-----this.viewParent------", this.viewParent);
+            }
+        }
+        let parent = (this.inj as any)._tNode.parent;
+        let injectorIndex = (this.inj as any)._tNode.injectorIndex;
+        /*if( parent === null ) {
+            this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8]
+            this.context = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
+        } else {
+            this.viewParent = (this.inj as any)._lView[injectorIndex - 1];
+            this.context = this.viewParent.context;
+        }*/
+        this.context = (this.inj as any)._lView[8];
+        //console.log("-----this.context------", this.context);
+
         this.displayType = config.displayType || DISPLAY_TYPE.BLOCK;
-        //this.context = (inj as any).view.context;
+        // this.context = (inj as any).view.context;
         // this.context = (this.viewContainerRef as any)._hostLView.debug.context;
-        let hasImplicitContext = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
+        // let hasImplicitContext = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
         // when $implicit is not available, this object contains some ngFor context or listitem context of the widget then
         // we use the direct parent for example: nav component is the parent for anchor => anchor gets viewParent as Nav
         // In other case, where we have implicitContext there we can make use of page/app level context hence viewParent.viewParent to get page level context
-        if (hasImplicitContext && this.viewParent.viewParent) {
+        /*if (hasImplicitContext && this.viewParent.viewParent) {
             if (this.viewParent.widgetType !== 'wm-card' && this.viewParent.widgetType !== 'wm-iframedialog'
                 && this.viewParent.widgetType !== 'wm-partialdialog') {
                 this.viewParent = this.viewParent.viewParent;
@@ -221,8 +245,13 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             this.context = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
         } else {
             this.context = (this.viewContainerRef as any).parentInjector._lView[8];
-        }
+        }*/
 
+        /*if(_viewParent && !hasImplicitContext) {
+            this.context = (this.viewContainerRef as any)._hostLView[8];
+        } else {
+            this.context = hasImplicitContext;
+        }*/
         // if (['wm-list', 'wm-nav'].includes(this.viewParent.widgetType) || ['wm-carousel-template', 'wm-card'].includes(this.widgetType)) {
         //     this.context = (this.viewContainerRef as any)._hostLView.debug.context;
         // } else {
@@ -599,12 +628,12 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Process the attributes
      */
     private processAttrs() {
-        const elDef = this.nativeElement;
-        Array.from(elDef.attributes).forEach(({ name, value }) => {
-            this.$attrs.set(name, value);
-            this.processAttr(name, value);
-        })
-
+        const attrs = this.nativeElement.attributes;
+        let i = 0;
+        _.map(attrs, (attr: Attr) => {
+            this.$attrs.set(attr.name, attr.value);
+            this.processAttr(attr.name, attr.value);
+        });
     }
 
     /**

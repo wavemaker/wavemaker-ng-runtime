@@ -20,7 +20,15 @@ export class LazyLoadDirective implements OnDestroy {
         @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
         this.viewParent = _viewParent;
-        this.context = (inj as any).view.context;
+        let currentlView = (inj as any)._lView;
+        if(currentlView[1].type === 1 || currentlView[1].type === 2) {
+            let parentlView = (inj as any)._lView[3];
+            if(parentlView[1].type == 1 || parentlView[1].type == 2) {
+                this.viewParent = parentlView[8];
+            }
+        }
+        //this.context = (inj as any).view.context;
+        this.context = (inj as any)._lView[8];
     }
 
     @Input()
