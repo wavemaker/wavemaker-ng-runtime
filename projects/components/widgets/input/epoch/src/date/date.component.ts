@@ -8,6 +8,7 @@ import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
+import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
 
 declare const _, $, moment;
 
@@ -40,6 +41,7 @@ export class DateComponent extends BaseDateTimeComponent {
 
     private keyEventPlugin;
     private deregisterEventListener;
+    private focusTrap;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -148,7 +150,15 @@ export class DateComponent extends BaseDateTimeComponent {
         // So actual bootstrap input target width we made it to 0, so bootstrap calculating the calendar container top position improperly.
         // To fix the container top position set the width 1px;
         this.$element.find('.model-holder').width('1px');
-
+        const dpContainerEl = $('bs-datepicker-container');
+        dpContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
+        $('.bs-calendar-container').removeAttr('role');
+        const datePickerContainer = $('.bs-datepicker-container')[0];
+        this.focusTrap = createFocusTrap(datePickerContainer, {
+            onActivate: () => datePickerContainer.classList.add('is-active'),
+            onDeactivate: () => datePickerContainer.classList.remove('is-active'),
+            allowOutsideClick: true
+        }).activate();
         this.addDatepickerKeyboardEvents(this, false);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
         adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
@@ -163,6 +173,7 @@ export class DateComponent extends BaseDateTimeComponent {
     public hideDatepickerDropdown() {
         this.invokeOnTouched();
         this.isOpen = false;
+        this.focusTrap?.deactivate();
         this.isEnterPressedOnDateInput = false;
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
