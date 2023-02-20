@@ -8,6 +8,7 @@
                 <span *ngIf="pane.badgevalue" class="label label-{{pane.badgetype}}" [textContent]="pane.badgevalue"></span>
         </a>
     </li>
+
 </ul>
 <div class="tab-content" *ngIf="type !== 'dynamic'" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
     <ng-content ngProjectAs="div[wmTabPane]"></ng-content>

@@ -10,6 +10,7 @@ import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './date-time.props';
+import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
 
 declare const moment, $, _;
 
@@ -46,6 +47,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
     private isEnterPressedOnDateInput = false;
+    private focusTrap;
 
     get timestamp() {
         return this.proxyModel ? this.proxyModel.valueOf() : undefined;
@@ -235,6 +237,15 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         // So actual bootstrap input target width we made it to 0 so bootstrap calculating the calendar container top position impropery.
         // To fix the container top position set the width 1px;
         this.$element.find('.model-holder').width('1px');
+        const dpContainerEl = $('bs-datepicker-container');
+        dpContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
+        $('.bs-calendar-container').removeAttr('role');
+        const datePickerContainer = $('.bs-datepicker-container')[0];
+        this.focusTrap = createFocusTrap(datePickerContainer, {
+            onActivate: () => datePickerContainer.classList.add('is-active'),
+            onDeactivate: () => datePickerContainer.classList.remove('is-active'),
+            allowOutsideClick: true
+        }).activate();
 
         this.bsDateValue ? this.activeDate = this.bsDateValue : this.activeDate = new Date();
         if (!this.bsDateValue) {
@@ -329,6 +340,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     public hideDatepickerDropdown() {
         this.isDateOpen = false;
+        this.focusTrap?.deactivate();
         this.invokeOnTouched();
         this.bsDatePickerDirective.hide();
 
