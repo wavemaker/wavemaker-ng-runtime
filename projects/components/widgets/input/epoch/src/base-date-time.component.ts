@@ -20,6 +20,7 @@ import {
 import { getContainerTargetClass, ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
 import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
+import { DateTimePickerComponent } from './date-time//date-time-picker.component';
 
 declare const moment, _, $;
 
@@ -94,6 +95,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     @ViewChild(BsDropdownDirective) protected bsDropdown;
     @ViewChild(TimepickerComponent) protected bsTimePicker;
+    @ViewChild(DateTimePickerComponent) datetimepickerComponent;
     private validateType: string;
     containerTarget: string;
 
@@ -882,25 +884,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             return _.get(window, 'cordova.wavemaker.datePicker.selectDate');
         }
     }
-
-    showCordovaDatePicker(mode = 'DATE_TIME',
-        selectedDate = Date.now(),
-        minDate?: number,
-        maxDate?: number) {
-        return Promise.resolve()
-            .then(() => this.getCordovaPluginDatePickerApi() || Promise.reject())
-            .then(selectDate => {
-                return new Promise((resolve, reject) => {
-                    selectDate({
-                        selectedDate: selectedDate,
-                        mode: mode,
-                        minDate: minDate,
-                        maxDate: maxDate
-                    }, (result) => {
-                        resolve(result?.date ? new Date(result.date) : null)
-                    }, reject);
-                });
-            });
+    
+    public showDatePickerModal() {
+        this.datetimepickerComponent.show();
+        return ;
     }
 
     blurDateInput(isPickerOpen) {
