@@ -1589,7 +1589,7 @@ $.widget('wm.datatable', {
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
         var gridRow = this.gridElement.find($row);
         // WMS-21139 trigger selectedItems change when the captured click is on the current table but not on child table
-        if (gridRow.length && gridRow.closest('table').attr('id') === this.gridElement.attr('id')) {
+        if (gridRow.length && gridRow.closest('tbody').attr('id') === this.gridElement.attr('id')) {
             var rowId = $row.attr('data-row-id');
             var rowData = this.preparedData[rowId];
             var data = this.options.data[rowId];
