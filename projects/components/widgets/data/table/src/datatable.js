@@ -1484,7 +1484,7 @@ $.widget('wm.datatable', {
         var $row,
             id;
         //If visible flag is true, select the first visible row item (Do not select the always new row)
-        if (visible && this.gridElement.find('tBody').is(':visible')) {
+        if (visible && this.gridElement.find('tbody').is(':visible')) {
             this.__setStatus();
             $row = this.gridElement.find('tBody tr.app-datagrid-row:visible:not(.always-new-row)').first();
         } else {
