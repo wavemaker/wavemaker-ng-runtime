@@ -4,7 +4,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { PopoverDirective } from 'ngx-bootstrap/popover';
 
 import { addClass, App, setAttr, setCSSFromObj, findRootContainer, adjustContainerPosition, adjustContainerRightEdges} from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef, AUTOCLOSE_TYPE, getContainerTargetClass, setFocusTrap } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef, AUTOCLOSE_TYPE, getContainerTargetClass } from '@wm/components/base';
 
 import { registerProps } from './popover.props';
 
@@ -63,7 +63,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public adaptiveposition:boolean;
     public containerTarget: string;
     public hint: string;
-    private focusTrap;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
@@ -92,7 +91,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public onHidden() {
         this.invokeEventCallback('hide', {$event: {type: 'hide'}});
         this.isOpen = false;
-        this.focusTrap.deactivate();
     }
 
     private setFocusToPopoverLink() {
@@ -156,8 +154,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         activePopover.isOpen = true;
 
         const popoverContainer  = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
-        this.focusTrap = setFocusTrap(popoverContainer, this.outsideclick, this.anchorRef.nativeElement);
-        this.focusTrap.activate();
         setCSSFromObj(popoverContainer, {
             height: this.popoverheight,
             minWidth: this.popoverwidth,
@@ -188,6 +184,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             // Check for Shift+Tab key
             if (action === 'shift.tab') {
                 this.bsPopoverDirective.hide();
+                event.preventDefault();
                 this.setFocusToPopoverLink();
                 this.isOpen = false;
             }
@@ -197,6 +194,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             // Check for Tab key
             if (action === 'tab') {
                 this.bsPopoverDirective.hide();
+                event.preventDefault();
                 this.setFocusToPopoverLink();
                 this.isOpen = false;
             }
