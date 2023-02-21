@@ -193,7 +193,7 @@ export class DateTimePickerComponent implements AfterViewInit {
 })
 export class TimePickerComponent implements AfterViewInit {
 
-    private options = {
+    options = {
         hour: [],
         minute: [],
         second: [],
