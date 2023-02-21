@@ -1484,11 +1484,11 @@ $.widget('wm.datatable', {
         var $row,
             id;
         //If visible flag is true, select the first visible row item (Do not select the always new row)
-        if (visible && this.gridElement.find('tBody').is(':visible')) {
+        if (visible && this.gridElement.find('tr').is(':visible')) {
             this.__setStatus();
-            $row = this.gridElement.find('tBody tr.app-datagrid-row:visible:not(.always-new-row)').first();
+            $row = this.gridElement.find('tr.app-datagrid-row:visible:not(.always-new-row)').first();
         } else {
-            $row = this.gridElement.find('tBody tr.app-datagrid-row:not(.always-new-row)').first();
+            $row = this.gridElement.find('tr.app-datagrid-row:not(.always-new-row)').first();
         }
         id = $row.attr('data-row-id');
         // Select the first row if it exists, i.e. it is not the first row being added.
@@ -3220,9 +3220,17 @@ $.widget('wm.datatable', {
         this.options[key] = value;
         if (key === 'height') {
             if(this.options.showHeader) {
-                this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px');
+                this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px; border: 1px solid #eee, box-shadow: 0px 1px 0px 0px rgb(118, 118, 118, 15%)');
             }
+          //  if(this.dataStatus.state != 'loading') {
+                var elements = this.gridHeaderElement.find('th');
+                this._setStyles(this.tableContainer, 'border-collapse: separate;');
+                for (var i = 0; i < elements.length; i += 1) {
+                    this._setStyles($(elements[i]), 'border: 1px solid #eee');
+                }
+            //}
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
+            this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
                 this.gridContainer.find('.app-grid-header-inner').css('overflow-y', 'auto');
             }
