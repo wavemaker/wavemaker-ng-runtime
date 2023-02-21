@@ -385,7 +385,8 @@ $.widget('wm.datatable', {
             generateRow(headerConfig, 0);
             //Combine all the row templates to generate the header
             rowTemplates.forEach(function($thList, index) {
-                $row = $('<tr></tr>');
+                $row = $('<tr role="row" tabindex="0"></tr>');
+                // To fix ADA issue "Tables headers in datatable must refer to data cells"
                 var rowSpan = rowTemplates.length - index;
                 //append all t-heads to the tr
                 $thList.forEach(function($th) {
@@ -562,7 +563,7 @@ $.widget('wm.datatable', {
             if (self.options.rowExpansionEnabled) {
                 var rowHeight = self.options.rowDef.height;
                 var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
-                var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
                     '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
                     '</td></tr>');
                 if (rowHeight) {
@@ -585,7 +586,7 @@ $.widget('wm.datatable', {
             self = this,
             gridOptions = self.options;
 
-        $htm = $('<tr tabindex="0" class="' + gridOptions.cssClassNames.tableRow + ' ' + (gridOptions.rowClass || '') + '" data-row-id="' + row.$$pk + '"></tr>');
+        $htm = $('<tr role="row" tabindex="0" class="' + gridOptions.cssClassNames.tableRow + ' ' + (gridOptions.rowClass || '') + '" data-row-id="' + row.$$pk + '"></tr>');
         this.preparedHeaderData.forEach(function (current, colIndex) {
             $htm.append(self._getColumnTemplate(row, colIndex, current, rowIndex, summaryRow));
         });
@@ -637,7 +638,7 @@ $.widget('wm.datatable', {
             colExpression = colDef.customExpression,
             styles = "text-align: " + colDef.textAlignment + ";position: relative;"
 
-        $htm = $('<td class="' + classes + '" data-col-id="' + colId + '"></td>');
+        $htm = $('<td class="' + classes + '" data-col-id="' + colId + '" role="cell"></td>');
         this._setStyles($htm, styles);
 
         columnValue = _.get(row, colDef.field);
@@ -999,7 +1000,7 @@ $.widget('wm.datatable', {
         this._prepareData();
         //If the pagination type is not Infinite Scroll or On-demand, remove the tbody and footer
         if (!this.options.isNavTypeScrollOrOndemand()) {
-          //  this.gridElement.remove();
+            //  this.gridElement.remove();
             this.gridFooter.remove();
             this._renderGrid();
         } else {
@@ -1432,8 +1433,8 @@ $.widget('wm.datatable', {
                     gridClass =  gridClass + ' ' + this.options.cssClassNames.gridRowExpansionClass;
                 }
                 // Set grid class on table.
-                this.gridElement.attr('class', gridClass);
-                this.gridHeaderElement.attr('class', gridClass);
+                this.tableContainer.attr('class', gridClass);
+                //  this.gridHeaderElement.attr('class', gridClass);
                 if (this.options.spacing === 'condensed') {
                     this._toggleSpacingClasses('condensed');
                 }
@@ -1483,11 +1484,11 @@ $.widget('wm.datatable', {
         var $row,
             id;
         //If visible flag is true, select the first visible row item (Do not select the always new row)
-        if (visible && this.gridElement.find('tBody').is(':visible')) {
+        if (visible && this.gridElement.find('tr').is(':visible')) {
             this.__setStatus();
-            $row = this.gridElement.find('tBody tr.app-datagrid-row:visible:not(.always-new-row)').first();
+            $row = this.gridElement.find('tr.app-datagrid-row:visible:not(.always-new-row)').first();
         } else {
-            $row = this.gridElement.find('tBody tr.app-datagrid-row:not(.always-new-row)').first();
+            $row = this.gridElement.find('tr.app-datagrid-row:not(.always-new-row)').first();
         }
         id = $row.attr('data-row-id');
         // Select the first row if it exists, i.e. it is not the first row being added.
@@ -1568,7 +1569,7 @@ $.widget('wm.datatable', {
         //As rows visibility is checked, remove loading icon
         this.__setStatus();
         var $headerCheckbox = this.gridHeaderElement.find('th.app-datagrid-header-cell input:checkbox'),
-            $tbody = this.gridElement.find('tbody'),
+            $tbody = this.gridElement,
             checkedItemsLength = $tbody.find('tr.app-datagrid-row:visible input[name="gridMultiSelect"]:checkbox:checked').length,
             visibleRowsLength = $tbody.find('tr.app-datagrid-row:visible').length;
 
@@ -2711,6 +2712,7 @@ $.widget('wm.datatable', {
             $tbody = self.gridElement,
             $row = $($tbody.find('> tr.app-datagrid-row[data-row-id="'+ rowId +'"]'));
         $row.removeClass(self.options.cssClassNames.expandedRowClass);
+        $row.find( 'button, a').attr('aria-expanded', 'false').attr('aria-live', 'polite');
         if (this.options.onBeforeRowCollapse(e, rowData, rowId) === false) {
             return;
         }
@@ -2738,6 +2740,7 @@ $.widget('wm.datatable', {
         }
         if (isClosed) {
             $row.addClass(self.options.cssClassNames.expandedRowClass);
+            $row.find( 'button, a').attr('aria-expanded', 'true');
             if (e && self.preparedData[rowId]._selected) {
                 e.stopPropagation();
             }
@@ -2869,13 +2872,16 @@ $.widget('wm.datatable', {
         });
         if (!this.options.showHeader) {
             this.tableContainer.append($colgroup);
+            this.gridHeaderElement.hide();
             //this.gridElement.prepend($colgroup.clone());
             return;
+        } else {
+            this.gridHeaderElement.show();
         }
         $header = headerTemplate.header;
 
         function toggleSelectAll(e) {
-            var $checkboxes = $('tbody tr.app-datagrid-row:visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
+            var $checkboxes = $('tr.app-datagrid-row:visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
                 checked = this.checked;
             $checkboxes.prop('checked', checked);
             $checkboxes.each(function () {
@@ -2919,7 +2925,7 @@ $.widget('wm.datatable', {
              * Colgroup is used to maintain the consistent widths between the header table and body table**/
             this.tableContainer.append($colgroup);
             /**As jquery references the colgroup, clone the colgroup and add it to the table body**/
-           // this.gridElement.prepend($colgroup.clone());
+            // this.gridElement.prepend($colgroup.clone());
         }
         /**Add event handler, to the select all checkbox on the header**/
         $header.on('click', '.app-datagrid-header-cell input:checkbox', toggleSelectAll);
@@ -2944,8 +2950,8 @@ $.widget('wm.datatable', {
                         newWidth = ui.size.width,
                         originalTableWidth,
                         newTableWidth;
-                    $colHeaderElement = self.gridHeaderElement.find('colgroup > col:nth-child(' + colIndex + ')');
-                    $colElement = self.gridElement.find('colgroup > col:nth-child(' + colIndex + ')');
+                    $colHeaderElement = self.tableContainer.find('colgroup > col:nth-child(' + colIndex + ')');
+                    $colElement = self.tableContainer.find('colgroup > col:nth-child(' + colIndex + ')');
                     $cellElements = self.gridElement.find('tr.app-datagrid-row > td:nth-child(' + colIndex + ') > div');
                     $colElement.width(newWidth);
                     $colHeaderElement.width(newWidth);
@@ -3020,7 +3026,7 @@ $.widget('wm.datatable', {
     _renderGrid: function (isCreated) {
         var $htm, isScrollorOnDemand = this.options.isNavTypeScrollOrOndemand(), pageStartIndex = this.getPageStartIndex();
         if(isScrollorOnDemand) {
-            var $tbody = this.gridElement.find('tbody');
+            var $tbody = this.gridElement;
             // get markup for new rows and append it to tbody
             $htm = $(this._getGridTemplate());
             if (!$tbody.length) {
@@ -3094,13 +3100,15 @@ $.widget('wm.datatable', {
                 '</tbody></table>' +
                 '</div></div></div>',
             $statusContainer = $(statusContainer);
-        this._setStyles($statusContainer.find('div.overlay'), "display:none");
-        this._setStyles($statusContainer.find('.app-grid-content'), 'height:' + this.options.height + '; overflow-y: ' + overflow + ';');
-
         this.gridContainer = $(table);
+        this.gridHeaderElement = this.gridContainer.find('.table-header');
+        this._setStyles($statusContainer.find('div.overlay'), "display:none");
+        this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow-y: auto;');
+
+
         this.tableContainer = this.gridContainer.find('table');
         this.gridElement = this.gridContainer.find('.app-grid-content');
-        this.gridHeaderElement = this.gridContainer.find('.table-header');
+
         // Remove the grid table element.
         this.element.find('.table-container').remove();
         this.element.append(this.gridContainer);
@@ -3211,9 +3219,20 @@ $.widget('wm.datatable', {
         }
         this.options[key] = value;
         if (key === 'height') {
-            this.gridContainer.find('.app-grid-content').css(key, value);
+            if(this.options.showHeader) {
+                this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px; border: 1px solid #eee, box-shadow: 0px 1px 0px 0px rgb(118, 118, 118, 15%)');
+            }
+            //  if(this.dataStatus.state != 'loading') {
+            var elements = this.gridHeaderElement.find('th');
+            this._setStyles(this.tableContainer, 'border-collapse: separate;');
+            for (var i = 0; i < elements.length; i += 1) {
+                this._setStyles($(elements[i]), 'border: 1px solid #eee');
+            }
+            //}
+            this.gridContainer.find('.app-grid-header-inner').css(key, value);
+            this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
-                this.gridContainer.find('.app-grid-content').css('overflow-y', 'auto');
+                this.gridContainer.find('.app-grid-header-inner').css('overflow-y', 'auto');
             }
             this.dataStatusContainer.css(key, value);
         }
