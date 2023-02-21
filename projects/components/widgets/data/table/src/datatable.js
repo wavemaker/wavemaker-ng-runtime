@@ -1611,8 +1611,7 @@ $.widget('wm.datatable', {
 
         function callRowSelectionEvents() {
             if (selected && $.isFunction(self.options.onRowSelect)) {
-                self.options.onRo
-                wSelect(data, e);
+                self.options.onRowSelect(data, e);
             }
             if (!selected && $.isFunction(self.options.onRowDeselect)) {
                 self.options.onRowDeselect(data, e);
