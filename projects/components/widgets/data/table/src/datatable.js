@@ -3266,3 +3266,4 @@ $.widget('wm.datatable', {
         window.clearTimeout(this.refreshGridTimeout);
     }
 });
+
