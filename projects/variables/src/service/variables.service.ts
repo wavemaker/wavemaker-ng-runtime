@@ -73,7 +73,7 @@ export class VariablesService {
             );
     }
 
-     processBindExp(d: any, scope: string, variable) {
+    processBindExp(d: any, scope: string, variable) {
         const root = getTarget(variable);
         let v = _.isArray(d.value) ? d.value[0] : d.value;
         if (v) {
@@ -87,6 +87,25 @@ export class VariablesService {
             name: d.target,
             value: v
         };
+    }
+
+    processBinding(variable: any, context: any, bindSource?: string, bindTarget?: string) {
+        bindSource = bindSource || 'dataBinding';
+        bindTarget = bindTarget || 'dataBinding';
+
+        const bindMap = variable[bindSource];
+        variable[bindSource] = {};
+        variable['_bind' + bindSource] = bindMap;
+        if (!bindMap || !_.isArray(bindMap)) {
+            return;
+        }
+        bindMap.forEach( (node) => {
+            /* for static variable change the binding with target 'dataBinding' to 'dataSet', as the results have to reflect directly in the dataSet */
+            if (variable.category === 'wm.Variable' && node.target === 'dataBinding') {
+                node.target = 'dataSet';
+            }
+            this.processBindExp(node, context, variable);
+        });
     }
 
     /**
@@ -111,13 +130,7 @@ export class VariablesService {
             varInstance = VariableFactory.create(variablesJson[variableName], scope);
            if (variablesJson[variableName].category === 'wm.Variable' || variablesJson[variableName].category === 'wm.ServiceVariable' ||
                variablesJson[variableName].category === 'wm.LiveVariable' || variablesJson[variableName].category === 'wm.CrudVariable') {
-               if (varInstance.dataBinding) {
-                   _.forEach(varInstance.dataBinding, (d: any) => {
-                       params[d.target] = d.value;
-                       this.processBindExp(d, scope, varInstance);
-                   });
-                   varInstance.dataBinding = params || {};
-               }
+               this.processBinding(varInstance, scope, 'dataBinding', 'dataBinding');
                varInstance.httpService = this.httpService;
                varInstance.getProviderId = (providerId, prefabName) => getClonedObject(this.metadataService.getByProviderId(providerId, prefabName));
                varInstance.getByCrudId = (crudId, prefabName) => getClonedObject(this.metadataService.getByCrudId(crudId, prefabName));
