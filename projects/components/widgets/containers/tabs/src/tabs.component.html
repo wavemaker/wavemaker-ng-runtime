@@ -2,7 +2,7 @@
     <li class="tab-header" *ngFor="let pane of panes; let i=index;" [attr.data-paneid]="pane.widgetId" [ngClass]="{'active': pane.isActive, 'disabled': pane.disabled}"
         [hidden]="!pane.show" role="presentation">
         <a class="tab-heading" href="javascript:void(0);" [attr.aria-label]="pane.title" [attr.title]="pane.title" [tabindex]="pane.tabindex"
-           [attr.aria-selected]="pane.isActive" role="tab" (click)="pane.select($event); pane.tabpaneHeaderClick($event, i);">
+           [attr.aria-selected]="pane.isActive" role="tab" (click)="pane.select($event); pane.tabpaneHeaderClick($event, i);" (keydown)="onkeydown($event)">
                 <i [ngClass]="['app-icon', pane.paneicon]" *ngIf="pane.paneicon"></i>
                 <span [textContent]="pane.title"></span>
                 <span *ngIf="pane.badgevalue" class="label label-{{pane.badgetype}}" [textContent]="pane.badgevalue"></span>
