@@ -535,16 +535,19 @@ $.widget('wm.datatable', {
 
     /* Returns the tbody markup. */
     _getGridTemplate: function () {
-        var self = this, preparedData,
-            $tbody =  this.gridElement,
-            isScrollorOnDemand = self.options.isNavTypeScrollOrOndemand(),
-            pageStartIndex = self.getPageStartIndex(),
-            startRowIndex = self.options.startRowIndex;
+        var self = this, preparedData,$tbody, tbodyExists,pageStartIndex = self.getPageStartIndex(),
+            startRowIndex = self.options.startRowIndex,
+            isScrollorOnDemand = self.options.isNavTypeScrollOrOndemand();
+            if(isScrollorOnDemand) {
+                $tbody = this.gridElement;
+            } else {
+                tbodyExists = this.gridElement.find('tbody').length;
+                $tbody = tbodyExists > 0 ? this.gridElement.find('tbody:first') : this.gridElement.empty();
+            }
 
-        console.log($tbody.outerHTML, '$tbody in grid template')
-        console.log(this.preparedData, 'this.preparedData 1')
 
         if(isScrollorOnDemand) {
+            $tbody = this.gridElement;
             this._handleCRUDForInfiniteScroll($tbody);
             //Increment the startRowIndex, when delete action is prformed.
             if (self.options.lastActionPerformed === self.options.ACTIONS.DELETE) {
@@ -558,16 +561,13 @@ $.widget('wm.datatable', {
             this.options.clearRowDetailExpression();
             preparedData = this.preparedData;
         }
-        console.log(this.preparedData, 'this.preparedData 2')
         _.forEach(preparedData, function (row, index) {
             var _row = _.clone(row), rowIndex = (isScrollorOnDemand) ? startRowIndex + index - 1 : index, rowTemplate;
             _row.$index = rowIndex + 1;
             self.options.generateCustomExpressions(_row, rowIndex);
             self.options.registerRowNgClassWatcher(_row, rowIndex);
             rowTemplate = self._getRowTemplate(row, rowIndex);
-            console.log($tbody.outerHTML, '$tbody 2 in grid template')
             $tbody.append(rowTemplate);
-            console.log($tbody.outerHTML, '$tbody 3 in grid template')
             if (self.options.rowExpansionEnabled) {
                 var rowHeight = self.options.rowDef.height;
                 var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
@@ -1435,9 +1435,19 @@ $.widget('wm.datatable', {
             case 'loadingicon':
                 this.dataStatusContainer.find('i').removeClass().addClass(this.options.loadingicon);
                 break;
+            case 'colDefs':
+                if(this.options.isdynamictable) {
+                    this._prepareHeaderData();
+                    this.setColGroupWidths();
+                    this._renderHeader();
+                    this._renderSearch();
+                    this.attachEventHandlers(this.gridElement);
+                    this._reselectColumns();
+                    this.addOrRemoveScroll();
+                    break;
+                }
             case 'multiselect': // Fallthrough
             case 'showRadioColumn':
-            case 'colDefs':
             case 'rowActions':
             case 'filterNullRecords':
             case 'showRowIndex':
@@ -3043,15 +3053,19 @@ $.widget('wm.datatable', {
         var $htm, isScrollorOnDemand = this.options.isNavTypeScrollOrOndemand(), pageStartIndex = this.getPageStartIndex();
         if(isScrollorOnDemand) {
             var $tbody = this.gridElement;
-            // get markup for new rows and append it to tbody
-            $htm = $(this._getGridTemplate());
-            if (!$tbody.length) {
+            // get markup for new rows and append it to tbod
+            var template = this._getGridTemplate();
+            $htm = $(template);
+            if (template && !$tbody.length) {
                 // initally append tbody to gridElement
                 this.gridElement.append($htm);
             }
         } else {
-            $htm = $(this._getGridTemplate());
-            this.gridElement.append($htm);
+            var templates = this._getGridTemplate();
+            $htm = $(templates);
+            if(templates) {
+                this.gridElement.append($htm);
+            }
         }
 
         if (this.options.summaryRow) {
@@ -3147,7 +3161,9 @@ $.widget('wm.datatable', {
             this.gridHeaderElement.empty();
             this.gridElement.find('colgroup').remove();
         }
-        this._renderHeader();
+         if(!this.options.isdynamictable) {
+             this._renderHeader();
+         }
         if (this.options.filtermode === this.CONSTANTS.SEARCH && (_.isEmpty(this.searchObj) || (this.searchObj && !this.searchObj.field && !this.searchObj.value))) {
             this._renderSearch();
         } else if (this.options.filtermode === this.CONSTANTS.MULTI_COLUMN) {
