@@ -134,6 +134,9 @@ export class VariablesService {
             const params: any = {};
             varInstance = VariableFactory.create(variablesJson[variableName], scope);
            if (this.isVariableSeperated(variablesJson, variableName)) {
+               if (varInstance.category === 'wm.CrudVariable' ) {
+                   varInstance.init();
+               }
                this.processBinding(varInstance, scope, 'dataBinding', 'dataBinding');
                varInstance.httpService = this.httpService;
                varInstance.getProviderId = (providerId, prefabName) => getClonedObject(this.metadataService.getByProviderId(providerId, prefabName));
