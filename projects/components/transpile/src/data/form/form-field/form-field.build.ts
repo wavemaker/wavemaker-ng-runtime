@@ -117,7 +117,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const widgetType = attrs.get('widget') || FormWidgetType.TEXT;
             const dataRole = isFormField ? 'form-field' : 'filter-field';
             const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
-                                   class="help-block text-danger" aria-hidden="false" [attr.aria-label]="${counter}.validationmessage" role="alert"
+                                   class="help-block text-danger" aria-hidden="false" role="alert"
                                    aria-live="assertive" [textContent]="${counter}.validationmessage"></p>` : '';
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
