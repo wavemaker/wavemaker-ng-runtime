@@ -108,6 +108,11 @@ export class VariablesService {
         });
     }
 
+    isVariableSeperated(variablesJson, variableName) {
+        return variablesJson[variableName].category === 'wm.Variable' || variablesJson[variableName].category === 'wm.ServiceVariable' ||
+            variablesJson[variableName].category === 'wm.LiveVariable' || variablesJson[variableName].category === 'wm.CrudVariable'
+    }
+
     /**
      * Takes the raw variables and actions json as input
      * Initialize the variable and action instances through the factory
@@ -128,19 +133,13 @@ export class VariablesService {
         for (const variableName in variablesJson) {
             const params: any = {};
             varInstance = VariableFactory.create(variablesJson[variableName], scope);
-           if (variablesJson[variableName].category === 'wm.Variable' || variablesJson[variableName].category === 'wm.ServiceVariable' ||
-               variablesJson[variableName].category === 'wm.LiveVariable' || variablesJson[variableName].category === 'wm.CrudVariable') {
+           if (this.isVariableSeperated(variablesJson, variableName)) {
                this.processBinding(varInstance, scope, 'dataBinding', 'dataBinding');
                varInstance.httpService = this.httpService;
                varInstance.getProviderId = (providerId, prefabName) => getClonedObject(this.metadataService.getByProviderId(providerId, prefabName));
                varInstance.getByCrudId = (crudId, prefabName) => getClonedObject(this.metadataService.getByCrudId(crudId, prefabName));
                const serviceDef = getClonedObject(this.metadataService.getByOperationId(varInstance.operationId, varInstance.getPrefabName()));
                varInstance.serviceInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
-               for (const e in VARIABLE_CONSTANTS.EVENT) {
-                   if (varInstance[VARIABLE_CONSTANTS.EVENT[e]]) {
-                       varInstance[VARIABLE_CONSTANTS.EVENT[e]] = $parseEvent(varInstance[VARIABLE_CONSTANTS.EVENT[e]]);
-                   }
-               }
                varInstance.subscribe('afterInvoke', () => $invokeWatchers(true));
                if (varInstance.category === 'wm.LiveVariable' && varInstance.operation === 'read') {
                    processFilterExpBindNode(varInstance._context, varInstance.filterExpressions, varInstance);
@@ -150,6 +149,15 @@ export class VariablesService {
                }
 
            }
+
+           if (this.isVariableSeperated(variablesJson, variableName) || variablesJson[variableName].category === 'wm.TimerVariable') {
+               for (const e in VARIABLE_CONSTANTS.EVENT) {
+                   if (varInstance[VARIABLE_CONSTANTS.EVENT[e]]) {
+                       varInstance[VARIABLE_CONSTANTS.EVENT[e]] = $parseEvent(varInstance[VARIABLE_CONSTANTS.EVENT[e]]);
+                   }
+               }
+           }
+
            varInstance.init();
 
             // if action type, put it in Actions namespace
