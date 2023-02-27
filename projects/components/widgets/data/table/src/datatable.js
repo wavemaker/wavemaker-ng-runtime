@@ -1437,6 +1437,7 @@ $.widget('wm.datatable', {
                 break;
             case 'colDefs':
                 if(this.options.isdynamictable) {
+                    this.tableContainer.find('colgroup').remove();
                     this._prepareHeaderData();
                     this.setColGroupWidths();
                     this._renderHeader();
