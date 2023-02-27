@@ -491,7 +491,6 @@ $.widget('wm.datatable', {
             var isExists = $tbody.find('tr.app-datagrid-row[data-row-id=' + row.$$pk + ']');
             if (!isExists.length) { return row;}
         })
-
         return preparedData;
     },
 
@@ -547,7 +546,6 @@ $.widget('wm.datatable', {
 
 
         if(isScrollorOnDemand) {
-            $tbody = this.gridElement;
             this._handleCRUDForInfiniteScroll($tbody);
             //Increment the startRowIndex, when delete action is prformed.
             if (self.options.lastActionPerformed === self.options.ACTIONS.DELETE) {
@@ -896,7 +894,7 @@ $.widget('wm.datatable', {
         });
         if (self.options.isNavTypeScrollOrOndemand()) {
             // If search action is performed or dataset is updated, then directly assign data to preparedData
-            if(self.options.isSearchTrigerred || self.options.isDatasetUpdated){
+            if((self.options.isSearchTrigerred && !self.emptySearch) || self.options.isDatasetUpdated){
                 self.preparedData = data;
             }
             // else update the existing data (if any edit action is performed) or push data (if the data is not present) to preparedData list.
@@ -2848,11 +2846,15 @@ $.widget('wm.datatable', {
             e.stopPropagation();
             // If the search text is empty then show all the rows.
             if (!$(this).val()) {
+                self.emptySearch = true;
                 if (self.searchObj.value) {
                     self.searchObj.value = '';
                     search(e);
                 }
+            } else {
+                self.emptySearch = false;
             }
+
             /* Search only when enter key is pressed. */
             if (e.which === 13) {
                 search(e);
