@@ -28,7 +28,7 @@
                 class="btn btn-default btn-date"
                 [tabindex]="tabindex"
                 [disabled]="disabled || readonly || isCurrentDate"
-                [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : 'Choose date by pressing enter'"
+                aria-label="Select date"
                 aria-haspopup="true"
                 aria-expanded="false"
                 (click)="toggleDpDropdown($event, false)">

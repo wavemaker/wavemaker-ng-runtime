@@ -103,7 +103,8 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
             this.bsModal.onHide.subscribe(() => {
                 //  Will de-activate focus trap for the respective dialog when they are closed.
                 const ref = this.dialogService.getLastOpenedDialog();
-                if (focusTrapObj[ref.titleId] !== undefined) {
+
+                if (ref && focusTrapObj[ref.titleId] !== undefined) {
                     focusTrapObj[ref.titleId].deactivate();
                 }
             }),
