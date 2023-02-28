@@ -44,6 +44,7 @@ export class VariablesService {
         setDependency('dialog', this.dialogService);
         wmSetDependency('oAuth', this.oAuthService);
         wmSetDependency('security', this.securityService);
+        wmSetDependency('metadata', this.metadataService);
     }
 
     /**
@@ -139,10 +140,6 @@ export class VariablesService {
                }
                this.processBinding(varInstance, scope, 'dataBinding', 'dataBinding');
                varInstance.httpService = this.httpService;
-               varInstance.getProviderId = (providerId, prefabName) => getClonedObject(this.metadataService.getByProviderId(providerId, prefabName));
-               varInstance.getByCrudId = (crudId, prefabName) => getClonedObject(this.metadataService.getByCrudId(crudId, prefabName));
-               const serviceDef = getClonedObject(this.metadataService.getByOperationId(varInstance.operationId, varInstance.getPrefabName()));
-               varInstance.serviceInfo = serviceDef === null ? null : _.get(serviceDef, 'wmServiceOperationInfo');
                varInstance.subscribe('afterInvoke', () => $invokeWatchers(true));
                if (varInstance.category === 'wm.LiveVariable' && varInstance.operation === 'read') {
                    processFilterExpBindNode(varInstance._context, varInstance.filterExpressions, varInstance);
