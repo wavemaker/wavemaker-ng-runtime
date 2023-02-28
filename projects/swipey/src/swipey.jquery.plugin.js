@@ -45,7 +45,7 @@ window.requestAnimationFrame = (function () {
     };
     // Binds events outside of zone
     function addEventListener(target, event, callback) {
-        (target.__zone_symbol__addEventListener || target.addEventListener).call(target, event, callback);
+        (target.__zone_symbol__addEventListener || target.addEventListener).call(target, event, callback, {passive: true});
     }
     // this methods returns ios version
     function iOSversion() {

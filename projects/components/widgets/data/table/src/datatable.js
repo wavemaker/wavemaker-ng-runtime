@@ -262,7 +262,6 @@ $.widget('wm.datatable', {
 
         var $colgroup = $('<colgroup></colgroup>'),
             $htm = this.gridHeaderElement.empty(),
-
             isDefined = this.Utils.isDefined,
             sortInfo = this.options.sortInfo,
             sortField = sortInfo.field,
@@ -399,6 +398,7 @@ $.widget('wm.datatable', {
                     $row.append($th);
 
                 });
+                $htm.append($row);
             });
         }
 
@@ -1486,7 +1486,6 @@ $.widget('wm.datatable', {
         var $row,
             id;
         //If visible flag is true, select the first visible row item (Do not select the always new row)
-
         if (visible && this.gridElement.find('tr').is(':visible')) {
             this.__setStatus();
             $row = this.gridElement.find('tr.app-datagrid-row:visible:not(.always-new-row)').first();
@@ -1592,7 +1591,7 @@ $.widget('wm.datatable', {
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
         var gridRow = this.gridElement.find($row);
         // WMS-21139 trigger selectedItems change when the captured click is on the current table but not on child table
-        if (gridRow.length && gridRow.closest('table').attr('id') === this.gridElement.attr('id')) {
+        if (gridRow.length && gridRow.closest('tbody').attr('id') === this.gridElement.attr('id')) {
             var rowId = $row.attr('data-row-id');
             var rowData = this.preparedData[rowId];
             var data = this.options.data[rowId];
@@ -3223,7 +3222,6 @@ $.widget('wm.datatable', {
         this.options[key] = value;
         if (key === 'height') {
             if(this.options.showHeader) {
-
                 this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px; border: 1px solid #eee, box-shadow: 0px 1px 0px 0px rgb(118, 118, 118, 15%)');
             }
           //  if(this.dataStatus.state != 'loading') {
@@ -3237,6 +3235,7 @@ $.widget('wm.datatable', {
             this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
                 this.gridContainer.find('.app-grid-header-inner').css('overflow', 'auto');
+
             }
             this.dataStatusContainer.css(key, value);
         }

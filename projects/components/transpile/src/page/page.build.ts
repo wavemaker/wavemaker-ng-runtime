@@ -64,7 +64,7 @@ register('wm-page', (): IBuildTaskDef => {
         },
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmPage #${counter}="wmPage" data-role="pageContainer" [attr.aria-label]="${counter}.hint || 'Main page content'" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmPage #${counter}="wmPage" data-role="pageContainer" [attr.aria-label]="${counter}.hint" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

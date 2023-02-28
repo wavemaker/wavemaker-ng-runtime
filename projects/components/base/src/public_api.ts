@@ -49,7 +49,8 @@ export {
     getConditionalClasses,
     prepareFieldDefs ,
     getContainerTargetClass,
-    extractDataSourceName
+    extractDataSourceName,
+    setFocusTrap
 } from './utils/widget-utils';
 export {
     BaseComponent
