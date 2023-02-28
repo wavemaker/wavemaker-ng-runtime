@@ -1011,7 +1011,6 @@ $.widget('wm.datatable', {
         this._prepareData();
         //If the pagination type is not Infinite Scroll or On-demand, remove the tbody and footer
         if (!this.options.isNavTypeScrollOrOndemand()) {
-          //  this.gridElement.remove();
             this.gridFooter.remove();
             this._renderGrid();
         } else {
