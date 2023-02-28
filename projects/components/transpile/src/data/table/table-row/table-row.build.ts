@@ -6,12 +6,13 @@ const tagName = 'div';
 const getRowExpansionActionTmpl = (attrs) => {
     const tag = attrs.get('widget-type') === 'anchor' ? 'a' : 'button';
     const directive = attrs.get('widget-type') === 'anchor' ? 'wmAnchor' : 'wmButton';
+    const title = attrs.get('display-name') || attrs.get('title') || 'Collapse/Expand';
     return `<ng-template #rowExpansionActionTmpl let-row="row">
                <${tag} ${directive}
                     ${getRowActionAttrs(attrs)}
                     class="${attrs.get('class')} row-expansion-button"
                     iconclass="${attrs.get('collapseicon')}"
-                    type="button"></${tag}>
+                    type="button" aria-label="${title}"></${tag}>
             </ng-template>`;
 };
 

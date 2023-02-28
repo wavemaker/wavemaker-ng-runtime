@@ -5,7 +5,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
 import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, adjustContainerRightEdges, getMomentLocaleObject, App } from '@wm/core';
-import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import {IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler} from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
 import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
@@ -157,11 +157,8 @@ export class DateComponent extends BaseDateTimeComponent {
         dpContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
         $('.bs-calendar-container').removeAttr('role');
         const datePickerContainer = $('.bs-datepicker-container')[0];
-        this.focusTrap = createFocusTrap(datePickerContainer, {
-            onActivate: () => datePickerContainer.classList.add('is-active'),
-            onDeactivate: () => datePickerContainer.classList.remove('is-active'),
-            allowOutsideClick: true
-        }).activate();
+        this.focusTrap = setFocusTrap(datePickerContainer, true);
+        this.focusTrap.activate();
         this.addDatepickerKeyboardEvents(this, false);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
         adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
@@ -277,16 +274,5 @@ export class DateComponent extends BaseDateTimeComponent {
             return;
         }
         this.setDataValue(newVal);
-    }
-
-    showCordovaDatePicker() {
-        return super.showCordovaDatePicker(
-            'DATE',
-            this.bsDataValue && this.bsDataValue.getTime(),
-            getDateObj(this.mindate)?.getTime(),
-            getDateObj(this.maxdate)?.getTime())
-        .then((date: Date) => {
-            this.bsDataValue = date && moment(date).startOf('day').toDate();
-        });
     }
 }

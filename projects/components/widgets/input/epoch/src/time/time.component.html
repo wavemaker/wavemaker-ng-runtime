@@ -39,20 +39,19 @@
         </div>
     </div>
 <ng-template [ngIf]="loadNativeDateInput">
-    <input type="time" class="form-control app-textbox display-input mobile-input"
-           role="timer" [attr.aria-label]="hint"
-           [value]="nativeDisplayValue" [min]="mintime" [max]="maxtime"
-           [tabindex]="tabindex"
-           [required]="required"
-           [disabled]="disabled || readonly || isCurrentTime"
-           (change)="onTimeChange($event, true)"
-           (focus)="onDateTimeInputFocus(true); invokeOnFocus($event); assignModel()"
-           (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
-    <div *ngIf="!!getCordovaPluginDatePickerApi()"
-        class="mobile-input mobile-datepicker-container"
+    <wm-datetimepicker
+        dateTimePicker
+        mode="TIME"
+        [minTime]="minTime"
+        [maxTime]="maxTime"
+        [placement]="modal"
+        [value]="bsTimeValue"
+        (change)="onTimeChange($event)">
+    </wm-datetimepicker>
+    <div class="mobile-input mobile-datepicker-container"
         tabindex="1000000"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event); assignModel()"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
-        (click)="!(disabled || readonly || isCurrentTime) && showCordovaDatePicker()">
+        (click)="!(disabled || readonly || isCurrentTime) && showDatePickerModal()">
     </div>
 </ng-template>

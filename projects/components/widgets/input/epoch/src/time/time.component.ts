@@ -365,20 +365,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         this.blurDateInput(true);
     }
 
-    public showCordovaDatePicker() {
-        const minTime = this.minTime?.getTime();
-        const maxTime = this.maxTime?.getTime();
-        return super.showCordovaDatePicker(
-            'TIME',
-            this.bsTimeValue && this.bsTimeValue.getTime(),
-            minTime,
-            maxTime)
-        .then((date: Date) => {
-            this.bsTimeValue = date;
-            this.onTimeChange(this.bsTimeValue);
-        });
-    }
-
     private isValid(event) {
         if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();

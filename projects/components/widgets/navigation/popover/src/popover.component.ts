@@ -90,6 +90,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     // Trigger on hiding popover
     public onHidden() {
         this.invokeEventCallback('hide', {$event: {type: 'hide'}});
+        this.isOpen = false;
     }
 
     private setFocusToPopoverLink() {
@@ -183,7 +184,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             // Check for Shift+Tab key
             if (action === 'shift.tab') {
                 this.bsPopoverDirective.hide();
+                event.preventDefault();
                 this.setFocusToPopoverLink();
+                this.isOpen = false;
             }
         };
         popoverEndBtn.onkeydown = (event) => {
@@ -191,7 +194,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             // Check for Tab key
             if (action === 'tab') {
                 this.bsPopoverDirective.hide();
+                event.preventDefault();
                 this.setFocusToPopoverLink();
+                this.isOpen = false;
             }
         };
 
