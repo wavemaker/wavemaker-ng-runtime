@@ -389,7 +389,6 @@ $.widget('wm.datatable', {
             rowTemplates.forEach(function($thList, index) {
                 $row = $('<tr role="row" tabindex="0"></tr>');
                 // To fix ADA issue "Tables headers in datatable must refer to data cells"
-                var $dummyHeaderRow = $('<tr role="row"></tr>');
                 var rowSpan = rowTemplates.length - index;
                 //append all t-heads to the tr
                 $thList.forEach(function($th) {
@@ -398,10 +397,8 @@ $.widget('wm.datatable', {
                         $th.attr('rowspan', rowSpan);
                     }
                     $row.append($th);
-                    $dummyHeaderRow.append('<td role="cell"></td>');
-                    self._setStyles($dummyHeaderRow, 'display:none;');
+
                 });
-                $htm.append($row, $dummyHeaderRow);
             });
         }
 
@@ -1489,11 +1486,12 @@ $.widget('wm.datatable', {
         var $row,
             id;
         //If visible flag is true, select the first visible row item (Do not select the always new row)
-        if (visible && this.gridElement.find('tbody').is(':visible')) {
+
+        if (visible && this.gridElement.find('tr').is(':visible')) {
             this.__setStatus();
-            $row = this.gridElement.find(' tr.app-datagrid-row:visible:not(.always-new-row)').first();
+            $row = this.gridElement.find('tr.app-datagrid-row:visible:not(.always-new-row)').first();
         } else {
-            $row = this.gridElement.find(' tr.app-datagrid-row:not(.always-new-row)').first();
+            $row = this.gridElement.find('tr.app-datagrid-row:not(.always-new-row)').first();
         }
         id = $row.attr('data-row-id');
         // Select the first row if it exists, i.e. it is not the first row being added.
@@ -2886,26 +2884,24 @@ $.widget('wm.datatable', {
         $header = headerTemplate.header;
 
         function toggleSelectAll(e) {
-            // setTimeout(function() {
-                var $checkboxes = $('tr.app-datagrid-row:visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
-                    checked = this.checked;
-                $checkboxes.prop('checked', checked);
-                $checkboxes.each(function () {
-                    var $row = $(this).closest('tr.app-datagrid-row'),
-                        rowId = $row.attr('data-row-id'),
-                        rowData = self.options.data[rowId];
-                    // If we enable multiselect and check header checkbox then updating selecteditem in datatable.
-                    self.options.assignSelectedItems(rowData, e);
-                    self.toggleRowSelection($row, checked, e, true);
-                    if (checked && $.isFunction(self.options.onRowSelect)) {
-                        self.options.onRowSelect(rowData, e);
-                    }
-                    if (!checked && $.isFunction(self.options.onRowDeselect)) {
-                        self.options.onRowDeselect(rowData, e);
-                    }
-                });
-           // }, 1000);
 
+            var $checkboxes = $('tr.app-datagrid-row:visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
+                checked = this.checked;
+            $checkboxes.prop('checked', checked);
+            $checkboxes.each(function () {
+                var $row = $(this).closest('tr.app-datagrid-row'),
+                    rowId = $row.attr('data-row-id'),
+                    rowData = self.options.data[rowId];
+                // If we enable multiselect and check header checkbox then updating selecteditem in datatable.
+                self.options.assignSelectedItems(rowData, e);
+                self.toggleRowSelection($row, checked, e, true);
+                if (checked && $.isFunction(self.options.onRowSelect)) {
+                    self.options.onRowSelect(rowData, e);
+                }
+                if (!checked && $.isFunction(self.options.onRowDeselect)) {
+                    self.options.onRowDeselect(rowData, e);
+                }
+            });
         }
 
         // WMS-17629: Hiding the table header column when show property is set to false
@@ -3110,7 +3106,7 @@ $.widget('wm.datatable', {
         this.gridContainer = $(table);
         this.gridHeaderElement = this.gridContainer.find('.table-header');
         this._setStyles($statusContainer.find('div.overlay'), "display:none");
-        this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow-y: auto;');
+        this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow: auto;');
 
 
         this.tableContainer = this.gridContainer.find('table');
@@ -3227,11 +3223,20 @@ $.widget('wm.datatable', {
         this.options[key] = value;
         if (key === 'height') {
             if(this.options.showHeader) {
-                this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px');
+
+                this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px; border: 1px solid #eee, box-shadow: 0px 1px 0px 0px rgb(118, 118, 118, 15%)');
             }
+          //  if(this.dataStatus.state != 'loading') {
+                var elements = this.gridHeaderElement.find('th');
+                this._setStyles(this.tableContainer, 'border-collapse: separate;');
+                for (var i = 0; i < elements.length; i += 1) {
+                    this._setStyles($(elements[i]), 'border: 1px solid #eee');
+                }
+            //}
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
+            this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
-                this.gridContainer.find('.app-grid-header-inner').css('overflow-y', 'auto');
+                this.gridContainer.find('.app-grid-header-inner').css('overflow', 'auto');
             }
             this.dataStatusContainer.css(key, value);
         }
