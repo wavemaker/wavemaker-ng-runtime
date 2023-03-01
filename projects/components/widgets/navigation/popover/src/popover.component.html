@@ -15,6 +15,8 @@
     [ngClass]="{'disable-popover': !canPopoverOpen}"
     [adaptivePosition]="adaptiveposition"
     [attr.aria-label]="hint || 'Popover menu'"
+    [attr.aria-expanded]="isOpen"
+    role="button"
     #anchor
     name.bind="name"
     wmAnchor

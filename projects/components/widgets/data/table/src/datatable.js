@@ -1011,6 +1011,7 @@ $.widget('wm.datatable', {
         this._prepareData();
         //If the pagination type is not Infinite Scroll or On-demand, remove the tbody and footer
         if (!this.options.isNavTypeScrollOrOndemand()) {
+
             this.gridFooter.remove();
             this._renderGrid();
         } else {
@@ -1138,7 +1139,7 @@ $.widget('wm.datatable', {
             // if the loading indicator ele is not created, create it and append it to grid ele if it is already present.
             // If not create grid ele and then append the loading indicator to grid ele
             var $loadingEl = $('<div class="loading-data-msg spin-icon-in-center"><span><i class="app-icon panel-icon fa-spin ' + this.options.loadingicon + '"></i>' +
-            '<span class="sr-only">Loading</span><span class="loading-text"></span></span></div>');
+                '<span class="sr-only">Loading</span><span class="loading-text"></span></span></div>');
             $loadingEl.find('.loading-text').html(loadingdatamsg);
             if ($dataGrid.length) {
                 $dataGrid.append($loadingEl);
@@ -1926,13 +1927,13 @@ $.widget('wm.datatable', {
         if (this.options.editmode === this.CONSTANTS.INLINE && (this.options.rowActions.length === 0 || !_.some(this.options.rowActions, { action: 'editRow($event)' }))) {
             if (saveInd) {
                 $gridActions.append('<button type="button" wmbutton="" class="btn app-button btn-default cancelNewRow" tabindex="0" accesskey="" title="Cancel">'+
-                                    '<i aria-hidden="true" class="app-icon wi wi-cancel"></i>'+
-                                    '<span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>'+
-                                '</button>'+
-                                '<button type="button" wmbutton="" class="btn app-button btn-primary saveNewRow" tabindex="0" accesskey="" title="Save">'+
-                                    '<i aria-hidden="true" class="app-icon wi wi-done"></i>'+
-                                    '<span class="sr-only">Save Icon</span><span class="btn-caption">Save</span>'+
-                                '</button>');
+                    '<i aria-hidden="true" class="app-icon wi wi-cancel"></i>'+
+                    '<span class="sr-only">Cancel Icon</span><span class="btn-caption">Cancel</span>'+
+                    '</button>'+
+                    '<button type="button" wmbutton="" class="btn app-button btn-primary saveNewRow" tabindex="0" accesskey="" title="Save">'+
+                    '<i aria-hidden="true" class="app-icon wi wi-done"></i>'+
+                    '<span class="sr-only">Save Icon</span><span class="btn-caption">Save</span>'+
+                    '</button>');
                 $gridActions.find('.cancelNewRow').on('click', function (event) {
                     self.toggleEditRow(event, {action: 'cancel', $row: $newRow});
                 });
@@ -2472,42 +2473,42 @@ $.widget('wm.datatable', {
         self.options.safeApply();
         self.setFocusOnElement(undefined, $row, true);
     },
-  _onEnter: function ($target, $row, quickEdit, event) {
+    _onEnter: function ($target, $row, quickEdit, event) {
         var self = this;
         if($target.is('button')){
-          return;
+            return;
         }
         if (quickEdit && $target.hasClass('app-datagrid-row') && !$target.hasClass('row-editing')) {
-          $row.trigger('click', [undefined, {action: 'edit'}]);
+            $row.trigger('click', [undefined, {action: 'edit'}]);
         } else {
-          //On click of enter while inside a widget in editing row, save the row
-          if ($row.hasClass('row-editing') && $target.closest('[data-field-name]').length) {
-            $target.blur(); //Blur the input, to update the model
-            self.toggleEditRow(event, {
-              'action': 'save',
-              'success': function (skipFocus, error) {
-                //On error, focus the same field. Else, focus the row
-                if (error) {
-                  $target.focus();
-                } else {
-                        self.focusActiveRow();
-                        self.focusNewRow();
+            //On click of enter while inside a widget in editing row, save the row
+            if ($row.hasClass('row-editing') && $target.closest('[data-field-name]').length) {
+                $target.blur(); //Blur the input, to update the model
+                self.toggleEditRow(event, {
+                    'action': 'save',
+                    'success': function (skipFocus, error) {
+                        //On error, focus the same field. Else, focus the row
+                        if (error) {
+                            $target.focus();
+                        } else {
+                            self.focusActiveRow();
+                            self.focusNewRow();
+                        }
+                    }
+                });
+            } else {
+                $row.trigger('click');
+                // When enter event is recived on the new row focus the row to enter text
+                if (quickEdit && $target.hasClass('always-new-row') && $target.hasClass('row-editing')) {
+                    self.focusNewRow();
                 }
-              }
-            });
-          } else {
-            $row.trigger('click');
-            // When enter event is recived on the new row focus the row to enter text
-            if (quickEdit && $target.hasClass('always-new-row') && $target.hasClass('row-editing')) {
-                self.focusNewRow();
             }
-          }
         }
         //Stop the enter keypress from submitting any parent form. If target is button, event should not be stopped as this stops click event on button
         if (!$target.is('button')) {
-          event.stopPropagation();
+            event.stopPropagation();
         }
-      },
+    },
     // Handles keydown event on row items.
     onKeyDown: function (event) {
         var $target = $(event.target),
@@ -2689,7 +2690,7 @@ $.widget('wm.datatable', {
                     }
                 }
                 // If class has danger, confirm dialog is opened, so dont save the row.
-                 //If focusout is because of input element or row action or current row, dont save the row
+                //If focusout is because of input element or row action or current row, dont save the row
                 if (isRelatedTargetRowAction || $row.hasClass("danger") || isRelatedTargetGridAction || (isTargetRowAction && isRelatedTargetRowAction) || (isTargetRowAction && e.relatedTarget ===null) || isInvalidTarget() || $relatedTarget.attr("focus-target") === "") {
                     return;
                 }
