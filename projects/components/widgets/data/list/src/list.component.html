@@ -25,6 +25,8 @@
 <ul [attr.tabindex]="tabindex" class="app-livelist-container clearfix {{listclass}}" role="list"
     (keydown.enter)="handleKeyDown($event, 'select')"
 
+    (keydown.space)="handleKeyDown($event, 'space')"
+
     (keydown.arrowup)="handleKeyDown($event, 'focusPrev')"
     (keydown.arrowdown)="handleKeyDown($event, 'focusNext')"
     (keydown.arrowleft)="handleKeyDown($event, 'focusPrev')"
