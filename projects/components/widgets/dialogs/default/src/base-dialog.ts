@@ -37,7 +37,6 @@ const invokeOpenedCallback = (ref) => {
               })[0];
 
             $(keyboardFocusableElements[0]).focus();
-
             focusTrapObj[ref.titleId] = createFocusTrap(container, {
                 onActivate: () => container.classList.add('is-active'),
                 onDeactivate: () => container.classList.remove('is-active'),
