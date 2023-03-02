@@ -3096,6 +3096,7 @@ $.widget('wm.datatable', {
         if (!this.tableId) {
             this.tableId = this.Utils.generateGuid();
         }
+
         var overflow = (this.options.isNavTypeScrollOrOndemand() && (this.options.height === '100%' || this.options.height === 'auto')) ? 'hidden' : 'auto';
         var statusContainer =
             '<div class="overlay">' +
