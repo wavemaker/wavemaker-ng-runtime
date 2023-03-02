@@ -1457,7 +1457,6 @@ $.widget('wm.datatable', {
                 }
                 // Set grid class on table.
                 this.tableContainer.attr('class', gridClass);
-              //  this.gridHeaderElement.attr('class', gridClass);
                 if (this.options.spacing === 'condensed') {
                     this._toggleSpacingClasses('condensed');
                 }
@@ -2305,15 +2304,15 @@ $.widget('wm.datatable', {
                 self.addOrRemoveScroll();
             }, e, function (skipFocus, error) {
                 if (self.options.isNavTypeScrollOrOndemand()) {
-                   var rowId = +$(e.target).closest("tr.app-datagrid-row").attr("data-row-id");
-                  // remove existing row from tbody
+                    var rowId = +$(e.target).closest("tr.app-datagrid-row").attr("data-row-id");
+                    // remove existing row from tbody
                     var $row = self.gridElement.find('tr.app-datagrid-row[data-row-id="' + rowId + '"]');
-                   self.options.setDeletedRowIndex(rowId);
-                   // remove data
+                    self.options.setDeletedRowIndex(rowId);
+                    // remove data
                     self.preparedData.splice(rowId,1);
                     // storing the data of deleted row in "options.deletedRowData"
                     self.options.data.splice(rowId,1);
-                   // decrementing index values and data-row-id for remaining rows
+                    // decrementing index values and data-row-id for remaining rows
                     self.gridElement.find('tr.app-datagrid-row:gt(' + rowId + ')').each(function(index, row) {
                         if (!$row.is(':last-child') && (!$(row).hasClass('always-new-row'))) {
                             $(row).attr("data-row-id", rowId);
@@ -2952,7 +2951,6 @@ $.widget('wm.datatable', {
              * Colgroup is used to maintain the consistent widths between the header table and body table**/
             this.tableContainer.append($colgroup);
             /**As jquery references the colgroup, clone the colgroup and add it to the table body**/
-           // this.gridElement.prepend($colgroup.clone());
         }
         /**Add event handler, to the select all checkbox on the header**/
         $header.on('click', '.app-datagrid-header-cell input:checkbox', toggleSelectAll);
@@ -3118,9 +3116,9 @@ $.widget('wm.datatable', {
         }
         var overflow = (this.options.isNavTypeScrollOrOndemand() && (this.options.height === '100%' || this.options.height === 'auto')) ? 'hidden' : 'auto';
         var statusContainer =
-            '<div class="overlay">' +
-            '<div class="status"><i class="' + this.options.loadingicon + '"></i><span class="message"></span></div>' +
-            '</div>',
+                '<div class="overlay">' +
+                '<div class="status"><i class="' + this.options.loadingicon + '"></i><span class="message"></span></div>' +
+                '</div>',
 
             table = '<div class="table-container table-responsive">' +
                 '<div class="app-grid-header">' +
@@ -3132,11 +3130,10 @@ $.widget('wm.datatable', {
                 '</div></div></div>',
             $statusContainer = $(statusContainer),
             $tableContainer = this.element.find('.table-container');
-            this.gridContainer = $(table);
+        this.gridContainer = $(table);
         this.gridHeaderElement = this.gridContainer.find('.table-header');
         this._setStyles($statusContainer.find('div.overlay'), "display:none");
         this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow: auto;');
-
 
         this.tableContainer = this.gridContainer.find('table');
         this.gridElement = this.gridContainer.find('.app-grid-content');
@@ -3284,12 +3281,13 @@ $.widget('wm.datatable', {
             if(this.options.showHeader) {
                 this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px; border: 1px solid #eee, box-shadow: 0px 1px 0px 0px rgb(118, 118, 118, 15%)');
             }
-          //  if(this.dataStatus.state != 'loading') {
-                var elements = this.gridHeaderElement.find('th');
-                this._setStyles(this.tableContainer, 'border-collapse: separate;');
-                for (var i = 0; i < elements.length; i += 1) {
-                    this._setStyles($(elements[i]), 'border: 1px solid #eee');
-                }
+
+            //  if(this.dataStatus.state != 'loading') {
+            var elements = this.gridHeaderElement.find('th');
+            this._setStyles(this.tableContainer, 'border-collapse: separate;');
+            for (var i = 0; i < elements.length; i += 1) {
+                this._setStyles($(elements[i]), 'border: 1px solid #eee');
+            }
             //}
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
             this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
