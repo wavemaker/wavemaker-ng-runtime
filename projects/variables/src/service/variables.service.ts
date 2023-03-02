@@ -13,7 +13,7 @@ import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
 
 import { VariableFactory } from '../factory/variable.factory';
-import { wmSetDependency, BaseAction, getTarget, setValueToNode } from '@wavemaker/variables';
+import { wmSetDependency, BaseAction, getTarget, setValueToNode, getTargetNodeKey, internalBoundNodeMap } from '@wavemaker/variables';
 import {setDependency, simulateFileDownload} from '../util/variable/variables.utils';
 import { MetadataService } from './metadata-service/metadata.service';
 import { VARIABLE_CONSTANTS } from '../constants/variables.constants';
@@ -75,13 +75,21 @@ export class VariablesService {
     }
 
     processBindExp(d: any, scope: any, variable) {
-        const root = getTarget(variable);
+        const root = getTarget(variable),
+            targetNodeKey = getTargetNodeKey(d.target),
+            runMode = true;
         let v = _.isArray(d.value) ? d.value[0] : d.value;
         if (v) {
             if (v.startsWith && v.startsWith('bind:')) {
                 v = $watch(v.replace('bind:', ''), scope, {}, variable.invokeOnParamChange.bind(variable, d), undefined, undefined, undefined, () => variable.isMuted);
             } else if (!_.isUndefined(d.value)) {
                 setValueToNode(d.target, d, root, variable, d.value, true);
+                if (runMode && root !== targetNodeKey) {
+                    if (!internalBoundNodeMap.has(variable)) {
+                        internalBoundNodeMap.set(variable, {});
+                    }
+                    _.set(internalBoundNodeMap.get(variable), [ variable.name, root, d.target ], d.value);
+                }
             }
         }
         return {
@@ -114,6 +122,16 @@ export class VariablesService {
             variablesJson[variableName].category === 'wm.LiveVariable' || variablesJson[variableName].category === 'wm.CrudVariable'
     }
 
+    getBindSourceTarget(variable) {
+        if (variable.category === 'wm.LiveVariable') {
+            return variable.operation === 'read' ? 'filterFields' : 'inputFields';
+        } else if (variable.category === 'wm.ModelVariable') {
+            return 'dataSet';
+        } else {
+            return 'dataBinding';
+        }
+    }
+
     /**
      * Takes the raw variables and actions json as input
      * Initialize the variable and action instances through the factory
@@ -138,7 +156,7 @@ export class VariablesService {
                if (varInstance.category === 'wm.CrudVariable' ) {
                    varInstance.init();
                }
-               this.processBinding(varInstance, scope, 'dataBinding', 'dataBinding');
+               this.processBinding(varInstance, scope, 'dataBinding', this.getBindSourceTarget(varInstance));
                varInstance.httpService = this.httpService;
                varInstance.subscribe('afterInvoke', () => $invokeWatchers(true));
                if (varInstance.category === 'wm.LiveVariable' && varInstance.operation === 'read') {
