@@ -513,7 +513,8 @@ $.widget('wm.datatable', {
         var self = this;
 
         //When search or sort applied or dataset is updated, clear the tbody and render with filtered data
-        if ((self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT || self.options.lastActionPerformed === self.options.ACTIONS.FILTER_CRITERIA || self.options.lastActionPerformed === self.options.ACTIONS.DATASET_UPDATE) && (self.options.isSearchTrigerred || self.options.isDatasetUpdated)) {
+        // Fix for [WMS-23263] 'isDataUpdatedByUser' flag is true when dataset is updated from script
+        if ((self.options.lastActionPerformed === self.options.ACTIONS.SEARCH_OR_SORT || self.options.lastActionPerformed === self.options.ACTIONS.FILTER_CRITERIA || self.options.lastActionPerformed === self.options.ACTIONS.DATASET_UPDATE) && (self.options.isSearchTrigerred || self.options.isDatasetUpdated || self.options.isDataUpdatedByUser)) {
             $tbody.html('');
             // In case of on demand pagination, when the next page is not disabled show the loading/load more button accordingly
             if(this.options.navigation === 'On-Demand' && !this.options.isLastPage)
@@ -580,8 +581,13 @@ $.widget('wm.datatable', {
             }
         });
         // set last action performed to default and clear action row index, after generating templates
+        // Fix for [WMS-23263] For Dynamic table _getGridTemplate() is being called twice
+        // so reset the lastActionPerformed flag if it is not dynamic table
+        if (!this.options.isdynamictable) {
             this.options.setLastActionPerformed(this.options.ACTIONS.DEFAULT);
+            this.options.setIsDataUpdatedByUser(false);
             this.options.clearActionRowIndex();
+        }
         return $tbody;
     },
 
