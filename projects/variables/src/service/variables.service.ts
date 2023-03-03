@@ -152,10 +152,8 @@ export class VariablesService {
         for (const variableName in variablesJson) {
             const params: any = {};
             varInstance = VariableFactory.create(variablesJson[variableName], scope);
+            varInstance.init();
            if (this.isVariableSeperated(variablesJson, variableName)) {
-               if (varInstance.category === 'wm.CrudVariable' ) {
-                   varInstance.init();
-               }
                this.processBinding(varInstance, scope, 'dataBinding', this.getBindSourceTarget(varInstance));
                varInstance.httpService = this.httpService;
                varInstance.subscribe('afterInvoke', () => $invokeWatchers(true));
@@ -176,7 +174,6 @@ export class VariablesService {
                }
            }
 
-           varInstance.init();
 
             // if action type, put it in Actions namespace
             if (varInstance instanceof BaseAction) {
