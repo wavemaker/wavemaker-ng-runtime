@@ -3103,7 +3103,7 @@ $.widget('wm.datatable', {
         this.gridContainer = $(table);
         this.gridHeaderElement = this.gridContainer.find('.table-header');
         this._setStyles($statusContainer.find('div.overlay'), "display:none");
-        this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow-y: auto;');
+        this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow: auto;');
 
 
         this.tableContainer = this.gridContainer.find('table');
@@ -3232,7 +3232,7 @@ $.widget('wm.datatable', {
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
             this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
-                this.gridContainer.find('.app-grid-header-inner').css('overflow-y', 'auto');
+                this.gridContainer.find('.app-grid-header-inner').css('overflow', 'auto');
             }
             this.dataStatusContainer.css(key, value);
         }
