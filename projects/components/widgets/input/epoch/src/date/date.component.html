@@ -57,7 +57,8 @@
         [placement]="modal"
         [excludedDaysToDisable]="excludedDaysToDisable"
         [excludedDatesToDisable]="excludedDatesToDisable"
-        [value]="bsDateValue"
+        [displayFormat]="dateInputFormat"
+        [value]="bsDataValue"
         (change)="onDateChange($event)">
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"

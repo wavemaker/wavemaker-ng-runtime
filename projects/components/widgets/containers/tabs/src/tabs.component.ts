@@ -291,6 +291,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
                 return pane;
             }
         }
+
     }
 
     // select next tab relative to the current active tab

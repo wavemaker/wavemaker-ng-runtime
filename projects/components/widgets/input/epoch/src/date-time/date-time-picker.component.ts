@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Injector, Input, NgZone, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 import { App } from '@wm/core';
 
@@ -27,19 +27,23 @@ declare const moment, $, _;
                     [value]="changedValue"
                     [min]="minTime"
                     [max]="maxTime"
-                    (change)="onDateUpdate($event)"
+                    (change)="onTimeUpdate($event)"
                     *ngIf="mode === 'DATE_TIME' || mode === 'TIME'"></wm-timepicker>
-            </div>
-            <div class="modal-footer">
                 <span class="text-primary date-picker-value">
                     {{getDateLabel()}}
                 </span>
+            </div>
+            <div class="modal-footer">
                 <button
-                    class="btn btn-secondary"
-                    (click)="hideModal()">{{appLocale.MESSAGE_DATE_PICKER_CANCEL || "Cancel" }}</button>
+                    class="btn btn-secondary clear-btn"
+                    (click)="clear()">{{appLocale.MESSAGE_DATE_PICKER_CLEAR || "Clear" }}</button>
                 <button
-                    class="btn btn-primary"
+                    class="btn btn-primary pull-right ok-btn"
                     (click)="onOkClick()">{{appLocale.MESSAGE_DATE_PICKER_OK || "Ok" }}</button>
+                <button
+                    class="btn btn-secondary pull-right cancel-btn"
+                    (click)="hideModal()">{{appLocale.MESSAGE_DATE_PICKER_CANCEL || "Cancel" }}</button>
+                
             </div>
         </div>
     </ng-template>
@@ -70,11 +74,16 @@ export class DateTimePickerComponent implements AfterViewInit {
     @Input()
     private maxTime: Date;
 
+    @Input()
+    private _displayFormat: string;
+
     @Output() change = new EventEmitter<Date>();
 
     private _value = new Date();
 
     private changedValue = null;
+    
+    private modalRef: BsModalRef;
 
     @Input()
     private excludedDatesToDisable;
@@ -108,16 +117,33 @@ export class DateTimePickerComponent implements AfterViewInit {
         return this._bsDatepickerConfig;
     }
 
+    @Input()
+    set displayFormat(format: string) {
+        if (format) {
+            this._displayFormat = format.replace(/y/g, "Y").replace(/d/g, "D").replace("a", "A");
+        }
+    }
+
+    get displayFormat() {
+        if (this._displayFormat) {
+            return this._displayFormat;
+        }
+    }
+    /**
+     * This method is used to highlight the current date
+     */
+    private hightlightToday() {
+        const toDay = new Date().getDate().toString();
+        _.filter($(`body>modal-container .date-picker-modal span:contains(${toDay})`)
+            .not('.is-other-month,.current-date'), (obj) => {
+            if ($(obj).text() === toDay) {
+                $(obj).addClass('current-date text-info');
+            }
+        });
+    }
+
     getDateLabel() {
-        if (this.mode === 'DATE_TIME') {
-            return moment(this.changedValue).format('DD MMM, YYYY HH:mm:ss');
-        }
-        if (this.mode === 'DATE') {
-            return moment(this.changedValue).format('DD MMM, YYYY');
-        }
-        if (this.mode === 'TIME') {
-            return moment(this.changedValue).format('HH:mm:ss');
-        }
+        return moment(this.changedValue).format(this.displayFormat);
     }
 
     openDatePicker() {
@@ -131,19 +157,41 @@ export class DateTimePickerComponent implements AfterViewInit {
     }
 
     public onDateUpdate(newVal) {
+        const oldVal = this.changedValue;
+        if (oldVal && newVal) {
+            newVal.setHours(oldVal.getHours());
+            newVal.setMinutes(oldVal.getMinutes());
+            newVal.setSeconds(oldVal.getSeconds());
+            newVal.setMilliseconds(oldVal.getMilliseconds());
+        }
+        this.changedValue = newVal;
+    }
+
+    public onTimeUpdate(newVal) {
         this.changedValue = newVal;
     }
 
     show() {
-        this.bsModalService.show(this.datetimepickerTemplate, {
+        this.reset();
+        this.modalRef = this.bsModalService.show(this.datetimepickerTemplate, {
             animated: true,
             backdrop: true,
             class: 'date-picker-modal modal-dialog-centered',
         });
     }
 
+    clear() {
+        this.changedValue = null;
+        this.triggerChange();
+        this.hideModal();
+    }
+
+    reset() {
+        this.changedValue = this._value;
+    }
+
     hideModal() {
-        this.bsModalService.hide();
+        this.bsModalService.hide(this.modalRef.id);
     }
 
     onCancelClick() {
@@ -157,14 +205,13 @@ export class DateTimePickerComponent implements AfterViewInit {
     }
 
     triggerChange() {
-        if (this.changedValue !== null
-            && this.value !== this.changedValue) {
+        if (this.value !== this.changedValue) {
             this.change.emit(this.changedValue);
         }
     }
 
     ngAfterViewInit(): void {
-        
+
     }
 
 }

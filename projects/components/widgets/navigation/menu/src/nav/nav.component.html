@@ -15,6 +15,7 @@
     <a wmAnchor
        [disableMenuContext]="disableMenuContext || !!item.action"
        [wmNavigationControl]="item.link"
+       [attr.aria-current]="item._selected || (!isactive && item.link === '#/' + activePageName) ? 'page' : ''"
        caption.bind="item.label"
        iconclass.bind="item.icon"
        badgevalue.bind="item.badge"
