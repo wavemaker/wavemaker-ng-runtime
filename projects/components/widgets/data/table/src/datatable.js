@@ -316,8 +316,7 @@ $.widget('wm.datatable', {
             $th.attr({
                 'data-col-id': id,
                 'data-col-field': field,
-                'title': titleLabel,
-                'role': 'columnheader'
+                'title': titleLabel
             });
             self._setStyles($th, 'text-align: ' + value.textAlignment)
             $th.addClass(headerClasses);
@@ -396,7 +395,6 @@ $.widget('wm.datatable', {
                         $th.attr('rowspan', rowSpan);
                     }
                     $row.append($th);
-
                 });
                 $htm.append($row);
             });
@@ -1002,7 +1000,6 @@ $.widget('wm.datatable', {
         this._prepareData();
         //If the pagination type is not Infinite Scroll or On-demand, remove the tbody and footer
         if (!this.options.isNavTypeScrollOrOndemand()) {
-          //  this.gridElement.remove();
             this.gridFooter.remove();
             this._renderGrid();
         } else {
@@ -1436,7 +1433,7 @@ $.widget('wm.datatable', {
                 }
                 // Set grid class on table.
                 this.tableContainer.attr('class', gridClass);
-              //  this.gridHeaderElement.attr('class', gridClass);
+
                 if (this.options.spacing === 'condensed') {
                     this._toggleSpacingClasses('condensed');
                 }
@@ -2883,7 +2880,6 @@ $.widget('wm.datatable', {
         $header = headerTemplate.header;
 
         function toggleSelectAll(e) {
-
             var $checkboxes = $('tr.app-datagrid-row:visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
                 checked = this.checked;
             $checkboxes.prop('checked', checked);
@@ -2928,7 +2924,7 @@ $.widget('wm.datatable', {
              * Colgroup is used to maintain the consistent widths between the header table and body table**/
             this.tableContainer.append($colgroup);
             /**As jquery references the colgroup, clone the colgroup and add it to the table body**/
-           // this.gridElement.prepend($colgroup.clone());
+
         }
         /**Add event handler, to the select all checkbox on the header**/
         $header.on('click', '.app-datagrid-header-cell input:checkbox', toggleSelectAll);
@@ -3235,7 +3231,6 @@ $.widget('wm.datatable', {
             this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
                 this.gridContainer.find('.app-grid-header-inner').css('overflow', 'auto');
-
             }
             this.dataStatusContainer.css(key, value);
         }
