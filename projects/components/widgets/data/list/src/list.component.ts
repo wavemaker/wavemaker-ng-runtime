@@ -128,6 +128,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public listclass: any;
     private isDataChanged: boolean;
     public statehandler: any;
+    private isListElementMovable : boolean;
 
     _isDependent;
     private _pageLoad;
@@ -952,13 +953,58 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
         }
         if (action === 'focusPrev') {
-            presentIndex = presentIndex <= 0 ? 0 : (presentIndex - 1);
-            this.lastSelectedItem = this.getListItemByIndex(presentIndex);
-            this.lastSelectedItem.nativeElement.focus();
+            if(this.isListElementMovable) {
+                let prev;
+                presentIndex = presentIndex <= 0 ? 0 : (presentIndex);
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                if(presentIndex === 0) {
+                    prev = this.listItems.last;
+                    return;
+                }
+                this.listItems.forEach(($liItem: ListItemDirective, idx) => {
+                    if(idx === presentIndex) {
+                        prev.nativeElement.before($liItem.nativeElement);
+                        this.lastSelectedItem.nativeElement.focus();
+                        const arr = this.listItems.toArray();
+                        let temp = arr[presentIndex];
+                        arr[presentIndex] = arr[presentIndex-1];
+                        arr[presentIndex-1] = temp;
+                        this.listItems.reset(arr);
+                    }
+                    prev = $liItem;
+                });
+            } else {
+                presentIndex = presentIndex <= 0 ? 0 : (presentIndex - 1);
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                this.lastSelectedItem.nativeElement.focus();
+            }
         } else if (action === 'focusNext') {
-            presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length - 1);
-            this.lastSelectedItem = this.getListItemByIndex(presentIndex);
-            this.lastSelectedItem.nativeElement.focus();
+            if(this.isListElementMovable) {
+                let prev;
+                presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex) : (listItems.length - 1);
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                if(presentIndex === this.listItems.length - 1 ) {
+                    prev = this.listItems.first;
+                    return;
+                }
+                this.listItems.forEach(($liItem: ListItemDirective, idx) => {
+                    if(idx === presentIndex +1 ) {
+                        prev.nativeElement.before($liItem.nativeElement)
+                        this.lastSelectedItem.nativeElement.focus();
+                        const arr = this.listItems.toArray();
+                        let temp = arr[presentIndex +1];
+                        arr[presentIndex +1] = arr[presentIndex];
+                        arr[presentIndex] = temp;
+                        this.listItems.reset(arr);
+
+                    }
+                    prev = $liItem;
+                });
+            } else {
+                presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length - 1);
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                this.lastSelectedItem.nativeElement.focus();
+            }
         } else if (action === 'select') {
             // if the enter click is pressed on the item which is not the last selected item, the find the item from which the event is originated.
             if (presentIndex === -1 || !$($event.target).closest(this.lastSelectedItem.nativeElement)) {
@@ -966,6 +1012,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 const $ul = $li.closest('ul.app-livelist-container');
                 presentIndex = $ul.find('li.app-list-item').index($li);
             }
+            this.onItemClick($event, this.getListItemByIndex(presentIndex));
+        } else if (action === 'space') {
+            this.isListElementMovable = !this.isListElementMovable;
             this.onItemClick($event, this.getListItemByIndex(presentIndex));
         }
     }
