@@ -139,7 +139,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,
                                          required: ${pCounter}.isUpdateMode && ${counter}.required}" [textContent]="${counter}.displayname"> </label>
                             <div [ngClass]="${counter}.displayname ? ${pCounter}._widgetClass : '${controlLayout}'">
-                                 <label class="form-control-static app-label"
+                                 <label class="form-control-static app-label" *ngIf="!(${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default' || ${counter}.widgettype === 'upload')"
                                        [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default' || ${counter}.widgettype === 'upload'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
                                 ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter, isInList)}
                                 <span aria-hidden="true" *ngIf="${counter}.showPendingSpinner" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span>
