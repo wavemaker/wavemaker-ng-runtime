@@ -128,6 +128,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private isDataChanged: boolean;
     public statehandler: any;
     private isListElementMovable : boolean;
+    private currentIndex: number;
+    private ariaText: String;
 
     _isDependent;
     private _pageLoad;
@@ -969,13 +971,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                         arr[presentIndex] = arr[presentIndex-1];
                         arr[presentIndex-1] = temp;
                         this.listItems.reset(arr);
-                    }
+                        this.currentIndex = presentIndex;
+                        this.ariaText = "selected ";
+                    }     
                     prev = $liItem;
                 });
             } else {
                 presentIndex = presentIndex <= 0 ? 0 : (presentIndex - 1);
                 this.lastSelectedItem = this.getListItemByIndex(presentIndex);
                 this.lastSelectedItem.nativeElement.focus();
+                this.currentIndex = presentIndex + 1;
+                this.ariaText = "selected ";
             }
         } else if (action === 'focusNext') {
             if(this.isListElementMovable) {
@@ -995,7 +1001,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                         arr[presentIndex +1] = arr[presentIndex];
                         arr[presentIndex] = temp;
                         this.listItems.reset(arr);
-
+                        this.currentIndex = idx + 1;
+                        this.ariaText = "selected ";
                     }
                     prev = $liItem;
                 });
@@ -1003,6 +1010,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length - 1);
                 this.lastSelectedItem = this.getListItemByIndex(presentIndex);
                 this.lastSelectedItem.nativeElement.focus();
+                this.currentIndex = presentIndex + 1;
+                this.ariaText = "selected ";
             }
         } else if (action === 'select') {
             // if the enter click is pressed on the item which is not the last selected item, the find the item from which the event is originated.
@@ -1013,8 +1022,18 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
             this.onItemClick($event, this.getListItemByIndex(presentIndex));
         } else if (action === 'space') {
+            if(!this.enablereorder) {
+                return;
+            }
             this.isListElementMovable = !this.isListElementMovable;
             this.onItemClick($event, this.getListItemByIndex(presentIndex));
+            this.currentIndex = presentIndex + 1;
+            let name = this.getListItemByIndex(presentIndex).item.name;
+            if(this.isListElementMovable) {
+                this.ariaText = name + " grabbed, current position ";
+            }   else {
+                this.ariaText =  name +  " dropped, final position ";
+            }
         }
     }
 
