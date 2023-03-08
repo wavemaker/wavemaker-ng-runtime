@@ -117,6 +117,18 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
         return this.httpClient.request(req);
     }
 
+    sendCall(requestParams, variable) {
+        return new Promise((resolve, reject) => {
+            variable._observable = this.sendCallAsObservable(requestParams).subscribe((response: any) => {
+                if (response && response.type) {
+                    resolve(response);
+                }
+            }, (err: any) => {
+                    reject(err);
+            });
+        });
+    }
+
     /**
      * Makes a http call and return a promise
      * @param options, options using which the call needs to be made
