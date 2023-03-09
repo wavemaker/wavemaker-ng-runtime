@@ -198,7 +198,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private sortInfo;
     private serverData;
     private filternullrecords;
-    private variableInflight;
+    private variableInflight = true;
     private isdynamictable;
     private _dynamicContext;
     private noOfColumns;

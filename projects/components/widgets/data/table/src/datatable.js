@@ -3186,7 +3186,8 @@ $.widget('wm.datatable', {
     },
     __setStatus: function (isCreated) {
         var loadingIndicator = this.dataStatusContainer.find('i'),
-            state = this.dataStatus.state;
+            state = this.dataStatus.state,
+            isScrollOrOndemand = this.options.isNavTypeScrollOrOndemand();
         this.dataStatusContainer.find('.message').text(this.dataStatus.message);
         if (state === 'loading') {
             loadingIndicator.removeClass('hidden');
@@ -3203,7 +3204,9 @@ $.widget('wm.datatable', {
                 if (state === 'nodata') {
                     this.dataStatusContainer.css('height', 'auto');
                     this.dataStatus.contentHeight = 0;
-                }  else if (this.options.isNavTypeScrollOrOndemand()){
+                }  else if (this.options.isNavTypeScrollOrOndemand() && this.options.getCurrentPage() > 1){
+                    // showing the loading icon only for the first page
+                    // from second page there is another loader which is being shown instead of LoadMore btn
                     this.dataStatusContainer.hide();
                 } else {
                     this.dataStatus.height = this.dataStatus.height || this.dataStatusContainer.outerHeight();
@@ -3211,7 +3214,7 @@ $.widget('wm.datatable', {
                     this.dataStatusContainer.css('height', this.dataStatus.height > this.dataStatus.contentHeight ? 'auto' : this.dataStatus.contentHeight);
                 }
             }
-            if (!this.options.isNavTypeScrollOrOndemand()) {
+            if (!isScrollOrOndemand || (isScrollOrOndemand && this.options.getCurrentPage() === 1)) {
                 this.gridContainer.addClass("show-msg");
             }
         } else {
