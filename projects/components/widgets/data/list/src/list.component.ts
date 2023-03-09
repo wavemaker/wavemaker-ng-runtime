@@ -346,7 +346,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.handleStateParams(data);
                 this.variableInflight = data.active;
                 // WMS-17268: Update nodatafound flag once the response is recieved from the server
-                this.noDataFound = _.isEmpty(data.data);
+                this.noDataFound = !data.data?.pagination.totalElements;
             });
         }
     }
@@ -973,7 +973,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                         this.listItems.reset(arr);
                         this.currentIndex = presentIndex;
                         this.ariaText = "selected ";
-                    }     
+                    }
                     prev = $liItem;
                 });
             } else {

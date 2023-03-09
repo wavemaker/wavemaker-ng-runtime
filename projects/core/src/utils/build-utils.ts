@@ -55,7 +55,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<wm-input ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} type="password" aria-label="Enter password" ${updateOnTmpl}></wm-input>`;
             break;
         case FormWidgetType.RADIOSET:
-            tmpl = `<ul wmRadioset ${innerTmpl}></ul>`;
+            tmpl = `<ul role="radiogroup" wmRadioset ${innerTmpl}></ul>`;
             break;
         case FormWidgetType.RATING:
             tmpl = `<div wmRating ${innerTmpl}></div>`;
