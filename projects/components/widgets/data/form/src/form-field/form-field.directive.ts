@@ -175,6 +175,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
+        this.nativeElement.querySelector('input')?.setAttribute('aria-invalid', `${this.ngform.controls[this._fieldName].invalid}`);
         this._activeField = false;
         this._triggeredByUser = false;
         this._clicktriggeredByUser = false;
