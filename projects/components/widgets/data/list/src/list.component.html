@@ -23,7 +23,7 @@
 <div *ngIf="navigation === 'Inline' && !noDataFound" aria-live="polite" aria-atomic="true" class="sr-only"> {{'Item ' + dataNavigator.dn.currentPage + ' of ' + dataNavigator.pageCount }}</div>
 
 <div>
-    <div id="instructions" class="sr-only" >
+    <div id={{titleId}} class="sr-only" >
         Press space bar to toggle drag drop mode, use arrow keys to move selected elements.
     </div>
     
@@ -32,7 +32,7 @@
     </div>    
 </div>
 
-<ul [attr.tabindex]="tabindex" aria-describedby="instructions" class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
+<ul [attr.tabindex]="tabindex" [attr.aria-describedby] = "titleId"  class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
     (keydown.enter)="handleKeyDown($event, 'select')"
 
     (keydown.space)="handleKeyDown($event, 'space')"
@@ -53,7 +53,6 @@
             [wmListItem]="item"
             #listItemRef="listItemRef"
             [attr.tabindex]="tabindex"
-            aria-selected="true"
             role="listitem">
             <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
         </li>

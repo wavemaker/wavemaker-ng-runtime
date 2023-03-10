@@ -19,7 +19,8 @@ import {
     switchClass,
     StatePersistence,
     PaginationService,
-    setListClass
+    setListClass,
+    generateGUId
 } from '@wm/core';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, unsupportedStatePersistenceTypes, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef, extractDataSourceName } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
@@ -131,6 +132,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private isListElementMovable : boolean;
     private currentIndex: number;
     private ariaText: String;
+    private titleId: string ; 
 
     _isDependent;
     private _pageLoad;
@@ -253,6 +255,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.variableInflight = false;
 
         this.noDataFound = !binddataset;
+        this.titleId = 'wmlist-' + generateGUId();
 
         // Updates pagination, filter, sort etc options for service and crud variables
         this._listenerDestroyers = [
