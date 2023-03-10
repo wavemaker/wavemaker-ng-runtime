@@ -132,7 +132,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private isListElementMovable : boolean;
     private currentIndex: number;
     private ariaText: String;
-    private titleId: string ; 
+    public titleId: string ; 
 
     _isDependent;
     private _pageLoad;
@@ -924,6 +924,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     public handleKeyDown($event, action: string) {
         $event.stopPropagation();
+        $event.preventDefault();
         const listItems: QueryList<ListItemDirective> = this.listItems;
 
         let presentIndex: number = this.getListItemIndex(this.lastSelectedItem);
@@ -1038,7 +1039,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }   else {
                 this.ariaText =  name +  " dropped, final position ";
             }
-        }
+        }    
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
