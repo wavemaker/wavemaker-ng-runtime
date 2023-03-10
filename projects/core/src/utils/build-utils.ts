@@ -31,7 +31,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmCheckbox ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''}></div>`;
             break;
         case FormWidgetType.CHECKBOXSET:
-            tmpl = `<ul wmCheckboxset ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''}></ul>`;
+            tmpl = `<ul role="group" wmCheckboxset ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''}></ul>`;
             break;
         case FormWidgetType.CHIPS:
             tmpl = `<ul wmChips role="input" debouncetime="${attrs.get('debouncetime')}" ${innerTmpl}></ul>`;
