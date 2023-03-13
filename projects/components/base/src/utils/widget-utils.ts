@@ -502,3 +502,16 @@ export const setFocusTrap = (container, allowOutsideClick, setReturnFocusElement
         setReturnFocus: setReturnFocusElement,
     });
 }
+
+/**
+ * Gets keyboard focusable elements within a specified element
+ * @param element {HTMLElement}
+ * @returns {Array}
+ */
+export const getKeyboardFocusableElements = (element: HTMLElement) => {
+    return [element.querySelectorAll(
+        'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
+    )].filter(el => {
+        return (!el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'));
+    })[0];
+}

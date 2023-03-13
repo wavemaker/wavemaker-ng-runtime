@@ -71,7 +71,8 @@ export {
     prepareFieldDefs ,
     getContainerTargetClass,
     extractDataSourceName,
-    setFocusTrap
+    setFocusTrap,
+    getKeyboardFocusableElements
 } from './utils/widget-utils';
 export {
     BaseComponent
