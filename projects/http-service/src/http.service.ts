@@ -3,8 +3,8 @@ import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpRespon
 
 import { Observable, Subject } from 'rxjs';
 
-import { AbstractHttpService, getValidJSON, replace, isNumber, isBoolean } from '@wm/core';
-import { HttpClientService } from '@wavemaker/variables';
+import { AbstractHttpService, replace, isNumber, isBoolean } from '@wm/core';
+import { HttpClientService, getErrMessage } from '@wavemaker/variables';
 
 declare const _;
 
@@ -83,30 +83,6 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
         return new HttpRequest(options.method, options.url, third, fourth);
     }
 
-    /**
-     * This method filters and returns error message from the failed network call response.
-     * @param err, error form network call failure
-     */
-    public getErrMessage(err: any) {
-        const HTTP_STATUS_MSG = {
-            404: this.getLocale()['MESSAGE_404_ERROR'] || 'Requested resource not found',
-            401: this.getLocale()['MESSAGE_401_ERROR'] || 'Requested resource requires authentication',
-            403: this.getLocale()['LABEL_FORBIDDEN_MESSAGE'] || 'The requested resource access/action is forbidden.'
-        };
-
-        // check if error message present for responded http status
-        let errMsg = HTTP_STATUS_MSG[err.status];
-        let errorDetails = err.error;
-        errorDetails = getValidJSON(errorDetails) || errorDetails;
-
-        // WM services have the format of error response as errorDetails.error
-        if (errorDetails && errorDetails.errors) {
-            errMsg = this.parseErrors(errorDetails.errors) || errMsg || 'Service Call Failed';
-        } else {
-            errMsg = errMsg || 'Service Call Failed';
-        }
-        return errMsg;
-    }
 
     /**
      * Make a http call and returns an observable that can be cancelled
@@ -147,7 +123,7 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
                         reject(e);
                     });
                 } else {
-                    const errMsg = this.getErrMessage(err);
+                    const errMsg = getErrMessage(err, this.getLocale());
                     reject({
                         error: errMsg,
                         details: err
