@@ -5,7 +5,7 @@ const tagName = 'ul';
 
 register('wm-radioset', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmRadioset ${getFormMarkupAttr(attrs)} ${getChildAttrs(attrs)} ${getNgModelAttr(attrs)}>`,
+        pre: attrs => `<${tagName} role="radiogroup" wmRadioset ${getFormMarkupAttr(attrs)} ${getChildAttrs(attrs)} ${getNgModelAttr(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });
