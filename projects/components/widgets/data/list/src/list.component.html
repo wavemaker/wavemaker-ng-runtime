@@ -22,7 +22,17 @@
 </nav>
 <div *ngIf="navigation === 'Inline' && !noDataFound" aria-live="polite" aria-atomic="true" class="sr-only"> {{'Item ' + dataNavigator.dn.currentPage + ' of ' + dataNavigator.pageCount }}</div>
 
-<ul [attr.tabindex]="tabindex" class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
+<div>
+    <div id={{titleId}} class="sr-only" >
+        Press space bar to toggle drag drop mode, use arrow keys to move selected elements.
+    </div>
+    
+    <div aria-live="assertive" *ngIf="listItems" class="sr-only" >
+        {{ariaText + currentIndex + ' of ' +  listItems.length}}
+    </div>    
+</div>
+
+<ul [attr.tabindex]="tabindex" [attr.aria-describedby] = "titleId"  class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
     (keydown.enter)="handleKeyDown($event, 'select')"
 
     (keydown.space)="handleKeyDown($event, 'space')"

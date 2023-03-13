@@ -96,6 +96,7 @@ export class DateTimePickerComponent implements AfterViewInit {
 
     @Input()
     set value(d: Date) {
+        d = d || new Date();
         this._value = d;
         this.changedValue = d;
     }
@@ -124,6 +125,27 @@ export class DateTimePickerComponent implements AfterViewInit {
         }
     }
 
+    validateSelectedDate() {
+        if (!this.changedValue) {
+            return true;
+        }
+        const cd = moment(this.changedValue);
+        if (this._bsDatepickerConfig?.minDate && this._bsDatepickerConfig?.minDate > this.changedValue) {
+            return false;
+        }
+        if (this._bsDatepickerConfig?.maxDate && this._bsDatepickerConfig?.maxDate < this.changedValue) {
+            return false;
+        }
+        if (this._bsDatepickerConfig?.daysDisabled?.indexOf(cd.day()) >= 0) {
+            return false;
+        }
+        const cdSt = cd.startOf('day').toDate().getTime();
+        if (this.excludedDatesToDisable?.find(d => d.getTime() === cdSt)) {
+            return false;
+        }
+        return true;
+    }
+
     get displayFormat() {
         if (this._displayFormat) {
             return this._displayFormat;
@@ -140,6 +162,12 @@ export class DateTimePickerComponent implements AfterViewInit {
                 $(obj).addClass('current-date text-info');
             }
         });
+    }
+
+    private hideOnClick() {
+        $('body>modal-container .date-picker-modal .app-datetime-picker')
+            .click(($event) => $event.stopPropagation());
+        $('body>modal-container .date-picker-modal').click(() => this.onCancelClick());
     }
 
     getDateLabel() {
@@ -175,9 +203,10 @@ export class DateTimePickerComponent implements AfterViewInit {
         this.reset();
         this.modalRef = this.bsModalService.show(this.datetimepickerTemplate, {
             animated: true,
-            backdrop: true,
-            class: 'date-picker-modal modal-dialog-centered',
+            backdrop: 'static',
+            class: 'date-picker-modal modal-dialog-centered'
         });
+        setTimeout(() => { this.hideOnClick()}, 500);
     }
 
     clear() {
@@ -200,7 +229,9 @@ export class DateTimePickerComponent implements AfterViewInit {
     }
 
     onOkClick() {
-        this.triggerChange();
+        if (this.validateSelectedDate()) {
+            this.triggerChange();
+        }
         this.hideModal();
     }
 
