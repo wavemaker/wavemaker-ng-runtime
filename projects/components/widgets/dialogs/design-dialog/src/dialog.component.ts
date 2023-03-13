@@ -27,7 +27,7 @@ const WIDGET_INFO = {widgetType: 'wm-dialog'};
     providers: [
         provideAsWidgetRef(DialogComponent),
         provideAsDialogRef(DialogComponent),
-        {provide: Context, useValue: {}, multi: true},
+        {provide: Context, useFactory: () => { return {} }, multi: true},
         {
             provide: UserDefinedExecutionContext,
             useExisting: DialogComponent

@@ -80,7 +80,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     @ViewChild('datagridElement', {static: true}) private _tableElement: ElementRef;
 
-    @ContentChildren('rowActionTmpl') rowActionTmpl: QueryList<any>;
+    @ContentChildren('rowActionTmpl', { descendants: true }) rowActionTmpl: QueryList<any>;
     @ViewChild('rowActionsView', { static: true, read: ViewContainerRef }) rowActionsViewRef: ViewContainerRef;
 
     @ContentChildren('filterTmpl', {descendants: true}) filterTmpl: QueryList<any>;
@@ -95,7 +95,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     @ContentChildren('customExprTmpl', {descendants: true}) customExprTmpl: QueryList<any>;
     @ViewChild('customExprView', { static: true, read: ViewContainerRef }) customExprViewRef: ViewContainerRef;
 
-    @ContentChildren('rowExpansionActionTmpl') rowExpansionActionTmpl: QueryList<any>;
+    @ContentChildren('rowExpansionActionTmpl', { descendants: true }) rowExpansionActionTmpl: QueryList<any>;
     @ContentChild('rowExpansionTmpl') rowExpansionTmpl: TemplateRef<any>;
     @ViewChild('rowDetailView', { static: true, read: ViewContainerRef }) rowDetailViewRef: ViewContainerRef;
     @ViewChild('rowExpansionActionView', { static: true, read: ViewContainerRef }) rowExpansionActionViewRef: ViewContainerRef;

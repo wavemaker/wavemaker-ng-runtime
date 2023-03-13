@@ -8,11 +8,12 @@ import {
     OnDestroy,
     OnInit,
     ViewContainerRef,
-    Optional
+    Optional,
+    inject
 } from '@angular/core';
-import { EventManager } from '@angular/platform-browser';
+import {EventManager} from '@angular/platform-browser';
 
-import { ReplaySubject, Subject } from 'rxjs';
+import {ReplaySubject, Subject} from 'rxjs';
 
 import {
     $invokeWatchers,
@@ -20,26 +21,26 @@ import {
     $unwatch,
     $watch,
     addClass,
-    setCSS,
-    setCSSFromObj,
     App,
     isDefined,
+    isMobileApp,
     removeAttr,
     removeClass,
     setAttr,
+    setCSS,
+    setCSSFromObj,
     switchClass,
-    isMobileApp,
     UserDefinedExecutionContext
 } from '@wm/core';
 
-import { getWidgetPropsByType } from '../../framework/widget-props';
-import { isStyle } from '../../framework/styler';
-import { register, renameWidget } from '../../framework/widget-registry';
-import { ChangeListener, Context, IWidgetConfig, WidgetConfig } from '../../framework/types';
-import { widgetIdGenerator } from '../../framework/widget-id-generator';
-import { DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
-import { WidgetProxyProvider } from '../../framework/widget-proxy-provider';
-import { getWatchIdentifier } from '../../../utils/widget-utils';
+import {getWidgetPropsByType} from '../../framework/widget-props';
+import {isStyle} from '../../framework/styler';
+import {register, renameWidget} from '../../framework/widget-registry';
+import {ChangeListener, Context, IWidgetConfig, WidgetConfig} from '../../framework/types';
+import {widgetIdGenerator} from '../../framework/widget-id-generator';
+import {DISPLAY_TYPE, EVENTS_MAP} from '../../framework/constants';
+import {WidgetProxyProvider} from '../../framework/widget-proxy-provider';
+import {getWatchIdentifier} from '../../../utils/widget-utils';
 
 declare const $, _;
 
@@ -188,6 +189,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     public viewContainerRef: ViewContainerRef;
     public _viewParent: UserDefinedExecutionContext;
+    public viewParentApp: App;
 
     protected constructor(
         protected inj: Injector,
@@ -197,6 +199,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     ) {
         const elementRef = inj.get(ElementRef);
         this.nativeElement = elementRef.nativeElement;
+        this.viewParentApp = inject(App);
         this.widgetType = config.widgetType;
         this.widgetSubType = config.widgetSubType || config.widgetType;
         this.viewContainerRef = inj.get(ViewContainerRef);
@@ -204,29 +207,24 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         // this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
         // this.viewParent = _viewParent || (this.viewContainerRef as any).parentInjector._lView[8];
         // https://github.com/angular/angular/blob/main/packages/core/src/render3/interfaces/view.ts
-        this.viewParent = _viewParent;
-        let currentlView = (inj as any)._lView;
-        // console.log("-----widgetType------", this.widgetType);
-        // console.log("-----currentlView------", currentlView);
-        if(currentlView[1].type === 1 || currentlView[1].type === 2) {
-            let parentlView = (inj as any)._lView[3];
-            // console.log("-----parentlView------", parentlView, "type---", currentlView[1].type);
-            if(parentlView[1].type == 1 || parentlView[1].type == 2) {
-                this.viewParent = parentlView[8];
-                // console.log("-----this.viewParent------", this.viewParent);
+
+        let lView = (this.inj as any)._lView;
+        const getParentlView = (lView: any) => {
+            //console.log("---*************--widgetType--*************---", this.widgetType);
+            let parentlView = lView[3];
+            if(typeof lView[1] === "boolean") { // this is lContainer, not lView if this is boolean
+                return getParentlView(parentlView);
+            }
+            let componentType = lView[1]["type"];
+            if(componentType === 0 || componentType === 1) {
+                return lView[8];
+            } else { // when componentType == 2, then fetch parent again
+                return getParentlView(parentlView);
             }
         }
-        let parent = (this.inj as any)._tNode.parent;
-        let injectorIndex = (this.inj as any)._tNode.injectorIndex;
-        /*if( parent === null ) {
-            this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8]
-            this.context = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
-        } else {
-            this.viewParent = (this.inj as any)._lView[injectorIndex - 1];
-            this.context = this.viewParent.context;
-        }*/
+        this.viewParent = getParentlView(lView) || this.viewParentApp;
+        //console.log("---*************--context--*************---", lView[8]);
         this.context = (this.inj as any)._lView[8];
-        //console.log("-----this.context------", this.context);
 
         this.displayType = config.displayType || DISPLAY_TYPE.BLOCK;
         // this.context = (inj as any).view.context;
@@ -362,16 +360,16 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     protected initContext() {
         // const context = (this.inj as any).view.context;
-        const context = this.context;
+        const context = this.context || {};
 
         const parentContexts = this.inj.get(Context, {});
 
         // assign the context property accordingly
-        if (this.viewParent !== context) {
-            this.context = context;
-        } else {
-            this.context = {};
-        }
+        // if (this.viewParent !== context) {
+        //     this.context = context;
+        // } else {
+        //     this.context = {};
+        // }
 
         if (parentContexts) {
             let parentContextObj = {};
@@ -625,14 +623,38 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     }
 
     /**
+     * This is required as the native element attributes are case insensitive(camelcase) like customExpressions becomes customexpression
+     * and our logic to check like these changes will fail. Before IVY changes, angular maintains a separate object with these attributes
+     * as it is like in the camelcase. With IVY all those are gone. So need to maintain a separate list with the camelcasing of attributes
+     * @private
+     */
+    private getAttributes() {
+        let _tNodeAttrs = (this.inj as any)._tNode.attrs, actualAttrs = Array.from(this.nativeElement.attributes).map(attr => attr.name);
+        if(_tNodeAttrs === null) {
+            return actualAttrs;
+        }
+        _tNodeAttrs.filter(attr => {
+            if(typeof attr === 'string') {
+                let lowerCaseAttr = attr.toLowerCase();
+                if (actualAttrs.includes(lowerCaseAttr)) {
+                    let index = actualAttrs.indexOf(lowerCaseAttr)
+                    actualAttrs[index] = attr;
+                }
+            }
+        });
+        return actualAttrs;
+    }
+
+    /**
      * Process the attributes
      */
     private processAttrs() {
-        const attrs = this.nativeElement.attributes;
+        const attrs = this.getAttributes();
         let i = 0;
-        _.map(attrs, (attr: Attr) => {
-            this.$attrs.set(attr.name, attr.value);
-            this.processAttr(attr.name, attr.value);
+        _.map(attrs, (attrName: string) => {
+            let attrValue = this.nativeElement.attributes[attrName].value
+            this.$attrs.set(attrName, attrValue);
+            this.processAttr(attrName, attrValue);
         });
     }
 

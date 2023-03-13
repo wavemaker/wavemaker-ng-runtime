@@ -41,7 +41,7 @@ const FILE_TYPES = {
     providers: [
         provideAsWidgetRef(FormFieldDirective),
         provideAs(FormFieldDirective, NG_VALUE_ACCESSOR, true),
-        { provide: Context, useValue: {}, multi: true }
+        {provide: Context, useFactory: () => { return {} }, multi: true}
     ]
 })
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {

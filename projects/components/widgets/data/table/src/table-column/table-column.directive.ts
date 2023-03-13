@@ -60,9 +60,9 @@ class FieldDef {
 export class TableColumnDirective extends BaseComponent implements OnInit, AfterContentInit, AfterViewInit {
     static initializeProps = registerProps();
 
-    @ContentChildren('filterWidget') _filterInstances;
-    @ContentChildren('inlineWidget') _inlineInstances;
-    @ContentChildren('inlineWidgetNew') _inlineInstancesNew;
+    @ContentChildren('filterWidget', { descendants: true }) _filterInstances;
+    @ContentChildren('inlineWidget', { descendants: true }) _inlineInstances;
+    @ContentChildren('inlineWidgetNew', { descendants: true }) _inlineInstancesNew;
     @ContentChild('customExprTmpl') customExprTmpl;
     @ContentChild('inlineWidgetTmpl') inlineWidthTempRef;
 
