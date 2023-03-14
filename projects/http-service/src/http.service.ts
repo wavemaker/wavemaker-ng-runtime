@@ -141,22 +141,6 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
         return this.localeObject;
     }
 
-    parseErrors(errors) {
-        let errMsg = '';
-        if (errors && errors.error && errors.error.length) {
-            errors.error.forEach((errorDetails, i) => {
-                errMsg += this.parseError(errorDetails) + (i > 0 ? '\n' : '');
-            });
-        }
-        return errMsg;
-    }
-
-    parseError(errorObj) {
-        let errMsg;
-        errMsg = errorObj.message ? replace(errorObj.message, errorObj.parameters, true) : ((errorObj.parameters && errorObj.parameters[0]) || '');
-        return errMsg;
-    }
-
     getHeader(error, headerKey) {
         return error.headers.get(headerKey);
     }
