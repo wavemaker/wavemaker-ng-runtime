@@ -2,7 +2,14 @@ import { Directive, Injector, Optional } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 
 import { App, addClass, removeClass, switchClass, toggleClass } from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {
+    APPLY_STYLES_TYPE,
+    getKeyboardFocusableElements,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler
+} from '@wm/components/base';
 import { LayoutDirective, PageDirective } from '@wm/components/page';
 
 import { registerProps } from './left-panel.props';
@@ -65,6 +72,14 @@ export class LeftPanelDirective extends StylableComponent {
     public collapse(): void {
         addClass(this.nativeElement, 'swipee-transition');
         switchClass(this.nativeElement, 'left-panel-collapsed', 'left-panel-expanded');
+        if (this.expanded) {
+            setTimeout(() => {
+                const leftNavButton = $('.app-header-action');
+                leftNavButton.attr('aria-expanded', 'false');
+                leftNavButton.focus();
+            }, 50);
+        }
+        addClass(this.nativeElement, 'hidden');
         this.expanded = false;
         switchClass(this.$page[0], 'left-panel-collapsed-container', 'left-panel-expanded-container');
         if (this.animation === AnimationType.SLIDE_IN) {
@@ -78,6 +93,7 @@ export class LeftPanelDirective extends StylableComponent {
     }
 
     public expand(): void {
+        removeClass(this.nativeElement, 'hidden');
         removeClass(this.nativeElement, 'swipee-transition');
         switchClass(this.nativeElement, 'left-panel-expanded', 'left-panel-collapsed');
         this.expanded = true;
@@ -90,6 +106,28 @@ export class LeftPanelDirective extends StylableComponent {
             this.setPageWidthAndPosition(['xs'], this.xscolumnwidth);
         }
         (this.getAttr("spa") && this.layout || this.page).notify('wmLeftPanel:expand');
+        $('.app-header-action').attr('aria-expanded', `${this.expanded}`);
+        const focusableElements = getKeyboardFocusableElements(this.nativeElement);
+        const firstFocusableElement = focusableElements[0];
+        const lastFocusableElement = focusableElements[focusableElements.length - 1];
+        setTimeout(() => {
+            $(firstFocusableElement).focus();
+        }, 50);
+        $(firstFocusableElement).on('keydown', (event) => {
+            if (event.shiftKey && event.key === 'Tab') {
+                this.collapse();
+            }
+        });
+        $(lastFocusableElement).on('keydown', (event) => {
+            if (event.key === 'Tab') {
+                this.collapse();
+            }
+        });
+        this.$element.on('keydown', (event) => {
+            if (event.key === 'Escape') {
+                this.collapse();
+            }
+        });
     }
 
     public isGesturesEnabled(): boolean {
