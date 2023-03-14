@@ -30,7 +30,8 @@
             "@wm/components/base": "wm.components.base",
             "@wm/transpiler": "wm.transpiler",
             "@wm/security": "wm.security",
-            "@wm/variables": "wm.variables"
+            "@wm/variables": "wm.variables",
+            "@wavemaker/variables": "wm_common_variables"
         }
     }
 }
