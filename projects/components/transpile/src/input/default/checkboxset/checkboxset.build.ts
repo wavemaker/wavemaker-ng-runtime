@@ -5,7 +5,7 @@ const tagName = 'ul';
 
 register('wm-checkboxset', (): IBuildTaskDef => {
     return {
-        pre: attrs => `<${tagName} wmCheckboxset ${getFormMarkupAttr(attrs)} ${getChildAttrs(attrs)} ${getNgModelAttr(attrs)}>`,
+        pre: attrs => `<${tagName} role="group" wmCheckboxset ${getFormMarkupAttr(attrs)} ${getChildAttrs(attrs)} ${getNgModelAttr(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

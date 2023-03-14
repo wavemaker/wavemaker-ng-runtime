@@ -225,6 +225,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         }
         if (!evt || !headerElement || !headerElement.length) {
             headerElement = this.nativeElement.querySelector(`li[data-paneid=${paneRef.widgetId}]`);
+            $(headerElement).children().focus();
         }
         this.animateIn(headerElement);
 
@@ -282,6 +283,12 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
                 return pane;
             }
         }
+        if (index === this.panes.length - 1) {
+            const pane = this.getPaneRefByIndex(0);
+             if (this.isSelectableTab(pane)) {
+                return pane;
+             }
+        }
     }
 
     private getSelectableTabBeforeIndex(index: number): TabPaneComponent {
@@ -291,7 +298,12 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
                 return pane;
             }
         }
-
+        if (index === 0) {
+            const pane = this.getPaneRefByIndex(this.panes.length - 1);
+            if (this.isSelectableTab(pane)) {
+                return pane;
+            }
+        }
     }
 
     // select next tab relative to the current active tab
@@ -391,6 +403,23 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
                 });
             }
         });
+    }
+    onkeydown(event) {
+        switch (event.key) {
+            case 'ArrowLeft':
+            case 'ArrowUp':
+                this.prev();
+                event.preventDefault();
+                break;
+
+            case 'ArrowRight':
+            case 'ArrowDown':
+                this.next();
+                event.preventDefault();
+                break;
+            default:
+                break;
+        }
     }
 
     ngAfterContentInit() {

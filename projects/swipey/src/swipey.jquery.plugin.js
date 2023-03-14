@@ -31,12 +31,19 @@ window.requestAnimationFrame = (function () {
     swipeMask.css({"background-color":"rgba(0, 0, 0, 0)", "position": "fixed", "top": 0, "width":"100vw", "height": "100vh", "z-index": 100000});
     var touchMoveListeners = [];
     var touchEndListeners = [];
+    var pointerId = null;
     var onTouch = function (e) {
+        if (e && 
+            ((e.pointerId && e.pointerId !== pointerId)
+                || (e.touches && e.touches.length > 1))) {
+            onTouchEnd(e);
+        }
         $.each(touchMoveListeners, function (i, fn) {
             return fn(e);
         });
     };
     var onTouchEnd = function (e) {
+        pointerId = null;
         $.each(touchEndListeners, function (i, fn) {
             return fn(e);
         });
@@ -56,6 +63,13 @@ window.requestAnimationFrame = (function () {
     }
     // additional check for ios version, as mobile preview in chrome browser is not recognising the pointermove events.
     if (window['PointerEvent'] && iOSversion() >= 13) {
+        addEventListener(document, 'pointerdown', function(e) {
+            if (pointerId && pointerId !== e.pointerId) {
+                onTouchEnd(e);
+            } else {
+                pointerId = e.pointerId;
+            }
+        });
         addEventListener(document, 'pointermove', onTouch);
         addEventListener(document, 'pointerup', onTouchEnd);
         addEventListener(document, 'pointercancel', onTouchEnd);

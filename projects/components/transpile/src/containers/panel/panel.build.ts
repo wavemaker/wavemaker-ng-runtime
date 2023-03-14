@@ -8,7 +8,7 @@ register('wm-panel', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmPanel #${counter}="wmPanel" partialContainer [attr.aria-label]="${counter}.hint || 'Panel'" wm-navigable-element="true" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmPanel #${counter}="wmPanel" partialContainer wm-navigable-element="true" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };
