@@ -1326,6 +1326,13 @@ export const addForIdAttributes = (element: HTMLElement) => {
             setAttr(labelEl[0] as HTMLElement, 'for', widgetId);
         }
     }
+    /*Adding aria-labelledby to radioset, checkboxset widgets*/
+    const ulEl = element.querySelectorAll('ul');
+    if (labelEl.length && ulEl.length && (ulEl[0].getAttribute('role') === 'radiogroup' || ulEl[0].getAttribute('role') === 'group')) {
+        const widgetId = 'wm-group-label-' + generateGUId();
+        setAttr(ulEl[0] as HTMLElement, 'aria-labelledby', widgetId);
+        setAttr(labelEl[0] as HTMLElement, 'id', widgetId);
+    }
 };
 
 /**

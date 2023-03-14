@@ -348,6 +348,7 @@ export class LiveFormDirective {
                 this.form.resetFileUploadWidget(field, true);
                 field.href = this.getBlobURL(prevDataValues, field.key, field.value);
             }
+            field.nativeElement.querySelector('input')?.removeAttribute('aria-invalid');
         });
         this.form.constructDataObject();
     }
