@@ -1103,7 +1103,7 @@ $.widget('wm.datatable', {
 
     /* Inserts a load more button at the end of the table when the pagination selected is on demand */
     addLoadMoreBtn : function (onDemandMsg, loadingdatamsg, cb) {
-        // Show Load more button only if it not that last page
+        // Show Load more button only if it not the last page
         if (!this.options.isLastPage) {
             var self = this;
             var $parenEl = $('<div class="on-demand-datagrid"><a class="app-button btn btn-block on-demand-load-btn"></a></div>');
@@ -3197,6 +3197,9 @@ $.widget('wm.datatable', {
         if (state === 'ready') {
             this.dataStatusContainer.hide();
         } else {
+            if (this.options.isNavTypeScrollOrOndemand() && (state === 'nodata' || this.options.isLastPage)) {
+                this.element.find('.on-demand-datagrid a').hide();
+            }
             this.dataStatusContainer.show();
         }
         if (state === 'nodata' || state === 'loading' || state === 'error') {
