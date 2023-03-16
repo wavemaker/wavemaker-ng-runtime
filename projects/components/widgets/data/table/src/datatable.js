@@ -3125,7 +3125,8 @@ $.widget('wm.datatable', {
     },
     __setStatus: function (isCreated) {
         var loadingIndicator = this.dataStatusContainer.find('i'),
-            state = this.dataStatus.state;
+            state = this.dataStatus.state,
+            isScrollOrOndemand = this.options.isNavTypeScrollOrOndemand();
         this.dataStatusContainer.find('.message').text(this.dataStatus.message);
         if (state === 'loading') {
             loadingIndicator.removeClass('hidden');
@@ -3135,6 +3136,10 @@ $.widget('wm.datatable', {
         if (state === 'ready') {
             this.dataStatusContainer.hide();
         } else {
+            // Hide the Load More Btn if the status is No data found or it is the last page
+            if (this.options.isNavTypeScrollOrOndemand() && (state === 'nodata' || this.options.isLastPage)) {
+                this.element.find('.on-demand-datagrid a').hide();
+            }
             this.dataStatusContainer.show();
         }
         if (state === 'nodata' || state === 'loading' || state === 'error') {
@@ -3142,7 +3147,9 @@ $.widget('wm.datatable', {
                 if (state === 'nodata') {
                     this.dataStatusContainer.css('height', 'auto');
                     this.dataStatus.contentHeight = 0;
-                }  else if (this.options.isNavTypeScrollOrOndemand()){
+                }  else if (this.options.isNavTypeScrollOrOndemand() && this.options.getCurrentPage() > 1){
+                    // showing the loading icon only for the first page
+                    // from second page there is another loader which is being shown instead of LoadMore btn
                     this.dataStatusContainer.hide();
                 } else {
                     this.dataStatus.height = this.dataStatus.height || this.dataStatusContainer.outerHeight();
@@ -3150,7 +3157,7 @@ $.widget('wm.datatable', {
                     this.dataStatusContainer.css('height', this.dataStatus.height > this.dataStatus.contentHeight ? 'auto' : this.dataStatus.contentHeight);
                 }
             }
-            if (!this.options.isNavTypeScrollOrOndemand()) {
+            if (!isScrollOrOndemand || (isScrollOrOndemand && this.options.getCurrentPage() === 1)) {
                 this.gridContainer.addClass("show-msg");
             }
         } else {

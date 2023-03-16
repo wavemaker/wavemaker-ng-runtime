@@ -1702,8 +1702,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         let enableNewRow;
         switch (key) {
             case 'datasource':
-                this.watchVariableDataSet(this.dataset);
-                this.onDataSourceChange();
+                if (this.dataset) {
+                    this.watchVariableDataSet(this.dataset);
+                    this.onDataSourceChange();
+                }
                 break;
             case 'dataset':
                 if (this.binddatasource && !this.datasource) {
