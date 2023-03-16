@@ -133,6 +133,12 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
         });
     }
 
+    cancel(variable) {
+        if (variable._observable) {
+            variable._observable.unsubscribe();
+        }
+    }
+
     setLocale(locale) {
         this.localeObject = locale;
     }
