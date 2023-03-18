@@ -1433,7 +1433,7 @@ $.widget('wm.datatable', {
                 this.dataStatusContainer.find('i').removeClass().addClass(this.options.loadingicon);
                 break;
             case 'colDefs':
-                if(this.options.isNavTypeScrollOrOndemand()) {
+                if(this.options.isNavTypeScrollOrOndemand() && this.options.isNextPageData) {
                     this.tableContainer.find('colgroup').remove();
                     this._prepareHeaderData();
                     this.setColGroupWidths();
@@ -3161,10 +3161,10 @@ $.widget('wm.datatable', {
             this.gridHeaderElement.empty();
             this.gridElement.find('colgroup').remove();
         }
-        //this._renderHeader();
-        if(!this.options.isNavTypeScrollOrOndemand()) {
-            this._renderHeader();
-        }
+        this._renderHeader();
+        // if(!(this.options.isNavTypeScrollOrOndemand() && this.options.isNextPageData)) {
+        //     this._renderHeader();
+        // }
         if (this.options.filtermode === this.CONSTANTS.SEARCH && (_.isEmpty(this.searchObj) || (this.searchObj && !this.searchObj.field && !this.searchObj.value))) {
             this._renderSearch();
         } else if (this.options.filtermode === this.CONSTANTS.MULTI_COLUMN) {

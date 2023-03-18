@@ -304,6 +304,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         setCurrentPage: (pageNum) => {
             _.set(this.dataNavigator, 'dn.currentPage', pageNum || 1);
         },
+        getDataSource: () => {
+            return this.datasource;
+        },
         // get the page limit
         getPageSize: () => {
             return this.pagesize;
@@ -1732,6 +1735,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.onDataSourceChange();
                 break;
             case 'dataset':
+                if (this.gridOptions.isNavTypeScrollOrOndemand() && this.gridOptions.getCurrentPage() === 1) {
+                    this.gridOptions.setIsNextPageData(false);
+                }
                 if (this.binddatasource && !this.datasource) {
                     return;
                 }
