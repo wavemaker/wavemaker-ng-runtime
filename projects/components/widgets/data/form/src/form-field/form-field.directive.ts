@@ -176,6 +176,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
         this.nativeElement.querySelector('input')?.setAttribute('aria-invalid', `${this.ngform.controls[this._fieldName].invalid}`);
+        this.nativeElement.querySelector('input')?.setAttribute('aria-describedby', `${this.nativeElement.getAttribute('__errormsg')}`);
         this._activeField = false;
         this._triggeredByUser = false;
         this._clicktriggeredByUser = false;
@@ -418,6 +419,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
                 this.app.notify('captionPositionAnimate', {displayVal: hasValue, nativeEl: captionEl, isSelectMultiple: this.formWidget && this.formWidget.multiple, isFocused: this._activeField});
             }
+            this.nativeElement.querySelector('input')?.setAttribute('aria-invalid', this._triggeredByUser && this.ngform.controls[this._fieldName].invalid ? 'true' : 'false');
+            this.nativeElement.querySelector('input')?.setAttribute('aria-describedby', `${this.nativeElement.getAttribute('__errormsg')}`);
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
             // Do mark as touched, only incase when user has entered an input but not through the script. Hence added mousedown event check
