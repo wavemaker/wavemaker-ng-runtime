@@ -320,7 +320,7 @@ $.widget('wm.datatable', {
                 'data-col-field': field,
                 'title': titleLabel
             });
-            self._setStyles($th, 'text-align: ' + value.textAlignment)
+            // self._setStyles($th, 'text-align: ' + value.textAlignment)
             $th.addClass(headerClasses);
             /* For custom columns, show display name if provided, else don't show any label. */
             if (field === 'checkbox') {
@@ -464,7 +464,7 @@ $.widget('wm.datatable', {
     _getSummaryRowTemplate: function () {
         var self = this,
             $tfoot = $('<tfoot class="' + this.options.cssClassNames.gridFooter + '"></tfoot>');
-        this._setStyles($tfoot, "border-top: 3px solid #eee;");
+        // this._setStyles($tfoot, "border-top: 3px solid #eee;");
 
         _.forEach(this.options.summaryRowDefs, function (row, index) {
             row.$$pk = index;
@@ -3283,18 +3283,22 @@ $.widget('wm.datatable', {
         this.options[key] = value;
         if (key === 'height') {
             if(this.options.showHeader) {
-                this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px; border: 1px solid #eee, box-shadow: 0px 1px 0px 0px rgb(118, 118, 118, 15%)');
+                // this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px;');
+                $thead = this.gridHeaderElement;
+                $thead.addClass("thead-sticky");
             }
 
             //  if(this.dataStatus.state != 'loading') {
             var elements = this.gridHeaderElement.find('th');
-            this._setStyles(this.tableContainer, 'border-collapse: separate;');
+            // this._setStyles(this.tableContainer, 'border-collapse: separate;');
+            
             for (var i = 0; i < elements.length; i += 1) {
-                this._setStyles($(elements[i]), 'border: 1px solid #eee');
+                // this._setStyles($(elements[i]), 'border: 1px solid #eee');
             }
             //}
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
-            this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
+            // this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
+            $('table.table-bordered').parents('.app-grid-header-inner').addClass('table_border');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
                 this.gridContainer.find('.app-grid-header-inner').css('overflow', 'auto');
             }
