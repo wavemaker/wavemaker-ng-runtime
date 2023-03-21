@@ -320,7 +320,7 @@ $.widget('wm.datatable', {
                 'data-col-field': field,
                 'title': titleLabel
             });
-            // self._setStyles($th, 'text-align: ' + value.textAlignment)
+            self._setStyles($th, 'text-align: ' + value.textAlignment)
             $th.addClass(headerClasses);
             /* For custom columns, show display name if provided, else don't show any label. */
             if (field === 'checkbox') {
@@ -464,7 +464,7 @@ $.widget('wm.datatable', {
     _getSummaryRowTemplate: function () {
         var self = this,
             $tfoot = $('<tfoot class="' + this.options.cssClassNames.gridFooter + '"></tfoot>');
-        // this._setStyles($tfoot, "border-top: 3px solid #eee;");
+        this._setStyles($tfoot, "border-top: 3px solid #eee;");
 
         _.forEach(this.options.summaryRowDefs, function (row, index) {
             row.$$pk = index;
