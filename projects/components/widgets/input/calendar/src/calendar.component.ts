@@ -153,7 +153,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             select: this.select.bind(this),
             eventDidMount: this.eventDidMount.bind(this),
             viewDidMount: this.viewDidMount.bind(this),
-            datesSet: this.datesSet.bind(this)        }
+            datesSet: this.datesSet.bind(this),
+            dateClick: this.dateClick.bind(this)   
+        }
     };
     public view: string;
     private dayClass: Array<any> = [];
@@ -161,7 +163,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     // this function selects the default date given for the calendar
     selectDate() {
         let start, end;
-        // checks if datavalue is an object and not a Date object
+        // checks if datavalue is an object and not a Date object 
         if (_.isObject(this.datavalue) && !_.isDate(this.datavalue)) {
             start = moment(this.datavalue.start);
             end   = moment(this.datavalue.end);
@@ -171,7 +173,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
 
         this.$fullCalendar.gotoDate( moment(start)._d); // after selecting the date go to the date.
-
+        
         this.$fullCalendar.select(start.valueOf(), end.valueOf());
     }
 
@@ -296,7 +298,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
         const _eventMetadata = eventObj.extendedProps._eventMetadata;
         Object.setPrototypeOf(_eventMetadata, eventObj);
-        return _eventMetadata;
+        return _eventMetadata;     
     }
 
     /**
@@ -308,7 +310,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     private convertEventObjForOldAndNewData(eventObj) {
         const _eventMetadata = eventObj.extendedProps;
         _.extend(eventObj, _eventMetadata);
-        return eventObj;
+        return eventObj;     
     }
 
     private eventResize(eventResizeInfo) {
@@ -347,6 +349,11 @@ export class CalendarComponent extends StylableComponent implements AfterContent
      */
     private datesSet(data) {
         this.currentview = {start: moment(data.start).format("YYYY-MM-DD"), end: moment(data.end).format("YYYY-MM-DD")};
+    }
+
+    private dateClick($info) {
+        const dateInfo = getUTCDateTime($info.date).valueOf();
+        this.invokeEventCallback('dateclick', {$dateInfo: dateInfo});
     }
 
     // update the calendar header options once the controls changes
@@ -495,7 +502,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         this.$fullCalendar =  calendar;
         this.invokeEventCallback('beforerender', {'$event' : {}});
         calendar.render();
-
+       
         // if the changes are already stacked before calendar renders then execute them when needed
         if (this.changesStack.length) {
             this.changesStack.forEach((changeObj) => {

@@ -70,7 +70,9 @@ export {
     getConditionalClasses,
     prepareFieldDefs ,
     getContainerTargetClass,
-    extractDataSourceName
+    extractDataSourceName,
+    setFocusTrap,
+    getKeyboardFocusableElements
 } from './utils/widget-utils';
 export {
     BaseComponent

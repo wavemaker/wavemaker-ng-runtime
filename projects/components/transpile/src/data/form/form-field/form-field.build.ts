@@ -1,5 +1,5 @@
 import { getFormMarkupAttr, IBuildTaskDef, ImportDef, register } from '@wm/transpiler';
-import { FormWidgetType, getFormWidgetTemplate, IDGenerator, isMobileApp, getRequiredFormWidget } from '@wm/core';
+import { FormWidgetType, getFormWidgetTemplate, IDGenerator, isMobileApp, getRequiredFormWidget, generateGUId } from '@wm/core';
 
 import { ALLFIELDS, isDataSetWidget } from '../../../utils/utils';
 
@@ -116,12 +116,14 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const pCounter = (parent && parent.get('form_reference')) || 'form';
             const widgetType = attrs.get('widget') || FormWidgetType.TEXT;
             const dataRole = isFormField ? 'form-field' : 'filter-field';
+            const formFieldErrorMsgId = 'wmform-field-error-' + generateGUId();
             const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
-                                   class="help-block text-danger" aria-hidden="false" [attr.aria-label]="${counter}.validationmessage" role="alert"
-                                   aria-live="assertive" [textContent]="${counter}.validationmessage"></p>` : '';
+                                   class="help-block text-danger" aria-hidden="false" role="alert"
+                                   aria-live="assertive" [attr.aria-label]="${counter}.validationmessage" id="${formFieldErrorMsgId}"><span aria-hidden="true" [textContent]="${counter}.validationmessage"></span></p>` : '';
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             const isInList = pCounter === (parentList && parentList.get('parent_form_reference'));
+            attrs.set('__errormsg', formFieldErrorMsgId);
             attrs.set('__widgetType', widgetType);
             attrs.delete('widget');
             shared.set('counter', counter);
@@ -139,7 +141,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                                         [ngStyle]="{width: ${pCounter}.captionsize}" [ngClass]="{'text-danger': ${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode,
                                          required: ${pCounter}.isUpdateMode && ${counter}.required}" [textContent]="${counter}.displayname"> </label>
                             <div [ngClass]="${counter}.displayname ? ${pCounter}._widgetClass : '${controlLayout}'">
-                                 <label class="form-control-static app-label"
+                                 <label class="form-control-static app-label" *ngIf="!(${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default' || ${counter}.widgettype === 'upload')"
                                        [hidden]="${pCounter}.isUpdateMode || ${counter}.viewmodewidget === 'default' || ${counter}.widgettype === 'upload'" [innerHTML]="${getCaptionByWidget(attrs, widgetType, counter)}"></label>
                                 ${getTemplate(attrs, widgetType, eventsTmpl, counter, pCounter, isInList)}
                                 <span aria-hidden="true" *ngIf="${counter}.showPendingSpinner" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span>

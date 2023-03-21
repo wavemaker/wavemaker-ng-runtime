@@ -18,7 +18,7 @@ import {
     App,
     UserDefinedExecutionContext
 } from '@wm/core';
-import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
 
@@ -54,6 +54,7 @@ export class DateComponent extends BaseDateTimeComponent {
     private keyEventPlugin;
     private deregisterEventListener;
     private isCurrentDate;
+    private focusTrap;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -164,11 +165,15 @@ export class DateComponent extends BaseDateTimeComponent {
         // So actual bootstrap input target width we made it to 0, so bootstrap calculating the calendar container top position improperly.
         // To fix the container top position set the width 1px;
         this.$element.find('.model-holder').width('1px');
-
+        const dpContainerEl = $('bs-datepicker-container');
+        dpContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
+        $('.bs-calendar-container').removeAttr('role');
+        const datePickerContainer = $('.bs-datepicker-container')[0];
+        this.focusTrap = setFocusTrap(datePickerContainer, true);
+        this.focusTrap.activate();
         this.addDatepickerKeyboardEvents(this, false);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
         adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
-        this.focusDateInput(this.isOpen);
     }
     onInputBlur($event) {
         if (!$($event.relatedTarget).hasClass('current-date')) {
@@ -180,10 +185,12 @@ export class DateComponent extends BaseDateTimeComponent {
     public hideDatepickerDropdown() {
         this.invokeOnTouched();
         this.isOpen = false;
+        this.focusTrap?.deactivate();
         this.isEnterPressedOnDateInput = false;
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
         }
+        this.blurDateInput(this.isOpen);
     }
 
     // change and blur events are added from the template
@@ -278,19 +285,7 @@ export class DateComponent extends BaseDateTimeComponent {
             this._bsDefaultLoadCheck = false;
             return;
         }
-        this.focusDateInput(this.isOpen);
 
         this.setDataValue(newVal);
-    }
-
-    showCordovaDatePicker() {
-        return super.showCordovaDatePicker(
-            'DATE',
-            this.bsDataValue && this.bsDataValue.getTime(),
-            getDateObj(this.mindate)?.getTime(),
-            getDateObj(this.maxdate)?.getTime())
-        .then((date: Date) => {
-            this.bsDataValue = date && moment(date).startOf('day').toDate();
-        });
     }
 }

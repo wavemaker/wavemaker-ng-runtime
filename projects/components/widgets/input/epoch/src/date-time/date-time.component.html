@@ -5,7 +5,7 @@
         (onShown)="onTimepickerOpen()"
         style="display: inherit;">
         <input class="form-control app-textbox display-input"
-            [attr.aria-label]="hint || 'Date and time field'"
+            [attr.aria-label]="hint"
             focus-target
             [name]="name"
             [tabindex]="tabindex"
@@ -28,7 +28,7 @@
                 class="btn btn-default btn-date"
                 [tabindex]="tabindex"
                 [disabled]="disabled || readonly || isCurrentDate"
-                aria-label="Select date"
+                [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : 'Choose date by pressing enter'"
                 aria-haspopup="true"
                 aria-expanded="false"
                 (click)="toggleDpDropdown($event, false)">
@@ -88,23 +88,20 @@
         </div>
     </div>
 <ng-template [ngIf]="loadNativeDateInput">
-    <input type="datetime-local"
-        class="form-control app-textbox mobile-input"
-        role="textbox"
-        step="any"
-        [value]="nativeDisplayValue" [min]="mindate | date:'yyyy-MM-ddTHH:mm:ss'" [max]="maxdate  | date:'yyyy-MM-ddTHH:mm:ss'"
-        [tabindex]="tabindex"
-        [required]="required"
-        [disabled]="disabled || readonly || isCurrentDate"
-        [attr.aria-label]="hint || 'Date and time field'"
-        (change)="onDateChange($event, true)"
-        (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
-        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
-    <div *ngIf="!!getCordovaPluginDatePickerApi()"
-        class="mobile-input mobile-datepicker-container"
+    <wm-datetimepicker
+        dateTimePicker
+        [config]="_dateOptions"
+        [placement]="modal"
+        [excludedDaysToDisable]="excludedDaysToDisable"
+        [excludedDatesToDisable]="excludedDatesToDisable"
+        [displayFormat]="dateInputFormat"
+        [value]="bsDateValue"
+        (change)="onModelUpdate($event, 'date')">
+    </wm-datetimepicker>
+    <div class="mobile-input mobile-datepicker-container"
         tabindex="1000000"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
-        (click)="!(disabled || readonly || isCurrentDate) && showCordovaDatePicker()">
+        (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal()">
     </div>
 </ng-template>

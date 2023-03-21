@@ -2,6 +2,7 @@ import { forwardRef } from '@angular/core';
 
 import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr, getClonedObject, prettifyLabel, initCaps, deHyphenate, checkIsCustomPipeExpression } from '@wm/core';
 import { DialogRef, WidgetRef } from '../widgets/framework/types';
+import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
 
 declare const _;
 
@@ -491,4 +492,26 @@ export const extractDataSourceName = (bindDataSource) => {
         dataSourceName = parts[1];
     }
     return dataSourceName;
+}
+
+export const setFocusTrap = (container, allowOutsideClick, setReturnFocusElement?) => {
+    return createFocusTrap(container, {
+        onActivate: () => container.classList.add('is-active'),
+        onDeactivate: () => container.classList.remove('is-active'),
+        allowOutsideClick: allowOutsideClick,
+        setReturnFocus: setReturnFocusElement,
+    });
+}
+
+/**
+ * Gets keyboard focusable elements within a specified element
+ * @param element {HTMLElement}
+ * @returns {Array}
+ */
+export const getKeyboardFocusableElements = (element: HTMLElement) => {
+    return [element.querySelectorAll(
+        'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
+    )].filter(el => {
+        return (!el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'));
+    })[0];
 }

@@ -36,7 +36,9 @@ import {
     switchClass,
     StatePersistence,
     PaginationService,
-    setListClass, UserDefinedExecutionContext
+    setListClass,
+    UserDefinedExecutionContext,
+    generateGUId
 } from '@wm/core';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, unsupportedStatePersistenceTypes, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef, extractDataSourceName } from '@wm/components/base';
 import { PaginationComponent } from '@wm/components/data/pagination';
@@ -113,6 +115,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public name;
     public currentPage;
     public direction;
+    public tabindex;
 
     public handleHeaderClick: Function;
     public toggleAllHeaders: void;
@@ -144,6 +147,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public listclass: any;
     private isDataChanged: boolean;
     public statehandler: any;
+    private isListElementMovable : boolean;
+    private currentIndex: number;
+    private ariaText: String;
+    public titleId: string ;
 
     _isDependent;
     private _pageLoad;
@@ -267,6 +274,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.variableInflight = false;
 
         this.noDataFound = !binddataset;
+        this.titleId = 'wmlist-' + generateGUId();
 
         // Updates pagination, filter, sort etc options for service and crud variables
         this._listenerDestroyers = [
@@ -361,7 +369,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.handleStateParams(data);
                 this.variableInflight = data.active;
                 // WMS-17268: Update nodatafound flag once the response is recieved from the server
-                this.noDataFound = _.isEmpty(data.data);
+                this.noDataFound = !data.data?.pagination.totalElements;
             });
         }
     }
@@ -935,6 +943,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     public handleKeyDown($event, action: string) {
         $event.stopPropagation();
+        $event.preventDefault();
         const listItems: QueryList<ListItemDirective> = this.listItems;
 
         let presentIndex: number = this.getListItemIndex(this.lastSelectedItem);
@@ -969,13 +978,65 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
         }
         if (action === 'focusPrev') {
-            presentIndex = presentIndex <= 0 ? 0 : (presentIndex - 1);
-            this.lastSelectedItem = this.getListItemByIndex(presentIndex);
-            this.lastSelectedItem.nativeElement.focus();
+            if(this.isListElementMovable) {
+                let prev;
+                presentIndex = presentIndex <= 0 ? 0 : (presentIndex);
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                if(presentIndex === 0) {
+                    prev = this.listItems.last;
+                    return;
+                }
+                this.listItems.forEach(($liItem: ListItemDirective, idx) => {
+                    if(idx === presentIndex) {
+                        prev.nativeElement.before($liItem.nativeElement);
+                        this.lastSelectedItem.nativeElement.focus();
+                        const arr = this.listItems.toArray();
+                        let temp = arr[presentIndex];
+                        arr[presentIndex] = arr[presentIndex-1];
+                        arr[presentIndex-1] = temp;
+                        this.listItems.reset(arr);
+                        this.currentIndex = presentIndex;
+                        this.ariaText = "selected ";
+                    }
+                    prev = $liItem;
+                });
+            } else {
+                presentIndex = presentIndex <= 0 ? 0 : (presentIndex - 1);
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                this.lastSelectedItem.nativeElement.focus();
+                this.currentIndex = presentIndex + 1;
+                this.ariaText = "selected ";
+            }
         } else if (action === 'focusNext') {
-            presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length - 1);
-            this.lastSelectedItem = this.getListItemByIndex(presentIndex);
-            this.lastSelectedItem.nativeElement.focus();
+            if(this.isListElementMovable) {
+                let prev;
+                presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex) : (listItems.length - 1);
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                if(presentIndex === this.listItems.length - 1 ) {
+                    prev = this.listItems.first;
+                    return;
+                }
+                this.listItems.forEach(($liItem: ListItemDirective, idx) => {
+                    if(idx === presentIndex +1 ) {
+                        prev.nativeElement.before($liItem.nativeElement)
+                        this.lastSelectedItem.nativeElement.focus();
+                        const arr = this.listItems.toArray();
+                        let temp = arr[presentIndex +1];
+                        arr[presentIndex +1] = arr[presentIndex];
+                        arr[presentIndex] = temp;
+                        this.listItems.reset(arr);
+                        this.currentIndex = idx + 1;
+                        this.ariaText = "selected ";
+                    }
+                    prev = $liItem;
+                });
+            } else {
+                presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length - 1);
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                this.lastSelectedItem.nativeElement.focus();
+                this.currentIndex = presentIndex + 1;
+                this.ariaText = "selected ";
+            }
         } else if (action === 'select') {
             // if the enter click is pressed on the item which is not the last selected item, the find the item from which the event is originated.
             if (presentIndex === -1 || !$($event.target).closest(this.lastSelectedItem.nativeElement)) {
@@ -984,6 +1045,19 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 presentIndex = $ul.find('li.app-list-item').index($li);
             }
             this.onItemClick($event, this.getListItemByIndex(presentIndex));
+        } else if (action === 'space') {
+            if(!this.enablereorder) {
+                return;
+            }
+            this.isListElementMovable = !this.isListElementMovable;
+            this.onItemClick($event, this.getListItemByIndex(presentIndex));
+            this.currentIndex = presentIndex + 1;
+            let name = this.getListItemByIndex(presentIndex).item.name;
+            if(this.isListElementMovable) {
+                this.ariaText = name + " grabbed, current position ";
+            }   else {
+                this.ariaText =  name +  " dropped, final position ";
+            }
         }
     }
 

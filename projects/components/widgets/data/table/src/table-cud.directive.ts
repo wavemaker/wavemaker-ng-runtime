@@ -316,6 +316,10 @@ export class TableCUDDirective {
         if (!dataSource) {
             return;
         }
+        // when delete operation is executed, turn on isRowDeleted flag to perform the next operations in table component
+        if (this.table.onDemandLoad || this.table.infScroll) {
+            this.table.isRowDeleted = true;
+        }
         if (dataSource.category === 'wm.CrudVariable') {
             this.triggerWMEvent('resetEditMode');
             if (dataSource.pagination) {
@@ -345,6 +349,10 @@ export class TableCUDDirective {
                     });
                 }
             }, error => {
+                // In case of deletion failure, turn isRowDeleted flag off to prevent executing code in table comp
+                if (this.table.isRowDeleted) {
+                    this.table.isRowDeleted = false;
+                }
                 triggerFn(options.callBack, undefined, true);
                 this.table.invokeEventCallback('error', {$event: options.evt, $operation: OPERATION.DELETE, $data: error});
                 if (!this.table.onError) {
@@ -411,11 +419,15 @@ export class TableCUDDirective {
             }
         }
         this.table._triggeredByUser = true;
+        //  Fix for [WMS-23263]: set 'isDataUpdatedByUser' flag to false since dataset is not being updated from script
+        this.table.gridOptions.setIsDataUpdatedByUser(false);
     }
 
     addNewRow() {
         if (!this.table.isGridEditMode) { // If grid is already in edit mode, do not add new row
             this.table._triggeredByUser = true;
+            //  Fix for [WMS-23263]: set 'isDataUpdatedByUser' flag to false since dataset is not being updated from script
+            this.table.gridOptions.setIsDataUpdatedByUser(false);
             this.table.callDataGridMethod('addNewRow');
             if (this.table._liveTableParent) {
                 this.table._liveTableParent.addNewRow();
@@ -443,6 +455,8 @@ export class TableCUDDirective {
             });
         }
         this.table._triggeredByUser = true;
+        //  Fix for [WMS-23263]: set 'isDataUpdatedByUser' flag to false since dataset is not being updated from script
+        this.table.gridOptions.setIsDataUpdatedByUser(false);
     }
 
     // Function to hide the edited row

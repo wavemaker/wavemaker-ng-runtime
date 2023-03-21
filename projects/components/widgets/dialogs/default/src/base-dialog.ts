@@ -33,7 +33,17 @@ const invokeOpenedCallback = (ref) => {
             }
             ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
             // focusTrapObj will create focus trap for the respective dialog according to the titleId assigned to them which is unique.
-            const container = $("[aria-labelledby= "+ ref.titleId + "]")[0];
+            const container = $('[aria-labelledby= ' + ref.titleId + ']')[0];
+
+            const keyboardFocusableElements = [container.querySelectorAll(
+                'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
+              )].filter(el => {
+                return (
+                  !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'))
+              })[0];
+
+            $(keyboardFocusableElements[0]).focus();
+
             focusTrapObj[ref.titleId] = createFocusTrap(container, {
                 onActivate: () => container.classList.add('is-active'),
                 onDeactivate: () => container.classList.remove('is-active'),
@@ -99,8 +109,8 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
             }),
             this.bsModal.onHide.subscribe(() => {
                 //  Will de-activate focus trap for the respective dialog when they are closed.
-                const ref = this.dialogService.getLastOpenedDialog();
-                if (focusTrapObj[ref.titleId] !== undefined) {
+                const ref = this.dialogService.getDialogRefFromClosedDialogs();
+                if (ref && focusTrapObj[ref.titleId] !== undefined) {
                     focusTrapObj[ref.titleId].deactivate();
                 }
             }),

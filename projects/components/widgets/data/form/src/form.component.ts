@@ -414,6 +414,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             if (!field || (validateTouch && !v.touched)) {
                 return;
             }
+            field.nativeElement.querySelector('input')?.setAttribute('aria-invalid', v.invalid);
             // invoking the prepareValidation on both parent form and current form.
             this.prepareValidationObj(v, k, field, prefix);
             this.prepareValidationObj.call(form, v, k, field, prefix);
@@ -802,6 +803,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
             if (field.widgettype === 'upload' || field.type === DataType.BLOB) {
                 this.resetFileUploadWidget(field, true);
             }
+            field.nativeElement.querySelector('input')?.removeAttribute('aria-invalid');
         });
         this.constructDataObject();
         this.clearMessage();

@@ -20,9 +20,22 @@
         </li>
     </ul>
 </nav>
+<div *ngIf="navigation === 'Inline' && !noDataFound" aria-live="polite" aria-atomic="true" class="sr-only"> {{'Item ' + dataNavigator.dn.currentPage + ' of ' + dataNavigator.pageCount }}</div>
 
-<ul tabindex="0" class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
+<div>
+    <div id={{titleId}} class="sr-only" >
+        Press space bar to toggle drag drop mode, use arrow keys to move selected elements.
+    </div>
+    
+    <div aria-live="assertive" *ngIf="listItems" class="sr-only" >
+        {{ariaText + currentIndex + ' of ' +  listItems.length}}
+    </div>    
+</div>
+
+<ul [attr.tabindex]="tabindex" [attr.aria-describedby] = "titleId"  class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
     (keydown.enter)="handleKeyDown($event, 'select')"
+
+    (keydown.space)="handleKeyDown($event, 'space')"
 
     (keydown.arrowup)="handleKeyDown($event, 'focusPrev')"
     (keydown.arrowdown)="handleKeyDown($event, 'focusNext')"
@@ -39,7 +52,7 @@
         <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{direction === 'horizontal' ? '' : itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
             [wmListItem]="item"
             #listItemRef="listItemRef"
-            tabindex="0"
+            [attr.tabindex]="tabindex"
             role="listitem">
             <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
         </li>
@@ -92,7 +105,7 @@
 <!--This template will be displayed when groupby is specified-->
 <ng-template #groupedListTemplate>
     <li *ngFor="let groupObj of groupedData" class="app-list-item-group clearfix">
-        <ul class="list-group item-group" [ngClass]="listclass">
+        <ul [attr.tabindex]="tabindex" class="list-group item-group" [ngClass]="listclass">
             <li class="app-list-item-header list-item list-group-header" (click)="handleHeaderClick($event)" [ngClass]="{'collapsible-content': collapsible}">
             <h4>{{groupObj.key}}
                 <div class="header-action">
@@ -102,7 +115,7 @@
                 </h4>
             </li>
             <ul class="list-group clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}}">
-                <li *ngFor="let item of groupObj.data; index as $index; first as $first; last as $last;" tabindex="0"
+                <li *ngFor="let item of groupObj.data; index as $index; first as $first; last as $last;" [attr.tabindex]="tabindex"
                     class="app-list-item group-list-item {{itemsPerRowClass}}"
                     [ngClass]="listItemRef.itemClass"
                     [wmListItem]="item" #listItemRef="listItemRef">

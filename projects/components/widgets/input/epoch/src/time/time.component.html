@@ -1,5 +1,5 @@
     <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" (onHidden)="hideTimepickerDropdown()" [container]="'body'" style="display: inherit">
-        <input class="form-control app-textbox display-input" [attr.aria-label]="hint || 'Time field'"
+        <input class="form-control app-textbox display-input" [attr.aria-label]="hint"
                focus-target
                [tabindex]="tabindex"
                [name]="name"
@@ -39,20 +39,20 @@
         </div>
     </div>
 <ng-template [ngIf]="loadNativeDateInput">
-    <input type="time" class="form-control app-textbox display-input mobile-input"
-           role="timer" [attr.aria-label]="hint || 'Time field'"
-           [value]="nativeDisplayValue" [min]="mintime" [max]="maxtime"
-           [tabindex]="tabindex"
-           [required]="required"
-           [disabled]="disabled || readonly || isCurrentTime"
-           (change)="onTimeChange($event, true)"
-           (focus)="onDateTimeInputFocus(true); invokeOnFocus($event); assignModel()"
-           (blur)="onDateTimeInputBlur(); invokeOnTouched($event)">
-    <div *ngIf="!!getCordovaPluginDatePickerApi()"
-        class="mobile-input mobile-datepicker-container"
+    <wm-datetimepicker
+        dateTimePicker
+        mode="TIME"
+        [minTime]="minTime"
+        [maxTime]="maxTime"
+        [placement]="modal"
+        [displayFormat]="timepattern"
+        [value]="bsTimeValue"
+        (change)="onTimeChange($event)">
+    </wm-datetimepicker>
+    <div class="mobile-input mobile-datepicker-container"
         tabindex="1000000"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event); assignModel()"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
-        (click)="!(disabled || readonly || isCurrentTime) && showCordovaDatePicker()">
+        (click)="!(disabled || readonly || isCurrentTime) && showDatePickerModal()">
     </div>
 </ng-template>

@@ -278,10 +278,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             pipeTransform : {}
         },
         navigation: '',
+        isdynamictable: '',
         deletedRowIndex: -1,
         lastActionPerformed: 'scroll',
         isSearchTrigerred: false,
         isDatasetUpdated: false,
+        isDataUpdatedByUser: false,
+        isNextPageData: undefined,
         ACTIONS: {
             'DELETE': 'delete',
             'EDIT': 'edit',
@@ -300,6 +303,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // set the page number
         setCurrentPage: (pageNum) => {
             _.set(this.dataNavigator, 'dn.currentPage', pageNum || 1);
+        },
+        getDataSource: () => {
+            return this.datasource;
         },
         // get the page limit
         getPageSize: () => {
@@ -321,6 +327,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         setIsDatasetUpdated: (value) => {
             this.setDataGridOption('isDatasetUpdated', value);
+        },
+        //  Fix for [WMS-23263]: 'isNextPageData' flag is set to true -> if user fetching the next page data by clicking onLoad more or scroll
+        setIsNextPageData: (value) => {
+            this.setDataGridOption('isNextPageData', value);
+        },
+        //  Fix for [WMS-23263]: 'isDataUpdatedByUser' flag is set to true -> if user changes the dataset from script
+        setIsDataUpdatedByUser: (value) => {
+            this.setDataGridOption('isDataUpdatedByUser', value);
         },
         onDataRender: () => {
             this.ngZone.run(() => {
@@ -695,6 +709,27 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const control = this.ngform.controls && this.ngform.controls[fieldName];
             return control && control.value;
         },
+
+        // function to add load more button to table
+        addLoadMoreBtn: () => {
+            this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
+                // set 'isNextPageData' flag to true & 'isDataUpdatedByUser' to false as next page data is being rendered
+                this.gridOptions.setIsNextPageData(true);
+                this.gridOptions.setIsDataUpdatedByUser(false);
+                this.dataNavigator.navigatePage('next', $event);
+                this.isDataLoading = true;
+            });
+        },
+        // function to bind scroll event
+        bindScrollEvt: () => {
+            if (this._gridData && this._gridData.length && this.infScroll) {
+                // smoothscroll events will be binded.
+                // Added timeout as the table html is rendered at runtime
+                setTimeout(() => {
+                    this.paginationService.bindScrollEvt(this, 'tbody', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+                }, 0);
+            }
+        },
         generateFilterRow: () => {
             // Clear the view container ref
             this.filterViewRef.clear();
@@ -818,11 +853,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.setDataGridOption('isLastPage', !!(this.dataNavigator.isDisableNext));
             // In case of on demand pagination, create the load more button only once and show the button until next page is not disabled
             if (!this.$element.find('.on-demand-datagrid').length && !this.dataNavigator.isDisableNext && this.onDemandLoad) {
-                this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
-                    this.dataNavigator.navigatePage('next', $event);
-                    this.isDataLoading = true;
-                });
-            } else if (this.dataNavigator.isDisableNext || !this.isDataLoading) {
+                this.gridOptions.addLoadMoreBtn();
+            } else if ((this._gridData && this._gridData.length) && (this.dataNavigator.isDisableNext || !this.isDataLoading)) {
                 // when the next page is disabled or when the data is not loading remove the loading/load more button accordingly
                 this.callDataGridMethod('hideLoadingIndicator', this.dataNavigator.isDisableNext, this.infScroll);
             }
@@ -836,13 +868,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this._onTouched();
 
         if (isDefined(newValue)) {
-            if (this._gridData.length && this.infScroll) {
-                // smoothscroll events will be binded.
-                // Added timeout as the table html is rendered at runtime
-                setTimeout(() => {
-                    this.paginationService.bindScrollEvt(this, 'tbody', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
-                }, 0);
-            }
+            this.gridOptions.bindScrollEvt();
 
             /*Setting the serial no's only when show navigation is enabled and data navigator is compiled
              and its current page is set properly*/
@@ -1014,6 +1040,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.name = this.name;
         this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
         this.gridOptions.navigation = this.navigation;
+        this.gridOptions.isdynamictable = this.isdynamictable;
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
         if (!_.isEmpty(this.gridData)) {
@@ -1148,6 +1175,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     // Fix for [WMS-22323]-this method is called when dataset is being updated
     setLastActionToDatasetUpdate() {
         this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.DATASET_UPDATE);
+        //  Fix for [WMS-23263]: reset currentPage to 1 as dataset is being changed
+        this.gridOptions.setCurrentPage(1);
         this.gridOptions.setIsDatasetUpdated(true);
     }
 
@@ -1706,6 +1735,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.onDataSourceChange();
                 break;
             case 'dataset':
+                if (this.gridOptions.isNavTypeScrollOrOndemand() && this.gridOptions.getCurrentPage() === 1) {
+                    this.gridOptions.setIsNextPageData(false);
+                }
                 if (this.binddatasource && !this.datasource) {
                     return;
                 }
@@ -1713,6 +1745,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 // So extracting datasource from the datset bound expression.
                 if (this.parentList && !this.datasource && _.startsWith(this.binddataset, 'item')) {
                     this.datasource = getDatasourceFromExpr(this.widget.$attrs.get('datasetboundexpr'), this);
+                }
+                if (this.gridOptions.isNavTypeScrollOrOndemand()) {
+                    if (this.gridOptions.isNextPageData) {
+                        // when fetching next page data
+                        this.gridOptions.setIsDataUpdatedByUser(false);
+                    } else {
+                        // when dataset is updated from script
+                        this.gridOptions.setIsDataUpdatedByUser(true);
+                        this.setLastActionToDatasetUpdate();
+                        this.gridOptions.setIsNextPageData(false);
+                    }
                 }
                 // for Static Variables with Retain State enabled, prevent Table from rendering more than once
                 if (!(_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none')) {

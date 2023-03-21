@@ -20,6 +20,7 @@ import {
 import { getContainerTargetClass, ToDatePipe } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
 import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
+import { DateTimePickerComponent } from './date-time//date-time-picker.component';
 
 declare const moment, _, $;
 
@@ -97,6 +98,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     @ViewChild(BsDropdownDirective) protected bsDropdown;
     @ViewChild(TimepickerComponent) protected bsTimePicker;
+    @ViewChild(DateTimePickerComponent) datetimepickerComponent;
     private validateType: string;
     containerTarget: string;
 
@@ -307,16 +309,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
         }
         setTimeout(() => {
-            if (newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
-                this.hightlightToday();
-            }
             const newDay = newDate.getDate().toString();
             _.filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
                 if ($(obj).text() === newDay) {
+                    $(obj).attr('aria-label', moment(newDate).format('dddd, MMMM Do YYYY'));
                     $(obj).focus();
                     this.activeDate = newDate;
                 }
             });
+            if (newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
+                this.hightlightToday();
+                $(`span:contains(${new Date().getDate().toString()})`).not('.is-other-month').parent().attr('aria-selected', 'true');
+            }
         });
 
     }
@@ -445,14 +449,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         dateContainer.onkeydown = (event) => {
             const action = this.keyEventPluginInstance.getEventFullKey(event);
             // Check for Shift+Tab key or Tab key or escape
-            if (action === 'shift.tab' || action === 'escape' || (action === 'tab' && !isDateTime)) {
+            if (action === 'escape') {
                 this.elementScope.hideDatepickerDropdown();
                 const displayInputElem = this.elementScope.nativeElement.querySelector('.display-input') as HTMLElement;
                 setTimeout(() => displayInputElem.focus());
-            }
-            if (action === 'tab' && isDateTime) {
-                this.bsDatePickerDirective.hide();
-                this.elementScope.toggleTimePicker(true);
             }
         };
         this.loadDays();
@@ -464,7 +464,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private loadDays() {
         setTimeout(() => {
-            $('.bs-datepicker-body').attr('tabindex', '0');
             $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '0');
             this.addKeyBoardEventsForDays();
             this.addDatepickerMouseEvents();
@@ -516,6 +515,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 setTimeout(() => displayInputElem.focus());
             }
         });
+        this.focusBlurDatePickerHeadButtons();
+    }
+
+    private focusBlurDatePickerHeadButtons() {
+        const datePickerHeadButton = $('.bs-datepicker-head button');
+        datePickerHeadButton.on('focus', function() { $(this).css('background-color', '#9AA0A3'); });
+        datePickerHeadButton.on('blur', function() { $(this).css('background-color', ''); });
     }
 
     /**
@@ -524,7 +530,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private loadMonths() {
         setTimeout(() => {
             const datePickerBody = $('.bs-datepicker-body');
-            datePickerBody.attr('tabindex', '0');
             datePickerBody.find('table.months span').attr('tabindex', '0');
             this.addKeyBoardEventsForMonths();
             this.addDatepickerMouseEvents();
@@ -567,6 +572,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setActiveDateFocus(newDate);
             }
         });
+        this.focusBlurDatePickerHeadButtons();
     }
 
     /**
@@ -575,7 +581,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private loadYears() {
         setTimeout(() => {
             const datePickerBody = $('.bs-datepicker-body');
-            datePickerBody.attr('tabindex', '0');
             datePickerBody.find('table.years span').attr('tabindex', '0');
             this.addKeyBoardEventsForYears();
             this.addDatepickerMouseEvents();
@@ -631,6 +636,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setActiveMonthFocus(this.activeDate);
             }
         });
+        this.focusBlurDatePickerHeadButtons();
     }
 
     /**
@@ -884,31 +890,16 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             return _.get(window, 'cordova.wavemaker.datePicker.selectDate');
         }
     }
-
-    showCordovaDatePicker(mode = 'DATE_TIME',
-        selectedDate = Date.now(),
-        minDate?: number,
-        maxDate?: number) {
-        return Promise.resolve()
-            .then(() => this.getCordovaPluginDatePickerApi() || Promise.reject())
-            .then(selectDate => {
-                return new Promise((resolve, reject) => {
-                    selectDate({
-                        selectedDate: selectedDate,
-                        mode: mode,
-                        minDate: minDate,
-                        maxDate: maxDate
-                    }, (result) => {
-                        resolve(result?.date ? new Date(result.date) : null)
-                    }, reject);
-                });
-            });
+    
+    public showDatePickerModal() {
+        this.datetimepickerComponent.show();
+        return ;
     }
 
-    focusDateInput(isPickerOpen) {
+    blurDateInput(isPickerOpen) {
         const displayInputElem = this.nativeElement.querySelector('.display-input') as HTMLElement;
         if (isPickerOpen) {
-            setTimeout(() => displayInputElem.focus());
+            setTimeout(() => displayInputElem.blur());
         }
     }
 

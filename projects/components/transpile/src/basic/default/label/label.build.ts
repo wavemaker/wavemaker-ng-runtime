@@ -8,7 +8,7 @@ register('wm-label', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmLabel #${counter}="wmLabel" [attr.aria-label]="${counter}.hint || 'Label text'" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmLabel #${counter}="wmLabel" [attr.aria-label]="${counter}.hint" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };
