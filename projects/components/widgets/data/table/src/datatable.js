@@ -3292,9 +3292,9 @@ $.widget('wm.datatable', {
             var elements = this.gridHeaderElement.find('th');
             // this._setStyles(this.tableContainer, 'border-collapse: separate;');
             
-            for (var i = 0; i < elements.length; i += 1) {
-                // this._setStyles($(elements[i]), 'border: 1px solid #eee');
-            }
+            // for (var i = 0; i < elements.length; i += 1) {
+            //     this._setStyles($(elements[i]), 'border: 1px solid #eee');
+            // }
             //}
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
             // this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
