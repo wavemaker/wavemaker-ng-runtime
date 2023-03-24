@@ -14,7 +14,8 @@
 
             "rxjs": "rxjs",
 
-            "@wm/core": "wm.core"
+            "@wm/core": "wm.core",
+            "@wavemaker/variables": "wm_common_variables"
         }
     }
 }
