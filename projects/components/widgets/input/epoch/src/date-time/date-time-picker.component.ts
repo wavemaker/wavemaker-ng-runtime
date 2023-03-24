@@ -186,7 +186,12 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
 
     public onDateUpdate(newVal) {
         const oldVal = this.changedValue;
-        if (oldVal && newVal) {
+         if (this.mode === 'DATE') {
+            newVal.setHours(0);
+            newVal.setMinutes(0);
+            newVal.setSeconds(0);
+            newVal.setMilliseconds(0);
+        } else if (oldVal && newVal) {
             newVal.setHours(oldVal.getHours());
             newVal.setMinutes(oldVal.getMinutes());
             newVal.setSeconds(oldVal.getSeconds());
