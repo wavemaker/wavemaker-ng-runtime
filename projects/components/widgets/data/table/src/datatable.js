@@ -3229,23 +3229,6 @@ $.widget('wm.datatable', {
                 $thead = this.gridHeaderElement;
                 $thead.addClass("thead-sticky");
             }
-<<<<<<< Updated upstream
-          //  if(this.dataStatus.state != 'loading') {
-                var elements = this.gridHeaderElement.find('th');
-                this._setStyles(this.tableContainer, 'border-collapse: separate;');
-                for (var i = 0; i < elements.length; i += 1) {
-                    this._setStyles($(elements[i]), 'border: 1px solid #eee');
-                }
-=======
-
-            //  if(this.dataStatus.state != 'loading') {
-            var elements = this.gridHeaderElement.find('th');
-            this._setStyles(this.tableContainer, 'border-collapse: separate;');
-            // for (var i = 0; i < elements.length; i += 1) {
-            //     this._setStyles($(elements[i]), 'border: 1px solid #eee');
-            // }
->>>>>>> Stashed changes
-            //}
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
             // this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
             $('table.table-bordered').parents('.app-grid-header-inner').addClass('table_border');
