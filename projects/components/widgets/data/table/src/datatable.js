@@ -3050,6 +3050,7 @@ $.widget('wm.datatable', {
     /* Renders the table body. */
     _renderGrid: function (isCreated) {
         var $htm, isScrollorOnDemand = this.options.isNavTypeScrollOrOndemand(), pageStartIndex = this.getPageStartIndex();
+        $('table.table-bordered').parents('.app-grid-header-inner').addClass('table_border');
         if(isScrollorOnDemand) {
             var $tbody = this.gridElement;
             // get markup for new rows and append it to tbod
@@ -3069,7 +3070,7 @@ $.widget('wm.datatable', {
 
         if (this.options.summaryRow) {
             var $summaryRowHtm = $(this._getSummaryRowTemplate());
-            this.gridElement.append($summaryRowHtm);
+            this.tableContainer.append($summaryRowHtm);
         }
         // Set proper data status messages after the grid is rendered.
         if (!this.options.data.length && this.dataStatus.state === 'nodata') {
@@ -3134,7 +3135,6 @@ $.widget('wm.datatable', {
         this.gridHeaderElement = this.gridContainer.find('.table-header');
         this._setStyles($statusContainer.find('div.overlay'), "display:none");
         this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow: auto;');
-
         this.tableContainer = this.gridContainer.find('table');
         this.gridElement = this.gridContainer.find('.app-grid-content');
 
@@ -3291,14 +3291,13 @@ $.widget('wm.datatable', {
             //  if(this.dataStatus.state != 'loading') {
             var elements = this.gridHeaderElement.find('th');
             // this._setStyles(this.tableContainer, 'border-collapse: separate;');
-            
+
             // for (var i = 0; i < elements.length; i += 1) {
             //     this._setStyles($(elements[i]), 'border: 1px solid #eee');
             // }
             //}
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
             // this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
-            $('table.table-bordered').parents('.app-grid-header-inner').addClass('table_border');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
                 this.gridContainer.find('.app-grid-header-inner').css('overflow', 'auto');
             }
