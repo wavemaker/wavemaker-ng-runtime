@@ -3024,6 +3024,7 @@ $.widget('wm.datatable', {
     /* Renders the table body. */
     _renderGrid: function (isCreated) {
         var $htm, isScrollorOnDemand = this.options.isNavTypeScrollOrOndemand(), pageStartIndex = this.getPageStartIndex();
+        $('table.table-bordered').parents('.app-grid-header-inner').addClass('table_border');
         if(isScrollorOnDemand) {
             var $tbody = this.gridElement;
             // get markup for new rows and append it to tbody
@@ -3039,7 +3040,7 @@ $.widget('wm.datatable', {
 
         if (this.options.summaryRow) {
             var $summaryRowHtm = $(this._getSummaryRowTemplate());
-            this.gridElement.append($summaryRowHtm);
+            this.tableContainer.append($summaryRowHtm);
         }
         // Set proper data status messages after the grid is rendered.
         if (!this.options.data.length && this.dataStatus.state === 'nodata') {
@@ -3231,7 +3232,6 @@ $.widget('wm.datatable', {
             }
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
             // this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
-            $('table.table-bordered').parents('.app-grid-header-inner').addClass('table_border');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
                 this.gridContainer.find('.app-grid-header-inner').css('overflow', 'auto');
             }
