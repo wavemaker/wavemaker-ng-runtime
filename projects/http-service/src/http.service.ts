@@ -7,6 +7,14 @@ import { AbstractHttpService, replace, isNumber, isBoolean } from '@wm/core';
 import { HttpClientService, getErrMessage } from '@wavemaker/variables';
 
 declare const _;
+enum HTTP_EVENT_TYPE {
+    Sent = 0,
+    UploadProgress = 1,
+    ResponseHeader = 2,
+    DownloadProgress = 3,
+    Response= 4,
+    User = 5
+}
 
 @Injectable()
 export class HttpServiceImpl extends AbstractHttpService implements HttpClientService {
@@ -133,10 +141,13 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
         });
     }
 
-    cancel(variable) {
+    cancel(variable, $file?) {
         if (variable._observable) {
             variable._observable.unsubscribe();
         }
+         if ($file && $file._uploadProgress) {
+             $file._uploadProgress.unsubscribe();
+         }
     }
 
     setLocale(locale) {
@@ -218,6 +229,22 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
         // });
     }
 
+    uploadFile(url, data, variable, options?) {
+        return new Promise((resolve, reject) => {
+             variable.request = this.upload(url, data, options).subscribe((event: any) => {
+                 if (event.type === HTTP_EVENT_TYPE.UploadProgress) {
+                     const uploadProgress = Math.round(100 * event.loaded / event.total);
+                     options.notify(uploadProgress);
+                 }
+
+                 if (event.type === HTTP_EVENT_TYPE.Response) {
+                     resolve(event.body);
+                 }
+            }, error => {
+                reject(error);
+            });
+        });
+    }
     /**
      * registers a callback to be trigerred on session timeout
      * @param callback
