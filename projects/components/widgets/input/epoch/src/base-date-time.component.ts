@@ -970,4 +970,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
         super.ngOnDestroy();
     }
+
+    public ngOnDetach() {
+        this.datetimepickerComponent?.hideModal();
+    }
 }

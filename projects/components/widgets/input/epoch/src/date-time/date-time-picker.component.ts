@@ -49,7 +49,7 @@ declare const moment, $, _;
     </ng-template>
     `
 })
-export class DateTimePickerComponent implements AfterViewInit {
+export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
 
     private isDateOpen = true;
 
@@ -186,7 +186,12 @@ export class DateTimePickerComponent implements AfterViewInit {
 
     public onDateUpdate(newVal) {
         const oldVal = this.changedValue;
-        if (oldVal && newVal) {
+         if (this.mode === 'DATE') {
+            newVal.setHours(0);
+            newVal.setMinutes(0);
+            newVal.setSeconds(0);
+            newVal.setMilliseconds(0);
+        } else if (oldVal && newVal) {
             newVal.setHours(oldVal.getHours());
             newVal.setMinutes(oldVal.getMinutes());
             newVal.setSeconds(oldVal.getSeconds());
@@ -220,7 +225,9 @@ export class DateTimePickerComponent implements AfterViewInit {
     }
 
     hideModal() {
-        this.bsModalService.hide(this.modalRef.id);
+        if (this.modalRef?.id) {
+            this.bsModalService.hide(this.modalRef.id);
+        }
     }
 
     onCancelClick() {
@@ -243,6 +250,10 @@ export class DateTimePickerComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
 
+    }
+
+    ngOnDestroy(): void {
+        this.hideModal();
     }
 
 }
