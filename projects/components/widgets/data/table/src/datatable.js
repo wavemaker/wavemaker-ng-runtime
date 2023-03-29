@@ -3070,6 +3070,7 @@ $.widget('wm.datatable', {
 
         if (this.options.summaryRow) {
             var $summaryRowHtm = $(this._getSummaryRowTemplate());
+            this.tableContainer.find('tfoot').remove();
             this.tableContainer.append($summaryRowHtm);
         }
         // Set proper data status messages after the grid is rendered.
