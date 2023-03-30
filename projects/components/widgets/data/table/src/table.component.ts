@@ -198,7 +198,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private sortInfo;
     private serverData;
     private filternullrecords;
-    private variableInflight = true;
+    private variableInflight;
     private isdynamictable;
     private _dynamicContext;
     private noOfColumns;
@@ -1702,6 +1702,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         let enableNewRow;
         switch (key) {
             case 'datasource':
+                // Fix for [WMS-23653] when startUpdate is false (request on page load property is unchecked) ,
+                // then set status msg as "No data found"
+                if (nv.startUpdate === false) {
+                    this.variableInflight = false;
+                    this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+                }
                 if (this.dataset) {
                     this.watchVariableDataSet(this.dataset);
                     this.onDataSourceChange();
