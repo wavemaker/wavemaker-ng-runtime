@@ -924,7 +924,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     public handleKeyDown($event, action: string) {
         $event.stopPropagation();
-        $event.preventDefault();
+        if($event.key !== "Enter" && $event.key !== "Tab") {
+            $event.preventDefault();
+        }
         const listItems: QueryList<ListItemDirective> = this.listItems;
 
         let presentIndex: number = this.getListItemIndex(this.lastSelectedItem);
