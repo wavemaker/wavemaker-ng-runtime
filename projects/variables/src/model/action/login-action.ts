@@ -1,4 +1,4 @@
-import { BaseAction } from '../base-action';
+import { BaseAction } from '@wavemaker/variables';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { VariableManagerFactory } from '../../factory/variable-manager.factory';
 

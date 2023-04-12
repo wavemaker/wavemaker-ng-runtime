@@ -83,6 +83,8 @@ export class AppRef {
     isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
 
+    targetPlatform: string;
+
     appLocale: any;
 
     changeLocale = this.i18nService.setSelectedLocale.bind(this.i18nService);
@@ -113,6 +115,7 @@ export class AppRef {
         this.isPrefabType = wmProjectProperties.type === PROJECT_TYPE.PREFAB;
         this.isApplicationType = wmProjectProperties.type === PROJECT_TYPE.APPLICATION;
         this.isTemplateBundleType = wmProjectProperties.type === PROJECT_TYPE.TEMPLATE_BUNDLE;
+        this.targetPlatform = wmProjectProperties.platformType;
 
         this.httpService.registerOnSessionTimeout(this.on401.bind(this));
 

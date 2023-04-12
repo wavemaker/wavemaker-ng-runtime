@@ -977,6 +977,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         super.ngOnDestroy();
     }
 
+    public ngOnDetach() {
+        this.datetimepickerComponent?.hideModal();
+    }
+
     setTimezone(locale) {
         this.i18nService.setTimezone(locale, this);
     }

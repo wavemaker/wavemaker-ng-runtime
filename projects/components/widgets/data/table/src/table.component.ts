@@ -1731,8 +1731,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         let enableNewRow;
         switch (key) {
             case 'datasource':
-                this.watchVariableDataSet(this.dataset);
-                this.onDataSourceChange();
+                // Fix for [WMS-23653] when startUpdate is false (request on page load property is unchecked),
+                // then set status msg as "No data found"
+                if (nv.startUpdate === false) {
+                    this.variableInflight = false;
+                    this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+                }
+                if (this.dataset) {
+                    this.watchVariableDataSet(this.dataset);
+                    this.onDataSourceChange();
+                }
                 break;
             case 'dataset':
                 if (this.gridOptions.isNavTypeScrollOrOndemand() && this.gridOptions.getCurrentPage() === 1) {

@@ -534,16 +534,15 @@ $.widget('wm.datatable', {
 
     /* Returns the tbody markup. */
     _getGridTemplate: function () {
-
         var self = this, preparedData,$tbody, tbodyExists,pageStartIndex = self.getPageStartIndex(),
             startRowIndex = self.options.startRowIndex,
             isScrollorOnDemand = self.options.isNavTypeScrollOrOndemand();
-        if(isScrollorOnDemand) {
-            $tbody = this.gridElement;
-        } else {
-            tbodyExists = this.gridElement.find('tbody').length;
-            $tbody = tbodyExists > 0 ? this.gridElement.find('tbody:first') : this.gridElement.empty();
-        }
+            if(isScrollorOnDemand) {
+                $tbody = this.gridElement;
+            } else {
+                tbodyExists = this.gridElement.find('tbody').length;
+                $tbody = tbodyExists > 0 ? this.gridElement.find('tbody:first') : this.gridElement.empty();
+            }
 
         if(isScrollorOnDemand) {
             this._handleCRUDForInfiniteScroll($tbody);
@@ -1104,7 +1103,7 @@ $.widget('wm.datatable', {
 
     /* Inserts a load more button at the end of the table when the pagination selected is on demand */
     addLoadMoreBtn : function (onDemandMsg, loadingdatamsg, cb) {
-        // Show Load more button only if it not that last page
+        // Show Load more button only if it not the last page
         if (!this.options.isLastPage) {
             var self = this;
             var $parenEl = $('<div class="on-demand-datagrid"><a class="app-button btn btn-block on-demand-load-btn"></a></div>');
@@ -3051,9 +3050,9 @@ $.widget('wm.datatable', {
     /* Renders the table body. */
     _renderGrid: function (isCreated) {
         var $htm, isScrollorOnDemand = this.options.isNavTypeScrollOrOndemand(), pageStartIndex = this.getPageStartIndex();
+        $('table.table-bordered').parents('.app-grid-header-inner').addClass('table_border');
         if(isScrollorOnDemand) {
             var $tbody = this.gridElement;
-
             // get markup for new rows and append it to tbod
             var template = this._getGridTemplate();
             $htm = $(template);
@@ -3071,7 +3070,8 @@ $.widget('wm.datatable', {
 
         if (this.options.summaryRow) {
             var $summaryRowHtm = $(this._getSummaryRowTemplate());
-            this.gridElement.append($summaryRowHtm);
+            this.tableContainer.find('tfoot').remove();
+            this.tableContainer.append($summaryRowHtm);
         }
         // Set proper data status messages after the grid is rendered.
         if (!this.options.data.length && this.dataStatus.state === 'nodata') {
@@ -3136,7 +3136,6 @@ $.widget('wm.datatable', {
         this.gridHeaderElement = this.gridContainer.find('.table-header');
         this._setStyles($statusContainer.find('div.overlay'), "display:none");
         this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow: auto;');
-
         this.tableContainer = this.gridContainer.find('table');
         this.gridElement = this.gridContainer.find('.app-grid-content');
 
@@ -3162,9 +3161,6 @@ $.widget('wm.datatable', {
             this.gridElement.find('colgroup').remove();
         }
         this._renderHeader();
-        // if(!(this.options.isNavTypeScrollOrOndemand() && this.options.isNextPageData)) {
-        //     this._renderHeader();
-        // }
         if (this.options.filtermode === this.CONSTANTS.SEARCH && (_.isEmpty(this.searchObj) || (this.searchObj && !this.searchObj.field && !this.searchObj.value))) {
             this._renderSearch();
         } else if (this.options.filtermode === this.CONSTANTS.MULTI_COLUMN) {
@@ -3179,7 +3175,7 @@ $.widget('wm.datatable', {
          * Render is called everytime when there is a change in dataset and the previously binded events are lost
          */
         if (this.options.isdynamictable) {
-            this.element.find('.on-demand-datagrid').remove();
+           this.element.find('.on-demand-datagrid').remove();
             if (this.options.navigation === 'On-Demand' && !this.element.find('.on-demand-datagrid').length) {
                 this.options.addLoadMoreBtn();
             } else if (this.options.navigation === 'Scroll') {
@@ -3189,7 +3185,8 @@ $.widget('wm.datatable', {
     },
     __setStatus: function (isCreated) {
         var loadingIndicator = this.dataStatusContainer.find('i'),
-            state = this.dataStatus.state;
+            state = this.dataStatus.state,
+            isScrollOrOndemand = this.options.isNavTypeScrollOrOndemand();
         this.dataStatusContainer.find('.message').text(this.dataStatus.message);
         if (state === 'loading') {
             loadingIndicator.removeClass('hidden');
@@ -3199,6 +3196,9 @@ $.widget('wm.datatable', {
         if (state === 'ready') {
             this.dataStatusContainer.hide();
         } else {
+            if (this.options.isNavTypeScrollOrOndemand() && (state === 'nodata' || this.options.isLastPage)) {
+                this.element.find('.on-demand-datagrid a').hide();
+            }
             this.dataStatusContainer.show();
         }
         if (state === 'nodata' || state === 'loading' || state === 'error') {
@@ -3206,7 +3206,9 @@ $.widget('wm.datatable', {
                 if (state === 'nodata') {
                     this.dataStatusContainer.css('height', 'auto');
                     this.dataStatus.contentHeight = 0;
-                }  else if (this.options.isNavTypeScrollOrOndemand()){
+                }  else if (this.options.isNavTypeScrollOrOndemand() && this.options.getCurrentPage() > 1){
+                    // showing the loading icon only for the first page
+                    // from second page there is another loader which is being shown instead of LoadMore btn
                     this.dataStatusContainer.hide();
                 } else {
                     this.dataStatus.height = this.dataStatus.height || this.dataStatusContainer.outerHeight();
@@ -3214,7 +3216,7 @@ $.widget('wm.datatable', {
                     this.dataStatusContainer.css('height', this.dataStatus.height > this.dataStatus.contentHeight ? 'auto' : this.dataStatus.contentHeight);
                 }
             }
-            if (!this.options.isNavTypeScrollOrOndemand()) {
+            if (!isScrollOrOndemand || (isScrollOrOndemand && this.options.getCurrentPage() === 1)) {
                 this.gridContainer.addClass("show-msg");
             }
         } else {
@@ -3282,18 +3284,21 @@ $.widget('wm.datatable', {
         this.options[key] = value;
         if (key === 'height') {
             if(this.options.showHeader) {
-                this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px; border: 1px solid #eee, box-shadow: 0px 1px 0px 0px rgb(118, 118, 118, 15%)');
+                // this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px;');
+                $thead = this.gridHeaderElement;
+                $thead.addClass("thead-sticky");
             }
 
             //  if(this.dataStatus.state != 'loading') {
             var elements = this.gridHeaderElement.find('th');
-            this._setStyles(this.tableContainer, 'border-collapse: separate;');
-            for (var i = 0; i < elements.length; i += 1) {
-                this._setStyles($(elements[i]), 'border: 1px solid #eee');
-            }
+            // this._setStyles(this.tableContainer, 'border-collapse: separate;');
+
+            // for (var i = 0; i < elements.length; i += 1) {
+            //     this._setStyles($(elements[i]), 'border: 1px solid #eee');
+            // }
             //}
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
-            this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
+            // this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
                 this.gridContainer.find('.app-grid-header-inner').css('overflow', 'auto');
             }

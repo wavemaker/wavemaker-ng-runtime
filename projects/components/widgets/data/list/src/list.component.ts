@@ -943,7 +943,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     public handleKeyDown($event, action: string) {
         $event.stopPropagation();
-        $event.preventDefault();
+        if($event.keyCode !== 13 && $event.keyCode !== 9 && !($event.target.classList.contains('form-control') && $event.keyCode === 32) ) {
+            $event.preventDefault();
+        }
         const listItems: QueryList<ListItemDirective> = this.listItems;
 
         let presentIndex: number = this.getListItemIndex(this.lastSelectedItem);

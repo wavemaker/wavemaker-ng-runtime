@@ -1,7 +1,7 @@
 import { Directive, Injector, Optional } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 
-import {App, addClass, removeClass, switchClass, toggleClass, UserDefinedExecutionContext} from '@wm/core';
+import {App, addClass, removeClass, switchClass, toggleClass, UserDefinedExecutionContext, isMobile } from '@wm/core';
 import { APPLY_STYLES_TYPE, getKeyboardFocusableElements,  IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { LayoutDirective, PageDirective } from '@wm/components/page';
 
@@ -72,7 +72,9 @@ export class LeftPanelDirective extends StylableComponent {
                 leftNavButton.focus();
             }, 50);
         }
-        addClass(this.nativeElement, 'hidden');
+        if (isMobile()) {
+            addClass(this.nativeElement, 'hidden');
+        }
         this.expanded = false;
         switchClass(this.$page[0], 'left-panel-collapsed-container', 'left-panel-expanded-container');
         if (this.animation === AnimationType.SLIDE_IN) {

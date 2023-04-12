@@ -243,7 +243,11 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         }
         if (!evt || !headerElement || !headerElement.length) {
             headerElement = this.nativeElement.querySelector(`li[data-paneid=${paneRef.widgetId}]`);
-            $(headerElement).children().focus();
+            const insideTabs = !!$(headerElement).closest('.app-tabs')
+                .parent().closest('.app-tabs').length;
+            if (!insideTabs) { 
+                $(headerElement).children().focus();
+            }
         }
         this.animateIn(headerElement);
 

@@ -1163,42 +1163,44 @@ export const validateDataSourceCtx = (ds, ctx) => {
  * @param name name of the variable
  * @param context scope of the variable
  */
-export const processFilterExpBindNode = (context, filterExpressions) => {
+export const processFilterExpBindNode = (context, filterExpressions, variable?) => {
     const destroyFn = context.registerDestroyListener ? context.registerDestroyListener.bind(context) : _.noop;
     const filter$ = new Subject();
 
     const bindFilExpObj = (obj, targetNodeKey) => {
+       const listener = (newVal, oldVal) => {
+            if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
+                return;
+            }
+            // Skip cloning for blob column
+            if (!_.includes(['blob', 'file'], obj.type)) {
+                newVal = getClonedObject(newVal);
+            }
+            // backward compatibility: where we are allowing the user to bind complete object
+            if (obj.target === 'dataBinding') {
+                // remove the existing databinding element
+                filterExpressions.rules = [];
+                // now add all the returned values
+                _.forEach(newVal, function (value, target) {
+                    filterExpressions.rules.push({
+                        'target': target,
+                        'value': value,
+                        'matchMode': obj.matchMode || 'startignorecase',
+                        'required': false,
+                        'type': ''
+                    });
+                });
+            } else {
+                // setting value to the root node
+                obj[targetNodeKey] = newVal;
+            }
+            filter$.next({ filterExpressions, newVal });
+        }
+
         if (stringStartsWith(obj[targetNodeKey], 'bind:')) {
             // [Todo-CSP]: needs a check, where is this used
             destroyFn(
-                $watch(obj[targetNodeKey].replace('bind:', ''), context, {}, (newVal, oldVal) => {
-                    if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
-                        return;
-                    }
-                    // Skip cloning for blob column
-                    if (!_.includes(['blob', 'file'], obj.type)) {
-                        newVal = getClonedObject(newVal);
-                    }
-                    // backward compatibility: where we are allowing the user to bind complete object
-                    if (obj.target === 'dataBinding') {
-                        // remove the existing databinding element
-                        filterExpressions.rules = [];
-                        // now add all the returned values
-                        _.forEach(newVal, function (value, target) {
-                            filterExpressions.rules.push({
-                                'target': target,
-                                'value': value,
-                                'matchMode': obj.matchMode || 'startignorecase',
-                                'required': false,
-                                'type': ''
-                            });
-                        });
-                    } else {
-                        // setting value to the root node
-                        obj[targetNodeKey] = newVal;
-                    }
-                    filter$.next({ filterExpressions, newVal });
-                }, undefined, false, { arrayType: _.includes(['in', 'notin'], obj.matchMode) })
+                $watch(obj[targetNodeKey].replace('bind:', ''), context, {}, variable ? variable.invokeOnFiltertExpressionChange.bind(variable, obj, targetNodeKey) : listener, undefined, false, { arrayType: _.includes(['in', 'notin'], obj.matchMode) })
             );
         }
     };

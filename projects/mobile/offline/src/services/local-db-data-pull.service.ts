@@ -5,7 +5,7 @@ import { Observer } from 'rxjs';
 import { $parseExpr, App, defer, getAbortableDefer, noop } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 
-import { LiveVariableUtils, LVService } from '@wm/variables';
+import { LiveVariableUtils, LVService } from '@wavemaker/variables';
 
 import { LocalDBManagementService } from './local-db-management.service';
 import { PullInfo } from './change-log.service';

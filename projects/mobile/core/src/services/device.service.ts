@@ -13,6 +13,7 @@ const REGISTRY_FILE_NAME = 'registry.info';
 export interface Config {
     baseUrl: string;
     customUrlScheme: string;
+    customUrl: string;
     buildTime: number;
     enableSSLPinning: boolean;
     offlineStorage: boolean;
@@ -125,7 +126,7 @@ export class DeviceService {
     }
 
     public isAppConnectedToPreview() {
-        return this._config.customUrlScheme !== this._config.baseUrl && this.getBaseUrl() !== 'NONE';
+        return this._config.customUrl !== this._config.baseUrl && this.getBaseUrl() !== 'NONE';
     }
 
     public getConfig(): Config {

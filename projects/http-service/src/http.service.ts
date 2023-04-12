@@ -3,12 +3,21 @@ import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpRespon
 
 import { Observable, Subject } from 'rxjs';
 
-import { AbstractHttpService, getValidJSON, replace, isNumber, isBoolean } from '@wm/core';
+import { AbstractHttpService, replace, isNumber, isBoolean } from '@wm/core';
+import { HttpClientService, getErrMessage } from '@wavemaker/variables';
 
 declare const _;
+enum HTTP_EVENT_TYPE {
+    Sent = 0,
+    UploadProgress = 1,
+    ResponseHeader = 2,
+    DownloadProgress = 3,
+    Response= 4,
+    User = 5
+}
 
 @Injectable()
-export class HttpServiceImpl extends AbstractHttpService {
+export class HttpServiceImpl extends AbstractHttpService implements HttpClientService {
     nonBodyTypeMethods = ['GET', 'DELETE', 'HEAD', 'OPTIONS', 'JSONP'];
     sessionTimeoutObservable = new Subject();
     sessionTimeoutQueue = [];
@@ -82,30 +91,6 @@ export class HttpServiceImpl extends AbstractHttpService {
         return new HttpRequest(options.method, options.url, third, fourth);
     }
 
-    /**
-     * This method filters and returns error message from the failed network call response.
-     * @param err, error form network call failure
-     */
-    public getErrMessage(err: any) {
-        const HTTP_STATUS_MSG = {
-            404: this.getLocale()['MESSAGE_404_ERROR'] || 'Requested resource not found',
-            401: this.getLocale()['MESSAGE_401_ERROR'] || 'Requested resource requires authentication',
-            403: this.getLocale()['LABEL_FORBIDDEN_MESSAGE'] || 'The requested resource access/action is forbidden.'
-        };
-
-        // check if error message present for responded http status
-        let errMsg = HTTP_STATUS_MSG[err.status];
-        let errorDetails = err.error;
-        errorDetails = getValidJSON(errorDetails) || errorDetails;
-
-        // WM services have the format of error response as errorDetails.error
-        if (errorDetails && errorDetails.errors) {
-            errMsg = this.parseErrors(errorDetails.errors) || errMsg || 'Service Call Failed';
-        } else {
-            errMsg = errMsg || 'Service Call Failed';
-        }
-        return errMsg;
-    }
 
     /**
      * Make a http call and returns an observable that can be cancelled
@@ -114,6 +99,18 @@ export class HttpServiceImpl extends AbstractHttpService {
     sendCallAsObservable(options: any): any {
         const req = this.generateRequest(options);
         return this.httpClient.request(req);
+    }
+
+    sendCall(requestParams, variable) {
+        return new Promise((resolve, reject) => {
+            variable._observable = this.sendCallAsObservable(requestParams).subscribe((response: any) => {
+                if (response && response.type) {
+                    resolve(response);
+                }
+            }, (err: any) => {
+                    reject(err);
+            });
+        });
     }
 
     /**
@@ -134,7 +131,7 @@ export class HttpServiceImpl extends AbstractHttpService {
                         reject(e);
                     });
                 } else {
-                    const errMsg = this.getErrMessage(err);
+                    const errMsg = getErrMessage(err, this.getLocale());
                     reject({
                         error: errMsg,
                         details: err
@@ -144,28 +141,21 @@ export class HttpServiceImpl extends AbstractHttpService {
         });
     }
 
+    cancel(variable, $file?) {
+        if (variable._observable) {
+            variable._observable.unsubscribe();
+        }
+         if ($file && $file._uploadProgress) {
+             $file._uploadProgress.unsubscribe();
+         }
+    }
+
     setLocale(locale) {
         this.localeObject = locale;
     }
 
     getLocale() {
         return this.localeObject;
-    }
-
-    parseErrors(errors) {
-        let errMsg = '';
-        if (errors && errors.error && errors.error.length) {
-            errors.error.forEach((errorDetails, i) => {
-                errMsg += this.parseError(errorDetails) + (i > 0 ? '\n' : '');
-            });
-        }
-        return errMsg;
-    }
-
-    parseError(errorObj) {
-        let errMsg;
-        errMsg = errorObj.message ? replace(errorObj.message, errorObj.parameters, true) : ((errorObj.parameters && errorObj.parameters[0]) || '');
-        return errMsg;
     }
 
     getHeader(error, headerKey) {
@@ -239,6 +229,22 @@ export class HttpServiceImpl extends AbstractHttpService {
         // });
     }
 
+    uploadFile(url, data, variable, options?) {
+        return new Promise((resolve, reject) => {
+             variable.request = this.upload(url, data, options).subscribe((event: any) => {
+                 if (event.type === HTTP_EVENT_TYPE.UploadProgress) {
+                     const uploadProgress = Math.round(100 * event.loaded / event.total);
+                     options.notify(uploadProgress);
+                 }
+
+                 if (event.type === HTTP_EVENT_TYPE.Response) {
+                     resolve(event.body);
+                 }
+            }, error => {
+                reject(error);
+            });
+        });
+    }
     /**
      * registers a callback to be trigerred on session timeout
      * @param callback

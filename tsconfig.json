@@ -37,6 +37,9 @@
             "@wm/core": [
                 "libraries/core"
             ],
+            "@wavemaker/variables": [
+                "node_modules/@wavemaker/variables/"
+            ],
             "@wm/components/base": [
                 "libraries/components/base"
             ],

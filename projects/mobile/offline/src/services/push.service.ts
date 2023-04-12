@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 
 import { DeviceFileUploadService } from '@wm/mobile/core';
-import { LVService } from '@wm/variables';
+import { LVService } from '@wavemaker/variables';
 
 import { Change, PushService } from './change-log.service';
 
