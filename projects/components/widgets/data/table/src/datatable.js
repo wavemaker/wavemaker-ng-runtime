@@ -3095,7 +3095,7 @@ $.widget('wm.datatable', {
                 '<div class="app-grid-header">' +
                 '<div class="app-grid-header-inner">' +
                 '<table tabindex="0" class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '">' +
-                '<thead tabindex="0" class="table-header" id="table_header_' + this.tableId + '">' +
+                '<thead tabindex="0" class="table-header thead-sticky" id="table_header_' + this.tableId + '">' +
                 '</thead><tbody class="app-grid-content app-datagrid-body"  id="table_' + this.tableId + '">' +
                 '</tbody></table>' +
                 '</div></div></div>',
@@ -3229,7 +3229,7 @@ $.widget('wm.datatable', {
             if(this.options.showHeader) {
                 // this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px;)');
                 $thead = this.gridHeaderElement;
-                $thead.addClass("thead-sticky");
+                // $thead.addClass("thead-sticky");
             }
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
             // this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
