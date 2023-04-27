@@ -47,12 +47,12 @@
               {
                 "input": "src/assets/themes/material/style.css",
                 "inject": false,
-                "bundleName": "wm-styles"
+                "bundleNames": "wm-styles"
               },
               {
                 "input": "src/assets/app.css",
                 "inject": false,
-                "bundleName": "wm-styles"
+                "bundleNames": "wm-styles"
               }
             ],
             "scripts": [
