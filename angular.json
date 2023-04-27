@@ -44,9 +44,10 @@
               "src/styles.css",
               "src/assets/styles/css/wm-style.css",
               "src/assets/styles/css/wm-responsive.css",
+              "node_modules/font-awesome/css/font-awesome.css",
               {
                 "input": "src/assets/themes/material/style.css",
-                "inject": false,
+                "inject": false, 
                 "bundleName": "wm-styles"
               },
               {
@@ -84,7 +85,8 @@
               "./node_modules/js-cookie/src/js.cookie.js",
               "./node_modules/jssha/dist/sha256.js",
               "./node_modules/tabbable/dist/index.umd.min.js",
-              "./node_modules/@wavemaker/focus-trap/dist/focus-trap.umd.min.js"
+              "./node_modules/@wavemaker/focus-trap/dist/focus-trap.umd.min.js",
+              "./projects/components/widgets/basic/tree/src/keyboard.js"
             ]
           },
           "configurations": {
@@ -179,7 +181,8 @@
               "./node_modules/hammerjs/hammer.min.js",
               "./node_modules/iscroll/build/iscroll.js",
               "./node_modules/js-cookie/src/js.cookie.js",
-              "./node_modules/jssha/dist/sha256.js"
+              "./node_modules/jssha/dist/sha256.js",
+              "./projects/components/widgets/basic/tree/src/keyboard.js"
             ],
             "aot": false,
             "vendorChunk": true,

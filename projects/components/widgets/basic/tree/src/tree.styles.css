@@ -1,0 +1,655 @@
+/*-------  Tree Styles  -------*/
+
+
+.app-tree * {
+    padding: 0;
+    margin: 0;
+    font-family: 'robotoregular', 'Arial', sans-serif;
+  }
+  .app-tree {
+    margin: 0;
+    padding: 0;
+    color: #61656c;
+  }
+  .app-tree li {
+    padding: 5px 0px;
+    margin: 0;
+    list-style: none;
+    line-height: 17px;
+    text-align: left;
+    white-space: nowrap;
+    outline: 0;
+  }
+  .app-tree li ul {
+    margin-left: 0;
+    /* margin: 0px; */
+    padding: 0 0 0 18px;
+  }
+  .app-tree li a {
+    padding-right: 3px;
+    margin: 0;
+    cursor: pointer;
+    height: 17px;
+    font-size: 13px;
+    color: #61656c;
+    background-color: transparent;
+    text-decoration: none;
+    vertical-align: top;
+    display: inline-block;
+  }
+  .app-tree li a::before {
+    /* margin-right: .25em; */
+  }
+  .app-tree li a input.rename {
+    height: 14px;
+    width: 80px;
+    padding: 0;
+    margin: 0;
+    /* color: #af0000; */
+    font-size: 12px;
+    border: 1px #585956 solid;
+    *border: 0px;
+  }
+  /* .app-tree li a:hover {
+    text-decoration: underline;
+  } */
+  .app-tree li a.curSelectedNode {
+    padding-top: 0px;
+    color: #61656c;
+    height: 17px;
+    opacity: 0.8;
+  }
+  .app-tree li a.curSelectedNode_Edit {
+    padding-top: 0px;
+    background-color: transparent;
+    color: #61656c;
+    height: 17px;
+    border: 1px #666 solid;
+    opacity: 0.8;
+  }
+  .app-tree li a.tmpTargetNode_inner {
+    padding-top: 0px;
+    /* background-color: #aaa; */
+    color: #61656c;
+    height: 17px;
+    border: 1px #666 solid;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+  }
+  .app-tree li span {
+    line-height: 17px;
+    margin-right: 2px;
+    background-color: transparent;
+  }
+  .app-tree li span.button {
+    line-height: 0;
+    margin: 0;
+    margin-right: 0.25em;
+    padding: 0;
+    display: inline-block;
+    vertical-align: top;
+    border: 0px solid;
+    cursor: pointer;
+    outline: none;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+  }
+  .app-tree li span.button::before {
+    color: #61656c;
+    font-family: wavicon;
+    padding-top: 10px;
+  }
+  .app-tree li span.button.chk {
+    margin: 0px;
+    cursor: auto;
+    width: 12px;
+    display: inline-block;
+    padding-top: 8px;
+    /* padding-left: 2px; */
+  }
+  .app-tree li a:hover, li a:focus {
+    color: #61656c;
+    text-decoration: none;
+  }
+  .app-tree li span.button.chk.checkbox_false_full::before {
+    font-family: FontAwesome;
+    content: "\f096";
+  }
+  .app-tree li span.button.chk.checkbox_false_full_focus::before {
+    font-family: FontAwesome;
+    content: "\f096";
+    color: #61656c;
+  }
+  .app-tree li span.button.chk.checkbox_false_part::before {
+    font-family: FontAwesome;
+    content: "\f096";
+    color: #61656c;
+  }
+  .app-tree li span.button.chk.checkbox_false_part_focus::before {
+    font-family: FontAwesome;
+    content: "\f096";
+    color: #61656c;
+  }
+  .app-tree li span.button.chk.checkbox_false_disable::before {
+    font-family: FontAwesome;
+    content: "\f096";
+    color: #808080;
+  }
+  .app-tree li span.button.chk.checkbox_true_full::before {
+    font-family: FontAwesome;
+    content: "\f046";
+  }
+  .app-tree li span.button.chk.checkbox_true_full_focus::before {
+    font-family: FontAwesome;
+    content: "\f046";
+  }
+  .app-tree li span.button.chk.checkbox_true_part::before {
+    font-family: FontAwesome;
+    content: "\f14a";
+  }
+  .app-tree li span.button.chk.checkbox_true_part_focus::before {
+    font-family: FontAwesome;
+    content: "\f14a";
+    color: #61656c;
+  }
+  .app-tree li span.button.chk.checkbox_true_full_focus::before {
+    font-family: FontAwesome;
+    content: "\f046";
+    color: #61656c;
+  }
+  .app-tree li span.button.chk.checkbox_true_part::before {
+    font-family: FontAwesome;
+    content: "\f046";
+    /* color: #aaaaaa; */
+  }
+  .app-tree li span.button.chk.checkbox_true_part_focus::before {
+    font-family: FontAwesome;
+    content: "\f046";
+    color: #61656c;
+  }
+  .app-tree li span.button.chk.checkbox_true_disable::before {
+    font-family: FontAwesome;
+    content: "\f046";
+    color: #808080;
+  }
+  .app-tree li span.button.chk.radio_false_full::before {
+    font-family: FontAwesome;
+    content: "\f10c";
+  }
+  .app-tree li span.button.chk.radio_false_full_focus::before {
+    font-family: FontAwesome;
+    content: "\f10c";
+    color: #61656c;
+  }
+  .app-tree li span.button.chk.radio_false_part::before {
+    font-family: FontAwesome;
+    content: "\f10c";
+    /* color: #aaaaaa; */
+  }
+  .app-tree li span.button.chk.radio_false_part_focus::before {
+    font-family: FontAwesome;
+    content: "\f10c";
+    color: #61656c;
+  }
+  .app-tree li span.button.chk.radio_false_disable::before {
+    font-family: FontAwesome;
+    content: "\f1db";
+    color: #808080;
+  }
+  .app-tree li span.button.chk.radio_true_full::before {
+    font-family: FontAwesome;
+    content: "\f192";
+  }
+  .app-tree li span.button.chk.radio_true_full_focus::before {
+    font-family: FontAwesome;
+    content: "\f192";
+    color: #61656c;
+  }
+  .app-tree li span.button.chk.radio_true_part::before {
+    font-family: FontAwesome;
+    content: "\f192";
+    /* color: #aaaaaa; */
+  }
+  .app-tree li span.button.chk.radio_true_part_focus::before {
+    font-family: FontAwesome;
+    content: "\f192";
+    /* color: #aaaaaa; */
+  }
+  .app-tree li span.button.chk.radio_true_disable::before {
+    font-family: FontAwesome;
+    content: "\f1db";
+    color: #808080;
+  }
+  .app-tree li span.button.switch {
+    width: 15px;
+    height: 17px;
+  }
+  .app-tree li span.button.plus-minus.root_open::before {
+    content: "\f382";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  /* .app-tree li span.button.roots_close::before {
+    
+  } */
+  
+  .app-tree li span.button.root_docu {
+    background: none;
+  }
+  .app-tree li span.button.roots_docu::before {
+    content: "\f022";
+    padding-left: 2px;
+    display: inline-block;
+    color: #61656c;
+  }
+  .app-tree li span.button.center_docu::before {
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+    color: #61656c;
+  }
+  .app-tree li span.button.bottom_docu::before {
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+    color: #61656c;
+  }
+  .app-tree li span.button.noline_docu {
+    background: none;
+  }
+  .app-tree .wm-sl-l {
+    /* -webkit-font-smoothing: antialiased; */
+  }
+  /* .app-tree li span.button.ico_open::before {
+    content: "\f115";
+    font-family: FontAwesome;
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+    color: #61656c;
+  } */
+  /* .app-tree li span.button.ico_close::before {
+    content: "\f114";
+    font-family: FontAwesome;
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+    color: #61656c;
+  }
+  .app-tree li span.button.ico_docu::before {
+    content: "\f022";
+    font-family: FontAwesome;
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+    color: #61656c;
+  } */
+  .app-tree li span.button.edit {
+    margin-left: 4px;
+    margin-right: -1px;
+    vertical-align: top;
+    *vertical-align: middle;
+    padding-top: 10px;
+  }
+  .app-tree li span.button.edit::before {
+    content: "\f044";
+    font-family: FontAwesome;
+  }
+  .app-tree li span.button.remove {
+    margin-left: 4px;
+    margin-right: -1px;
+    vertical-align: top;
+    *vertical-align: middle;
+    padding-top: 10px;
+  }
+  .app-tree li span.button.remove::before {
+    content: "\f1f8";
+    font-family: FontAwesome;
+  }
+  .app-tree li span.button.add {
+    margin-left: 4px;
+    margin-right: -1px;
+    vertical-align: top;
+    *vertical-align: middle;
+    padding-top: 10px;
+  }
+  .app-tree li span.button.add::before {
+    content: "\f067";
+    font-family: FontAwesome;
+  }
+  .app-tree li span.button.ico_loading {
+    margin-right: 2px;
+    background: url(./img/loading.gif) no-repeat scroll 0 0 transparent;
+    vertical-align: top;
+    *vertical-align: middle;
+  }
+  ul.tmpTargetzTree {
+    background-color: #FFE6B0;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+  }
+  span.tmpzTreeMove_arrow {
+    width: 16px;
+    height: 17px;
+    display: inline-block;
+    padding: 0;
+    margin: 2px 0 0 1px;
+    border: 0 none;
+    position: absolute;
+    background-color: transparent;
+    background-attachment: scroll;
+  }
+  span.tmpzTreeMove_arrow::before {
+    content: "\f04b";
+    font-family: FontAwesome;
+    color: #61656c;
+  }
+  ul.app-tree.zTreeDragUL {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    width: auto;
+    height: auto;
+    overflow: hidden;
+    background-color: #cfcfcf;
+    border: 1px #61656c dotted;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+  }
+  .ztreeMask {
+    z-index: 10000;
+    background-color: #cfcfcf;
+    opacity: 0.0;
+    filter: alpha(opacity=0);
+    position: absolute;
+  }
+  
+  
+  /* tree icon styles */
+  
+  /* plus-minus styles */
+  .app-tree li span.button.plus-minus.roots_close::before {
+    content: "\f40c";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.plus-minus.roots_open::before {
+    content: "\f382";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.plus-minus.center_open::before {
+    content: "\f382";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.plus-minus.center_close::before {
+    content: "\f40c";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.plus-minus.bottom_open::before {
+    content: "\f382";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.plus-minus.bottom_close::before {
+    content: "\f40c";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  /* Folder icon styles */
+  
+  .app-tree li span.button.folder.roots_close::before {
+    content: "\f299";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.folder.roots_open::before {
+    content: "\f296";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.folder.center_close::before {
+    content: "\f299";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.folder.center_open::before {
+    content: "\f296";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.folder.bottom_close::before {
+    content: "\f299";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.folder.bottom_open::before {
+    content: "\f296";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+    /* circle-plus-minus icon styles */
+
+  .app-tree li span.button.circle-plus-minus.roots_close::before {
+    content: "\f111";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.circle-plus-minus.roots_open::before {
+    content: "\f433";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.circle-plus-minus.center_close::before {
+    content: "\f111";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.circle-plus-minus.center_open::before {
+    content: "\f433";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.circle-plus-minus.bottom_close::before {
+    content: "\f111";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.circle-plus-minus.bottom_open::before {
+    content: "\f433";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  /* Chevron icon styles */
+
+  .app-tree li span.button.chevron.roots_close::before {
+    content: "\f310";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.chevron.roots_open::before {
+    content: "\f30e";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.chevron.center_close::before {
+    content: "\f310";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.chevron.center_open::before {
+    content: "\f30e";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.chevron.bottom_close::before {
+    content: "\f310";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.chevron.bottom_open::before {
+    content: "\f30e";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  /* Menu Icon styles */
+
+  .app-tree li span.button.menu.roots_close::before {
+    content: "\f145";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.menu.roots_open::before {
+    content: "\f13c";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.menu.center_close::before {
+    content: "\f145";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.menu.center_open::before {
+    content: "\f13c";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.menu.bottom_close::before {
+    content: "\f145";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.menu.bottom_open::before {
+    content: "\f13c";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  /* Triangle icon styles */
+
+  .app-tree li span.button.triangle.roots_close::before {
+    content: "\f401";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.triangle.roots_open::before {
+    content: "\f13e";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.triangle.center_close::before {
+    content: "\f401";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.triangle.center_open::before {
+    content: "\f13e";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.triangle.bottom_close::before {
+    content: "\f401";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.triangle.bottom_open::before {
+    content: "\f13e";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  /* expand-collapse icon styles */
+  .app-tree li span.button.expand-collapse.roots_close::before {
+    content: "\f25b";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.expand-collapse.roots_open::before {
+    content: "\f25a";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.expand-collapse.center_close::before {
+    content: "\f25b";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.expand-collapse.center_open::before {
+    content: "\f25a";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+
+  .app-tree li span.button.expand-collapse.bottom_close::before {
+    content: "\f25b";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }
+  .app-tree li span.button.expand-collapse.bottom_open::before {
+    content: "\f25a";
+    padding-top: 10px;
+    padding-left: 2px;
+    display: inline-block;
+  }

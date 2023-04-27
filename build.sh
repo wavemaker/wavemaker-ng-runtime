@@ -585,6 +585,8 @@ bundleWebLibs() {
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
         ./node_modules/tabbable/dist/index.umd.js   \
         ./node_modules/@wavemaker/focus-trap/dist/focus-trap.umd.js \
+        ./node_modules/@ztree/ztree_v3/js/jquery.ztree.all.js \
+        ./projects/components/widgets/basic/tree/src/keyboard.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
 
          ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-libs.js \
@@ -657,6 +659,8 @@ bundleMobileLibs() {
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         ./node_modules/tabbable/dist/index.umd.js   \
         ./node_modules/@wavemaker/focus-trap/dist/focus-trap.umd.js \
+        ./node_modules/@ztree/ztree_v3/js/jquery.ztree.all.js \
+        ./projects/components/widgets/basic/tree/src/keyboard.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
 
     ./node_modules/.bin/terser ./dist/bundles/wmmobile/scripts/wm-libs.js \
