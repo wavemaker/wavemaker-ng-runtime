@@ -3228,7 +3228,7 @@ $.widget('wm.datatable', {
         if (key === 'height') {
             if(this.options.showHeader) {
                 // this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px;)');
-                $thead = this.gridHeaderElement;
+                var $thead = this.gridHeaderElement;
                 // $thead.addClass("thead-sticky");
             }
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
