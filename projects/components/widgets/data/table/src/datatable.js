@@ -1234,6 +1234,7 @@ $.widget('wm.datatable', {
                 colDef = self.preparedHeaderData[id],
                 $headerCell = self.gridContainer.find('th[data-col-id="' + id + '"]'),
                 $tdCell = self.gridElement.find('td.app-datagrid-cell[data-col-id="' + id + '"]'),
+                $footCell=self.tableContainer.find('tfoot tr.app-datagrid-row td.app-datagrid-cell[data-col-id="' + id + '"]'),
                 $headerCol = $(headerCols[id]),
                 $bodyCol = $(bodyCols[id]),
                 definedWidth,
@@ -1248,11 +1249,13 @@ $.widget('wm.datatable', {
                 $tdCell.hide();
                 $headerCol.hide();
                 $bodyCol.hide();
+                $footCell.hide();
             } else {
                 $headerCell.show();
                 $tdCell.show();
                 $headerCol.show();
                 $bodyCol.show();
+                $footCell.show();
             }
             //If default width is set, reset the width so that correct width is set on reload
             if ($headerCol.length && $headerCol[0].style.width === '90px') {
