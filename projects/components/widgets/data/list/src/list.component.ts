@@ -131,7 +131,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private isListElementMovable : boolean;
     private currentIndex: number;
     private ariaText: String;
-    public titleId: string ; 
+    public titleId: string ;
 
     _isDependent;
     private _pageLoad;
@@ -348,8 +348,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.ngZone.run(() => {
                 this.handleStateParams(data);
                 this.variableInflight = data.active;
-                // WMS-17268: Update nodatafound flag once the response is recieved from the server
-                this.noDataFound = !data.data?.pagination.totalElements;
+                // Fix for [WMS-23772] Update nodatafound flag once the response is recieved from the server
+                const totalEle = data.data?.pagination?.totalElements;
+                if (!_.isUndefined(totalEle)) {
+                    this.noDataFound = totalEle === 0 ? true : false;
+                } else { // totalelements is undefined
+                    this.noDataFound = _.isEmpty(data.data?.data);
+                }
             });
         }
     }
