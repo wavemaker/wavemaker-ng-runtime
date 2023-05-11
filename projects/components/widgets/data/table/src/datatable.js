@@ -1234,7 +1234,7 @@ $.widget('wm.datatable', {
                 colDef = self.preparedHeaderData[id],
                 $headerCell = self.gridContainer.find('th[data-col-id="' + id + '"]'),
                 $tdCell = self.gridElement.find('td.app-datagrid-cell[data-col-id="' + id + '"]'),
-                $footCell = self.tableContainer.find('tfoot tr.app-datagrid-row td.app-datagrid-cell[data-col-id="' + id + '"]'),
+                $footCell=self.tableContainer.find('tfoot tr.app-datagrid-row td.app-datagrid-cell[data-col-id="' + id + '"]'),
                 $headerCol = $(headerCols[id]),
                 $bodyCol = $(bodyCols[id]),
                 definedWidth,
