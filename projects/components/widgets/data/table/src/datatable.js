@@ -3138,7 +3138,7 @@ $.widget('wm.datatable', {
         this.gridContainer = $(table);
         this.gridHeaderElement = this.gridContainer.find('.table-header');
         this._setStyles($statusContainer.find('div.overlay'), "display:none");
-        this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow: auto;');
+        this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow: auto;color:blue');
         this.tableContainer = this.gridContainer.find('table');
         this.gridElement = this.gridContainer.find('.app-grid-content');
 
