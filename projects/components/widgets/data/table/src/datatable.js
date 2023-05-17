@@ -2396,7 +2396,7 @@ $.widget('wm.datatable', {
             id = $th.attr('data-col-id'),
             $sortContainer = $th.find('.sort-buttons-container'),
             $sortIcon = $sortContainer.find('i.sort-icon'),
-            direction = $sortIcon.hasClass('asc') ? 'desc' : $sortIcon.hasClass('desc') ? '' : 'asc',
+            direction = $sortIcon.hasClass('asc') ? 'desc' : 'asc',
             sortInfo = this.options.sortInfo,
             $previousSortMarker = this.gridHeaderElement.find('.sort-buttons-container.active'),
             field = $th.attr('data-col-field'),
