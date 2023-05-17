@@ -126,6 +126,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     gridfirstrowselect;
     iconclass;
     ondemandmessage;
+    viewlessmessage;
+    showviewlessbutton = false;
     _triggeredByUser;
     isGridEditMode;
     loadingdatamsg;
@@ -282,6 +284,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         lastActionPerformed: 'scroll',
         isSearchTrigerred: false,
         isDatasetUpdated: false,
+        showviewlessbutton: false,
+        ondemandmessage: '',
+        viewlessmessage: '',
+        loadingdatamsg: '',
         ACTIONS: {
             'DELETE': 'delete',
             'EDIT': 'edit',
@@ -321,6 +327,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         setIsDatasetUpdated: (value) => {
             this.setDataGridOption('isDatasetUpdated', value);
+        },
+        refreshData: () => {
+            this.refreshData();
         },
         onDataRender: () => {
             this.ngZone.run(() => {
@@ -1014,6 +1023,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.name = this.name;
         this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
         this.gridOptions.navigation = this.navigation;
+        this.gridOptions.showviewlessbutton = this.showviewlessbutton;
+        this.gridOptions.ondemandmessage = this.ondemandmessage;
+        this.gridOptions.viewlessmessage = this.viewlessmessage;
+        this.gridOptions.loadingdatamsg = this.loadingdatamsg;
+
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
         if (!_.isEmpty(this.gridData)) {
@@ -1797,6 +1811,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (nv) {
                     this.$element.find('.on-demand-datagrid > a').text(nv);
                 }
+                this.gridOptions.ondemandmessage = nv;
+                break;
+            case 'viewlessmessage':
+                this.gridOptions.viewlessmessage = nv;
                 break;
             case 'show':
                 if (nv) {
