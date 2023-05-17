@@ -2386,12 +2386,14 @@ $.widget('wm.datatable', {
     },
     /* Handles table sorting. */
     sortHandler: function (e) {
-        e.stopImmediatePropagation();
+        if(e) {
+            e.stopImmediatePropagation();
+        }
         // If header span is clicked and column selection is enabled, call header click
-        if ($(e.target).hasClass('header-data') && this.options.enableColumnSelection) {
+        if (e && $(e.target).hasClass('header-data') && this.options.enableColumnSelection) {
             this.headerClickHandler(e);
         }
-        var $e = $(e.target),
+        var $e = $(e.target) || this.gridElement,
             $th = $e.closest('th.app-datagrid-header-cell'),
             id = $th.attr('data-col-id'),
             $sortContainer = $th.find('.sort-buttons-container'),
@@ -2433,7 +2435,9 @@ $.widget('wm.datatable', {
         }
         this._setGridEditMode(false);
         this.closeEditedRow();
-        this.options.sortHandler.call(this, this.options.sortInfo, e, 'sort');
+        if(e) {
+            this.options.sortHandler.call(this, this.options.sortInfo, e, 'sort');
+        }
     },
     //Method to handle up and next key presses
     processUpDownKeys: function (event, $row, direction) {
@@ -3104,6 +3108,7 @@ $.widget('wm.datatable', {
                 this.selectFirstRow(true, true);
             }
         }
+        this.options.sortHandler.call(this, this.options.sortInfo, null, 'sort');
     },
 
     /* Renders the table container. */

@@ -425,21 +425,36 @@ export class TableFilterSortDirective {
         if (!statePersistenceTriggered && this.table.getConfiguredState() !== 'none') {
             this.table.statePersistence.removeWidgetState(this.table, 'pagination');
         }
-
-        refreshDataSource(this.table.datasource, {
-            page : 1,
-            filterFields : filterFields,
-            orderBy : sortOptions,
-            condition : condition
-        }).then((response) => {
-            $appDigest();
-            const data = (response && response.data) ? response.data : response;
-            this.table.invokeEventCallback('sort', {$event: e, $data: {
-                    data,
-                    sortDirection: sortObj.direction,
-                    colDef: this.table.columns[sortObj.field]
-                }});
-        });
+        if (!e) {
+            const $e = this.table.datagridElement,
+                $th = $e.find("[data-col-field='" + sortObj.field + "']"),
+                $sortContainer = $th.find('.sort-buttons-container'),
+                $sortIcon = $sortContainer.find('i.sort-icon'),
+                direction = this.table.sortInfo.direction;
+                if (direction === 'asc') {
+                    $sortIcon.addClass(direction + ' wi wi-long-arrow-up');
+                } else {
+                    $sortIcon.addClass(direction + ' wi wi-long-arrow-down');
+                }
+                $sortContainer.addClass('active');
+        } else {
+            refreshDataSource(this.table.datasource, {
+                page: 1,
+                filterFields: filterFields,
+                orderBy: sortOptions,
+                condition: condition
+            }).then((response) => {
+                $appDigest();
+                const data = (response && response.data) ? response.data : response;
+                this.table.invokeEventCallback('sort', {
+                    $event: e, $data: {
+                        data,
+                        sortDirection: sortObj.direction,
+                        colDef: this.table.columns[sortObj.field]
+                    }
+                });
+            });
+        }
     }
 
     private searchHandler(searchSortObj, e, type, statePersistenceTriggered?) {
