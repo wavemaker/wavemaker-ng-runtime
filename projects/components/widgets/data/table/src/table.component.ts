@@ -122,6 +122,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     filtermode;
     searchlabel;
     formposition;
+    bulkedit;
+    formvisibility;
     gridclass;
     gridfirstrowselect;
     iconclass;
@@ -267,6 +269,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         rowClass: '',
         editmode: '',
         formPosition: '',
+        bulkedit: false,
+        formvisibility: '',
         isMobile: false,
         rowExpansionEnabled: false,
         rowDef: {
@@ -1043,6 +1047,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.rowClass = this.rowclass;
         this.gridOptions.editmode = this.editmode;
         this.gridOptions.formPosition = this.formposition;
+        this.gridOptions.bulkedit = this.bulkedit;
+        this.gridOptions.formvisibility = this.formvisibility;
         this.gridOptions.filtermode = this.filtermode;
         this.gridOptions.searchLabel = this.searchlabel;
         this.gridOptions.isMobile = isMobile();
@@ -1250,13 +1256,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         const sortExp = this.getSortExpr();
         const sortExpArr = sortExp.split(' ');
-        if (sortExp && sortExpArr.length) {
-            this.sortInfo = {
-                direction : sortExpArr[1],
-                field:  sortExpArr[0]
-
-            };
-        }
+        // if (sortExp && sortExpArr.length) {
+        //     this.sortInfo = {
+        //         direction : sortExpArr[1],
+        //         field:  sortExpArr[0]
+        //
+        //     };
+        // }
+        //this.sortInfo = this.gridOptions.sortInfo;
 
         /*Return if data is invalid.*/
         if (!this.isDataValid()) {

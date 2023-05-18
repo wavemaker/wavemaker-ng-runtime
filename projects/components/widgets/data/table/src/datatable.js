@@ -1007,6 +1007,7 @@ $.widget('wm.datatable', {
     },
     /* Re-renders the table body. */
     refreshGridData: function () {
+        var self = this;
         this._prepareData();
         //If the pagination type is not Infinite Scroll or On-demand, remove the tbody and footer
         if (!this.options.isNavTypeScrollOrOndemand()) {
@@ -1017,7 +1018,9 @@ $.widget('wm.datatable', {
         }
         this._reselectColumns();
         this.addOrRemoveScroll();
-        this._setGridEditMode(false);
+        if (!this.options.bulkedit) {
+            this._setGridEditMode(false);
+        }
         this.toggleNewRowActions(false);
     },
     //Populate row data with default data
@@ -1424,6 +1427,7 @@ $.widget('wm.datatable', {
 
     /* Sets the options for the grid. */
     _setOption: function (key, value) {
+        var self = this;
         this._super(key, value);
         switch (key) {
             case 'showHeader':
@@ -1446,6 +1450,14 @@ $.widget('wm.datatable', {
                 break;
             case 'data':
                 this.refreshGridData();
+                if (this.options.bulkedit) {
+                    this.gridElement.find('tr').each(function (id, rowTemp) {
+                        if (self.preparedData[id]) {
+                           // self.makeRowEditable($(rowTemp), self.preparedData[id]);
+                            self.rowSelectionHandler(self, $(rowTemp));
+                        }
+                    });
+                }
                 break;
             case 'dataStates':
                 if (this.dataStatus.state === 'nodata') {
@@ -3121,7 +3133,7 @@ $.widget('wm.datatable', {
         this.attachEventHandlers($htm);
         this.__setStatus(isCreated);
         //Add new row, if always show new row is present for quick edit
-        if (this.options.editmode === this.CONSTANTS.QUICK_EDIT && this.options.showNewRow) {
+        if (this.options.editmode === this.CONSTANTS.QUICK_EDIT && this.options.showNewRow && this.options.formvisibility !== 'onBtnClick') {
             this.addNewRow(false, true);
         }
         if (isCreated) {
