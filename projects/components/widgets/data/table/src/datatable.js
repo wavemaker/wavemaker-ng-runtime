@@ -1445,6 +1445,9 @@ $.widget('wm.datatable', {
                 this.selectFirstRow(value);
                 break;
             case 'data':
+                if(!this.isResetSortIconsDone) {
+                    this.setSortIconDefault();
+                }
                 this.refreshGridData();
                 break;
             case 'dataStates':
@@ -2398,6 +2401,7 @@ $.widget('wm.datatable', {
     },
     //Method to remove sort icons from the column header cells
     resetSortIcons: function ($el) {
+        this.isResetSortIconsDone = true;
         var $sortContainer;
         //If sort icon is not passed, find out the sort icon from the active class
         if (!$el && this.gridHeaderElement) {
@@ -2407,9 +2411,25 @@ $.widget('wm.datatable', {
         }
         $el.removeClass('desc asc').removeClass(this.options.cssClassNames.descIcon).removeClass(this.options.cssClassNames.ascIcon);
     },
+    setSortIconDefault: function() {
+        const sortInfo = this.options.sortInfo,
+            $e = this.tableContainer,
+            $th = $e.find("[data-col-field='" + sortInfo.field + "']"),
+            $sortContainer = $th.find('.sort-buttons-container'),
+            $sortIcon = $sortContainer.find('i.sort-icon'),
+            direction = sortInfo.direction;
+        if (direction === 'asc') {
+            $sortIcon.addClass(direction + ' ' + this.options.cssClassNames.ascIcon);
+            $sortContainer.addClass('active');
+        } else if (direction === 'desc'){
+            $sortIcon.addClass(direction + ' ' + this.options.cssClassNames.descIcon);
+            $sortContainer.addClass('active');
+        }
+
+    },
     /* Handles table sorting. */
     sortHandler: function (e) {
-        e.stopImmediatePropagation();
+          e.stopImmediatePropagation();
         // If header span is clicked and column selection is enabled, call header click
         if ($(e.target).hasClass('header-data') && this.options.enableColumnSelection) {
             this.headerClickHandler(e);
@@ -3021,6 +3041,9 @@ $.widget('wm.datatable', {
                     self.options.redrawWidgets();
                 }
             });
+        }
+        if(!this.isResetSortIconsDone) {
+            this.setSortIconDefault();
         }
     },
     addOrRemoveScroll: function () {
