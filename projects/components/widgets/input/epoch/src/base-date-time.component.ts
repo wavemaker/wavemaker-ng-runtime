@@ -345,6 +345,33 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
+    private getMonth(date, inc) {
+        const currentMonth = new Date(date);
+
+        let month = currentMonth.getMonth();
+        let year = currentMonth.getFullYear();
+
+        month += inc;
+
+        // Adjust the year if the month goes beyond December or before January
+        if (month > 11) {
+          month = 0;
+          year++;
+        } else if (month < 0) {
+          month = 11;
+          year--;
+        }
+    
+        const newDate = new Date(year, month);
+
+        const fullMonth = newDate.toLocaleString('en-US', { month: 'long' });
+    
+        return {
+            date: newDate,
+            fullMonth: fullMonth
+          };
+    }
+
     /**
     * This method sets the mouse events to Datepicker popup. These events are required when we navigate date picker through mouse.
      */
@@ -375,8 +402,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForMonthOrDay();
             }
         });
-        datePickerHead.find('.next').attr('aria-label', 'Next');
-        datePickerHead.find('.previous').attr('aria-label', 'Previous');
+        let next = this.getMonth(this.activeDate, 1);
+        let prev = this.getMonth(this.activeDate, -1);
+        datePickerHead.find('.next').attr('aria-label', `Next Month ${next.fullMonth} ${next.date.getFullYear()}`);
+        datePickerHead.find('.previous').attr('aria-label', `Previous Month ${prev.fullMonth} ${prev.date.getFullYear()}`);
     }
 
     /**
