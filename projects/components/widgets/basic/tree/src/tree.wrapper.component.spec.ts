@@ -1,26 +1,26 @@
 import { Component, ViewChild } from '@angular/core';
-import { TreeDirective } from './tree.directive';
+import { TreeComponent } from './tree.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import { App } from '@wm/core';
 
-let mockApp = {};
+let mockApp = {}; 
 
-const markup = `<div wmTree name="tree1" class="testClass" height="800" width="200" tabindex="1" show="true"
+const markup = `<ul wmTree name="tree1" class="testClass" height="800" width="200" tabindex="1" show="true"
                 collapse.event="tree1Collapse($event, widget, $item, $path)"
                 expand.event="tree1Expand($event, widget, $item, $path)"
                 fontfamily="Segoe UI" color="#0000FF" fontweight="700" fontstyle="italic" fontsize="20"
                 backgroundcolor="#00ff29" backgroundimage="http://www.google.com/doodle4google/images/splashes/featured.png"
                 backgroundrepeat="repeat" backgroundposition="left" backgroundsize="200px 200px" backgroundattachment="fixed"
                 bordercolor="#d92953" borderstyle="solid" borderwidth="3px 4px 5px 6px"
-                padding="3px 4px 5px 6px"></div>`;
+                padding="3px 4px 5px 6px"></ul>`;
 
 @Component({
     template: markup
 })
 class TreeWrapperComponent {
-    @ViewChild(TreeDirective, /* TODO: add static flag */ {static: true}) wmComponent: TreeDirective;
+    @ViewChild(TreeComponent, /* TODO: add static flag */ {static: true}) wmComponent: TreeComponent;
 
     treenodeItem;
     treePath;
@@ -67,7 +67,7 @@ class TreeWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [TreeWrapperComponent, TreeDirective],
+    declarations: [TreeWrapperComponent, TreeComponent],
     imports: [],
     providers: [
         { provide: App, useValue: mockApp }
@@ -90,7 +90,7 @@ TestBase.verifyStyles();
 
 describe('wm-tree: Component Specific Tests', () => {
     let wrapperComponent: TreeWrapperComponent;
-    let wmComponent: TreeDirective;
+    let wmComponent: TreeComponent;
     let fixture: ComponentFixture<TreeWrapperComponent>;
     beforeEach(async () => {
         fixture = compileTestComponent(testModuleDef, TreeWrapperComponent);
