@@ -77,11 +77,11 @@ hasLibChanges() {
     local updateTime=`date -r ./package.json +%s`
     local buildTime=`date -r ${successFile} +%s`
 
-	if [[ ${updateTime} -le ${buildTime} ]]; then
-		return 1
-	else
-		return 0
-	fi
+    if [[ ${updateTime} -le ${buildTime} ]]; then
+        return 1
+    else
+        return 0
+    fi
     return 0
 }
 hasLibJsChanges(){
@@ -98,11 +98,11 @@ hasLibJsChanges(){
     local updateTime=`date -r ./projects/components/widgets/data/table/src/datatable.js +%s`
     local buildTime=`date -r ${successFile} +%s`
 
-	if [[ ${updateTime} -le ${buildTime} ]]; then
-		return 1
-	else
-		return 0
-	fi
+    if [[ ${updateTime} -le ${buildTime} ]]; then
+        return 1
+    else
+        return 0
+    fi
     return 0
 }
 buildNeeded() {
@@ -570,6 +570,8 @@ bundleWebLibs() {
         ./node_modules/jquery-ui/ui/widgets/mouse.js \
         ./node_modules/jquery-ui/ui/widgets/resizable.js \
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
+        ./node_modules/jquery-ui/ui/safe-blur.js \
+        ./node_modules/jquery-ui/ui/safe-active-element.js \
         ./node_modules/jquery-ui/ui/widgets/draggable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
@@ -641,6 +643,8 @@ bundleMobileLibs() {
         ./node_modules/jquery-ui/ui/widgets/mouse.js \
         ./node_modules/jquery-ui/ui/widgets/resizable.js \
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
+        ./node_modules/jquery-ui/ui/safe-blur.js \
+        ./node_modules/jquery-ui/ui/safe-active-element.js \
         ./node_modules/jquery-ui/ui/widgets/draggable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \

@@ -1,3 +1,5 @@
+Angular
+
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
@@ -61,7 +63,9 @@
               "./node_modules/d3/d3.min.js",
               "./node_modules/he/he.js",
               "./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js",
+              "./node_modules/jquery-ui/dist/jquery-ui.min.js",
               "./node_modules/jquery/dist/jquery.min.js",
+             
               "./node_modules/jquery-ui/ui/disable-selection.js",
               "./node_modules/jquery-ui/ui/version.js",
               "./node_modules/jquery-ui/ui/widget.js",
@@ -71,7 +75,9 @@
               "./node_modules/jquery-ui/ui/widgets/mouse.js",
               "./node_modules/jquery-ui/ui/widgets/resizable.js",
               "./node_modules/jquery-ui/ui/widgets/sortable.js",
-              "./node_modules/jquery-ui/ui/widgets/draggable.js",
+              "./node_modules/jquery-ui/ui/safe-blur.js",
+              "./node_modules/jquery-ui/ui/safe-active-element.js",
+              "./node_modules/jquery-ui/ui/widgets/draggable.js",  
               "./node_modules/jquery-ui/ui/widgets/droppable.js",
               "./libraries/scripts/datatable/datatable.js",
               "./libraries/scripts/swipey/swipey.jquery.plugin.js",
