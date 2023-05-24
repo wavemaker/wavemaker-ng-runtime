@@ -570,8 +570,6 @@ bundleWebLibs() {
         ./node_modules/jquery-ui/ui/widgets/mouse.js \
         ./node_modules/jquery-ui/ui/widgets/resizable.js \
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
-        ./node_modules/jquery-ui/ui/safe-blur.js \
-        ./node_modules/jquery-ui/ui/safe-active-element.js \
         ./node_modules/jquery-ui/ui/widgets/draggable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
@@ -643,8 +641,6 @@ bundleMobileLibs() {
         ./node_modules/jquery-ui/ui/widgets/mouse.js \
         ./node_modules/jquery-ui/ui/widgets/resizable.js \
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
-        ./node_modules/jquery-ui/ui/safe-blur.js \
-        ./node_modules/jquery-ui/ui/safe-active-element.js \
         ./node_modules/jquery-ui/ui/widgets/draggable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/hammerjs/hammer.min.js \
