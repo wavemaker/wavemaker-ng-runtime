@@ -7,6 +7,7 @@ import { registerProps } from './panel.props';
 
 const DEFAULT_CLS = 'app-panel panel';
 declare const _;
+declare const $;
 const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-panel', hostClass: DEFAULT_CLS };
 
 @Component({
@@ -64,7 +65,15 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
         this.expandCollapseTitle = `${this.appLocale.LABEL_COLLAPSE}/${this.appLocale.LABEL_EXPAND}`;
         removeAttr(this.nativeElement, 'title');
     }
-
+    ngAfterViewInit(){
+        $(function() {
+            $(".app-panel.panel").draggable({
+                cursor:"move",
+                start: function(event, ui) { $(this).css({'z-index':'10000','position':'sticky'});}
+           });
+        });
+        
+    }
     // toggle the panel state between collapsed - expanded. invoke the respective callbacks
     public toggle($event) {
         if (this.collapsible) {
