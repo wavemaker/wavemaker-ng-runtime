@@ -126,8 +126,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     gridfirstrowselect;
     iconclass;
     ondemandmessage;
-    viewlessmessage;
-    showviewlessbutton = false;
     _triggeredByUser;
     isGridEditMode;
     loadingdatamsg;
@@ -286,10 +284,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         isSearchTrigerred: false,
         isDatasetUpdated: false,
         isDataUpdatedByUser: false,
-        showviewlessbutton: false,
-        ondemandmessage: '',
-        viewlessmessage: '',
-        loadingdatamsg: '',
         isNextPageData: undefined,
         ACTIONS: {
             'DELETE': 'delete',
@@ -341,9 +335,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         //  Fix for [WMS-23263]: 'isDataUpdatedByUser' flag is set to true -> if user changes the dataset from script
         setIsDataUpdatedByUser: (value) => {
             this.setDataGridOption('isDataUpdatedByUser', value);
-        },
-        refreshData: () => {
-          this.refreshData();
         },
         onDataRender: () => {
             this.ngZone.run(() => {
@@ -1050,11 +1041,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
         this.gridOptions.navigation = this.navigation;
         this.gridOptions.isdynamictable = this.isdynamictable;
-        this.gridOptions.showviewlessbutton = this.showviewlessbutton;
-        this.gridOptions.ondemandmessage = this.ondemandmessage;
-        this.gridOptions.viewlessmessage = this.viewlessmessage;
-        this.gridOptions.loadingdatamsg = this.loadingdatamsg;
-
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
         if (!_.isEmpty(this.gridData)) {
@@ -1854,10 +1840,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (nv) {
                     this.$element.find('.on-demand-datagrid > a').text(nv);
                 }
-                this.gridOptions.ondemandmessage = nv;
-                break;
-            case 'viewlessmessage':
-                this.gridOptions.viewlessmessage = nv;
                 break;
             case 'show':
                 if (nv) {
