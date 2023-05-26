@@ -80,6 +80,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public removeKeyupListener;
     public loadNativeDateInput;
     public showcustompicker;
+    public next;
+    public prev;
+    public clicked = false;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -346,15 +349,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         let year = currentMonth.getFullYear();
 
         month += inc;
-
-        // Adjust the year if the month goes beyond December or before January
-        if (month > 11) {
-          month = 0;
-          year++;
-        } else if (month < 0) {
-          month = 11;
-          year--;
-        }
     
         const newDate = new Date(year, month);
 
@@ -372,12 +366,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private addDatepickerMouseEvents() {
         const datePickerHead = $(`.bs-datepicker-head`);
         datePickerHead.find(`.previous`).click((event) => {
+            this.next = this.getMonth(this.activeDate, 0);
+            this.prev = this.getMonth(this.activeDate, -2);
+            this.clicked = true;
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForDate(-1);
             }
         });
         datePickerHead.find(`.next`).click((event) => {
+            this.next = this.getMonth(this.activeDate, 2);
+            this.prev = this.getMonth(this.activeDate, 0);
+            this.clicked = true;
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForDate(1);
@@ -396,10 +396,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForMonthOrDay();
             }
         });
-        let next = this.getMonth(this.activeDate, 1);
-        let prev = this.getMonth(this.activeDate, -1)
-        datePickerHead.find('.next').attr('aria-label', `Next Month ${next.fullMonth} ${next.date.getFullYear()}`);
-        datePickerHead.find('.previous').attr('aria-label', `Previous Month ${prev.fullMonth} ${prev.date.getFullYear()}`);
+        datePickerHead.find('.next').attr('aria-label', `Next Month ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
+        datePickerHead.find('.previous').attr('aria-label', `Previous Month ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
     }
 
     /**
@@ -488,6 +486,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private loadDays() {
         setTimeout(() => {
             $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '0');
+            if (this.clicked === false) {
+                this.next = this.getMonth(this.activeDate, 1);
+                this.prev = this.getMonth(this.activeDate, -1);
+            }
             this.addKeyBoardEventsForDays();
             this.addDatepickerMouseEvents();
         });
