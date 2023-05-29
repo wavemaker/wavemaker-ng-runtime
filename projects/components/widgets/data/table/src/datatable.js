@@ -534,11 +534,18 @@ $.widget('wm.datatable', {
 
     /* Returns the tbody markup. */
     _getGridTemplate: function () {
+
         var self = this, preparedData,$tbody,pageStartIndex = self.getPageStartIndex(),
             startRowIndex = self.options.startRowIndex,
             isScrollorOnDemand = self.options.isNavTypeScrollOrOndemand();
             if(isScrollorOnDemand) {
                 $tbody = this.gridElement;
+                if(this.renderTableOnViewLess) {
+                    $tbody = this.gridElement.empty();
+                    this.hideLoadingIndicator(true);
+                    this.addNavigationControls();
+                    this.renderTableOnViewLess = false;
+                }
             } else {
                 $tbody = this.gridElement.empty();
             }
@@ -549,7 +556,7 @@ $.widget('wm.datatable', {
             if (self.options.lastActionPerformed === self.options.ACTIONS.DELETE) {
                 startRowIndex = self.options.actionRowIndex + 1;
             }
-            preparedData = this._getPreparedDataForInfiniteScroll($tbody, this.preparedData.slice(pageStartIndex));
+            preparedData = this._getPreparedDataForInfiniteScroll($tbody, this.preparedData.slice(pageStartIndex, pageStartIndex + this.options.getPageSize()));
         } else {
             // if navigation type is not scroll or on-Demand then clear CustomExpressions and RowDetailExpression
             // as the expressions will be generated again
@@ -843,7 +850,7 @@ $.widget('wm.datatable', {
         if (!this.options.colDefs.length && this.options.data.length) {
             this._generateCustomColDefs();
         }
-        gridData = this.options.isNavTypeScrollOrOndemand() ? this.options.data.slice(pageStartIndex) : this.options.data;
+        gridData = this.options.isNavTypeScrollOrOndemand() ? this.options.data.slice(pageStartIndex, pageStartIndex + this.options.getPageSize()) : this.options.data;
         gridData.forEach(function (item, i) {
             var rowData = $.extend(true, {}, item);
             colDefs.forEach(function (colDef) {
@@ -1103,26 +1110,43 @@ $.widget('wm.datatable', {
     /* Inserts a load more button at the end of the table when the pagination selected is on demand */
     addLoadMoreBtn : function (onDemandMsg, loadingdatamsg, cb) {
         // Show Load more button only if it not the last page
+        var $btnEl;
         if (!this.options.isLastPage) {
             var self = this;
             var $parenEl = $('<div class="on-demand-datagrid"><a class="app-button btn btn-block on-demand-load-btn"></a></div>');
-            var $btnEl = $parenEl.find('a');
+            $btnEl = $parenEl.find('a');
             $btnEl.append(onDemandMsg);
             // Adding load more button in case of on demand pagination
             this.element.find('.app-grid-header-inner').append($parenEl);
+
             // Adding click event to the button
             $btnEl.on('click', function (e) {
                 // when the button is clicked, hide the button and show loading indicator
-                $btnEl.hide();
-                self.showLoadingIndicator(loadingdatamsg, false);
+               var lastPage = (self.options.getCurrentPage() == self.options.getPageSize() - 1);
+                if(!lastPage) {
+                    console.log('inside last page');
+                    self.showLoadingIndicator(loadingdatamsg, false);
+                }
+                if(!self.options.showviewlessbutton){
+                    $btnEl.hide();
+                }
                 // Fix for [WMS-23839] refresh data when clicked on View less button
-                if (self.options.isLastPage && self.options.showviewlessbutton) {
-                    self.options.refreshData();
+                if (lastPage && self.options.showviewlessbutton) {
+                    console.log('inside view less')
+                    $btnEl.hide();
+                   // this.hideLoadingIndicator(true);
+                         self.renderTableOnViewLess = true;
+                         self.options.setCurrentPage(1);
+                         self._renderGrid();
+
+
                 } else if (cb && typeof cb === 'function') {
                     cb(e);
                 }
+
             });
         }
+
     },
 
     /* Shows loading indicator when clicked on load more button or in case of infinite scroll event is triggered */
@@ -1152,33 +1176,16 @@ $.widget('wm.datatable', {
 
     /* Hides loading indicator and shows load more button */
     hideLoadingIndicator: function (showLoadBtn, infScroll) {
+        debugger
         if (!showLoadBtn && !infScroll) {
             // In case of on demand pagination, when the next page is not disabled hide the individual elements
             this.element.find('.loading-data-msg').hide();
             this.element.find('.on-demand-load-btn').text(this.options.ondemandmessage);
             this.element.find('.on-demand-load-btn').show();
-        } else if (showLoadBtn && this.options.showviewlessbutton) {
-            var onDemandGridEl = this.element.find('.on-demand-datagrid');
-            // Fix for [WMS-23839] Add view less btn for infinte scroll pagination
-            if (this.options.showviewlessbutton && onDemandGridEl.length && !(this.element.find('.on-demand-datagrid .on-demand-load-btn').length) && infScroll) {
-               var $btnEl = $('<a class="app-button btn btn-block on-demand-load-btn"></a>'), self = this;
-               onDemandGridEl.append($btnEl);
-                $btnEl.on('click', function (e) {
-                    $btnEl.hide();
-                    self.showLoadingIndicator(self.options.loadingdatamsg, true);
-                    // when the button is clicked, hide the button and show loading indicator
-                    if (self.options.isLastPage && self.options.showviewlessbutton) {
-                        self.options.refreshData();
-                    }
-                });
-            }
-            this.element.find('.loading-data-msg').hide();
-            // show view less msg instead of on demand msg when table is fully expanded
-            this.element.find('.on-demand-load-btn').text(this.options.viewlessmessage);
-            this.element.find('.on-demand-load-btn').show();
+        } else if((this.options.getCurrentPage() == this.options.getPageSize() - 1) && this.options.showviewlessbutton) {
+                this.element.find('.on-demand-load-btn').show().text(this.options.viewlessmessage);
         } else {
-            // In case of infinite scroll or when next page is disable hide the grid element which is the parent. If we don't the parent ele border will be shown
-            this.element.find('.on-demand-datagrid').hide();
+                this.element.find('.on-demand-datagrid').hide();
         }
     },
 
@@ -3108,6 +3115,7 @@ $.widget('wm.datatable', {
                 // initally append tbody to gridElement
                 this.gridElement.append($htm);
             }
+            // this.addNavigationControls();
         } else {
             var templates = this._getGridTemplate();
             $htm = $(templates);
@@ -3218,12 +3226,15 @@ $.widget('wm.datatable', {
             this._toggleSpacingClasses('condensed');
         }
         this._renderGrid(isCreated);
+        this.addNavigationControls();
+    },
+    addNavigationControls: function() {
         /**
          * bind on demand / scroll events to the table in case of dynamictable in render fn
          * Render is called everytime when there is a change in dataset and the previously binded events are lost
          */
         if (this.options.isdynamictable) {
-           this.element.find('.on-demand-datagrid').remove();
+            this.element.find('.on-demand-datagrid').remove();
             if (this.options.navigation === 'On-Demand' && !this.element.find('.on-demand-datagrid').length) {
                 this.options.addLoadMoreBtn();
             } else if (this.options.navigation === 'Scroll') {
@@ -3245,7 +3256,7 @@ $.widget('wm.datatable', {
             this.dataStatusContainer.hide();
         } else {
             // [WMS-23839] always show load more btn if show view less btn is true
-            if (this.options.isNavTypeScrollOrOndemand() && (state === 'nodata' || (this.options.isLastPage && !this.options.showviewlessbutton))) {
+            if (this.options.isNavTypeScrollOrOndemand() && (state === 'nodata' || ((this.options.getCurrentPage() == this.options.getPageSize() - 1)  && !this.options.showviewlessbutton))) {
                 this.element.find('.on-demand-datagrid a').hide();
             }
             this.dataStatusContainer.show();
