@@ -14,6 +14,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "optimizecss": "gulp --gulpfile build-scripts/optimize-css.gulpfile.js",
+    "preinstall": "npx force-resolutions",
     "postbuild": "node build-scripts/post-build.js"
   },
   "private": true,
@@ -112,5 +113,8 @@
     "tslint": "5.11.0",
     "typescript": "3.8.3",
     "util": "0.11.1"
+  },
+  "resolutions": {
+    "imask": "6.0.5"
   }
 }
