@@ -924,8 +924,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     public handleKeyDown($event, action: string) {
         $event.stopPropagation();
-
-        if($event.keyCode !== 13 && $event.keyCode !== 9 && !($event.target.classList.contains('form-control') && $event.keyCode === 32) ) {
+        if($event.keyCode !== 13 && $event.keyCode !== 9 && !(($event.target.classList.contains('form-control') || $event.target.classList.contains('note-editable')) && $event.keyCode === 32) ) {
             $event.preventDefault();
         }
 
