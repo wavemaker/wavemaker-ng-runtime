@@ -32,6 +32,7 @@ export {
     getObjValueByKey,
     getEvaluatedData,
     isActiveNavItem,
+    hasLinkToCurrentPage,
     getOrderByExpr,
     isDataSetWidget,
     getImageUrl,
