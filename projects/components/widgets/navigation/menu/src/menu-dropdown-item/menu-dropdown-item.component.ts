@@ -1,10 +1,10 @@
 import { Component, ElementRef, HostListener, Input, OnInit, Optional } from '@angular/core';
 
 import { addClass, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
-import { isActiveNavItem } from '@wm/components/base';
 import { NavComponent } from '../nav/nav.component';
 
 import { KEYBOARD_MOVEMENTS, MENU_POSITION, MenuComponent } from '../menu.component';
+import { hasLinkToCurrentPage } from '@wm/components/base';
 
 declare const _, $;
 
@@ -48,7 +48,7 @@ export class MenuDropdownItemComponent implements OnInit {
     ngOnInit() {
         // add active class to the item only if it is in nav component.
         if (this.parentNav) {
-            if (isActiveNavItem(this.item.link, this.menuRef.route.url)) {
+            if (hasLinkToCurrentPage([this.item], this.menuRef.route.url)) {
                 // add active class to the li, if the menu item's link is same as the current page name.
                 addClass(this.nativeElement, 'active');
             }
