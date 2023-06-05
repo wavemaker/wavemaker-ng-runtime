@@ -3096,7 +3096,9 @@ $.widget('wm.datatable', {
         if (this.options.summaryRow) {
             var $summaryRowHtm = $(this._getSummaryRowTemplate());
             this.tableContainer.find('tfoot').remove();
-            this.tableContainer.append($summaryRowHtm);
+            if (this.options.data.length){
+                this.tableContainer.append($summaryRowHtm);
+            }
         }
         // Set proper data status messages after the grid is rendered.
         if (!this.options.data.length && this.dataStatus.state === 'nodata') {
@@ -3107,7 +3109,7 @@ $.widget('wm.datatable', {
             this.setStatus(this.dataStatus.state, this.dataStatus.message, isCreated);
         }
         this.gridBody = this.gridElement.find('tbody');
-        this.gridFooter = this.gridElement.find('tfoot');
+        this.gridFooter = this.tableContainer.find('tfoot');
         this._findAndReplaceCompiledTemplates();
         this.options.clearRowActions();
         // attach event handlers
