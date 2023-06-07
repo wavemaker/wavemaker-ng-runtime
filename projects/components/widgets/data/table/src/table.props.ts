@@ -40,6 +40,8 @@ export const registerProps = () => {
                 ['navigationalign', {value: 'left', ...PROP_STRING}],
                 ['nodatamessage', {value: 'No data found.', ...PROP_STRING}],
                 ['ondemandmessage', {value: 'Load More', ...PROP_STRING}],
+                ['showviewlessbutton', {value: false, ...PROP_BOOLEAN}],
+                ['viewlessmessage', {value: 'View Less', ...PROP_STRING}],
                 ['pagesize', PROP_NUMBER],
                 ['radioselect', PROP_BOOLEAN],
                 ['rowclass', PROP_STRING],
