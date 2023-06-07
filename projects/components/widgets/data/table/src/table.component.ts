@@ -254,6 +254,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         data: [],
         colDefs: [],
         startRowIndex: 1,
+        mode: '',
         sortInfo: {
             field: '',
             direction: ''
@@ -310,6 +311,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // get the page limit
         getPageSize: () => {
             return this.pagesize;
+        },
+        enableNavigation: () => {
+                this.dataNavigator.widget.isDisableNext = false;
+                this.dataNavigator.widget.isDisableLast = false;
+                this.gridOptions.mode = 'viewless';
         },
         // set the deleted row index
         setDeletedRowIndex: (id) => {
@@ -712,13 +718,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         // function to add load more button to table
         addLoadMoreBtn: () => {
-            this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
-                // set 'isNextPageData' flag to true & 'isDataUpdatedByUser' to false as next page data is being rendered
-                this.gridOptions.setIsNextPageData(true);
-                this.gridOptions.setIsDataUpdatedByUser(false);
-                this.dataNavigator.navigatePage('next', $event);
-                this.isDataLoading = true;
-            });
+                this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
+                        this.gridOptions.setIsNextPageData(true);
+                        this.gridOptions.setIsDataUpdatedByUser(false);
+                        if (this.gridOptions.mode === 'viewless') {
+                            this.dataNavigator.navigatePage('first', $event, true);
+                            this.gridOptions.mode = '';
+                        } else {
+                            this.dataNavigator.navigatePage('next', $event);
+                            this.isDataLoading = true;
+                        }
+                }, this.infScroll);
         },
         // function to bind scroll event
         bindScrollEvt: () => {
