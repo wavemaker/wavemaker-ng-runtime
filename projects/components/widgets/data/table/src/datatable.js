@@ -1111,7 +1111,7 @@ $.widget('wm.datatable', {
     addLoadMoreBtn : function (onDemandMsg, loadingdatamsg, cb, infScroll) {
         // Show Load more button only if it not the last page
         var $btnEl;
-        if (!this.options.isLastPage) {
+        if (!this.options.isLastPage || infScroll) {
             var self = this;
             var $parenEl = $('<div class="on-demand-datagrid"><a class="app-button btn btn-block on-demand-load-btn"></a></div>');
             $btnEl = $parenEl.find('a');
@@ -1125,7 +1125,7 @@ $.widget('wm.datatable', {
             // Adding click event to the button
             $btnEl.on('click', function (e) {
                 // when the button is clicked, hide the button and show loading indicator
-                var lastPage = (self.options.getCurrentPage() == self.options.getPageSize() - 1);
+                var lastPage = (self.options.getCurrentPage() == self.options.getPageCount());
                 if(!lastPage) {
                     self.showLoadingIndicator(loadingdatamsg, false);
                 }
@@ -1186,8 +1186,9 @@ $.widget('wm.datatable', {
             this.element.find('.loading-data-msg').hide();
             this.element.find('.on-demand-load-btn').text(this.options.ondemandmessage);
             this.element.find('.on-demand-load-btn').show();
-        } else if((this.options.getCurrentPage() == this.options.getPageSize() - 1) && this.options.showviewlessbutton) {
+        } else if((this.options.getCurrentPage() == this.options.getPageCount()) && this.options.showviewlessbutton) {
                 this.element.find('.on-demand-load-btn').show().text(this.options.viewlessmessage);
+                this.element.find('.loading-data-msg').hide();
                 if(infScroll) {
                     this.options.addLoadMoreBtn();
                     this.element.find('.loading-data-msg').hide();
@@ -3266,7 +3267,7 @@ $.widget('wm.datatable', {
             this.dataStatusContainer.hide();
         } else {
             // [WMS-23839] always show load more btn if show view less btn is true
-            if (this.options.isNavTypeScrollOrOndemand() && (state === 'nodata' || ((this.options.getCurrentPage() == this.options.getPageSize() - 1)  && !this.options.showviewlessbutton))) {
+            if (this.options.isNavTypeScrollOrOndemand() && (state === 'nodata' || ((this.options.getCurrentPage() == this.options.getPageCount())  && !this.options.showviewlessbutton))) {
                 this.element.find('.on-demand-datagrid a').hide();
             }
             this.dataStatusContainer.show();

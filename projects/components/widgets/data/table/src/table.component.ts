@@ -318,6 +318,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         getPageSize: () => {
             return this.pagesize;
         },
+
+        getPageCount : () =>{
+            return this.dataNavigator.pageCount;
+        },
         enableNavigation: () => {
                 this.dataNavigator.widget.isDisableNext = false;
                 this.dataNavigator.widget.isDisableLast = false;
@@ -1089,6 +1093,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         this.datagridElement.datatable(this.gridOptions);
         this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+        // if(this.gridOptions.data.length || this.variableInflight) {
+        //     this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+        // } else {
+        //     this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+        // }
 
         this.applyProps.forEach(args => this.callDataGridMethod(...args));
 
@@ -1436,7 +1445,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     setGridData(serverData) {
         const data = this.filternullrecords ?  this.removeEmptyRecords(serverData) : serverData;
         if (!this.variableInflight) {
-            if (data && data.length === 0) {
+            if (data && (data.length) === 0) {
                 this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
             } else {
                 this.callDataGridMethod('setStatus', 'ready');

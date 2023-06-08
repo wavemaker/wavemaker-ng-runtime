@@ -171,7 +171,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         this.isDisableCurrent = isCurrentPageFirst && isCurrentPageLast;
         // In case of client side pagination, when load more reaches last page hide the on-demand grid ele
         if (this.dataset && this.dataset.length && this.isDisableNext && this.parent.onDemandLoad && this.parent.widgetType === 'wm-table') {
-            this.parent.callDataGridMethod('hideLoadingIndicator', this.isDisableNext, false);
+            this.parent.callDataGridMethod('hideLoadingIndicator', this.isDisableNext, this.parent.infScroll);
         }
     }
 
