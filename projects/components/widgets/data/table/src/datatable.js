@@ -556,7 +556,7 @@ $.widget('wm.datatable', {
             if (self.options.lastActionPerformed === self.options.ACTIONS.DELETE) {
                 startRowIndex = self.options.actionRowIndex + 1;
             }
-            preparedData = this._getPreparedDataForInfiniteScroll($tbody, this.preparedData.slice(pageStartIndex, pageStartIndex + this.options.getPageSize()));
+            preparedData = this._getPreparedDataForInfiniteScroll($tbody, this.preparedData.slice(pageStartIndex));
         } else {
             // if navigation type is not scroll or on-Demand then clear CustomExpressions and RowDetailExpression
             // as the expressions will be generated again
@@ -850,7 +850,7 @@ $.widget('wm.datatable', {
         if (!this.options.colDefs.length && this.options.data.length) {
             this._generateCustomColDefs();
         }
-        gridData = this.options.isNavTypeScrollOrOndemand() ? this.options.data.slice(pageStartIndex, pageStartIndex + this.options.getPageSize()) : this.options.data;
+        gridData = this.options.isNavTypeScrollOrOndemand() ? this.options.data.slice(pageStartIndex) : this.options.data;
         gridData.forEach(function (item, i) {
             var rowData = $.extend(true, {}, item);
             colDefs.forEach(function (colDef) {
@@ -1119,7 +1119,9 @@ $.widget('wm.datatable', {
             // Adding load more button in case of on demand pagination
             this.element.find('.app-grid-header-inner').append($parenEl);
             if(infScroll) {
-                this.element.find('.on-demand-load-btn').text(this.options.viewlessmessage);
+                if(this.element.find('.on-demand-load-btn').length) {
+                    this.element.find('.on-demand-load-btn').text(this.options.viewlessmessage);
+                }
             }
 
             // Adding click event to the button
@@ -1190,7 +1192,9 @@ $.widget('wm.datatable', {
                 this.element.find('.on-demand-load-btn').show().text(this.options.viewlessmessage);
                 this.element.find('.loading-data-msg').hide();
                 if(infScroll) {
-                    this.options.addLoadMoreBtn();
+                    if(!this.element.find('.on-demand-load-btn').length) {
+                        this.options.addLoadMoreBtn();
+                    }
                     this.element.find('.loading-data-msg').hide();
                 }
         } else {
