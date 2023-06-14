@@ -363,7 +363,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
                 this.callDataGridMethod('selectRows', this.items);
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
-                this.selectedItemChange.next(this.selectedItems);
+                if(this.selectedItems.length) {
+                    this.selectedItemChange.next(this.selectedItems);
+                }
                 // On render, apply the filters set for query service variable
                 if (this._isPageSearch && this.filterInfo) {
                     this.searchSortHandler(this.filterInfo, undefined, 'search');
@@ -373,9 +375,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         onRowSelect: (row, e) => {
             this.ngZone.run(() => {
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
-                this.selectedItemChange.next(this.selectedItems);
+                if (this.selectedItems.length) {
+                    this.selectedItemChange.next(this.selectedItems);
+                }
                 const rowData = this.addRowIndex(row);
-                if (rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
+                if (this.selectedItems.length && rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
                     const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
