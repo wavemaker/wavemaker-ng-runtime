@@ -302,6 +302,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param isMouseEvent - boolean value represents the event is mouse event/ keyboard event
      */
     private setActiveDateFocus(newDate, isMouseEvent?: boolean) {
+        this.setNextData(newDate);
         const activeMonth = this.activeDate.getMonth();
         // check for keyboard event
         if (!isMouseEvent) {
@@ -355,11 +356,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         let year = currentMonth.getFullYear();
 
         month += inc;
-    
+
         const newDate = new Date(year, month);
 
         const fullMonth = newDate.toLocaleString('en-US', { month: 'long' });
-    
+
         return {
             date: newDate,
             fullMonth: fullMonth
@@ -402,8 +403,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForMonthOrDay();
             }
         });
-        datePickerHead.find('.next').attr('aria-label', `Next Month ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
-        datePickerHead.find('.previous').attr('aria-label', `Previous Month ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
+        datePickerHead.find('.next').attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
+        datePickerHead.find('.previous').attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
     }
 
     /**
@@ -485,17 +486,20 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this.loadDays();
         this.setActiveDateFocus(this.activeDate);
     }
-
+    private setNextData(nextDate) {
+        this.next = this.getMonth(nextDate, 1);
+        this.prev = this.getMonth(nextDate, -1);
+    }
     /**
      * This method is used to add tabindex, keybord and mouse events for days
      */
     private loadDays() {
         setTimeout(() => {
             $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '0');
-            if (this.clicked === false) {
-                this.next = this.getMonth(this.activeDate, 1);
-                this.prev = this.getMonth(this.activeDate, -1);
-            }
+            // if (this.clicked === false) {
+            //     this.next = this.getMonth(this.activeDate, 1);
+            //     this.prev = this.getMonth(this.activeDate, -1);
+            // }
             this.addKeyBoardEventsForDays();
             this.addDatepickerMouseEvents();
         });
@@ -622,6 +626,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * This method is used to set focus for active month
      */
     private setActiveMonthFocus(newDate, isMoouseEvent?: boolean) {
+        this.setNextData(newDate);
         const newMonth = months[newDate.getMonth()];
         // check for keyboard event
         if (!isMoouseEvent) {
@@ -921,7 +926,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             return _.get(window, 'cordova.wavemaker.datePicker.selectDate');
         }
     }
-    
+
     public showDatePickerModal() {
         this.datetimepickerComponent.show();
         return ;

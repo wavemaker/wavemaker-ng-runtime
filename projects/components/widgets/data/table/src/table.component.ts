@@ -126,6 +126,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     gridfirstrowselect;
     iconclass;
     ondemandmessage;
+    viewlessmessage;
+    showviewlessbutton = false;
     _triggeredByUser;
     isGridEditMode;
     loadingdatamsg;
@@ -254,6 +256,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         data: [],
         colDefs: [],
         startRowIndex: 1,
+        mode: '',
         sortInfo: {
             field: '',
             direction: ''
@@ -284,6 +287,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         isSearchTrigerred: false,
         isDatasetUpdated: false,
         isDataUpdatedByUser: false,
+        showviewlessbutton: false,
+        ondemandmessage: '',
+        viewlessmessage: '',
+        loadingdatamsg: '',
         isNextPageData: undefined,
         ACTIONS: {
             'DELETE': 'delete',
@@ -310,6 +317,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // get the page limit
         getPageSize: () => {
             return this.pagesize;
+        },
+
+        getPageCount : () =>{
+            return this.dataNavigator.pageCount;
+        },
+        enableNavigation: () => {
+                this.dataNavigator.widget.isDisableNext = false;
+                this.dataNavigator.widget.isDisableLast = false;
+                this.gridOptions.mode = 'viewless';
         },
         // set the deleted row index
         setDeletedRowIndex: (id) => {
@@ -347,7 +363,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
                 this.callDataGridMethod('selectRows', this.items);
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
-                this.selectedItemChange.next(this.selectedItems);
+                if(this.selectedItems.length) {
+                    this.selectedItemChange.next(this.selectedItems);
+                }
                 // On render, apply the filters set for query service variable
                 if (this._isPageSearch && this.filterInfo) {
                     this.searchSortHandler(this.filterInfo, undefined, 'search');
@@ -357,9 +375,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         onRowSelect: (row, e) => {
             this.ngZone.run(() => {
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
-                this.selectedItemChange.next(this.selectedItems);
+                if (this.selectedItems.length) {
+                    this.selectedItemChange.next(this.selectedItems);
+                }
                 const rowData = this.addRowIndex(row);
-                if (rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
+                if (this.selectedItems.length && rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
                     const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
@@ -712,13 +732,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         // function to add load more button to table
         addLoadMoreBtn: () => {
-            this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
-                // set 'isNextPageData' flag to true & 'isDataUpdatedByUser' to false as next page data is being rendered
-                this.gridOptions.setIsNextPageData(true);
-                this.gridOptions.setIsDataUpdatedByUser(false);
-                this.dataNavigator.navigatePage('next', $event);
-                this.isDataLoading = true;
-            });
+                this.callDataGridMethod('addLoadMoreBtn', this.ondemandmessage, this.loadingdatamsg, ($event) => {
+                        this.gridOptions.setIsNextPageData(true);
+                        this.gridOptions.setIsDataUpdatedByUser(false);
+                        if (this.gridOptions.mode === 'viewless') {
+                            this.dataNavigator.navigatePage('first', $event, true);
+                            this.gridOptions.mode = '';
+                        } else {
+                            this.dataNavigator.navigatePage('next', $event);
+                            this.isDataLoading = true;
+                        }
+                }, this.infScroll);
         },
         // function to bind scroll event
         bindScrollEvt: () => {
@@ -1041,6 +1065,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.securityUtils.pipeTransform = this.trustAsPipe;
         this.gridOptions.navigation = this.navigation;
         this.gridOptions.isdynamictable = this.isdynamictable;
+        this.gridOptions.showviewlessbutton = this.showviewlessbutton;
+        this.gridOptions.ondemandmessage = this.ondemandmessage;
+        this.gridOptions.viewlessmessage = this.viewlessmessage;
+        this.gridOptions.loadingdatamsg = this.loadingdatamsg;
+
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
         if (!_.isEmpty(this.gridData)) {
@@ -1068,6 +1097,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         this.datagridElement.datatable(this.gridOptions);
         this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+        // if(this.gridOptions.data.length || this.variableInflight) {
+        //     this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+        // } else {
+        //     this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+        // }
 
         this.applyProps.forEach(args => this.callDataGridMethod(...args));
 
@@ -1415,7 +1449,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     setGridData(serverData) {
         const data = this.filternullrecords ?  this.removeEmptyRecords(serverData) : serverData;
         if (!this.variableInflight) {
-            if (data && data.length === 0) {
+            if (data && (data.length) === 0) {
                 this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
             } else {
                 this.callDataGridMethod('setStatus', 'ready');
@@ -1840,6 +1874,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (nv) {
                     this.$element.find('.on-demand-datagrid > a').text(nv);
                 }
+                this.gridOptions.ondemandmessage = nv;
+                break;
+            case 'viewlessmessage':
+                this.gridOptions.viewlessmessage = nv;
                 break;
             case 'show':
                 if (nv) {
