@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 
 import { $appDigest, addClass, removeClass, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
-import { DatasetAwareNavComponent, isActiveNavItem, NavNode, provideAsWidgetRef, styler, AUTOCLOSE_TYPE } from '@wm/components/base';
+import { DatasetAwareNavComponent, hasLinkToCurrentPage, provideAsWidgetRef, styler, AUTOCLOSE_TYPE } from '@wm/components/base';
 import { NavComponent } from './nav/nav.component';
 
 import { registerProps } from './menu.props';
@@ -147,6 +147,9 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         // For selecting the item on load
         const datasetSubscription = this.nodes$.subscribe(() => {
             if (!_.isEmpty(this.nodes)) {
+                if(hasLinkToCurrentPage(this.nodes, this.route.url)) {
+                    addClass(this.nativeElement.querySelector('.dropdown-toggle') as HTMLElement, 'active');
+                }
                 // If menu widget is inside nav widget then dont check for item isactive property because these will be handled form nav widget.
                 if (this.parentNav) {
                     return;
@@ -177,25 +180,10 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
 
     }
 
-    /**
-     * returns true if the menu has link to the current page.
-     * @param nodes
-     */
-    private hasLinkToCurrentPage(nodes: Array<NavNode>) {
-        return nodes.some(node => {
-            if (isActiveNavItem(node.link, this.route.url)) {
-                return true;
-            }
-            if (node.children) {
-                return this.hasLinkToCurrentPage(node.children);
-            }
-        });
-    }
-
     protected resetNodes() {
         super.resetNodes();
         // open the menu if any of its menu items has link to current page and if autoopen value is 'active page'
-        if ((this.autoopen === AUTO_OPEN.ACTIVE_PAGE && this.hasLinkToCurrentPage(this.nodes)) || this.autoopen === AUTO_OPEN.ALWAYS) {
+        if ((this.autoopen === AUTO_OPEN.ACTIVE_PAGE && hasLinkToCurrentPage(this.nodes, this.route.url)) || this.autoopen === AUTO_OPEN.ALWAYS) {
             this.bsDropdown.show();
         }
     }
