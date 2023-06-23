@@ -80,6 +80,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public removeKeyupListener;
     public loadNativeDateInput;
     public showcustompicker;
+    public next;
+    public prev;
+    public clicked = false;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -293,6 +296,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param isMouseEvent - boolean value represents the event is mouse event/ keyboard event
      */
     private setActiveDateFocus(newDate, isMouseEvent?: boolean) {
+        this.setNextData(newDate);
         const activeMonth = this.activeDate.getMonth();
         // check for keyboard event
         if (!isMouseEvent) {
@@ -339,18 +343,42 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
+    private getMonth(date, inc) {
+        const currentMonth = new Date(date);
+
+        let month = currentMonth.getMonth();
+        let year = currentMonth.getFullYear();
+
+        month += inc;
+
+        const newDate = new Date(year, month);
+
+        const fullMonth = newDate.toLocaleString('en-US', { month: 'long' });
+
+        return {
+            date: newDate,
+            fullMonth: fullMonth
+          };
+    }
+
     /**
     * This method sets the mouse events to Datepicker popup. These events are required when we navigate date picker through mouse.
      */
     private addDatepickerMouseEvents() {
         const datePickerHead = $(`.bs-datepicker-head`);
         datePickerHead.find(`.previous`).click((event) => {
+            this.next = this.getMonth(this.activeDate, 0);
+            this.prev = this.getMonth(this.activeDate, -2);
+            this.clicked = true;
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForDate(-1);
             }
         });
         datePickerHead.find(`.next`).click((event) => {
+            this.next = this.getMonth(this.activeDate, 2);
+            this.prev = this.getMonth(this.activeDate, 0);
+            this.clicked = true;
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForDate(1);
@@ -369,8 +397,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForMonthOrDay();
             }
         });
-        datePickerHead.find('.next').attr('aria-label', 'Next');
-        datePickerHead.find('.previous').attr('aria-label', 'Previous');
+        datePickerHead.find('.next').attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
+        datePickerHead.find('.previous').attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
     }
 
     /**
@@ -452,7 +480,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this.loadDays();
         this.setActiveDateFocus(this.activeDate);
     }
-
+    private setNextData(nextDate) {
+        this.next = this.getMonth(nextDate, 1);
+        this.prev = this.getMonth(nextDate, -1);
+    }
     /**
      * This method is used to add tabindex, keybord and mouse events for days
      */
@@ -585,6 +616,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * This method is used to set focus for active month
      */
     private setActiveMonthFocus(newDate, isMoouseEvent?: boolean) {
+        this.setNextData(newDate);
         const newMonth = months[newDate.getMonth()];
         // check for keyboard event
         if (!isMoouseEvent) {
