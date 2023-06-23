@@ -13,7 +13,8 @@ const DEFAULT_VALIDATOR = {
     mindate: 'mindate',
     maxdate: 'maxdate',
     excludedates: 'excludedates',
-    excludedays: 'excludedays'
+    excludedays: 'excludedays',
+    invalidNumber:'invalidNumber'
 };
 
 export class BaseFieldValidations {
