@@ -143,6 +143,11 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         Object.assign(this.context, initState);
         this.modalOptions.ariaLabelledBy = this.titleId;
         this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
+        // Fix for [WMS-23948]: Focus moving out of active Dialog widget
+        if (this.dialogService.getOpenedDialogs().length === 1) {
+            const parentSelector = $('body > app-root')[0];
+            parentSelector.setAttribute('aria-hidden', 'true');
+        }
     }
 
     /**

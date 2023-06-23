@@ -155,6 +155,11 @@ export class DialogServiceImpl {
         if (openedDialogs.indexOf(ref) !== -1) {
             openedDialogs.splice(openedDialogs.indexOf(ref), 1);
         }
+        if (openedDialogs.length === 0) {
+            //Fix for [WMS-23948]: remove aria-hidden attribute only after all dialogs are closed
+            const parentSelector = $('body > app-root')[0];
+            parentSelector.removeAttribute('aria-hidden');
+        }
     }
 
     public getOpenedDialogs() {
