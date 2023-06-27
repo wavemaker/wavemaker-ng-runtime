@@ -24,7 +24,12 @@ export class PaginationService {
             fieldDefs = [];
             parent.gridOptions.setCurrentPage(1);
         }
-        let currentPage = parent.gridOptions.showviewlessbutton && (parent.gridOptions.mode === 'viewless') ? parent.gridOptions.getCurrentPage() :  parent.currentPage ;
+        let currentPage;
+        if (parent.widgetType === 'wm-table') {
+            currentPage = parent.gridOptions.showviewlessbutton && (parent.gridOptions.mode === 'viewless') ? parent.gridOptions.getCurrentPage() : parent.currentPage;
+        } else {
+            currentPage = parent.currentPage;
+        }
         const dataNavigator = parent.dataNavigator;
         const pagesize = parent.pagesize;
 
