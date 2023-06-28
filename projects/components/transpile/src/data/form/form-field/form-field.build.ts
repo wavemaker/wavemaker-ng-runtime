@@ -123,7 +123,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             const isInList = pCounter === (parentList && parentList.get('parent_form_reference'));
-            attrs.set('__errormsg', formFieldErrorMsgId);
+            attrs.set('__validationId', formFieldErrorMsgId);
             attrs.set('__widgetType', widgetType);
             attrs.delete('widget');
             shared.set('counter', counter);

@@ -21,10 +21,11 @@
         <span class="input-group-btn dropdown-toggle">
             <button type="button" class="btn btn-default btn-date" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentTime" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event, false)"><i aria-hidden="true" class="app-icon wi wi-access-time"></i></button>
         </span>
-        <div *dropdownMenu class="dropdown-menu" (click)="preventTpClose($event)">
+        <div *dropdownMenu class="dropdown-menu" (click)="preventTpClose($event)" aria-hidden="true">
             <timepicker class="model-holder"
                         [showMeridian]="ismeridian"
                         [readonlyInput]="isDisabled"
+                        aria-hidden="true"
                         [(ngModel)]="bsTimeValue"
                         [disabled]="disabled || readonly || isCurrentTime"
                         [min]="minTime"
@@ -42,6 +43,7 @@
     <wm-datetimepicker
         dateTimePicker
         mode="TIME"
+        aria-hidden="true"
         [minTime]="minTime"
         [maxTime]="maxTime"
         [placement]="modal"
@@ -50,7 +52,7 @@
         (change)="onTimeChange($event)">
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
-        tabindex="1000000"
+        aria-hidden="true"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event); assignModel()"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
         (click)="!(disabled || readonly || isCurrentTime) && showDatePickerModal()">
