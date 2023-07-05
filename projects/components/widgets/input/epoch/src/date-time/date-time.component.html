@@ -47,11 +47,10 @@
                     class="app-icon wm-sl-l sl-time"></i>
             </button>
         </span>
-        <div style="width: 0;display: inline-block;" aria-hidden="true">
+        <div style="width: 0;display: inline-block;">
         <input class="model-holder"
             aria-label="datepicker dropdownmenu"
             aria-controls="date"
-               aria-hidden="true"
             focus-target
             [container]="containerTarget || 'body'"
             [bsConfig]="_dateOptions"
@@ -71,10 +70,8 @@
             class="dropdown-menu"
             aria-label="timepicker dropdown"
             aria-controls="time"
-             aria-hidden="true"
             (click)="preventTpClose($event)">
             <timepicker class="model-holder"
-                        aria-hidden="true"
                 [showMeridian]="ismeridian"
                 [readonlyInput]="disabled || readonly || isCurrentDate"
                 [(ngModel)]="bsTimeValue"
@@ -99,11 +96,10 @@
         [excludedDatesToDisable]="excludedDatesToDisable"
         [displayFormat]="dateInputFormat"
         [value]="bsDateValue"
-        aria-hidden="true"
         (change)="onModelUpdate($event, 'date')">
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
-        aria-hidden="true"
+        tabindex="1000000"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
         (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal()">
