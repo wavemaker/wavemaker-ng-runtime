@@ -30,11 +30,10 @@
                 class="app-icon wi wi-calendar"></i>
         </button>
     </span>
-    <div style="width: 0;display: inline-block;" aria-hidden="true">
+    <div style="width: 0;display: inline-block;">
     <input class="model-holder"
         aria-label="datepicker dropdownmenu"
         aria-controls="date"
-        aria-hidden="true"
         [container]="containerTarget || 'body'"
         [bsConfig]="_dateOptions"
         [isOpen]="isOpen"
@@ -60,11 +59,10 @@
         [excludedDatesToDisable]="excludedDatesToDisable"
         [displayFormat]="dateInputFormat"
         [value]="bsDataValue"
-        aria-hidden="true"
         (change)="onDateChange($event)">
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
-        aria-hidden="true"
+        tabindex="1000000"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
         (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal()">
