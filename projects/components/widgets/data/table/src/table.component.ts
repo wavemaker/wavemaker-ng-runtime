@@ -1737,10 +1737,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.variableInflight = false;
                     this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
                 }
-                if (this.dataset) {
-                    this.watchVariableDataSet(this.dataset);
-                    this.onDataSourceChange();
-                }
+                this.watchVariableDataSet(this.dataset);
+                this.onDataSourceChange();
                 break;
             case 'dataset':
                 if (this.gridOptions.isNavTypeScrollOrOndemand() && this.gridOptions.getCurrentPage() === 1) {
