@@ -130,7 +130,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private isDataChanged: boolean;
     public statehandler: any;
     private isListElementMovable : boolean;
-    private currentIndex: number;
+    public currentIndex: number;
     private ariaText: String;
     public titleId: string ;
 

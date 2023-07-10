@@ -62,7 +62,7 @@
         (change)="onDateChange($event)">
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
-        aria-hidden="true"
+         tabindex="1000000"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
         (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal()">
