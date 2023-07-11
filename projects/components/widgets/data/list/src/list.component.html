@@ -23,11 +23,11 @@
 <div *ngIf="navigation === 'Inline' && !noDataFound" aria-live="polite" aria-atomic="true" class="sr-only"> {{'Item ' + dataNavigator.dn.currentPage + ' of ' + dataNavigator.pageCount }}</div>
 
 <div>
-    <div id={{titleId}} class="sr-only" >
+    <div id={{titleId}} class="sr-only" *ngIf="enablereorder">
         Press space bar to toggle drag drop mode, use arrow keys to move selected elements.
     </div>
-    
-    <div aria-live="assertive" *ngIf="listItems" class="sr-only" >
+
+    <div aria-live="assertive" *ngIf="listItems && enablereorder && currentIndex" class="sr-only" >
         {{ariaText + currentIndex + ' of ' +  listItems.length}}
     </div>    
 </div>

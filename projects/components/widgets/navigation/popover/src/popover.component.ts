@@ -179,6 +179,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         });
         const popoverStartBtn: HTMLElement = popoverContainer.querySelector('.popover-start');
         const popoverEndBtn: HTMLElement = popoverContainer.querySelector('.popover-end');
+        // Fix for [WMS-23958]: ADA Issue - Popover state not announcing and focus incorrect
+        popoverStartBtn.setAttribute('aria-hidden', 'true');
+        popoverEndBtn.setAttribute('aria-hidden', 'true');
         popoverStartBtn.onkeydown = (event) => {
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             // Check for Shift+Tab key
