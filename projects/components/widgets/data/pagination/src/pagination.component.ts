@@ -81,8 +81,27 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             this.dn.currentPage = currentPage;
             inst.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
             this.goToPage();
+            if (this.navigation === 'Basic') {
+                this._setAriaForBasicNavigation();
+            }
         }
     }, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+
+    private _setAriaForBasicNavigation() {
+        _.forEach(this.nativeElement.getElementsByTagName('a'), (item) => {
+            item.setAttribute('href', 'javascript:void(0);');
+            const childNode = item.querySelector('span');
+            if (childNode?.dataset.isacitvepage === "true") {
+                item.setAttribute('aria-current', 'true');
+                item.focus();
+            }
+            if(childNode?.dataset.isdisabled === "true") {
+                item.setAttribute('aria-disabled', 'true');
+            } else {
+                item.removeAttr('aria-disabled');
+            }
+        });
+    }
 
     constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
         super(inj, WIDGET_CONFIG);
@@ -249,9 +268,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 this.resetPageNavigation();
             }
             if (this.navigation === 'Basic') {
-                _.forEach(this.nativeElement.getElementsByTagName('a'), (item) => {
-                    item.setAttribute('href', 'javascript:void(0);');
-                });
+                this._setAriaForBasicNavigation();
             }
         } else {
             if (newVal && !_.isString(newVal)) {
