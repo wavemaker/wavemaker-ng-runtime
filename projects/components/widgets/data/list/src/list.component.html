@@ -10,7 +10,7 @@
     </h3>
 </div>
 
-<nav class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisablePrevious" aria-label="Page navigation" *ngIf="navigation === 'Inline' && !noDataFound">
+<div class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisablePrevious" aria-label="Page navigation" *ngIf="navigation === 'Inline' && !noDataFound">
     <ul class="pager">
         <li class="previous" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisablePrevious : true)}">
             <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('prev', $event)">
@@ -19,7 +19,7 @@
             </a>
         </li>
     </ul>
-</nav>
+</div>
 <div *ngIf="navigation === 'Inline' && !noDataFound" aria-live="polite" aria-atomic="true" class="sr-only"> {{'Item ' + dataNavigator.dn.currentPage + ' of ' + dataNavigator.pageCount }}</div>
 
 <div>
