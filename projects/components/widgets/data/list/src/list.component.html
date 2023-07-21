@@ -71,7 +71,7 @@
     </span>
 </div>
 
-<nav class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisableNext" *ngIf="navigation === 'Inline' && !noDataFound">
+<div class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisableNext" *ngIf="navigation === 'Inline' && !noDataFound">
     <ul class="pager">
         <li class="next" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisableNext  : true)}">
             <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('next', $event)">
@@ -80,7 +80,7 @@
             </a>
         </li>
     </ul>
-</nav>
+</div>
 
 <div class="panel-footer" *ngIf="navigation !== 'None'" [hidden]="!showNavigation || (onDemandLoad && dataNavigator.isDisableNext) || (dataNavigator.dataSize <= pagesize) || (!dataNavigator.dataSize && !dataNavigator.datasource?.pagination?.next)">
     <nav wmPagination
