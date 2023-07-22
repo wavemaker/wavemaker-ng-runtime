@@ -131,10 +131,20 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
             return true;
         }
         const cd = moment(this.changedValue);
-        if (this._bsDatepickerConfig?.minDate && this._bsDatepickerConfig?.minDate > this.changedValue) {
+        const minDate = this._bsDatepickerConfig?.minDate;
+        const maxDate = this._bsDatepickerConfig?.maxDate;
+        if (minDate
+            && ((this.mode === 'DATE' 
+                    && moment(minDate).startOf('day').toDate() > this.changedValue)
+                || (this.mode !== 'DATE' 
+                    && minDate > this.changedValue))) {
             return false;
         }
-        if (this._bsDatepickerConfig?.maxDate && this._bsDatepickerConfig?.maxDate < this.changedValue) {
+        if (maxDate 
+            && ((this.mode === 'DATE' 
+                    && moment(maxDate).endOf('day').toDate() < this.changedValue)
+                || (this.mode !== 'DATE' 
+                    && maxDate < this.changedValue))) {
             return false;
         }
         if (this._bsDatepickerConfig?.daysDisabled?.indexOf(cd.day()) >= 0) {
