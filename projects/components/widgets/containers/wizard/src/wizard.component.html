@@ -16,6 +16,9 @@
                     <span *ngIf="class && class.includes('text-inline')">{{'0' + (i+1)}}</span>
                     <span class="step-title" [textContent]="step.title"></span>
                 </span>
+                <span class="subtitle-wrapper" *ngIf="step.subtitle">
+                    <span class="step-title" [textContent]="step.subtitle"></span>
+                </span>
             </a>
         </li>
     </ul>
