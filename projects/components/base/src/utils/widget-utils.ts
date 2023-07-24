@@ -509,10 +509,9 @@ export const setFocusTrap = (container, allowOutsideClick, setReturnFocusElement
  * @returns {Array}
  */
 export const getKeyboardFocusableElements = (element: HTMLElement) => {
-    const elementNodeList = element.querySelectorAll('a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable]');
-    const elements = Array.from(elementNodeList);
-    return elements.filter(el => {
-        return (!el.hasAttribute('disabled') && !el.hasAttribute('hidden')
-            && (!el.hasAttribute('tabindex') || (el.hasAttribute('tabindex') && !el.getAttribute("tabindex").startsWith('-'))));
-    });
+    return [element.querySelectorAll(
+        'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
+    )].filter(el => {
+        return (!el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'));
+    })[0];
 }
