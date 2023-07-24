@@ -14,6 +14,10 @@ export class WizardStep {
      * Title of the wizardstep widget.
      */
     @Input() title: string = 'Step Title';
+    /**
+     * Sub Title of the wizardstep widget.
+     */
+    @Input() subtitle: string = 'Step SubTitle';
 
     /**
      * Name of the wizardstep widget.
