@@ -93,12 +93,12 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             const childNode = item.querySelector('span');
             if (childNode?.dataset.isacitvepage === "true") {
                 item.setAttribute('aria-current', 'true');
-                item.focus();
+                setTimeout(() => item.focus());
             }
             if(childNode?.dataset.isdisabled === "true") {
                 item.setAttribute('aria-disabled', 'true');
             } else {
-                item.removeAttr('aria-disabled');
+                item.removeAttribute('aria-disabled');
             }
         });
     }

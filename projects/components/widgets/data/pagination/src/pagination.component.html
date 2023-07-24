@@ -5,7 +5,7 @@
            [attr.aria-disabled]="isDisableFirst"
            (click)="navigatePage('first', $event)">
             <span aria-hidden="true"><i class="wi wi-first-page"></i></span>
-            <span class="sr-only">{{appLocale.LABEL_FIRST}} {{ isDisableFirst ? ' , Disabled' : ''}}</span>
+            <span class="sr-only">Go to first page {{ isDisableFirst ? ' , Disabled' : ''}}</span>
         </a>
     </li>
     <li [ngClass]="{'disabled':isDisablePrevious}">
@@ -13,7 +13,7 @@
             [attr.aria-disabled]="isDisablePrevious"
             (click)="navigatePage('prev', $event)">
             <span aria-hidden="true"><i class="wi wi-chevron-left"></i></span>
-            <span class="sr-only">{{appLocale.LABEL_PREVIOUS}} {{ isDisablePrevious ? ', Disabled' : ''}}</span>
+            <span class="sr-only">Go to previous page {{ isDisablePrevious ? ', Disabled' : ''}}</span>
         </a>
     </li>
     <li class="pagecount disabled">
@@ -30,7 +30,7 @@
            [attr.aria-disabled]="isDisableNext"
            (click)="navigatePage('next', $event)">
             <span aria-hidden="true"><i class="wi wi-chevron-right"></i></span>
-            <span class="sr-only">{{appLocale.LABEL_NEXT}} {{ isDisableNext ? ' , Disabled' : ''}}</span>
+            <span class="sr-only">Go to next page {{ isDisableNext ? ' , Disabled' : ''}}</span>
         </a>
     </li>
     <li [ngClass]="{'disabled':isDisableLast}">
@@ -38,7 +38,7 @@
            [attr.aria-disabled]="isDisableLast"
            (click)="navigatePage('last', $event)">
             <span aria-hidden="true"><i class="wi wi-last-page"></i></span>
-            <span class="sr-only">{{appLocale.LABEL_LAST}} {{ isDisableLast ? ' , Disabled' : ''}}</span>
+            <span class="sr-only">Go to last page {{ isDisableLast ? ' , Disabled' : ''}}</span>
         </a>
     </li>
     <li *ngIf="showrecordcount" class="totalcount disabled">
@@ -82,13 +82,13 @@
 </ul>
 
 <ng-template #pageTemplate let-page>
-    <span class="sr-only" [attr.data-isacitvepage]="page.active">Page </span>
+    <span class="sr-only" [attr.data-isacitvepage]="page.active">{{'Page '}}</span>
     {{page.number}}
-    <span class="sr-only" *ngIf="page.active"> Current, {{' Showing page ' + page.number + ' of ' + pageCount}}</span>
+    <span class="sr-only" *ngIf="page.active"> {{', Showing page ' + page.number + ' of ' + pageCount}}</span>
 </ng-template>
 <ng-template #prevTemplate let-disabled="disabled">
-    <span class="sr-only" [attr.data-isdisabled]="disabled">Previous {{disabled ? ', Disabled' : ''}}</span>
+    <span class="sr-only" [attr.data-isdisabled]="disabled">Go to Previous page {{disabled ? ', Disabled' : ''}}</span>
 </ng-template>
 <ng-template #nextTemplate let-disabled="disabled">
-    <span class="sr-only" [attr.data-isdisabled]="disabled">Next {{disabled ? ', Disabled' : ''}}</span>
+    <span class="sr-only" [attr.data-isdisabled]="disabled">Go to Next page {{disabled ? ', Disabled' : ''}}</span>
 </ng-template>
