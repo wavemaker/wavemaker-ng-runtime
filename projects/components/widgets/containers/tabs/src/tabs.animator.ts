@@ -9,39 +9,28 @@ declare const $;
 export class TabsAnimator extends SwipeAnimation {
 
     private _$el;
+    private _noOfTabs;
 
     public constructor(private tabs: TabsComponent) {
         super();
         this._$el = $(this.tabs.getNativeElement()).find('>.tab-content');
+        const childEls = this._$el.find('>[wmTabPane]');
+        this._noOfTabs = childEls.length;
+
+        const maxWidth = `${this._noOfTabs * 100}%`;
+        addClass(this.tabs.getNativeElement(), 'has-transition');
+        setCSSFromObj(this._$el[0], {maxWidth: maxWidth, width: maxWidth});
+        const width = `${100 / this._noOfTabs}%`;
+        for (const child of Array.from(childEls)) {
+            setCSS(child as HTMLElement, 'width', width);
+        }
         this.init(this._$el);
     }
 
-    public calibrate() {
-        const activeTabIndex = this.tabs.getActiveTabIndex();
-        const panes = this._$el.find('>.tab-pane');
-        let activeTabVisibleIndex = 0;
-        let noOfVisiblePanes = 0;
-        let visiblePanes = [];
-        panes.each((i, p) => {
-            if (!$(p).prop('hidden')) {
-                noOfVisiblePanes++;
-                if (i === activeTabIndex) {
-                    activeTabVisibleIndex = noOfVisiblePanes - 1;
-                }
-                visiblePanes.push(p);
-            }
-            return true;
-        });
-        return {
-            activeTabIndex: activeTabVisibleIndex,
-            noOfTabs: noOfVisiblePanes,
-            panes: visiblePanes
-        };
-    }
-
     public bounds() {
-        const {activeTabIndex, noOfTabs, panes} = this.calibrate(),
-            w = $(panes[0]).width(),
+        const activeTabIndex = this.tabs.getActiveTabIndex(),
+            w = this._$el.find('>.tab-pane').first().width(),
+            noOfTabs = this._$el.find('>.tab-pane:visible').length,
             centerVal = -1 * activeTabIndex * w;
         this.clearContentFocus();
         return {
@@ -72,15 +61,8 @@ export class TabsAnimator extends SwipeAnimation {
         }
     }
     public transitionTabIntoView() {
-        const {activeTabIndex, noOfTabs, panes} = this.calibrate();
-        const maxWidth = `${noOfTabs * 100}%`;
-        setCSSFromObj(this._$el[0], {maxWidth: maxWidth, width: maxWidth});
-        addClass(this.tabs.getNativeElement(), 'has-transition');
-        const width = `${100 / noOfTabs}%`;
-        panes.forEach(p => {
-            setCSS(p as any, 'width', width);
-        });
-        setCSS(this._$el[0], 'transform', `translate3d(${-1 *  activeTabIndex / noOfTabs * 100}%, 0, 0)`);
+        const activeTabIndex = this.tabs.getActiveTabIndex();
+        setCSS(this._$el[0], 'transform', `translate3d(${-1 *  activeTabIndex / this._noOfTabs * 100}%, 0, 0)`);
     }
 
     public onUpper($event?: Event) {
