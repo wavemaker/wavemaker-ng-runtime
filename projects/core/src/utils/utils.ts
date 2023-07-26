@@ -87,9 +87,17 @@ export const isIpad = () => {
 
 export const isIos = () => isIphone() || isIpod() || isIpad();
 
-export const isLargeTabletLandscape = () => window.matchMedia("only screen and (min-device-width : 1366px) and (max-device-width : 1366px) and (min-device-height : 1024px) and (max-device-height : 1024px) and (min-width: 1366px) and (max-width: 1366px)").matches;
+export const isLargeTabletLandscape = (landScapeWidth, landScapeHeight) => {
+    const width = landScapeWidth || '1366px';
+    const height = landScapeHeight || '1024px';
+    return window.matchMedia("only screen and (min-device-width : "+width+") and (max-device-width : "+width+") and (min-device-height : "+height+") and (max-device-height : "+height+") and (min-width: "+width+") and (max-width: "+width+")").matches;
+}
 
-export const isLargeTabletPortrait = () => window.matchMedia("only screen and (min-device-width : 1024px) and (max-device-width : 1024px) and (min-device-height : 1366px) and (max-device-height : 1366px) and (min-width: 1024px) and (max-width: 1024px)").matches;
+export const isLargeTabletPortrait = (landScapeWidth, landScapeHeight) =>  {
+    const height = landScapeWidth || '1366px';
+    const width = landScapeHeight || '1024px';
+    return window.matchMedia("only screen and (min-device-width : "+width+") and (max-device-width : "+width+") and (min-device-height : "+height+") and (max-device-height : "+height+") and (min-width: "+width+") and (max-width: "+width+")").matches;
+}
 
 export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('#wm-mobile-display:visible').length > 0;
 
