@@ -796,9 +796,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
 
     // Triggers after the sorting.
-    private onUpdate(evt, ui) {
+    private onUpdate(evt, ui, presentIndex?) {
         const data = this.fieldDefs;
-        const newIndex = ui.item.index();
+        // If ui is not present then it is called from drag and drop using keyboard
+        const newIndex = ui === undefined ? presentIndex : ui.item.index();
         const oldIndex = this.$ulEle.data('oldIndex');
 
         const minIndex = _.min([newIndex, oldIndex]);
@@ -1024,8 +1025,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.currentIndex = presentIndex + 1;
             if(this.isListElementMovable) {
                 this.ariaText = `Item ${this.currentIndex} grabbed, current position `;
+                this.$ulEle.data('oldIndex', presentIndex);
             }   else {
                 this.ariaText = `Item ${this.currentIndex} dropped, final position `;
+                this.onUpdate($event, undefined, presentIndex);
             }
         }
     }
