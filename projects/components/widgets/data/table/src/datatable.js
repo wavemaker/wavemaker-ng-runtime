@@ -1400,6 +1400,7 @@ $.widget('wm.datatable', {
 
     /* Sets the options for the grid. */
     _setOption: function (key, value) {
+        //var self = this;
         this._super(key, value);
         switch (key) {
             case 'showHeader':
@@ -1425,6 +1426,14 @@ $.widget('wm.datatable', {
                     this.setSortIconDefault();
                 }
                 this.refreshGridData();
+                // if (this.options.bulkedit) {
+                //     this.gridElement.find('tr').each(function (id, rowTemp) {
+                //         if (self.preparedData[id]) {
+                //            // self.makeRowEditable($(rowTemp), self.preparedData[id]);
+                //             self.rowSelectionHandler(self, $(rowTemp));
+                //         }
+                //     });
+                // }
                 break;
             case 'dataStates':
                 if (this.dataStatus.state === 'nodata') {
@@ -1862,9 +1871,9 @@ $.widget('wm.datatable', {
         });
     },
     //Method to make row editable with widgets
-    makeRowEditable: function ($row, rowData, alwaysNewRow) {
+    makeRowEditable: function ($row, rowData, alwaysNewRow, $ele) {
         var self = this,
-            $originalElements = $row.find('td.app-datagrid-cell'),
+            $originalElements = $ele ? $ele : $row.find('td.app-datagrid-cell'),
             rowId = parseInt($row.attr('data-row-id'), 10),
             $editableElements,
             _rowData = _.clone(rowData);
@@ -1970,6 +1979,7 @@ $.widget('wm.datatable', {
             $deleteButton = $row.find('.delete-row-button'),
             rowData = _.cloneDeep(this.options.data[$row.attr('data-row-id')]) || {},
             self = this,
+            $ele,
             action,
             isNewRow,
             $editableElements,
@@ -2039,8 +2049,11 @@ $.widget('wm.datatable', {
             this._setGridEditMode(true);
             this.disableActions(true);
             $deleteButton.removeClass('disabled-action');
+            if ($(e.target)[0].tagName === 'TD') {
+                $ele = $ele = $(e.target);
+            }
             this.options.runInNgZone(function () {
-                self.makeRowEditable($row, rowData);
+                self.makeRowEditable($row, rowData, undefined, $ele);
             });
             // Show editable row.
             $editButton.addClass('hidden');
@@ -3116,7 +3129,7 @@ $.widget('wm.datatable', {
         this.attachEventHandlers($htm);
         this.__setStatus(isCreated);
         //Add new row, if always show new row is present for quick edit
-        if (this.options.editmode === this.CONSTANTS.QUICK_EDIT && this.options.showNewRow) {
+        if (this.options.editmode === this.CONSTANTS.QUICK_EDIT && this.options.showNewRow && this.options.formvisibility !== 'onBtnClick') {
             this.addNewRow(false, true);
         }
         if (isCreated) {

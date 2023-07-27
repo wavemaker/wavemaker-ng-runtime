@@ -6,6 +6,7 @@ export const registerProps = () => {
         new Map(
             [
                 ['boundarylinks', {value: false, ...PROP_BOOLEAN}],
+                ['bulkedit', {value: false, ...PROP_BOOLEAN}],
                 ['class', PROP_STRING],
                 ['confirmdelete', {value: 'Are you sure you want to delete this?', ...PROP_STRING}],
                 ['datasource', PROP_STRING],
@@ -25,6 +26,7 @@ export const registerProps = () => {
                 ['filternullrecords', {value: true, ...PROP_BOOLEAN}],
                 ['forceellipses', {value: true, ...PROP_BOOLEAN}],
                 ['formposition', PROP_STRING],
+                ['formvisibility', PROP_STRING],
                 ['gridclass', {value: 'table-hover', ...PROP_STRING}],
                 ['gridfirstrowselect', PROP_BOOLEAN],
                 ['iconclass', PROP_STRING],
