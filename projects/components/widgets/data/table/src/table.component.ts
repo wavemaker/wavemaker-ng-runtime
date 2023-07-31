@@ -200,7 +200,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private sortInfo;
     private serverData;
     private filternullrecords;
-    private variableInflight;
+    private variableInflight = true;
     private isdynamictable;
     private _dynamicContext;
     private noOfColumns;
@@ -864,6 +864,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private _selectedItemsExist = false;
     set gridData(newValue) {
         this.isDataLoading = false;
+        // Fix for [WMS-24012]: hide no datafound msg when variableInflight is true and dataset is empty
+        if (this.variableInflight && _.isEmpty(newValue)) {
+            return;
+        }
         this.variableInflight = false;
         if (this.gridOptions.isNavTypeScrollOrOndemand()) {
             // update the _gridData field with the next set of items and modify the current page
@@ -1448,6 +1452,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     setGridData(serverData) {
         const data = this.filternullrecords ?  this.removeEmptyRecords(serverData) : serverData;
+        // fix for [WMS-24012] set variableinflight flag to false for static variables
+        if (_.get(this.datasource, 'category') === 'wm.Variable') {
+            this.variableInflight = false;
+        }
         if (!this.variableInflight) {
             if (data && (data.length) === 0) {
                 this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
@@ -1771,10 +1779,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.variableInflight = false;
                     this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
                 }
-                if (this.dataset) {
-                    this.watchVariableDataSet(this.dataset);
-                    this.onDataSourceChange();
-                }
+                this.watchVariableDataSet(this.dataset);
+                this.onDataSourceChange();
                 break;
             case 'dataset':
                 if (this.gridOptions.isNavTypeScrollOrOndemand() && this.gridOptions.getCurrentPage() === 1) {

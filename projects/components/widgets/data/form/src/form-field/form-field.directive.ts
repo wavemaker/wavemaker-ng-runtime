@@ -175,8 +175,17 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     _onBlurField($evt) {
         $($evt.target).closest('.live-field').removeClass('active');
-        this.nativeElement.querySelector('input')?.setAttribute('aria-invalid', `${this.ngform.controls[this._fieldName].invalid}`);
-        this.nativeElement.querySelector('input')?.setAttribute('aria-describedby', `${this.nativeElement.getAttribute('__errormsg')}`);
+        const ele = this.nativeElement.querySelector('p.text-danger');
+        // Fix for [WMS-23959]: ADA issue - adding aria-describedby, aria-invalid, __errormsg attributes only when the form field is invalid , else removing the attributes
+        if (this.ngform.controls[this._fieldName].invalid  && this.ngform.controls[this._fieldName].touched && this.form.isUpdateMode) {
+            this.nativeElement.setAttribute('__errormsg', `${this.nativeElement.getAttribute('__validationId')}`);
+            this.nativeElement.querySelector('input')?.setAttribute('aria-invalid', `${this.ngform.controls[this._fieldName].invalid}`);
+            this.nativeElement.querySelector('input')?.setAttribute('aria-describedby', `${this.nativeElement.getAttribute('__validationId')}`);
+        } else {
+            this.nativeElement.removeAttribute('__errormsg');
+            this.nativeElement.querySelector('input')?.removeAttribute('aria-invalid');
+            this.nativeElement.querySelector('input')?.removeAttribute('aria-describedby');
+        }
         this._activeField = false;
         this._triggeredByUser = false;
         this._clicktriggeredByUser = false;
@@ -419,8 +428,16 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
                 this.app.notify('captionPositionAnimate', {displayVal: hasValue, nativeEl: captionEl, isSelectMultiple: this.formWidget && this.formWidget.multiple, isFocused: this._activeField});
             }
-            this.nativeElement.querySelector('input')?.setAttribute('aria-invalid', this._triggeredByUser && this.ngform.controls[this._fieldName].invalid ? 'true' : 'false');
-            this.nativeElement.querySelector('input')?.setAttribute('aria-describedby', `${this.nativeElement.getAttribute('__errormsg')}`);
+           // Fix for [WMS-23959]: ADA issue - adding aria-describedby, aria-invalid, __errormsg attributes only when the form field is invalid , else removing the attributes
+            if (this.ngform.controls[this._fieldName].invalid && this.ngform.controls[this._fieldName].touched && this.form.isUpdateMode) {
+                this.nativeElement.setAttribute('__errormsg', `${this.nativeElement.getAttribute('__validationId')}`);
+                this.nativeElement.querySelector('input')?.setAttribute('aria-invalid', this._triggeredByUser && this.ngform.controls[this._fieldName].invalid ? 'true' : 'false');
+                this.nativeElement.querySelector('input')?.setAttribute('aria-describedby', `${this.nativeElement.getAttribute('__validationId')}`);
+            } else {
+                this.nativeElement.removeAttribute('__errormsg');
+                this.nativeElement.querySelector('input')?.removeAttribute('aria-invalid');
+                this.nativeElement.querySelector('input')?.removeAttribute('aria-describedby');
+            }
             this.form.onFieldValueChange(this, val);
             this.notifyChanges();
             // Do mark as touched, only incase when user has entered an input but not through the script. Hence added mousedown event check
