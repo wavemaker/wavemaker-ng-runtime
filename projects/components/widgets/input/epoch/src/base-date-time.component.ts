@@ -883,11 +883,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 children[i].classList.remove('add-opacity');
             }
             displayInputElem.classList.remove('remove-opacity');
-            let allDateTimeElements = this.nativeElement.getElementsByTagName('*');
-            for (let i=0; i < allDateTimeElements.length; i++) {
-                allDateTimeElements[i].setAttribute('tabindex', this.tabindex);
-            }
-            displayInputElem.removeAttribute('tabindex');
         }
     }
 
@@ -903,11 +898,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 children[i].classList.add('add-opacity');
             }
             displayInputElem.classList.add('remove-opacity');
-            let allDateTimeElements = this.nativeElement.getElementsByTagName('*');
-            for (let i=0; i < allDateTimeElements.length; i++) {
-                allDateTimeElements[i].setAttribute('tabindex', '-1');
-            }
-            displayInputElem.setAttribute('tabindex', this.tabindex);
             return;
         }
 
@@ -997,7 +987,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         // this mobileinput width varies in ios hence setting width here.
         let mobileInput = this.getMobileInput();
         if (mobileInput) {
-            mobileInput.style.width = mobileInput.parentElement.clientWidth + 'px';
+            setTimeout(()=> {
+                mobileInput.style.width = mobileInput.parentElement.clientWidth + 'px';
+                mobileInput.style.height = mobileInput.parentElement.clientHeight + 'px';
+            });
         }
     }
 
