@@ -27,9 +27,9 @@ const overrideSummerNote = () => {
     if (!$.summernote.__overidden) {
         // override summernote methods
 
-        const origFn = $.summernote.ui.button.bind($.summernote);
+        const origFn = $.summernote.ui_template().button.bind($.summernote);
 
-        $.summernote.ui.button = (...args) => {
+        $.summernote.ui_template.button = (...args) => {
 
             const retVal = origFn(...args);
             const origCallback = retVal.callback;

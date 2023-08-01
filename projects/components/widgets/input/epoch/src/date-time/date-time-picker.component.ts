@@ -35,15 +35,16 @@ declare const moment, $, _;
             </div>
             <div class="modal-footer">
                 <button
-                    class="btn btn-secondary clear-btn"
-                    (click)="clear()">{{appLocale.MESSAGE_DATE_PICKER_CLEAR || "Clear" }}</button>
+                    *ngIf="mode === 'DATE_TIME' || mode === 'DATE'"
+                    class="btn btn-secondary today-btn"
+                    (click)="setToday()">{{appLocale.MESSAGE_DATE_PICKER_TODAY || "Today" }}</button>
                 <button
                     class="btn btn-primary pull-right ok-btn"
+                    *ngIf="mode === 'DATE_TIME' || mode === 'TIME'"
                     (click)="onOkClick()">{{appLocale.MESSAGE_DATE_PICKER_OK || "Ok" }}</button>
                 <button
-                    class="btn btn-secondary pull-right cancel-btn"
-                    (click)="hideModal()">{{appLocale.MESSAGE_DATE_PICKER_CANCEL || "Cancel" }}</button>
-                
+                    class="btn btn-secondary pull-right clear-btn"
+                    (click)="clear()">{{appLocale.MESSAGE_DATE_PICKER_CLEAR || "Clear" }}</button>
             </div>
         </div>
     </ng-template>
@@ -130,10 +131,20 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
             return true;
         }
         const cd = moment(this.changedValue);
-        if (this._bsDatepickerConfig?.minDate && this._bsDatepickerConfig?.minDate > this.changedValue) {
+        const minDate = this._bsDatepickerConfig?.minDate;
+        const maxDate = this._bsDatepickerConfig?.maxDate;
+        if (minDate
+            && ((this.mode === 'DATE' 
+                    && moment(minDate).startOf('day').toDate() > this.changedValue)
+                || (this.mode !== 'DATE' 
+                    && minDate > this.changedValue))) {
             return false;
         }
-        if (this._bsDatepickerConfig?.maxDate && this._bsDatepickerConfig?.maxDate < this.changedValue) {
+        if (maxDate 
+            && ((this.mode === 'DATE' 
+                    && moment(maxDate).endOf('day').toDate() < this.changedValue)
+                || (this.mode !== 'DATE' 
+                    && maxDate < this.changedValue))) {
             return false;
         }
         if (this._bsDatepickerConfig?.daysDisabled?.indexOf(cd.day()) >= 0) {
@@ -198,6 +209,11 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
             newVal.setMilliseconds(oldVal.getMilliseconds());
         }
         this.changedValue = newVal;
+        if (this.mode === 'DATE' 
+            && oldVal !== newVal 
+            && this.validateSelectedDate()) {
+            this.onOkClick();
+        }
     }
 
     public onTimeUpdate(newVal) {
@@ -218,6 +234,11 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
         this.changedValue = null;
         this.triggerChange();
         this.hideModal();
+    }
+
+    setToday() {
+        const today = moment().startOf('day').toDate();
+        this.onDateUpdate(today);
     }
 
     reset() {

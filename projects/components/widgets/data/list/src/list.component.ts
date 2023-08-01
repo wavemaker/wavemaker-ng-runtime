@@ -130,9 +130,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private isDataChanged: boolean;
     public statehandler: any;
     private isListElementMovable : boolean;
-    private currentIndex: number;
+    public currentIndex: number;
     private ariaText: String;
-    public titleId: string ; 
+    public titleId: string ;
 
     _isDependent;
     private _pageLoad;
@@ -349,8 +349,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.ngZone.run(() => {
                 this.handleStateParams(data);
                 this.variableInflight = data.active;
-                // WMS-17268: Update nodatafound flag once the response is recieved from the server
-                this.noDataFound = !data.data?.pagination.totalElements;
+                // Fix for [WMS-23772] Update nodatafound flag once the response is recieved from the server
+                const totalEle = data.data?.pagination?.totalElements;
+                if (!_.isUndefined(totalEle)) {
+                    this.noDataFound = totalEle === 0 ? true : false;
+                } else { // totalelements is undefined
+                    this.noDataFound = _.isEmpty(data.data?.data);
+                }
             });
         }
     }
@@ -924,9 +929,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     public handleKeyDown($event, action: string) {
         $event.stopPropagation();
-        if($event.keyCode !== 13 && $event.keyCode !== 9 && !($event.target.classList.contains('form-control') && $event.keyCode === 32) ) {
+        if($event.keyCode !== 13 && $event.keyCode !== 9 && !(($event.target.classList.contains('form-control') || $event.target.classList.contains('note-editable')) && $event.keyCode === 32) ) {
             $event.preventDefault();
         }
+
         const listItems: QueryList<ListItemDirective> = this.listItems;
 
         let presentIndex: number = this.getListItemIndex(this.lastSelectedItem);
@@ -962,27 +968,21 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
         if (action === 'focusPrev') {
             if(this.isListElementMovable) {
-                let prev;
                 presentIndex = presentIndex <= 0 ? 0 : (presentIndex);
-                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
                 if(presentIndex === 0) {
-                    prev = this.listItems.last;
                     return;
                 }
-                this.listItems.forEach(($liItem: ListItemDirective, idx) => {
-                    if(idx === presentIndex) {
-                        prev.nativeElement.before($liItem.nativeElement);
-                        this.lastSelectedItem.nativeElement.focus();
-                        const arr = this.listItems.toArray();
-                        let temp = arr[presentIndex];
-                        arr[presentIndex] = arr[presentIndex-1];
-                        arr[presentIndex-1] = temp;
-                        this.listItems.reset(arr);
-                        this.currentIndex = presentIndex;
-                        this.ariaText = "selected ";
-                    }
-                    prev = $liItem;
-                });
+
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                const prevElt = this.getListItemByIndex(presentIndex - 1);
+                prevElt.nativeElement.before(this.lastSelectedItem.nativeElement);
+                this.lastSelectedItem.nativeElement.focus();
+                this.statePersistence.removeWidgetState(this, 'selectedItem');
+                const arr = this.listItems.toArray();
+                [arr[presentIndex - 1], arr[presentIndex]] = [arr[presentIndex], arr[presentIndex - 1]];
+                this.listItems.reset(arr);
+                this.currentIndex = presentIndex;
+                this.ariaText = "selected ";
             } else {
                 presentIndex = presentIndex <= 0 ? 0 : (presentIndex - 1);
                 this.lastSelectedItem = this.getListItemByIndex(presentIndex);
@@ -992,27 +992,21 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
         } else if (action === 'focusNext') {
             if(this.isListElementMovable) {
-                let prev;
                 presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex) : (listItems.length - 1);
-                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
                 if(presentIndex === this.listItems.length - 1 ) {
-                    prev = this.listItems.first;
                     return;
                 }
-                this.listItems.forEach(($liItem: ListItemDirective, idx) => {
-                    if(idx === presentIndex +1 ) {
-                        prev.nativeElement.before($liItem.nativeElement)
-                        this.lastSelectedItem.nativeElement.focus();
-                        const arr = this.listItems.toArray();
-                        let temp = arr[presentIndex +1];
-                        arr[presentIndex +1] = arr[presentIndex];
-                        arr[presentIndex] = temp;
-                        this.listItems.reset(arr);
-                        this.currentIndex = idx + 1;
-                        this.ariaText = "selected ";
-                    }
-                    prev = $liItem;
-                });
+
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                const nextElt = this.getListItemByIndex(presentIndex + 1);
+                nextElt.nativeElement.after(this.lastSelectedItem.nativeElement);
+                this.lastSelectedItem.nativeElement.focus();
+                this.statePersistence.removeWidgetState(this, 'selectedItem');
+                const arr = this.listItems.toArray();
+                [arr[presentIndex], arr[presentIndex + 1]] = [arr[presentIndex + 1], arr[presentIndex]];
+                this.listItems.reset(arr);
+                this.currentIndex = presentIndex + 2;
+                this.ariaText = "selected ";
             } else {
                 presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length - 1);
                 this.lastSelectedItem = this.getListItemByIndex(presentIndex);
@@ -1035,13 +1029,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.isListElementMovable = !this.isListElementMovable;
             this.onItemClick($event, this.getListItemByIndex(presentIndex));
             this.currentIndex = presentIndex + 1;
-            let name = this.getListItemByIndex(presentIndex).item.name;
             if(this.isListElementMovable) {
-                this.ariaText = name + " grabbed, current position ";
+                this.ariaText = `Item ${this.currentIndex} grabbed, current position `;
             }   else {
-                this.ariaText =  name +  " dropped, final position ";
+                this.ariaText = `Item ${this.currentIndex} dropped, final position `;
             }
-        }    
+        }
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {

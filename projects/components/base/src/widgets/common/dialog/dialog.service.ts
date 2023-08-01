@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-
+import {isMobile, isMobileApp} from '@wm/core';
 const openedDialogs = [];
 /*We need closedDialogs array because onHidden event is asynchronous,
 and if the user uses script and calls dialog1.close() and then dialog2.close() then
@@ -154,6 +154,11 @@ export class DialogServiceImpl {
     public removeFromOpenedDialogs(ref) {
         if (openedDialogs.indexOf(ref) !== -1) {
             openedDialogs.splice(openedDialogs.indexOf(ref), 1);
+        }
+        if (openedDialogs.length === 0 && (isMobile() || isMobileApp())) {
+            //Fix for [WMS-23948]: remove aria-hidden attribute only after all dialogs are closed
+            const parentSelector = $('body > app-root')[0];
+            parentSelector.removeAttribute('aria-hidden');
         }
     }
 

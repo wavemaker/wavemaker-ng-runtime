@@ -41,7 +41,8 @@ export class DeviceService {
         }, maxWaitTime * 1000);
         document.addEventListener('backbutton', this.executeBackTapListeners.bind(this));
         if (hasCordova()) {
-            const configUrl = `${location.protocol}//${location.hostname}${isIos() ? '' : '/_www'}/config.json`; 
+            const port = location.port ? ':' + location.port : '';
+            const configUrl = `${location.protocol}//${location.hostname}${port}${isIos() ? '' : '/_www'}/config.json`; 
             fetchContent('json', configUrl, true, (response => {
                 if (!response.error && response.baseUrl) {
                     this._config = response;

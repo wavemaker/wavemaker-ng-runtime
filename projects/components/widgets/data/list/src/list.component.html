@@ -13,23 +13,24 @@
 <nav class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisablePrevious" aria-label="Page navigation" *ngIf="navigation === 'Inline' && !noDataFound">
     <ul class="pager">
         <li class="previous" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisablePrevious : true)}">
-            <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('prev', $event)">
+            <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('prev', $event)"
+               [attr.aria-disabled]="dataNavigator.isDisablePrevious">
                 <i class="wi wi-chevron-left" aria-hidden="true"></i>
-                <span class="sr-only">Previous</span>
+                <span class="sr-only">Go to Previous page {{dataNavigator.isDisablePrevious ? ', Disabled' : ''}}</span>
             </a>
         </li>
     </ul>
 </nav>
-<div *ngIf="navigation === 'Inline' && !noDataFound" aria-live="polite" aria-atomic="true" class="sr-only"> {{'Item ' + dataNavigator.dn.currentPage + ' of ' + dataNavigator.pageCount }}</div>
+<div *ngIf="navigation === 'Inline' && !noDataFound" aria-live="polite" aria-atomic="true" class="sr-only"> {{'Page ' + dataNavigator.dn.currentPage + ' of ' + dataNavigator.pageCount }}</div>
 
 <div>
-    <div id={{titleId}} class="sr-only" >
+    <div id={{titleId}} class="sr-only" *ngIf="enablereorder">
         Press space bar to toggle drag drop mode, use arrow keys to move selected elements.
     </div>
-    
-    <div aria-live="assertive" *ngIf="listItems" class="sr-only" >
+
+    <div aria-live="assertive" *ngIf="listItems && enablereorder && currentIndex" class="sr-only" >
         {{ariaText + currentIndex + ' of ' +  listItems.length}}
-    </div>    
+    </div>
 </div>
 
 <ul [attr.tabindex]="tabindex" [attr.aria-describedby] = "titleId"  class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
@@ -74,9 +75,10 @@
 <nav class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisableNext" *ngIf="navigation === 'Inline' && !noDataFound">
     <ul class="pager">
         <li class="next" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisableNext  : true)}">
-            <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('next', $event)">
+            <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('next', $event)"
+               [attr.aria-disabled]="dataNavigator.isDisableNext">
                 <i class="wi wi-chevron-right" aria-hidden="true"></i>
-                <span class="sr-only">Next</span>
+                <span class="sr-only">Go to Next page {{dataNavigator.isDisableNext ? ', Disabled' : ''}}</span>
             </a>
         </li>
     </ul>

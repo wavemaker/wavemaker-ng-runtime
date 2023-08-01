@@ -81,8 +81,27 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             this.dn.currentPage = currentPage;
             inst.invokeEventCallback('paginationchange', {$event: undefined, $index: this.dn.currentPage});
             this.goToPage();
+            if (this.navigation === 'Basic') {
+                this._setAriaForBasicNavigation();
+            }
         }
     }, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+
+    private _setAriaForBasicNavigation() {
+        _.forEach(this.nativeElement.getElementsByTagName('a'), (item) => {
+            item.setAttribute('href', 'javascript:void(0);');
+            const childNode = item.querySelector('span');
+            if (childNode?.dataset.isacitvepage === "true") {
+                item.setAttribute('aria-current', 'true');
+                setTimeout(() => item.focus());
+            }
+            if(childNode?.dataset.isdisabled === "true") {
+                item.setAttribute('aria-disabled', 'true');
+            } else {
+                item.removeAttribute('aria-disabled');
+            }
+        });
+    }
 
     constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
         super(inj, WIDGET_CONFIG);
@@ -171,7 +190,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         this.isDisableCurrent = isCurrentPageFirst && isCurrentPageLast;
         // In case of client side pagination, when load more reaches last page hide the on-demand grid ele
         if (this.dataset && this.dataset.length && this.isDisableNext && this.parent.onDemandLoad && this.parent.widgetType === 'wm-table') {
-            this.parent.callDataGridMethod('hideLoadingIndicator', this.isDisableNext, false);
+            this.parent.callDataGridMethod('hideLoadingIndicator', this.isDisableNext, this.parent.infScroll);
         }
     }
 
@@ -249,9 +268,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 this.resetPageNavigation();
             }
             if (this.navigation === 'Basic') {
-                _.forEach(this.nativeElement.getElementsByTagName('a'), (item) => {
-                    item.setAttribute('href', 'javascript:void(0);');
-                });
+                this._setAriaForBasicNavigation();
             }
         } else {
             if (newVal && !_.isString(newVal)) {

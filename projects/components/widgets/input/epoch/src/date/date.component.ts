@@ -197,7 +197,6 @@ export class DateComponent extends BaseDateTimeComponent {
             if(!skipFocus){
                 this.onDateTimeInputFocus();
             }
-            return;
         }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', { $event: $event });

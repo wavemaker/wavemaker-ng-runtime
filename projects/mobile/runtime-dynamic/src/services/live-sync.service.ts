@@ -154,15 +154,16 @@ export class LiveSyncInterceptor implements HttpInterceptor {
                 error: reject
             });
         }).then((fileContent: string) => {
+            const port = location.port ? ':' + location.port : '';
             let path = this.localAppUrl || 
-                (`${location.protocol}//${location.hostname}${location.pathname}`);
+                (`${location.protocol}//${location.hostname}${port}${location.pathname}`);
             let cordovaPath = path;
             if (cordovaPath.endsWith('.html')) {
                 const splits = cordovaPath.split('/').slice(0, );
                 cordovaPath = splits.slice(0, splits.length - 1).join('/');
             }
             cordovaPath += '/cordova.js';
-            const mAppUrl = `${location.protocol}//${location.hostname}${transformFileURI(localDir + 'live-index.html')}`;
+            const mAppUrl = `${location.protocol}//${location.hostname}${port}${transformFileURI(localDir + 'live-index.html')}`;
             fileContent = fileContent.replace('cordova.js', cordovaPath);
             fileContent = fileContent.replace('<head>', `
             <head>
