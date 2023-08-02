@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { Subscription } from 'rxjs';
 
-import {AbstractDialogService, closePopover, findRootContainer, generateGUId, isMobileApp} from '@wm/core';
+import {AbstractDialogService, closePopover, findRootContainer, generateGUId, isMobile, isMobileApp} from '@wm/core';
 
 import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
 import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
@@ -65,6 +65,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
     private readonly bsModal: BsModalService;
 
     private dialogRef: BsModalRef;
+    private dialogId: number;
     public titleId:string = 'wmdialog-' + generateGUId();
 
     protected constructor(
@@ -78,18 +79,24 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         const router = inj.get(Router);
 
         const subscriptions: Subscription[] = [
-            this.bsModal.onShown.subscribe(() => {
+            this.bsModal.onShown.subscribe(({id}) => {
                 const ref = this.dialogService.getLastOpenedDialog();
                 if (ref === this) {
                     // Always get the reference of last pushed dialog in the array for calling onOpen callback
                     invokeOpenedCallback(ref);
+                    this.dialogId = id;
                 }
             }),
             this.bsModal.onShow.subscribe(() => {
                 focusTrapObj.activeElement = document.activeElement;
             }),
             this.bsModal.onHidden.subscribe((closeReason) => {
-                const ref = closeReason === 'esc' || closeReason === 'backdrop-click' ? this.dialogService.getLastOpenedDialog() : this.dialogService.getDialogRefFromClosedDialogs();
+                let ref = this.dialogService.getDialogRefFromClosedDialogs();
+                if (this.dialogId && closeReason?.id === this.dialogId) {
+                    ref = this;
+                } else if (closeReason === 'esc' || closeReason === 'backdrop-click') {
+                    ref = this.dialogService.getLastOpenedDialog();
+                }
                 if (ref === this) {
                     // remove the dialog reference from opened dialogs and closed dialogs
                     this.dialogService.removeFromOpenedDialogs(ref);
@@ -145,7 +152,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         this.modalOptions.ariaLabelledBy = this.titleId;
         this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
         // Fix for [WMS-23948]: Focus moving out of active Dialog widget
-        if (this.dialogService.getOpenedDialogs().length === 1 && isMobileApp()) {
+        if (this.dialogService.getOpenedDialogs().length === 1 && (isMobile() || isMobileApp())) {
             const parentSelector = $('body > app-root')[0];
             parentSelector.setAttribute('aria-hidden', 'true');
         }
