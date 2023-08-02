@@ -8,7 +8,6 @@ import {AbstractDialogService, closePopover, findRootContainer, generateGUId, is
 
 import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
 import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
-
 declare const _;
 
 let eventsRegistered = false;
@@ -91,9 +90,12 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
                 focusTrapObj.activeElement = document.activeElement;
             }),
             this.bsModal.onHidden.subscribe((closeReason) => {
-                const ref = (closeReason === 'esc' 
-                    || closeReason === 'backdrop-click'
-                    || (this.dialogId && closeReason?.id === this.dialogId)) ? this.dialogService.getLastOpenedDialog() : this.dialogService.getDialogRefFromClosedDialogs();
+                let ref = this.dialogService.getDialogRefFromClosedDialogs();
+                if (this.dialogId && closeReason?.id === this.dialogId) {
+                    ref = this;
+                } else if (closeReason === 'esc' || closeReason === 'backdrop-click') {
+                    ref = this.dialogService.getLastOpenedDialog();
+                }
                 if (ref === this) {
                     // remove the dialog reference from opened dialogs and closed dialogs
                     this.dialogService.removeFromOpenedDialogs(ref);
