@@ -17,6 +17,14 @@ import { wmSetDependency, BaseAction, getTarget, setValueToNode, getTargetNodeKe
 import {setDependency, simulateFileDownload} from '../util/variable/variables.utils';
 import { MetadataService } from './metadata-service/metadata.service';
 import { VARIABLE_CONSTANTS } from '../constants/variables.constants';
+import {appManager} from '../util/variable/variables.utils';
+import { DateFormatter } from '@wavemaker/variables';
+
+export class Formatter implements DateFormatter {
+    format(value, format) {
+        return  appManager.getPipe('date').transform(value, format);
+    }
+}
 
 declare const _;
 
@@ -156,6 +164,7 @@ export class VariablesService {
            if (this.isVariableSeperated(variablesJson, variableName)) {
                this.processBinding(varInstance, scope, 'dataBinding', this.getBindSourceTarget(varInstance));
                varInstance.httpService = this.httpService;
+               varInstance.dateFormatter = new Formatter();
                varInstance.subscribe('afterInvoke', () => $invokeWatchers(true));
                if (varInstance.category === 'wm.LiveVariable' && varInstance.operation === 'read') {
                    processFilterExpBindNode(varInstance._context, varInstance.filterExpressions, varInstance);
