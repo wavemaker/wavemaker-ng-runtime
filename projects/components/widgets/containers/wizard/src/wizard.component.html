@@ -3,7 +3,7 @@
         <li class="app-wizard-step" *ngFor="let step of steps; let i = index" [hidden]="!step.show"
             [ngClass]="{active: step.done, current: step.active, disabled: step.disabled}"
             (click)="onWizardHeaderClick($event, step)">
-            <a href="javascript:void(0)" [attr.aria-label]="step.title" [attr.title]="step.title">
+            <a href="javascript:void(0)" [attr.aria-label]="step.title" [attr.title]="step.title" [ngClass]="{'title-center-align':class && class.includes('classic') && !step.subtitle}">
                 <span class="arrow" *ngIf="class && class.includes('classic')"></span>
                 <span class="wizard-step-number">
                     <span class="count" *ngIf="class && class.includes('number') && !step.isDone">{{i+1}}</span>
@@ -16,10 +16,11 @@
                     <span *ngIf="class && class.includes('text-inline')">{{'0' + (i+1)}}</span>
                     <span class="step-title" [textContent]="step.title"></span>
                 </span>
-                <span class="subtitle-wrapper" [attr.title]="step.subtitle">
+                <span class="subtitle-wrapper" [attr.title]="step.subtitle" *ngIf="step.subtitle">
                     <span class="step-title" [textContent]="step.subtitle"></span>
+                    <a class="read_more" (click)="readMoreSubtitle()" style="display:none">more</a>
                 </span>
-            </a>
+            </a>    
         </li>
     </ul>
 </div>
