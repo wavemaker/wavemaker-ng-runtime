@@ -311,6 +311,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             _.filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
                 if ($(obj).text() === newDay) {
                     $(obj).attr('aria-label', moment(newDate).format('dddd, MMMM Do YYYY'));
+                    $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '-1');
+                    $(obj).attr('tabindex', '0');
                     $(obj).focus();
                     this.activeDate = newDate;
                 }
@@ -374,6 +376,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (event.originalEvent) {
                 this.setFocusForDate(-1);
             }
+            setTimeout(() => {
+                $(`.bs-datepicker-head .previous`).focus();
+            })
         });
         datePickerHead.find(`.next`).click((event) => {
             this.next = this.getMonth(this.activeDate, 2);
@@ -383,6 +388,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (event.originalEvent) {
                 this.setFocusForDate(1);
             }
+            setTimeout(() => {
+                $(`.bs-datepicker-head .next`).focus();
+            })
         });
         datePickerHead.find(`.current`).click((event) => {
             // check for original mouse click
@@ -397,6 +405,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForMonthOrDay();
             }
         });
+        //datePickerHead.find('.current').attr('aria-live', 'polite');
         datePickerHead.find('.next').attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
         datePickerHead.find('.previous').attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
     }
@@ -489,7 +498,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private loadDays() {
         setTimeout(() => {
-            $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '0');
             this.addKeyBoardEventsForDays();
             this.addDatepickerMouseEvents();
         });
@@ -554,8 +562,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private loadMonths() {
         setTimeout(() => {
-            const datePickerBody = $('.bs-datepicker-body');
-            datePickerBody.find('table.months span').attr('tabindex', '0');
             this.addKeyBoardEventsForMonths();
             this.addDatepickerMouseEvents();
         });
@@ -605,8 +611,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private loadYears() {
         setTimeout(() => {
-            const datePickerBody = $('.bs-datepicker-body');
-            datePickerBody.find('table.years span').attr('tabindex', '0');
             this.addKeyBoardEventsForYears();
             this.addDatepickerMouseEvents();
         });
@@ -627,6 +631,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
         }
         setTimeout(() => {
+            $(`.bs-datepicker-body table.months span`).attr('tabindex', '-1')
+            $(`.bs-datepicker-body table.months span:contains(${newMonth})`).attr('tabindex', '0')
             $(`.bs-datepicker-body table.months span:contains(${newMonth})`).focus();
             this.activeDate = newDate;
         });
@@ -682,6 +688,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
         }
         setTimeout(() => {
+            $(`.bs-datepicker-body table.years span`).attr('tabindex', '-1');
+            $(`.bs-datepicker-body table.years span:contains(${newYear})`).attr('tabindex', '0');
             $(`.bs-datepicker-body table.years span:contains(${newYear})`).focus();
             this.activeDate = newDate;
         });
