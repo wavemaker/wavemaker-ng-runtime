@@ -1075,10 +1075,14 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.dataNavigator.widget.maxResults = nv;
             this.dataNavigator.maxResults = nv;
         } else if (key === 'enablereorder') {
-            if (nv) {
+            if (nv && this.$ulEle) {
+                if (!isMobile() && !isMobileApp()) {
+                  this.$ulEle.attr('aria-described-by', this.titleId);
+                }
                 this.configureDnD();
                 this.$ulEle.sortable('enable');
             } else if (this.$ulEle && !nv) {
+                this.$ulEle.removeAttr('aria-described-by');
                 this.$ulEle.sortable('disable');
             }
         } else {
@@ -1253,8 +1257,18 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             super.ngAfterViewInit();
             this.setUpCUDHandlers();
             this.selectedItemWidgets = this.multiselect ? [] : {};
+            var ele = $(this.nativeElement).find('.app-livelist-container');
+
             if (this.enablereorder && !this.groupby) {
+                if (ele && !isMobileApp() && !isMobile()) {
+                    ele.attr('aria-described-by', this.titleId);
+                }
                 this.configureDnD();
+            }
+            if (!this.enablereorder) {
+                if (ele) {
+                    ele.removeAttr('aria-described-by');
+                }
             }
             if (this.groupby && this.collapsible) {
                 this.handleHeaderClick = handleHeaderClick;
@@ -1265,7 +1279,16 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.setupHandlers();
         const $ul = this.nativeElement.querySelector('ul.app-livelist-container');
         styler($ul as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
-
+        if (this.enablereorder) {
+            if ($ul && !isMobileApp() && !isMobile()) {
+                $ul.setAttribute('aria-described-by', this.titleId);
+            }
+        }
+        if (!this.enablereorder)  {
+            if($ul) {
+                $ul.removeAttribute('aria-described-by');
+            }
+        }
         if (isMobileApp() && $ul.querySelector('.app-list-item-action-panel')) {
             this._listAnimator = new ListAnimator(this);
         }
