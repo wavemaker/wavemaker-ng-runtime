@@ -4,7 +4,7 @@ import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { PopoverDirective } from 'ngx-bootstrap/popover';
 
 import { addClass, App, setAttr, setCSSFromObj, findRootContainer, adjustContainerPosition, adjustContainerRightEdges} from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef, AUTOCLOSE_TYPE, getContainerTargetClass, getKeyboardFocusableElements } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef, AUTOCLOSE_TYPE, getContainerTargetClass } from '@wm/components/base';
 
 import { registerProps } from './popover.props';
 
@@ -171,19 +171,43 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             this.anchorRef.nativeElement.onmouseenter = () => clearTimeout(this.closePopoverTimeout);
             this.anchorRef.nativeElement.onmouseleave = () => this.hidePopover();
         }
-
+        setTimeout(() => {
+            this.anchorRef.nativeElement.removeAttribute('aria-describedby');
+        });
         const deRegister = this.eventManager.addEventListener(popoverContainer, 'keydown.esc', () => {
             this.isOpen = false;
             this.setFocusToPopoverLink();
             deRegister();
         });
+        const popoverStartBtn: HTMLElement = popoverContainer.querySelector('.popover-start');
+        const popoverEndBtn: HTMLElement = popoverContainer.querySelector('.popover-end');
+        popoverStartBtn.onkeydown = (event) => {
+            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
+            // Check for Shift+Tab key
+            if (action === 'shift.tab') {
+                this.bsPopoverDirective.hide();
+                event.preventDefault();
+                this.setFocusToPopoverLink();
+                this.isOpen = false;
+            }
+        };
+        popoverEndBtn.onkeydown = (event) => {
+            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
+            // Check for Tab key
+            if (action === 'tab') {
+                this.bsPopoverDirective.hide();
+                event.preventDefault();
+                this.setFocusToPopoverLink();
+                this.isOpen = false;
+            }
+        };
 
         //Whenever autoclose property is set to 'always', adding the onclick listener to the popover container to close the popover.
         if (this.autoclose === AUTOCLOSE_TYPE.ALWAYS) {
             popoverContainer.onclick = () => this.close();
         }
 
-        setAttr(popoverContainer, 'tabindex', 0);
+        setTimeout(() => popoverStartBtn.focus(), 50);
         // Adjusting popover position if the popover placement is top or bottom
         setTimeout( () => {
             if (!this.adaptiveposition ) {
@@ -205,7 +229,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                     this.Widgets   = partialScope.Widgets;
                     this.Variables = partialScope.Variables;
                     this.Actions   = partialScope.Actions;
-                    this.setKeyboardHandlers();
                     this.invokeEventCallback('load');
                     this.invokeEventCallback('show', {$event: {type: 'show'}});
                 }
@@ -215,60 +238,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             this.Widgets   = this.viewParent.Widgets;
             this.Variables = this.viewParent.Variables;
             this.Actions   = this.viewParent.Actions;
-            this.setKeyboardHandlers();
             this.invokeEventCallback('show', {$event: {type: 'show'}});
         }
-    }
-
-    private setKeyboardHandlers() {
-        const popoverContainer  = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
-        const focusableElements = getKeyboardFocusableElements(popoverContainer);
-
-        if(focusableElements.length) {
-            const firstFocusableElement = focusableElements[0];
-            const lastFocusableElement = focusableElements[focusableElements.length - 1];
-
-            $(firstFocusableElement).on('keydown', (event) => {
-                const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-                // Check for Shift+Tab key
-                if (action === 'shift.tab') {
-                    this.bsPopoverDirective.hide();
-                    event.preventDefault();
-                    this.setFocusToPopoverLink();
-                    this.isOpen = false;
-                }
-            });
-
-            $(lastFocusableElement).on('keydown', (event) => {
-                const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-                // Check for Tab key
-                if (action === 'tab') {
-                    this.bsPopoverDirective.hide();
-                    event.preventDefault();
-                    this.setFocusToPopoverLink();
-                    this.isOpen = false;
-                }
-            });
-        } else {
-            $(this.anchorRef.nativeElement).on('keydown', (event) => {
-                const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-                if (action === 'tab' || action === 'shift.tab' || action === 'escape') {
-                    this.bsPopoverDirective.hide();
-                    event.preventDefault();
-                    this.setFocusToPopoverLink();
-                    this.isOpen = false;
-                    $(this.anchorRef.nativeElement).off('keydown');
-                }
-            });
-        }
-
-        setTimeout(() => {
-            if(focusableElements.length) {
-                $(focusableElements[0]).focus();
-            } else {
-                this.setFocusToPopoverLink();
-            }
-        }, 50);
     }
 
     private hidePopover() {
