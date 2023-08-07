@@ -1074,9 +1074,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.dataNavigator.maxResults = nv;
         } else if (key === 'enablereorder') {
             if (nv && this.$ulEle) {
-                if (!isMobile() && !isMobileApp()) {
-                  this.$ulEle.attr('aria-described-by', this.titleId);
-                }
+                this.$ulEle.attr('aria-described-by', this.titleId);
                 this.configureDnD();
                 this.$ulEle.sortable('enable');
             } else if (this.$ulEle && !nv) {
@@ -1258,7 +1256,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             var ele = $(this.nativeElement).find('.app-livelist-container');
 
             if (this.enablereorder && !this.groupby) {
-                if (ele && !isMobileApp() && !isMobile()) {
+                if(ele) {
                     ele.attr('aria-described-by', this.titleId);
                 }
                 this.configureDnD();
@@ -1278,7 +1276,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const $ul = this.nativeElement.querySelector('ul.app-livelist-container');
         styler($ul as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
         if (this.enablereorder) {
-            if ($ul && !isMobileApp() && !isMobile()) {
+            if ($ul){
                 $ul.setAttribute('aria-described-by', this.titleId);
             }
         }
