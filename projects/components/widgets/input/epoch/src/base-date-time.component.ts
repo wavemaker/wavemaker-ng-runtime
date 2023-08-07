@@ -310,6 +310,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             const newDay = newDate.getDate().toString();
             _.filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
                 if ($(obj).text() === newDay) {
+                    if($(obj).hasClass('selected')) {
+                       $(obj).parent().attr('aria-selected', 'true');
+                    }
                     $(obj).attr('aria-label', moment(newDate).format('dddd, MMMM Do YYYY'));
                     $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '-1');
                     $(obj).attr('tabindex', '0');
@@ -319,7 +322,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             });
             if (newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
                 this.hightlightToday();
-                $(`span:contains(${new Date().getDate().toString()})`).not('.is-other-month').parent().attr('aria-selected', 'true');
             }
         });
 
@@ -405,9 +407,16 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForMonthOrDay();
             }
         });
-        //datePickerHead.find('.current').attr('aria-live', 'polite');
         datePickerHead.find('.next').attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
         datePickerHead.find('.previous').attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
+        setTimeout(() => {
+            const currentNodes = datePickerHead.find('.current span');
+            let msg = '';
+            currentNodes.each((i) => {
+                msg =`${msg} ${$(currentNodes[i]).text()}`;
+            });
+            datePickerHead.find('.current').parent().append(`<div aria-live="polite" aria-atomic="true" class="sr-only">${msg}</div>`);
+        });
     }
 
     /**
