@@ -1074,11 +1074,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.dataNavigator.maxResults = nv;
         } else if (key === 'enablereorder') {
             if (nv && this.$ulEle) {
-                this.$ulEle.attr('aria-described-by', this.titleId);
+                this.$ulEle.attr('aria-describedby', this.titleId);
                 this.configureDnD();
                 this.$ulEle.sortable('enable');
             } else if (this.$ulEle && !nv) {
-                this.$ulEle.removeAttr('aria-described-by');
+                this.$ulEle.removeAttr('aria-describedby');
                 this.$ulEle.sortable('disable');
             }
         } else {
@@ -1257,13 +1257,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
             if (this.enablereorder && !this.groupby) {
                 if(ele) {
-                    ele.attr('aria-described-by', this.titleId);
+                    ele.attr('aria-describedby', this.titleId);
                 }
                 this.configureDnD();
             }
             if (!this.enablereorder) {
                 if (ele) {
-                    ele.removeAttr('aria-described-by');
+                    ele.removeAttr('aria-describedby');
                 }
             }
             if (this.groupby && this.collapsible) {
@@ -1277,12 +1277,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         styler($ul as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
         if (this.enablereorder) {
             if ($ul){
-                $ul.setAttribute('aria-described-by', this.titleId);
+                $ul.setAttribute('aria-describedby', this.titleId);
             }
         }
         if (!this.enablereorder)  {
             if($ul) {
-                $ul.removeAttribute('aria-described-by');
+                $ul.removeAttribute('aria-describedby');
             }
         }
         if (isMobileApp() && $ul.querySelector('.app-list-item-action-panel')) {
