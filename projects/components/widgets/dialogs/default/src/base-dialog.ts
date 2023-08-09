@@ -64,6 +64,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
     private readonly bsModal: BsModalService;
 
     private dialogRef: BsModalRef;
+    private dialogId: number;
     public titleId:string = 'wmdialog-' + generateGUId();
 
     protected constructor(
@@ -77,18 +78,24 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         const router = inj.get(Router);
 
         const subscriptions: Subscription[] = [
-            this.bsModal.onShown.subscribe(() => {
+            this.bsModal.onShown.subscribe(({id}) => {
                 const ref = this.dialogService.getLastOpenedDialog();
                 if (ref === this) {
                     // Always get the reference of last pushed dialog in the array for calling onOpen callback
                     invokeOpenedCallback(ref);
+                    this.dialogId = id;
                 }
             }),
             this.bsModal.onShow.subscribe(() => {
                 focusTrapObj.activeElement = document.activeElement;
             }),
             this.bsModal.onHidden.subscribe((closeReason) => {
-                const ref = closeReason === 'esc' || closeReason === 'backdrop-click' ? this.dialogService.getLastOpenedDialog() : this.dialogService.getDialogRefFromClosedDialogs();
+                let ref = this.dialogService.getDialogRefFromClosedDialogs();
+                if (this.dialogId && closeReason?.id === this.dialogId) {
+                    ref = this;
+                } else if (closeReason === 'esc' || closeReason === 'backdrop-click') {
+                    ref = this.dialogService.getLastOpenedDialog();
+                }
                 if (ref === this) {
                     // remove the dialog reference from opened dialogs and closed dialogs
                     this.dialogService.removeFromOpenedDialogs(ref);

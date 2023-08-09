@@ -8,7 +8,8 @@
             [attr.aria-label]="hint"
             focus-target
             [name]="name"
-            [tabindex]="tabindex"
+            [tabindex]="loadNativeDateInput ? '-1' : tabindex"
+            [attr.aria-hidden]="!!loadNativeDateInput"
             type="text"
             [value]="displayValue"
             (click)="toggleDpDropdown($event, true)"
@@ -26,7 +27,8 @@
         <span class="input-group-btn">
             <button type="button"
                 class="btn btn-default btn-date"
-                [tabindex]="tabindex"
+                [tabindex]="loadNativeDateInput ? '-1' : tabindex"
+                [attr.aria-hidden]="!!loadNativeDateInput"
                 [disabled]="disabled || readonly || isCurrentDate"
                 [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : 'Choose date by pressing enter'"
                 aria-haspopup="true"
@@ -37,7 +39,8 @@
             </button>
             <button type="button"
                 class="btn btn-default btn-time"
-                [tabindex]="tabindex"
+                [tabindex]="loadNativeDateInput ? '-1' : tabindex"
+                [attr.aria-hidden]="!!loadNativeDateInput"
                 [disabled]="disabled || readonly || isCurrentDate"
                 aria-label="Select time"
                 aria-haspopup="true"
@@ -52,6 +55,8 @@
             aria-label="datepicker dropdownmenu"
             aria-controls="date"
             focus-target
+            [tabindex]="-1"
+            [attr.aria-hidden]="!!loadNativeDateInput"
             [container]="containerTarget || 'body'"
             [bsConfig]="_dateOptions"
             [isOpen]="isDateOpen"
@@ -99,7 +104,7 @@
         (change)="onModelUpdate($event, 'date')">
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
-        tabindex="1000000"
+        [tabindex]="tabindex || 0"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
         (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal()">
