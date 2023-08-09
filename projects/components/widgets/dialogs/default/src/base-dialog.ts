@@ -8,7 +8,6 @@ import {AbstractDialogService, closePopover, findRootContainer, generateGUId, is
 
 import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
 import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
-
 declare const _;
 
 let eventsRegistered = false;
