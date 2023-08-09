@@ -23,12 +23,14 @@ import {
 import { SecurityService } from '@wm/security';
 
 import { WmDefaultRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
+import { PipeService } from "./pipe.service";
 
 declare const _;
 
 const injectorMap = {
     DialogService: AbstractDialogService,
     i18nService: AbstractI18nService,
+    PipeService: PipeService,
     statePersistence: StatePersistence,
     SpinnerService: AbstractSpinnerService,
     StatePersistenceService: StatePersistence,
