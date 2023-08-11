@@ -171,7 +171,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             this.anchorRef.nativeElement.onmouseenter = () => clearTimeout(this.closePopoverTimeout);
             this.anchorRef.nativeElement.onmouseleave = () => this.hidePopover();
         }
-
+        setTimeout(() => {
+            this.anchorRef.nativeElement.removeAttribute('aria-describedby');
+        });
         const deRegister = this.eventManager.addEventListener(popoverContainer, 'keydown.esc', () => {
             this.isOpen = false;
             this.setFocusToPopoverLink();
@@ -179,9 +181,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         });
         const popoverStartBtn: HTMLElement = popoverContainer.querySelector('.popover-start');
         const popoverEndBtn: HTMLElement = popoverContainer.querySelector('.popover-end');
-        // Fix for [WMS-23958]: ADA Issue - Popover state not announcing and focus incorrect
-        popoverStartBtn.setAttribute('aria-hidden', 'true');
-        popoverEndBtn.setAttribute('aria-hidden', 'true');
         popoverStartBtn.onkeydown = (event) => {
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             // Check for Shift+Tab key
@@ -208,7 +207,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             popoverContainer.onclick = () => this.close();
         }
 
-        setAttr(popoverContainer, 'tabindex', 0);
         setTimeout(() => popoverStartBtn.focus(), 50);
         // Adjusting popover position if the popover placement is top or bottom
         setTimeout( () => {
