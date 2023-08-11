@@ -268,20 +268,29 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         this.invokeEventCallback('cancel', {steps: this.steps.toArray()});
     }
     public addMoreText(){
-        setTimeout(() => {     
-            $(".app-wizard-step.current .subtitle-wrapper .step-title").css({"height":"auto","display":"block"});    
+        setTimeout(() => {   
+
+            
+        var newWindowWidth = $(window).width();
+        if(newWindowWidth < 768){
+        $(".app-wizard-step.current .subtitle-wrapper .step-title").css({"height":"auto","display":"block"});    
+        var subtitleTextLength = $(".app-wizard-step.current .subtitle-wrapper .step-title").height();
+        $(".read_more").css("display","none");
+        $(".current .subtitle-wrapper").removeClass("readmore_subtitle");
+
+        if(subtitleTextLength>44){
+                        $(".app-wizard-step.current .subtitle-wrapper .step-title").css({"height":"auto","display":"block"});    
          var subtitleTextLength = $(".app-wizard-step.current .subtitle-wrapper .step-title").height();
         var newWindowWidth = $(window).width();
         $(".read_more").css("display","none");
         $(".current .subtitle-wrapper").removeClass("readmore_subtitle");
-
-        if(subtitleTextLength>44 && newWindowWidth < 768){
             $(".app-wizard-step.current .subtitle-wrapper .step-title").css({"height":"44px","display":"-webkit-box"});
             $(".current .read_more").css("display","block");
             $(".active .read_more").css("display","none");
             $(".disable .read_more").css("display","none");
-            $(".app-wizard-step.current>a").css("height","95px")
+            $(".app-wizard-step>a").css("height","100px")
             }
+        }
     });
   
     }
