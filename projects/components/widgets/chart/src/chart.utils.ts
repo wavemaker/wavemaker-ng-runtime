@@ -712,8 +712,7 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
 
     // Support for custom colors if user gives direct string of colors in text box
     if (_.isString(propertyValueMap.customcolors) && propertyValueMap.customcolors) {
-        let tempColors = propertyValueMap.customcolors.replace(/'/g, "\"");
-        colors = JSON.parse(tempColors);
+        colors = _.split(propertyValueMap.customcolors, ',');
     }
     if (_.isArray(propertyValueMap.customcolors)) {
         colors = propertyValueMap.customcolors;
