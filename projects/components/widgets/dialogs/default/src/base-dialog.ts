@@ -80,7 +80,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         const subscriptions: Subscription[] = [
             this.bsModal.onShown.subscribe(({id}) => {
                 const ref = this.dialogService.getLastOpenedDialog();
-                if (ref === this) {
+                if (ref === this && !this.dialogId) {
                     // Always get the reference of last pushed dialog in the array for calling onOpen callback
                     invokeOpenedCallback(ref);
                     this.dialogId = id;
@@ -97,6 +97,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
                     ref = this.dialogService.getLastOpenedDialog();
                 }
                 if (ref === this) {
+                    this.dialogId = null;
                     // remove the dialog reference from opened dialogs and closed dialogs
                     this.dialogService.removeFromOpenedDialogs(ref);
                     this.dialogService.removeFromClosedDialogs(ref);
