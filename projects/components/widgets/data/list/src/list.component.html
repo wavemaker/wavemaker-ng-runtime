@@ -33,7 +33,7 @@
     </div>
 </div>
 
-<ul [attr.tabindex]="tabindex" [attr.aria-describedby] = "titleId"  class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
+<ul [attr.tabindex]="tabindex"  class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
     (keydown.enter)="handleKeyDown($event, 'select')"
 
     (keydown.space)="handleKeyDown($event, 'space')"
