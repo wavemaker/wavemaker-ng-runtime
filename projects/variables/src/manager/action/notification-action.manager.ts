@@ -46,10 +46,9 @@ export class NotificationActionManager extends BaseActionManager {
 
     private notifyViaDialog(variable, options) {
         const commonPageDialogId = 'Common' + _.capitalize(variable.operation) + 'Dialog',
-            variableOwner = variable.owner,
-            dialogId = (variableOwner === VARIABLE_CONSTANTS.OWNER.APP ) ? commonPageDialogId : 'notification' + variable.operation + 'dialog';
+            dialogId = commonPageDialogId;
         const closeCallBackFn = () => initiateCallback('onOk', variable, options.data);
-        dialogService.open(dialogId,  variable._context, {
+        dialogService.open(dialogId, undefined, {
             notification: {
                 'title' : options.title || variable.dataBinding.title,
                 'text' : options.message || variable.dataBinding.text,
@@ -58,12 +57,12 @@ export class NotificationActionManager extends BaseActionManager {
                 'alerttype' : options.alerttype || variable.dataBinding.alerttype || 'information',
                 onOk: () => {
                     // Close the action dialog after triggering onOk callback event
-                    dialogService.close(dialogId, variable._context, closeCallBackFn);
+                    dialogService.close(dialogId, undefined, closeCallBackFn);
                 },
                 onCancel: () => {
                     initiateCallback('onCancel', variable, options.data);
                     // Close the action dialog after triggering onCancel callback event
-                    dialogService.close(dialogId, variable._context);
+                    dialogService.close(dialogId, undefined);
                 },
                 onClose: () => {
                     initiateCallback('onClose', variable, options.data);
