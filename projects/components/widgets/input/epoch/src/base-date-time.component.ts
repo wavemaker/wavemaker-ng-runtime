@@ -166,7 +166,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             };
         }
         /* WMS-18269 | Extending the existing validation for 'required' */
-        if (this["show"] && this["required"]) {
+        if (this['show'] && this['required']) {
             return !!c.value ? null : { required: true };
         }
         this.validateType = '';
@@ -310,14 +310,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             const newDay = newDate.getDate().toString();
             _.filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
                 if ($(obj).text() === newDay) {
+                    if ($(obj).hasClass('selected')) {
+                       $(obj).parent().attr('aria-selected', 'true');
+                    }
                     $(obj).attr('aria-label', moment(newDate).format('dddd, MMMM Do YYYY'));
+                    $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '-1');
+                    $(obj).attr('tabindex', '0');
                     $(obj).focus();
                     this.activeDate = newDate;
                 }
             });
             if (newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
                 this.hightlightToday();
-                $(`span:contains(${new Date().getDate().toString()})`).not('.is-other-month').parent().attr('aria-selected', 'true');
             }
         });
 
@@ -347,7 +351,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const currentMonth = new Date(date);
 
         let month = currentMonth.getMonth();
-        let year = currentMonth.getFullYear();
+        const year = currentMonth.getFullYear();
 
         month += inc;
 
@@ -374,6 +378,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (event.originalEvent) {
                 this.setFocusForDate(-1);
             }
+            setTimeout(() => {
+                $(`.bs-datepicker-head .previous`).focus();
+            });
+
         });
         datePickerHead.find(`.next`).click((event) => {
             this.next = this.getMonth(this.activeDate, 2);
@@ -383,6 +391,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (event.originalEvent) {
                 this.setFocusForDate(1);
             }
+            setTimeout(() => {
+                $(`.bs-datepicker-head .next`).focus();
+            });
+
         });
         datePickerHead.find(`.current`).click((event) => {
             // check for original mouse click
@@ -399,6 +411,22 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         });
         datePickerHead.find('.next').attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
         datePickerHead.find('.previous').attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
+        setTimeout(() => {
+            const currentNodes = datePickerHead.find('.current span');
+            const msg = 'Changed to month ';
+            // currentNodes.each((i) => {
+            //     msg =`${msg} ${$(currentNodes[i]).text()}`;
+            // });
+            datePickerHead.find('.current').attr("aria-live", "assertive").attr("aria-atomic", "false");
+            if (this.clicked) {
+                if ($(currentNodes[0]).text()) {
+                    datePickerHead.find('.ng-star-inserted').prepend(`<div class="sr-only">${msg}</div>`);
+                }
+                if ($(currentNodes[1]).text()) {
+                    datePickerHead.find('.current').last().prepend(`<div class="sr-only"> and year </div>`);
+                }
+            }
+        });
     }
 
     /**
@@ -489,7 +517,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private loadDays() {
         setTimeout(() => {
-            $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '0');
             this.addKeyBoardEventsForDays();
             this.addDatepickerMouseEvents();
         });
@@ -554,8 +581,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private loadMonths() {
         setTimeout(() => {
-            const datePickerBody = $('.bs-datepicker-body');
-            datePickerBody.find('table.months span').attr('tabindex', '0');
             this.addKeyBoardEventsForMonths();
             this.addDatepickerMouseEvents();
         });
@@ -605,8 +630,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private loadYears() {
         setTimeout(() => {
-            const datePickerBody = $('.bs-datepicker-body');
-            datePickerBody.find('table.years span').attr('tabindex', '0');
             this.addKeyBoardEventsForYears();
             this.addDatepickerMouseEvents();
         });
@@ -627,6 +650,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
         }
         setTimeout(() => {
+            $(`.bs-datepicker-body table.months span`).attr('tabindex', '-1');
+            $(`.bs-datepicker-body table.months span:contains(${newMonth})`).attr('tabindex', '0');
             $(`.bs-datepicker-body table.months span:contains(${newMonth})`).focus();
             this.activeDate = newDate;
         });
@@ -682,6 +707,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
         }
         setTimeout(() => {
+            $(`.bs-datepicker-body table.years span`).attr('tabindex', '-1');
+            $(`.bs-datepicker-body table.years span:contains(${newYear})`).attr('tabindex', '0');
             $(`.bs-datepicker-body table.years span:contains(${newYear})`).focus();
             this.activeDate = newDate;
         });
@@ -870,18 +897,13 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     onDateTimeInputBlur() {
         // removing the opacity on blur of the mobile widget
-        let displayInputElem = this.getMobileInput();
+        const displayInputElem = this.getMobileInput();
         if (displayInputElem && !hasCordova()) {
-            let children = this.nativeElement.children;
-            for (let i=0; i < children.length; i++) {
+            const children = this.nativeElement.children;
+            for (let i = 0; i < children.length; i++) {
                 children[i].classList.remove('add-opacity');
             }
             displayInputElem.classList.remove('remove-opacity');
-            let allDateTimeElements = this.nativeElement.getElementsByTagName('*');
-            for (let i=0; i < allDateTimeElements.length; i++) {
-                allDateTimeElements[i].setAttribute('tabindex', this.tabindex);
-            }
-            displayInputElem.removeAttribute('tabindex');
         }
     }
 
@@ -889,19 +911,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         if (!this.loadNativeDateInput) {
             return;
         }
-        let displayInputElem = this.getMobileInput();
+        const displayInputElem = this.getMobileInput();
         // toggling the classes to show and hide the native widget using opacity
         if (skipFocus && !hasCordova()) {
-            let children = this.nativeElement.children;
-            for (let i=0; i < children.length; i++) {
+            const children = this.nativeElement.children;
+            for (let i = 0; i < children.length; i++) {
                 children[i].classList.add('add-opacity');
             }
             displayInputElem.classList.add('remove-opacity');
-            let allDateTimeElements = this.nativeElement.getElementsByTagName('*');
-            for (let i=0; i < allDateTimeElements.length; i++) {
-                allDateTimeElements[i].setAttribute('tabindex', '-1');
-            }
-            displayInputElem.setAttribute('tabindex', this.tabindex);
             return;
         }
 
@@ -965,17 +982,17 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         } else if (key === 'selectfromothermonth') {
             this._dateOptions.selectFromOtherMonth = nv;
 
-        } else if (key === 'todaybutton'){
+        } else if (key === 'todaybutton') {
             this._dateOptions.showTodayButton = nv;
-        } else if (key === 'clearbutton'){
+        } else if (key === 'clearbutton') {
             this._dateOptions.showClearButton = nv;
-        } else if (key === 'todaybuttonlabel'){
+        } else if (key === 'todaybuttonlabel') {
             this._dateOptions.todayButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
-        } else if (key === 'clearbuttonlabel'){
+        } else if (key === 'clearbuttonlabel') {
             this._dateOptions.clearButtonLabel = this.i18nService.getLocalizedMessage(nv) || nv;
         } else if (key === 'showcustompicker') {
             this.loadNativeDateInput = isMobile() && !this.showcustompicker;
-        } else if(key === 'adaptiveposition'){
+        } else if (key === 'adaptiveposition') {
             this._dateOptions.adaptivePosition = nv;
         } else {
             super.onPropertyChange(key, nv, ov);
@@ -989,9 +1006,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
 
         // this mobileinput width varies in ios hence setting width here.
-        let mobileInput = this.getMobileInput();
+        const mobileInput = this.getMobileInput();
         if (mobileInput) {
-            mobileInput.style.width = mobileInput.parentElement.clientWidth + 'px';
+            setTimeout(() => {
+                mobileInput.style.width = mobileInput.parentElement.clientWidth + 'px';
+                mobileInput.style.height = mobileInput.parentElement.clientHeight + 'px';
+            });
         }
     }
 

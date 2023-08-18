@@ -801,9 +801,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
 
     // Triggers after the sorting.
-    private onUpdate(evt, ui) {
+    private onUpdate(evt, ui, presentIndex?) {
         const data = this.fieldDefs;
-        const newIndex = ui.item.index();
+        // If ui is not present then it is called from drag and drop using keyboard
+        const newIndex = ui === undefined ? presentIndex : ui.item.index();
         const oldIndex = this.$ulEle.data('oldIndex');
 
         const minIndex = _.min([newIndex, oldIndex]);
@@ -1030,8 +1031,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.currentIndex = presentIndex + 1;
             if(this.isListElementMovable) {
                 this.ariaText = `Item ${this.currentIndex} grabbed, current position `;
+                this.$ulEle.data('oldIndex', presentIndex);
             }   else {
                 this.ariaText = `Item ${this.currentIndex} dropped, final position `;
+                this.onUpdate($event, undefined, presentIndex);
             }
         }
     }
@@ -1076,10 +1079,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.dataNavigator.widget.maxResults = nv;
             this.dataNavigator.maxResults = nv;
         } else if (key === 'enablereorder') {
-            if (nv) {
+            if (nv && this.$ulEle) {
+                this.$ulEle.attr('aria-describedby', this.titleId);
                 this.configureDnD();
                 this.$ulEle.sortable('enable');
             } else if (this.$ulEle && !nv) {
+                this.$ulEle.removeAttr('aria-describedby');
                 this.$ulEle.sortable('disable');
             }
         } else {
@@ -1254,8 +1259,18 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             super.ngAfterViewInit();
             this.setUpCUDHandlers();
             this.selectedItemWidgets = this.multiselect ? [] : {};
+            var ele = $(this.nativeElement).find('.app-livelist-container');
+
             if (this.enablereorder && !this.groupby) {
+                if(ele) {
+                    ele.attr('aria-describedby', this.titleId);
+                }
                 this.configureDnD();
+            }
+            if (!this.enablereorder) {
+                if (ele) {
+                    ele.removeAttr('aria-describedby');
+                }
             }
             if (this.groupby && this.collapsible) {
                 this.handleHeaderClick = handleHeaderClick;
@@ -1266,7 +1281,16 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.setupHandlers();
         const $ul = this.nativeElement.querySelector('ul.app-livelist-container');
         styler($ul as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
-
+        if (this.enablereorder) {
+            if ($ul){
+                $ul.setAttribute('aria-describedby', this.titleId);
+            }
+        }
+        if (!this.enablereorder)  {
+            if($ul) {
+                $ul.removeAttribute('aria-describedby');
+            }
+        }
         if (isMobileApp() && $ul.querySelector('.app-list-item-action-panel')) {
             this._listAnimator = new ListAnimator(this);
         }
