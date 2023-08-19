@@ -983,7 +983,7 @@ $.widget('wm.datatable', {
         this._render(true);
     },
     _setGridEditMode: function (val) {
-        if ($.isFunction(this.options.setGridEditMode)) {
+        if (_.isFunction(this.options.setGridEditMode)) {
             this.options.setGridEditMode(val);
         }
     },
@@ -1041,7 +1041,7 @@ $.widget('wm.datatable', {
             $gridBody,
             $alwaysNewRow;
 
-        if (!alwaysNewRow && $.isFunction(this.options.beforeRowInsert)) {
+        if (!alwaysNewRow && _.isFunction(this.options.beforeRowInsert)) {
             this.options.beforeRowInsert();
         }
 
@@ -1680,10 +1680,10 @@ $.widget('wm.datatable', {
             isQuickEdit = this.options.editmode === this.CONSTANTS.QUICK_EDIT;
 
         function callRowSelectionEvents() {
-            if (selected && $.isFunction(self.options.onRowSelect)) {
+            if (selected && _.isFunction(self.options.onRowSelect)) {
                 self.options.onRowSelect(data, e);
             }
-            if (!selected && $.isFunction(self.options.onRowDeselect)) {
+            if (!selected && _.isFunction(self.options.onRowDeselect)) {
                 self.options.onRowDeselect(data, e);
             }
         }
@@ -1728,7 +1728,7 @@ $.widget('wm.datatable', {
         if (!rowData) {
             return;
         }
-        if ($.isFunction(this.options.onRowDblClick)) {
+        if (_.isFunction(this.options.onRowDblClick)) {
             this.options.onRowDblClick(rowData, e);
         }
     },
@@ -1770,13 +1770,13 @@ $.widget('wm.datatable', {
         if (selected) {
             $column.addClass(selectedClass);
             $th.addClass(selectedClass);
-            if ($.isFunction(this.options.onColumnSelect) && e) {
+            if (_.isFunction(this.options.onColumnSelect) && e) {
                 this.options.onColumnSelect(colInfo, e);
             }
         } else {
             $column.removeClass(selectedClass);
             $th.removeClass(selectedClass);
-            if ($.isFunction(this.options.onColumnDeselect) && e) {
+            if (_.isFunction(this.options.onColumnDeselect) && e) {
                 this.options.onColumnDeselect(colInfo, e);
             }
         }
@@ -2029,7 +2029,7 @@ $.widget('wm.datatable', {
 
         //On success of update or delete
         function onSaveSuccess(skipFocus, error) {
-            if ($.isFunction(options.success)) {
+            if (_.isFunction(options.success)) {
                 options.success(skipFocus, error);
             }
             if (!advancedEdit || self.options.actionsEnabled.edit) {
@@ -2060,7 +2060,7 @@ $.widget('wm.datatable', {
                 return;
             }
             $row.addClass('row-editing');
-            if ($.isFunction(this.options.beforeRowUpdate)) {
+            if (_.isFunction(this.options.beforeRowUpdate)) {
                 this.options.beforeRowUpdate(rowData, e);
             }
 
@@ -2073,7 +2073,7 @@ $.widget('wm.datatable', {
                 self.toggleNewRowActions(true);
             }
             //Event for on before form render. User can update row data here.
-            if ($.isFunction(this.options.onBeforeFormRender)) {
+            if (_.isFunction(this.options.onBeforeFormRender)) {
                 isValid = this.options.onBeforeFormRender(rowData, e, options.operation || action);
                 if (isValid === false) {
                     return;
@@ -2096,7 +2096,7 @@ $.widget('wm.datatable', {
                 });
             }
             //Event for on before form render. User can access form widgets here.
-            if ($.isFunction(this.options.onFormRender)) {
+            if (_.isFunction(this.options.onFormRender)) {
                 this.options.onFormRender($row, e, options.operation || action, $row.hasClass('always-new-row'));
             }
         } else {
@@ -2160,7 +2160,7 @@ $.widget('wm.datatable', {
                             }
                             self.options.setTouched($invalidTd.find('[formcontrolname]').attr('formcontrolname'));
                         });
-                        if ($.isFunction(options.success)) {
+                        if (_.isFunction(options.success)) {
                             options.success(false, true);
                         }
                         return;
@@ -2168,14 +2168,14 @@ $.widget('wm.datatable', {
 
                     if (isNewRow && advancedEdit && _.isEmpty(rowData)) {
                         self.removeNewRow($row);
-                        if ($.isFunction(options.success)) {
+                        if (_.isFunction(options.success)) {
                             options.success(false, undefined, true);
                         }
                         return;
                     }
 
                     if (isNewRow) {
-                        if ($.isFunction(this.options.onBeforeRowInsert)) {
+                        if (_.isFunction(this.options.onBeforeRowInsert)) {
                             isValid = this.options.onBeforeRowInsert(rowData, e, editOptions);
                             if (isValid === false) {
                                 return;
@@ -2192,7 +2192,7 @@ $.widget('wm.datatable', {
                             self.removeNewRow($row);
                         }
                     } else {
-                        if ($.isFunction(this.options.onBeforeRowUpdate)) {
+                        if (_.isFunction(this.options.onBeforeRowUpdate)) {
                             isValid = this.options.onBeforeRowUpdate(rowData, e, editOptions);
                             if (isValid === false) {
                                 return;
@@ -2205,7 +2205,7 @@ $.widget('wm.datatable', {
                     if (!options.noMsg) {
                         this.options.noChangesDetected();
                     }
-                    if ($.isFunction(options.success)) {
+                    if (_.isFunction(options.success)) {
                         options.success(false);
                     }
                 }
@@ -2315,7 +2315,7 @@ $.widget('wm.datatable', {
         this.options.setActionRowIndex(rowId);
         this.options.setLastActionPerformed(this.options.ACTIONS.DELETE);
 
-        if ($.isFunction(this.options.beforeRowDelete)) {
+        if (_.isFunction(this.options.beforeRowDelete)) {
             this.options.beforeRowDelete(rowData, e);
         }
         if (isNewRow) {
@@ -2331,13 +2331,13 @@ $.widget('wm.datatable', {
             return;
         }
         /* calling onbeforerowDelete callback function.*/
-        if($.isFunction(this.options.onBeforeRowDelete)) {
+        if(_.isFunction(this.options.onBeforeRowDelete)) {
             isValid = this.options.onBeforeRowDelete(rowData, e, options);
             if (isValid === false) {
                 return;
             }
         }
-        if ($.isFunction(this.options.onRowDelete)) {
+        if (_.isFunction(this.options.onRowDelete)) {
             className = this.options.cssClassNames.deleteRow;
             isActiveRow = $row.attr('class').indexOf('active') !== -1;
             if (isActiveRow) {
@@ -2982,10 +2982,10 @@ $.widget('wm.datatable', {
                 // If we enable multiselect and check header checkbox then updating selecteditem in datatable.
                 self.options.assignSelectedItems(rowData, e);
                 self.toggleRowSelection($row, checked, e, true);
-                if (checked && $.isFunction(self.options.onRowSelect)) {
+                if (checked && _.isFunction(self.options.onRowSelect)) {
                     self.options.onRowSelect(rowData, e);
                 }
-                if (!checked && $.isFunction(self.options.onRowDeselect)) {
+                if (!checked && _.isFunction(self.options.onRowDeselect)) {
                     self.options.onRowDeselect(rowData, e);
                 }
             });
@@ -3020,7 +3020,7 @@ $.widget('wm.datatable', {
         /**Add event handler, to the select all checkbox on the header**/
         $header.on('click', '.app-datagrid-header-cell input:checkbox', toggleSelectAll);
 
-        if ($.isFunction(this.options.onHeaderClick)) {
+        if (_.isFunction(this.options.onHeaderClick)) {
             this.gridHeaderElement.find('th.app-datagrid-header-cell').on('click', this.headerClickHandler.bind(this));
         }
 
@@ -3168,7 +3168,7 @@ $.widget('wm.datatable', {
         if (isCreated) {
             this._setColSpan(this.options.headerConfig);
         }
-        if ($.isFunction(this.options.onDataRender)) {
+        if (_.isFunction(this.options.onDataRender)) {
             this.options.onDataRender();
         }
         if (!isCreated && this.options.selectFirstRow) {
