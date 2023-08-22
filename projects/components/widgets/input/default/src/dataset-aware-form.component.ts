@@ -1,4 +1,4 @@
-import { Injector, Attribute, OnInit, Injectable } from '@angular/core';
+import { Injector, Attribute, OnInit, Injectable, OnDestroy } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { BaseFormCustomComponent } from './base-form-custom.component';
 declare const _;
 
 @Injectable()
-export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent implements OnInit {
+export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent implements OnInit, OnDestroy {
     public dataset: any;
     public datafield: string;
     public displayfield: string;
@@ -53,6 +53,8 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     private readonly _debouncedInitDatasetItems: Function;
     protected allowempty = true;
     public compareby: any;
+
+    private cancelLocaleChangeSubscription;
 
     public get modelByKey() {
         return this._modelByKey;
@@ -101,6 +103,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             $appDigest();
         }, 150);
         this.handleHeaderClick = noop;
+
+        this.cancelLocaleChangeSubscription = this.getAppInstance().subscribe("locale-changed", () => {
+            this._debouncedInitDatasetItems();
+        });
     }
 
     /**
@@ -351,6 +357,12 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         if (this.groupby && this.collapsible) {
             this.handleHeaderClick = handleHeaderClick;
             this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
+        }
+    }
+
+    ngOnDestroy() {
+        if(this.cancelLocaleChangeSubscription) {
+            this.cancelLocaleChangeSubscription();
         }
     }
 }
