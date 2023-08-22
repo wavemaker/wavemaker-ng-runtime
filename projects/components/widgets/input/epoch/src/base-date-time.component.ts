@@ -89,6 +89,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected invalidDateTimeFormat: boolean;
 
     private dateOnShowSubscription: Subscription;
+    private cancelLocaleChangeSubscription;
 
     /**
      * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
@@ -111,6 +112,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this._dateOptions.clearPosition = 'right';
         this.meridians = getLocaleDayPeriods(this.selectedLocale, FormStyle.Format, TranslationWidth.Abbreviated);
         this.loadNativeDateInput = isMobile() && !this.showcustompicker;
+
+        this.cancelLocaleChangeSubscription = this.getAppInstance().subscribe("locale-changed", (locale) => {
+            this.datePipe.datePipe.locale = locale.angular;
+            this._dateOptions.todayButtonLabel = this.i18nService.getLocalizedMessage('LABEL_TODAY_DATE');
+            this._dateOptions.clearButtonLabel = this.i18nService.getLocalizedMessage('LABEL_CLEAR_DATE');
+        });
     }
 
 
@@ -1018,6 +1025,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     ngOnDestroy() {
         if (this.dateOnShowSubscription) {
             this.dateOnShowSubscription.unsubscribe();
+        }
+        if(this.cancelLocaleChangeSubscription) {
+            this.cancelLocaleChangeSubscription();
         }
 
         super.ngOnDestroy();
