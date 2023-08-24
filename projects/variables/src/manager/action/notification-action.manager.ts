@@ -44,15 +44,8 @@ export class NotificationActionManager extends BaseActionManager {
         }
     }
 
-    private notifyViaDialog(variable, options) {
-        const commonPageDialogId = 'Common' + _.capitalize(variable.operation) + 'Dialog';
-        let dialogId = commonPageDialogId;
-        const closeCallBackFn = () => initiateCallback('onOk', variable, options.data);
-        const isPrefabType = getWmProjectProperties().type !== 'APPLICATION';
-        if (isPrefabType) {
-            dialogId = 'Prefab' + _.capitalize(variable.operation) + 'Dialog';
-        }
-        const variableConfig = {
+    private getDialogConfig(variable, options, dialogId, closeCallBackFn) {
+        return {
             'title' : options.title || variable.dataBinding.title,
             'text' : options.message || variable.dataBinding.text,
             'okButtonText' : options.okButtonText || variable.dataBinding.okButtonText || 'OK',
@@ -71,8 +64,18 @@ export class NotificationActionManager extends BaseActionManager {
                 initiateCallback('onClose', variable, options.data);
             }
         };
-        const configInfo = isPrefabType ? variableConfig : {notification: variableConfig};
-        dialogService.open(dialogId, undefined, configInfo);
+    }
+
+    private notifyViaDialog(variable, options) {
+        const isPrefabType = getWmProjectProperties().type === 'PREFAB';
+        const dialogPrefix = isPrefabType ? 'Prefab' : 'Common';
+        const dialogId = dialogPrefix + _.capitalize(variable.operation) + 'Dialog';
+        const closeCallBackFn = () => initiateCallback('onOk', variable, options.data);
+
+
+        let dialogConfig: any = this.getDialogConfig(variable, options, dialogId, closeCallBackFn);
+        dialogConfig = isPrefabType ? dialogConfig : { notification: dialogConfig };
+        dialogService.open(dialogId, undefined, dialogConfig);
     }
 
 // *********************************************************** PUBLIC ***********************************************************//
