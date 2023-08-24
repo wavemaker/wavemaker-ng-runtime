@@ -15,6 +15,12 @@
     <div wmConfirmDialog name="_app-confirm-dialog" title.bind="title" message.bind="message" oktext.bind="oktext"
          canceltext.bind="canceltext" closable="false" iconclass.bind="iconclass"
          escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
+    <div  *ngIf="!isApplicationType" wmConfirmDialog name="PrefabConfirmDialog" title.bind="title" message.bind="text" oktext.bind="okButtonText"
+         canceltext.bind="cancelButtonText" closable="false" iconclass.bind="iconclass"
+         escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
+    <div  *ngIf="!isApplicationType" wmAlertDialog name="PrefabAlertDialog" title.bind="title" message.bind="text" oktext.bind="okButtonText"
+         canceltext.bind="cancelButtonText" closable="false" iconclass.bind="iconclass"
+         escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
     <div wmAppExt></div>
     <i id="wm-mobile-display"></i>
 </ng-container>

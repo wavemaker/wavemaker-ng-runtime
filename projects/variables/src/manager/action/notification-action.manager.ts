@@ -1,7 +1,7 @@
 import { BaseActionManager } from './base-action.manager';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { initiateCallback, toasterService, dialogService } from '../../util/variable/variables.utils';
-
+import { getWmProjectProperties } from '@wm/core';
 declare const _;
 
 export class NotificationActionManager extends BaseActionManager {
@@ -45,30 +45,34 @@ export class NotificationActionManager extends BaseActionManager {
     }
 
     private notifyViaDialog(variable, options) {
-        const commonPageDialogId = 'Common' + _.capitalize(variable.operation) + 'Dialog',
-            dialogId = commonPageDialogId;
+        const commonPageDialogId = 'Common' + _.capitalize(variable.operation) + 'Dialog';
+        let dialogId = commonPageDialogId;
         const closeCallBackFn = () => initiateCallback('onOk', variable, options.data);
-        dialogService.open(dialogId, undefined, {
-            notification: {
-                'title' : options.title || variable.dataBinding.title,
-                'text' : options.message || variable.dataBinding.text,
-                'okButtonText' : options.okButtonText || variable.dataBinding.okButtonText || 'OK',
-                'cancelButtonText' : options.cancelButtonText || variable.dataBinding.cancelButtonText || 'CANCEL',
-                'alerttype' : options.alerttype || variable.dataBinding.alerttype || 'information',
-                onOk: () => {
-                    // Close the action dialog after triggering onOk callback event
-                    dialogService.close(dialogId, undefined, closeCallBackFn);
-                },
-                onCancel: () => {
-                    initiateCallback('onCancel', variable, options.data);
-                    // Close the action dialog after triggering onCancel callback event
-                    dialogService.close(dialogId, undefined);
-                },
-                onClose: () => {
-                    initiateCallback('onClose', variable, options.data);
-                }
+        const isPrefabType = getWmProjectProperties().type !== 'APPLICATION';
+        if (isPrefabType) {
+            dialogId = 'Prefab' + _.capitalize(variable.operation) + 'Dialog';
+        }
+        const variableConfig = {
+            'title' : options.title || variable.dataBinding.title,
+            'text' : options.message || variable.dataBinding.text,
+            'okButtonText' : options.okButtonText || variable.dataBinding.okButtonText || 'OK',
+            'cancelButtonText' : options.cancelButtonText || variable.dataBinding.cancelButtonText || 'CANCEL',
+            'alerttype' : options.alerttype || variable.dataBinding.alerttype || 'information',
+            onOk: () => {
+                // Close the action dialog after triggering onOk callback event
+                dialogService.close(dialogId, undefined, closeCallBackFn);
+            },
+            onCancel: () => {
+                initiateCallback('onCancel', variable, options.data);
+                // Close the action dialog after triggering onCancel callback event
+                dialogService.close(dialogId, undefined);
+            },
+            onClose: () => {
+                initiateCallback('onClose', variable, options.data);
             }
-        });
+        };
+        const configInfo = isPrefabType ? variableConfig : {notification: variableConfig};
+        dialogService.open(dialogId, undefined, configInfo);
     }
 
 // *********************************************************** PUBLIC ***********************************************************//
