@@ -3,6 +3,7 @@ import {Component, Injector, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { APPLY_STYLES_TYPE, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
+import {getClonedObject} from "@wm/core";
 
 declare const _, $;
 
@@ -20,6 +21,7 @@ const defaultTreeIconClass = 'plus-minus';
 export class TreeComponent extends StylableComponent implements OnInit {
     static initializeProps = registerProps();
 
+    public selecteditem;
     private nodes;
     private level;
     private orderby;
@@ -30,12 +32,17 @@ export class TreeComponent extends StylableComponent implements OnInit {
     private treeClass;
     private nodeicon;
     private name;
+    private datavalue;
 
     private setting = {
         data: {
             simpleData: {
-                enable: true
+                enable: false
             },
+            key: {
+                children: 'children',
+                name: 'label'
+            }
         },
         view: {
             dblClickExpand: false,
@@ -77,10 +84,17 @@ export class TreeComponent extends StylableComponent implements OnInit {
                 this.treeicon = nv;
                 break;
             case 'nodelabel':
-                this.nodelabel = nv;
+                this.setting.data.key.name = this.labelKey;
+                this.renderTree();
                 break;
-            case 'icon':
-                this.nodeicon = nv;
+            case 'nodechildren':
+                this.setting.data.key.children = this.childrenKey;
+                this.renderTree();
+                break;
+            case 'nodeicon':
+                this.nodeicon = this.iconKey;
+                this.renderTree();
+                break;
             case 'orderby':
                 this.renderTree();
                 break;
@@ -96,14 +110,15 @@ export class TreeComponent extends StylableComponent implements OnInit {
     // expands the tree nodes if the property is selected.
     private expandTree(level, node, childLevel) {
         node.map(childNode => {
-            if ("children" in childNode && !("open" in childNode) && childLevel < level) {
+            const children = this.getChildren(childNode);
+            if (children && !("open" in childNode) && childLevel < level) {
                 childNode["open"] = true;
-                this.expandTree(level, childNode.children, childLevel+1);
+                this.expandTree(level, children, childLevel+1);
             } else {
                 childLevel = 0;
                 return;
             }
-        })
+        });
     }
 
     // sets the template for the tree based on the property selected.
@@ -155,9 +170,11 @@ export class TreeComponent extends StylableComponent implements OnInit {
     private setNodeData(nodes, depth, level, parentNode, type) {
         if(depth === 0) {
             nodes.map(node => {
-                if (node.children) {
-                    this.setNodeData(node.children, depth, level , parentNode, type);
-                } if (node.icon && this.nodelabel == 'icon') {
+                const children = this.getChildren(node);
+                if (children) {
+                    this.setNodeData(children, depth, level , parentNode, type);
+                }
+                if (node.icon && this.nodelabel == 'icon') {
                     node[type] = node.icon;
                 } else if(node.name && this.nodelabel == 'name') {
                     node[type] = node.name;
@@ -167,11 +184,12 @@ export class TreeComponent extends StylableComponent implements OnInit {
             })
         } else {
             nodes.map(node => {
-                if (node.children && level > 1) {
+                const children = this.getChildren(node);
+                if (children && level > 1) {
                     if(depth === level) {
                         parentNode = node;
                     }
-                    this.setNodeData(node.children, depth, level - 1, parentNode, type);
+                    this.setNodeData(children, depth, level - 1, parentNode, type);
                 }
                 if (level === 1 && (type === "name" ? this.nodelabel.includes("label") || this.nodelabel.includes("name"): this.nodeicon.includes("label") || this.nodeicon.includes("name") )) {
                     parentNode[type] = node.name || node.label;
@@ -202,16 +220,21 @@ export class TreeComponent extends StylableComponent implements OnInit {
 
     private getPath(treeNode, path) {
         if(treeNode.getParentNode() === null) {
-            path = "/" + treeNode.name + path;
+            path = "/" + treeNode[this.labelKey] + path;
         } else {
-            path = this.getPath(treeNode.getParentNode(), path) + "/" + treeNode.name;
+            path = this.getPath(treeNode.getParentNode(), path) + "/" + treeNode[this.labelKey];
         }
         return path;
     }
 
     // binds the click event to all nodes to open the child nodes
     public onClick(event, treeId, treeNode, clickFlag) {
-        var treeObj = $.fn.zTree.getZTreeObj(`${this.name}`);
+        if(this.nodeclick === "expand") {
+            var nodes = this.treeObj.getSelectedNodes();
+            if (nodes.length>0) {
+                this.expandNode(nodes[0], !nodes[0].open, true);
+            }
+        }
         let path = this.getPath(treeNode, "");
 
         const eventParams = {
@@ -219,6 +242,8 @@ export class TreeComponent extends StylableComponent implements OnInit {
             "$item"   : treeNode,
             "$path" : path
         };
+
+        this.setSelectedItem(treeNode);
         this.invokeEventCallback('select', eventParams);
     }
 
@@ -233,7 +258,9 @@ export class TreeComponent extends StylableComponent implements OnInit {
             "$path" : path
         };
         this.invokeEventCallback('expand', eventParams);
-        treeNode.children ? treeNode.children.map((el) => {
+
+        const children = this.getChildren(treeNode);
+        children?.map((el) => {
             if (el.isParent) {
                 let ele = $(`#${el.tId}_switch`);
                 $(ele).addClass(self.treeicon || defaultTreeIconClass);
@@ -243,12 +270,14 @@ export class TreeComponent extends StylableComponent implements OnInit {
                     }, 0);
                 });
             }
-        }) : '';
+        });
     }
 
     public onCollapse(event, treeId, treeNode) {
-        let path = this.getPath(treeNode, "");
+        // const el = $(`#${treeNode.tId}_switch`);
+        // $(el).addClass(this.treeicon || defaultTreeIconClass);
 
+        let path = this.getPath(treeNode, "");
         const eventParams = {
             '$event'  : event,
             "$item"   : treeNode,
@@ -257,18 +286,35 @@ export class TreeComponent extends StylableComponent implements OnInit {
         this.invokeEventCallback('collapse', eventParams);
     }
 
+    private getChildren(node) {
+        return node[this.childrenKey];
+    }
+    get childrenKey() {
+        const depth = this.countDepth(this.nodechildren);
+        return depth ? this.nodechildren.split('.').pop() : (this.nodechildren || 'children');
+    }
+    get labelKey() {
+        const depth = this.countDepth(this.nodelabel);
+        return depth ? this.nodelabel.split('.').pop() : (this.nodelabel || 'label');
+    }
+    get iconKey() {
+        const depth = this.countDepth(this.nodeicon);
+        return depth ? this.nodeicon.split('.').pop() : (this.nodeicon || 'icon');
+    }
+
+    get treeObj(){
+        return $.fn.zTree.getZTreeObj(`${this.name}`)
+    }
+
     // function to support backward compatibility of objects
-    public modifyObjects(array) {
+    private modifyObjects(array) {
         array.forEach(obj => {
-          if (obj.label !== undefined) {
-            obj.name = obj.label;
-            delete obj.label;
-          }
-          if (obj.children !== undefined) {
-            this.modifyObjects(obj.children);
+          obj.icon = obj[this.nodeicon];
+          const children = this.getChildren(obj);
+          if (children?.length) {
+            this.modifyObjects(children);
           }
         });
-        return array;
       }
 
     // sets the node children property to parent nodes
@@ -282,12 +328,13 @@ export class TreeComponent extends StylableComponent implements OnInit {
           if(depth === level) {
             parentNode  = nodes[i];
           }
-          if (node.children && node.children.length > 0) {
+          const children = this.getChildren(node);
+          if (children?.length) {
             if (level === 1) {
-                parentNode.children = node.children.map(child => ({ name: child.name, children: child?.children }));
+                parentNode[this.childrenKey] = children.map(child => ({ [this.labelKey]: child[this.labelKey], [this.childrenKey]: this.getChildren(child), icon: child[this.iconKey] }));
                 return;
             } else {
-              this.setNodeChildren(node.children, depth ,level - 1, parentNode);
+              this.setNodeChildren(children, depth ,level - 1, parentNode);
             }
           }
         }
@@ -312,10 +359,11 @@ export class TreeComponent extends StylableComponent implements OnInit {
 
     // Renders the tree on to the dom
     public renderTree() {
-        console.log(this.nodes, 'this.nodes');
         if(this.nodes) {
             this.nativeElement.setAttribute('id', this.name);
-            this.nodes = this.modifyObjects(this.nodes);
+             if(this.nodeicon && this.nodeicon !== 'icon') {
+                this.modifyObjects(this.nodes);
+            }
             this.setTreeTemplate(this.treeClass);
 
             if (this.nodelabel) {
@@ -350,12 +398,48 @@ export class TreeComponent extends StylableComponent implements OnInit {
         let zTree = $.fn.zTree.init($('ul[name="' + this.name + '"]'), this.setting, this.nodes);
 
         $.fn.zTreeKeyboardNavigation(zTree, $('ul[name="' + this.name + '"]'), null, this.treeicon || defaultTreeIconClass);
+    }
 
+    private setSelectedItem(treeNode) {
+        debugger;
+        this.selecteditem = getClonedObject(treeNode) || {};
+        this.selecteditem.path = this.getPath(treeNode, "");
+        const deSelectElm = $(`li[treenode].selected`);
+        deSelectElm.removeClass('selected');
+        const selectElm = $(`#${treeNode.tId}:has(.curSelectedNode)`);
+//        const selectElm = $(`li[treenode]:has(.curSelectedNode)`);
+        selectElm.addClass('selected');
+    }
+
+    private expandNode(node, expand, eventFlag) {
+        this.treeObj.expandNode(node, expand, false, false, eventFlag);
+        const el = $(`#${node.tId}_switch`);
+        $(el).addClass(this.treeicon || defaultTreeIconClass);
     }
 
     ngAfterViewInit(): void {
         setTimeout(() => {
             this.changeTreeIcons(this.treeicon || defaultTreeIconClass);
+
+            if (this.datavalue) {
+                const nodes = this.treeObj.getNodes();
+                let selectNode;
+
+                if (this.datavalue === 'FirstNode'){
+                    if (nodes.length) {
+                        selectNode = nodes[0];
+                    }
+                }
+                if(this.datavalue === 'LastNode') {
+                    if (nodes.length) {
+                        selectNode = nodes[nodes.length - 1]
+                    }
+                }
+                this.treeObj.selectNode(selectNode, false);
+                this.setSelectedItem(selectNode);
+                this.expandNode(selectNode, true, false);
+            }
+
         }, 200);
     }
 }
