@@ -79,9 +79,11 @@ export class TreeComponent extends StylableComponent implements OnInit {
                 if (nv > 0) {
                     this.level = nv;
                 }
+                this.renderTree();
                 break;
             case 'treeicons':
                 this.treeicon = nv;
+                this.renderTree();
                 break;
             case 'nodelabel':
                 this.setting.data.key.name = this.labelKey;
@@ -100,6 +102,7 @@ export class TreeComponent extends StylableComponent implements OnInit {
                 break;
             case 'class':
                 this.treeClass = nv;
+                this.renderTree();
                 break;
             default:
                 super.onPropertyChange(key, nv, ov);
@@ -139,7 +142,7 @@ export class TreeComponent extends StylableComponent implements OnInit {
     private getNodesFromString(value) {
         return value.split(',').map((item) => {
             return {
-                'name': item && item.trim()
+                'label': item && item.trim()
             };
         });
     }
@@ -274,9 +277,6 @@ export class TreeComponent extends StylableComponent implements OnInit {
     }
 
     public onCollapse(event, treeId, treeNode) {
-        // const el = $(`#${treeNode.tId}_switch`);
-        // $(el).addClass(this.treeicon || defaultTreeIconClass);
-
         let path = this.getPath(treeNode, "");
         const eventParams = {
             '$event'  : event,
@@ -290,16 +290,25 @@ export class TreeComponent extends StylableComponent implements OnInit {
         return node[this.childrenKey];
     }
     get childrenKey() {
+        if(!this.nodechildren) {
+            return 'children';
+        }
         const depth = this.countDepth(this.nodechildren);
-        return depth ? this.nodechildren.split('.').pop() : (this.nodechildren || 'children');
+        return depth ? this.nodechildren.split('.').pop() : this.nodechildren;
     }
     get labelKey() {
+        if(!this.nodelabel) {
+            return 'label';
+        }
         const depth = this.countDepth(this.nodelabel);
-        return depth ? this.nodelabel.split('.').pop() : (this.nodelabel || 'label');
+        return depth ? this.nodelabel.split('.').pop() : this.nodelabel;
     }
     get iconKey() {
+        if(!this.nodeicon) {
+            return 'icon';
+        }
         const depth = this.countDepth(this.nodeicon);
-        return depth ? this.nodeicon.split('.').pop() : (this.nodeicon || 'icon');
+        return depth ? this.nodeicon.split('.').pop() : this.nodeicon;
     }
 
     get treeObj(){
@@ -401,13 +410,11 @@ export class TreeComponent extends StylableComponent implements OnInit {
     }
 
     private setSelectedItem(treeNode) {
-        debugger;
         this.selecteditem = getClonedObject(treeNode) || {};
         this.selecteditem.path = this.getPath(treeNode, "");
         const deSelectElm = $(`li[treenode].selected`);
         deSelectElm.removeClass('selected');
         const selectElm = $(`#${treeNode.tId}:has(.curSelectedNode)`);
-//        const selectElm = $(`li[treenode]:has(.curSelectedNode)`);
         selectElm.addClass('selected');
     }
 
