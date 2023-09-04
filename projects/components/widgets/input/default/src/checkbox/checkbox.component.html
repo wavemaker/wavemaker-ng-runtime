@@ -14,7 +14,15 @@
            [tabindex]="tabindex"
            (blur)="invokeOnTouched($event)"
            (ngModelChange)="handleChange($event)">
-    <span class="caption" [innerHtml]="_caption"></span>
+           <span class="toggle_slider">
+            <i class="app-icon {{checkedicon}} toggle-checked" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}" *ngIf="proxyModel"></i>
+            <i class="app-icon {{uncheckedicon}} toggle-unchecked" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}" *ngIf="!proxyModel"></i>
+           </span>
+           <span class="caption" [innerHtml]="_caption" class="ng-hide"></span>
+    
+
+
+    
     <img alt="Checkbox Image" aria-hidden="true" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="switch"/>
 </label>
 <input type="hidden" class="ng-hide model-holder" aria-hidden="true" tabindex="-1" [disabled]="disabled" [value]="proxyModel">

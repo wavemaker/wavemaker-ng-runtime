@@ -18,7 +18,11 @@ export const checkboxProps = new Map(
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['uncheckedvalue', {value: false, ...PROP_STRING}]
+        ['uncheckedvalue', {value: false, ...PROP_STRING}],
+        ['togglewithicon', PROP_BOOLEAN],
+        ['checkedicon', PROP_STRING],
+        ['uncheckedicon', PROP_STRING]
+
     ]
 );
 

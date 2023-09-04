@@ -59,6 +59,11 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     public _caption = '&nbsp';
     private _checkedvalue;
     private _uncheckedvalue;
+    public togglewithicon:boolean;
+    public checkedicon:string;
+    public uncheckedicon:string;
+
+
 
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('checkbox', { static: true, read: ElementRef }) checkboxEl: ElementRef;
@@ -85,9 +90,12 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
 
         this._checkedvalue = unStringify(checkedVal, true);
         this._uncheckedvalue = unStringify(uncheckedVal, false);
-
         // if the type of the checkbox is toggle update the related classes on the host node
         toggleClass(this.nativeElement, 'app-toggle', type === 'toggle');
+        // toggleClass(this.nativeElement, 'toggle-button', type === 'toggle' && this._m3 == true);
+        // toggleClass(this.nativeElement, 'toggle-button', type === 'toggle');
+
+
     }
 
     onPropertyChange(key, nv, ov) {
