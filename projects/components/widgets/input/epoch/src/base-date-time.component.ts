@@ -83,6 +83,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public next;
     public prev;
     public clicked = false;
+    private loadedOnce: boolean = false;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -391,8 +392,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (event.originalEvent) {
                 this.setFocusForDate(-1);
             }
+            var prevMon = this.getMonth(this.activeDate, -1);
+            $(`.bs-datepicker-head .previous`).prepend(`<div aria-hidden=false class="sr-only-focusable">Changed to Previous Month, ${prevMon.fullMonth} and year ${prevMon.date.getFullYear()}</div>`);
+
             setTimeout(() => {
-                $(`.bs-datepicker-head .previous`).focus();
+               $(`.bs-datepicker-head .previous`).focus();
             });
 
         });
@@ -404,6 +408,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (event.originalEvent) {
                 this.setFocusForDate(1);
             }
+            var nextMon = this.getMonth(this.activeDate, 1);
+            $(`.bs-datepicker-head .next`).prepend(`<div aria-hidden=false class="sr-only-focusable">Changed to Next Month, ${nextMon.fullMonth} and year ${nextMon.date.getFullYear()}</div>`);
             setTimeout(() => {
                 $(`.bs-datepicker-head .next`).focus();
             });
@@ -420,24 +426,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForMonthOrDay();
-            }
-        });
-        datePickerHead.find('.next').attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
-        datePickerHead.find('.previous').attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
-        setTimeout(() => {
-            const currentNodes = datePickerHead.find('.current span');
-            const msg = 'Changed to month ';
-            // currentNodes.each((i) => {
-            //     msg =`${msg} ${$(currentNodes[i]).text()}`;
-            // });
-            datePickerHead.find('.current').attr("aria-live", "assertive").attr("aria-atomic", "false");
-            if (this.clicked) {
-                if ($(currentNodes[0]).text()) {
-                    datePickerHead.find('.ng-star-inserted').prepend(`<div class="sr-only">${msg}</div>`);
-                }
-                if ($(currentNodes[1]).text()) {
-                    datePickerHead.find('.current').last().prepend(`<div class="sr-only"> and year </div>`);
-                }
             }
         });
     }
