@@ -37,6 +37,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public transition: string;
     public tabsposition: string;
     public statehandler: any;
+    public tabTitlesLoaded: boolean;
     private statePersistence: StatePersistence;
 
     public vertical: boolean;
@@ -227,7 +228,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             headerElement = this.nativeElement.querySelector(`li[data-paneid=${paneRef.widgetId}]`);
             const insideTabs = !!$(headerElement).closest('.app-tabs')
                 .parent().closest('.app-tabs').length;
-            if (!insideTabs) { 
+            if (!insideTabs) {
                 $(headerElement).children().focus();
             }
         }
@@ -439,6 +440,9 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
+        this.tabTitlesLoaded = true;
         this.registerTabsScroll();
+            // Perform actions after the view and content have been initialized
+
     }
 }
