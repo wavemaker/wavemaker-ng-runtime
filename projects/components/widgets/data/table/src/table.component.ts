@@ -869,6 +869,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return;
         }
         this.variableInflight = false;
+        // Fix for [WMS-24108]: Change the status to ready or nodata found when variableInflight is false(after getting the data)
+        if (newValue && (newValue.length) === 0) {
+            this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+        } else {
+            this.callDataGridMethod('setStatus', 'ready');
+        }
         if (this.gridOptions.isNavTypeScrollOrOndemand()) {
             // update the _gridData field with the next set of items and modify the current page
             [this._gridData, this.currentPage] = this.paginationService.updateFieldsOnPagination(this, newValue);
