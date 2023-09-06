@@ -1,9 +1,7 @@
-import {Component, Injector, OnInit, ViewEncapsulation } from '@angular/core';
-
-
-import { APPLY_STYLES_TYPE, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { Attribute, Component, Injector, OnInit, ViewEncapsulation } from '@angular/core';
+import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
-import {getClonedObject} from "@wm/core";
+import { getClonedObject } from "@wm/core";
 
 declare const _, $;
 
@@ -22,6 +20,7 @@ export class TreeComponent extends StylableComponent implements OnInit {
     static initializeProps = registerProps();
 
     public selecteditem: any;
+    public nodeid: string;
     private nodes;
     private level;
     private orderby;
@@ -60,7 +59,8 @@ export class TreeComponent extends StylableComponent implements OnInit {
     };
 
     constructor(
-        inj: Injector
+        inj: Injector,
+        @Attribute('nodeid.bind') private bindnodeid
     ) {
         super(inj, WIDGET_INFO);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
@@ -238,16 +238,7 @@ export class TreeComponent extends StylableComponent implements OnInit {
                 this.expandNode(nodes[0], !nodes[0].open, true);
             }
         }
-        let path = this.getPath(treeNode, "");
-
-        const eventParams = {
-            '$event'  : event,
-            "$item"   : treeNode,
-            "$path" : path
-        };
-
-        this.setSelectedItem(treeNode);
-        this.invokeEventCallback('select', eventParams);
+        this.selectNode(event, treeNode);
     }
 
     // Adds tree icon classes to child nodes when expanded
@@ -410,13 +401,26 @@ export class TreeComponent extends StylableComponent implements OnInit {
         this.postRenderTree();
     }
 
-    private setSelectedItem(treeNode) {
-        this.selecteditem = getClonedObject(treeNode) || {};
-        this.selecteditem.path = this.getPath(treeNode, "");
+    private selectNode(event, node) {
         const deSelectElm = $(`.app-tree[name=${this.name}] li[treenode].selected`);
         deSelectElm.removeClass('selected');
-        const selectElm = $(`#${treeNode.tId}:has(.curSelectedNode)`);
+
+        if(!node) {
+            return;
+        }
+        const selectElm = $(`#${node.tId}:has(.curSelectedNode)`);
         selectElm.addClass('selected');
+
+        const path = this.getPath(node, "");
+        this.selecteditem = getClonedObject(node) || {};
+        this.selecteditem.path = path;
+
+        const eventParams = {
+            '$event'  : event,
+            "$item"   : node,
+            "$path" : path
+        };
+        this.invokeEventCallback('select', eventParams);
     }
 
     private expandNode(node, expand, eventFlag) {
@@ -431,24 +435,35 @@ export class TreeComponent extends StylableComponent implements OnInit {
 
             if (this.datavalue && !this.selecteditem) {
                 const nodes = this.treeObj.getNodes();
-                let selectNode;
+                let node;
+                if(nodes.length) {
+                    if (this.datavalue === 'FirstNode') {
+                        node = nodes[0];
+                    }
+                    if(this.datavalue === 'LastNode') {
+                        node = nodes[nodes.length - 1]
+                    }
+                }
 
-                if (this.datavalue === 'FirstNode') {
-                    if (nodes.length) {
-                        selectNode = nodes[0];
-                    }
-                }
-                if(this.datavalue === 'LastNode') {
-                    if (nodes.length) {
-                        selectNode = nodes[nodes.length - 1]
-                    }
-                }
-                if(selectNode) {
-                    this.treeObj.selectNode(selectNode, false);
-                    this.setSelectedItem(selectNode);
-                    this.expandNode(selectNode, true, false);
+                if(node) {
+                    this.treeObj.selectNode(node, false);
+                    this.selectNode(undefined, node);
+                    this.expandNode(node, true, false);
                 }
             }
         }, 200);
+    }
+
+    private selectById(value?) {
+        const simpleNodes = this.treeObj.transformToArray(this.treeObj.getNodes());
+        const node = simpleNodes.find(node => value === getEvaluatedData(node, {field: this.nodeid, bindExpression: this.bindnodeid}, this.viewParent));
+        if(node) {
+            this.treeObj.selectNode(node, false);
+            this.selectNode(undefined, node);
+        }
+    }
+    private deselectById(value?) {
+        this.selecteditem = {};
+        this.selectById();
     }
 }
