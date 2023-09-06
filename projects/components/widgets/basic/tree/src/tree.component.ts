@@ -21,7 +21,7 @@ const defaultTreeIconClass = 'plus-minus';
 export class TreeComponent extends StylableComponent implements OnInit {
     static initializeProps = registerProps();
 
-    public selecteditem;
+    public selecteditem: any;
     private nodes;
     private level;
     private orderby;
@@ -407,12 +407,13 @@ export class TreeComponent extends StylableComponent implements OnInit {
         let zTree = $.fn.zTree.init($('ul[name="' + this.name + '"]'), this.setting, this.nodes);
 
         $.fn.zTreeKeyboardNavigation(zTree, $('ul[name="' + this.name + '"]'), null, this.treeicon || defaultTreeIconClass);
+        this.postRenderTree();
     }
 
     private setSelectedItem(treeNode) {
         this.selecteditem = getClonedObject(treeNode) || {};
         this.selecteditem.path = this.getPath(treeNode, "");
-        const deSelectElm = $(`li[treenode].selected`);
+        const deSelectElm = $(`.app-tree[name=${this.name}] li[treenode].selected`);
         deSelectElm.removeClass('selected');
         const selectElm = $(`#${treeNode.tId}:has(.curSelectedNode)`);
         selectElm.addClass('selected');
@@ -424,15 +425,15 @@ export class TreeComponent extends StylableComponent implements OnInit {
         $(el).addClass(this.treeicon || defaultTreeIconClass);
     }
 
-    ngAfterViewInit(): void {
+    private postRenderTree() {
         setTimeout(() => {
             this.changeTreeIcons(this.treeicon || defaultTreeIconClass);
 
-            if (this.datavalue) {
+            if (this.datavalue && !this.selecteditem) {
                 const nodes = this.treeObj.getNodes();
                 let selectNode;
 
-                if (this.datavalue === 'FirstNode'){
+                if (this.datavalue === 'FirstNode') {
                     if (nodes.length) {
                         selectNode = nodes[0];
                     }
@@ -442,11 +443,12 @@ export class TreeComponent extends StylableComponent implements OnInit {
                         selectNode = nodes[nodes.length - 1]
                     }
                 }
-                this.treeObj.selectNode(selectNode, false);
-                this.setSelectedItem(selectNode);
-                this.expandNode(selectNode, true, false);
+                if(selectNode) {
+                    this.treeObj.selectNode(selectNode, false);
+                    this.setSelectedItem(selectNode);
+                    this.expandNode(selectNode, true, false);
+                }
             }
-
         }, 200);
     }
 }
