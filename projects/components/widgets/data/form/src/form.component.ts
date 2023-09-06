@@ -74,15 +74,19 @@ const findInvalidElement = ($formEle, ngForm) => {
     };
 };
 
-const setTouchedState = ngForm => {
+const setTouchedState = (self, ngForm, fieldName) => {
     if (ngForm.valid) {
         return;
     }
     if (ngForm.controls) {
-        _.forEach(ngForm.controls, ctrl => {
-            setTouchedState(ctrl);
+        _.forEach(ngForm.controls, (ctrl, fieldName) => {
+            setTouchedState(self, ctrl, fieldName);
         });
     } else {
+        const element = self.$element.find(`[wmformfield][key="${fieldName}"]`);
+        element[0].setAttribute('__errormsg', element[0].getAttribute('__validationId'));
+        element[0].querySelector('input')?.setAttribute('aria-invalid', ngForm.invalid);
+        element[0].querySelector('input')?.setAttribute('aria-describedby', element[0].getAttribute('__validationId'));
         ngForm.markAsTouched();
     }
 };
@@ -484,7 +488,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
 
     // This method loops through the form fields and highlights the invalid fields by setting state to touched
     highlightInvalidFields() {
-        setTouchedState(this.ngform);
+        setTouchedState(this, this.ngform, '');
     }
 
     // Disable the form submit if form is in invalid state. Highlight all the invalid fields if validation type is default

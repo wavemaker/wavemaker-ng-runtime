@@ -171,7 +171,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             this.anchorRef.nativeElement.onmouseenter = () => clearTimeout(this.closePopoverTimeout);
             this.anchorRef.nativeElement.onmouseleave = () => this.hidePopover();
         }
-
+        setTimeout(() => {
+            this.anchorRef.nativeElement.removeAttribute('aria-describedby');
+        });
         const deRegister = this.eventManager.addEventListener(popoverContainer, 'keydown.esc', () => {
             this.isOpen = false;
             this.setFocusToPopoverLink();
@@ -205,7 +207,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             popoverContainer.onclick = () => this.close();
         }
 
-        setAttr(popoverContainer, 'tabindex', 0);
         setTimeout(() => popoverStartBtn.focus(), 50);
         // Adjusting popover position if the popover placement is top or bottom
         setTimeout( () => {

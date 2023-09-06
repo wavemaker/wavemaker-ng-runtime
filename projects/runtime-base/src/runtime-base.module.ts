@@ -46,6 +46,7 @@ import { ToasterServiceImpl } from './services/toaster.service';
 import { I18nServiceImpl } from './services/i18n.service';
 import { SpinnerServiceImpl } from './services/spinner.service';
 import { NavigationServiceImpl } from './services/navigation.service';
+import { PipeService } from "./services/pipe.service";
 import { AppDefaultsService } from './services/app-defaults.service';
 import { AppManagerService } from './services/app.manager.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
@@ -331,6 +332,7 @@ export class RuntimeBaseModule {
                     useClass: HttpCallInterceptor,
                     multi: true
                 },
+                PipeService,
                 DecimalPipe,
                 DatePipe,
                 AppManagerService,

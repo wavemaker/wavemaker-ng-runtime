@@ -3,6 +3,7 @@ import { forwardRef } from '@angular/core';
 import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr, getClonedObject, prettifyLabel, initCaps, deHyphenate, checkIsCustomPipeExpression } from '@wm/core';
 import { DialogRef, WidgetRef } from '../widgets/framework/types';
 import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
+import { NavNode } from "../widgets/common/base/dataset-aware-nav.component";
 
 declare const _;
 
@@ -138,6 +139,21 @@ export const isActiveNavItem = (link, routeName) => {
     return routeRegex.test(link);
 };
 
+/**
+* returns true if the menu has link to the current page.
+* @param nodes
+* @param routeUrl
+*/
+export const hasLinkToCurrentPage = (nodes: Array<NavNode>, routeUrl) => {
+    return nodes.some(node => {
+        if (isActiveNavItem(node.link, routeUrl)) {
+            return true;
+        }
+        if (node.children) {
+            return hasLinkToCurrentPage(node.children, routeUrl);
+        }
+    });
+}
 
 /**
  * Returns the orderBy Expression based on the 'sort 'option in pageable object
@@ -509,9 +525,10 @@ export const setFocusTrap = (container, allowOutsideClick, setReturnFocusElement
  * @returns {Array}
  */
 export const getKeyboardFocusableElements = (element: HTMLElement) => {
-    return [element.querySelectorAll(
-        'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
-    )].filter(el => {
-        return (!el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'));
-    })[0];
+    const elementNodeList = element.querySelectorAll('a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable]');
+    const elements = Array.from(elementNodeList);
+    return elements.filter(el => {
+        return (!el.hasAttribute('disabled') && !el.hasAttribute('hidden')
+            && (!el.hasAttribute('tabindex') || (el.hasAttribute('tabindex') && !el.getAttribute("tabindex").startsWith('-'))));
+    });
 }

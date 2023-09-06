@@ -138,6 +138,10 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
             // setting default tab pane on pageload whenever show property is bindable
             if (this._isFirstLoad) {
                 (this as any).tabsRef.selectDefaultPaneByIndex((this as any).tabsRef.defaultpaneindex);
+            } else if (!nv && this.isActive) {
+                (this as any).tabsRef.next();
+            } else if (nv || !this.isActive) {
+                (this as any).tabsRef.tabsAnimator?.transitionTabIntoView();
             }
             this._isFirstLoad = false;
         } else {

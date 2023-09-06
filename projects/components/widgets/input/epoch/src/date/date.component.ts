@@ -209,7 +209,6 @@ export class DateComponent extends BaseDateTimeComponent {
             if(!skipFocus){
                 this.onDateTimeInputFocus();
             }
-            return;
         }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', { $event: $event });
@@ -243,7 +242,7 @@ export class DateComponent extends BaseDateTimeComponent {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-            if (action === 'enter' || action === 'arrowdown') {
+            if (action === 'enter') {
                 const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this);

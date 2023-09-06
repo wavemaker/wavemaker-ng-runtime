@@ -2,7 +2,8 @@
         focus-target
         type="text"
         [name]="name"
-        [tabindex]="tabindex"
+        [tabindex]="loadNativeDateInput ? '-1' : tabindex"
+        [attr.aria-hidden]="!!loadNativeDateInput"
         [value]="displayValue"
         (click)="toggleDpDropdown($event, true)"
         (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
@@ -20,7 +21,8 @@
     <span class="input-group-btn">
         <button type="button"
             class="btn btn-default btn-time"
-            [tabindex]="tabindex"
+            [tabindex]="loadNativeDateInput ? '-1' : tabindex"
+            [attr.aria-hidden]="!!loadNativeDateInput"
             [disabled]="disabled || readonly"
             [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : 'Choose date by pressing enter'"
             aria-haspopup="true"
@@ -34,6 +36,8 @@
     <input class="model-holder"
         aria-label="datepicker dropdownmenu"
         aria-controls="date"
+        [tabindex]="-1"
+        [attr.aria-hidden]="!!loadNativeDateInput"
         [container]="containerTarget || 'body'"
         [bsConfig]="_dateOptions"
         [isOpen]="isOpen"
@@ -62,9 +66,10 @@
         (change)="onDateChange($event)">
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
-        tabindex="1000000"
+        [tabindex]="tabindex || 0"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
+        [attr.aria-label]="displayValue ? 'Change Date' + displayValue : 'Choose Date'"
         (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal()">
     </div>
 </ng-template>

@@ -438,7 +438,9 @@ export class TableFilterSortDirective {
                     data,
                     sortDirection: sortObj.direction,
                     colDef: this.table.columns[sortObj.field]
-                }});
+
+                    }
+            });
         });
     }
 

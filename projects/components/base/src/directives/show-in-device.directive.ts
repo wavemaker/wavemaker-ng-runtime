@@ -49,12 +49,24 @@ export class ShowInDeviceDirective implements OnDestroy {
     5. For all, always render the view.
      */
     private onResize($event?) {
+
+        const lgWidth = getComputedStyle(document.documentElement).getPropertyValue('--screen-lg') || '1200px';
+        const mdWidth = getComputedStyle(document.documentElement).getPropertyValue('--screen-md') || '992px';
+        const smWidth = getComputedStyle(document.documentElement).getPropertyValue('--screen-sm') || '768px';
+        const lgTabLandScapeWidth = getComputedStyle(document.documentElement).getPropertyValue('--screen-lg-tab-landscape') || '1366px';
+        const lgTabPortraitWidth = getComputedStyle(document.documentElement).getPropertyValue('--screen-lg-tab-portrait') || '1024px';
+        const lgWidthMin = parseFloat(lgWidth)-1;
+        const lgUnit =  lgWidthMin + "px";
+        const mdWidthMin = parseFloat(mdWidth)-1;
+        const mdUnit = mdWidthMin + "px";
+        const smWidthMin = parseFloat(smWidth)-1;
+        const smUnit = smWidthMin + "px";
         if (
-            (this.devices.indexOf('lg') > -1 && window.matchMedia("(min-width: 1200px)").matches && !isLargeTabletLandscape())
-        ||  (this.devices.indexOf('md') > -1 && (isLargeTabletLandscape() || (window.matchMedia("(min-width: 992px) and (max-width: 1199px)").matches && !isLargeTabletPortrait())))
-        ||  (this.devices.indexOf('sm') > -1 && (window.matchMedia("(min-width: 768px) and (max-width: 991px)").matches || isLargeTabletPortrait()))
-        ||  (this.devices.indexOf('xs') > -1 && window.matchMedia("(max-width: 767px)").matches)
-        ||  (this.devices.indexOf('all') > -1)) {
+            (this.devices.indexOf('lg') > -1 && window.matchMedia("(min-width: "+lgWidth+")").matches && !isLargeTabletLandscape(lgTabLandScapeWidth, lgTabPortraitWidth))
+            ||  (this.devices.indexOf('md') > -1 && (isLargeTabletLandscape(lgTabLandScapeWidth, lgTabPortraitWidth) || (window.matchMedia("(min-width: "+mdWidth+") and (max-width: "+lgUnit +")").matches && !isLargeTabletPortrait(lgTabLandScapeWidth, lgTabPortraitWidth))))
+            ||  (this.devices.indexOf('sm') > -1 && (window.matchMedia("(min-width: "+smWidth+") and (max-width: "+mdUnit+")").matches || isLargeTabletPortrait(lgTabLandScapeWidth, lgTabPortraitWidth)))
+            ||  (this.devices.indexOf('xs') > -1 && window.matchMedia("(max-width: "+smUnit+")").matches)
+            ||  (this.devices.indexOf('all') > -1)) {
             if (!this.embeddedView) {
                 this.embeddedView = this.viewContainerRef.createEmbeddedView(this.templateRef, this.context);
             }

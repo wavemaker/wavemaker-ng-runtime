@@ -32,7 +32,7 @@ describe('ToNumber pipe', () => {
     let pipe: ToNumberPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new ToNumberPipe(TestBed.inject(DecimalPipe));
+        // pipe = new ToNumberPipe(TestBed.inject(DecimalPipe));
     });
 
     it('create an instance', () => {
@@ -80,7 +80,7 @@ describe('ToDate pipe', () => {
     let pipe: ToDatePipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new ToDatePipe(TestBed.inject(DatePipe));
+        // pipe = new ToDatePipe(TestBed.inject(DatePipe));
     });
 
     it('create an instance', () => {
@@ -168,7 +168,7 @@ describe('NumberToString pipe', () => {
     let pipe: NumberToStringPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new NumberToStringPipe(TestBed.inject(DecimalPipe));
+        // pipe = new NumberToStringPipe(TestBed.inject(DecimalPipe));
     });
 
     it('create an instance', () => {
@@ -238,7 +238,7 @@ describe('ToCurrency pipe', () => {
     let pipe: ToCurrencyPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new ToCurrencyPipe(TestBed.inject(DecimalPipe));
+        // pipe = new ToCurrencyPipe(TestBed.inject(DecimalPipe));
     });
 
     it('create an instance', () => {

@@ -9,6 +9,8 @@ import {
     closePopover,
     findRootContainer,
     generateGUId,
+    isMobile,
+    isMobileApp,
     UserDefinedExecutionContext
 } from '@wm/core';
 
@@ -17,9 +19,9 @@ import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
 
 declare const _;
 
-let eventsRegistered = false;
+const eventsRegistered = false;
 
-let focusTrapObj = {
+const focusTrapObj = {
     activeElement: null
 };
 
@@ -39,7 +41,7 @@ const invokeOpenedCallback = (ref) => {
                 'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
               )].filter(el => {
                 return (
-                  !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'))
+                  !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'));
               })[0];
 
             $(keyboardFocusableElements[0]).focus();
@@ -71,7 +73,8 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
     private readonly bsModal: BsModalService;
 
     private dialogRef: BsModalRef;
-    public titleId:string = 'wmdialog-' + generateGUId();
+    private dialogId: number;
+    public titleId: string = 'wmdialog-' + generateGUId();
 
     protected constructor(
         inj: Injector,
@@ -85,19 +88,26 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         const router = inj.get(Router);
 
         const subscriptions: Subscription[] = [
-            this.bsModal.onShown.subscribe(() => {
+            this.bsModal.onShown.subscribe(({id}) => {
                 const ref = this.dialogService.getLastOpenedDialog();
-                if (ref === this) {
+                if (ref === this && !this.dialogId) {
                     // Always get the reference of last pushed dialog in the array for calling onOpen callback
                     invokeOpenedCallback(ref);
+                    this.dialogId = id;
                 }
             }),
             this.bsModal.onShow.subscribe(() => {
                 focusTrapObj.activeElement = document.activeElement;
             }),
             this.bsModal.onHidden.subscribe((closeReason) => {
-                const ref = closeReason === 'esc' || closeReason === 'backdrop-click' ? this.dialogService.getLastOpenedDialog() : this.dialogService.getDialogRefFromClosedDialogs();
+                let ref = this.dialogService.getDialogRefFromClosedDialogs();
+                if (this.dialogId && closeReason?.id === this.dialogId) {
+                    ref = this;
+                } else if (closeReason === 'esc' || closeReason === 'backdrop-click') {
+                    ref = this.dialogService.getLastOpenedDialog();
+                }
                 if (ref === this) {
+                    this.dialogId = null;
                     // remove the dialog reference from opened dialogs and closed dialogs
                     this.dialogService.removeFromOpenedDialogs(ref);
                     this.dialogService.removeFromClosedDialogs(ref);
@@ -151,6 +161,11 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         Object.assign(this.context, initState);
         this.modalOptions.ariaLabelledBy = this.titleId;
         this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
+        // Fix for [WMS-23948]: Focus moving out of active Dialog widget
+        if (this.dialogService.getOpenedDialogs().length === 1 && (isMobile() || isMobileApp())) {
+            const parentSelector = $('body > app-root')[0];
+            parentSelector.setAttribute('aria-hidden', 'true');
+        }
     }
 
     /**

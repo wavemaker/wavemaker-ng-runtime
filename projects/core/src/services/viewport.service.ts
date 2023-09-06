@@ -2,9 +2,9 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { EventNotifier } from '../utils/event-notifier';
 import { isAndroid, isAndroidTablet, isIos, isIpad } from '../utils/utils';
 
-const MINIMUM_MOBILE_WIDTH = 480;
-const MINIMUM_TAB_WIDTH = 768;
-const MINIMUM_LARGE_SCREEN_WIDTH = 1280;
+let MINIMUM_MOBILE_WIDTH = 480;
+let MINIMUM_TAB_WIDTH = 768;
+let MINIMUM_LARGE_SCREEN_WIDTH = 1280;
 
 const enum SCREEN_TYPE {
     MOBILE,
@@ -102,6 +102,8 @@ export class Viewport implements IViewportService, OnDestroy {
                 this.isMobileType = true;
             }
         } else {
+             MINIMUM_MOBILE_WIDTH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--screen-xs')) || 480;
+             MINIMUM_TAB_WIDTH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--screen-sm')) || 768;
             // Tablet specification: min >= 480 max >= 768
             if (minValue >= MINIMUM_MOBILE_WIDTH && maxValue >= MINIMUM_TAB_WIDTH) {
                 this.type = SCREEN_TYPE.TABLET;

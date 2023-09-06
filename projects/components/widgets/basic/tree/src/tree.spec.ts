@@ -2,7 +2,7 @@ import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angul
 import { Component, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
-import {TreeDirective} from "./tree.directive";
+import {TreeComponent} from "./tree.component";
 import {PipeProvider} from "../../../../../runtime-base/src/services/pipe-provider.service";
 import {App, setPipeProvider} from "@wm/core";
 import {TrustAsPipe} from "../../../../base/src/pipes/trust-as.pipe";
@@ -23,7 +23,7 @@ const markup = `
     template: markup
 })
 class TreeSpec {
-    @ViewChild(TreeDirective, /* TODO: add static flag */ {static: true}) tree: TreeDirective;
+    @ViewChild(TreeComponent, /* TODO: add static flag */ {static: true}) tree: TreeComponent;
     public testdata: any = [
         {
             "key": "a val",
@@ -63,7 +63,7 @@ describe('wm-tree: Widget specific test cases', () => {
 
     beforeEach(waitForAsync(()=>{
         TestBed.configureTestingModule({
-            declarations: [TreeSpec, TreeDirective],
+            declarations: [TreeSpec, TreeComponent],
             providers: [
                 {provide: App, useValue: mockApp},
                 {provide: TrustAsPipe, useClass: TrustAsPipe},

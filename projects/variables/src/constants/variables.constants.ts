@@ -1,3 +1,4 @@
+import {$rootScope as rootScope} from '@wavemaker/variables';
 export const CONSTANTS = {
     hasCordova: window['cordova'] !== undefined,
     isStudioMode: false,
@@ -325,11 +326,4 @@ export const VARIABLE_URLS = {
     }
 };
 
-export const $rootScope = {
-    project: {
-        deployedUrl: './',
-        id: 'temp_id'
-    },
-    projectName: 'test_project_name',
-    isApplicationType: true
-};
+export const $rootScope = rootScope;

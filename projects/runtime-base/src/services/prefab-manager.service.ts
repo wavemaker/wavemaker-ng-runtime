@@ -53,6 +53,7 @@ export class PrefabManagerService {
     // TODO [Vinay] - implement onPrefabResourceLoad
     protected loadScripts(prefabName, {resources: {scripts}} = {resources: {scripts: []}}): Promise<any> {
         const baseUrl = getPrefabBaseUrl(prefabName);
+        scripts = scripts.filter(script => !script.startsWith('npm://'));
         const _scripts = scripts.map(url => getPrefabResourceUrl(url, baseUrl));
 
         return loadScripts(_scripts, true);

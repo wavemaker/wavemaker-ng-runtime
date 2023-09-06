@@ -1,7 +1,7 @@
 import { BaseActionManager } from './base-action.manager';
 import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { initiateCallback, toasterService, dialogService } from '../../util/variable/variables.utils';
-
+import { getWmProjectProperties } from '@wm/core';
 declare const _;
 
 export class NotificationActionManager extends BaseActionManager {
@@ -44,32 +44,38 @@ export class NotificationActionManager extends BaseActionManager {
         }
     }
 
-    private notifyViaDialog(variable, options) {
-        const commonPageDialogId = 'Common' + _.capitalize(variable.operation) + 'Dialog',
-            variableOwner = variable.owner,
-            dialogId = (variableOwner === VARIABLE_CONSTANTS.OWNER.APP ) ? commonPageDialogId : 'notification' + variable.operation + 'dialog';
-        const closeCallBackFn = () => initiateCallback('onOk', variable, options.data);
-        dialogService.open(dialogId,  variable._context, {
-            notification: {
-                'title' : options.title || variable.dataBinding.title,
-                'text' : options.message || variable.dataBinding.text,
-                'okButtonText' : options.okButtonText || variable.dataBinding.okButtonText || 'OK',
-                'cancelButtonText' : options.cancelButtonText || variable.dataBinding.cancelButtonText || 'CANCEL',
-                'alerttype' : options.alerttype || variable.dataBinding.alerttype || 'information',
-                onOk: () => {
-                    // Close the action dialog after triggering onOk callback event
-                    dialogService.close(dialogId, variable._context, closeCallBackFn);
-                },
-                onCancel: () => {
-                    initiateCallback('onCancel', variable, options.data);
-                    // Close the action dialog after triggering onCancel callback event
-                    dialogService.close(dialogId, variable._context);
-                },
-                onClose: () => {
-                    initiateCallback('onClose', variable, options.data);
-                }
+    private getDialogConfig(variable, options, dialogId, closeCallBackFn) {
+        return {
+            'title' : options.title || variable.dataBinding.title,
+            'text' : options.message || variable.dataBinding.text,
+            'okButtonText' : options.okButtonText || variable.dataBinding.okButtonText || 'OK',
+            'cancelButtonText' : options.cancelButtonText || variable.dataBinding.cancelButtonText || 'CANCEL',
+            'alerttype' : options.alerttype || variable.dataBinding.alerttype || 'information',
+            onOk: () => {
+                // Close the action dialog after triggering onOk callback event
+                dialogService.close(dialogId, undefined, closeCallBackFn);
+            },
+            onCancel: () => {
+                initiateCallback('onCancel', variable, options.data);
+                // Close the action dialog after triggering onCancel callback event
+                dialogService.close(dialogId, undefined);
+            },
+            onClose: () => {
+                initiateCallback('onClose', variable, options.data);
             }
-        });
+        };
+    }
+
+    private notifyViaDialog(variable, options) {
+        const isPrefabType = getWmProjectProperties().type === 'PREFAB';
+        const dialogPrefix = isPrefabType ? 'Prefab' : 'Common';
+        const dialogId = dialogPrefix + _.capitalize(variable.operation) + 'Dialog';
+        const closeCallBackFn = () => initiateCallback('onOk', variable, options.data);
+
+
+        let dialogConfig: any = this.getDialogConfig(variable, options, dialogId, closeCallBackFn);
+        dialogConfig = isPrefabType ? dialogConfig : { notification: dialogConfig };
+        dialogService.open(dialogId, undefined, dialogConfig);
     }
 
 // *********************************************************** PUBLIC ***********************************************************//

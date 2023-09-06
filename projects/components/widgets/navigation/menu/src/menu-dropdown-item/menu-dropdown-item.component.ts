@@ -1,7 +1,7 @@
-import { Component, ElementRef, HostListener, Input, OnInit, Optional } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 
-import { addClass, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
-import { isActiveNavItem } from '@wm/components/base';
+import { addClass, triggerItemAction, UserDefinedExecutionContext, App, toggleClass } from '@wm/core';
+import { hasLinkToCurrentPage } from '@wm/components/base';
 import { NavComponent } from '../nav/nav.component';
 
 import { KEYBOARD_MOVEMENTS, MENU_POSITION, MenuComponent } from '../menu.component';
@@ -23,7 +23,7 @@ const MENU_LAYOUT_TYPE = {
     selector: 'li[wmMenuDropdownItem]',
     templateUrl: './menu-dropdown-item.component.html',
 })
-export class MenuDropdownItemComponent implements OnInit {
+export class MenuDropdownItemComponent implements OnInit, OnDestroy {
 
     public menualign: string;
 
@@ -32,8 +32,10 @@ export class MenuDropdownItemComponent implements OnInit {
     @Input() item;
 
     private readonly nativeElement;
+    private highlightActiveLinkSubscription: () => void;
 
     constructor(
+        private app: App,
         public menuRef: MenuComponent,
         private userDefinedExecutionContext: UserDefinedExecutionContext,
         @Optional() private parentNav: NavComponent,
@@ -48,10 +50,13 @@ export class MenuDropdownItemComponent implements OnInit {
     ngOnInit() {
         // add active class to the item only if it is in nav component.
         if (this.parentNav) {
-            if (isActiveNavItem(this.item.link, this.menuRef.route.url)) {
+            if (hasLinkToCurrentPage([this.item], this.menuRef.route.url)) {
                 // add active class to the li, if the menu item's link is same as the current page name.
                 addClass(this.nativeElement, 'active');
             }
+            this.highlightActiveLinkSubscription = this.app.subscribe("highlightActiveLink", (data) => {
+                toggleClass(this.nativeElement, 'active', hasLinkToCurrentPage([this.item], this.menuRef.route.url));
+            });
         }
     }
 
@@ -163,5 +168,11 @@ export class MenuDropdownItemComponent implements OnInit {
         selectedItem.target = selectedItem.target || this.menuRef.linktarget;
         // Trigger the action associated with active item
         triggerItemAction(this, selectedItem);
+    }
+
+    ngOnDestroy(): void {
+        if(this.highlightActiveLinkSubscription) {
+            this.highlightActiveLinkSubscription();
+        }
     }
 }
