@@ -23,12 +23,13 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
     static initializeProps = registerProps();
 
     private _isFirstLoad: boolean = true;
-
+    private _isOnLoadTriggered: boolean = false;
     public $lazyLoad = noop;
     public name: string;
     public show: boolean;
     public smoothscroll: any;
     private isdynamic: boolean;
+    public content: string;
 
     @HostBinding('class.active') isActive = false;
     @HostBinding('class.disabled') disabled = false;
@@ -93,6 +94,11 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         setTimeout(() => {
             if (this.reDrawableComponents) {
                 this.reDrawableComponents.forEach(c => c.redraw());
+            }
+            // Fix for [WMS-24564]: trigger  Onload event when it is inline content
+            if (!this._isOnLoadTriggered && !this.content) {
+                this.invokeEventCallback('load');
+                this._isOnLoadTriggered = true;
             }
         }, 100);
     }
