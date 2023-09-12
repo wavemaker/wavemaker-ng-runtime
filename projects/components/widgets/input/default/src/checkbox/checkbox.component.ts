@@ -92,7 +92,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         this._checkedvalue = unStringify(checkedVal, true);
         this._uncheckedvalue = unStringify(uncheckedVal, false);
         // if the type of the checkbox is toggle update the related classes on the host node
-        toggleClass(this.nativeElement, 'app-toggle', type === 'toggle')
+        toggleClass(this.nativeElement, 'app-toggle', type === 'toggle');
     }
 
     onPropertyChange(key, nv, ov) {
@@ -119,8 +119,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
             this._onChange(this.datavalue);
         } else {
             super.onPropertyChange(key, nv, ov);
-        }
-       
+        }      
     }
     // change and blur events are handled from template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
