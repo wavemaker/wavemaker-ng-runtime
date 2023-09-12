@@ -1,4 +1,4 @@
-<label [ngClass]="{'unchecked': !proxyModel, 'disabled': (disabled || readonly), 'required': (required && _caption)}">
+<label [ngClass]="{'unchecked': !proxyModel, 'disabled': (disabled || readonly), 'required': (required && _caption)}" (mouseenter)="onMouseOver()">
     <input type="checkbox"
            role="checkbox"
            #checkbox
@@ -15,8 +15,8 @@
            (blur)="invokeOnTouched($event)"
            (ngModelChange)="handleChange($event)">
            <span class="toggle_slider">
-            <i class="app-icon {{checkedicon}} toggle-checked" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}" *ngIf="proxyModel"></i>
-            <i class="app-icon {{uncheckedicon}} toggle-unchecked" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}" *ngIf="!proxyModel"></i>
+            <i class="app-icon {{checkedicon}} toggle-checked" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, color:getColor(), fontSize:iconwidth}" *ngIf="proxyModel && togglewithicon"></i>
+            <i class="app-icon {{uncheckedicon}} toggle-unchecked" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}" *ngIf="!proxyModel && togglewithicon"></i>
            </span>
            <span class="caption" [innerHtml]="_caption" class="ng-hide"></span>
     

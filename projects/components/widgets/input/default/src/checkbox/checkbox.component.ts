@@ -72,6 +72,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     // @ts-ignore
     public get datavalue() {
         return isDefined(this.proxyModel) ? (this.proxyModel ? this._checkedvalue : this._uncheckedvalue) : undefined;
+        
     }
     // when the datavalue is set, update the checked state
     // @ts-ignore
@@ -91,11 +92,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         this._checkedvalue = unStringify(checkedVal, true);
         this._uncheckedvalue = unStringify(uncheckedVal, false);
         // if the type of the checkbox is toggle update the related classes on the host node
-        toggleClass(this.nativeElement, 'app-toggle', type === 'toggle');
-        // toggleClass(this.nativeElement, 'toggle-button', type === 'toggle' && this._m3 == true);
-        // toggleClass(this.nativeElement, 'toggle-button', type === 'toggle');
-
-
+        toggleClass(this.nativeElement, 'app-toggle', type === 'toggle')
     }
 
     onPropertyChange(key, nv, ov) {
@@ -123,8 +120,8 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         } else {
             super.onPropertyChange(key, nv, ov);
         }
+       
     }
-
     // change and blur events are handled from template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'change' && eventName !== 'blur') {
@@ -136,6 +133,17 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
 
     handleChange(newVal: boolean) {
         this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
+    }
+    getColor() {
+        var labelElement = $("div[widget-id='" + this.widgetId + "'] label");
+        var bgcolor = $(labelElement).css("background-color");
+     return bgcolor;
+    }
+    onMouseOver(){
+        var labelElement = $("div.app-toggle[widget-id='" + this.widgetId + "'] label");
+        var bgcolor = $(labelElement).css("background-color");
+        document.documentElement.style.setProperty('--boxAfterBackColor', bgcolor);
+
     }
 
     @HostListener('keydown.enter', ['$event', '"ENTER"'])

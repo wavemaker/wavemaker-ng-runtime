@@ -20,8 +20,8 @@ export const checkboxProps = new Map(
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['uncheckedvalue', {value: false, ...PROP_STRING}],
         ['togglewithicon', PROP_BOOLEAN],
-        ['checkedicon', PROP_STRING],
-        ['uncheckedicon', PROP_STRING]
+        ['checkedicon', {value: "wi wi-done", ...PROP_STRING}],
+        ['uncheckedicon', {value: "wi wi-close", ...PROP_STRING}]
 
     ]
 );
