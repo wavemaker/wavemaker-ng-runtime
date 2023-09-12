@@ -1,8 +1,8 @@
-import { AfterViewInit, ElementRef, Injectable, Injector } from '@angular/core';
+import { AfterViewInit, ElementRef, Inject, Injectable, Injector } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-import { $appDigest, addClass, switchClass } from '@wm/core';
-import { IWidgetConfig, styler } from '@wm/components/base';
+import {$appDigest, addClass, switchClass, UserDefinedExecutionContext} from '@wm/core';
+import { IWidgetConfig, styler, WidgetConfig } from '@wm/components/base';
 import { BaseFormCustomComponent } from '../../base-form-custom.component';
 declare const _;
 
@@ -93,11 +93,12 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         styler(this.inputEl.nativeElement, this);
     }
 
-    constructor(
+    protected constructor(
         inj: Injector,
-        config: IWidgetConfig
+        @Inject(WidgetConfig) config: IWidgetConfig,
+        _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, config);
+        super(inj, config, _viewParent);
         let updateOn = this.nativeElement.getAttribute('updateon') || 'blur';
         updateOn = updateOn === 'default' ? 'change' : updateOn;
         this.ngModelOptions.updateOn = updateOn;

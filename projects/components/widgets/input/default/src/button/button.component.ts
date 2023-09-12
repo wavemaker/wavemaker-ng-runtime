@@ -1,8 +1,9 @@
-import { Component, HostBinding, Injector } from '@angular/core';
+import {Component, HostBinding, Injector, Optional} from '@angular/core';
 
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './button.props';
+import { UserDefinedExecutionContext } from '@wm/core';
 
 const DEFAULT_CLS = 'btn app-button';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -32,8 +33,8 @@ export class ButtonComponent extends StylableComponent {
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
     }
 }

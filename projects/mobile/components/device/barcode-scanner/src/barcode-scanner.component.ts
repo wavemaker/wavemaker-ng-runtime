@@ -1,9 +1,9 @@
-import { Component, HostListener, Injector } from '@angular/core';
+import {Component, HostListener, Injector, Optional} from '@angular/core';
 
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { hasCordova } from '@wm/core';
+import {hasCordova, UserDefinedExecutionContext} from '@wm/core';
 
 import { registerProps } from './barcode-scanner.props';
 
@@ -28,8 +28,8 @@ export class BarcodeScannerComponent extends StylableComponent {
     public caption: any;
 
 
-    constructor(private scanner: BarcodeScanner, inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(private scanner: BarcodeScanner, inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 

@@ -1,4 +1,21 @@
-import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ContentChildren, ElementRef, Injector, NgZone, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import {
+    AfterViewInit,
+    Attribute,
+    ChangeDetectorRef,
+    Component,
+    ContentChild,
+    ContentChildren,
+    ElementRef,
+    Injector,
+    NgZone,
+    OnDestroy,
+    OnInit,
+    Optional,
+    QueryList,
+    TemplateRef,
+    ViewChild,
+    ViewChildren
+} from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -20,6 +37,7 @@ import {
     StatePersistence,
     PaginationService,
     setListClass,
+    UserDefinedExecutionContext,
     generateGUId
 } from '@wm/core';
 import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, unsupportedStatePersistenceTypes, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef, extractDataSourceName } from '@wm/components/base';
@@ -229,10 +247,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('mouseleave.event') mouseLeaveCB: string,
         statePersistence: StatePersistence,
         paginationService: PaginationService,
+        @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
-        super(inj, WIDGET_CONFIG, propsInitPromise);
+        super(inj, WIDGET_CONFIG, _viewParent, propsInitPromise);
         this.propsInitPromise = propsInitPromise;
         this.promiseResolverFn = resolveFn;
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);

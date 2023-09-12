@@ -257,7 +257,7 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
      * trigger the registered methods on session timeout
      */
     on401() {
-        this.sessionTimeoutObservable.next();
+        this.sessionTimeoutObservable.next(undefined);
     }
 
     pushToSessionFailureQueue(callback) {

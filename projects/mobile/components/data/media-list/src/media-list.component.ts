@@ -1,6 +1,6 @@
-import { Component, ContentChild, ElementRef, Injector, TemplateRef } from '@angular/core';
+import {Component, ContentChild, ElementRef, Injector, Optional, TemplateRef} from '@angular/core';
 
-import { $appDigest, addClass, isArray, isObject, isString, removeClass } from '@wm/core';
+import {$appDigest, addClass, isArray, isObject, isString, removeClass, UserDefinedExecutionContext} from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     getEvaluatedData,
@@ -39,8 +39,8 @@ export class MediaListComponent extends StylableComponent {
 
     @ContentChild('mediaListTemplate') mediaListTemplate: TemplateRef<ElementRef>;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 

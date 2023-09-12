@@ -1,6 +1,6 @@
 import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Viewport, StatePersistence, PaginationService } from '@wm/core';
+import {Viewport, StatePersistence, PaginationService, UserDefinedExecutionContext} from '@wm/core';
 
 import { Observable, Subject } from 'rxjs';
 
@@ -80,7 +80,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     @ViewChild('datagridElement', {static: true}) private _tableElement: ElementRef;
 
-    @ContentChildren('rowActionTmpl') rowActionTmpl: QueryList<any>;
+    @ContentChildren('rowActionTmpl', { descendants: true }) rowActionTmpl: QueryList<any>;
     @ViewChild('rowActionsView', { static: true, read: ViewContainerRef }) rowActionsViewRef: ViewContainerRef;
 
     @ContentChildren('filterTmpl', {descendants: true}) filterTmpl: QueryList<any>;
@@ -95,7 +95,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     @ContentChildren('customExprTmpl', {descendants: true}) customExprTmpl: QueryList<any>;
     @ViewChild('customExprView', { static: true, read: ViewContainerRef }) customExprViewRef: ViewContainerRef;
 
-    @ContentChildren('rowExpansionActionTmpl') rowExpansionActionTmpl: QueryList<any>;
+    @ContentChildren('rowExpansionActionTmpl', { descendants: true }) rowExpansionActionTmpl: QueryList<any>;
     @ContentChild('rowExpansionTmpl') rowExpansionTmpl: TemplateRef<any>;
     @ViewChild('rowDetailView', { static: true, read: ViewContainerRef }) rowDetailViewRef: ViewContainerRef;
     @ViewChild('rowExpansionActionView', { static: true, read: ViewContainerRef }) rowExpansionActionViewRef: ViewContainerRef;
@@ -968,9 +968,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         @Attribute('datasource.bind') public binddatasource,
         @Attribute('readonlygrid') public readonlygrid,
         private ngZone: NgZone,
-        private trustAsPipe: TrustAsPipe
+        private trustAsPipe: TrustAsPipe, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
 
         this.ngform = fb.group({});

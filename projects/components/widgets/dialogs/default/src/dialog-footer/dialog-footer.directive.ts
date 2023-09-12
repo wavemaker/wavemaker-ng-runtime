@@ -1,7 +1,8 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 
 import { BaseComponent, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
 import { registerProps } from './dialog-footer.props';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 const WIDGET_INFO: IWidgetConfig = {
     widgetType: 'wm-dialogfooter',
@@ -17,7 +18,7 @@ const WIDGET_INFO: IWidgetConfig = {
 export class DialogFooterDirective extends BaseComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_INFO);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_INFO, _viewParent);
     }
 }

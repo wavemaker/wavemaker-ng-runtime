@@ -3,7 +3,19 @@ import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport, App, noop, isDateTimeType, isMobileApp } from '@wm/core';
+import {
+    debounce,
+    FormWidgetType,
+    isDefined,
+    isMobile,
+    addForIdAttributes,
+    Viewport,
+    App,
+    noop,
+    isDateTimeType,
+    isMobileApp,
+    UserDefinedExecutionContext
+} from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
@@ -29,7 +41,7 @@ const FILE_TYPES = {
     providers: [
         provideAsWidgetRef(FormFieldDirective),
         provideAs(FormFieldDirective, NG_VALUE_ACCESSOR, true),
-        { provide: Context, useValue: {}, multi: true }
+        {provide: Context, useFactory: () => { return {} }, multi: true}
     ]
 })
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
@@ -128,7 +140,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Attribute('pc-display') pcDisplay,
         @Attribute('mobile-display') mobileDisplay,
         @Attribute('tablet-display') tabletDisplay,
-        @Self() @Inject(Context) contexts: Array<any>
+        @Self() @Inject(Context) contexts: Array<any>,
+        @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
         const WIDGET_CONFIG = {
             widgetType: 'wm-form-field',
@@ -137,7 +150,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         };
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, _viewParent, new Promise(res => resolveFn = res));
         this._initPropsRes = resolveFn;
         this.app = app;
         this.fieldDefConfig = {};

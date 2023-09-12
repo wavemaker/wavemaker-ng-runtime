@@ -1,10 +1,11 @@
-import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { provideAs, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './textarea.props';
 import { BaseInput } from '../text/base/base-input';
+import {UserDefinedExecutionContext} from '@wm/core';
 const WIDGET_CONFIG = {
     widgetType: 'wm-textarea',
     hostClass: 'app-input-wrapper'
@@ -37,11 +38,11 @@ export class TextareaComponent extends BaseInput {
     @ViewChild('textarea', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
     }
 
     public onInputChange() {
-        this.charlength = this.inputEl.nativeElement.value.length;    
+        this.charlength = this.inputEl.nativeElement.value.length;
     }
 }

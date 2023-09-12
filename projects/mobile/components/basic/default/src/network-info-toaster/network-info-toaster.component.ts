@@ -1,9 +1,9 @@
-import { Component, Injector, OnDestroy } from '@angular/core';
+import {Component, Injector, OnDestroy, Optional} from '@angular/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './network-info-toaster.props';
-import { $appDigest, App } from '@wm/core';
+import {$appDigest, App, UserDefinedExecutionContext} from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 
 const DEFAULT_CLS = 'network-info-toaster';
@@ -35,8 +35,8 @@ export class NetworkInfoToasterComponent extends StylableComponent implements On
 
     private _listenerDestroyer;
 
-    constructor(private networkService: NetworkService, app: App, inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(private networkService: NetworkService, app: App, inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.$element, this);
         this.isServiceAvailable = <boolean> this.networkService.isAvailable();
         this.isServiceConnected = this.networkService.isConnected();

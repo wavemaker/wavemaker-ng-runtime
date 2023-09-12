@@ -1,6 +1,6 @@
-import { ContentChild, Directive, HostListener, Injector, AfterViewInit } from '@angular/core';
+import {ContentChild, Directive, HostListener, Injector, AfterViewInit, Optional} from '@angular/core';
 
-import { addClass, removeClass } from '@wm/core';
+import {addClass, removeClass, UserDefinedExecutionContext} from '@wm/core';
 import { APPLY_STYLES_TYPE, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { AnchorComponent } from '@wm/components/basic';
 
@@ -31,8 +31,8 @@ export class NavItemDirective extends StylableComponent implements AfterViewInit
         }
     }
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 

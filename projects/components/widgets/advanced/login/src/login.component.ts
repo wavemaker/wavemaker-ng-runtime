@@ -1,10 +1,20 @@
-import { AfterViewInit, Component, ContentChild, ContentChildren, Injector, QueryList, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ContentChild,
+    ContentChildren,
+    Injector,
+    Optional,
+    QueryList,
+    ViewChild
+} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, MessageComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { FormComponent } from '@wm/components/data/form';
 import { ButtonComponent } from '@wm/components/input';
 
 import { registerProps } from './login.props';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
@@ -29,8 +39,8 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     errormessage: any;
     eventsource;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_INFO);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_INFO, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 

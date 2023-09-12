@@ -6,7 +6,7 @@ import {
     PropertyRead,
     ImplicitReceiver,
     LiteralPrimitive,
-    MethodCall,
+    Call,
     Conditional,
     Binary,
     PrefixNot,
@@ -19,7 +19,6 @@ import {
 
 declare const _;
 
-const isString = v => typeof v === 'string';
 const isDef = v => v !== void 0;
 const ifDef = (v, d) => v === void 0 ? d : v;
 const plus = (a, b) => void 0 === a ? b : void 0 === b ? a : a + b;
@@ -154,7 +153,7 @@ class ASTCompiler {
 
     processLiteralPrimitive() {
         const ast = this.cAst;
-        return isString(ast.value) ? `"${ast.value.replace(/"/g, '\"').replace(STR_ESCAPE_REGEX, stringEscapeFn)}"` : ast.value;
+        return typeof (ast.value) === 'string' ? `"${ast.value.replace(/"/g, '\"').replace(STR_ESCAPE_REGEX, stringEscapeFn)}"` : ast.value;
     }
 
     processLiteralArray() {
@@ -311,7 +310,9 @@ class ASTCompiler {
         const fn = this.build(ast.receiver, stmts);
         const v = this.createVar();
         const isImplicitReceiver = ast.receiver instanceof ImplicitReceiver;
-        stmts.push(`${v}= ${fn}&&${fn}.${ast.name}&&${fn}.${ast.name}${isImplicitReceiver ? '.bind(_ctx)' : ''}(${_args.join(',')})`);
+        const exp = stmts[stmts.length - 1];
+        const context = stmts[stmts.length - 1].split('&&')[0].split('=')[1];
+        stmts.push(`${v}= ${fn}&&${fn}${isImplicitReceiver ? '.bind(_ctx)' : `.bind(${context})`}(${_args.join(',')})`);
         return v;
     }
 
@@ -385,7 +386,7 @@ class ASTCompiler {
             return this.processBinary();
         } else if (ast instanceof Conditional) {
             return this.processConditional();
-        } else if (ast instanceof MethodCall) {
+        } else if (ast instanceof Call) {
             return this.processMethodCall();
         } else if (ast instanceof Chain) {
             return this.processChain();
@@ -491,7 +492,7 @@ export function $parseExpr(expr: string, defOnly?: boolean): ParseExprResult {
         return noop;
     }
 
-    if (!isString(expr)) {
+    if (typeof (expr) !== 'string') {
         return noop;
     }
 
@@ -602,7 +603,7 @@ function simpleFunctionEvaluator(expr, ctx, locals) {
 }
 
 export function $parseEvent(expr, defOnly?): ParseExprResult {
-    if (!isString(expr)) {
+    if (typeof (expr) !== 'string') {
         return noop;
     }
 
@@ -628,7 +629,7 @@ export function $parseEvent(expr, defOnly?): ParseExprResult {
             fn = simpleFunctionEvaluator.bind(undefined, expr);
         } else {
             const parser = new Parser(new Lexer);
-            const ast = parser.parseAction(expr, '',0);
+            const ast = parser.parseAction(expr, false, '',0);
 
             if (ast.errors.length) {
                 return noop;

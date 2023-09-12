@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, Injector } from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, Injector, Optional} from '@angular/core';
 
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { MediaCapture } from '@awesome-cordova-plugins/media-capture/ngx';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { convertToBlob, hasCordova } from '@wm/core';
+import {convertToBlob, hasCordova, UserDefinedExecutionContext} from '@wm/core';
 
 import { registerProps } from './camera.props';
 
@@ -47,8 +47,8 @@ export class CameraComponent extends StylableComponent {
 
     private _cameraOptions: any;
 
-    constructor(private camera: Camera, private mediaCapture: MediaCapture, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef) {
-        super(inj, WIDGET_CONFIG);
+    constructor(private camera: Camera, private mediaCapture: MediaCapture, inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 

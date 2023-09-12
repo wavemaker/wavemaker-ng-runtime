@@ -3,13 +3,6 @@
     "dest": "../../libraries/core",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.core",
-        "umdModuleIds": {
-            "@angular/compiler": "ng.compiler",
-            "@angular/core": "ng.core",
-
-            "rxjs": "rxjs"
-        }
+        "entryFile": "src/public_api.ts"
     }
 }

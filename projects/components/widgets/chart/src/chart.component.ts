@@ -1,6 +1,19 @@
-import { AfterViewInit, OnDestroy, Component, HostBinding, Injector, ViewEncapsulation } from '@angular/core';
+import {AfterViewInit, OnDestroy, Component, HostBinding, Injector, ViewEncapsulation, Optional} from '@angular/core';
 
-import { App, DataSource, getClonedObject, isDataSourceEqual, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn, isMobileApp, noop } from '@wm/core';
+import {
+    App,
+    DataSource,
+    getClonedObject,
+    isDataSourceEqual,
+    isEmptyObject,
+    isNumberType,
+    prettifyLabels,
+    removeAttr,
+    triggerFn,
+    isMobileApp,
+    noop,
+    UserDefinedExecutionContext
+} from '@wm/core';
 import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler,  } from '@wm/components/base';
 
 import { registerProps } from './chart.props';
@@ -1067,8 +1080,8 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
     }
 
-    constructor(inj: Injector, private app: App) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private app: App, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['fontsize', 'fontunit', 'color', 'fontfamily', 'fontweight', 'fontstyle', 'textdecoration']);
 
         // generate unique id for the component

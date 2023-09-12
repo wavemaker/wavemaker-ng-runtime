@@ -4,6 +4,7 @@ import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './table-action.props';
 import { TableComponent } from '../table.component';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 
@@ -40,8 +41,8 @@ export class TableActionDirective extends BaseComponent implements OnInit {
 
     private _propsInitialized: boolean;
 
-    constructor(inj: Injector, @Optional() public table: TableComponent) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public table: TableComponent, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
     }
 
     populateAction() {

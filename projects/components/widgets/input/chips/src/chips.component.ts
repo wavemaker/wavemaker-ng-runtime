@@ -1,7 +1,16 @@
-import { AfterViewInit, Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
+import {AfterViewInit, Attribute, Component, Injector, OnInit, Optional, SkipSelf, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { $appDigest, $unwatch, $watch, debounce, isAppleProduct, isDefined, toBoolean } from '@wm/core';
+import {
+    $appDigest,
+    $unwatch,
+    $watch,
+    debounce,
+    isAppleProduct,
+    isDefined,
+    toBoolean,
+    UserDefinedExecutionContext
+} from '@wm/core';
 import { ALLFIELDS, configureDnD, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 import { SearchComponent } from '@wm/components/basic/search';
@@ -20,7 +29,11 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './chips.component.html',
     providers: [
         provideAs(ChipsComponent, NG_VALUE_ACCESSOR, true),
-        provideAsWidgetRef(ChipsComponent)
+        provideAsWidgetRef(ChipsComponent),
+        {
+            provide: UserDefinedExecutionContext,
+            useExisting: ChipsComponent
+        }
     ]
 })
 export class ChipsComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
@@ -67,9 +80,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         @Attribute('displayimagesrc.bind') private bindDisplayImgSrc,
         @Attribute('datafield.bind') private bindDataField,
         @Attribute('dataset.bind') private bindDataSet,
-        @Attribute('chipclass.bind') private bindChipclass
+        @Attribute('chipclass.bind') private bindChipclass, @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
 
         // set the showsearchicon as false by default.

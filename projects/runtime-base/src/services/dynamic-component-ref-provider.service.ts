@@ -1,7 +1,7 @@
 import {
     Compiler,
     Component,
-    CUSTOM_ELEMENTS_SCHEMA,
+    CUSTOM_ELEMENTS_SCHEMA, forwardRef,
     Injectable,
     NgModule,
     NO_ERRORS_SCHEMA,
@@ -21,7 +21,7 @@ declare const _;
 const componentFactoryRefCache = new Map<string, any>();
 
 const getDynamicModule = (componentRef: any) => {
-    @NgModule({
+    return NgModule({
         declarations: [
             componentRef
         ],
@@ -29,31 +29,25 @@ const getDynamicModule = (componentRef: any) => {
             RuntimeBaseModule
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-    })
-    class DynamicModule {}
-
-    return DynamicModule;
+    })(
+        class DynamicModule {}
+    );
 };
 
 const getDynamicComponent = (
-    selector,
+    selector: any,
     template: string,
     css: string = '') => {
-
-    const componentDef = {
+    // @ts-ignore
+    const component = Component({
         template,
         styles: [css],
-        encapsulation: ViewEncapsulation.None
-    };
-
-    @Component({
-        ...componentDef,
+        encapsulation: ViewEncapsulation.None,
         selector
-    })
-    class DynamicComponent {
-    }
-
-    return DynamicComponent;
+    })(
+        class DynamicComponent {
+        });
+    return component;
 };
 
 @Injectable()

@@ -1,6 +1,15 @@
-import { AfterViewInit, Attribute, Component, ContentChildren, HostBinding, Injector, OnInit } from '@angular/core';
+import {
+    AfterViewInit,
+    Attribute,
+    Component,
+    ContentChildren,
+    HostBinding,
+    Injector,
+    OnInit,
+    Optional
+} from '@angular/core';
 
-import { noop, removeAttr } from '@wm/core';
+import {noop, removeAttr, UserDefinedExecutionContext} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, styler, StylableComponent } from '@wm/components/base';
 import { registerProps } from './tab-pane.props';
@@ -40,9 +49,9 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         inj: Injector,
         private tabsRef: TabsComponent,
         @Attribute('heading') public heading,
-        @Attribute('title') public title
+        @Attribute('title') public title, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         // title property here serves the purpose of heading.
         // TODO: make it common for all the widget.

@@ -1,7 +1,7 @@
-import { Attribute, Component, HostListener, Injector } from '@angular/core';
+import {Attribute, Component, HostListener, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { AppDefaults, noop, setListClass, switchClass} from '@wm/core';
+import {AppDefaults, noop, setListClass, switchClass, UserDefinedExecutionContext} from '@wm/core';
 import { convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAs, provideAsWidgetRef, styler, toggleAllHeaders } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
@@ -36,8 +36,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
         this.multiple = true;
     }

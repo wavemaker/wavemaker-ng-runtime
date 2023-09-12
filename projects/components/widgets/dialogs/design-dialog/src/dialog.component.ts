@@ -1,6 +1,17 @@
-import { Attribute, Component, ContentChild, Inject, Injector, OnInit, Self, TemplateRef, ViewChild } from '@angular/core';
+import {
+    Attribute,
+    Component,
+    ContentChild,
+    Inject,
+    Injector,
+    OnInit,
+    Optional,
+    Self, SkipSelf,
+    TemplateRef,
+    ViewChild
+} from '@angular/core';
 
-import { toBoolean } from '@wm/core';
+import {toBoolean, UserDefinedExecutionContext} from '@wm/core';
 import { Context, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -16,7 +27,11 @@ const WIDGET_INFO = {widgetType: 'wm-dialog'};
     providers: [
         provideAsWidgetRef(DialogComponent),
         provideAsDialogRef(DialogComponent),
-        {provide: Context, useValue: {}, multi: true}
+        {provide: Context, useFactory: () => { return {} }, multi: true},
+        {
+            provide: UserDefinedExecutionContext,
+            useExisting: DialogComponent
+        }
     ]
 })
 export class DialogComponent extends BaseDialog implements OnInit {
@@ -31,7 +46,8 @@ export class DialogComponent extends BaseDialog implements OnInit {
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
         @Attribute('closable') closable: string | boolean,
-        @Self() @Inject(Context) contexts: Array<any>
+        @Self() @Inject(Context) contexts: Array<any>,
+        @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
         if (modal === null || modal === undefined) {
             modal = true;
@@ -50,6 +66,7 @@ export class DialogComponent extends BaseDialog implements OnInit {
         super(
             inj,
             WIDGET_INFO,
+            _viewParent,
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,

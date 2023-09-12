@@ -4,6 +4,7 @@ import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './form-action.props';
 import { FormComponent } from '../form.component';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 
@@ -40,8 +41,8 @@ export class FormActionDirective extends BaseComponent implements OnInit {
 
     private _propsInitialized: boolean;
 
-    constructor(inj: Injector, @Optional() public form: FormComponent) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public form: FormComponent, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
     }
 
     populateAction() {

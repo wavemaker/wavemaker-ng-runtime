@@ -3,7 +3,7 @@ import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Rout
 
 import { setTheme } from 'ngx-bootstrap/utils';
 
-import { noop } from '@wm/core';
+import {noop, UserDefinedExecutionContext} from '@wm/core';
 import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App, addClass, removeClass } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { AppManagerService } from '../../services/app.manager.service';
@@ -18,7 +18,13 @@ interface SPINNER {
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    providers: [
+        {
+            provide: UserDefinedExecutionContext,
+            useExisting: AppComponent
+        }
+    ]
 })
 export class AppComponent implements DoCheck, AfterViewInit {
     public startApp = false;
@@ -47,7 +53,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
 
         this.isApplicationType = getWmProjectProperties().type === 'APPLICATION';
 
-        this.appManager.beforeAppReady(); 
+        this.appManager.beforeAppReady();
 
         // subscribe to OAuth changes
         oAuthService.getOAuthProvidersAsObservable().subscribe((providers: any) => {

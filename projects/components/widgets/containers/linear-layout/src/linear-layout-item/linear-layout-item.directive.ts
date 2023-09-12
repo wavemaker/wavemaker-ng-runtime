@@ -1,8 +1,9 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './linear-layout-item.props';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-linear-layout-item clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -18,15 +19,15 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class LinearLayoutItemDirective extends StylableComponent {
     static initializeProps = registerProps();
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         switch (key) {
-            case 'flexgrow': 
+            case 'flexgrow':
                 this.$element.css('flex-grow', nv);
             break;
         }

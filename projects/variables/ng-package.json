@@ -3,26 +3,6 @@
     "dest": "../../libraries/variables",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.variables",
-        "umdModuleIds": {
-            "@angular/compiler": "ng.compiler",
-            "@angular/core": "ng.core",
-            "@angular/common": "ng.common",
-            "@angular/common/http": "ng.common.http",
-            "@angular/router": "ng.router",
-            "@angular/platform-browser/animations": "ng.platformBrowser.animations",
-
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
-            "ngx-toastr": "ngxToastr",
-            "angular2-websocket/angular2-websocket":  "angularWebSocket",
-
-            "@wm/core": "wm.core",
-            "@wm/http": "wm.http",
-            "@wm/security":  "wm.security",
-            "@wm/oAuth": "wm.oAuth",
-            "@wavemaker/variables": "wm_common_variables"
-        }
+        "entryFile": "src/public_api.ts"
     }
 }

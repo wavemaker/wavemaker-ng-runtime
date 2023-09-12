@@ -1,6 +1,16 @@
-import { Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit } from '@angular/core';
+import {Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit, Optional} from '@angular/core';
 
-import { $appDigest, $watch, AppConstants, DataSource, debounce, isDefined, switchClass, triggerFn } from '@wm/core';
+import {
+    $appDigest,
+    $watch,
+    AppConstants,
+    DataSource,
+    debounce,
+    isDefined,
+    switchClass,
+    triggerFn,
+    UserDefinedExecutionContext
+} from '@wm/core';
 import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, styler, WidgetRef, unsupportedStatePersistenceTypes} from '@wm/components/base';
 import { registerProps } from './pagination.props';
 
@@ -102,8 +112,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         });
     }
 
-    constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
     }
 

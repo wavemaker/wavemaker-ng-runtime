@@ -26,7 +26,9 @@ const components = [
     ],
     declarations: [...components],
     exports: [...components],
-    entryComponents: []
+    providers: [
+        PageDirective
+    ]
 })
 export class PageModule {
 }

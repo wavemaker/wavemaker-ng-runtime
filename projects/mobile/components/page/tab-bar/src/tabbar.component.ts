@@ -1,9 +1,10 @@
-import { AfterViewInit, Attribute, Component, Injector, OnDestroy } from '@angular/core';
+import {AfterViewInit, Attribute, Component, Injector, OnDestroy, Optional} from '@angular/core';
 
 import { getEvaluatedData, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';
 
 import { registerProps } from './tabbar.props';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const $;
 declare const _;
@@ -52,9 +53,9 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         inj: Injector,
         @Attribute('itemlabel.bind') public binditemlabel,
         @Attribute('itemicon.bind') public binditemicon,
-        @Attribute('itemlink.bind') public binditemlink
+        @Attribute('itemlink.bind') public binditemlink, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
         styler(this.nativeElement, this);
         page.notify('wmMobileTabbar:ready', this);
         this.tabItems = this.getDefaultItems();

@@ -1,8 +1,8 @@
-import { AfterViewInit, Attribute, Component, Injector, OnInit, OnDestroy } from '@angular/core';
+import {AfterViewInit, Attribute, Component, Injector, OnInit, OnDestroy, Optional} from '@angular/core';
 
 import { Subject } from 'rxjs';
 
-import { App, DataSource, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
+import {App, DataSource, isAudioFile, isImageFile, isVideoFile, UserDefinedExecutionContext} from '@wm/core';
 import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './file-upload.props';
@@ -348,8 +348,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         super.onPropertyChange(key, nv, ov);
     }
 
-    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
         // styler(this.nativeElement, this);
     }
 

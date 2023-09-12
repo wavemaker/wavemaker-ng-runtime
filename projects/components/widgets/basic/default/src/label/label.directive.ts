@@ -1,6 +1,6 @@
-import { Directive, Injector, SecurityContext } from '@angular/core';
+import {Directive, Injector, Optional, SecurityContext} from '@angular/core';
 
-import { setProperty, toggleClass } from '@wm/core';
+import {setProperty, toggleClass, UserDefinedExecutionContext} from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, SanitizePipe } from '@wm/components/base';
 
 import { registerProps } from './label.props';
@@ -24,8 +24,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class LabelDirective extends StylableComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector, private sanitizePipe:SanitizePipe) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private sanitizePipe:SanitizePipe, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         styler(this.nativeElement, this);
     }

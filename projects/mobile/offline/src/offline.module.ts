@@ -27,8 +27,7 @@ import { SecurityOfflineBehaviour } from './utils/security.utils';
     exports: [],
     providers: [
         // add providers to mobile-runtime module.
-    ],
-    entryComponents: []
+    ]
 })
 export class OfflineModule {
     static initialized = false;

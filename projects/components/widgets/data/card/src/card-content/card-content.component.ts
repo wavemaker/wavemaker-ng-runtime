@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './card-content.props';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-card-content card-body card-block';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -21,8 +22,8 @@ export class CardContentComponent extends StylableComponent implements AfterView
 
     @ViewChild('cardContentContainer') private cardContentContainerElRef: ElementRef;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
     }
 
     ngAfterViewInit() {

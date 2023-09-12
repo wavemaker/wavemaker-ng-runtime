@@ -35,7 +35,8 @@ export class WmDefaultRouteReuseStrategy {
         CACHE_PAGE // to use page cache
     ];
 
-    constructor(private maxCacheSize: number, private maxCacheAge: number) {
+    constructor(@Inject(MAX_CACHE_SIZE) maxCacheSize?: number,
+                @Inject(MAX_CACHE_AGE) maxCacheAge?: number) {
         this.cache = new LRUCache<DetachedRouteHandle>(maxCacheSize, maxCacheAge, (key, handle) => {
             if (this.currentRouteKey === key) {
                 this.cache.set(key, handle);
@@ -88,7 +89,7 @@ export class WmDefaultRouteReuseStrategy {
         }
         return defaultValue;
     }
-    
+
     // DefaultRouteReuseStrategy : Begin
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         const key = this.getKey(route);
@@ -142,9 +143,8 @@ export class WmDefaultRouteReuseStrategy {
 /* Custom Strategy specifically for preview & WaveMaker Deployments */
 export class WmRouteReuseStrategy extends WmDefaultRouteReuseStrategy
     implements RouteReuseStrategy {
-    constructor(@Inject(MAX_CACHE_SIZE) maxCacheSize: number,
-                @Inject(MAX_CACHE_AGE) maxCacheAge: number) {
-        super(maxCacheSize, maxCacheAge);
+    constructor() {
+        super();
     }
     private isSameRoute(future, current): boolean {
         // Incase of prefab project we have only one route So reloading the route everytime
@@ -180,9 +180,8 @@ export class WmRouteReuseStrategy extends WmDefaultRouteReuseStrategy
 /* Custom Strategy specifically for Angular Deployments */
 export class WmNgRouteReuseStrategy extends WmDefaultRouteReuseStrategy
     implements RouteReuseStrategy {
-    constructor(@Inject(MAX_CACHE_SIZE) maxCacheSize: number,
-                @Inject(MAX_CACHE_AGE) maxCacheAge: number) {
-        super(maxCacheSize, maxCacheAge);
+    constructor() {
+        super();
     }
     private isSameRoute(future, current): boolean {
         /*

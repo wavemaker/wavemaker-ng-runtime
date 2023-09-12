@@ -4,6 +4,7 @@ import { BaseComponent, Context, provideAsWidgetRef } from '@wm/components/base'
 
 import { registerProps } from './table-row-action.props';
 import { TableComponent } from '../table.component';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 
@@ -13,7 +14,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
     selector: '[wmTableRowAction]',
     providers: [
         provideAsWidgetRef(TableRowActionDirective),
-        {provide: Context, useValue: {}, multi: true}
+        {provide: Context, useFactory: () => { return {} }, multi: true}
     ]
 })
 export class TableRowActionDirective extends BaseComponent implements OnInit {
@@ -39,9 +40,9 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
     constructor(
         inj: Injector,
         @Optional() public table: TableComponent,
-        @Self() @Inject(Context) contexts: Array<any>
+        @Self() @Inject(Context) contexts: Array<any>, @Optional() public _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         contexts[0].editRow = (evt) => this.table.editRow(evt);
         contexts[0].deleteRow = (evt) => this.table.deleteRow(evt);

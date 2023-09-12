@@ -1,18 +1,27 @@
-import { Injector, OnDestroy, TemplateRef, Injectable } from '@angular/core';
+import {Injector, OnDestroy, TemplateRef, Injectable, Inject, Optional} from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { Subscription } from 'rxjs';
 
-import {AbstractDialogService, closePopover, findRootContainer, generateGUId, isMobile, isMobileApp} from '@wm/core';
+import {
+    AbstractDialogService,
+    closePopover,
+    findRootContainer,
+    generateGUId,
+    isMobile,
+    isMobileApp,
+    UserDefinedExecutionContext
+} from '@wm/core';
 
-import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
+import { BaseComponent, IDialog, IWidgetConfig, WidgetConfig } from '@wm/components/base';
 import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
+
 declare const _;
 
-let eventsRegistered = false;
+const eventsRegistered = false;
 
-let focusTrapObj = {
+const focusTrapObj = {
     activeElement: null
 };
 
@@ -32,7 +41,7 @@ const invokeOpenedCallback = (ref) => {
                 'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
               )].filter(el => {
                 return (
-                  !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'))
+                  !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'));
               })[0];
 
             $(keyboardFocusableElements[0]).focus();
@@ -65,14 +74,15 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
 
     private dialogRef: BsModalRef;
     private dialogId: number;
-    public titleId:string = 'wmdialog-' + generateGUId();
+    public titleId: string = 'wmdialog-' + generateGUId();
 
     protected constructor(
         inj: Injector,
-        widgetConfig: IWidgetConfig,
+        @Inject(WidgetConfig) config: IWidgetConfig,
+        _viewParent: UserDefinedExecutionContext,
         protected modalOptions: ModalOptions
     ) {
-        super(inj, widgetConfig);
+        super(inj, config, _viewParent);
         this.dialogService = inj.get(AbstractDialogService);
         this.bsModal = inj.get(BsModalService);
         const router = inj.get(Router);

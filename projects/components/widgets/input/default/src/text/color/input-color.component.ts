@@ -1,10 +1,11 @@
-import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { IWidgetConfig, provideAs, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './input-color.props';
 import { BaseInput } from '../base/base-input';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-color',
@@ -38,7 +39,7 @@ export class InputColorComponent extends BaseInput {
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
     }
 }

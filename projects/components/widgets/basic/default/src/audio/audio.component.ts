@@ -1,7 +1,8 @@
-import { Component, Injector } from '@angular/core';
+import {Component, Injector, Optional} from '@angular/core';
 
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './audio.props';
+import {UserDefinedExecutionContext} from '@wm/core';
 
 
 const DEFAULT_CLS = 'app-audio';
@@ -28,8 +29,8 @@ export class AudioComponent extends StylableComponent {
     public audiopreload: any;
     public audiosupportmessage: any;
     public autoplay: boolean;
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
+        super(inj, WIDGET_CONFIG, _viewParent);
 
         styler(this.nativeElement, this);
     }
