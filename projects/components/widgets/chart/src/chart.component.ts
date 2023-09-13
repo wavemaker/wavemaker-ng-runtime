@@ -183,7 +183,11 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         if (isLineTypeChart(this.type) && !isNumberType(this.xAxisDataType)) {
             // Verification to get the unique data keys
             this.xDataKeyArr.push(value);
-            return value;
+            if (value instanceof Date) {
+                return value;
+            } else {
+                return index;
+            }
         }
         return value;
     }
