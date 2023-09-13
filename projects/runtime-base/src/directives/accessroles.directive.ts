@@ -100,7 +100,7 @@ export class AccessrolesDirective {
         const isAccessible = !this.securityEnabled || this.hasAccessToWidget(widgetRoles, this.userRoles);
         if (isAccessible) {
             // [WMS-19294] pass on the previous context as second param.
-            this.viewContainerRef.createEmbeddedView(this.templateRef, (this.inj as any).view.context);
+            this.viewContainerRef.createEmbeddedView(this.templateRef, (this.inj as any)._lView[8]);
         } else {
             this.viewContainerRef.clear();
         }
