@@ -70,7 +70,9 @@ export class DateComponent extends BaseDateTimeComponent {
     // @ts-ignore
     set datavalue(newVal) {
         if (newVal === CURRENT_DATE) {
-            this.bsDataValue = this.timeZone ? getMomentLocaleObject(this.timeZone) : new Date();
+            setTimeout(() => {
+                this.bsDataValue = this.timeZone ? getMomentLocaleObject(this.timeZone) : new Date();
+            }, 50);
             this.isCurrentDate = true;
         } else {
             this.bsDataValue = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}, this.timeZone) : undefined;
