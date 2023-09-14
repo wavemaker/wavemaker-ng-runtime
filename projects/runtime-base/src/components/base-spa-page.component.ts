@@ -1,4 +1,4 @@
-import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive, AfterContentInit } from '@angular/core';
+import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive, AfterContentInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { isAndroid, isIos, Viewport, ScriptLoaderService, registerFnByExpr } from '@wm/core';
@@ -66,15 +66,15 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
 
         muteWatchers();
 
-        this.App = this.injector.get(App);
-        this.route = this.injector.get(ActivatedRoute);
-        this.appManager = this.injector.get(AppManagerService);
-        this.navigationService = this.injector.get(AbstractNavigationService);
-        this.scriptLoaderService = this.injector.get(ScriptLoaderService);
-        this.i18nService = this.injector.get(AbstractI18nService);
-        this.router = this.injector.get(Router);
-        this.Viewport = this.injector.get(Viewport);
-        this.layoutDirective = this.injector.get(LayoutDirective);
+        this.App = inject(App);
+        this.route = inject(ActivatedRoute);
+        this.appManager = inject(AppManagerService);
+        this.navigationService = inject(AbstractNavigationService);
+        this.scriptLoaderService = inject(ScriptLoaderService);
+        this.i18nService = inject(AbstractI18nService);
+        this.router = inject(Router);
+        this.Viewport = inject(Viewport);
+        this.layoutDirective = inject(LayoutDirective);
 
         // register functions for binding evaluation
         this.registerExpressions();
@@ -103,7 +103,7 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
 
     initUserScript() {
         try {
-            this.evalUserScript(this, this.App, this.injector.get(UtilsService));
+            this.evalUserScript(this, this.App, inject(UtilsService));
         } catch (e) {
             console.error(`Error in evaluating page (${this.pageName}) script\n`, e);
         }
@@ -123,7 +123,7 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
     }
 
     initVariables() {
-        const variablesService = this.injector.get(VariablesService);
+        const variablesService = inject(VariablesService);
 
         // get variables and actions instances for the page
         const variableCollection = variablesService.register(this.pageName, this.getVariables(), this);
