@@ -189,7 +189,6 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             } else {
                 return index;
             }
-
         }
         return value;
     }
