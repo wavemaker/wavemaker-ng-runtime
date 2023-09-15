@@ -1020,8 +1020,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const mobileInput = this.getMobileInput();
         if (mobileInput) {
             setTimeout(() => {
-                mobileInput.style.width = mobileInput.parentElement.clientWidth + 'px';
-                mobileInput.style.height = mobileInput.parentElement.clientHeight + 'px';
+                mobileInput.style.width = '100%';
+                mobileInput.style.height = '100%';
             });
         }
     }
