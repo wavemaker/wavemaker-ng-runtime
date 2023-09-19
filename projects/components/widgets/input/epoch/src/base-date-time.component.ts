@@ -387,7 +387,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForDate(-1);
             }
             var prevMon = this.getMonth(this.activeDate, -1);
-            $(`.bs-datepicker-head .previous`).prepend(`<div aria-hidden=false class="sr-only-focusable">Changed to Previous Month, ${prevMon.fullMonth} and year ${prevMon.date.getFullYear()}</div>`);
+            $(`.bs-datepicker-head .previous`).prepend(`<p aria-hidden="false" class="sr-only">Changed to Previous Month, ${prevMon.fullMonth} and year ${prevMon.date.getFullYear()}</p>`);
 
             setTimeout(() => {
                $(`.bs-datepicker-head .previous`).focus();
@@ -403,7 +403,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForDate(1);
             }
             var nextMon = this.getMonth(this.activeDate, 1);
-            $(`.bs-datepicker-head .next`).prepend(`<div aria-hidden=false class="sr-only-focusable">Changed to Next Month, ${nextMon.fullMonth} and year ${nextMon.date.getFullYear()}</div>`);
+            $(`.bs-datepicker-head .next`).prepend(`<p aria-hidden="false" class="sr-only">Changed to Next Month, ${nextMon.fullMonth} and year ${nextMon.date.getFullYear()}</p>`);
             setTimeout(() => {
                 $(`.bs-datepicker-head .next`).focus();
             });
@@ -422,6 +422,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForMonthOrDay();
             }
         });
+        if(!this.clicked) {
+            datePickerHead.find('.next').attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
+            datePickerHead.find('.previous').attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
+        }
     }
 
     /**
