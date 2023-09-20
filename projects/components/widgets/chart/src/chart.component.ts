@@ -183,7 +183,12 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         if (isLineTypeChart(this.type) && !isNumberType(this.xAxisDataType)) {
             // Verification to get the unique data keys
             this.xDataKeyArr.push(value);
-            return index;
+            // Check if it is of type Date
+            if (value instanceof Date) {
+                return value;
+            } else {
+                return index;
+            }
         }
         return value;
     }
@@ -992,7 +997,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
               }).style("font-size", function() {
                 // 16 is the default font size to multiply with the scaled value and 24 is the maximum font size that can be applied
                 var fontSize = 16 * d3.select(this).attr("data-scale");
-                return fontSize > 24 ? 24 : fontSize + "px"; 
+                return fontSize > 24 ? 24 : fontSize + "px";
               });
     }
 
@@ -1045,7 +1050,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             this.isLoadInProgress = data.active;
         }
     }
-    
+
     hideTooltip() {
         d3.selectAll('.nvtooltip').style('opacity', 0);
     }
