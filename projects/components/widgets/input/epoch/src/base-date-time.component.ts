@@ -83,7 +83,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public next;
     public prev;
     public clicked = false;
-    private loadedOnce: boolean = false;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
