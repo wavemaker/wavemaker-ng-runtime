@@ -14,7 +14,7 @@
            [tabindex]="tabindex"
            (blur)="invokeOnTouched($event)"
            (ngModelChange)="handleChange($event)">
-           <span class="toggle_slider">
+           <span class="toggle_slider" ng-if="!isNativeMobileApplicationType">
             <i class="app-icon {{checkedicon}} toggle-checked" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, color:getColor(), fontSize:iconwidth}" *ngIf="proxyModel && togglewithicon"></i>
             <i class="app-icon {{uncheckedicon}} toggle-unchecked" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}" *ngIf="!proxyModel && togglewithicon"></i>
            </span>
