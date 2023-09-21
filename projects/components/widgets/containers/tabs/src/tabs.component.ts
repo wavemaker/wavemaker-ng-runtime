@@ -36,6 +36,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public defaultpaneindex: number;
     public transition: string;
     public tabsposition: string;
+    public iconposition:string;
     public statehandler: any;
     private statePersistence: StatePersistence;
 
@@ -53,6 +54,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public fieldDefs;
     public type;
     public nodatamessage;
+    public tabwithicon:boolean;
 
     @ContentChildren(TabPaneComponent) panes: QueryList<TabPaneComponent>;
 
@@ -356,6 +358,21 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             addClass(this.nativeElement, 'inverted');
         }
     }
+    private setIconPosition() {
+        var _tabdiv = this.nativeElement.children[0],
+         _tabheader = $(_tabdiv).find('li a div.tab-heading');
+        // element.removeClass('inverted');
+        if (this.iconposition === 'right') {
+            _tabheader.addClass('icon_right');
+        } else if(this.iconposition === 'top'){
+            _tabheader.addClass('icon_top');
+            _tabheader.removeClass('icon_right');
+        }
+        else {
+            _tabheader.removeClass('icon_top');
+            _tabheader.removeClass('icon_right');
+        }
+    };
 
     private onDataChange(newVal) {
         this.fieldDefs = createArrayFrom(newVal);
@@ -430,6 +447,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.promiseResolverFn();
         super.ngAfterContentInit();
         this.setTabsPosition();
+        this.setIconPosition();
         this.panes.changes.subscribe( slides => {
             if (this.panes.length) {
                 this.selectDefaultPaneByIndex(this.defaultpaneindex || 0);
