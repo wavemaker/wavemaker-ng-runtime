@@ -1,4 +1,4 @@
-import {AfterViewInit, Directive, Injector, OnDestroy, Optional} from '@angular/core';
+import {AfterViewInit, Directive, Injector, OnDestroy, Optional, SkipSelf} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import {EventNotifier, UserDefinedExecutionContext, Viewport, ViewportEvent} from '@wm/core';
@@ -31,7 +31,7 @@ export class SpaPageDirective extends StylableComponent implements AfterViewInit
         }
     }
 
-    constructor(inj: Injector, private titleService: Title, private viewport: Viewport, @Optional() public _viewParent: UserDefinedExecutionContext) {
+    constructor(inj: Injector, private titleService: Title, private viewport: Viewport, @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext) {
         super(inj, WIDGET_CONFIG, _viewParent);
     }
 
