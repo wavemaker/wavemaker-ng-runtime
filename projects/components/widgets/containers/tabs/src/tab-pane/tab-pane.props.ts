@@ -16,7 +16,7 @@ export const registerProps = () => {
                 ['isdefaulttab', PROP_STRING],
                 ['isdynamic', PROP_BOOLEAN], // internal property
                 ['name', PROP_STRING],
-                ['paneicon', PROP_STRING],
+                ['paneicon', {value: 'wi wi-home', ...PROP_STRING}],
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['smoothscroll', {value: false, ...PROP_BOOLEAN}],
                 ['title', {value: 'Tab Title', ...PROP_STRING}]

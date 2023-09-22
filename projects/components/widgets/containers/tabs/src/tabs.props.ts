@@ -15,7 +15,9 @@ export const registerProps = () => {
             ['show', {value: true, ...PROP_BOOLEAN}],
             ['statehandler', {value: 'none', ...PROP_STRING}],
             ['transition', PROP_STRING],
-            ['type', PROP_STRING]
+            ['type', PROP_STRING],
+            ['tabwithicon', PROP_BOOLEAN],
+            ['iconposition', {value: 'left', ...PROP_STRING}],
         ]
     );
     if (isMobileApp()) {
