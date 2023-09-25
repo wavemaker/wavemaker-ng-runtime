@@ -120,9 +120,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         inj: Injector,
         app: App,
         @Attribute('datavalue.bind') public binddatavalue,
-        @Attribute('dataset.bind') public binddataset, @Optional() public _viewParent: UserDefinedExecutionContext
+        @Attribute('dataset.bind') public binddataset
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
         // this flag will not allow the empty datafield values.
         this.allowempty = false;
         this.app = app;

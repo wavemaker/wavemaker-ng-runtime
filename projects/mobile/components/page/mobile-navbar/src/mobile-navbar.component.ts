@@ -62,9 +62,9 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
         private deviceService: DeviceService,
         private navigationService: AbstractNavigationService,
         inj: Injector,
-        @Attribute('backbtnclick.event') private backbtnClickEvt, @Optional() public _viewParent: UserDefinedExecutionContext
+        @Attribute('backbtnclick.event') private backbtnClickEvt,
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
         page.subscribe('wmLeftPanel:ready', (leftNavPanel: LeftPanelDirective) => {
             if (this.showLeftnavbtn) {
                 this.leftNavPanel = leftNavPanel;

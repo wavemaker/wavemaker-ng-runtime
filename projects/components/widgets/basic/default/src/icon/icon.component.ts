@@ -26,8 +26,8 @@ export class IconComponent extends StylableComponent {
     @HostBinding('attr.icon-position') iconposition: string;
     @HostBinding('style.fontSize') iconsize: string;
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this);
     }

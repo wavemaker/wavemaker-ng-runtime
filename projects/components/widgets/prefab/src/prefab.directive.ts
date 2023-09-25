@@ -24,12 +24,12 @@ export class PrefabDirective extends StylableComponent implements OnDestroy {
     name: string;
     propsReady: Function;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('prefabname') prefabName, @Optional() public _viewParent: UserDefinedExecutionContext) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('prefabname') prefabName) {
         const widgetType = `wm-prefab-${prefabName}`;
         const WIDGET_CONFIG = {widgetType, hostClass: DEFAULT_CLS};
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, _viewParent, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
         this.propsReady = resolveFn;
         this.prefabName = prefabName;
         this.widgetType = widgetType;

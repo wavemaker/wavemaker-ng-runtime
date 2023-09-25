@@ -23,8 +23,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class ContainerDirective extends BaseContainerComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
         addClass(this.nativeElement, DEFAULT_CLS);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);

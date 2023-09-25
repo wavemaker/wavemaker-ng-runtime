@@ -153,9 +153,9 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         @Optional() public table: TableComponent,
         @Optional() public group: TableColumnGroupDirective,
         @Attribute('filterdataset.bind') public bindfilterdataset,
-        @Attribute('dataset.bind') public binddataset, @Optional() public _viewParent: UserDefinedExecutionContext
+        @Attribute('dataset.bind') public binddataset
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
 
         this.notifyForFields = [];
     }

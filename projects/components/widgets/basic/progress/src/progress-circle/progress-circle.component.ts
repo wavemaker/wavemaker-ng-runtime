@@ -63,8 +63,8 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     @ViewChild(CircleProgressComponent, { static: true }) circleRef: CircleProgressComponent;
 
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         this.options = _.clone(DEFAULT_OPTIONS);
         this.redraw = _.debounce(this._redraw, 100);

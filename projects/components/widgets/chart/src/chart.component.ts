@@ -1080,8 +1080,8 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
     }
 
-    constructor(inj: Injector, private app: App, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private app: App) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['fontsize', 'fontunit', 'color', 'fontfamily', 'fontweight', 'fontstyle', 'textdecoration']);
 
         // generate unique id for the component

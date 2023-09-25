@@ -36,11 +36,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     constructor(
         inj: Injector,
         config: IWidgetConfig,
-        _viewParent: UserDefinedExecutionContext,
         private i18nService: AbstractI18nService,
         private trailingZeroDecimalPipe: TrailingZeroDecimalPipe
     ) {
-        super(inj, config, _viewParent);
+        super(inj, config);
         this.selectedLocale = i18nService.getSelectedLocale();
         this.DECIMAL = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Decimal);
         this.GROUP = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Group);

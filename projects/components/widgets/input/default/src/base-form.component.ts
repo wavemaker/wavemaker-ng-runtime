@@ -17,10 +17,9 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
     protected constructor(
         protected inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
-        _viewParent: UserDefinedExecutionContext,
         initPromise?: Promise<any>
     ) {
-        super(inj, config, _viewParent, initPromise);
+        super(inj, config, initPromise);
         this.binddatavalue = this.$element.attr('datavalue.bind');
     }
 

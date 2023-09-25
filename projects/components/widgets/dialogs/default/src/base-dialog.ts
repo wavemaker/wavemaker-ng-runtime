@@ -79,10 +79,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
     protected constructor(
         inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
-        _viewParent: UserDefinedExecutionContext,
         protected modalOptions: ModalOptions
     ) {
-        super(inj, config, _viewParent);
+        super(inj, config);
         this.dialogService = inj.get(AbstractDialogService);
         this.bsModal = inj.get(BsModalService);
         const router = inj.get(Router);

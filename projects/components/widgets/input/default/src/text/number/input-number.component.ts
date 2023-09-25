@@ -43,8 +43,8 @@ export class InputNumberComponent extends BaseInput {
 
     public step;
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
     }
 
     onArrowPress($event) {

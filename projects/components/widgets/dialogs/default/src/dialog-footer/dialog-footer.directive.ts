@@ -18,7 +18,7 @@ const WIDGET_INFO: IWidgetConfig = {
 export class DialogFooterDirective extends BaseComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_INFO, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_INFO);
     }
 }

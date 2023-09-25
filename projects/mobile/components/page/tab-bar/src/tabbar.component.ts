@@ -53,9 +53,9 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         inj: Injector,
         @Attribute('itemlabel.bind') public binditemlabel,
         @Attribute('itemicon.bind') public binditemicon,
-        @Attribute('itemlink.bind') public binditemlink, @Optional() public _viewParent: UserDefinedExecutionContext
+        @Attribute('itemlink.bind') public binditemlink
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         page.notify('wmMobileTabbar:ready', this);
         this.tabItems = this.getDefaultItems();

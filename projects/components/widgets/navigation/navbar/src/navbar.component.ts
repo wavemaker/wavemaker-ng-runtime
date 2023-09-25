@@ -25,8 +25,8 @@ export class NavbarComponent extends StylableComponent implements AfterViewInit 
     public imgsrc: string;
     @ViewChild('navContent', {static: true}) private navContent: ElementRef;
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 

@@ -95,10 +95,9 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
 
     protected constructor(
         inj: Injector,
-        @Inject(WidgetConfig) config: IWidgetConfig,
-        _viewParent: UserDefinedExecutionContext
+        @Inject(WidgetConfig) config: IWidgetConfig
     ) {
-        super(inj, config, _viewParent);
+        super(inj, config);
         let updateOn = this.nativeElement.getAttribute('updateon') || 'blur';
         updateOn = updateOn === 'default' ? 'change' : updateOn;
         this.ngModelOptions.updateOn = updateOn;

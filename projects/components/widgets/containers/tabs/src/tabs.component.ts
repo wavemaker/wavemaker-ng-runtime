@@ -79,11 +79,11 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         dynamicComponentProvider: DynamicComponentRefProvider,
         @Attribute('transition') _transition: string,
         @Attribute('tabsposition') _tabsPosition: string,
-        statePersistence: StatePersistence, @Optional() public _viewParent: UserDefinedExecutionContext
+        statePersistence: StatePersistence
     ) {
         // handle to the promise resolver
         let resolveFn: Function = noop;
-        super(inj, WIDGET_CONFIG, _viewParent, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
 
         this.transition = _transition;
         this.tabsposition = _tabsPosition;
@@ -245,7 +245,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             headerElement = this.nativeElement.querySelector(`li[data-paneid=${paneRef.widgetId}]`);
             const insideTabs = !!$(headerElement).closest('.app-tabs')
                 .parent().closest('.app-tabs').length;
-            if (!insideTabs) { 
+            if (!insideTabs) {
                 $(headerElement).children().focus();
             }
         }

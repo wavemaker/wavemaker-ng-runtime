@@ -124,8 +124,8 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         }
     }
 
-    constructor(inj: Injector, private sanitizePipe: SanitizePipe, private ngZone: NgZone, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_INFO, _viewParent);
+    constructor(inj: Injector, private sanitizePipe: SanitizePipe, private ngZone: NgZone) {
+        super(inj, WIDGET_INFO);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['height']);
         overrideSummerNote();
     }

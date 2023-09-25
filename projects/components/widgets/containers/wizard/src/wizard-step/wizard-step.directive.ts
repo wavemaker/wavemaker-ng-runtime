@@ -120,8 +120,8 @@ export class WizardStepDirective extends BaseComponent {
         return this.status === STEP_STATUS.DISABLED;
     }
 
-    constructor(inj: Injector, @Self() private ngForm: NgForm, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, @Self() private ngForm: NgForm) {
+        super(inj, WIDGET_CONFIG);
         // If we inject directly as a param in the constructor, getting circular dependency error in unit testcases
         this.wizardComponent = this.inj.get(WizardComponent);
     }

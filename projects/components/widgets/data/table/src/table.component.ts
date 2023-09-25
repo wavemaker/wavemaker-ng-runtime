@@ -968,9 +968,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         @Attribute('datasource.bind') public binddatasource,
         @Attribute('readonlygrid') public readonlygrid,
         private ngZone: NgZone,
-        private trustAsPipe: TrustAsPipe, @Optional() public _viewParent: UserDefinedExecutionContext
+        private trustAsPipe: TrustAsPipe
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG,);
         styler(this.nativeElement, this);
 
         this.ngform = fb.group({});

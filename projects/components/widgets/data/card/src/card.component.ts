@@ -36,8 +36,8 @@ export class CardComponent extends MenuAdapterComponent implements OnInit, After
 
     @ViewChild('cardContainerWrapper', { static: true }) private cardContainerElRef: ElementRef;
 
-    constructor(inj: Injector, @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext, private render2: Renderer2) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private render2: Renderer2) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
     }
 

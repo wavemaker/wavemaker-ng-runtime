@@ -41,8 +41,8 @@ export class FormActionDirective extends BaseComponent implements OnInit {
 
     private _propsInitialized: boolean;
 
-    constructor(inj: Injector, @Optional() public form: FormComponent, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, @Optional() public form: FormComponent) {
+        super(inj, WIDGET_CONFIG);
     }
 
     populateAction() {

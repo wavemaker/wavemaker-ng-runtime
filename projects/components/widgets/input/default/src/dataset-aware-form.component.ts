@@ -97,9 +97,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.invokeOnChange(val, undefined, true);
     }
 
-    protected constructor(inj: Injector,  @Inject(WidgetConfig) config: IWidgetConfig, _viewParent: UserDefinedExecutionContext,
+    protected constructor(inj: Injector,  @Inject(WidgetConfig) config: IWidgetConfig,
                           @Attribute('groupby') public groupby?: string) {
-        super(inj, config, _viewParent);
+        super(inj, config,);
         this.datePipe = this.inj.get(ToDatePipe);
         this.appDefaults = this.inj.get(AppDefaults);
         this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');

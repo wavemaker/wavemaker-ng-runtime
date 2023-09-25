@@ -80,9 +80,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         @Attribute('displayimagesrc.bind') private bindDisplayImgSrc,
         @Attribute('datafield.bind') private bindDataField,
         @Attribute('dataset.bind') private bindDataSet,
-        @Attribute('chipclass.bind') private bindChipclass, @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext
+        @Attribute('chipclass.bind') private bindChipclass
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 
         // set the showsearchicon as false by default.

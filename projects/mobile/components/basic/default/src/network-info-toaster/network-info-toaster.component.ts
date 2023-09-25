@@ -35,8 +35,8 @@ export class NetworkInfoToasterComponent extends StylableComponent implements On
 
     private _listenerDestroyer;
 
-    constructor(private networkService: NetworkService, app: App, inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(private networkService: NetworkService, app: App, inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         styler(this.$element, this);
         this.isServiceAvailable = <boolean> this.networkService.isAvailable();
         this.isServiceConnected = this.networkService.isConnected();

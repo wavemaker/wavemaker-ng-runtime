@@ -24,8 +24,8 @@ export class SegmentedControlComponent extends StylableComponent implements Afte
     public contents: SegmentContentComponent[] = [];
     public currentSelectedIndex = 0;
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 

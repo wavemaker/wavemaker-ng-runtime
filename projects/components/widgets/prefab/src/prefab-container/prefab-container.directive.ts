@@ -20,8 +20,8 @@ declare const _;
 export class PrefabContainerDirective extends StylableComponent  implements OnDestroy {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector, private viewport: Viewport, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private viewport: Viewport) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 
         this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.RESIZE, data => this.callback('resize', data)));

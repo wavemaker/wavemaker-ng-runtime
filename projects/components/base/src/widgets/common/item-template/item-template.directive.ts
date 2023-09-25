@@ -45,8 +45,8 @@ export class ItemTemplateDirective extends StylableComponent {
         this.widget.content = value;
     }
 
-    constructor(inj: Injector, elRef: ElementRef, private app: App, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, elRef: ElementRef, private app: App) {
+        super(inj, WIDGET_CONFIG);
         this.nativeElement = elRef.nativeElement;
         // this.context = (<NgForOfContext<ItemTemplateDirective>>(<any>inj).view.context);
         this.context = (this.inj as any)._lView[8];

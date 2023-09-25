@@ -60,8 +60,8 @@ export class DatasetAwareNavComponent extends StylableComponent {
     protected binditemid: string | null;
     protected nodes$ = new Subject();
 
-    constructor(inj: Injector, WIDGET_CONFIG, _viewParent?: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, WIDGET_CONFIG) {
+        super(inj, WIDGET_CONFIG);
         this.securityService = this.inj.get(SecurityService);
         this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');
         this.binditemicon = this.nativeElement.getAttribute('itemicon.bind');

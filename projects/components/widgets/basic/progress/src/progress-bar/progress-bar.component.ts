@@ -61,8 +61,8 @@ export class ProgressBarComponent extends StylableComponent {
         displayValue: '0'
     }];
 
-    constructor(inj: Injector, @Attribute('dataset') dataset: string, @Attribute('dataset.bind') boundDataset: string, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, @Attribute('dataset') dataset: string, @Attribute('dataset.bind') boundDataset: string) {
+        super(inj, WIDGET_CONFIG);
 
         // flag which determines whether dataset is provided or not
         this.hasDataset = !!(dataset || boundDataset);

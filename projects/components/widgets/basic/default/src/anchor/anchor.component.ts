@@ -48,9 +48,9 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
 
     constructor(
         inj: Injector,
-        private app: App, @Optional() public _viewParent: UserDefinedExecutionContext
+        private app: App
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
 

@@ -27,9 +27,9 @@ export class TableColumnGroupDirective extends BaseComponent implements OnInit {
     constructor(
         inj: Injector,
         @SkipSelf() @Optional() public group: TableColumnGroupDirective,
-        @Optional() public table: TableComponent, @Optional() public _viewParent: UserDefinedExecutionContext
+        @Optional() public table: TableComponent
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
     }
 
     populateConfig() {

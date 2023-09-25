@@ -64,8 +64,8 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
         return this.iconurl || this.iconclass || this.collapsible || this.actions || this.title || this.subheading || this.enablefullscreen;
     }
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
 

@@ -39,8 +39,8 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     errormessage: any;
     eventsource;
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_INFO, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_INFO);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 

@@ -100,9 +100,9 @@ export class DateComponent extends BaseDateTimeComponent {
         inj: Injector,
         private cdRef: ChangeDetectorRef,
         private appDefaults: AppDefaults,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins, @Optional() public _viewParent: UserDefinedExecutionContext
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 
         // KeyEventsPlugin

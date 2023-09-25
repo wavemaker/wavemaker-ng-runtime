@@ -26,9 +26,9 @@ export class HtmlDirective extends StylableComponent implements OnInit {
         inj: Injector,
         @Attribute('height') height: string,
         @Attribute('content.bind') private boundContent: string,
-        private sanitizePipe:SanitizePipe, @Optional() public _viewParent: UserDefinedExecutionContext
+        private sanitizePipe:SanitizePipe
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
 
         // if the height is provided set the overflow to auto
         if (height) {

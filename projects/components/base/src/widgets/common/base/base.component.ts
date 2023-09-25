@@ -188,13 +188,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     private isMuted = false;
 
     public viewContainerRef: ViewContainerRef;
-    public _viewParent: UserDefinedExecutionContext;
     public viewParentApp: App;
 
     protected constructor(
         protected inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
-        _viewParent?: UserDefinedExecutionContext,
         initPromise?: Promise<any> // Promise on which the initialization has to wait
     ) {
         const elementRef = inj.get(ElementRef);

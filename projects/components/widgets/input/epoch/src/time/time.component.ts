@@ -135,9 +135,9 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         private ngZone: NgZone,
         private appDefaults: AppDefaults,
         app: App,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins, @Optional() public _viewParent: UserDefinedExecutionContext
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
 
         // KeyEventsPlugin
         this.keyEventPlugin = evtMngrPlugins[1];

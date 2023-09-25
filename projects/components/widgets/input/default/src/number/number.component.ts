@@ -35,7 +35,7 @@ export class NumberComponent extends NumberLocale {
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel, {static: true}) ngModel: NgModel;
 
-    constructor(inj: Injector, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent, i18nService, trailingZeroDecimalPipe);
+    constructor(inj: Injector, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe) {
+        super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe);
     }
 }

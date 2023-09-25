@@ -348,8 +348,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         super.onPropertyChange(key, nv, ov);
     }
 
-    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt) {
+        super(inj, WIDGET_CONFIG);
         // styler(this.nativeElement, this);
     }
 

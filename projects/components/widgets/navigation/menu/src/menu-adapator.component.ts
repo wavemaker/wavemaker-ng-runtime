@@ -28,9 +28,8 @@ export class MenuAdapterComponent extends BaseContainerComponent implements Afte
     constructor(
         inj,
         WIDGET_CONFIG,
-        _viewParent: UserDefinedExecutionContext
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
 
         this.pageScope = this.viewParent;
         this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');

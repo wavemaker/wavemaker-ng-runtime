@@ -246,12 +246,11 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
         statePersistence: StatePersistence,
-        paginationService: PaginationService,
-        @Optional() public _viewParent: UserDefinedExecutionContext
+        paginationService: PaginationService
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
-        super(inj, WIDGET_CONFIG, _viewParent, propsInitPromise);
+        super(inj, WIDGET_CONFIG, propsInitPromise);
         this.propsInitPromise = propsInitPromise;
         this.promiseResolverFn = resolveFn;
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);

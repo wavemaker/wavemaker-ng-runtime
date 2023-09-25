@@ -17,8 +17,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class RepeatTemplateDirective extends StylableComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
 }

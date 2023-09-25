@@ -46,8 +46,7 @@ export class DialogComponent extends BaseDialog implements OnInit {
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
         @Attribute('closable') closable: string | boolean,
-        @Self() @Inject(Context) contexts: Array<any>,
-        @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext
+        @Self() @Inject(Context) contexts: Array<any>
     ) {
         if (modal === null || modal === undefined) {
             modal = true;
@@ -66,7 +65,6 @@ export class DialogComponent extends BaseDialog implements OnInit {
         super(
             inj,
             WIDGET_INFO,
-            _viewParent,
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,

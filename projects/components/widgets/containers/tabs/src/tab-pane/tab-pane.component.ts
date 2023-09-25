@@ -49,9 +49,9 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         inj: Injector,
         private tabsRef: TabsComponent,
         @Attribute('heading') public heading,
-        @Attribute('title') public title, @Optional() public _viewParent: UserDefinedExecutionContext
+        @Attribute('title') public title
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
 
         // title property here serves the purpose of heading.
         // TODO: make it common for all the widget.

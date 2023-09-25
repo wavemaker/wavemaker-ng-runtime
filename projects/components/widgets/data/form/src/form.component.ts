@@ -263,10 +263,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         @Attribute('wmLiveFilter') isLiveFilter,
         @Attribute('data-role') role,
         @Attribute('key') key,
-        @Attribute('name') name,
-        @Optional() public _viewParent: UserDefinedExecutionContext
+        @Attribute('name') name
     ) {
-        super(inj, getWidgetConfig(isLiveForm, isLiveFilter, role), _viewParent);
+        super(inj, getWidgetConfig(isLiveForm, isLiveFilter, role),);
 
         styler(this.nativeElement, this);
 

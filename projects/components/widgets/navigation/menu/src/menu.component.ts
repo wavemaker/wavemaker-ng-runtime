@@ -137,10 +137,9 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         private userDefinedExecutionContext: UserDefinedExecutionContext,
         @Self() @Optional() public bsDropdown: BsDropdownDirective,
         @Optional() private parentNav: NavComponent,
-        @Attribute('select.event') public selectEventCB: string,
-        @Optional() public _viewParent: UserDefinedExecutionContext
+        @Attribute('select.event') public selectEventCB: string
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
         if (parentNav) {
             this.disableMenuContext = !!parentNav.disableMenuContext;
         } else {

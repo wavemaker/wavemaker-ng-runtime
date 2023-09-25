@@ -31,8 +31,8 @@ export class SpaPageDirective extends StylableComponent implements AfterViewInit
         }
     }
 
-    constructor(inj: Injector, private titleService: Title, private viewport: Viewport, @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private titleService: Title, private viewport: Viewport) {
+        super(inj, WIDGET_CONFIG);
     }
 
     /**

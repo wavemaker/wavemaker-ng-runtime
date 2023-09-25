@@ -33,8 +33,8 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     private _debounceSetSelectedValue: Function;
     public name: string;
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
 
         this._debounceSetSelectedValue = debounce((val) => {
             this.setSelectedValue();

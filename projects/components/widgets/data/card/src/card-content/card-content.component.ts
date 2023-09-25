@@ -22,8 +22,8 @@ export class CardContentComponent extends StylableComponent implements AfterView
 
     @ViewChild('cardContentContainer') private cardContentContainerElRef: ElementRef;
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
     }
 
     ngAfterViewInit() {

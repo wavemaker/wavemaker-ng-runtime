@@ -12,8 +12,8 @@ export abstract class BaseContainerComponent extends StylableComponent {
     public content;
     public Widgets;
 
-    constructor(inj: Injector, WIDGET_CONFIG: IWidgetConfig, _viewparent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewparent);
+    constructor(inj: Injector, WIDGET_CONFIG: IWidgetConfig) {
+        super(inj, WIDGET_CONFIG);
     }
 
     private updateRedrawableComponents(widgets) {

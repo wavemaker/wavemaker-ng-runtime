@@ -150,9 +150,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         private cdRef: ChangeDetectorRef,
         private appDefaults: AppDefaults,
         app: App,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins, @Optional() public _viewParent: UserDefinedExecutionContext
+        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
         this.registerDestroyListener(() => this.clearTimeInterval());
         styler(this.nativeElement, this);
         this.app = app;

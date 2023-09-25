@@ -41,8 +41,8 @@ export class TableActionDirective extends BaseComponent implements OnInit {
 
     private _propsInitialized: boolean;
 
-    constructor(inj: Injector, @Optional() public table: TableComponent, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, @Optional() public table: TableComponent) {
+        super(inj, WIDGET_CONFIG);
     }
 
     populateAction() {

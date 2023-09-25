@@ -27,8 +27,8 @@ export class MessageComponent extends StylableComponent {
     caption: string;
     public hideclose: any;
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
 

@@ -31,8 +31,7 @@ export class AlertDialogComponent extends BaseDialog implements OnInit {
         inj: Injector,
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
-        @Attribute('closable') closable: string | boolean,
-        @SkipSelf() @Optional() public _viewParent: UserDefinedExecutionContext
+        @Attribute('closable') closable: string | boolean
     ) {
         if (modal === null || modal === undefined) {
             modal = false;
@@ -48,7 +47,6 @@ export class AlertDialogComponent extends BaseDialog implements OnInit {
         super(
             inj,
             WIDGET_INFO,
-            _viewParent,
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,

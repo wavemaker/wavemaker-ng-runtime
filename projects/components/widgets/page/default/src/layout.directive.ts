@@ -20,8 +20,8 @@ export class LayoutDirective extends StylableComponent implements AfterViewInit 
 
     private _eventNotifier = new EventNotifier(false);
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
     }
 
     /**

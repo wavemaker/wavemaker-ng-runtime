@@ -22,8 +22,8 @@ export class PageContentComponent extends StylableComponent {
     private pulltorefresh: boolean;
     private childPullToRefresh: boolean;
 
-    constructor(inj: Injector, private app: App, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private app: App) {
+        super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
 

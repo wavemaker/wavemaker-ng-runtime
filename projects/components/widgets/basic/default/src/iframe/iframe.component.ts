@@ -37,8 +37,8 @@ export class IframeComponent extends StylableComponent {
      */
     public showContentLoadError = false;
 
-    constructor(inj: Injector, private trustAsPipe: TrustAsPipe, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private trustAsPipe: TrustAsPipe) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
 

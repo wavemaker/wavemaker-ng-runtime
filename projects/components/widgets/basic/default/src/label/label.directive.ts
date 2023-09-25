@@ -24,8 +24,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 export class LabelDirective extends StylableComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector, private sanitizePipe:SanitizePipe, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private sanitizePipe:SanitizePipe) {
+        super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this);
     }

@@ -41,8 +41,8 @@ export class CurrencyComponent extends NumberLocale {
     @ViewChild(NgModel, {static: true}) ngModel: NgModel;
     @ViewChild('input', { static: true, read: ElementRef }) inputEl: ElementRef;
 
-    constructor(inj: Injector,  private appDefaults: AppDefaults, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent, i18nService, trailingZeroDecimalPipe);
+    constructor(inj: Injector,  private appDefaults: AppDefaults, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe) {
+        super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe);
         this.currencyCode = this.appDefaults.currencyCode || 'USD';
         this.currencySymbol = CURRENCY_INFO[this.appDefaults.currencyCode || "USD"].symbol;
     }

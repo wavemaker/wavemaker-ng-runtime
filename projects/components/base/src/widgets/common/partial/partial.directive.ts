@@ -17,8 +17,8 @@ declare const _;
 })
 export class PartialDirective extends StylableComponent implements OnDestroy {
     static initializeProps = registerProps();
-    constructor(inj: Injector, private viewport: Viewport, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private viewport: Viewport) {
+        super(inj, WIDGET_CONFIG);
 
         this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.RESIZE, data => this.callback('resize', data)));
         this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.ORIENTATION_CHANGE, data => this.callback('orientationchange', data)));

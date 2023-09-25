@@ -105,8 +105,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private validateType: string;
     containerTarget: string;
 
-    constructor(inj: Injector, WIDGET_CONFIG, _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, WIDGET_CONFIG) {
+        super(inj, WIDGET_CONFIG);
         this.i18nService = this.inj.get(AbstractI18nService);
         this.invokeEventCallback('beforeload');
 

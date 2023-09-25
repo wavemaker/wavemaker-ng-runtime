@@ -57,10 +57,9 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         private cdRef: ChangeDetectorRef,
         private route: Router,
         private app: App,
-        @Attribute('select.event') selectEventCB,
-        @SkipSelf() @Optional() _viewParent: UserDefinedExecutionContext
+        @Attribute('select.event') selectEventCB
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.disableMenuContext = !!selectEventCB;
         this.pageScope = this.viewParent;

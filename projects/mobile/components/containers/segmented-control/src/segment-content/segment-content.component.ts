@@ -25,8 +25,8 @@ export class SegmentContentComponent extends StylableComponent implements AfterV
     public compile = false;
     private loaddelay: number;
 
-    constructor(private segmentedControl: SegmentedControlComponent, inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(private segmentedControl: SegmentedControlComponent, inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
         segmentedControl.addContent(this);
     }

@@ -112,8 +112,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         });
     }
 
-    constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
 

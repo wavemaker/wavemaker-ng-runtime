@@ -50,8 +50,8 @@ export class CarouselDirective extends StylableComponent implements AfterContent
 
     @ContentChildren(SlideComponent) slides: QueryList<SlideComponent>;
 
-    constructor(public component: CarouselComponent, inj: Injector, private ngZone: NgZone, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(public component: CarouselComponent, inj: Injector, private ngZone: NgZone) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
 

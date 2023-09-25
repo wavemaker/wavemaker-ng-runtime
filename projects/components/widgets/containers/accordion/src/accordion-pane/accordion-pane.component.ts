@@ -35,8 +35,8 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
     // reference to the components which needs a redraw(eg, grid, chart) when the height of this component changes
     @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
 
-    constructor(inj: Injector, private accordionRef: AccordionDirective, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private accordionRef: AccordionDirective) {
+        super(inj, WIDGET_CONFIG);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
 

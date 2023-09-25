@@ -51,8 +51,8 @@ export class SpinnerComponent extends StylableComponent implements OnInit {
         });
     }
 
-    constructor(inj: Injector, private imagePipe: ImagePipe, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector, private imagePipe: ImagePipe) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
     }
 

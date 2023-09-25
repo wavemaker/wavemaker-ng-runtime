@@ -60,9 +60,9 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         private dialogService: AbstractDialogService,
         private app: App,
         @Attribute('formlayout') layoutType: string,
-        @Attribute('dialogid') dialogId: string, @Optional() public _viewParent: UserDefinedExecutionContext
+        @Attribute('dialogid') dialogId: string
     ) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
         if (layoutType === 'dialog') {
             this.isLayoutDialog = true;

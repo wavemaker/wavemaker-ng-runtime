@@ -48,8 +48,8 @@ export class InputTextComponent extends BaseInput implements OnInit{
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('input', {read: IMaskDirective}) imask: IMaskDirective<any>;
 
-    constructor(inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(inj: Injector) {
+        super(inj, WIDGET_CONFIG);
     }
 
     /* Define the property change handler. This function will be triggered when there is a change in the widget property */

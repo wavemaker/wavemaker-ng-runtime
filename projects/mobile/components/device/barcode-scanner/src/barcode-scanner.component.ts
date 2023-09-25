@@ -28,8 +28,8 @@ export class BarcodeScannerComponent extends StylableComponent {
     public caption: any;
 
 
-    constructor(private scanner: BarcodeScanner, inj: Injector, @Optional() public _viewParent: UserDefinedExecutionContext) {
-        super(inj, WIDGET_CONFIG, _viewParent);
+    constructor(private scanner: BarcodeScanner, inj: Injector) {
+        super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 
