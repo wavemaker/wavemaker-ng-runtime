@@ -381,13 +381,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // if domUpdated is true then do not hide the dropdown in the fullscreen
         if (!this._domUpdated && this._isOpen) {
             this.listenQuery = false;
-
-            // hide the typeahead only after the item is selected from dropdown.
-            setTimeout(() => {
-                if ((this.typeahead as any)._typeahead.isShown) {
-                    this.typeahead.hide();
-                }
-            }, 200);
         }
         this._isOpen = false;
         // on outside click, typeahead is hidden. To avoid this, when fullscreen is set, overridding isFocused flag on the typeahead container
