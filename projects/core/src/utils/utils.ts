@@ -1497,7 +1497,7 @@ export const VALIDATOR = {
 };
 
 export const transformFileURI = (url) => {
-    if (url && hasCordova() && url.startsWith('file://')) {
+    if (_.isString(url) && hasCordova() && url.startsWith('file://')) {
         if (isIos()) {
             return url.replace('file://', '/_app_file_');
         } else if (isAndroid() && location.href.startsWith('http')) {
