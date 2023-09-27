@@ -1,7 +1,7 @@
 import {Component, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import {setListClass, UserDefinedExecutionContext} from '@wm/core';
+import {setListClass} from '@wm/core';
 
 import { provideAsWidgetRef, styler, provideAs } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';

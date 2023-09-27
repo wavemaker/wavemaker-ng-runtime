@@ -2,7 +2,6 @@ import {Directive, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './card-actions.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-card-actions';
 const WIDGET_CONFIG: IWidgetConfig = {

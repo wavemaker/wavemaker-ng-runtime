@@ -4,7 +4,6 @@ import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './table-row.props';
 import { TableComponent } from '../table.component';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-row', hostClass: ''};
 

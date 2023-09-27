@@ -1,6 +1,6 @@
 import {Attribute, Component, Injector, OnInit, Optional, SkipSelf, TemplateRef, ViewChild} from '@angular/core';
 
-import { toBoolean, UserDefinedExecutionContext } from '@wm/core';
+import { toBoolean } from '@wm/core';
 import { IWidgetConfig, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -15,11 +15,7 @@ const WIDGET_INFO: IWidgetConfig = {widgetType: 'wm-alertdialog'};
     templateUrl: './alert-dialog.component.html',
     providers: [
         provideAsWidgetRef(AlertDialogComponent),
-        provideAsDialogRef(AlertDialogComponent),
-        {
-            provide: UserDefinedExecutionContext,
-            useExisting: AlertDialogComponent
-        }
+        provideAsDialogRef(AlertDialogComponent)
     ]
 })
 export class AlertDialogComponent extends BaseDialog implements OnInit {

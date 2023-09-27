@@ -10,7 +10,7 @@ import {
     SkipSelf
 } from '@angular/core';
 
-import {toBoolean, UserDefinedExecutionContext} from '@wm/core';
+import {toBoolean} from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -24,11 +24,7 @@ const WIDGET_INFO = {widgetType: 'wm-confirmdialog'};
     templateUrl: './confirm-dialog.component.html',
     providers: [
         provideAsWidgetRef(ConfirmDialogComponent),
-        provideAsDialogRef(ConfirmDialogComponent),
-        {
-            provide: UserDefinedExecutionContext,
-            useExisting: ConfirmDialogComponent
-        }
+        provideAsDialogRef(ConfirmDialogComponent)
     ]
 })
 export class ConfirmDialogComponent extends BaseDialog implements OnInit {

@@ -1,7 +1,7 @@
 import {Component, Injector, NgZone, OnDestroy, OnInit, Optional, SecurityContext} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import {setAttr, setCSS, setHtml, UserDefinedExecutionContext} from '@wm/core';
+import {setAttr, setCSS, setHtml} from '@wm/core';
 import {APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, SanitizePipe, styler} from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
 

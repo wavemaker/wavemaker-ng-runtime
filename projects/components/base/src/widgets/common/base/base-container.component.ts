@@ -2,7 +2,6 @@ import {ContentChildren, Directive, Injector, Optional} from '@angular/core';
 import { StylableComponent } from "./stylable.component";
 import { RedrawableDirective } from "../redraw/redrawable.directive";
 import { IWidgetConfig } from '../../framework/types';
-import {UserDefinedExecutionContext} from '@wm/core';
 declare const _;
 
 @Directive()

@@ -1,6 +1,6 @@
 import {Attribute, Component, Injector, OnInit, Optional, SkipSelf, TemplateRef, ViewChild} from '@angular/core';
 
-import {toBoolean, UserDefinedExecutionContext} from '@wm/core';
+import {toBoolean} from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -14,11 +14,7 @@ const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
     templateUrl: './iframe-dialog.component.html',
     providers: [
         provideAsWidgetRef(IframeDialogComponent),
-        provideAsDialogRef(IframeDialogComponent),
-        {
-            provide: UserDefinedExecutionContext,
-            useExisting: IframeDialogComponent
-        }
+        provideAsDialogRef(IframeDialogComponent)
     ]
 })
 export class IframeDialogComponent extends BaseDialog implements OnInit {

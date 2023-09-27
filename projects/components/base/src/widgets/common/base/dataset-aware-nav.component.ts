@@ -2,7 +2,7 @@ import {Injector, Optional} from '@angular/core';
 
 import { Subject } from 'rxjs';
 
-import {$appDigest, findValueOf, isObject, isDefined, validateAccessRoles, UserDefinedExecutionContext} from '@wm/core';
+import {$appDigest, findValueOf, isObject, isDefined, validateAccessRoles} from '@wm/core';
 import { SecurityService } from '@wm/security';
 
 import { createArrayFrom } from '../../../utils/data-utils';

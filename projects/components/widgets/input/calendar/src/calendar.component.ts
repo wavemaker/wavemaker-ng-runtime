@@ -16,8 +16,7 @@ import {
     getSessionStorageItem,
     AbstractI18nService,
     isMobileApp,
-    isMobile,
-    UserDefinedExecutionContext
+    isMobile
 } from '@wm/core';
 
 import { APPLY_STYLES_TYPE, createArrayFrom, getEvaluatedData, IWidgetConfig, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';

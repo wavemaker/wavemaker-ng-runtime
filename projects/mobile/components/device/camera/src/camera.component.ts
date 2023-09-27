@@ -4,7 +4,7 @@ import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { MediaCapture } from '@awesome-cordova-plugins/media-capture/ngx';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import {convertToBlob, hasCordova, UserDefinedExecutionContext} from '@wm/core';
+import {convertToBlob, hasCordova} from '@wm/core';
 
 import { registerProps } from './camera.props';
 

@@ -2,7 +2,6 @@ import {AfterViewInit, Component, ElementRef, Injector, Optional, ViewChild} fro
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './card-content.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-card-content card-body card-block';
 const WIDGET_CONFIG: IWidgetConfig = {

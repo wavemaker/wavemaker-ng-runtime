@@ -1,6 +1,6 @@
 import {Directive, Injector, Optional, SecurityContext} from '@angular/core';
 
-import {setProperty, toggleClass, UserDefinedExecutionContext} from '@wm/core';
+import {setProperty, toggleClass} from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, SanitizePipe } from '@wm/components/base';
 
 import { registerProps } from './label.props';

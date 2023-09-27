@@ -1,7 +1,7 @@
 import {Attribute, Component, HostListener, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import {AppDefaults, noop, setListClass, switchClass, UserDefinedExecutionContext} from '@wm/core';
+import {AppDefaults, noop, setListClass, switchClass} from '@wm/core';
 import { convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAs, provideAsWidgetRef, styler, toggleAllHeaders } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 

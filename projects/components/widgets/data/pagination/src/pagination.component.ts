@@ -8,8 +8,7 @@ import {
     debounce,
     isDefined,
     switchClass,
-    triggerFn,
-    UserDefinedExecutionContext
+    triggerFn
 } from '@wm/core';
 import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, styler, WidgetRef, unsupportedStatePersistenceTypes} from '@wm/components/base';
 import { registerProps } from './pagination.props';

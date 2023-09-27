@@ -5,7 +5,6 @@ import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/compon
 
 import { registerProps } from './input-email.props';
 import { BaseInput } from '../base/base-input';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-email',

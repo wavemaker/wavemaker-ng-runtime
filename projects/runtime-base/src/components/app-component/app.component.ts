@@ -3,7 +3,7 @@ import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Rout
 
 import { setTheme } from 'ngx-bootstrap/utils';
 
-import {noop, UserDefinedExecutionContext} from '@wm/core';
+import {noop} from '@wm/core';
 import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App, addClass, removeClass } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { AppManagerService } from '../../services/app.manager.service';
@@ -18,13 +18,7 @@ interface SPINNER {
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    encapsulation: ViewEncapsulation.None,
-    providers: [
-        {
-            provide: UserDefinedExecutionContext,
-            useExisting: AppComponent
-        }
-    ]
+    encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements DoCheck, AfterViewInit {
     public startApp = false;

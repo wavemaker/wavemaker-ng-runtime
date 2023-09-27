@@ -1,6 +1,6 @@
 import {Component, Injector, Optional} from '@angular/core';
 
-import {App, switchClass, UserDefinedExecutionContext} from '@wm/core';
+import {App, switchClass} from '@wm/core';
 import { APPLY_STYLES_TYPE, PullToRefresh, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './page-content.props';

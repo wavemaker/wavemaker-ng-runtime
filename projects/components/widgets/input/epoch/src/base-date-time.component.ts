@@ -14,7 +14,7 @@ import {
     isIos,
     isMobile,
     isString,
-    setAttr, UserDefinedExecutionContext
+    setAttr
 } from '@wm/core';
 
 import { getContainerTargetClass, ToDatePipe } from '@wm/components/base';

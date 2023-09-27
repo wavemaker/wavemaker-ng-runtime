@@ -29,8 +29,7 @@ import {
     getNativeDateObject,
     adjustContainerRightEdges,
     App,
-    getMomentLocaleObject,
-    UserDefinedExecutionContext
+    getMomentLocaleObject
 } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler, setFocusTrap } from '@wm/components/base';
 

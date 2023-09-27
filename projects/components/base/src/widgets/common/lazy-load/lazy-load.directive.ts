@@ -1,6 +1,6 @@
 import {Directive, inject, Injector, Input, OnDestroy, Optional, TemplateRef, ViewContainerRef} from '@angular/core';
 
-import {$watch, App, UserDefinedExecutionContext} from '@wm/core';
+import {$watch, App} from '@wm/core';
 
 declare const _;
 

@@ -16,8 +16,7 @@ import {
     DynamicComponentRefProvider,
     noop,
     removeClass,
-    StatePersistence,
-    UserDefinedExecutionContext
+    StatePersistence
 } from '@wm/core';
 import {
     APPLY_STYLES_TYPE,

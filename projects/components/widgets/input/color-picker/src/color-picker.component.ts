@@ -2,7 +2,7 @@ import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/cor
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { ColorPickerDirective} from 'ngx-color-picker';
 
-import {addClass, removeClass, UserDefinedExecutionContext} from '@wm/core';
+import {addClass, removeClass} from '@wm/core';
 import { AUTOCLOSE_TYPE, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '@wm/components/input';
 import { registerProps } from './color-picker.props';

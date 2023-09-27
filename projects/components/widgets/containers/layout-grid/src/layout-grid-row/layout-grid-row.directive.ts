@@ -3,7 +3,6 @@ import {Directive, Injector, Optional} from '@angular/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './layout-grid-row.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-grid-row clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {

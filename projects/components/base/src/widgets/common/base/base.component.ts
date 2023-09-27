@@ -29,8 +29,7 @@ import {
     setAttr,
     setCSS,
     setCSSFromObj,
-    switchClass,
-    UserDefinedExecutionContext
+    switchClass
 } from '@wm/core';
 
 import {getWidgetPropsByType} from '../../framework/widget-props';

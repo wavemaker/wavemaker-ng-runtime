@@ -11,7 +11,7 @@ import {
     ViewChild
 } from '@angular/core';
 
-import {toBoolean, UserDefinedExecutionContext} from '@wm/core';
+import {toBoolean} from '@wm/core';
 import { Context, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -27,11 +27,7 @@ const WIDGET_INFO = {widgetType: 'wm-dialog'};
     providers: [
         provideAsWidgetRef(DialogComponent),
         provideAsDialogRef(DialogComponent),
-        {provide: Context, useFactory: () => { return {} }, multi: true},
-        {
-            provide: UserDefinedExecutionContext,
-            useExisting: DialogComponent
-        }
+        {provide: Context, useFactory: () => { return {} }, multi: true}
     ]
 })
 export class DialogComponent extends BaseDialog implements OnInit {

@@ -1,7 +1,7 @@
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 
-import {AbstractI18nService, UserDefinedExecutionContext} from '@wm/core';
+import {AbstractI18nService} from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe } from '@wm/components/base';
 
 import { registerProps } from './number.props';

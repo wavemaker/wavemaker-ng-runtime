@@ -1,7 +1,7 @@
 import { Directive, Injector, Optional } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 
-import {App, addClass, removeClass, switchClass, toggleClass, UserDefinedExecutionContext, isMobile } from '@wm/core';
+import {App, addClass, removeClass, switchClass, toggleClass, isMobile } from '@wm/core';
 import { APPLY_STYLES_TYPE, getKeyboardFocusableElements,  IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { LayoutDirective, PageDirective } from '@wm/components/page';
 

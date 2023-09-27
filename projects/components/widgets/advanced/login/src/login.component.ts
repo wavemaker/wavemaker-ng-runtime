@@ -14,7 +14,6 @@ import { FormComponent } from '@wm/components/data/form';
 import { ButtonComponent } from '@wm/components/input';
 
 import { registerProps } from './login.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 

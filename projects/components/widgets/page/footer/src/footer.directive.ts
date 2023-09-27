@@ -2,7 +2,6 @@ import {Directive, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './footer.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-footer clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {

@@ -9,7 +9,7 @@ import {
     Optional
 } from '@angular/core';
 
-import {noop, removeAttr, UserDefinedExecutionContext} from '@wm/core';
+import {noop, removeAttr} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, styler, StylableComponent } from '@wm/components/base';
 import { registerProps } from './tab-pane.props';

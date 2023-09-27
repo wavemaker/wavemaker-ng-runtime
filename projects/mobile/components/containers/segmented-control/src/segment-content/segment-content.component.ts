@@ -4,7 +4,6 @@ import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent
 
 import { registerProps } from './segment-content.props';
 import { SegmentedControlComponent } from '../segmented-control.component';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 

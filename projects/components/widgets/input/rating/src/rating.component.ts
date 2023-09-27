@@ -1,7 +1,7 @@
 import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import {generateGUId, setCSS, noop, UserDefinedExecutionContext} from '@wm/core';
+import {generateGUId, setCSS, noop} from '@wm/core';
 import { getOrderedDataset, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 

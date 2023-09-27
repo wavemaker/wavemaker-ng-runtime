@@ -3,7 +3,6 @@ import {Component, Injector, Optional} from '@angular/core';
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './content.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-content clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-content', hostClass: DEFAULT_CLS};

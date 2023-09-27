@@ -15,8 +15,7 @@ import {
     getFormattedDate,
     adjustContainerRightEdges,
     getMomentLocaleObject,
-    App,
-    UserDefinedExecutionContext
+    App
 } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';

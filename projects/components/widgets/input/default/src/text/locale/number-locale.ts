@@ -2,7 +2,7 @@ import { Injector } from '@angular/core';
 import { AbstractControl, Validator } from '@angular/forms';
 import { getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
-import {AbstractI18nService, isDefined, UserDefinedExecutionContext} from '@wm/core';
+import {AbstractI18nService, isDefined} from '@wm/core';
 import { IWidgetConfig, TrailingZeroDecimalPipe, INPUTMODE } from '@wm/components/base';
 
 import { BaseInput } from '../base/base-input';

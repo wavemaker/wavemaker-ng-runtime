@@ -9,8 +9,7 @@ import {
     isDefined,
     isEqualWithFields,
     noop,
-    toBoolean,
-    UserDefinedExecutionContext
+    toBoolean
 } from '@wm/core';
 
 import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, handleHeaderClick, toggleAllHeaders, transformFormData, transformDataWithKeys, groupData, ToDatePipe, IWidgetConfig, WidgetConfig } from '@wm/components/base';

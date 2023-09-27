@@ -1,6 +1,6 @@
 import { Injector, AfterViewInit, Injectable, Inject } from '@angular/core';
 
-import {DataSource, UserDefinedExecutionContext} from '@wm/core';
+import {DataSource} from '@wm/core';
 
 import { IWidgetConfig, StylableComponent, WidgetConfig } from '@wm/components/base';
 

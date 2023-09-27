@@ -3,7 +3,6 @@ import {AfterViewInit, QueryList, ViewChildren, Directive, Optional} from '@angu
 import { StylableComponent } from '@wm/components/base';
 import { MenuComponent } from './menu.component';
 import {BaseContainerComponent} from '@wm/components/base';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 

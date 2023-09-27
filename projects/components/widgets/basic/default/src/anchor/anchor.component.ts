@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, HostBinding, Injector, OnDestroy, Optional } from '@angular/core';
 
-import { addClass, App, encodeUrl, EventNotifier, getRouteNameFromLink, setAttr, removeAttr, removeClass, UserDefinedExecutionContext } from '@wm/core';
+import { addClass, App, encodeUrl, EventNotifier, getRouteNameFromLink, setAttr, removeAttr, removeClass } from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './anchor.props';

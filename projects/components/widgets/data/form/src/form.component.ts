@@ -19,7 +19,7 @@ import {
     removeAttr,
     $invokeWatchers,
     scrollToElement,
-    isElementInViewport, UserDefinedExecutionContext
+    isElementInViewport,
 } from '@wm/core';
 import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
 import { PrefabDirective } from '@wm/components/prefab';

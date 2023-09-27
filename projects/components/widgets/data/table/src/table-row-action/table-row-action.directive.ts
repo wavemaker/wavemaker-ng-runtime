@@ -4,7 +4,6 @@ import { BaseComponent, Context, provideAsWidgetRef } from '@wm/components/base'
 
 import { registerProps } from './table-row-action.props';
 import { TableComponent } from '../table.component';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 

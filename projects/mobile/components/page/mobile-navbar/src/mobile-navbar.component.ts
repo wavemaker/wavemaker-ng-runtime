@@ -1,6 +1,6 @@
 import {AfterViewInit, Attribute, Component, Injector, OnDestroy, Optional, ViewChild} from '@angular/core';
 
-import {AbstractNavigationService, App, UserDefinedExecutionContext} from '@wm/core';
+import {AbstractNavigationService, App} from '@wm/core';
 import { BaseComponent, getImageUrl, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';
 import { LeftPanelDirective } from '@wm/components/page/left-panel';

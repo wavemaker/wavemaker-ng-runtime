@@ -17,8 +17,7 @@ import {
     App,
     getClonedObject,
     isDefined,
-    triggerFn,
-    UserDefinedExecutionContext
+    triggerFn
 } from '@wm/core';
 import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { TableComponent } from '@wm/components/data/table';

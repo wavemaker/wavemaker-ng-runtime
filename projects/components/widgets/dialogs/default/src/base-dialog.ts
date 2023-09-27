@@ -10,8 +10,7 @@ import {
     findRootContainer,
     generateGUId,
     isMobile,
-    isMobileApp,
-    UserDefinedExecutionContext
+    isMobileApp
 } from '@wm/core';
 
 import { BaseComponent, IDialog, IWidgetConfig, WidgetConfig } from '@wm/components/base';

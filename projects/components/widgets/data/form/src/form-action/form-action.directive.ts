@@ -4,7 +4,6 @@ import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './form-action.props';
 import { FormComponent } from '../form.component';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 

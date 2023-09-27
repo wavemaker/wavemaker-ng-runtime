@@ -4,7 +4,7 @@ import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler } from '@w
 import { MenuAdapterComponent } from '@wm/components/navigation/menu';
 
 import { registerProps } from './card.props';
-import {removeAttr, setAttr, UserDefinedExecutionContext} from '@wm/core';
+import {removeAttr, setAttr} from '@wm/core';
 
 const DEFAULT_CLS = 'app-card card app-panel';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -16,11 +16,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: '[wmCard]',
     templateUrl: './card.component.html',
     providers: [
-        provideAsWidgetRef(CardComponent),
-        {
-            provide: UserDefinedExecutionContext,
-            useExisting: CardComponent
-        }
+        provideAsWidgetRef(CardComponent)
     ]
 })
 export class CardComponent extends MenuAdapterComponent implements OnInit, AfterViewInit {

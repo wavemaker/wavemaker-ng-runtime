@@ -5,7 +5,6 @@ import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/compon
 import { BaseFormCustomComponent } from '@wm/components/input';
 
 import { registerProps } from './slider.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 
 const DEFAULT_CLS = 'app-slider slider';

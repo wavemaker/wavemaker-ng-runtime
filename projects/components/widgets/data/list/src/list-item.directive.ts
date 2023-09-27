@@ -15,7 +15,7 @@ import { NgForOfContext } from '@angular/common';
 
 import { Observable, Subject } from 'rxjs';
 
-import {$invokeWatchers, $watch, App, UserDefinedExecutionContext} from '@wm/core';
+import {$invokeWatchers, $watch, App} from '@wm/core';
 
 import { ListComponent } from './list.component';
 

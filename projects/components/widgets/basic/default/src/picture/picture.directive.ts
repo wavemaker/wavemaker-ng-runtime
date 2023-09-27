@@ -1,6 +1,6 @@
 import {Directive, HostBinding, Injector, OnInit, Optional} from '@angular/core';
 
-import {setAttr, setCSS, switchClass, UserDefinedExecutionContext} from '@wm/core';
+import {setAttr, setCSS, switchClass} from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe } from '@wm/components/base';
 
 import { registerProps } from './picture.props';

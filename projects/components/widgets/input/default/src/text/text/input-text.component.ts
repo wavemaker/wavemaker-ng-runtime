@@ -5,7 +5,6 @@ import {IWidgetConfig, provideAs, provideAsWidgetRef} from '@wm/components/base'
 import {registerProps} from './input-text.props';
 import {BaseInput} from '../base/base-input';
 import { IMaskDirective } from 'angular-imask';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 

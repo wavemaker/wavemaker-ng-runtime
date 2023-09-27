@@ -5,7 +5,6 @@ import { CircleProgressComponent, CircleProgressOptionsInterface } from 'ng-circ
 import { IWidgetConfig, provideAsWidgetRef, IRedrawableComponent, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './progress-circle.props';
 import { calculatePercent, getDecimalCount, isPercentageValue } from '../utils';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 

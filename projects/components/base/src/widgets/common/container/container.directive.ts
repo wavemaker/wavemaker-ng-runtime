@@ -1,6 +1,6 @@
 import {Directive, Injector, Optional} from '@angular/core';
 
-import {addClass, UserDefinedExecutionContext} from '@wm/core';
+import {addClass} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';

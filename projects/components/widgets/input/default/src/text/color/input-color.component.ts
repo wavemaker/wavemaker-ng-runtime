@@ -5,7 +5,6 @@ import { IWidgetConfig, provideAs, provideAsWidgetRef } from '@wm/components/bas
 
 import { registerProps } from './input-color.props';
 import { BaseInput } from '../base/base-input';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-color',

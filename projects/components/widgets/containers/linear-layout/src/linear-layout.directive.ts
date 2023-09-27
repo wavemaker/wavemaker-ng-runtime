@@ -3,7 +3,6 @@ import {Directive, Injector, Optional} from '@angular/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, BaseContainerComponent } from '@wm/components/base';
 
 import { registerProps } from './linear-layout.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-linear-layout clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {

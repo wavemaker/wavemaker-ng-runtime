@@ -16,7 +16,6 @@ import { createArrayFrom, IWidgetConfig, StylableComponent, styler } from '@wm/c
 
 import { registerProps } from './carousel.props';
 import { CarouselAnimator } from './carousel.animator';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const _;
 

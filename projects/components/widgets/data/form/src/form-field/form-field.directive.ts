@@ -13,8 +13,7 @@ import {
     App,
     noop,
     isDateTimeType,
-    isMobileApp,
-    UserDefinedExecutionContext
+    isMobileApp
 } from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';

@@ -5,7 +5,6 @@ import { provideAs, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './textarea.props';
 import { BaseInput } from '../text/base/base-input';
-import {UserDefinedExecutionContext} from '@wm/core';
 const WIDGET_CONFIG = {
     widgetType: 'wm-textarea',
     hostClass: 'app-input-wrapper'

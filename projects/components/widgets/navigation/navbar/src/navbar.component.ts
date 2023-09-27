@@ -3,7 +3,6 @@ import {AfterViewInit, Component, ElementRef, Injector, Optional, ViewChild} fro
 import { APPLY_STYLES_TYPE, styler, StylableComponent, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './navbar.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'navbar navbar-default app-navbar';
 const WIDGET_CONFIG = {widgetType: 'wm-navbar', hostClass: DEFAULT_CLS};

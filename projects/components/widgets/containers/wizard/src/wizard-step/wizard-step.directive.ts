@@ -5,7 +5,6 @@ import { BaseComponent, IWidgetConfig, provideAsWidgetRef, RedrawableDirective }
 import { WizardComponent } from '../wizard.component';
 
 import { registerProps } from './wizard-step.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const DEFAULT_CLS = 'app-wizard-step-content';
 const WIDGET_CONFIG: IWidgetConfig = {

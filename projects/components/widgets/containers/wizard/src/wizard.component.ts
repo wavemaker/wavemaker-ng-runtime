@@ -9,7 +9,7 @@ import {
     QueryList
 } from '@angular/core';
 
-import {noop, UserDefinedExecutionContext} from '@wm/core';
+import {noop} from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './wizard.props';

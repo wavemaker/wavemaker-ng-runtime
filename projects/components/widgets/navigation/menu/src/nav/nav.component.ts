@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { addClass, App, removeClass, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
+import { addClass, App, removeClass, triggerItemAction } from '@wm/core';
 import { APPLY_STYLES_TYPE, DatasetAwareNavComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './nav.props';
@@ -30,11 +30,7 @@ const NavClassMap = {
     selector: '[wmNav]',
     templateUrl: './nav.component.html',
     providers: [
-        provideAsWidgetRef(NavComponent),
-        {
-            provide: UserDefinedExecutionContext,
-            useExisting: NavComponent
-        }
+        provideAsWidgetRef(NavComponent)
     ]
 })
 export class NavComponent extends DatasetAwareNavComponent implements OnInit {

@@ -3,7 +3,6 @@ import {Component, HostBinding, Injector, Optional} from '@angular/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './button.props';
-import { UserDefinedExecutionContext } from '@wm/core';
 
 const DEFAULT_CLS = 'btn app-button';
 const WIDGET_CONFIG: IWidgetConfig = {

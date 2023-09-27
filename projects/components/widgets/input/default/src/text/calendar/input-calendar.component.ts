@@ -4,7 +4,6 @@ import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { registerProps } from './input-calendar.props';
 import { BaseInput } from '../base/base-input';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-calendar',

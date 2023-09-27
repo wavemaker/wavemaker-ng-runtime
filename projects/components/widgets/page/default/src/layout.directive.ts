@@ -1,6 +1,6 @@
 import {AfterViewInit, Directive, Injector, Optional} from '@angular/core';
 
-import {EventNotifier, UserDefinedExecutionContext} from '@wm/core';
+import {EventNotifier} from '@wm/core';
 import { updateDeviceView, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './layout.props';

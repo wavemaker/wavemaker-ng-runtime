@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import {isDefined, toggleClass, UserDefinedExecutionContext} from '@wm/core';
+import {isDefined, toggleClass} from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '../base-form-custom.component';
 

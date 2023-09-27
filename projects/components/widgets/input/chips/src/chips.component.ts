@@ -8,8 +8,7 @@ import {
     debounce,
     isAppleProduct,
     isDefined,
-    toBoolean,
-    UserDefinedExecutionContext
+    toBoolean
 } from '@wm/core';
 import { ALLFIELDS, configureDnD, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
@@ -29,11 +28,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './chips.component.html',
     providers: [
         provideAs(ChipsComponent, NG_VALUE_ACCESSOR, true),
-        provideAsWidgetRef(ChipsComponent),
-        {
-            provide: UserDefinedExecutionContext,
-            useExisting: ChipsComponent
-        }
+        provideAsWidgetRef(ChipsComponent)
     ]
 })
 export class ChipsComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {

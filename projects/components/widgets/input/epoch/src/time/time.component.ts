@@ -15,7 +15,7 @@ import {
     getDisplayDateTimeFormat,
     getFormattedDate,
     getNativeDateObject,
-    getMomentLocaleObject, UserDefinedExecutionContext
+    getMomentLocaleObject
 } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 

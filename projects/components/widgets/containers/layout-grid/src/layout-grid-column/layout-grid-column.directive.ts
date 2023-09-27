@@ -1,6 +1,6 @@
 import {Attribute, Directive, Injector, Optional} from '@angular/core';
 
-import {isMobileApp, setCSS, switchClass, UserDefinedExecutionContext, Viewport} from '@wm/core';
+import {isMobileApp, setCSS, switchClass, Viewport} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 

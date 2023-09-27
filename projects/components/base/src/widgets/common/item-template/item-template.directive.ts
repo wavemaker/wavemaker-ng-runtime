@@ -13,7 +13,7 @@
 import { Directive, ElementRef, Injector, Input, Optional, ViewContainerRef } from '@angular/core';
 import { NgForOfContext } from '@angular/common';
 
-import {App, UserDefinedExecutionContext} from '@wm/core';
+import {App} from '@wm/core';
 
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 import { registerProps } from './item-template.props';

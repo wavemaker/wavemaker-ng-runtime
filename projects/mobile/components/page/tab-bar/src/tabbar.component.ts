@@ -4,7 +4,6 @@ import { getEvaluatedData, IWidgetConfig, provideAsWidgetRef, StylableComponent,
 import { PageDirective } from '@wm/components/page';
 
 import { registerProps } from './tabbar.props';
-import {UserDefinedExecutionContext} from '@wm/core';
 
 declare const $;
 declare const _;
