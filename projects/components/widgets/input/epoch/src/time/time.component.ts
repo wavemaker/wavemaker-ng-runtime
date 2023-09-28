@@ -1,6 +1,5 @@
 import {Component, Inject, Injector, NgZone, OnDestroy, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 import {
     $appDigest,
@@ -128,19 +127,13 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     private bsTimeValue: Date;
 
-    private keyEventPlugin;
-
     constructor(
         inj: Injector,
         private ngZone: NgZone,
         private appDefaults: AppDefaults,
-        app: App,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+        app: App
     ) {
         super(inj, WIDGET_CONFIG);
-
-        // KeyEventsPlugin
-        this.keyEventPlugin = evtMngrPlugins[1];
 
         styler(this.nativeElement, this);
         /**
@@ -244,8 +237,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     public onDisplayKeydown(event) {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
-            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-            if (action === 'enter' || action === 'arrowdown') {
+            if (event.key === 'Enter' || event.key === 'ArrowDown') {
                 event.preventDefault();
                 this.toggleDropdown(event);
             } else {

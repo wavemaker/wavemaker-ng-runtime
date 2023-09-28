@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
@@ -50,7 +49,6 @@ export class DateComponent extends BaseDateTimeComponent {
     private _bsDefaultLoadCheck: boolean;
     public hint: string;
 
-    private keyEventPlugin;
     private deregisterEventListener;
     private isCurrentDate;
     private focusTrap;
@@ -100,14 +98,11 @@ export class DateComponent extends BaseDateTimeComponent {
     constructor(
         inj: Injector,
         private cdRef: ChangeDetectorRef,
-        private appDefaults: AppDefaults,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+        private appDefaults: AppDefaults
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
 
-        // KeyEventsPlugin
-        this.keyEventPlugin = evtMngrPlugins[1];
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
@@ -242,8 +237,7 @@ export class DateComponent extends BaseDateTimeComponent {
     public onDisplayKeydown(event) {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
-            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-            if (action === 'enter') {
+            if (event.key === 'Enter') {
                 const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this);

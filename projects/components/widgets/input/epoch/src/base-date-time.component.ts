@@ -63,7 +63,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public maxdate;
     public dataentrymode;
     protected activeDate;
-    private keyEventPluginInstance;
     private elementScope;
     public datepattern;
     public timepattern;
@@ -498,14 +497,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param isDateTime - boolean value represents the loaded widget is date or datetime
      */
     protected addDatepickerKeyboardEvents(scope, isDateTime) {
-        this.keyEventPluginInstance = scope.keyEventPlugin.constructor;
         this.elementScope = scope;
         const dateContainer = document.querySelector(`.${scope.dateContainerCls}`) as HTMLElement;
         setAttr(dateContainer, 'tabindex', '0');
         dateContainer.onkeydown = (event) => {
-            const action = this.keyEventPluginInstance.getEventFullKey(event);
             // Check for Shift+Tab key or Tab key or escape
-            if (action === 'escape') {
+            if (event.key === 'Escape') {
                 this.elementScope.hideDatepickerDropdown();
                 const displayInputElem = this.elementScope.nativeElement.querySelector('.display-input') as HTMLElement;
                 setTimeout(() => displayInputElem.focus());
@@ -539,36 +536,35 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     private addKeyBoardEventsForDays() {
         const datePickerBody = $('.bs-datepicker-body');
         datePickerBody.keydown((event) => {
-            const action = this.keyEventPluginInstance.getEventFullKey(event);
             let newdate;
-            if (action === 'arrowdown') {
+            if (event.key === 'ArrowDown') {
                 event.preventDefault();
                 newdate = moment(this.activeDate).add(+7, 'days').toDate();
                 this.setActiveDateFocus(newdate);
-            } else if (action === 'arrowup') {
-                event.preventDefault();
-                newdate = moment(this.activeDate).add(-7, 'days').toDate();
-                this.setActiveDateFocus(newdate);
-            } else if (action === 'arrowleft') {
-                newdate = moment(this.activeDate).add(-1, 'days').toDate();
-                this.setActiveDateFocus(newdate);
-            } else if (action === 'arrowright') {
-                newdate = moment(this.activeDate).add(+1, 'days').toDate();
-                this.setActiveDateFocus(newdate);
-            } else if (action === 'pageup') {
-                event.preventDefault();
-                newdate = moment(this.activeDate).add(-1, 'month').toDate();
-                this.setActiveDateFocus(newdate);
-            } else if (action === 'pagedown') {
-                event.preventDefault();
-                newdate = moment(this.activeDate).add(+1, 'month').toDate();
-                this.setActiveDateFocus(newdate);
-            } else if (action === 'control.arrowup') {
+            } else if (event.ctrlKey && event.key === 'ArrowUp') {
                 // clicking on table header month name to load list of months
                 $('.bs-datepicker-head .current').first().click();
                 this.loadMonths();
                 this.setActiveMonthFocus(this.activeDate);
-            } else if (action === 'enter') {
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(-7, 'days').toDate();
+                this.setActiveDateFocus(newdate);
+            } else if (event.key === 'ArrowLeft') {
+                newdate = moment(this.activeDate).add(-1, 'days').toDate();
+                this.setActiveDateFocus(newdate);
+            } else if (event.key === 'ArrowRight') {
+                newdate = moment(this.activeDate).add(+1, 'days').toDate();
+                this.setActiveDateFocus(newdate);
+            } else if (event.key === 'PageUp') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(-1, 'month').toDate();
+                this.setActiveDateFocus(newdate);
+            } else if (event.key === 'PageDown') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(+1, 'month').toDate();
+                this.setActiveDateFocus(newdate);
+            } else if (event.key === 'Enter') {
                 if ($(document.activeElement).hasClass('disabled')) {
                     return;
                 }
@@ -602,28 +598,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private addKeyBoardEventsForMonths() {
         $('.bs-datepicker-body').keydown((event) => {
-            const action = this.keyEventPluginInstance.getEventFullKey(event);
             let newdate;
-            if (action === 'arrowdown') {
-                event.preventDefault();
-                newdate = moment(this.activeDate).add(+3, 'month').toDate();
-                this.setActiveMonthFocus(newdate);
-            } else if (action === 'arrowup') {
-                event.preventDefault();
-                newdate = moment(this.activeDate).add(-3, 'month').toDate();
-                this.setActiveMonthFocus(newdate);
-            } else if (action === 'arrowleft') {
-                newdate = moment(this.activeDate).add(-1, 'month').toDate();
-                this.setActiveMonthFocus(newdate);
-            } else if (action === 'arrowright') {
-                newdate = moment(this.activeDate).add(+1, 'month').toDate();
-                this.setActiveMonthFocus(newdate);
-            } else if (action === 'control.arrowup') {
-                // clicking on table header year to load list of years
-                $('.bs-datepicker-head .current').first().click();
-                this.loadYears();
-                this.setActiveYearFocus(this.activeDate);
-            } else if (action === 'control.arrowdown' || action === 'enter') {
+            if ((event.ctrlKey && event.key === 'ArrowDown') || event.key === 'Enter') {
                 if ($(document.activeElement).parent().hasClass('disabled')) {
                     return;
                 }
@@ -631,6 +607,25 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.loadDays();
                 const newDate = new Date(this.activeDate.getFullYear(), this.activeDate.getMonth(), 1);
                 this.setActiveDateFocus(newDate);
+            } else if (event.ctrlKey && event.key === 'ArrowUp') {
+                // clicking on table header year to load list of years
+                $('.bs-datepicker-head .current').first().click();
+                this.loadYears();
+                this.setActiveYearFocus(this.activeDate);
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(+3, 'month').toDate();
+                this.setActiveMonthFocus(newdate);
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(-3, 'month').toDate();
+                this.setActiveMonthFocus(newdate);
+            } else if (event.key === 'ArrowLeft') {
+                newdate = moment(this.activeDate).add(-1, 'month').toDate();
+                this.setActiveMonthFocus(newdate);
+            } else if (event.key === 'ArrowRight') {
+                newdate = moment(this.activeDate).add(+1, 'month').toDate();
+                this.setActiveMonthFocus(newdate);
             }
         });
         this.focusBlurDatePickerHeadButtons();
@@ -673,29 +668,28 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     private addKeyBoardEventsForYears() {
         $('.bs-datepicker-body').keydown((event) => {
-            const action = this.keyEventPluginInstance.getEventFullKey(event);
             let newdate;
-            if (action === 'arrowdown') {
-                event.preventDefault();
-                newdate = moment(this.activeDate).add(+4, 'year').toDate();
-                this.setActiveYearFocus(newdate);
-            } else if (action === 'arrowup') {
-                event.preventDefault();
-                newdate = moment(this.activeDate).add(-4, 'year').toDate();
-                this.setActiveYearFocus(newdate);
-            } else if (action === 'arrowleft') {
-                newdate = moment(this.activeDate).add(-1, 'year').toDate();
-                this.setActiveYearFocus(newdate);
-            } else if (action === 'arrowright') {
-                newdate = moment(this.activeDate).add(+1, 'year').toDate();
-                this.setActiveYearFocus(newdate);
-            } else if (action === 'control.arrowdown' || action === 'enter') {
+            if ((event.ctrlKey && event.key === 'ArrowDown') || event.key === 'Enter') {
                 if ($(document.activeElement).parent().hasClass('disabled')) {
                     return;
                 }
                 $(document.activeElement).click();
                 this.loadMonths();
                 this.setActiveMonthFocus(this.activeDate);
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(+4, 'year').toDate();
+                this.setActiveYearFocus(newdate);
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                newdate = moment(this.activeDate).add(-4, 'year').toDate();
+                this.setActiveYearFocus(newdate);
+            } else if (event.key === 'ArrowLeft') {
+                newdate = moment(this.activeDate).add(-1, 'year').toDate();
+                this.setActiveYearFocus(newdate);
+            } else if (event.key === 'ArrowRight') {
+                newdate = moment(this.activeDate).add(+1, 'year').toDate();
+                this.setActiveYearFocus(newdate);
             }
         });
         this.focusBlurDatePickerHeadButtons();
@@ -730,7 +724,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param scope - scope of the time picker widget
      */
     protected focusTimePickerPopover(scope) {
-        this.keyEventPluginInstance = scope.keyEventPlugin.constructor;
         this.elementScope = scope;
         // setTimeout is used so that by then time input has the updated value. focus is setting back to the input field
         this.elementScope.ngZone.runOutsideAngular(() => {
@@ -810,36 +803,34 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this.removeKeyupListener = () => {
             inputFields.first().off('keyup');
         };
-        $el.on('keydown', evt => {
-            const $target = $(evt.target);
+        $el.on('keydown', event => {
+            const $target = $(event.target);
             const $parent = $target.parent();
             const elementScope = this.elementScope;
 
-            const action = this.keyEventPluginInstance.getEventFullKey(evt);
-
             let stopPropogation, preventDefault;
 
-            if (action === 'escape') {
+            if (event.key === 'Escape') {
                 elementScope.hideTimepickerDropdown();
             }
 
             if ($target.hasClass('bs-timepicker-field')) {
                 if ($parent.is(':first-child')) {
-                    if (action === 'shift.tab' || action === 'enter' || action === 'escape') {
+                    if ((event.shiftKey && event.key === 'Tab') || event.key === 'Enter' || event.key === 'Escape') {
                         elementScope.setIsTimeOpen(false);
                         this.focus();
                         stopPropogation = true;
                         preventDefault = true;
                     }
                 } else if ($parent.is(':last-child') || ($parent.next().next().find('button.disabled').length)) {
-                    if (action === 'tab' || action === 'escape' || action === 'enter') {
+                    if (event.key === 'Tab' || event.key === 'Escape' || event.key === 'Enter') {
                         elementScope.setIsTimeOpen(false);
                         this.focus();
                         stopPropogation = true;
                         preventDefault = true;
                     }
                 } else {
-                    if (action === 'enter' || action === 'escape') {
+                    if (event.key === 'Enter' || event.key === 'Escape') {
                         elementScope.setIsTimeOpen(false);
                         this.focus();
                         stopPropogation = true;
@@ -847,19 +838,19 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     }
                 }
                 if (stopPropogation) {
-                    evt.stopPropagation();
+                    event.stopPropagation();
                 }
                 if (preventDefault) {
-                    evt.preventDefault();
+                    event.preventDefault();
                 }
                 if (elementScope.mintime && elementScope.maxtime && !this.isValidDate(elementScope.bsTimeValue)) {
-                    if (action === 'arrowdown') {
+                    if (event.key === 'ArrowDown') {
                         elementScope.bsTimeValue = elementScope.maxTime;
-                    } else if (action === 'arrowup') {
+                    } else if (event.key === 'ArrowUp') {
                         elementScope.bsTimeValue = elementScope.minTime;
                     }
                 }
-                if (action === 'tab') {
+                if (event.key === 'Tab') {
                     this.invalidDateTimeFormat = false;
                     this.invokeOnChange(this.datavalue, undefined, false);
                     const pattern = this.datepattern || this.timepattern;
@@ -867,11 +858,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                         $(this.nativeElement).find('.display-input').val(elementScope.displayValue);
                     }
                 }
-                if (action === 'arrowdown' || action === 'arrowup') {
+                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
                     this.timeFormatValidation();
                 }
             } else if ($target.hasClass('btn-default')) {
-                if (action === 'tab' || action === 'escape') {
+                if (event.key === 'Tab' || event.key === 'Escape') {
                     elementScope.setIsTimeOpen(false);
                     this.focus();
                 }
