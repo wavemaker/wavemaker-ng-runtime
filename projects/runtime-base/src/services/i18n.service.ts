@@ -39,6 +39,8 @@ export class I18nServiceImpl extends AbstractI18nService {
     private formatsByLocale = {'timezone': '', 'number': ''};
     private get app() { return this.inj.get(App) };
 
+    private bundleLoaded:{[key:string] : any} = {};
+
     constructor(
         private $http: HttpClient,
         private bsLocaleService: BsLocaleService,
@@ -118,6 +120,8 @@ export class I18nServiceImpl extends AbstractI18nService {
                 this.extendMessages(bundle.messages);
                 this.extendPrefabMessages(bundle);
                 this.appDefaults.setFormats(bundle.formats);
+                this.bundleLoaded.app = true;
+                this.notifyLocaleChanged();
             });
     }
 
@@ -137,6 +141,8 @@ export class I18nServiceImpl extends AbstractI18nService {
             _config = _config && _config._config;
             defineLocale(this.selectedLocale, _config);
             this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
+            this.bundleLoaded.moment = true;
+            this.notifyLocaleChanged();
         })
     }
 
@@ -167,6 +173,7 @@ export class I18nServiceImpl extends AbstractI18nService {
 
         // return in case of mobile app or if selected locale is default supported locale.
         if (!force && (isMobile() || isMobileApp() || this.selectedLocale === this.defaultSupportedLocale)) {
+            this.bundleLoaded.fullCalendar = true;
             return;
         }
 
@@ -179,7 +186,7 @@ export class I18nServiceImpl extends AbstractI18nService {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
             const path = _cdnUrl + `locales/moment-timezone/moment-timezone-with-data.js`;
             loadScripts([path], true).then(()=>{
-                /** 
+                /**
                  * If locale is provided in the form of offset and not timezone name, deduce the name.
                  * If locale is provided as GMT+9, name will be deduced as Asia/Tokyo
                  */
@@ -206,9 +213,17 @@ export class I18nServiceImpl extends AbstractI18nService {
     protected loadLocaleBundles(libLocale) {
         if (libLocale.moment) {
             this.loadMomentLocaleBundle(libLocale.moment);
+        } else if (this.selectedLocale === this.defaultSupportedLocale) {
+            this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
+            this.bundleLoaded.moment = true;
         }
         if (libLocale.fullCalendar && window['FullCalendar']) {
-            this.loadCalendarLocaleBundle(libLocale.fullCalendar);
+            this.loadCalendarLocaleBundle(libLocale.fullCalendar)?.then(() => {
+                this.bundleLoaded.fullCalendar = true;
+                this.notifyLocaleChanged();
+            });
+        } else {
+            this.bundleLoaded.fullCalendar = true;
         }
         if (libLocale.angular) {
             this.loadAppLocaleBundle();
@@ -229,7 +244,7 @@ export class I18nServiceImpl extends AbstractI18nService {
             return pageConfig;
         } else {
             return this.formatsByLocale['timezone'];
-        }    
+        }
     }
 
     public getFormatsByLocale() {
@@ -261,8 +276,18 @@ export class I18nServiceImpl extends AbstractI18nService {
         // reset the localeData object
         this.init();
 
+        this.bundleLoaded.moment = false;
+        this.bundleLoaded.fullCalendar = false;
+        this.bundleLoaded.app = false;
+        this.bundleLoaded.angular = false;
+        this.bundleLoaded.libLocale = libLocale;
+
         // load the locale bundles of the selected locale
-        return this.loadLocaleBundles(libLocale).then(() => this.updateLocaleDirection());
+        return this.loadLocaleBundles(libLocale).then(() => {
+            this.updateLocaleDirection();
+            this.bundleLoaded.angular = true;
+            this.notifyLocaleChanged();
+        });
     }
 
     private deduceAppLocale() {
@@ -310,6 +335,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     public loadDefaultLocale() {
+        Date.prototype["month"] = Date.prototype.getMonth;
         const locale = this.deduceAppLocale();
         return this.setSelectedLocale(locale);
     }
@@ -356,6 +382,12 @@ export class I18nServiceImpl extends AbstractI18nService {
 
     public getwidgetLocale() {
         return this.formatsByLocale;
+    }
+
+    private notifyLocaleChanged() {
+        if(this.bundleLoaded.moment && this.bundleLoaded.fullCalendar && this.bundleLoaded.angular && this.bundleLoaded.app) {
+            this.app.notify(  'locale-changed', this.bundleLoaded.libLocale);
+        }
     }
 
 }
