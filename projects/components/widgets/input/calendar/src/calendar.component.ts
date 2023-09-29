@@ -1,6 +1,6 @@
 import { DatePickerInnerComponent } from 'ngx-bootstrap/datepicker/datepicker-inner.component';
 
-import { Attribute, AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Attribute, AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import {getClonedObject, getSessionStorageItem, AbstractI18nService, isMobileApp, isMobile} from '@wm/core';
 
@@ -79,7 +79,7 @@ const dateFormat = 'YYYY/MM/DD';
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class CalendarComponent extends StylableComponent implements AfterContentInit, AfterViewInit, OnInit, IRedrawableComponent {
+export class CalendarComponent extends StylableComponent implements AfterContentInit, AfterViewInit, OnInit, OnDestroy, IRedrawableComponent {
     static initializeProps = registerProps();
     // The calendar element reference
     @ViewChild('calendar') _calendar: ElementRef;
@@ -140,16 +140,17 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             eventDidMount: this.eventDidMount.bind(this),
             viewDidMount: this.viewDidMount.bind(this),
             datesSet: this.datesSet.bind(this),
-            dateClick: this.dateClick.bind(this)   
+            dateClick: this.dateClick.bind(this)
         }
     };
     public view: string;
     private dayClass: Array<any> = [];
+    private cancelLocaleChangeSubscription;
 
     // this function selects the default date given for the calendar
     selectDate() {
         let start, end;
-        // checks if datavalue is an object and not a Date object 
+        // checks if datavalue is an object and not a Date object
         if (_.isObject(this.datavalue) && !_.isDate(this.datavalue)) {
             start = moment(this.datavalue.start);
             end   = moment(this.datavalue.end);
@@ -159,7 +160,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
 
         this.$fullCalendar.gotoDate( moment(start)._d); // after selecting the date go to the date.
-        
+
         this.$fullCalendar.select(start.valueOf(), end.valueOf());
     }
 
@@ -284,7 +285,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
         const _eventMetadata = eventObj.extendedProps._eventMetadata;
         Object.setPrototypeOf(_eventMetadata, eventObj);
-        return _eventMetadata;     
+        return _eventMetadata;
     }
 
     /**
@@ -296,7 +297,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     private convertEventObjForOldAndNewData(eventObj) {
         const _eventMetadata = eventObj.extendedProps;
         _.extend(eventObj, _eventMetadata);
-        return eventObj;     
+        return eventObj;
     }
 
     private eventResize(eventResizeInfo) {
@@ -390,6 +391,12 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             i18nService.initCalendarLocale();
             FullCalendar.__wm_locale_initialized = true;
         }
+
+        this.cancelLocaleChangeSubscription = this.getAppInstance().subscribe("locale-changed", (libLocale) => {
+            this.setLocale();
+            this.applyCalendarOptions('option', 'locale', libLocale.fullCalendar || 'en');
+            this.redraw();
+        });
     }
 
     ngOnInit() {
@@ -488,7 +495,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         this.$fullCalendar =  calendar;
         this.invokeEventCallback('beforerender', {'$event' : {}});
         calendar.render();
-       
+
         // if the changes are already stacked before calendar renders then execute them when needed
         if (this.changesStack.length) {
             this.changesStack.forEach((changeObj) => {
@@ -679,5 +686,11 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                 self.$fullCalendar.addEvent(event);
             });
         });
+    }
+
+    ngOnDestroy() {
+        if(this.cancelLocaleChangeSubscription) {
+            this.cancelLocaleChangeSubscription();
+        }
     }
 }

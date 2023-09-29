@@ -6,6 +6,7 @@ import { WidgetRef } from '@wm/components/base';
 import { hasCordova, noop, transformFileURI } from '@wm/core';
 import { DeviceFileCacheService } from '@wm/mobile/core';
 
+declare const _;
 const DEFAULT_IMAGE =  'resources/images/imagelists/default-image.png';
 
 @Directive({
@@ -25,7 +26,7 @@ export class ImageCacheDirective implements DoCheck {
     ) {}
 
     public ngDoCheck() {
-        if (this.componentInstance.imgSource
+        if (_.isString(this.componentInstance.imgSource)
             && this.componentInstance.imgSource.startsWith('http')) {
             if (this._lastUrl !== this.componentInstance.imgSource) {
                 this._lastUrl = this.componentInstance.imgSource;

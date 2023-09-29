@@ -8,12 +8,12 @@ declare const moment, $, _;
 
 @Component({
     selector: 'wm-datetimepicker',
-    template: ` 
+    template: `
     <ng-template #datetimepickerTemplate>
         <div class="app-datetime-picker">
             <div class="modal-body">
                 <div class="mobile-datetime-picker-options">
-                    
+
                 </div>
                 <bs-datepicker-inline
                     [bsConfig]="bsDatepickerConfig"
@@ -37,14 +37,14 @@ declare const moment, $, _;
                 <button
                     *ngIf="mode === 'DATE_TIME' || mode === 'DATE'"
                     class="btn btn-secondary today-btn"
-                    (click)="setToday()">{{appLocale.MESSAGE_DATE_PICKER_TODAY || "Today" }}</button>
+                    (click)="setToday()">{{appLocale.LABEL_TODAY_DATE || "Today" }}</button>
                 <button
                     class="btn btn-primary pull-right ok-btn"
                     *ngIf="mode === 'DATE_TIME' || mode === 'TIME'"
-                    (click)="onOkClick()">{{appLocale.MESSAGE_DATE_PICKER_OK || "Ok" }}</button>
+                    (click)="onOkClick()">{{appLocale.LABEL_OK || "Ok" }}</button>
                 <button
                     class="btn btn-secondary pull-right clear-btn"
-                    (click)="clear()">{{appLocale.MESSAGE_DATE_PICKER_CLEAR || "Clear" }}</button>
+                    (click)="clear()">{{appLocale.LABEL_CLEAR_DATE || "Clear" }}</button>
             </div>
         </div>
     </ng-template>
@@ -83,7 +83,7 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
     private _value = new Date();
 
     private changedValue = null;
-    
+
     private modalRef: BsModalRef;
 
     @Input()
@@ -102,7 +102,7 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
         this.changedValue = d;
     }
 
-    
+
     @Input("config")
     set bsDatepickerConfig(config: BsDatepickerConfig) {
         this._bsDatepickerConfig = config;
@@ -209,8 +209,8 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
             newVal.setMilliseconds(oldVal.getMilliseconds());
         }
         this.changedValue = newVal;
-        if (this.mode === 'DATE' 
-            && oldVal !== newVal 
+        if (this.mode === 'DATE'
+            && oldVal !== newVal
             && this.validateSelectedDate()) {
             this.onOkClick();
         }
@@ -282,19 +282,19 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
 
 @Component({
     selector: 'wm-timepicker',
-    template: ` 
+    template: `
         <wm-pickergroup>
-            <wm-picker 
+            <wm-picker
                 [options]="options.hour"
                 [selectedValue]="hour"
                 (change)="set($event, 'HOUR')"></wm-picker>
             <span class="app-time-separator">:</span>
-            <wm-picker 
+            <wm-picker
                 [options]="options.minute"
                 [selectedValue]="minute"
                 (change)="set($event, 'MINUTE')"></wm-picker>
             <span class="app-time-separator">:</span>
-            <wm-picker 
+            <wm-picker
                 [options]="options.minute"
                 [selectedValue]="second"
                 (change)="set($event, 'SECOND')"></wm-picker>
@@ -379,7 +379,7 @@ export class TimePickerComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        
+
     }
 
 }
