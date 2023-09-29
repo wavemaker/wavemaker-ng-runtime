@@ -758,11 +758,28 @@ buildLibs() {
     fi
 }
 
+getMg12PreviewArtifacts() {
+    FILENAME="app-runtime-wm-build-11.4.2-rc.124.tgz"
+    #ARTIFACT_URL="https://registry.npmjs.org/@wavemaker/app-runtime-wm-build/-/$FILENAME"
+    DIST=$(realpath "./dist")
+    SRC_DIR=$(realpath "./ng-12-preview-artifacts")
+    #wget -P "$DIST" "$ARTIFACT_URL"
+    cp "$SRC_DIR/$FILENAME" "$DIST"
+    mkdir $DIST/bundles_bk
+    mv "$DIST/bundles"/* "$DIST/bundles_bk"
+    tar -xf "$DIST/$FILENAME" -C "$DIST/bundles"
+    rm -rf "$DIST/bundles/app-runtime-wm-build/package.json"
+    mv "$DIST/bundles/app-runtime-wm-build"/* "$DIST/bundles"
+    rm -rf "$DIST/bundles/app-runtime-wm-build"
+    rm -rf "$DIST/$FILENAME"
+}
+
 buildLibs
 buildApp
 buildDocs
 copyLocale
 copyDist
+getMg12PreviewArtifacts
 
 end=`date +%s`
 
