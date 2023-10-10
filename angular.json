@@ -176,6 +176,7 @@
               "./node_modules/jquery-ui/ui/widgets/droppable.js",
               "./libraries/scripts/datatable/datatable.js",
               "./node_modules/moment/min/moment.min.js",
+              "./node_modules/moment-timezone/builds/moment-timezone.min.js",
               "./node_modules/fullcalendar/main.min.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
               "./node_modules/hammerjs/hammer.min.js",
