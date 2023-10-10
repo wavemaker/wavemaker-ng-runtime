@@ -355,7 +355,9 @@ export class StatePersistence {
         if (!_.get(parsedObj, [stateParam]) && !_.get(parsedObj, key)) {
             return;
         }
-        if (_.get(parsedObj, stateParam + '.' + key)) {
+        // Fix for [WMS-24698]: when table is inside a prefab, state persistence key is like "TestLabel_11.TestLabel_1.staticVariable1Table1"
+        // _.get(parsedObj, stateParam + '.' + key) is undefined so using (parsedObj && parsedObj[stateParam] && parsedObj[stateParam][key]) condition.
+        if (_.get(parsedObj, stateParam + '.' + key) || (parsedObj && parsedObj[stateParam] && parsedObj[stateParam][key])) {
             if (subParam) {
                 delete parsedObj[stateParam][key][subParam];
             } else {
