@@ -8,7 +8,7 @@ register('wm-button', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid()
-            return `<${tagName} wmButton #${counter}="wmButton" [attr.aria-label]="${counter}.hint || ${counter}.caption" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmButton #${counter}="wmButton" [attr.aria-label]="${counter}.hint || ${counter}.caption || null" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

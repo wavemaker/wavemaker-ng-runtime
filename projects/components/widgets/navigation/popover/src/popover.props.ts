@@ -15,7 +15,7 @@ export const registerProps = () => {
                 ['contentsource', {value: 'partial', ...PROP_STRING}],
                 ['encodeurl', PROP_BOOLEAN],
                 ['hint', PROP_STRING],
-                ['hyperlink', PROP_STRING],
+                ['hyperlink', {value: 'javascript:void(0)', PROP_STRING}],
                 ['iconclass', PROP_STRING],
                 ['iconheight', PROP_STRING],
                 ['iconmargin', PROP_STRING],
