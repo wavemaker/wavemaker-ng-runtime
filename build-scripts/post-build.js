@@ -257,8 +257,6 @@ const generateSha1 = (content) => {
         } else {
             isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.js`);
             isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.css`);
-            $("script[type='module']").remove();
-            $('script[nomodule]').removeAttr('nomodule');
         }
 
         if (isProdBuild) {
