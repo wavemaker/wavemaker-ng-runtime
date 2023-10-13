@@ -152,7 +152,13 @@ export class BaseFieldValidations {
 
         this.widgetControl.setAsyncValidators([this._asyncValidatorFn()]);
         if(this.widgetContext.ngform.touched){
-            this.widgetControl.updateValueAndValidity();
+            const opt = {};
+            // updating the value only when prevData is not equal to current value.
+            // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
+            if (this.formwidget && this.instance.value === this.formwidget.prevDatavalue) {
+                opt['emitEvent'] = false;
+            }
+            this.widgetControl.updateValueAndValidity(opt);
         }
     }
 
@@ -219,8 +225,14 @@ export class BaseFieldValidations {
     validate() {
         this.applyDefaultValidators();
         if (this._asyncValidatorFn) {
+            const opt = {};
+            // updating the value only when prevData is not equal to current value.
+            // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
+            if (this.formwidget && this.instance.value === this.formwidget.prevDatavalue) {
+                opt['emitEvent'] = false;
+            }
             this.widgetControl.setAsyncValidators([this._asyncValidatorFn()]);
-            this.widgetControl.updateValueAndValidity();
+            this.widgetControl.updateValueAndValidity(opt);
         }
         // show the validation erros show when form is touched and not on load. This just highlights the field that is subscribed for changes.
         if (this.widgetContext.ngform.touched) {
@@ -242,8 +254,14 @@ export class BaseFieldValidations {
     // invokes both custom sync validations and default validations.
     applyDefaultValidators() {
         const validators = this.getDefaultValidators();
+        const opt = {};
+        // updating the value only when prevData is not equal to current value.
+        // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
+        if (this.formwidget && this.instance.value === this.formwidget.prevDatavalue) {
+            opt['emitEvent'] = false;
+        }
         this.widgetControl.setValidators(_.concat(this._syncValidators || [], validators));
-        this.widgetControl.updateValueAndValidity();
+        this.widgetControl.updateValueAndValidity(opt);
         this.setCustomValidationMessage();
     }
 
