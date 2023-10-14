@@ -196,7 +196,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     ) {
         const elementRef = inj.get(ElementRef);
         this.nativeElement = elementRef.nativeElement;
-        this.viewParentApp = inject(App);
+        //making the code compatible in both the JIT and AOT modes
+        this.viewParentApp = inj ? inj.get(App) : inject(App);
         this.widgetType = config.widgetType;
         this.widgetSubType = config.widgetSubType || config.widgetType;
         this.viewContainerRef = inj.get(ViewContainerRef);

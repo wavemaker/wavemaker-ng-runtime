@@ -18,7 +18,7 @@ export class LazyLoadDirective implements OnDestroy {
         private templateRef: TemplateRef<any>,
         private viewContainer: ViewContainerRef
     ) {
-        let viewParentApp = inject(App);
+        let viewParentApp = inj ? inj.get(App) : inject(App);
         let lView = (inj as any)._lView;
         const getParentlView = (lView: any) => {
             let parentlView = lView[3];

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { WmComponentsModule } from '@wm/components/base';
 
@@ -14,7 +15,8 @@ const components = [
 @NgModule({
     imports: [
         CommonModule,
-        WmComponentsModule
+        WmComponentsModule,
+        FormsModule
     ],
     declarations: [...components],
     exports: [...components]

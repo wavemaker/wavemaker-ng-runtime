@@ -73,12 +73,12 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     init() {
 
-        this.App = inject(App);
+        this.App = this.injector ? this.injector.get(App) : inject(App);
         //making the code compatible in both the JIT and AOT modes
         this.containerWidget = this.injector ? this.injector.get(WidgetRef) : inject(WidgetRef);
-        this.i18nService = inject(AbstractI18nService);
-        this.scriptLoaderService = inject(ScriptLoaderService);
-        this.Viewport = inject(Viewport);
+        this.i18nService = this.injector ? this.injector.get(AbstractI18nService) : inject(AbstractI18nService);
+        this.scriptLoaderService = this.injector ? this.injector.get(ScriptLoaderService) : inject(ScriptLoaderService);
+        this.Viewport = this.injector ? this.injector.get(Viewport) : inject(Viewport);
         // this.viewContainerRef = this.getContainerWidgetInjector().get(ViewContainerRef);
         // Replacing this.getContainerWidgetInjector().view.component as viewParent
         // this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
@@ -105,9 +105,9 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         });
 
         if(this.spa) {
-            this.pageDirective = inject(SpaPageDirective);
+            this.pageDirective = this.injector ? this.injector.get(SpaPageDirective) : inject(SpaPageDirective);
         } else {
-            this.pageDirective = inject(PageDirective);
+            this.pageDirective = this.injector ? this.injector.get(PageDirective) : inject(PageDirective);
         }
         if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
@@ -142,14 +142,14 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
                     this.Prefab = this.viewParent;
                 }
             }
-            this.evalUserScript(this, this.App, inject(UtilsService));
+            this.evalUserScript(this, this.App, this.injector ? this.injector.get(UtilsService) : inject(UtilsService));
         } catch (e) {
             console.error(`Error in evaluating partial (${this.partialName}) script\n`, e);
         }
     }
 
     initVariables() {
-        const variablesService = inject(VariablesService);
+        const variablesService = this.injector ? this.injector.get(VariablesService) : inject(VariablesService);
 
         // get variables and actions instances for the page
         const variableCollection = variablesService.register(this.partialName, this.getVariables(), this);

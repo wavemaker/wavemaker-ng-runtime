@@ -2,8 +2,6 @@
     "extends": "../../../tsconfig.json",
     "compilerOptions": {
         "outDir": "../../../out-tsc/lib",
-        "module": "es2020",
-        "moduleResolution": "node",
         "declaration": true,
         "sourceMap": true,
         "inlineSources": true,
@@ -19,10 +17,8 @@
         ]
     },
     "angularCompilerOptions": {
-      "compilationMode": "full",
         "skipTemplateCodegen": true,
-        "strictMetadataEmit": false,
-        "fullTemplateTypeCheck": false,
+
         "strictInjectionParameters": true,
         "enableResourceInlining": true
     },

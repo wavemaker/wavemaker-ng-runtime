@@ -59,11 +59,12 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     init() {
         this.App = this.injector.get(App);
         //making the code compatible in both the JIT and AOT modes
-        this.containerWidget = this.injector ? this.injector.get(WidgetRef) : inject(WidgetRef);;
-        this.prefabMngr = inject(PrefabManagerService);
-        this.i18nService = inject(AbstractI18nService);
-        this.scriptLoaderService = inject(ScriptLoaderService);
-        this.Viewport = inject(Viewport);
+        this.containerWidget = this.injector ? this.injector.get(WidgetRef) : inject(WidgetRef);
+
+        this.prefabMngr = this.injector ? this.injector.get(PrefabManagerService) : inject(PrefabManagerService);
+        this.i18nService = this.injector ? this.injector.get(AbstractI18nService) : inject(AbstractI18nService);
+        this.scriptLoaderService = this.injector ? this.injector.get(ScriptLoaderService) : inject(ScriptLoaderService);
+        this.Viewport = this.injector ? this.injector.get(Viewport) : inject(Viewport);
 
         this.viewParent = this.containerWidget.viewParent;
 
@@ -72,9 +73,9 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         }
 
         if (this.spa) {
-            this.pageDirective = inject(SpaPageDirective);
+            this.pageDirective = this.injector ? this.injector.get(SpaPageDirective) : inject(SpaPageDirective);
         } else {
-            this.pageDirective = inject(PageDirective);
+            this.pageDirective = this.injector ? this.injector.get(PageDirective) : inject(PageDirective);
         }
         if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));

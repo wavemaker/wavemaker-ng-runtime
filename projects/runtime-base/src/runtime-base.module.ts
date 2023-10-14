@@ -242,14 +242,15 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     HeaderModule,
     LeftPanelModule,
     RightPanelModule,
-    TopNavModule
+    TopNavModule,
+    PrefabModule
 ];
 
 // setting parseExpr as exprEvaluator for swipeAnimation
 ($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
 
 @NgModule({
-    declarations: definitions,
+    declarations: [ ...definitions ],
     imports: [
         CommonModule,
         RouterModule,
@@ -257,20 +258,22 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
 
         ToastrModule,
         WmComponentsModule,
-        PrefabModule,
         MobileRuntimeModule,
         CoreModule,
         SecurityModule,
         OAuthModule,
         VariablesModule,
         HttpServiceModule,
-        REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
+        ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     exports: [
-        definitions,
+        ...definitions,
 
         CommonModule,
+        RouterModule,
+        HttpClientModule,
 
+        ToastrModule,
         WmComponentsModule,
         MobileRuntimeModule,
         CoreModule,
@@ -278,7 +281,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         OAuthModule,
         VariablesModule,
         HttpServiceModule,
-        REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
+        ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     providers: [
         {provide: ɵDomSharedStylesHost, useClass: WMDomSharedStylesHost},

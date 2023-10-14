@@ -21,7 +21,8 @@ const enum STEP_STATUS {
 @Directive({
     selector: 'form[wmWizardStep]',
     providers: [
-        provideAsWidgetRef(WizardStepDirective)
+        provideAsWidgetRef(WizardStepDirective),
+        NgForm
     ],
     exportAs: 'wmWizardStep'
 })
