@@ -96,14 +96,14 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
      * Make a http call and returns an observable that can be cancelled
      * @param options, options using which the call needs to be made
      */
-    sendCallAsObservable(options: any): any {
+    sendCallAsObservable(options: any, params? : any): any {
         const req = this.generateRequest(options);
         return this.httpClient.request(req);
     }
 
-    sendCall(requestParams, variable) {
+    sendCall(requestParams, variable, params?) {
         return new Promise((resolve, reject) => {
-            variable._observable = this.sendCallAsObservable(requestParams).subscribe((response: any) => {
+            variable._observable = this.sendCallAsObservable(requestParams, params).subscribe((response: any) => {
                 if (response && response.type) {
                     resolve(response);
                 }

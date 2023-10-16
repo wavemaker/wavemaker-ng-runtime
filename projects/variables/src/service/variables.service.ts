@@ -53,6 +53,7 @@ export class VariablesService {
         wmSetDependency('oAuth', this.oAuthService);
         wmSetDependency('security', this.securityService);
         wmSetDependency('metadata', this.metadataService);
+        wmSetDependency('http', this.httpService);
     }
 
     /**
