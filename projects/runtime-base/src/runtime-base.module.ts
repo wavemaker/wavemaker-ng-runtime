@@ -4,6 +4,7 @@ import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ɵDomSharedStylesHost } from '@angular/platform-browser';
 import {ɵDomRendererFactory2} from "@angular/platform-browser";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ToastrModule } from 'ngx-toastr';
 
@@ -255,6 +256,8 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         CommonModule,
         RouterModule,
         HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
 
         ToastrModule,
         WmComponentsModule,
@@ -267,6 +270,9 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     exports: [
+        FormsModule,
+        ReactiveFormsModule,
+
         ...definitions,
 
         CommonModule,
