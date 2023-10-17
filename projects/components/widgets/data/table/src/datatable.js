@@ -573,10 +573,16 @@ $.widget('wm.datatable', {
             $tbody.append(rowTemplate);
             if (self.options.rowExpansionEnabled) {
                 var rowHeight = self.options.rowDef.height;
+                var rowPosition = self.options.rowDef.position;
                 var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
                 var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
                     '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
                     '</td></tr>');
+                if(rowPosition === "-1"){
+                    $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                    '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
+                    '</td><td></td></tr>');
+                }
                 if (rowHeight) {
                     $tr.find('div.row-overlay').css('min-height', rowHeight);
                 }
