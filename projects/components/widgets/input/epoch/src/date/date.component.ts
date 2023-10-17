@@ -109,6 +109,9 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when the date input changes
      */
     onDisplayDateChange($event, isNativePicker: boolean = false) {
+        this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
+        this.updateFormat('datepattern');
+
         if (this.isEnterPressedOnDateInput) {
             this.isEnterPressedOnDateInput = false;
             return;
@@ -229,6 +232,8 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when pressing key on the date input
      */
     public onDisplayKeydown(event) {
+        this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
+        this.updateFormat('datepattern');
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
