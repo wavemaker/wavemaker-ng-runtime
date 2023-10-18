@@ -53,7 +53,8 @@ export class DialogComponent extends BaseDialog implements OnInit {
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,
-                keyboard: !toBoolean(modal)
+                keyboard: toBoolean(closable) ? true : !toBoolean(modal)
+
             }
         );
     }
