@@ -268,7 +268,8 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when the date selection changes
      */
     onDateChange(newVal): void {
-
+        this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
+        this.updateFormat('datepattern');
         /**
          *  Ngx-bootstrap upgrade : To avoid the page load datechange event;
          *  TODO:
