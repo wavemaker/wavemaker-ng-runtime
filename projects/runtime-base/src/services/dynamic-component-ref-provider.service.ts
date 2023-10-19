@@ -1,19 +1,19 @@
 import {
     Compiler,
     Component,
-    CUSTOM_ELEMENTS_SCHEMA, forwardRef,
+    CUSTOM_ELEMENTS_SCHEMA,
     Injectable,
     NgModule,
     NO_ERRORS_SCHEMA,
     ViewEncapsulation
 } from '@angular/core';
 
-import { App, extendProto, isDefined } from '@wm/core';
-import { transpile } from '@wm/transpiler';
-import { initComponentsBuildTask } from '@wm/build-task';
+import {App, extendProto, isDefined} from '@wm/core';
+import {transpile} from '@wm/transpiler';
+import {initComponentsBuildTask} from '@wm/build-task';
 
-import { AppManagerService } from './app.manager.service';
-import { RuntimeBaseModule } from '../runtime-base.module';
+import {AppManagerService} from './app.manager.service';
+import {RuntimeBaseModule} from '../runtime-base.module';
 
 initComponentsBuildTask();
 declare const _;
@@ -22,16 +22,12 @@ const componentFactoryRefCache = new Map<string, any>();
 
 const getDynamicModule = (componentRef: any) => {
     return NgModule({
-        declarations: [
-            componentRef
-        ],
+        declarations: [componentRef],
         imports: [
-            RuntimeBaseModule
+            RuntimeBaseModule,
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-    })(
-        class DynamicModule {}
-    );
+    })(class DynamicModule {});
 };
 
 const getDynamicComponent = (
@@ -39,15 +35,12 @@ const getDynamicComponent = (
     template: string,
     css: string = '') => {
     // @ts-ignore
-    const component = Component({
+    return Component({
         template,
         styles: [css],
         encapsulation: ViewEncapsulation.None,
         selector
-    })(
-        class DynamicComponent {
-        });
-    return component;
+    })(class DynamicComponent {});
 };
 
 @Injectable()

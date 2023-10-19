@@ -35,7 +35,7 @@ import {
 } from '@wm/core';
 import { FileExtensionFromMimePipe } from '@wm/components/base';
 import { DeviceFileOpenerService, DeviceService, ExtAppMessageService, MobileCoreModule, NetworkService } from '@wm/mobile/core';
-import { PushService, PushServiceImpl } from '@wm/mobile/offline';
+import {OfflineModule, PushService, PushServiceImpl} from '@wm/mobile/offline';
 import { SecurityService } from '@wm/security';
 import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope, CONSTANTS } from '@wm/variables';
@@ -44,6 +44,16 @@ import { BasicModule } from '@wm/mobile/components/basic';
 import { AppExtComponent } from './components/app-ext.component';
 import { MobileHttpInterceptor } from './services/http-interceptor.service';
 import { WebProcessService } from './services/webprocess.service';
+import {SearchModule} from "@wm/mobile/components/basic/search";
+import {SegmentedControlModule} from "@wm/mobile/components/containers/segmented-control";
+import {MediaListModule} from "@wm/mobile/components/data/media-list";
+import {BarcodeScannerModule} from "@wm/mobile/components/device/barcode-scanner";
+import {CameraModule} from "@wm/mobile/components/device/camera";
+import {FileUploadModule} from "@wm/mobile/components/input/file-upload";
+import {PageModule} from "@wm/mobile/components/page";
+import {LeftPanelModule} from "@wm/mobile/components/page/left-panel";
+import {MobileNavbarModule} from "@wm/mobile/components/page/mobile-navbar";
+import {TabBarModule} from "@wm/mobile/components/page/tab-bar";
 
 declare const $, navigator, _, cordova;
 
@@ -69,17 +79,36 @@ const cordovaServices = [
     Diagnostic
 ];
 
+export const MOBILE_COMPONENT_MODULES = [
+    BasicModule,
+    MobileCoreModule,
+    OfflineModule,
+    VariablesModule,
+    SearchModule,
+    SegmentedControlModule,
+    MediaListModule,
+    BarcodeScannerModule,
+    CameraModule,
+    FileUploadModule,
+    PageModule,
+    LeftPanelModule,
+    MobileNavbarModule,
+    TabBarModule
+];
+
 @NgModule({
     declarations: [
         AppExtComponent
     ],
     exports: [
-        AppExtComponent
+        AppExtComponent,
+        ...MOBILE_COMPONENT_MODULES
     ],
     imports: [
         MobileCoreModule,
         VariablesModule,
-        BasicModule
+        BasicModule,
+        ...MOBILE_COMPONENT_MODULES
     ],
     bootstrap: []
 })
