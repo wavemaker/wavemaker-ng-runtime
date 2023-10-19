@@ -1301,6 +1301,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
         } else {
             this.resetPageNavigation();
+            // If the dataset is undefined or empty or table is bound to static variable then set variableInflight to false inorder to update the status
+            if (newVal === '' || newVal === undefined || _.get(this.datasource, 'category') === 'wm.Variable') {
+                this.variableInflight = false;
+            }
             /*for run mode, disabling the loader and showing no data found message if dataset is not valid*/
             if (!this.variableInflight) {
                 this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
@@ -1459,7 +1463,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     setGridData(serverData) {
         const data = this.filternullrecords ?  this.removeEmptyRecords(serverData) : serverData;
         // fix for [WMS-24012] set variableinflight flag to false for static variables
-        if (_.get(this.datasource, 'category') === 'wm.Variable') {
+        // If the table is bound to some widget and not bound to any variable (ex: Table1.selectedItem) then set variableInflight to false
+        if (_.get(this.datasource, 'category') === 'wm.Variable' || _.get(this.datasource, 'category') === undefined) {
             this.variableInflight = false;
         }
         if (!this.variableInflight) {
