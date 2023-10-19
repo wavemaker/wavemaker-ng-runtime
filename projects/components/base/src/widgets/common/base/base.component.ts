@@ -363,11 +363,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         const parentContexts = this.inj.get(Context, {});
 
         // assign the context property accordingly
-        // if (this.viewParent !== context) {
-        //     this.context = context;
-        // } else {
-        //     this.context = {};
-        // }
+        if (this.viewParent !== context) {
+            this.context = context;
+        } else {
+            this.context = {};
+        }
 
         if (parentContexts) {
             let parentContextObj = {};
@@ -551,7 +551,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     protected processBindAttr(propName: string, expr: string) {
 
         this.initState.delete(propName);
-
         this.registerDestroyListener(
             $watch(
                 expr,
@@ -625,14 +624,18 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * and our logic to check like these changes will fail. Before IVY changes, angular maintains a separate object with these attributes
      * as it is like in the camelcase. With IVY all those are gone. So need to maintain a separate list with the camelcasing of attributes
      * @private
+     * _tNode.attrs attributes are stored in array(even index: key, odd index: value)
      */
     private getAttributes() {
         let _tNodeAttrs = (this.inj as any)._tNode.attrs, actualAttrs = Array.from(this.nativeElement.attributes).map(attr => attr.name);
         if(_tNodeAttrs === null) {
             return actualAttrs;
         }
-        _tNodeAttrs.filter(attr => {
-            if(typeof attr === 'string') {
+        _.forEach(_tNodeAttrs, (attr, i) => {
+            if (typeof attr === 'number') {
+                return false;
+            }
+            if(typeof attr === 'string' && i % 2 == 0) {
                 let lowerCaseAttr = attr.toLowerCase();
                 if (actualAttrs.includes(lowerCaseAttr)) {
                     let index = actualAttrs.indexOf(lowerCaseAttr)
