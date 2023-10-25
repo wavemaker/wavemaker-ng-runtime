@@ -135,7 +135,7 @@ const rollupGlobals = {
     'ngx-bootstrap/tabs': 'tabs',
     'ng-circle-progress': 'ngCircleProgress',
     'ngx-color-picker': 'ngxColorpicker',
-    'angular-imask': 'IMask',
+    'angular-imask': 'angularIMask',
     'ngx-toastr': 'ngxToastr',
     'rxjs': 'rxjs',
     'rxjs/operators': 'rxjs.operators',

@@ -599,8 +599,8 @@ bundleWebLibs() {
         ./projects/components/widgets/data/table/src/datatable.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
-        ./node_modules/imask/dist/imask.min.js \
         ../wavemaker-ui-variables/dist/umd/index.js \
+        ./node_modules/imask/dist/imask.min.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         ./node_modules/@metrichor/jmespath/dist/jmespath.umd.js \
         ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \

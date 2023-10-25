@@ -17,7 +17,7 @@ export default [
         output: {
             file: './node_modules/angular-imask/bundles/angular-imask.umd.js',
             format: 'umd',
-            name: 'IMask',
+            name: 'angularIMask',
             globals: rollupGlobals
         }
     }
