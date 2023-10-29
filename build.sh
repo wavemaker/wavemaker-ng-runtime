@@ -554,7 +554,7 @@ bundleWebLibs() {
     ${TERSER} \
         ./dist/tmp/libs/tslib/tslib.umd.js \
         ./dist/tmp/libs/core-js/core-js.umd.js \
-        ./node_modules/zone.js/dist/zone.js \
+        ./node_modules/zone.js/bundles/zone.umd.js \
         ./node_modules/rxjs/bundles/rxjs.umd.js \
         ./node_modules/@angular/compiler/bundles/compiler.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
@@ -626,7 +626,7 @@ bundleMobileLibs() {
     ${TERSER} \
         ./dist/tmp/libs/tslib/tslib.umd.js \
         ./dist/tmp/libs/core-js/core-js.umd.js \
-        ./node_modules/zone.js/dist/zone.js \
+        ./node_modules/zone.js/bundles/zone.umd.js \
         ./node_modules/rxjs/bundles/rxjs.umd.js \
         ./node_modules/@angular/compiler/bundles/compiler.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \

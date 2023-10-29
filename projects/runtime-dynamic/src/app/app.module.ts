@@ -111,10 +111,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
-export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
-    cookieName: 'wm_xsrf_token',
-    headerName: getWmProjectProperties().xsrf_header_name
-});
+
+// In angular 15, xsrf headerName should not be null. Angular 15 is not using default header value like it used to send in calls
+// for angular 12 if the headerName is null . The user has to take care of not sending null values. Then ng 15 uses default value for headerName
+let xsrfHeaderName = getWmProjectProperties().xsrf_header_name;
+let xsrfOptions = {
+    cookieName: 'wm_xsrf_token'
+}
+if(xsrfHeaderName) {
+    xsrfOptions['headerName'] = xsrfHeaderName;
+}
+export const httpClientXsrfModule = HttpClientXsrfModule.withOptions(xsrfOptions);
 
 export const modalModule: ModuleWithProviders<ModalModule> = ModalModule.forRoot();
 export const bsDatePickerModule: ModuleWithProviders<BsDatepickerModule> = BsDatepickerModule.forRoot();
