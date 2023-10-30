@@ -16,7 +16,7 @@ import { BaseComponent } from '../widgets/common/base/base.component';
 declare const _, $;
 
 @Directive({
-    selector: '[showInDevice]'
+    selector: '[wmShowInDevice]'
 })
 export class ShowInDeviceDirective implements OnDestroy {
     private readonly context;
@@ -35,7 +35,7 @@ export class ShowInDeviceDirective implements OnDestroy {
 
         window.addEventListener('resize', this.onResize.bind(this));
     }
-    @Input() set showInDevice(devices) {
+    @Input() set wmShowInDevice(devices) {
         this.devices = devices.split(',');
         this.onResize();
     }

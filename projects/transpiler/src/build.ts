@@ -26,7 +26,7 @@ interface IProviderInfo {
 const OVERRIDES = {
     'accessroles': '*accessroles',
     'ng-if': '*ngIf',
-    'showindevice': '*showInDevice',
+    'showindevice': '*wmShowInDevice',
     'ng-class': '[ngClass]',
     'data-ng-class': '[ngClass]',
     'data-ng-src': 'src',

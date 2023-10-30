@@ -3,7 +3,7 @@ import { App } from '@wm/core';
 
 declare const _, $;
 @Directive({
-    selector: '[captionPosition]'
+    selector: '[wmCaptionPosition]'
 })
 export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestroy {
     private elementRef: ElementRef;
@@ -28,7 +28,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     private onBlurCb() { // on blur, remove animation and placeholder if there is no value
         let mobileInputVal;
         // In case of mobile date / time picker check for input element's value which has 'mobile-input' class
-        if (this.inputEl.length > 1 && this.inputEl.hasClass('mobile-input')) { 
+        if (this.inputEl.length > 1 && this.inputEl.hasClass('mobile-input')) {
             _.forEach(this.inputEl, (el) => {
                 if ($(el).hasClass('mobile-input') && el.value) {
                     mobileInputVal = el.value;
@@ -60,15 +60,15 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
             this.placeholder = this.inputEl.attr('placeholder');
             this.inputEl.removeAttr('placeholder');
         }
-        
+
         // Do not show placeholder as selected by default
         this.checkForSelectPlaceholder();
 
         // check for datavalue attribute in composite element and defaultvalue attribute in form field element
         // check for datavalue.bind attribute to see whether default value is binded via expression or a variable
         // check for displayformat attribute, as in form fields user can set display format to the field
-        // check for formdata/bindformdata attribute to see if any default value is binded to the form 
-        // check for select tag with multiple attribute enabled 
+        // check for formdata/bindformdata attribute to see if any default value is binded to the form
+        // check for select tag with multiple attribute enabled
 
         if ((this.inputEl.val() && !this.inputEl.is('select')) || $(this.inputEl.closest('[widget-id]')).attr('datavalue') || $(this.inputEl.parent('[widget-id]')).attr('datavalue.bind') || this.nativeEl.getAttribute('defaultvalue')
             || this.nativeEl.getAttribute('displayformat') || $(this.nativeEl).find('select option:selected').text() || $(this.nativeEl).find('select').attr('multiple')) {
@@ -90,7 +90,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
             });
         });
         const config = { attributes: true, childList: false, characterData: false };
-        this._attrObserver.observe(this.inputEl[0], config);   
+        this._attrObserver.observe(this.inputEl[0], config);
     }
 
     // when a form is right aligned and have input-group-btn's like date picker, time picker etc. adjust the css to not overlap the label on the icon
@@ -163,7 +163,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
                     const selectEl = this.inputEl.find('option:first');
                     if (this.inputEl.attr('placeholder') || selectEl.text()) {
                         if (selectEl.length) {
-                            selectEl.text(''); 
+                            selectEl.text('');
                         } else {
                             this.placeholder = this.inputEl.attr('placeholder');
                             this.inputEl.removeAttr('placeholder');
