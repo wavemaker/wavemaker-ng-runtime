@@ -1,4 +1,4 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './repeat-template.props';
 import { styler } from '../../framework/styler';

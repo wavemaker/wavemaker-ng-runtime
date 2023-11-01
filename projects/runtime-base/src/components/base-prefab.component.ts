@@ -1,4 +1,4 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
+import { AfterViewInit, Injector, inject, OnDestroy, ViewChild, Directive } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import {
@@ -46,6 +46,8 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     destroy$ = new Subject();
     viewInit$ = new Subject();
 
+    private viewParent: any;
+
     abstract evalUserScript(prefabContext: any, appContext: any, utils: any);
     abstract getVariables();
     abstract getExpressions();
@@ -56,20 +58,24 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
 
     init() {
         this.App = this.injector.get(App);
+        //making the code compatible in both the JIT and AOT modes
+        this.containerWidget = this.injector ? this.injector.get(WidgetRef) : inject(WidgetRef);
 
-        this.containerWidget = this.injector.get(WidgetRef);
-        this.prefabMngr = this.injector.get(PrefabManagerService);
-        this.i18nService = this.injector.get(AbstractI18nService);
-        this.scriptLoaderService = this.injector.get(ScriptLoaderService);
-        this.Viewport = this.injector.get(Viewport);
-        if (this.getContainerWidgetInjector().view.component.registerFragment) {
-            this.getContainerWidgetInjector().view.component.registerFragment();
+        this.prefabMngr = this.injector ? this.injector.get(PrefabManagerService) : inject(PrefabManagerService);
+        this.i18nService = this.injector ? this.injector.get(AbstractI18nService) : inject(AbstractI18nService);
+        this.scriptLoaderService = this.injector ? this.injector.get(ScriptLoaderService) : inject(ScriptLoaderService);
+        this.Viewport = this.injector ? this.injector.get(Viewport) : inject(Viewport);
+
+        this.viewParent = this.containerWidget.viewParent;
+
+        if (this.viewParent.registerFragment) {
+            this.viewParent.registerFragment();
         }
 
-        if(this.spa) {
-            this.pageDirective = this.injector.get(SpaPageDirective, null);
+        if (this.spa) {
+            this.pageDirective = this.injector ? this.injector.get(SpaPageDirective) : inject(SpaPageDirective);
         } else {
-            this.pageDirective = this.injector.get(PageDirective, null);
+            this.pageDirective = this.injector ? this.injector.get(PageDirective) : inject(PageDirective);
         }
         if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
@@ -210,8 +216,8 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         // triggering watchers so variables and propertiers watching over an expression are updated
         $invokeWatchers(true, true);
         this.onReady();
-        if (this.getContainerWidgetInjector().view.component.resolveFragment) {
-            this.getContainerWidgetInjector().view.component.resolveFragment();
+        if (this.viewParent.resolveFragment) {
+            this.viewParent.resolveFragment();
         }
         this.containerWidget.invokeEventCallback('load');
     }

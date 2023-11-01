@@ -1,6 +1,18 @@
-import { AfterViewInit, OnDestroy, Component, HostBinding, Injector, ViewEncapsulation } from '@angular/core';
+import {AfterViewInit, OnDestroy, Component, HostBinding, Injector, ViewEncapsulation, Optional} from '@angular/core';
 
-import { App, DataSource, getClonedObject, isDataSourceEqual, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn, isMobileApp, noop } from '@wm/core';
+import {
+    App,
+    DataSource,
+    getClonedObject,
+    isDataSourceEqual,
+    isEmptyObject,
+    isNumberType,
+    prettifyLabels,
+    removeAttr,
+    triggerFn,
+    isMobileApp,
+    noop
+} from '@wm/core';
 import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler,  } from '@wm/components/base';
 
 import { registerProps } from './chart.props';

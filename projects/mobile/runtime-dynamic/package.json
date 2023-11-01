@@ -1,35 +1,6 @@
 {
     "name": "@wm/mobile/components/runtime-dynamic",
-    "ngPackage": {
-        "dest": "../../../libraries/mobile/runtime-dynamic",
-        "lib": {
-            "flatModuleFile": "index",
-            "entryFile": "./src/public_api.ts",
-            "umdId": "wm.mobile.runtime.dynamic",
-            "umdModuleIds": {
-                "@angular/core": "ng.core",
-                "@angular/common/http": "ng.common.http",
-
-                "@awesome-cordova-plugins/file/ngx": "awesomeCordova.plugins",
-
-                "rxjs": "rxjs",
-
-                "@wm/core": "wm.core",
-                "@wm/mobile/core": "wm.mobile.core",
-                "@wm/mobile/components/basic": "wm.mobile.components.basic",
-                "@wm/mobile/components/basic/search": "wm.mobile.components.basic.search",
-                "@wm/mobile/components/containers/segmented-control": "wm.mobile.components.containers.segmentedcontrol",
-                "@wm/mobile/components/data/media-list": "wm.mobile.components.data.medialist",
-                "@wm/mobile/components/device/barcode-scanner": "wm.mobile.components.device.barcodescanner",
-                "@wm/mobile/components/device/camera": "wm.mobile.components.device.camera",
-                "@wm/mobile/components/input/file-upload": "wm.mobile.components.input.fileupload",
-                "@wm/mobile/components/page": "wm.mobile.components.page",
-                "@wm/mobile/components/page/left-panel": "wm.mobile.components.page.leftpanel",
-                "@wm/mobile/components/page/mobile-navbar": "wm.mobile.components.page.mobilenavbar",
-                "@wm/mobile/components/page/tab-bar": "wm.mobile.components.page.tabbar"
-            }
-        }
-    },
+    "sideEffects": false,
     "dependencies": {
       "tslib": "^2.0.0"
     }

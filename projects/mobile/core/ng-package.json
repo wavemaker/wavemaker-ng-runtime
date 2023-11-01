@@ -3,30 +3,6 @@
     "dest": "../../../libraries/mobile/core",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.mobile.core",
-        "umdModuleIds": {
-            "@angular/compiler": "ng.compiler",
-            "@angular/core": "ng.core",
-            "@angular/common": "ng.common",
-            "@angular/common/http": "ng.common.http",
-
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
-
-            "@awesome-cordova-plugins/core/ngx": "awesomeCordova.core", 
-            "@awesome-cordova-plugins/app-version/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/file-opener/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/file/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/network/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/app-version/ngx/index": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/file-opener/ngx/index": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/file/ngx/index": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/network/ngx/index": "awesomeCordova.plugins",
-
-            "@wm/core": "wm.core",
-            "@wm/components/base": "wm.components.base"
-
-        }
+        "entryFile": "src/public_api.ts"
     }
 }

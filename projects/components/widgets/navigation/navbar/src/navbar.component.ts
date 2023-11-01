@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, styler, StylableComponent, provideAsWidgetRef } from '@wm/components/base';
 

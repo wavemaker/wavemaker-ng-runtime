@@ -1,4 +1,4 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, BaseContainerComponent } from '@wm/components/base';
 

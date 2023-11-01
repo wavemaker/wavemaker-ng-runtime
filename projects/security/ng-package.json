@@ -3,18 +3,6 @@
     "dest": "../../libraries/security",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.security",
-        "umdModuleIds": {
-            "@angular/compiler": "ng.compiler",
-            "@angular/core": "ng.core",
-            "@angular/common": "ng.common",
-            "@angular/router": "ng.router",
-
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
-
-            "@wm/core": "wm.core"
-        }
+        "entryFile": "src/public_api.ts"
     }
 }

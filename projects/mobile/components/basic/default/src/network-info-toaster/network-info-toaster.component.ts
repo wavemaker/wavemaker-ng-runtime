@@ -1,9 +1,9 @@
-import { Component, Injector, OnDestroy } from '@angular/core';
+import {Component, Injector, OnDestroy, Optional} from '@angular/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './network-info-toaster.props';
-import { $appDigest, App } from '@wm/core';
+import {$appDigest, App} from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 
 const DEFAULT_CLS = 'network-info-toaster';

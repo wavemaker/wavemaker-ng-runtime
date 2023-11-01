@@ -1,9 +1,21 @@
-import { AfterViewInit, ContentChildren, Directive, ElementRef, HostBinding, HostListener, Injector, Input, OnInit, QueryList } from '@angular/core';
+import {
+    AfterViewInit,
+    ContentChildren,
+    Directive,
+    ElementRef,
+    HostBinding,
+    HostListener,
+    Injector,
+    Input,
+    OnInit,
+    Optional,
+    QueryList, ViewContainerRef
+} from '@angular/core';
 import { NgForOfContext } from '@angular/common';
 
 import { Observable, Subject } from 'rxjs';
 
-import { $invokeWatchers, $watch, App } from '@wm/core';
+import {$invokeWatchers, $watch, App} from '@wm/core';
 
 import { ListComponent } from './list.component';
 
@@ -24,6 +36,7 @@ export class ListItemDirective implements OnInit, AfterViewInit {
 
     private itemClass = '';
     private _currentItemWidgets = {};
+    private viewContainerRef: ViewContainerRef;
 
     @HostBinding('class.active') isActive = false;
     @HostBinding('class.disable-item') disableItem = false;
@@ -66,10 +79,13 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         this.item = val;
     }
 
-    constructor(private inj: Injector, elRef: ElementRef, private app: App) {
+    constructor(private inj: Injector, elRef: ElementRef, private app: App, @Optional() public _viewParent: ListComponent) {
+        this.viewContainerRef = inj.get(ViewContainerRef);
         this.nativeElement = elRef.nativeElement;
-        this.listComponent = (<ListComponent>(<any>inj).view.component);
-        this.context = (<NgForOfContext<ListItemDirective>>(<any>inj).view.context);
+        this.listComponent = _viewParent;
+        // this.context = (<NgForOfContext<ListItemDirective>>(<any>inj).view.context);
+        this.context = (this.inj as any)._lView[8];
+        //this.context = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
         this.itemClassWatcher(this.listComponent);
         this.disableItemWatcher(this.listComponent);
         $(this.nativeElement).data('listItemContext', this);

@@ -1,6 +1,6 @@
-import { Attribute, Component, Injector } from '@angular/core';
+import {Attribute, Component, Injector, Optional} from '@angular/core';
 
-import { findValueOf, isDefined } from '@wm/core';
+import {findValueOf, isDefined} from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './progress-bar.props';

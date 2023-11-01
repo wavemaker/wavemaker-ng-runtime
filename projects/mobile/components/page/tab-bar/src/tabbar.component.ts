@@ -1,4 +1,4 @@
-import { AfterViewInit, Attribute, Component, Injector, OnDestroy } from '@angular/core';
+import {AfterViewInit, Attribute, Component, Injector, OnDestroy, Optional} from '@angular/core';
 
 import { getEvaluatedData, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';

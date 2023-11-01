@@ -1,6 +1,15 @@
-import { AfterContentInit, AfterViewInit, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Component,
+    ContentChildren,
+    Injector,
+    OnInit,
+    Optional,
+    QueryList
+} from '@angular/core';
 
-import { noop } from '@wm/core';
+import {noop} from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './wizard.props';
@@ -173,7 +182,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
                 this.setDefaultStep(step);
             }
         }
-        this.addMoreText();   
+        this.addMoreText();
     }
 
     /**
@@ -268,12 +277,12 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         this.invokeEventCallback('cancel', {steps: this.steps.toArray()});
     }
     public addMoreText(){
-        setTimeout(() => {   
+        setTimeout(() => {
 
-            
+
         var newWindowWidth = $(window).width();
         if(newWindowWidth < 768){
-        $(".app-wizard-step.current .subtitle-wrapper .step-title").css({"height":"auto","display":"block"});    
+        $(".app-wizard-step.current .subtitle-wrapper .step-title").css({"height":"auto","display":"block"});
         var subtitleTextLength = $(".app-wizard-step.current .subtitle-wrapper .step-title").height();
         $(".read_more").css("display","none");
         $(".current .subtitle-wrapper").removeClass("readmore_subtitle");
@@ -287,24 +296,24 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             }
         }
     });
-  
+
     }
     public readMoreSubtitle(){
         $(".current .subtitle-wrapper").addClass("readmore_subtitle");
-        $(".current .read_more").css("display","none");  
-        $(document).on("mouseup",function(e:any) 
+        $(".current .read_more").css("display","none");
+        $(document).on("mouseup",function(e:any)
         {
             var container = $(".subtitle-wrapper");
             // if the target of the click isn't the container nor a descendant of the container
-            if (!container.is(e.target) && container.has(e.target).length === 0) 
+            if (!container.is(e.target) && container.has(e.target).length === 0)
             {
                 $(".current .subtitle-wrapper").removeClass("readmore_subtitle");
-                $(".current .read_more").css("display","block"); 
+                $(".current .read_more").css("display","block");
                 $(document).off("mouseup");
             }
         });
     }
-    
+
     private isFirstStep(stepRef: WizardStepDirective) {
         return this.steps.first === stepRef;
     }
@@ -340,7 +349,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         );
         setTimeout(() => { if($(window).width()<768){
             $(".app-wizard").removeClass("vertical");
-      } 
+      }
     });
     }
 }

@@ -6,7 +6,7 @@
         "outDir": "./dist/out-tsc",
         "sourceMap": true,
         "declaration": false,
-        "target": "es2015",
+        "target": "es2022",
         "module": "es2020",
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
@@ -97,6 +97,6 @@
         }
     },
     "angularCompilerOptions":{
-        "enableIvy": false
+        "compilationMode": "full"
     }
 }

@@ -1,4 +1,21 @@
-import { AfterViewInit, Attribute, ChangeDetectorRef, Component, ContentChild, ContentChildren, ElementRef, Injector, NgZone, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import {
+    AfterViewInit,
+    Attribute,
+    ChangeDetectorRef,
+    Component,
+    ContentChild,
+    ContentChildren,
+    ElementRef,
+    Injector,
+    NgZone,
+    OnDestroy,
+    OnInit,
+    Optional,
+    QueryList,
+    TemplateRef,
+    ViewChild,
+    ViewChildren
+} from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -228,7 +245,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
         statePersistence: StatePersistence,
-        paginationService: PaginationService,
+        paginationService: PaginationService
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);

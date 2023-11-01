@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, Injector } from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, Injector, Optional} from '@angular/core';
 
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { MediaCapture } from '@awesome-cordova-plugins/media-capture/ngx';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { convertToBlob, hasCordova } from '@wm/core';
+import {convertToBlob, hasCordova} from '@wm/core';
 
 import { registerProps } from './camera.props';
 

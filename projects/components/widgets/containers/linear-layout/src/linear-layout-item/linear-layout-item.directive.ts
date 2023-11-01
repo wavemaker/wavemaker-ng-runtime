@@ -1,4 +1,4 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
@@ -26,7 +26,7 @@ export class LinearLayoutItemDirective extends StylableComponent {
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         switch (key) {
-            case 'flexgrow': 
+            case 'flexgrow':
                 this.$element.css('flex-grow', nv);
             break;
         }

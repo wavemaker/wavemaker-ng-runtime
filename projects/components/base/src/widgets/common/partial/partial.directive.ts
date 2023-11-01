@@ -1,6 +1,6 @@
-import { Directive, Injector, OnDestroy } from '@angular/core';
+import {Directive, Injector, OnDestroy, Optional} from '@angular/core';
 
-import { Viewport, ViewportEvent } from '@wm/core';
+import {Viewport, ViewportEvent} from '@wm/core';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './partial.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';

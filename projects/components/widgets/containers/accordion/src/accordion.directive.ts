@@ -1,6 +1,6 @@
-import { AfterContentInit, ContentChildren, Directive, Injector, QueryList } from '@angular/core';
+import {AfterContentInit, ContentChildren, Directive, Injector, Optional, QueryList} from '@angular/core';
 
-import { DynamicComponentRefProvider, isNumber, noop, StatePersistence } from '@wm/core';
+import {DynamicComponentRefProvider, isNumber, noop, StatePersistence} from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     createArrayFrom,

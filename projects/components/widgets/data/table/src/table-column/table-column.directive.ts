@@ -1,6 +1,16 @@
 import { AfterContentInit, AfterViewInit, Attribute, ContentChild, ContentChildren, TemplateRef, Directive, Injector, OnInit, Optional } from '@angular/core';
 
-import { $watch, AppDefaults, DataSource, DataType, debounce, FormWidgetType, getDisplayDateTimeFormat, isDateTimeType, isDefined } from '@wm/core';
+import {
+    $watch,
+    AppDefaults,
+    DataSource,
+    DataType,
+    debounce,
+    FormWidgetType,
+    getDisplayDateTimeFormat,
+    isDateTimeType,
+    isDefined
+} from '@wm/core';
 import { applyFilterOnField, BaseFieldValidations, EDIT_MODE, fetchRelatedFieldData, getDataTableFilterWidget, getDefaultValue, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField, getEditModeWidget, getWatchIdentifier, isDataSetWidget, provideAsWidgetRef, setHeaderConfigForTable, BaseComponent } from '@wm/components/base';
 import { registerProps } from './table-column.props';
 import { TableComponent } from '../table.component';
@@ -49,9 +59,9 @@ class FieldDef {
 export class TableColumnDirective extends BaseComponent implements OnInit, AfterContentInit, AfterViewInit {
     static initializeProps = registerProps();
 
-    @ContentChildren('filterWidget') _filterInstances;
-    @ContentChildren('inlineWidget') _inlineInstances;
-    @ContentChildren('inlineWidgetNew') _inlineInstancesNew;
+    @ContentChildren('filterWidget', { descendants: true }) _filterInstances;
+    @ContentChildren('inlineWidget', { descendants: true }) _inlineInstances;
+    @ContentChildren('inlineWidgetNew', { descendants: true }) _inlineInstancesNew;
     @ContentChild('customExprTmpl') customExprTmpl;
     @ContentChild('inlineWidgetTmpl') inlineWidthTempRef;
 

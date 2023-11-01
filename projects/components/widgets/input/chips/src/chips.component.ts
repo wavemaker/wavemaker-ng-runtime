@@ -1,7 +1,15 @@
-import { AfterViewInit, Attribute, Component, Injector, OnInit, ViewChild } from '@angular/core';
+import {AfterViewInit, Attribute, Component, Injector, OnInit, Optional, SkipSelf, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { $appDigest, $unwatch, $watch, debounce, isAppleProduct, isDefined, toBoolean } from '@wm/core';
+import {
+    $appDigest,
+    $unwatch,
+    $watch,
+    debounce,
+    isAppleProduct,
+    isDefined,
+    toBoolean
+} from '@wm/core';
 import { ALLFIELDS, configureDnD, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 import { SearchComponent } from '@wm/components/basic/search';

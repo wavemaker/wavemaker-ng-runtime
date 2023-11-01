@@ -1,6 +1,6 @@
-import { AfterViewInit, ContentChildren, Directive, Injector } from '@angular/core';
+import {AfterViewInit, ContentChildren, Directive, Injector, Optional} from '@angular/core';
 
-import { addForIdAttributes, switchClass } from '@wm/core';
+import {addForIdAttributes, switchClass} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, WidgetRef } from '@wm/components/base';
 

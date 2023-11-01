@@ -1,6 +1,6 @@
-import { Component, Injector } from '@angular/core';
+import {Component, Injector, Optional} from '@angular/core';
 
-import { switchClass } from '@wm/core';
+import {switchClass} from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';

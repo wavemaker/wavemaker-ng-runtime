@@ -11,12 +11,7 @@ import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { PaginationModule as ngxPaginationModule } from 'ngx-bootstrap/pagination';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-
-
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { DatepickerModule as ngxDatepickerModule, } from 'ngx-bootstrap/datepicker';
-
-
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { PopoverModule as ngxPopoverModule } from 'ngx-bootstrap/popover';
 
@@ -24,7 +19,7 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
 import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 
-import { App, getWmProjectProperties, PartialRefProvider } from '@wm/core';
+import {App, getWmProjectProperties, PartialRefProvider} from '@wm/core';
 // Basic widgets
 
 import { BasicModule } from '@wm/components/basic';
@@ -116,28 +111,33 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
-export const httpClientXsrfModule = HttpClientXsrfModule.withOptions({
-    cookieName: 'wm_xsrf_token',
-    headerName: getWmProjectProperties().xsrf_header_name
-});
 
-export const modalModule: ModuleWithProviders<any> = ModalModule.forRoot();
-export const bsDatePickerModule: ModuleWithProviders<any> = BsDatepickerModule.forRoot();
-export const datepickerModule: ModuleWithProviders<any> = ngxDatepickerModule.forRoot();
-export const timepickerModule: ModuleWithProviders<any> = ngxTimepickerModule.forRoot();
-export const bsDropdownModule: ModuleWithProviders<any> = BsDropdownModule.forRoot();
-export const paginationModule: ModuleWithProviders<any> = ngxPaginationModule.forRoot();
-export const typeaheadModule: ModuleWithProviders<any> = TypeaheadModule.forRoot();
-export const progressbarModule: ModuleWithProviders<any> = ProgressbarModule.forRoot();
-export const carouselModule: ModuleWithProviders<any> = ngxCarouselModule.forRoot();
-export const popoverModule: ModuleWithProviders<any> = ngxPopoverModule.forRoot();
-export const ngCircleProgressModule: ModuleWithProviders<any> = NgCircleProgressModule.forRoot({});
-export const tooltipModule: ModuleWithProviders<any> = TooltipModule.forRoot();
+// In angular 15, xsrf headerName should not be null. Angular 15 is not using default header value like it used to send in calls
+// for angular 12 if the headerName is null . The user has to take care of not sending null values. Then ng 15 uses default value for headerName
+let xsrfHeaderName = getWmProjectProperties().xsrf_header_name;
+let xsrfOptions = {
+    cookieName: 'wm_xsrf_token'
+}
+if(xsrfHeaderName) {
+    xsrfOptions['headerName'] = xsrfHeaderName;
+}
+export const httpClientXsrfModule = HttpClientXsrfModule.withOptions(xsrfOptions);
+
+export const modalModule: ModuleWithProviders<ModalModule> = ModalModule.forRoot();
+export const bsDatePickerModule: ModuleWithProviders<BsDatepickerModule> = BsDatepickerModule.forRoot();
+export const timepickerModule: ModuleWithProviders<ngxTimepickerModule> = ngxTimepickerModule.forRoot();
+export const bsDropdownModule: ModuleWithProviders<BsDropdownModule> = BsDropdownModule.forRoot();
+export const paginationModule: ModuleWithProviders<ngxPaginationModule> = ngxPaginationModule.forRoot();
+export const typeaheadModule: ModuleWithProviders<TypeaheadModule> = TypeaheadModule.forRoot();
+export const progressbarModule: ModuleWithProviders<ProgressbarModule> = ProgressbarModule.forRoot();
+export const carouselModule: ModuleWithProviders<ngxCarouselModule> = ngxCarouselModule.forRoot();
+export const popoverModule: ModuleWithProviders<ngxPopoverModule> = ngxPopoverModule.forRoot();
+export const ngCircleProgressModule: ModuleWithProviders<NgCircleProgressModule> = NgCircleProgressModule.forRoot({});
+export const tooltipModule: ModuleWithProviders<TooltipModule> = TooltipModule.forRoot();
 
 const componentsModule = [
     // NGX Bootstrap
     BsDatepickerModule,
-    ngxDatepickerModule,
     ngxTimepickerModule,
     BsDropdownModule,
     ngxPaginationModule,
@@ -230,7 +230,6 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
 
         modalModule,
         bsDatePickerModule,
-        datepickerModule,
         timepickerModule,
         bsDropdownModule,
         paginationModule,
@@ -252,7 +251,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         AppResourceManagerService,
         { provide: AppJSProvider, useClass: AppJSProviderService },
         { provide: AppVariablesProvider, useClass: AppVariablesProviderService },
-        {provide: AppExtensionProvider,useClass:AppExtensionProviderService},
+        { provide: AppExtensionProvider,useClass:AppExtensionProviderService},
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
         { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService },

@@ -1,7 +1,17 @@
-import { AfterViewInit, Attribute, Component, ElementRef, HostListener, Injector, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Attribute,
+    Component,
+    ElementRef,
+    HostListener,
+    Injector,
+    OnInit,
+    Optional,
+    ViewChild
+} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { isDefined, toggleClass } from '@wm/core';
+import {isDefined, toggleClass} from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { BaseFormCustomComponent } from '../base-form-custom.component';
 

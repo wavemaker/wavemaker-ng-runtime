@@ -1,4 +1,14 @@
-import { AfterContentInit, ContentChildren, Directive, Injector, NgZone, OnDestroy, OnInit, QueryList } from '@angular/core';
+import {
+    AfterContentInit,
+    ContentChildren,
+    Directive,
+    Injector,
+    NgZone,
+    OnDestroy,
+    OnInit,
+    Optional,
+    QueryList
+} from '@angular/core';
 
 import { CarouselComponent, SlideComponent } from 'ngx-bootstrap/carousel';
 

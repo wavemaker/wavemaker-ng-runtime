@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';

@@ -1,4 +1,4 @@
-import { AfterViewInit, QueryList, ViewChildren, Directive } from '@angular/core';
+import {AfterViewInit, QueryList, ViewChildren, Directive, Optional} from '@angular/core';
 
 import { StylableComponent } from '@wm/components/base';
 import { MenuComponent } from './menu.component';

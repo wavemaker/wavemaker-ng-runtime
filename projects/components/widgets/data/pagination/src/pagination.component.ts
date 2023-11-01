@@ -1,6 +1,15 @@
-import { Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit } from '@angular/core';
+import {Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit, Optional} from '@angular/core';
 
-import { $appDigest, $watch, AppConstants, DataSource, debounce, isDefined, switchClass, triggerFn } from '@wm/core';
+import {
+    $appDigest,
+    $watch,
+    AppConstants,
+    DataSource,
+    debounce,
+    isDefined,
+    switchClass,
+    triggerFn
+} from '@wm/core';
 import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, styler, WidgetRef, unsupportedStatePersistenceTypes} from '@wm/components/base';
 import { registerProps } from './pagination.props';
 

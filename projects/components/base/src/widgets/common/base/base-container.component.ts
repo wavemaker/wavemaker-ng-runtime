@@ -1,6 +1,7 @@
-import { ContentChildren, Directive } from '@angular/core';
+import {ContentChildren, Directive, Injector, Optional} from '@angular/core';
 import { StylableComponent } from "./stylable.component";
 import { RedrawableDirective } from "../redraw/redrawable.directive";
+import { IWidgetConfig } from '../../framework/types';
 declare const _;
 
 @Directive()
@@ -9,6 +10,10 @@ export abstract class BaseContainerComponent extends StylableComponent {
     @ContentChildren(RedrawableDirective, { descendants: true }) reDrawableComponents;
     public content;
     public Widgets;
+
+    constructor(inj: Injector, WIDGET_CONFIG: IWidgetConfig) {
+        super(inj, WIDGET_CONFIG);
+    }
 
     private updateRedrawableComponents(widgets) {
         _.pickBy(widgets, widget => {

@@ -1,7 +1,7 @@
-import { AfterViewInit, Directive, Injector, OnDestroy } from '@angular/core';
+import {AfterViewInit, Directive, Injector, OnDestroy, Optional, SkipSelf} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import { EventNotifier, Viewport, ViewportEvent } from '@wm/core';
+import {EventNotifier, Viewport, ViewportEvent} from '@wm/core';
 import { updateDeviceView, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './page.props';

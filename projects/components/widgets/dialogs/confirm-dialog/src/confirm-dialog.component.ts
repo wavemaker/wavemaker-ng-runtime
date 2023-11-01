@@ -1,6 +1,16 @@
-import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild, HostListener } from '@angular/core';
+import {
+    Attribute,
+    Component,
+    Injector,
+    OnInit,
+    TemplateRef,
+    ViewChild,
+    HostListener,
+    Optional,
+    SkipSelf
+} from '@angular/core';
 
-import { toBoolean } from '@wm/core';
+import {toBoolean} from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -25,7 +35,7 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
         inj: Injector,
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
-        @Attribute('closable') closable: string | boolean,
+        @Attribute('closable') closable: string | boolean
     ) {
         if (modal === null || modal === undefined) {
             modal = false;

@@ -1,6 +1,6 @@
-import { ContentChild, Directive, HostListener, Injector, AfterViewInit } from '@angular/core';
+import {ContentChild, Directive, HostListener, Injector, AfterViewInit, Optional} from '@angular/core';
 
-import { addClass, removeClass } from '@wm/core';
+import {addClass, removeClass} from '@wm/core';
 import { APPLY_STYLES_TYPE, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { AnchorComponent } from '@wm/components/basic';
 

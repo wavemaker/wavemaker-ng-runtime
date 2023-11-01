@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Injector, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, Injector, Optional, ViewChild} from '@angular/core';
 import { CircleProgressComponent, CircleProgressOptionsInterface } from 'ng-circle-progress';
 
 

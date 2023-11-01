@@ -1,6 +1,6 @@
-import { Component, Injector, SecurityContext } from '@angular/core';
+import {Component, Injector, Optional, SecurityContext} from '@angular/core';
 
-import { appendNode, createElement, removeNode, transformFileURI } from '@wm/core';
+import {appendNode, createElement, removeNode, transformFileURI} from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
 
 import { registerProps } from './video.props';

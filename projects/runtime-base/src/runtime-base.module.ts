@@ -4,6 +4,7 @@ import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ɵDomSharedStylesHost } from '@angular/platform-browser';
 import {ɵDomRendererFactory2} from "@angular/platform-browser";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ToastrModule } from 'ngx-toastr';
 
@@ -66,6 +67,61 @@ import { MAX_CACHE_AGE, MAX_CACHE_SIZE } from './util/wm-route-reuse-strategy';
 //angular overrides
 import { WMDomSharedStylesHost } from "./overrides/wm_shared_styles_host";
 import { WMDomRendererFactory2 } from "./overrides/wm_dom_renderer";
+import {PageModule} from "@wm/components/page";
+import {FooterModule} from "@wm/components/page/footer";
+import {HeaderModule} from "@wm/components/page/header";
+import {LeftPanelModule} from "@wm/components/page/left-panel";
+import {RightPanelModule} from "@wm/components/page/right-panel";
+import {TopNavModule} from "@wm/components/page/top-nav";
+import {BasicModule} from "@wm/components/basic";
+import {ProgressModule} from "@wm/components/basic/progress";
+import {RichTextEditorModule} from "@wm/components/basic/rich-text-editor";
+import {SearchModule} from "@wm/components/basic/search";
+import {TreeModule} from "@wm/components/basic/tree";
+import {CalendarModule} from "@wm/components/input/calendar";
+import {ChipsModule} from "@wm/components/input/chips";
+import {ColorPickerModule} from "@wm/components/input/color-picker";
+import {CurrencyModule} from "@wm/components/input/currency";
+import {EpochModule} from "@wm/components/input/epoch";
+import {FileUploadModule} from "@wm/components/input/file-upload";
+import {InputModule} from "@wm/components/input";
+import {RatingModule} from "@wm/components/input/rating";
+import {SliderModule} from "@wm/components/input/slider";
+import {CardModule} from "@wm/components/data/card";
+import {FormModule} from "@wm/components/data/form";
+import {ListModule} from "@wm/components/data/list";
+import {LiveTableModule} from "@wm/components/data/live-table";
+import {PaginationModule} from "@wm/components/data/pagination";
+import {TableModule} from "@wm/components/data/table";
+import {ChartModule} from "@wm/components/chart";
+import {AccordionModule} from "@wm/components/containers/accordion";
+import {LinearLayoutModule} from "@wm/components/containers/linear-layout";
+import {LayoutGridModule} from "@wm/components/containers/layout-grid";
+import {PanelModule} from "@wm/components/containers/panel";
+import {TabsModule} from "@wm/components/containers/tabs";
+import {TileModule} from "@wm/components/containers/tile";
+import {WizardModule} from "@wm/components/containers/wizard";
+import {AlertDialogModule} from "@wm/components/dialogs/alert-dialog";
+import {IframeDialogModule} from "@wm/components/dialogs/iframe-dialog";
+import {LoginDialogModule} from "@wm/components/dialogs/login-dialog";
+import {PartialDialogModule} from "@wm/components/dialogs/partial-dialog";
+import {BreadcrumbModule} from "@wm/components/navigation/breadcrumb";
+import {MenuModule} from "@wm/components/navigation/menu";
+import {NavbarModule} from "@wm/components/navigation/navbar";
+import {PopoverModule} from "@wm/components/navigation/popover";
+import {CarouselModule} from "@wm/components/advanced/carousel";
+import {LoginModule} from "@wm/components/advanced/login";
+import {MarqueeModule} from "@wm/components/advanced/marquee";
+import {BsDatepickerModule} from "ngx-bootstrap/datepicker";
+import {TimepickerModule as ngxTimepickerModule} from "ngx-bootstrap/timepicker";
+import {BsDropdownModule} from "ngx-bootstrap/dropdown";
+import {PaginationModule as ngxPaginationModule} from "ngx-bootstrap/pagination";
+import {TypeaheadModule} from "ngx-bootstrap/typeahead";
+import {ProgressbarModule} from "ngx-bootstrap/progressbar";
+import {CarouselModule as ngxCarouselModule} from "ngx-bootstrap/carousel";
+import {PopoverModule as ngxPopoverModule} from "ngx-bootstrap/popover";
+import {NgCircleProgressModule} from "ng-circle-progress";
+import {TooltipModule} from "ngx-bootstrap/tooltip";
 
 declare const _WM_APP_PROPERTIES;
 
@@ -113,49 +169,130 @@ const definitions = [
 export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     ConfirmDialogModule,
     DesignDialogModule,
-    DialogModule
+    DialogModule,
+
+    // NGX Bootstrap
+    BsDatepickerModule,
+    ngxTimepickerModule,
+    BsDropdownModule,
+    ngxPaginationModule,
+    TypeaheadModule,
+    ProgressbarModule,
+    ngxCarouselModule,
+    ngxPopoverModule,
+    NgCircleProgressModule,
+    TooltipModule,
+
+    // Basic widgets
+    BasicModule,
+    ProgressModule,
+    RichTextEditorModule,
+    SearchModule,
+    TreeModule,
+
+    // Input
+    CalendarModule,
+    ChipsModule,
+    ColorPickerModule,
+    CurrencyModule,
+    EpochModule,
+    FileUploadModule,
+    InputModule,
+    RatingModule,
+    SliderModule,
+
+    // Data
+    CardModule,
+    FormModule,
+    ListModule,
+    LiveTableModule,
+    PaginationModule,
+    TableModule,
+
+    // chart
+    ChartModule,
+
+    // container modules
+    AccordionModule,
+    LinearLayoutModule,
+    LayoutGridModule,
+    PanelModule,
+    TabsModule,
+    TileModule,
+    WizardModule,
+
+    // dialogs
+    AlertDialogModule,
+    IframeDialogModule,
+    LoginDialogModule,
+    PartialDialogModule,
+
+    // navigation
+    BreadcrumbModule,
+    MenuModule,
+    NavbarModule,
+    PopoverModule,
+
+    // Advanced
+    CarouselModule,
+    LoginModule,
+    MarqueeModule,
+
+    PageModule,
+    FooterModule,
+    HeaderModule,
+    LeftPanelModule,
+    RightPanelModule,
+    TopNavModule,
+    PrefabModule
 ];
 
 // setting parseExpr as exprEvaluator for swipeAnimation
 ($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
 
 @NgModule({
-    declarations: definitions,
+    declarations: [ ...definitions ],
     imports: [
+        CommonModule,
+        RouterModule,
+        HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+
+        ToastrModule,
+        WmComponentsModule,
+        MobileRuntimeModule,
+        CoreModule,
+        SecurityModule,
+        OAuthModule,
+        VariablesModule,
+        HttpServiceModule,
+        ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
+    ],
+    exports: [
+        FormsModule,
+        ReactiveFormsModule,
+
+        ...definitions,
+
         CommonModule,
         RouterModule,
         HttpClientModule,
 
         ToastrModule,
         WmComponentsModule,
-        PrefabModule,
         MobileRuntimeModule,
         CoreModule,
         SecurityModule,
         OAuthModule,
         VariablesModule,
         HttpServiceModule,
-        REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
-    ],
-    exports: [
-        definitions,
-
-        CommonModule,
-
-        WmComponentsModule,
-        MobileRuntimeModule,
-        CoreModule,
-        SecurityModule,
-        OAuthModule,
-        VariablesModule,
-        HttpServiceModule,
-        REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
+        ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     providers: [
         {provide: ɵDomSharedStylesHost, useClass: WMDomSharedStylesHost},
         {provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2}
-    ],
-    entryComponents: [CustomToasterComponent]
+    ]
 })
 export class RuntimeBaseModule {
 

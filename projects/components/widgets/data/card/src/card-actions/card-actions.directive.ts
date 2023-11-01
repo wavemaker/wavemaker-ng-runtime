@@ -1,4 +1,4 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './card-actions.props';

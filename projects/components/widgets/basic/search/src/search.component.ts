@@ -1,4 +1,15 @@
-import { AfterViewInit, Attribute, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import {
+    AfterViewInit,
+    Attribute,
+    Component,
+    ElementRef,
+    Injector,
+    OnInit,
+    Optional,
+    QueryList,
+    ViewChild,
+    ViewChildren
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { Observable, from, of } from 'rxjs';
@@ -6,7 +17,15 @@ import { filter, mergeMap } from 'rxjs/operators';
 
 import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
-import { addClass, adjustContainerPosition, App, DataSource, isDefined, isMobile, toBoolean } from '@wm/core';
+import {
+    addClass,
+    adjustContainerPosition,
+    App,
+    DataSource,
+    isDefined,
+    isMobile,
+    toBoolean
+} from '@wm/core';
 import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, provideAs, provideAsWidgetRef, styler, transformFormData, getContainerTargetClass } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 

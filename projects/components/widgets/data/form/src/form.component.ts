@@ -19,7 +19,7 @@ import {
     removeAttr,
     $invokeWatchers,
     scrollToElement,
-    isElementInViewport
+    isElementInViewport,
 } from '@wm/core';
 import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
 import { PrefabDirective } from '@wm/components/prefab';
@@ -271,7 +271,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         @Attribute('key') key,
         @Attribute('name') name
     ) {
-        super(inj, getWidgetConfig(isLiveForm, isLiveFilter, role));
+        super(inj, getWidgetConfig(isLiveForm, isLiveFilter, role),);
 
         styler(this.nativeElement, this);
 

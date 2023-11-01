@@ -1,22 +1,6 @@
 {
     "name": "@wm/components/page/left-panel",
-    "ngPackage": {
-        "dest": "../../../../../libraries/components/page/left-panel",
-        "lib": {
-            "flatModuleFile": "index",
-            "entryFile": "./src/public_api.ts",
-            "umdId": "wm.components.page.leftpanel",
-            "umdModuleIds": {
-                "@angular/core": "ng.core",
-                "@angular/router": "ng.router",
-
-                "@swipey": "swipey",
-                "@wm/core": "wm.core",
-                "@wm/components/base": "wm.components.base",
-                "@wm/components/page": "wm.components.page"
-            }
-        }
-    },
+    "sideEffects": false,
     "dependencies": {
       "tslib": "^2.0.0"
     }

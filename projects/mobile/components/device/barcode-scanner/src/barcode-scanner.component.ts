@@ -1,9 +1,9 @@
-import { Component, HostListener, Injector } from '@angular/core';
+import {Component, HostListener, Injector, Optional} from '@angular/core';
 
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { hasCordova } from '@wm/core';
+import {hasCordova} from '@wm/core';
 
 import { registerProps } from './barcode-scanner.props';
 

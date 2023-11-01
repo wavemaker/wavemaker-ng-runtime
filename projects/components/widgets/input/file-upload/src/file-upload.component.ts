@@ -1,8 +1,8 @@
-import { AfterViewInit, Attribute, Component, Injector, OnInit, OnDestroy } from '@angular/core';
+import {AfterViewInit, Attribute, Component, Injector, OnInit, OnDestroy, Optional} from '@angular/core';
 
 import { Subject } from 'rxjs';
 
-import { App, DataSource, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
+import {App, DataSource, isAudioFile, isImageFile, isVideoFile} from '@wm/core';
 import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './file-upload.props';

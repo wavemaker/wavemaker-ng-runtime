@@ -28,6 +28,8 @@ const generateHash = async (filepath) => {
     return hash.digest('hex');
 };
 const generateHashForScripts = (updatedFilenames) => {
+    //from angular 12(IVY), scripts array in angular json, doesn't allow `@` symbol in the name/value
+    //so removed `@` from wavemaker.com in the file name and adding it back in the post-build.js file
     const scriptsMap = {};
     return new Promise(resolve => {
         fs.readdir(opPath, (err, items) => {
@@ -255,8 +257,6 @@ const generateSha1 = (content) => {
         } else {
             isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.js`);
             isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.css`);
-            $("script[type='module']").remove();
-            $('script[nomodule]').removeAttr('nomodule');
         }
 
         if (isProdBuild) {

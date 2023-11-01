@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, ContentChildren, Injector } from '@angular/core';
+import {AfterViewInit, Component, ContentChildren, Injector, Optional} from '@angular/core';
 
-import { noop, removeAttr } from '@wm/core';
+import {noop, removeAttr} from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, StylableComponent, styler,  } from '@wm/components/base';
 
 import { registerProps } from './accordion-pane.props';

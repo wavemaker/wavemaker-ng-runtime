@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 
 import { $watch } from '@wm/core';
 
-import { WidgetRef } from '../../../widgets/framework/types';
+import { WidgetRef } from '../../framework/types';
 
 declare const _;
 

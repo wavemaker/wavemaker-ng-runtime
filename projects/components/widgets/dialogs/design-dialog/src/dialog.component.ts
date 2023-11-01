@@ -1,6 +1,17 @@
-import { Attribute, Component, ContentChild, Inject, Injector, OnInit, Self, TemplateRef, ViewChild } from '@angular/core';
+import {
+    Attribute,
+    Component,
+    ContentChild,
+    Inject,
+    Injector,
+    OnInit,
+    Optional,
+    Self, SkipSelf,
+    TemplateRef,
+    ViewChild
+} from '@angular/core';
 
-import { toBoolean } from '@wm/core';
+import {toBoolean} from '@wm/core';
 import { Context, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -16,7 +27,7 @@ const WIDGET_INFO = {widgetType: 'wm-dialog'};
     providers: [
         provideAsWidgetRef(DialogComponent),
         provideAsDialogRef(DialogComponent),
-        {provide: Context, useValue: {}, multi: true}
+        {provide: Context, useFactory: () => { return {} }, multi: true}
     ]
 })
 export class DialogComponent extends BaseDialog implements OnInit {

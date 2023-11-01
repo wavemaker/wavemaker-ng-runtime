@@ -3,11 +3,7 @@
     "dest": "../../libraries/transpiler",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.transpiler",
-        "umdModuleIds": {
-            "@angular/compiler": "ng.compiler",
-            "@wm/core": "wm.core"
-        }
-    }
+        "entryFile": "src/public_api.ts"
+    },
+    "allowedNonPeerDependencies": ["@angular/common", "@angular/core", "@angular/compiler"]
 }

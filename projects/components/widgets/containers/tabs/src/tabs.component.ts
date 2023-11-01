@@ -1,6 +1,23 @@
-import { AfterContentInit, AfterViewInit, Attribute, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Attribute,
+    Component,
+    ContentChildren,
+    Injector,
+    OnInit,
+    Optional,
+    QueryList
+} from '@angular/core';
 
-import { addClass, appendNode, DynamicComponentRefProvider, noop, removeClass, StatePersistence } from '@wm/core';
+import {
+    addClass,
+    appendNode,
+    DynamicComponentRefProvider,
+    noop,
+    removeClass,
+    StatePersistence
+} from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     IWidgetConfig,
@@ -61,7 +78,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         dynamicComponentProvider: DynamicComponentRefProvider,
         @Attribute('transition') _transition: string,
         @Attribute('tabsposition') _tabsPosition: string,
-        statePersistence: StatePersistence,
+        statePersistence: StatePersistence
     ) {
         // handle to the promise resolver
         let resolveFn: Function = noop;
@@ -227,7 +244,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             headerElement = this.nativeElement.querySelector(`li[data-paneid=${paneRef.widgetId}]`);
             const insideTabs = !!$(headerElement).closest('.app-tabs')
                 .parent().closest('.app-tabs').length;
-            if (!insideTabs) { 
+            if (!insideTabs) {
                 $(headerElement).children().focus();
             }
         }

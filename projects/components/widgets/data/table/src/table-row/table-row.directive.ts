@@ -27,8 +27,7 @@ export class TableRowDirective extends BaseComponent implements OnInit {
 
     constructor(
         inj: Injector,
-        @Optional() @SkipSelf() public table: TableComponent
-    ) {
+        @Optional() @SkipSelf() public table: TableComponent) {
         super(inj, WIDGET_CONFIG);
     }
 

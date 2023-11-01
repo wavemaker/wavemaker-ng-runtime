@@ -2,6 +2,7 @@ import { MetadataResolve, AppExtensionJSResolve } from '@wm/runtime/base';
 import { SecurityConfigResolve, PrefabPreviewComponent, CanDeactivatePageGuard, EmptyPageComponent } from '@wm/runtime/base';
 
 import { PageWrapperComponent } from './components/page-wrapper.component';
+import {Routes} from '@angular/router';
 
 const appDependenciesResolve = {
     securityConfig: SecurityConfigResolve,
@@ -9,7 +10,7 @@ const appDependenciesResolve = {
     appMetaConfig: AppExtensionJSResolve
 };
 
-export const routes = [
+export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',

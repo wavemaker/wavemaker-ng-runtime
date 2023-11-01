@@ -1,8 +1,8 @@
-import { Injector, AfterViewInit, Injectable } from '@angular/core';
+import { Injector, AfterViewInit, Injectable, Inject } from '@angular/core';
 
-import { DataSource } from '@wm/core';
+import {DataSource} from '@wm/core';
 
-import { IWidgetConfig, StylableComponent } from '@wm/components/base';
+import { IWidgetConfig, StylableComponent, WidgetConfig } from '@wm/components/base';
 
 declare const _;
 
@@ -16,7 +16,7 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
 
     protected constructor(
         protected inj: Injector,
-        config: IWidgetConfig,
+        @Inject(WidgetConfig) config: IWidgetConfig,
         initPromise?: Promise<any>
     ) {
         super(inj, config, initPromise);

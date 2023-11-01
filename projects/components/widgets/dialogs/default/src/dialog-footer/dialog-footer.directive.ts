@@ -1,4 +1,4 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 
 import { BaseComponent, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
 import { registerProps } from './dialog-footer.props';

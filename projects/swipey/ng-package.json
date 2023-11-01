@@ -3,7 +3,6 @@
     "dest": "../../libraries/swipey",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "swipey"
+        "entryFile": "src/public_api.ts"
     }
 }

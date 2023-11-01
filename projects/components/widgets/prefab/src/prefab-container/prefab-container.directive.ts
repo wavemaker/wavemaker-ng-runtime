@@ -1,7 +1,7 @@
-import { Directive, Injector, OnDestroy } from '@angular/core';
+import {Directive, Injector, OnDestroy, Optional} from '@angular/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { Viewport, ViewportEvent } from '@wm/core';
+import {Viewport, ViewportEvent} from '@wm/core';
 import { registerProps } from './prefab-container.props';
 
 const DEFAULT_CLS = 'app-prefab-container full-height';

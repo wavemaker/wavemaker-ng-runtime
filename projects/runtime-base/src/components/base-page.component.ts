@@ -1,4 +1,4 @@
-import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive, AfterContentInit, AfterContentChecked } from '@angular/core';
+import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive, AfterContentInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { isAndroid, isIos, Viewport, ScriptLoaderService, registerFnByExpr } from '@wm/core';
@@ -66,14 +66,14 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
         muteWatchers();
 
-        this.App = this.injector.get(App);
-        this.route = this.injector.get(ActivatedRoute);
-        this.appManager = this.injector.get(AppManagerService);
-        this.navigationService = this.injector.get(AbstractNavigationService);
-        this.scriptLoaderService = this.injector.get(ScriptLoaderService);
-        this.i18nService = this.injector.get(AbstractI18nService);
-        this.router = this.injector.get(Router);
-        this.Viewport = this.injector.get(Viewport);
+        this.App = this.injector ? this.injector.get(App) : inject(App);
+        this.route = this.injector ? this.injector.get(ActivatedRoute) : inject(ActivatedRoute);
+        this.appManager = this.injector ? this.injector.get(AppManagerService) : inject(AppManagerService);
+        this.navigationService = this.injector ? this.injector.get(AbstractNavigationService) : inject(AbstractNavigationService);
+        this.scriptLoaderService = this.injector ? this.injector.get(ScriptLoaderService) : inject(ScriptLoaderService);
+        this.i18nService = this.injector ? this.injector.get(AbstractI18nService) : inject(AbstractI18nService);
+        this.router = this.injector ? this.injector.get(Router) : inject(Router);
+        this.Viewport = this.injector ? this.injector.get(Viewport) : inject(Viewport);
 
         // register functions for binding evaluation
         this.registerExpressions();
@@ -102,7 +102,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     initUserScript() {
         try {
-            this.evalUserScript(this, this.App, this.injector.get(UtilsService));
+            this.evalUserScript(this, this.App, this.injector ? this.injector.get(UtilsService) : inject(UtilsService));
         } catch (e) {
             console.error(`Error in evaluating page (${this.pageName}) script\n`, e);
         }
@@ -122,7 +122,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     initVariables() {
-        const variablesService = this.injector.get(VariablesService);
+        const variablesService = this.injector ? this.injector.get(VariablesService) : inject(VariablesService);
 
         // get variables and actions instances for the page
         const variableCollection = variablesService.register(this.pageName, this.getVariables(), this);

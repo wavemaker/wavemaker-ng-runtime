@@ -1,6 +1,6 @@
-import { Attribute, Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {Attribute, Component, ContentChild, Injector, OnInit, Optional, SkipSelf, TemplateRef, ViewChild} from '@angular/core';
 
-import { App, toBoolean } from '@wm/core';
+import {App, toBoolean} from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 

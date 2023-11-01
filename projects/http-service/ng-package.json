@@ -3,19 +3,6 @@
     "dest": "../../libraries/http",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.http",
-        "umdModuleIds": {
-            "@angular/compiler": "ng.compiler",
-            "@angular/core": "ng.core",
-            "@angular/common": "ng.common",
-            "@angular/common/http": "ng.common.http",
-
-
-            "rxjs": "rxjs",
-
-            "@wm/core": "wm.core",
-            "@wavemaker/variables": "wm_common_variables"
-        }
+        "entryFile": "src/public_api.ts"
     }
 }

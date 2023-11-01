@@ -1,5 +1,3 @@
-import { DatePickerInnerComponent } from 'ngx-bootstrap/datepicker/datepicker-inner.component';
-
 import { Attribute, AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import {getClonedObject, getSessionStorageItem, AbstractI18nService, isMobileApp, isMobile} from '@wm/core';
@@ -84,8 +82,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     // The calendar element reference
     @ViewChild('calendar') _calendar: ElementRef;
     @ViewChild('datepicker') _datepicker: ElementRef;
-
-    public _datepickerInnerComponent: DatePickerInnerComponent;
 
     public selecteddates: any;
     public selecteddata: any;

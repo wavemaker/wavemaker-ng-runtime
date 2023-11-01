@@ -42,7 +42,7 @@ import {DomSanitizer} from "@angular/platform-browser";
 export class PipeProvider {
     _pipeMeta;
     _locale = getSessionStorageItem('selectedLocale') || 'en';
-    formatsByLocale = this.i18service?.getwidgetLocale();
+    formatsByLocale;
     preparePipeMeta = (
         reference: Pipe,
         name: string,
@@ -52,58 +52,63 @@ export class PipeProvider {
         type: { reference, diDeps },
         name,
         pure
-    })
-    _pipeData = [
-        // TODO | NEED TO BE TESTED
-        this.preparePipeMeta(AsyncPipe, 'async', false, [ChangeDetectorRef]),
-        this.preparePipeMeta(SlicePipe, 'slice', false),
-        this.preparePipeMeta(PercentPipe, 'percent', true, [this._locale]),
-        this.preparePipeMeta(I18nPluralPipe, 'i18nPlural', true, [
-            NgLocalization
-        ]),
-        this.preparePipeMeta(I18nSelectPipe, 'i18nSelect', true),
-        this.preparePipeMeta(KeyValuePipe, 'keyvalue', false, [
-            KeyValueDiffers
-        ]),
-        this.preparePipeMeta(FileIconClassPipe, 'fileIconClass', true),
-        this.preparePipeMeta(
-            FileExtensionFromMimePipe,
-            'fileExtensionFromMime',
-            true
-        ),
-        this.preparePipeMeta(StateClassPipe, 'stateClass', true),
-        this.preparePipeMeta(FileSizePipe, 'filesize', true),
-        // TESTED
-        this.preparePipeMeta(FilterPipe, 'filter', true),
-        this.preparePipeMeta(UpperCasePipe, 'uppercase', true),
-        this.preparePipeMeta(LowerCasePipe, 'lowercase', true),
-        this.preparePipeMeta(JsonPipe, 'json', false),
-        this.preparePipeMeta(DecimalPipe, 'number', true, [this._locale]),
-        this.preparePipeMeta(TitleCasePipe, 'titlecase', true),
-        this.preparePipeMeta(CurrencyPipe, 'currency', true, [this._locale]),
-        this.preparePipeMeta(DatePipe, 'date', true, [this._locale]),
-        this.preparePipeMeta(ToDatePipe, 'toDate', true, [
-            new DatePipe(this._locale)
-        ]),
-        this.preparePipeMeta(ToNumberPipe, 'toNumber', true, [
-            new DecimalPipe(this._locale),
-            this.i18service
-        ]),
-        this.preparePipeMeta(ToCurrencyPipe, 'toCurrency', true, [
-            new DecimalPipe(this._locale),
-            this.i18service
-        ]),
-        this.preparePipeMeta(PrefixPipe, 'prefix', true),
-        this.preparePipeMeta(SuffixPipe, 'suffix', true),
-        this.preparePipeMeta(TimeFromNowPipe, 'timeFromNow', true),
-        this.preparePipeMeta(NumberToStringPipe, 'numberToString', true, [
-            new DecimalPipe(this._locale)
-        ]),
-        this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true),
-        this.preparePipeMeta(CustomPipe, 'custom', true, [this.injector.get(CustomPipeManager)]),
-        this.preparePipeMeta(TrustAsPipe, 'trustAs', true, [this.domSanitizer]),
-        this.preparePipeMeta(SanitizePipe, 'sanitize', true, [this.domSanitizer])
-    ];
+    });
+    _pipeData = [];
+
+    setPipeData() {
+        this._pipeData = [
+            // TODO | NEED TO BE TESTED
+            this.preparePipeMeta(AsyncPipe, 'async', false, [ChangeDetectorRef]),
+            this.preparePipeMeta(SlicePipe, 'slice', false),
+            this.preparePipeMeta(PercentPipe, 'percent', true, [this._locale]),
+            this.preparePipeMeta(I18nPluralPipe, 'i18nPlural', true, [
+                NgLocalization
+            ]),
+            this.preparePipeMeta(I18nSelectPipe, 'i18nSelect', true),
+            this.preparePipeMeta(KeyValuePipe, 'keyvalue', false, [
+                KeyValueDiffers
+            ]),
+            this.preparePipeMeta(FileIconClassPipe, 'fileIconClass', true),
+            this.preparePipeMeta(
+                FileExtensionFromMimePipe,
+                'fileExtensionFromMime',
+                true
+            ),
+            this.preparePipeMeta(StateClassPipe, 'stateClass', true),
+            this.preparePipeMeta(FileSizePipe, 'filesize', true),
+            // TESTED
+            this.preparePipeMeta(FilterPipe, 'filter', true),
+            this.preparePipeMeta(UpperCasePipe, 'uppercase', true),
+            this.preparePipeMeta(LowerCasePipe, 'lowercase', true),
+            this.preparePipeMeta(JsonPipe, 'json', false),
+            this.preparePipeMeta(DecimalPipe, 'number', true, [this._locale]),
+            this.preparePipeMeta(TitleCasePipe, 'titlecase', true),
+            this.preparePipeMeta(CurrencyPipe, 'currency', true, [this._locale]),
+            this.preparePipeMeta(DatePipe, 'date', true, [this._locale]),
+            this.preparePipeMeta(ToDatePipe, 'toDate', true, [
+                new DatePipe(this._locale)
+            ]),
+            this.preparePipeMeta(ToNumberPipe, 'toNumber', true, [
+                new DecimalPipe(this._locale),
+                this.i18service
+            ]),
+            this.preparePipeMeta(ToCurrencyPipe, 'toCurrency', true, [
+                new DecimalPipe(this._locale),
+                this.i18service
+            ]),
+            this.preparePipeMeta(PrefixPipe, 'prefix', true),
+            this.preparePipeMeta(SuffixPipe, 'suffix', true),
+            this.preparePipeMeta(TimeFromNowPipe, 'timeFromNow', true),
+            this.preparePipeMeta(NumberToStringPipe, 'numberToString', true, [
+                new DecimalPipe(this._locale)
+            ]),
+            this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true),
+            this.preparePipeMeta(CustomPipe, 'custom', true, [this.injector.get(CustomPipeManager)]),
+            this.preparePipeMeta(TrustAsPipe, 'trustAs', true, [this.domSanitizer]),
+            this.preparePipeMeta(SanitizePipe, 'sanitize', true, [this.domSanitizer])
+        ];
+    }
+
 
     unknownPipe(name) {
         throw Error(`The pipe '${name}' could not be found`);
@@ -111,9 +116,11 @@ export class PipeProvider {
 
     constructor(private compiler: Compiler, private injector: Injector, private domSanitizer:DomSanitizer, private i18service: AbstractI18nService) {
         this._pipeMeta = new Map();
+        this.setPipeData();
         this._pipeData.forEach(v => {
             this._pipeMeta.set(v.name, v);
         });
+        this.formatsByLocale = this.i18service? this.i18service.getwidgetLocale() : {};
     }
 
     meta(name) {

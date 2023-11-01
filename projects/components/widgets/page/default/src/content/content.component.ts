@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import {Component, Injector, Optional} from '@angular/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 

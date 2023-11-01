@@ -1,6 +1,6 @@
-import { Attribute, ChangeDetectorRef, Directive, ElementRef, Injector, OnDestroy } from '@angular/core';
+import {Attribute, ChangeDetectorRef, Directive, ElementRef, Injector, OnDestroy, Optional} from '@angular/core';
 
-import { setCSS, noop } from '@wm/core';
+import {setCSS, noop} from '@wm/core';
 
 import { PROP_TYPE, register, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { prefabProps } from './prefab.props';

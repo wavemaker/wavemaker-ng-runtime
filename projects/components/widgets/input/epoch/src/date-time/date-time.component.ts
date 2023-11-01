@@ -1,12 +1,35 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    Inject,
+    Injector,
+    NgZone,
+    OnDestroy,
+    Optional,
+    ViewChild
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
-
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
-import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, App, getMomentLocaleObject } from '@wm/core';
-import {provideAsWidgetRef, provideAs, styler, setFocusTrap} from '@wm/components/base';
+import {
+    AbstractI18nService,
+    addClass,
+    addEventListenerOnElement,
+    adjustContainerPosition,
+    AppDefaults,
+    EVENT_LIFE,
+    FormWidgetType,
+    getDateObj,
+    getDisplayDateTimeFormat,
+    getFormattedDate,
+    getNativeDateObject,
+    adjustContainerRightEdges,
+    App,
+    getMomentLocaleObject
+} from '@wm/core';
+import { provideAsWidgetRef, provideAs, styler, setFocusTrap } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './date-time.props';
@@ -41,7 +64,6 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private app: App;
     public hint: string;
     public showdropdownon: string;
-    private keyEventPlugin;
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
     private isEnterPressedOnDateInput = false;
@@ -123,15 +145,12 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         private ngZone: NgZone,
         private cdRef: ChangeDetectorRef,
         private appDefaults: AppDefaults,
-        app: App,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+        app: App
     ) {
         super(inj, WIDGET_CONFIG);
         this.registerDestroyListener(() => this.clearTimeInterval());
         styler(this.nativeElement, this);
         this.app = app;
-        // KeyEventsPlugin
-        this.keyEventPlugin = evtMngrPlugins[1];
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
@@ -422,8 +441,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             let newVal = event.target.value.trim();
-            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-            if (action === 'enter' || action === 'arrowdown') {
+            if (event.key === 'Enter' || event.key === 'ArrowDown') {
                 newVal = newVal ? getNativeDateObject(newVal, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate, this);

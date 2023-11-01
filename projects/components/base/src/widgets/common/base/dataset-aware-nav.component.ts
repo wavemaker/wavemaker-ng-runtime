@@ -1,8 +1,8 @@
-import { Injector } from '@angular/core';
+import {Injector, Optional} from '@angular/core';
 
 import { Subject } from 'rxjs';
 
-import { $appDigest, findValueOf, isObject, isDefined, validateAccessRoles } from '@wm/core';
+import {$appDigest, findValueOf, isObject, isDefined, validateAccessRoles} from '@wm/core';
 import { SecurityService } from '@wm/security';
 
 import { createArrayFrom } from '../../../utils/data-utils';
@@ -170,7 +170,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
         this.nodes = this.getNodes();
         $appDigest();
         // notify the node listeners
-        this.nodes$.next();
+        this.nodes$.next(null);
     }
 
     // debounce function for reset nodes functions.

@@ -1,16 +1,6 @@
 {
-    "name": "@wm/mobile/runtime/dynamic",
-    "ngPackage": {
-        "dest": "../../../../libraries/mobile/placeholder/runtime-dynamic",
-        "lib": {
-            "flatModuleFile": "index",
-            "entryFile": "./src/public_api.ts",
-            "umdId": "wm.mobile.runtime.dynamic",
-            "umdModuleIds": {
-                "@angular/core": "ng.core"
-            }
-        }
-    },
+    "name": "@wm/mobile/placeholder/runtime/dynamic",
+    "sideEffects": false,
     "dependencies": {
       "tslib": "^2.0.0"
     }

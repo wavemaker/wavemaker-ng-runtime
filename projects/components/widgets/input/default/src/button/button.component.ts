@@ -1,4 +1,4 @@
-import { Component, HostBinding, Injector } from '@angular/core';
+import {Component, HostBinding, Injector, Optional} from '@angular/core';
 
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 

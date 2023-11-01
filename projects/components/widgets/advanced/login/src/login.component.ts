@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ContentChild, ContentChildren, Injector, QueryList, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ContentChild,
+    ContentChildren,
+    Injector,
+    Optional,
+    QueryList,
+    ViewChild
+} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, MessageComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { FormComponent } from '@wm/components/data/form';

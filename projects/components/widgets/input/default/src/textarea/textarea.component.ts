@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
+import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { provideAs, provideAsWidgetRef } from '@wm/components/base';
@@ -42,6 +42,6 @@ export class TextareaComponent extends BaseInput {
     }
 
     public onInputChange() {
-        this.charlength = this.inputEl.nativeElement.value.length;    
+        this.charlength = this.inputEl.nativeElement.value.length;
     }
 }

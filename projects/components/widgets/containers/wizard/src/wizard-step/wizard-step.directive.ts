@@ -1,4 +1,4 @@
-import { ContentChildren, Directive, HostBinding, Injector, Self } from '@angular/core';
+import {ContentChildren, Directive, HostBinding, Injector, Optional, Self} from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { BaseComponent, IWidgetConfig, provideAsWidgetRef, RedrawableDirective } from '@wm/components/base';
@@ -21,7 +21,8 @@ const enum STEP_STATUS {
 @Directive({
     selector: 'form[wmWizardStep]',
     providers: [
-        provideAsWidgetRef(WizardStepDirective)
+        provideAsWidgetRef(WizardStepDirective),
+        NgForm
     ],
     exportAs: 'wmWizardStep'
 })

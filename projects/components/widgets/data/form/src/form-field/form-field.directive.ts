@@ -3,7 +3,18 @@ import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { debounceTime } from 'rxjs/operators';
 
-import { debounce, FormWidgetType, isDefined, isMobile, addForIdAttributes, Viewport, App, noop, isDateTimeType, isMobileApp } from '@wm/core';
+import {
+    debounce,
+    FormWidgetType,
+    isDefined,
+    isMobile,
+    addForIdAttributes,
+    Viewport,
+    App,
+    noop,
+    isDateTimeType,
+    isMobileApp
+} from '@wm/core';
 import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
@@ -29,7 +40,7 @@ const FILE_TYPES = {
     providers: [
         provideAsWidgetRef(FormFieldDirective),
         provideAs(FormFieldDirective, NG_VALUE_ACCESSOR, true),
-        { provide: Context, useValue: {}, multi: true }
+        {provide: Context, useFactory: () => { return {} }, multi: true}
     ]
 })
 export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {

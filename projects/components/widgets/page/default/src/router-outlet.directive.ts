@@ -1,6 +1,6 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Injector, Optional} from '@angular/core';
 
-import { switchClass } from '@wm/core';
+import {switchClass} from '@wm/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 import { registerProps } from './router-outlet.props';

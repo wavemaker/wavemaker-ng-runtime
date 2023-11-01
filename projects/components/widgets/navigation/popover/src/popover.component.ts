@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, ContentChild, ElementRef, Inject, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 import { PopoverDirective } from 'ngx-bootstrap/popover';
 
@@ -39,7 +38,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public isOpen = false;
     private closePopoverTimeout;
     public readonly popoverContainerCls;
-    private keyEventPlugin;
     public canPopoverOpen = true;
     private Widgets;
     private Variables;
@@ -69,11 +67,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     @ContentChild(TemplateRef) popoverTemplate;
     @ContentChild('partial') partialRef;
 
-    constructor(inj: Injector, private app: App, @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
+    constructor(inj: Injector, private app: App) {
         super(inj, WIDGET_CONFIG);
-
-        // KeyEventsPlugin
-        this.keyEventPlugin = evtMngrPlugins[1];
         this.popoverContainerCls = `app-popover-${this.widgetId}`;
     }
 
@@ -182,24 +177,20 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         const popoverStartBtn: HTMLElement = popoverContainer.querySelector('.popover-start');
         const popoverEndBtn: HTMLElement = popoverContainer.querySelector('.popover-end');
         popoverStartBtn.onkeydown = (event) => {
-            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             // Check for Shift+Tab key
-            if (action === 'shift.tab') {
+            if (event.shiftKey && event.key === 'Tab') {
                 this.bsPopoverDirective.hide();
                 event.preventDefault();
                 this.setFocusToPopoverLink();
-                this.isOpen = false;
-            }
+                this.isOpen = false;            }
         };
         popoverEndBtn.onkeydown = (event) => {
-            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             // Check for Tab key
-            if (action === 'tab') {
+            if (!event.shiftKey && event.key === 'Tab') {
                 this.bsPopoverDirective.hide();
                 event.preventDefault();
                 this.setFocusToPopoverLink();
-                this.isOpen = false;
-            }
+                this.isOpen = false;            }
         };
 
         //Whenever autoclose property is set to 'always', adding the onclick listener to the popover container to close the popover.
@@ -255,8 +246,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (!this.canPopoverOpen) {
            return;
         }
-        const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-        if (action === 'enter') {
+        if ($event.key === 'Enter') {
             $event.stopPropagation();
             this.showPopover();
         }

@@ -1,18 +1,45 @@
-import { AfterContentInit, AfterViewInit, ElementRef, Injectable, Injector, OnDestroy, OnInit } from '@angular/core';
-import { EventManager } from '@angular/platform-browser';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    ElementRef,
+    Injectable,
+    Injector,
+    Inject,
+    OnDestroy,
+    OnInit,
+    ViewContainerRef,
+    Optional,
+    inject
+} from '@angular/core';
+import {EventManager} from '@angular/platform-browser';
 
-import { ReplaySubject, Subject } from 'rxjs';
+import {ReplaySubject, Subject} from 'rxjs';
 
-import { $invokeWatchers, $parseEvent, $unwatch, $watch, addClass, setCSS, setCSSFromObj, App, isDefined, removeAttr, removeClass, setAttr, switchClass, isMobileApp } from '@wm/core';
+import {
+    $invokeWatchers,
+    $parseEvent,
+    $unwatch,
+    $watch,
+    addClass,
+    App,
+    isDefined,
+    isMobileApp,
+    removeAttr,
+    removeClass,
+    setAttr,
+    setCSS,
+    setCSSFromObj,
+    switchClass
+} from '@wm/core';
 
-import { getWidgetPropsByType } from '../../framework/widget-props';
-import { isStyle } from '../../framework/styler';
-import { register, renameWidget } from '../../framework/widget-registry';
-import { ChangeListener, Context, IWidgetConfig } from '../../framework/types';
-import { widgetIdGenerator } from '../../framework/widget-id-generator';
-import { DISPLAY_TYPE, EVENTS_MAP } from '../../framework/constants';
-import { WidgetProxyProvider } from '../../framework/widget-proxy-provider';
-import { getWatchIdentifier } from '../../../utils/widget-utils';
+import {getWidgetPropsByType} from '../../framework/widget-props';
+import {isStyle} from '../../framework/styler';
+import {register, renameWidget} from '../../framework/widget-registry';
+import {ChangeListener, Context, IWidgetConfig, WidgetConfig} from '../../framework/types';
+import {widgetIdGenerator} from '../../framework/widget-id-generator';
+import {DISPLAY_TYPE, EVENTS_MAP} from '../../framework/constants';
+import {WidgetProxyProvider} from '../../framework/widget-proxy-provider';
+import {getWatchIdentifier} from '../../../utils/widget-utils';
 
 declare const $, _;
 
@@ -62,7 +89,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     /**
      * DOM node reference of the component root
      */
-    protected readonly nativeElement: HTMLElement;
+    public readonly nativeElement: HTMLElement;
 
     /**
      * Type of the component
@@ -159,18 +186,60 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     private isMuted = false;
 
+    public viewContainerRef: ViewContainerRef;
+    public viewParentApp: App;
+
     protected constructor(
         protected inj: Injector,
-        config: IWidgetConfig,
+        @Inject(WidgetConfig) config: IWidgetConfig,
         initPromise?: Promise<any> // Promise on which the initialization has to wait
     ) {
         const elementRef = inj.get(ElementRef);
         this.nativeElement = elementRef.nativeElement;
+        //making the code compatible in both the JIT and AOT modes
+        this.viewParentApp = inj ? inj.get(App) : inject(App);
         this.widgetType = config.widgetType;
         this.widgetSubType = config.widgetSubType || config.widgetType;
-        this.viewParent = (inj as any).view.component;
+        this.viewContainerRef = inj.get(ViewContainerRef);
+        // this.viewParent = (inj as any).view.component;
+        // this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
+        // this.viewParent = _viewParent || (this.viewContainerRef as any).parentInjector._lView[8];
+        // https://github.com/angular/angular/blob/main/packages/core/src/render3/interfaces/view.ts
+
+        let lView = (this.inj as any)._lView;
+        this.viewParent = lView[8] === null ? this.viewParentApp : this.findParentlView(lView);
+        //console.log("---*************--context--*************---", lView[8]);
+        this.context = (this.inj as any)._lView[8];
+
         this.displayType = config.displayType || DISPLAY_TYPE.BLOCK;
-        this.context = (inj as any).view.context;
+        // this.context = (inj as any).view.context;
+        // this.context = (this.viewContainerRef as any)._hostLView.debug.context;
+        // let hasImplicitContext = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
+        // when $implicit is not available, this object contains some ngFor context or listitem context of the widget then
+        // we use the direct parent for example: nav component is the parent for anchor => anchor gets viewParent as Nav
+        // In other case, where we have implicitContext there we can make use of page/app level context hence viewParent.viewParent to get page level context
+        /*if (hasImplicitContext && this.viewParent.viewParent) {
+            if (this.viewParent.widgetType !== 'wm-card' && this.viewParent.widgetType !== 'wm-iframedialog'
+                && this.viewParent.widgetType !== 'wm-partialdialog') {
+                this.viewParent = this.viewParent.viewParent;
+            }
+        }
+        if (!hasImplicitContext || (!this.viewParent.widgetType)) {
+            this.context = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);
+        } else {
+            this.context = (this.viewContainerRef as any).parentInjector._lView[8];
+        }*/
+
+        /*if(_viewParent && !hasImplicitContext) {
+            this.context = (this.viewContainerRef as any)._hostLView[8];
+        } else {
+            this.context = hasImplicitContext;
+        }*/
+        // if (['wm-list', 'wm-nav'].includes(this.viewParent.widgetType) || ['wm-carousel-template', 'wm-card'].includes(this.widgetType)) {
+        //     this.context = (this.viewContainerRef as any)._hostLView.debug.context;
+        // } else {
+        //     this.context = (this.viewContainerRef as any).parentInjector._lView[8];
+        // }
         this.widget = this.createProxy();
         this.eventManager = inj.get(EventManager);
         (this.nativeElement as any).widget = this.widget;
@@ -199,6 +268,34 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 this.initWidget();
                 this.setInitProps();
             });
+        }
+    }
+
+    public findParentlView = (lView: any) => {
+        //console.log("---*************--widgetType--*************---", this.widgetType);
+        let parentlView = lView[3];
+        if(typeof lView[1] === "boolean") { // this is lContainer, not lView if this is boolean
+            return this.findParentlView(parentlView);
+        }
+        let componentType = lView[1]["type"];
+        if(this.widgetType === "wm-button") {
+            if(componentType === 0 || componentType === 1) {
+                let p = lView[8];
+                // ts-ignore
+                if(p.constructor.name === 'DialogComponent') {
+                    return this.findParentlView(parentlView);
+                } else {
+                    return p;
+                }
+            } else { // when componentType == 2, then fetch parent again
+                return this.findParentlView(parentlView);
+            }
+        } else {
+            if(componentType === 0 || componentType === 1) {
+                return lView[8];
+            } else { // when componentType == 2, then fetch parent again
+                return this.findParentlView(parentlView);
+            }
         }
     }
 
@@ -275,7 +372,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     }
 
     protected initContext() {
-        const context = (this.inj as any).view.context;
+        // const context = (this.inj as any).view.context;
+        const context = this.context || {};
 
         const parentContexts = this.inj.get(Context, {});
 
@@ -468,7 +566,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     protected processBindAttr(propName: string, expr: string) {
 
         this.initState.delete(propName);
-
         this.registerDestroyListener(
             $watch(
                 expr,
@@ -514,6 +611,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * If the attribute is a bound expression, register a watch on the expression
      */
     protected processAttr(attrName: string, attrValue: string) {
+        // console.log("====attrName=====", attrName, "=====typeof attrname=====", typeof attrName, "-----attrValue----", attrValue);
         const {0: propName, 1: type, 2: meta, length} = attrName.split('.');
         if (type === 'bind') {
             // if the show property is bound, set the initial value to false
@@ -538,15 +636,43 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     }
 
     /**
+     * This is required as the native element attributes are case insensitive(camelcase) like customExpressions becomes customexpression
+     * and our logic to check like these changes will fail. Before IVY changes, angular maintains a separate object with these attributes
+     * as it is like in the camelcase. With IVY all those are gone. So need to maintain a separate list with the camelcasing of attributes
+     * @private
+     * _tNode.attrs attributes are stored in array(even index: key, odd index: value)
+     */
+    private getAttributes() {
+        let _tNodeAttrs = (this.inj as any)._tNode.attrs, actualAttrs = Array.from(this.nativeElement.attributes).map(attr => attr.name);
+        if(_tNodeAttrs === null) {
+            return actualAttrs;
+        }
+        _.forEach(_tNodeAttrs, (attr, i) => {
+            if (typeof attr === 'number') {
+                return false;
+            }
+            if(typeof attr === 'string' && i % 2 == 0) {
+                let lowerCaseAttr = attr.toLowerCase();
+                if (actualAttrs.includes(lowerCaseAttr)) {
+                    let index = actualAttrs.indexOf(lowerCaseAttr)
+                    actualAttrs[index] = attr;
+                }
+            }
+        });
+        return actualAttrs;
+    }
+
+    /**
      * Process the attributes
      */
     private processAttrs() {
-        const elDef = (this.inj as any).elDef;
-
-        for (const [, attrName, attrValue] of elDef.element.attrs) {
+        const attrs = this.getAttributes();
+        let i = 0;
+        _.map(attrs, (attrName: string) => {
+            let attrValue = this.nativeElement.attributes[attrName].value
             this.$attrs.set(attrName, attrValue);
             this.processAttr(attrName, attrValue);
-        }
+        });
     }
 
     /**
@@ -590,7 +716,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.initState.clear();
         this.initState = undefined;
 
-        this.readyState.next();
+        this.readyState.next(null);
         this.readyState.complete();
     }
 

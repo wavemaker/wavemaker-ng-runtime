@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, Injector } from '@angular/core';
+import {AfterViewInit, Component, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { $appDigest, debounce, isDefined, setCSS, toBoolean } from '@wm/core';
+import {$appDigest, debounce, isDefined, setCSS, toBoolean} from '@wm/core';
 import { DataSetItem, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
@@ -33,7 +33,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     private _debounceSetSelectedValue: Function;
     public name: string;
 
-    constructor(inj: Injector, ) {
+    constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 
         this._debounceSetSelectedValue = debounce((val) => {

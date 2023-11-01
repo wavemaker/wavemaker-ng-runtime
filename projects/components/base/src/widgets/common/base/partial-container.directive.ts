@@ -33,6 +33,7 @@ export class PartialContainerDirective {
         } else if (this.componentInstance.viewParent) {
             prefabName = this.componentInstance.viewParent.prefabName;
         }
+
         const componentFactory = await this.partialRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL, {prefab: prefabName});
         if (componentFactory) {
             const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);

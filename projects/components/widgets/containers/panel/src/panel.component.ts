@@ -1,6 +1,15 @@
-import { AfterContentInit, Component, ContentChildren, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterContentInit,
+    Component,
+    ContentChildren,
+    ElementRef,
+    Injector,
+    OnInit,
+    Optional,
+    ViewChild
+} from '@angular/core';
 
-import { $appDigest, noop, removeAttr, setCSS, toggleClass } from '@wm/core';
+import {$appDigest, noop, removeAttr, setCSS, toggleClass} from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, styler } from '@wm/components/base';
 import { MenuAdapterComponent } from '@wm/components/navigation/menu';
 import { registerProps } from './panel.props';

@@ -1,6 +1,6 @@
-import { Component, ContentChild, ElementRef, Injector, TemplateRef } from '@angular/core';
+import {Component, ContentChild, ElementRef, Injector, Optional, TemplateRef} from '@angular/core';
 
-import { $appDigest, addClass, isArray, isObject, isString, removeClass } from '@wm/core';
+import {$appDigest, addClass, isArray, isObject, isString, removeClass} from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     getEvaluatedData,

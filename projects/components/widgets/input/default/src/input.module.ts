@@ -50,8 +50,7 @@ const components = [
         IMaskModule
     ],
     declarations: [...components],
-    exports: [...components],
-    entryComponents: []
+    exports: [...components]
 })
 export class InputModule {
 }

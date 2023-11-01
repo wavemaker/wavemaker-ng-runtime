@@ -13,7 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
     selector: '[wmTableRowAction]',
     providers: [
         provideAsWidgetRef(TableRowActionDirective),
-        {provide: Context, useValue: {}, multi: true}
+        {provide: Context, useFactory: () => { return {} }, multi: true}
     ]
 })
 export class TableRowActionDirective extends BaseComponent implements OnInit {

@@ -26,7 +26,10 @@ const components = [
     ],
     declarations: [...components],
     exports: [...components],
-    entryComponents: []
+    providers: [
+        PageDirective,
+        SpaPageDirective
+    ]
 })
 export class PageModule {
 }

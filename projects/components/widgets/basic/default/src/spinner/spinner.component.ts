@@ -1,6 +1,6 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import {Component, Injector, OnInit, Optional} from '@angular/core';
 
-import { DataSource, validateDataSourceCtx } from '@wm/core';
+import {DataSource, validateDataSourceCtx} from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe } from '@wm/components/base';
 
 import { registerProps } from './spinner.props';

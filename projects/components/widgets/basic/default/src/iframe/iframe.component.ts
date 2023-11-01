@@ -1,7 +1,7 @@
-import { Component, Injector, SecurityContext } from '@angular/core';
+import {Component, Injector, Optional, SecurityContext} from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 
-import { encodeUrl, isInsecureContentRequest } from '@wm/core';
+import {encodeUrl, isInsecureContentRequest} from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
 
 import { registerProps } from './iframe.props';

@@ -1,10 +1,18 @@
-import { Injector, Attribute, OnInit, Injectable, OnDestroy } from '@angular/core';
+import { Injector, Attribute, OnInit, Injectable, OnDestroy, Inject } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
-import { AppDefaults, $appDigest, debounce, isDefined, isEqualWithFields, noop, toBoolean } from '@wm/core';
+import {
+    AppDefaults,
+    $appDigest,
+    debounce,
+    isDefined,
+    isEqualWithFields,
+    noop,
+    toBoolean
+} from '@wm/core';
 
-import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, handleHeaderClick, toggleAllHeaders, transformFormData, transformDataWithKeys, groupData, ToDatePipe } from '@wm/components/base';
+import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, handleHeaderClick, toggleAllHeaders, transformFormData, transformDataWithKeys, groupData, ToDatePipe, IWidgetConfig, WidgetConfig } from '@wm/components/base';
 import { BaseFormCustomComponent } from './base-form-custom.component';
 
 declare const _;
@@ -90,8 +98,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.invokeOnChange(val, undefined, true);
     }
 
-    protected constructor(inj: Injector, WIDGET_CONFIG, @Attribute('groupby') public groupby?: string) {
-        super(inj, WIDGET_CONFIG);
+    protected constructor(inj: Injector,  @Inject(WidgetConfig) config: IWidgetConfig,
+                          @Attribute('groupby') public groupby?: string) {
+        super(inj, config);
         this.datePipe = this.inj.get(ToDatePipe);
         this.appDefaults = this.inj.get(AppDefaults);
         this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');

@@ -1,6 +1,6 @@
-import { Attribute, Directive, Injector, OnInit, SecurityContext } from '@angular/core';
+import {Attribute, Directive, Injector, OnInit, Optional, SecurityContext} from '@angular/core';
 
-import { setCSS, setProperty } from '@wm/core';
+import {setCSS, setProperty} from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, SanitizePipe, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './html.props';
