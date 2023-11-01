@@ -207,20 +207,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         // https://github.com/angular/angular/blob/main/packages/core/src/render3/interfaces/view.ts
 
         let lView = (this.inj as any)._lView;
-        const getParentlView = (lView: any) => {
-            //console.log("---*************--widgetType--*************---", this.widgetType);
-            let parentlView = lView[3];
-            if(typeof lView[1] === "boolean") { // this is lContainer, not lView if this is boolean
-                return getParentlView(parentlView);
-            }
-            let componentType = lView[1]["type"];
-            if(componentType === 0 || componentType === 1) {
-                return lView[8];
-            } else { // when componentType == 2, then fetch parent again
-                return getParentlView(parentlView);
-            }
-        }
-        this.viewParent = getParentlView(lView) || this.viewParentApp;
+        this.viewParent = lView[8] === null ? this.viewParentApp : this.findParentlView(lView);
         //console.log("---*************--context--*************---", lView[8]);
         this.context = (this.inj as any)._lView[8];
 
@@ -281,6 +268,34 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 this.initWidget();
                 this.setInitProps();
             });
+        }
+    }
+
+    public findParentlView = (lView: any) => {
+        //console.log("---*************--widgetType--*************---", this.widgetType);
+        let parentlView = lView[3];
+        if(typeof lView[1] === "boolean") { // this is lContainer, not lView if this is boolean
+            return this.findParentlView(parentlView);
+        }
+        let componentType = lView[1]["type"];
+        if(this.widgetType === "wm-button") {
+            if(componentType === 0 || componentType === 1) {
+                let p = lView[8];
+                // ts-ignore
+                if(p.constructor.name === 'DialogComponent') {
+                    return this.findParentlView(parentlView);
+                } else {
+                    return p;
+                }
+            } else { // when componentType == 2, then fetch parent again
+                return this.findParentlView(parentlView);
+            }
+        } else {
+            if(componentType === 0 || componentType === 1) {
+                return lView[8];
+            } else { // when componentType == 2, then fetch parent again
+                return this.findParentlView(parentlView);
+            }
         }
     }
 
@@ -596,6 +611,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * If the attribute is a bound expression, register a watch on the expression
      */
     protected processAttr(attrName: string, attrValue: string) {
+        // console.log("====attrName=====", attrName, "=====typeof attrname=====", typeof attrName, "-----attrValue----", attrValue);
         const {0: propName, 1: type, 2: meta, length} = attrName.split('.');
         if (type === 'bind') {
             // if the show property is bound, set the initial value to false
