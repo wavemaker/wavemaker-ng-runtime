@@ -37,8 +37,9 @@ export class PartialContainerDirective {
         const componentFactory = await this.partialRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL, {prefab: prefabName});
         if (componentFactory) {
             const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);
-            if (instanceRef && instanceRef['_component'] && prefabName) {
-                instanceRef['_component'].prefabName = prefabName;
+            if (instanceRef && instanceRef['instance'] && prefabName) {
+                // @ts-ignore
+                instanceRef['instance'].prefabName = prefabName;
             }
             if (!this.$target) {
                 this.$target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
