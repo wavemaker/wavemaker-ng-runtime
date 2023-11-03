@@ -309,8 +309,7 @@ class ASTCompiler {
         }
         const fn = this.build(ast.receiver, stmts);
         const v = this.createVar();
-        const isImplicitReceiver = ast.receiver instanceof ImplicitReceiver;
-        const exp = stmts[stmts.length - 1];
+        const isImplicitReceiver = ast.receiver instanceof ImplicitReceiver || (ast.receiver instanceof PropertyRead && ast.receiver?.receiver instanceof ImplicitReceiver);
         const context = stmts[stmts.length - 1].split('&&')[0].split('=')[1];
         stmts.push(`${v}= ${fn}&&${fn}${isImplicitReceiver ? '.bind(_ctx)' : `.bind(${context})`}(${_args.join(',')})`);
         return v;
