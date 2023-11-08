@@ -109,9 +109,6 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when the date input changes
      */
     onDisplayDateChange($event, isNativePicker: boolean = false) {
-        this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
-        this.updateFormat('datepattern');
-
         if (this.isEnterPressedOnDateInput) {
             this.isEnterPressedOnDateInput = false;
             return;
@@ -198,8 +195,8 @@ export class DateComponent extends BaseDateTimeComponent {
      */
      public toggleDpDropdown($event, skipFocus: boolean = false) {
         if (this.loadNativeDateInput) {
-            //Fixes click event getting triggred twice in Mobile devices.
-            if(!skipFocus){
+             // Fixes click event getting triggred twice in Mobile devices.
+            if (!skipFocus) {
                 this.onDateTimeInputFocus();
             }
         }
@@ -232,8 +229,6 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when pressing key on the date input
      */
     public onDisplayKeydown(event) {
-        this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
-        this.updateFormat('datepattern');
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             const action = this.keyEventPlugin.constructor.getEventFullKey(event);
@@ -268,8 +263,6 @@ export class DateComponent extends BaseDateTimeComponent {
      * This is an internal method triggered when the date selection changes
      */
     onDateChange(newVal): void {
-        this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
-        this.updateFormat('datepattern');
         /**
          *  Ngx-bootstrap upgrade : To avoid the page load datechange event;
          *  TODO:
