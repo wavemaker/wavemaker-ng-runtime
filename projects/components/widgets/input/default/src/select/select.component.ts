@@ -80,6 +80,17 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
             return;
         }
         if (key === 'class' ||  key === 'tabindex') {
+            if(key === 'class') {
+                // After NG15 upgrade ng-invalid class is added even the field is valid, so we are removing the ng-invalid manually
+                const isNgUntouchedValid = this.selectEl.nativeElement.classList.contains('ng-untouched') && this.selectEl.nativeElement.classList.contains('ng-valid')
+                if(isNgUntouchedValid && nv.includes('ng-untouched') && nv.includes('ng-invalid')) {
+                    setTimeout(()=> {
+                        if(this.selectEl.nativeElement.classList.contains('ng-untouched') && this.selectEl.nativeElement.classList.contains('ng-valid') && this.selectEl.nativeElement.classList.contains('ng-invalid')) {
+                            this.selectEl.nativeElement.classList.remove('ng-invalid');
+                        }
+                    });
+                }
+            }
             return;
         } else if (key === 'readonly') {
              (nv === true) ? setAttr(this.selectEl.nativeElement, 'readonly', 'readonly') : removeAttr(this.selectEl.nativeElement, 'readonly') ;
