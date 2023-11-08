@@ -659,7 +659,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                         dataObj = data[0]._dataObj;
                         break;
                     case 'Bubble':
-                        dataObj = data.data.point[4]._dataObj;
+                        dataObj = data;
                         break;
                 }
                 this.selecteditem = dataObj;

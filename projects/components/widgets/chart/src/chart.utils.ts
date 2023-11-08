@@ -437,9 +437,9 @@ export const getNumberFormatedData = (numberFormat, d) => {
     let formattedData,
         divider,
         prefix;
-    formattedData = d3.format(numberFormat)(d);
     // formatting the data based on number format selected
     if (numberFormat) {
+        formattedData = d3.format(numberFormat)(d);
         // Getting the respective divider[1000,1000000,1000000000] based on the number format choosen
         divider = (tickformats[numberFormat] && tickformats[numberFormat].divider) || 0;
         prefix = tickformats[numberFormat] && tickformats[numberFormat].prefix;
@@ -470,7 +470,7 @@ export const modifyLegendPosition = (widgetContext, position, id) => {
         legendWrap = d3.select(chart_Id + ' .nv-legendWrap'),
         legendPadding = 5;
     // Return when showlegend is false
-    if (!showLegend || !legendWrap[0][0]) {
+    if (!showLegend || !legendWrap['_groups'][0][0]) {
         return;
     }
     if (position === 'bottom') {
@@ -756,3 +756,4 @@ export const postPlotChartProcess = (widgetContext, isPreview?) => {
 };
 
 export const getDateList = () => dateList;
+
