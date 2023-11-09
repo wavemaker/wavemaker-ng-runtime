@@ -90,7 +90,7 @@ export class VariablesService {
         let v = _.isArray(d.value) ? d.value[0] : d.value;
         if (v) {
             if (v.startsWith && v.startsWith('bind:')) {
-                v = $watch(v.replace('bind:', ''), scope, {}, variable.invokeOnParamChange.bind(variable, d), undefined, undefined, undefined, () => variable.isMuted);
+                v = scope.registerDestroyListener($watch(v.replace('bind:', ''), scope, {}, variable.invokeOnParamChange.bind(variable, d), undefined, undefined, undefined, () => variable.isMuted));
             } else if (!_.isUndefined(d.value)) {
                 setValueToNode(d.target, d, root, variable, d.value, true);
                 if (runMode && root !== targetNodeKey) {
