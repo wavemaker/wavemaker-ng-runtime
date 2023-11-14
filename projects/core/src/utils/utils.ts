@@ -99,7 +99,8 @@ export const isLargeTabletPortrait = (landScapeWidth, landScapeHeight) =>  {
     return window.matchMedia("only screen and (min-device-width : "+width+") and (max-device-width : "+width+") and (min-device-height : "+height+") and (max-device-height : "+height+") and (min-width: "+width+") and (max-width: "+width+")").matches;
 }
 
-export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('#wm-mobile-display:visible').length > 0;
+//export const isMobile = () => isAndroid() || isIos() || isAndroidTablet() || $('#wm-mobile-display:visible').length > 0;
+export const isMobile = () => false;
 
 export const isTablet = () => {
     const scope = document.querySelector('.app-page').widget;
