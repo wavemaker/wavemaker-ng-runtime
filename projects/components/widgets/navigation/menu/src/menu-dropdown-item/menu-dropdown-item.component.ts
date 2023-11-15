@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 
-import { addClass, triggerItemAction, App, toggleClass } from '@wm/core';
+import { addClass, triggerItemAction, UserDefinedExecutionContext, App, toggleClass } from '@wm/core';
 import { hasLinkToCurrentPage } from '@wm/components/base';
 import { NavComponent } from '../nav/nav.component';
 
@@ -37,6 +37,7 @@ export class MenuDropdownItemComponent implements OnInit, OnDestroy {
     constructor(
         private app: App,
         public menuRef: MenuComponent,
+        private userDefinedExecutionContext: UserDefinedExecutionContext,
         @Optional() private parentNav: NavComponent,
         elRef: ElementRef,
     ) {

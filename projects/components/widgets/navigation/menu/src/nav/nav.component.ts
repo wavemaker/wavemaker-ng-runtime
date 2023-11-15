@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { addClass, App, removeClass, triggerItemAction } from '@wm/core';
+import {addClass, App, removeClass, triggerItemAction, UserDefinedExecutionContext} from '@wm/core';
 import { APPLY_STYLES_TYPE, DatasetAwareNavComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './nav.props';
@@ -52,6 +52,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         inj: Injector,
         private cdRef: ChangeDetectorRef,
         private route: Router,
+        private userDefinedExecutionContext: UserDefinedExecutionContext,
         private app: App,
         @Attribute('select.event') selectEventCB
     ) {

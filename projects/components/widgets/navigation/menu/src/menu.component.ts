@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 
-import { $appDigest, addClass, removeClass, triggerItemAction, App, toggleClass } from '@wm/core';
+import { $appDigest, addClass, removeClass, triggerItemAction, App, toggleClass, UserDefinedExecutionContext } from '@wm/core';
 import { DatasetAwareNavComponent, hasLinkToCurrentPage, provideAsWidgetRef, styler, AUTOCLOSE_TYPE } from '@wm/components/base';
 import { NavComponent } from './nav/nav.component';
 
@@ -133,6 +133,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     constructor(
         inj: Injector,
         public route: Router,
+        private userDefinedExecutionContext: UserDefinedExecutionContext,
         private app: App,
         @Self() @Optional() public bsDropdown: BsDropdownDirective,
         @Optional() private parentNav: NavComponent,
