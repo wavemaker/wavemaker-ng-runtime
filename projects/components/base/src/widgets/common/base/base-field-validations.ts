@@ -93,9 +93,9 @@ export class BaseFieldValidations {
         if (this.widgetContext.ngform) {
             this.widgetControl.setValidators(this.instance._validators);
             const opt = {};
-            // updating the value only when prevData is not equal to current value.
+            // updating the value only when prevData is not equal to current value. and also initially when  instance.value is empty or null for some widgets like date, checkboxset
             // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
-            if (this.formwidget && this.instance.value === this.formwidget.prevDatavalue) {
+            if (this.formwidget && (this.instance.value === this.formwidget.prevDatavalue || this.isNullOrEmptyOrFalsy(this.instance.value))) {
                 opt['emitEvent'] = false;
             }
             this.widgetControl.updateValueAndValidity(opt);
@@ -153,9 +153,9 @@ export class BaseFieldValidations {
         this.widgetControl.setAsyncValidators([this._asyncValidatorFn()]);
         if(this.widgetContext.ngform.touched){
             const opt = {};
-            // updating the value only when prevData is not equal to current value.
+            // updating the value only when prevData is not equal to current value. and also initially when  instance.value is empty or null for some widgets like date, checkboxset
             // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
-            if (this.formwidget && this.instance.value === this.formwidget.prevDatavalue) {
+            if (this.formwidget && (this.instance.value === this.formwidget.prevDatavalue || this.isNullOrEmptyOrFalsy(this.instance.value))) {
                 opt['emitEvent'] = false;
             }
             this.widgetControl.updateValueAndValidity(opt);
@@ -226,9 +226,9 @@ export class BaseFieldValidations {
         this.applyDefaultValidators();
         if (this._asyncValidatorFn) {
             const opt = {};
-            // updating the value only when prevData is not equal to current value.
+            // updating the value only when prevData is not equal to current value. and also initially when  instance.value is empty or null for some widgets like date, checkboxset
             // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
-            if (this.formwidget && this.instance.value === this.formwidget.prevDatavalue) {
+            if (this.formwidget && (this.instance.value === this.formwidget.prevDatavalue || this.isNullOrEmptyOrFalsy(this.instance.value))) {
                 opt['emitEvent'] = false;
             }
             this.widgetControl.setAsyncValidators([this._asyncValidatorFn()]);
@@ -250,14 +250,17 @@ export class BaseFieldValidations {
             this.applyDefaultValidators();
         }, watchName));
     }
+    isNullOrEmptyOrFalsy(value)  {
+        return _.isEmpty(value);
+    }
 
     // invokes both custom sync validations and default validations.
     applyDefaultValidators() {
         const validators = this.getDefaultValidators();
         const opt = {};
-        // updating the value only when prevData is not equal to current value.
+        // updating the value only when prevData is not equal to current value. and also initially when  instance.value is empty or null for some widgets like date, checkboxset
         // emitEvent flag will prevent from emitting the valueChanges when value is equal to the prevDatavalue.
-        if (this.formwidget && this.instance.value === this.formwidget.prevDatavalue) {
+        if (this.formwidget && (this.instance.value === this.formwidget.prevDatavalue || this.isNullOrEmptyOrFalsy(this.instance.value))) {
             opt['emitEvent'] = false;
         }
         this.widgetControl.setValidators(_.concat(this._syncValidators || [], validators));
