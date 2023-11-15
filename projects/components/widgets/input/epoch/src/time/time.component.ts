@@ -196,7 +196,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', {$event: $event});
-            this.focusOnInputEl();
+            //this.focusOnInputEl();
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             return;

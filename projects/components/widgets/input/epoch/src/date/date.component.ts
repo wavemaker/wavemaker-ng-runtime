@@ -48,7 +48,6 @@ export class DateComponent extends BaseDateTimeComponent {
     private isEnterPressedOnDateInput = false;
     private _bsDefaultLoadCheck: boolean;
     public hint: string;
-    private app: App;
 
     private deregisterEventListener;
     private isCurrentDate;
@@ -99,12 +98,10 @@ export class DateComponent extends BaseDateTimeComponent {
     constructor(
         inj: Injector,
         private cdRef: ChangeDetectorRef,
-        private appDefaults: AppDefaults,
-        app: App
+        private appDefaults: AppDefaults
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
-        this.app = app;
 
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
@@ -189,10 +186,6 @@ export class DateComponent extends BaseDateTimeComponent {
         if (this.deregisterEventListener) {
             this.deregisterEventListener();
         }
-        const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
-        if (parentEl.length > 0) {
-            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
-        }
         this.blurDateInput(this.isOpen);
     }
 
@@ -215,7 +208,7 @@ export class DateComponent extends BaseDateTimeComponent {
         }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', { $event: $event });
-            this.focusOnInputEl();
+          //  this.focusOnInputEl();
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             $event.stopPropagation();
