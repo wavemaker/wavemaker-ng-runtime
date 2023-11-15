@@ -325,6 +325,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 if ($(obj).text() === newDay) {
                     if ($(obj).hasClass('selected')) {
                        $(obj).parent().attr('aria-selected', 'true');
+                       $(obj).parent().attr('aria-activedescendant','true');
                     }
                     $(obj).attr('aria-label', moment(newDate).format('dddd, MMMM Do YYYY'));
                     $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '-1');
@@ -393,7 +394,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
             var prevMon = this.getMonth(this.activeDate, -1);
             $(`.bs-datepicker-head .previous`).prepend(`<p aria-hidden="false" class="sr-only">Changed to Previous Month, ${prevMon.fullMonth} and year ${prevMon.date.getFullYear()}</p>`);
-
+            //$(`.bs-datepicker-head .previous`).focus();
             setTimeout(() => {
                $(`.bs-datepicker-head .previous`).focus();
             });
@@ -943,8 +944,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
-    public showDatePickerModal() {
+    public showDatePickerModal(bsDataval) {
+        bsDataval ? this.activeDate = bsDataval : this.activeDate = new Date();
+       this.setNextData(this.activeDate);
         this.datetimepickerComponent.show();
+        setTimeout(() => {
+            this.addDatepickerMouseEvents();
+            this.setActiveDateFocus(this.activeDate, true);
+        }, 500);
         return ;
     }
 
