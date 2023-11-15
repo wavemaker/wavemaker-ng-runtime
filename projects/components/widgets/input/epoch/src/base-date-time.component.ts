@@ -325,6 +325,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 if ($(obj).text() === newDay) {
                     if ($(obj).hasClass('selected')) {
                        $(obj).parent().attr('aria-selected', 'true');
+                       $(obj).parent().attr('aria-activedescendant','true');
                     }
                     $(obj).attr('aria-label', moment(newDate).format('dddd, MMMM Do YYYY'));
                     $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '-1');
@@ -943,8 +944,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
-    public showDatePickerModal() {
+    public showDatePickerModal(bsDataval) {
+        bsDataval ? this.activeDate = bsDataval : this.activeDate = new Date();
+       this.setNextData(this.activeDate);
         this.datetimepickerComponent.show();
+        setTimeout(() => {
+            this.addDatepickerMouseEvents();
+            this.setActiveDateFocus(this.activeDate, true);
+        }, 500);
         return ;
     }
 
