@@ -32,6 +32,7 @@ const WIDGET_INFO = {widgetType: 'wm-dialog'};
 })
 export class DialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
+    isDialogComponent: boolean = true;
 
     @ViewChild('dialogTemplate', { static: true, read: TemplateRef }) dialogTemplate: TemplateRef<any>;
     @ContentChild('dialogBody', /* TODO: add static flag */ { read: TemplateRef }) dialogBody: TemplateRef<any>;

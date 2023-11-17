@@ -40,7 +40,9 @@ const getDynamicComponent = (
         styles: [css],
         encapsulation: ViewEncapsulation.None,
         selector
-    })(class DynamicComponent {});
+    })(class DynamicComponent {
+        isDynamicComponent: boolean = true;
+    });
 };
 
 @Injectable()

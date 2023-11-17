@@ -125,6 +125,7 @@ const getDynamicComponent = (
     }
 
     class DynamicComponent extends BaseClass {
+        isDynamicComponent: boolean = true;
         pageName;
         partialName;
         prefabName;

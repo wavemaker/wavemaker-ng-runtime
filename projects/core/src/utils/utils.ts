@@ -1603,3 +1603,30 @@ export const setListClass = (scope) => {
         scope.itemsPerRowClass = 'col-xs-12';
     }
 };
+
+export const findParent = (lView: any, viewParentApp?: any) => {
+    let parent = findViewParent(lView);
+    return parent ? parent : viewParentApp;
+}
+
+export const findViewParent = (lView: any) => {
+    if(lView[3] === null) {
+        return lView[8];
+    }
+    let parentlView = lView[3];
+    if(typeof lView[1] === "boolean") {
+        return findViewParent(parentlView);
+    }
+    let componentType = lView[1]["type"];
+    if(componentType === 0 || componentType === 1) {
+        let p = lView[8];
+        // ts-ignore
+        if(p.hasOwnProperty("isDialogComponent")) {
+            return findViewParent(parentlView);
+        } else {
+            return p;
+        }
+    } else {
+        return findViewParent(parentlView);
+    }
+}
