@@ -8,6 +8,7 @@ export abstract class FragmentMonitor {
     fragments = 0;
     viewInit$: Subject<any>;
     isViewInitialized: boolean;
+    isPageComponent: boolean = true;
 
     fragmentsLoaded$ = new Subject();
 
