@@ -42,7 +42,7 @@ export class PartialParamHandlerDirective {
 
     getViewParent(viewParent: any) {
         let parent = viewParent.viewParent;
-        if(parent.constructor.name === "DynamicComponent") {
+        if(parent.hasOwnProperty("isDynamicComponent")) {
             return parent
         }
         return this.getViewParent(parent);

@@ -29,7 +29,8 @@ import {
     setAttr,
     setCSS,
     setCSSFromObj,
-    switchClass
+    switchClass,
+    findParent
 } from '@wm/core';
 
 import {getWidgetPropsByType} from '../../framework/widget-props';
@@ -207,7 +208,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         // https://github.com/angular/angular/blob/main/packages/core/src/render3/interfaces/view.ts
 
         let lView = (this.inj as any)._lView;
-        this.viewParent = lView[8] === null ? this.viewParentApp : this.findParentlView(lView);
+        this.viewParent = findParent(lView, this.viewParentApp);
         //console.log("---*************--context--*************---", lView[8]);
         this.context = (this.inj as any)._lView[8];
 
@@ -268,29 +269,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 this.initWidget();
                 this.setInitProps();
             });
-        }
-    }
-
-    public findParentlView = (lView: any) => {
-        //console.log("---*************--widgetType--*************---", this.widgetType);
-        if(lView[3] === null) {
-            return lView[8] ? lView[8] : this.viewParentApp
-        }
-        let parentlView = lView[3];
-        if(typeof lView[1] === "boolean") { // this is lContainer, not lView if this is boolean
-            return this.findParentlView(parentlView);
-        }
-        let componentType = lView[1]["type"];
-        if(componentType === 0 || componentType === 1) {
-            let p = lView[8];
-            // ts-ignore
-            if(p.constructor.name === 'DialogComponent') {
-                return this.findParentlView(parentlView);
-            } else {
-                return p;
-            }
-        } else { // when componentType == 2, then fetch parent again
-            return this.findParentlView(parentlView);
         }
     }
 
