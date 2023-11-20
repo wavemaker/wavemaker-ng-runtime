@@ -107,6 +107,6 @@
         [tabindex]="tabindex || 0"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
-        (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal()">
+        (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal(bsDateValue)">
     </div>
 </ng-template>

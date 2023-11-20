@@ -70,6 +70,6 @@
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
         [attr.aria-label]="displayValue ? 'Change Date' + displayValue : 'Choose Date'"
-        (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal()">
+        (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal(bsDataValue)">
     </div>
 </ng-template>
