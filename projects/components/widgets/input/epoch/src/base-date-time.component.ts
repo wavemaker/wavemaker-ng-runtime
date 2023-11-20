@@ -938,8 +938,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
-    public showDatePickerModal() {
+    public showDatePickerModal(bsDataval) {
+        bsDataval ? this.activeDate = bsDataval : this.activeDate = new Date();
+       this.setNextData(this.activeDate);
         this.datetimepickerComponent.show();
+        setTimeout(() => {
+            this.addDatepickerMouseEvents();
+            this.setActiveDateFocus(this.activeDate, true);
+        }, 500);
         return ;
     }
 
