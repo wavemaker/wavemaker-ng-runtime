@@ -9,14 +9,13 @@ import {
     Input,
     OnInit,
     Optional,
-    inject,
     QueryList, ViewContainerRef
 } from '@angular/core';
 import { NgForOfContext } from '@angular/common';
 
 import { Observable, Subject } from 'rxjs';
 
-import {$invokeWatchers, $watch, App, findParent} from '@wm/core';
+import {$invokeWatchers, $watch, App} from '@wm/core';
 
 import { ListComponent } from './list.component';
 
@@ -80,13 +79,9 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         this.item = val;
     }
 
-    constructor(private inj: Injector, elRef: ElementRef, private app: App) {
+    constructor(private inj: Injector, elRef: ElementRef, private app: App, @Optional() public _viewParent: ListComponent) {
         this.viewContainerRef = inj.get(ViewContainerRef);
         this.nativeElement = elRef.nativeElement;
-        let viewParentApp = this.inj ? this.inj.get(App) : inject(App);
-        let _viewParent  = findParent((this.inj as any)._lView, viewParentApp);
-
-        // @ts-ignore
         this.listComponent = _viewParent;
         // this.context = (<NgForOfContext<ListItemDirective>>(<any>inj).view.context);
         this.context = (this.inj as any)._lView[8];
