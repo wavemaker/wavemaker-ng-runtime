@@ -1603,57 +1603,29 @@ export const setListClass = (scope) => {
     }
 };
 
-export const findParent = (lView: any, viewParentApp?: any)  => {
-    // console.log("---*************--lView--*************---", lView);
-    // console.log("---*************--viewParentApp--*************---", viewParentApp);
-    let parentObj = findViewParent(lView, { 'parent' : {}, 'root': {} })
-    // console.log("---*************--parentObj--*************---", parentObj);
-    let finalParent = {};
-    if(parentObj['parent'] ===  null || parentObj['root'] ===  null) {
-        parentObj['root'] = viewParentApp;
-        parentObj['parent'] = {};
-    }
-    let mergFunc = function(objValue: any, srcValue: any, key: any) {
-        const protectedKeys = ['viewParent'];
-        if (protectedKeys.includes(key)) {
-            return objValue;
-        }
-        return srcValue;
-    }
-    if(_.isEmpty(parentObj['parent'])) {
-        finalParent = _.mergeWith(parentObj.root, parentObj.parent, mergFunc);
-    } else {
-        finalParent = _.mergeWith(parentObj.parent, parentObj.root, mergFunc);
-    }
-    // console.log("---*************--finalParent--*************---", finalParent);
-    return finalParent;
+export const findParent = (lView: any, viewParentApp?: any) => {
+    let parent = findViewParent(lView);
+    return parent ? parent : viewParentApp;
 }
 
-export const findViewParent = (lView: any, parentObj: any) => {
+export const findViewParent = (lView: any) => {
     if(lView[3] === null) {
-        parentObj['root'] = lView[8];
-        return parentObj;
+        return lView[8];
     }
     let parentlView = lView[3];
-    if(typeof lView[1] === "boolean") { // this is lContainer, not lView if this is boolean
-        return findViewParent(parentlView, parentObj);
+    if(typeof lView[1] === "boolean") {
+        return findViewParent(parentlView);
     }
     let componentType = lView[1]["type"];
     if(componentType === 0 || componentType === 1) {
         let p = lView[8];
         // ts-ignore
-        if(p.hasOwnProperty("isDynamicComponent") || p.hasOwnProperty("isPageComponent")) {
-            parentObj['root'] = p;
-            return parentObj;
+        if(p.hasOwnProperty("isDialogComponent")) {
+            return findViewParent(parentlView);
         } else {
-            if(_.isEmpty(parentObj['parent'])) {
-                parentObj['parent'] = p;
-                // console.log(".......parentObj........", parentObj)
-            }
-            return findViewParent(parentlView, parentObj);
+            return p;
         }
-    } else { // when componentType == 2, then fetch parent again
-        return findViewParent(parentlView, parentObj);
+    } else {
+        return findViewParent(parentlView);
     }
 }
-
