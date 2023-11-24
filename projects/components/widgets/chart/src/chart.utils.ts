@@ -474,7 +474,7 @@ export const modifyLegendPosition = (widgetContext, position, id) => {
         return;
     }
     if (position === 'bottom') {
-        const legendWrapHeight = legendWrap[0][0].getBoundingClientRect().height,
+        const legendWrapHeight = legendWrap['_groups'][0][0].getBoundingClientRect().height,
             wrap = d3.select(chart_Id + ' .nv-wrap'),
             wrapTransform = (wrap && wrap.attr('transform')) ? wrap.attr('transform').replace(/, /g, ',') : '',
             coordinates = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(wrapTransform),
