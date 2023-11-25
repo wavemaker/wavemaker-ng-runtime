@@ -1609,7 +1609,8 @@ export const findParent = (lView: any, viewParentApp?: any) => {
 }
 
 export const findViewParent = (lView: any) => {
-    if(lView[3] === null) {
+    return lView[16][8];
+    /*if(lView[3] === null) {
         return lView[8];
     }
     let parentlView = lView[3];
@@ -1620,12 +1621,21 @@ export const findViewParent = (lView: any) => {
     if(componentType === 0 || componentType === 1) {
         let p = lView[8];
         // ts-ignore
-        if(p.hasOwnProperty("isDialogComponent")) {
+        if(p.hasOwnProperty("isDialogComponent") || p.hasOwnProperty("isContainerDirective")) {
             return findViewParent(parentlView);
         } else {
             return p;
         }
     } else {
         return findViewParent(parentlView);
-    }
+    }*/
 }
+
+/*export const getParent = (parent: any) => {
+    if(parent.hasOwnProperty("isDynamicComponent") || parent.hasOwnProperty("isPageComponent")) {
+        return parent
+    } else{
+        return parent.viewParent ? getParent(parent.viewParent) : parent;
+    }
+
+}*/
