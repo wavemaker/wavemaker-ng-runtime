@@ -1610,7 +1610,7 @@ export const findParent = (lView: any, viewParentApp?: any) => {
 }
 
 export const findViewParent = (lView: any) => {
-    return lView[16][8];
+    return lView[16] ? lView[16][8] : lView[16];
     /*if(lView[3] === null) {
         return lView[8];
     }
