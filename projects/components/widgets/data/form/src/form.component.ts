@@ -909,7 +909,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     private triggerWMEvent(eventName) {
-        const tableId = this.nativeElement.getAttribute('dependson');
+        const tableId = this.nativeElement.getAttribute('dependsontable');
         if (!tableId) {
             return;
         }
