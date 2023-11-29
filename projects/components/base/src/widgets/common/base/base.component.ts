@@ -618,7 +618,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     private getAttributes() {
         let _tNodeAttrs = (this.inj as any)._tNode.attrs, actualAttrs = Array.from(this.nativeElement.attributes).map(attr => attr.name);
         if(_tNodeAttrs === null) {
-            return actualAttrs;
+            return actualAttrs.sort();
         }
         _.forEach(_tNodeAttrs, (attr, i) => {
             if (typeof attr === 'number') {
@@ -632,16 +632,22 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 }
             }
         });
-        return actualAttrs;
+
+        /*
+        Sorting attributes as properties like placeholder is not working when it is bound.
+        placeholder and placeholder.bind two properties are coming in Array.
+        When array is not sorted, initially placeholder.bind value is set then placeholder default value is updated.
+        If array is sorted, placeholder.bind value will be set finally.
+        This is caused because of the way we are storing attribute names in watcher registry map
+         */
+        return actualAttrs.sort();
     }
 
     /**
      * Process the attributes
      */
     private processAttrs() {
-        const attrs = this.getAttributes();
-        let i = 0;
-        _.map(attrs, (attrName: string) => {
+        _.map(this.getAttributes(), (attrName: string) => {
             let attrValue = this.nativeElement.attributes[attrName].value
             this.$attrs.set(attrName, attrValue);
             this.processAttr(attrName, attrValue);
