@@ -86,7 +86,7 @@ export class PipeProvider {
             this.preparePipeMeta(CurrencyPipe, 'currency', true, [this._locale]),
             this.preparePipeMeta(DatePipe, 'date', true, [this._locale]),
             this.preparePipeMeta(ToDatePipe, 'toDate', true, [
-                new DatePipe(this._locale)
+                new DatePipe(this._locale), undefined, this.injector.get(CustomPipeManager)
             ]),
             this.preparePipeMeta(ToNumberPipe, 'toNumber', true, [
                 new DecimalPipe(this._locale),
