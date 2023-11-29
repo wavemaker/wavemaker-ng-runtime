@@ -34,6 +34,8 @@ export class TrailingZeroDecimalPipe implements PipeTransform {
     name: 'toDate'
 })
 export class ToDatePipe implements PipeTransform {
+    private pipeRef: any;
+
     transform(data: any, format: any, timezone?, compInstance?) {
         let timestamp;
         // 'null' is to be treated as a special case, If user wants to enter null value, empty string will be passed to the backend
@@ -43,27 +45,37 @@ export class ToDatePipe implements PipeTransform {
         if (!isDefined(data)) {
             return '';
         }
-        timestamp = getEpochValue(data);
-        if (timestamp) {
-            if (format === 'timestamp') {
-                return timestamp;
+        if (this.pipeRef && _.isFunction(this.pipeRef.formatter)) {
+            try {
+                return this.pipeRef.formatter(...arguments);
+            } catch (error) {
+                return data;
             }
-            if (format === 'UTC') {
-                return new Date(timestamp).toISOString();
+        } else {
+            timestamp = getEpochValue(data);
+            if (timestamp) {
+                if (format === 'timestamp') {
+                    return timestamp;
+                }
+                if (format === 'UTC') {
+                    return new Date(timestamp).toISOString();
+                }
+                let formattedVal;
+                const timeZone = this.i18nService ? this.i18nService.getTimezone(compInstance) : timezone;
+                if (timeZone && (data === timestamp || hasOffsetStr(data))) {
+                    formattedVal = moment(timestamp).tz(timeZone).format(format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A'));
+                } else {
+                    formattedVal = this.datePipe.transform(timestamp, format);
+                }
+                return formattedVal;
             }
-            let formattedVal;
-            const timeZone = this.i18nService ? this.i18nService.getTimezone(compInstance) : timezone;
-            if (timeZone && (data === timestamp || hasOffsetStr(data))) {
-                formattedVal = moment(timestamp).tz(timeZone).format(format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A'));
-            } else {
-                formattedVal = this.datePipe.transform(timestamp, format);
-            }
-            return formattedVal;
+            return '';
         }
-        return '';
     }
 
-    constructor(private datePipe: DatePipe, private i18nService: AbstractI18nService ) { }
+    constructor(private datePipe: DatePipe, private custmeUserPipe: CustomPipeManager, private i18nService: AbstractI18nService ) {
+        this.pipeRef = this.custmeUserPipe ? this.custmeUserPipe.getCustomPipe("toDate") : null;
+    }
 }
 
 @Pipe({
