@@ -774,13 +774,16 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this.invokeOnChange(this.datavalue, undefined, false);
     }
 
-    private updateTimeValue(value, fieldName) {
+    private updateTimeValue(el, value, fieldName) {
+        let minEl = el.find('input[aria-label="minutes"]');
+        let secEl = el.find('input[aria-label="seconds"]');
+        minEl.value = secEl.value = '00';
         if (value.length < 2) {
             setTimeout(() => {
-                fieldName === 'minutes' ? this.bsTimePicker.updateMinutes('00') : this.bsTimePicker.updateSeconds('00');
+                fieldName === 'minutes' ? this.bsTimePicker.updateMinutes(minEl) : this.bsTimePicker.updateSeconds(secEl);
             }, 500);
         } else {
-            fieldName === 'minutes' ? this.bsTimePicker.updateMinutes('00') : this.bsTimePicker.updateSeconds('00');
+            fieldName === 'minutes' ? this.bsTimePicker.updateMinutes(minEl) : this.bsTimePicker.updateSeconds(secEl);
         }
     }
 
@@ -796,7 +799,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             _.forEach(inputFields, (field, index) => {
                 if (evt.target !== field && field.value === '' && hourValue.length) {
                     const fieldName = index === 1 ? 'minutes' : 'seconds';
-                    this.updateTimeValue(hourValue, fieldName);
+                    this.updateTimeValue($el, hourValue, fieldName);
                 }
             });
         });
