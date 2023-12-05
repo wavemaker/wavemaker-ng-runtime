@@ -182,15 +182,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {number}
      */
     private parseNumber(val: string): number {
-        // WMS-22179: split number based on the decimal seperator in the val
-        let seperator;
-        if (val.indexOf(this.DECIMAL) > -1) {
-            seperator = this.DECIMAL;
-        } else {
-            seperator = '.';
-        }
+        // WMS-22179: split number based on the decimal separator in the val
         // splits string into two parts. decimal and number.
-        const parts = val.split(seperator);
+        const parts = val.split(this.inputmode === INPUTMODE.FINANCIAL ? (val.indexOf(this.DECIMAL) > -1 ? this.DECIMAL : '.') : this.DECIMAL);
         if (!parts.length) {
             return null;
         }
