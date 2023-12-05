@@ -335,9 +335,34 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     ngOnDestroy(): void {
-        this.savePageSnapShot();
-        this.destroy$.complete();
+        this.handlePageDestroy().then(() => {
+            this.savePageSnapShot();
+            this.destroy$.complete();
+        });
     }
+    
+    async handlePageDestroy(): Promise<void> {
+        let captureAppThumbnail = this.canCaptureApplicationThumbnail() ?? false;
+        if (captureAppThumbnail || true) {
+            await this.emitRunTimePageDestroyEvent();
+        }
+    }
+
+    canCaptureApplicationThumbnail() {
+        //Conditions to capture only home pages and emit event in development mode.
+        return (localStorage.getItem("captureApplicationThumbnail") === 'true' && this?.App?.landingPageName === this?.pageName && (<any>window)?.top?.html2canvas && !(<any>this).App.isAppThumbnailCaptured) ?? false;
+    }
+    
+    emitRunTimePageDestroyEvent(): Promise<void> {
+        return new Promise<void>((resolve) => {
+            window.top.postMessage({ key: 'capture-app-thumbnail' }, "*");
+            (<any>this).App.isAppThumbnailCaptured = true;
+            setTimeout(() => {
+                resolve();
+            }, 3000);
+        });
+    }
+    
 
     onReady() {}
 
