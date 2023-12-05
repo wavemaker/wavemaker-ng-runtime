@@ -324,6 +324,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                         this.onPageContentReady = () => {
                             this.fragmentsLoaded$.subscribe(noop, noop, () => {
                                 this.invokeOnReady();
+                                this.handlePageThumbnails();
                             });
                             unMuteWatchers();
                             this.viewInit$.complete();
@@ -338,6 +339,26 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.savePageSnapShot();
         this.destroy$.complete();
     }
+    
+    handlePageThumbnails(){
+        let captureAppThumbnail = this.canCaptureApplicationThumbnail() ?? false;
+        if(captureAppThumbnail){
+            setTimeout(() => {
+                this.emitRunTimeAppThumbnailCaptureEvent();
+            }, 2000)
+        }
+    }
+
+    canCaptureApplicationThumbnail() {
+        //Conditions to capture only home pages and emit event in development mode.
+        return (localStorage.getItem("captureApplicationThumbnail") === 'true' && this?.App?.landingPageName === this?.pageName && (<any>window)?.top?.html2canvas && !(<any>this).App.isAppThumbnailCaptured) ?? false;
+    }
+    
+    emitRunTimeAppThumbnailCaptureEvent(){
+        window.top.postMessage({ key: 'capture-app-thumbnail' }, "*");
+        (<any>this).App.isAppThumbnailCaptured = true;
+    }
+    
 
     onReady() {}
 
