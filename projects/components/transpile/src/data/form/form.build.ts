@@ -79,7 +79,9 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const role = parentLoginWidget && parentLoginWidget.get('isLogin') ? 'app-login' : '';
             const counter = idGen.nextUid();
             const dependsOn = attrs.get('dependson') ? `dependson="${attrs.get('dependson')}"` : '';
-            const dependsOnTable = attrs.get('dependson') ? `dependsontable="${attrs.get('dependson')}"` : '';
+            if(dependsOn) {
+                attrs.set('dependsontable', attrs.get('dependson'));
+            }
             const classProp = attrs.get('formlayout') === 'page' ? 'app-device-liveform panel liveform-inline' : '';
             const dialogAttributes = ['title', 'title.bind', 'iconclass', 'iconclass.bind', 'width'];
             attrs.delete('dependson');
@@ -125,7 +127,8 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             }
 
             tmpl = getAttrMarkup(attrs);
-            return `<div ${dependsOn}>${liveFormTmpl} ${tmpl} ${dependsOnTable}>
+            const dependsOnTmpl = dependsOn ? `<div ${dependsOn}>` : '';
+            return `${dependsOnTmpl}${liveFormTmpl} ${tmpl}>
                        ${buttonTemplate} ${mobileFormContentTmpl}`;
         },
         post: (attrs) => {
@@ -135,7 +138,10 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             if (attrs.get('formlayout') === 'page') {
                 return `</div></${tagName}>`;
             }
-            return `</${tagName}></div>`;
+            if(attrs.get('dependsontable')) {
+                return `</${tagName}></div>`;
+            }
+            return `</${tagName}>`;
         },
         provide: (attrs, shared) => {
             const provider = new Map();

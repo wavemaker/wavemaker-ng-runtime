@@ -335,8 +335,59 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     ngOnDestroy(): void {
-        this.savePageSnapShot();
-        this.destroy$.complete();
+        this.handlePageDestroy().then(() => {
+            this.savePageSnapShot();
+            this.destroy$.complete();
+        });
+    }
+    
+    async handlePageDestroy(): Promise<void> {
+        let captureAppThumbnail = this.canCaptureApplicationThumbnail() ?? false;
+        if (captureAppThumbnail || true) {
+            await this.emitRunTimePageDestroyEvent();
+        }
+    }
+
+    canCaptureApplicationThumbnail() {
+        //Conditions to capture only home pages and emit event in development mode.
+        return (localStorage.getItem("captureApplicationThumbnail") === 'true' && this?.App?.landingPageName === this?.pageName && (<any>window)?.top?.html2canvas && !(<any>this).App.isAppThumbnailCaptured) ?? false;
+    }
+    
+    emitRunTimePageDestroyEvent(): Promise<void> {
+        return new Promise<void>((resolve) => {
+            window.top.postMessage({ key: 'capture-app-thumbnail' }, "*");
+            (<any>this).App.isAppThumbnailCaptured = true;
+            setTimeout(() => {
+                resolve();
+            }, 3000);
+        });
+    }
+    
+
+    captureApplicationThumbnail() {
+        const root = this;
+        let captureApplicationThumbnail = localStorage.getItem("captureApplicationThumbnail") === "true" ? true : false;
+        if (captureApplicationThumbnail && this.App.landingPageName === this.pageName && !(<any>this).App.isApplicationThumbnailCaptured) {
+            html2canvas(document.body)
+                .then(canvas => {
+                    try {
+                        (<any>root).App.isApplicationThumbnailCaptured = true;
+                        const screenshotUrl = canvas.toDataURL("image/png");
+                        console.log(screenshotUrl);
+
+                        const a = document.createElement("a");
+                        a.href = screenshotUrl;
+                        a.download = "screenshot.jpg";
+                        a.click();
+                    } catch (error) {
+                        console.error('Error in html2canvas then block:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error in html2canvas promise:', error);
+                });
+
+        }
     }
 
     onReady() {}
