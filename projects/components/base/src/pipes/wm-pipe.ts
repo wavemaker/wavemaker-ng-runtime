@@ -1,6 +1,5 @@
-import { Inject, Pipe, PipeTransform, Injector} from '@angular/core';
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { CURRENCY_INFO, isDefined, App, CustomPipeManager, AbstractI18nService, hasOffsetStr } from '@wm/core';
+
+import { CustomPipeManager } from '@wm/core';
 declare const _;
 
 export class WmPipe {
