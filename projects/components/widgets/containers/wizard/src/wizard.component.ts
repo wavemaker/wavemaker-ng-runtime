@@ -41,6 +41,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     private readonly promiseResolverFn: Function;
     public actionsalignment: any;
     public cancelable: any;
+    public enablenext: any;
 
     get hasPrevStep(): boolean {
         return !this.isFirstStep(this.currentStep);
@@ -68,7 +69,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         if (!this.currentStep) {
             return;
         }
-        return this.currentStep.enableNext && this.currentStep.isValid;
+        return this.enablenext ? true : (this.currentStep.enableNext && this.currentStep.isValid);
     }
 
     get enableDone(): boolean {
@@ -215,18 +216,26 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
 
-        let nextStep: WizardStepDirective;
-
         // abort if onSkip method returns false
         if (eventName === 'skip') {
             if (currentStep.invokeSkipCB(currentStepIndex) === false) {
                 return;
             }
-        } else if (eventName === 'next') {
+            this.extendNextFn(currentStep, currentStepIndex);
+        } else if (this.currentStep.isValid && eventName === 'next') {
             if (currentStep.invokeNextCB(currentStepIndex) === false) {
                 return;
             }
+            this.extendNextFn(currentStep, currentStepIndex);
+        } else if (this.enablenext && !this.currentStep.isValid){
+            Array.from((<any>this).currentStep.getAllEmbeddedForms())?.forEach((form:any) => {
+                form.widget.highlightInvalidFields();
+            });
         }
+    }
+
+    extendNextFn(currentStep, currentStepIndex){
+        let nextStep: WizardStepDirective;
         nextStep = this.getNextValidStepFormIndex(currentStepIndex + 1);
         nextStep.isInitialized = true;
 
