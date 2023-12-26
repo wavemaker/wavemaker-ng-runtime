@@ -34,25 +34,32 @@ export class TrailingZeroDecimalPipe implements PipeTransform {
     name: 'toDate'
 })
 export class ToDatePipe extends WmPipe implements PipeTransform {
-    transform(data: any, format: any, timezone?, compInstance?) {
+    // This method calls the custom formatter fn after applying the exisitng date pattern
+    returnFn(data, args) {
         if (this.isCustomPipe) {
-            return this.customFormatter(data, arguments);
+            if (args) {
+                args[0] = data;
+            }
+            return this.customFormatter(data, args);
         }
+        return data;
+    }
+    transform(data: any, format: any, timezone?, compInstance?) {
         let timestamp;
         // 'null' is to be treated as a special case, If user wants to enter null value, empty string will be passed to the backend
         if (data === 'null' || data === '') {
-            return '';
+            return this.returnFn('', arguments);
         }
         if (!isDefined(data)) {
-            return '';
+            return this.returnFn('',arguments);
         }
         timestamp = getEpochValue(data);
         if (timestamp) {
             if (format === 'timestamp') {
-                return timestamp;
+                return this.returnFn(timestamp, arguments);
             }
             if (format === 'UTC') {
-                return new Date(timestamp).toISOString();
+                return this.returnFn(new Date(timestamp).toISOString(), arguments);
             }
             let formattedVal;
             const timeZone = this.i18nService ? this.i18nService.getTimezone(compInstance) : timezone;
@@ -61,9 +68,9 @@ export class ToDatePipe extends WmPipe implements PipeTransform {
             } else {
                 formattedVal = this.datePipe.transform(timestamp, format);
             }
-            return formattedVal;
+            return this.returnFn(formattedVal, arguments);
         }
-        return '';
+        return this.returnFn('', arguments);
     }
 
     constructor(private datePipe: DatePipe, private i18nService: AbstractI18nService, protected customPipeManager: CustomPipeManager) {
