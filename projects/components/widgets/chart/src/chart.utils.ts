@@ -437,9 +437,9 @@ export const getNumberFormatedData = (numberFormat, d) => {
     let formattedData,
         divider,
         prefix;
-    formattedData = d3.format(numberFormat)(d);
     // formatting the data based on number format selected
     if (numberFormat) {
+        formattedData = d3.format(numberFormat)(d);
         // Getting the respective divider[1000,1000000,1000000000] based on the number format choosen
         divider = (tickformats[numberFormat] && tickformats[numberFormat].divider) || 0;
         prefix = tickformats[numberFormat] && tickformats[numberFormat].prefix;
@@ -470,11 +470,11 @@ export const modifyLegendPosition = (widgetContext, position, id) => {
         legendWrap = d3.select(chart_Id + ' .nv-legendWrap'),
         legendPadding = 5;
     // Return when showlegend is false
-    if (!showLegend || !legendWrap[0][0]) {
+    if (!showLegend || !legendWrap['_groups'][0][0]) {
         return;
     }
     if (position === 'bottom') {
-        const legendWrapHeight = legendWrap[0][0].getBoundingClientRect().height,
+        const legendWrapHeight = legendWrap['_groups'][0][0].getBoundingClientRect().height,
             wrap = d3.select(chart_Id + ' .nv-wrap'),
             wrapTransform = (wrap && wrap.attr('transform')) ? wrap.attr('transform').replace(/, /g, ',') : '',
             coordinates = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(wrapTransform),
@@ -565,8 +565,8 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
             break;
         case 'Area':
             chart = nv.models.stackedAreaChart()
-                .x(d => d[0])
-                .y(d => d[1])
+                .x(d => d.x)
+                .y(d => d.y)
                 .clipEdge(true)
                 .showControls(false)
                 .style(propertyValueMap.areaviewtype)
@@ -655,9 +655,11 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
         }
         // Customizing the tooltips in case of the pie and donut when labelType is value
         customiseTooltip(chart, propertyValueMap, widgetContext);
-    } else {
+    }
+    else {
         chart.showXAxis(propertyValueMap.showxaxis)
             .showYAxis(propertyValueMap.showyaxis);
+        chart.legendPosition(propertyValueMap.showlegend);
 
         // Setting the labels if they are specified explicitly or taking the axiskeys chosen
         xaxislabel = propertyValueMap.xaxislabel || prettifyLabels(widgetContext.xaxisdatakey) || 'x caption';
@@ -745,14 +747,15 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
 export const postPlotChartProcess = (widgetContext, isPreview?) => {
     const id = isPreview ? null : widgetContext.$id;
     // If user sets to highlight the data points and increase the thickness of the line
-    if (isLineTypeChart(widgetContext.type)) {
-        setLineThickness(id, widgetContext.linethickness);
-        highlightPoints(id, widgetContext.highlightpoints);
-    }
+    // if (isLineTypeChart(widgetContext.type)) {
+    // //    setLineThickness(id, widgetContext.linethickness);
+    // //    highlightPoints(id, widgetContext.highlightpoints);
+    // }
     // Modifying the legend position only when legend is shown
-    if (widgetContext.showlegend) {
-        modifyLegendPosition(widgetContext, widgetContext.showlegend, id);
-    }
+    // if (widgetContext.showlegend) {
+    //     modifyLegendPosition(widgetContext, widgetContext.showlegend, id);
+    // }
 };
 
 export const getDateList = () => dateList;
+
