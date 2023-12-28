@@ -7,6 +7,7 @@ export const registerProps = () => {
             [
                 ['actionsalignment', {value: 'right', ...PROP_STRING}],
                 ['cancelable', {value: true, ...PROP_BOOLEAN}],
+                ['enablenext', {value: false, ...PROP_BOOLEAN}],
                 ['cancelbtnlabel', {value: 'Cancel', ...PROP_STRING}],
                 ['class', {value: 'classic', ...PROP_STRING}],
                 ['defaultstep', {value: 'none', ...PROP_STRING}],

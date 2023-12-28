@@ -26,7 +26,7 @@ import { AppManagerService } from '../services/app.manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
 import { CACHE_PAGE } from '../util/wm-route-reuse-strategy';
 
-declare const $, _;
+declare const $, _, html2canvas;
 
 @Directive()
 export abstract class BasePageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy, AfterContentInit {
@@ -335,8 +335,35 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     ngOnDestroy(): void {
+        //this.captureApplicationThumbnail();
         this.savePageSnapShot();
         this.destroy$.complete();
+    }
+
+    captureApplicationThumbnail() {
+        const root = this;
+        let captureApplicationThumbnail = localStorage.getItem("captureApplicationThumbnail") === "true" ? true : false;
+        if (captureApplicationThumbnail && this.App.landingPageName === this.pageName && !(<any>this).App.isApplicationThumbnailCaptured) {
+            html2canvas(document.body)
+                .then(canvas => {
+                    try {
+                        (<any>root).App.isApplicationThumbnailCaptured = true;
+                        const screenshotUrl = canvas.toDataURL("image/png");
+                        console.log(screenshotUrl);
+
+                        const a = document.createElement("a");
+                        a.href = screenshotUrl;
+                        a.download = "screenshot.jpg";
+                        a.click();
+                    } catch (error) {
+                        console.error('Error in html2canvas then block:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error in html2canvas promise:', error);
+                });
+
+        }
     }
 
     onReady() {}
