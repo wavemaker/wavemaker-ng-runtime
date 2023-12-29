@@ -20,7 +20,9 @@ export const inputEmailTypeProps = new Map(
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', {value: 'email', ...PROP_STRING}],
-        ['updateon', PROP_STRING]
+        ['updateon', PROP_STRING],
+        ['conditionalclass', PROP_ANY],
+        ['conditionalstyle', PROP_ANY]
     ]
 );
 

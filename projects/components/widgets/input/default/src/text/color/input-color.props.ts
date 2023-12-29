@@ -17,7 +17,9 @@ export const inputColorTypeProps = new Map([
     ['show', {value: true, ...PROP_BOOLEAN}],
     ['tabindex', {value: 0, ...PROP_NUMBER}],
     ['type', {value: 'color', ...PROP_STRING}],
-    ['updateon', PROP_STRING]
+    ['updateon', PROP_STRING],
+    ['conditionalclass', PROP_ANY],
+    ['conditionalstyle', PROP_ANY]
 ]);
 
 export const registerProps = () => {
