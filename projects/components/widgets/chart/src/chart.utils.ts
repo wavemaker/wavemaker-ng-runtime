@@ -399,7 +399,10 @@ export const highlightPoints = (id, highlightpoints) => {
 export const setLineThickness = (id, thickness) => {
     const chartSvg = id ? d3.select('#wmChart' + id + ' svg') : d3.select(chartId + ' svg');
     thickness = thickness || 1.5;
-    chartSvg.selectAll('.nv-line').style({'stroke-width': thickness});
+    const lines =  chartSvg.selectAll('.nv-line');
+    if(lines.size() != 0) {
+        lines.style({'stroke-width': thickness});
+    }
 };
 
 // Constructing a common key value map for preview and canvas mode
@@ -429,7 +432,7 @@ export const getDateFormatedData = (dateFormat, d) => {
      * This is because it returns UTC time i.e. Coordinated Universal Time (UTC).
      * To create date in local time use moment
      */
-    return d3.time.format(dateFormat)(new Date(moment(moment(d).format()).valueOf()));
+    return d3.timeFormat(dateFormat)(new Date(moment(moment(d).format()).valueOf()));
 };
 
 // Formats the given value according to number format
@@ -439,7 +442,11 @@ export const getNumberFormatedData = (numberFormat, d) => {
         prefix;
     // formatting the data based on number format selected
     if (numberFormat) {
-        formattedData = d3.format(numberFormat)(d);
+        let numberFormatter = d3.format(numberFormat);
+        if(numberFormat == 'Thousand' || numberFormat == 'Million' || numberFormat == 'Billion') {
+            numberFormatter = d3.format(',.2s');
+        }
+        formattedData = numberFormatter(d);
         // Getting the respective divider[1000,1000000,1000000000] based on the number format choosen
         divider = (tickformats[numberFormat] && tickformats[numberFormat].divider) || 0;
         prefix = tickformats[numberFormat] && tickformats[numberFormat].prefix;
@@ -747,10 +754,10 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
 export const postPlotChartProcess = (widgetContext, isPreview?) => {
     const id = isPreview ? null : widgetContext.$id;
     // If user sets to highlight the data points and increase the thickness of the line
-    // if (isLineTypeChart(widgetContext.type)) {
-    // //    setLineThickness(id, widgetContext.linethickness);
-    // //    highlightPoints(id, widgetContext.highlightpoints);
-    // }
+    if (isLineTypeChart(widgetContext.type)) {
+       setLineThickness(id, widgetContext.linethickness);
+       highlightPoints(id, widgetContext.highlightpoints);
+    }
     // Modifying the legend position only when legend is shown
     // if (widgetContext.showlegend) {
     //     modifyLegendPosition(widgetContext, widgetContext.showlegend, id);
