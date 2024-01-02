@@ -655,7 +655,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     attachClickEvent() {
         let dataObj;
         d3.select('#wmChart' + this.$id + ' svg').selectAll(chartDataPointXpath[this.type]).style('pointer-events', 'all')
-            .on('click', (data, index) => {
+            .on('click', (event, data, index) => {
                 switch (this.type) {
                     case 'Column':
                     case 'Bar':
