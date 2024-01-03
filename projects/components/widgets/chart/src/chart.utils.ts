@@ -455,7 +455,7 @@ export const getNumberFormatedData = (numberFormat, d) => {
         } else if(numberFormat == '%') {
             numberFormatter = d3.format('.2%');
         } else {
-            numberFormatter = d3.format(numberFormat)
+            numberFormatter = d3.format(numberFormat);
         }
         formattedData = numberFormatter(d);
         // Getting the respective divider[1000,1000000,1000000000] based on the number format choosen
