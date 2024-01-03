@@ -389,9 +389,14 @@ export const getYScaleMinValue = value => {
 export const highlightPoints = (id, highlightpoints) => {
     const chartSvg = id ? d3.select('#wmChart' + id + ' svg') : d3.select(chartId + ' svg');
     if (highlightpoints) {
-        chartSvg.selectAll('.nv-point').style({'stroke-width': '6px', 'fill-opacity': '.95', 'stroke-opacity': '.95'});
+        chartSvg.selectAll('.nv-point')
+            .style('stroke-width', '6px')
+            .style('fill-opacity', '0.95')
+            .style('stroke-opacity', '0.95');
     } else {
-        chartSvg.selectAll('.nv-point').style({'stroke-width': '0px', 'fill-opacity': '0'});
+        chartSvg.selectAll('.nv-point')
+            .style('stroke-width', '0px')
+            .style('fill-opacity', '0');
     }
 };
 
@@ -399,9 +404,11 @@ export const highlightPoints = (id, highlightpoints) => {
 export const setLineThickness = (id, thickness) => {
     const chartSvg = id ? d3.select('#wmChart' + id + ' svg') : d3.select(chartId + ' svg');
     thickness = thickness || 1.5;
-    const lines =  chartSvg.selectAll('.nv-line');
-    if(lines.size() != 0) {
-        lines.style({'stroke-width': thickness});
+
+    const lines = chartSvg.selectAll('.nv-line');
+
+    if (lines.size() !== 0) {
+        lines.style('stroke-width', thickness);
     }
 };
 
@@ -442,9 +449,13 @@ export const getNumberFormatedData = (numberFormat, d) => {
         prefix;
     // formatting the data based on number format selected
     if (numberFormat) {
-        let numberFormatter = d3.format(numberFormat);
+        let numberFormatter;
         if(numberFormat == 'Thousand' || numberFormat == 'Million' || numberFormat == 'Billion') {
             numberFormatter = d3.format(',.2s');
+        } else if(numberFormat == '%') {
+            numberFormatter = d3.format('.2%');
+        } else {
+            numberFormatter = d3.format(numberFormat)
         }
         formattedData = numberFormatter(d);
         // Getting the respective divider[1000,1000000,1000000000] based on the number format choosen
