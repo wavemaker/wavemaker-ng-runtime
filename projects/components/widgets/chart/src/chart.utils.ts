@@ -439,6 +439,9 @@ export const getDateFormatedData = (dateFormat, d) => {
      * This is because it returns UTC time i.e. Coordinated Universal Time (UTC).
      * To create date in local time use moment
      */
+    if(dateFormat == '%c') {
+        dateFormat = '%a %b %e %X %Y';
+    }
     return d3.timeFormat(dateFormat)(new Date(moment(moment(d).format()).valueOf()));
 };
 
@@ -454,10 +457,14 @@ export const getNumberFormatedData = (numberFormat, d) => {
             numberFormatter = d3.format(',.2s');
         } else if(numberFormat == '%') {
             numberFormatter = d3.format('.2%');
+        }else if(numberFormat == '.f') {
+            numberFormatter = d3.format('.2f');
         } else {
             numberFormatter = d3.format(numberFormat);
         }
         formattedData = numberFormatter(d);
+
+
         // Getting the respective divider[1000,1000000,1000000000] based on the number format choosen
         divider = (tickformats[numberFormat] && tickformats[numberFormat].divider) || 0;
         prefix = tickformats[numberFormat] && tickformats[numberFormat].prefix;
