@@ -27,6 +27,8 @@ export class InputNumberComponent extends BaseInput {
     public disabled: boolean;
     public name: string;
     public readonly: boolean;
+    public conditionalclass: any;
+    public conditionalstyle: any;
     public minvalue: number;
     public maxvalue: number;
     public tabindex: any;

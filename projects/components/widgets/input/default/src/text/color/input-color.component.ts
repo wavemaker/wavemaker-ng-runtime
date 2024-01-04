@@ -27,6 +27,8 @@ export class InputColorComponent extends BaseInput {
     public maxchars: number;
     public name: string;
     public readonly: boolean;
+    public conditionalclass: any;
+    public conditionalstyle: any;
     public tabindex: any;
     public shortcutkey: string;
     public autofocus: boolean;

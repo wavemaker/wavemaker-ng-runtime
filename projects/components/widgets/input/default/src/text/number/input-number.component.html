@@ -18,6 +18,8 @@
        [attr.accesskey]="shortcutkey"
        [attr.aria-label]="hint"
        [autofocus]="autofocus"
+       [ngClass]="conditionalclass"
+       [ngStyle]="conditionalstyle"
        (blur)="handleBlur($event)"
        (ngModelChange)="handleChange($event)"
        [autocomplete]="autocomplete ? 'on' : 'off'"

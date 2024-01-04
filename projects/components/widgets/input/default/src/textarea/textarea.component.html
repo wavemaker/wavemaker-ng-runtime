@@ -14,6 +14,8 @@
           [attr.aria-label]="hint"
           aria-multiline="true"
           [autofocus]="autofocus"
+          [ngClass]="conditionalclass"
+          [ngStyle]="conditionalstyle"
           (blur)="handleBlur($event)"
           (input)="onInputChange()"
           (ngModelChange)="handleChange($event); onInputChange();"

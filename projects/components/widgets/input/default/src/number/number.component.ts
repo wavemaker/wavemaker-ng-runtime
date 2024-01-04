@@ -30,6 +30,8 @@ export class NumberComponent extends NumberLocale {
     public name: string;
     public hint: string;
     public tabindex: any;
+    public conditionalclass: any;
+    public conditionalstyle: any;
     public shortcutkey: string;
     public autofocus: boolean;
     @ViewChild('input', {static: true}) inputEl: ElementRef;

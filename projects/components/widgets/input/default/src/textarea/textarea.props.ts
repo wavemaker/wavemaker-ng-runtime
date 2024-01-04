@@ -21,6 +21,8 @@ export const textareaProps = new Map(
         ['updateon', PROP_STRING],
         ['limitdisplaytext', PROP_STRING],
         ['charlength', PROP_NUMBER],
+        ['conditionalclass', PROP_ANY],
+        ['conditionalstyle', PROP_ANY]
     ]
 );
 
