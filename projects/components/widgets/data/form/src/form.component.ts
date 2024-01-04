@@ -74,6 +74,20 @@ const findInvalidElement = ($formEle, ngForm) => {
     };
 };
 
+// Function to get the active element markup based on widget type
+const getActiveElement = (element) => {
+    const widgetType = element.getAttribute('widgettype');
+    switch (widgetType) {
+        case 'select':
+            return element.querySelector('select');
+            break;
+        case 'textarea':
+            return element.querySelector('textarea');
+            break;
+        default:
+            return element.querySelector('input');
+    }
+}
 const setTouchedState = (self, ngForm, fieldName) => {
     if (ngForm.valid) {
         return;
@@ -85,8 +99,9 @@ const setTouchedState = (self, ngForm, fieldName) => {
     } else {
         const element = self.$element.find(`[wmformfield][key="${fieldName}"]`);
         element[0].setAttribute('__errormsg', element[0].getAttribute('__validationId'));
-        element[0].querySelector('input')?.setAttribute('aria-invalid', ngForm.invalid);
-        element[0].querySelector('input')?.setAttribute('aria-describedby', element[0].getAttribute('__validationId'));
+        let activeElement = getActiveElement(element[0]);
+            activeElement?.setAttribute('aria-invalid', ngForm.invalid);
+        activeElement?.setAttribute('aria-describedby', element[0].getAttribute('__validationId'));
         ngForm.markAsTouched();
     }
 };
