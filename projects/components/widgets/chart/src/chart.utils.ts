@@ -444,6 +444,15 @@ export const getDateFormatedData = (dateFormat, d) => {
     }
     return d3.timeFormat(dateFormat)(new Date(moment(moment(d).format()).valueOf()));
 };
+const removeTrailingZeros = value => {
+    // Convert value to a string if it's a number
+    const stringValue = typeof value === 'number' ? value.toString() : value;
+
+    // Remove trailing zeros
+    const formattedValue = stringValue.replace(/\.0+$/, "");
+
+    return formattedValue;
+};
 
 // Formats the given value according to number format
 export const getNumberFormatedData = (numberFormat, d) => {
@@ -475,6 +484,7 @@ export const getNumberFormatedData = (numberFormat, d) => {
         // Auto formatting the data when no formating option is chosen
         formattedData = d >= 1000 ? d3.format('.1s')(d) : d;
     }
+    formattedData = removeTrailingZeros(formattedData);
     return formattedData;
 };
 
