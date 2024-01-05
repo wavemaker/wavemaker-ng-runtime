@@ -447,11 +447,8 @@ export const getDateFormatedData = (dateFormat, d) => {
 const removeTrailingZeros = value => {
     // Convert value to a string if it's a number
     const stringValue = typeof value === 'number' ? value.toString() : value;
-
     // Remove trailing zeros
-    const formattedValue = stringValue.replace(/\.0+$/, "");
-
-    return formattedValue;
+    return stringValue.replace(/\.0+$/, "");
 };
 
 // Formats the given value according to number format

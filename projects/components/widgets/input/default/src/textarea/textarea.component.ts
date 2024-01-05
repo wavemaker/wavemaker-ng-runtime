@@ -26,6 +26,8 @@ export class TextareaComponent extends BaseInput {
     public disabled: boolean;
     public name: string;
     public readonly: boolean;
+    public conditionalclass: any;
+    public conditionalstyle: any;
     public tabindex: any;
     public placeholder: any;
     public shortcutkey: string;

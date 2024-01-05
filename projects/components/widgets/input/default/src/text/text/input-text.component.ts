@@ -33,6 +33,8 @@ export class InputTextComponent extends BaseInput implements OnInit{
     public type: any;
     public name: string;
     public readonly: boolean;
+    public conditionalclass: any;
+    public conditionalstyle: any;
     public tabindex: any;
     public placeholder: any;
     public shortcutkey: string;

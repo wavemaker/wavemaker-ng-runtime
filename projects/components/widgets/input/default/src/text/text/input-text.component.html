@@ -17,6 +17,8 @@
        [attr.placeholder]="placeholder"
        [attr.accesskey]="shortcutkey"
        [autofocus]="autofocus"
+       [ngClass]="conditionalclass"
+       [ngStyle]="conditionalstyle"
        (ngModelChange)="handleChange($event)"
        (blur)="handleBlur($event); checkForDisplayFormat($event)"
        (focus)="checkForDisplayFormat($event)"

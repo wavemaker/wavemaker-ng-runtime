@@ -18,4 +18,6 @@
        (blur)="handleBlur($event)"
        (ngModelChange)="handleChange($event)"
        [autocomplete]="autocomplete ? 'on' : 'off'"
+       [ngClass]="conditionalclass"
+       [ngStyle]="conditionalstyle"
        #input>

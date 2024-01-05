@@ -27,6 +27,8 @@ export class InputCalendarComponent extends BaseInput {
     public type: string;
     public name: string;
     public readonly: string;
+    public conditionalclass: any;
+    public conditionalstyle: any;
     public minvalue: any;
     public maxvalue: any;
     public step: number;
