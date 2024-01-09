@@ -577,7 +577,7 @@ bundleWebLibs() {
         ./node_modules/x2js/x2js.js \
         ./node_modules/d3/dist/d3.min.js \
         ./node_modules/he/he.js \
-        ./node_modules/@wavemake/nvd3/build/nv.d3.min.js \
+        ./node_modules/@wavemaker/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
         ./node_modules/fullcalendar/main.min.js \
         ./node_modules/jssha/dist/sha256.js \
