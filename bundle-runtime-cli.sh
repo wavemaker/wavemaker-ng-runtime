@@ -21,8 +21,8 @@ mkdir -p libraries/scripts/datatable/
 cp projects/components/widgets/data/table/src/datatable.js libraries/scripts/datatable/
 mkdir -p libraries/scripts/d3/
 cp ./node_modules/d3/dist/d3.min.js libraries/scripts/d3/
-mkdir -p libraries/scripts/@wavemaker.com/nvd3/build/
-cp ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js libraries/scripts/@wavemaker.com/nvd3/build/
+mkdir -p libraries/scripts/@wavemaker/nvd3/build/
+cp ./node_modules/@wavemaker/nvd3/build/nv.d3.min.js libraries/scripts/@wavemaker/nvd3/build/
 mkdir -p libraries/scripts/fullcalendar/
 cp ./node_modules/fullcalendar/main.min.js libraries/scripts/fullcalendar
 mkdir -p libraries/scripts/summernote/dist/
