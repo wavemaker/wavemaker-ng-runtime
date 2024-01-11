@@ -69,7 +69,7 @@
         [tabindex]="tabindex || 0"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
-        [attr.aria-label]="displayValue ? 'Change Date' + displayValue : 'Choose Date'"
+        [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : hint || 'Choose Date'"
         (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal(bsDataValue)">
     </div>
 </ng-template>
