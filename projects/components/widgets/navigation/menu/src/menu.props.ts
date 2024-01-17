@@ -31,6 +31,7 @@ export const registerProps = () => {
                 ['orderby', PROP_STRING],
                 ['shortcutkey', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
+                ['showonhover', {value: false, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['type', {value: 'menu', ...PROP_STRING}],
                 ['userrole', PROP_STRING]
