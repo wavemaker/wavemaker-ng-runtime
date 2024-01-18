@@ -445,10 +445,14 @@ export const getDateFormatedData = (dateFormat, d) => {
     return d3.timeFormat(dateFormat)(new Date(moment(moment(d).format()).valueOf()));
 };
 const removeTrailingZeros = value => {
+    if(!value) {
+        return value;
+    }
     // Convert value to a string if it's a number
     const stringValue = typeof value === 'number' ? value.toString() : value;
+
     // Remove trailing zeros
-    return stringValue.replace(/\.*0+$/, "").replace(/\.0+%$/, "%");
+    return stringValue.replace(/\.0+$/, "").replace(/\.0+%$/, "%");
 };
 
 // Formats the given value according to number format
@@ -776,6 +780,7 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
     return chart;
 };
 
+// @ts-ignore
 export const postPlotChartProcess = (widgetContext, isPreview?) => {
     const id = isPreview ? null : widgetContext.$id;
     // If user sets to highlight the data points and increase the thickness of the line
@@ -789,5 +794,6 @@ export const postPlotChartProcess = (widgetContext, isPreview?) => {
     // }
 };
 
+// @ts-ignore
 export const getDateList = () => dateList;
 
