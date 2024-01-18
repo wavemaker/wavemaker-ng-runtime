@@ -324,6 +324,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                         this.onPageContentReady = () => {
                             this.fragmentsLoaded$.subscribe(noop, noop, () => {
                                 this.invokeOnReady();
+                                this.handlePageThumbnails();
                             });
                             unMuteWatchers();
                             this.viewInit$.complete();
@@ -335,32 +336,27 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     ngOnDestroy(): void {
-        this.handlePageDestroy().then(() => {
-            this.savePageSnapShot();
-            this.destroy$.complete();
-        });
+        this.savePageSnapShot();
+        this.destroy$.complete();
     }
     
-    async handlePageDestroy(): Promise<void> {
+    handlePageThumbnails(){
         let captureAppThumbnail = this.canCaptureApplicationThumbnail() ?? false;
-        if (captureAppThumbnail || true) {
-            await this.emitRunTimePageDestroyEvent();
+        if(captureAppThumbnail){
+            setTimeout(() => {
+                this.emitRunTimeAppThumbnailCaptureEvent();
+            }, 2000)
         }
     }
 
     canCaptureApplicationThumbnail() {
-        //Conditions to capture only home pages and emit event in development mode.
+        //Conditions to capture only home pages.
         return (localStorage.getItem("captureApplicationThumbnail") === 'true' && this?.App?.landingPageName === this?.pageName && (<any>window)?.top?.html2canvas && !(<any>this).App.isAppThumbnailCaptured) ?? false;
     }
     
-    emitRunTimePageDestroyEvent(): Promise<void> {
-        return new Promise<void>((resolve) => {
-            window.top.postMessage({ key: 'capture-app-thumbnail' }, "*");
-            (<any>this).App.isAppThumbnailCaptured = true;
-            setTimeout(() => {
-                resolve();
-            }, 3000);
-        });
+    emitRunTimeAppThumbnailCaptureEvent(){
+        window.top.postMessage({ key: 'capture-app-thumbnail' }, "*");
+        (<any>this).App.isAppThumbnailCaptured = true;
     }
     
 
