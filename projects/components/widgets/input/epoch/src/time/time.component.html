@@ -51,6 +51,7 @@
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
         tabindex="1000000"
+         role="button"
          [attr.aria-label]="displayValue ? 'Change time  ' + displayValue : hint || 'Select time'"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event); assignModel()"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
