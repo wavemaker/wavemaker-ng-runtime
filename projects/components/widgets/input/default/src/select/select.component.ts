@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import {DataSource, removeAttr, setAttr} from '@wm/core';
+import {DataSource, removeAttr, setAttr, App} from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
@@ -33,6 +33,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     public name: string;
     public autofocus: boolean;
     public hint: string;
+    private app: App;
 
     @ViewChild('select', { static: true, read: ElementRef }) selectEl: ElementRef;
 
@@ -42,14 +43,19 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         }
     }
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector,  app: App) {
         super(inj, WIDGET_CONFIG);
+        this.app = app;
         this.acceptsArray = true;
     }
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
         styler(this.selectEl.nativeElement as HTMLElement, this);
+        setTimeout(() => {
+            this.checkForFloatingLabel(null);
+        }, 10)
+
     }
 
     // Change event is registered from the template, Prevent the framework from registering one more event
@@ -67,6 +73,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
                 this.selectEl.nativeElement.value = '';
             }
             this.datavalue = (this as any).prevDatavalue;
+
             return;
         }
         this.invokeOnTouched();
@@ -105,9 +112,12 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
      * @param $event event received will be either a blur or focus event
      */
     checkForFloatingLabel($event) {
-        const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
+        const captionEl = $(this.selectEl.nativeElement).closest('div.app-composite-widget.caption-floating');
+
         if (captionEl.length > 0) {
-            if ($event.type === 'focus' && (!this.datavalue || (this.datavalue && $(this.selectEl).find('select option:selected').text() === '' && this.placeholder))) {
+            if(!$event){
+                this.app.notify('captionPositionAnimate', {isSelect: true, nativeEl: captionEl});
+            } else if ($event.type === 'focus' && (!this.datavalue || (this.datavalue && $(this.selectEl).find('select option:selected').text() === '' && this.placeholder))) {
                 $(this.selectEl.nativeElement).find('option:first').text(this.placeholder);
             } else if (!this.datavalue) {
                 $(this.selectEl.nativeElement).find('option:selected').text('');
