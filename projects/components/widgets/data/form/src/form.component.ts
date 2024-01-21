@@ -97,7 +97,10 @@ const setTouchedState = (self, ngForm, fieldName) => {
             setTouchedState(self, ctrl, fieldName);
         });
     } else {
-        const element = self.$element.find(`[wmformfield][key="${fieldName}"]`);
+        let element = self.$element.find(`[wmformfield][key="${fieldName}"]`) ;
+        if (!element.length) {
+            element = self.$element.find(`[wmformfield][name="${fieldName}"]`);
+        }
         element[0].setAttribute('__errormsg', element[0].getAttribute('__validationId'));
         let activeElement = getActiveElement(element[0]);
             activeElement?.setAttribute('aria-invalid', ngForm.invalid);
