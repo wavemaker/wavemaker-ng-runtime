@@ -111,7 +111,9 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
                 }
             }
             else if (!this.datavalue) {
-              //  $(this.selectEl.nativeElement).find('option:first').text('');
+                if(this.placeholder) {
+                    $(this.selectEl.nativeElement).find('option:first').text('');
+                }
                 captionEl.removeClass('float-active');
             }
         }
