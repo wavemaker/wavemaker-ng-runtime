@@ -397,14 +397,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             });
         },
         // assigns the items on capture phase of the click handler.
-        assignSelectedItems: (row, e) => {
+        assignSelectedItems: (row, e, isRowSelected) => {
             this.ngZone.run(() => {
                 /*
                  * in case of single select, update the items with out changing the reference.
                  * for multi select, keep old selected items in tact
                  */
                 if (this.multiselect) {
-                    if (_.findIndex(this.items, row) === -1) {
+                    //Fix for [WMS-25110]: Add row to items list only if the row is selected
+                    if (_.findIndex(this.items, row) === -1 && (isRowSelected === undefined || isRowSelected == true)) {
                         this.items.push(row);
                     }
                 } else {
