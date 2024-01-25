@@ -1669,7 +1669,7 @@ $.widget('wm.datatable', {
             var rowId = $row.attr('data-row-id');
             var rowData = this.preparedData[rowId];
             var data = this.options.data[rowId];
-            this.options.assignSelectedItems(data, e);
+            this.options.assignSelectedItems(data, e, rowData?._selected);
         }
     },
 
@@ -2978,7 +2978,7 @@ $.widget('wm.datatable', {
         $header = headerTemplate.header;
 
         function toggleSelectAll(e) {
-            var $checkboxes = $('tr.app-datagrid-row:visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
+            var $checkboxes = $('tr.app-datagrid-row:not(.always-new-row):visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
                 checked = this.checked;
             $checkboxes.prop('checked', checked);
             $checkboxes.each(function () {
@@ -2986,7 +2986,7 @@ $.widget('wm.datatable', {
                     rowId = $row.attr('data-row-id'),
                     rowData = self.options.data[rowId];
                 // If we enable multiselect and check header checkbox then updating selecteditem in datatable.
-                self.options.assignSelectedItems(rowData, e);
+                self.options.assignSelectedItems(rowData, e, self.preparedData[rowId]?._selected);
                 self.toggleRowSelection($row, checked, e, true);
                 if (checked && _.isFunction(self.options.onRowSelect)) {
                     self.options.onRowSelect(rowData, e);
