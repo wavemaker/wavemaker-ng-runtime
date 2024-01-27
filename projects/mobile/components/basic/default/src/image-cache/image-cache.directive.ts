@@ -49,7 +49,7 @@ export class ImageCacheDirective implements DoCheck {
     private getLocalPath(val: string) {
         if (hasCordova() && val && val.indexOf('{{') < 0  && val.startsWith('http')) {
             return this.deviceFileCacheService.getLocalPath(val, true, true, !this._isEnabled)
-                .catch(noop);
+                .catch(() => val);
         }
         return Promise.resolve(val);
     }
