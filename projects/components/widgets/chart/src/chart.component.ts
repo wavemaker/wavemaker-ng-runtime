@@ -91,7 +91,9 @@ const getValidAliasName = aliasName => aliasName ? aliasName.replace(/\./g, '$')
 // Applying the font related styles for the chart
 const setTextStyle = (properties, id) => {
     const charttext = d3.select('#wmChart' + id + ' svg').selectAll('text');
-    charttext.style(properties);
+    if (!charttext.empty()) {
+        charttext.style(properties);
+    }
 };
 
 const angle = d => {
