@@ -140,8 +140,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (root) {
             $('body > popover-container').wrap('<' + root + '/>');
         }
-
-        if (activePopover && activePopover.isOpen) {
+        // Fix for [WMS-25125]: Not closing the existing opened popovers when the autoclose property is DISABLED
+        if (activePopover && activePopover.isOpen && activePopover.autoclose !== AUTOCLOSE_TYPE.DISABLED) {
             activePopover.isOpen = false;
         }
 
