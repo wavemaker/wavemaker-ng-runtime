@@ -39,6 +39,7 @@ export class PartialDirective extends StylableComponent implements OnDestroy {
 
     public ngOnDestroy() {
         this.callback('destroy');
+        super.ngOnDestroy();
     }
 
 }

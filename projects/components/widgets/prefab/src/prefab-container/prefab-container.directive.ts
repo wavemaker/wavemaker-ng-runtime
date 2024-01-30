@@ -43,5 +43,6 @@ export class PrefabContainerDirective extends StylableComponent  implements OnDe
 
     public ngOnDestroy() {
         this.callback('destroy');
+        super.ngOnDestroy();
     }
 }
