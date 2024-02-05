@@ -391,7 +391,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         $(".bs-datepicker-head .previous span").attr("aria-hidden", true);
         $(".bs-datepicker-head .next span").attr("aria-hidden", true);
 
-        datePickerHead.find(".previous").click((function(event) {
+        datePickerHead.find(".previous").click(((event)=> {
             this.next = this.getMonth(this.activeDate, 0);
             this.prev = this.getMonth(this.activeDate, -2);
             this.prevChange = this.getMonth(this.activeDate, -1);
@@ -402,7 +402,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
             var prevMon = this.getMonth(this.activeDate, -1);
            // $(".bs-datepicker-head .previous").prepend('<p aria-hidden="false" aria-live="polite" class="sr-only">Changed to Previous Month, ' + prevMon.fullMonth + " and year " + prevMon.date.getFullYear() + "</p>");
-             setTimeout((function() {
+             setTimeout(()=> {
                 $('.bs-datepicker-head').on('focus', '.previous', ()=> {
                     $(".bs-datepicker-head .next").attr("aria-label", "Next Month, " + this.next.fullMonth + " " + this.next.date.getFullYear());
                     if(this.counter == 1) {
@@ -414,9 +414,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     $(".bs-datepicker-head .previous span").attr("aria-hidden", true);
                 });
                 $(".bs-datepicker-head .previous").focus();
-             }), 10);
+             }, 10);
         }));
-        datePickerHead.find(".next").click((function(event) {
+        datePickerHead.find(".next").click((event)=> {
             this.next = this.getMonth(this.activeDate, 2);
             this.nextChange = this.getMonth(this.activeDate, 1);
             this.prev = this.getMonth(this.activeDate, 0);
@@ -427,7 +427,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
             var nextMon = this.getMonth(this.activeDate, 1);
            // $(".bs-datepicker-head .next").prepend('<p aria-hidden="false" aria-live="polite" class="sr-only">Changed to Next Month, ' + nextMon.fullMonth + " and year " + nextMon.date.getFullYear() + "</p>");
-             setTimeout((function() {
+             setTimeout(() => {
                 $('.bs-datepicker-head').on('focus', '.next', ()=> {
                     if(this.count == 1) {
                         $(".bs-datepicker-head .next").attr("aria-label", "Changed to Next Month, " + this.nextChange.fullMonth + " " + this.next.date.getFullYear());
@@ -440,8 +440,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 });
                    $(".bs-datepicker-head .next").focus();
 
-             }), 10);
-        }));
+             }, 10);
+        });
         datePickerHead.find(`.current`).click((event) => {
             // check for original mouse click
             if (event.originalEvent) {
