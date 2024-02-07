@@ -81,12 +81,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public loadNativeDateInput;
     public showcustompicker;
     public next;
-    public nextChange;
     public prev;
-    public prevChange;
     public clicked = false;
-    private counter = 1;
-    private count = 1;
 
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
@@ -323,7 +319,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             _.filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
                 if ($(obj).text() === newDay) {
                     if ($(obj).hasClass('selected')) {
-                       $(obj).parent().attr('aria-selected', 'true');
+                        $(obj).parent().attr('aria-selected', 'true');
                     }
                     $(obj).attr('aria-label', moment(newDate).format('dddd, MMMM Do YYYY'));
                     $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '-1');
@@ -374,85 +370,79 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         return {
             date: newDate,
             fullMonth: fullMonth
-          };
+        };
     }
 
     /**
-    * This method sets the mouse events to Datepicker popup. These events are required when we navigate date picker through mouse.
+     * This method sets the mouse events to Datepicker popup. These events are required when we navigate date picker through mouse.
      */
     private addDatepickerMouseEvents() {
-        const datePickerHead = $(`.bs-datepicker-head`);
         $(".bs-datepicker-head .previous span").attr("aria-hidden", true);
         $(".bs-datepicker-head .next span").attr("aria-hidden", true);
 
-        datePickerHead.find(".previous").click(((event)=> {
+        $(".bs-datepicker-head").on("click", ".previous", (event)=> {
             this.next = this.getMonth(this.activeDate, 0);
             this.prev = this.getMonth(this.activeDate, -2);
-            this.prevChange = this.getMonth(this.activeDate, -1);
             this.clicked = true;
-            this.counter = 1;
+            // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForDate(-1);
             }
             var prevMon = this.getMonth(this.activeDate, -1);
-           // $(".bs-datepicker-head .previous").prepend('<p aria-hidden="false" aria-live="polite" class="sr-only">Changed to Previous Month, ' + prevMon.fullMonth + " and year " + prevMon.date.getFullYear() + "</p>");
-             setTimeout(()=> {
-                $('.bs-datepicker-head').on('focus', '.previous', ()=> {
-                    $(".bs-datepicker-head .next").attr("aria-label", "Next Month, " + this.next.fullMonth + " " + this.next.date.getFullYear());
-                    if(this.counter == 1) {
-                        $(".bs-datepicker-head .previous").attr("aria-label", "Changed to Previous Month, " + this.prevChange.fullMonth + " " + this.prev.date.getFullYear());
-                    } else {
-                        $(".bs-datepicker-head .previous").attr("aria-label", "Previous Month, " + this.prev.fullMonth + " " + this.prev.date.getFullYear());
-                    }
-                    this.counter++;
-                    $(".bs-datepicker-head .previous span").attr("aria-hidden", true);
-                });
-                $(".bs-datepicker-head .previous").focus();
-             }, 10);
-        }));
-        datePickerHead.find(".next").click((event)=> {
+
+            setTimeout(() => {
+                $(".bs-datepicker-head .previous span").attr("aria-hidden", true);
+                $(".bs-datepicker-head .next span").attr("aria-hidden", true);
+                $(".bs-datepicker-head .next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
+                $(".bs-datepicker-head .previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
+                $('.bs-datepicker-head .current').first().append(`<h2 aria-hidden="false" aria-atomic="true" aria-live='polite' class="sr-only">Changed to Previous Month, ${prevMon.fullMonth} and year ${prevMon.date.getFullYear()}</h2>`);
+                $('.bs-datepicker-head').on('focus', '.current', function(){
+                    $('.bs-datepicker-head .current').find('h2').remove();
+                })
+                $(`.bs-datepicker-head .previous`).focus();
+
+            });
+
+        });
+        $(".bs-datepicker-head").on("click", ".next", (event) => {
             this.next = this.getMonth(this.activeDate, 2);
-            this.nextChange = this.getMonth(this.activeDate, 1);
             this.prev = this.getMonth(this.activeDate, 0);
             this.clicked = true;
-            this.count = 1;
+            // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForDate(1);
             }
             var nextMon = this.getMonth(this.activeDate, 1);
-           // $(".bs-datepicker-head .next").prepend('<p aria-hidden="false" aria-live="polite" class="sr-only">Changed to Next Month, ' + nextMon.fullMonth + " and year " + nextMon.date.getFullYear() + "</p>");
-             setTimeout(() => {
-                $('.bs-datepicker-head').on('focus', '.next', ()=> {
-                    if(this.count == 1) {
-                        $(".bs-datepicker-head .next").attr("aria-label", "Changed to Next Month, " + this.nextChange.fullMonth + " " + this.next.date.getFullYear());
-                    } else {
-                        $(".bs-datepicker-head .next").attr("aria-label", "Next Month, " + this.next.fullMonth + " " + this.next.date.getFullYear());
-                    }
-                    this.count++;
-                    $(".bs-datepicker-head .previous").attr("aria-label", "Previous Month, " + this.prev.fullMonth + " " + this.prev.date.getFullYear());
-                    $(".bs-datepicker-head .next span").attr("aria-hidden", true);
-                });
-                   $(".bs-datepicker-head .next").focus();
+            setTimeout(() => {
+                $(".bs-datepicker-head .previous span").attr("aria-hidden", true);
+                $(".bs-datepicker-head .next span").attr("aria-hidden", true);
+                $(".bs-datepicker-head .next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
+                $(".bs-datepicker-head .previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
+                $('.bs-datepicker-head .current').first().append(`<h2 aria-hidden="false" aria-atomic="true" aria-live='polite' class="sr-only">Changed to Next Month, ${nextMon.fullMonth} and year ${nextMon.date.getFullYear()}</h2>`);
+                $('.bs-datepicker-head').on('focus', '.current', function(){
+                    $('.bs-datepicker-head .current').find('h2').remove();
+                })
+                $(`.bs-datepicker-head .next`).focus();
+            });
 
-             }, 10);
         });
-        datePickerHead.find(`.current`).click((event) => {
+        $(".bs-datepicker-head").on("click", ".current", (event) => {
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForCurrentMonthOryear();
             }
         });
-        $('.bs-datepicker-body, .bs-datepicker-action-buttons').click((event) => {
+        $('.bs-datepicker-body').on("click", ".bs-datepicker-action-buttons", (event) => {
             event.stopPropagation();
             // check for original mouse click
             if (event.originalEvent) {
                 this.setFocusForMonthOrDay();
             }
         });
-        if(!this.clicked) {
-            datePickerHead.find('.next').attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
-            datePickerHead.find('.previous').attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
-        }
+        // if(!this.clicked) {
+        $(".bs-datepicker-head .next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
+        $(".bs-datepicker-head .previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
+        //  }
     }
 
     /**
@@ -962,7 +952,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     public showDatePickerModal(bsDataval) {
         bsDataval ? this.activeDate = bsDataval : this.activeDate = new Date();
-       this.setNextData(this.activeDate);
+        this.setNextData(this.activeDate);
         this.datetimepickerComponent.show();
         setTimeout(() => {
             this.addDatepickerMouseEvents();
