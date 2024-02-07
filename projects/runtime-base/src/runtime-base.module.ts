@@ -2,7 +2,7 @@ import {APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule} from '@angula
 import { RouterModule } from '@angular/router';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { ɵDomSharedStylesHost } from '@angular/platform-browser';
+import { ɵSharedStylesHost } from '@angular/platform-browser';
 import {ɵDomRendererFactory2} from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -290,7 +290,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     providers: [
-        {provide: ɵDomSharedStylesHost, useClass: WMDomSharedStylesHost},
+        {provide: ɵSharedStylesHost, useClass: WMDomSharedStylesHost},
         {provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2}
     ]
 })

@@ -2,7 +2,8 @@ import rollupGlobals, {rollupExternals} from './rollup-utils.mjs';
 
 export default [
     {
-        input: './libraries/core/fesm2015/index.mjs',
+        input: './libraries/core/fesm2022/index.mjs',
+        type: 'module',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/core/bundles/index.umd.js',
@@ -12,7 +13,7 @@ export default [
         }
     },
     {
-        input: './libraries/swipey/fesm2015/index.mjs',
+        input: './libraries/swipey/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/swipey/bundles/index.umd.js',
@@ -22,7 +23,7 @@ export default [
         }
     },
     {
-        input: './libraries/transpiler/fesm2015/index.mjs',
+        input: './libraries/transpiler/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/transpiler/bundles/index.umd.js',
@@ -32,7 +33,7 @@ export default [
         }
     },
     {
-        input: './libraries/http/fesm2015/index.mjs',
+        input: './libraries/http/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/http/bundles/index.umd.js',
@@ -42,7 +43,7 @@ export default [
         }
     },
     {
-        input: './libraries/oAuth/fesm2015/index.mjs',
+        input: './libraries/oAuth/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/oAuth/bundles/index.umd.js',
@@ -52,7 +53,7 @@ export default [
         }
     },
     {
-        input: './libraries/security/fesm2015/index.mjs',
+        input: './libraries/security/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/security/bundles/index.umd.js',
@@ -62,7 +63,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/base/fesm2015/index.mjs',
+        input: './libraries/components/base/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/base/bundles/index.umd.js',
@@ -72,7 +73,7 @@ export default [
         }
     },
     {
-        input: './libraries/build-task/fesm2015/index.mjs',
+        input: './libraries/build-task/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/build-task/bundles/index.umd.js',
@@ -82,7 +83,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/default/fesm2015/index.mjs',
+        input: './libraries/components/input/default/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/input/default/bundles/index.umd.js',
@@ -92,7 +93,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/core/fesm2015/index.mjs',
+        input: './libraries/mobile/core/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/core/bundles/index.umd.js',
@@ -102,7 +103,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/basic/default/fesm2015/index.mjs',
+        input: './libraries/mobile/components/basic/default/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/basic/default/bundles/index.umd.js',
@@ -112,7 +113,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/basic/search/fesm2015/index.mjs',
+        input: './libraries/mobile/components/basic/search/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/basic/search/bundles/index.umd.js',
@@ -122,7 +123,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/containers/segmented-control/fesm2015/index.mjs',
+        input: './libraries/mobile/components/containers/segmented-control/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/containers/segmented-control/bundles/index.umd.js',
@@ -132,7 +133,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/device/barcode-scanner/fesm2015/index.mjs',
+        input: './libraries/mobile/components/device/barcode-scanner/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/device/barcode-scanner/bundles/index.umd.js',
@@ -142,7 +143,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/device/camera/fesm2015/index.mjs',
+        input: './libraries/mobile/components/device/camera/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/device/camera/bundles/index.umd.js',
@@ -152,7 +153,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/input/file-upload/fesm2015/index.mjs',
+        input: './libraries/mobile/components/input/file-upload/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/input/file-upload/bundles/index.umd.js',
@@ -162,7 +163,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/page/default/fesm2015/index.mjs',
+        input: './libraries/mobile/components/page/default/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/page/default/bundles/index.umd.js',
@@ -172,7 +173,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/page/left-panel/fesm2015/index.mjs',
+        input: './libraries/mobile/components/page/left-panel/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/page/left-panel/bundles/index.umd.js',
@@ -182,7 +183,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/page/mobile-navbar/fesm2015/index.mjs',
+        input: './libraries/mobile/components/page/mobile-navbar/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/page/mobile-navbar/bundles/index.umd.js',
@@ -192,7 +193,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/page/tab-bar/fesm2015/index.mjs',
+        input: './libraries/mobile/components/page/tab-bar/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/page/tab-bar/bundles/index.umd.js',
@@ -202,7 +203,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/components/data/media-list/fesm2015/index.mjs',
+        input: './libraries/mobile/components/data/media-list/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/components/data/media-list/bundles/index.umd.js',
@@ -212,7 +213,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/offline/fesm2015/index.mjs',
+        input: './libraries/mobile/offline/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/offline/bundles/index.umd.js',
@@ -222,7 +223,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/variables/fesm2015/index.mjs',
+        input: './libraries/mobile/variables/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/variables/bundles/index.umd.js',
@@ -232,7 +233,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/runtime/fesm2015/index.mjs',
+        input: './libraries/mobile/runtime/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/runtime/bundles/index.umd.js',
@@ -242,7 +243,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/runtime-dynamic/fesm2015/index.mjs',
+        input: './libraries/mobile/runtime-dynamic/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/runtime-dynamic/bundles/index.umd.js',
@@ -252,7 +253,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/basic/default/fesm2015/index.mjs',
+        input: './libraries/components/basic/default/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/basic/default/bundles/index.umd.js',
@@ -262,7 +263,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/basic/progress/fesm2015/index.mjs',
+        input: './libraries/components/basic/progress/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/basic/progress/bundles/index.umd.js',
@@ -272,7 +273,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/basic/rich-text-editor/fesm2015/index.mjs',
+        input: './libraries/components/basic/rich-text-editor/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/basic/rich-text-editor/bundles/index.umd.js',
@@ -282,7 +283,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/basic/search/fesm2015/index.mjs',
+        input: './libraries/components/basic/search/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/basic/search/bundles/index.umd.js',
@@ -292,7 +293,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/basic/tree/fesm2015/index.mjs',
+        input: './libraries/components/basic/tree/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/basic/tree/bundles/index.umd.js',
@@ -302,7 +303,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/calendar/fesm2015/index.mjs',
+        input: './libraries/components/input/calendar/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/input/calendar/bundles/index.umd.js',
@@ -312,7 +313,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/chips/fesm2015/index.mjs',
+        input: './libraries/components/input/chips/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/input/chips/bundles/index.umd.js',
@@ -322,7 +323,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/color-picker/fesm2015/index.mjs',
+        input: './libraries/components/input/color-picker/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/input/color-picker/bundles/index.umd.js',
@@ -332,7 +333,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/currency/fesm2015/index.mjs',
+        input: './libraries/components/input/currency/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/input/currency/bundles/index.umd.js',
@@ -342,7 +343,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/epoch/fesm2015/index.mjs',
+        input: './libraries/components/input/epoch/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/input/epoch/bundles/index.umd.js',
@@ -352,7 +353,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/file-upload/fesm2015/index.mjs',
+        input: './libraries/components/input/file-upload/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/input/file-upload/bundles/index.umd.js',
@@ -362,7 +363,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/rating/fesm2015/index.mjs',
+        input: './libraries/components/input/rating/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/input/rating/bundles/index.umd.js',
@@ -372,7 +373,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/slider/fesm2015/index.mjs',
+        input: './libraries/components/input/slider/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/input/slider/bundles/index.umd.js',
@@ -382,7 +383,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/chart/fesm2015/index.mjs',
+        input: './libraries/components/chart/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/chart/bundles/index.umd.js',
@@ -392,7 +393,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/navigation/menu/fesm2015/index.mjs',
+        input: './libraries/components/navigation/menu/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/navigation/menu/bundles/index.umd.js',
@@ -402,7 +403,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/navigation/navbar/fesm2015/index.mjs',
+        input: './libraries/components/navigation/navbar/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/navigation/navbar/bundles/index.umd.js',
@@ -412,7 +413,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/navigation/breadcrumb/fesm2015/index.mjs',
+        input: './libraries/components/navigation/breadcrumb/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/navigation/breadcrumb/bundles/index.umd.js',
@@ -422,7 +423,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/navigation/popover/fesm2015/index.mjs',
+        input: './libraries/components/navigation/popover/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/navigation/popover/bundles/index.umd.js',
@@ -432,7 +433,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/dialogs/default/fesm2015/index.mjs',
+        input: './libraries/components/dialogs/default/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/dialogs/default/bundles/index.umd.js',
@@ -442,7 +443,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/dialogs/alert-dialog/fesm2015/index.mjs',
+        input: './libraries/components/dialogs/alert-dialog/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/dialogs/alert-dialog/bundles/index.umd.js',
@@ -452,7 +453,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/dialogs/confirm-dialog/fesm2015/index.mjs',
+        input: './libraries/components/dialogs/confirm-dialog/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/dialogs/confirm-dialog/bundles/index.umd.js',
@@ -462,7 +463,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/dialogs/design-dialog/fesm2015/index.mjs',
+        input: './libraries/components/dialogs/design-dialog/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/dialogs/design-dialog/bundles/index.umd.js',
@@ -472,7 +473,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/page/default/fesm2015/index.mjs',
+        input: './libraries/components/page/default/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/page/default/bundles/index.umd.js',
@@ -482,7 +483,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/page/footer/fesm2015/index.mjs',
+        input: './libraries/components/page/footer/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/page/footer/bundles/index.umd.js',
@@ -492,7 +493,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/page/header/fesm2015/index.mjs',
+        input: './libraries/components/page/header/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/page/header/bundles/index.umd.js',
@@ -502,7 +503,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/page/left-panel/fesm2015/index.mjs',
+        input: './libraries/components/page/left-panel/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/page/left-panel/bundles/index.umd.js',
@@ -512,7 +513,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/page/right-panel/fesm2015/index.mjs',
+        input: './libraries/components/page/right-panel/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/page/right-panel/bundles/index.umd.js',
@@ -522,7 +523,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/page/top-nav/fesm2015/index.mjs',
+        input: './libraries/components/page/top-nav/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/page/top-nav/bundles/index.umd.js',
@@ -532,7 +533,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/prefab/fesm2015/index.mjs',
+        input: './libraries/components/prefab/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/prefab/bundles/index.umd.js',
@@ -542,7 +543,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/data/pagination/fesm2015/index.mjs',
+        input: './libraries/components/data/pagination/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/data/pagination/bundles/index.umd.js',
@@ -552,7 +553,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/data/card/fesm2015/index.mjs',
+        input: './libraries/components/data/card/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/data/card/bundles/index.umd.js',
@@ -562,7 +563,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/data/list/fesm2015/index.mjs',
+        input: './libraries/components/data/list/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/data/list/bundles/index.umd.js',
@@ -572,7 +573,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/data/table/fesm2015/index.mjs',
+        input: './libraries/components/data/table/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/data/table/bundles/index.umd.js',
@@ -582,7 +583,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/data/live-table/fesm2015/index.mjs',
+        input: './libraries/components/data/live-table/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/data/live-table/bundles/index.umd.js',
@@ -592,7 +593,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/data/form/fesm2015/index.mjs',
+        input: './libraries/components/data/form/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/data/form/bundles/index.umd.js',
@@ -602,7 +603,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/dialogs/iframe-dialog/fesm2015/index.mjs',
+        input: './libraries/components/dialogs/iframe-dialog/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/dialogs/iframe-dialog/bundles/index.umd.js',
@@ -612,7 +613,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/dialogs/login-dialog/fesm2015/index.mjs',
+        input: './libraries/components/dialogs/login-dialog/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/dialogs/login-dialog/bundles/index.umd.js',
@@ -622,7 +623,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/dialogs/partial-dialog/fesm2015/index.mjs',
+        input: './libraries/components/dialogs/partial-dialog/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/dialogs/partial-dialog/bundles/index.umd.js',
@@ -632,7 +633,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/containers/accordion/fesm2015/index.mjs',
+        input: './libraries/components/containers/accordion/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/containers/accordion/bundles/index.umd.js',
@@ -642,7 +643,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/containers/layout-grid/fesm2015/index.mjs',
+        input: './libraries/components/containers/layout-grid/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/containers/layout-grid/bundles/index.umd.js',
@@ -652,7 +653,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/containers/linear-layout/fesm2015/index.mjs',
+        input: './libraries/components/containers/linear-layout/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/containers/linear-layout/bundles/index.umd.js',
@@ -662,7 +663,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/containers/panel/fesm2015/index.mjs',
+        input: './libraries/components/containers/panel/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/containers/panel/bundles/index.umd.js',
@@ -672,7 +673,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/containers/tabs/fesm2015/index.mjs',
+        input: './libraries/components/containers/tabs/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/containers/tabs/bundles/index.umd.js',
@@ -682,7 +683,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/containers/wizard/fesm2015/index.mjs',
+        input: './libraries/components/containers/wizard/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/containers/wizard/bundles/index.umd.js',
@@ -692,7 +693,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/containers/tile/fesm2015/index.mjs',
+        input: './libraries/components/containers/tile/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/containers/tile/bundles/index.umd.js',
@@ -702,7 +703,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/advanced/carousel/fesm2015/index.mjs',
+        input: './libraries/components/advanced/carousel/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/advanced/carousel/bundles/index.umd.js',
@@ -712,7 +713,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/advanced/marquee/fesm2015/index.mjs',
+        input: './libraries/components/advanced/marquee/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/advanced/marquee/bundles/index.umd.js',
@@ -722,7 +723,7 @@ export default [
         }
     },
     {
-        input: './libraries/components/advanced/login/fesm2015/index.mjs',
+        input: './libraries/components/advanced/login/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/components/advanced/login/bundles/index.umd.js',
@@ -732,7 +733,7 @@ export default [
         }
     },
     {
-        input: './libraries/variables/fesm2015/index.mjs',
+        input: './libraries/variables/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/variables/bundles/index.umd.js',
@@ -742,7 +743,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/placeholder/runtime/fesm2015/index.mjs',
+        input: './libraries/mobile/placeholder/runtime/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/placeholder/runtime/bundles/index.umd.js',
@@ -752,7 +753,7 @@ export default [
         }
     },
     {
-        input: './libraries/mobile/placeholder/runtime-dynamic/fesm2015/index.mjs',
+        input: './libraries/mobile/placeholder/runtime-dynamic/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/mobile/placeholder/runtime-dynamic/bundles/index.umd.js',
@@ -762,7 +763,7 @@ export default [
         }
     },
     {
-        input: './libraries/runtime/base/fesm2015/index.mjs',
+        input: './libraries/runtime/base/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/runtime/base/bundles/index.umd.js',
@@ -772,7 +773,7 @@ export default [
         }
     },
     {
-        input: './libraries/runtime/dynamic/fesm2015/index.mjs',
+        input: './libraries/runtime/dynamic/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
             file: './libraries/runtime/dynamic/bundles/index.umd.js',

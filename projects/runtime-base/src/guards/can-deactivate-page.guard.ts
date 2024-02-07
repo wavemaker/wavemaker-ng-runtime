@@ -1,4 +1,4 @@
-import {ActivatedRouteSnapshot, CanDeactivate, Resolve, RouterStateSnapshot} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import {Injectable, Injector} from '@angular/core';
 import {Observable} from 'rxjs';
 import {noop} from '@wm/core';
@@ -15,7 +15,7 @@ export interface CanComponentDeactivate  {
     here component is pagewrapper so adding custom implementation for route change
  */
 @Injectable()
-export class CanDeactivatePageGuard implements CanDeactivate<CanComponentDeactivate> {
+export class CanDeactivatePageGuard  {
   canDeactivate(component: CanComponentDeactivate, route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
       function invokeCompDeactivate() {
           let retVal;
@@ -35,7 +35,7 @@ export class CanDeactivatePageGuard implements CanDeactivate<CanComponentDeactiv
 
 //  [WMS-18847] - canDeactivate guard for angular deployment.
 @Injectable()
-export class CanDeactivateNgPageGuard implements CanDeactivate<CanComponentDeactivate> {
+export class CanDeactivateNgPageGuard  {
     canDeactivate(component: CanComponentDeactivate, route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         return component.canDeactivate ? component.canDeactivate() : true;
     }

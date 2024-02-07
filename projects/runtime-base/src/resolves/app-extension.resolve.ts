@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { Resolve } from '@angular/router';
+
 
 import { App, UtilsService, CustomPipeManager } from '@wm/core';
 
@@ -11,7 +11,7 @@ let appJsLoaded = false;
 
 
 @Injectable()
-export class AppExtensionJSResolve implements Resolve<any> {
+export class AppExtensionJSResolve  {
 
     constructor(
         private appManager: AppManagerService,

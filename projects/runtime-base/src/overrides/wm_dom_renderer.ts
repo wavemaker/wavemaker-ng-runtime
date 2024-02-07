@@ -6,10 +6,20 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {APP_ID, Inject, Injectable, Renderer2, RendererFactory2, RendererStyleFlags2, RendererType2, ViewEncapsulation} from '@angular/core';
+import {
+    APP_ID,
+    inject,
+    Inject,
+    Injectable,
+    Renderer2,
+    RendererFactory2,
+    RendererStyleFlags2,
+    RendererType2,
+    ViewEncapsulation
+} from '@angular/core';
 
-import {EventManager} from '@angular/platform-browser';
-import {ɵDomSharedStylesHost} from '@angular/platform-browser';
+import {EventManager, ɵSharedStylesHost} from '@angular/platform-browser';
+import {DOCUMENT, ɵgetDOM as getDOM} from '@angular/common';
 
 export const NAMESPACE_URIS: {[ns: string]: string} = {
   'svg': 'http://www.w3.org/2000/svg',
@@ -83,9 +93,9 @@ export class WMDomRendererFactory2 implements RendererFactory2 {
   private defaultRenderer: Renderer2;
 
   constructor(
-      private eventManager: EventManager, private sharedStylesHost: ɵDomSharedStylesHost,
-      @Inject(APP_ID) private appId: string) {
-    this.defaultRenderer = new WMDefaultDomRenderer2(eventManager);
+      private eventManager: EventManager, private sharedStylesHost: ɵSharedStylesHost,
+      @Inject(APP_ID) private appId: string, @Inject(DOCUMENT) private readonly doc: Document,) {
+    this.defaultRenderer = new WMDefaultDomRenderer2(eventManager, doc);
   }
 
   createRenderer(element: any, type: RendererType2|null): Renderer2 {
@@ -97,7 +107,7 @@ export class WMDomRendererFactory2 implements RendererFactory2 {
         let renderer = this.rendererByCompId.get(type.id);
         if (!renderer) {
           renderer = new EmulatedEncapsulationDomRenderer2(
-              this.eventManager, this.sharedStylesHost, type, this.appId);
+              this.eventManager, this.sharedStylesHost, type, this.appId, this.doc);
           this.rendererByCompId.set(type.id, renderer);
         }
         (<EmulatedEncapsulationDomRenderer2>renderer).applyToHost(element);
@@ -118,7 +128,7 @@ export class WMDomRendererFactory2 implements RendererFactory2 {
               'ViewEncapsulation.Native is no longer supported. Falling back to ViewEncapsulation.ShadowDom. The fallback will be removed in v12.');
         }
 
-        return new ShadowDomRenderer(this.eventManager, this.sharedStylesHost, element, type);
+        return new ShadowDomRenderer(this.eventManager, this.sharedStylesHost, element, type, this.doc);
       default: {
         if (!this.rendererByCompId.has(type.id)) {
           const styles = flattenStyles(type.id, type.styles, []);
@@ -136,8 +146,7 @@ export class WMDomRendererFactory2 implements RendererFactory2 {
 
 class WMDefaultDomRenderer2 implements Renderer2 {
   data: {[key: string]: any} = Object.create(null);
-
-  constructor(private eventManager: EventManager) {}
+  constructor(private eventManager: EventManager, @Inject(DOCUMENT) protected readonly doc: Document,) {}
 
   destroy(): void {}
 
@@ -299,11 +308,13 @@ class WMDefaultDomRenderer2 implements Renderer2 {
 
   listen(target: 'window'|'document'|'body'|any, event: string, callback: (event: any) => boolean):
       () => void {
-    NG_DEV_MODE && checkNoSyntheticProp(event, 'listener');
-    if (typeof target === 'string') {
-      return <() => void>this.eventManager.addGlobalEventListener(
-          target, event, decoratePreventDefault(callback));
-    }
+      (typeof NG_DEV_MODE === 'undefined' || NG_DEV_MODE) && checkNoSyntheticProp(event, 'listener');
+      if (typeof target === 'string') {
+          target = getDOM().getGlobalEventTarget(this.doc, target);
+          if (!target) {
+              throw new Error(`Unsupported event target ${target} for event ${event}`);
+          }
+      }
     return <() => void>this.eventManager.addEventListener(
                target, event, decoratePreventDefault(callback)) as () => void;
   }
@@ -328,9 +339,9 @@ class EmulatedEncapsulationDomRenderer2 extends WMDefaultDomRenderer2 {
   private hostAttr: string;
 
   constructor(
-      eventManager: EventManager, sharedStylesHost: ɵDomSharedStylesHost,
-      private component: RendererType2, appId: string) {
-    super(eventManager);
+      eventManager: EventManager, sharedStylesHost: ɵSharedStylesHost,
+      private component: RendererType2, appId: string, @Inject(DOCUMENT) protected readonly doc: Document) {
+    super(eventManager, doc);
     const styles = flattenStyles(appId + '-' + component.id, component.styles, []);
     sharedStylesHost.addStyles(styles);
 
@@ -353,9 +364,9 @@ class ShadowDomRenderer extends WMDefaultDomRenderer2 {
   private shadowRoot: any;
 
   constructor(
-      eventManager: EventManager, private sharedStylesHost: ɵDomSharedStylesHost,
-      private hostEl: any, component: RendererType2) {
-    super(eventManager);
+      eventManager: EventManager, private sharedStylesHost: ɵSharedStylesHost,
+      private hostEl: any, component: RendererType2, @Inject(DOCUMENT) protected readonly doc: Document,) {
+    super(eventManager, doc);
     this.shadowRoot = (hostEl as any).attachShadow({mode: 'open'});
     this.sharedStylesHost.addHost(this.shadowRoot);
     const styles = flattenStyles(component.id, component.styles, []);

@@ -2,7 +2,7 @@ import rollupGlobals, {rollupExternals} from './rollup-utils.mjs';
 
 export default [
     {
-        input: "node_modules/@angular/core/fesm2015/core.mjs",
+        input: "node_modules/@angular/core/fesm2022/core.mjs",
         output: {
             file: "node_modules/@angular/core/bundles/core.umd.js",
             format: "umd",
@@ -16,7 +16,7 @@ export default [
         external: ["rxjs", "rxjs/operators"],
     },
     {
-        input: "node_modules/@angular/animations/fesm2015/animations.mjs",
+        input: "node_modules/@angular/animations/fesm2022/animations.mjs",
         output: {
             file: "node_modules/@angular/animations/bundles/animations.umd.js",
             format: "umd",
@@ -27,7 +27,7 @@ export default [
         }
     },
     {
-        input: "node_modules/@angular/common/fesm2015/common.mjs",
+        input: "node_modules/@angular/common/fesm2022/common.mjs",
         output: {
             file: "node_modules/@angular/common/bundles/common.umd.js",
             format: "umd",
@@ -40,7 +40,7 @@ export default [
         external: ["@angular/core"],
     },
     {
-        input: "node_modules/@angular/compiler/fesm2015/compiler.mjs",
+        input: "node_modules/@angular/compiler/fesm2022/compiler.mjs",
         output: {
             file: "node_modules/@angular/compiler/bundles/compiler.umd.js",
             format: "umd",
@@ -48,7 +48,7 @@ export default [
         }
     },
     {
-        input: "node_modules/@angular/platform-browser/fesm2015/platform-browser.mjs",
+        input: "node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
         output: {
             file: "node_modules/@angular/platform-browser/bundles/platform-browser.umd.js",
             format: "umd",
@@ -61,7 +61,7 @@ export default [
         external: ["@angular/core", "@angular/common"],
     },
     {
-        input: "node_modules/@angular/platform-browser-dynamic/fesm2015/platform-browser-dynamic.mjs",
+        input: "node_modules/@angular/platform-browser-dynamic/fesm2022/platform-browser-dynamic.mjs",
         output: {
             file: "node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js",
             format: "umd",
@@ -81,7 +81,7 @@ export default [
         ]
     },
     {
-        input: "./node_modules/@angular/common/fesm2015/http.mjs",
+        input: "./node_modules/@angular/common/fesm2022/http.mjs",
         output: {
             file: "node_modules/@angular/common/bundles/common-http.umd.js",
             format: "umd",
@@ -97,7 +97,7 @@ export default [
         external: ["@angular/core", "@angular/common", "rxjs", "rxjs/operators"],
     },
     {
-        input: "node_modules/@angular/forms/fesm2015/forms.mjs",
+        input: "node_modules/@angular/forms/fesm2022/forms.mjs",
         output: {
             file: "node_modules/@angular/forms/bundles/forms.umd.js",
             format: "umd",
@@ -112,7 +112,7 @@ export default [
         external: ["@angular/core", "@angular/common", "rxjs", "rxjs/operators"],
     },
     {
-        input: "node_modules/@angular/router/fesm2015/router.mjs",
+        input: "node_modules/@angular/router/fesm2022/router.mjs",
         output: {
             file: "node_modules/@angular/router/bundles/router.umd.js",
             format: "umd",
@@ -128,7 +128,7 @@ export default [
         external: ["@angular/core", "@angular/common", "@angular/platform-browser", "rxjs", "rxjs/operators"],
     },
     {
-        input: 'node_modules/@angular/animations/fesm2015/browser.mjs',
+        input: 'node_modules/@angular/animations/fesm2022/browser.mjs',
         output: {
             file: 'node_modules/@angular/animations/bundles/animations-browser.umd.js',
             format: 'umd',
@@ -142,7 +142,7 @@ export default [
         external: ["@angular/core", "@angular/common", "@angular/animations"],
     },
     {
-        input: 'node_modules/@angular/platform-browser/fesm2015/animations.mjs',
+        input: 'node_modules/@angular/platform-browser/fesm2022/animations.mjs',
         output: {
             file: 'node_modules/@angular/platform-browser/bundles/platform-browser-animations.umd.js',
             format: 'umd',

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 
 import { AbstractToasterService, App } from '@wm/core';
 import { SecurityService } from '@wm/security';
@@ -10,7 +10,7 @@ import { AppManagerService } from '../services/app.manager.service';
 declare const _: any;
 
 @Injectable()
-export class RoleGuard implements CanActivate {
+export class RoleGuard  {
 
     constructor(
         private securityService: SecurityService,
