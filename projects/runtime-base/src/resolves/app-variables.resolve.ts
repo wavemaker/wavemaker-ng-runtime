@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
+
 
 import { AppManagerService } from '../services/app.manager.service';
 import { AppVariablesProvider } from '../types/types';
@@ -9,7 +9,7 @@ let appVariablesLoaded = false;
 @Injectable({
     providedIn: 'root'
 })
-export class AppVariablesResolve implements Resolve<any> {
+export class AppVariablesResolve {
 
     constructor(
         private appManager: AppManagerService,

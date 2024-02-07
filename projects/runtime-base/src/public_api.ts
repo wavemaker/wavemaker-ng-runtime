@@ -20,7 +20,7 @@ export {
 export * from './util/utils';
 export * from './guards/auth.guard';
 export * from './guards/role.guard';
-export * from './guards/page-not-found.gaurd';
+export * from './guards/page-not-found.guard';
 export * from './components/app-component/app.component';
 export * from './components/empty-component/empty-page.component';
 export * from './components/prefab-preview.component';
@@ -32,14 +32,12 @@ export * from './resolves/metadata.resolve';
 export * from './resolves/security-config.resolve';
 export * from './guards/can-deactivate-page.guard';
 export * from './util/wm-route-reuse-strategy';
-export * from './guards/page-not-found.gaurd';
 export * from './components/app-spinner.component';
 export * from './components/base-page.component';
 export * from './components/base-partial.component';
 export * from './components/custom-toaster.component';
 export * from './directives/accessroles.directive';
 export * from './directives/prefab.directive';
-export * from './guards/page-not-found.gaurd';
 export {
     AppRef
 } from './services/app.service';

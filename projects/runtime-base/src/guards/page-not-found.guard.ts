@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 
 import { App } from '@wm/core';
 import { AppManagerService } from '../services/app.manager.service';
@@ -7,7 +7,7 @@ import { AppManagerService } from '../services/app.manager.service';
 declare const _: any;
 
 @Injectable()
-export class PageNotFoundGaurd implements CanActivate {
+export class PageNotFoundGuard {
 
     constructor(
         private app: App,
