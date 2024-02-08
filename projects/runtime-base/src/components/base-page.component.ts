@@ -221,6 +221,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.onReady();
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
         (this.App.onPageReady || noop)(this.pageName, this);
+        if(window?.top?.name !== window?.name && this?.App?.landingPageName === this?.pageName)
+        window.top.postMessage({ key: 'capture-app-thumbnail'}, "*");
     }
 
     private loadScripts() {
