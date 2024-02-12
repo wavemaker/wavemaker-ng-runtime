@@ -105,8 +105,10 @@
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
         [tabindex]="tabindex || 0"
+         role="button"
+         [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : hint || 'Choose Date'"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
-        (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal()">
+        (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal(bsDateValue)">
     </div>
 </ng-template>

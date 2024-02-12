@@ -23,6 +23,7 @@ export const registerProps = () => {
                 ['name', PROP_STRING],
                 ['orderby', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}],
+                ['showonhover', {value: false, ...PROP_BOOLEAN}],
                 ['type', PROP_STRING],
                 ['userrole', PROP_STRING]
             ]

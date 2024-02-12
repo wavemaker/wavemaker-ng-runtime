@@ -40,7 +40,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
     public type;
     public disableMenuContext: boolean;
     public layout;
-
+    public showonhover: boolean;
     private activeNavLINode: HTMLElement;
     private itemActionFn: Function;
     private pageScope: any;
