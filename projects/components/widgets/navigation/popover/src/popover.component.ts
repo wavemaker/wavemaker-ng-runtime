@@ -280,12 +280,12 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         super.ngAfterViewInit();
         styler(this.anchorRef.nativeElement, this);
         this.containerTarget = getContainerTargetClass(this.nativeElement);
-        let parentElemPopover = $(this.nativeElement).parents();
-        if (parentElemPopover.closest('[wmTable]').length ||
-            parentElemPopover.closest('[wmtabs]').length ||
-            parentElemPopover.closest('modal-container').length) {
-            this.adaptiveposition = false;
-        }
+        // let parentElemPopover = $(this.nativeElement).parents();
+        // if (parentElemPopover.closest('[wmTable]').length ||
+        //     parentElemPopover.closest('[wmtabs]').length ||
+        //     parentElemPopover.closest('modal-container').length) {
+        //     this.adaptiveposition = false;
+        // }
     }
 
     ngOnDetach() {
