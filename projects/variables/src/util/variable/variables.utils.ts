@@ -316,7 +316,7 @@ const downloadThroughIframe = (requestParams, success, dataBinding) => {
         'target'  : iFrameElement.attr('name'),
         'action'  : url,
         'method'  : requestParams.method,
-        'enctype' : !_.isEmpty(requestParams.data) ? encType : WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA
+        'enctype' : !(_.isEmpty(requestParams.data) && _.isEmpty(queryParams)) ? encType : WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA
     });
 
     /* process query params, append a hidden input element in the form against each param */
