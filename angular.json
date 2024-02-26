@@ -30,6 +30,11 @@
               "src/favicon.ico",
               "src/assets",
               {
+                  "glob": "print.css",
+                  "input": "src/assets/",
+                  "output": "."
+              },
+              {
                 "glob": "**/*",
                 "input": "libraries/locales/",
                 "output": "/locales/"
@@ -187,7 +192,12 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                  "glob": "print.css",
+                  "input": "src/assets/",
+                  "output": "."
+              }
             ],
             "styles": [
               "src/styles.css",

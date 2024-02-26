@@ -108,8 +108,10 @@ const addScriptForWMStylesPath = (wm_styles_path) => {
             );
         }
     }
+}
+const addPrintStylesPath = (print_styles_path) => {
     $("head").append(
-        `<link rel="stylesheet" type="text/css" media="print" href="print.css"/>`
+        `<link rel="stylesheet" type="text/css" media="print" href="${print_styles_path}"/>`
     );
 }
 
@@ -289,6 +291,11 @@ const generateSha1 = (content) => {
         }
 
         addScriptForWMStylesPath(wm_styles_path);
+        addPrintStylesPath(`${deployUrl}/print.css`);
+
+        //this is required to download all the assets
+        $('head').append('<meta name="deployUrl" content="_cdnUrl_" />');
+
         const htmlContent = $.html();
         await writeFile(`./dist/index.html`, htmlContent);
 
