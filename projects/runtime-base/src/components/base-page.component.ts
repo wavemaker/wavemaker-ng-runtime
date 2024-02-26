@@ -1,7 +1,7 @@
 import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive, AfterContentInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { isAndroid, isIos, Viewport, ScriptLoaderService, registerFnByExpr } from '@wm/core';
+import { isAndroid, isIos, Viewport, ScriptLoaderService, registerFnByExpr, getWmProjectProperties } from '@wm/core';
 import { PageDirective } from '@wm/components/page';
 
 import {Subject, Subscription} from 'rxjs';
@@ -221,8 +221,11 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.onReady();
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
         (this.App.onPageReady || noop)(this.pageName, this);
-        if(window.top.name !== window.name && this.App.landingPageName === this.pageName)
-        window.top.postMessage({ key: 'onHomepageLoad'}, "*");
+
+        const homePage = getWmProjectProperties()?.homePage;
+        if (window.top.name !== window.name && homePage === this.pageName) {
+            window.top.postMessage({ key: 'onHomepageLoad'}, "*");
+        }
     }
 
     private loadScripts() {
