@@ -175,6 +175,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     rowActions = [];
     selectedColumns;
     shownavigation = false;
+    showFirstRow = false;
     dataset;
     _liveTableParent;
     isPartOfLiveGrid;
@@ -397,7 +398,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             });
         },
         // assigns the items on capture phase of the click handler.
-        assignSelectedItems: (row, e, isRowSelected) => {
+        assignSelectedItems: (row, e, rowInfo) => {
             this.ngZone.run(() => {
                 /*
                  * in case of single select, update the items with out changing the reference.
@@ -405,8 +406,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                  */
                 if (this.multiselect) {
                     //Fix for [WMS-25110]: Add row to items list only if the row is selected
-                    if (_.findIndex(this.items, row) === -1 && (isRowSelected === undefined || isRowSelected == true)) {
+                    if (_.findIndex(this.items, row) === -1 && (rowInfo?._selected === undefined || rowInfo?._selected == true || (this.gridfirstrowselect && rowInfo?.rowId == 0 && !this.showFirstRow))) {
                         this.items.push(row);
+                        if (rowInfo?.rowId == 0) {
+                            this.showFirstRow = true;
+                        }
                     }
                 } else {
                     this.items.length = 0;
