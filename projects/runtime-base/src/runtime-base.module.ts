@@ -2,7 +2,7 @@ import {APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule} from '@angula
 import { RouterModule } from '@angular/router';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { ɵDomSharedStylesHost } from '@angular/platform-browser';
+import { ɵSharedStylesHost } from '@angular/platform-browser';
 import {ɵDomRendererFactory2} from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -53,7 +53,7 @@ import { AppManagerService } from './services/app.manager.service';
 import { PrefabManagerService } from './services/prefab-manager.service';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
-import { PageNotFoundGaurd } from './guards/page-not-found.gaurd';
+import { PageNotFoundGuard } from './guards/page-not-found.guard';
 import { AppJSResolve } from './resolves/app-js.resolve';
 import { AppExtensionJSResolve } from './resolves/app-extension.resolve';
 import { I18nResolve } from './resolves/i18n.resolve';
@@ -290,7 +290,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     providers: [
-        {provide: ɵDomSharedStylesHost, useClass: WMDomSharedStylesHost},
+        {provide: ɵSharedStylesHost, useClass: WMDomSharedStylesHost},
         {provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2}
     ]
 })
@@ -348,7 +348,7 @@ export class RuntimeBaseModule {
                 PrefabManagerService,
                 AuthGuard,
                 RoleGuard,
-                PageNotFoundGaurd,
+                PageNotFoundGuard,
                 CanDeactivatePageGuard,
                 AppJSResolve,
                 AppExtensionJSResolve,

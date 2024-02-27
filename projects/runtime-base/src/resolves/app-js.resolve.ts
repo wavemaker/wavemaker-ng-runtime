@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { Resolve } from '@angular/router';
+
 
 import { App, UtilsService } from '@wm/core';
 
@@ -9,7 +9,7 @@ import { AppManagerService } from '../services/app.manager.service';
 let appJsLoaded = false;
 
 @Injectable()
-export class AppJSResolve implements Resolve<any> {
+export class AppJSResolve {
     private appManager;
 
     // AppManagerService: To be make sure this instance available for locale(en.json) calls request to track inside intercepter
