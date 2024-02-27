@@ -307,6 +307,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     private eventClick(eventClickInfo) {
+        if (eventClickInfo?.jsEvent) {
+            eventClickInfo.jsEvent.preventDefault();
+        }
         let eventObj = this.convertEventObj(eventClickInfo.event);
         this.invokeEventCallback('eventclick', {$event: eventClickInfo.jsEvent, $data: eventObj, $view: eventClickInfo.view});
     }
