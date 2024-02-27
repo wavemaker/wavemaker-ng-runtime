@@ -76,7 +76,7 @@ const setMobileProjectType = (angularJson) => {
 const addMobileSpecificStyles = async (deployUrl) => {
     if (isDevBuild) {
         $("body").append(
-            `<script type="text/javascript" defer="true" src="${deployUrl}/wm-android-styles.js"></script>`
+            `<script type="text/javascript" defer="true" src="${deployUrl}wm-android-styles.js"></script>`
         );
     }
 
@@ -84,12 +84,12 @@ const addMobileSpecificStyles = async (deployUrl) => {
         let hash = await generateHash(`${opPath}/wm-android-styles.css`);
         copyMobileCssFiles(hash, 'wm-android-styles');
         $("head").append(
-            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}/wm-android-styles.${hash}.css" >`
+            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}wm-android-styles.${hash}.css" >`
         );
         hash = await generateHash(`${opPath}/wm-ios-styles.css`);
         copyMobileCssFiles(hash, 'wm-ios-styles');
         $("head").append(
-            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}/wm-ios-styles.${hash}.css" >`
+            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}wm-ios-styles.${hash}.css" >`
         );
     }
 }
@@ -155,7 +155,7 @@ const getUpdatedFileName = (deployUrl, url, updatedFileNames) => {
     }
 
     if (absUrl in updatedFileNames) {
-        return `${deployUrl}/${updatedFileNames[absUrl]}` // add the leading '/' back
+        return `${deployUrl}${updatedFileNames[absUrl]}` // add the leading '/' back
     }
     return `${deployUrl}${url}`;
 }
@@ -208,7 +208,7 @@ const updatePwaAssets = (deployUrl, updatedFileNames, updatedFileHashes) => {
     const manifest = JSON.parse(fs.readFileSync(manifestPath).toString());
     const updatedManifest = {
         ...manifest,
-        icons: manifest.icons.map(icon => ({ ...icon, src: `${deployUrl}/${getIconPath(icon.src)}` })),
+        icons: manifest.icons.map(icon => ({ ...icon, src: `${deployUrl}${getIconPath(icon.src)}` })),
     }
     const manifestContent = JSON.stringify(updatedManifest, null, 4);
     fs.writeFileSync(manifestPath, manifestContent);
@@ -246,9 +246,6 @@ const generateSha1 = (content) => {
         const angularJson = require(`${process.cwd()}/angular.json`);
         const build = angularJson['projects']['angular-app']['architect']['build'];
         let deployUrl = args['deploy-url'] || build['options']['deployUrl'];
-        if (deployUrl.endsWith('/')) {
-            deployUrl = deployUrl.slice(0, deployUrl.length - 1);
-        }
 
         const contents = await readFile(`./dist/index.html`, `utf8`);
         $ = cheerio.load(contents);
@@ -280,18 +277,18 @@ const generateSha1 = (content) => {
             await addMobileSpecificStyles(deployUrl);
         } else {
             if (isDevBuild) {
-                wm_styles_path = `${deployUrl}/wm-styles.js`;
+                wm_styles_path = `${deployUrl}wm-styles.js`;
             } else {
                 const fileName = 'wm-styles';
                 const hash = await generateHash(`${opPath}/${fileName}.css`);
                 copyCssFiles(hash, updatedFilenames);
                 const updatedFileName = `${fileName}.${hash}.css`
-                wm_styles_path = `${deployUrl}/${updatedFileName}`;
+                wm_styles_path = `${deployUrl}${updatedFileName}`;
             }
         }
 
         addScriptForWMStylesPath(wm_styles_path);
-        addPrintStylesPath(`${deployUrl}/print.css`);
+        addPrintStylesPath(`${deployUrl}print.css`);
 
         //this is required to download all the assets
         $('head').append('<meta name="deployUrl" content="_cdnUrl_" />');
