@@ -1817,7 +1817,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     }
                 }
                 // for Static Variables with Retain State enabled, prevent Table from rendering more than once
-                if (!(_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none')) {
+                // Fix for [WMS-25284]: Render table that is inside list widget and bound to static Variable
+                if (!(_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') || (this.parentList && _.startsWith(this.binddataset, 'item'))) {
                     this.watchVariableDataSet(nv);
                 }
                 break;
