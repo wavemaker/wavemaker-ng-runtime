@@ -1,6 +1,17 @@
-import { extractType, DataType, DEFAULT_FORMATS, $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
+import {
+    $parseEvent,
+    $watch,
+    DataType,
+    DEFAULT_FORMATS,
+    extractType,
+    findValueOf,
+    getBlob,
+    getClonedObject,
+    stringStartsWith,
+    triggerFn
+} from '@wm/core';
 
-import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
+import {CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS} from '../../constants/variables.constants';
 
 declare const window, _, $, moment, he;
 
@@ -286,7 +297,7 @@ const setParamsFromURL = (queryParams, params) => {
  * @param variable: the variable that is called from user action
  * @param requestParams object consisting the info to construct the XHR request for the service
  */
-const downloadThroughIframe = (requestParams, success) => {
+const downloadThroughIframe = (requestParams, success, dataBinding) => {
     // Todo: SHubham: URL contains '//' in between which should be handled at the URL formation only
     if (requestParams.url[1] === '/' && requestParams.url[2] === '/') {
         requestParams.url = requestParams.url.slice(0, 1) + requestParams.url.slice(2);
@@ -294,7 +305,8 @@ const downloadThroughIframe = (requestParams, success) => {
     let iFrameElement,
         formEl,
         paramElement,
-        queryParams     = '';
+        queryParams = '',
+        data;
     const IFRAME_NAME     = 'fileDownloadIFrame',
         FORM_NAME       = 'fileDownloadForm',
         CONTENT_TYPE    = 'Content-Type',
@@ -315,7 +327,7 @@ const downloadThroughIframe = (requestParams, success) => {
         'target'  : iFrameElement.attr('name'),
         'action'  : url,
         'method'  : requestParams.method,
-        'enctype' : encType
+        'enctype': !(_.isEmpty(requestParams.data) && _.isEmpty(queryParams)) ? encType : WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA
     });
 
     /* process query params, append a hidden input element in the form against each param */
@@ -326,8 +338,13 @@ const downloadThroughIframe = (requestParams, success) => {
     if (_.includes(WS_CONSTANTS.NON_BODY_HTTP_METHODS, _.toUpper(requestParams.method))) {
         setParamsFromURL(queryParams, params); // Set params for URL query params
     }
-    setParamsFromURL(requestParams.data, params); // Set params for request data
-    _.forEach(params, function (val, key) {
+    if (!_.isEmpty(requestParams.data)) {
+        setParamsFromURL(requestParams.data, params);// Set params for request data
+        data = params;
+    } else {
+        data = dataBinding;
+    }
+    _.forEach(data, function (val, key) {
         paramElement = $('<input type="hidden">');
         paramElement.attr({
             'name'  : key,
@@ -646,7 +663,7 @@ export const processBinding = (variable: any, context: any, bindSource?: string,
  * @param success success callback
  * @param error error callback
  */
-export const simulateFileDownload = (requestParams, fileName, exportFormat, success, error) => {
+export const simulateFileDownload = (requestParams, fileName, exportFormat, success, error, dataBinding) => {
     /*success and error callbacks are executed incase of downloadThroughAnchor
      Due to technical limitation cannot be executed incase of iframe*/
     if (CONSTANTS.hasCordova) {
@@ -658,7 +675,7 @@ export const simulateFileDownload = (requestParams, fileName, exportFormat, succ
     } else if (!_.isEmpty(requestParams.headers) || isXsrfEnabled()) {
         downloadThroughAnchor(requestParams, success, error);
     } else {
-        downloadThroughIframe(requestParams, success);
+        downloadThroughIframe(requestParams, success, dataBinding);
     }
 };
 

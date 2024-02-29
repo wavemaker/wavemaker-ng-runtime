@@ -1,11 +1,34 @@
-import { AfterViewInit, Component, ContentChild, ElementRef, Inject, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ContentChild,
+    ElementRef,
+    Injector,
+    OnInit,
+    TemplateRef,
+    ViewChild
+} from '@angular/core';
 
-import { PopoverDirective } from 'ngx-bootstrap/popover';
+import {PopoverDirective} from 'ngx-bootstrap/popover';
 
-import { addClass, App, setAttr, setCSSFromObj, findRootContainer, adjustContainerPosition, adjustContainerRightEdges} from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef, AUTOCLOSE_TYPE, getContainerTargetClass } from '@wm/components/base';
+import {
+    addClass,
+    adjustContainerPosition,
+    adjustContainerRightEdges,
+    App,
+    findRootContainer,
+    setCSSFromObj
+} from '@wm/core';
+import {
+    AUTOCLOSE_TYPE,
+    getContainerTargetClass,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler
+} from '@wm/components/base';
 
-import { registerProps } from './popover.props';
+import {registerProps} from './popover.props';
 
 declare const _, $;
 
@@ -280,12 +303,12 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         super.ngAfterViewInit();
         styler(this.anchorRef.nativeElement, this);
         this.containerTarget = getContainerTargetClass(this.nativeElement);
-        let parentElemPopover = $(this.nativeElement).parents();
-        if (parentElemPopover.closest('[wmTable]').length ||
-            parentElemPopover.closest('[wmtabs]').length ||
-            parentElemPopover.closest('modal-container').length) {
-            this.adaptiveposition = false;
-        }
+        // let parentElemPopover = $(this.nativeElement).parents();
+        // if (parentElemPopover.closest('[wmTable]').length ||
+        //     parentElemPopover.closest('[wmtabs]').length ||
+        //     parentElemPopover.closest('modal-container').length) {
+        //     this.adaptiveposition = false;
+        // }
     }
 
     ngOnDetach() {

@@ -1669,7 +1669,7 @@ $.widget('wm.datatable', {
             var rowId = $row.attr('data-row-id');
             var rowData = this.preparedData[rowId];
             var data = this.options.data[rowId];
-            this.options.assignSelectedItems(data, e, rowData?._selected);
+            this.options.assignSelectedItems(data, e, {'rowId': rowId, '_selected': rowData?._selected});
         }
     },
 
@@ -2986,7 +2986,10 @@ $.widget('wm.datatable', {
                     rowId = $row.attr('data-row-id'),
                     rowData = self.options.data[rowId];
                 // If we enable multiselect and check header checkbox then updating selecteditem in datatable.
-                self.options.assignSelectedItems(rowData, e, self.preparedData[rowId]?._selected);
+                self.options.assignSelectedItems(rowData, e, {
+                    'rowId': rowId,
+                    '_selected': self.preparedData[rowId]?._selected
+                });
                 self.toggleRowSelection($row, checked, e, true);
                 if (checked && _.isFunction(self.options.onRowSelect)) {
                     self.options.onRowSelect(rowData, e);

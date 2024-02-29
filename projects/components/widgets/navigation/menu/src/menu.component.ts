@@ -1,13 +1,37 @@
-import { AfterViewInit, Attribute, Component, HostListener, Injector, OnDestroy, OnInit, Optional, Self } from '@angular/core';
-import { Router } from '@angular/router';
+import {
+    AfterViewInit,
+    Attribute,
+    Component,
+    HostListener,
+    Injector,
+    OnDestroy,
+    OnInit,
+    Optional,
+    Self
+} from '@angular/core';
+import {Router} from '@angular/router';
 
-import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
+import {BsDropdownDirective} from 'ngx-bootstrap/dropdown';
 
-import { $appDigest, addClass, removeClass, triggerItemAction, App, toggleClass, UserDefinedExecutionContext } from '@wm/core';
-import { DatasetAwareNavComponent, hasLinkToCurrentPage, provideAsWidgetRef, styler, AUTOCLOSE_TYPE } from '@wm/components/base';
-import { NavComponent } from './nav/nav.component';
+import {
+    $appDigest,
+    addClass,
+    App,
+    removeClass,
+    toggleClass,
+    triggerItemAction,
+    UserDefinedExecutionContext
+} from '@wm/core';
+import {
+    AUTOCLOSE_TYPE,
+    DatasetAwareNavComponent,
+    hasLinkToCurrentPage,
+    provideAsWidgetRef,
+    styler
+} from '@wm/components/base';
+import {NavComponent} from './nav/nav.component';
 
-import { registerProps } from './menu.props';
+import {registerProps} from './menu.props';
 
 declare const _;
 
@@ -17,6 +41,8 @@ export const KEYBOARD_MOVEMENTS = {
     MOVE_RIGHT: 'RIGHT-ARROW',
     MOVE_DOWN: 'DOWN-ARROW',
     ON_ENTER: 'ENTER',
+    ON_MOUSE_ENTER: 'MOUSE-ENTER',
+    ON_MOUSE_LEAVE: 'MOUSE-LEAVE',
     ON_TAB: 'TAB',
     ON_SHIFT_TAB: 'SHIFT-TAB',
     ON_ESCAPE: 'ESC'
@@ -71,6 +97,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public iconclass: string;
     public animateitems: string;
     public disableMenuContext: boolean;
+    public showonhover: boolean;
     public autoclose: string;
     public autoopen: string;
     public hint: string;
@@ -97,6 +124,8 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     }
 
     @HostListener('keydown.arrowup', ['$event', '"UP-ARROW"'])
+    @HostListener('mouseenter', ['$event', '"MOUSE-ENTER"'])
+    @HostListener('mouseleave', ['$event', '"MOUSE-LEAVE"'])
     @HostListener('keydown.arrowdown', ['$event', '"DOWN-ARROW"'])
     @HostListener('keydown.arrowright', ['$event', '"RIGHT-ARROW"'])
     @HostListener('keydown.arrowleft', ['$event', '"LEFT-ARROW"'])
@@ -122,9 +151,9 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
             } else {
                 this.$element.find('> ul[wmmenudropdown] li.app-menu-item').first().find('> a').focus();
             }
-        } else if (eventAction === KEY_MOVEMENTS.ON_ENTER) {
+        } else if (eventAction === KEY_MOVEMENTS.ON_ENTER || (eventAction === KEY_MOVEMENTS.ON_MOUSE_ENTER && this.showonhover)) {
             this.bsDropdown.toggle(true);
-        } else if (_.includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT], eventAction)) {
+        } else if (_.includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT, KEY_MOVEMENTS.ON_MOUSE_LEAVE], eventAction)) {
             this.bsDropdown.hide();
         }
         $event.preventDefault();

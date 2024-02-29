@@ -1,35 +1,67 @@
-import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
-import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import {Viewport, StatePersistence, PaginationService} from '@wm/core';
-
-import { Observable, Subject } from 'rxjs';
-
+import {
+    AfterContentInit,
+    Attribute,
+    Component,
+    ContentChild,
+    ContentChildren,
+    ElementRef,
+    HostListener,
+    Injector,
+    NgZone,
+    OnDestroy,
+    Optional,
+    QueryList,
+    TemplateRef,
+    ViewChild,
+    ViewContainerRef
+} from '@angular/core';
+import {ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {
     $appDigest,
+    $invokeWatchers,
     $parseEvent,
     $unwatch,
     $watch,
     App,
     closePopover,
     DataSource,
+    DynamicComponentRefProvider,
+    extendProto,
     getClonedObject,
     getDatasourceFromExpr,
     getValidJSON,
-    IDGenerator,
     isDataSourceEqual,
     isDefined,
     isMobile,
+    PaginationService,
+    StatePersistence,
     triggerFn,
-    DynamicComponentRefProvider,
-    extendProto,
-    $invokeWatchers
+    Viewport
 } from '@wm/core';
-import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe, extractDataSourceName, DEBOUNCE_TIMES, NAVIGATION_TYPE, unsupportedStatePersistenceTypes } from '@wm/components/base';
-import { PaginationComponent } from '@wm/components/data/pagination';
 
-import { ListComponent } from '@wm/components/data/list';
-import { registerProps } from './table.props';
-import { debounceTime } from 'rxjs/operators';
+import {Observable, Subject} from 'rxjs';
+import {
+    DEBOUNCE_TIMES,
+    EDIT_MODE,
+    extractDataSourceName,
+    getConditionalClasses,
+    getOrderByExpr,
+    getRowOperationsColumn,
+    NAVIGATION_TYPE,
+    prepareFieldDefs,
+    provideAs,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+    transformData,
+    TrustAsPipe,
+    unsupportedStatePersistenceTypes
+} from '@wm/components/base';
+import {PaginationComponent} from '@wm/components/data/pagination';
+
+import {ListComponent} from '@wm/components/data/list';
+import {registerProps} from './table.props';
+import {debounceTime} from 'rxjs/operators';
 
 declare const _, $;
 
@@ -175,6 +207,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     rowActions = [];
     selectedColumns;
     shownavigation = false;
+    showFirstRow = false;
     dataset;
     _liveTableParent;
     isPartOfLiveGrid;
@@ -397,7 +430,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             });
         },
         // assigns the items on capture phase of the click handler.
-        assignSelectedItems: (row, e, isRowSelected) => {
+        assignSelectedItems: (row, e, rowInfo) => {
             this.ngZone.run(() => {
                 /*
                  * in case of single select, update the items with out changing the reference.
@@ -405,8 +438,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                  */
                 if (this.multiselect) {
                     //Fix for [WMS-25110]: Add row to items list only if the row is selected
-                    if (_.findIndex(this.items, row) === -1 && (isRowSelected === undefined || isRowSelected == true)) {
+                    if (_.findIndex(this.items, row) === -1 && (rowInfo?._selected === undefined || rowInfo?._selected == true || (this.gridfirstrowselect && rowInfo?.rowId == 0 && !this.showFirstRow))) {
                         this.items.push(row);
+                        if (rowInfo?.rowId == 0) {
+                            this.showFirstRow = true;
+                        }
                     }
                 } else {
                     this.items.length = 0;

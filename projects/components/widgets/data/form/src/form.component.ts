@@ -1,31 +1,57 @@
-import { Attribute, Component, HostBinding, HostListener, Injector, OnDestroy, SkipSelf, Optional, ViewChild, ViewContainerRef, ContentChildren, AfterContentInit, AfterViewInit, NgZone } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Attribute,
+    Component,
+    ContentChildren,
+    HostBinding,
+    HostListener,
+    Injector,
+    NgZone,
+    OnDestroy,
+    Optional,
+    SkipSelf,
+    ViewChild,
+    ViewContainerRef
+} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 import {
     $appDigest,
-    getClonedObject,
-    getValidJSON,
-    getFiles,
-    isDefined,
-    removeClass,
-    App,
+    $invokeWatchers,
     $parseEvent,
+    AbstractDialogService,
+    App,
+    DataSource,
+    DataType,
     debounce,
     DynamicComponentRefProvider,
     extendProto,
-    DataSource,
-    AbstractDialogService,
-    DataType,
-    removeAttr,
-    $invokeWatchers,
-    scrollToElement,
+    getClonedObject,
+    getFiles,
+    getValidJSON,
+    isDefined,
     isElementInViewport,
+    removeAttr,
+    removeClass,
+    scrollToElement,
 } from '@wm/core';
-import { getFieldLayoutConfig, parseValueByType, MessageComponent, PartialDirective, performDataOperation, provideAsWidgetRef, StylableComponent, styler, WidgetRef, Live_Operations } from '@wm/components/base';
-import { PrefabDirective } from '@wm/components/prefab';
-import { ListComponent } from '@wm/components/data/list';
+import {
+    getFieldLayoutConfig,
+    Live_Operations,
+    MessageComponent,
+    parseValueByType,
+    PartialDirective,
+    performDataOperation,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+    WidgetRef
+} from '@wm/components/base';
+import {PrefabDirective} from '@wm/components/prefab';
+import {ListComponent} from '@wm/components/data/list';
 
-import { registerFormProps } from './form.props';
+import {registerFormProps} from './form.props';
 
 declare const _;
 
@@ -74,6 +100,20 @@ const findInvalidElement = ($formEle, ngForm) => {
     };
 };
 
+// Function to get the active element markup based on widget type
+const getActiveElement = (element) => {
+    const widgetType = element.getAttribute('widgettype');
+    switch (widgetType) {
+        case 'select':
+            return element.querySelector('select');
+            break;
+        case 'textarea':
+            return element.querySelector('textarea');
+            break;
+        default:
+            return element.querySelector('input');
+    }
+}
 const setTouchedState = (self, ngForm, fieldName) => {
     if (ngForm.valid) {
         return;
@@ -84,15 +124,13 @@ const setTouchedState = (self, ngForm, fieldName) => {
         });
     } else {
         let element = self.$element.find(`[wmformfield][key="${fieldName}"]`);
-        // checking for name attribute if the key attribute is not present on formfield
         if (!element.length) {
             element = self.$element.find(`[wmformfield][name="${fieldName}"]`);
         }
-        if (element.length) {
-            element[0].setAttribute('__errormsg', element[0].getAttribute('__validationId'));
-            element[0].querySelector('input')?.setAttribute('aria-invalid', ngForm.invalid);
-            element[0].querySelector('input')?.setAttribute('aria-describedby', element[0].getAttribute('__validationId'));
-        }
+        element[0].setAttribute('__errormsg', element[0].getAttribute('__validationId'));
+        let activeElement = getActiveElement(element[0]);
+        activeElement?.setAttribute('aria-invalid', ngForm.invalid);
+        activeElement?.setAttribute('aria-describedby', element[0].getAttribute('__validationId'));
         ngForm.markAsTouched();
     }
 };

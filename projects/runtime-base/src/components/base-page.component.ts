@@ -1,30 +1,41 @@
-import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive, AfterContentInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
-import { isAndroid, isIos, Viewport, ScriptLoaderService, registerFnByExpr } from '@wm/core';
-import { PageDirective } from '@wm/components/page';
-
-import {Subject, Subscription} from 'rxjs';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Directive,
+    HostListener,
+    inject,
+    Injector,
+    OnDestroy,
+    ViewChild
+} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {
     AbstractI18nService,
     AbstractNavigationService,
-    addClass,
     App,
+    getWmProjectProperties,
+    isAndroid,
+    isIos,
     isMobileApp,
     muteWatchers,
     noop,
-    removeClass,
+    registerFnByExpr,
+    ScriptLoaderService,
     unMuteWatchers,
-    UtilsService
+    UtilsService,
+    Viewport
 } from '@wm/core';
-import { commonPartialWidgets } from './base-partial.component';
+import {PageDirective} from '@wm/components/page';
+
+import {Subject} from 'rxjs';
+import {commonPartialWidgets} from './base-partial.component';
 
 
-import { VariablesService } from '@wm/variables';
-import { AppManagerService } from '../services/app.manager.service';
-import { FragmentMonitor } from '../util/fragment-monitor';
-import { CACHE_PAGE } from '../util/wm-route-reuse-strategy';
+import {VariablesService} from '@wm/variables';
+import {AppManagerService} from '../services/app.manager.service';
+import {FragmentMonitor} from '../util/fragment-monitor';
+import {CACHE_PAGE} from '../util/wm-route-reuse-strategy';
 
 declare const $, _, html2canvas;
 
@@ -221,6 +232,11 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.onReady();
         this.appManager.notify('pageReady', {'name' : this.pageName, instance: this});
         (this.App.onPageReady || noop)(this.pageName, this);
+
+        const homePage = getWmProjectProperties()?.homePage;
+        if (window.top.name !== window.name && homePage === this.pageName) {
+            window.top.postMessage({key: 'onHomepageLoad'}, "*");
+        }
     }
 
     private loadScripts() {

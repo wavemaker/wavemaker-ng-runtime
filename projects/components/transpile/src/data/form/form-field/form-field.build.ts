@@ -1,7 +1,14 @@
-import { getFormMarkupAttr, IBuildTaskDef, ImportDef, register } from '@wm/transpiler';
-import { FormWidgetType, getFormWidgetTemplate, IDGenerator, isMobileApp, getRequiredFormWidget, generateGUId } from '@wm/core';
+import {getFormMarkupAttr, IBuildTaskDef, register} from '@wm/transpiler';
+import {
+    FormWidgetType,
+    generateGUId,
+    getFormWidgetTemplate,
+    getRequiredFormWidget,
+    IDGenerator,
+    isMobileApp
+} from '@wm/core';
 
-import { ALLFIELDS, isDataSetWidget } from '../../../utils/utils';
+import {ALLFIELDS, isDataSetWidget} from '../../../utils/utils';
 
 const tagName = 'div';
 const idGen = new IDGenerator('formfield_');
@@ -118,7 +125,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const dataRole = isFormField ? 'form-field' : 'filter-field';
             const formFieldErrorMsgId = 'wmform-field-error-' + generateGUId();
             const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
-                                   class="help-block text-danger" aria-hidden="false" role="alert"
+                                   class="help-block text-danger" aria-hidden="false"
                                    aria-live="assertive" [attr.aria-label]="${counter}.validationmessage" id="${formFieldErrorMsgId}"><span aria-hidden="true" [textContent]="${counter}.validationmessage"></span></p>` : '';
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';

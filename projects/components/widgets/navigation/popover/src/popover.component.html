@@ -14,6 +14,7 @@
     [class]="class"
     [ngClass]="{'disable-popover': !canPopoverOpen}"
     [adaptivePosition]="adaptiveposition"
+   boundariesElement="window"
     [attr.aria-label]="hint || 'Popover menu'"
     [attr.aria-expanded]="isOpen"
     role="button"

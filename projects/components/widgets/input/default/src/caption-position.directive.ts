@@ -1,5 +1,5 @@
-import { AfterViewInit, Directive, ElementRef, Injector, OnInit, OnDestroy } from '@angular/core';
-import { App } from '@wm/core';
+import {AfterViewInit, Directive, ElementRef, Injector, OnDestroy, OnInit} from '@angular/core';
+import {App} from '@wm/core';
 
 declare const _, $;
 @Directive({
@@ -149,7 +149,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
             // isSelectMultiple is set to true when for select widget, multiple option is enabled
             // Checking inputEl focus - when form is represented as dialog and the first field is automatically in focus
             const isInputElFocused = this.inputEl && this.inputEl.is(':focus');
-            if (data.displayVal || data.isFocused || data.isSelectMultiple || isInputElFocused) {
+            if (data.isSelect || data.displayVal || data.isFocused || data.isSelectMultiple || isInputElFocused) {
                 data.nativeEl.addClass('float-active');
                 if (!data.displayVal && isInputElFocused) {
                     this.inputEl.attr('placeholder', this.placeholder);

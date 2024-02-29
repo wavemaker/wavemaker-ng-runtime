@@ -14,9 +14,10 @@
         [attr.aria-multiselectable]="multiple"
         [autofocus]="autofocus"
 >
-    <option selected
+    <option
     value="undefined"
     [textContent]="placeholder"
+    *ngIf="!isIosPlatform() || !!placeholder"
     [hidden]="!placeholder"></option>
 
     <ng-container *ngIf="groupby">

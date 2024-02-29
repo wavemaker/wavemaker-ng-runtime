@@ -1,4 +1,4 @@
-import { isEmptyObject, prettifyLabels } from '@wm/core';
+import {isEmptyObject, prettifyLabels} from '@wm/core';
 
 declare const _, $, d3, nv, moment;
 
@@ -452,7 +452,7 @@ const removeTrailingZeros = value => {
     const stringValue = typeof value === 'number' ? value.toString() : value;
 
     // Remove trailing zeros
-    return stringValue.replace(/\.0+$/, "").replace(/\.0+%$/, "%");
+    return stringValue.replace(/\.0+([A-Za-z]*)$/, '$1').replace(/\.([1-9]+)0+([A-Za-z]*)$/, '.$1$2');
 };
 
 // Formats the given value according to number format
