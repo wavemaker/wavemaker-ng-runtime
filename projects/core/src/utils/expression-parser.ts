@@ -1,20 +1,20 @@
 import {
-    Lexer,
-    Parser,
-    BindingPipe,
-    ReadPropExpr,
-    PropertyRead,
-    ImplicitReceiver,
-    LiteralPrimitive,
-    Call,
-    Conditional,
     Binary,
-    PrefixNot,
-    KeyedRead,
-    LiteralMap,
-    LiteralArray,
+    BindingPipe,
+    Call,
     Chain,
-    PropertyWrite
+    Conditional,
+    ImplicitReceiver,
+    KeyedRead,
+    Lexer,
+    LiteralArray,
+    LiteralMap,
+    LiteralPrimitive,
+    Parser,
+    PrefixNot,
+    PropertyRead,
+    PropertyWrite,
+    Unary
 } from '@angular/compiler';
 
 declare const _;
@@ -275,6 +275,15 @@ class ASTCompiler {
         return this.handleBinaryDefault();
     }
 
+    processUnary() {
+        const ast = this.cAst;
+        const stmts = this.cStmts;
+        const e = this.build(ast.expr, stmts);
+        const v = this.createVar();
+        stmts.push(`${v}=${ast.operator}${e}`);
+        return v;
+    }
+
     processConditional() {
         const ast = this.cAst;
         const stmts = this.cStmts;
@@ -381,6 +390,8 @@ class ASTCompiler {
             return this.processKeyedRead();
         } else if (ast instanceof PrefixNot) {
             return this.processPrefixNot();
+        } else if (ast instanceof Unary) {
+            return this.processUnary();
         } else if (ast instanceof Binary) {
             return this.processBinary();
         } else if (ast instanceof Conditional) {
