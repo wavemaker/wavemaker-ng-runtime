@@ -518,6 +518,13 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
         eventSource.forEach((obj) => {
             obj._eventMetadata = _.clone(obj);
+            if(_.isEmpty(obj._eventMetadata.url)) {
+                delete obj._eventMetadata.url;
+            }
+            if(_.isEmpty(obj.url)) {
+                delete obj.url;
+            }
+
             _.mapKeys(properties,  (value, key) => {
                 let objVal;
                 if (key === 'title') {
