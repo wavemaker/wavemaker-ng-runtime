@@ -291,7 +291,7 @@ const generateSha1 = (content) => {
         addPrintStylesPath(`${deployUrl}print.css`);
 
         //this is required to download all the assets
-        $('head').append('<meta name="deployUrl" content="_cdnUrl_" />');
+        $('head').append(`<meta name="deployUrl" content=${deployUrl} />`);
 
         const htmlContent = $.html();
         await writeFile(`./dist/index.html`, htmlContent);
