@@ -126,12 +126,20 @@ import {TooltipModule} from "ngx-bootstrap/tooltip";
 declare const _WM_APP_PROPERTIES;
 
 const initializeProjectDetails = () => {
-    let cdnUrl = document.querySelector('[name="deployUrl"]') && document.querySelector('[name="deployUrl"]').getAttribute('content')
+    let cdnUrl = document.querySelector('[name="deployUrl"]') && document.querySelector('[name="deployUrl"]').getAttribute('content');
+    //for preview
+    if(!cdnUrl) {
+        cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
+    }
     _WM_APP_PROJECT.id = hasCordova() ? _WM_APP_PROPERTIES.displayName : location.href.split('/')[3];
     _WM_APP_PROJECT.cdnUrl = cdnUrl;
     _WM_APP_PROJECT.ngDest = 'ng-bundle/';
-    //@ts-ignore
-    __webpack_require__.p = __webpack_public_path__ = cdnUrl;
+    try {
+        //@ts-ignore
+        __webpack_require__.p = __webpack_public_path__ = cdnUrl;
+    } catch(e) {
+        //for app preview there is no webpack. Don't do anything.
+    }
 };
 
 enum OS {
