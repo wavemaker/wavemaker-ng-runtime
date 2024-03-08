@@ -129,7 +129,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
             }
         } else if (eventAction === KEY_MOVEMENTS.ON_ENTER || (eventAction === KEY_MOVEMENTS.ON_MOUSE_ENTER && this.showonhover)) {
             this.bsDropdown.toggle(true);
-        } else if (_.includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT, KEY_MOVEMENTS.ON_MOUSE_LEAVE], eventAction)) {
+        } else if (_.includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT], eventAction) || (eventAction ==  KEY_MOVEMENTS.ON_MOUSE_LEAVE && this.autoclose == AUTOCLOSE_TYPE.ALWAYS)) {
             this.bsDropdown.hide();
         }
         $event.preventDefault();
@@ -212,6 +212,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
 
         if (key === 'autoclose') {
             this.bsDropdown.autoClose = nv !== AUTOCLOSE_TYPE.DISABLED;
+            this.autoclose = nv;
         } else {
             super.onPropertyChange(key, nv, ov);
         }
