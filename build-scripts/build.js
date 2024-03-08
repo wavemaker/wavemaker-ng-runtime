@@ -6,7 +6,7 @@ const ngBuildArgs = ['build', ...args];
 console.log("Build params - ", ngBuildArgs);
 
 //Trigger angular build with the passed params
-const ngBuildProcess = spawnSync('ng', ngBuildArgs, { stdio: 'inherit' });
+const ngBuildProcess = spawnSync('./node_modules/.bin/ng', ngBuildArgs, { stdio: 'inherit' });
 
 if (ngBuildProcess.status === 0) {
     console.log('ng build completed successfully!');
