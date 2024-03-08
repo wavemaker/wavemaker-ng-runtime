@@ -31,6 +31,7 @@ export const registerProps = () => {
                 ['editdatepattern', PROP_STRING],
                 ['outputformat', PROP_STRING],
                 ['edit-widget-type', PROP_STRING],
+                ['showineditmode', PROP_BOOLEAN],
                 ['editinputtype', PROP_STRING],
                 ['exportexpression', PROP_STRING],
                 ['filterdataset', PROP_STRING],
