@@ -4,8 +4,8 @@
     "scripts": {
         "ng": "ng",
         "start": "./node_modules/.bin/ng serve",
-        "build": "./node_modules/.bin/ng build",
-        "postbuild": "node build-scripts/post-build.js",
+        "build": "node build-scripts/build.js",
+        "post-build": "node build-scripts/post-build.js",
         "test": "./node_modules/.bin/ng test",
         "test_components": "./node_modules/.bin/ng t @wm/components/base",
         "test_mobile": "./node_modules/.bin/ng t @wm/mobile/components/basic",
