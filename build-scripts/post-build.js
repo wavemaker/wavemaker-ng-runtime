@@ -197,6 +197,8 @@ const getIconPath = (iconPath) => {
 const updatePwaAssets = (deployUrl, updatedFileNames, updatedFileHashes) => {
     const ngswPath = './dist/ngsw.json';
     const manifestPath = './dist/manifest.json';
+    //this is always from server in case of pwa. Need to fix this to use cdnurl from runtime/build config
+    deployUrl = deployUrl === "_cdnUrl_" ? 'ng-bundle/' : deployUrl;
 
     // copy service worker and its config to root directory
     fs.copyFileSync('./dist/ng-bundle/ngsw-worker.js', './dist/ngsw-worker.js');
