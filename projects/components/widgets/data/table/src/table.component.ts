@@ -120,6 +120,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     enablecolumnselection;
     enablesort = true;
     filtermode;
+    filteronkeypress;
     searchlabel;
     formposition;
     gridclass;
@@ -263,6 +264,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             direction: ''
         },
         filtermode: '',
+        filteronkeypress: false,
         searchLabel: '',
         rowActions: [],
         headerConfig: [],
@@ -1074,6 +1076,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.editmode = this.editmode;
         this.gridOptions.formPosition = this.formposition;
         this.gridOptions.filtermode = this.filtermode;
+        this.gridOptions.filteronkeypress = this.filteronkeypress;
         this.gridOptions.searchLabel = this.searchlabel;
         this.gridOptions.isMobile = isMobile();
         this.gridOptions.name = this.name;

@@ -19,6 +19,7 @@ $.widget('wm.datatable', {
         isMobile: false,
         enableSort: true,
         filtermode: '',
+        filteronkeypress: false,
         activeRow: undefined,
         height: '100%',
         showHeader: true,
@@ -2924,7 +2925,7 @@ $.widget('wm.datatable', {
             }
 
             /* Search only when enter key is pressed. */
-            if (e.which === 13) {
+            if (e.which === 13 || self.options.filteronkeypress) {
                 search(e);
             }
         });
