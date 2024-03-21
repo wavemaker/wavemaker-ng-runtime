@@ -104,8 +104,16 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         super.onPropertyChange(key, nv, ov);
     }
 
+    isSafariBrowser()  {
+        var reg = {
+            MAC: /Mac/i,
+            MACINTEL: /MacIntel/i
+        }
+        return reg.MAC.test(window.navigator.platform) || reg.MACINTEL.test(window.navigator.platform);
+    }
+
     isIosPlatform() {
-        return isIos();
+        return isIos() || this.isSafariBrowser();
     }
     /**
      * When caption floating is enabled and placeholder is given, do not show placeholder until user focuses on the field
@@ -116,8 +124,8 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     checkForFloatingLabel($event) {
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
         if (captionEl.length > 0) {
-            if ((!$event || $event.type === 'focus') && (($(this.selectEl).find('select option:selected').text() === '' && (this.placeholder || this.datavalue || this.isIosPlatform())))) {
-                if(!$event && (this.placeholder || this.datavalue || this.isIosPlatform())){
+            if ((!$event || $event.type === 'focus') && (($(this.selectEl).find('select option:selected').text() === '' && (this.placeholder || (this.datavalue || this.binddatavalue) || this.isIosPlatform())))) {
+                if(!$event && (this.placeholder || this.datavalue || this.binddatavalue || this.isIosPlatform())){
                     this.app.notify('captionPositionAnimate', {isSelect: true, nativeEl: captionEl});
                 }
                 if(this.placeholder) {
