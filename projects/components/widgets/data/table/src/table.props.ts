@@ -22,6 +22,7 @@ export const registerProps = () => {
                 ['exportformat', PROP_STRING],
                 ['exportdatasize', {value: 100, ...PROP_NUMBER}],
                 ['filtermode', PROP_STRING],
+                ['filteronkeypress', {value: false, ...PROP_BOOLEAN}],
                 ['filternullrecords', {value: true, ...PROP_BOOLEAN}],
                 ['forceellipses', {value: true, ...PROP_BOOLEAN}],
                 ['formposition', PROP_STRING],
