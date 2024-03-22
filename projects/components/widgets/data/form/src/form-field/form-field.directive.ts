@@ -475,7 +475,13 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
                 const hasValue = ((isDefined(val) && val !== '' && val !== null) || captionEl.find('input').val()) || captionEl.find('input:-webkit-autofill').length;
 
-                this.app.notify('captionPositionAnimate', {displayVal: hasValue, nativeEl: captionEl, isSelectMultiple: this.formWidget && this.formWidget.multiple, isFocused: this._activeField});
+                this.app.notify('captionPositionAnimate', {
+                    isSelect: true,
+                    displayVal: hasValue,
+                    nativeEl: captionEl,
+                    isSelectMultiple: this.formWidget && this.formWidget.multiple,
+                    isFocused: this._activeField
+                });
             }
            // Fix for [WMS-23959]: ADA issue - adding aria-describedby, aria-invalid, __errormsg attributes only when the form field is invalid , else removing the attributes
             this.setAriaAttributes();
