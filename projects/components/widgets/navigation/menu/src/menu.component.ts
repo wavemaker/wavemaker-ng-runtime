@@ -1,13 +1,37 @@
-import { AfterViewInit, Attribute, Component, HostListener, Injector, OnDestroy, OnInit, Optional, Self } from '@angular/core';
-import { Router } from '@angular/router';
+import {
+    AfterViewInit,
+    Attribute,
+    Component,
+    HostListener,
+    Injector,
+    OnDestroy,
+    OnInit,
+    Optional,
+    Self
+} from '@angular/core';
+import {Router} from '@angular/router';
 
-import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
+import {BsDropdownDirective} from 'ngx-bootstrap/dropdown';
 
-import { $appDigest, addClass, removeClass, triggerItemAction, App, toggleClass, UserDefinedExecutionContext } from '@wm/core';
-import { DatasetAwareNavComponent, hasLinkToCurrentPage, provideAsWidgetRef, styler, AUTOCLOSE_TYPE } from '@wm/components/base';
-import { NavComponent } from './nav/nav.component';
+import {
+    $appDigest,
+    addClass,
+    App,
+    removeClass,
+    toggleClass,
+    triggerItemAction,
+    UserDefinedExecutionContext
+} from '@wm/core';
+import {
+    AUTOCLOSE_TYPE,
+    DatasetAwareNavComponent,
+    hasLinkToCurrentPage,
+    provideAsWidgetRef,
+    styler
+} from '@wm/components/base';
+import {NavComponent} from './nav/nav.component';
 
-import { registerProps } from './menu.props';
+import {registerProps} from './menu.props';
 
 declare const _;
 

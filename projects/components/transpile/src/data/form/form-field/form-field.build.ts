@@ -1,7 +1,14 @@
-import { getFormMarkupAttr, IBuildTaskDef, ImportDef, register } from '@wm/transpiler';
-import { FormWidgetType, getFormWidgetTemplate, IDGenerator, isMobileApp, getRequiredFormWidget, generateGUId } from '@wm/core';
+import {getFormMarkupAttr, IBuildTaskDef, register} from '@wm/transpiler';
+import {
+    FormWidgetType,
+    generateGUId,
+    getFormWidgetTemplate,
+    getRequiredFormWidget,
+    IDGenerator,
+    isMobileApp
+} from '@wm/core';
 
-import { ALLFIELDS, isDataSetWidget } from '../../../utils/utils';
+import {ALLFIELDS, isDataSetWidget} from '../../../utils/utils';
 
 const tagName = 'div';
 const idGen = new IDGenerator('formfield_');

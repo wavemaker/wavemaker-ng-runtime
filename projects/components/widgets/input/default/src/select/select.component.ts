@@ -1,11 +1,11 @@
-import {AfterViewInit, Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
-import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
+import {AfterViewInit, Component, ElementRef, Injector, ViewChild} from '@angular/core';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
 
-import {DataSource, removeAttr, setAttr, App, isIos} from '@wm/core';
-import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
-import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
+import {App, DataSource, isIos, removeAttr, setAttr} from '@wm/core';
+import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
+import {DatasetAwareFormComponent} from '../dataset-aware-form.component';
 
-import { registerProps } from './select.props';
+import {registerProps} from './select.props';
 
 declare const _;
 
@@ -43,7 +43,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         }
     }
 
-    constructor(inj: Injector,  app: App) {
+    constructor(inj: Injector, app: App) {
         super(inj, WIDGET_CONFIG);
         this.app = app;
         this.acceptsArray = true;
@@ -117,17 +117,16 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
         if (captionEl.length > 0) {
             if ((!$event || $event.type === 'focus') && (($(this.selectEl).find('select option:selected').text() === '' && (this.placeholder || this.datavalue || this.isIosPlatform())))) {
-                if(!$event && (this.placeholder || this.datavalue || this.isIosPlatform())){
+                if (!$event && (this.placeholder || this.datavalue || this.isIosPlatform())) {
                     this.app.notify('captionPositionAnimate', {isSelect: true, nativeEl: captionEl});
                 }
-                if(this.placeholder) {
+                if (this.placeholder) {
                     $(this.selectEl.nativeElement).find('option:first').text(this.placeholder);
                 }
-            }
-            else if (!this.datavalue) {
-                if(!this.placeholder) {
-                  //  $(this.selectEl.nativeElement).find('option:first').text('');
-                    if(!this.isIosPlatform()) {
+            } else if (!this.datavalue) {
+                if (!this.placeholder) {
+                    //  $(this.selectEl.nativeElement).find('option:first').text('');
+                    if (!this.isIosPlatform()) {
                         captionEl.removeClass('float-active');
                     }
                 }

@@ -1,35 +1,67 @@
-import { AfterContentInit, Attribute, Component, ContentChildren, ContentChild, ElementRef, HostListener, Injector, NgZone, OnDestroy, Optional, QueryList, ViewChild, ViewContainerRef, TemplateRef } from '@angular/core';
-import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import {Viewport, StatePersistence, PaginationService} from '@wm/core';
-
-import { Observable, Subject } from 'rxjs';
-
+import {
+    AfterContentInit,
+    Attribute,
+    Component,
+    ContentChild,
+    ContentChildren,
+    ElementRef,
+    HostListener,
+    Injector,
+    NgZone,
+    OnDestroy,
+    Optional,
+    QueryList,
+    TemplateRef,
+    ViewChild,
+    ViewContainerRef
+} from '@angular/core';
+import {ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {
     $appDigest,
+    $invokeWatchers,
     $parseEvent,
     $unwatch,
     $watch,
     App,
     closePopover,
     DataSource,
+    DynamicComponentRefProvider,
+    extendProto,
     getClonedObject,
     getDatasourceFromExpr,
     getValidJSON,
-    IDGenerator,
     isDataSourceEqual,
     isDefined,
     isMobile,
+    PaginationService,
+    StatePersistence,
     triggerFn,
-    DynamicComponentRefProvider,
-    extendProto,
-    $invokeWatchers
+    Viewport
 } from '@wm/core';
-import { EDIT_MODE, getConditionalClasses, getOrderByExpr, getRowOperationsColumn, prepareFieldDefs, provideAs, provideAsWidgetRef, StylableComponent, styler, transformData, TrustAsPipe, extractDataSourceName, DEBOUNCE_TIMES, NAVIGATION_TYPE, unsupportedStatePersistenceTypes } from '@wm/components/base';
-import { PaginationComponent } from '@wm/components/data/pagination';
 
-import { ListComponent } from '@wm/components/data/list';
-import { registerProps } from './table.props';
-import { debounceTime } from 'rxjs/operators';
+import {Observable, Subject} from 'rxjs';
+import {
+    DEBOUNCE_TIMES,
+    EDIT_MODE,
+    extractDataSourceName,
+    getConditionalClasses,
+    getOrderByExpr,
+    getRowOperationsColumn,
+    NAVIGATION_TYPE,
+    prepareFieldDefs,
+    provideAs,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+    transformData,
+    TrustAsPipe,
+    unsupportedStatePersistenceTypes
+} from '@wm/components/base';
+import {PaginationComponent} from '@wm/components/data/pagination';
+
+import {ListComponent} from '@wm/components/data/list';
+import {registerProps} from './table.props';
+import {debounceTime} from 'rxjs/operators';
 
 declare const _, $;
 

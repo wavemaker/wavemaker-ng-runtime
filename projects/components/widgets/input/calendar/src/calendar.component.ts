@@ -1,10 +1,28 @@
-import { Attribute, AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Injector,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 
-import {getClonedObject, getSessionStorageItem, AbstractI18nService, isMobileApp, isMobile} from '@wm/core';
+import {AbstractI18nService, getClonedObject, getSessionStorageItem, isMobile} from '@wm/core';
 
-import { APPLY_STYLES_TYPE, createArrayFrom, getEvaluatedData, IWidgetConfig, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {
+    APPLY_STYLES_TYPE,
+    createArrayFrom,
+    getEvaluatedData,
+    IRedrawableComponent,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler
+} from '@wm/components/base';
 
-import { registerProps } from './calendar.props';
+import {registerProps} from './calendar.props';
 
 declare const _, $, moment;
 
@@ -518,10 +536,10 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
         eventSource.forEach((obj) => {
             obj._eventMetadata = _.clone(obj);
-            if(_.isEmpty(obj._eventMetadata.url)) {
+            if (_.isEmpty(obj._eventMetadata.url)) {
                 delete obj._eventMetadata.url;
             }
-            if(_.isEmpty(obj.url)) {
+            if (_.isEmpty(obj.url)) {
                 delete obj.url;
             }
 

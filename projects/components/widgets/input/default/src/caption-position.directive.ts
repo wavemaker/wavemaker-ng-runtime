@@ -1,5 +1,5 @@
-import { AfterViewInit, Directive, ElementRef, Injector, OnInit, OnDestroy } from '@angular/core';
-import { App } from '@wm/core';
+import {AfterViewInit, Directive, ElementRef, Injector, OnDestroy, OnInit} from '@angular/core';
+import {App} from '@wm/core';
 
 declare const _, $;
 @Directive({

@@ -1,19 +1,10 @@
-import {
-    Attribute,
-    ChangeDetectorRef,
-    Component,
-    Injector,
-    OnInit,
-    Optional,
-    SkipSelf,
-    ViewContainerRef
-} from '@angular/core';
-import { Router } from '@angular/router';
+import {Attribute, ChangeDetectorRef, Component, Injector, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 
 import {addClass, App, removeClass, triggerItemAction, UserDefinedExecutionContext} from '@wm/core';
-import { APPLY_STYLES_TYPE, DatasetAwareNavComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {APPLY_STYLES_TYPE, DatasetAwareNavComponent, provideAsWidgetRef, styler} from '@wm/components/base';
 
-import { registerProps } from './nav.props';
+import {registerProps} from './nav.props';
 
 declare const _;
 

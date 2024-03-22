@@ -1,6 +1,17 @@
-import { extractType, DataType, DEFAULT_FORMATS, $parseEvent, $watch, findValueOf, getBlob, getClonedObject, stringStartsWith, triggerFn } from '@wm/core';
+import {
+    $parseEvent,
+    $watch,
+    DataType,
+    DEFAULT_FORMATS,
+    extractType,
+    findValueOf,
+    getBlob,
+    getClonedObject,
+    stringStartsWith,
+    triggerFn
+} from '@wm/core';
 
-import { CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS } from '../../constants/variables.constants';
+import {CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS} from '../../constants/variables.constants';
 
 declare const window, _, $, moment, he;
 
@@ -294,7 +305,7 @@ const downloadThroughIframe = (requestParams, success, dataBinding) => {
     let iFrameElement,
         formEl,
         paramElement,
-        queryParams     = '',
+        queryParams = '',
         data;
     const IFRAME_NAME     = 'fileDownloadIFrame',
         FORM_NAME       = 'fileDownloadForm',
@@ -316,7 +327,7 @@ const downloadThroughIframe = (requestParams, success, dataBinding) => {
         'target'  : iFrameElement.attr('name'),
         'action'  : url,
         'method'  : requestParams.method,
-        'enctype' : !(_.isEmpty(requestParams.data) && _.isEmpty(queryParams)) ? encType : WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA
+        'enctype': !(_.isEmpty(requestParams.data) && _.isEmpty(queryParams)) ? encType : WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA
     });
 
     /* process query params, append a hidden input element in the form against each param */
@@ -327,7 +338,7 @@ const downloadThroughIframe = (requestParams, success, dataBinding) => {
     if (_.includes(WS_CONSTANTS.NON_BODY_HTTP_METHODS, _.toUpper(requestParams.method))) {
         setParamsFromURL(queryParams, params); // Set params for URL query params
     }
-    if(!_.isEmpty(requestParams.data)) {
+    if (!_.isEmpty(requestParams.data)) {
         setParamsFromURL(requestParams.data, params);// Set params for request data
         data = params;
     } else {

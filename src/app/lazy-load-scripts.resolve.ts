@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
-
-import { isIos, isMobileApp, ScriptLoaderService } from '@wm/core';
+import { isMobileApp, ScriptLoaderService } from '@wm/core';
 
 
 @Injectable()
-export class LazyLoadScriptsResolve implements Resolve<any> {
+export class LazyLoadScriptsResolve {
 
     constructor(private scriptLoaderService: ScriptLoaderService) {}
 

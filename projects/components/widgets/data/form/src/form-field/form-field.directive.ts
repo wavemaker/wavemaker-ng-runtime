@@ -1,25 +1,43 @@
-import { AfterContentInit, Attribute, ContentChild, Directive, Inject, Injector, OnInit, Optional, Self, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+    AfterContentInit,
+    Attribute,
+    ContentChild,
+    Directive,
+    HostListener,
+    Inject,
+    Injector,
+    OnInit,
+    Optional,
+    Self
+} from '@angular/core';
+import {FormBuilder, FormGroup, NG_VALUE_ACCESSOR} from '@angular/forms';
 
-import { debounceTime } from 'rxjs/operators';
+import {debounceTime} from 'rxjs/operators';
 
 import {
+    addForIdAttributes,
+    App,
     debounce,
     FormWidgetType,
+    isDateTimeType,
     isDefined,
     isMobile,
-    addForIdAttributes,
-    Viewport,
-    App,
     noop,
-    isDateTimeType,
-    isMobileApp
+    Viewport
 } from '@wm/core';
-import { Context, getDefaultViewModeWidget, getEvaluatedData, provideAs, provideAsWidgetRef, BaseFieldValidations, StylableComponent } from '@wm/components/base';
-import { ListComponent } from '@wm/components/data/list';
+import {
+    BaseFieldValidations,
+    Context,
+    getDefaultViewModeWidget,
+    getEvaluatedData,
+    provideAs,
+    provideAsWidgetRef,
+    StylableComponent
+} from '@wm/components/base';
+import {ListComponent} from '@wm/components/data/list';
 
-import { registerProps } from './form-field.props';
-import { FormComponent } from '../form.component';
+import {registerProps} from './form-field.props';
+import {FormComponent} from '../form.component';
 
 declare const _, $;
 

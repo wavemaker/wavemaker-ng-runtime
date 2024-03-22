@@ -1,12 +1,12 @@
-import { Subject } from 'rxjs';
+import {Subject} from 'rxjs';
 
-import { getWmProjectProperties } from './wm-project-properties';
+import {getWmProjectProperties} from './wm-project-properties';
 
-import { $watch, $appDigest } from './watcher';
-import { DataType } from '../enums/enums';
-import { DataSource } from '../types/types';
-import { setAttr } from './dom';
-import { $parseEvent } from './expression-parser';
+import {$appDigest, $watch} from './watcher';
+import {DataType} from '../enums/enums';
+import {DataSource} from '../types/types';
+import {setAttr} from './dom';
+import {$parseEvent} from './expression-parser';
 
 declare const _, X2JS;
 declare const moment;
@@ -26,7 +26,7 @@ const REGEX = {
     IPOD: /iPod/i,
     IPAD: /iPad/i,
     MAC: /Mac/i,
-    MACINTEL: /MacIntel/i,
+        MACINTEL: /MacIntel/i,
     ANDROID_TABLET: /android|android 3.0|xoom|sch-i800|playbook|tablet|kindle/i,
     MOBILE: /Mobile/i,
     WINDOWS: /Windows Phone/i,
@@ -1610,7 +1610,7 @@ export const findParent = (lView: any, viewParentApp?: any) => {
 }
 
 export const findViewParent = (lView: any) => {
-    return lView[16] ? lView[16][8] : lView[16];
+    return lView[15] ? lView[15][8] : lView[15];
     /*if(lView[3] === null) {
         return lView[8];
     }
