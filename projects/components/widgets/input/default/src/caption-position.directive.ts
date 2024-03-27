@@ -149,7 +149,8 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
             // isSelectMultiple is set to true when for select widget, multiple option is enabled
             // Checking inputEl focus - when form is represented as dialog and the first field is automatically in focus
             const isInputElFocused = this.inputEl && this.inputEl.is(':focus');
-            if (data.isSelect || data.displayVal || data.isFocused || data.isSelectMultiple || isInputElFocused) {
+            const localName = this.inputEl && this.inputEl.length && this.inputEl[0].localName;
+            if ((data.isSelect && localName == 'select') || data.displayVal || data.isFocused || data.isSelectMultiple || isInputElFocused) {
                 data.nativeEl.addClass('float-active');
                 if (!data.displayVal && isInputElFocused) {
                     this.inputEl.attr('placeholder', this.placeholder);
