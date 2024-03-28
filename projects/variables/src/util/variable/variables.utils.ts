@@ -323,16 +323,17 @@ const downloadThroughIframe = (requestParams, success, dataBinding) => {
     }
     iFrameElement = $('<iframe id="' + IFRAME_NAME + '" name="' + IFRAME_NAME + '" class="ng-hide"></iframe>');
     formEl        = $('<form id="' + FORM_NAME + '" name="' + FORM_NAME + '"></form>');
+
+    /* process query params, append a hidden input element in the form against each param */
+    queryParams += url.indexOf('?') !== -1 ? url.substring(url.indexOf('?') + 1) : '';
+    queryParams += encType === WS_CONSTANTS.CONTENT_TYPES.FORM_URL_ENCODED ? ((queryParams ? '&' : '') + requestParams.dataParams) : '';
+
     formEl.attr({
         'target'  : iFrameElement.attr('name'),
         'action'  : url,
         'method'  : requestParams.method,
         'enctype': !(_.isEmpty(requestParams.data) && _.isEmpty(queryParams)) ? encType : WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA
     });
-
-    /* process query params, append a hidden input element in the form against each param */
-    queryParams += url.indexOf('?') !== -1 ? url.substring(url.indexOf('?') + 1) : '';
-    queryParams += encType === WS_CONSTANTS.CONTENT_TYPES.FORM_URL_ENCODED ? ((queryParams ? '&' : '') + requestParams.dataParams) : '';
 
     // For Non body methods only, set the input fields from query parameters
     if (_.includes(WS_CONSTANTS.NON_BODY_HTTP_METHODS, _.toUpper(requestParams.method))) {
@@ -342,7 +343,7 @@ const downloadThroughIframe = (requestParams, success, dataBinding) => {
         setParamsFromURL(requestParams.data, params);// Set params for request data
         data = params;
     } else {
-        data = dataBinding;
+        data = _.isEmpty(dataBinding) ? params : dataBinding;
     }
     _.forEach(data, function (val, key) {
         paramElement = $('<input type="hidden">');
