@@ -1,18 +1,18 @@
 const { spawnSync } = require('child_process');
 const path = require('path');
-const {isEmpty} = require("lodash/lang");
 
 let processArgs = process.argv;
-const nodeVMArgs = processArgs.findIndex(arg => arg.startsWith('--max-old-space-size')) !== -1 ? processArgs.pop() : '';
+if (processArgs.findIndex(arg => arg.startsWith('--max-old-space-size')) !== -1) {
+    process.env.NODE_OPTIONS = processArgs.pop();
+}
 const args = processArgs.slice(2);
 const ngBuildArgs = ['build', ...args];
 console.log("Build params - ", ngBuildArgs);
+console.log("Setting node options - ", process.env.NODE_OPTIONS);
 
 //Trigger angular build with the passed params
 const ngPath = path.resolve(process.cwd(), 'node_modules', '.bin', "ng");
-const nodeArgs = nodeVMArgs ? [nodeVMArgs, ngPath, ...ngBuildArgs] : [ngPath, ...ngBuildArgs];
-console.log('Executing command: node', nodeArgs.join(' '));
-const ngBuildProcess = spawnSync('node', nodeArgs, {stdio: 'inherit', shell: true});
+const ngBuildProcess = spawnSync(ngPath, ngBuildArgs, {stdio: 'inherit', shell: true});
 
 if (ngBuildProcess.status === 0) {
     console.log('ng build completed successfully!');
