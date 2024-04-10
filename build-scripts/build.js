@@ -1,18 +1,23 @@
 const { spawnSync } = require('child_process');
 const path = require('path');
 
-const args = process.argv.slice(2);
-
+let processArgs = process.argv;
+if (processArgs.findIndex(arg => arg.startsWith('--max-old-space-size')) !== -1) {
+    process.env.NODE_OPTIONS = processArgs.pop();
+}
+const args = processArgs.slice(2);
 const ngBuildArgs = ['build', ...args];
 console.log("Build params - ", ngBuildArgs);
+console.log("Setting node options - ", process.env.NODE_OPTIONS);
 
 //Trigger angular build with the passed params
 const ngPath = path.resolve(process.cwd(), 'node_modules', '.bin', "ng");
-const ngBuildProcess = spawnSync(ngPath, ngBuildArgs, { stdio: 'inherit', shell: true });
+const ngBuildProcess = spawnSync(ngPath, ngBuildArgs, {stdio: 'inherit', shell: true});
 
 if (ngBuildProcess.status === 0) {
     console.log('ng build completed successfully!');
 } else {
+    // TODO: JS heap out of memory error handling
     console.error('Error during ng build:', ngBuildProcess.error || ngBuildProcess.stderr);
     process.exit(1);
 }
