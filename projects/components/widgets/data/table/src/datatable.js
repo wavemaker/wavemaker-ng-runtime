@@ -2697,6 +2697,10 @@ $.widget('wm.datatable', {
             // assign selectedItems so that any child actions can have access to the selectedItems.
             $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this), true);
             $htm.on('click', this.rowSelectionHandler.bind(this));
+            $htm.on("click", "tr *", function(event) {
+                // Prevent propagation to parent elements
+                event.stopPropagation();
+            });
             $htm.on('dblclick', this.rowDblClickHandler.bind(this));
             $htm.on('keydown', this.onKeyDown.bind(this));
         }
