@@ -2689,6 +2689,7 @@ $.widget('wm.datatable', {
     attachEventHandlers: function ($htm) {
         var $header = this.gridHeaderElement,
             self = this;
+        var isMultiSelect = this.options.multiselect;
 
         if (this.options.enableRowSelection) {
             $htm[0].removeEventListener('click', this.rowClickHandlerOnCapture.bind(this), true);
@@ -2697,9 +2698,12 @@ $.widget('wm.datatable', {
             // assign selectedItems so that any child actions can have access to the selectedItems.
             $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this), true);
             $htm.on('click', this.rowSelectionHandler.bind(this));
-            $htm.on("click", "tr *", function(event) {
+            $htm.on("click", "td *", function(event) {
                 // Prevent propagation to parent elements
-                event.stopPropagation();
+                if(event.target.type != 'checkbox' && isMultiSelect){
+                    event.stopPropagation();
+                }
+
             });
             $htm.on('dblclick', this.rowDblClickHandler.bind(this));
             $htm.on('keydown', this.onKeyDown.bind(this));
