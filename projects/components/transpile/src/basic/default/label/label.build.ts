@@ -5,8 +5,7 @@ let tagName = 'p';
 const idGen = new IDGenerator('wm_label');
 
 register('wm-label', (): IBuildTaskDef => {
-    return {
-       
+    return {   
         pre: (attrs:any) => {
             if(!attrs.get("notag")){
                 if(!attrs.get('type')){
@@ -21,10 +20,7 @@ register('wm-label', (): IBuildTaskDef => {
             const counter = idGen.nextUid();
             return `<${tagName} wmLabel #${counter}="wmLabel" [attr.aria-label]="${counter}.hint" ${getAttrMarkup(attrs)}>`;
         },
-        post: () => `</${tagName}>`,
-        template:(node, shared)=>{
-           console.log(node);
-        }
+        post: () => `</${tagName}>`
     };
 });
 
