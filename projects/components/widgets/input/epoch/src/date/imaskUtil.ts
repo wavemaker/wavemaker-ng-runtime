@@ -8,15 +8,9 @@ export function validateTheMaskedDate (format)  {
     }
     const modifiedFormat = format.toUpperCase().replace(/E/g, 'd');
     const parseFn=  str => {
-        console.log(str, 'str');
-        console.log(modifiedFormat, 'modifiedFormat');
-        console.log(moment(str, modifiedFormat).toDate())
         return moment(str, modifiedFormat).toDate();
     };
     const formatFn = date => {
-            console.log(date, 'date');
-            console.log(modifiedFormat, 'modifiedFormat');
-            console.log(moment(date, modifiedFormat).format(modifiedFormat))
             return moment(date, modifiedFormat).format(modifiedFormat);
         };
     return {
