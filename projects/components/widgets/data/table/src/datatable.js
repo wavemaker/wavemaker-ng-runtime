@@ -965,6 +965,7 @@ $.widget('wm.datatable', {
             gridElement: null,
             gridHeader: null,
             gridBody: null,
+            columnClickInfo: {},
             gridFooter: null,
             gridSearch: null,
             tableId: null,
@@ -1663,6 +1664,9 @@ $.widget('wm.datatable', {
     // triggered on capture phase of click listener.
     // sets the selected rowdata on click.
     rowClickHandlerOnCapture: function (e, $row, options) {
+        if(this.getColInfo(e) && (e.target.type != 'checkbox')) {
+            return;
+        }
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
         var gridRow = this.gridElement.find($row);
         // WMS-21139 trigger selectedItems change when the captured click is on the current table but not on child table
@@ -1676,6 +1680,9 @@ $.widget('wm.datatable', {
 
     /* Handles row selection. */
     rowSelectionHandler: function (e, $row, options) {
+        if(this.getColInfo(e) && (e.target.type != 'checkbox')) {
+            return;
+        }
         options = options || {};
         var rowId,
             rowData,
@@ -2685,25 +2692,39 @@ $.widget('wm.datatable', {
         }
         return false;
     },
+    getColInfo: function(event) {
+        var row =  $(event.target).closest('tr.app-datagrid-row');
+        var rowId = row.attr('data-row-id');
+        var column = $(event.target).closest('td.app-datagrid-cell');
+        var colId = column.attr('data-col-id');
+        if(this.columnClickInfo && this.columnClickInfo[rowId] && this.columnClickInfo[rowId][colId]) {
+            return this.columnClickInfo[rowId][colId];
+        }
+        return false;
+    },
     /* Attaches all event handlers for the table. */
     attachEventHandlers: function ($htm) {
         var $header = this.gridHeaderElement,
             self = this;
-        var isMultiSelect = this.options.multiselect;
 
         if (this.options.enableRowSelection) {
-            $htm[0].removeEventListener('click', this.rowClickHandlerOnCapture.bind(this), true);
+            $htm[0].removeEventListener('click', this.rowClickHandlerOnCapture.bind(this));
             $htm.off();
+            $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this));
             // add js click handler for capture phase in order to first listen on grid and
             // assign selectedItems so that any child actions can have access to the selectedItems.
-            $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this), true);
             $htm.on('click', this.rowSelectionHandler.bind(this));
             $htm.on("click", "td *", function(event) {
-                // Prevent propagation to parent elements
-                if(event.target.type != 'checkbox' && isMultiSelect){
-                    event.stopPropagation();
-                }
 
+                // Prevent propagation to parent elements
+                if(event.target.type != 'checkbox'){
+                    var row =  $(event.target).closest('tr.app-datagrid-row');
+                    var rowId = row.attr('data-row-id');
+                    var column = $(event.target).closest('td.app-datagrid-cell');
+                    var colId = column.attr('data-col-id');
+                    self.columnClickInfo[rowId] = {};
+                    self.columnClickInfo[rowId][colId] = true;
+                }
             });
             $htm.on('dblclick', this.rowDblClickHandler.bind(this));
             $htm.on('keydown', this.onKeyDown.bind(this));
