@@ -141,15 +141,15 @@ export class AppRef {
                 return getHttpDependency.call(this);
             }
             let providerInstance = injectorMap[injToken] && this.inj.get(injectorMap[injToken]);
-            if (!providerInstance && this.inj['_providers']) {
-                _.forEach(this.inj['_providers'], val => {
-                    if (_.isObject(val)) {
-                        if (val.__proto__.constructor.SERVICE_NAME === injToken) {
-                            providerInstance = val;
-                            return false;
-                        }
+            if (!providerInstance && this.inj['records']?.values) {
+                const values = this.inj['records'].values();
+                let next = values?.next();
+                while (next) {
+                    if (next?.value?.value?.constructor?.SERVICE_NAME === injToken) {
+                        return next.value.value;
                     }
-                });
+                    next = values.next();
+                }
             }
             return providerInstance;
         }
