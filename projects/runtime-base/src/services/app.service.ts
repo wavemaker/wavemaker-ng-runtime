@@ -144,7 +144,7 @@ export class AppRef {
             if (!providerInstance && this.inj['records']?.values) {
                 const values = this.inj['records'].values();
                 let next = values?.next();
-                while (next) {
+                while (next && !next.done) {
                     if (next?.value?.value?.constructor?.SERVICE_NAME === injToken) {
                         return next.value.value;
                     }
