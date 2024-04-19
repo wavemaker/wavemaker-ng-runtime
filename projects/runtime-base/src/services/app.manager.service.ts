@@ -270,7 +270,6 @@ export class AppManagerService {
                         window.location.href = ssoUrl
                     }
                 } catch (error) {
-                    console.log(error, "error in catch block while accessing parent");
                     window.location.href = ssoUrl;
                 }
             }
