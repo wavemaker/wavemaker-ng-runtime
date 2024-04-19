@@ -62,7 +62,7 @@ export class AppManagerService {
                     // WMS-21117 : Do not trigger spinner, if the current variable is same as spinner which is in context
                     if (variable._spinnerId && variable._spinnerId.length) {
                         _.forEach(variable._spinnerId, (item) => {
-                            if (item.slice(0, item.lastIndexOf('_')) === variable._id && (this.$spinner as any).messagesByContext && (this.$spinner as any).messagesByContext[variable.spinnerContext] && 
+                            if (item.slice(0, item.lastIndexOf('_')) === variable._id && (this.$spinner as any).messagesByContext && (this.$spinner as any).messagesByContext[variable.spinnerContext] &&
                                 (variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext]["finalMessage"] || variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext][item])) {
                                 spinnerExists = true;
                                 return;
@@ -93,7 +93,7 @@ export class AppManagerService {
             }
         });
         this.$app.subscribe('userLoggedOut', () => this.setLandingPage().then(() => {
-            this.$app.clearPageCache();            
+            this.$app.clearPageCache();
         }));
         this.$app.subscribe('http401', (d = {}) => this.handle401(d.page, d.options));
     }
@@ -259,11 +259,20 @@ export class AppManagerService {
              * remove-toolbar has been assigned with a window name WM_PREVIEW_WINDOW, check if the iframe is our toolbar related and
              * safely change the location of the parent toolbar with current url.
              */
-            if (window.self !== window.top && window.parent.name === PREVIEW_WINDOW_NAME) {
-                window.parent.location.href = window.self.location.href;
-                window.parent.name = '';
-            } else {
-                window.location.href = ssoUrl;
+            if (window.self !== window.top) {
+                try {
+                    if (window.parent  && window.location.origin === window.parent.origin){
+                        if(window.parent.name === PREVIEW_WINDOW_NAME) {
+                            window.parent.location.href = window.self.location.href;
+                            window.parent.name = ""
+                        }
+                    } else {
+                        window.location.href = ssoUrl
+                    }
+                } catch (error) {
+                    console.log(error, "error in catch block while accessing parent");
+                    window.location.href = ssoUrl;
+                }
             }
         }
     }
