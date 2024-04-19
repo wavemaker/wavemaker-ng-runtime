@@ -3,7 +3,7 @@ import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Rout
 
 import { setTheme } from 'ngx-bootstrap/utils';
 
-import {noop} from '@wm/core';
+import { CustomIconsLoaderService, noop } from '@wm/core';
 import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App, addClass, removeClass } from '@wm/core';
 import { OAuthService } from '@wm/oAuth';
 import { AppManagerService } from '../../services/app.manager.service';
@@ -39,12 +39,14 @@ export class AppComponent implements DoCheck, AfterViewInit {
         ngZone: NgZone,
         private router: Router,
         private app: App,
-        private appManager: AppManagerService
+        private appManager: AppManagerService,
+        private customIconsLoaderService: CustomIconsLoaderService
     ) {
         setPipeProvider(_pipeProvider);
         setNgZone(ngZone);
         setAppRef(_appRef);
 
+        this.customIconsLoaderService.load();
         this.isApplicationType = getWmProjectProperties().type === 'APPLICATION';
 
         this.appManager.beforeAppReady();
