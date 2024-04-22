@@ -66,7 +66,6 @@
         "ngx-bootstrap": "9.0.0",
         "ngx-color-picker": "16.0.0",
         "ngx-toastr": "17.0.2",
-        "nvd3": "^1.8.6",
         "rxjs": "6.6.0",
         "rxjs-compat": "6.4.0",
         "summernote": "0.8.18",
