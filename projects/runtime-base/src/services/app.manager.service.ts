@@ -261,7 +261,7 @@ export class AppManagerService {
              */
             if (window.self !== window.top) {
                 try {
-                    if (window.parent  && window.location.origin === window.parent.origin){
+                    if (window.parent && window.location.origin === window.parent.origin){
                         if(window.parent.name === PREVIEW_WINDOW_NAME) {
                             window.parent.location.href = window.self.location.href;
                             window.parent.name = ""
@@ -272,6 +272,8 @@ export class AppManagerService {
                 } catch (error) {
                     window.location.href = ssoUrl;
                 }
+            } else {
+                window.location.href = ssoUrl;
             }
         }
     }
