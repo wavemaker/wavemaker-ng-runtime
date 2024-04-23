@@ -5,6 +5,7 @@ import { getLocaleDayPeriods, FormStyle, TranslationWidth } from '@angular/commo
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { TimepickerComponent, TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
+
 import {
     AbstractI18nService,
     getDateObj,
@@ -286,13 +287,19 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     /**
      * This method is used to highlight the current date
      */
-    protected hightlightToday() {
-        const toDay = new Date().getDate().toString();
-        _.filter($(`span:contains(${toDay})`).not('.is-other-month'), (obj) => {
-            if ($(obj).text() === toDay) {
-                $(obj).addClass('current-date text-info');
-            }
-        });
+    protected hightlightToday(newDate) {
+        const activeMonth = $(`.bs-datepicker-head .current`).first().text();
+        const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
+        const monthName = new Date().toLocaleString('default', { month: 'long' });
+
+        if(activeMonth == monthName && activeYear == new Date().getFullYear() && newDate.getDate() === new Date().getDate() && newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
+            const toDay = new Date().getDate().toString();
+            _.filter($(`span:contains(${toDay})`).not('.is-other-month'), (obj) => {
+                if ($(obj).text() === toDay) {
+                    $(obj).addClass('current-date text-info');
+                }
+            });
+        }
     }
 
     /**
@@ -323,7 +330,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         setTimeout(() => {
             const newDay = newDate.getDate().toString();
             _.filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
-                if ($(obj).text() === newDay) {
+                const activeMonth = $(`.bs-datepicker-head .current`).first().text();
+                const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
+                const monthName = new Date().toLocaleString('default', { month: 'long' });
+                if ($(obj).text() === newDay && activeMonth == monthName && activeYear == new Date().getFullYear()) {
                     if ($(obj).hasClass('selected')) {
                         $(obj).parent().attr('aria-selected', 'true');
                     }
@@ -334,8 +344,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     this.activeDate = newDate;
                 }
             });
-            if (newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
-                this.hightlightToday();
+            if (newDate.getDate() === new Date().getDate() && newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
+                this.hightlightToday(newDate);
             }
         });
 
