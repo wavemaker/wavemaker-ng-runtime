@@ -245,7 +245,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
         this.bsDateValue ? this.activeDate = this.bsDateValue : this.activeDate = new Date();
         if (!this.bsDateValue) {
-            this.hightlightToday();
+            this.hightlightToday(this.activeDate);
         }
         this.addDatepickerKeyboardEvents(this, true);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
