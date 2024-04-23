@@ -4,11 +4,11 @@ const path = require('path');
 let processArgs = process.argv;
 if (processArgs.findIndex(arg => arg.startsWith('--max-old-space-size')) !== -1) {
     process.env.NODE_OPTIONS = processArgs.pop();
+    console.log("Setting node options: ", process.env.NODE_OPTIONS);
 }
 const args = processArgs.slice(2);
 const ngBuildArgs = ['build', ...args];
-console.log("Build params - ", ngBuildArgs);
-console.log("Setting node options - ", process.env.NODE_OPTIONS);
+console.log("\x1b[33m", "Angular build params: ", ngBuildArgs);
 
 //Trigger angular build with the passed params
 const ngPath = path.resolve(process.cwd(), 'node_modules', '.bin', "ng");
