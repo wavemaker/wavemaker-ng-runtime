@@ -154,7 +154,7 @@ export class DateComponent extends BaseDateTimeComponent {
         this.isOpen = true;
         this.bsDataValue ? this.activeDate = this.bsDataValue : this.activeDate = new Date();
         if (!this.bsDataValue) {
-            this.hightlightToday();
+            this.hightlightToday(this.activeDate);
         }
 
         // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
