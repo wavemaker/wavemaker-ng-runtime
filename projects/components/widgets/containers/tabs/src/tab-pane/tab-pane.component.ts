@@ -56,7 +56,7 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         this.invokeEventCallback('select', {$event});
     }
 
-    public select($event?: Event) {
+    public select($event?: Event, isKeyBoardEvent?: boolean) {
         // When called programatically $event won't be available
         if (this.isActive || this.disabled) {
             return;
@@ -65,7 +65,7 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         this.isActive = true;
         this.$lazyLoad();
         this.redrawChildren();
-        this.notifyParent($event);
+        this.notifyParent($event, isKeyBoardEvent);
     }
 
     tabpaneHeaderClick($event, paneIndex) {
@@ -103,8 +103,8 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         }, 100);
     }
 
-    private notifyParent(evt?: Event) {
-        this.tabsRef.notifyChange(this, evt);
+    private notifyParent(evt?: Event, isKeyBoardEvent?: boolean) {
+        this.tabsRef.notifyChange(this, evt, isKeyBoardEvent);
     }
 
     // select next valid tab
