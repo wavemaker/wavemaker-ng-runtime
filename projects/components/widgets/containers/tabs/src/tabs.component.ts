@@ -185,7 +185,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
      * TabPane children components invoke this method to communicate with the parent
      * if the evt argument is defined on-change callback will be invoked.
      */
-    public notifyChange(paneRef: TabPaneComponent, evt: Event, isKeyBoardEvent: boolean) {
+    public notifyChange(paneRef: TabPaneComponent, evt: Event) {
         if (!this.isSelectableTab(paneRef)) {
             return;
         }
@@ -227,7 +227,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             headerElement = this.nativeElement.querySelector(`li[data-paneid=${paneRef.widgetId}]`);
             const insideTabs = !!$(headerElement).closest('.app-tabs')
                 .parent().closest('.app-tabs').length;
-            if (!insideTabs && isKeyBoardEvent) {
+            if (!insideTabs) { 
                 $(headerElement).children().focus();
             }
         }
@@ -311,18 +311,18 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
     // select next tab relative to the current active tab
-    public next($event?: Event, isKeyBoardEvent?: boolean) {
+    public next($event?: Event) {
         const pane = this.getSelectableTabAfterIndex(this.getActiveTabIndex());
         if (pane) {
-            pane.select($event, isKeyBoardEvent);
+            pane.select($event);
         }
     }
 
     // select prev tab relative to the current active tab
-    public prev($event?: Event, isKeyBoardEvent?: boolean) {
+    public prev($event?: Event) {
         const pane = this.getSelectableTabBeforeIndex(this.getActiveTabIndex());
         if (pane) {
-            pane.select($event, isKeyBoardEvent);
+            pane.select($event);
         }
     }
 
@@ -412,13 +412,13 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         switch (event.key) {
             case 'ArrowLeft':
             case 'ArrowUp':
-                this.prev(null, true);
+                this.prev();
                 event.preventDefault();
                 break;
 
             case 'ArrowRight':
             case 'ArrowDown':
-                this.next(null, true);
+                this.next();
                 event.preventDefault();
                 break;
             default:
