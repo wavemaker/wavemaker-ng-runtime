@@ -26,31 +26,28 @@ export function validateTheMaskedDate (format)  {
                     to: 9999,
                     placeholderChar:'Y',
                 maxLength: 4,
-                overwrite: false,
             },
             YYY: {
                 mask: IMask.MaskedRange,
-                from: 0,
-                to: 9999,
+                from: 900,
+                to: 999,
                 placeholderChar:'Y',
-                maxLength: 4,
+                maxLength: 3,
                 overwrite: false,
             },
             YY: {
                 mask: IMask.MaskedRange,
                 from: 0,
-                to: 9999,
+                to: 99,
                 placeholderChar:'Y',
-                maxLength: 4,
-                overwrite: false,
+                maxLength: 2,
             },
             Y: {
                 mask: IMask.MaskedRange,
                 from: 0,
-                to: 9999,
+                to: 9,
                 placeholderChar:'Y',
-                maxLength: 4,
-                overwrite: false,
+                maxLength: 1,
             },
         M: {
             mask: IMask.MaskedRange,
@@ -58,7 +55,6 @@ export function validateTheMaskedDate (format)  {
             to: 12,
             placeholderChar:'M',
             maxLength: 2,
-            overwrite: false,
         },
         MM: {
             mask: IMask.MaskedRange,
@@ -66,7 +62,6 @@ export function validateTheMaskedDate (format)  {
             to: 12,
             placeholderChar:'M',
             maxLength: 2,
-            overwrite: false,
         },
         MMM: {
             mask: IMask.MaskedEnum,
@@ -75,7 +70,6 @@ export function validateTheMaskedDate (format)  {
             ),
             placeholderChar:'M',
             maxLength: 3,
-            overwrite: false,
         },
         MMMM: {
             mask: IMask.MaskedEnum,
@@ -83,8 +77,6 @@ export function validateTheMaskedDate (format)  {
                 new Date(0, i).toLocaleString(window.navigator.language, { month: 'long' })
             ),
             placeholderChar:'M',
-            minLength: 3,
-            overwrite: false,
         },
         DD: {
             mask: IMask.MaskedRange,
@@ -92,7 +84,6 @@ export function validateTheMaskedDate (format)  {
             to: 31,
             placeholderChar:'D',
             maxLength: 2,
-            overwrite: false,
         },
         D: {
             mask: IMask.MaskedRange,
@@ -100,7 +91,6 @@ export function validateTheMaskedDate (format)  {
             to: 31,
             placeholderChar:'D',
             maxLength: 1,
-            overwrite: false,
         },
         ddd: {
             mask: IMask.MaskedEnum,
@@ -109,7 +99,6 @@ export function validateTheMaskedDate (format)  {
             ),
             placeholderChar:'E',
             maxLength: 3,
-            overwrite: false,
         },
         dddd: {
             mask: IMask.MaskedEnum,
@@ -118,12 +107,11 @@ export function validateTheMaskedDate (format)  {
             ),
             placeholderChar:'E',
             minLength: 6,
-            overwrite: false,
         },
     },
         autofix: true,
         lazy: false,
-        overwrite: false,
+        overwrite: true,
         skipInvalid: true
 
     }
