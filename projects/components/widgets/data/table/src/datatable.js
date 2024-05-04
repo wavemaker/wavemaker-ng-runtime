@@ -2721,8 +2721,12 @@ $.widget('wm.datatable', {
                     var rowId = row.attr('data-row-id');
                     var column = $(event.target).closest('td.app-datagrid-cell');
                     var colId = column.attr('data-col-id');
-                    self.columnClickInfo[rowId] = {};
-                    self.columnClickInfo[rowId][colId] = true;
+                    var id = Number(colId);
+                    var colDefination = self.preparedHeaderData[id];
+                    if(colDefination.readonly) {
+                        self.columnClickInfo[rowId] = {};
+                        self.columnClickInfo[rowId][colId] = true;
+                    }
                 }
             });
             $htm.on('dblclick', this.rowDblClickHandler.bind(this));
