@@ -107,8 +107,10 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     private _selectFirstItem = false;
 
     public type: any;
+    public _menuposition: string;
 
     @HostListener('onShown') onShow() {
+        this._menuposition = this.menuposition;
         if (this._selectFirstItem) {
             setTimeout(() => {
                 this.$element.find('> ul[wmmenudropdown] li.app-menu-item').first().find('> a').focus();
@@ -120,6 +122,9 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         this.$element.find('>.dropdown-toggle').focus();
         this.$element.find('li').removeClass('open');
         this._selectFirstItem = false;
+        // reset the menuposition when dropdown is closed
+        this.menuposition = this._menuposition ? this._menuposition : MENU_POSITION.DOWN_RIGHT;
+        this.setMenuPosition();
         $appDigest();
     }
 
@@ -242,7 +247,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         }
     }
 
-    private setMenuPosition() {
+    public setMenuPosition() {
         switch (this.menuposition) {
             case POSITION.DOWN_RIGHT:
                 removeClass(this.nativeElement, 'dropup');
