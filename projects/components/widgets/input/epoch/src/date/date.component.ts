@@ -19,6 +19,8 @@ import {
 import { IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
+import { validateTheMaskedDate } from './imaskUtil';
+
 
 declare const _, $, moment;
 
@@ -73,6 +75,15 @@ export class DateComponent extends BaseDateTimeComponent {
     get datavalue() {
         return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat, this.timeZone, null, this.isCurrentDate, this) || '';
     }
+    get mask() {
+        if (this.datepattern) {
+           return validateTheMaskedDate(this.datepattern);
+        }
+        else {
+            return false;
+        }
+    }
+
 
     // Todo[Shubham]: needs to be redefined
     // sets the dataValue and computes the display model values
@@ -154,7 +165,7 @@ export class DateComponent extends BaseDateTimeComponent {
         this.isOpen = true;
         this.bsDataValue ? this.activeDate = this.bsDataValue : this.activeDate = new Date();
         if (!this.bsDataValue) {
-            this.hightlightToday();
+            this.hightlightToday(this.activeDate);
         }
 
         // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
