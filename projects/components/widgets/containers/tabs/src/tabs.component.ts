@@ -244,7 +244,6 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             headerElement = this.nativeElement.querySelector(`li[data-paneid=${paneRef.widgetId}]`);
             const insideTabs = !!$(headerElement).closest('.app-tabs')
                 .parent().closest('.app-tabs').length;
-
             if (!insideTabs && isKeyBoardEvent) {
                 $(headerElement).children().focus();
             }

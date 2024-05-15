@@ -119,7 +119,6 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         $appDigest();
     }
     @HostListener('onHidden') onHide() {
-        this.$element.find('>.dropdown-toggle').focus();
         this.$element.find('li').removeClass('open');
         this._selectFirstItem = false;
         // reset the menuposition when dropdown is closed
