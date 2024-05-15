@@ -21,11 +21,11 @@ module.exports = function (config) {
                 "../../../node_modules/jquery-ui/ui/widgets/droppable.js",
                 '../../../libraries/swipey/bundles/index.umd.js',
                 '../../../../wavemaker-app-runtime-angularjs/application/styles/css/wm-style.css',
-                '../../../../wavemaker-artifacts/default/themes/material/style.css'
             ],
           frameworks: ['jasmine', '@angular-devkit/build-angular'],
           plugins: [
             require('karma-jasmine'),
+              require('karma-coverage'),
             require('karma-chrome-launcher'),
             require('karma-jasmine-html-reporter'),
             require('karma-coverage-istanbul-reporter'),
@@ -49,4 +49,3 @@ module.exports = function (config) {
           restartOnFileChange: true
         });
       };
-      

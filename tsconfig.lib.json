@@ -1,8 +1,10 @@
 {
-    "extends": "../../../tsconfig.json",
+    "extends": "./tsconfig.json",
     "compilerOptions": {
         "outDir": "../../../out-tsc/lib",
         "declaration": true,
+       "esModuleInterop": true,
+        "module": "CommonJS",
         "sourceMap": true,
         "inlineSources": true,
         "emitDecoratorMetadata": true,
