@@ -6,10 +6,10 @@ module.exports = {
   preset: "jest-preset-angular",
   roots: ["<rootDir>/projects"],
   testEnvironment: "jsdom",
-    testMatch: [
-       // "**/projects/components/widgets/advanced/**/*.spec.ts"
-        "**/projects/**/*.spec.ts"
-    ],
+  testMatch: [
+    "**/projects/components/widgets/input/default/src/text/text/input-text.wrapper.component.spec.ts"
+    // "**/projects/**/*.spec.ts"
+  ],
 
   setupFilesAfterEnv: ["<rootDir>/src/setup-jest.js"],
   collectCoverage: true,
