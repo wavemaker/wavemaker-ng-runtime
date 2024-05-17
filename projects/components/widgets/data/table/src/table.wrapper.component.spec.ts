@@ -1064,7 +1064,7 @@ describe("DataTable", () => {
 
                 /* TODO: Need to add testcase for WMS-20545 Trigger select event when only one column is editable */
                 it("Should make row editable when clicked on a column having customExpression", () => {
-                    spyOn(wrapperComponent, 'UserTable1Rowselect');
+                    jest.spyOn(wrapperComponent, 'UserTable1Rowselect');
                     const debugEl = quick_edit_fixture.debugElement.nativeElement;
                     const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
                     const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row:first-child");

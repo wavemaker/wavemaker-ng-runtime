@@ -264,11 +264,11 @@ TestBase.verifyStyles();
 
 const defaultValidators = (
     validatorType,
-    errorType, 
-    validator, 
+    errorType,
+    validator,
     errorMsg,
     formField,
-    invalidTestValue, 
+    invalidTestValue,
     validTestValue
 ) => {
     expect(formField._control.valid).toBeTruthy();
@@ -287,11 +287,11 @@ const defaultValidators = (
 }
 
 const dateValidations = (
-    validatorType, 
-    validator, 
-    errorMsg, 
-    wmComponent, 
-    invalidTestValue, 
+    validatorType,
+    validator,
+    errorMsg,
+    wmComponent,
+    invalidTestValue,
     validTestValue
 ) => {
     let formField = wmComponent.formfields['dateofbirth'];
@@ -356,8 +356,8 @@ describe('FormComponent', () => {
             expect(wmComponent.dirty).toBe(true);
             console.log('before form submit, dirty - ', wmComponent.dirty);
 
-            spyOn(wrapperComponent, 'onResult').and.callThrough();
-            spyOn(wrapperComponent, 'onSuccess').and.callThrough();
+            jest.spyOn(wrapperComponent, 'onResult').mockImplementation(wrapperComponent.onResult);
+            jest.spyOn(wrapperComponent, 'onSuccess').mockImplementation(wrapperComponent.onSuccess);
 
             fixture.whenStable().then(() => {
                 wmComponent.submitForm({});

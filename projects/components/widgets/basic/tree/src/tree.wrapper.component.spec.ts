@@ -5,8 +5,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import { App } from '@wm/core';
 
-let mockApp = {}; 
-
+let mockApp = {};
 const markup = `<ul wmTree name="tree1" class="testClass" height="800" width="200" tabindex="1" show="true"
                 collapse.event="tree1Collapse($event, widget, $item, $path)"
                 expand.event="tree1Expand($event, widget, $item, $path)"
@@ -104,7 +103,7 @@ describe('wm-tree: Component Specific Tests', () => {
 
     it('should call exapand tree callback with item, path as data arguments ', async (done) => {
         wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
-        spyOn(wrapperComponent, 'tree1Expand').and.callThrough();
+        jest.spyOn(wrapperComponent, 'tree1Expand').mockImplementation(wrapperComponent.tree1Expand);
         let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
         setTimeout(() => {
             nodeicon.click();
@@ -120,7 +119,7 @@ describe('wm-tree: Component Specific Tests', () => {
 
     it('should call collapse tree callback with item, path as data arguments',async (done) => {
         wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
-        spyOn(wrapperComponent, 'tree1Collapse').and.callThrough();
+        jest.spyOn(wrapperComponent, 'tree1Expand').mockImplementation(wrapperComponent.tree1Collapse);
         let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
         setTimeout(() => {
             nodeicon.click();

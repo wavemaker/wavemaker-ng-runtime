@@ -395,7 +395,7 @@ describe("TimeComponent", () => {
 
         onClickCheckTaglengthOnBody(fixture, '.btn-date', null, null);
         fixture.whenStable().then(() => {
-            spyOn(timeWrapperComponent, 'time1Change').and.callThrough();
+            jest.spyOn(timeWrapperComponent, 'time1Change');
             triggerTimerClickonArrowsByIndex(1);
             fixture.detectChanges();
             expect(timeWrapperComponent.time1Change).toHaveBeenCalledTimes(1);

@@ -90,13 +90,13 @@ describe('wm-wizard: Component Specific Tests', () => {
         const frstStepRef = wmComponent.getWidget().getStepRefByIndex(0);
         const secondStepRef = wmComponent.getWidget().getStepRefByIndex(1);
         fixture.whenStable().then(() => {
-            spyOn(frstStepRef, 'invokeEventCallback');
+            jest.spyOn(frstStepRef, 'invokeEventCallback');
             wmComponent.next();
             fixture.detectChanges();
             expect(frstStepRef.invokeEventCallback).toHaveBeenCalledTimes(1);
             expect(frstStepRef.invokeEventCallback).toHaveBeenCalledWith('next', {currentStep: frstStepRef, stepIndex: 0});
 
-            spyOn(secondStepRef, 'invokeEventCallback');
+            jest.spyOn(secondStepRef, 'invokeEventCallback');
             // We have setTimeout in wizardstep directive redraw chilsdren method So adding same here.
             setTimeout(() => {
                 expect(secondStepRef.invokeEventCallback).toHaveBeenCalledTimes(1);
@@ -109,7 +109,7 @@ describe('wm-wizard: Component Specific Tests', () => {
     it('should have correct param values in onPrev callback event',  async () => {
         const secondStepRef = wmComponent.getWidget().getStepRefByIndex(1);
         fixture.whenStable().then(() => {
-            spyOn(secondStepRef, 'invokeEventCallback');
+            jest.spyOn(secondStepRef, 'invokeEventCallback');
             wmComponent.next();
             fixture.detectChanges();
             wmComponent.prev();
@@ -122,7 +122,7 @@ describe('wm-wizard: Component Specific Tests', () => {
         const frstStepRef = wmComponent.getWidget().getStepRefByIndex(0);
         fixture.whenStable().then(() => {
             frstStepRef.setProperty('enableskip', true);
-            spyOn(frstStepRef, 'invokeEventCallback');
+            jest.spyOn(frstStepRef, 'invokeEventCallback');
             wmComponent.skip();
             fixture.detectChanges();
             expect(frstStepRef.invokeEventCallback).toHaveBeenCalledWith('skip', {currentStep: frstStepRef, stepIndex: 0});

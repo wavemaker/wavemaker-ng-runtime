@@ -241,7 +241,7 @@ describe('PopoverComponent', () => {
 
         fixture.whenStable().then(() => {
             wmComponent.getWidget().nativeElement.interaction = 'hover';
-            spyOn(popoverWrapperComponent, 'onHover');
+            jest.spyOn(popoverWrapperComponent, 'onHover').mockImplementation(popoverWrapperComponent.onHover);
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.dispatchEvent(new MouseEvent('mouseenter'));
             fixture.detectChanges();
             expect(popoverWrapperComponent.onHover).toHaveBeenCalledTimes(1);

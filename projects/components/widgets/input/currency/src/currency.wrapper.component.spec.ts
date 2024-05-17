@@ -13,8 +13,8 @@ let mockApp = {};
 
 const markup = `<div blur.event="onBlur($event, widget)"
                  focus.event="onFocus($event, widget)"
-                 change.event="onChange($event, widget, newVal, oldVal)" 
-                 wmCurrency name="currency1" step="0.01" hint="currency" inputmode="natural" 
+                 change.event="onChange($event, widget, newVal, oldVal)"
+                 wmCurrency name="currency1" step="0.01" hint="currency" inputmode="natural"
                  trailingzero="true" tabindex="1"></div>`;
 
 class MockAbstractI18nService {
@@ -114,9 +114,9 @@ describe('CurrencyComponent', () => {
     it('should show formatted value when default value is provided and on focus should remove step formatting. Test focus and blur cb', () => {
         currencyComp.datavalue = 1234;
         currencyComp.ngModelOptions.updateOn = 'change';
-    
-        spyOn(wrapperComponent, 'onFocus');
-        spyOn(wrapperComponent, 'onBlur');
+
+        jest.spyOn(wrapperComponent, 'onFocus');
+        jest.spyOn(wrapperComponent, 'onBlur');
 
 
         // On focus should strip '.00'
@@ -124,7 +124,7 @@ describe('CurrencyComponent', () => {
         expect(currencyComp.transformNumber(currencyComp.datavalue)).toEqual(currencyComp.displayValue);
 
         // on focus, check focus callback is triggered
-        expect(wrapperComponent.onFocus).toHaveBeenCalledTimes(1);         
+        expect(wrapperComponent.onFocus).toHaveBeenCalledTimes(1);
 
         // On blur should show '.00' formatting
         validateOnEvt('blur', '1,234.00');
@@ -133,25 +133,25 @@ describe('CurrencyComponent', () => {
         });
 
         // on blur, check blur callback is triggered
-        expect(wrapperComponent.onBlur).toHaveBeenCalledTimes(1);         
+        expect(wrapperComponent.onBlur).toHaveBeenCalledTimes(1);
     });
 
     it('should not show formatted value when step is not provided', () => {
         currencyComp.step = 1;
         currencyComp.datavalue = 12345;
-    
+
         validateOnEvt('focus', '12,345');
 
-        validateOnEvt('blur', '12,345');       
+        validateOnEvt('blur', '12,345');
     });
 
     it('should not show formatted value when trailingzero is not provided', () => {
         currencyComp.trailingzero = false;
         currencyComp.datavalue = 12345;
-    
+
         validateOnEvt('focus', '12,345');
 
-        validateOnEvt('blur', '12,345');           
+        validateOnEvt('blur', '12,345');
     });
 
     it('should show inputted decimal in focus and formatted decimal value on blur in natural currency', () => {
@@ -175,7 +175,7 @@ describe('CurrencyComponent', () => {
         // When user enters a value show it in financial format
 
         setInputValue(fixture, '.app-currency-input', '12').then(() => {
-            expect(currencyComp.displayValue).toEqual('0.12'); 
+            expect(currencyComp.displayValue).toEqual('0.12');
         });
     });
 
@@ -189,8 +189,8 @@ describe('CurrencyComponent', () => {
         // On focus should show '.00' formatting
         validateOnEvt('focus', '123.00');
 
-        // On blur should strip '.00' 
-        validateOnEvt('blur', '123'); 
+        // On blur should strip '.00'
+        validateOnEvt('blur', '123');
     });
 
 
@@ -198,17 +198,17 @@ describe('CurrencyComponent', () => {
         currencyComp.ngModelOptions.updateOn = 'change';
         currencyComp.inputmode = 'financial';
         currencyComp.step = 0.01;
-        
+
         currencyComp.isDefaultQuery = false;
 
         // format the display value when update on is set to keypress
         currencyComp.onInputChange('1234567');
-        expect((currencyComp.displayValue)).toEqual('12,345.67');   
+        expect((currencyComp.displayValue)).toEqual('12,345.67');
 
         // do not format the display value when update on is set to blur, and change it only on blur
         currencyComp.ngModelOptions.updateOn = 'blur';
         currencyComp.onInputChange('1234567');
-        expect((currencyComp.displayValue)).toEqual('12345.67');   
+        expect((currencyComp.displayValue)).toEqual('12345.67');
     });
 
 
@@ -217,13 +217,13 @@ describe('CurrencyComponent', () => {
     it('should not allow user to enter more than 16 digits', () => {
         currencyComp.datavalue = 1234567890123456;
 
-        validateInput({ 'key': '7', 'keyCode': 50, 'code': 'Digit7'});     
+        validateInput({ 'key': '7', 'keyCode': 50, 'code': 'Digit7'});
     });
 
     it('should not allow user to enter decimals exceeding the limit set in step', () => {
         currencyComp.datavalue = 123.45;
 
-        validateInput({ 'key': '7', 'keyCode': 50, 'code': 'Digit7'});     
+        validateInput({ 'key': '7', 'keyCode': 50, 'code': 'Digit7'});
     });
 
     it('should  allow user to enter decimals exceeding the limit set in step when input mode is financial', () => {
@@ -272,16 +272,16 @@ describe('CurrencyComponent', () => {
         currencyComp.datavalue = -123.45;
         validateInput({ 'key': '-', 'keyCode': 189, 'code': 'Minus' });
 
-        // When negative value is entered, minus sign should be shown on blur 
-        validateOnEvt('blur', '-123.45'); 
+        // When negative value is entered, minus sign should be shown on blur
+        validateOnEvt('blur', '-123.45');
     });
 
     it('should allow plus sign only once', () => {
         currencyComp.datavalue = +123.45;
         validateInput({ 'key': '+', 'keyCode': 187, 'code': 'Equal' });
 
-        // when positive value is entered with +, strip plus sign 
-        validateOnEvt('blur', '123.45'); 
+        // when positive value is entered with +, strip plus sign
+        validateOnEvt('blur', '123.45');
     });
 
     it('should not allow user to enter space when there is no input value', () => {

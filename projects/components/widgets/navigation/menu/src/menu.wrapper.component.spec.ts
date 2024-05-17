@@ -255,7 +255,8 @@ describe('MenuComponent', () => {
             fixture.detectChanges();
             const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
             fixture.whenStable().then(() => {
-                spyOn(menuWrapperComponent, 'menu1Select').and.callThrough();
+                jest.spyOn(menuWrapperComponent, 'menu1Select').mockImplementation(menuWrapperComponent.menu1Select);
+
                 const liElements = menudropdownEle.query(By.css('li.app-menu-item'));
                 liElements.nativeElement.click();
                 fixture.detectChanges();

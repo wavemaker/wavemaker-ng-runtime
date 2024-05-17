@@ -352,7 +352,7 @@ export class ComponentTestBase {
                         let eleControl = getHtmlSelectorElement(fixture, evtObj.clickableEle);
                         eleControl.nativeElement.click();
                         fixture.whenStable().then(() => {
-                            spyOn(fixture.componentInstance, evtObj.callbackMethod).and.callThrough();
+                            jest.spyOn(fixture.componentInstance, evtObj.callbackMethod).mockImplementation(fixture.componentInstance[evtObj.callbackMethod]);
                             expect(fixture.componentInstance[evtObj.callbackMethod]).toHaveBeenCalledTimes(1);
                         });
                         // });
@@ -360,7 +360,7 @@ export class ComponentTestBase {
                 } else if (evtObj.mouseSelectionEle) {
                     it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
                         fixture.whenStable().then(() => {
-                            spyOn(fixture.componentInstance, evtObj.callbackMethod).and.callThrough();
+                            jest.spyOn(fixture.componentInstance, evtObj.callbackMethod).mockImplementation(fixture.componentInstance[evtObj.callbackMethod]);
                             let eleControl = getHtmlSelectorElement(fixture, evtObj.mouseSelectionEle);
                             eleControl.nativeElement.dispatchEvent(new MouseEvent(evtObj.eventName));
                             expect(fixture.componentInstance[evtObj.callbackMethod]).toHaveBeenCalledTimes(1);
@@ -369,7 +369,7 @@ export class ComponentTestBase {
                 } else if (evtObj.eventTrigger) {
                     it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
                         fixture.whenStable().then(() => {
-                            spyOn(fixture.componentInstance, evtObj.callbackMethod).and.callThrough();
+                            jest.spyOn(fixture.componentInstance, evtObj.callbackMethod).mockImplementation(fixture.componentInstance[evtObj.callbackMethod]);
                             let eleControl = getHtmlSelectorElement(fixture, evtObj.eventTrigger);
                             eleControl.triggerEventHandler(evtObj.eventName, {});
                             expect(fixture.componentInstance[evtObj.callbackMethod]).toHaveBeenCalledTimes(1);

@@ -119,7 +119,7 @@ describe('ListComponent', () => {
         const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
         expect(liElem.nativeElement.classList).toContain('disable-item');
         // the click handler should not be called on disabling the item
-        spyOn(wrapperComponent, 'onListClick');
+        jest.spyOn(wrapperComponent, 'onListClick').mockImplementation(wrapperComponent.onListClick);
         listComponent.getNativeElement().click();
         expect(wrapperComponent.onListClick).toHaveBeenCalledTimes(0);
     });
@@ -136,8 +136,9 @@ describe('ListComponent', () => {
     // });
 
     it('should select item by index from the script in on-render event', () => {
-        spyOn(wrapperComponent, 'onRender');
+        jest.spyOn(wrapperComponent, 'onRender').mockImplementation(wrapperComponent.onRender);
         fixture.detectChanges();
+
         expect(wrapperComponent.onRender).toHaveBeenCalledTimes(1);
         // select item by passing index
         listComponent.selectItem(1);
@@ -148,7 +149,7 @@ describe('ListComponent', () => {
     });
 
     it('should render items depending on the page size provided', (done) => {
-        spyOn(wrapperComponent, 'onRender');
+        jest.spyOn(wrapperComponent, 'onRender').mockImplementation(wrapperComponent.onRender);
         listComponent.setProperty('pagesize', 1);
         fixture.detectChanges();
         expect(wrapperComponent.onRender).toHaveBeenCalledTimes(1);
@@ -168,7 +169,7 @@ describe('ListComponent', () => {
 
         expect(index).toEqual(0);
 
-        // object does not exist in test data      
+        // object does not exist in test data
         const obj = {name: 'Jack', age: 24};
         const val = listComponent.getIndex(obj);
         fixture.detectChanges();
@@ -246,7 +247,7 @@ describe('ListComponent With groupby', () => {
 
 
     it('should select item by model from the script with groupby property in on-render event', () => {
-        spyOn(wrapperComponent, 'onRender');
+        jest.spyOn(wrapperComponent, 'onRender');
         fixture.detectChanges();
         // select item by passing its model
         listComponent.selectItem(listComponent.dataset[0]);

@@ -94,8 +94,7 @@ describe("PanelComponent", () => {
         fixture.whenStable().then(() => {
 
             let menudropdownEle = getMenudropdownEle();
-            spyOn(panelWrapperComponent, 'panel1Actionsclick').and.callThrough();
-
+            jest.spyOn(panelWrapperComponent, 'panel1Actionsclick');
             setTimeout(function () {
                 fixture.detectChanges();
                 fixture.whenStable().then(() => {
