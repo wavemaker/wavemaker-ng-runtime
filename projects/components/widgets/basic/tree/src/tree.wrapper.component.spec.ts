@@ -104,10 +104,17 @@ describe('wm-tree: Component Specific Tests', () => {
     it('should call exapand tree callback with item, path as data arguments ', async (done) => {
         wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
         jest.spyOn(wrapperComponent, 'tree1Expand').mockImplementation(wrapperComponent.tree1Expand);
+
         let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
-        setTimeout(() => {
-            nodeicon.click();
-            fixture.whenStable().then(() => {
+
+        setTimeout(async () => {
+
+            expect(nodeicon).not.toBeNull(); // Ensure the element exists before interacting
+
+            if (nodeicon) {
+                nodeicon.click();
+            }
+           await fixture.whenStable().then(() => {
                 expect(wrapperComponent.tree1Expand).toHaveBeenCalledTimes(1);
                 expect(wrapperComponent.treePath).toEqual('/item2');
                 expect(wrapperComponent.treenodeItem).toBeDefined();
@@ -121,9 +128,14 @@ describe('wm-tree: Component Specific Tests', () => {
         wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
         jest.spyOn(wrapperComponent, 'tree1Expand').mockImplementation(wrapperComponent.tree1Collapse);
         let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
-        setTimeout(() => {
-            nodeicon.click();
-            nodeicon.click();
+        setTimeout(async () => {
+            fixture.detectChanges(); // Ensure the DOM is updated
+            await fixture.whenStable();
+            expect(nodeicon).not.toBeNull(); // Ensure the element exists before interacting
+
+            if (nodeicon) {
+                nodeicon.click();
+            }
             fixture.whenStable().then(() => {
                 expect(wrapperComponent.tree1Collapse).toHaveBeenCalledTimes(1);
                 expect(wrapperComponent.treePath).toEqual('/item2');

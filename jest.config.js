@@ -9,6 +9,7 @@ module.exports = {
   testMatch: [
     //"**/projects/components/widgets/data/list/src/list.wrapper.component.spec.ts"
      "**/projects/**/*.spec.ts"
+    // "**/projects/components/widgets/basic/tree/src/tree.wrapper.component.spec.ts"
   ],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 

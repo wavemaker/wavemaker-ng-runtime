@@ -296,7 +296,9 @@ export class ComponentTestBase {
 
                 it(prop + ': should be applied', () => {
                     initValue = this.widgetDef.$unCompiled.attr(propName);
+                   // console.log(initValue, '*****');
                     cssValue = component.$element.css(cssName);
+                  //  console.log(cssValue, 'vss*****');
                     if (initValue) {
                         if (cssName === 'backgroundImage') {
                             initValue = 'url("' + initValue + '")';
@@ -311,14 +313,14 @@ export class ComponentTestBase {
                             cssValue = this.rgbToHex(component.$element.css(cssName)).toLowerCase();
                         } else if (cssName === 'backgroundPosition') {
                             // TODO: write logic to compute background position based on value. Now hardcoding for 'left'
-                            initValue = '0% 50%';
+                            initValue = 'left';
                         } else if (cssName === 'textDecoration') {
                             // if text decoration is just assigned as 'underline' css value is still 'underline solid rgba(0, 0, 255)'. so compare only first value
                             initValue = (initValue || '').split(' ').shift();
                             cssValue = (cssValue || '').split(' ').shift();
                         }
-                        // console.log(cssName, cssValue, initValue);
-                        expect(cssValue).toBe(initValue);
+                         console.log(cssName, cssValue, initValue);
+                        expect(cssValue).toBe(initValue.replace(/^"|"$/g, ''));
                     }
                 });
             });

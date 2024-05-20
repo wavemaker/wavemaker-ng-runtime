@@ -3,6 +3,9 @@ import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, provideAsWidget
 import { registerProps } from './tree.props';
 import { $parseEvent, getClonedObject } from "@wm/core";
 
+import '@ztree/ztree_v3/js/jquery.ztree.all.js';
+import "./keyboard-navigation.js";
+
 declare const _, $;
 
 const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
