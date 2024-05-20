@@ -4,12 +4,16 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
 import {CarouselDirective} from "./carousel.directive";
 import {CarouselTemplateDirective} from "./carousel-template/carousel-template.directive";
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
-import {App, setPipeProvider, $parseExpr} from '@wm/core';
+import {App, setPipeProvider, $parseExpr, AbstractI18nService} from '@wm/core';
 import { BasicModule } from '@wm/components/basic';
 import { WmComponentsModule } from '@wm/components/base';
 
-// this is required by swipey
-($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
+const mockI18 = {
+    getwidgetLocale() {
+
+    }
+}
+//SwipeAnimation.expressionEvaluator = $parseExpr;
 
 const mockApp = {
     subscribe: () => {}
@@ -55,7 +59,8 @@ describe('wm-carousel: Widget specific test cases', () => {
             imports: [CarouselModule, BasicModule, WmComponentsModule.forRoot()],
             declarations: [CarouselSpec, CarouselDirective, CarouselTemplateDirective],
             providers: [
-                {provide: App, useValue: mockApp}
+                {provide: App, useValue: mockApp},
+                {provide: AbstractI18nService, useValue: mockI18}
             ]
         })
             .compileComponents();

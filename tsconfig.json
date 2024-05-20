@@ -1,120 +1,114 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-      "baseUrl": "./",
-      "downlevelIteration": true,
-      "outDir": "./dist/out-tsc",
-      "sourceMap": true,
-      "declaration": false,
-      "target": "es2022",
-      "module": "es2020",
-      "moduleResolution": "node",
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "typeRoots": [
-        "node_modules/@types"
-      ],
-      "lib": [
-        "es2018",
-        "dom"
-      ],
-      "paths": {
-        "rxjs/observable/throw": [
-          "node_modules/rxjs-compat/_esm2015/observable/throw"
+        "baseUrl": "./",
+        "outDir": "./dist/out-tsc",
+
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+        "importHelpers": true,
+        "target": "ES2022",
+        "module": "ES2022",
+        "paths": {
+            "rxjs/observable/throw": [
+                "node_modules/rxjs-compat/_esm2015/observable/throw"
+            ],
+            "rxjs/observable/*": [
+                "node_modules/rxjs-compat/_esm2015/observable/*"
+            ],
+            "rxjs/Observable": [
+                "node_modules/rxjs-compat/_esm2015/Observable"
+            ],
+            "@wm/build-task": [
+                "libraries/build-task/"
+            ],
+            "@wm/mobile-build-task": [
+                "libraries/mobile-build-task"
+            ],
+            "@wm/core": [
+                "libraries/core"
+            ],
+            "@wavemaker/variables": [
+                "node_modules/@wavemaker/variables/"
+            ],
+            "@wm/components/base": [
+                "libraries/components/base"
+            ],
+            "@wm/components/basic": [
+                "libraries/components/basic/default"
+            ],
+            "@wm/components/input": [
+                "libraries/components/input/default"
+            ],
+            "@wm/components/page": [
+                "libraries/components/page/default"
+            ],
+            "@wm/mobile/components/basic": [
+                "libraries/mobile/components/basic/default"
+            ],
+            "@wm/mobile/components/page": [
+                "libraries/mobile/components/page/default"
+            ],
+            "@wm/components/dialogs": [
+                "libraries/components/dialogs/default"
+            ],
+            "@wm/mobile/components/*": [
+                "libraries/mobile/components/*"
+            ],
+            "@wm/components/*": [
+                "libraries/components/*"
+            ],
+            "@wm/transpiler": [
+                "libraries/transpiler"
+            ],
+            "@wm/security": [
+                "libraries/security"
+            ],
+            "@swipey": [
+                "libraries/swipey"
+            ],
+            "@wm/http": [
+                "libraries/http"
+            ],
+            "@wm/oAuth": [
+                "libraries/oAuth"
+            ],
+            "@wm/variables": [
+                "libraries/variables"
+            ],
+            "@wm/mobile/core": [
+                "libraries/mobile/core"
+            ],
+            "@wm/mobile/components": [
+                "libraries/mobile/components"
+            ],
+            "@wm/mobile/offline": [
+                "libraries/mobile/offline"
+            ],
+            "@wm/mobile/variables": [
+                "libraries/mobile/variables"
+            ],
+            "@wm/runtime/base": [
+                "libraries/runtime/base"
+            ],
+            "@wm/runtime/dynamic": [
+                "libraries/runtime/dynamic"
+            ],
+            "@wm/mobile/runtime": [
+                "libraries/mobile/runtime"
+            ],
+            "@wm/mobile/runtime/dynamic": [
+                "libraries/mobile/runtime-dynamic"
+            ]
+        },
+        "lib": [
+            "es2020",
+            "dom"
         ],
-        "rxjs/observable/*": [
-          "node_modules/rxjs-compat/_esm2015/observable/*"
-        ],
-        "rxjs/Observable": [
-          "node_modules/rxjs-compat/_esm2015/Observable"
-        ],
-        "@wm/build-task": [
-          "libraries/build-task/"
-        ],
-        "@wm/mobile-build-task": [
-          "libraries/mobile-build-task"
-        ],
-        "@wm/core": [
-          "libraries/core"
-        ],
-        "@wavemaker/variables": [
-          "node_modules/@wavemaker/variables/"
-        ],
-        "@wm/components/base": [
-          "libraries/components/base"
-        ],
-        "@wm/components/basic": [
-          "libraries/components/basic/default"
-        ],
-        "@wm/components/input": [
-          "libraries/components/input/default"
-        ],
-        "@wm/components/page": [
-          "libraries/components/page/default"
-        ],
-        "@wm/mobile/components/basic": [
-          "libraries/mobile/components/basic/default"
-        ],
-        "@wm/mobile/components/page": [
-          "libraries/mobile/components/page/default"
-        ],
-        "@wm/components/dialogs": [
-          "libraries/components/dialogs/default"
-        ],
-        "@wm/mobile/components/*": [
-          "libraries/mobile/components/*"
-        ],
-        "@wm/components/*": [
-          "libraries/components/*"
-        ],
-        "@wm/transpiler": [
-          "libraries/transpiler"
-        ],
-        "@wm/security": [
-          "libraries/security"
-        ],
-        "@swipey": [
-          "libraries/swipey"
-        ],
-        "@wm/http": [
-          "libraries/http"
-        ],
-        "@wm/oAuth": [
-          "libraries/oAuth"
-        ],
-        "@wm/variables": [
-          "libraries/variables"
-        ],
-        "@wm/mobile/core": [
-          "libraries/mobile/core"
-        ],
-        "@wm/mobile/components": [
-          "libraries/mobile/components"
-        ],
-        "@wm/mobile/offline": [
-          "libraries/mobile/offline"
-        ],
-        "@wm/mobile/variables": [
-          "libraries/mobile/variables"
-        ],
-        "@wm/runtime/base": [
-          "libraries/runtime/base"
-        ],
-        "@wm/runtime/dynamic": [
-          "libraries/runtime/dynamic"
-        ],
-        "@wm/mobile/runtime": [
-          "libraries/mobile/runtime"
-        ],
-        "@wm/mobile/runtime/dynamic": [
-          "libraries/mobile/runtime-dynamic"
-        ]
-      },
-      "useDefineForClassFields": false
+        "useDefineForClassFields": false,
+        "resolveJsonModule": true
     },
-    "angularCompilerOptions":{
-        "compilationMode": "full",
-        "strictMetadataEmit": false,
-        "fullTemplateTypeCheck": false
+    "angularCompilerOptions": {
+        "trace": true
     }
 }

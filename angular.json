@@ -306,25 +306,6 @@
             }
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/components/base/src/test.ts",
-            "polyfills": "projects/components/base/polyfills.ts",
-            "tsConfig": "projects/components/base/tsconfig.spec.json",
-            "karmaConfig": "projects/components/base/karma.conf.js",
-            "codeCoverage": true,
-            "watch": false,
-            "styles": [
-              "../wavemaker-app-runtime-angularjs/application/styles/css/wm-style.css"
-            ],
-            "scripts": [
-              "./libraries/scripts/swipey/swipey.jquery.plugin.js",
-                "./libraries/scripts/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js"
-            ],
-            "assets": []
-          }
-        }
       }
     },
     "@wm/components/basic": {
@@ -1425,20 +1406,6 @@
             }
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/variables/src/test.ts",
-            "polyfills": "projects/variables/polyfills.ts",
-            "tsConfig": "projects/variables/tsconfig.spec.json",
-            "karmaConfig": "projects/variables/karma.conf.js",
-            "codeCoverage": true,
-            "watch": false,
-            "styles": [],
-            "scripts": [],
-            "assets": []
-          }
-        }
       }
     },
     "@wm/mobile/core": {
@@ -1479,20 +1446,6 @@
             }
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/mobile/components/src/test.ts",
-            "polyfills": "projects/mobile/components/polyfills.ts",
-            "tsConfig": "projects/mobile/components/tsconfig.spec.json",
-            "karmaConfig": "projects/mobile/components/karma.conf.js",
-            "codeCoverage": true,
-            "watch": false,
-            "styles": [],
-            "scripts": [],
-            "assets": []
-          }
-        }
       }
     },
     "@wm/mobile/components/basic/search": {
@@ -1553,18 +1506,6 @@
             }
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/variables/src/test.ts",
-            "polyfills": "projects/variables/polyfills.ts",
-            "tsConfig": "projects/variables/tsconfig.spec.json",
-            "karmaConfig": "projects/variables/karma.conf.js",
-            "styles": [],
-            "scripts": [],
-            "assets": []
-          }
-        }
       }
     },
     "@wm/mobile/components/device/barcode-scanner": {
@@ -1703,18 +1644,6 @@
             "production": {
               "tsConfig": "projects/mobile/components/page/tab-bar/tsconfig.lib.prod.json"
             }
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/mobile/components/src/test.ts",
-            "polyfills": "projects/mobile/components/polyfills.ts",
-            "tsConfig": "projects/mobile/components/tsconfig.spec.json",
-            "karmaConfig": "projects/mobile/components/karma.conf.js",
-            "styles": [],
-            "scripts": [],
-            "assets": []
           }
         }
       }
