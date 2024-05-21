@@ -9,7 +9,7 @@
         [attr.aria-hidden]="!!loadNativeDateInput"
         [value]="displayValue"
         (click)="toggleDpDropdown($event, true)"
-        (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
+        (focus)="onDateTimeInputFocus(); invokeOnFocus($event);onInputFocus($event)"
         (blur)="onInputBlur($event)"
         [disabled]="disabled || readonly"
         [autofocus]="autofocus"

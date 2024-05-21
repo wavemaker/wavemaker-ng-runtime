@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
@@ -21,6 +21,8 @@ import { IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler } fr
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
 import { validateTheMaskedDate } from './imaskUtil';
+import { IMaskDirective } from 'angular-imask';
+
 
 
 declare const _, $, moment;
@@ -81,7 +83,7 @@ export class DateComponent extends BaseDateTimeComponent {
            return validateTheMaskedDate(this.datepattern);
         }
         else {
-            return false;
+            return {};
         }
     }
 
@@ -105,7 +107,7 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     @ViewChild(BsDatepickerDirective) protected bsDatePickerDirective;
-
+    @ViewChild('dateInput', {read: IMaskDirective}) imask: IMaskDirective<any>;
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
     constructor(
@@ -122,12 +124,17 @@ export class DateComponent extends BaseDateTimeComponent {
         this._bsDefaultLoadCheck = true;
         this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
         this.updateFormat('datepattern');
+        if (this.imask) {
+            this.imask.maskRef.updateValue();
+        }
     }
-
     /**
      * This is an internal method triggered when the date input changes
      */
     onDisplayDateChange($event, isNativePicker: boolean = false) {
+        if (this.imask) {
+            this.imask.maskRef.updateValue();
+        }
         if (this.isEnterPressedOnDateInput) {
             this.isEnterPressedOnDateInput = false;
             return;
@@ -143,6 +150,9 @@ export class DateComponent extends BaseDateTimeComponent {
         if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this.displayValue, isNativePicker)) {
             return;
         }
+        if (this.imask) {
+            this.imask.maskRef.value = newVal.toDateString();
+        }
         this.setDataValue(newVal);
     }
 
@@ -157,6 +167,7 @@ export class DateComponent extends BaseDateTimeComponent {
         }
         if (newVal) {
             this.bsDataValue = newVal;
+            this.imask.maskRef.value = newVal.toDateString();
         } else {
             this.bsDataValue = undefined;
         }
@@ -168,6 +179,9 @@ export class DateComponent extends BaseDateTimeComponent {
         this.bsDataValue ? this.activeDate = this.bsDataValue : this.activeDate = new Date();
         if (!this.bsDataValue) {
             this.hightlightToday(this.activeDate);
+        }
+        if (this.imask) {
+            this.imask.maskRef.updateValue();
         }
 
         // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
@@ -185,9 +199,18 @@ export class DateComponent extends BaseDateTimeComponent {
         adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
     }
     onInputBlur($event) {
+        if (this.imask) {
+            this.imask.maskRef.updateValue();
+        }
         if (!$($event.relatedTarget).hasClass('current-date')) {
             this.invokeOnTouched();
             this.invokeEventCallback('blur', { $event });
+        }
+    }
+
+    onInputFocus($event) {
+        if (this.imask) {
+            this.imask.maskRef.value = $event.target.value;
         }
     }
 
@@ -267,6 +290,9 @@ export class DateComponent extends BaseDateTimeComponent {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
                     this.bsDatePickerDirective.bsValue =  event.target.value ? newVal : '';
+                    if (this.imask) {
+                        this.imask.maskRef.value = event.target.value;
+                    }
                 }
                 this.toggleDpDropdown(event);
             } else {
