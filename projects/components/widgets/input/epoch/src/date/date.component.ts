@@ -83,7 +83,7 @@ export class DateComponent extends BaseDateTimeComponent {
            return validateTheMaskedDate(this.datepattern);
         }
         else {
-            return {};
+            return false;
         }
     }
 
@@ -150,9 +150,6 @@ export class DateComponent extends BaseDateTimeComponent {
         if (isNativePicker && this.minDateMaxDateValidationOnInput(newVal, $event, this.displayValue, isNativePicker)) {
             return;
         }
-        if (this.imask) {
-            this.imask.maskRef.value = newVal.toDateString();
-        }
         this.setDataValue(newVal);
     }
 
@@ -167,7 +164,9 @@ export class DateComponent extends BaseDateTimeComponent {
         }
         if (newVal) {
             this.bsDataValue = newVal;
-            this.imask.maskRef.value = newVal.toDateString();
+            if (this.imask) {
+                this.imask.maskRef.updateValue();
+            }
         } else {
             this.bsDataValue = undefined;
         }
