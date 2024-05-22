@@ -14,11 +14,11 @@ export const datepatternTest = (fixture, selector: string, inputSelector: string
             let splitHrmMin = attrVal.split('T');
             if(splitHrmMin && splitHrmMin.length > 1) {
                 let hrsmin = splitHrmMin[1].replaceAll('M','m');
-                attrVal = splitHrmMin[0] + 'T' + hrsmin; 
+                attrVal = splitHrmMin[0] + 'T' + hrsmin;
             }
         } else {
             attrVal = attrVal.replaceAll('y', 'Y').replaceAll('d', 'D');
-           
+
         }
         expect(moment(dateInputControl.nativeElement.value, attrVal, true).isValid()).toBe(true);
     })
@@ -123,6 +123,9 @@ export class MockAbstractI18nService {
 
     public getLocalizedMessage(val) {
         return val;
+    }
+    public getwidgetLocale() {
+        return 'en';
     }
 
 }

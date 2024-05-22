@@ -22,6 +22,7 @@ import {
     styler
 } from '@wm/components/base';
 
+import "fullcalendar/main.min.js";
 import {registerProps} from './calendar.props';
 
 declare const _, $, moment;

@@ -7,6 +7,7 @@ import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-prov
 import {App, setPipeProvider, $parseExpr, AbstractI18nService} from '@wm/core';
 import { BasicModule } from '@wm/components/basic';
 import { WmComponentsModule } from '@wm/components/base';
+import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 
 const mockI18 = {
     getwidgetLocale() {
@@ -60,7 +61,7 @@ describe('wm-carousel: Widget specific test cases', () => {
             declarations: [CarouselSpec, CarouselDirective, CarouselTemplateDirective],
             providers: [
                 {provide: App, useValue: mockApp},
-                {provide: AbstractI18nService, useValue: mockI18}
+                {provide: AbstractI18nService, useClass: MockAbstractI18nService}
             ]
         })
             .compileComponents();

@@ -7,12 +7,13 @@ import { MenuDropdownComponent } from './menu-dropdown/menu-dropdown.component';
 import { MenuDropdownItemComponent } from './menu-dropdown-item/menu-dropdown-item.component';
 import { NavigationControlDirective } from './nav/navigation-control.directive';
 import { Router } from '@angular/router';
-import { UserDefinedExecutionContext } from '@wm/core';
+import {AbstractI18nService, UserDefinedExecutionContext} from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { ButtonComponent } from '@wm/components/input';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
 import { compileTestComponent, getHtmlSelectorElement } from '../../../../base/src/test/util/component-test-util';
+import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
 
 const markup = `<div
                 wmMenu
@@ -69,7 +70,8 @@ const menuComponentModuleDef: ITestModuleDef = {
         { provide: Router, useValue: Router },
         { provide: SecurityService, useValue: SecurityService },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
-        { provide: ComponentFixtureAutoDetect, useValue: true }
+        { provide: ComponentFixtureAutoDetect, useValue: true },
+        {provide: AbstractI18nService, useClass: MockAbstractI18nService}
     ]
 };
 
@@ -255,7 +257,7 @@ describe('MenuComponent', () => {
             fixture.detectChanges();
             const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
             fixture.whenStable().then(() => {
-                jest.spyOn(menuWrapperComponent, 'menu1Select').mockImplementation(menuWrapperComponent.menu1Select);
+                jest.spyOn(menuWrapperComponent, 'menu1Select');
 
                 const liElements = menudropdownEle.query(By.css('li.app-menu-item'));
                 liElements.nativeElement.click();

@@ -1,5 +1,5 @@
 import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import {App, AppDefaults, setPipeProvider} from '@wm/core';
+import {AbstractI18nService, App, AppDefaults, setPipeProvider} from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -9,6 +9,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
 import { PaginationModule as WmPaginationModule } from '@wm/components/data/pagination';
 import { WmComponentsModule, ToDatePipe, TrustAsPipe } from '@wm/components/base';
+import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 // import { setPipeProvider } from '../../../../../core/src/utils/expression-parser';
 
 let mockApp = {
@@ -67,7 +68,9 @@ describe('ListComponent', () => {
            providers: [
                {provide: App, useValue: mockApp},
                {provide: ToDatePipe, useValue: mockApp},
-               {provide: AppDefaults, useClass: AppDefaults}
+               {provide: AppDefaults, useClass: AppDefaults},
+               {provide: AbstractI18nService, useClass: MockAbstractI18nService}
+
            ]
        })
            .compileComponents();
@@ -119,7 +122,7 @@ describe('ListComponent', () => {
         const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
         expect(liElem.nativeElement.classList).toContain('disable-item');
         // the click handler should not be called on disabling the item
-        jest.spyOn(wrapperComponent, 'onListClick').mockImplementation(wrapperComponent.onListClick);
+        jest.spyOn(wrapperComponent, 'onListClick');
         listComponent.getNativeElement().click();
         expect(wrapperComponent.onListClick).toHaveBeenCalledTimes(0);
     });
@@ -136,7 +139,7 @@ describe('ListComponent', () => {
     // });
 
     it('should select item by index from the script in on-render event', () => {
-        jest.spyOn(wrapperComponent, 'onRender').mockImplementation(wrapperComponent.onRender);
+        jest.spyOn(wrapperComponent, 'onRender');
         fixture.detectChanges();
 
         expect(wrapperComponent.onRender).toHaveBeenCalledTimes(1);
@@ -149,7 +152,7 @@ describe('ListComponent', () => {
     });
 
     it('should render items depending on the page size provided', (done) => {
-        jest.spyOn(wrapperComponent, 'onRender').mockImplementation(wrapperComponent.onRender);
+        jest.spyOn(wrapperComponent, 'onRender');
         listComponent.setProperty('pagesize', 1);
         fixture.detectChanges();
         expect(wrapperComponent.onRender).toHaveBeenCalledTimes(1);
@@ -229,7 +232,8 @@ describe('ListComponent With groupby', () => {
             providers: [
                 {provide: App, useValue: mockApp},
                 {provide: ToDatePipe, useValue: mockApp},
-                {provide: AppDefaults, useClass: AppDefaults}
+                {provide: AppDefaults, useClass: AppDefaults},
+                {provide: AbstractI18nService, useClass: MockAbstractI18nService}
             ]
         })
             .compileComponents();

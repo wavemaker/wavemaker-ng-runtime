@@ -1,23 +1,24 @@
 import {
     waitForAsync, ComponentFixture, ComponentFixtureAutoDetect
 } from '@angular/core/testing';
-import { App } from '@wm/core';
+import {AbstractI18nService, App} from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 
-import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 import { By } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 import { ScrollableDirective } from './scrollable.directive';
-import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
+import { WmComponentsModule, ToDatePipe, StylableComponent, BaseComponent} from '@wm/components/base';
 import { PartialRefProvider, AppDefaults } from '@wm/core';
 import { BaseFormComponent } from 'projects/components/widgets/input/default/src/base-form.component';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
-import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck, getHtmlSelectorElement } from 'projects/components/base/src/test/util/component-test-util';
-
-
+import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck } from 'projects/components/base/src/test/util/component-test-util';
+import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
+import {BaseFormCustomComponent} from 'projects/components/widgets/input/default/src/base-form-custom.component';
+import {DatasetAwareFormComponent} from '@wm/components/input';
 
 const mockApp = {};
 
@@ -89,7 +90,13 @@ const testModuleDef: ITestModuleDef = {
         { provide: AppDefaults, useClass: AppDefaults },
         { provide: TypeaheadMatch, useValue: TypeaheadMatch },
         { provide: ComponentFixtureAutoDetect, useValue: true },
-        { provide: PartialRefProvider, useClass: PartialRefProvider }
+        { provide: PartialRefProvider, useClass: PartialRefProvider },
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService},
+        { provide: BaseComponent, useClass: BaseComponent},
+        { provide: StylableComponent, useClass: StylableComponent},
+        { provide: BaseFormComponent, useClass: BaseFormComponent},
+        { provide: BaseFormCustomComponent, useClass: BaseFormCustomComponent},
+        { provide: DatasetAwareFormComponent, useClass: DatasetAwareFormComponent}
     ]
 };
 
@@ -153,7 +160,7 @@ describe('SearchComponent', () => {
 
     it('should change the input and call the onChange event', waitForAsync(async () => {
         const testValue = 'abc';
-        jest.spyOn(wrapperComponent, 'onChange').mockImplementation(wrapperComponent.onChange);
+        jest.spyOn(wrapperComponent, 'onChange');
         await fixture.whenStable();
         await setInputValue(fixture, '.app-search-input', testValue);
         expect(wmComponent.query).toEqual(testValue);
@@ -163,7 +170,7 @@ describe('SearchComponent', () => {
     it('should trigger the onSubmit callback', waitForAsync(() => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         const testValue = 'te';
-        jest.spyOn(wrapperComponent, 'search1Submit').mockImplementation(wrapperComponent.search1Submit);
+        jest.spyOn(wrapperComponent, 'search1Submit');
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
             let liElement = getLIElement();
             liElement[0].click();
@@ -179,7 +186,7 @@ describe('SearchComponent', () => {
     it('should trigger the onselect callback', waitForAsync(async () => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         const testValue = 'te';
-        jest.spyOn(wrapperComponent, 'search1Select').mockImplementation(wrapperComponent.search1Select);
+        jest.spyOn(wrapperComponent, 'search1Select');
         await setInputValue(fixture, '.app-search-input', testValue);
         let liElement = getLIElement();
         liElement[0].click();
@@ -192,9 +199,7 @@ describe('SearchComponent', () => {
         wmComponent.getWidget().type = 'autocomplete';
         wmComponent.getWidget().showclear = true;
         const testValue = 'te';
-        jest.spyOn(wmComponent as any, 'clearSearch' as any).mockImplementation(($event: any, loadOnClear: any) => {
-            (wmComponent as any)['clearSearch']($event, loadOnClear);
-        });
+        jest.spyOn(wmComponent as any, 'clearSearch' as any);
         await setInputValue(fixture, '.app-search-input', testValue);
         let searchBtnEle = fixture.debugElement.query(By.css('.clear-btn'));
         searchBtnEle.nativeElement.click();

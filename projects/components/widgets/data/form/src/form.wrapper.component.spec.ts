@@ -241,7 +241,6 @@ const testModuleDef: ITestModuleDef = {
         { provide: DynamicComponentRefProvider, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
-        { provide: AbstractI18nService, useValue: mockApp },
         { provide: DecimalPipe, useClass: DecimalPipe },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }
@@ -356,8 +355,8 @@ describe('FormComponent', () => {
             expect(wmComponent.dirty).toBe(true);
             console.log('before form submit, dirty - ', wmComponent.dirty);
 
-            jest.spyOn(wrapperComponent, 'onResult').mockImplementation(wrapperComponent.onResult);
-            jest.spyOn(wrapperComponent, 'onSuccess').mockImplementation(wrapperComponent.onSuccess);
+            jest.spyOn(wrapperComponent, 'onResult');
+            jest.spyOn(wrapperComponent, 'onSuccess');
 
             fixture.whenStable().then(() => {
                 wmComponent.submitForm({});

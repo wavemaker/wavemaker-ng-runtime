@@ -438,7 +438,7 @@ describe("DatetimeComponent", () => {
     it('Should trigger the date control change event', waitForAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-time');
         dateInputControl.nativeElement.click();
-        jest.spyOn(dateWrapperComponent, 'datetime1Change').mockImplementation(dateWrapperComponent.datetime1Change);
+        jest.spyOn(dateWrapperComponent, 'datetime1Change');
 
         fixture.whenStable().then(() => {
             triggerTimerClickonArrowsByIndex(0);

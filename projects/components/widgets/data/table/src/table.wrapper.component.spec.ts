@@ -402,7 +402,6 @@ let providers = [
     { provide: FormBuilder, useClass: FormBuilder },
     { provide: DynamicComponentRefProvider, useValue: mockApp },
     { provide: DatePipe, useClass: DatePipe },
-    { provide: AbstractI18nService, useValue: mockApp },
     { provide: DecimalPipe, useClass: DecimalPipe },
     { provide: AbstractI18nService, useClass: MockAbstractI18nService }
 ]

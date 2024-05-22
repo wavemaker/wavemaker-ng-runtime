@@ -6,7 +6,7 @@ import {SanitizePipe} from "@wm/components/base";
 
 let mockApp = {};
 
-const markup = `<div wmHtml #wm_html2="wmHtml" [attr.aria-label]="wm_html2.hint || 'HTML content'" hint="Html content"  name="html1">`;
+const markup = `<div wmHtml #wm_html2="wmHtml" [attr.aria-label]="wm_html2.hint || 'HTML content'" hint="HTML content"  name="html1">`;
 
 @Component({
     template: markup

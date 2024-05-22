@@ -354,7 +354,7 @@ export class ComponentTestBase {
                         let eleControl = getHtmlSelectorElement(fixture, evtObj.clickableEle);
                         eleControl.nativeElement.click();
                         fixture.whenStable().then(() => {
-                            jest.spyOn(fixture.componentInstance, evtObj.callbackMethod).mockImplementation(fixture.componentInstance[evtObj.callbackMethod]);
+                            jest.spyOn(fixture.componentInstance, evtObj.callbackMethod);
                             expect(fixture.componentInstance[evtObj.callbackMethod]).toHaveBeenCalledTimes(1);
                         });
                         // });
@@ -362,7 +362,7 @@ export class ComponentTestBase {
                 } else if (evtObj.mouseSelectionEle) {
                     it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
                         fixture.whenStable().then(() => {
-                            jest.spyOn(fixture.componentInstance, evtObj.callbackMethod).mockImplementation(fixture.componentInstance[evtObj.callbackMethod]);
+                            jest.spyOn(fixture.componentInstance, evtObj.callbackMethod);
                             let eleControl = getHtmlSelectorElement(fixture, evtObj.mouseSelectionEle);
                             eleControl.nativeElement.dispatchEvent(new MouseEvent(evtObj.eventName));
                             expect(fixture.componentInstance[evtObj.callbackMethod]).toHaveBeenCalledTimes(1);
@@ -371,7 +371,7 @@ export class ComponentTestBase {
                 } else if (evtObj.eventTrigger) {
                     it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
                         fixture.whenStable().then(() => {
-                            jest.spyOn(fixture.componentInstance, evtObj.callbackMethod).mockImplementation(fixture.componentInstance[evtObj.callbackMethod]);
+                            jest.spyOn(fixture.componentInstance, evtObj.callbackMethod);
                             let eleControl = getHtmlSelectorElement(fixture, evtObj.eventTrigger);
                             eleControl.triggerEventHandler(evtObj.eventName, {});
                             expect(fixture.componentInstance[evtObj.callbackMethod]).toHaveBeenCalledTimes(1);
@@ -413,7 +413,7 @@ export class ComponentTestBase {
                 }
                 component.getWidget().hint = 'updated hint';
                 fixture.detectChanges();
-                expect($inputEl.getAttribute('aria-label')).toBe(component.getWidget().hint);
+                expect($inputEl.getAttribute('aria-label')).toBe(component.getWidget().hint || component.getWidget().caption || 'Link');
             });
         });
     }

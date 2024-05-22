@@ -9,6 +9,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import { DatePipe } from '@angular/common';
 import { AbstractI18nService } from '@wm/core';
+import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 
 const mockI18 = {
     initCalendarLocale() {
@@ -48,7 +49,7 @@ const calendarComponentModuleDef: ITestModuleDef = {
     imports: [ComponentsTestModule, FormsModule, BsDatepickerModule],
     providers: [{ provide: ToDatePipe, useClass: ToDatePipe },
     { provide: DatePipe, useClass: DatePipe },
-    { provide: AbstractI18nService, useValue: mockI18 }]
+    { provide: AbstractI18nService, useClass:MockAbstractI18nService  }]
 };
 
 const calendarComponentDef: ITestComponentDef = {
