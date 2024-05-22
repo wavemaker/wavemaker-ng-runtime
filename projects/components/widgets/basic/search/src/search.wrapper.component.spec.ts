@@ -20,7 +20,9 @@ import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-
 import {BaseFormCustomComponent} from 'projects/components/widgets/input/default/src/base-form-custom.component';
 import {DatasetAwareFormComponent} from '@wm/components/input';
 
-const mockApp = {};
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `
         <div wmSearch name="testsearch"

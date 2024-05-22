@@ -91,7 +91,7 @@ describe("wm-rating: Component Specific tests", () => {
         ).toBe(testVal);
     });
     it("should call MouseOver event listener", () => {
-        spyOn(wmComponent, "onMouseOver");
+        jest.spyOn(wmComponent, "onMouseOver");
         testElement.nativeElement.dispatchEvent(new MouseEvent("mouseover"));
         expect(wmComponent.onMouseOver).toHaveBeenCalled();
     });
@@ -103,7 +103,7 @@ describe("wm-rating: Component Specific tests", () => {
         );
     });
     it('should call TouchStart event listener',()=>{
-        spyOn(wmComponent,"onTouchStart");
+        jest.spyOn(wmComponent,"onTouchStart");
         testElement.nativeElement.dispatchEvent(new Event("touchstart"));
         expect(wmComponent.onTouchStart).toHaveBeenCalled();
     });

@@ -11,7 +11,9 @@ import {
 import {IMaskModule} from "angular-imask";
 import {InputColorComponent} from "./input-color.component";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<wm-input type="color" name="text1" hint="colorpicker">`;
 

@@ -11,7 +11,9 @@ import {
 import {IMaskModule} from "angular-imask";
 import {InputCalendarComponent} from "./input-calendar.component";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<wm-input type="date" name="text1" hint="date field">`;
 

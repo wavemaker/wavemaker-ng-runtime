@@ -5,7 +5,9 @@ import {App} from "@wm/core";
 import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../base/src/test/common-widget.specs";
 import {ColorPickerModule} from "ngx-color-picker";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div wmColorPicker name="colorpicker1" hint="colorpicker" tabindex="1">`;
 

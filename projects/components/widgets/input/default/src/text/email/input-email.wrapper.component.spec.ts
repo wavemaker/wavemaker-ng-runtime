@@ -11,7 +11,9 @@ import {
 import {IMaskModule} from "angular-imask";
 import {InputEmailComponent} from "./input-email.component";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<wm-input type="email" name="text1" hint="email field">`;
 

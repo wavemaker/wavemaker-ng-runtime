@@ -4,7 +4,9 @@ import {IframeComponent} from "./iframe.component";
 import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
 import {TrustAsPipe} from "@wm/components/base";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div wmIframe name="iframe1" iframesrc="//bing.com" hint="iframe"></div>`;
 

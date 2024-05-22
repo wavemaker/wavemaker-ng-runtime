@@ -15,7 +15,7 @@ import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../.
 import { ComponentsTestModule } from "../../../../base/src/test/components.test.module";
 import { compileTestComponent } from "../../../../base/src/test/util/component-test-util";
 
-const markup = `<div wmPanel badgevalue="Test val" #wm_panel1="wmPanel" partialContainer [attr.aria-label]="wm_panel1.hint || 'Panel'" wm-navigable-element="true"  subheading="subheading" iconclass="wi wi-account-circle" actions="testData" autoclose="outsideClick" title="Title" name="panel1" hint="panel hint" actionsclick.event="panel1Actionsclick($item)">`;
+const markup = `<div wmPanel badgevalue="Test val" #wm_panel1="wmPanel" partialContainer [attr.aria-label]="wm_panel1.hint || 'panel hint'" wm-navigable-element="true"  subheading="subheading" iconclass="wi wi-account-circle" actions="testData" autoclose="outsideClick" title="Title" name="panel1" hint="panel hint" actionsclick.event="panel1Actionsclick($item)">`;
 @Component({
     template: markup
 })

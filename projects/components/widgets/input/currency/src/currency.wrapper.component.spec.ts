@@ -9,7 +9,9 @@ import { PipeProvider } from "../../../../../runtime-base/src/services/pipe-prov
 import {waitForAsync, ComponentFixture} from '@angular/core/testing';
 import {compileTestComponent, setInputValue} from "../../../../base/src/test/util/component-test-util";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div blur.event="onBlur($event, widget)"
                  focus.event="onFocus($event, widget)"

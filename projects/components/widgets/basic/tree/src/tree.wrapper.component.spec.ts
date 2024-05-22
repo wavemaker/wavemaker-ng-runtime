@@ -6,7 +6,9 @@ import { compileTestComponent } from '../../../../base/src/test/util/component-t
 import {AbstractI18nService, App} from '@wm/core';
 import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 const markup = `<ul wmTree name="tree1" class="testClass" height="800" width="200" tabindex="1" show="true"
                 collapse.event="tree1Collapse($event, widget, $item, $path)"
                 expand.event="tree1Expand($event, widget, $item, $path)"

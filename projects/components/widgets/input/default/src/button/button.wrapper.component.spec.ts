@@ -10,7 +10,7 @@ const markup = `
                 #wm_button1="wmButton"
                 hint="Help text for test label"
                 caption="Test Button"
-                [attr.aria-label]="wm_button1.hint || wm_button1.caption || 'Button'"
+                [attr.aria-label]="wm_button1.hint || wm_button1.caption || 'Help text for test label'"
                 type="button"
                 tabindex="1" badgevalue="1"
                 disabled="false"

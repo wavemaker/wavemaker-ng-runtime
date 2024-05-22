@@ -8,7 +8,9 @@ import { compileTestComponent } from '../../../../base/src/test/util/component-t
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { App } from '@wm/core';
 
-const mockApp = {};
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `
         <div wmWizard role="tablist" stepstyle="justified" name="wizard1" class="classic" show="true" width="800" height="200"

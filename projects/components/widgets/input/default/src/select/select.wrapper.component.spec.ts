@@ -7,7 +7,9 @@ import {ToDatePipe} from "@wm/components/base";
 import {DatePipe} from "@angular/common";
 import {MockAbstractI18nService} from '../../../../../base/src/test/util/date-test-util';
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<wm-select name="select1" hint="select field">`;
 

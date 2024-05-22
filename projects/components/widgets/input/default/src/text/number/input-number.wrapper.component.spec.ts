@@ -11,7 +11,9 @@ import {
 import {IMaskModule} from "angular-imask";
 import {InputNumberComponent} from "./input-number.component";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<wm-input type="number" name="text1" hint="number field">`;
 

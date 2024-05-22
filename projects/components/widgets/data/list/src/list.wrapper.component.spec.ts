@@ -13,7 +13,7 @@ import { MockAbstractI18nService } from 'projects/components/base/src/test/util/
 // import { setPipeProvider } from '../../../../../core/src/utils/expression-parser';
 
 let mockApp = {
-    subscribe: () => {}
+    subscribe: () => { return () => {}}
 };
 
 @Component({

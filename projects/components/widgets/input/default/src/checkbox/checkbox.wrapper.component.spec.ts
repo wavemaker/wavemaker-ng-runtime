@@ -6,7 +6,9 @@ import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../
 import {FormsModule} from "@angular/forms";
 import {App} from "@wm/core";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div wmCheckbox hint="checkbox" caption="Label" name="checkbox1" tabindex="1"></div>`;
 

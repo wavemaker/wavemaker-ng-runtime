@@ -7,7 +7,7 @@ import {
     AppDefaults,
     AbstractI18nService,
     getDateObj,
-    getFormattedDate
+    getFormattedDate, App
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { DatePipe, registerLocaleData } from '@angular/common';
@@ -35,7 +35,7 @@ import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import localeDE from '@angular/common/locales/de';
 
 const mockApp = {
-    subscribe: () => { }
+    subscribe: () => { return () => {}}
 };
 const currentDate = new Date().toISOString().split('T')[0];
 
@@ -85,7 +85,7 @@ class DateWrapperComponent {
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [DateWrapperComponent, DateComponent],
     imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot()],
-    providers: [{ provide: Router, useValue: Router },
+    providers: [{ provide: Router, useValue: Router }, {provide: App, useValue: mockApp},
     { provide: SecurityService, useValue: SecurityService },
     { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
     { provide: AppDefaults, useValue: AppDefaults },

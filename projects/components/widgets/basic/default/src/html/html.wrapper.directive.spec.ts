@@ -4,7 +4,9 @@ import {HtmlDirective} from "./html.directive";
 import {App} from "@wm/core";
 import {SanitizePipe} from "@wm/components/base";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div wmHtml #wm_html2="wmHtml" [attr.aria-label]="wm_html2.hint || 'HTML content'" hint="HTML content"  name="html1">`;
 

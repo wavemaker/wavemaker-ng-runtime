@@ -9,8 +9,10 @@ import {AbstractI18nService, App, AppDefaults} from '@wm/core';
 import { ToDatePipe } from '@wm/components/base';
 import {MockAbstractI18nService} from '../../../../../base/src/test/util/date-test-util';
 
-let mockApp = {};
-const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switch1.hint || 'Switch button'" datavalue="yes" show="true" width="800" height="200" hint="test switch" tabindex="0" disabled="false" name="switch1"></div>`;
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
+const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switch1.hint || 'Switch button'" datavalue="yes" show="true" width="800" height="200" hint="Switch button" tabindex="0" disabled="false" name="switch1"></div>`;
 
 @Component({
     template: markup

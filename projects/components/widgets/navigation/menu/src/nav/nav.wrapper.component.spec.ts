@@ -9,7 +9,9 @@ import { ComponentsTestModule } from '../../../../../base/src/test/components.te
 import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
 import { SecurityService } from '@wm/security';
 
-const mockApp = {};
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 class MockSecurityService { }
 const markup = ` <ul wmNav data-element-type="wmNav" data-role="page-header"  type="pills" autoclose="outsideClick" name="testNav"
                    itemlabel="label" itemlink="link" itemicon="icon" itemaction="task" isactive="active" select.event="onSelect($event, widget, $item)"></ul>`;
@@ -96,7 +98,7 @@ describe('Nav Component', () => {
         expect(wrapperComponent).toBeTruthy();
     });
     it('should trigger select event callback and should contain selecteditem as item having isactive true', (done) => {
-        spyOn(wrapperComponent, 'onSelect');
+        jest.spyOn(wrapperComponent, 'onSelect');
         // navwidget dataset propertychangehandler is having debouncetime so using setimeout
         setTimeout(() => {
             expect(wrapperComponent.onSelect).toHaveBeenCalledTimes(1);

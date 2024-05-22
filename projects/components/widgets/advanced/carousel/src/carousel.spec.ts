@@ -17,7 +17,7 @@ const mockI18 = {
 //SwipeAnimation.expressionEvaluator = $parseExpr;
 
 const mockApp = {
-    subscribe: () => {}
+    subscribe: () => { return () => {}}
 };
 
 const markup = `

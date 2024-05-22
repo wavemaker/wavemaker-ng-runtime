@@ -27,7 +27,8 @@ import { fullNameValidator, registerFullNameValidator, nameComparisionValidator 
 const mockApp = {
     getSelectedLocale: () => {
         return 'en';
-    }
+    },
+    subscribe: () => { return () => {}}
 };
 
 const markup = `<form wmForm role="" #form_1 ngNativeValidate

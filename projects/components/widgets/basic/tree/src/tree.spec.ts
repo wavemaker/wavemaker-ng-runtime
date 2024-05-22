@@ -8,7 +8,7 @@ import {App, setPipeProvider} from "@wm/core";
 import {TrustAsPipe} from '../../../../base';
 
 const mockApp = {
-    subscribe: ()=>{}
+    subscribe: () => { return () => {}}
 };
 
 const markup = `

@@ -10,7 +10,9 @@ import { TrustAsPipe } from '../../../../base/src/pipes/trust-as.pipe';
 import { ImagePipe } from '../../../../base/src/pipes/image.pipe';
 
 
-const mockApp = {};
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `
         <wm-popover
@@ -216,7 +218,7 @@ describe('PopoverComponent', () => {
 
     it('should open the popover on mouse click', waitForAsync(() => {
         fixture.whenStable().then(() => {
-            spyOn(popoverWrapperComponent, 'onClick');
+            jest.spyOn(popoverWrapperComponent, 'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
             fixture.detectChanges();
             expect(document.getElementsByTagName('popover-container').length).toBe(1);
@@ -225,7 +227,7 @@ describe('PopoverComponent', () => {
 
     it('should close the popover when user click outside', waitForAsync(() => {
         fixture.whenStable().then(() => {
-            spyOn(popoverWrapperComponent, 'onClick');
+            jest.spyOn(popoverWrapperComponent, 'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
             fixture.detectChanges();
             expect(document.getElementsByTagName('popover-container').length).toBe(1);

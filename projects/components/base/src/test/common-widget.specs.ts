@@ -413,7 +413,7 @@ export class ComponentTestBase {
                 }
                 component.getWidget().hint = 'updated hint';
                 fixture.detectChanges();
-                expect($inputEl.getAttribute('aria-label')).toBe(component.getWidget().hint || component.getWidget().caption || 'Link');
+                expect($inputEl.getAttribute('aria-label')).toBe('updated hint');
             });
         });
     }

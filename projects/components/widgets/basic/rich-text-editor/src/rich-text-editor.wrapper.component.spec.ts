@@ -7,7 +7,7 @@ import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../.
 import {SanitizePipe} from "@wm/components/base";
 
 const  markup = `<div wmRichTextEditor #wm_richtexteditor1="wmRichTextEditor"
-                        [attr.aria-label]="wm_richtexteditor1.hint || 'Richtext editor'"
+                        [attr.aria-label]="wm_richtexteditor1.hint || 'Help text for test richtext editor'"
                         hint="Help text for test richtext editor"
                         placeholder="test placeholder"
                         readonly="false" show="true" showpreview="false"

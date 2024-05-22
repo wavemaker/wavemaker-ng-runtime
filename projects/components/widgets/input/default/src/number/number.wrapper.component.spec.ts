@@ -11,7 +11,9 @@ import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../
 import {compileTestComponent} from "../../../../../base/src/test/util/component-test-util";
 import { By } from '@angular/platform-browser';
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div wmNumber hint="Number" name="testnumber" tabindex="1" ngModel change.event="onChange($event, widget, newVal, oldVal)"></div>`;
 

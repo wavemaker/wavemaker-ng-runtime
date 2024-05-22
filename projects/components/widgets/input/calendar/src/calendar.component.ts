@@ -505,7 +505,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     ngAfterViewInit() {
         super.ngAfterViewInit();
         const calendarEl = this._calendar.nativeElement;
-        const FullCalendar = window['FullCalendar'];
+        const FullCalendar = window['FullCalendarVDom'];
         const calendar = new FullCalendar.Calendar(calendarEl, this.calendarOptions.calendar);
         this.$fullCalendar =  calendar;
         this.invokeEventCallback('beforerender', {'$event' : {}});

@@ -13,7 +13,9 @@ import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
 import { SearchComponent } from '@wm/components/basic/search';
 import { PartialRefProvider } from '@wm/core';
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<ul wmChips name="chips1" readonly="false" class= "text-success" show="true" width="800" height="200" backgroundcolor="#00ff29"
                     placeholder="" tabindex="0" overflow="auto"></ul>`; // placeholder and tabindex are not working because .bind is not working
