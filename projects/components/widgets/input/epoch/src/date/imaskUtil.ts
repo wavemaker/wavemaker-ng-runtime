@@ -59,7 +59,7 @@ export function validateTheMaskedDate (format)  {
             },
             Y: {
                 mask: IMask.MaskedRange,
-                from: 1900,
+                from: 0,
                 to: 9999,
                 placeholderChar:'Y',
                 maxLength: 4,
