@@ -25,6 +25,7 @@ const markup = `
             shortcutkey="enter"
             popoverwidth="240"
             popoverheight="360"
+            container=".wm-app"
             popoverarrow="true"
             fontsize="16"
             fontfamily="Times New Roman"

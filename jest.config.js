@@ -9,6 +9,7 @@ module.exports = {
   testMatch: [
   // "**/projects/components/widgets/basic/**/*.spec.ts"
     "**/projects/**/*.spec.ts"
+    //"**/projects/components/widgets/navigation/popover/src/popover.wrapper.component.spec.ts"
   //"**/projects/components/widgets/input/default/src/switch/switch.wrapper.component.spec.ts"
     //  "**/projects/components/widgets/basic/**/*.spec.ts"
     //  "**/projects/components/widgets/input/calendar/src/calendar.wrapper.component.spec.ts"
