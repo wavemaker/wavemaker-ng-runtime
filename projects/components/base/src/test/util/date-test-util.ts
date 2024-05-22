@@ -127,6 +127,9 @@ export class MockAbstractI18nService {
     public getwidgetLocale() {
         return 'en';
     }
+    public initCalendarLocale() {
+
+    }
 
 }
 

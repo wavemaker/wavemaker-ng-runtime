@@ -6,6 +6,7 @@ import {APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, SanitizePipe, styler} 
 import { BaseFormCustomComponent } from '@wm/components/input';
 
 import { registerProps } from './rich-text-editor.props';
+import "summernote/dist/summernote-lite.min.js";
 
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 

@@ -401,7 +401,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         super(inj, WIDGET_CONFIG);
 
         this.eventSources.push(this.dataSetEvents);
-        const FullCalendar = window['FullCalendar'];
+        const FullCalendar = window['FullCalendarVDom'];
         if (!FullCalendar.__wm_locale_initialized) {
             i18nService.initCalendarLocale();
             FullCalendar.__wm_locale_initialized = true;

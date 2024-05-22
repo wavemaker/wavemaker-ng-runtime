@@ -5,8 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
-import { App, AppDefaults } from '@wm/core';
+import {AbstractI18nService, App, AppDefaults} from '@wm/core';
 import { ToDatePipe } from '@wm/components/base';
+import {MockAbstractI18nService} from '../../../../../base/src/test/util/date-test-util';
 
 let mockApp = {};
 const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switch1.hint || 'Switch button'" datavalue="yes" show="true" width="800" height="200" hint="test switch" tabindex="0" disabled="false" name="switch1"></div>`;
@@ -26,7 +27,8 @@ const testModuleDef: ITestModuleDef = {
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
-        { provide: AppDefaults, useClass: AppDefaults }
+        { provide: AppDefaults, useClass: AppDefaults },
+        {provide: AbstractI18nService, useClass: MockAbstractI18nService}
     ]
 };
 

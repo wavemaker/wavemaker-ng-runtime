@@ -10,12 +10,10 @@ import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import { DatePipe } from '@angular/common';
 import { AbstractI18nService } from '@wm/core';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
+import {
+    StylableComponent,BaseComponent
+} from '@wm/components/base';
 
-const mockI18 = {
-    initCalendarLocale() {
-
-    }
-}
 
 const markup = `<div
                 wmCalendar
@@ -49,6 +47,8 @@ const calendarComponentModuleDef: ITestModuleDef = {
     imports: [ComponentsTestModule, FormsModule, BsDatepickerModule],
     providers: [{ provide: ToDatePipe, useClass: ToDatePipe },
     { provide: DatePipe, useClass: DatePipe },
+    { provide: BaseComponent, useClass:BaseComponent  },
+    { provide: StylableComponent, useClass:StylableComponent  },
     { provide: AbstractI18nService, useClass:MockAbstractI18nService  }]
 };
 

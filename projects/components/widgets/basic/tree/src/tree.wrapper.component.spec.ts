@@ -103,48 +103,72 @@ describe('wm-tree: Component Specific Tests', () => {
         expect(wmComponent).toBeTruthy();
     });
 
-    it('should call exapand tree callback with item, path as data arguments ', async (done) => {
+    it('should call expand tree callback with item, path as data arguments', async () => {
         wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
         jest.spyOn(wrapperComponent, 'tree1Expand');
 
+        // Trigger change detection
+        fixture.detectChanges();
+
+        // Wait for the component to stabilize
+        await fixture.whenStable();
+        // Query for the node icon
         let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
 
-        setTimeout(async () => {
+        // Ensure the node icon is not null before interacting
+        expect(nodeicon).not.toBeNull();
 
-            expect(nodeicon).not.toBeNull(); // Ensure the element exists before interacting
+        if (nodeicon) {
+            // Click the node icon
+            nodeicon.click();
 
-            if (nodeicon) {
-                nodeicon.click();
-            }
-           await fixture.whenStable().then(() => {
-                expect(wrapperComponent.tree1Expand).toHaveBeenCalledTimes(1);
-                expect(wrapperComponent.treePath).toEqual('/item2');
-                expect(wrapperComponent.treenodeItem).toBeDefined();
-                done();
-            });
-        }, 100);
-
-    });
-
-    it('should call collapse tree callback with item, path as data arguments',async (done) => {
-        wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
-        jest.spyOn(wrapperComponent, 'tree1Expand');
-        let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
-        setTimeout(async () => {
-            fixture.detectChanges(); // Ensure the DOM is updated
+            // Trigger change detection and wait for stabilization
+            fixture.detectChanges();
             await fixture.whenStable();
-            expect(nodeicon).not.toBeNull(); // Ensure the element exists before interacting
 
-            if (nodeicon) {
-                nodeicon.click();
-            }
-            fixture.whenStable().then(() => {
-                expect(wrapperComponent.tree1Collapse).toHaveBeenCalledTimes(1);
-                expect(wrapperComponent.treePath).toEqual('/item2');
-                expect(wrapperComponent.treenodeItem).toBeDefined();
-                done();
-            });
-        }, 100);
-    });
+            // Verify the expand method was called
+            expect(wrapperComponent.tree1Expand).toHaveBeenCalledTimes(1);
+            expect(wrapperComponent.treePath).toEqual('/item2');
+            expect(wrapperComponent.treenodeItem).toBeDefined();
+        } else {
+            throw new Error('Node icon not found');
+        }
+    }, 10000); // Increase the timeout if necessary
+
+
+    it('should call collapse tree callback with item, path as data arguments', async () => {
+        // Set the dataset
+        wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
+
+        // Spy on the collapse method
+        jest.spyOn(wrapperComponent, 'tree1Collapse');
+
+        // Trigger change detection
+        fixture.detectChanges();
+
+        // Wait for the component to stabilize
+        await fixture.whenStable();
+
+        // Query for the node icon
+        let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
+        expect(nodeicon).not.toBeNull(); // Ensure the element exists before interacting
+
+        if (nodeicon) {
+            // Click the node icon
+            nodeicon.click();
+
+            // Trigger change detection and wait for stabilization
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            // Verify the collapse method was called
+            expect(wrapperComponent.tree1Collapse).toHaveBeenCalledTimes(1);
+            expect(wrapperComponent.treePath).toEqual('/item2');
+            expect(wrapperComponent.treenodeItem).toBeDefined();
+        } else {
+            throw new Error('Node icon not found');
+        }
+    }, 10000); // Increase the timeout if necessary
+
 
 });

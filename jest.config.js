@@ -7,9 +7,12 @@ module.exports = {
   roots: ["<rootDir>/projects"],
   testEnvironment: "jsdom",
   testMatch: [
-   // "**/projects/components/widgets/basic/default/src/**/*.spec.ts"
+  // "**/projects/components/widgets/basic/**/*.spec.ts"
      "**/projects/**/*.spec.ts"
-   //  "**/projects/components/widgets/basic/tree/src/tree.wrapper.component.spec.ts"
+   //   "**/projects/components/widgets/data/table/src/table.wrapper.component.spec.ts"
+    //  "**/projects/components/widgets/basic/**/*.spec.ts"
+    //  "**/projects/components/widgets/input/calendar/src/calendar.wrapper.component.spec.ts"
+   // "**/projects/components/widgets/basic/tree/src/tree.wrapper.component.spec.ts"
   ],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 
