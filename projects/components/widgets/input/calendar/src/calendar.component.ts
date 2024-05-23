@@ -401,7 +401,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         super(inj, WIDGET_CONFIG);
 
         this.eventSources.push(this.dataSetEvents);
-        const FullCalendar = window['FullCalendarVDom'];
+        const FullCalendar = window['FullCalendar'];
         if (!FullCalendar.__wm_locale_initialized) {
             i18nService.initCalendarLocale();
             FullCalendar.__wm_locale_initialized = true;
@@ -505,7 +505,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     ngAfterViewInit() {
         super.ngAfterViewInit();
         const calendarEl = this._calendar.nativeElement;
-        const FullCalendar = window['FullCalendarVDom'];
+        const FullCalendar = window['FullCalendar'];
         const calendar = new FullCalendar.Calendar(calendarEl, this.calendarOptions.calendar);
         this.$fullCalendar =  calendar;
         this.invokeEventCallback('beforerender', {'$event' : {}});

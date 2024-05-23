@@ -720,18 +720,18 @@ describe("DataTable", () => {
     describe("Create Operation", () => {
         describe("Read Only", () => {
             describe("Details Below", () => {
-                xit("To Do", () => { });
+                it("To Do", () => { });
             });
             describe("Simple View Only", () => {
-                xit("To Do", () => { });
+                it("To Do", () => { });
             });
         });
         describe("Editable", () => {
             describe("Form As Dialog", () => {
-                xit("To Do", () => { });
+                it("To Do", () => { });
             });
             describe("Form Below", () => {
-                xit("To Do", () => { });
+                it("To Do", () => { });
             });
             describe("Inline Editable", () => {
                 @Component({
@@ -859,7 +859,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                xit('should respect the maxdate validation', waitForAsync(() => {
+                it('should respect the maxdate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-12-05';
                     const validTestValue = '2019-11-02';
                     dateValidators(
@@ -913,7 +913,7 @@ describe("DataTable", () => {
                     defaultAndCustomValidator(false, wmComponent, inline_edit_fixture);
                 }));
 
-                xit('should trigger observe validator', fakeAsync(() => {
+                it('should trigger observe validator', fakeAsync(() => {
                     observeValidator(false, wmComponent, inline_edit_fixture);
                 }));
 
@@ -1075,7 +1075,7 @@ describe("DataTable", () => {
                     ).toBeTruthy();
                 });
 
-                xit('should trigger default maxvalue validator', waitForAsync(() => {
+                it('should trigger default maxvalue validator', waitForAsync(() => {
                     const invalidTestValue = 20;
                     const validTestValue = 18;
                     defaultValidators(
@@ -1106,7 +1106,7 @@ describe("DataTable", () => {
                     );
                 }));
 
-                xit('should respect the maxdate validation', waitForAsync(() => {
+                it('should respect the maxdate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-12-05';
                     const validTestValue = '2019-11-02';
                     dateValidators(
@@ -1159,7 +1159,7 @@ describe("DataTable", () => {
                     defaultAndCustomValidator(true, wmComponent, quick_edit_fixture);
                 }));
 
-                xit('should trigger observe validator', fakeAsync(() => {
+                it('should trigger observe validator', fakeAsync(() => {
                     observeValidator(true, wmComponent, quick_edit_fixture);
                 }));
 
@@ -1167,23 +1167,23 @@ describe("DataTable", () => {
                     customValidatorAsync(true, wmComponent, quick_edit_fixture);
                 }));
 
-                xit("Tab out between columns", () => { });
-                xit("Tab out of last columns with empty new-row", () => { });
-                xit("Tab out of last columns with non empty new-row", () => { });
-                xit("Tab out of last columns with non-empty exisiting row", () => { });
+                it("Tab out between columns", () => { });
+                it("Tab out of last columns with empty new-row", () => { });
+                it("Tab out of last columns with non empty new-row", () => { });
+                it("Tab out of last columns with non-empty exisiting row", () => { });
                 describe("Pagination", () => {
                     describe("Basic", () => {
                         // ADD COLUMNS STEP
-                        xit("To Do", () => { });
+                        it("To Do", () => { });
                     });
                     describe("Pager", () => {
-                        xit("To Do", () => { });
+                        it("To Do", () => { });
                     });
                     describe("Classic", () => {
-                        xit("To Do", () => { });
+                        it("To Do", () => { });
                     });
                     describe("None", () => {
-                        xit("To Do", () => { });
+                        it("To Do", () => { });
                     });
                 });
             });

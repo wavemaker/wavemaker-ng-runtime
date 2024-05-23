@@ -36,7 +36,6 @@ const componentDef: ITestComponentDef = {
     testComponent: RichTextEditorWrapperComponent
 };
 const testBase: ComponentTestBase = new ComponentTestBase(componentDef);
-
 testBase.verifyPropsInitialization();
 testBase.verifyCommonProperties();
 testBase.verifyAccessibility();

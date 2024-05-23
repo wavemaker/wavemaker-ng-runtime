@@ -233,7 +233,7 @@ describe('SearchComponent', () => {
     }));
 
 
-    xit('should be able show the typehead values in descending order', waitForAsync(() => {
+    it('should be able show the typehead values in descending order', waitForAsync(() => {
         wmComponent.getWidget().dataset = [{ name: 'Aman', age: 21 }, { name: 'Tony', age: 42 }, { name: 'John', age: 25 }, { name: 'Berf', age: 28 }];
         wmComponent.getWidget().searchkey = 'name';
         wmComponent.getWidget().displaylabel = 'name';
@@ -443,7 +443,7 @@ describe('SearchComponent', () => {
         expect(input.value).toBe('');
     }));
 
-    xit('should invoke getTransformedData method ', waitForAsync(() => {
+    it('should invoke getTransformedData method ', waitForAsync(() => {
         const testValue = 'te';
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
         jest.spyOn(wmComponent, 'getTransformedData');
@@ -457,7 +457,7 @@ describe('SearchComponent', () => {
         // });
     }));
 
-    xit('datavalue change should update the static variable bound to the dataset', ((done) => {
+    it('datavalue change should update the static variable bound to the dataset', ((done) => {
         const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
         const baseformComponent = new (BaseFormComponent as any)((wmComponent as any).inj, WIDGET_CONFIG);
         jest.spyOn(baseformComponent.__proto__, 'updateBoundVariable');

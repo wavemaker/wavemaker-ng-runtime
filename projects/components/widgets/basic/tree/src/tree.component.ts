@@ -4,7 +4,7 @@ import { registerProps } from './tree.props';
 import { $parseEvent, getClonedObject } from "@wm/core";
 
 import '@ztree/ztree_v3/js/jquery.ztree.all.js';
-import "./keyboard-navigation.js";
+import "libraries/scripts/tree-keyboard-navigation/keyboard-navigation.js";
 
 declare const _, $;
 

@@ -8,6 +8,24 @@ global.$ = global.jQuery;
 
 global._ = require("lodash");
 global.moment = require("moment");
+class IntersectionObserver {
+    constructor(callback, options) {
+
+    }
+
+    observe(element) {
+
+    }
+
+    unobserve() {
+        return null;
+    }
+
+    disconnect() {
+        return null;
+    }
+}
+global.IntersectionObserver = IntersectionObserver;
 import "jquery-ui/ui/disable-selection.js";
 import "jquery-ui/ui/version.js";
 import "jquery-ui/ui/widget.js";

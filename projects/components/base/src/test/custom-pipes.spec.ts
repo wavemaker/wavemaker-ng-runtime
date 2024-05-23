@@ -6,8 +6,12 @@ import { Component, OnInit } from '@angular/core';
 import { compileTestComponent } from './util/component-test-util';
 import { ITestModuleDef } from './common-widget.specs';
 import { CustomPipe, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe, SanitizePipe } from '@wm/components/base';
-import { CustomPipeManager } from '@wm/core';
+import {AbstractI18nService, App, CustomPipeManager} from '@wm/core';
+import {MockAbstractI18nService} from './util/date-test-util';
 
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 @Component({
     template: '<div></div>'
 })
@@ -22,7 +26,10 @@ const testModuleDef: ITestModuleDef = {
         BrowserModule,
     ],
     declarations: [PipeWrapperComponent],
-    providers: [DecimalPipe, DatePipe, TrustAsPipe, SanitizePipe, CustomPipeManager]
+    providers: [   {provide: App, useValue: mockApp},
+        {provide: AbstractI18nService, useClass: MockAbstractI18nService},
+        DecimalPipe, DatePipe, TrustAsPipe, SanitizePipe, CustomPipeManager
+    ]
 };
 
 declare const moment;
@@ -32,7 +39,7 @@ describe('ToNumber pipe', () => {
     let pipe: ToNumberPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        // pipe = new ToNumberPipe(TestBed.inject(DecimalPipe));
+        pipe = new ToNumberPipe(TestBed.inject(DecimalPipe), TestBed.inject(AbstractI18nService));
     });
 
     it('create an instance', () => {
@@ -80,7 +87,7 @@ describe('ToDate pipe', () => {
     let pipe: ToDatePipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        // pipe = new ToDatePipe(TestBed.inject(DatePipe));
+        pipe = new ToDatePipe(TestBed.inject(DatePipe), TestBed.inject(AbstractI18nService), TestBed.inject(CustomPipeManager));
     });
 
     it('create an instance', () => {
@@ -168,7 +175,7 @@ describe('NumberToString pipe', () => {
     let pipe: NumberToStringPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        // pipe = new NumberToStringPipe(TestBed.inject(DecimalPipe));
+        pipe = new NumberToStringPipe(TestBed.inject(DecimalPipe), TestBed.inject(AbstractI18nService));
     });
 
     it('create an instance', () => {
@@ -238,7 +245,7 @@ describe('ToCurrency pipe', () => {
     let pipe: ToCurrencyPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        // pipe = new ToCurrencyPipe(TestBed.inject(DecimalPipe));
+        pipe = new ToCurrencyPipe(TestBed.inject(DecimalPipe), TestBed.inject(AbstractI18nService));
     });
 
     it('create an instance', () => {

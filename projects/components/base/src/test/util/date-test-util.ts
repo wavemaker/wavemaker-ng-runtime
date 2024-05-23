@@ -130,6 +130,9 @@ export class MockAbstractI18nService {
     public initCalendarLocale() {
 
     }
+    public getTimezone() {
+
+    }
 
 }
 

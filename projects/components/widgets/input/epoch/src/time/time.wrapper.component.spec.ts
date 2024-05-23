@@ -28,7 +28,7 @@ import {
     AppDefaults,
     AbstractI18nService,
     getNativeDateObject,
-    getFormattedDate
+    getFormattedDate, App
 } from '@wm/core';
 import { FormsModule } from '@angular/forms';
 import { ToDatePipe } from '../../../../../base/src/pipes/custom-pipes';
@@ -40,6 +40,9 @@ import localeRO from '@angular/common/locales/ro';
 declare const moment;
 
 const currentTime = moment(new Date()).format('hh:mm:ss');
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 class MockAbstractI18nServiceDe {
     constructor() {
@@ -108,6 +111,7 @@ const dateComponentModuleDef: ITestModuleDef = {
     declarations: [TimeWrapperComponent, TimeComponent],
     imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
+        { provide: App, useValue: mockApp },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: AppDefaults, useValue: AppDefaults },
         { provide: ToDatePipe, useClass: ToDatePipe },

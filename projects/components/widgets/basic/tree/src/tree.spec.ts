@@ -4,8 +4,9 @@ import { By } from '@angular/platform-browser';
 
 import {TreeComponent} from "./tree.component";
 import {PipeProvider} from "../../../../../runtime-base/src/services/pipe-provider.service";
-import {App, setPipeProvider} from "@wm/core";
+import {App, setPipeProvider, AbstractI18nService} from "@wm/core";
 import {TrustAsPipe} from '../../../../base';
+import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 
 const mockApp = {
     subscribe: () => { return () => {}}
@@ -67,6 +68,7 @@ describe('wm-tree: Widget specific test cases', () => {
             providers: [
                 {provide: App, useValue: mockApp},
                 {provide: TrustAsPipe, useClass: TrustAsPipe},
+                { provide: AbstractI18nService, useClass:MockAbstractI18nService  }
             ]
         })
             .compileComponents();

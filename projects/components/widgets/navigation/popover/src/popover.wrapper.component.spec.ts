@@ -114,6 +114,7 @@ describe('PopoverComponent', () => {
         fixture = compileTestComponent(testModuleDef, PopoverwrapperComponent);
         popoverWrapperComponent = fixture.componentInstance;
         wmComponent = popoverWrapperComponent.wmComponent;
+        //$('body').addClass('wm-app');
         fixture.detectChanges();
     }));
 
@@ -159,7 +160,7 @@ describe('PopoverComponent', () => {
         })
     }))
 
-    xit('popover width ', waitForAsync(() => {
+    it('popover width ', waitForAsync(() => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
         fixture.detectChanges();
         fixture.whenStable().then(() => {
@@ -240,7 +241,7 @@ describe('PopoverComponent', () => {
         })
     }))
 
-    xit('should open the popover on mouse hover', waitForAsync(() => {
+    it('should open the popover on mouse hover', waitForAsync(() => {
 
         fixture.whenStable().then(() => {
             wmComponent.getWidget().nativeElement.interaction = 'hover';

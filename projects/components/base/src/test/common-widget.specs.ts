@@ -95,7 +95,8 @@ export class ComponentTestBase {
                         processedAttrValue = toDimension(processedAttrValue);
                     }
 
-
+console.log(component[attrName], 'component[attrName]')
+                    console.log(processedAttrValue, 'processedAttrValue')
                     expect(component[attrName]).toBe(processedAttrValue);
                 });
 

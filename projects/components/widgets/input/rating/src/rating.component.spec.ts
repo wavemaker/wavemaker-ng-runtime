@@ -12,7 +12,12 @@ import { RatingComponent } from "./rating.component";
 import { ComponentFixture } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { Component, ViewChild } from "@angular/core";
-import { AppDefaults } from "@wm/core";
+import {AbstractI18nService, App, AppDefaults} from '@wm/core';
+import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
+
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div tabindex="1"  wmRating  name="rating1"></div>`;
 @Component({
@@ -26,6 +31,8 @@ const testModuleDef: ITestModuleDef = {
     declarations: [RatingComponent, TestComponent],
     imports: [FormsModule, ComponentsTestModule],
     providers: [
+        { provide: App, useValue: mockApp },
+        {provide: AbstractI18nService, useClass: MockAbstractI18nService},
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
         { provide: AppDefaults, useClass: AppDefaults }
@@ -61,12 +68,12 @@ describe("wm-rating: Component Specific tests", () => {
         fixture.detectChanges();
         expect(
             fixture.debugElement.queryAll(By.css("label.active")).length
-        ).toBeTruthy(wmComponent.datavalue);
+        ).toBeTruthy();
         wmComponent.datavalue = 5;
         fixture.detectChanges();
         expect(
             fixture.debugElement.queryAll(By.css("label.active")).length
-        ).toBeTruthy(wmComponent.datavalue);
+        ).toBeTruthy();
     });
     it("should set the caption as per datavalue", () => {
         wmComponent.datavalue = 5;

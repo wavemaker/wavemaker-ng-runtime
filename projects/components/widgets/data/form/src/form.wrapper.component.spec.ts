@@ -25,9 +25,6 @@ import { triggerTimerClickonArrowsByIndex, getTimePickerElement, MockAbstractI18
 import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
 
 const mockApp = {
-    getSelectedLocale: () => {
-        return 'en';
-    },
     subscribe: () => { return () => {}}
 };
 
@@ -243,7 +240,7 @@ const testModuleDef: ITestModuleDef = {
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
         { provide: DecimalPipe, useClass: DecimalPipe },
-        { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
+        { provide: UserDefinedExecutionContext, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }
     ]
 };
@@ -522,7 +519,7 @@ describe('FormComponent', () => {
         );
     }));
 
-    xit('should respect the mintime validation', waitForAsync(() => {
+    it('should respect the mintime validation', waitForAsync(() => {
         let formField = wmComponent.formfields['timeofbirth'];
         let timeWidget = formField.getWidget().formWidget;
         timeWidget.timepattern = 'HH:mm:ss';
@@ -542,7 +539,7 @@ describe('FormComponent', () => {
         });
     }));
 
-    xit('should respect the maxtime validation', waitForAsync(() => {
+    it('should respect the maxtime validation', waitForAsync(() => {
         let formField = wmComponent.formfields['timeofbirth'];
         let timeWidget = formField.getWidget().formWidget;
         timeWidget.timepattern = 'HH:mm:ss';

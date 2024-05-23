@@ -7,14 +7,14 @@ module.exports = {
   roots: ["<rootDir>/projects"],
   testEnvironment: "jsdom",
   testMatch: [
-  // "**/projects/components/widgets/basic/**/*.spec.ts"
-    "**/projects/**/*.spec.ts"
-    //"**/projects/components/widgets/navigation/popover/src/popover.wrapper.component.spec.ts"
-  //"**/projects/components/widgets/input/default/src/switch/switch.wrapper.component.spec.ts"
-    //  "**/projects/components/widgets/basic/**/*.spec.ts"
-    //  "**/projects/components/widgets/input/calendar/src/calendar.wrapper.component.spec.ts"
-   // "**/projects/components/widgets/basic/tree/src/tree.wrapper.component.spec.ts"
-    // "**/projects/components/widgets/navigation/menu/src/menu.wrapper.component.spec.ts"
+   "**/projects/**/*.spec.ts"
+    //  "**/projects/components/widgets/data/form/src/form.wrapper.component.spec.ts"
+   //   "**/projects/components/widgets/navigation/popover/src/popover.wrapper.component.spec.ts"
+     // "**/projects/components/base/src/test/custom-pipes.spec.ts"
+   //   "**/projects/components/widgets/containers/panel/src/panel.wrapper.component.spec.ts"
+    //  "**/projects/components/widgets/navigation/popover/src/popover.wrapper.component.spec.ts"
+ //     "**/projects/components/widgets/basic/rich-text-editor/src/rich-text-editor.component.ts"
+
   ],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 

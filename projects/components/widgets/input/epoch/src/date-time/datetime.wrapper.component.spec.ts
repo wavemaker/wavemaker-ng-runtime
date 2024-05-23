@@ -6,7 +6,7 @@ import {
     AppDefaults,
     AbstractI18nService,
     getNativeDateObject,
-    getFormattedDate
+    getFormattedDate, App
 } from '@wm/core';
 import { WmComponentsModule } from '@wm/components/base';
 import { SecurityService } from '@wm/security';
@@ -47,6 +47,11 @@ import {
 } from '../../../../../base/src/test/util/date-test-util';
 import localeDE from '@angular/common/locales/de';
 import localeRO from '@angular/common/locales/ro';
+
+
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const getFormatedDate = (date?) => {
     if (!date) {
@@ -107,6 +112,7 @@ const dateComponentModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent, DatetimeComponent],
     imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [{ provide: Router, useValue: Router },
+    { provide: App, useValue: mockApp },
     { provide: SecurityService, useValue: SecurityService },
     { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
     { provide: AppDefaults, useValue: AppDefaults },

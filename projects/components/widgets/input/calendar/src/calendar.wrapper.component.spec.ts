@@ -100,7 +100,7 @@ describe('CalendarComponent', () => {
         })
     }))
 
-    xit('should apply events data to the calendar', waitForAsync(() => {
+    it('should apply events data to the calendar', waitForAsync(() => {
         fixture.whenStable().then(() => {
             wmComponent.getWidget().dataset = calenderWrapperComponent.testData1;
             fixture.detectChanges();

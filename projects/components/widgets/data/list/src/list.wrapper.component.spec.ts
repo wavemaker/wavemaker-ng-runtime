@@ -8,7 +8,7 @@ import { ListItemDirective } from './list-item.directive';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
 import { PaginationModule as WmPaginationModule } from '@wm/components/data/pagination';
-import { WmComponentsModule, ToDatePipe, TrustAsPipe } from '@wm/components/base';
+import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 // import { setPipeProvider } from '../../../../../core/src/utils/expression-parser';
 
@@ -67,7 +67,7 @@ describe('ListComponent', () => {
            declarations: [ListWrapperComponent, ListComponent, ListItemDirective],
            providers: [
                {provide: App, useValue: mockApp},
-               {provide: ToDatePipe, useValue: mockApp},
+               {provide: ToDatePipe, useClass: ToDatePipe},
                {provide: AppDefaults, useClass: AppDefaults},
                {provide: AbstractI18nService, useClass: MockAbstractI18nService}
 
@@ -231,7 +231,7 @@ describe('ListComponent With groupby', () => {
             declarations: [ListWrapperComponent, ListComponent, ListItemDirective],
             providers: [
                 {provide: App, useValue: mockApp},
-                {provide: ToDatePipe, useValue: mockApp},
+                {provide: ToDatePipe, useClass: ToDatePipe},
                 {provide: AppDefaults, useClass: AppDefaults},
                 {provide: AbstractI18nService, useClass: MockAbstractI18nService}
             ]
