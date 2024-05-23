@@ -10,6 +10,7 @@ import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-prov
 import { PaginationModule as WmPaginationModule } from '@wm/components/data/pagination';
 import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
+import { DatePipe } from '@angular/common';
 // import { setPipeProvider } from '../../../../../core/src/utils/expression-parser';
 
 let mockApp = {
@@ -66,11 +67,11 @@ describe('ListComponent', () => {
            ],
            declarations: [ListWrapperComponent, ListComponent, ListItemDirective],
            providers: [
-               {provide: App, useValue: mockApp},
-               {provide: ToDatePipe, useClass: ToDatePipe},
-               {provide: AppDefaults, useClass: AppDefaults},
-               {provide: AbstractI18nService, useClass: MockAbstractI18nService}
-
+               { provide: App, useValue: mockApp },
+               { provide: ToDatePipe, useClass: ToDatePipe },
+               { provide: AppDefaults, useClass: AppDefaults },
+               { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+               { provide: DatePipe, useValue: DatePipe }
            ]
        })
            .compileComponents();
@@ -233,7 +234,8 @@ describe('ListComponent With groupby', () => {
                 {provide: App, useValue: mockApp},
                 {provide: ToDatePipe, useClass: ToDatePipe},
                 {provide: AppDefaults, useClass: AppDefaults},
-                {provide: AbstractI18nService, useClass: MockAbstractI18nService}
+                {provide: AbstractI18nService, useClass: MockAbstractI18nService},
+                { provide: DatePipe, useValue: DatePipe }
             ]
         })
             .compileComponents();
@@ -253,13 +255,17 @@ describe('ListComponent With groupby', () => {
     it('should select item by model from the script with groupby property in on-render event', () => {
         jest.spyOn(wrapperComponent, 'onRender');
         fixture.detectChanges();
-        // select item by passing its model
+    
+        // Ensure dataset is populated
+        expect(listComponent.dataset.length).toBeGreaterThan(0);
+    
+        // Select item by passing its model
         listComponent.selectItem(listComponent.dataset[0]);
         fixture.detectChanges();
-
-        // selected item should be the second one in dataset
+    
+        // Selected item should be the first one in dataset
         expect(listComponent.selecteditem).toEqual(listComponent.dataset[0]);
-    });
+      });
 
     it('should display header as others when grouping is done with a column having empty value', () => {
         fixture.detectChanges();
