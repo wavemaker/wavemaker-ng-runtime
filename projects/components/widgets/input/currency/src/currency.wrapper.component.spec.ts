@@ -8,6 +8,7 @@ import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../
 import { PipeProvider } from "../../../../../runtime-base/src/services/pipe-provider.service";
 import {waitForAsync, ComponentFixture} from '@angular/core/testing';
 import {compileTestComponent, setInputValue} from "../../../../base/src/test/util/component-test-util";
+import { MockAbstractI18nService } from "projects/components/base/src/test/util/date-test-util";
 
 let mockApp = {
     subscribe: () => { return () => {}}
@@ -18,12 +19,6 @@ const markup = `<div blur.event="onBlur($event, widget)"
                  change.event="onChange($event, widget, newVal, oldVal)"
                  wmCurrency name="currency1" step="0.01" hint="currency" inputmode="natural"
                  trailingzero="true" tabindex="1"></div>`;
-
-class MockAbstractI18nService {
-    public getSelectedLocale() {
-        return 'en';
-    }
-}
 
 @Component({
     template: markup

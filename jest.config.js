@@ -3,8 +3,8 @@ module.exports = {
   roots: ["<rootDir>/projects"],
   testEnvironment: "jsdom",
   testMatch: [
-    //  "**/projects/**/*.spec.ts"
-    "**/projects/components/widgets/data/list/src/list.wrapper.component.spec.ts"
+     "**/projects/**/*.spec.ts"
+    // "**/projects/components/widgets/input/currency/src/currency.wrapper.component.spec.ts"
 
   ],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],

@@ -5,12 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
-import {AbstractI18nService, App, AppDefaults} from '@wm/core';
-import { ToDatePipe } from '@wm/components/base';
-import {MockAbstractI18nService} from '../../../../../base/src/test/util/date-test-util';
+import { AbstractI18nService, App, AppDefaults } from '@wm/core';
+import { BaseComponent, StylableComponent, ToDatePipe } from '@wm/components/base';
+import { MockAbstractI18nService } from '../../../../../base/src/test/util/date-test-util';
+import { BaseFormCustomComponent } from '../base-form-custom.component';
+import { BaseFormComponent } from '../base-form.component';
+import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
+import { PipeProvider } from 'projects/runtime-base/src/services/pipe-provider.service';
 
 const mockApp = {
-    subscribe: () => { return () => {}}
+    subscribe: () => { return () => { } }
 };
 const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switch1.hint || 'Switch button'" datavalue="yes" show="true" width="800" height="200" hint="Switch button" tabindex="0" disabled="false" name="switch1"></div>`;
 
@@ -18,7 +22,7 @@ const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switc
     template: markup
 })
 class SwitchWrapperComponent {
-    @ViewChild(SwitchComponent, /* TODO: add static flag */ {static: true}) wmComponent: SwitchComponent;
+    @ViewChild(SwitchComponent, /* TODO: add static flag */ { static: true }) wmComponent: SwitchComponent;
 }
 const testModuleDef: ITestModuleDef = {
     imports: [
@@ -30,7 +34,13 @@ const testModuleDef: ITestModuleDef = {
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
         { provide: AppDefaults, useClass: AppDefaults },
-        {provide: AbstractI18nService, useClass: MockAbstractI18nService}
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+        { provide: BaseComponent, useClass: BaseComponent },
+        { provide: StylableComponent, useClass: StylableComponent },
+        { provide: BaseFormComponent, useClass: BaseFormComponent },
+        { provide: BaseFormCustomComponent, useClass: BaseFormCustomComponent },
+        { provide: DatasetAwareFormComponent, useClass: DatasetAwareFormComponent },
+        { provide: PipeProvider, useClass: PipeProvider }
     ]
 };
 
@@ -54,7 +64,7 @@ describe('wm-switch: Component specific tests: ', () => {
     let fixture: ComponentFixture<SwitchWrapperComponent>;
 
     beforeEach(waitForAsync(() => {
-        fixture  = compileTestComponent(testModuleDef, SwitchWrapperComponent);
+        fixture = compileTestComponent(testModuleDef, SwitchWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
         fixture.detectChanges();
