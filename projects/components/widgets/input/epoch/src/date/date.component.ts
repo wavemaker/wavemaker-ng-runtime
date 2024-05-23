@@ -79,8 +79,11 @@ export class DateComponent extends BaseDateTimeComponent {
         return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat, this.timeZone, null, this.isCurrentDate, this) || '';
     }
     get mask() {
+        if (this.imask) {
+            this.imask.destroyMask();
+        }
         if (this.datepattern) {
-           return validateTheMaskedDate(this.datepattern);
+           return validateTheMaskedDate(this.datepattern, this.selectedLocale);
         }
         else {
             return false;
@@ -209,7 +212,7 @@ export class DateComponent extends BaseDateTimeComponent {
 
     onInputFocus($event) {
         if (this.imask) {
-            this.imask.maskRef.value = $event.target.value;
+            this.imask.maskRef.updateValue();
         }
     }
 
@@ -290,7 +293,7 @@ export class DateComponent extends BaseDateTimeComponent {
                     this.isEnterPressedOnDateInput = true;
                     this.bsDatePickerDirective.bsValue =  event.target.value ? newVal : '';
                     if (this.imask) {
-                        this.imask.maskRef.value = event.target.value;
+                        this.imask.maskRef.updateValue();
                     }
                 }
                 this.toggleDpDropdown(event);
