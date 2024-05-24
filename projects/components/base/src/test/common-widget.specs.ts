@@ -34,12 +34,20 @@ export class ComponentTestBase {
      * util function to convert rgb color code to hex
      * @param rgbColor, rgb color expression
      */
-    private rgbToHex(rgbColor) {
-        rgbColor = rgbColor.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-        function hex(x) {
+    private rgbToHex(rgbColor: string) {
+        // Check if the input is already in hex format
+        if (rgbColor.match(/^#[0-9a-fA-F]{6}$/)) {
+            return rgbColor;
+        }
+        // Match RGB format and convert to hex
+        const match = rgbColor.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        if (!match) {
+            throw new Error("Invalid RGB color format");
+        }
+        function hex(x: string) {
             return ('0' + parseInt(x, 10).toString(16)).slice(-2);
         }
-        return '#' + hex(rgbColor[1]) + hex(rgbColor[2]) + hex(rgbColor[3]);
+        return '#' + hex(match[1]) + hex(match[2]) + hex(match[3]);
     }
 
     /**
@@ -94,9 +102,6 @@ export class ComponentTestBase {
                     if (isDimensionProp(attrName)) {
                         processedAttrValue = toDimension(processedAttrValue);
                     }
-
-console.log(component[attrName], 'component[attrName]')
-                    console.log(processedAttrValue, 'processedAttrValue')
                     expect(component[attrName]).toBe(processedAttrValue);
                 });
 
@@ -297,31 +302,39 @@ console.log(component[attrName], 'component[attrName]')
 
                 it(prop + ': should be applied', () => {
                     initValue = this.widgetDef.$unCompiled.attr(propName);
-                   // console.log(initValue, '*****');
                     cssValue = component.$element.css(cssName);
-                  //  console.log(cssValue, 'vss*****');
+                    // console.log(cssValue, 'vss*****');
                     if (initValue) {
                         if (cssName === 'backgroundImage') {
                             initValue = 'url("' + initValue + '")';
+                            // Normalize cssValue to ensure it matches the format of initValue
+                            const normalizeUrl = (url) => url.replace(/^url\("?|"?\)$/g, 'url("').replace('")', '")');
+                            expect(normalizeUrl(cssValue)).toBe(normalizeUrl(initValue));
                         } else if (cssName === 'fontSize') {
                             initValue = +(initValue);
                             let fontUnit = this.widgetDef.$unCompiled.attr('fontunit') || 'px';
                             initValue = initValue + fontUnit;
+                            expect(cssValue).toBe(initValue);
                         } else if (cssName === 'fontFamily') {
-                            initValue = '"' + initValue + '"';
+                            // Strip quotes from initValue for comparison
+                            initValue = initValue.replace(/^"|"$/g, '');
+                            expect(cssValue).toBe(initValue);
                         } else if (cssName === 'color' || cssName === 'backgroundColor' || cssName === 'borderColor') {
                             initValue = initValue ? initValue.toLowerCase() : '';
                             cssValue = this.rgbToHex(component.$element.css(cssName)).toLowerCase();
+                            expect(cssValue).toBe(initValue);
                         } else if (cssName === 'backgroundPosition') {
                             // TODO: write logic to compute background position based on value. Now hardcoding for 'left'
                             initValue = 'left';
+                            expect(cssValue).toBe(initValue);
                         } else if (cssName === 'textDecoration') {
                             // if text decoration is just assigned as 'underline' css value is still 'underline solid rgba(0, 0, 255)'. so compare only first value
                             initValue = (initValue || '').split(' ').shift();
                             cssValue = (cssValue || '').split(' ').shift();
+                            expect(cssValue).toBe(initValue);
+                        } else {
+                            expect(cssValue).toBe(initValue.replace(/^"|"$/g, ''));
                         }
-                         console.log(cssName, cssValue, initValue);
-                        expect(cssValue).toBe(initValue.replace(/^"|"$/g, ''));
                     }
                 });
             });
@@ -386,7 +399,7 @@ console.log(component[attrName], 'component[attrName]')
 
     }
 
-    public verifyAccessibility():void {
+    public verifyAccessibility(): void {
         describe(this.widgetDef.type + ': Accessibility tests: ', () => {
 
             let component,
@@ -404,8 +417,8 @@ console.log(component[attrName], 'component[attrName]')
                 $inputEl = this.widgetDef.inputElementSelector ? fixture.nativeElement.querySelector(this.widgetDef.inputElementSelector) : $element;
             }));
 
-            it(this.widgetDef.type + ': aria-label should not be empty without hint',() => {
-               expect($inputEl.getAttribute('aria-label')).toBeDefined();
+            it(this.widgetDef.type + ': aria-label should not be empty without hint', () => {
+                expect($inputEl.getAttribute('aria-label')).toBeDefined();
             });
 
             it(this.widgetDef.type + ': aria-label property change should be reflected based on hint', () => {
