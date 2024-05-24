@@ -4,7 +4,7 @@ module.exports = {
   testEnvironment: "jsdom",
   testMatch: [
      "**/projects/**/*.spec.ts"
-    // "**/projects/components/widgets/input/currency/src/currency.wrapper.component.spec.ts"
+    // "**/projects/components/widgets/input/default/src/number/number.wrapper.component.spec.ts"
 
   ],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
@@ -29,7 +29,6 @@ module.exports = {
     "@wm/components/page": "<rootDir>/projects/components/widgets/page/default/src/public_api.ts",
     "@wm/components/(.*)/(.*)$": "<rootDir>/projects/components/widgets/$1/$2/src/public_api.ts",
     "@wm/components/(.*)$": "<rootDir>/projects/components/widgets/$1/src/public_api.ts",
-
     "@wm/(.*)$": "<rootDir>/projects/$1/index.ts",
     "projects/(.*)$": "<rootDir>/projects/$1",
     "libraries/(.*)$": "<rootDir>/libraries/$1"
