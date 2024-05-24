@@ -1,15 +1,12 @@
     <input class="form-control app-textbox app-dateinput display-input"
         focus-target
         type="text"
-           #dateInput
         [name]="name"
-       [imask]="mask"
-       [unmask]="true"
         [tabindex]="loadNativeDateInput ? '-1' : tabindex"
         [attr.aria-hidden]="!!loadNativeDateInput"
         [value]="displayValue"
         (click)="toggleDpDropdown($event, true)"
-        (focus)="onDateTimeInputFocus(); invokeOnFocus($event);onInputFocus($event)"
+        (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
         (blur)="onInputBlur($event)"
         [disabled]="disabled || readonly"
         [autofocus]="autofocus"
