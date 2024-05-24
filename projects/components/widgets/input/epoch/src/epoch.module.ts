@@ -12,7 +12,7 @@ import { DateTimePickerComponent, TimePickerComponent } from './date-time/date-t
 import { DatetimeComponent } from './date-time/date-time.component';
 import { TimeComponent } from './time/time.component';
 import { PickerComponent, PickerGroupComponent } from './picker/picker.component';
-import { IMaskModule } from 'angular-imask';
+
 
 
 const components = [
@@ -32,8 +32,7 @@ const components = [
         BsDropdownModule,
         FormsModule,
         TimepickerModule,
-        WmComponentsModule,
-        IMaskModule
+        WmComponentsModule
     ],
     declarations: [...components],
     exports: [...components]
