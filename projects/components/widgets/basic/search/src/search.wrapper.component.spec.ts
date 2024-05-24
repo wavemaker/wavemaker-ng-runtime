@@ -423,7 +423,6 @@ describe('SearchComponent', () => {
             setTimeout(() => {
 
                 expect(wmComponent.typeaheadOnSelect).toHaveBeenCalled();
-                done();
             }, 50);
 
         });
@@ -443,11 +442,12 @@ describe('SearchComponent', () => {
         const testValue = 'te';
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
         jest.spyOn(wmComponent, 'getTransformedData');
-        // setInputValue(fixture, '.app-search-input', testValue).then(() => {
-        // let ulElement = getUlElement();
-        // ulElement[0].dispatchEvent(new CustomEvent('scroll'));
-        fixture.whenStable().then(() => {
-            expect(wmComponent.getTransformedData).toHaveBeenCalled();
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
+            let ulElement = getUlElement();
+            ulElement[0].dispatchEvent(new CustomEvent('scroll'));
+            fixture.whenStable().then(() => {
+                expect(wmComponent.getTransformedData).toHaveBeenCalled();
+            });
         });
 
         // });

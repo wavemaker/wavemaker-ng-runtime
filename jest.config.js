@@ -5,7 +5,7 @@ module.exports = {
   testMatch: [
      "**/projects/**/*.spec.ts"
     //  "**/projects/variables/src/model/variable/model-variable.spec.ts"
-    // "**/projects/components/widgets/basic/search/src/search.wrapper.component.spec.ts"
+    //"**/projects/components/widgets/basic/search/src/search.wrapper.component.spec.ts"
     //  "**/projects/components/widgets/navigation/popover/src/popover.wrapper.component.spec.ts"
     //  "**/projects/components/widgets/containers/panel/src/panel.wrapper.component.spec.ts"
     // "**/projects/components/widgets/input/default/src/number/number.wrapper.component.spec.ts"

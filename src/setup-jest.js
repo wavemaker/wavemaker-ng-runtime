@@ -26,6 +26,30 @@ class IntersectionObserver {
     }
 }
 global.IntersectionObserver = IntersectionObserver;
+// jest.setup.js
+
+// Mock MSCSSMatrix
+class MockMSCSSMatrix {
+    constructor() {
+        // Initialize with default values or any necessary properties
+    }
+
+    // Add any methods that your tests might call
+    setMatrixValue(value) {
+        // Mock implementation of setMatrixValue
+    }
+
+    multiply(matrix) {
+        // Mock implementation of multiply
+        return this;
+    }
+
+    // Add other methods as needed
+}
+
+// Attach the mock to the global scope
+global.MSCSSMatrix = MockMSCSSMatrix;
+
 import "jquery-ui/ui/disable-selection.js";
 import "jquery-ui/ui/version.js";
 import "jquery-ui/ui/widget.js";
