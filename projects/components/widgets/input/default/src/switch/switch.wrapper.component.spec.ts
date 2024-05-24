@@ -6,12 +6,8 @@ import { DatePipe } from '@angular/common';
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
 import { AbstractI18nService, App, AppDefaults } from '@wm/core';
-import { BaseComponent, StylableComponent, ToDatePipe } from '@wm/components/base';
 import { MockAbstractI18nService } from '../../../../../base/src/test/util/date-test-util';
-import { BaseFormCustomComponent } from '../base-form-custom.component';
-import { BaseFormComponent } from '../base-form.component';
-import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
-import { PipeProvider } from 'projects/runtime-base/src/services/pipe-provider.service';
+import { ToDatePipe } from '@wm/components/base';
 
 const mockApp = {
     subscribe: () => { return () => { } }
@@ -34,13 +30,7 @@ const testModuleDef: ITestModuleDef = {
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
         { provide: AppDefaults, useClass: AppDefaults },
-        { provide: AbstractI18nService, useClass: MockAbstractI18nService },
-        { provide: BaseComponent, useClass: BaseComponent },
-        { provide: StylableComponent, useClass: StylableComponent },
-        { provide: BaseFormComponent, useClass: BaseFormComponent },
-        { provide: BaseFormCustomComponent, useClass: BaseFormCustomComponent },
-        { provide: DatasetAwareFormComponent, useClass: DatasetAwareFormComponent },
-        { provide: PipeProvider, useClass: PipeProvider }
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService }
     ]
 };
 

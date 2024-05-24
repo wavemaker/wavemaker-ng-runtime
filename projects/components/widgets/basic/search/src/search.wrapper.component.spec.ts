@@ -7,18 +7,17 @@ import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 
 import { TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
-
+import {BaseComponent} from '@wm/components/base';
 import { By } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 import { ScrollableDirective } from './scrollable.directive';
-import { WmComponentsModule, ToDatePipe, StylableComponent, BaseComponent} from '@wm/components/base';
+import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
 import { PartialRefProvider, AppDefaults } from '@wm/core';
 import { BaseFormComponent } from 'projects/components/widgets/input/default/src/base-form.component';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck } from 'projects/components/base/src/test/util/component-test-util';
-import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
-import {BaseFormCustomComponent} from 'projects/components/widgets/input/default/src/base-form-custom.component';
-import {DatasetAwareFormComponent} from '@wm/components/input';
+import {MockAbstractI18nService} from 'projects/components/base/src/test/util/date-test-util';
+
 
 const mockApp = {
     subscribe: () => { return () => {}}
@@ -93,12 +92,8 @@ const testModuleDef: ITestModuleDef = {
         { provide: TypeaheadMatch, useValue: TypeaheadMatch },
         { provide: ComponentFixtureAutoDetect, useValue: true },
         { provide: PartialRefProvider, useClass: PartialRefProvider },
-        { provide: AbstractI18nService, useClass: MockAbstractI18nService},
-        { provide: BaseComponent, useClass: BaseComponent},
-        { provide: StylableComponent, useClass: StylableComponent},
-        { provide: BaseFormComponent, useClass: BaseFormComponent},
-        { provide: BaseFormCustomComponent, useClass: BaseFormCustomComponent},
-        { provide: DatasetAwareFormComponent, useClass: DatasetAwareFormComponent}
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+        { provide: BaseComponent, useClass: BaseComponent }
     ]
 };
 
@@ -148,6 +143,7 @@ describe('SearchComponent', () => {
         fixture = compileTestComponent(testModuleDef, SearchWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
+       // $('body').addClass('wm-app');
         fixture.detectChanges();
     }));
 

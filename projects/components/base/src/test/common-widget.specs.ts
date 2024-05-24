@@ -67,9 +67,9 @@ export class ComponentTestBase {
                 fixture.detectChanges();
             }));
             let count = 0;
-
             // iterate through all the attributes specified in the markup and verify them against corresponding iScope properties
             _.forEach(this.widgetDef.$unCompiled[0].attributes, (attr) => {
+
                 let attrName = attr.name,
                     attrValue = attr.value,
                     processedAttrValue = attrValue;
@@ -83,7 +83,7 @@ export class ComponentTestBase {
 
                 it('"' + attrName + '" should be on the widget with value as: ' + processedAttrValue, () => {
                     let attrProps = widgetProps.get(attrName) || {};
-                    // console.log(++count, ' checking', attrName, ' of type', attrProps.type, ' for value', processedAttrValue)
+                   //  console.log(++count, ' checking', attrName, ' of type', attrProps.type, ' for value', processedAttrValue)
 
                     // convert the type of the attr.value and compare with its corresponding iScope property
                     if (attrProps.type === 1) {
@@ -101,6 +101,10 @@ export class ComponentTestBase {
                     // dimension properties like height, width, etc
                     if (isDimensionProp(attrName)) {
                         processedAttrValue = toDimension(processedAttrValue);
+                    }
+
+                    if(attr.name == 'container') {
+                        attrName = 'containerTarget';
                     }
                     expect(component[attrName]).toBe(processedAttrValue);
                 });

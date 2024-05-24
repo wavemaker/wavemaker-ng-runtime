@@ -241,6 +241,7 @@ describe('PopoverComponent', () => {
         })
     }))
 
+
     it('should open the popover on mouse hover', waitForAsync(() => {
 
         fixture.whenStable().then(() => {
