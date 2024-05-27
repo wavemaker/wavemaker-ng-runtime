@@ -1,4 +1,4 @@
-import { ComponentFixture, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync, fakeAsync, tick } from '@angular/core/testing';
 import {Component, LOCALE_ID, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -47,6 +47,7 @@ import {
 } from '../../../../../base/src/test/util/date-test-util';
 import localeDE from '@angular/common/locales/de';
 import localeRO from '@angular/common/locales/ro';
+import {deLocale} from 'ngx-bootstrap/locale';
 
 
 const mockApp = {
@@ -183,21 +184,20 @@ describe("DatetimeComponent", () => {
 
 
     /************************* Properties starts ****************************************** **/
-    it('should not add the hidden property, element always visible', waitForAsync(async () => {
+    it('should not add the hidden property, element always visible', fakeAsync(async () => {
         await notHavingTheAttribute(fixture, '.app-datetime', 'hidden');
     }));
 
 
-    it('should autofocus the date control ', waitForAsync(() => {
+    it('should autofocus the date control ', fakeAsync(() => {
         let inputEle = getHtmlSelectorElement(fixture, '.app-textbox').nativeElement;
-        fixture.whenStable().then(() => {
-            expect(inputEle).toEqual(document.activeElement);
-        });
+        tick();
+        expect(inputEle).toEqual(document.activeElement);
 
     }));
 
 
-    it("should show the calendar panel on click the date button (date entry mode) ", waitForAsync(() => {
+    it("should show the calendar panel on click the date button (date entry mode) ", fakeAsync(() => {
 
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1);
 
@@ -441,16 +441,16 @@ describe("DatetimeComponent", () => {
 
     /************************* Events starts ****************************************** **/
 
-    it('Should trigger the date control change event', waitForAsync(() => {
+    it('Should trigger the date control change event', fakeAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-time');
         dateInputControl.nativeElement.click();
         jest.spyOn(dateWrapperComponent, 'datetime1Change');
+        tick()
 
-        fixture.whenStable().then(() => {
-            triggerTimerClickonArrowsByIndex(0);
 
-            expect(dateWrapperComponent.datetime1Change).toHaveBeenCalledTimes(1);
-        });
+        triggerTimerClickonArrowsByIndex(0);
+
+        expect(dateWrapperComponent.datetime1Change).toHaveBeenCalledTimes(1);
     }));
 
 
@@ -489,35 +489,36 @@ describe(('Datetime Component with Localization'), () => {
         fixture.detectChanges();
     }));
 
-    it('should create the datetime Component with de locale', waitForAsync(() => {
+    it('should create the datetime Component with de locale', fakeAsync(() => {
         expect(dateWrapperComponent).toBeTruthy();
     }));
 
-    it ('should display localized dates in date picker', waitForAsync(() => {
+    it ('should display localized dates in date picker', fakeAsync(() => {
         localizedDatePickerTest(fixture, '.btn-date');
 
     }));
 
-    it ('should display localized meriains in time picker', waitForAsync(() => {
+    it ('should display localized meriains in time picker', fakeAsync(() => {
         localizedTimePickerTest(fixture,  (wmComponent as any).meridians, '.btn-time');
     }));
 
-    it ('should display the defult value in de format',  waitForAsync(() => {
+    it ('should display the defult value in de format',  fakeAsync(() => {
         const datetime = '2020-02-20 02:00 PM', datepattern = 'yyyy-MM-dd hh:mm a';
         wmComponent.getWidget().datepattern = datepattern;
         wmComponent.datavalue = datetime;
         fixture.detectChanges();
+        tick();
         const dateObj = getNativeDateObject(datetime);
         expect(getFormattedDate((wmComponent as any).datePipe, dateObj, datepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
     }));
 
-    it('should update the datavalue without error when we type "de" format datetime in inputbox with "12H" format ',  waitForAsync(() => {
+    it('should update the datavalue without error when we type "de" format datetime in inputbox with "12H" format ',  fakeAsync(() => {
         const datepattern = 'yyyy, dd MMMM hh:mm:ss a';
         wmComponent.getWidget().datepattern = datepattern;
         localizedValueOnInputTest(fixture, '2020, 21 Februar 03:15:00 AM', wmComponent, datepattern);
     }));
 
-    it('should update the datavalue without error when we type "de" format datetime in inputbox with "24H" format',  waitForAsync(() => {
+    it('should update the datavalue without error when we type "de" format datetime in inputbox with "24H" format',  fakeAsync(() => {
         const datetime = '2020, 21 Februar 15:15:00', datepattern = 'yyyy, dd MMMM HH:mm:ss';
         wmComponent.getWidget().datepattern = datepattern;
         localizedValueOnInputTest(fixture, '2020, 21 Februar 15:15:00', wmComponent, datepattern);
@@ -557,7 +558,7 @@ describe(('Datetime Component with ro(Romania) Localization'), () => {
     }));
 
 
-    it('should update the datavalue without error when we type "ro" format datetime in inputbox with "12H" format ',  waitForAsync(() => {
+    it('should update the datavalue without error when we type "ro" format datetime in inputbox with "12H" format ',  fakeAsync(() => {
         const  datepattern = 'yyyy, dd MMMM hh:mm:ss a';
         wmComponent.getWidget().datepattern = datepattern;
         localizedValueOnInputTest(fixture, '2020, 21 februarie 03:15:00 a.m.', wmComponent, datepattern);
