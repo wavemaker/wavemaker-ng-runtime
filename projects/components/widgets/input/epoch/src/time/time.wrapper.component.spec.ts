@@ -1,7 +1,7 @@
 import {Component, LOCALE_ID, ViewChild} from '@angular/core';
 import { TimeComponent } from './time.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
-import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
     compileTestComponent,
     getHtmlSelectorElement,
@@ -16,13 +16,11 @@ import {
     datepatternTest,
     outputpatternTest,
     getTimePickerElement,
-    localizedTimePickerTest, localizedValueOnInputTest, MockAbstractI18nService
+    localizedTimePickerTest, localizedValueOnInputTest, MockAbstractI18nService, MockAbstractI18nServiceDe, MockAbstractI18nServiceRO
 } from '../../../../../base/src/test/util/date-test-util';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import {  BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import {  deLocale } from 'ngx-bootstrap/locale';
-import { By } from '@angular/platform-browser';
-import { waitForAsync, ComponentFixture } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync } from '@angular/core/testing';
 import {
     UserDefinedExecutionContext,
     AppDefaults,
@@ -36,6 +34,7 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 import { WmComponentsModule } from '@wm/components/base';
 import localeDE from '@angular/common/locales/de';
 import localeRO from '@angular/common/locales/ro';
+import {BsLocaleService} from 'ngx-bootstrap/datepicker';
 
 declare const moment;
 
@@ -43,24 +42,6 @@ const currentTime = moment(new Date()).format('hh:mm:ss');
 const mockApp = {
     subscribe: () => { return () => {}}
 };
-
-class MockAbstractI18nServiceDe {
-    constructor() {
-        moment.defineLocale('de', deLocale);
-    }
-    public getSelectedLocale() {
-        return 'de';
-    }
-}
-
-class MockAbstractI18nServiceRO {
-    constructor() {
-        moment.defineLocale('ro', deLocale);
-    }
-    public getSelectedLocale() {
-        return 'ro';
-    }
-}
 
 
 const markup = `<div wmTime  name="time1" hint="my time" datavalue="${currentTime}" maxtime="${currentTime}" mintime="${currentTime}"
@@ -109,7 +90,7 @@ class TimeWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [TimeWrapperComponent, TimeComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
@@ -178,6 +159,11 @@ describe("TimeComponent", () => {
         wmComponent = timeWrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
 
 
     /************************* Properties starts ****************************************** **/
@@ -412,14 +398,15 @@ describe("TimeComponent", () => {
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
     declarations: [TimeWrapperComponent, TimeComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
+        { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: AppDefaults, useValue: AppDefaults },
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
-        { provide: AbstractI18nService, useClass: MockAbstractI18nServiceDe }
+        { provide: AbstractI18nService, deps: [BsLocaleService], useClass: MockAbstractI18nServiceDe }
     ]
 };
 
@@ -437,11 +424,18 @@ describe('TimeComponent with localization', () => {
         fixture.detectChanges();
     }));
 
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
+
+
     it('should create the time Component with de locale', () => {
         expect(timeWrapperComponent).toBeTruthy() ;
     });
 
-    it ('should display localized meriains in time picker', waitForAsync(() => {
+    it ('should display localized meriains in time picker', fakeAsync(() => {
          localizedTimePickerTest(fixture,  (wmComponent as any).meridians, '.btn-date');
     }));
 
@@ -454,14 +448,14 @@ describe('TimeComponent with localization', () => {
         expect(getFormattedDate((wmComponent as any).datePipe, dateObj, timepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
     }));
 
-    it('should update the datavalue without error when we type "de" format time in inputbox with "12H" format', waitForAsync(() => {
+    it('should update the datavalue without error when we type "de" format time in inputbox with "12H" format', fakeAsync(() => {
         const  timepattern = 'hh:mm:ss a';
         wmComponent.getWidget().timepattern = timepattern;
         localizedValueOnInputTest(fixture, '03:15:00 AM', wmComponent);
     }));
 
 
-    it('should update the datavalue without error when we type "de" format time in inputbox with "24H" format', waitForAsync(() => {
+    it('should update the datavalue without error when we type "de" format time in inputbox with "24H" format', fakeAsync(() => {
         const time = '15:15:00', timepattern = 'HH:mm:ss';
         wmComponent.getWidget().timepattern = timepattern;
         localizedValueOnInputTest(fixture, '15:15:00', wmComponent);
@@ -470,14 +464,15 @@ describe('TimeComponent with localization', () => {
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
     declarations: [TimeWrapperComponent, TimeComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
+        { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: AppDefaults, useValue: AppDefaults },
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
-        { provide: AbstractI18nService, useClass: MockAbstractI18nServiceRO }
+        { provide: AbstractI18nService, deps: [BsLocaleService], useClass: MockAbstractI18nServiceRO }
     ]
 };
 
@@ -495,7 +490,14 @@ describe('TimeComponent with ro (Romania) localization', () => {
         fixture.detectChanges();
     }));
 
-    it('should update the datavalue without error when we type "ro" format time in inputbox with "12H" format', waitForAsync(() => {
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
+
+
+    it('should update the datavalue without error when we type "ro" format time in inputbox with "12H" format', fakeAsync(() => {
         const  timepattern = 'hh:mm:ss a';
         wmComponent.getWidget().timepattern = timepattern;
         localizedValueOnInputTest(fixture, '03:15:00 a.m.', wmComponent);
