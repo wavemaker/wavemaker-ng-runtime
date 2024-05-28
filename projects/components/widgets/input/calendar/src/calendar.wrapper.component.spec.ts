@@ -8,16 +8,20 @@ import { compileTestComponent } from 'projects/components/base/src/test/util/com
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import { DatePipe } from '@angular/common';
-import {AbstractI18nService, App} from '@wm/core';
+import { AbstractI18nService, App } from '@wm/core';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import {
-    StylableComponent,BaseComponent
+    StylableComponent, BaseComponent
 } from '@wm/components/base';
 
 const mockApp = {
-    subscribe: () => { return () => {}}
+    subscribe: () => { return () => { } }
 };
-
+declare global {
+    interface Window {
+        FullCalendar: any;
+    }
+}
 const markup = `<div
                 wmCalendar
                 redrawable
@@ -38,7 +42,7 @@ const markup = `<div
     template: markup
 })
 class CalendarWrapperComponent {
-    @ViewChild(CalendarComponent, /* TODO: add static flag */ {static: true})
+    @ViewChild(CalendarComponent, /* TODO: add static flag */ { static: true })
     wmComponent: CalendarComponent;
 
     public testData1 = [{ title: 'event', start: '02/02/2020' }];
@@ -49,11 +53,11 @@ const calendarComponentModuleDef: ITestModuleDef = {
     declarations: [CalendarWrapperComponent, CalendarComponent],
     imports: [ComponentsTestModule, FormsModule, BsDatepickerModule],
     providers: [{ provide: ToDatePipe, useClass: ToDatePipe },
-        { provide: App, useValue: mockApp },
+    { provide: App, useValue: mockApp },
     { provide: DatePipe, useClass: DatePipe },
-    { provide: BaseComponent, useClass:BaseComponent  },
-    { provide: StylableComponent, useClass:StylableComponent  },
-    { provide: AbstractI18nService, useClass:MockAbstractI18nService  }]
+    { provide: BaseComponent, useClass: BaseComponent },
+    { provide: StylableComponent, useClass: StylableComponent },
+    { provide: AbstractI18nService, useClass: MockAbstractI18nService }]
 };
 
 const calendarComponentDef: ITestComponentDef = {
@@ -76,7 +80,21 @@ describe('CalendarComponent', () => {
     let calenderWrapperComponent: CalendarWrapperComponent;
     let wmComponent: CalendarComponent;
     let fixture: ComponentFixture<CalendarWrapperComponent>;
-
+    window.FullCalendar = {
+        Calendar: class {
+            el: any;
+            options: any;
+            constructor(el: any, options: any) {
+                this.el = el;
+                this.options = options;
+            }
+            render() { }
+            setOption(optionKey: string, optionValue: any) { }
+            changeView(view: any) { }
+        },
+        __wm_locale_initialized: false,
+        dayGridPlugin: {}
+    };
     beforeEach((async () => {
         fixture = compileTestComponent(calendarComponentModuleDef, CalendarWrapperComponent);
         calenderWrapperComponent = fixture.componentInstance;
