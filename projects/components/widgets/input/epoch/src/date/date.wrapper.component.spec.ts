@@ -2,6 +2,7 @@ import { By } from '@angular/platform-browser';
 import {Component, LOCALE_ID, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
     UserDefinedExecutionContext,
     AppDefaults,
@@ -18,7 +19,6 @@ import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { DateComponent } from './date.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
-import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
 import { compileTestComponent, getHtmlSelectorElement, checkElementClass, onClickCheckTaglengthOnBody, onClickCheckClassEleLengthOnBody, hasAttributeCheck } from '../../../../../base/src/test/util/component-test-util';
 import {
     datepatternTest,
@@ -48,6 +48,7 @@ const markup = `<div wmDate  name="date1" mindate="2019-12-02"  datavalue="${cur
 @Component({
     template: markup
 })
+
 class DateWrapperComponent {
     @ViewChild(DateComponent, /* TODO: add static flag */ {static: true})
     wmComponent: DateComponent;
@@ -84,7 +85,7 @@ class DateWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [DateWrapperComponent, DateComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [{ provide: Router, useValue: Router }, {provide: App, useValue: mockApp},
     { provide: SecurityService, useValue: SecurityService },
     { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
@@ -153,6 +154,12 @@ describe('DateComponent', () => {
         wmComponent = dateWrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
+
 
 
     /************************* Properties starts ****************************************** **/
@@ -392,10 +399,11 @@ describe('DateComponent', () => {
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
     declarations: [DateWrapperComponent, DateComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
         { provide: LOCALE_ID, useValue: 'de' },
         { provide: Router, useValue: Router },
+        { provide: App, useValue: mockApp },
         { provide: SecurityService, useValue: SecurityService },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: AppDefaults, useValue: AppDefaults },
@@ -419,6 +427,11 @@ describe(('Date Component with Localization'), () => {
         wmComponent = dateWrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
 
     it('should create the date Component with de locale', () => {
         expect(dateWrapperComponent).toBeTruthy() ;

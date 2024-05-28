@@ -4,6 +4,10 @@ module.exports = {
   testEnvironment: "jsdom",
   testMatch: [
      "**/projects/**/*.spec.ts"
+     // "**/projects/components/widgets/input/epoch/**/*.spec.ts"
+    //  "**/projects/components/widgets/input/epoch/src/time/time.wrapper.component.spec.ts"
+     // "**/projects/components/widgets/input/epoch/src/date-time/datetime.wrapper.component.spec.ts"
+     // "**/projects/components/widgets/input/epoch/src/date/date.wrapper.component.spec.ts"
     //  "**/projects/components/widgets/navigation/popover/src/popover.wrapper.component.spec.ts"
     //  "**/projects/components/widgets/input/epoch/src/date-time/datetime.wrapper.component.spec.ts"
 

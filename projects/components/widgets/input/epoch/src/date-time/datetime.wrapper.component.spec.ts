@@ -1,6 +1,7 @@
 import { ComponentFixture, waitForAsync, fakeAsync, tick } from '@angular/core/testing';
 import {Component, LOCALE_ID, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
     UserDefinedExecutionContext,
     AppDefaults,
@@ -21,7 +22,6 @@ import {
 import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
 import { DatetimeComponent } from './date-time.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
-import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
 import {
     compileTestComponent,
     getHtmlSelectorElement,
@@ -47,7 +47,6 @@ import {
 } from '../../../../../base/src/test/util/date-test-util';
 import localeDE from '@angular/common/locales/de';
 import localeRO from '@angular/common/locales/ro';
-import {deLocale} from 'ngx-bootstrap/locale';
 
 
 const mockApp = {
@@ -111,7 +110,7 @@ class DatetimeWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent, DatetimeComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [{ provide: Router, useValue: Router },
     { provide: App, useValue: mockApp },
     { provide: SecurityService, useValue: SecurityService },
@@ -181,6 +180,13 @@ describe("DatetimeComponent", () => {
         wmComponent = dateWrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
+
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
+
 
 
     /************************* Properties starts ****************************************** **/
@@ -355,6 +361,8 @@ describe("DatetimeComponent", () => {
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
 
     }));
+
+
     it('should disable the excluded days on the calendar panel', waitForAsync(() => {
         wmComponent.getWidget().excludedays = '1,6';
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1, (ele) => {
@@ -461,8 +469,9 @@ describe("DatetimeComponent", () => {
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent, DatetimeComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
+        { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
         { provide: Router, useValue: Router },
         { provide: SecurityService, useValue: SecurityService },
@@ -488,6 +497,11 @@ describe(('Datetime Component with Localization'), () => {
         wmComponent = dateWrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
 
     it('should create the datetime Component with de locale', fakeAsync(() => {
         expect(dateWrapperComponent).toBeTruthy();
@@ -529,8 +543,9 @@ describe(('Datetime Component with Localization'), () => {
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent, DatetimeComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
+        { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },
         { provide: Router, useValue: Router },
         { provide: SecurityService, useValue: SecurityService },
@@ -556,6 +571,12 @@ describe(('Datetime Component with ro(Romania) Localization'), () => {
         wmComponent = dateWrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
+
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
 
 
     it('should update the datavalue without error when we type "ro" format datetime in inputbox with "12H" format ',  fakeAsync(() => {
