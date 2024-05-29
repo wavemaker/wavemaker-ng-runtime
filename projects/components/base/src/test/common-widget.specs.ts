@@ -83,7 +83,7 @@ export class ComponentTestBase {
 
                 it('"' + attrName + '" should be on the widget with value as: ' + processedAttrValue, () => {
                     let attrProps = widgetProps.get(attrName) || {};
-                   //  console.log(++count, ' checking', attrName, ' of type', attrProps.type, ' for value', processedAttrValue)
+                    //  console.log(++count, ' checking', attrName, ' of type', attrProps.type, ' for value', processedAttrValue)
 
                     // convert the type of the attr.value and compare with its corresponding iScope property
                     if (attrProps.type === 1) {
@@ -103,7 +103,7 @@ export class ComponentTestBase {
                         processedAttrValue = toDimension(processedAttrValue);
                     }
 
-                    if(attr.name == 'container') {
+                    if (attr.name == 'container') {
                         attrName = 'containerTarget';
                     }
                     expect(component[attrName]).toBe(processedAttrValue);
@@ -265,22 +265,22 @@ export class ComponentTestBase {
             }
 
             // check com
-            _.forEach(['fontSize',
-                'fontWeight',
+            _.forEach(['fontsize',
+                'fontweight',
                 'fontStyle',
-                'fontFamily',
+                'fontfamily',
                 'textDecoration',
-                'textAlign',
+                'textalign',
                 'color',
                 'whiteSpace',
                 'backgroundColor',
-                'backgroundImage',
-                'backgroundRepeat',
-                'backgroundPosition',
-                'backgroundSize',
-                'backgroundAttachment',
-                'borderColor',
-                'borderWidth',
+                'backgroundimage',
+                'backgroundrepeat',
+                'backgroundposition',
+                'backgroundsize',
+                'backgroundattachment',
+                'bordercolor',
+                'borderwidth',
                 'borderStyle',
                 'opacity',
                 'overflow',
@@ -300,34 +300,30 @@ export class ComponentTestBase {
                     propName = cssName.toLowerCase();
                 }
 
-                // if (!widgetProps[propName]) {
-                //     return;
-                // }
-
                 it(prop + ': should be applied', () => {
                     initValue = this.widgetDef.$unCompiled.attr(propName);
-                    cssValue = component.$element.css(cssName);
+                    cssValue = component.$element[0].widget[cssName];
                     // console.log(cssValue, 'vss*****');
                     if (initValue) {
-                        if (cssName === 'backgroundImage') {
+                        if (cssName === 'backgroundimage') {
                             initValue = 'url("' + initValue + '")';
                             // Normalize cssValue to ensure it matches the format of initValue
                             const normalizeUrl = (url) => url.replace(/^url\("?|"?\)$/g, 'url("').replace('")', '")');
                             expect(normalizeUrl(cssValue)).toBe(normalizeUrl(initValue));
-                        } else if (cssName === 'fontSize') {
+                        } else if (cssName === 'fontsize') {
                             initValue = +(initValue);
                             let fontUnit = this.widgetDef.$unCompiled.attr('fontunit') || 'px';
                             initValue = initValue + fontUnit;
-                            expect(cssValue).toBe(initValue);
-                        } else if (cssName === 'fontFamily') {
+                            expect(cssValue + fontUnit).toBe(initValue);
+                        } else if (cssName === 'fontfamily') {
                             // Strip quotes from initValue for comparison
                             initValue = initValue.replace(/^"|"$/g, '');
                             expect(cssValue).toBe(initValue);
-                        } else if (cssName === 'color' || cssName === 'backgroundColor' || cssName === 'borderColor') {
+                        } else if (cssName === 'color' || cssName === 'backgroundcolor' || cssName === 'bordercolor') {
                             initValue = initValue ? initValue.toLowerCase() : '';
-                            cssValue = this.rgbToHex(component.$element.css(cssName)).toLowerCase();
+                            cssValue = this.rgbToHex(cssValue).toLowerCase();
                             expect(cssValue).toBe(initValue);
-                        } else if (cssName === 'backgroundPosition') {
+                        } else if (cssName === 'backgroundposition') {
                             // TODO: write logic to compute background position based on value. Now hardcoding for 'left'
                             initValue = 'left';
                             expect(cssValue).toBe(initValue);
@@ -337,7 +333,7 @@ export class ComponentTestBase {
                             cssValue = (cssValue || '').split(' ').shift();
                             expect(cssValue).toBe(initValue);
                         } else {
-                            expect(cssValue).toBe(initValue.replace(/^"|"$/g, ''));
+                            expect(cssValue).toBe(initValue);
                         }
                     }
                 });
