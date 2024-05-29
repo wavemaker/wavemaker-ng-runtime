@@ -13,6 +13,7 @@ import { MockAbstractI18nService } from 'projects/components/base/src/test/util/
 import {
     StylableComponent, BaseComponent
 } from '@wm/components/base';
+import "fullcalendar/main.min.js";
 
 const mockApp = {
     subscribe: () => { return () => { } }

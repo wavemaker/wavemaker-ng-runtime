@@ -5,6 +5,8 @@ import { ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import {AbstractI18nService, App} from '@wm/core';
 import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
+import '@ztree/ztree_v3/js/jquery.ztree.all.js';
+import "libraries/scripts/tree-keyboard-navigation/keyboard-navigation.js";
 
 let mockApp = {
     subscribe: () => { return () => {}}

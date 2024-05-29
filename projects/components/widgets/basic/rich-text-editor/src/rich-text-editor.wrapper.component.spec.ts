@@ -5,6 +5,7 @@ import { ComponentsTestModule } from '../../../../base/src/test/components.test.
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import {SanitizePipe} from "@wm/components/base";
+import "summernote/dist/summernote-lite.min.js";
 
 const  markup = `<div wmRichTextEditor #wm_richtexteditor1="wmRichTextEditor"
                         [attr.aria-label]="wm_richtexteditor1.hint || 'Help text for test richtext editor'"
