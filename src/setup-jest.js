@@ -6,6 +6,9 @@ import { TestBed } from '@angular/core/testing';
 global.jQuery = require("jquery");
 global.$ = global.jQuery;
 
+// Mock the datatable function
+$.fn.datatable = jest.fn()
+
 global._ = require("lodash");
 global.moment = require("moment");
 class IntersectionObserver {
