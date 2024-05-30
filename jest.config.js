@@ -17,6 +17,11 @@ module.exports = {
   setupFilesAfterEnv: ["<rootDir>/src/setup-jest.js"],
   collectCoverage: true,
   coverageReporters: ["html", "json-summary"],
+  coveragePathIgnorePatterns:["libraries/scripts/tree-keyboard-navigation",
+  "libraries/scripts/jquery.ui.touch-punch",
+  "libraries/scripts/swipey",
+  ".yalc/@wavemaker/variables/src/"
+  ],
   // collectCoverageFrom: [
   //     '**/*.{ts,tsx}',
   //     '!**/node_modules/**',
