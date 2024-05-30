@@ -25,12 +25,12 @@ import { VALIDATOR } from '@wm/core';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { DateComponent, TimeComponent } from '@wm/components/input/epoch';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { compileTestComponent, mockApp, mockViewport } from "projects/components/base/src/test/util/component-test-util";
+import {PaginationComponent} from '@wm/components/data/pagination';
 
 const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="quickedit"
                                 name="UserTable1" title="User List" navigation="Basic" isdynamictable="false" rowselect.event="UserTable1Rowselect($event, widget, row)">
@@ -390,9 +390,8 @@ let declarations = [
     TableColumnDirective,
     TableColumnGroupDirective,
     TableRowDirective,
+    PaginationComponent,
     TableRowActionDirective,
-    DateComponent,
-    TimeComponent
 ]
 
 let providers = [
