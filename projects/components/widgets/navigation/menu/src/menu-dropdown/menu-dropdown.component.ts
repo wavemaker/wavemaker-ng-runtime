@@ -57,7 +57,7 @@ export class MenuDropdownComponent implements AfterViewInit {
     // Function to check if the menu widget is present inside other widgets like table, tabs, dialog, nav, list, tile, panel, accordion
     // if true then call createObserver() which internally calculates dropown height
     getParentWidget() {
-        const closestWidget  = $(this.menuRef.nativeElement).closest('table, ul, .dialog, .app-tabs, .app-accordion, .app-panel, .app-tile');
+        const closestWidget  = $(this.menuRef.nativeElement).closest('table, ul.list-group');
 
         // Check if the closest table is the parent of the menu widget
         if (closestWidget && $(closestWidget).has(this.menuRef.nativeElement).length > 0) {
