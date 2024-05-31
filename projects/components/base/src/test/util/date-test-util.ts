@@ -92,21 +92,21 @@ export const getTimePickerElement = () => {
     return document.getElementsByTagName('timepicker')[0].getElementsByClassName('btn-link');
 }
 
-export const localizedDatePickerTest = (fixture, btnClass) => {
+export const localizedDatePickerTest = async(fixture, btnClass) => {
     onClickCheckTaglengthOnBody(fixture, btnClass, 'bs-datepicker-container', 1);
-    tick();
+    await fixture.whenStable();
         expect($('bs-datepicker-container').find('.bs-datepicker-head button.current span')[0].innerText).toBe(deLocale.months[new Date().getMonth()]);
         expect($('bs-datepicker-container').find('.days.weeks th')[new Date().getDay()].innerText).toBe(deLocale.weekdaysShort[new Date().getDay()]);
 
 }
 
-export const localizedTimePickerTest = (fixture, meridians, btnClass) => {
+export const localizedTimePickerTest = (async(fixture, meridians, btnClass) => {
     onClickCheckTaglengthOnBody(fixture, btnClass, null, null);
-    tick();
+    await fixture.whenStable();
     const timePicker = getElementByTagOnDocQuery('timepicker');
     expect(timePicker[0].querySelector('button').innerHTML).toEqual(meridians[0]);
 
-}
+})
 
 export const localizedValueOnInputTest = (fixture, value, wmComponent, pattern?) => {
     const input =  getHtmlSelectorElement(fixture, '.app-textbox');

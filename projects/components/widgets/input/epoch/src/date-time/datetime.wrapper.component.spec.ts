@@ -119,7 +119,8 @@ const dateComponentModuleDef: ITestModuleDef = {
     { provide: ToDatePipe, useClass: ToDatePipe },
     { provide: DatePipe, useClass: DatePipe },
     { provide: AbstractI18nService, useClass: MockAbstractI18nService }
-    ]
+    ],
+    teardown: {destroyAfterEach: false}  
 };
 
 const dateComponentDef: ITestComponentDef = {
@@ -203,7 +204,7 @@ describe("DatetimeComponent", () => {
     }));
 
 
-    it("should show the calendar panel on click the date button (date entry mode) ", fakeAsync(() => {
+    it("should show the calendar panel on click the date button (date entry mode) ", (() => {
 
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1);
 
@@ -449,12 +450,11 @@ describe("DatetimeComponent", () => {
 
     /************************* Events starts ****************************************** **/
 
-    it('Should trigger the date control change event', fakeAsync(() => {
+    it('Should trigger the date control change event', (async() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-time');
         dateInputControl.nativeElement.click();
         jest.spyOn(dateWrapperComponent, 'datetime1Change');
-        tick()
-
+        await fixture.whenStable();
 
         triggerTimerClickonArrowsByIndex(0);
 
@@ -507,12 +507,12 @@ describe(('Datetime Component with Localization'), () => {
         expect(dateWrapperComponent).toBeTruthy();
     }));
 
-    it ('should display localized dates in date picker', fakeAsync(() => {
+    it ('should display localized dates in date picker', (() => {
         localizedDatePickerTest(fixture, '.btn-date');
 
     }));
 
-    it ('should display localized meriains in time picker', fakeAsync(() => {
+    it ('should display localized meriains in time picker', (() => {
         localizedTimePickerTest(fixture,  (wmComponent as any).meridians, '.btn-time');
     }));
 

@@ -11,7 +11,8 @@ import { compileTestComponent, getHtmlSelectorElement } from './util/component-t
 export interface ITestModuleDef {
     imports: Array<any>,
     declarations: Array<any>,
-    providers?: Array<any>
+    providers?: Array<any>,
+    teardown?: any
 }
 
 export interface ITestComponentDef {
