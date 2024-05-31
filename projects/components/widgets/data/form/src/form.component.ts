@@ -1294,7 +1294,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (controls) {
             // when current form is inside the list (i.e. incase of formArray).
             if (_.get(this.parentList, 'name') && controls.hasOwnProperty(this.parentList.name)) {
-                this.parentForm.ngform.removeControl(this.parentList.name);
+                //get the index of current form in the list and remove the FormControl from FormArray
+                const index = _.findIndex(this.parentList.getWidgets(this.name), {widgetId: this.widgetId});
+                (<FormArray>this.parentForm.ngform.controls[this.parentList.name]).removeAt(index);
             }
             // when we have formGroupName set i.e. multiple formInstance with counter appended to formName
             if (this.formGroupName && controls.hasOwnProperty(this.formGroupName)) {
