@@ -1352,7 +1352,7 @@ $.widget('wm.datatable', {
                                         currentNode = currentNode.parent();
                                         elemWidth = currentNode.width();
                                         // Find padding of all the elements which are on top of table
-                                        if (currentNode.find('table').length) {
+                                        if (currentNode.find('table').length && currentNode.prop('style')) {
                                             padding = padding + parseFloat(currentNode.css('padding-left')) + parseFloat(currentNode.css('padding-right'));
                                         }
                                     }
