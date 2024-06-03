@@ -76,7 +76,8 @@ const menuComponentModuleDef: ITestModuleDef = {
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: ComponentFixtureAutoDetect, useValue: true },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }
-    ]
+    ],
+    teardown: {destroyAfterEach: false}   
 };
 
 const menuComponentDef: ITestComponentDef = {
@@ -305,5 +306,74 @@ describe('MenuComponent', () => {
             expect(liElements).toBeTruthy();
         });
     }));
+
+    it('should open the dropdown  on keyboard enter and close on escape', waitForAsync(() => {
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        const menuElement = getHtmlSelectorElement(fixture, '[wmmenu]');
+        menuElement.triggerEventHandler('keydown.enter', { preventDefault: () => { } });
+        fixture.whenStable().then(() => {
+            const menuDropdownElement = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menuDropdownElement).toBeTruthy();
+            const liElements = menuDropdownElement.query(By.css('[wmmenudropdownitem]'));
+            expect(liElements).toBeTruthy();
+            menuElement.triggerEventHandler('keydown.escape', { preventDefault: () => { } });
+            fixture.detectChanges();
+            expect(menuDropdownElement.nativeElement.classList.contains('open')).toBeFalsy();
+        });
+    }));
     /***************************** actions end ************************************* */
+
+   it('should dropdown position be down,right', waitForAsync(() => {
+        wmComponent.menuposition = 'down,right';
+        jest.spyOn(wmComponent, 'setMenuPosition');
+        wmComponent.setMenuPosition();
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        buttonClickFunction();
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-right');
+        });
+    }));
+    
+    it('should dropdown position be down,left', waitForAsync(() => {
+        wmComponent.menuposition = 'down,left';
+        jest.spyOn(wmComponent, 'setMenuPosition');
+        wmComponent.setMenuPosition();
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        buttonClickFunction();
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-left');
+        });
+    }));
+
+    it('should dropdown position be up,right', waitForAsync(() => {
+        wmComponent.menuposition = 'up,right';
+        jest.spyOn(wmComponent, 'setMenuPosition');
+        wmComponent.setMenuPosition();
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        buttonClickFunction();
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-right');
+        });
+    }));
+
+    it('should dropdown position be up,left', waitForAsync(() => {
+        wmComponent.menuposition = 'up,left';
+        jest.spyOn(wmComponent, 'setMenuPosition');
+        wmComponent.setMenuPosition();
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        buttonClickFunction();
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-left');
+        });
+    }));
+
+
 });
