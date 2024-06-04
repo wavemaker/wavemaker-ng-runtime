@@ -12,7 +12,7 @@ import {
 } from '@wm/core';
 import { ALLFIELDS, configureDnD, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
-import { SearchComponent } from '@wm/components/basic/search';
+import { SearchComponent } from '../../../basic/search/src/search.component';
 
 import { registerProps } from './chips.props';
 

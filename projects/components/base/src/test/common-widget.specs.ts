@@ -274,7 +274,7 @@ export class ComponentTestBase {
                 'textalign',
                 'color',
                 'whiteSpace',
-                'backgroundColor',
+                'backgroundcolor',
                 'backgroundimage',
                 'backgroundrepeat',
                 'backgroundposition',
@@ -307,7 +307,7 @@ export class ComponentTestBase {
                     // console.log(cssValue, 'vss*****');
                     if (initValue) {
                         if (cssName === 'backgroundimage') {
-                            initValue = 'url("' + initValue + '")';
+                            initValue = initValue
                             // Normalize cssValue to ensure it matches the format of initValue
                             const normalizeUrl = (url) => url.replace(/^url\("?|"?\)$/g, 'url("').replace('")', '")');
                             expect(normalizeUrl(cssValue)).toBe(normalizeUrl(initValue));
