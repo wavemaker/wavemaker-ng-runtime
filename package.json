@@ -9,6 +9,7 @@
         "test": "jest --no-cache --detectOpenHandles",
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage --detectOpenHandles",
+        "test-prod": "jest --no-cache --no-color --detectOpenHandles --ci --silent 2>&1 | sed 's/\\x1b\\[[0-9;]*m//g' > test-results.txt",
         "lint": "./node_modules/.bin/ng lint",
         "e2e": "./node_modules/.bin/ng e2e",
         "optimizecss": "gulp --gulpfile build-scripts/optimize-css.gulpfile.js",
