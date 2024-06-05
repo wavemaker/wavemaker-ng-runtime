@@ -110,9 +110,9 @@ describe("wm-rating: Component Specific tests", () => {
         );
     });
     it('should call TouchStart event listener',()=>{
-        jest.spyOn(wmComponent,"onTouchStart");
+       const onTouchStartSpy = jest.spyOn(wmComponent,"onTouchStart");
         testElement.nativeElement.dispatchEvent(new Event("touchstart"));
-        expect(wmComponent.onTouchStart).toHaveBeenCalled();
+        expect(onTouchStartSpy).toHaveBeenCalled();
     });
     it('should not set "rating-label-hover" class on mouseover for touch enabled devices',()=>{
         testElement.nativeElement.dispatchEvent(new Event("touchstart"));
