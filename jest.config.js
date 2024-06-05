@@ -4,11 +4,12 @@ module.exports = {
   testEnvironment: "jsdom",
   testMatch: [
      "**/projects/**/*.spec.ts"
-    //  "**/projects/variables/src/model/variable/model-variable.spec.ts"
-    //"**/projects/components/widgets/basic/search/src/search.wrapper.component.spec.ts"
+     // "**/projects/components/widgets/input/epoch/**/*.spec.ts"
+    //  "**/projects/components/widgets/input/epoch/src/time/time.wrapper.component.spec.ts"
+     // "**/projects/components/widgets/input/epoch/src/date-time/datetime.wrapper.component.spec.ts"
+     // "**/projects/components/widgets/input/epoch/src/date/date.wrapper.component.spec.ts"
     //  "**/projects/components/widgets/navigation/popover/src/popover.wrapper.component.spec.ts"
-    //  "**/projects/components/widgets/containers/panel/src/panel.wrapper.component.spec.ts"
-    // "**/projects/components/widgets/input/default/src/number/number.wrapper.component.spec.ts"
+    //  "**/projects/components/widgets/input/epoch/src/date-time/datetime.wrapper.component.spec.ts"
 
   ],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
@@ -16,6 +17,11 @@ module.exports = {
   setupFilesAfterEnv: ["<rootDir>/src/setup-jest.js"],
   collectCoverage: true,
   coverageReporters: ["html", "json-summary"],
+  coveragePathIgnorePatterns:["libraries/scripts/tree-keyboard-navigation",
+  "libraries/scripts/jquery.ui.touch-punch",
+  "libraries/scripts/swipey",
+  ".yalc/@wavemaker/variables/src/"
+  ],
   // collectCoverageFrom: [
   //     '**/*.{ts,tsx}',
   //     '!**/node_modules/**',
@@ -27,6 +33,7 @@ module.exports = {
     "@wm/swipey": "<rootDir>/projects/swipey/src/public_api.ts",
     "@swipey": "<rootDir>/projects/swipey/src/public_api.ts",
     "@wm/components/base": "<rootDir>/projects/components/base/index.ts",
+    "@wm/components/basic/search": "<rootDir>/projects/components/widgets/basic/search/src/public_api.ts",
     "@wm/components/basic": "<rootDir>/projects/components/widgets/basic/default/src/public_api.ts",
     "@wm/components/input": "<rootDir>/projects/components/widgets/input/default/src/public_api.ts",
     "@wm/components/dialogs": "<rootDir>/projects/components/widgets/dialogs/default/src/public_api.ts",

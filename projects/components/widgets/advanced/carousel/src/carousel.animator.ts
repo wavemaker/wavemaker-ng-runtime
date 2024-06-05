@@ -1,5 +1,4 @@
 import { NgZone } from '@angular/core';
-import 'libraries/scripts/swipey/swipey.jquery.plugin.js';
 
 import { SwipeAnimation } from '@swipey';
 

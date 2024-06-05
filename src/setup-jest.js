@@ -6,6 +6,8 @@ import { TestBed } from '@angular/core/testing';
 global.jQuery = require("jquery");
 global.$ = global.jQuery;
 
+
+
 global._ = require("lodash");
 global.moment = require("moment");
 class IntersectionObserver {

@@ -137,7 +137,7 @@ const markup = `<form wmForm role="" #form_1 ngNativeValidate
                                                 [innerHTML]="formfield_4.value | toDate:formfield_4.formWidget.datepattern ||  'yyyy-MMM-dd'"></label>
                                             <div wmDate dataentrymode="undefined"
                                                 [class.hidden]="!form_1.isUpdateMode && formfield_4.viewmodewidget !== 'default'"
-                                                formControlName="dateofbirth" focus.event="_onFocusField($event);"
+                                                 focus.event="_onFocusField($event);"
                                                 blur.event="_onBlurField($event);" #formWidget name="dateofbirth_formWidget"></div>
                                         </div>
                                     </div>
@@ -162,7 +162,7 @@ const markup = `<form wmForm role="" #form_1 ngNativeValidate
                                                 [innerHTML]="formfield_5.value | toDate:formfield_5.formWidget.timepattern || 'hh:mm a'"></label>
                                             <div wmTime dataentrymode="undefined"
                                                 [class.hidden]="!form_1.isUpdateMode && formfield_5.viewmodewidget !== 'default'"
-                                                formControlName="timeofbirth" focus.event="_onFocusField($event);"
+                                                 focus.event="_onFocusField($event);"
                                                 blur.event="_onBlurField($event);" #formWidget name="timeofbirth_formWidget"></div>
                                         </div>
                                     </div>
@@ -228,8 +228,7 @@ const testModuleDef: ITestModuleDef = {
         FormActionDirective,
         FormFieldDirective,
         FormWidgetDirective,
-        DateComponent,
-        TimeComponent
+        
     ],
     providers: [
         { provide: App, useValue: mockApp },

@@ -174,7 +174,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
      * @param widgteName: Name of the widget
      * @param index: Index of the widget
      */
-    public getWidgets(widgteName: string, index: number) {
+    public getWidgets(widgteName: string, index?: number) {
         let $target;
         const retVal = [];
 

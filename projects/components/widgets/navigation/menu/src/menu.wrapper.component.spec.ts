@@ -1,22 +1,22 @@
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { By } from '@angular/platform-browser';
-import { waitForAsync, ComponentFixture, ComponentFixtureAutoDetect } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, ComponentFixtureAutoDetect, tick, fakeAsync } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { MenuComponent } from './menu.component';
 import { MenuDropdownComponent } from './menu-dropdown/menu-dropdown.component';
 import { MenuDropdownItemComponent } from './menu-dropdown-item/menu-dropdown-item.component';
 import { NavigationControlDirective } from './nav/navigation-control.directive';
 import { Router } from '@angular/router';
-import {AbstractI18nService, App, UserDefinedExecutionContext} from '@wm/core';
+import { AbstractI18nService, App, UserDefinedExecutionContext } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { ButtonComponent } from '@wm/components/input';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
 import { compileTestComponent, getHtmlSelectorElement } from '../../../../base/src/test/util/component-test-util';
-import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
+import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
 
 const mockApp = {
-    subscribe: () => { return () => {}}
+    subscribe: () => { return () => { } }
 };
 const markup = `<div
                 wmMenu
@@ -53,7 +53,7 @@ const markup = `<div
     template: markup
 })
 class MenuWrapperComponent {
-    @ViewChild(MenuComponent, /* TODO: add static flag */ {static: true})
+    @ViewChild(MenuComponent, /* TODO: add static flag */ { static: true })
     wmComponent: MenuComponent;
 
     public testdata = 'Op1,op2,op3';
@@ -75,8 +75,9 @@ const menuComponentModuleDef: ITestModuleDef = {
         { provide: SecurityService, useValue: SecurityService },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: ComponentFixtureAutoDetect, useValue: true },
-        {provide: AbstractI18nService, useClass: MockAbstractI18nService}
-    ]
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService }
+    ],
+    teardown: {destroyAfterEach: false}   
 };
 
 const menuComponentDef: ITestComponentDef = {
@@ -297,7 +298,7 @@ describe('MenuComponent', () => {
     it('should open the dropdown  on keyboard enter', waitForAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         const menuElement = getHtmlSelectorElement(fixture, '[wmmenu]');
-        menuElement.triggerEventHandler('keydown.enter', { preventDefault: () => {}});
+        menuElement.triggerEventHandler('keydown.enter', { preventDefault: () => { } });
         fixture.whenStable().then(() => {
             const menuDropdownElement = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
             expect(menuDropdownElement).toBeTruthy();
@@ -305,5 +306,74 @@ describe('MenuComponent', () => {
             expect(liElements).toBeTruthy();
         });
     }));
+
+    it('should open the dropdown  on keyboard enter and close on escape', waitForAsync(() => {
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        const menuElement = getHtmlSelectorElement(fixture, '[wmmenu]');
+        menuElement.triggerEventHandler('keydown.enter', { preventDefault: () => { } });
+        fixture.whenStable().then(() => {
+            const menuDropdownElement = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menuDropdownElement).toBeTruthy();
+            const liElements = menuDropdownElement.query(By.css('[wmmenudropdownitem]'));
+            expect(liElements).toBeTruthy();
+            menuElement.triggerEventHandler('keydown.escape', { preventDefault: () => { } });
+            fixture.detectChanges();
+            expect(menuDropdownElement.nativeElement.classList.contains('open')).toBeFalsy();
+        });
+    }));
     /***************************** actions end ************************************* */
+
+   it('should dropdown position be down,right', waitForAsync(() => {
+        wmComponent.menuposition = 'down,right';
+        jest.spyOn(wmComponent, 'setMenuPosition');
+        wmComponent.setMenuPosition();
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        buttonClickFunction();
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-right');
+        });
+    }));
+    
+    it('should dropdown position be down,left', waitForAsync(() => {
+        wmComponent.menuposition = 'down,left';
+        jest.spyOn(wmComponent, 'setMenuPosition');
+        wmComponent.setMenuPosition();
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        buttonClickFunction();
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-left');
+        });
+    }));
+
+    it('should dropdown position be up,right', waitForAsync(() => {
+        wmComponent.menuposition = 'up,right';
+        jest.spyOn(wmComponent, 'setMenuPosition');
+        wmComponent.setMenuPosition();
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        buttonClickFunction();
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-right');
+        });
+    }));
+
+    it('should dropdown position be up,left', waitForAsync(() => {
+        wmComponent.menuposition = 'up,left';
+        jest.spyOn(wmComponent, 'setMenuPosition');
+        wmComponent.setMenuPosition();
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        buttonClickFunction();
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-left');
+        });
+    }));
+
+
 });

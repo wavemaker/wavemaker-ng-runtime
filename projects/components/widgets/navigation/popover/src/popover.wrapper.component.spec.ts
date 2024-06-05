@@ -6,9 +6,7 @@ import { PopoverConfig, PopoverModule } from 'ngx-bootstrap/popover';
 import { compileTestComponent, getHtmlSelectorElement } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { AnchorComponent } from '../../../basic/default/src/anchor/anchor.component';
-import { TrustAsPipe } from '../../../../base/src/pipes/trust-as.pipe';
-import { ImagePipe } from '../../../../base/src/pipes/image.pipe';
-
+import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
 
 const mockApp = {
     subscribe: () => { return () => {}}
@@ -81,9 +79,10 @@ class PopoverwrapperComponent {
 
 const testModuleDef: ITestModuleDef = {
     imports: [
+        ComponentsTestModule,
         PopoverModule.forRoot(),
     ],
-    declarations: [PopoverwrapperComponent, PopoverComponent, AnchorComponent, ImagePipe, TrustAsPipe],
+    declarations: [PopoverwrapperComponent, PopoverComponent, AnchorComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: PopoverConfig },

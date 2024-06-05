@@ -756,7 +756,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 const fd = _.get(formData, field.form.formGroupName, {});
                 fd[fieldName] = fieldValue;
                 _.set(formData, field.form.formGroupName, fd);
-            } else if (field.form.isParentList) {
+            } else if (this.parentForm && this.parentForm.ngform && field.form.isParentList) { // Fix for [WMS-25806]: use formArrayIndex only if form has a parent form
                 // setting formdata based on formArrayIndex
                 const fd = _.get(formData, field.form.parentList.name, []);
                 fd[field.form.formArrayIndex] = fd[field.form.formArrayIndex] || {};
@@ -1294,7 +1294,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         if (controls) {
             // when current form is inside the list (i.e. incase of formArray).
             if (_.get(this.parentList, 'name') && controls.hasOwnProperty(this.parentList.name)) {
-                this.parentForm.ngform.removeControl(this.parentList.name);
+                //get the index of current form in the list and remove the FormControl from FormArray
+                const index = _.findIndex(this.parentList.getWidgets(this.name), {widgetId: this.widgetId});
+                (<FormArray>this.parentForm.ngform.controls[this.parentList.name]).removeAt(index);
             }
             // when we have formGroupName set i.e. multiple formInstance with counter appended to formName
             if (this.formGroupName && controls.hasOwnProperty(this.formGroupName)) {

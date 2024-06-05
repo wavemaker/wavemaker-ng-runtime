@@ -1,4 +1,4 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -97,17 +97,18 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
     /* ****************************************** TestCase for "CONTAINS" match mode ********************************************** */
-    it('should add chipitems with "CONTAINS" matchmode',  (done) => {
-        applyMatchMode('anywhere', 'Option 2', 'option 2', done);
-    });
-    it ('should add chipitems with "CONTAINS" matchmode with search key', (done) => {
+    it('should add chipitems with "CONTAINS" matchmode', waitForAsync(() => {
+        applyMatchMode('anywhere', 'Option 2', 'option 2');
+    }))
+    
+    it ('should add chipitems with "CONTAINS" matchmode with search key', waitForAsync(() => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
         fixture.detectChanges();
-        applyMatchMode('anywhere', 'Tony', 'tony', done);
-    });
+        applyMatchMode('anywhere', 'Tony', 'tony');
+    }));
 
     /* ****************************************** TestCase for "CONTAINS_IGNORE_CASE" match mode *********************************** */
     it('should add chipitems with "CONTAINS_IGNORE_CASE" matchmode',  (done) => {
@@ -123,17 +124,17 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
     /* ****************************************** TestCase for "STARTS_WITH" match mode ******************************************** */
-    it('should add chipitems with "STARTS_WITH" matchmode',  (done) => {
-        applyMatchMode('start', 'Option 2', 'option 2', done);
-    });
-    it ('should add chipitems with "STARTS_WITH" matchmode with search key', (done) => {
+    it('should add chipitems with "STARTS_WITH" matchmode',  waitForAsync(() => {
+        applyMatchMode('start', 'Option 2', 'option 2');
+    }))
+    it ('should add chipitems with "STARTS_WITH" matchmode with search key', waitForAsync(() => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
         fixture.detectChanges();
-        applyMatchMode('start', 'Tony', 'tony', done);
-    });
+        applyMatchMode('start', 'Tony', 'tony');
+    }));
 
     /* ****************************************** TestCase for "STARTS_WITH_IGNORE_CASE" match mode ********************************** */
     it('should add chipitems with "STARTS_WITH_IGNORE_CASE" matchmode',  (done) => {
@@ -149,19 +150,20 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
     /* ****************************************** TestCase for "ENDS_WITH" match mode ************************************************ */
-    it('should add chipitems with "ENDS_WITH" matchmode',  (done) => {
+    it('should add chipitems with "ENDS_WITH" matchmode',  waitForAsync(() => {
         wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
         fixture.detectChanges();
-        applyMatchMode('end', 'script', 'Script', done);
-    });
-    it ('should add chipitems with "ENDS_WITH" matchmode with search key', (done) => {
+        applyMatchMode('end', 'script', 'Script');
+    }));
+
+    it ('should add chipitems with "ENDS_WITH" matchmode with search key', waitForAsync(() => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
         fixture.detectChanges();
-        applyMatchMode('end', 'Son', 'son', done);
-    });
+        applyMatchMode('end', 'Son', 'son');
+    }));
 
     /* ****************************************** TestCase for "ENDS_WITH_IGNORE_CASE" match mode ************************************* */
     it('should add chipitems with "ENDS_WITH_IGNORE_CASE" matchmode',  (done) => {
@@ -179,19 +181,19 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
     /* ****************************************** TestCase for "IS_EQUAL" match mode ************************************************** */
-    it('should add chipitems with "IS_EQUAL" matchmode',  (done) => {
+    it('should add chipitems with "IS_EQUAL" matchmode',  waitForAsync(() => {
         wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
         fixture.detectChanges();
-        applyMatchMode('exact', 'java', 'Java', done);
-    });
-    it ('should add chipitems with "IS_EQUAL" matchmode with search key', (done) => {
+        applyMatchMode('exact', 'java', 'Java');
+    }));
+    it ('should add chipitems with "IS_EQUAL" matchmode with search key', waitForAsync(() => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
         fixture.detectChanges();
-        applyMatchMode('exact', 'Peter', 'peter', done);
-    });
+        applyMatchMode('exact', 'Peter', 'peter');
+    }));
 
     /* ****************************************** TestCase for "IS_EQUAL_WITH_IGNORE_CASE" match mode ********************************** */
     it('should add chipitems with "IS_EQUAL_WITH_IGNORE_CASE" matchmode',  (done) => {
@@ -208,6 +210,29 @@ describe('wm-chips: Component Specific Tests', () => {
         applyIgnoreCaseMatchMode('exactignorecase', 'Peter', 'peter', done);
     });
 
+
+   it('should delete chip item', waitForAsync(() => {
+        const testValue = 'Option 3';
+        addItem(testValue, 'keyup').then(() => {
+            expect(wmComponent.chipsList.length).toEqual(1);
+            const chipItem = wmComponent.chipsList[0];
+            chipItem.removeChipItem();
+            expect(wmComponent.chipsList.length).toEqual(0);
+        });
+    }));
+
+    it('should trigger onArrowLeft when left arrow key is pressed', () => {
+        wmComponent.readonly = true;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        const  chipItem= fixture.debugElement.query(By.css('div'));
+        const event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+        chipItem.nativeElement.dispatchEvent(event);
+    });
+
+    
+
+
     function applyIgnoreCaseMatchMode(matchMode, value1, value2, done) {
         wmComponent.setProperty('matchmode', matchMode);
         fixture.detectChanges();
@@ -220,7 +245,7 @@ describe('wm-chips: Component Specific Tests', () => {
             });
         });
     }
-    function applyMatchMode(matchMode, value1, value2, done) {
+    function applyMatchMode(matchMode, value1, value2) {
         wmComponent.setProperty('matchmode', matchMode);
         fixture.detectChanges();
         addItem(value1, 'keyup').then(async () => {
@@ -228,7 +253,6 @@ describe('wm-chips: Component Specific Tests', () => {
             expect(wmComponent.chipsList.length).toEqual(1);
             addItem(value2, 'keydown').then(() => {
                 expect(wmComponent.chipsList.length).toEqual(2);
-                done();
             });
         });
     }

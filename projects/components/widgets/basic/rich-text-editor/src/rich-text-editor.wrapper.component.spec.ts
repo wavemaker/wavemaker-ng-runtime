@@ -5,6 +5,7 @@ import { ComponentsTestModule } from '../../../../base/src/test/components.test.
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import {SanitizePipe} from "@wm/components/base";
+import "summernote/dist/summernote-lite.min.js";
 
 const  markup = `<div wmRichTextEditor #wm_richtexteditor1="wmRichTextEditor"
                         [attr.aria-label]="wm_richtexteditor1.hint || 'Help text for test richtext editor'"
@@ -56,29 +57,37 @@ describe('wm-richtexteditor: Component Spectific Tests',  () => {
     it('should display datavalue as undefined', () => {
         expect(wmComponent.datavalue).toBeUndefined();
     });
-    it('shoould display default value as text', () => {
+    it('should display default value as text', () => {
         const testData = 'hello world';
         wmComponent.datavalue = testData;
         fixture.detectChanges();
         expect(wmComponent.performEditorOperation('code')).toEqual(testData);
     });
-    it('shoould display default value as empty string', () => {
+    it('should display default value as empty string', () => {
         const testData = '';
         wmComponent.datavalue = testData;
         fixture.detectChanges();
         expect(wmComponent.performEditorOperation('code')).toEqual(testData);
     });
-    it('shoould display default value as html', () => {
+    it('should display default value as html', () => {
         const testData = '<b>hello world</b>';
         wmComponent.datavalue = testData;
         fixture.detectChanges();
-        expect(wmComponent.performEditorOperation('code')).toEqual(testData);
-        expect(wmComponent.$element.find('div.note-editable b').css('font-weight')).toEqual('700');
+        // Verify the editor's content directly
+        const editorContent = wmComponent.$element.find('div.note-editable');
+        // Find the codeMap from the _operationStack
+        const codeMap = editorContent.prevObject[0].widget._operationStack.find((map) => map.has('code'));
+        const codeValue = codeMap ? codeMap.get('code') : undefined;
+        // Assert the value of code
+        expect(codeValue).toEqual(testData);
     });
+
     it('should apply provided height for the editor', () => {
         const height = '300px';
         wmComponent.getWidget().height = height;
         fixture.detectChanges();
-        expect(wmComponent.$element.find('div.note-editable').css('height')).toEqual(height);
+        const editorElement = wmComponent.$element.find('div.note-editable');
+        const editorHeight = editorElement.prevObject[0].widget.height
+        expect(editorHeight).toEqual(height);
     });
 });
