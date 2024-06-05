@@ -33,6 +33,7 @@ module.exports = {
     "@wm/swipey": "<rootDir>/projects/swipey/src/public_api.ts",
     "@swipey": "<rootDir>/projects/swipey/src/public_api.ts",
     "@wm/components/base": "<rootDir>/projects/components/base/index.ts",
+    "@wm/components/basic/search": "<rootDir>/projects/components/widgets/basic/search/src/public_api.ts",
     "@wm/components/basic": "<rootDir>/projects/components/widgets/basic/default/src/public_api.ts",
     "@wm/components/input": "<rootDir>/projects/components/widgets/input/default/src/public_api.ts",
     "@wm/components/dialogs": "<rootDir>/projects/components/widgets/dialogs/default/src/public_api.ts",

@@ -10,7 +10,7 @@ import { ChipsComponent } from './chips.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue } from '../../../../base/src/test/util/component-test-util';
 import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
-import { SearchComponent } from '../../../basic/search/src/search.component';
+import { SearchComponent } from '@wm/components/basic/search';
 import { PartialRefProvider } from '@wm/core';
 import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
 
