@@ -268,12 +268,12 @@ export class ComponentTestBase {
             // check com
             _.forEach(['fontsize',
                 'fontweight',
-                'fontStyle',
+                'fontstyle',
                 'fontfamily',
-                'textDecoration',
+                'textdecoration',
                 'textalign',
                 'color',
-                'whiteSpace',
+                'whitespace',
                 'backgroundcolor',
                 'backgroundimage',
                 'backgroundrepeat',
@@ -282,11 +282,11 @@ export class ComponentTestBase {
                 'backgroundattachment',
                 'bordercolor',
                 'borderwidth',
-                'borderStyle',
+                'borderstyle',
                 'opacity',
                 'overflow',
                 'cursor',
-                'zIndex',
+                'zindex',
                 'visibility',
                 'display',
                 'padding',
@@ -328,7 +328,7 @@ export class ComponentTestBase {
                             // TODO: write logic to compute background position based on value. Now hardcoding for 'left'
                             initValue = 'left';
                             expect(cssValue).toBe(initValue);
-                        } else if (cssName === 'textDecoration') {
+                        } else if (cssName === 'textdecoration') {
                             // if text decoration is just assigned as 'underline' css value is still 'underline solid rgba(0, 0, 255)'. so compare only first value
                             initValue = (initValue || '').split(' ').shift();
                             cssValue = (cssValue || '').split(' ').shift();
