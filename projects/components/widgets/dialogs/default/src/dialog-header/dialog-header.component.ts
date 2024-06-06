@@ -21,6 +21,7 @@ export class DialogHeaderComponent {
     @Input() public iconurl: string;
     @Input() public closable = true;
     @Input() public heading: string;
+    @Input() public headinglevel?: string = 'h4';
     @Input() public subheading: string;
     @Input() public titleid:string;
 
