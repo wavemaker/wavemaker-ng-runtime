@@ -19,6 +19,7 @@ export const registerProps = () => {
                 ['oktext', {value: 'OK', ...PROP_STRING}],
                 ['showactions', {value: true, ...PROP_BOOLEAN}],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
+                ['headinglevel', {value: 'h4', ...PROP_STRING}],
                 ['title', {value: 'Page Content', ...PROP_STRING}]
             ]
         )
