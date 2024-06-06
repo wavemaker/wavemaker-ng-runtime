@@ -20,7 +20,7 @@ let mockApp = {
 @Component({
     template: `
         <div wmList template="true" itemsperrow="xs-1 sm-1 md-1 lg-1" class="media-list" name="testlist"
-             dataset.bind="testdata" navigation="Basic"
+             dataset.bind="testdata" navigation="Basic" direction="vertical"
              click.event="onListClick($event, widget)"
              beforedatarender.event="onBeforeRender(widget, $data)"
              render.event="onRender(widget, $data)">
@@ -35,6 +35,7 @@ class ListWrapperComponent {
     listComponent: ListComponent;
     public testdata: any = [{name: 'Peter', age: 21}, {name: 'Tony', age: 42}];
     public testdata1: any = [{firstname: 'Peter', id: 1}, {firstname: '', id: 2}];
+    public testDataNavigation: any = [{ navigation: 'Pager'}];
     onBeforeRender(widget, $data) {
         console.log('calling on before render');
     }
@@ -194,6 +195,20 @@ describe('ListComponent', () => {
         expect(directiveIndex).toEqual(1);
     });
 
+    it('should change the navigation type to Basic when the navigation property is set to Basic', () => {
+        listComponent.onPropertyChange('navigation', 'Basic')
+        fixture.detectChanges();
+        const listComponentEle = fixture.debugElement.query(By.css('.media-list'));
+        expect(listComponentEle.nativeElement.attributes.getNamedItem('navigation').value).toEqual('Basic');
+    });
+
+    it('should change the direction of the list items when the direction property is set to vertical', () => {
+        listComponent.onPropertyChange('direction', 'vertical');
+        fixture.detectChanges();
+        const listComponentEle = fixture.debugElement.query(By.css('.media-list'));
+        expect(listComponentEle.nativeElement.attributes.getNamedItem('direction').value).toEqual('vertical');
+    })
+    
 
     /*
     it('should invoke on-before-render and on-render in sequence', fakeAsync(() => {
