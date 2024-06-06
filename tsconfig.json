@@ -80,8 +80,8 @@
             }
         },
         "enableI18nLegacyMessageIdFormat": false,
-        "strictInjectionParameters": true,
-        "strictInputAccessModifiers": true,
+        "strictInjectionParameters": false,
+        "strictInputAccessModifiers": false,
         "trace": true
     }
 }
