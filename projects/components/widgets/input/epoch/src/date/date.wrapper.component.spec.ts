@@ -94,7 +94,8 @@ const dateComponentModuleDef: ITestModuleDef = {
     { provide: DatePipe, useClass: DatePipe },
     { provide: AbstractI18nService, useClass: MockAbstractI18nService }
 
-    ]
+    ],
+    teardown: { destroyAfterEach: false }
 };
 
 const dateComponentDef: ITestComponentDef = {
@@ -202,7 +203,7 @@ describe('DateComponent', () => {
         expect(dateInputControl.nativeElement.value).toEqual(currentDate);
     }));
 
-    it('should update the datevalue as currentdate', async (done) => {
+    it('should update the datevalue as currentdate', async () => {
         wmComponent.setProperty('datavalue', 'CURRENT_DATE');
         fixture.detectChanges();
         const dateInputControl = getHtmlSelectorElement(fixture, '.app-dateinput');
@@ -211,17 +212,17 @@ describe('DateComponent', () => {
         wmComponent.setProperty('datavalue', newDateValue);
         setTimeout(() => {
             expect(dateInputControl.nativeElement.value).toBe(newDateValue);
-            done();
         }, 1000);
 
     });
 
-    it('should show the date patten as yyyy-mm-dd format ', waitForAsync(() => {
+    it('should show the date patten as yyyy-mm-dd format ', (() => {
         datepatternTest(fixture, '.app-date', '.app-dateinput');
 
     }));
 
-    it('should get the date outputformat as yyyy-mm-dd ', waitForAsync(() => {
+    it('should get the date outputformat as yyyy-mm-dd ', (() => {
+        wmComponent.outputformat = 'yyyy-MM-dd';
         outputpatternTest(fixture, '.app-date', dateWrapperComponent.wmComponent.datavalue);
 
     }));
@@ -279,7 +280,7 @@ describe('DateComponent', () => {
 
 
 
-    it('should be able to set the mindate and disable the below mindate on calendar', waitForAsync(() => {
+    it('should be able to set the mindate and disable the below mindate on calendar', (() => {
         wmComponent.getWidget().mindate = '2019-11-02';
         wmComponent.getWidget().datavalue = '2019-11-02';
         checkElementClass(fixture, '.app-date', 'ng-valid');
@@ -288,7 +289,7 @@ describe('DateComponent', () => {
         });
     }));
 
-    it('should respect the maxdate validation', waitForAsync(() => {
+    it('should respect the maxdate validation', (() => {
         wmComponent.getWidget().maxdate = '2020-01-03';
         wmComponent.getWidget().datavalue = '2020-01-04';
         checkElementClass(fixture, '.app-date', 'ng-invalid');
@@ -297,7 +298,7 @@ describe('DateComponent', () => {
         });
     }));
 
-    it('should ignore the  excluded days', waitForAsync(() => {
+    it('should ignore the  excluded days', (() => {
         dateWrapperComponent.wmComponent.getWidget().excludedays = '1,6';
         dateWrapperComponent.wmComponent.getWidget().datavalue = '2019-12-30';
         checkElementClass(fixture, '.app-date', 'ng-invalid');
@@ -410,8 +411,8 @@ const dateComponentLocaleModuleDef: ITestModuleDef = {
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
         { provide: AbstractI18nService,  deps: [BsLocaleService], useClass: MockAbstractI18nServiceDe }
-
-    ]
+    ],
+    teardown: { destroyAfterEach: false }
 };
 
 describe(('Date Component with Localization'), () => {
@@ -437,7 +438,7 @@ describe(('Date Component with Localization'), () => {
         expect(dateWrapperComponent).toBeTruthy() ;
     });
 
-    it ('should display localized dates in date picker', waitForAsync(() => {
+    it ('should display localized dates in date picker', (() => {
          localizedDatePickerTest(fixture, '.btn-time');
     }));
 
