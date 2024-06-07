@@ -114,6 +114,11 @@
         "util": "0.11.1",
         "yargs": "^17.3.1"
     },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "4.9.5",
+        "@rollup/rollup-darwin-arm64": "4.9.5",
+        "@rollup/rollup-win32-x64": "4.9.5"
+    },
     "engines": {
         "node": ">=18.16.1",
         "npm": ">=9.5.1"
