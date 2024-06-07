@@ -3,10 +3,17 @@
     "compilerOptions": {
         "baseUrl": "./",
         "outDir": "./dist/out-tsc",
+        "downlevelIteration": true,
+        "declaration": false,
+        "sourceMap": true,
+        "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "target": "ES2022",
         "module": "ES2022",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
         "paths": {
             "rxjs/observable/throw": [
                 "node_modules/rxjs-compat/_esm2015/observable/throw"
@@ -62,6 +69,9 @@
         "resolveJsonModule": true
     },
     "angularCompilerOptions": {
+        "compilationMode": "full",
+        "strictMetadataEmit": false,
+        "fullTemplateTypeCheck": false,
         "extendedDiagnostics": {
             "checks": {
                 "optionalChainNotNullable": "suppress"
