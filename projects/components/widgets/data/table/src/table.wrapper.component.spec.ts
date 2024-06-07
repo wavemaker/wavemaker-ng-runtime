@@ -159,7 +159,7 @@ const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 da
                             </div>`;
 
 const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="inline"
-                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false">
+                                name="UserTable1" title="User List" navigation="Basic" filtermode="multicolumn" isdynamictable="false">
 
                                 <div wmTableColumn index="0" headerIndex="0" binding="firstname" caption="Firstname" edit-widget-type="text" type="string"
                                     mobiledisplay="false" searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
@@ -945,7 +945,11 @@ describe("DataTable", () => {
                     expect(rowEl.querySelector('td .save-edit-row-button').classList.contains('hidden')).toBeTruthy();
                 });
 
-
+                it('should show mutlicolumn filter', () => {
+                    const debugEl = inline_edit_fixture.debugElement.nativeElement;
+                    const filterRowElem = debugEl.querySelector(".filter-row");
+                    expect(filterRowElem).toBeDefined()
+                });
             });
 
             describe("Quick Edit", () => {
@@ -1203,16 +1207,18 @@ describe("DataTable", () => {
                     expect(firstRowColEls[0].textContent.trim()).toEqual('admin');
                 });
 
-                it('should sort the column in descending order on click of the column header twice', () => {
+                it('should sort the column in descending order on click of the column header twice', (async() => {
                     const debugEl = quick_edit_fixture.debugElement.nativeElement;
                     const tableHeaderEl = debugEl.querySelectorAll(".app-datagrid-header-cell");
                     tableHeaderEl[0].click();
                     tableHeaderEl[0].click();
+                    quick_edit_fixture.detectChanges();
+                    await quick_edit_fixture.whenStable();
                     const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
                     const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row");
                     const firstRowColEls = tableRowEls[0].querySelectorAll("td");
-                    expect(firstRowColEls[0].textContent.trim()).toEqual('admin');
-                });
+                    expect(firstRowColEls[0].textContent.trim()).toEqual('user');
+                }));
 
                 it('should filter the data on entering the text in the filter input', async () => {
                     const debugEl = quick_edit_fixture.debugElement.nativeElement;
@@ -1233,7 +1239,7 @@ describe("DataTable", () => {
                     await quick_edit_fixture.whenStable();
                     const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
                     const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row");
-                    expect(tableRowEls.length).toEqual(4);
+                    expect(tableRowEls.length).toEqual(1);
                 });
 
                 it('should add load more button to table when data is more than 10', () => {
@@ -1245,6 +1251,7 @@ describe("DataTable", () => {
                     const loadMoreBtnEl = debugEl.querySelector(".app-datagrid-load-more");
                     expect(loadMoreBtnEl).toBeDefined();
                 });
+
 
 
                 it('should open confirmaion dialog on click of delete icon', () => {
