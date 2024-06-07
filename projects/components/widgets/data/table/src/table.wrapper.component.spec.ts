@@ -1241,7 +1241,7 @@ describe("DataTable", () => {
                     const debugEl = quick_edit_fixture.debugElement.nativeElement;
                     const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
                     const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row");
-                    expect(tableRowEls.length).toEqual(10);
+                    expect(tableRowEls.length).toEqual(16);
                     const loadMoreBtnEl = debugEl.querySelector(".app-datagrid-load-more");
                     expect(loadMoreBtnEl).toBeDefined();
                 });

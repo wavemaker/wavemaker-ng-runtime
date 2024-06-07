@@ -88,7 +88,8 @@ export const mockApp = {
     subscribe: () => { return () => {}},
     getSelectedLocale: () => {
         return 'en';
-    }
+    },
+    notifyApp : () => jest.fn()
 };
 
 export const mockViewport = {};
