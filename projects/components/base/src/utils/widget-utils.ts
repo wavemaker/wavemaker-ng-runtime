@@ -1,9 +1,20 @@
-import { forwardRef } from '@angular/core';
+import {forwardRef} from '@angular/core';
 
-import { encodeUrl, isValidWebURL, stringStartsWith, FormWidgetType, $parseExpr, getClonedObject, prettifyLabel, initCaps, deHyphenate, checkIsCustomPipeExpression } from '@wm/core';
-import { DialogRef, WidgetRef } from '../widgets/framework/types';
-import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
-import { NavNode } from "../widgets/common/base/dataset-aware-nav.component";
+import {
+    $parseExpr,
+    checkIsCustomPipeExpression,
+    deHyphenate,
+    encodeUrl,
+    FormWidgetType,
+    getClonedObject,
+    initCaps,
+    isValidWebURL,
+    prettifyLabel,
+    stringStartsWith
+} from '@wm/core';
+import {DialogRef, WidgetRef} from '../widgets/framework/types';
+import {createFocusTrap} from '@wavemaker/focus-trap';
+import {NavNode} from "../widgets/common/base/dataset-aware-nav.component";
 
 declare const _;
 

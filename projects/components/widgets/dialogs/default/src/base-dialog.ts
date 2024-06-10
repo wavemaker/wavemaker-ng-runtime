@@ -1,20 +1,13 @@
-import {Injector, OnDestroy, TemplateRef, Injectable, Inject, Optional} from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import {Inject, Injectable, Injector, OnDestroy, TemplateRef} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
+import {BsModalRef, BsModalService, ModalOptions} from 'ngx-bootstrap/modal';
 
-import { Subscription } from 'rxjs';
+import {Subscription} from 'rxjs';
 
-import {
-    AbstractDialogService,
-    closePopover,
-    findRootContainer,
-    generateGUId,
-    isMobile,
-    isMobileApp
-} from '@wm/core';
+import {AbstractDialogService, findRootContainer, generateGUId, isMobile, isMobileApp} from '@wm/core';
 
-import { BaseComponent, IDialog, IWidgetConfig, WidgetConfig } from '@wm/components/base';
-import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
+import {BaseComponent, IDialog, IWidgetConfig, WidgetConfig} from '@wm/components/base';
+import {createFocusTrap} from '@wavemaker/focus-trap';
 
 declare const _;
 
