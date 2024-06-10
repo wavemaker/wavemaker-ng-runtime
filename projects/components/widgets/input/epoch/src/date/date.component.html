@@ -2,11 +2,14 @@
         focus-target
         type="text"
         [name]="name"
+        #dateInput
+        [imask]="mask"
+        [unmask]="true"
         [tabindex]="loadNativeDateInput ? '-1' : tabindex"
         [attr.aria-hidden]="!!loadNativeDateInput"
         [value]="displayValue"
         (click)="toggleDpDropdown($event, true)"
-        (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
+        (focus)="onDateTimeInputFocus(); invokeOnFocus($event); updateIMask()"
         (blur)="onInputBlur($event)"
         [disabled]="disabled || readonly"
         [autofocus]="autofocus"
