@@ -1,0 +1,73 @@
+@keyframes flipEntry {
+  0% {
+    opacity: 0;
+    transform: perspective(1000px) rotateY(180deg);
+  }
+  50%{opacity: 0;}
+  51% {opacity : 1;}
+  100% {
+    opacity : 1;
+    transform: perspective(1000px) rotateY(0deg);
+  }
+}
+
+@keyframes flipExit {
+  0% {
+    opacity: 1;
+    transform: perspective(1000px) rotateY(0deg);
+  }
+  50%{opacity: 1;}
+  51% {opacity : 0;}
+  100% {
+    opacity : 0;
+    transform: perspective(1000px) rotateY(-180deg);
+  }
+}
+
+@keyframes flipReverseEntry {
+  0% {
+    opacity: 0;
+    transform: perspective(1000px) rotateY(-180deg);
+  }
+  50%{opacity: 0;}
+  51% {opacity : 1;}
+  100% {
+    opacity : 1;
+    transform: perspective(1000px) rotateY(0deg);
+  }
+}
+
+@keyframes flipReverseExit {
+  0% {
+    opacity: 1;
+    transform: perspective(1000px) rotateY(0deg);
+  }
+  50%{opacity: 1;}
+  51% {opacity : 0;}
+  100% {
+    opacity : 0;
+    transform: perspective(1000px) rotateY(180deg);
+  }
+}
+
+.wm-app, .wm-app app-root {
+  >.page-transition-flip {
+    >.page-exit {
+      animation-name: flipExit;
+    }
+    >.page-entry {
+      animation-name: flipEntry;
+    }
+  }
+
+  >.page-transition-flip-exit {
+    >.page-exit {
+      animation-timing-function: cubic-bezier(0.600, 0.040, 0.980, 0.335); /* easeInCirc */
+      animation-name: flipReverseExit;
+    }
+    >.page-entry {
+      animation-timing-function: cubic-bezier(0.600, 0.040, 0.980, 0.335); /* easeInCirc */
+      animation-name: flipReverseEntry;
+    }
+  }
+}

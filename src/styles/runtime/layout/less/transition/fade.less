@@ -1,0 +1,47 @@
+@keyframes wm-page-fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes wm-page-fadeOutDown {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  30% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
+.wm-app, .wm-app app-root {
+  >.page-transition-fade {
+    > .page-entry {
+      animation-name: fadeIn;
+    }
+    >.android-page.page-entry {
+      animation-name: wm-page-fadeInDown;
+    }
+  }
+  >.page-transition-fade-exit {
+    >.page-exit {
+      animation-name: fadeOut;
+      z-index: 1;
+    }
+    >.android-page.page-exit {
+      animation-name: wm-page-fadeOutDown;
+    }
+  }
+}

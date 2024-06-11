@@ -1,0 +1,34 @@
+.transform(@transformValue){
+  transform: @transformValue;
+  -webkit-transform: @transformValue;
+  -moz-transform: @transformValue;
+  -ms-transform: @transformValue;
+}
+
+.animation(@name, @duration){
+  -webkit-animation: @name @duration ease-in;
+  -moz-animation: @name @duration ease-in;
+  -o-animation: @name @duration ease-in;
+  animation: @name @duration ease-in;
+}
+
+.commonTransitionStyles() {
+  .page-transition > * {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: visible !important;
+    animation-duration: 0.3s;
+    animation-timing-function: cubic-bezier(0.075, 0.820, 0.165, 1.000);/* easeOutCirc */
+    animation-fill-mode: forwards;
+    .app-page > .app-left-panel {
+      display: none;
+    }
+  }
+  .page-transition > *:before,
+  .page-transition > *:after {
+    animation-duration: 0.3s;
+  }
+}
