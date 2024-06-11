@@ -31,8 +31,21 @@ import { DatasetAwareFormComponent } from '@wm/components/input';
 
 import { registerProps } from './search.props';
 import { DataProvider, IDataProvider, IDataProviderConfig } from './data-provider/data-provider';
-
-declare const _;
+import {
+    debounce,
+    find,
+    get,
+    includes,
+    isArray,
+    isEmpty,
+    isEqual,
+    isObject,
+    isUndefined,
+    map,
+    split,
+    toString,
+    trim
+} from "lodash-es";
 
 const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
 
@@ -163,7 +176,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
          */
         const datavalueSubscription = this.datavalue$.subscribe((val: Array<string> | string) => {
 
-            const query = (_.isArray(val) ? val[0] : val) as string;
+            const query = (isArray(val) ? val[0] : val) as string;
 
             if (query === null || query === '') {
                 this._modelByValue = '';
@@ -177,7 +190,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             if (!this._unsubscribeDv) {
                 this._defaultQueryInvoked = false;
                 // if prev datavalue is not equal to current datavalue then clear the modelByKey and queryModel
-                if (!_.isObject(val) && (this as any).prevDatavalue !== val) {
+                if (!isObject(val) && (this as any).prevDatavalue !== val) {
                     this._modelByKey = undefined;
                     this.query = this.queryModel = '';
                 }
@@ -273,7 +286,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private getDataSourceAsObservable(query: string): Observable<any> {
         // show dropdown only when there is change in query. This should not apply when dataoptions with filterFields are updated.
         // when lastResult is not available i.e. still the first call is pending and second query is invoked then do not return.
-        if (this._lastQuery === query && !_.get(this.dataoptions, 'filterFields') && isDefined(this._lastResult)) {
+        if (this._lastQuery === query && !get(this.dataoptions, 'filterFields') && isDefined(this._lastResult)) {
             this._loadingItems = false;
             return of(this._lastResult);
         }
@@ -286,12 +299,12 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         */
         if (this.type === 'autocomplete' && this.searchkey && this.query && this.datavalue) {
             let bindDisplayLabelArray = [];
-            const searchKeyArray = _.split(this.searchkey, ',');
+            const searchKeyArray = split(this.searchkey, ',');
             let displaylabel;
             if (this.binddisplaylabel) {
-                bindDisplayLabelArray = _.split(this.binddisplaylabel, '+');
+                bindDisplayLabelArray = split(this.binddisplaylabel, '+');
                 if (bindDisplayLabelArray.length === 1) {
-                    if (!_.includes(bindDisplayLabelArray[0], '|')) {
+                    if (!includes(bindDisplayLabelArray[0], '|')) {
                         const regex = /\[(.*?)\]/;
                         displaylabel = regex.exec(bindDisplayLabelArray[0])[1];
                     } else {
@@ -299,8 +312,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     }
                 }
             }
-            if ((bindDisplayLabelArray.length > 1 || (displaylabel && !_.includes(searchKeyArray, displaylabel))
-                    || (this.displayexpression && !_.includes(searchKeyArray, this.displayexpression)))) {
+            if ((bindDisplayLabelArray.length > 1 || (displaylabel && !includes(searchKeyArray, displaylabel))
+                || (this.displayexpression && !includes(searchKeyArray, this.displayexpression)))) {
                 this._loadingItems = false;
                 return of([]);
             }
@@ -310,7 +323,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (!_.includes(['blur', 'focus', 'select', 'submit', 'change'], eventName)) {
+        if (!includes(['blur', 'focus', 'select', 'submit', 'change'], eventName)) {
             super.handleEvent(node, eventName, eventCallback, locals);
         }
     }
@@ -366,7 +379,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         // trigger the typeahead change manually to fetch the next set of results.
         this.typeahead.onInput({
             target: {
-                value: _.trim(this.query) || '0' // dummy data to notify the observables
+                value: trim(this.query) || '0' // dummy data to notify the observables
             }
         });
     }
@@ -422,7 +435,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // Triggered for enter event
     private handleEnterEvent($event) {
         // submit event triggered when there is no search results
-        if (!_.get(this.typeahead, 'matches.length')) {
+        if (!get(this.typeahead, 'matches.length')) {
             this.onSearchSelect($event);
         }
     }
@@ -467,7 +480,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         }
         // setting the ulElements, liElement on typeaheadContainer.
         // as we are using customOption template, liElements are not available on typeaheadContainer so append them explicitly.
-        const fn = _.debounce(() => {
+        const fn = debounce(() => {
             this._isOpen = true;
             this.typeaheadContainer = this.typeahead._container || (this.typeahead as any)._typeahead.instance;
             (this.typeaheadContainer as any).liElements = this.liElements;
@@ -490,7 +503,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             dropdownEl.css({ position: 'relative', top: 0, height: screenHeight + 'px' });
             this.showClosebtn = this.query && this.query !== '';
 
-            if (!_.isUndefined(this.dataProvider.isLastPage) && !this.dataProvider.isLastPage) {
+            if (!isUndefined(this.dataProvider.isLastPage) && !this.dataProvider.isLastPage) {
                 this.triggerSearch();
             }
         }
@@ -552,7 +565,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.query = '';
             }
             if (this.clearData) {
-                if (_.get((this.typeahead as any), '_typeahead.isShown')) {
+                if (get((this.typeahead as any), '_typeahead.isShown')) {
                     this.typeahead.hide();
                 }
             }
@@ -567,9 +580,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private updateByDataSource(data) {
         // value is present but the corresponding key is not found then fetch next set
         // modelByKey will be set only when datavalue is available inside the localData otherwise make a N/w call.
-        if (isDefined(data) && !_.isObject(data) && this.datasource && !isDefined(this._modelByKey) && this.datafield !== ALLFIELDS) {
+        if (isDefined(data) && !isObject(data) && this.datasource && !isDefined(this._modelByKey) && this.datafield !== ALLFIELDS) {
             // Avoid making default query if queryModel already exists.
-            if (isDefined(this.queryModel) && !_.isEmpty(this.queryModel)) {
+            if (isDefined(this.queryModel) && !isEmpty(this.queryModel)) {
                 this.updateDatavalueFromQueryModel();
                 return;
             }
@@ -584,8 +597,8 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     // updates the model value using queryModel
     private updateDatavalueFromQueryModel() {
         if (isDefined(this.queryModel)) {
-            this._modelByValue = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
-            this._modelByKey = _.isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).key : this.queryModel;
+            this._modelByValue = isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).value : this.queryModel;
+            this._modelByKey = isArray(this.queryModel) ? (this.queryModel[0] as DataSetItem).key : this.queryModel;
             this.toBeProcessedDatavalue = undefined;
         }
     }
@@ -596,14 +609,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (this._defaultQueryInvoked && this.searchkey) {
             return;
         }
-        const selectedItem = _.find(this.datasetItems, (item) => {
-            return (_.isObject(item.value) ? _.isEqual(item.value, data) : (_.toString(item.value)).toLowerCase() === (_.toString(data)).toLowerCase());
+        const selectedItem = find(this.datasetItems, (item) => {
+            return (isObject(item.value) ? isEqual(item.value, data) : (toString(item.value)).toLowerCase() === (toString(data)).toLowerCase());
         });
 
         // set the default only when it is available in dataset.
         if (selectedItem) {
             this.queryModel = [selectedItem];
-        } else if (this.datafield === ALLFIELDS && _.isObject(data)) {
+        } else if (this.datafield === ALLFIELDS && isObject(data)) {
             this.queryModel = this.getTransformedData(extractDataAsArray(data));
         } else {
             // resetting the queryModel only when prevDatavalue is equal to data
@@ -616,7 +629,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         this.updateDatavalueFromQueryModel();
 
         // Show the label value on input.
-        this._lastQuery = this.query = isDefined(this.queryModel) && this.queryModel.length ? _.get(this.queryModel[0], 'label') : '';
+        this._lastQuery = this.query = isDefined(this.queryModel) && this.queryModel.length ? get(this.queryModel[0], 'label') : '';
         this.showClosebtn = (this.query !== '');
     }
 
@@ -691,14 +704,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 }
 
                 // In mobile, trigger the search by default until the results have height upto page height. Other results can be fetched by scrolling
-                if (this._isOpen && this.isMobileAutoComplete() && !_.isUndefined(this.dataProvider.isLastPage) && !this.dataProvider.isLastPage) {
+                    if (this._isOpen && this.isMobileAutoComplete() && !isUndefined(this.dataProvider.isLastPage) && !this.dataProvider.isLastPage) {
                     this.triggerSearch();
                 }
 
                 const transformedData = this.getTransformedData(this.formattedDataset, nextItemIndex);
 
                 // result contains the datafield values.
-                this.result = _.map(transformedData, 'value');
+                    this.result = map(transformedData, 'value');
                 return transformedData;
             }, (error) => {
                 this._loadingItems = false;
@@ -706,7 +719,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }
             ).then(result => {
                 if (this.isScrolled) {
-                    (_.debounce(() => {
+                    (debounce(() => {
                         this.setLastActiveMatchAsSelected();
                     }, 30))();
                     this.isScrolled = false;
@@ -729,7 +742,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     // this method returns the parent context i.e. Page context and not parent component's context.
     private getContext(context) {
-        if (context && _.get(context, 'widget')) {
+        if (context && get(context, 'widget')) {
             return this.getContext(context.viewParent);
         }
         return context;
@@ -852,7 +865,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         // when dataoptions are provided and there is no displaylabel given then displaylabel is set as the relatedfield
         if (key === 'displaylabel' && this.dataoptions && this.binddisplaylabel === null) {
-            this.query = _.get(this._modelByValue, nv) || this._modelByValue;
+            this.query = get(this._modelByValue, nv) || this._modelByValue;
         }
 
         // when search is disabled, do not load any more data or just clear the data that is already in process or loaded.
@@ -861,7 +874,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 this.clearData = false;
             } else {
                 this.clearData = true;
-                if (_.get((this.typeahead as any), '_typeahead.isShown')) {
+                if (get((this.typeahead as any), '_typeahead.isShown')) {
                     this.typeahead.hide();
                 }
             }

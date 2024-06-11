@@ -3,8 +3,9 @@ import { NavigationStart, Router } from '@angular/router';
 
 import { App, NavigationOptions, AbstractNavigationService } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
+import {filter, isEmpty, isEqual} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 const parentSelector = 'body >app-root';
 
@@ -55,7 +56,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
     }
 
     public getPageTransition() {
-        if (_.isEmpty(this.transition) || _.isEqual('none', this.transition)) {
+        if (isEmpty(this.transition) || isEqual('none', this.transition)) {
             return null;
         }
         return this.transition;
@@ -77,8 +78,8 @@ export class NavigationServiceImpl implements AbstractNavigationService {
        *  BrowserAnimcation module has issue with RouterOutlet
           In the result every route appending to previous route instead of replace.
           To fix the issue we are navigating inside the ngZones
-       * 
-       *  */  
+       *
+       *  */
         this.zone.run(() => {
             return this.router.navigate([`/${pageName}`], { queryParams: options.urlParams});
         });
@@ -91,7 +92,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
     public goToPrevious() {
         if (this.history.getPagesCount()) {
             this.transition = this.history.getCurrentPage().transition;
-            if (!_.isEmpty(this.transition)) {
+            if (!isEmpty(this.transition)) {
                 this.transition += '-exit';
             }
             this.history.pop();
@@ -197,8 +198,8 @@ export class NavigationServiceImpl implements AbstractNavigationService {
     private getViewElementInActivePage($el) {
         let selector;
         if ($el.length > 1) {
-            selector = _.filter($el, (childSelector) => {
-                if (_.isEmpty($(childSelector).closest('[data-role = "partial"]')) && _.isEmpty($(childSelector).closest('[wmprefabcontainer]'))) {
+            selector = filter($el, (childSelector) => {
+                if (isEmpty($(childSelector).closest('[data-role = "partial"]')) && isEmpty($(childSelector).closest('[wmprefabcontainer]'))) {
                     return childSelector;
                 }
             });
@@ -276,11 +277,11 @@ export class NavigationServiceImpl implements AbstractNavigationService {
 class PageInfo {
 
     constructor(public name, public urlParams?, public transition?) {
-        this.transition = _.isEmpty(this.transition) ? null : this.transition;
+        this.transition = isEmpty(this.transition) ? null : this.transition;
     }
 
     public isEqual(page1: PageInfo) {
-        return page1 && page1.name === this.name && _.isEqual(page1.urlParams, this.urlParams);
+        return page1 && page1.name === this.name && isEqual(page1.urlParams, this.urlParams);
     }
 }
 

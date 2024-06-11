@@ -2,13 +2,14 @@ import { Inject, Pipe, PipeTransform } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { CURRENCY_INFO, isDefined, App, CustomPipeManager, AbstractI18nService, hasOffsetStr } from '@wm/core';
 import { WmPipe } from "./wm-pipe";
+import {filter, includes, isDate, isFunction, isObject, isUndefined, startsWith} from "lodash-es";
 
-declare const moment, _, $;
+declare const moment;
 
 const getEpochValue = data => {
     let epoch;
     // For data in form of string number ('123'), convert to number (123). And don't parse date objects.
-    if (!_.isDate(data) && !isNaN(data)) {
+    if (!isDate(data) && !isNaN(data)) {
         data = parseInt(data, 10);
     }
     // get the timestamp value. If data is time string, append date string to the time value
@@ -86,7 +87,7 @@ export class ToNumberPipe implements PipeTransform {
         if (fracSize && !String(fracSize).match(/^(\d+)?\.((\d+)(-(\d+))?)?$/)) {
             fracSize = '1.' + fracSize + '-' + fracSize;
         }
-        if (!_.isNaN(+data)) {
+        if (!isNaN(+data)) {
             const locale = this.i18nService && this.i18nService.getwidgetLocale() ? this.i18nService.getwidgetLocale() : undefined;
             const formattedLocale = locale ? locale['number'] : null;
             return this.decimalPipe.transform(data, fracSize, formattedLocale);
@@ -103,7 +104,7 @@ export class ToCurrencyPipe implements PipeTransform {
     transform(data, currencySymbol, fracSize) {
         const _currencySymbol = (CURRENCY_INFO[currencySymbol] || {}).symbol || currencySymbol || '';
         let _val = new ToNumberPipe(this.decimalPipe, this.i18nService).transform(data, fracSize);
-        const isNegativeNumber = _.startsWith(_val, '-');
+        const isNegativeNumber = startsWith(_val, '-');
         if (isNegativeNumber) {
             _val = _val.replace('-','');
         }
@@ -119,7 +120,7 @@ export class ToCurrencyPipe implements PipeTransform {
 })
 export class PrefixPipe implements PipeTransform {
     transform(data, padding) {
-        return (_.isUndefined(data) || data === null || data === '') ? data : ((padding || '') + data);
+        return (isUndefined(data) || data === null || data === '') ? data : ((padding || '') + data);
     }
 }
 
@@ -128,7 +129,7 @@ export class PrefixPipe implements PipeTransform {
 })
 export class SuffixPipe implements PipeTransform {
     transform(data, padding) {
-        return (_.isUndefined(data) || data === null || data === '') ? data : (data + (padding || ''));
+        return (isUndefined(data) || data === null || data === '') ? data : (data + (padding || ''));
     }
 }
 
@@ -150,7 +151,7 @@ export class CustomPipe implements PipeTransform {
        }
 
         let pipeRef = this.custmeUserPipe.getCustomPipe(pipename);
-        if(!pipeRef || !_.isFunction(pipeRef.formatter)){
+        if (!pipeRef || !isFunction(pipeRef.formatter)) {
             console.warn('formatter is not defined, please check the custom pipes documentation');
             return data;
         }
@@ -201,12 +202,12 @@ export class FilterPipe implements PipeTransform {
             return [];
         }
         // If object is passed as first paramter
-        if (_.isObject(field)) {
-            return _.filter(data, field);
+        if (isObject(field)) {
+            return filter(data, field);
         }
         // If key value pair is provided
-        return _.filter(data, item => {
-            return _.includes(item[field], value);
+        return filter(data, item => {
+            return includes(item[field], value);
         });
     }
 }

@@ -5,8 +5,7 @@ import { debounceTime, filter } from 'rxjs/operators';
 import { App, $invokeWatchers, noop, ComponentType, PartialRefProvider } from '@wm/core';
 
 import { WidgetRef } from "../../framework/types";
-
-declare const _;
+import {debounce} from "lodash-es";
 
 @Directive({
     selector: '[partialContainer]'
@@ -52,7 +51,7 @@ export class PartialContainerDirective {
         }
     }
 
-    renderPartial = _.debounce(this._renderPartial, 200);
+    renderPartial = debounce(this._renderPartial, 200);
 
     onLoadSuccess() {
         this.componentInstance.invokeEventCallback('load');

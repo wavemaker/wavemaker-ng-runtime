@@ -62,8 +62,21 @@ import {PaginationComponent} from '@wm/components/data/pagination';
 import {ListComponent} from '@wm/components/data/list';
 import {registerProps} from './table.props';
 import {debounceTime} from 'rxjs/operators';
+import {
+    debounce,
+    extend, find,
+    findIndex, floor, forEach,
+    get, includes, indexOf, isArray, isEmpty,
+    isEqual,
+    isNaN, isObject,
+    isUndefined, keys, omitBy,
+    pullAllWith,
+    remove,
+    set,
+    some, split, startsWith, toNumber, values
+} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 const DEFAULT_CLS = 'app-grid app-panel panel';
 const WIDGET_CONFIG = {widgetType: 'wm-table', hostClass: DEFAULT_CLS};
@@ -244,8 +257,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     private currentPage;
     private applyProps = new Map();
 
-    redraw = _.debounce(this._redraw, 150);
-    debouncedHandleLoading = _.debounce(this.handleLoading, 350);
+    redraw = debounce(this._redraw, 150);
+    debouncedHandleLoading = debounce(this.handleLoading, 350);
 
     // Filter and Sort Methods
     rowFilter: any = {};
@@ -340,11 +353,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         isLastPage : false,
         // get the current page number
         getCurrentPage: () => {
-            return _.get(this.dataNavigator, 'dn.currentPage') || 1;
+            return get(this.dataNavigator, 'dn.currentPage') || 1;
         },
         // set the page number
         setCurrentPage: (pageNum) => {
-            _.set(this.dataNavigator, 'dn.currentPage', pageNum || 1);
+            set(this.dataNavigator, 'dn.currentPage', pageNum || 1);
         },
         getDataSource: () => {
             return this.datasource;
@@ -417,8 +430,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (this.selectedItems.length && rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
                     const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                     const widgetState = this.statePersistence.getWidgetState(this);
-                    if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
-                        if (!_.some(widgetState.selectedItem, obj)) {
+                    if (get(widgetState, 'selectedItem') && this.multiselect) {
+                        if (!some(widgetState.selectedItem, obj)) {
                             widgetState.selectedItem.push(obj);
                         }
                         this.statePersistence.setWidgetState(this, {'selectedItem': widgetState.selectedItem});
@@ -440,7 +453,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                  */
                 if (this.multiselect) {
                     //Fix for [WMS-25110]: Add row to items list only if the row is selected
-                    if (_.findIndex(this.items, row) === -1 && (rowInfo?._selected === undefined || rowInfo?._selected == true || (this.gridfirstrowselect && rowInfo?.rowId == 0 && !this.showFirstRow))) {
+                    if (findIndex(this.items, row) === -1 && (rowInfo?._selected === undefined || rowInfo?._selected == true || (this.gridfirstrowselect && rowInfo?.rowId == 0 && !this.showFirstRow))) {
                         this.items.push(row);
                         if (rowInfo?.rowId == 0) {
                             this.showFirstRow = true;
@@ -459,16 +472,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         onRowDeselect: (row, e) => {
             if (this.multiselect) {
                 this.ngZone.run(() => {
-                    this.items = _.pullAllWith(this.items, [row], _.isEqual);
+                    this.items = pullAllWith(this.items, [row], isEqual);
                     this.selectedItems = this.callDataGridMethod('getSelectedRows');
                     this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
                     const rowData = this.addRowIndex(row);
                     if (this.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
                         const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                         const widgetState = this.statePersistence.getWidgetState(this);
-                        if (_.get(widgetState, 'selectedItem')) {
-                            _.remove(widgetState.selectedItem, function(selectedItem) {
-                                return _.isEqual(selectedItem, obj);
+                        if (get(widgetState, 'selectedItem')) {
+                            remove(widgetState.selectedItem, function (selectedItem) {
+                                return isEqual(selectedItem, obj);
                             });
                             this.statePersistence.removeWidgetState(this, 'selectedItem');
                             if (widgetState.selectedItem.length > 0) {
@@ -511,11 +524,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         onRowDelete: (row, cancelRowDeleteCallback, e, callBack, options) => {
             this.ngZone.run(() => {
-                this.deleteRecord(_.extend({}, options, {row, 'cancelRowDeleteCallback': cancelRowDeleteCallback, 'evt': e, 'callBack': callBack}));
+                this.deleteRecord(extend({}, options, {
+                    row,
+                    'cancelRowDeleteCallback': cancelRowDeleteCallback,
+                    'evt': e,
+                    'callBack': callBack
+                }));
             });
         },
         onRowInsert: (row, e, callBack, options) => {
-            this.insertRecord(_.extend({}, options, {row, event: e, 'callBack': callBack}));
+            this.insertRecord(extend({}, options, {row, event: e, 'callBack': callBack}));
         },
         beforeRowUpdate: (row, eventName?) => {
             if (this._liveTableParent) {
@@ -524,7 +542,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.prevData = getClonedObject(row);
         },
         afterRowUpdate: (row, e, callBack, options) => {
-            this.updateRecord(_.extend({}, options, {row, 'prevData': this.prevData, 'event': e, 'callBack': callBack}));
+            this.updateRecord(extend({}, options, {row, 'prevData': this.prevData, 'event': e, 'callBack': callBack}));
         },
         onBeforeRowUpdate: (row, e, options) => {
             return this.invokeEventCallback('beforerowupdate', {$event: e, $data: row, row, options: options});
@@ -605,7 +623,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 const customExprView = this.customExprViewRef.createEmbeddedView(tmpl, context);
                 const rootNode = customExprView.rootNodes[0];
                 const fieldName = rootNode.getAttribute('data-col-identifier');
-                _.extend(colDef, this.columns[fieldName]);
+                extend(colDef, this.columns[fieldName]);
                 if (!summaryRow) {
                     this.customExprCompiledTl[fieldName + index] = rootNode;
                 } else {
@@ -830,7 +848,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             if (this.gridOptions.isNavTypeScrollOrOndemand()) {
                 this.actionRowIndex = parseInt(val);
                 this.setDataGridOption('actionRowIndex', this.actionRowIndex);
-                if (!_.isNaN(this.actionRowIndex)) {
+                if (!isNaN(this.actionRowIndex)) {
                     this.actionRowPage = Math.floor(this.actionRowIndex / this.pagesize) + 1;
                     this.setDataGridOption('actionRowPage', this.actionRowPage || this.gridOptions.actionRowPage);
                 }
@@ -872,7 +890,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         clearForm: this.clearForm.bind(this),
         callLoadInlineWidgetData: () => {
             this.fullFieldDefs.forEach(col => {
-                if (_.isUndefined(col.isDataSetBound)) {
+                if (isUndefined(col.isDataSetBound)) {
                     triggerFn(col.loadInlineWidgetData && col.loadInlineWidgetData.bind(col));
                 }
             });
@@ -904,7 +922,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     set gridData(newValue) {
         this.isDataLoading = false;
         // Fix for [WMS-24012]: hide no datafound msg when variableInflight is true and dataset is empty
-        if (this.variableInflight && _.isEmpty(newValue)) {
+        if (this.variableInflight && isEmpty(newValue)) {
             return;
         }
         this.variableInflight = false;
@@ -920,7 +938,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
             // When edit action is performed on previous page, update the _gridData field with the modified row data
             if (this.gridOptions.lastActionPerformed === this.gridOptions.ACTIONS.EDIT) {
-                const rowIndex = _.floor(this.actionRowIndex % this.pagesize);
+                const rowIndex = floor(this.actionRowIndex % this.pagesize);
                 this._gridData.splice(this.actionRowIndex, 1 , newValue[rowIndex]);
             }
             this.setDataGridOption('isLastPage', !!(this.dataNavigator.isDisableNext));
@@ -961,7 +979,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.setDataGridOption('colDefs', getClonedObject(this.fieldDefs));
             }
             // If data and colDefs are present, call on before data render event
-            if (!this.isdynamictable && !_.isEmpty(newValue) && gridOptions.colDefs.length) {
+            if (!this.isdynamictable && !isEmpty(newValue) && gridOptions.colDefs.length) {
                 this.invokeEventCallback('beforedatarender', {$data: this._gridData, $columns: this.columns, data: this._gridData, columns: this.columns});
             }
             this.setDataGridOption('data', getClonedObject(this._gridData));
@@ -976,7 +994,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (this.multiselect) {
             return getClonedObject(this.items);
         }
-        if (_.isEmpty(this.items)) {
+        if (isEmpty(this.items)) {
             return {};
         }
         return getClonedObject(this.items[0]);
@@ -1017,12 +1035,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         const listenersToRemove = [
             // Updates pagination, filter, sort etc options for service and crud variables
             this.app.subscribe('check-state-persistence-options', options => {
-                let dataSourceName = _.get(this.datasource, 'name');
+                let dataSourceName = get(this.datasource, 'name');
                 // in Prefabs, this.datasource is not resolved at the time of variable invocation, so additional check is required.
                 if (!dataSourceName) {
                     dataSourceName = extractDataSourceName(this.binddatasource);
                 }
-                if (_.get(options, 'variable.name') !== dataSourceName) {
+                if (get(options, 'variable.name') !== dataSourceName) {
                     return;
                 }
                 if (this._pageLoad && this.getConfiguredState() !== 'none') {
@@ -1072,7 +1090,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     ngAfterContentInit() {
         super.ngAfterContentInit();
         this.headerConfig = this.headerConfig.filter(this.filterEmptyValues.bind(this));
-        _.remove(this.fieldDefs, f => f === undefined);
+        remove(this.fieldDefs, f => f === undefined);
         const runModeInitialProperties = {
             showrowindex: 'showRowIndex',
             multiselect: 'multiselect',
@@ -1122,7 +1140,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
-        if (!_.isEmpty(this.gridData)) {
+        if (!isEmpty(this.gridData)) {
             this.gridOptions.data = getClonedObject(this.gridData);
         }
         this.gridOptions.messages = {
@@ -1133,7 +1151,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridElement = this.$element;
         this.$element.css({'position': 'relative'});
 
-        _.forEach(runModeInitialProperties, (value, key) => {
+        forEach(runModeInitialProperties, (value, key) => {
             if (isDefined(this[key])) {
                 this.gridOptions[value] = (this[key] === 'true' || this[key] === true);
             }
@@ -1166,17 +1184,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     private handleStateParams(widgetState, options) {
-        if (_.get(widgetState, 'selectedItem')) {
+        if (get(widgetState, 'selectedItem')) {
             this._selectedItemsExist = true;
         }
         options.options = options.options || {};
-        if (_.get(widgetState, 'pagination')) {
+        if (get(widgetState, 'pagination')) {
             options.options.page = widgetState.pagination;
-            if (_.get(widgetState, 'sort')) {
+            if (get(widgetState, 'sort')) {
                 this.sortStateHandler(widgetState);
-                options.options.orderBy = _.get(widgetState, 'sort.field') + ' ' + _.get(widgetState, 'sort.direction');
+                options.options.orderBy = get(widgetState, 'sort.field') + ' ' + get(widgetState, 'sort.direction');
             }
-            if (_.get(widgetState, 'search')) {
+            if (get(widgetState, 'search')) {
                 setTimeout( () => {
                     this.searchStateHandler(widgetState);
                 }, 500);
@@ -1184,15 +1202,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
         } else {
             options.options.page = 1;
-            if (_.get(widgetState, 'search')) {
+            if (get(widgetState, 'search')) {
                 setTimeout( () => {
                     this.searchStateHandler(widgetState);
                 }, 500);
                 options.options.filterFields = this.getFilterFields(widgetState.search);
             }
-            if (_.get(widgetState, 'sort')) {
+            if (get(widgetState, 'sort')) {
                 this.sortStateHandler(widgetState);
-                options.options.orderBy = _.get(widgetState, 'sort.field') + ' ' + _.get(widgetState, 'sort.direction');
+                options.options.orderBy = get(widgetState, 'sort.field') + ' ' + get(widgetState, 'sort.direction');
             }
         }
         return options;
@@ -1208,17 +1226,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     private sortStateHandler(widgetState) {
         const $gridElement = this.datagridElement;
-        const $sortIcon =  $gridElement.find('th[data-col-field="' + _.get(widgetState, 'sort.field') + '"] .sort-icon');
-        if (_.get(widgetState, 'sort.direction') === 'asc' && $sortIcon.length)  {
+        const $sortIcon = $gridElement.find('th[data-col-field="' + get(widgetState, 'sort.field') + '"] .sort-icon');
+        if (get(widgetState, 'sort.direction') === 'asc' && $sortIcon.length) {
             $sortIcon.addClass('asc wi wi-long-arrow-up');
-        } else if (_.get(widgetState, 'sort.direction') === 'desc'  && $sortIcon.length) {
+        } else if (get(widgetState, 'sort.direction') === 'desc' && $sortIcon.length) {
             $sortIcon.addClass('desc wi wi-long-arrow-down');
         }
     }
 
     private searchStateHandler(widgetState) {
-        if (_.isArray(widgetState.search)) {
-            _.forEach( widgetState.search, (filterObj) => {
+        if (isArray(widgetState.search)) {
+            forEach(widgetState.search, (filterObj) => {
                 if (this.rowFilter[filterObj.field]) {
                     this.rowFilter[filterObj.field].value = filterObj.value;
                     this.rowFilter[filterObj.field].matchMode = filterObj.matchMode;
@@ -1245,12 +1263,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
     // Compares the prevFilterCriteria Rules with the new rules
     compareFilterExpressions(prevFilters, newFilters) {
-        return !!((prevFilters.length === newFilters.length) && (_.isEqual(prevFilters, newFilters)));
+        return !!((prevFilters.length === newFilters.length) && (isEqual(prevFilters, newFilters)));
     }
 
     // Set the table lastActionPerformed to Filter Criteria and maintain the prevFilterExpression
     setLastActionToFilterCriteria() {
-        this.prevFilterExpression = _.get(this.datasource, 'filterExpressions.rules') ? getClonedObject(this.datasource.filterExpressions.rules) : getClonedObject([].concat(this.datasource.dataBinding));
+        this.prevFilterExpression = get(this.datasource, 'filterExpressions.rules') ? getClonedObject(this.datasource.filterExpressions.rules) : getClonedObject([].concat(this.datasource.dataBinding));
         this.gridOptions.setLastActionPerformed(this.gridOptions.ACTIONS.FILTER_CRITERIA);
         this.gridOptions.setIsSearchTrigerred(true);
     }
@@ -1266,8 +1284,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     // Update the lastActionPerformed to Filter_Criteria, when there is change in the Variable filter criteria rules
     checkIfVarFiltersApplied() {
-        if (!_.isEmpty(_.get(this.datasource, 'filterExpressions.rules')) || !_.isEmpty(_.get(this.datasource, 'dataBinding'))) {
-            const currentFilterExpr = _.get(this.datasource, 'filterExpressions.rules') ? this.datasource.filterExpressions.rules : [].concat(this.datasource.dataBinding);
+        if (!isEmpty(get(this.datasource, 'filterExpressions.rules')) || !isEmpty(get(this.datasource, 'dataBinding'))) {
+            const currentFilterExpr = get(this.datasource, 'filterExpressions.rules') ? this.datasource.filterExpressions.rules : [].concat(this.datasource.dataBinding);
             const isEqual = this.compareFilterExpressions(this.prevFilterExpression, currentFilterExpr);
             if (!isEqual) {
                 this.setLastActionToFilterCriteria();
@@ -1282,28 +1300,28 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.checkIfVarFiltersApplied();
         }
         // State handling for static variables
-        if (_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
+        if (get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
-            if (_.get(widgetState, 'selectedItem')) {
+            if (get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = true;
             } else {
                 this.setDataGridOption('selectFirstRow', this.gridfirstrowselect);
             }
-            if (_.get(widgetState, 'search')) {
+            if (get(widgetState, 'search')) {
                 this.searchStateHandler(widgetState);
                 this.searchSortHandler(widgetState.search, undefined, 'search', true);
             }
-            if (_.get(widgetState, 'sort')) {
+            if (get(widgetState, 'sort')) {
                this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
                 this.sortStateHandler(widgetState);
             }
-            if (_.get(widgetState, 'pagination')) {
+            if (get(widgetState, 'pagination')) {
                 this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
             }
         }
         // After the setting the watch on navigator, dataset is triggered with undefined. In this case, return here.
-        if (this.dataNavigatorWatched && _.isUndefined(newVal) && this.__fullData) {
+        if (this.dataNavigatorWatched && isUndefined(newVal) && this.__fullData) {
             return;
         }
         // If variable is in loading state, show loading icon
@@ -1342,7 +1360,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         } else {
             this.resetPageNavigation();
             // If the dataset is undefined or empty or table is bound to static variable then set variableInflight to false inorder to update the status
-            if (newVal === '' || newVal === undefined || _.get(this.datasource, 'category') === 'wm.Variable') {
+            if (newVal === '' || newVal === undefined || get(this.datasource, 'category') === 'wm.Variable') {
                 this.variableInflight = false;
             }
             /*for run mode, disabling the loader and showing no data found message if dataset is not valid*/
@@ -1356,7 +1374,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.checkFiltersApplied(this.getSortExpr());
         }
 
-        if (!_.isObject(newVal) || newVal === '' || (newVal && newVal.dataValue === '')) {
+        // @ts-ignore
+        if (!isObject(newVal) || newVal === '' || (newVal && newVal.dataValue === '')) {
             if (!this.variableInflight) {
                 // If variable has finished loading and resultSet is empty, ender empty data
                 this.setGridData([]);
@@ -1381,7 +1400,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     addRowIndex(row) {
         const rowData = getClonedObject(row);
-        const rowIndex = _.indexOf(this.gridOptions.data, row);
+        const rowIndex = indexOf(this.gridOptions.data, row);
         if (rowIndex < 0) {
             return row;
         }
@@ -1411,7 +1430,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     getClonedRowObject(rowData) {
         const row = getClonedObject(rowData);
         row.getProperty = field => {
-            return _.get(row, field);
+            return get(row, field);
         };
         row.$isFirst = row.$index === 1;
         row.$isLast = this.gridData.length === row.$index;
@@ -1427,7 +1446,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
         } else {
             // If grid is in edit mode or grid has data, dont show the no data message
-            if (!this.isGridEditMode && _.isEmpty(this.dataset)) {
+            if (!this.isGridEditMode && isEmpty(this.dataset)) {
                 this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
             } else {
                 this.callDataGridMethod('setStatus', 'ready');
@@ -1448,7 +1467,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     clearForm(newRow?) {
         const ctrls = this.ngform.controls;
-        _.keys(this.ngform.controls).forEach(key => {
+        keys(this.ngform.controls).forEach(key => {
             // If new row, clear the controls in the new row. Else, clear the controls in edit row
             if (!key.endsWith('_filter') && ((key.endsWith('_new') && newRow) || (!key.endsWith('_new') && !newRow))) {
                 ctrls[key].setValue('');
@@ -1504,7 +1523,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         const data = this.filternullrecords ?  this.removeEmptyRecords(serverData) : serverData;
         // fix for [WMS-24012] set variableinflight flag to false for static variables
         // If the table is bound to some widget and not bound to any variable (ex: Table1.selectedItem) then set variableInflight to false
-        if (_.get(this.datasource, 'category') === 'wm.Variable' || _.get(this.datasource, 'category') === undefined) {
+        if (get(this.datasource, 'category') === 'wm.Variable' || get(this.datasource, 'category') === undefined) {
             this.variableInflight = false;
         }
         if (!this.variableInflight) {
@@ -1522,7 +1541,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return;
         }
         const option = {};
-        if (isDefined && (!_.isEqual(newVal, this.gridOptions[optionName]) || forceSet)) {
+        if (isDefined && (!isEqual(newVal, this.gridOptions[optionName]) || forceSet)) {
             option[optionName] = newVal;
             this.datagridElement.datatable('option', option);
             this.gridOptions[optionName] = newVal;
@@ -1552,14 +1571,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             return;
         }
 
-        rowActionCol = _.find(this.fullFieldDefs, {'field': ROW_OPS_FIELD, type: 'custom'}); // Check if column is fetched from markup
-        _.remove(this.fieldDefs, {type: 'custom', field: ROW_OPS_FIELD}); // Removing operations column
-        _.remove(this.headerConfig, {field: rowOperationsColumn.field});
+        rowActionCol = find(this.fullFieldDefs, {'field': ROW_OPS_FIELD, type: 'custom'}); // Check if column is fetched from markup
+        remove(this.fieldDefs, {type: 'custom', field: ROW_OPS_FIELD}); // Removing operations column
+        remove(this.headerConfig, {field: rowOperationsColumn.field});
 
         /*Add the column for row operations only if at-least one operation has been enabled.*/
         if (this.rowActions.length) {
             if (rowActionCol) { // If column is present in markup, push the column or push the default column
-                insertPosition = rowActionCol.rowactionsposition ? _.toNumber(rowActionCol.rowactionsposition) : this.fieldDefs.length;
+                insertPosition = rowActionCol.rowactionsposition ? toNumber(rowActionCol.rowactionsposition) : this.fieldDefs.length;
                 this.fieldDefs.splice(insertPosition, 0, rowActionCol);
                 if (insertPosition === 0) {
                     this.headerConfig.unshift(config);
@@ -1588,13 +1607,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (isDefined(newVal)) {
                     // Watch will not be triggered if dataset and new value are equal. So trigger the property change handler manually
                     // This happens in case, if dataset is directly updated.
-                    if (_.isEqual(this.dataset, newVal)) {
+                    if (isEqual(this.dataset, newVal)) {
                         this.watchVariableDataSet(newVal);
                     } else {
-                        if (_.isArray(newVal)) {
+                        if (isArray(newVal)) {
                             this.widget.dataset = [].concat(newVal);
-                        } else if (_.isObject(newVal)) {
-                            this.widget.dataset = _.extend({}, newVal);
+                        } else if (isObject(newVal)) {
+                            this.widget.dataset = extend({}, newVal);
                         } else {
                             this.widget.dataset = newVal;
                         }
@@ -1675,7 +1694,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (this.getConfiguredState() !== 'none' && this._selectedItemsExist && serviceData.length) {
             const widgetState = this.statePersistence.getWidgetState(this);
             let currentPageItems;
-            if (_.get(widgetState, 'selectedItem')) {
+            if (get(widgetState, 'selectedItem')) {
                 currentPageItems = widgetState.selectedItem.filter(val => {
                     return val.page === this.dataNavigator.dn.currentPage;
                 });
@@ -1683,7 +1702,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 // if an item is already selected, don't trigger onSelect event for it again
                 if (currentPageItems.length && this.selecteditem.length !== widgetState.selectedItem.length) {
                     // don't reassign this.selecteditem if selected items already exist.
-                    if (_.isArray(this.selecteditem)) {
+                    if (isArray(this.selecteditem)) {
                         currentPageItems.forEach((item) => {
                             this.selectItem(item.index, undefined);
                         });
@@ -1701,7 +1720,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         // empty the filter field template refs.
         (this.filterTmpl as any)._results = [];
 
-        if (_.isEmpty(columns)) {
+        if (isEmpty(columns)) {
             return;
         }
 
@@ -1709,8 +1728,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         columns.forEach(col => {
             let attrsTmpl = '';
             let customTmpl = '';
-            _.forEach(col, (val, key) => {
-                if (!_.isUndefined(val) && val !== '') {
+            forEach(col, (val, key) => {
+                if (!isUndefined(val) && val !== '') {
                     // If custom expression is present, keep it inside table column. Else, keep as attribute
                     if (key === 'customExpression') {
                         customTmpl = val;
@@ -1754,7 +1773,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         defaultFieldDefs = prepareFieldDefs(properties);
 
         /*append additional properties*/
-        _.forEach(defaultFieldDefs, columnDef => {
+        forEach(defaultFieldDefs, columnDef => {
             columnDef.binding = columnDef.field;
             columnDef.caption = columnDef.displayName;
             columnDef.pcDisplay = true;
@@ -1779,7 +1798,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
         defaultFieldDefs = [];
         // Apply the changes made by the user
-        _.forEach(this.columns, val => {
+        forEach(this.columns, val => {
             defaultFieldDefs.push(val);
         });
 
@@ -1791,11 +1810,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         /* check whether data is valid or not */
         const dataValid = data && !data.error;
         /*if the data is type json object, make it an array of the object*/
-        if (dataValid && !_.isArray(data)) {
+        if (dataValid && !isArray(data)) {
             data = [data];
         }
         /* if the data is empty, show nodatamessage */
-        if (_.isEmpty(data)) {
+        if (isEmpty(data)) {
             this.setGridData(data);
             return;
         }
@@ -1815,7 +1834,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         let pagingOptions;
         if (this.datasource && this.datasource.execute(DataSource.Operation.IS_PAGEABLE)) {
             pagingOptions = this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS);
-            sortExp = _.isEmpty(pagingOptions) ? '' : getOrderByExpr(pagingOptions.sort);
+            sortExp = isEmpty(pagingOptions) ? '' : getOrderByExpr(pagingOptions.sort);
         }
         return sortExp || '';
     }
@@ -1842,7 +1861,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
                 // if table is inside list then table dataset will be set as "item.XXX" and there is no datasource.
                 // So extracting datasource from the datset bound expression.
-                if (this.parentList && !this.datasource && _.startsWith(this.binddataset, 'item')) {
+                if (this.parentList && !this.datasource && startsWith(this.binddataset, 'item')) {
                     this.datasource = getDatasourceFromExpr(this.widget.$attrs.get('datasetboundexpr'), this);
                 }
                 if (this.gridOptions.isNavTypeScrollOrOndemand()) {
@@ -1858,7 +1877,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
                 // for Static Variables with Retain State enabled, prevent Table from rendering more than once
                 // Fix for [WMS-25284]: Render table that is inside list widget and bound to static Variable
-                if (!(_.get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') || (this.parentList && _.startsWith(this.binddataset, 'item'))) {
+                if (!(get(this.datasource, 'category') === 'wm.Variable' && this._pageLoad && this.getConfiguredState() !== 'none') || (this.parentList && startsWith(this.binddataset, 'item'))) {
                     this.watchVariableDataSet(nv);
                 }
                 break;
@@ -1908,7 +1927,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.exportOptions = [];
                 if (nv) {
                     // Populate options for export drop down menu
-                    _.forEach(_.split(nv, ','), type => {
+                    forEach(split(nv, ','), type => {
                         this.exportOptions.push({
                             label: type,
                             icon: exportIconMapping[type]
@@ -1918,7 +1937,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 break;
             case 'shownewrow':
                 // Enable new row if shownew is true or addNewRow buton is present
-                enableNewRow = nv || _.some(this.actions, act => _.includes(act.action, 'addNewRow()'));
+                enableNewRow = nv || some(this.actions, act => includes(act.action, 'addNewRow()'));
                 this.callDataGridMethod('option', 'actionsEnabled.new', enableNewRow);
                 break;
             case 'pagesize':
@@ -1977,11 +1996,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     populateActions() {
         this._actions.header = [];
         this._actions.footer = [];
-        _.forEach(this.actions, (action) => {
-            if (_.includes(action.position, 'header')) {
+        forEach(this.actions, (action) => {
+            if (includes(action.position, 'header')) {
                 this._actions.header.push(action);
             }
-            if (_.includes(action.position, 'footer')) {
+            if (includes(action.position, 'footer')) {
                 this._actions.footer.push(action);
             }
         });
@@ -2055,9 +2074,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (data) {
             this.serverData = data;
         }
-        if (_.isObject(item)) {
-            item = _.omitBy(item, (value) => {
-                return _.isArray(value) && _.isEmpty(value);
+        if (isObject(item)) {
+            item = omitBy(item, (value) => {
+                return isArray(value) && isEmpty(value);
             });
         }
         this.callDataGridMethod('selectRow', item, true);
@@ -2073,7 +2092,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.checkFiltersApplied(this.getSortExpr());
         if (this._isClientSearch) {
             data = getClonedObject(this.__fullData);
-            if (_.isObject(data) && !_.isArray(data)) {
+            if (isObject(data) && !isArray(data)) {
                 data = [data];
             }
             data = this.getSearchResult(data, this.filterInfo);
@@ -2091,7 +2110,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     export($item) {
         let filterFields;
-        const sortOptions = _.isEmpty(this.sortInfo) ? '' : this.sortInfo.field + ' ' + this.sortInfo.direction;
+        const sortOptions = isEmpty(this.sortInfo) ? '' : this.sortInfo.field + ' ' + this.sortInfo.direction;
         const columns = {};
         let isValid;
         let requestData;
@@ -2126,7 +2145,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (isValid === false) {
             return;
         }
-        requestData.fields = _.values(requestData.columns);
+        requestData.fields = values(requestData.columns);
         this.datasource.execute(DataSource.Operation.DOWNLOAD, {data: requestData});
     }
 
@@ -2200,7 +2219,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
 
     ngOnDetach() {
         super.ngOnDetach();
-        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none') {
+        if (get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none') {
             this._pageLoad = false;
         } else {
             this._pageLoad = true;

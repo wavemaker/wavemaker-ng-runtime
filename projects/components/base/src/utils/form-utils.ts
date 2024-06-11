@@ -4,8 +4,22 @@ import { getEvaluatedData, getObjValueByKey } from './widget-utils';
 
 import { ALLFIELDS } from './data-utils';
 import { ToDatePipe } from '../pipes/custom-pipes';
+import {
+    cloneDeep,
+    filter,
+    forEach, get, groupBy, includes,
+    isArray, isEqual,
+    isNull,
+    isObject,
+    isString,
+    isUndefined, keys,
+    orderBy as _orderBy, sortBy,
+    split, toLower,
+    trim, uniqBy, uniqWith, values
+} from "lodash-es";
 
-declare const _, $, moment;
+declare const $;
+declare const moment;
 
 const momentLocale = moment.localeData();
 const momentCalendarOptions = getClonedObject(momentLocale._calendar);
@@ -42,7 +56,7 @@ const ROLLUP_PATTERNS = {
  */
 export const getOrderedDataset = (dataSet: any, orderBy: string, innerItem?) => {
     if (!orderBy) {
-        return _.cloneDeep(dataSet);
+        return cloneDeep(dataSet);
     }
 
     // The order by only works when the dataset contains list of objects.
@@ -54,7 +68,7 @@ export const getOrderedDataset = (dataSet: any, orderBy: string, innerItem?) => 
         fields.push(innerItem ? innerItem + '.' + item[0] : item[0]);
         directions.push(item[1]);
     });
-    return _.orderBy(dataSet, fields, directions);
+    return _orderBy(dataSet, fields, directions);
 };
 
 /**
@@ -64,10 +78,10 @@ export const transformDataWithKeys = (dataSet: any) => {
     const data: DataSetItem[] = [];
     // if the dataset is instance of object (not an array) or the first item in the dataset array is an object,
     // then we extract the keys from the object and prepare the dataset items.
-    if (_.isObject(dataSet[0]) || (_.isObject(dataSet) && !(dataSet instanceof Array))) {
+    if (isObject(dataSet[0]) || (isObject(dataSet) && !(dataSet instanceof Array))) {
         // getting keys of the object
         const objectKeys = Object.keys(dataSet[0] || dataSet);
-        _.forEach(objectKeys, (objKey, index) => {
+        forEach(objectKeys, (objKey, index) => {
             data.push({
                 key: objKey,
                 label: objKey,
@@ -83,15 +97,15 @@ export const transformDataWithKeys = (dataSet: any) => {
 // Converts any type of data to array.
 export const extractDataAsArray = data => {
 
-    if (_.isUndefined(data) || _.isNull(data) || _.trim(data) === '') {
+    if (isUndefined(data) || isNull(data) || trim(data) === '') {
         return [];
     }
 
-    if (_.isString(data)) {
-        data = _.split(data, ',').map(str => str.trim());
+    if (isString(data)) {
+        data = split(data, ',').map(str => str.trim());
     }
 
-    if (!_.isArray(data)) {
+    if (!isArray(data)) {
         data = [data];
     }
 
@@ -100,8 +114,8 @@ export const extractDataAsArray = data => {
 
 // This function return always an object containing dataset details.
 export const convertDataToObject = dataResult => {
-    if (_.isString(dataResult)) {
-        dataResult = _.split(dataResult, ',').map(str => str.trim());
+    if (isString(dataResult)) {
+        dataResult = split(dataResult, ',').map(str => str.trim());
     }
 
     return dataResult;
@@ -116,7 +130,7 @@ const isSeachWidget = (widgetType) => {
 const setGroupbyKey = (scope, context, dataSetItem, innerItem) => {
     if (scope && isSeachWidget(scope.widgetType)) {
         if (scope.groupby) {
-            if (_.includes(scope.groupby, '(')) {
+            if (includes(scope.groupby, '(')) {
                 //[Todo-CSP]: can generate expr fn in page based on groupby property on widget
                 const groupDataByUserDefinedFn = $parseEvent(scope.groupby);
                 (dataSetItem as any).groupby = groupDataByUserDefinedFn(context, {'row': dataSetItem.dataObject || dataSetItem});
@@ -147,27 +161,34 @@ export const transformFormData = (context: any, dataSet: any, myDataField?: stri
     dataSet = convertDataToObject(dataSet);
 
     // startIndex is the index of the next new item.
-    if (_.isUndefined(startIndex)) {
+    if (isUndefined(startIndex)) {
         startIndex = 1;
     }
 
-    if (_.isString(dataSet)) {
+    if (isString(dataSet)) {
         dataSet = dataSet.split(',').map(str => str.trim());
         dataSet.forEach((option, index) => {
             const dataSetItem = {key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index};
             setGroupbyKey(scope, context, dataSetItem, 'value');
             data.push(dataSetItem);
         });
-    } else if (_.isArray(dataSet) && !_.isObject(dataSet[0])) { // array of primitive values only
+    } else if (isArray(dataSet) && !isObject(dataSet[0])) { // array of primitive values only
         dataSet.forEach((option, index) => {
             const dataSetItem = {key: option, value: option, label: (isDefined(option) && option !== null) ? option.toString() : '', index: startIndex + index};
             setGroupbyKey(scope, context, dataSetItem, 'value');
             data.push(dataSetItem);
         });
-    } else if (!(dataSet instanceof Array) && _.isObject(dataSet)) {
+    } else if (!(dataSet instanceof Array) && isObject(dataSet)) {
         const i = 0;
-        _.forEach(dataSet, (value, key) => {
-            const dataSetItem = {key: _.trim(key), value: key, label: (isDefined(value) && value !== null) ? value.toString() : '', index: startIndex, dataObject: dataSet};
+        forEach(dataSet, (value, key) => {
+            // @ts-ignore
+            const dataSetItem = {
+                key: trim(key),
+                value: key,
+                label: (isDefined(value) && value !== null) ? value.toString() : '',
+                index: startIndex,
+                dataObject: dataSet
+            };
             setGroupbyKey(scope, context, dataSetItem, 'value');
             data.push(dataSetItem);
         });
@@ -178,7 +199,7 @@ export const transformFormData = (context: any, dataSet: any, myDataField?: stri
         dataSet.forEach((option, index) => {
             const key = myDataField === ALLFIELDS ? startIndex + index : getObjValueByKey(option, myDataField);
             // Omit all the items whose datafield (key) is null or undefined.
-            if (!_.isUndefined(key) && !_.isNull(key)) {
+            if (!isUndefined(key) && !isNull(key)) {
                 const label = getEvaluatedData(option, {
                     field: displayOptions.displayField,
                     expression: displayOptions.displayExpr,
@@ -213,18 +234,18 @@ export const getUniqObjsByDataField = (data: Array<DataSetItem>, dataField: stri
     let uniqData;
     const isAllFields = dataField === ALLFIELDS;
 
-    uniqData = isAllFields ? _.uniqWith(data, _.isEqual) : _.uniqBy(data, 'key');
+    uniqData = isAllFields ? uniqWith(data, isEqual) : uniqBy(data, 'key');
 
     if (!displayField || allowEmptyFields) {
         return uniqData;
     }
 
     // return objects having non empty datafield and display field values.
-    return _.filter(uniqData, (obj) => {
+    return filter(uniqData, (obj) => {
         if (isAllFields) {
-            return _.trim(obj.label);
+            return trim(obj.label);
         }
-        return _.trim(obj.key) && _.trim(obj.label);
+        return trim(obj.key) && trim(obj.label);
     });
 };
 
@@ -237,7 +258,7 @@ export const getUniqObjsByDataField = (data: Array<DataSetItem>, dataField: stri
  */
 export const setItemByCompare = (datasetItems: Array<DataSetItem>, compareWithDataObj: Object, compareByField: string) => {
     // compare the fields based on fields given to compareby property.
-    _.forEach(datasetItems, opt => {
+    forEach(datasetItems, opt => {
         if (isEqualWithFields(opt.value, compareWithDataObj, compareByField)) {
             opt.selected = true;
             return false;
@@ -255,13 +276,13 @@ export const setItemByCompare = (datasetItems: Array<DataSetItem>, compareWithDa
  */
 const getSortedGroupedData = (groupedLiData: Object, groupBy: string, orderby: string) => {
     const _groupedData = [];
-    _.forEach(_.keys(groupedLiData), (groupkey, index) => {
+    forEach(keys(groupedLiData), (groupkey, index) => {
         const liData = getOrderedDataset(groupedLiData[groupkey], orderby, 'dataObject');
         _groupedData.push({
             key: groupkey,
-            data: _.sortBy(liData, data => {
+            data: sortBy(liData, data => {
                 data._groupIndex = index + 1;
-                return _.get(data, groupBy) || _.get(data.dataObject, groupBy);
+                return get(data, groupBy) || get(data.dataObject, groupBy);
             })
         });
     });
@@ -282,10 +303,11 @@ const getSortedGroupedData = (groupedLiData: Object, groupBy: string, orderby: s
  */
 export const groupData = (compRef: any, data: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateformat: string, datePipe: ToDatePipe, innerItem?: string, AppDefaults?: any) => {
     let groupedLiData = {};
-    if (_.includes(groupby, '(')) {
+    if (includes(groupby, '(')) {
         //[Todo-CSP]: can generate expr fn in page based on groupby property on widget
         const groupDataByUserDefinedFn = $parseEvent(groupby);
-        groupedLiData = _.groupBy(data, val => {
+        groupedLiData = groupBy(data, val => {
+            // @ts-ignore
             return groupDataByUserDefinedFn(compRef.viewParent, {'row': val.dataObject || val});
         });
     } else {
@@ -313,15 +335,15 @@ const getGroupedData = (fieldDefs: Array<Object | DataSetItem>, groupby: string,
 
     // handling case-in-sensitive scenario
     // ordering the data based on groupby field. If there is innerItem then apply orderby using the innerItem's containing the groupby field.
-    fieldDefs = _.orderBy(fieldDefs, fieldDef => {
-        const groupKey = _.get(innerItem ? fieldDef[innerItem] : fieldDef, groupby);
+    fieldDefs = _orderBy(fieldDefs, fieldDef => {
+        const groupKey = get(innerItem ? fieldDef[innerItem] : fieldDef, groupby);
         if (groupKey) {
-            return _.toLower(groupKey);
+            return toLower(groupKey);
         }
     });
 
     // extract the grouped data based on the field obtained from 'groupDataByField'.
-    const groupedLiData = _.groupBy(fieldDefs, groupDataByField.bind(undefined, groupby, match, innerItem, dateFormat, datePipe, AppDefaults));
+    const groupedLiData = groupBy(fieldDefs, groupDataByField.bind(undefined, groupby, match, innerItem, dateFormat, datePipe, AppDefaults));
 
     momentLocale._calendar = momentCalendarOptions; // Reset to default moment calendar options
 
@@ -402,10 +424,10 @@ const getTimeRolledUpString = (concatStr: string, rollUp: string, dateformat: st
 // groups the fields based on the groupby value.
 const groupDataByField = (groupby: string, match: string, innerItem: string, dateFormat: string, datePipe: ToDatePipe, AppDefaults: any, liData: Object) => {
     // get the groupby field value from the liData or innerItem in the liData.
-    let concatStr = _.get(innerItem ? liData[innerItem] : liData, groupby);
+    let concatStr = get(innerItem ? liData[innerItem] : liData, groupby);
 
     // by default set the undefined groupKey as 'others'
-    if (_.isUndefined(concatStr) || _.isNull(concatStr) || concatStr.toString().trim() === '') {
+    if (isUndefined(concatStr) || isNull(concatStr) || concatStr.toString().trim() === '') {
         return GROUP_BY_OPTIONS.OTHERS;
     }
 
@@ -415,7 +437,7 @@ const groupDataByField = (groupby: string, match: string, innerItem: string, dat
     }
 
     // if match contains the time options then get the concatStr using 'getTimeRolledUpString'
-    if (_.includes(_.values(TIME_ROLLUP_OPTIONS), match)) {
+    if (includes(values(TIME_ROLLUP_OPTIONS), match)) {
         concatStr = getTimeRolledUpString(concatStr, match, dateFormat, datePipe, AppDefaults);
     }
 
@@ -435,12 +457,12 @@ export const toggleAllHeaders = (el: any) => {
     const groupIcons = groups.find('li.list-group-header .app-icon');
 
     if (groupIcons) {
-        _.forEach(groupIcons, (icon) => {
-            icon = $(icon);
-            if (icon.hasClass('wi-chevron-down')) {
-                icon.removeClass('wi-chevron-down').addClass('wi-chevron-up');
+        forEach(groupIcons, (icon) => {
+            const $icon = $(icon);
+            if ($icon.hasClass('wi-chevron-down')) {
+                $icon.removeClass('wi-chevron-down').addClass('wi-chevron-up');
             } else {
-                icon.removeClass('wi-chevron-up').addClass('wi-chevron-down');
+                $icon.removeClass('wi-chevron-up').addClass('wi-chevron-down');
             }
         });
     }

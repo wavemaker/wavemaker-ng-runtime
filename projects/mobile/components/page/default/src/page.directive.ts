@@ -5,9 +5,9 @@ import { Subscription } from 'rxjs';
 import { addClass, AbstractNavigationService, App } from '@wm/core';
 import { PageDirective } from '@wm/components/page';
 import { DeviceService } from '@wm/mobile/core';
+import {remove} from "lodash-es";
 
-declare const $, _;
-
+declare const $;
 @Directive({
     selector: '[wmPage]'
 })
@@ -33,7 +33,7 @@ export class MobilePageDirective implements OnDestroy {
                 id && modalsOpened.push(id);
             }),
             modalService.onHidden.subscribe(({id}) => {
-                id && _.remove(modalsOpened, id);
+                id && remove(modalsOpened, id);
             })
         ];
         // add backbutton listener on every page.

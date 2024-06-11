@@ -1,11 +1,10 @@
-import {Directive, Injector, Optional, SecurityContext} from '@angular/core';
+import {Directive, ElementRef, Injector, Optional, SecurityContext} from '@angular/core';
 
 import {setProperty, toggleClass} from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, SanitizePipe } from '@wm/components/base';
 
 import { registerProps } from './label.props';
-
-declare const _;
+import {isObject} from "lodash-es";
 
 const DEFAULT_CLS = 'app-label';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -36,9 +35,9 @@ export class LabelDirective extends StylableComponent {
             // Check for trustPipe safe values
             let bindContent = this.nativeElement.getAttribute('caption.bind');
             let safeValue = bindContent ? nv && bindContent.includes('trustAs:') : false;
-            if (_.isObject(nv) && !safeValue) {
+            if (isObject(nv) && !safeValue) {
                 setProperty(this.nativeElement, 'textContent', JSON.stringify(nv));
-            } else if (_.isObject(nv) && safeValue) {
+            } else if (isObject(nv) && safeValue) {
                 setProperty(this.nativeElement, 'innerHTML', nv[Object.keys(nv)[0]]);
             }  else {
                 setProperty(this.nativeElement, 'innerHTML', this.sanitizePipe.transform(nv, SecurityContext.HTML));

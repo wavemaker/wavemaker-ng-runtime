@@ -5,8 +5,7 @@ import { DeviceFileService } from '@wm/mobile/core';
 
 import { Change, ChangeLogService, FlushContext, Worker } from '../change-log.service';
 import { CallBack, LocalDBManagementService } from '../local-db-management.service';
-
-declare const _;
+import {assignIn, isEmpty, isEqual, isObject, isString, mapValues, replace} from "lodash-es";
 
 const STORE_KEY = 'offlineFileUpload';
 
@@ -24,7 +23,7 @@ export class FileHandler implements Worker {
      */
     public preCall(change: Change) {
         if (change.service === 'DatabaseService') {
-            change.params.data = _.mapValues(change.params.data, v => {
+            change.params.data = mapValues(change.params.data, v => {
                 const remoteUrl = this.fileStore[v];
                 if (remoteUrl) {
                     this.logger.debug('swapped file path from %s -> %s', v, remoteUrl);
@@ -114,22 +113,26 @@ export class UploadedFilesImportAndExportService implements CallBack {
         const modifiedProperties = {},
             entityName = change.params.entityName,
             dataModelName = change.params.dataModelName;
-        change.params.data = _.mapValues(change.params.data, function (v, k) {
+        change.params.data = mapValues(change.params.data, function (v, k) {
             let mv = v, isModified = false;
-            if (_.isString(v)) {
-                mv = _.replace(v, oldUploadDir, uploadDir);
-                isModified = !_.isEqual(mv, v);
-            } else if (_.isObject(v) && v.wmLocalPath) {
-                // insertMultiPartData and updateMultiPartData
-                mv = _.replace(v.wmLocalPath, oldUploadDir, uploadDir);
-                isModified = !_.isEqual(mv, v.wmLocalPath);
+            if (isString(v)) {
+                mv = replace(v, oldUploadDir, uploadDir);
+                isModified = !isEqual(mv, v);
+            } else { // @ts-ignore
+                if (isObject(v) && v.wmLocalPath) {
+                    // insertMultiPartData and updateMultiPartData
+                    // @ts-ignore
+                    mv = replace(v.wmLocalPath, oldUploadDir, uploadDir);
+                    // @ts-ignore
+                    isModified = !isEqual(mv, v.wmLocalPath);
+                }
             }
             if (isModified) {
                 modifiedProperties[k] = mv;
             }
             return mv;
         });
-        if (!_.isEmpty(modifiedProperties)) {
+        if (!isEmpty(modifiedProperties)) {
             this.localDBManagementService.getStore(dataModelName, entityName)
                 .then(store => {
                     // If there is a primary for the entity, then update actual row with the modifications
@@ -137,7 +140,7 @@ export class UploadedFilesImportAndExportService implements CallBack {
                         const primaryKeyName = store.primaryKeyName;
                         const primaryKey = change.params.data[primaryKeyName];
                         return store.get(primaryKey)
-                            .then(obj => store.save(_.assignIn(obj, modifiedProperties)));
+                            .then(obj => store.save(assignIn(obj, modifiedProperties)));
                     }
                 }).then(() => {
                 change.params = JSON.stringify(change.params);
@@ -157,7 +160,7 @@ export class UploadedFilesImportAndExportService implements CallBack {
         change.params = JSON.parse(change.params);
         if (change.service === 'OfflineFileUploadService'
             && change.operation === 'uploadToServer') {
-            change.params.file = _.replace(change.params.file, metaInfo.uploadDir, this.uploadDir);
+            change.params.file = replace(change.params.file, metaInfo.uploadDir, this.uploadDir);
             change.params = JSON.stringify(change.params);
             return this.changeLogService.getStore().then( store => store.save(change));
         }

@@ -3,8 +3,7 @@ import {AfterViewInit, QueryList, ViewChildren, Directive, Optional} from '@angu
 import { StylableComponent } from '@wm/components/base';
 import { MenuComponent } from './menu.component';
 import {BaseContainerComponent} from '@wm/components/base';
-
-declare const _;
+import {includes} from "lodash-es";
 
 const menuProps = ['itemlabel', 'itemicon', 'itemlink', 'itemaction', 'itemchildren', 'userrole'];
 
@@ -40,7 +39,7 @@ export class MenuAdapterComponent extends BaseContainerComponent implements Afte
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
-        if (_.includes(menuProps, key) && this.menuRef) {
+        if (includes(menuProps, key) && this.menuRef) {
             this.menuRef.itemlabel = nv;
         } else {
             super.onPropertyChange(key, nv, ov);

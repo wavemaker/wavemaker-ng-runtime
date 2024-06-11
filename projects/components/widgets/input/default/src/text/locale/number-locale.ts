@@ -6,8 +6,7 @@ import {AbstractI18nService, isDefined} from '@wm/core';
 import { IWidgetConfig, TrailingZeroDecimalPipe, INPUTMODE } from '@wm/components/base';
 
 import { BaseInput } from '../base/base-input';
-
-declare const _;
+import {includes, intersection, isNull, isString, isUndefined, round, toArray} from "lodash-es";
 
 export abstract class NumberLocale extends BaseInput implements Validator {
     private DECIMAL: string;
@@ -53,7 +52,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         this.lastValIsDecimal = false;
 
         // set text value to null if data value is empty.
-        if (_.includes([null, undefined, ''], value)) {
+        // @ts-ignore
+        if (includes([null, undefined, ''], value)) {
             const input = this.inputEl.nativeElement;
             const prevDataValue =  (this as any).prevDatavalue;
             this.displayValue = input.value = this.proxyModel = null;
@@ -66,8 +66,8 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
         // if the widget has default value and if we change the locale, the value should be in selected locale format.
         if (this.isDefaultQuery) {
-            const isLocalizedNumber = _.isString(value) && _.includes(value, this.DECIMAL);
-            const parts = isLocalizedNumber ?  (value as any).split(this.DECIMAL) : _.isString(value) && (value as any).split('.');
+            const isLocalizedNumber = isString(value) && includes(value, this.DECIMAL);
+            const parts = isLocalizedNumber ? (value as any).split(this.DECIMAL) : isString(value) && (value as any).split('.');
             this.decimalValue = parts[1] || '';
             (value as any) = isLocalizedNumber ? value : this.transformNumber(value);
         }
@@ -83,7 +83,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
 
         // On keypress, if the user types a decimal and is still active on the input do not throw error.
-        if (_.isNaN(model) && strVal[strVal.length - 1] === this.DECIMAL && this.ngModelOptions.updateOn === 'change' && this.$element.find('input:focus').length) {
+        if (isNaN(model) && strVal[strVal.length - 1] === this.DECIMAL && this.ngModelOptions.updateOn === 'change' && this.$element.find('input:focus').length) {
             this.lastValIsDecimal = true;
         }
         // get a valid number form the text.
@@ -121,7 +121,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     private isValid(val: number): boolean {
         // id number is infinite then consider it as invalid value
-        if (_.isNaN(val) || !_.isFinite(val) || (!Number.isInteger(this.step) &&
+        if (isNaN(val) || !isFinite(val) || (!Number.isInteger(this.step) &&
             this.countDecimals(val) > this.countDecimals(this.step))) {
             this.isInvalidNumber = true;
             return false;
@@ -140,12 +140,12 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {number}
      */
     private getValueInRange(value: number): number {
-        if (!_.isNaN(this.minvalue) && value < this.minvalue) {
+        if (!isNaN(this.minvalue) && value < this.minvalue) {
             this.validateType = 'minvalue';
             return this.minvalue;
 
         }
-        if (!_.isNaN(this.maxvalue) && value > this.maxvalue) {
+        if (!isNaN(this.maxvalue) && value > this.maxvalue) {
             this.validateType = 'maxvalue';
             return this.maxvalue;
         }
@@ -281,7 +281,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             financialVal = valInWholeNum *  this.step;
         }
 
-        if (!_.isNaN(financialVal)) {
+           if (!isNaN(financialVal)) {
             // When update on key is set keypress, update the datavalue else update only the display value
             if (this.ngModelOptions.updateOn === 'change') {
                 this.datavalue = parseFloat(financialVal.toFixed(stepVal));
@@ -344,7 +344,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
         // proxyModel to be updated from $event.target.value if present to support arrow keys when input changes else pick up from this.proxymodel
         let proxyModel;
-        if (targetVal && !_.isNaN(parseFloat(targetVal))) {
+        if (targetVal && !isNaN(parseFloat(targetVal))) {
             proxyModel = parseFloat(targetVal);
         } else {
             proxyModel = this.proxyModel;
@@ -356,13 +356,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (this.numberNotInRange) {
             const inputValue = this.parseNumber(this.inputEl.nativeElement.value);
             // take the textbox value as current model if the value is valid.
-            if (!_.isNaN(inputValue)) {
+            if (!isNaN(inputValue)) {
                 value = this.getValueInRange(inputValue);
                 proxyModel = inputValue;
                 this.resetValidations();
             }
         } else {
-            if (_.isUndefined(proxyModel) || _.isNull(proxyModel)) {
+            if (isUndefined(proxyModel) || isNull(proxyModel)) {
                 proxyModel = value = this.getValueInRange((this.minvalue || 0));
                 this.resetValidations();
             } else {
@@ -373,7 +373,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             const decimalRoundValue = Math.max(this.countDecimals(proxyModel), this.countDecimals(this.step));
 
             // update the modelProxy.
-            this.proxyModel = _.round(value, decimalRoundValue);
+            this.proxyModel = round(value, decimalRoundValue);
             this.updateDisplayText();
             this.handleChange(this.proxyModel);
         }
@@ -412,7 +412,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         this.isDefaultQuery = false;
 
         // allow actions if control key is pressed or if backspace is pressed. (for Mozilla).
-        if ($event.ctrlKey || _.includes(['Backspace', 'ArrowRight', 'ArrowLeft', 'Tab', 'Enter', 'Delete'], $event.key)) {
+        if ($event.ctrlKey || includes(['Backspace', 'ArrowRight', 'ArrowLeft', 'Tab', 'Enter', 'Delete'], $event.key)) {
             return;
         }
 
@@ -447,19 +447,19 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             return false;
         }
         // comma cannot be entered consecutively
-        if (_.includes(inputValue, ',') && inputValue[inputValue.length - 1] === ',' && $event.key === ',') {
+        if (includes(inputValue, ',') && inputValue[inputValue.length - 1] === ',' && $event.key === ',') {
             return false;
         }
 
         // a decimal value can be entered only once in the input.
-        if (_.includes(inputValue, this.DECIMAL) && $event.key === this.DECIMAL) {
+        if (includes(inputValue, this.DECIMAL) && $event.key === this.DECIMAL) {
             return false;
         }
         // 'e' can be entered only once in the input.
-        if (_.intersection(_.toArray(inputValue), ['e', 'E']).length && _.includes('eE', $event.key)) {
+        if (intersection(toArray(inputValue), ['e', 'E']).length && includes('eE', $event.key)) {
             return false;
         }
-        if ((_.includes(inputValue, '+') || _.includes(inputValue, '-')) && ($event.key === '+' || $event.key === '-')) {
+        if ((includes(inputValue, '+') || includes(inputValue, '-')) && ($event.key === '+' || $event.key === '-')) {
             return false;
         }
         // Do not allow user to enter only space without any input value

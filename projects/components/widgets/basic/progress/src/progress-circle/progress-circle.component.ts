@@ -5,8 +5,7 @@ import { CircleProgressComponent, CircleProgressOptionsInterface } from 'ng-circ
 import { IWidgetConfig, provideAsWidgetRef, IRedrawableComponent, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './progress-circle.props';
 import { calculatePercent, getDecimalCount, isPercentageValue } from '../utils';
-
-declare const _;
+import {clone, debounce, extend} from "lodash-es";
 
 const DEFAULT_CLS = 'progress app-progress circle';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progress-circle', hostClass: DEFAULT_CLS};
@@ -65,8 +64,8 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
-        this.options = _.clone(DEFAULT_OPTIONS);
-        this.redraw = _.debounce(this._redraw, 100);
+        this.options = clone(DEFAULT_OPTIONS);
+        this.redraw = debounce(this._redraw, 100);
     }
 
     private _redraw () {
@@ -88,7 +87,7 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     }
 
     overrideDefaults(options) {
-        _.extend(this.options, options);
+        extend(this.options, options);
     }
 
     updateDisplayValueFormat() {

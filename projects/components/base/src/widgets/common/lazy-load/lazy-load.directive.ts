@@ -2,8 +2,6 @@ import {Directive, inject, Injector, Input, OnDestroy, Optional, TemplateRef, Vi
 
 import {$watch, App, findParent} from '@wm/core';
 
-declare const _;
-
 @Directive({
     selector: '[lazyLoad]'
 })

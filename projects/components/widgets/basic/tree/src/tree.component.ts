@@ -2,8 +2,9 @@ import { Attribute, Component, Injector, OnInit, ViewEncapsulation } from '@angu
 import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
 import { $parseEvent, getClonedObject } from "@wm/core";
+import {isArray, isEmpty, isObject, isString} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
 const defaultTreeIconClass = 'plus-minus';
@@ -152,11 +153,11 @@ export class TreeComponent extends StylableComponent implements OnInit {
     // gets the nodes and orders the nodes if required
     private getNodes(newVal) {
         let nodes;
-        if (_.isArray(newVal)) {
+        if (isArray(newVal)) {
             nodes = getOrderedDataset(newVal, this.orderby);
-        } else if (_.isObject(newVal)) {
+        } else if (isObject(newVal)) {
             nodes = [newVal];
-        } else if (_.isString(newVal) && !_.isEmpty(newVal)) {
+        } else if (isString(newVal) && !isEmpty(newVal)) {
             newVal = newVal.trim();
             if (newVal) {
                 nodes = this.getNodesFromString(newVal);
@@ -254,7 +255,7 @@ export class TreeComponent extends StylableComponent implements OnInit {
             zNode['icon'] = icon;
             zNode['nodeId'] = nodeId;
             zNode['data'] = getClonedObject(node);
-            if (_.isArray(children) && children.length) {
+            if (isArray(children) && children.length) {
                 zNode['children'] = [];
                 this.constructZTreeData(children, zNode['children']);
             }

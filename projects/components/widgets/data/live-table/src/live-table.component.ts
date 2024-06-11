@@ -24,7 +24,6 @@ import { TableComponent } from '@wm/components/data/table';
 
 import { registerProps } from './live-table.props';
 
-declare const _;
 declare var $: any;
 
 const DEFAULT_CLS = 'app-livegrid';

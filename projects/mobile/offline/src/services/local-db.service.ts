@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { LocalDBManagementService } from './local-db-management.service';
 import { LocalDBStore } from '../models/local-db-store';
+import {forEach, get, mapKeys} from "lodash-es";
 
-declare const _;
 
 @Injectable({providedIn: 'root'})
 export class LocalDbService {
@@ -35,7 +35,7 @@ export class LocalDbService {
     public insertTableData(params: any, successCallback?: any, failureCallback?: any, options = {}) {
         this.getStore(params).then(store => {
             const isPKAutoIncremented = (store.primaryKeyField && store.primaryKeyField.generatorType === 'identity');
-            if (_.get(options, 'resetPrimaryKey') !== false && isPKAutoIncremented && params.data[store.primaryKeyName]) {
+            if (get(options, 'resetPrimaryKey') !== false && isPKAutoIncremented && params.data[store.primaryKeyName]) {
                 delete params.data[store.primaryKeyName];
             }
             return store.add(params.data).then(() => {
@@ -185,7 +185,7 @@ export class LocalDbService {
     }
 
     private convertFieldNameToColumnName(store: LocalDBStore, filterGroup: any, options?: any) {
-        _.forEach(filterGroup.rules, rule => {
+        forEach(filterGroup.rules, rule => {
             if (rule.rules) {
                 this.convertFieldNameToColumnName(store, rule);
             } else {
@@ -194,7 +194,7 @@ export class LocalDbService {
         });
         // handling the scenario where variable options can have filterField. For example: search filter query
         if (options && options.filterFields) {
-            options.filterFields = _.mapKeys(options.filterFields, (v, k) => {
+            options.filterFields = mapKeys(options.filterFields, (v, k) => {
                 return this.getColumnName(store, k);
             });
         }

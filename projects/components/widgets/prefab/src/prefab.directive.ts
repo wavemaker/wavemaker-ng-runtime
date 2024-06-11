@@ -4,12 +4,11 @@ import {setCSS, noop} from '@wm/core';
 
 import { PROP_TYPE, register, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { prefabProps } from './prefab.props';
+import {startsWith} from "lodash-es";
 
 const DEFAULT_CLS = 'app-prefab';
 
 const registeredPropsSet = new Set<string>();
-
-declare const _;
 
 @Directive({
     selector: 'section[wmPrefab]',
@@ -80,7 +79,7 @@ export class PrefabDirective extends StylableComponent implements OnDestroy {
             }
 
             // Do not set the 'bind:*' values
-            propsMap.set(k, {type, value: _.startsWith(v.value, 'bind:') ? undefined : v.value});
+            propsMap.set(k, {type, value: startsWith(v.value, 'bind:') ? undefined : v.value});
         });
 
         registeredPropsSet.add(this.widgetType);

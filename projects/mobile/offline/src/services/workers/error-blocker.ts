@@ -1,8 +1,7 @@
 import { Change, FlushContext, Worker } from '../change-log.service';
 import { LocalDBStore } from '../../models/local-db-store';
 import { LocalDBManagementService } from '../local-db-management.service';
-
-declare const _;
+import {isNull, isUndefined} from "lodash-es";
 
 const STORE_KEY = 'errorBlockerStore';
 
@@ -45,7 +44,7 @@ export class ErrorBlocker implements Worker {
             const dataModelName = change.params.dataModelName;
             return this.localDBManagementService.getStore(dataModelName, entityName).then( store => {
                 const id = change['dataLocalId'] || change.params.data[store.primaryKeyName];
-                if (!(_.isUndefined(id) || _.isNull(id))) {
+                if (!(isUndefined(id) || isNull(id))) {
                     this.removeError(dataModelName, entityName, id);
                 }
             });
@@ -59,7 +58,7 @@ export class ErrorBlocker implements Worker {
             const dataModelName = change.params.dataModelName;
             return this.localDBManagementService.getStore(dataModelName, entityName).then( store => {
                 const id = change['dataLocalId'] || (change.params.data && change.params.data[store.primaryKeyName]) || change.params[store.primaryKeyName] || change.params.id;
-                if (!(_.isUndefined(id) || _.isNull(id))) {
+                if (!(isUndefined(id) || isNull(id))) {
                     this.recordError(dataModelName, entityName, id);
                 }
             });

@@ -10,8 +10,7 @@ import {
     hasCordova,
     triggerFn
 } from '@wm/core';
-
-declare const _;
+import {each, forEach, get, isEmpty, join, set} from "lodash-es";
 
 // Todo[Shubham]: Move below constants to a common file
 const XSRF_COOKIE_NAME = 'wm_xsrf_token',
@@ -83,7 +82,7 @@ export class SecurityService {
      */
     getConfig(successCallback, failureCallback) {
         function invokeQueuedCallbacks(id, method, data) {
-            _.forEach(this.requestQueue[id], fn => triggerFn(fn[method], data));
+            forEach(this.requestQueue[id], fn => triggerFn(fn[method], data));
             this.requestQueue[id] = null;
         }
 
@@ -182,7 +181,7 @@ export class SecurityService {
     }
 
     isNoPageLoaded() {
-        return !_.isEmpty(this.getCurrentRoutePage());
+        return !isEmpty(this.getCurrentRoutePage());
     }
 
     getPageByLoggedInUser() {
@@ -256,7 +255,7 @@ export class SecurityService {
      */
     getRedirectPage(config, page?) {
         const homePage = getWmProjectProperties().homePage,
-            loginPage = _.get(config, 'loginConfig.pageName');
+            loginPage = get(config, 'loginConfig.pageName');
         let prevRedirectPage,
             redirectPage = page || this.getCurrentRoutePage();
 
@@ -270,7 +269,7 @@ export class SecurityService {
              *  in this case, redirectTo page should be 'page' and not undefined
              */
             prevRedirectPage = this.getCurrentRouteQueryParam('redirectTo');
-            redirectPage = !_.isEmpty(prevRedirectPage) ? prevRedirectPage : undefined;
+            redirectPage = !isEmpty(prevRedirectPage) ? prevRedirectPage : undefined;
         }
 
         return redirectPage;
@@ -282,7 +281,7 @@ export class SecurityService {
     getRedirectedRouteQueryParams() {
         let queryParams = {};
         this.activatedRoute.queryParams.subscribe((paramVal) => {
-            _.forEach(paramVal, (val, key) => {
+            forEach(paramVal, (val, key) => {
                 queryParams[key] = val;
             });
         });
@@ -292,17 +291,17 @@ export class SecurityService {
     // accepts query object like {a:1, b:2} and returns a=1&b=2 string
     getQueryString(queryObject) {
         const params = [];
-        _.forEach(queryObject, function (value, key) {
+        forEach(queryObject, function (value, key) {
             params.push(key + '=' + value);
         });
-        return _.join(params, '&');
+        return join(params, '&');
     }
 
     appLogin(params, successCallback, failureCallback) {
         let payload = '';
 
         // encode all parameters
-        _.each(params, function (value, name) {
+        each(params, function (value, name) {
             payload += (payload ? '&' : '') + encodeURIComponent(name) + '=' + encodeURIComponent(value);
         });
 
@@ -354,8 +353,8 @@ export class SecurityService {
             responseType: 'text',
             byPassResult: true
         }).then((response) => {
-            _.set(this.get(), 'authenticated', false);
-            _.set(this.get(), 'userInfo', null);
+            set(this.get(), 'authenticated', false);
+            set(this.get(), 'userInfo', null);
             /*if (CONSTANTS.hasCordova) {
                 localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, '');
             }*/

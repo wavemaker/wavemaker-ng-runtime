@@ -6,8 +6,6 @@ import {registerProps} from './input-text.props';
 import {BaseInput} from '../base/base-input';
 import { IMaskDirective } from 'angular-imask';
 
-declare const _;
-
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-text',
     hostClass: 'app-input-wrapper'

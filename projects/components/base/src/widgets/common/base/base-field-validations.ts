@@ -1,8 +1,7 @@
 import { Validators } from '@angular/forms';
 
 import { VALIDATOR, $watch, $unwatch, FormWidgetType } from '@wm/core';
-
-declare const _;
+import {cloneDeep, concat, extend, filter, find, forEach, get, isEmpty, isFunction, toUpper} from "lodash-es";
 
 const DEFAULT_VALIDATOR = {
     pattern: 'regexp',
@@ -73,7 +72,7 @@ export class BaseFieldValidations {
         if (this.instance.regexp) {
             _validator.push(Validators.pattern(this.instance.regexp));
         }
-        if (this.formwidget && _.isFunction(this.formwidget.validate)) {
+        if (this.formwidget && isFunction(this.formwidget.validate)) {
             _validator.push(this.formwidget.validate.bind(this.formwidget));
         }
         return _validator;
@@ -104,7 +103,7 @@ export class BaseFieldValidations {
 
     getPromiseList(validators) {
         const arr = [];
-        _.forEach(validators, (fn, index) => {
+        forEach(validators, (fn, index) => {
             let promise = fn;
             if (fn instanceof Function && fn.bind) {
                 promise = fn(this.widgetControl, this.widgetContext);
@@ -127,9 +126,10 @@ export class BaseFieldValidations {
                     // if err obj has validationMessage key, then set validationMessage using this value
                     // else return the value of the first key in the err object as validation message.
                     if (err.hasOwnProperty('errorMessage')) {
-                        this.instance.validationmessage = _.get(err, 'errorMessage');
+                        this.instance.validationmessage = get(err, 'errorMessage');
                     } else {
-                        const keys = _.keys(err);
+                        // @ts-ignore
+                        const keys = keys(err);
                         this.instance.validationmessage = (err[keys[0]]).toString();
                     }
                     return err;
@@ -163,7 +163,7 @@ export class BaseFieldValidations {
     }
 
     isDefaultValidator(type) {
-        return _.get(VALIDATOR, _.toUpper(type));
+        return get(VALIDATOR, toUpper(type));
     }
 
     // default validator is bound to a function then watch for value changes
@@ -180,10 +180,10 @@ export class BaseFieldValidations {
 
     // sets the default validation on the form field
     setValidators(validators) {
-        let _cloneValidators = _.cloneDeep(validators);
+        let _cloneValidators = cloneDeep(validators);
         this.hasValidators = true;
         this._syncValidators = [];
-        _.forEach(_cloneValidators, (obj, index) => {
+        forEach(_cloneValidators, (obj, index) => {
             // custom validation is bound to function.
             if (obj && obj instanceof Function) {
                 // passing formfield and form as arguments to the obj (i.e. validator function)
@@ -191,10 +191,10 @@ export class BaseFieldValidations {
                 this._syncValidators.push(_cloneValidators[index]);
             } else {
                 // checks for default validator like required, maxchars etc.
-                const key = _.get(obj, 'type');
-                this.defaultValidatorMessages[key] = _.get(obj, 'errorMessage');
+                const key = get(obj, 'type');
+                this.defaultValidatorMessages[key] = get(obj, 'errorMessage');
                 if (this.isDefaultValidator(key)) {
-                    const value = _.get(obj, 'validator');
+                    const value = get(obj, 'validator');
                     this.setDefaultValidator(key, value);
                     _cloneValidators[index] = '';
                 }
@@ -202,7 +202,7 @@ export class BaseFieldValidations {
         });
 
         // _syncValidators contains all the custom validations on the form field. will not include default validators.
-        this._syncValidators = _.filter(_cloneValidators, val => {
+        this._syncValidators = filter(_cloneValidators, val => {
             if (val) {
                 return val;
             }
@@ -211,8 +211,8 @@ export class BaseFieldValidations {
     }
 
     observeOn(fields, context) {
-        _.forEach(fields, field => {
-            const formfield = _.find(this.widgetContext[context], {'key': field});
+        forEach(fields, field => {
+            const formfield = find(this.widgetContext[context], {'key': field});
             if (formfield) {
                 if (!formfield.notifyForFields) {
                     formfield.notifyForFields = [];
@@ -245,13 +245,13 @@ export class BaseFieldValidations {
         const watchName = `${this.instance.widgetId}_` + key + '_formField';
         $unwatch(watchName);
         //[Todo-CSP]: Need clarity generate this expr fn if form is present in the page
-        this.instance.registerDestroyListener($watch('boundFn(fn)', _.extend(this.instance, this.instance.viewParent), {fn}, (nv, ov) => {
+        this.instance.registerDestroyListener($watch('boundFn(fn)', extend(this.instance, this.instance.viewParent), {fn}, (nv, ov) => {
             this.instance.widget[key] = nv;
             this.applyDefaultValidators();
         }, watchName));
     }
     isNullOrEmptyOrFalsy(value)  {
-        return _.isEmpty(value);
+        return isEmpty(value);
     }
 
     // invokes both custom sync validations and default validations.
@@ -263,7 +263,7 @@ export class BaseFieldValidations {
         if (this.formwidget && (this.instance.value === this.formwidget.prevDatavalue || this.isNullOrEmptyOrFalsy(this.instance.value))) {
             opt['emitEvent'] = false;
         }
-        this.widgetControl.setValidators(_.concat(this._syncValidators || [], validators));
+        this.widgetControl.setValidators(concat(this._syncValidators || [], validators));
         this.widgetControl.updateValueAndValidity(opt);
         this.setCustomValidationMessage();
     }
@@ -275,13 +275,14 @@ export class BaseFieldValidations {
             return;
         }
         if (fieldErrors.hasOwnProperty('errorMessage')) {
-            this.instance.validationmessage = _.get(fieldErrors, 'errorMessage');
+            this.instance.validationmessage = get(fieldErrors, 'errorMessage');
         } else {
-            const keys = _.keys(fieldErrors);
+            // @ts-ignore
+            const keys = keys(fieldErrors);
             const key = keys[0];
-            const validationMsgKey = _.get(DEFAULT_VALIDATOR, key) || this.formwidget.validateType;
+            const validationMsgKey = get(DEFAULT_VALIDATOR, key) || this.formwidget.validateType;
             if (validationMsgKey) {
-                const msg = _.get(this.defaultValidatorMessages, validationMsgKey) || this.instance.validationmessage;
+                const msg = get(this.defaultValidatorMessages, validationMsgKey) || this.instance.validationmessage;
                 if (msg && msg instanceof Function) {
                     // passing formfield and form as arguments to the errorMessage function.
                     this.instance.validationmessage = msg(this.widgetControl, this.widgetContext);

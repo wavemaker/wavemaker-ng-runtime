@@ -1,7 +1,7 @@
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { MediaCapture } from '@awesome-cordova-plugins/media-capture/ngx';
 
-import { isNumber } from '@wm/core';
+import {isNumber} from 'lodash-es';
 import { DeviceVariableService, IDeviceVariableOperation } from '@wm/variables';
 
 export class CameraService extends DeviceVariableService {

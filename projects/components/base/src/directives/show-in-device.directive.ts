@@ -13,7 +13,6 @@ import { isLargeTabletLandscape, isLargeTabletPortrait } from '@wm/core';
 
 import { WidgetRef } from '../widgets/framework/types';
 import { BaseComponent } from '../widgets/common/base/base.component';
-declare const _, $;
 
 @Directive({
     selector: '[wmShowInDevice]'

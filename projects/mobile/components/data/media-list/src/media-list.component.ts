@@ -1,6 +1,6 @@
 import {Component, ContentChild, ElementRef, Injector, Optional, TemplateRef} from '@angular/core';
 
-import {$appDigest, addClass, isArray, isObject, isString, removeClass} from '@wm/core';
+import {$appDigest, addClass, isObject, removeClass} from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     getEvaluatedData,
@@ -11,6 +11,7 @@ import {
 } from '@wm/components/base';
 
 import { registerProps } from './media-list.props';
+import {isArray, isString} from "lodash-es";
 
 const DEFAULT_CLS = 'app-medialist';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-media-list', hostClass: DEFAULT_CLS};

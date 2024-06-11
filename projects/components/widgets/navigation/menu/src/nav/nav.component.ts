@@ -5,8 +5,7 @@ import {addClass, App, removeClass, triggerItemAction, UserDefinedExecutionConte
 import {APPLY_STYLES_TYPE, DatasetAwareNavComponent, provideAsWidgetRef, styler} from '@wm/components/base';
 
 import {registerProps} from './nav.props';
-
-declare const _;
+import {find, forEach, isEmpty, omit} from "lodash-es";
 
 const DEFAULT_CLS = 'nav app-nav';
 const WIDGET_CONFIG = {widgetType: 'wm-nav', hostClass: DEFAULT_CLS};
@@ -53,16 +52,16 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         this.pageScope = this.viewParent;
         // For selecting the item on load
         const datasetSubscription = this.nodes$.subscribe(() => {
-            if (!_.isEmpty(this.nodes)) {
+            if (!isEmpty(this.nodes)) {
                 let itemFound = false;
                 const getItem = (nodes, isMenuWidget?) => {
-                    _.forEach(nodes, (item) => {
+                    forEach(nodes, (item) => {
                         if (itemFound) {
                             return;
                         }
                         if (item.isactive || item.link == '#/'+this.activePageName) {
                             itemFound = true;
-                            this.selecteditem = isMenuWidget ? _.omit(item, ['children', 'value']) : item.value;
+                            this.selecteditem = isMenuWidget ? omit(item, ['children', 'value']) : item.value;
                             this.invokeEventCallback('select', {$event: {}, $item: item.value});
                             // Trigger the action associated with active item
                             triggerItemAction(this, item);
@@ -72,7 +71,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
                             }
                             return false;
                         }
-                        if (!_.isEmpty(item.children)) {
+                        if (!isEmpty(item.children)) {
                             getItem(item.children, 'menu');
                         }
                     });
@@ -96,8 +95,9 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
     public onNavSelect($event: Event, item: any, liRef: HTMLElement) {
         $event.preventDefault();
 
-        const selectedItem = _.find(this.nodes, '_selected');
+        const selectedItem = find(this.nodes, '_selected');
         if (selectedItem) {
+            // @ts-ignore
             delete selectedItem._selected;
         }
 
@@ -129,7 +129,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
      * @param $item
      */
     onMenuItemSelect($event, widget, $item) {
-        this.selecteditem = _.omit($item, ['children', 'value']);
+        this.selecteditem = omit($item, ['children', 'value']);
         this.invokeEventCallback('select', {$event, $item: this.selecteditem});
     }
 }

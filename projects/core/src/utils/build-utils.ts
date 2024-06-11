@@ -1,8 +1,6 @@
 import { Attribute, Element } from '@angular/compiler';
-
 import { FormWidgetType } from '../enums/enums';
-
-declare const _;
+import {includes, isArray, startsWith} from "lodash-es";
 
 // For html upload widget, add events on input tag
 const getUploadEventTmpl = (attrs, counter?, fieldName?) => {
@@ -188,7 +186,7 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
         formWidgetsRegex = new RegExp(`(Widgets.(.*).(formWidgets|filterWidgets))\\b`, 'g');
     }
 
-    if (!_.isArray(rootNode)) {
+    if (!isArray(rootNode)) {
         // [WMS-16712],[WMS-16769],[WMS-16805] The markup of root node(table, list, carousel) need to be updated only for the widgets mentioned in widgetList map.
         nodes = widgetList[(rootNode as any).name] ? [rootNode as Element] : ((rootNode as any).children || []) as Array<Element>;
     } else {
@@ -202,12 +200,12 @@ export const updateTemplateAttrs = (rootNode: Element | Array<Element>, parentDa
             childNode.attrs.forEach((attr) => {
                 // trim the extra spaces in bindings
                 let value = attr.value && attr.value.trim();
-                if (_.startsWith(value, 'bind:')) {
+                if (startsWith(value, 'bind:')) {
                     // The markup of root node(table, list, carousel) attributes conatains same dataset variable binding then those attributes need to be updated only for specific properties mentioned in widgetList map.
                     if (!widgetList[nodeName] || (widgetList[nodeName] && widgetList[nodeName].indexOf(attr.name) > -1)) {
                         // if the attribute value is "bind:xxxxx.xxxx", either the dataSet/scopeDataSet has to contain "xxxx.xxxx"
                         // [WMS-17908]: if child widget contains bind expression as parendataset.length > 0 then dont replace it with item
-                        if (_.includes(value, parentDataSet) && value !== 'bind:' + parentDataSet && !parentDataSetLengthRegex.test(value)) {
+                        if (includes(value, parentDataSet) && value !== 'bind:' + parentDataSet && !parentDataSetLengthRegex.test(value)) {
                             value = value.replace('bind:', '');
                             addDatasetBoundExprAttribute(childNode, attr, value);
                             value = value.replace(regex, referenceName);

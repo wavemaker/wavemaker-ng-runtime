@@ -2,8 +2,7 @@ import { DeviceFileService } from '@wm/mobile/core';
 
 import { Change, Worker } from '../change-log.service';
 import { LocalDBManagementService } from '../local-db-management.service';
-
-declare const _;
+import {forEach, isObject, mapValues} from "lodash-es";
 
 export class MultiPartParamTransformer implements Worker {
 
@@ -18,8 +17,9 @@ export class MultiPartParamTransformer implements Worker {
                 case 'insertMultiPartTableData':
                 case 'updateMultiPartTableData':
                     // clean up files
-                    _.forEach(change.params.data, v => {
-                        if (_.isObject(v) && v.wmLocalPath) {
+                    forEach(change.params.data, v => {
+                        // @ts-ignore
+                        if (isObject(v) && v.wmLocalPath) {
                             this.deviceFileService.removeFile(v.wmLocalPath);
                         }
                     });
@@ -57,8 +57,9 @@ export class MultiPartParamTransformer implements Worker {
                                  * As save method called with FormData object, empty row is inserted.
                                  * Since FormData is converted to map, update the record details now.
                                  */
-                                store.save(_.mapValues(map, function (v) {
-                                    return (_.isObject(v) && v.wmLocalPath) || v;
+                                store.save(mapValues(map, function (v) {
+                                    // @ts-ignore
+                                    return (isObject(v) && v.wmLocalPath) || v;
                                 }));
                                 return map;
                             });

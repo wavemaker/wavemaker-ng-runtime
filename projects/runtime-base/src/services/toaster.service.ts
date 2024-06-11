@@ -5,8 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AbstractToasterService, isDefined } from '@wm/core';
 
 import { CustomToasterComponent } from '../components/custom-toaster.component';
-
-declare const _;
+import {isNumber, isObject, merge} from "lodash-es";
 
 @Injectable()
 export class ToasterServiceImpl extends AbstractToasterService {
@@ -17,7 +16,7 @@ export class ToasterServiceImpl extends AbstractToasterService {
 
     private _showToaster (type: string, title: string, desc: string, options?: any) {
         // backward compatibility (in 9.x, 4th param is timeout value).
-        if (_.isNumber(options)) {
+        if (isNumber(options)) {
             options = {timeOut: options};
         }
 
@@ -29,7 +28,7 @@ export class ToasterServiceImpl extends AbstractToasterService {
         // pop the toaster only if either title or description are defined
         if (title || desc) {
             // if the desc is an object, stringify it.
-            if (!options.bodyOutputType && _.isObject(desc)) {
+            if (!options.bodyOutputType && isObject(desc)) {
                 desc = JSON.stringify(desc);
             }
             const fn = this.toaster[type];
@@ -88,8 +87,8 @@ export class ToasterServiceImpl extends AbstractToasterService {
      * @param {options} Object
      */
     public setToasterConfig(options) {
-        if (_.isObject(options)) {
-            _.merge(this.toaster.toastrConfig, options);
+        if (isObject(options)) {
+            merge(this.toaster.toastrConfig, options);
         } else {
             console.warn('Please pass a valid options object, For Example : {maxOpened: 1, autoDismiss: true}');
         }

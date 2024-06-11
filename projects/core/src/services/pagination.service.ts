@@ -1,7 +1,8 @@
 import { isDefined } from '../utils/utils';
 import { Injectable } from '@angular/core';
-declare const _, $;
+import {debounce, get, isEmpty, isEqual} from "lodash-es";
 
+declare const $;
 @Injectable({ providedIn: 'root' })
 
 export class PaginationService {
@@ -82,7 +83,7 @@ export class PaginationService {
             newVal.forEach(function (newObj) {
                 flag = false;
                 fieldDefs.forEach(function (obj) {
-                    if (_.isEqual(newObj, obj)) {
+                    if (isEqual(newObj, obj)) {
                         flag = true;
                     }
                 });
@@ -178,7 +179,7 @@ export class PaginationService {
      * @returns debounced function definition
      */
     public debouncedFetchNextDatasetOnScroll(dataNavigator, debounceNum, parent) {
-        return _.debounce(() => this.fetchNextDatasetOnScroll(dataNavigator, parent), debounceNum);
+        return debounce(() => this.fetchNextDatasetOnScroll(dataNavigator, parent), debounceNum);
     }
 
     /**
@@ -214,12 +215,12 @@ export class PaginationService {
 
         const $scrollParent = $element.closest('[wmsmoothscroll="true"]');
 
-        const iScroll = _.get($scrollParent[0], 'iscroll');
+        const iScroll = get($scrollParent[0], 'iscroll');
 
         // when iscroll is not initialised the notify the smoothscroll and subscribe to the iscroll update
         if (!iScroll) {
             const iScrollSubscription = app.subscribe('iscroll-update', (_el) => {
-                if (!_.isEmpty(_el) && _el.isSameNode($scrollParent[0])) {
+                if (!isEmpty(_el) && _el.isSameNode($scrollParent[0])) {
                     this.setIscrollHandlers($scrollParent[0], dataNavigator, debounceNum);
                     iScrollSubscription();
                 }
@@ -240,7 +241,7 @@ export class PaginationService {
      */
     public setIscrollHandlers(el, dataNavigator, debounceNum) {
         let lastScrollTop = 0;
-        const wrapper = _.get(el.iscroll, 'wrapper');
+        const wrapper = get(el.iscroll, 'wrapper');
         const self = el.iscroll;
 
         el.iscroll.on('scrollEnd', () => {

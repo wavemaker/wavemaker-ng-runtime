@@ -9,6 +9,8 @@ import { CustomPipe, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe,
 import {AbstractI18nService, App, CustomPipeManager} from '@wm/core';
 import {MockAbstractI18nService} from './util/date-test-util';
 
+declare const moment;
+
 const mockApp = {
     subscribe: () => { return () => {}}
 };
@@ -31,8 +33,6 @@ const testModuleDef: ITestModuleDef = {
         DecimalPipe, DatePipe, TrustAsPipe, SanitizePipe, CustomPipeManager
     ]
 };
-
-declare const moment;
 
 describe('ToNumber pipe', () => {
     let fixture: ComponentFixture<PipeWrapperComponent>;

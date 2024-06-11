@@ -16,8 +16,7 @@ import { registerProps } from './table-column.props';
 import { TableComponent } from '../table.component';
 import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
 import { debounceTime } from 'rxjs/operators';
-
-declare const _;
+import {cloneDeep, forEach, head, includes, last, map, max, mean, min, round, split, sum} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
@@ -442,7 +441,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 if (this.relatedEntityName) {
                     this.widget['is-related']  = true;
                     this.widget['lookup-type']  = this.relatedEntityName;
-                    this.widget['lookup-field'] = _.last(_.split(this.field, '.'));
+                    this.widget['lookup-field'] = last(split(this.field, '.'));
                 }
                 if (this.filterwidget === FormWidgetType.AUTOCOMPLETE) {
                     this.filterInstance.dataoptions = getDistinctFieldProperties(this.table.datasource, this);
@@ -476,11 +475,11 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             if (this['related-entity-name'] && this['primary-key']) {
                 // Fetch the data for the related fields
                 this.isDataSetBound = true;
-                const bindings = _.split(this.binding, '.');
+                const bindings = split(this.binding, '.');
                 this.showPendingSpinner = true;
                 fetchRelatedFieldData(dataSource, this.widget, {
-                    relatedField: _.head(bindings),
-                    datafield: _.last(bindings),
+                    relatedField: head(bindings),
+                    datafield: last(bindings),
                     widget: 'edit-widget-type'
                 });
             } else if (dataSource.execute(DataSource.Operation.SUPPORTS_DISTINCT_API)) {
@@ -511,7 +510,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.filterInstance.registerReadyStateListener(() => {
             if (isDataSetWidget(this.filterwidget)) {
                 // if binding is department.deptId then field will be deptId
-                const field = _.last(this.binding.split('.'));
+                const field = last(this.binding.split('.'));
                 this.filterInstance.dataset = this._filterDataSet;
                 this.filterInstance.datafield = this.filterdatafield || field;
                 this.filterInstance.displayfield = this.filterdisplayfield || field;
@@ -529,7 +528,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // Notifies all the dependent validation controls incase of any changes
     notifyChanges(quickEdit?) {
-        _.forEach(this.notifyForFields, field => {
+        forEach(this.notifyForFields, field => {
             if (quickEdit && this._isNewEditableRow) {
                 field.fieldValidations_new.validate();
             } else {
@@ -540,7 +539,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // Watches control for dependent validation changes
     observeOn(fields) {
-        this.observeOnFields = _.cloneDeep(fields);
+        this.observeOnFields = cloneDeep(fields);
     }
 
     // Sets the default validators inline and quickedit new row using props
@@ -553,12 +552,12 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
 
     // Sets the Async validators on the inline and quickedit new row form control
     setAsyncValidators(validators) {
-        this.asyncValidators = _.cloneDeep(validators);
+        this.asyncValidators = cloneDeep(validators);
     }
 
     // Sets the default/custom validators on the inline and quickedit new row form control
     setValidators(validators) {
-        this.syncValidators = _.cloneDeep(validators);
+        this.syncValidators = cloneDeep(validators);
     }
 
     boundFn(fn) {
@@ -577,7 +576,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     }
 
     private _invokeSummaryRowData(data) {
-        _.forEach(data, (item, index) => {
+        forEach(data, (item, index) => {
             const content = item;
             if (content instanceof Promise) {
                 content.then(res => {
@@ -594,27 +593,27 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         });
     }
     private _getColumnData() {
-        return _.map(this.table.dataset, this.binding);
+        return map(this.table.dataset, this.binding);
     }
 
     public aggregate = {
         sum: () => {
-            return _.sum(this._getColumnData());
+            return sum(this._getColumnData());
         },
         average: (precision: number = 2) => {
-            return _.round(_.mean(this._getColumnData()), precision);
+            return round(mean(this._getColumnData()), precision);
         },
         count: () => {
             return this._getColumnData().length;
         },
         minimum: () => {
-            return _.min(this._getColumnData());
+            return min(this._getColumnData());
         },
         maximum: () => {
-            return _.max(this._getColumnData());
+            return max(this._getColumnData());
         },
         percent: (value, precision: number = 2) => {
-            return _.round((_.sum(this._getColumnData()) / value ) * 100, precision);
+            return round((sum(this._getColumnData()) / value) * 100, precision);
         }
     };
     /* Summary Row Logic end */
@@ -669,7 +668,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.limit =  this.limit ? +this.limit  :  undefined;
         this.editWidgetType = this['edit-widget-type'] =  this['edit-widget-type'] || getEditModeWidget(this);
         this.filterOn =  this['filter-on'];
-        this.readonly =  isDefined(this.getAttr('readonly')) ? this.getAttr('readonly') === 'true' :  (this['related-entity-name'] ? !this['primary-key'] :  _.includes(['identity', 'uniqueid', 'sequence'], this.generator));
+        this.readonly = isDefined(this.getAttr('readonly')) ? this.getAttr('readonly') === 'true' : (this['related-entity-name'] ? !this['primary-key'] : includes(['identity', 'uniqueid', 'sequence'], this.generator));
         this.filterwidget =  this.filterwidget || getDataTableFilterWidget(this.type || 'string');
         this.isFilterDataSetBound = !!this.bindfilterdataset;
         this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);

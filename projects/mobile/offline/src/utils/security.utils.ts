@@ -3,8 +3,8 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { App, noop, triggerFn } from '@wm/core';
 import { DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
+import {debounce} from "lodash-es";
 
-declare const _;
 declare const cordova;
 const SECURITY_FILE = 'logged-in-user.info';
 declare const resolveLocalFileSystemURL;
@@ -23,7 +23,7 @@ export class SecurityOfflineBehaviour {
         private networkService: NetworkService,
         private securityService: SecurityService
     ) {
-        this.saveSecurityConfigLocally = _.debounce((config: any) => {
+        this.saveSecurityConfigLocally = debounce((config: any) => {
             this._saveSecurityConfigLocally(config);
         }, 1000);
     }

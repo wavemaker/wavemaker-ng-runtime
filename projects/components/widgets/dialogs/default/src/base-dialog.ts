@@ -9,8 +9,6 @@ import {AbstractDialogService, findRootContainer, generateGUId, isMobile, isMobi
 import {BaseComponent, IDialog, IWidgetConfig, WidgetConfig} from '@wm/components/base';
 import {createFocusTrap} from '@wavemaker/focus-trap';
 
-declare const _;
-
 const eventsRegistered = false;
 
 const focusTrapObj = {

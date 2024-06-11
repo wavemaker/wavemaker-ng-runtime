@@ -20,12 +20,14 @@ import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './time.props';
+import {forEach, get, includes} from "lodash-es";
+
+declare const $;
+declare const moment;
 
 const CURRENT_TIME = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
 const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
-
-declare const _, moment, $;
 
 @Component({
     selector: '[wmTime]',
@@ -338,7 +340,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (!_.includes(['blur', 'focus', 'change', 'click'], eventName)) {
+        if (!includes(['blur', 'focus', 'change', 'click'], eventName)) {
             super.handleEvent(node, eventName, eventCallback, locals);
         }
     }
@@ -371,7 +373,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     public onShown() {
         const tpElements  = document.querySelectorAll('timepicker');
-        _.forEach(tpElements, element => {
+        forEach(tpElements, element => {
             addClass(element.parentElement as HTMLElement, 'app-datetime', true);
         });
         this.focusTimePickerPopover(this);
@@ -383,6 +385,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if (!this.displayInputElem) {
             this.displayInputElem = this.getMobileInput();
         }
-        (this.displayInputElem as any).value = _.get(this, 'nativeDisplayValue');
+        (this.displayInputElem as any).value = get(this, 'nativeDisplayValue');
     }
 }

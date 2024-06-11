@@ -1,8 +1,7 @@
 import { Directive, Input, TemplateRef, ViewContainerRef, Injector } from '@angular/core';
 
 import { SecurityService } from '@wm/security';
-
-declare const _;
+import {get, includes, split, trim} from "lodash-es";
 
 enum USER_ROLE {
     EVERYONE = 'Everyone',
@@ -27,9 +26,9 @@ export class AccessrolesDirective {
         private inj: Injector
     ) {
         const securityConfig = this.securityService.get();
-        this.securityEnabled = _.get(securityConfig, 'securityEnabled');
-        this.isUserAuthenticated = _.get(securityConfig, 'authenticated');
-        this.userRoles = _.get(securityConfig, 'userInfo.userRoles');
+        this.securityEnabled = get(securityConfig, 'securityEnabled');
+        this.isUserAuthenticated = get(securityConfig, 'authenticated');
+        this.userRoles = get(securityConfig, 'userInfo.userRoles');
     }
 
     /**
@@ -46,8 +45,8 @@ export class AccessrolesDirective {
             return [];
         }
         // replace the unicode equivalent of comma with comma
-        return _.split(val, ',').map(function (v) {
-            return _.trim(v).replace(UNICODE_COMMA_REGEX, ',');
+        return split(val, ',').map(function (v) {
+            return trim(v).replace(UNICODE_COMMA_REGEX, ',');
         });
     }
 
@@ -59,7 +58,7 @@ export class AccessrolesDirective {
      */
     private matchRoles(widgetRoles, userRoles) {
         return widgetRoles.some(function (item) {
-            return _.includes(userRoles, item);
+            return includes(userRoles, item);
         });
     }
 
@@ -71,17 +70,17 @@ export class AccessrolesDirective {
      */
     private hasAccessToWidget(widgetRoles, userRoles) {
         // access the widget when 'Everyone' is chosen
-        if (_.includes(widgetRoles, USER_ROLE.EVERYONE)) {
+        if (includes(widgetRoles, USER_ROLE.EVERYONE)) {
             return true;
         }
 
         // access the widget when 'Anonymous' is chosen and user is not authenticated
-        if (_.includes(widgetRoles, USER_ROLE.ANONYMOUS) && !this.isUserAuthenticated) {
+        if (includes(widgetRoles, USER_ROLE.ANONYMOUS) && !this.isUserAuthenticated) {
             return true;
         }
 
         // access the widget when 'Only Authenticated Users' is chosen and user is authenticated
-        if (_.includes(widgetRoles, USER_ROLE.AUTHENTICATED) && this.isUserAuthenticated) {
+        if (includes(widgetRoles, USER_ROLE.AUTHENTICATED) && this.isUserAuthenticated) {
             return true;
         }
 

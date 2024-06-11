@@ -1,10 +1,11 @@
 import {AfterViewInit, Component, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import {isNumber, setCSS, setCSSFromObj} from '@wm/core';
+import {setCSS, setCSSFromObj} from '@wm/core';
 
 import { registerProps } from './segmented-control.props';
 import { SegmentContentComponent } from './segment-content/segment-content.component';
+import {isNumber} from "lodash-es";
 
 const DEFAULT_CLS = 'app-segmented-control';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segmented-control', hostClass: DEFAULT_CLS};

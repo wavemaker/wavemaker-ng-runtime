@@ -1,18 +1,31 @@
 import { IDataProvider, IDataProviderConfig } from './data-provider';
-
-declare const _;
+import {
+    endsWith,
+    filter,
+    get,
+    includes,
+    isArray,
+    isEqual,
+    isNumber,
+    isObject,
+    split,
+    startsWith,
+    toLower,
+    toString,
+    values
+} from "lodash-es";
 
 export class LocalDataProvider implements IDataProvider {
     private applyFilter(entry, queryText, filtername?) {
-        entry = _.isNumber(entry) ? entry.toString() : entry;
-        if (_.includes(filtername, 'start') ) {
-            return _.startsWith(entry, queryText);
-        } else if (_.includes(filtername, 'end')) {
-            return _.endsWith(entry, queryText);
-        } else if (_.includes(filtername, 'exact')) {
-            return _.isEqual(entry, queryText);
+        entry = isNumber(entry) ? entry.toString() : entry;
+        if (includes(filtername, 'start')) {
+            return startsWith(entry, queryText);
+        } else if (includes(filtername, 'end')) {
+            return endsWith(entry, queryText);
+        } else if (includes(filtername, 'exact')) {
+            return isEqual(entry, queryText);
         }
-        return _.includes(entry, queryText);
+        return includes(entry, queryText);
     }
 
     // LocalData filtering is done based on the searchkey.
@@ -21,7 +34,7 @@ export class LocalDataProvider implements IDataProvider {
         let casesensitive = config.casesensitive;
         const matchMode = config.matchMode;
         // for supporting existing projects
-        if (matchMode && !_.includes(matchMode, 'ignorecase')) {
+        if (matchMode && !includes(matchMode, 'ignorecase')) {
             casesensitive = true;
         }
         let queryText = config.query,
@@ -33,15 +46,15 @@ export class LocalDataProvider implements IDataProvider {
              * return the filtered data containing the matching string.
              */
             if (config.searchKey) {
-                const keys = _.split(config.searchKey, ',');
+                const keys = split(config.searchKey, ',');
 
-                filteredData = _.filter(config.dataset, (item: any) => {
+                filteredData = filter(config.dataset, (item: any) => {
                     return keys.some(key => {
-                        let a = _.get(item, key),
+                        let a = get(item, key),
                             b = queryText;
                         if (!casesensitive) {
-                            a = _.toLower(_.toString(a));
-                            b = _.toLower(_.toString(b));
+                            a = toLower(toString(a));
+                            b = toLower(toString(b));
                         }
                         return this.applyFilter(a, b, matchMode);
                     });
@@ -49,20 +62,22 @@ export class LocalDataProvider implements IDataProvider {
             } else {
                 // local search on data with array of objects.
                 // Iterate over each item and return the filtered data containing the matching string.
-                if (_.isArray(entries) && _.isObject(entries[0])) {
-                    filteredData = _.filter(entries, entry => {
-                        let a = _.values(entry).join(' ');
+                if (isArray(entries) && isObject(entries[0])) {
+                    filteredData = filter(entries, entry => {
+                        let a = values(entry).join(' ');
                         if (!casesensitive) {
-                            a = _.toLower(a);
-                            queryText = _.toLower(queryText);
+                            a = toLower(a);
+                            // @ts-ignore
+                            queryText = toLower(queryText);
                         }
                         return this.applyFilter(a, queryText);
                     });
                 } else {
-                    filteredData = _.filter(entries, entry => {
+                    filteredData = filter(entries, entry => {
                         if (!casesensitive) {
-                            entry = _.toLower(entry);
-                            queryText = _.toLower(queryText);
+                            entry = toLower(entry);
+                            // @ts-ignore
+                            queryText = toLower(queryText);
                         }
                         return this.applyFilter(entry, queryText, matchMode);
                     });

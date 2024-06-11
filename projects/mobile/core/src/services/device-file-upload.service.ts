@@ -3,8 +3,7 @@ import { Injectable } from '@angular/core';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 
 import { convertToBlob } from '@wm/core';
-
-declare const _;
+import {forEach} from "lodash-es";
 
 export interface IUploadResponse {
     text: string;
@@ -91,8 +90,8 @@ export class DeviceFileUploadService {
     public upload(url: string, fileParamName: string, path: string, fileName?: string, params?: any, headers?: any): Promise<IUploadResponse> {
         const req = new UploadRequest(url, this.cordovaFile)
             .addFile(fileParamName, path, fileName);
-        _.forEach(params, (k, v) => req.addParam(k, v));
-        _.forEach(headers, (k, v) => req.addHeader(k, v));
+        forEach(params, (k, v) => req.addParam(k, v));
+        forEach(headers, (k, v) => req.addHeader(k, v));
         return req.post();
     }
 

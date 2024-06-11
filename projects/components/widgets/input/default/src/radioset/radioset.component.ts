@@ -6,8 +6,9 @@ import {setListClass} from '@wm/core';
 import { provideAsWidgetRef, styler, provideAs } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 import { registerProps } from './radioset.props';
+import {includes} from "lodash-es";
 
-declare const $, _;
+declare const $;
 
 const DEFAULT_CLS = 'app-radioset list-group inline';
 const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
@@ -65,7 +66,7 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
                     return callback();
                 }
             );
-        } else if (!_.includes(['change'], eventName)) {
+        } else if (!includes(['change'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
     }

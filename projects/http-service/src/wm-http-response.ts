@@ -1,9 +1,6 @@
 import { WmHttpRequest } from './wm-http-request';
 import { HttpResponse } from '@angular/common/http';
 
-
-declare const _;
-
 /**
  * This class creates a custom WmHttpRequest.
  */

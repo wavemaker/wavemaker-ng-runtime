@@ -1,9 +1,10 @@
 import {Directive, DoCheck, ElementRef, Injector, Input, OnDestroy, OnInit} from '@angular/core';
 
 import { App, debounce, isKitkatDevice, isMobileApp } from '@wm/core';
+import {forEach, includes} from "lodash-es";
 
+declare const $;
 declare const IScroll;
-declare const _, $;
 
 @Directive({
     selector: '[wmSmoothscroll]'
@@ -112,8 +113,8 @@ export class SmoothScrollDirective implements OnInit, DoCheck, OnDestroy {
 
         if ($events) {
             // map all events on previous iscroll to the newly created iscroll.
-            _.forEach($events, (listeners, key)  => {
-                _.forEach(listeners, l => {
+            forEach($events, (listeners, key) => {
+                forEach(listeners, l => {
                     iScroll.on(key, l);
                 });
             });
@@ -145,7 +146,7 @@ export class SmoothScrollDirective implements OnInit, DoCheck, OnDestroy {
         };
 
         this._$el[0].iscroll = iScroll;
-        _.forEach(this.pendingIscrolls, (_el, index) => {
+        forEach(this.pendingIscrolls, (_el, index) => {
             if (_el.isSameNode(this._$el[0])) {
                 this.app.notify('iscroll-update', {el: _el});
                 this.pendingIscrolls.splice(index, 1);
@@ -186,7 +187,7 @@ export class SmoothScrollDirective implements OnInit, DoCheck, OnDestroy {
         }
         // Check for scrollable content and if smoothscroll-container div is already added.
         if (iScroll.wrapper
-            && !_.includes(iScroll.wrapper.children[0].classList, 'smoothscroll-container')
+            && !includes(iScroll.wrapper.children[0].classList, 'smoothscroll-container')
             && iScroll.wrapper.scrollHeight > iScroll.wrapper.clientHeight) {
 
             const cloneEvents = iScroll._events;

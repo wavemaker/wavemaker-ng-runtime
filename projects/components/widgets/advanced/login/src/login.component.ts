@@ -14,10 +14,9 @@ import { FormComponent } from '@wm/components/data/form';
 import { ButtonComponent } from '@wm/components/input';
 
 import { registerProps } from './login.props';
+import {includes} from "lodash-es";
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
-
-declare const _;
 
 @Component({
     selector: 'div[wmLogin]',
@@ -87,7 +86,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
 
         // get login button component
         this.buttonComponents.forEach(cmp => {
-            if (cmp.getNativeElement().getAttribute('name') === 'loginButton' || _.includes(cmp.getNativeElement().classList, 'app-login-button')) {
+            if (cmp.getNativeElement().getAttribute('name') === 'loginButton' || includes(cmp.getNativeElement().classList, 'app-login-button')) {
                 if (this.loginBtnCmp) {
                     return;
                 }

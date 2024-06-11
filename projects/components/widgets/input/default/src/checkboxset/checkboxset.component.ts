@@ -6,8 +6,9 @@ import { convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provi
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from '../checkboxset/checkboxset.props';
+import {forEach, includes} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 const DEFAULT_CLS = 'app-checkboxset list-group inline';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: DEFAULT_CLS};
@@ -50,7 +51,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
         // construct the _model from the checked elements.
         const inputElements = this.nativeElement.querySelectorAll('input:checked');
         const keys = [];
-        _.forEach(inputElements, ($el) => {
+        forEach(inputElements, ($el) => {
+            // @ts-ignore
             keys.push($el.value);
         });
 
@@ -75,7 +77,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
                     return callback();
                 }
             );
-        } else if (!_.includes(['change'], eventName)) {
+        } else if (!includes(['change'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
     }

@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 
 import { convertToBlob, AbstractSpinnerService } from '@wm/core';
 import { FileBrowserComponent } from './file-browser.component';
+import {map} from "lodash-es";
 
-declare const _;
-declare const window, cordova;
+declare const cordova;
 
 export interface FileContent {
     name: string;
@@ -75,13 +75,14 @@ export class FileSelectorService {
      * @returns fileObj having name, path, content
      */
     private getFiles(filePaths: string[]): Promise<FileContent[]> {
-        return Promise.all(_.map(filePaths, filePath => {
+        // @ts-ignore
+        return Promise.all(map(filePaths, filePath => {
                 if (filePath.indexOf('://') < 0) {
                     filePath = 'file://' + filePath;
                 }
                 return convertToBlob(filePath)
             })).then(filesList => {
-                return _.map(filesList, fileObj => {
+            return map(filesList, fileObj => {
                     const path = fileObj.filepath;
                     return {
                         name: path.split('/').pop(),

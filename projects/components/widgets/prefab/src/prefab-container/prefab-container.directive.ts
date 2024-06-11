@@ -3,13 +3,13 @@ import {Directive, Injector, OnDestroy, Optional} from '@angular/core';
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import {Viewport, ViewportEvent} from '@wm/core';
 import { registerProps } from './prefab-container.props';
+import {assign} from "lodash-es";
 
 const DEFAULT_CLS = 'app-prefab-container full-height';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-prefab-container',
     hostClass: DEFAULT_CLS
 };
-declare const _;
 
 @Directive({
     selector: '[wmPrefabContainer]',
@@ -29,7 +29,7 @@ export class PrefabContainerDirective extends StylableComponent  implements OnDe
     }
 
     private callback(eventName, locals?: object) {
-        locals = _.assign({ widget: this }, locals);
+        locals = assign({widget: this}, locals);
         this.invokeEventCallback(eventName, locals);
     }
 

@@ -1,7 +1,8 @@
 import { _WM_APP_PROJECT, hasCordova, isIE, getWmProjectProperties } from '@wm/core';
-import {trigger} from "@angular/animations";
+import {get, isUndefined} from "lodash-es";
 
-declare const moment, _, jsSHA;
+declare const moment;
+declare const jsSHA;
 
 const accessTokenSuffix = '.access_token', pkceIdentifier = 'pkce', implicitIdentifier = 'implicit';
 
@@ -34,7 +35,7 @@ export const parseConfig = (serviceParams: any): any => {
         for (param in urlParams) {
             if (urlParams.hasOwnProperty(param)) {
                 val = urlParams[param];
-                if (!_.isUndefined(val) && val !== null) {
+                if (!isUndefined(val) && val !== null) {
                     config.url = config.url.replace(new RegExp(':' + param, 'g'), val);
                 }
             }
@@ -46,7 +47,7 @@ export const parseConfig = (serviceParams: any): any => {
         config.params = serviceParams.params;
     }
     /* check for data */
-    if (!_.isUndefined(serviceParams.data)) {
+    if (!isUndefined(serviceParams.data)) {
         config.data = serviceParams.data;
     }
     /* check for data parameters, written to support old service calls (.json calls) */
@@ -235,10 +236,10 @@ function handleLoginForIE(url, providerId, onSuccess, onError, removeProviderCon
  * @param providerInfo
  */
 function isPassedFlow(providerInfo, flow) {
-    let oAuthFlow = _.get(providerInfo, 'oauth2Flow');
+    let oAuthFlow = get(providerInfo, 'oauth2Flow');
     oAuthFlow = oAuthFlow ? oAuthFlow.toLowerCase() : oAuthFlow;
     if (flow === pkceIdentifier) {
-        if (_.get(providerInfo, 'oAuth2Pkce.enabled') === true) {
+        if (get(providerInfo, 'oAuth2Pkce.enabled') === true) {
             oAuthFlow = pkceIdentifier;
         }
     }
@@ -295,7 +296,7 @@ function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfi
         // Create and store a new PKCE code_verifier (the plaintext random secret)
         code_verifier = generateRandomString();
         let code_challenge;
-        if (_.get(securityObj, 'oAuth2Pkce.challengeMethod') === 'plain') {
+        if (get(securityObj, 'oAuth2Pkce.challengeMethod') === 'plain') {
             code_challenge = code_verifier;
             url = constructURLForImplicitOrPKCE(providerId, securityObj, requestSourceType, code_challenge, customUriScheme, deployedURL);
             startoAuthFlow(url, providerId, onSuccess, removeProviderConfigCallBack, securityObj, requestSourceType, customUriScheme, deployedURL, http);
@@ -370,7 +371,7 @@ function constructURLForImplicitOrPKCE(providerId, providerInfo, requestSourceTy
         const responseType = providerInfo.responseType ? providerInfo.responseType : 'token';
         url = commonUrl + '&response_type=' + responseType;
     } else {
-        url = commonUrl + '&response_type=code&code_challenge=' + code_challenge + '&code_challenge_method=' + _.get(providerInfo, 'oAuth2Pkce.challengeMethod');
+        url = commonUrl + '&response_type=code&code_challenge=' + code_challenge + '&code_challenge_method=' + get(providerInfo, 'oAuth2Pkce.challengeMethod');
     }
     return url;
 }

@@ -15,8 +15,18 @@ import { DatasetAwareFormComponent } from '@wm/components/input';
 import { SearchComponent } from '@wm/components/basic/search';
 
 import { registerProps } from './chips.props';
-
-declare const _;
+import {
+    clone,
+    filter,
+    find,
+    findIndex,
+    forEach, isArray,
+    isEqual,
+    isObject, max, pullAt, reduce,
+    slice,
+    toString,
+    trim
+} from "lodash-es";
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-chips',
@@ -91,7 +101,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this._debounceUpdateQueryModel = debounce((val) => {
             this.updateQueryModel(val).then(() => {
                 if (this.bindChipclass) {
-                    _.forEach(this.chipsList, (item, index) => {
+                    forEach(this.chipsList, (item, index) => {
                         this.registerChipItemClass(item, index);
                     });
                 }
@@ -183,13 +193,13 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
 
         // clone the data as the updations on data will change the datavalue.
-        let dataValue = _.clone(data);
+        let dataValue = clone(data);
         const prevChipsList = this.chipsList;
         this.chipsList = [];
 
         // update the model when model has items more than maxsize
         if (this.maxsize && dataValue.length > this.maxsize) {
-            this._modelByValue = dataValue = _.slice(dataValue, 0, this.maxsize);
+            this._modelByValue = dataValue = slice(dataValue, 0, this.maxsize);
             data = dataValue;
         }
 
@@ -205,8 +215,8 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
          * 6. If value is not object and allowonlyselect is false, then create a customModel and replace this value with customModel and prepare datasetItem from this value
          */
         dataValue.forEach((val: any, i: number) => {
-            const itemFound = _.find(this.datasetItems, item => {
-                return _.isObject(item.value) ? _.isEqual(item.value, val) : _.toString(item.value) === _.toString(val);
+            const itemFound = find(this.datasetItems, item => {
+                return isObject(item.value) ? isEqual(item.value, val) : toString(item.value) === toString(val);
             });
 
             if (itemFound) {
@@ -215,7 +225,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                 searchQuery.push(val);
             } else if (this.datafield === ALLFIELDS) {
                 let dataObj, isCustom = false;
-                if (!_.isObject(val)) {
+                if (!isObject(val)) {
                     dataObj = this.createCustomDataModel(val);
                     isCustom = true;
                     if (dataObj) {
@@ -225,7 +235,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                     // if custom chips is already generated, val will be object as {'dataField_val': 'entered_val'}
                     // Hence check this val in previous chipList and assign the iscustom flag
                     const prevChipObj = prevChipsList.find(obj => {
-                        return _.isEqual(obj.value, val);
+                        return isEqual(obj.value, val);
                     });
                     if (prevChipObj) {
                         isCustom = prevChipObj.iscustom;
@@ -248,7 +258,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                 .then(response => {
                     this.chipsList = this.chipsList.concat(response || []);
                     dataValue.forEach((val: any, i: number) => {
-                        const isExists = _.find(this.chipsList, (obj) => {
+                        const isExists = find(this.chipsList, (obj) => {
                             return obj.value.toString() === val.toString();
                         });
 
@@ -295,7 +305,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         let chipObj;
 
         if (searchComponent && isDefined(searchComponent.datavalue) && searchComponent.queryModel !== '') {
-            if (!searchComponent.query || !_.trim(searchComponent.query)) {
+            if (!searchComponent.query || !trim(searchComponent.query)) {
                 return;
             }
             chipObj = searchComponent.queryModel;
@@ -305,7 +315,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             }
             let dataObj;
             if (this.datafield === ALLFIELDS) {
-                if (!_.isObject(this.searchComponent.query) && _.trim(this.searchComponent.query)) {
+                if (!isObject(this.searchComponent.query) && trim(this.searchComponent.query)) {
                     dataObj = this.createCustomDataModel(this.searchComponent.query);
                     // return if the custom chip is empty
                     if (!dataObj) {
@@ -315,7 +325,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
                 }
             }
 
-            const data = dataObj || _.trim(this.searchComponent.query);
+            const data = dataObj || trim(this.searchComponent.query);
             if (data) {
                 const transformedData = this.getTransformedData(data, true);
                 chipObj = transformedData[0];
@@ -377,9 +387,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     // Check if newItem already exists
     private isDuplicate(item: DataSetItem) {
         if (this.datafield === ALLFIELDS) {
-            return _.findIndex(this.chipsList, {value: item.value}) > -1;
+            return findIndex(this.chipsList, {value: item.value}) > -1;
         }
-        return _.findIndex(this.chipsList, {key: item.key}) > -1;
+        return findIndex(this.chipsList, {key: item.key}) > -1;
     }
 
     // Check if max size is reached
@@ -392,8 +402,9 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         this.nextItemIndex++;
         return this.searchComponent.getDataSource(query, true, index)
             .then((response) => {
-                return _.filter(query, queryVal => {
-                    _.find(response, {value: queryVal});
+                // @ts-ignore
+                return filter(query, queryVal => {
+                    find(response, {value: queryVal});
                 });
             });
     }
@@ -492,10 +503,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     private removeItem($event: Event, item: DataSetItem, index: number, canFocus?: boolean) {
         $event.stopPropagation();
 
-        const indexes = _.isArray(index) ? index : [index];
-        const focusIndex = _.max(indexes);
+        const indexes = isArray(index) ? index : [index];
+        const focusIndex = max(indexes);
 
-        const items = _.reduce(indexes, (result, i) => {
+        const items = reduce(indexes, (result, i) => {
             result.push(this.chipsList[i]);
             return result;
         }, []);
@@ -506,7 +517,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             return;
         }
 
-        const prevDatavalue = _.clone(this.datavalue);
+        const prevDatavalue = clone(this.datavalue);
 
         // focus next chip after deletion.
         // if there are no chips in the list focus search box
@@ -526,11 +537,11 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             }
         });
 
-        const pulledItems = _.pullAt(this.chipsList, indexes);
+        const pulledItems = pullAt(this.chipsList, indexes);
 
         pulledItems.forEach(datasetItem => {
-            this._modelByValue = _.filter(this._modelByValue, val => {
-                return !(_.isObject(val) ? _.isEqual(val, datasetItem.value) : _.toString(val) === _.toString(datasetItem.value));
+            this._modelByValue = filter(this._modelByValue, val => {
+                return !(isObject(val) ? isEqual(val, datasetItem.value) : toString(val) === toString(datasetItem.value));
             });
         });
 
@@ -551,7 +562,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
      * @param currentIndex :- the current index of the element.
      */
     private swapElementsInArray(data: Array<any>, newIndex: number, currentIndex: number) {
-        const draggedItem = _.pullAt(data, currentIndex)[0];
+        const draggedItem = pullAt(data, currentIndex)[0];
         data.splice(newIndex, 0, draggedItem);
     }
 

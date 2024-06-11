@@ -38,8 +38,9 @@ import {ListComponent} from '@wm/components/data/list';
 
 import {registerProps} from './form-field.props';
 import {FormComponent} from '../form.component';
+import {forEach, get, isArray, isObject, join} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 // Custom validator to show validation error, if setValidationMessage method is used
 const customValidatorFn = () => {
@@ -261,28 +262,28 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         const value = this.value;
         const displayField = this.displayfield || this.displaylabel
         const displayExpr = this.displayexpression;
-        if (_.isObject(value)) {
-            if (_.isArray(value)) {
-                _.forEach(value, obj => {
-                    if (_.isObject(obj)) {
+        if (isObject(value)) {
+            if (isArray(value)) {
+                forEach(value, obj => {
+                    if (isObject(obj)) {
                         caption.push(this.evaluateExpr(obj, displayField, displayExpr));
                     }
                 });
             } else {
                 caption.push(this.evaluateExpr(value, displayField, displayExpr));
             }
-            return _.join(caption, ',');
+            return join(caption, ',');
         }
         return (value === undefined || value === null) ? '' : this.value;
     }
 
     getCaption() {
-        return (this.value === undefined || this.value === null) ? (_.get(this.form.dataoutput, this._fieldName) || '') : this.value;
+        return (this.value === undefined || this.value === null) ? (get(this.form.dataoutput, this._fieldName) || '') : this.value;
     }
 
     // Notifies changes to observing validation fields
     notifyChanges() {
-        _.forEach(this.notifyForFields, field => {
+        forEach(this.notifyForFields, field => {
             field.fieldValidations.validate();
         });
     }
@@ -590,7 +591,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 .subscribe(this.onValueChange.bind(this));
             this.registerDestroyListener(() => onMaxValueChangeSubscription.unsubscribe());
         }
-        this.value = _.get(this.form.formdata, this._fieldName);
+        this.value = get(this.form.formdata, this._fieldName);
     }
 
     ngOnInit() {

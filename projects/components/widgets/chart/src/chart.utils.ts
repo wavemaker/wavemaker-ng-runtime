@@ -1,6 +1,10 @@
 import {isEmptyObject, prettifyLabels} from '@wm/core';
+import {forEach, includes, invert, isArray, isFinite, isString, isUndefined, split} from "lodash-es";
 
-declare const _, $, d3, nv, moment;
+declare const $;
+
+declare const moment;
+declare const d3, nv;
 
 export const chartTypes = ['Column', 'Line', 'Area', 'Cumulative Line', 'Bar', 'Pie', 'Donut', 'Bubble'],
     allShapes = ['circle', 'square', 'diamond', 'cross', 'triangle-up', 'triangle-down'];
@@ -85,8 +89,8 @@ const dateList = ['01/01/2001', '01/01/2002', '01/01/2003'],
         'medium' : 0.6,
         'large' : 0.7
     },
-    barSpacingMapInvert = _.invert(barSpacingMap),
-    donutRatioMapInvert = _.invert(donutRatioMap),
+    barSpacingMapInvert = invert(barSpacingMap),
+    donutRatioMapInvert = invert(donutRatioMap),
     tickformats = {
         'Thousand': {
             'prefix': 'K',
@@ -137,13 +141,13 @@ export const isAreaChart = type => type === 'Area';
 export const isPieType = type => isPieChart(type) || isDonutChart(type);
 
 // The format of chart data is array of json objects in case of the following types of chart
-export const isChartDataJSON = type => _.includes(dataTypeJSON, type) || !_.includes(chartTypes, type);
+export const isChartDataJSON = type => includes(dataTypeJSON, type) || !includes(chartTypes, type);
 
 // The format of chart data is array of objects in case of the following types of chart
-export const isChartDataArray = type => _.includes(dataTypeArray, type);
+export const isChartDataArray = type => includes(dataTypeArray, type);
 
 // returns true is the chart type is 'line', 'area' or 'cumulative line' else false
-export const isLineTypeChart = type => _.includes(lineTypeCharts, type);
+export const isLineTypeChart = type => includes(lineTypeCharts, type);
 
 // X/Y Domain properties are supported only for Column and Area charts
 export const isAxisDomainSupported = type => isColumnChart(type) || isAreaChart(type);
@@ -360,7 +364,7 @@ export const getDataType = widgetContext => {
 };
 
 // Sample data to populate when no data is bound
-export const getSampleData = widgetContext => constructSampleData(getDataType(widgetContext), _.split(widgetContext.yaxisdatakey, ',').length, widgetContext.shape);
+export const getSampleData = widgetContext => constructSampleData(getDataType(widgetContext), split(widgetContext.yaxisdatakey, ',').length, widgetContext.shape);
 
 // Check whether X/Y Domain was set to Min and is supported for the present chart
 export const isAxisDomainValid = (widgetContext, axis) => {
@@ -372,7 +376,7 @@ export const isAxisDomainValid = (widgetContext, axis) => {
 
 // Check whether min and max values are finite or not
 export const areMinMaxValuesValid = values => {
-    if (_.isFinite(values.min) && _.isFinite(values.max)) {
+    if (isFinite(values.min) && isFinite(values.max)) {
         return true;
     }
     return false;
@@ -417,8 +421,8 @@ export const initProperties = (widgetContext, propertyValueMap) => {
     if (!propertyValueMap || isEmptyObject(propertyValueMap)) {
         propertyValueMap = {};
     }
-    _.forEach(basicProperties, prop => {
-        if (_.isUndefined(propertyValueMap[prop])) {
+    forEach(basicProperties, prop => {
+        if (isUndefined(propertyValueMap[prop])) {
             propertyValueMap[prop] = widgetContext[prop];
         }
     });
@@ -675,7 +679,7 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
     // Setting the legend type choosen by user or default it will be furious
     chart.legend.vers((propertyValueMap.legendtype && propertyValueMap.legendtype.toLowerCase()) || 'furious');
 
-    if (!_.includes(chartTypes, widgetContext.type)) {
+    if (!includes(chartTypes, widgetContext.type)) {
         chart = nv.models.multiBarChart()
             .x(d => d.x)
             .y(d => d.y);
@@ -749,10 +753,10 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
     }
 
     // Support for custom colors if user gives direct string of colors in text box
-    if (_.isString(propertyValueMap.customcolors) && propertyValueMap.customcolors) {
-        colors = _.split(propertyValueMap.customcolors, ',');
+    if (isString(propertyValueMap.customcolors) && propertyValueMap.customcolors) {
+        colors = split(propertyValueMap.customcolors, ',');
     }
-    if (_.isArray(propertyValueMap.customcolors)) {
+    if (isArray(propertyValueMap.customcolors)) {
         colors = propertyValueMap.customcolors;
     }
 

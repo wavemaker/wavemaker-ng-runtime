@@ -19,9 +19,7 @@ import {
 } from '@angular/router';
 
 import { LRUCache } from '@wm/core';
-
-declare const _;
-
+import {isNil} from "lodash-es";
 export const CACHE_PAGE = '_cache_page';
 export const MAX_CACHE_SIZE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_SIZE';
 export const MAX_CACHE_AGE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_AGE';
@@ -47,12 +45,10 @@ export class WmDefaultRouteReuseStrategy {
     }
 
     private getKey(route: ActivatedRouteSnapshot) {
-        const queryParams = _.chain(route.queryParams)
-            .keys()
-            .filter(k => !_.includes(this.paramsToIgnore, k))
-            .orderBy()
+        const queryParams = Object.keys(route.queryParams)
+            .filter(k => !this.paramsToIgnore.includes(k))
             .map(k => k + '=' + route.queryParams[k])
-            .value().join('&');
+            .sort().join('&');
         let pageName = route.params.pageName;
         if (route.data.pageName && route.routeConfig.path === '') {
             pageName = route.data.pageName;
@@ -84,7 +80,7 @@ export class WmDefaultRouteReuseStrategy {
 
     private isCacheEnabled(route: ActivatedRouteSnapshot, defaultValue: boolean) {
         const canReuse = route.queryParams[CACHE_PAGE];
-        if (!_.isNil(canReuse)) {
+        if (!isNil(canReuse)) {
             return (canReuse === 'true' || canReuse === true);
         }
         return defaultValue;
