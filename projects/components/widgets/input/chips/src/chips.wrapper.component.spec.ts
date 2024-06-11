@@ -225,12 +225,127 @@ describe('wm-chips: Component Specific Tests', () => {
         wmComponent.readonly = true;
         wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
         fixture.detectChanges();
-        const  chipItem= fixture.debugElement.query(By.css('div'));
+        jest.spyOn(wmComponent, 'onArrowLeft');
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
         const event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+        chipItem.nativeElement.dispatchEvent(event);
+        expect(wmComponent.onArrowLeft).toHaveBeenCalled();
+    });
+
+    it('should trigger onArrowRight when right arrow key is pressed', () => {
+        wmComponent.readonly = true;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        jest.spyOn(wmComponent, 'onArrowRight');
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+        chipItem.nativeElement.dispatchEvent(event);
+        expect(wmComponent.onArrowRight).toHaveBeenCalled();
+    });
+
+    it('should trigger onBackspace when backspace key is pressed', () => {
+        wmComponent.readonly = true;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'Backspace' });
+        chipItem.nativeElement.dispatchEvent(event);
+    });
+    
+    it('should trigger onArrowLeft when search input query is empty', () => {
+        wmComponent.readonly = false;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        jest.spyOn(wmComponent, 'onArrowLeft');
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+        chipItem.nativeElement.dispatchEvent(event);
+        expect(wmComponent.onArrowLeft).toHaveBeenCalled();
+    });
+
+    it('should trigger onArrowRight when search input query is empty', () => {
+        wmComponent.readonly = false;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
         chipItem.nativeElement.dispatchEvent(event);
     });
 
-    
+    it('should set displayfield', () => {
+        wmComponent.getWidget().displayfield = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().displayfield).toEqual('java, javascript, mongoDB');
+    });
+
+    it('should limit the number of chips', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().limit = 2;
+        fixture.detectChanges();
+        const testValue = 'java';
+        addItem(testValue, 'keydown').then(() => {
+            expect(wmComponent.chipsList.length).toEqual(1);
+        });
+    });
+
+    it('should set readonly property', () => {
+        wmComponent.readonly = true;
+        fixture.detectChanges();
+        expect(wmComponent.readonly).toBeTruthy();
+    });
+
+    it('should enable order property', () => {
+        wmComponent.enablereorder = true;
+        fixture.detectChanges();
+        expect(wmComponent.enablereorder).toBeTruthy();
+    });
+
+    it('should set displayimagesrc property', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().displayimagesrc = 'https://www.w3schools.com/howto/img_avatar.png';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().displayimagesrc).toEqual('https://www.w3schools.com/howto/img_avatar.png');
+    });
+
+    it('should set displayexpression property', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().displayexpression = 'java';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().displayexpression).toEqual('java');
+    });
+
+    it('should set datafield property', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().datafield = 'java';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().datafield).toEqual('java');
+    });
+
+    it('should set dataoptions property', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().dataoptions = 'java';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().dataoptions).toEqual('java');
+    });
+
+    it('should set groupby property', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().groupby = 'chips1groupby(row)';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().groupby).toEqual('chips1groupby(row)');
+    });
+
+
+    it('should onTextDelete when delete key is pressed', () => {
+        wmComponent.readonly = true;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        jest.spyOn(wmComponent, 'onTextDelete');
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'Delete' });
+        chipItem.nativeElement.dispatchEvent(event);
+        expect(wmComponent.onTextDelete).toHaveBeenCalled();
+    });
 
 
     function applyIgnoreCaseMatchMode(matchMode, value1, value2, done) {

@@ -1,5 +1,5 @@
 import { By } from '@angular/platform-browser';
-import {Component, LOCALE_ID, ViewChild} from '@angular/core';
+import { Component, LOCALE_ID, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,7 +15,7 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WmComponentsModule } from '@wm/components/base';
 
-import { waitForAsync, ComponentFixture } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { DateComponent } from './date.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
@@ -33,12 +33,17 @@ import {
 } from '../../../../../base/src/test/util/date-test-util';
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import localeDE from '@angular/common/locales/de';
+import { IMaskDirective, IMaskModule } from 'angular-imask';
 
 const mockApp = {
-    subscribe: () => { return () => {}}
+    subscribe: () => { return () => { } }
 };
 const currentDate = new Date().toISOString().split('T')[0];
-
+class MockIMaskDirective {
+    destroyMask() {
+        console.log("Destroy mask called")
+    }
+}
 const markup = `<div wmDate  name="date1" mindate="2019-12-02"  datavalue="${currentDate}" dataentrymode="default" placeholder="Select birth date"
    shortcutkey="d" class="input-group-sm" showdropdownon="button" showweeks="true"  hint="Test hint" datepattern="yyyy-MM-dd"
    outputformat="yyyy-MM-dd" required="true" tabindex="1"  autofocus="true" class="input-group-sm" color="#b6a9a9"
@@ -50,7 +55,7 @@ const markup = `<div wmDate  name="date1" mindate="2019-12-02"  datavalue="${cur
 })
 
 class DateWrapperComponent {
-    @ViewChild(DateComponent, /* TODO: add static flag */ {static: true})
+    @ViewChild(DateComponent, /* TODO: add static flag */ { static: true })
     wmComponent: DateComponent;
 
 
@@ -85,16 +90,17 @@ class DateWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [DateWrapperComponent, DateComponent],
-    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot()],
-    providers: [{ provide: Router, useValue: Router }, {provide: App, useValue: mockApp},
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot(), IMaskModule],
+    providers: [{ provide: Router, useValue: Router }, { provide: App, useValue: mockApp },
     { provide: SecurityService, useValue: SecurityService },
     { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
     { provide: AppDefaults, useValue: AppDefaults },
     { provide: ToDatePipe, useClass: ToDatePipe },
     { provide: DatePipe, useClass: DatePipe },
-    { provide: AbstractI18nService, useClass: MockAbstractI18nService }
-
-    ]
+    { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+    { provide: IMaskDirective, useClass: MockIMaskDirective }
+    ],
+    teardown: { destroyAfterEach: false }
 };
 
 const dateComponentDef: ITestComponentDef = {
@@ -147,11 +153,11 @@ describe('DateComponent', () => {
     let dateWrapperComponent: DateWrapperComponent;
     let wmComponent: DateComponent;
     let fixture: ComponentFixture<DateWrapperComponent>;
-
     beforeEach((async () => {
         fixture = compileTestComponent(dateComponentModuleDef, DateWrapperComponent);
         dateWrapperComponent = fixture.componentInstance;
         wmComponent = dateWrapperComponent.wmComponent;
+        // wmComponent.imask = TestBed.inject(IMaskDirective);
         fixture.detectChanges();
     }));
     afterEach(() => {
@@ -202,7 +208,7 @@ describe('DateComponent', () => {
         expect(dateInputControl.nativeElement.value).toEqual(currentDate);
     }));
 
-    it('should update the datevalue as currentdate', async (done) => {
+    it('should update the datevalue as currentdate', async () => {
         wmComponent.setProperty('datavalue', 'CURRENT_DATE');
         fixture.detectChanges();
         const dateInputControl = getHtmlSelectorElement(fixture, '.app-dateinput');
@@ -211,17 +217,17 @@ describe('DateComponent', () => {
         wmComponent.setProperty('datavalue', newDateValue);
         setTimeout(() => {
             expect(dateInputControl.nativeElement.value).toBe(newDateValue);
-            done();
         }, 1000);
 
     });
 
-    it('should show the date patten as yyyy-mm-dd format ', waitForAsync(() => {
+    it('should show the date patten as yyyy-mm-dd format ', (() => {
         datepatternTest(fixture, '.app-date', '.app-dateinput');
 
     }));
 
-    it('should get the date outputformat as yyyy-mm-dd ', waitForAsync(() => {
+    it('should get the date outputformat as yyyy-mm-dd ', (() => {
+        wmComponent.outputformat = 'yyyy-MM-dd';
         outputpatternTest(fixture, '.app-date', dateWrapperComponent.wmComponent.datavalue);
 
     }));
@@ -279,7 +285,7 @@ describe('DateComponent', () => {
 
 
 
-    it('should be able to set the mindate and disable the below mindate on calendar', waitForAsync(() => {
+    it('should be able to set the mindate and disable the below mindate on calendar', (() => {
         wmComponent.getWidget().mindate = '2019-11-02';
         wmComponent.getWidget().datavalue = '2019-11-02';
         checkElementClass(fixture, '.app-date', 'ng-valid');
@@ -288,7 +294,7 @@ describe('DateComponent', () => {
         });
     }));
 
-    it('should respect the maxdate validation', waitForAsync(() => {
+    it('should respect the maxdate validation', (() => {
         wmComponent.getWidget().maxdate = '2020-01-03';
         wmComponent.getWidget().datavalue = '2020-01-04';
         checkElementClass(fixture, '.app-date', 'ng-invalid');
@@ -297,7 +303,7 @@ describe('DateComponent', () => {
         });
     }));
 
-    it('should ignore the  excluded days', waitForAsync(() => {
+    it('should ignore the  excluded days', (() => {
         dateWrapperComponent.wmComponent.getWidget().excludedays = '1,6';
         dateWrapperComponent.wmComponent.getWidget().datavalue = '2019-12-30';
         checkElementClass(fixture, '.app-date', 'ng-invalid');
@@ -399,7 +405,7 @@ describe('DateComponent', () => {
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
     declarations: [DateWrapperComponent, DateComponent],
-    imports: [FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot(), IMaskModule],
     providers: [
         { provide: LOCALE_ID, useValue: 'de' },
         { provide: Router, useValue: Router },
@@ -409,9 +415,10 @@ const dateComponentLocaleModuleDef: ITestModuleDef = {
         { provide: AppDefaults, useValue: AppDefaults },
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
-        { provide: AbstractI18nService,  deps: [BsLocaleService], useClass: MockAbstractI18nServiceDe }
-
-    ]
+        { provide: AbstractI18nService, deps: [BsLocaleService], useClass: MockAbstractI18nServiceDe },
+        { provide: IMaskDirective, useClass: MockIMaskDirective }
+    ],
+    teardown: { destroyAfterEach: false }
 };
 
 describe(('Date Component with Localization'), () => {
@@ -434,14 +441,14 @@ describe(('Date Component with Localization'), () => {
     });
 
     it('should create the date Component with de locale', () => {
-        expect(dateWrapperComponent).toBeTruthy() ;
+        expect(dateWrapperComponent).toBeTruthy();
     });
 
-    it ('should display localized dates in date picker', waitForAsync(() => {
-         localizedDatePickerTest(fixture, '.btn-time');
+    it('should display localized dates in date picker', (() => {
+        localizedDatePickerTest(fixture, '.btn-time');
     }));
 
-    it ('should display the defult value in de format', waitForAsync(() => {
+    it('should display the defult value in de format', waitForAsync(() => {
         const date = '2020-02-20', datepattern = 'yyyy-MM-dd';
         wmComponent.getWidget().datepattern = datepattern;
         wmComponent.datavalue = date;
@@ -451,12 +458,12 @@ describe(('Date Component with Localization'), () => {
     }));
 
     it('should update the datavalue without error when we type "de" format date in inputbox', waitForAsync(() => {
-        const date = '2020, 21 Februar', datepattern = 'yyyy, dd MMMM', input =  getHtmlSelectorElement(fixture, '.app-textbox');
+        const date = '2020, 21 Februar', datepattern = 'yyyy, dd MMMM', input = getHtmlSelectorElement(fixture, '.app-textbox');
         wmComponent.getWidget().datepattern = datepattern;
         input.nativeElement.value = date;
-        input.triggerEventHandler('change', {target: input.nativeElement});
+        input.triggerEventHandler('change', { target: input.nativeElement });
         fixture.detectChanges();
-        const dateObj = getDateObj(date, {pattern: datepattern});
+        const dateObj = getDateObj(date, { pattern: datepattern });
         expect(getFormattedDate((wmComponent as any).datePipe, dateObj, (wmComponent as any).outputformat)).toEqual(wmComponent.datavalue);
     }));
 

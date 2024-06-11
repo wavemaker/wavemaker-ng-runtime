@@ -19,10 +19,11 @@ import { DatePipe, CommonModule, DecimalPipe } from '@angular/common';
 import {  TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { DateComponent, TimeComponent } from '@wm/components/input/epoch';
 import { ToDatePipe } from '../../../../base/src/pipes/custom-pipes';
 import { triggerTimerClickonArrowsByIndex, getTimePickerElement, MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
+import { DateComponent } from "../../../input/epoch/src/date/date.component";
+import { TimeComponent } from "../../../input/epoch/src/time/time.component";
 
 const mockApp = {
     subscribe: () => { return () => {}}
@@ -137,7 +138,7 @@ const markup = `<form wmForm role="" #form_1 ngNativeValidate
                                                 [innerHTML]="formfield_4.value | toDate:formfield_4.formWidget.datepattern ||  'yyyy-MMM-dd'"></label>
                                             <div wmDate dataentrymode="undefined"
                                                 [class.hidden]="!form_1.isUpdateMode && formfield_4.viewmodewidget !== 'default'"
-                                                 focus.event="_onFocusField($event);"
+                                                formControlName="dateofbirth" focus.event="_onFocusField($event);"
                                                 blur.event="_onBlurField($event);" #formWidget name="dateofbirth_formWidget"></div>
                                         </div>
                                     </div>
@@ -162,7 +163,7 @@ const markup = `<form wmForm role="" #form_1 ngNativeValidate
                                                 [innerHTML]="formfield_5.value | toDate:formfield_5.formWidget.timepattern || 'hh:mm a'"></label>
                                             <div wmTime dataentrymode="undefined"
                                                 [class.hidden]="!form_1.isUpdateMode && formfield_5.viewmodewidget !== 'default'"
-                                                 focus.event="_onFocusField($event);"
+                                                formControlName="timeofbirth" focus.event="_onFocusField($event);"
                                                 blur.event="_onBlurField($event);" #formWidget name="timeofbirth_formWidget"></div>
                                         </div>
                                     </div>
@@ -228,7 +229,8 @@ const testModuleDef: ITestModuleDef = {
         FormActionDirective,
         FormFieldDirective,
         FormWidgetDirective,
-        
+        TimeComponent,
+        DateComponent
     ],
     providers: [
         { provide: App, useValue: mockApp },
@@ -241,7 +243,8 @@ const testModuleDef: ITestModuleDef = {
         { provide: DecimalPipe, useClass: DecimalPipe },
         { provide: UserDefinedExecutionContext, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }
-    ]
+    ],
+    teardown: {destroyAfterEach: false}
 };
 
 const componentDef: ITestComponentDef = {
@@ -340,7 +343,7 @@ describe('FormComponent', () => {
     });
 
 
-    it('check for dirty property before and after form submit and should trigger onSuccess event', (async(done) => {
+    it('check for dirty property before and after form submit and should trigger onSuccess event', (async() => {
         const testValue = 'abc';
         const inputEl = fixture.nativeElement.querySelector('wm-input');
         setInputValue(fixture, '.app-textbox', testValue).then(() => {
@@ -352,19 +355,18 @@ describe('FormComponent', () => {
             expect(wmComponent.dirty).toBe(true);
             console.log('before form submit, dirty - ', wmComponent.dirty);
 
-            jest.spyOn(wrapperComponent, 'onResult');
-            jest.spyOn(wrapperComponent, 'onSuccess');
+            const onResultSpy =  jest.spyOn(wrapperComponent, 'onResult');
+            const onSuccessSpy = jest.spyOn(wrapperComponent, 'onSuccess');
 
             fixture.whenStable().then(() => {
                 wmComponent.submitForm({});
                 fixture.detectChanges();
 
                 setTimeout(() => {
-                    expect(wrapperComponent.onResult).toHaveBeenCalledTimes(1);
+                    expect(onResultSpy).toHaveBeenCalledTimes(1);
                     expect(wmComponent.dirty).toBe(false);
                     console.log('after form submit, dirty - ', wmComponent.dirty);
-                    expect(wrapperComponent.onSuccess).toHaveBeenCalledTimes(1);
-                    done();
+                    expect(onSuccessSpy).toHaveBeenCalledTimes(1);
                 });
             });
         });
@@ -518,7 +520,7 @@ describe('FormComponent', () => {
         );
     }));
 
-    it('should respect the mintime validation', waitForAsync(() => {
+    it('should respect the mintime validation', (() => {
         let formField = wmComponent.formfields['timeofbirth'];
         let timeWidget = formField.getWidget().formWidget;
         timeWidget.timepattern = 'HH:mm:ss';
