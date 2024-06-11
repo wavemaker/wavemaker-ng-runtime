@@ -14,9 +14,9 @@ import {initComponentsBuildTask} from '@wm/build-task';
 
 import {AppManagerService} from './app.manager.service';
 import {RuntimeBaseModule} from '../runtime-base.module';
+import {get} from "lodash-es";
 
 initComponentsBuildTask();
-declare const _;
 
 const componentFactoryRefCache = new Map<string, any>();
 
@@ -89,7 +89,7 @@ export class DynamicComponentRefProviderService {
         options.noCache = isDefined(options.noCache) ? options.noCache : true;
         options.selector = isDefined(options.selector) ? options.selector : 'wm-dynamic-component-' + this.counter++;
         const componentFactoryRef = await this.getComponentFactoryRef(options.selector, markup, options);
-        const component = this.app.dynamicComponentContainerRef.createComponent(componentFactoryRef, 0, _.get(options, 'inj'));
+        const component = this.app.dynamicComponentContainerRef.createComponent(componentFactoryRef, 0, get(options, 'inj'));
         extendProto(component.instance, context);
         target.appendChild(component.location.nativeElement);
     }

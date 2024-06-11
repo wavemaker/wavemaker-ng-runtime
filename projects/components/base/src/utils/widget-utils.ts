@@ -15,8 +15,7 @@ import {
 import {DialogRef, WidgetRef} from '../widgets/framework/types';
 import {createFocusTrap} from '@wavemaker/focus-trap';
 import {NavNode} from "../widgets/common/base/dataset-aware-nav.component";
-
-declare const _;
+import {assignWith, forEach, get, includes, isArray, isNull, isObject, isString, join, split, union} from "lodash-es";
 
 const DATASET_WIDGETS = new Set([FormWidgetType.SELECT, FormWidgetType.CHECKBOXSET, FormWidgetType.RADIOSET,
     FormWidgetType.SWITCH, FormWidgetType.AUTOCOMPLETE, FormWidgetType.CHIPS, FormWidgetType.TYPEAHEAD, FormWidgetType.RATING]);
@@ -94,7 +93,7 @@ export const getObjValueByKey = (obj: any, strKey: string) => {
         /* convert indexes to properties, so as to work for even 'key1[0].child1'*/
         strKey.replace(/\[(\w+)\]/g, '.$1').split('.').forEach(key => {
             // If obj is null, then assign val to null.
-            val = (val && val[key]) || (_.isNull(obj) ? obj : obj[key]);
+            val = (val && val[key]) || (isNull(obj) ? obj : obj[key]);
         });
         return val;
     }
@@ -134,7 +133,7 @@ export const getEvaluatedData = (dataObj: any, options: any, context?: any) => {
     // Handling field name with special charecters
     // Ex: field = "f name"
     if (!bindExpr && !expr) {
-        return _.get(dataObj, field);
+        return get(dataObj, field);
     }
 
     return $parseExpr(expressionValue)(context, Object.assign({}, dataObj, {__1: dataObj}));
@@ -177,13 +176,13 @@ export const getOrderByExpr = pageableObj => {
     const expressions       = [],
         KEY_VAL_SEPARATOR = ' ',
         FIELD_SEPARATOR   = ',';
-    _.forEach(pageableObj, obj => {
+    forEach(pageableObj, obj => {
         if (obj.direction) {
             expressions.push(obj.property + KEY_VAL_SEPARATOR + obj.direction.toLowerCase());
         }
     });
 
-    return _.join(expressions, FIELD_SEPARATOR);
+    return join(expressions, FIELD_SEPARATOR);
 };
 
 export const isDataSetWidget = widget => {
@@ -290,13 +289,13 @@ export const getMatchModeTypesMap = (multiMode?) => {
         modes.character.push('in', 'notin');
     }
 
-    _.forEach(typesMap, (types, primType) => {
-        _.forEach(types, type => {
+    forEach(typesMap, (types, primType) => {
+        forEach(types, type => {
             matchModeTypesMap[type] = modes[primType];
         });
     });
     // this is used in filter criteria when the user types the column name manually and where we dont know the type of the column
-    matchModeTypesMap['default'] = _.union(modes['number'], modes['string'], modes['character'], modes['date'], modes['date']);
+    matchModeTypesMap['default'] = union(modes['number'], modes['string'], modes['character'], modes['date'], modes['date']);
     return matchModeTypesMap;
 };
 
@@ -331,14 +330,14 @@ export const getMatchModeMsgs = (appLocale) => {
 const getClassesArray = classVal => {
     let classes = [];
 
-    if (_.isArray(classVal)) {
+    if (isArray(classVal)) {
         classVal.forEach(v => {
             classes = classes.concat(getClassesArray(v));
         });
         return classes;
     }
-    if (_.isObject(classVal)) {
-        _.forEach(classVal, (val, key) => {
+    if (isObject(classVal)) {
+        forEach(classVal, (val, key) => {
             if (val) {
                 classes = classes.concat(key.split(' '));
             }
@@ -353,9 +352,9 @@ export const getConditionalClasses = (nv, ov?) => {
     // if the conditional class property has already toAdd and toRemove arrays then take that otherwise build those arrays
     const classToAdd = nv.toAdd || nv;
     const classToRemove = nv.toRemove || ov;
-    if (_.isObject(nv)) {
-        toAdd = _.isArray(classToAdd) ? classToAdd : getClassesArray(classToAdd || []);
-        toRemove = classToRemove ? (_.isArray(classToRemove) ? classToRemove : getClassesArray(classToRemove)) : [];
+    if (isObject(nv)) {
+        toAdd = isArray(classToAdd) ? classToAdd : getClassesArray(classToAdd || []);
+        toRemove = classToRemove ? (isArray(classToRemove) ? classToRemove : getClassesArray(classToRemove)) : [];
     } else {
         toAdd = classToAdd ? [classToAdd] : [];
         toRemove = classToRemove ? [classToRemove] : [];
@@ -375,9 +374,9 @@ const pushFieldDef = (dataObject, columnDefObj, namePrefix, options) => {
     if (!options) {
         options = {};
     }
-    _.forEach(dataObject, (value, title) => {
-        if (_.includes(title, '.')) {
-            relatedInfo  = _.split(title, '.');
+    forEach(dataObject, (value, title) => {
+        if (includes(title, '.')) {
+            relatedInfo = split(title, '.');
             relatedTable = relatedInfo[0];
             relatedField = relatedInfo[1];
             isRelated    = true;
@@ -385,7 +384,7 @@ const pushFieldDef = (dataObject, columnDefObj, namePrefix, options) => {
         if (options.noModifyTitle) {
             modifiedTitle = title;
         } else {
-            if (_.isString(title)) {
+            if (isString(title)) {
                 modifiedTitle = prettifyLabel(title);
                 modifiedTitle = deHyphenate(modifiedTitle);
                 modifiedTitle = namePrefix ? initCaps(namePrefix) + ' ' + modifiedTitle : modifiedTitle;
@@ -396,7 +395,7 @@ const pushFieldDef = (dataObject, columnDefObj, namePrefix, options) => {
         title = namePrefix ? namePrefix + '.' + title : title;
         if (isRelated) {
             // For related columns, shorten the title to last two words
-            fieldName = _.split(modifiedTitle, ' ');
+            fieldName = split(modifiedTitle, ' ');
             fieldName = fieldName.length > 1 ? fieldName[fieldName.length - 2] + ' ' + fieldName[fieldName.length - 1] : fieldName[0];
         } else {
             fieldName = modifiedTitle;
@@ -404,7 +403,7 @@ const pushFieldDef = (dataObject, columnDefObj, namePrefix, options) => {
         const defObj = options.setBindingField ? {'displayName': fieldName, 'field': title, 'relatedTable': relatedTable, 'relatedField': relatedField || modifiedTitle}
         : {'displayName': fieldName, 'relatedTable': relatedTable, 'relatedField': relatedField || modifiedTitle};
         /*if field is a leaf node, push it in the columnDefs*/
-        if (!_.isObject(value) || (_.isArray(value) && !value[0])) {
+        if (!isObject(value) || (isArray(value) && !value[0])) {
             /*if the column counter has reached upperBound return*/
             if (options.upperBound && options.columnCount === options.upperBound) {
                 return;
@@ -420,7 +419,7 @@ const pushFieldDef = (dataObject, columnDefObj, namePrefix, options) => {
             }
 
             /* if field is an array node, process its first child */
-            if (_.isArray(value) && value[0]) {
+            if (isArray(value) && value[0]) {
                 pushFieldDef(value[0], columnDefObj, title + '[0]', options);
             } else {
                 pushFieldDef(value, columnDefObj, title, options);
@@ -431,17 +430,17 @@ const pushFieldDef = (dataObject, columnDefObj, namePrefix, options) => {
 
 const getMetaDataFromData = (data) => {
     let dataObject;
-    if (_.isArray(data)) {
-        if (_.isObject(data[0])) {
+    if (isArray(data)) {
+        if (isObject(data[0])) {
             dataObject = getClonedObject(data[0]);
             /*Loop over the object to find out any null values. If any null values are present in the first row, check and assign the values from other row.
              * As column generation is dependent on data, for related fields if first row value is null, columns are not generated.
              * To prevent this, check the data in other rows and generate the columns. New keys from others rows are also added*/
-            _.forEach(data, (row, index) => {
+            forEach(data, (row, index) => {
                 if ((index + 1) >= 10) { // Limit the data search to first 10 records
                     return false;
                 }
-                _.assignWith(dataObject, row, (objValue, srcValue) => {
+                assignWith(dataObject, row, (objValue, srcValue) => {
                     return (objValue === null || objValue === undefined) ? srcValue : objValue;
                 });
             });

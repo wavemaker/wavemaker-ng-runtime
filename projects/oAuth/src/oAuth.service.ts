@@ -5,8 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { AbstractHttpService } from '@wm/core';
 
 import { getAccessToken, performAuthorization, removeAccessToken } from './oAuth.utils';
-
-declare const _;
+import {find, remove} from "lodash-es";
 
 @Injectable()
 export class OAuthService {
@@ -21,14 +20,14 @@ export class OAuthService {
     }
 
     addProviderConfig(provider) {
-        if (!(_.find(this.providersConfig, {'name' : provider.name}))) {
+        if (!(find(this.providersConfig, {'name': provider.name}))) {
             this.providersConfig.push(provider);
         }
         this.providers.next(this.providersConfig);
     }
 
     removeProviderConfig(providerId) {
-        _.remove(this.providersConfig, provider => provider.name === providerId);
+        remove(this.providersConfig, provider => provider.name === providerId);
         this.providers.next(this.providersConfig);
     }
 

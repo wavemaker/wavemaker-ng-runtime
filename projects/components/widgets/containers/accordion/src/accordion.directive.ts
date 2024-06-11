@@ -1,6 +1,5 @@
 import {AfterContentInit, ContentChildren, Directive, Inject, Injector, Optional, QueryList} from '@angular/core';
-
-import {DynamicComponentRefProvider, isNumber, noop, StatePersistence} from '@wm/core';
+import {DynamicComponentRefProvider, noop, StatePersistence} from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     createArrayFrom,
@@ -12,8 +11,7 @@ import {
 
 import { registerProps } from './accordion.props';
 import { AccordionPaneComponent } from './accordion-pane/accordion-pane.component';
-
-declare const _;
+import {find, forEach, get, indexOf, isArray, isNumber} from "lodash-es";
 
 const DEFAULT_CLS = 'app-accordion panel-group';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -109,8 +107,8 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         const isLastPane =  this.dynamicPanes.length === this.dynamicPaneIndex;
         if (isLastPane) {
             for (let i = 0; i < this.dynamicPanes.length; i++) {
-                const newPaneRef  = _.find(this.dynamicPanes, pane => pane.dynamicPaneIndex === i);
-                const isDuplicatePane = _.find(this.panes.toArray(), newPaneRef);
+                const newPaneRef = find(this.dynamicPanes, pane => pane.dynamicPaneIndex === i);
+                const isDuplicatePane = find(this.panes.toArray(), newPaneRef);
                 if (!isDuplicatePane) {
                     this.panes.reset([...this.panes.toArray(), newPaneRef]);
                     if (newPaneRef.active) {
@@ -126,13 +124,13 @@ export class AccordionDirective extends StylableComponent implements AfterConten
      * @param tabpanes - list of tabpanes
      */
     public addPane(tabpanes) {
-        if (!_.isArray(tabpanes)) {
+        if (!isArray(tabpanes)) {
             tabpanes = [tabpanes];
         }
         const paneNamesList = [];
-        _.forEach(tabpanes, (pane, index) => {
-            const isPaneAlreadyCreated = _.find(this.panes.toArray(), {name: pane.name});
-            const isPaneNameExist = _.indexOf(paneNamesList, pane.name);
+        forEach(tabpanes, (pane, index) => {
+            const isPaneAlreadyCreated = find(this.panes.toArray(), {name: pane.name});
+            const isPaneNameExist = indexOf(paneNamesList, pane.name);
             // If user tries to add tabpane with the same name which is already exists then do not create the pane
             if (isPaneAlreadyCreated || isPaneNameExist > 0) {
                 console.warn(`The tab pane with name ${pane.name} already exists`);
@@ -144,14 +142,14 @@ export class AccordionDirective extends StylableComponent implements AfterConten
             this.dynamicPaneIndex++;
             const name = pane.name ? pane.name : `accordionpane${this.panes.toArray().length + (index + 1)}`;
             paneNamesList.push(name);
-            const partialParams = _.get(pane, 'params');
+            const partialParams = get(pane, 'params');
 
-            _.forEach(pane, (value, key) => {
+            forEach(pane, (value, key) => {
                 if (key !== 'params') {
                     propsTmpl = `${propsTmpl} ${key}="${value}"`;
                 }
             });
-            _.forEach(partialParams, (value, key) => {
+            forEach(partialParams, (value, key) => {
                 paramMarkup = `${paramMarkup} <wm-param name="${key}" value="${value}"></wm-param>`;
             });
             const markup = `<wm-accordionpane dynamicPaneIndex="${this.dynamicPaneIndex - 1}" isdynamic="true" name="${name}" ${propsTmpl}>
@@ -184,7 +182,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     }
 
     private getPaneRefByName(name: string): AccordionPaneComponent {
-        return _.find(this.panes.toArray(), {name: name});
+        return find(this.panes.toArray(), {name: name});
     }
 
     private getPaneIndexByRef(paneRef: AccordionPaneComponent): number {
@@ -225,7 +223,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         } else if (key === 'statehandler') {
             const widgetState = this.statePersistence.getWidgetState(this);
             let paneToSelect: any = [];
-            if (nv !== 'none' && _.isArray(widgetState)) {
+            if (nv !== 'none' && isArray(widgetState)) {
                 widgetState.forEach(paneName => {
                     paneToSelect = this.panes.filter(function(pane) {
                         return paneName === pane.name;

@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-
-declare const _;
+import {assign} from "lodash-es";
 
 @Injectable({providedIn: 'root'})
 export class FieldWidgetService {
     constructor() {
-        _.assign(this, {
+        assign(this, {
             TEXT : 'text',
             NUMBER : 'number',
             TEXTAREA : 'textarea',

@@ -5,8 +5,7 @@ import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@w
 
 import { registerProps } from './progress-bar.props';
 import { getDecimalCount, isPercentageValue } from '../utils';
-
-declare const _;
+import {debounce, isArray} from "lodash-es";
 
 const DEFAULT_CLS = 'progress app-progress';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-progress-bar', hostClass: DEFAULT_CLS};
@@ -69,7 +68,7 @@ export class ProgressBarComponent extends StylableComponent {
 
         styler(this.nativeElement, this);
 
-        this._prepareData = _.debounce(() => this.prepareData(), 50);
+        this._prepareData = debounce(() => this.prepareData(), 50);
     }
 
     // update the proper classes when there is a change in type
@@ -96,7 +95,7 @@ export class ProgressBarComponent extends StylableComponent {
 
     protected prepareData() {
         // when the dataset is provided, iterate over the dataset to set the proper values in the data
-        if (this.dataset && _.isArray(this.dataset) && this.type && this.datavalue) {
+        if (this.dataset && isArray(this.dataset) && this.type && this.datavalue) {
             this.data = this.dataset.map((datum): IProgressInfo => {
                 const val: string = findValueOf(datum, this.datavalue).toString();
                 let percentVal = val;

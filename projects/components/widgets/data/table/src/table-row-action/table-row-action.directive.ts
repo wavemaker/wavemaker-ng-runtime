@@ -4,8 +4,7 @@ import { BaseComponent, Context, provideAsWidgetRef } from '@wm/components/base'
 
 import { registerProps } from './table-row-action.props';
 import { TableComponent } from '../table.component';
-
-declare const _;
+import {isUndefined} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
 
@@ -50,7 +49,7 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
     }
 
     getTitle() {
-        return _.isUndefined(this.title) ? (this['display-name'] || '') : this.title;
+        return isUndefined(this.title) ? (this['display-name'] || '') : this.title;
     }
 
     populateAction() {

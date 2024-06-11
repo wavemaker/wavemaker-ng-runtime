@@ -17,8 +17,6 @@ import { createArrayFrom, IWidgetConfig, StylableComponent, styler } from '@wm/c
 import { registerProps } from './carousel.props';
 import { CarouselAnimator } from './carousel.animator';
 
-declare const _;
-
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-carousel'
 };

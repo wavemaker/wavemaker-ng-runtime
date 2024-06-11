@@ -4,8 +4,7 @@
 import { propNameCSSKeyMap } from './styler';
 import { globalPropertyChangeHandler } from './property-change-handler';
 import { BaseComponent } from '../common/base/base.component';
-
-declare const _;
+import {isFunction, startsWith} from "lodash-es";
 
 /**
  *  proxy handler for the components
@@ -17,7 +16,7 @@ export const proxyHandler = {
     },
     get: (target: BaseComponent, key: string): any => {
         const v = target[key];
-        if (_.isFunction(v)) { // bind the proper context for the methods
+        if (isFunction(v)) { // bind the proper context for the methods
             return v.bind(target);
         }
         return v;
@@ -50,7 +49,7 @@ export class WidgetProxyProvider {
             // bind proper context for the methods
             invokeLater(() => {
                 for (const key in instance) {
-                    if (_.isFunction(instance[key]) && key !== 'constructor' && key !== 'super' && !_.startsWith(key, 'ng')) {
+                    if (isFunction(instance[key]) && key !== 'constructor' && key !== 'super' && !startsWith(key, 'ng')) {
                         instance[key] = instance[key].bind(instance);
                     }
                 }

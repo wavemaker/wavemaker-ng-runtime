@@ -10,8 +10,6 @@ import { registerProps } from './breadcrumb.props';
 const DEFAULT_CLS = 'breadcrumb app-breadcrumb';
 const WIDGET_CONFIG = {widgetType: 'wm-breadcrumb', hostClass: DEFAULT_CLS};
 
-declare const _;
-
 @Component({
     selector: '[wmBreadcrumb]',
     templateUrl: './breadcrumb.component.html',

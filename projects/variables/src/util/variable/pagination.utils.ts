@@ -1,12 +1,11 @@
 import { jmespath } from '@metrichor/jmespath';
-
-declare const _;
+import {find, isEmpty, result, set, startsWith} from "lodash-es";
 
 export class PaginationUtils {
     /**
      * Modifies the query values with the pagination info which is retrieved from the previous API response.
-     * @param variable withholds variable information 
-     * @param operationInfo has metadata of the variable 
+     * @param variable withholds variable information
+     * @param operationInfo has metadata of the variable
      * @param paginationInfo has metadata of the variable pagination data
      * @returns {void} This method does not return anything
      */
@@ -31,7 +30,7 @@ export class PaginationUtils {
 
     /**
      * Sets pagination on the variable based on the response of the triggered api call.
-     * @param variable withholds variable information 
+     * @param variable withholds variable information
      * @param response has data of the api call's response
      * @param options has info of the api's query params
      * @returns {void} This method does not return anything
@@ -47,7 +46,7 @@ export class PaginationUtils {
         variable.pagination['totalElements'] = response.totalElements;
         variable.pagination['numberOfElements'] = variable.pagination['size'];
         variable.pagination['number'] =  options['page'] ? options['page'] - 1 : 0;
-        
+
         /**
          * Deduce totalPages from totalElements by size.
          * If the total elements are evenly split among the pages, assign the same to totalPages
@@ -79,19 +78,19 @@ export class PaginationUtils {
      * @param response has data of the api call's response
      * @param resHeaders has data of the api call's response headers
      * @param res holds the information of pagination which has to be stored on the variable
-     * @param key has key name against which data has to be stored in pagination 
+     * @param key has key name against which data has to be stored in pagination
      * @returns {void} This method does not return anything
      */
     static setPaginationItems(item, response, res, key, resHeaders) {
         // if the item has body, resolve the expression against the response
-        if (_.startsWith(item, '$body')) {
+        if (startsWith(item, '$body')) {
             const bodyKey = item.replace('$body.', '');
             try {
                 res[key] = jmespath.search(response, bodyKey);
             } catch {
                 console.warn(`${item} expression needs to be corrected as per JMES guidelines`);
             }
-        } else if (_.startsWith(item, '$header')) { // if the item has header, resolve the expression against the response headers 
+        } else if (startsWith(item, '$header')) { // if the item has header, resolve the expression against the response headers
             const headerKey = item.replace('$header.', '');
             const headers =  (<any>Object).fromEntries(resHeaders.headers);
             const headerParams = headerKey.split('.');
@@ -100,14 +99,14 @@ export class PaginationUtils {
             } catch {
                 console.warn(`${item} expression needs to be corrected as per JMES guidelines`);
             }
-            if (res[key]?.length) { 
+            if (res[key]?.length) {
                 let headerVal = res[key].join();
-                if (headerParams.length === 1) { 
+                if (headerParams.length === 1) {
                     /**
                      * If the headerParams has only 1 key (which is not an object) name assing headerVal to the res[key]
                      */
                     res[key] = headerVal;
-                } else { 
+                } else {
                     /**
                      * If the headerParams has more than 1 key (an object), parse the stringified headerVal which is an object
                      * Resolve the expression against headerVal object amd assign it to res[key]
@@ -116,7 +115,7 @@ export class PaginationUtils {
                     const headerResp = JSON.parse(headerVal);
                     const specialChar = /[!@#$%^&*()+\=\[\]{};':"\\|,<>\/?]+/;
                     if (specialChar.test(keyName)) {
-                        // If key name has expression (ex: comparission expression) 
+                        // If key name has expression (ex: comparission expression)
                         // add root key name to keyName for JMES to resolve the expression
                         keyName = 'headerResp.' + keyName;
                     }
@@ -132,8 +131,8 @@ export class PaginationUtils {
 
     /**
      * Return the pagination information of the service based on its existence on swagger or on the variable
-     * @param variable withholds variable information 
-     * @param operationInfo has metadata of the variable 
+     * @param variable withholds variable information
+     * @param operationInfo has metadata of the variable
      * @returns {object} This method return pagination metadata
      */
     static getPaginationInfo(operationInfo, variable) {
@@ -146,15 +145,15 @@ export class PaginationUtils {
 
     /**
      * Set query params with the pagination info, if pagination metadata is present in query params
-     * @param variable withholds variable information 
-     * @param operationInfo has metadata of the variable 
+     * @param variable withholds variable information
+     * @param operationInfo has metadata of the variable
      * @param options has info of the api's query params
      * @returns {void} This method does not return anything
      */
-    static checkPaginationAtQuery(operationInfo, variable, options) {        
+    static checkPaginationAtQuery(operationInfo, variable, options) {
         const paginationInfo = this.getPaginationInfo(operationInfo, variable);
         // If page is not first, pagination is present on the variable and paginationInfo's input meta has size set pagination in query params
-        const hasPagination = options && options['page'] && paginationInfo?.input.size && variable.pagination;    
+        const hasPagination = options && options['page'] && paginationInfo?.input.size && variable.pagination;
         if (!hasPagination) {
             return;
         }
@@ -166,10 +165,12 @@ export class PaginationUtils {
         } else {
             inputParam = 'page';
         }
-        const paramName = paginationInfo.input[inputParam].split('.')[0]; 
-        const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName });   
+        const paramName = paginationInfo.input[inputParam].split('.')[0];
+        const paramObj = find(operationInfo.parameters, function (obj) {
+            return obj.name === paramName
+        });
         // check if the variable has query params and they are not empty
-        if (!_.isEmpty(variable.dataBinding) && paramObj && paramObj.parameterType === 'query') {
+        if (!isEmpty(variable.dataBinding) && paramObj && paramObj.parameterType === 'query') {
             /**
              * For pagination type other than offset, assign page which is recieved from options
              * For offset type, calculate page from size and options[page]
@@ -179,13 +180,13 @@ export class PaginationUtils {
             } else {
                 variable.pagination['page'] = this.getOffsetInfo(variable, options);
             }
-            this.setPaginationQueryParams(variable, operationInfo, paginationInfo);  
+            this.setPaginationQueryParams(variable, operationInfo, paginationInfo);
         }
     }
 
     /**
      * Deduces the offset information from the size and page params
-     * @param variable withholds variable information 
+     * @param variable withholds variable information
      * @param options has info of the api's query params
      * @returns {object} Returns the next offset number
      */
@@ -195,8 +196,8 @@ export class PaginationUtils {
 
     /**
      * Sets Pagination data on the request information
-     * @param variable withholds variable information 
-     * @param operationInfo has metadata of the variable 
+     * @param variable withholds variable information
+     * @param operationInfo has metadata of the variable
      * @param options has info of the api's query params
      * @param paginationInfo has pagination information of the variable
      * @param headers has request headers
@@ -214,38 +215,40 @@ export class PaginationUtils {
         } else {
             inputParam = 'page';
         }
-        const paramName = paginationInfo.input[inputParam].split('.')[0]; 
-        // check if paramName is present in parameters of operation info 
-        const paramObj = _.find(operationInfo.parameters, function(obj) { return obj.name === paramName }); 
-        // set page/offset and size from pagination if matched parameter's type is header  
+        const paramName = paginationInfo.input[inputParam].split('.')[0];
+        // check if paramName is present in parameters of operation info
+        const paramObj = find(operationInfo.parameters, function (obj) {
+            return obj.name === paramName
+        });
+        // set page/offset and size from pagination if matched parameter's type is header
         if (paramObj?.parameterType === 'header') {
-            _.set(reqObj, paginationInfo.input[inputParam], variable.pagination['page']);
-            _.set(reqObj, paginationInfo.input.size, variable.pagination['size']);
+            set(reqObj, paginationInfo.input[inputParam], variable.pagination['page']);
+            set(reqObj, paginationInfo.input.size, variable.pagination['size']);
             headers[paramName] = JSON.stringify(reqObj[paramName]);
             resObj['headers'] = headers;
-        } else if (paramObj?.parameterType === 'body') { 
-            // set page/offset and size from pagination if matched parameter's type is body 
+        } else if (paramObj?.parameterType === 'body') {
+            // set page/offset and size from pagination if matched parameter's type is body
             // assign bodyVal to updated pagination info object
             const bodyVal = JSON.parse(paramObj.sampleValue);
             const bodyParam = paginationInfo.input[inputParam].split('.')[1]
             if (bodyVal && bodyVal[bodyParam]) {
-                const inputBodyParam = paginationInfo.input[inputParam].split('.').splice(1).join('.');               
-                if (inputParam !== 'offset') { 
-                    _.set(reqObj, inputBodyParam, variable.pagination['page']);
+                const inputBodyParam = paginationInfo.input[inputParam].split('.').splice(1).join('.');
+                if (inputParam !== 'offset') {
+                    set(reqObj, inputBodyParam, variable.pagination['page']);
                 } else {
-                    _.set(reqObj, inputBodyParam, this.getOffsetInfo(variable, options));
+                    set(reqObj, inputBodyParam, this.getOffsetInfo(variable, options));
                 }
-                _.set(reqObj, paginationInfo.input.size.split('.').splice(1).join('.'), variable.pagination['size']);
+                set(reqObj, paginationInfo.input.size.split('.').splice(1).join('.'), variable.pagination['size']);
                 bodyVal[bodyParam] =  reqObj[bodyParam];
                 requestBody = JSON.stringify(bodyVal);
                 resObj['requestBody'] = requestBody;
             }
         } else if (variable.pagination.next && paramObj) {
             /**
-             * For cursor type pagination, if pagination info is present in the path 
-             * Based on whether user clicks on the next or prev button modify the url 
+             * For cursor type pagination, if pagination info is present in the path
+             * Based on whether user clicks on the next or prev button modify the url
              */
-            
+
             if (paramObj.parameterType === 'path') {
                 const urlParams = operationInfo.relativePath.split('/'),
                 paramConfig = '{' + paramObj.name + '}',
@@ -275,7 +278,7 @@ export class PaginationUtils {
 
             } else if (paramObj.parameterType === 'query') {
             /**
-             * For cursor type pagination, if pagination info is present in the query 
+             * For cursor type pagination, if pagination info is present in the query
              * Based on whether user clicks on the next or prev button modify the url's query params
              */
                 const urlParams = url.split('?');
@@ -290,7 +293,7 @@ export class PaginationUtils {
                 resObj['url'] = url;
             }
         }
-        return resObj;   
+        return resObj;
     }
 
     /**
@@ -298,19 +301,21 @@ export class PaginationUtils {
      * @param operationInfo has metadata of the variable
      * @param res holds the information of pagination which has to be stored on the variable
      * @param paramName has key name against which data has to be stored in pagination
-     * @param variable withholds variable information 
+     * @param variable withholds variable information
      * @returns {void} This method does not return anything
      */
     static setParameterVal(paramName, res, operationInfo, variable) {
         const paginationInfo = this.getPaginationInfo(operationInfo, variable);
-        const param = paginationInfo.input[paramName].split('.')[0]; 
-        const sizeObj = _.find(operationInfo.parameters, function(obj) { return obj.name === param });
-        res[paramName] = _.result(sizeObj, 'sampleValue');
+        const param = paginationInfo.input[paramName].split('.')[0];
+        const sizeObj = find(operationInfo.parameters, function (obj) {
+            return obj.name === param
+        });
+        res[paramName] = result(sizeObj, 'sampleValue');
     }
 
     /**
      * Creates res object from the response recieved from the api triggered
-     * @param variable withholds variable information 
+     * @param variable withholds variable information
      * @param operationInfo has metadata of the variable
      * @param paginationInfo has metadata of the variable's pagination
      * @param response has data of the api call's response
@@ -321,7 +326,7 @@ export class PaginationUtils {
     static generatePaginationRes(operationInfo, paginationInfo, response, resHeaders, options, variable) {
         let res = {};
         const resOutput = paginationInfo.output;
-        // If pagination type is not cursor, create the following metadata 
+        // If pagination type is not cursor, create the following metadata
         if (!resOutput?.next) {
             /**
              * If size is present in the pagination's output metadata deduce size from api's response
@@ -329,7 +334,7 @@ export class PaginationUtils {
              */
             if (resOutput?.size) {
                 this.setPaginationItems(resOutput.size, response, res, 'size', resHeaders);
-            } else { 
+            } else {
                 this.setParameterVal('size', res, operationInfo, variable);
             }
             /**
@@ -344,12 +349,12 @@ export class PaginationUtils {
             /**
              * If totalElements has $minValue in it, set totalElements as $minValue
              * If the rendered elements are greater than $minValue, set totalElements as Number of elements rendered + 1
-             
-                * If totalElements is present in the pagination's output metadata deduce totalElements from api's response
-                
-                * If Pagination type is offset, deduce totalElements from size and options[page] else deduce from size and res[page]
+
+             * If totalElements is present in the pagination's output metadata deduce totalElements from api's response
+
+             * If Pagination type is offset, deduce totalElements from size and options[page] else deduce from size and res[page]
                 */
-            if (_.startsWith(resOutput?.totalElements, '$minValue')) {
+            if (startsWith(resOutput?.totalElements, '$minValue')) {
                 const totalEl = resOutput.totalElements.replace('$minValue=', '');
                 const pageParam = res['page'] ? res['page'] : options['page']
                 const elRendered = res['size'] * pageParam;

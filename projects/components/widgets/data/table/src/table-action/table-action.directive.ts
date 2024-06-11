@@ -4,8 +4,7 @@ import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './table-action.props';
 import { TableComponent } from '../table.component';
-
-declare const _;
+import {isUndefined} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
 
@@ -51,7 +50,7 @@ export class TableActionDirective extends BaseComponent implements OnInit {
             show: this.show,
             class: this.class || '',
             iconclass: this.iconclass || '',
-            title: _.isUndefined(this.title) ? (this['display-name'] || '') : this.title,
+            title: isUndefined(this.title) ? (this['display-name'] || '') : this.title,
             action: this.action,
             accessroles: this.accessroles,
             shortcutkey: this.shortcutkey,

@@ -16,9 +16,9 @@ import {
 import { DeviceFileDownloadService, DeviceService, NetworkService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 import { CONSTANTS } from '@wm/variables';
+import {forEach, split} from "lodash-es";
 
 declare const cordova;
-declare const _;
 
 interface RequestInterceptor {
     intercept(request: HttpRequest<any>): Promise<HttpRequest<any>>;
@@ -45,12 +45,12 @@ export class MobileHttpInterceptor implements HttpInterceptor {
         const subject = new Subject<HttpEvent<any>>();
         const token = localStorage.getItem(CONSTANTS.XSRF_COOKIE_NAME);
         const xsrfHeaderName = getWmProjectProperties().xsrf_header_name;
-        if (token 
+        if (token
             && xsrfHeaderName
-            && this.app.deployedUrl 
+            && this.app.deployedUrl
             && (request.url.indexOf('://') < 0
                 || request.url.startsWith(this.app.deployedUrl))) {
-                
+
             // Clone the request to add the new header
             request = request.clone({ headers: request.headers.set(xsrfHeaderName, token) });
         }
@@ -119,14 +119,14 @@ class SecurityInterceptor implements RequestInterceptor {
 
     public intercept(request: HttpRequest<any>): Promise<HttpRequest<any>> {
         return new Promise<HttpRequest<any>>((resolve, reject) => {
-            if (!SecurityInterceptor.PREFAB_URL_PATTERN.test(request.url) 
+            if (!SecurityInterceptor.PREFAB_URL_PATTERN.test(request.url)
                 && SecurityInterceptor.PAGE_URL_PATTERN.test(request.url)) {
                 return Promise.resolve().then(() => {
                     if (!this.initialized) {
                         return this.init();
                     }
                 }).then(() => {
-                    const urlSplits = _.split(request.url, '/');
+                    const urlSplits = split(request.url, '/');
                     const pageName = urlSplits[urlSplits.length - 2];
                     if (!this.publicPages || this.publicPages[pageName]) {
                         return Promise.resolve(request);
@@ -157,7 +157,7 @@ class SecurityInterceptor implements RequestInterceptor {
             if (!this.initialized) {
                 this.publicPages = {};
                 this.initialized = true;
-                _.forEach(JSON.parse(text), pageName => this.publicPages[pageName] = true);
+                forEach(JSON.parse(text), pageName => this.publicPages[pageName] = true);
             }
         }).catch(() => {
             this.initialized = true;

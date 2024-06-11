@@ -8,8 +8,7 @@ import { SWAGGER_CONSTANTS } from '@wm/variables';
 import { ColumnInfo, EntityInfo } from './config';
 import { escapeName } from '../utils/utils';
 import { LocalDBManagementService } from '../services/local-db-management.service';
-
-declare const _;
+import {filter, find, forEach, isEmpty, isNil, isString, map, reduce, trim} from "lodash-es";
 
 export interface FilterCriterion {
     attributeName: string;
@@ -26,7 +25,7 @@ export interface Pagination {
 const insertRecordSqlTemplate = (schema: EntityInfo) => {
     const columnNames = [],
         placeHolder = [];
-    _.forEach(schema.columns, col => {
+    forEach(schema.columns, col => {
         columnNames.push(escapeName(col.name));
         placeHolder.push('?');
     });
@@ -36,7 +35,7 @@ const insertRecordSqlTemplate = (schema: EntityInfo) => {
 const replaceRecordSqlTemplate = (schema: EntityInfo) => {
     const columnNames = [],
         placeHolder = [];
-    _.forEach(schema.columns, col => {
+    forEach(schema.columns, col => {
         columnNames.push(escapeName(col.name));
         placeHolder.push('?');
     });
@@ -44,7 +43,7 @@ const replaceRecordSqlTemplate = (schema: EntityInfo) => {
 };
 
 const deleteRecordTemplate = (schema: EntityInfo) => {
-    const primaryKeyField = _.find(schema.columns, 'primaryKey');
+    const primaryKeyField = find(schema.columns, 'primaryKey');
     if (primaryKeyField) {
         return `DELETE FROM ${escapeName(schema.name)} WHERE ${escapeName(primaryKeyField.name)} = ?`;
     }
@@ -60,7 +59,7 @@ const selectSqlTemplate = (schema: EntityInfo) => {
         if (col.foreignRelations) {
             col.foreignRelations.forEach(foreignRelation => {
                 childTableName = foreignRelation.sourceFieldName;
-                _.forEach(foreignRelation.dataMapper, (childCol, childFiledName) => {
+                forEach(foreignRelation.dataMapper, (childCol, childFiledName) => {
                     columns.push(childTableName + '.' + escapeName(childCol.name) + ' as \'' + childFiledName + '\'');
                 });
                 joins.push(` LEFT JOIN ${escapeName(foreignRelation.targetTable)} ${childTableName}
@@ -90,7 +89,7 @@ const generateWherClause = (store: LocalDBStore, filterCriteria: FilterCriterion
     let conditions;
     const fieldToColumnMapping = store.fieldToColumnMapping,
         tableName = store.entitySchema.name;
-    if (!_.isEmpty(filterCriteria) && _.isString(filterCriteria)) {
+    if (!isEmpty(filterCriteria) && isString(filterCriteria)) {
         return ' WHERE ' + filterCriteria;
     }
     if (filterCriteria) {
@@ -122,8 +121,8 @@ const generateWherClause = (store: LocalDBStore, filterCriteria: FilterCriterion
 
 const generateOrderByClause = (store: LocalDBStore, sort: string) => {
     if (sort) {
-        return ' ORDER BY ' + _.map(sort.split(','), field => {
-            const splits =  _.trim(field).split(' ');
+        return ' ORDER BY ' + map(sort.split(','), field => {
+            const splits = trim(field).split(' ');
             splits[0] = escapeName(store.entitySchema.name) + '.' + escapeName(store.fieldToColumnMapping[splits[0]]);
             return splits.join(' ');
         }).join(',');
@@ -142,7 +141,7 @@ const mapRowDataToObj = (schema: EntityInfo, dataObj: any) => {
         if (col.foreignRelations) {
             col.foreignRelations.forEach(foreignRelation => {
                 let childEntity = null;
-                _.forEach(foreignRelation.dataMapper, function (childCol, childFieldName) {
+                forEach(foreignRelation.dataMapper, function (childCol, childFieldName) {
                     const fieldValue = dataObj[childFieldName];
                     if (isDefined(fieldValue) && fieldValue !== null && fieldValue !== '') {
                         childEntity = childEntity || {};
@@ -152,7 +151,7 @@ const mapRowDataToObj = (schema: EntityInfo, dataObj: any) => {
                 });
                 dataObj[foreignRelation.sourceFieldName] = childEntity;
             });
-        } else if (col.sqlType === 'boolean' && !_.isNil(val)) {
+        } else if (col.sqlType === 'boolean' && !isNil(val)) {
             dataObj[col.fieldName] = (val === 1);
         }
     });
@@ -170,7 +169,7 @@ const getValue = (entity: any, col: ColumnInfo) => {
             return false;
         });
     }
-    if (_.isNil(value)) {
+    if (isNil(value)) {
         return col.defaultValue;
     } else if (col.sqlType === 'boolean') {
         return (value === true ? 1 : 0);
@@ -204,14 +203,14 @@ export class LocalDBStore {
         private localDbManagementService: LocalDBManagementService,
         private sqliteObject: SQLiteObject
     ) {
-        this.primaryKeyField = _.find(this.entitySchema.columns, 'primaryKey');
+        this.primaryKeyField = find(this.entitySchema.columns, 'primaryKey');
         this.primaryKeyName = this.primaryKeyField ? this.primaryKeyField.fieldName : undefined;
         this.entitySchema.columns.forEach(c => {
             this.fieldToColumnMapping[c.fieldName] = c.name;
             if (c.foreignRelations) {
                 c.foreignRelations.forEach( foreignRelation => {
                     this.fieldToColumnMapping[foreignRelation.targetPath] = c.name;
-                    _.forEach(foreignRelation.dataMapper, (childCol, childFieldName) => {
+                    forEach(foreignRelation.dataMapper, (childCol, childFieldName) => {
                         this.fieldToColumnMapping[childFieldName] = foreignRelation.sourceFieldName + '.' + childCol.name;
                     });
                 });
@@ -229,7 +228,7 @@ export class LocalDBStore {
         if (this.primaryKeyName) {
             const idValue = entity[this.primaryKeyName];
             if (this.primaryKeyField.sqlType === 'number'
-                && (!isDefined(idValue) || (_.isString(idValue) && _.isEmpty(_.trim(idValue))))) {
+                && (!isDefined(idValue) || (isString(idValue) && isEmpty(trim(idValue))))) {
                 if (this.primaryKeyField.generatorType === 'identity') {
                     // updating the id with the latest id obtained from nextId.
                     entity[this.primaryKeyName] = this.localDbManagementService.nextIdCount();
@@ -368,8 +367,8 @@ export class LocalDBStore {
      */
     public saveAll(entities: any[]) {
         // filtering the null entities
-        entities = _.filter(entities, null);
-        const queries = _.map(entities, entity => {
+        entities = filter(entities, null);
+        const queries = map(entities, entity => {
             const rowData = mapObjToRow(this, entity);
             const params = this.entitySchema.columns.map(f => rowData[f.name]);
             return [this.replaceRecordSqlTemplate, params];
@@ -412,14 +411,14 @@ export class LocalDBStore {
      * Converts form data object to map for storing request in local database..
      */
     private serializeFormDataToMap(formData) {
-        const blobColumns = _.filter(this.entitySchema.columns, {
+        const blobColumns = filter(this.entitySchema.columns, {
                 'sqlType' : 'blob'
             }),
             promises = [];
         let map = {};
         if (formData && typeof formData.append === 'function' && formData.rowData) {
-            _.forEach(formData.rowData, (fieldData, fieldName) => {
-                if (fieldData && _.find(blobColumns, {'fieldName' : fieldName})) {
+            forEach(formData.rowData, (fieldData, fieldName) => {
+                if (fieldData && find(blobColumns, {'fieldName': fieldName})) {
                     promises.push(this.saveBlobToFile(fieldData).then(localFile => {
                         map[fieldName] = localFile;
                     }));
@@ -440,7 +439,7 @@ export class LocalDBStore {
         const formData = new FormData(),
             blobColumns = this.entitySchema.columns.filter(c => c.sqlType === 'blob'),
             promises = [];
-        _.forEach(blobColumns, column => {
+        forEach(blobColumns, column => {
             const value = map[column.fieldName];
             if (value && value.wmLocalPath) {
                 promises.push(convertToBlob(value.wmLocalPath)
@@ -455,7 +454,8 @@ export class LocalDBStore {
     }
 
     private createTableSql(schema) {
-        const fieldStr = _.reduce(schema.columns, (result, f) => {
+        // @ts-ignore
+        const fieldStr = reduce(schema.columns, (result, f) => {
             let str = escapeName(f.name);
             if (f.primaryKey) {
                 if (f.sqlType === 'number' && f.generatorType === 'databaseIdentity') {

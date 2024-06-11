@@ -1,28 +1,9 @@
 import {Attribute, Inject, Injectable, Injector, OnDestroy, OnInit, Optional} from '@angular/core';
-
 import {Subject} from 'rxjs';
-
 import {$appDigest, AppDefaults, debounce, isDefined, isEqualWithFields, noop, toBoolean} from '@wm/core';
-
-import {
-    ALLFIELDS,
-    convertDataToObject,
-    DataSetItem,
-    extractDataAsArray,
-    getOrderedDataset,
-    getUniqObjsByDataField,
-    groupData,
-    handleHeaderClick,
-    IWidgetConfig,
-    ToDatePipe,
-    toggleAllHeaders,
-    transformDataWithKeys,
-    transformFormData,
-    WidgetConfig
-} from '@wm/components/base';
-import {BaseFormCustomComponent} from './base-form-custom.component';
-
-declare const _;
+import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, handleHeaderClick, toggleAllHeaders, transformFormData, transformDataWithKeys, groupData, ToDatePipe, IWidgetConfig, WidgetConfig } from '@wm/components/base';
+import { BaseFormCustomComponent } from './base-form-custom.component';
+import {debounce as _debounce, find, isArray, isEmpty, isEqual, isNull, isObject, toString} from "lodash-es";
 
 @Injectable()
 export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent implements OnInit, OnDestroy {
@@ -137,7 +118,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             return;
         }
 
-        if (this.multiple && !_.isArray(keys)) {
+        if (this.multiple && !isArray(keys)) {
             keys = [keys];
         }
 
@@ -147,10 +128,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         if (this.multiple) {
             this._modelByValue = [];
             keys.forEach(key => {
-                const itemByKey = _.find(this.datasetItems, item => {
+                const itemByKey = find(this.datasetItems, item => {
                     // not triple equal, as the instance type can be different.
                     // only value comparison should be done.
-                    return _.toString(item.key) === _.toString(key);
+                    return toString(item.key) === toString(key);
                 });
                 if (itemByKey) {
                     itemByKey.selected = true;
@@ -159,10 +140,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             });
         } else {
             this._modelByValue = '';
-            const itemByKey = _.find(this.datasetItems, item => {
+            const itemByKey = find(this.datasetItems, item => {
                 // not triple equal, as the instance type can be different.
                 // only value comparison should be done.
-                return _.toString(item.key) === _.toString(keys);
+                return toString(item.key) === toString(keys);
             });
             if (itemByKey) {
                 itemByKey.selected = true;
@@ -183,7 +164,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this.resetDatasetItems();
 
         // if datavalue is not defined or empty then set the model as undefined.
-        if (!isDefined(values) || values === '' || _.isNull(values) || (values instanceof Array && !values.length)) {
+        if (!isDefined(values) || values === '' || isNull(values) || (values instanceof Array && !values.length)) {
             this._modelByKey = undefined;
             // do not return when allowempty is set to true.
             if (!this.allowempty || !isDefined(values)) {
@@ -191,7 +172,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             }
         }
 
-        if (this.acceptsArray && !_.isArray(values)) {
+        if (this.acceptsArray && !isArray(values)) {
             values = this.allowempty ? [values] : extractDataAsArray(values);
         }
 
@@ -203,16 +184,16 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
         const filterField = this.datafield === ALLFIELDS ? 'dataObject' : 'key';
 
-        if (_.isArray(values)) {
+        if (isArray(values)) {
             this._modelByKey = [];
             values.forEach(val => {
-                const itemByValue = _.find(this.datasetItems, item => {
+                const itemByValue = find(this.datasetItems, item => {
                     if (filterField === 'dataObject') {
                         if (this.compareby && this.compareby.length) {
                             return isEqualWithFields(item[filterField], val, this.compareby);
                         }
                     }
-                    return (_.isObject(item.value) ? _.isEqual(item.value, val) : (_.toString(item.value)).toLowerCase() === (_.toString(val)).toLowerCase());
+                    return (isObject(item.value) ? isEqual(item.value, val) : (toString(item.value)).toLowerCase() === (toString(val)).toLowerCase());
                 });
                 if (itemByValue) {
                     itemByValue.selected = true;
@@ -221,13 +202,13 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
             });
         } else {
             this._modelByKey = undefined;
-            const itemByValue = _.find(this.datasetItems, item => {
+            const itemByValue = find(this.datasetItems, item => {
                 if (filterField === 'dataObject') {
                     if (this.compareby && this.compareby.length) {
                         return isEqualWithFields(item[filterField], values, this.compareby);
                     }
                 }
-                return (_.isObject(item.value)  ? _.isEqual(item.value, values) : (_.toString(item.value)).toLowerCase() === (_.toString(values)).toLowerCase());
+                return (isObject(item.value) ? isEqual(item.value, values) : (toString(item.value)).toLowerCase() === (toString(values)).toLowerCase());
             });
             if (itemByValue) {
                 itemByValue.selected = true;
@@ -239,16 +220,16 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         this._debounceDatavalueUpdation(values);
     }
 
-    protected readonly _debounceDatavalueUpdation = _.debounce((values) => {
+    protected readonly _debounceDatavalueUpdation = _debounce((values) => {
         // if no item is found in datasetItems, wait untill the dataset updates by preserving the datavalue in toBeProcessedDatavalue.
-        if (!isDefined(this._modelByKey) || (_.isArray(this._modelByKey) && !this._modelByKey.length)) {
+        if (!isDefined(this._modelByKey) || (isArray(this._modelByKey) && !this._modelByKey.length)) {
             this.toBeProcessedDatavalue = values;
             this._modelByValue = '';
         } else if (isDefined(this.toBeProcessedDatavalue)) {
             // obtain the first array value when multiple is set to false.
             // set the modelByValue only when undefined.
             if (!isDefined(this._modelByValue)) {
-                this._modelByValue = (!this.multiple && _.isArray(this.toBeProcessedDatavalue)) ? this.toBeProcessedDatavalue[0] : this.toBeProcessedDatavalue;
+                this._modelByValue = (!this.multiple && isArray(this.toBeProcessedDatavalue)) ? this.toBeProcessedDatavalue[0] : this.toBeProcessedDatavalue;
             }
             this.toBeProcessedDatavalue = undefined;
         }
@@ -270,7 +251,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     // This function parses the dataset and extracts the displayOptions from parsed dataset.
     protected initDatasetItems() {
-        if (!this.dataset || _.isEmpty(this.dataset)) {
+        if (!this.dataset || isEmpty(this.dataset)) {
             this.datasetItems = [];
             // notify the dataset listeners
             this.dataset$.next(this.datasetItems);
@@ -301,7 +282,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     protected postDatasetItemsInit() {
         if (this.datasetItems.length && !this._defaultQueryInvoked) {
             // use the latest of toBeProcessedDatavalue, datavalue
-            const _datavalue = _.isEmpty(this.toBeProcessedDatavalue) ? this.datavalue : this.toBeProcessedDatavalue;
+            const _datavalue = isEmpty(this.toBeProcessedDatavalue) ? this.datavalue : this.toBeProcessedDatavalue;
             this.selectByValue(_datavalue);
         }
         // notify the dataset listeners

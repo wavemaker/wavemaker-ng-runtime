@@ -6,8 +6,7 @@ import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
 import {DatasetAwareFormComponent} from '../dataset-aware-form.component';
 
 import {registerProps} from './select.props';
-
-declare const _;
+import {includes} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'};
 
@@ -56,7 +55,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
 
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (!_.includes(['blur', 'change'], eventName)) {
+        if (!includes(['blur', 'change'], eventName)) {
             super.handleEvent(this.selectEl.nativeElement, eventName, eventCallback, locals);
         }
     }

@@ -2,8 +2,7 @@ import { Component, DoCheck, ElementRef } from '@angular/core';
 
 import { addClass, removeAttr, setAttr } from '@wm/core';
 import { provideAsWidgetRef } from '@wm/components/base';
-
-declare const _;
+import {isFunction, remove} from "lodash-es";
 
 export interface Process {
     max: number;
@@ -100,7 +99,7 @@ export class ProcessManagerComponent implements DoCheck {
     private removeInstance(instance: Process): Promise<void> {
         return new Promise( resolve => {
             setTimeout(() => {
-                _.remove(this.instances, instance);
+                remove(this.instances, instance);
                 this.flushQueue();
                 resolve();
             }, 1000);
@@ -114,7 +113,7 @@ export class ProcessManagerComponent implements DoCheck {
             }
             instance.value = propertyValue;
             instance.progressLabel = instance.value + '/' + instance.max;
-        } else if (propertyName === 'onStop' && _.isFunction(propertyValue)) {
+        } else if (propertyName === 'onStop' && isFunction(propertyValue)) {
             instance.onStop = () => {
                 propertyValue();
                 return this.removeInstance(instance);

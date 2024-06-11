@@ -2,8 +2,7 @@ import { AppConstants, DataSource, findValueOf, getClonedObject } from '@wm/core
 
 import { convertDataToObject, interpolateBindExpressions } from '@wm/components/base';
 import { IDataProvider, IDataProviderConfig } from './data-provider';
-
-declare const _;
+import {assign, get, indexOf, isArray, isEmpty, isObject, set, slice, split} from "lodash-es";
 
 export class RemoteDataProvider implements IDataProvider {
     public filter(config: IDataProviderConfig): Promise<any> {
@@ -25,7 +24,7 @@ export class RemoteDataProvider implements IDataProvider {
                         dataoptions.filterExpr = filterexpressions;
 
                         config.datasource.execute(
-                            DataSource.Operation.GET_RELATED_TABLE_DATA, _.assign({relatedField: dataoptions.relatedField}, requestParams)
+                            DataSource.Operation.GET_RELATED_TABLE_DATA, assign({relatedField: dataoptions.relatedField}, requestParams)
                         ).then(resolve, reject);
                     });
                 });
@@ -39,7 +38,7 @@ export class RemoteDataProvider implements IDataProvider {
                         page: config.page,
                         fields: dataoptions.distinctField,
                         entityName: dataoptions.tableName,
-                        filterFields: _.assign(dataoptions.filterFields, requestParams.filterFields),
+                        filterFields: assign(dataoptions.filterFields, requestParams.filterFields),
                         filterExpr: getClonedObject(dataoptions.filterExpr || {})
 
                     }
@@ -72,7 +71,7 @@ export class RemoteDataProvider implements IDataProvider {
         // in case data received is value as string then add that string value to object and convert object into array
         if (tempResponse) {
             const tempObj = {};
-            _.set(tempObj, operationResult, tempResponse);
+            set(tempObj, operationResult, tempResponse);
             data = [tempObj]; // convert data into an array having tempObj
         } else {
             // in case data received is already an object then convert it into an array
@@ -87,7 +86,7 @@ export class RemoteDataProvider implements IDataProvider {
     }
 
     private isLastPageForDistinctApi(data, page, totalElements, _isLastPage) {
-        return page > 1 && !_isLastPage && _.isEmpty(data) && totalElements === AppConstants.INT_MAX_VALUE;
+        return page > 1 && !_isLastPage && isEmpty(data) && totalElements === AppConstants.INT_MAX_VALUE;
     }
 
 
@@ -99,8 +98,8 @@ export class RemoteDataProvider implements IDataProvider {
         let page: number;
         let isPaginatedData: boolean;
 
-        const expressionArray = _.split(config.binddataset, '.');
-        const dataExpression = _.slice(expressionArray, _.indexOf(expressionArray, 'dataSet') + 1).join('.');
+        const expressionArray = split(config.binddataset, '.');
+        const dataExpression = slice(expressionArray, indexOf(expressionArray, 'dataSet') + 1).join('.');
         const $I = '[$i]';
 
         return new Promise((resolve, reject) => {
@@ -125,18 +124,18 @@ export class RemoteDataProvider implements IDataProvider {
             }
             // if data expression exists, extract the data from the expression path
             if (dataExpression) {
-                if (_.isArray(data)) {
+                if (isArray(data)) {
                     const index = dataExpression.lastIndexOf($I);
                     if(index > -1){
                         const restExpr = dataExpression.substr(index + 5);
                         formattedData = data.map(datum => findValueOf(datum, restExpr));
                     }
-                } else if (_.isObject(data)) {
-                    formattedData = _.get(data, dataExpression);
+                } else if (isObject(data)) {
+                    formattedData = get(data, dataExpression);
                 }
                 data = formattedData || data;
             }
-            if (!_.isArray(data)) {
+            if (!isArray(data)) {
                 data = this.getTransformedData(config.datasource, data);
             }
             // in case of no data received, resolve the promise with empty array

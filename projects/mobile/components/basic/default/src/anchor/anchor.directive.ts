@@ -1,9 +1,7 @@
 import { Directive, HostListener, Inject } from '@angular/core';
 
 import { WidgetRef } from '@wm/components/base';
-
-declare const _;
-declare const cordova;
+import {startsWith} from "lodash-es";
 
 @Directive({
     selector: '[wmAnchor]'
@@ -16,12 +14,12 @@ export class AnchorDirective {
     onClick () {
         let href = this.widget.hyperlink;
         if (href) {
-            if (href.indexOf(':') >= 0 && !(_.startsWith(href, 'http://') || _.startsWith(href, 'https://'))) {
+            if (href.indexOf(':') >= 0 && !(startsWith(href, 'http://') || startsWith(href, 'https://'))) {
                 return;
-            } else if (_.startsWith(href, '#')) {
+            } else if (startsWith(href, '#')) {
                 window.location.href = window.location.origin + window.location.pathname + href;
                 return;
-            } else if (_.startsWith(href, '//')) {
+            } else if (startsWith(href, '//')) {
                 href = 'https:' + href;
             }
             if (window['cordova']) {

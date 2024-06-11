@@ -2,9 +2,8 @@ import {AfterViewInit, Inject, Injectable, Injector, Optional} from '@angular/co
 
 import {DataSource} from '@wm/core';
 
-import {IWidgetConfig, StylableComponent, WidgetConfig} from '@wm/components/base';
-
-declare const _;
+import { IWidgetConfig, StylableComponent, WidgetConfig } from '@wm/components/base';
+import {has, set} from "lodash-es";
 
 @Injectable()
 export abstract class BaseFormComponent extends StylableComponent implements AfterViewInit{
@@ -54,10 +53,10 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
         binddatavalue = binddatavalue.replace(/\[\$i\]/g, '[0]');
 
         // In case of list widget context will be the listItem.
-        if (_.has(this.context, binddatavalue.split('.')[0])) {
-            _.set(this.context, binddatavalue, value);
+        if (has(this.context, binddatavalue.split('.')[0])) {
+            set(this.context, binddatavalue, value);
         } else {
-            _.set(this.viewParent, binddatavalue, value);
+            set(this.viewParent, binddatavalue, value);
         }
     }
 

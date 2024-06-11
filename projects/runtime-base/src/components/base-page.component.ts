@@ -36,8 +36,10 @@ import {VariablesService} from '@wm/variables';
 import {AppManagerService} from '../services/app.manager.service';
 import {FragmentMonitor} from '../util/fragment-monitor';
 import {CACHE_PAGE} from '../util/wm-route-reuse-strategy';
+import {each, extend} from "lodash-es";
 
-declare const $, _, html2canvas;
+declare const $;
+declare const html2canvas;
 
 @Directive()
 export abstract class BasePageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy, AfterContentInit {
@@ -120,7 +122,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     }
 
     registerPageParams() {
-        const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = _.extend({}, params));
+        const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = extend({}, params));
         this.registerDestroyListener(() => subscription.unsubscribe());
     }
 
@@ -186,7 +188,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
      */
     registerExpressions() {
         const expressions = this.getExpressions();
-        _.each(expressions, (fn, expr)=>{
+        each(expressions, (fn, expr) => {
             registerFnByExpr(expr, fn[0], fn[1]);
         });
     }
@@ -396,16 +398,16 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     mute() {
         const m = o => { o && o.mute && o.mute(); };
-        _.each(this.Widgets, m);
-        _.each(this.Variables, m);
-        _.each(this.Actions, m);
+        each(this.Widgets, m);
+        each(this.Variables, m);
+        each(this.Actions, m);
     }
 
     unmute(c = this) {
         const um = o => { o && o.unmute && o.unmute(); };
-        _.each(this.Widgets, um);
-        _.each(this.Variables, um);
-        _.each(this.Actions, um);
+        each(this.Widgets, um);
+        each(this.Variables, um);
+        each(this.Actions, um);
     }
 
     ngOnAttach() {
@@ -421,12 +423,12 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         (this.App as any).Widgets = Object.create(this.Widgets);
         if(this.pageDirective && this.pageDirective.refreshdataonattach) {
             const refresh = v => { v && v.startUpdate && v.invoke && v.invoke(); };
-            _.each(this.Variables, refresh);
-            _.each(this.Actions, refresh);
+            each(this.Variables, refresh);
+            each(this.Actions, refresh);
         }
         this.runPageTransition().then(() => {
             setTimeout(() => this.restoreScrollPosition(), 100);
-            _.each(this.Widgets, w => w && w.ngOnAttach && w.ngOnAttach());
+            each(this.Widgets, w => w && w.ngOnAttach && w.ngOnAttach());
             this.appManager.notify('pageAttach', {'name' : this.pageName, instance: this});
         });
     }
@@ -435,7 +437,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.saveScrollPosition();
         this.savePageSnapShot();
         this.mute();
-        _.each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
+        each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
         this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
     }
 

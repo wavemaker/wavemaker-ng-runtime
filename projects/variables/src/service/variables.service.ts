@@ -19,6 +19,7 @@ import { MetadataService } from './metadata-service/metadata.service';
 import { VARIABLE_CONSTANTS } from '../constants/variables.constants';
 import {appManager} from '../util/variable/variables.utils';
 import { DateFormatter } from '@wavemaker/variables';
+import {isArray, isFunction, isUndefined, set} from "lodash-es";
 
 export class Formatter implements DateFormatter {
     format(value, format) {
@@ -26,7 +27,6 @@ export class Formatter implements DateFormatter {
     }
 }
 
-declare const _;
 
 @Injectable()
 export class VariablesService {
@@ -64,7 +64,7 @@ export class VariablesService {
     bulkCancel(collection) {
         Object.keys(collection).forEach(name => {
             const variable = collection[name];
-            if (_.isFunction(variable.cancel)) {
+            if (isFunction(variable.cancel)) {
                 variable.cancel();
             }
         });
@@ -87,18 +87,18 @@ export class VariablesService {
         const root = getTarget(variable),
             targetNodeKey = getTargetNodeKey(d.target),
             runMode = true;
-        let v = _.isArray(d.value) ? d.value[0] : d.value;
+        let v = isArray(d.value) ? d.value[0] : d.value;
         if (v) {
             if (v.startsWith && v.startsWith('bind:')) {
                 const watchExpression = $watch(v.replace('bind:', ''), scope, {}, variable.invokeOnParamChange.bind(variable, d), undefined, undefined, d, () => variable.isMuted);
                 v = scope.registerDestroyListener ? scope.registerDestroyListener(watchExpression) : watchExpression;
-            } else if (!_.isUndefined(d.value)) {
+            } else if (!isUndefined(d.value)) {
                 setValueToNode(d.target, d, root, variable, d.value, true);
                 if (runMode && root !== targetNodeKey) {
                     if (!internalBoundNodeMap.has(variable)) {
                         internalBoundNodeMap.set(variable, {});
                     }
-                    _.set(internalBoundNodeMap.get(variable), [ variable.name, root, d.target ], d.value);
+                    set(internalBoundNodeMap.get(variable), [variable.name, root, d.target], d.value);
                 }
             }
         }
@@ -115,7 +115,7 @@ export class VariablesService {
         const bindMap = variable[bindSource];
         variable[bindSource] = {};
         variable['_bind' + bindSource] = bindMap;
-        if (!bindMap || !_.isArray(bindMap)) {
+        if (!bindMap || !isArray(bindMap)) {
             return;
         }
         bindMap.forEach( (node) => {

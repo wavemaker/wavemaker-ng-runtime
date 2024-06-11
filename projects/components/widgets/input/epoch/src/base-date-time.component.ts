@@ -4,9 +4,6 @@ import {Subscription} from 'rxjs';
 import {FormStyle, getLocaleDayPeriods, TranslationWidth} from '@angular/common';
 import {BsDropdownDirective} from 'ngx-bootstrap/dropdown';
 import {TimepickerComponent, TimepickerConfig} from 'ngx-bootstrap/timepicker';
-
-
-
 import {
     AbstractI18nService,
     getDateObj,
@@ -15,7 +12,6 @@ import {
     hasCordova,
     isIos,
     isMobile,
-    isString,
     setAttr
 } from '@wm/core';
 
@@ -23,8 +19,10 @@ import {getContainerTargetClass, ToDatePipe} from '@wm/components/base';
 import {BaseFormCustomComponent} from '@wm/components/input';
 import {BsDatepickerConfig, BsDatepickerDirective} from 'ngx-bootstrap/datepicker';
 import {DateTimePickerComponent} from './date-time//date-time-picker.component';
+import {filter, forEach, get, includes, isNaN as _isNaN, isString, isUndefined, parseInt, split} from "lodash-es";
 
-declare const moment, _, $;
+declare const $;
+declare const moment;
 
 const CURRENT_DATE = 'CURRENT_DATE';
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -164,14 +162,14 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 }
             };
         }
-        if (!_.isUndefined(this.dateNotInRange) && this.dateNotInRange) {
+        if (!isUndefined(this.dateNotInRange) && this.dateNotInRange) {
             return {
                 dateNotInRange: {
                     valid: false
                 },
             };
         }
-        if (!_.isUndefined(this.timeNotInRange) && this.timeNotInRange) {
+        if (!isUndefined(this.timeNotInRange) && this.timeNotInRange) {
             return {
                 timeNotInRange: {
                     valid: false
@@ -197,7 +195,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         inputVal = inputVal.trim();
         if (inputVal) {
             if (pattern === 'timestamp') {
-                if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                if (!_isNaN(inputVal) && parseInt(inputVal) !== formattedDate) {
                     this.invalidDateTimeFormat = true;
                     this.validateType = 'incorrectformat';
                     this.invokeOnChange(this.datavalue, undefined, false);
@@ -254,7 +252,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             if (this.excludedates) {
                 let excludeDatesArray;
                 if (isString(this.excludedates)) {
-                    excludeDatesArray = _.split(this.excludedates, ',');
+                    excludeDatesArray = split(this.excludedates, ',');
                 } else {
                     excludeDatesArray = this.excludedates;
                 }
@@ -267,8 +265,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 }
             }
             if (this.excludedays) {
-                const excludeDaysArray = _.split(this.excludedays, ',');
-                const day = _.get(dateTimeVal, 'getDay') ? dateTimeVal.getDay() : dateTimeVal;
+                const excludeDaysArray = split(this.excludedays, ',');
+                const day = get(dateTimeVal, 'getDay') ? dateTimeVal.getDay() : dateTimeVal;
                 if (excludeDaysArray.indexOf(day.toString()) > -1) {
                     this.dateNotInRange = true;
                     this.validateType = 'excludedays';
@@ -293,9 +291,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const month = new Date(newDate).toLocaleString('default', { month: 'long' });
         const year = newDate.getFullYear().toString();
 
-        if(activeMonth == month && activeYear == year) {
-            const toDay = newDate.getDate().toString();
-            _.filter($(`span:contains(${toDay})`).not('.is-other-month'), (obj) => {
+        if(activeMonth == month && activeYear == new Date().getFullYear() && newDate.getDate() === new Date().getDate() && newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
+            const toDay = new Date().getDate().toString();
+            filter($(`span:contains(${toDay})`).not('.is-other-month'), (obj) => {
                 if ($(obj).text() === toDay) {
                     $(obj).addClass('current-date text-info');
                 }
@@ -361,7 +359,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
         setTimeout(() => {
             const newDay = newDate.getDate().toString();
-            _.filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
+            filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
                 const activeMonth = $(`.bs-datepicker-head .current`).first().text();
                 const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
                 const monthName = new Date().toLocaleString('default', { month: 'long' });
@@ -408,10 +406,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const activeMonthOrYear = $(`.bs-datepicker-head .current`).first().text();
         const datePickerBody = $('.bs-datepicker-body');
         if (datePickerBody.find('table.months').length > 0) {
-            if (_.parseInt(activeMonthOrYear) !== this.activeDate.getFullYear()) {
+            if (parseInt(activeMonthOrYear) !== this.activeDate.getFullYear()) {
                 this.loadMonths();
             }
-            const newDate = new Date(_.parseInt(activeMonthOrYear), this.activeDate.getMonth(), this.activeDate.getDate());
+            const newDate = new Date(parseInt(activeMonthOrYear), this.activeDate.getMonth(), this.activeDate.getDate());
             this.setActiveMonthFocus(newDate, true);
         } else if (datePickerBody.find('table.days').length > 0) {
             const newMonth = months.indexOf(activeMonthOrYear);
@@ -449,7 +447,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         } else if (datePickerBody.find('table.years').length > 0) {
             this.loadYears();
             const startYear = datePickerBody.find('table.years span').first().text();
-            const newDate = new Date(_.parseInt(startYear), this.activeDate.getMonth(), this.activeDate.getDate());
+            const newDate = new Date(parseInt(startYear), this.activeDate.getMonth(), this.activeDate.getDate());
             this.setActiveYearFocus(newDate, true);
         } else if (datePickerBody.find('table.days').length > 0) {
             this.loadDays();
@@ -672,9 +670,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const endYear = datePickerYears.last().text();
         // check for keyboard event
         if (!isMouseEvent) {
-            if (newDate.getFullYear() < _.parseInt(startYear)) {
+            if (newDate.getFullYear() < parseInt(startYear)) {
                 this.goToOtherMonthOryear('previous', 'year');
-            } else if (newDate.getFullYear() > _.parseInt(endYear)) {
+            } else if (newDate.getFullYear() > parseInt(endYear)) {
                 this.goToOtherMonthOryear('next', 'year');
             }
         }
@@ -763,7 +761,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         // WMS-19382: update minutes and seconds to 0 when we enter hour value
         inputFields.first().on('keyup', evt => {
             const hourValue = (evt.target as any).value;
-            _.forEach(inputFields, (field, index) => {
+            forEach(inputFields, (field, index) => {
+                // @ts-ignore
                 if (evt.target !== field && field.value === '' && hourValue.length) {
                     const fieldName = index === 1 ? 'minutes' : 'seconds';
                     this.updateTimeValue($el, hourValue, fieldName);
@@ -855,11 +854,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public updateFormat(pattern) {
         if (pattern === 'datepattern') {
             this._dateOptions.dateInputFormat = this.datepattern;
-            this.showseconds = _.includes(this.datepattern, 's');
-            this.ismeridian = _.includes(this.datepattern, 'h');
+            this.showseconds = includes(this.datepattern, 's');
+            this.ismeridian = includes(this.datepattern, 'h');
         } else if (pattern === 'timepattern') {
-            this.showseconds = _.includes(this.timepattern, 's');
-            this.ismeridian = _.includes(this.timepattern, 'h');
+            this.showseconds = includes(this.timepattern, 's');
+            this.ismeridian = includes(this.timepattern, 'h');
         }
     }
 
@@ -902,7 +901,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     getCordovaPluginDatePickerApi() {
         if (isIos()) {
-            return _.get(window, 'cordova.wavemaker.datePicker.selectDate');
+            return get(window, 'cordova.wavemaker.datePicker.selectDate');
         }
     }
 
@@ -910,8 +909,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * This method sets the mouse events to Datepicker popup. These events are required when we navigate date picker through mouse.
      */
     private addDatepickerMouseEvents() {
-        $(".bs-datepicker-head .previous span").attr("aria-hidden", true);
-        $(".bs-datepicker-head .next span").attr("aria-hidden", true);
+        $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
+        $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
 
         $(".bs-datepicker-head").on("click", ".previous", (event) => {
             this.next = this.getMonth(this.activeDate, 0);
@@ -924,8 +923,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             var prevMon = this.getMonth(this.activeDate, -1);
 
             setTimeout(() => {
-                $(".bs-datepicker-head .previous span").attr("aria-hidden", true);
-                $(".bs-datepicker-head .next span").attr("aria-hidden", true);
+                $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
+                $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
                 $(".bs-datepicker-head .next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
                 $(".bs-datepicker-head .previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
                 $('.bs-datepicker-head .current').first().append(`<h2 aria-hidden="false" aria-atomic="true" aria-live='polite' class="sr-only">Changed to Previous Month, ${prevMon.fullMonth} and year ${prevMon.date.getFullYear()}</h2>`);
@@ -947,8 +946,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
             var nextMon = this.getMonth(this.activeDate, 1);
             setTimeout(() => {
-                $(".bs-datepicker-head .previous span").attr("aria-hidden", true);
-                $(".bs-datepicker-head .next span").attr("aria-hidden", true);
+                $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
+                $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
                 $(".bs-datepicker-head .next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
                 $(".bs-datepicker-head .previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
                 $('.bs-datepicker-head .current').first().append(`<h2 aria-hidden="false" aria-atomic="true" aria-live='polite' class="sr-only">Changed to Next Month, ${nextMon.fullMonth} and year ${nextMon.date.getFullYear()}</h2>`);
@@ -1006,14 +1005,15 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this.minDateMaxDateValidationOnInput(this.datavalue);
         } else if (key === 'excludedates' || key === 'excludedays') {
             if (this.excludedays) {
-                this.excludedDaysToDisable = _.split(this.excludedays, ',').map((day) => {
+                this.excludedDaysToDisable = split(this.excludedays, ',').map((day) => {
                     return +day;
                 });
             }
             if (this.excludedates) {
                 this.excludedDatesToDisable = this.excludedates;
                 if (isString(this.excludedates)) {
-                    this.excludedDatesToDisable = _.split(this.excludedates, ',');
+                    // @ts-ignore
+                    this.excludedDatesToDisable = split(this.excludedates, ',');
                 }
                 this.excludedDatesToDisable = this.excludedDatesToDisable.map(d => getDateObj(d));
             }

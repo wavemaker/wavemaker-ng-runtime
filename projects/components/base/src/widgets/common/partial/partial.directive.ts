@@ -4,10 +4,10 @@ import {Viewport, ViewportEvent} from '@wm/core';
 import { StylableComponent } from '../base/stylable.component';
 import { registerProps } from './partial.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
+import {assign} from "lodash-es";
 
 const DEFAULT_CLS = 'app-partial clearfix';
 const WIDGET_CONFIG = {widgetType: 'wm-partial', hostClass: DEFAULT_CLS};
-declare const _;
 
 @Directive({
     selector: '[wmPartial]',
@@ -25,7 +25,7 @@ export class PartialDirective extends StylableComponent implements OnDestroy {
     }
 
     private callback(eventName, locals?: object) {
-        locals = _.assign({ widget: this }, locals);
+        locals = assign({widget: this}, locals);
         this.invokeEventCallback(eventName, locals);
     }
 

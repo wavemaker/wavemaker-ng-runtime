@@ -54,8 +54,10 @@ import {PageModule} from "@wm/mobile/components/page";
 import {LeftPanelModule} from "@wm/mobile/components/page/left-panel";
 import {MobileNavbarModule} from "@wm/mobile/components/page/mobile-navbar";
 import {TabBarModule} from "@wm/mobile/components/page/tab-bar";
+import {keys} from "lodash-es";
 
-declare const $, navigator, _, cordova;
+declare const $;
+declare const navigator, cordova;
 
 export const MAX_WAIT_TIME_4_OAUTH_MESSAGE = 60000;
 
@@ -224,7 +226,7 @@ export class MobileRuntimeModule {
     }
 
     public applyOSTheme(os) {
-        let oldStyleSheet = $('link[theme="wmtheme"][href ^="themes"][href $="/style.css"]').first();
+        let oldStyleSheet: any = $('link[theme="wmtheme"][href ^="themes"][href $="/style.css"]').first();
         if (oldStyleSheet.length) {
             const themeUrl = oldStyleSheet.attr('href').replace(new RegExp('/[a-z]*/style.css$'), `/${os.toLowerCase()}/style.css`),
                 newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
@@ -240,7 +242,7 @@ export class MobileRuntimeModule {
         const removeTheme = os.toLowerCase() === 'android' ? 'wm-ios-styles' : 'wm-android-styles';
         let isDevBuild;
         const useTheme = 'wm-' + os.toLowerCase() + '-styles';
-        let unusedStyleSheet = $('link[href *=' + removeTheme + ']').first();
+        let unusedStyleSheet: any = $('link[href *=' + removeTheme + ']').first();
         if (!unusedStyleSheet.length) {
             isDevBuild = true;
             unusedStyleSheet = $('script[src *=' + removeTheme + ']').first();
@@ -314,7 +316,7 @@ export class MobileRuntimeModule {
                     isAuthenticating = false;
                     return this.cookieService.clearAll()
                         .then(() => {
-                            const  promises = _.keys(output).map(k => {
+                            const promises = keys(output).map(k => {
                                 return this.cookieService.setCookie(this.app.deployedUrl, k, output[k]);
                             });
                             return Promise.all(promises);

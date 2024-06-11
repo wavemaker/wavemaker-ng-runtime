@@ -5,8 +5,6 @@ import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent
 import { registerProps } from './segment-content.props';
 import { SegmentedControlComponent } from '../segmented-control.component';
 
-declare const _;
-
 const DEFAULT_CLS = 'app-segment-content clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segment-content', hostClass: DEFAULT_CLS};
 

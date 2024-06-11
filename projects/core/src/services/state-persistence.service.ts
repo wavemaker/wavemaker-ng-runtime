@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-
-declare const _;
+import {clone, get, includes, isArray, isEmpty, isObject, merge} from "lodash-es";
 
 @Injectable({ providedIn: 'root' })
 export class StatePersistence {
@@ -84,7 +83,7 @@ export class StatePersistence {
         if (parsedStateInfo && widget  && widget.getAppInstance().activePageName && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
             parsedStateInfo = parsedStateInfo[widget.getAppInstance().activePageName];
         }
-        if (_.get(parsedStateInfo, this.WIDGET_STATE_KEY)) {
+        if (get(parsedStateInfo, this.WIDGET_STATE_KEY)) {
             const stateKey = this.getNestedPath(widget.viewParent, widget.getWidget().name);
             return parsedStateInfo[this.WIDGET_STATE_KEY][stateKey];
         }
@@ -241,7 +240,7 @@ export class StatePersistence {
         if (widget && stateObj && widget.getAppInstance().activePageName && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
             parsedObj = stateObj[widget.getAppInstance().activePageName];
         } else {
-            parsedObj = _.clone(stateObj);
+            parsedObj = clone(stateObj);
         }
         if (stateParam) {
             if (parsedObj && !parsedObj[stateParam]) {
@@ -249,9 +248,9 @@ export class StatePersistence {
             } else if (!parsedObj) {
                 parsedObj = {[stateParam]: {}};
             }
-            if (_.isObject(val) && !_.isArray(val)) {
+            if (isObject(val) && !isArray(val)) {
                 parsedObj[stateParam][key] = parsedObj[stateParam][key] || {};
-                _.merge(parsedObj[stateParam][key], val);
+                merge(parsedObj[stateParam][key], val);
             } else {
                 parsedObj[stateParam][key] = val;
             }
@@ -261,9 +260,9 @@ export class StatePersistence {
             } else if (!parsedObj) {
                 parsedObj = {[key]: {}};
             }
-            if (_.isObject(val) && !_.isArray(val)) {
+            if (isObject(val) && !isArray(val)) {
                 parsedObj[key] = parsedObj[key] || {};
-                _.merge(parsedObj[key], val);
+                merge(parsedObj[key], val);
             } else {
                 parsedObj[key] = val;
             }
@@ -350,26 +349,26 @@ export class StatePersistence {
         if (widget && stateObj && widget.getAppInstance().activePageName && (mode.toLowerCase() === 'localstorage' || mode.toLowerCase() === 'sessionstorage')) {
             parsedObj = stateObj[widget.getAppInstance().activePageName];
         } else {
-            parsedObj = _.clone(stateObj);
+            parsedObj = clone(stateObj);
         }
-        if (!_.get(parsedObj, [stateParam]) && !_.get(parsedObj, key)) {
+        if (!get(parsedObj, [stateParam]) && !get(parsedObj, key)) {
             return;
         }
         // Fix for [WMS-24698]: when table is inside a prefab, state persistence key is like "TestLabel_11.TestLabel_1.staticVariable1Table1"
-        // _.get(parsedObj, stateParam + '.' + key) is undefined so using (parsedObj && parsedObj[stateParam] && parsedObj[stateParam][key]) condition.
-        if (_.get(parsedObj, stateParam + '.' + key) || (parsedObj && parsedObj[stateParam] && parsedObj[stateParam][key])) {
+        // get(parsedObj, stateParam + '.' + key) is undefined so using (parsedObj && parsedObj[stateParam] && parsedObj[stateParam][key]) condition.
+        if (get(parsedObj, stateParam + '.' + key) || (parsedObj && parsedObj[stateParam] && parsedObj[stateParam][key])) {
             if (subParam) {
                 delete parsedObj[stateParam][key][subParam];
             } else {
                 delete parsedObj[stateParam][key];
             }
-            if (_.isEmpty(parsedObj[stateParam][key])) {
+            if (isEmpty(parsedObj[stateParam][key])) {
                 delete parsedObj[stateParam][key];
             }
-            if (_.isEmpty(parsedObj[stateParam])) {
+            if (isEmpty(parsedObj[stateParam])) {
                 delete parsedObj[stateParam];
             }
-        } else if (!stateParam && _.get(parsedObj, key)) {
+        } else if (!stateParam && get(parsedObj, key)) {
             delete parsedObj[key];
         }
 
@@ -392,9 +391,9 @@ export class StatePersistence {
         }
 
         const decodedURI = decodeURIComponent(window.location.href);
-        if (_.isEmpty(parsedObj)) {
+        if (isEmpty(parsedObj)) {
             url = decodedURI.replace(/(wm_state=).*?(&|$)/ ,'' + '$2');
-            if (_.includes(['&', '?'], url.charAt(url.length - 1))) {
+            if (includes(['&', '?'], url.charAt(url.length - 1))) {
                 url = url.replace(url.charAt(url.length - 1), '');
             }
         } else {

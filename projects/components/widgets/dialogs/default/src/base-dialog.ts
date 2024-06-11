@@ -1,4 +1,4 @@
-import {Inject, Injectable, Injector, OnDestroy, TemplateRef} from '@angular/core';
+import {Inject, Injectable, Injector, OnDestroy, Optional, TemplateRef} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 import {BsModalRef, BsModalService, ModalOptions} from 'ngx-bootstrap/modal';
 
@@ -8,8 +8,6 @@ import {AbstractDialogService, findRootContainer, generateGUId, isMobile, isMobi
 
 import {BaseComponent, IDialog, IWidgetConfig, WidgetConfig} from '@wm/components/base';
 import {createFocusTrap} from '@wavemaker/focus-trap';
-
-declare const _;
 
 const eventsRegistered = false;
 

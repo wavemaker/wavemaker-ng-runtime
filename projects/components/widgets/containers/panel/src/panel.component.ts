@@ -14,9 +14,9 @@ import {$appDigest, noop, removeAttr, setCSS, toggleClass} from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, styler } from '@wm/components/base';
 import { MenuAdapterComponent } from '@wm/components/navigation/menu';
 import { registerProps } from './panel.props';
+import {omit} from "lodash-es";
 
 const DEFAULT_CLS = 'app-panel panel';
-declare const _;
 const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-panel', hostClass: DEFAULT_CLS };
 
 @Component({
@@ -41,7 +41,7 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
     public title: string;
     public subheading: string;
     public actions: any;
-    public selectedAction: string;
+    public selectedAction: any;
 
     public helpClass = '';
     public helptext = '';
@@ -120,7 +120,7 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
 
     // On action item click
     protected menuActionItemClick($event, $item) {
-        this.selectedAction = _.omit($item, ['children', 'value']);
+        this.selectedAction = omit($item, ['children', 'value']);
         this.invokeEventCallback('actionsclick', { $event, $item: this.selectedAction });
     }
 

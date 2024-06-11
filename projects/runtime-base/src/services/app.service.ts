@@ -12,7 +12,6 @@ import {
     FieldWidgetService,
     getWmProjectProperties,
     isDefined,
-    isString,
     ConstantService,
     UtilsService,
     DynamicComponentRefProvider,
@@ -24,8 +23,7 @@ import { SecurityService } from '@wm/security';
 
 import { WmDefaultRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
 import { PipeService } from "./pipe.service";
-
-declare const _;
+import {each, get, isEmpty, isString} from "lodash-es";
 
 const injectorMap = {
     DialogService: AbstractDialogService,
@@ -160,9 +158,9 @@ export class AppRef {
      * triggers the onSessionTimeout callback in app.js
      */
     on401() {
-        const userInfo = _.get(this.securityService.get(), 'userInfo');
+        const userInfo = get(this.securityService.get(), 'userInfo');
         // if a previous user exists, a session time out triggered
-        if (!_.isEmpty(userInfo)) {
+        if (!isEmpty(userInfo)) {
             this.onSessionTimeout();
         }
     }
@@ -172,7 +170,7 @@ export class AppRef {
     }
 
     public notifyApp(template, type, title) {
-        const notificationAction = _.get(this, 'Actions.appNotification');
+        const notificationAction = get(this, 'Actions.appNotification');
         const EXCLUDE_NOTIFICATION_MESSAGES = ['PROCESS_REJECTED_IN_QUEUE'];
         const skipDefaultNotification = EXCLUDE_NOTIFICATION_MESSAGES.indexOf(template) !== -1;
         if (notificationAction) {
@@ -201,7 +199,7 @@ export class AppRef {
      * @param expressions, map of bind expression vs generated function
      */
     public registerExpressions(expressions) {
-        _.each(expressions, (fn, expr)=>{
+        each(expressions, (fn, expr) => {
             registerFnByExpr(expr, fn[0], fn[1]);
         });
     }

@@ -20,6 +20,7 @@ import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
 import { validateTheMaskedDate } from './imaskUtil';
 import { IMaskDirective } from 'angular-imask';
+import {includes, isNaN, parseInt} from "lodash-es";
 
 declare const _, $;
 
@@ -219,7 +220,7 @@ export class DateComponent extends BaseDateTimeComponent {
 
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
-        if (!_.includes(['blur', 'focus', 'change', 'click'], eventName)) {
+        if (!includes(['blur', 'focus', 'change', 'click'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
     }
@@ -271,7 +272,7 @@ export class DateComponent extends BaseDateTimeComponent {
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
-                    if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                    if (!isNaN(inputVal) && parseInt(inputVal) !== formattedDate) {
                         this.invalidDateTimeFormat = true;
                         this.invokeOnChange(this.datavalue, event, false);
                     }

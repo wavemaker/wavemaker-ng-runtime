@@ -4,8 +4,6 @@ import { ActivatedRouteSnapshot } from '@angular/router';
 import { App } from '@wm/core';
 import { AppManagerService } from '../services/app.manager.service';
 
-declare const _: any;
-
 @Injectable()
 export class PageNotFoundGuard {
 

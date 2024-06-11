@@ -4,7 +4,17 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 
-import { DataType, DEFAULT_FORMATS, executePromiseChain, extractType, isAndroid, isArray, isIos, noop, toPromise, transformFileURI } from '@wm/core';
+import {
+    DataType,
+    DEFAULT_FORMATS,
+    executePromiseChain,
+    extractType,
+    isAndroid,
+    isIos,
+    noop,
+    toPromise,
+    transformFileURI
+} from '@wm/core';
 import { DeviceFileService, DeviceService } from '@wm/mobile/core';
 import { SecurityService } from '@wm/security';
 import { formatDate } from '@wm/variables';
@@ -13,10 +23,23 @@ import { LocalKeyValueService } from './local-key-value.service';
 import { LocalDBStore } from '../models/local-db-store';
 import { escapeName } from '../utils/utils';
 import { ColumnInfo, DBInfo, EntityInfo, NamedQueryInfo, PullType } from '../models/config';
-
-declare const _;
-declare const cordova;
+import {
+    chain,
+    find,
+    forEach,
+    isEmpty,
+    isUndefined,
+    map,
+    now,
+    parseInt,
+    replace,
+    toUpper,
+    toString,
+    values,
+    isArray, assignIn
+} from "lodash-es";
 declare const moment;
+declare const cordova;
 declare const Zeep;
 
 const  NEXT_ID_COUNT = 'localDBStore.nextIdCount';
@@ -133,7 +156,8 @@ export class LocalDBManagementService {
         return new Promise((resolve, reject) => {
             // Before closing databases, give some time for the pending transactions (if any).
             setTimeout(() => {
-                const closePromises = _.map(_.values(this.databases), db => db.sqliteObject.close());
+                // @ts-ignore
+                const closePromises = map(values(this.databases), db => db.sqliteObject.close());
                 Promise.all(closePromises).then(resolve, reject);
             }, 1000);
         });
@@ -159,14 +183,14 @@ export class LocalDBManagementService {
             return Promise.reject(`Query by name ' ${queryName} ' Not Found`);
         }
         queryData = this.databases[dbName].queries[queryName];
-        paramPromises = _.chain(queryData.params)
+        paramPromises = chain(queryData.params)
             .filter(p => p.variableType !== 'PROMPT')
             .forEach(p => {
                 const paramValue = this.systemProperties[p.variableType].value(p.name, params);
                 return toPromise(paramValue).then(v => params[p.name] = v);
             }).value();
         return Promise.all(paramPromises).then(() => {
-            params = _.map(queryData.params, p => {
+            params = map(queryData.params, p => {
                 // Sqlite will accept DateTime value as below format.
                 if (typeof params[p.name] !== 'string'
                     && (p.type === DataType.DATETIME || p.type === DataType.LOCALDATETIME)) {
@@ -182,19 +206,19 @@ export class LocalDBManagementService {
                 .then(result => {
                     let firstRow,
                         needTransform;
-                    if (!_.isEmpty(result.rows)) {
+                    if (!isEmpty(result.rows)) {
                         firstRow = result.rows[0];
-                        needTransform = _.find(queryData.response.properties, p => !firstRow.hasOwnProperty(p.fieldName));
-                        if (!_.isUndefined(needTransform)) {
-                            result.rows = _.map(result.rows, row => {
+                        needTransform = find(queryData.response.properties, p => !firstRow.hasOwnProperty(p.fieldName));
+                        if (!isUndefined(needTransform)) {
+                            result.rows = map(result.rows, row => {
                                 const transformedRow = {},
                                     rowWithUpperKeys = {};
                                 // This is to make search for data as case-insensitive
-                                _.forEach(row, (v, k) => rowWithUpperKeys[k.toUpperCase()] = v);
-                                _.forEach(queryData.response.properties, p => {
+                                forEach(row, (v, k) => rowWithUpperKeys[k.toUpperCase()] = v);
+                                forEach(queryData.response.properties, p => {
                                     // format the value depending on the typeRef specified in properties.
                                     const propType = extractType(p.fieldType.typeRef);
-                                    const formatValue = DEFAULT_FORMATS[_.toUpper(propType)];
+                                    const formatValue = DEFAULT_FORMATS[toUpper(propType)];
                                     const fieldVal = row[p.name];
                                     if (fieldVal && typeof fieldVal !== 'string'
                                         && (propType === DataType.DATETIME || propType === DataType.LOCALDATETIME || propType === DataType.DATE)) {
@@ -228,7 +252,7 @@ export class LocalDBManagementService {
      */
     public exportDB(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            const folderToExport = 'offline_temp_' + _.now(),
+            const folderToExport = 'offline_temp_' + now(),
                 folderToExportFullPath = cordova.file.cacheDirectory + folderToExport + '/',
                 zipFileName = '_offline_data.zip',
                 metaInfo = {
@@ -259,7 +283,7 @@ export class LocalDBManagementService {
                             } else if (isAndroid()) {
                                 metaInfo.OS = 'ANDROID';
                             }
-                            metaInfo.createdOn = _.now();
+                            metaInfo.createdOn = now();
                             return metaInfo;
                         }).then(() => executePromiseChain(this.getCallbacksFor('preExport'), [folderToExportFullPath, metaInfo]))
                         .then(() => {
@@ -314,7 +338,7 @@ export class LocalDBManagementService {
      */
     public importDB(zipPath: string, revertIfFails: boolean): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const importFolder = 'offline_temp_' + _.now(),
+            const importFolder = 'offline_temp_' + now(),
                 importFolderFullPath = cordova.file.cacheDirectory + importFolder + '/';
             let zipMeta;
             // Create a temporary folder to unzip the contents of the zip.
@@ -436,7 +460,7 @@ export class LocalDBManagementService {
                 .then(metadata => this.loadNamedQueries(metadata))
                 .then(metadata => this.loadOfflineConfig(metadata))
                 .then(metadata => {
-                    return Promise.all(_.map(metadata, dbMetadata => {
+                    return Promise.all(map(metadata, dbMetadata => {
                         return this.openDatabase(dbMetadata)
                             .then(database => {
                                 this.databases[dbMetadata.schema.name] = database;
@@ -455,9 +479,9 @@ export class LocalDBManagementService {
                             .then(() => this.disableForeignKeys())
                             .then(() => this.deviceService.getAppBuildTime())
                             .then(dbSeedCreationTime => {
-                                return executePromiseChain(_.map(this.callbacks, 'onDbCreate'), [{
+                                return executePromiseChain(map(this.callbacks, 'onDbCreate'), [{
                                     'databases' : this.databases,
-                                    'dbCreatedOn' : _.now(),
+                                    'dbCreatedOn': now(),
                                     'dbSeedCreatedOn' : dbSeedCreationTime
                                 }]);
                             }).then(() => this.databases);
@@ -523,11 +547,11 @@ export class LocalDBManagementService {
             let defaultValue = col.columnValue ? col.columnValue.defaultValue : '';
             const type = col.sqlType;
             if (type === 'number' && !col.primaryKey) {
-                defaultValue = _.isEmpty(defaultValue) ? null : _.parseInt(defaultValue);
+                defaultValue = isEmpty(defaultValue) ? null : parseInt(defaultValue);
             } else if (type === 'boolean') {
-                defaultValue = _.isEmpty(defaultValue) ? null : (defaultValue === 'true' ? 1 : 0);
+                defaultValue = isEmpty(defaultValue) ? null : (defaultValue === 'true' ? 1 : 0);
             } else {
-                defaultValue = _.isEmpty(defaultValue) ? null : defaultValue;
+                defaultValue = isEmpty(defaultValue) ? null : defaultValue;
             }
             reqEntity.columns.push({
                 name: col['name'],
@@ -539,10 +563,10 @@ export class LocalDBManagementService {
             });
         });
 
-        _.forEach(entity.relations, r => {
+        forEach(entity.relations, r => {
             let targetEntitySchema, targetEntity, col, sourceColumn, mapping;
             if (r.cardinality === 'ManyToOne' || r.cardinality === 'OneToOne') {
-                targetEntity = _.find(schema.tables, t => t.name === r.targetTable);
+                targetEntity = find(schema.tables, t => t.name === r.targetTable);
                 mapping = r.mappings[0];
                 if (targetEntity) {
                     targetEntity = targetEntity.entityName;
@@ -559,7 +583,8 @@ export class LocalDBManagementService {
                         targetFieldName: targetEntitySchema.columns.find(column => column.name === mapping.targetColumn).fieldName
                     };
                     foreignRelation.targetPath = foreignRelation.sourceFieldName + '.' + foreignRelation.targetFieldName;
-                    foreignRelation.dataMapper = _.chain(targetEntitySchema.columns)
+                    // @ts-ignore
+                    foreignRelation.dataMapper = chain(targetEntitySchema.columns)
                         .keyBy(childCol => foreignRelation.sourceFieldName + '.' + childCol.fieldName)
                         .mapValues(childCol => new ColumnInfo(childCol.name, childCol.fieldName)).value();
                     col.foreignRelations = col.foreignRelations || [];
@@ -574,25 +599,25 @@ export class LocalDBManagementService {
     private compactQueries(queriesByDB): Map<string, NamedQueryInfo> {
         const queries = new Map<string, NamedQueryInfo>();
 
-        _.forEach(queriesByDB.queries, queryData => {
+        forEach(queriesByDB.queries, queryData => {
             let query, params;
             if (queryData.nativeSql && queryData.type === 'SELECT') {
-                query = _.isEmpty(queryData.offlineQueryString) ? queryData.queryString : queryData.offlineQueryString;
-                params = _.map(this.extractQueryParams(query), p => {
-                    const paramObj = _.find(queryData.parameters, {'name': p});
+                query = isEmpty(queryData.offlineQueryString) ? queryData.queryString : queryData.offlineQueryString;
+                params = map(this.extractQueryParams(query), p => {
+                    const paramObj = find(queryData.parameters, {'name': p});
                     return {
                         name: paramObj.name,
                         type: paramObj.type,
                         variableType: paramObj.variableType
                     };
                 });
-                params.forEach(p => query = _.replace(query, ':' + p.name, '?'));
+                params.forEach(p => query = replace(query, ':' + p.name, '?'));
                 queries[queryData.name] = {
                     name: queryData.name,
                     query: query,
                     params: params,
                     response: {
-                        properties: _.map(queryData.response.properties, p => {
+                        properties: map(queryData.response.properties, p => {
                             p.nameInUpperCase = p.name.toUpperCase();
                             return p;
                         })
@@ -620,7 +645,7 @@ export class LocalDBManagementService {
     }
 
     private convertBoolToInt(bool: boolean) {
-        return _.toString(bool) === 'true' ? 1 : 0;
+        return toString(bool) === 'true' ? 1 : 0;
     }
 
     private convertIntToBool(int: number) {
@@ -632,9 +657,8 @@ export class LocalDBManagementService {
      * @returns {*}
      */
     private disableForeignKeys() {
-        return Promise.all(_.map(this.databases, db =>
-            this.executeSQLQuery(db.schema.name, 'PRAGMA foreign_keys = OFF')
-        ));
+        // @ts-ignore
+        return Promise.all(map(this.databases, db => this.executeSQLQuery(db.schema.name, 'PRAGMA foreign_keys = OFF')));
     }
 
     /**
@@ -722,7 +746,7 @@ export class LocalDBManagementService {
     private getMetaInfo(fileNameRegex: RegExp) {
         const folder = cordova.file.applicationDirectory + META_LOCATION + '/';
         return this.deviceFileService.listFiles(folder, fileNameRegex)
-            .then(files => Promise.all(_.map(files, f => {
+            .then(files => Promise.all(map(files, f => {
                     return new Promise((resolve, reject) => {
                         // Cordova File reader has buffer issues with large files.
                         // so, using ajax to retrieve local json
@@ -772,7 +796,7 @@ export class LocalDBManagementService {
     private loadNamedQueries(metadata) {
         return this.getMetaInfo(/.+_query\.json$/)
             .then((queriesByDBs: any) => {
-                queriesByDBs = _.isArray(queriesByDBs) ? queriesByDBs : [queriesByDBs];
+                queriesByDBs = isArray(queriesByDBs) ? queriesByDBs : [queriesByDBs];
                 queriesByDBs.map(e => metadata[e.name].queries = this.compactQueries(e));
                 return metadata;
             });
@@ -787,10 +811,12 @@ export class LocalDBManagementService {
     private loadOfflineConfig(metadata) {
         return this.getMetaInfo(/.+_offline\.json$/)
             .then(configs => {
-                _.forEach(configs, config => {
-                    _.forEach(config.entities, entityConfig => {
-                        const entitySchema = _.find(metadata[config.name].schema.entities, schema => schema.name === entityConfig.name);
-                        _.assignIn(entitySchema, entityConfig);
+                forEach(configs, config => {
+                    // @ts-ignore
+                    forEach(config.entities, entityConfig => {
+                        // @ts-ignore
+                        const entitySchema = find(metadata[config.name].schema.entities, schema => schema.name === entityConfig.name);
+                        assignIn(entitySchema, entityConfig);
                     });
                 });
                 return metadata;
@@ -801,7 +827,7 @@ export class LocalDBManagementService {
         const logger = console,
             originalExecuteSql = sqliteObject.executeSql;
         sqliteObject.executeSql = (sql, params, logOutput?: boolean) => {
-            const startTime = _.now();
+            const startTime = now();
             return originalExecuteSql.call(sqliteObject, sql, params).then(result => {
                 if (logOutput || this._logSql) {
                     const objArr = [],
@@ -809,7 +835,7 @@ export class LocalDBManagementService {
                     for (let i = 0; i < rowCount; i++) {
                         objArr.push(result.rows.item(i));
                     }
-                    logger.debug('SQL "%s"  with params %O took [%d ms]. And the result is %O', sql, params, _.now() - startTime, objArr);
+                    logger.debug('SQL "%s"  with params %O took [%d ms]. And the result is %O', sql, params, now() - startTime, objArr);
                 }
                 return result;
             }, error => {
@@ -840,10 +866,12 @@ export class LocalDBManagementService {
      * @returns {*}
      */
     private normalizeData() {
-        return Promise.all(_.map(this.databases, database => {
-            return Promise.all(_.map(database.schema.entities, entitySchema => {
-                return Promise.all(_.map(entitySchema.columns, column => {
+        return Promise.all(map(this.databases, database => {
+            // @ts-ignore
+            return Promise.all(map(database.schema.entities, entitySchema => {
+                return Promise.all(map(entitySchema.columns, column => {
                     if (column.sqlType === 'boolean') {
+                        // @ts-ignore
                         return this.normalizeBooleanData(database.schema.name, entitySchema.name, column.name);
                     }
                 }));
@@ -858,9 +886,9 @@ export class LocalDBManagementService {
         }).then(sqliteObject => {
             database.sqliteObject = sqliteObject;
             this.logSql(sqliteObject);
-            const storePromises = _.map(database.schema.entities, entitySchema => {
-                const store = new LocalDBStore(this.deviceFileService,
-                    entitySchema,
+            const storePromises = map(database.schema.entities, entitySchema => {
+                // @ts-ignore
+                const store = new LocalDBStore(this.deviceFileService, entitySchema,
                     this.file,
                     this,
                     sqliteObject
@@ -868,7 +896,7 @@ export class LocalDBManagementService {
                 return store.create();
             });
             return Promise.all(storePromises).then(stores => {
-                _.forEach(stores, store => {
+                forEach(stores, store => {
                     database.stores[store.entitySchema.entityName] = store;
                 });
                 return database;

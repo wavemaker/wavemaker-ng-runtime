@@ -6,8 +6,9 @@ import { DataSetItem, provideAs, provideAsWidgetRef, styler } from '@wm/componen
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from './switch.props';
+import {find, findIndex} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 const DEFAULT_CLS = 'app-switch';
 const WIDGET_CONFIG = {widgetType: 'wm-switch', hostClass: DEFAULT_CLS};
@@ -71,7 +72,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     // This function sets the selectedItem by either using compareby fields or selected flag on datasetItems.
     private setSelectedValue() {
         if (isDefined(this.datavalue) || isDefined(this.toBeProcessedDatavalue)) {
-            this.selectedItem = _.find(this.datasetItems, {selected: true});
+            this.selectedItem = find(this.datasetItems, {selected: true});
             return;
         }
 
@@ -97,7 +98,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         this.setSelectedValue();
 
         let left,
-            index = this.selectedItem ? _.findIndex(this.datasetItems, {key: this.selectedItem.key}) : -1;
+            index = this.selectedItem ? findIndex(this.datasetItems, {key: this.selectedItem.key}) : -1;
 
         if (index === undefined || index === null) {
             index = -1;
@@ -132,7 +133,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         this.modelByKey = option.key;
         this.invokeOnTouched();
 
-        if (this.selectedItem && $index === _.findIndex(this.datasetItems, {key: this.selectedItem.key})) {
+        if (this.selectedItem && $index === findIndex(this.datasetItems, {key: this.selectedItem.key})) {
             if (this.datasetItems.length === 2) {
                 $index = $index === 1 ? 0 : 1;
             } else {

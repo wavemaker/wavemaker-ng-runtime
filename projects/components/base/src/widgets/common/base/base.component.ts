@@ -41,28 +41,29 @@ import {widgetIdGenerator} from '../../framework/widget-id-generator';
 import {DISPLAY_TYPE, EVENTS_MAP} from '../../framework/constants';
 import {WidgetProxyProvider} from '../../framework/widget-proxy-provider';
 import {getWatchIdentifier} from '../../../utils/widget-utils';
+import {camelCase, forEach, isArray, isObject, join, map, extend} from "lodash-es";
 
-declare const $, _;
+declare const $;
 
 // Gets list of classes to add and remove and applies on the $el
 const updateClasses = (toAdd, toRemove, el) => {
     if (toRemove && toRemove.length) {
-        removeClass(el, _.join(toRemove, ' '));
+        removeClass(el, join(toRemove, ' '));
     }
     if (toAdd && toAdd.length) {
-        addClass(el, _.join(toAdd, ' '));
+        addClass(el, join(toAdd, ' '));
     }
 };
 
 // To add and remove styles on the $el
 const updateStyles = (nv, ov, el) => {
-    if (ov && _.isObject(ov)) {
+    if (ov && isObject(ov)) {
         const keys = Object.keys(ov || {});
         keys.forEach(function(key) {
             setCSS(el, key, '');
         });
     }
-    if (nv && _.isObject(nv)) {
+    if (nv && isObject(nv)) {
         setCSSFromObj(el, nv);
     }
 
@@ -272,7 +273,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             });
         }
         if(explicitContext) {
-            _.extend(this.context, explicitContext);
+            extend(this.context, explicitContext);
         }
     }
 
@@ -363,8 +364,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
         if (parentContexts) {
             let parentContextObj = {};
-            if (_.isArray(parentContexts)) {
-                _.forEach(parentContexts, (contextObj) => {
+            if (isArray(parentContexts)) {
+                forEach(parentContexts, (contextObj) => {
                     Object.assign(parentContextObj, contextObj);
                 });
             } else {
@@ -526,7 +527,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
         // prepend eventName with on and convert it to camelcase.
         // eg, "click" ---> onClick
-        const onEventName =  _.camelCase(`on-${eventName}`);
+        const onEventName = camelCase(`on-${eventName}`);
         // save the eventCallback in widgetScope.
         this[onEventName] = eventCallback;
 
@@ -624,7 +625,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         if(_tNodeAttrs === null) {
             return actualAttrs.sort();
         }
-        _.forEach(_tNodeAttrs, (attr, i) => {
+        forEach(_tNodeAttrs, (attr, i: any) => {
             if (typeof attr === 'number') {
                 return false;
             }
@@ -651,7 +652,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Process the attributes
      */
     private processAttrs() {
-        _.map(this.getAttributes(), (attrName: string) => {
+        map(this.getAttributes(), (attrName: string) => {
             let attrValue = this.nativeElement.attributes[attrName].value
             this.$attrs.set(attrName, attrValue);
             this.processAttr(attrName, attrValue);

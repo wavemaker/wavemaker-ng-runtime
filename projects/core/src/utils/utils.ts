@@ -7,12 +7,25 @@ import {DataType} from '../enums/enums';
 import {DataSource} from '../types/types';
 import {setAttr} from './dom';
 import {$parseEvent} from './expression-parser';
+import {
+    attempt,
+    camelCase, cloneDeep, every,
+    filter, forEach, get, identity,
+    includes, indexOf, intersection, isArray, isDate,
+    isEqual, isEqualWith, isError,
+    isFunction,
+    isNull,
+    isNumber, isString,
+    isUndefined, keys, map, noop as _noop, omit, replace as _replace,
+    split,
+    startsWith, toLower, toUpper, trim
+} from "lodash-es";
 
-declare const _, X2JS;
+declare const $;
+declare const X2JS;
 declare const moment;
 declare const document;
 declare const resolveLocalFileSystemURL;
-declare const $;
 declare const WM_CUSTOM_FORMATTERS;
 declare const MSCSSMatrix;
 declare const _WM_APP_PROPERTIES;
@@ -147,12 +160,12 @@ export const encodeUrlParams = (url: string): string => {
             queryParams = queryParamsString.split('&');
             queryParams.forEach(function (param) {
                 let decodedParamValue;
-                const i = _.includes(param, '=') ? param.indexOf('=') : (param && param.length),
+                const i = includes(param, '=') ? param.indexOf('=') : (param && param.length),
                     paramName = param.substr(0, i),
                     paramValue = param.substr(i + 1);
 
                 // add the = for param name only when the param value exists in the given param or empty value is assigned
-                if (paramValue || _.includes(param, '=')) {
+                if (paramValue || includes(param, '=')) {
                     try {
                         decodedParamValue = decodeURIComponent(paramValue);
                     } catch (e) {
@@ -203,7 +216,7 @@ export const periodSeparate = name => {
 };
 
 export const prettifyLabel = label => {
-    label = _.camelCase(label);
+    label = camelCase(label);
     /*capitalize the initial Letter*/
     label = initCaps(label);
     /*Convert camel case words to separated words*/
@@ -221,12 +234,12 @@ export const deHyphenate = (name) => {
 export const prettifyLabels = (names, separator = ',') => {
     let modifiedNames, namesArray = [];
 
-    if (!_.isArray(names)) {
-        namesArray = _.split(names, separator);
+    if (!isArray(names)) {
+        namesArray = split(names, separator);
     }
 
-    modifiedNames = _.map(namesArray, prettifyLabel);
-    if (_.isArray(names)) {
+    modifiedNames = map(namesArray, prettifyLabel);
+    if (isArray(names)) {
         return modifiedNames;
     }
     return modifiedNames.join(separator);
@@ -277,7 +290,7 @@ export const getEvaluatedExprValue = (object, expression) => {
      * $eval is used, as expression can be in format of field1 + ' ' + field2
      * $eval can fail, if expression is not in correct format, so attempt the eval function
      */
-    val = _.attempt(function () {
+    val = attempt(function () {
 
         const argsExpr = Object.keys(object).map((fieldName) => {
             return `var ${fieldName} = data['${fieldName}'];`;
@@ -289,8 +302,8 @@ export const getEvaluatedExprValue = (object, expression) => {
      * $eval fails if field expression has spaces. Ex: 'field name' or 'field@name'
      * As a fallback, get value directly from object or scope
      */
-    if (_.isError(val)) {
-        val = _.get(object, expression);
+    if (isError(val)) {
+        val = get(object, expression);
     }
     return val;
 };
@@ -333,7 +346,7 @@ export function triggerFn(fn, ...argmnts) {
         args[start - 1] = arguments[start];
     }
 
-    if (_.isFunction(fn)) {
+    if (isFunction(fn)) {
         return fn.apply(null, args);
     }
 }
@@ -385,13 +398,13 @@ export const getDateObj = (value, options?, timezone?): Date => {
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
         // Fix for WMS-19601, invalid date is returned on date selection.
-        const isNativePicker = (options && options.hasOwnProperty('isNativePicker')) ? _.get(options, 'isNativePicker') : isMobile();
+        const isNativePicker = (options && options.hasOwnProperty('isNativePicker')) ? get(options, 'isNativePicker') : isMobile();
         const pattern =  isNativePicker ? 'YYYY/MM/DD HH:mm:ss' : momentPattern(options.pattern);
         value = moment(value, pattern).toDate();
     }
 
     /*if the value is a date object, no need to covert it*/
-    if (_.isDate(value)) {
+    if (isDate(value)) {
         return value;
     }
 
@@ -410,7 +423,7 @@ export const getDateObj = (value, options?, timezone?): Date => {
      * This is because it returns UTC time i.e. Coordinated Universal Time (UTC).
      * To create date in local time use moment
      */
-    if (_.isString(value)) {
+    if (isString(value)) {
         /*
          * If selected locale is Arabic, moment(value).format() is giving date in Arabic language
          * (Ex: If date value is "1990-11-23" and moment(value).format() is "١٩٩٠-١١-٢٣T٠٠:٠٠:٠٠+٠٥:٣٠")
@@ -457,12 +470,12 @@ export const addEventListenerOnElement = (_element: Element, excludeElement: Ele
  * @returns a clone of the passed object
  */
 export const getClonedObject = (object) => {
-    return _.cloneDeep(object);
+    return cloneDeep(object);
 };
 
 export const getFiles = (formName, fieldName, isList) => {
-    const files = _.get(document.forms, [formName, fieldName, 'files']);
-    return isList ? _.map(files, _.identity) : files && files[0];
+    const files = get(document.forms, [formName, fieldName, 'files']);
+    return isList ? map(files, identity) : files && files[0];
 };
 
 /*Function to generate a random number*/
@@ -485,7 +498,7 @@ export const validateAccessRoles = (roleExp, loggedInUser) => {
 
         roles = roleExp && roleExp.split(',').map(Function.prototype.call, String.prototype.trim);
 
-        return _.intersection(roles, loggedInUser.userRoles).length;
+        return intersection(roles, loggedInUser.userRoles).length;
     }
 
     return true;
@@ -509,7 +522,7 @@ export const xmlToJson = (xmlString) => {
     const x2jsObj = new X2JS({ 'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false });
     let json = x2jsObj.xml2js(xmlString);
     if (json) {
-        json = _.get(json, Object.keys(json)[0]);
+        json = get(json, Object.keys(json)[0]);
     }
     return json;
 };
@@ -546,7 +559,7 @@ export const findValueOf = (obj, key, create?) => {
     }
 
     if (!create) {
-        return _.get(obj, key);
+        return get(obj, key);
     }
 
     const parts = key.split('.'),
@@ -611,7 +624,7 @@ export const isNumberType = (type: any): boolean => {
 
 /* function to check if provided object is empty*/
 export const isEmptyObject = (obj: any): boolean => {
-    if (isObject(obj) && !_.isArray(obj)) {
+    if (isObject(obj) && !isArray(obj)) {
         return Object.keys(obj).length === 0;
     }
     return false;
@@ -623,7 +636,7 @@ export const scrollToElement = (element) => {
     const formPosition = $element.offset().top;
     const $scrollParent = $element.closest('[wmsmoothscroll="true"]');
     if (isMobileApp() && $scrollParent.length) {
-        const iScroll = _.get($scrollParent[0], 'iscroll');
+        const iScroll = get($scrollParent[0], 'iscroll');
         let to = -(formPosition - iScroll.y);
         to = (iScroll.maxScrollY > to) ? iScroll.maxScrollY : to;
         iScroll.scrollTo(0, to);
@@ -661,8 +674,8 @@ export const isPageable = (obj: any): boolean => {
         'totalPages': 1
     };
     // paginated object may or may not contain 'empty' property. In either case, Pageable should return as true.
-    const paginatedObj = _.omit(obj, 'empty');
-    return (_.isEqual(_.keys(pageable), _.keys(paginatedObj).sort()));
+    const paginatedObj = omit(obj, 'empty');
+    return (isEqual(keys(pageable), keys(paginatedObj).sort()));
 };
 
 /*
@@ -683,23 +696,23 @@ export const replace = (template, map, parseError?: boolean) => {
     }
 
     return template.replace(regEx, function (match, key) {
-        return _.get(map, key);
+        return get(map, key);
     });
 };
 
 /*Function to check if date time type*/
 export const isDateTimeType = type => {
-    if (_.includes(type, '.')) {
-        type = _.toLower(extractType(type));
+    if (includes(type, '.')) {
+        type = toLower(extractType(type));
     }
-    return _.includes([DataType.DATE, DataType.TIME, DataType.TIMESTAMP, DataType.DATETIME, DataType.LOCALDATETIME], type);
+    return includes([DataType.DATE, DataType.TIME, DataType.TIMESTAMP, DataType.DATETIME, DataType.LOCALDATETIME], type);
 };
 
 const momentPattern = (pattern) => {
-    if (_.includes(pattern, 'E')) {
-       pattern =  _.replace(pattern, /E[,]?/g, '');
+    if (includes(pattern, 'E')) {
+        pattern = _replace(pattern, /E[,]?/g, '');
     }
-    return _.replace(pattern, /y*d*/g, (val) => val.toUpperCase());
+    return _replace(pattern, /y*d*/g, (val) => val.toUpperCase());
 };
 
 /*  This function returns date object. If val is undefined it returns invalid date */
@@ -707,15 +720,15 @@ export const getValidDateObject = (val, options?) => {
    const defaultMeridian = ['AM', 'PM'];
    const momentMeridian = moment()._locale.meridiem();
     // Updating localized meridians with default meridians when moment meridian is not defined
-    if (options && options.meridians && _.includes(defaultMeridian, momentMeridian)) {
-        _.forEach(options.meridians, (meridian, index) => {
-            if (_.includes(val, meridian)) {
+    if (options && options.meridians && includes(defaultMeridian, momentMeridian)) {
+        forEach(options.meridians, (meridian, index) => {
+            if (includes(val, meridian)) {
                 val = val.replace(meridian, defaultMeridian[index]);
             }
         });
     }
-    const isNativePicker = (options && options.hasOwnProperty('isNativePicker')) ? _.get(options, 'isNativePicker') : isMobile();
-    const pattern = isNativePicker ? (_.get(options, 'pattern') ||  'YYYY/MM/DD HH:mm:ss') : (momentPattern(_.get(options, 'pattern')) || '');
+    const isNativePicker = (options && options.hasOwnProperty('isNativePicker')) ? get(options, 'isNativePicker') : isMobile();
+    const pattern = isNativePicker ? (get(options, 'pattern') || 'YYYY/MM/DD HH:mm:ss') : (momentPattern(get(options, 'pattern')) || '');
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
         if (!isNaN((new Date(val)).getTime())) {
@@ -789,24 +802,24 @@ export const getBlob = (val, valContentType?) => {
 export const isEqualWithFields = (obj1, obj2, compareBy) => {
     // compareBy can be 'id' or 'id1, id2' or 'id1, id2:id3'
     // Split the compareby comma separated values
-    let _compareBy = _.isArray(compareBy) ? compareBy : _.split(compareBy, ',');
+    let _compareBy = isArray(compareBy) ? compareBy : split(compareBy, ',');
 
-    _compareBy = _.map(_compareBy, _.trim);
+    _compareBy = map(_compareBy, trim);
 
-    return _.isEqualWith(obj1, obj2, function (o1, o2) {
-        return _.every(_compareBy, function (cb) {
+    return isEqualWith(obj1, obj2, function (o1, o2) {
+        return every(_compareBy, function (cb) {
             let cb1, cb2, _cb;
 
             // If compareby contains : , compare the values by the keys on either side of :
-            if (_.indexOf(cb, compareBySeparator) === -1) {
-                cb1 = cb2 = _.trim(cb);
+            if (indexOf(cb, compareBySeparator) === -1) {
+                cb1 = cb2 = trim(cb);
             } else {
-                _cb = _.split(cb, compareBySeparator);
-                cb1 = _.trim(_cb[0]);
-                cb2 = _.trim(_cb[1]);
+                _cb = split(cb, compareBySeparator);
+                cb1 = trim(_cb[0]);
+                cb2 = trim(_cb[1]);
             }
 
-            return _.get(o1, cb1) === _.get(o2, cb2);
+            return get(o1, cb1) === get(o2, cb2);
         });
     });
 };
@@ -945,14 +958,6 @@ export const getSessionStorageItem = key => {
 
 export const noop = (...args) => { };
 
-export const isArray = v => _.isArray(v);
-
-export const isString = v => typeof v === 'string';
-
-export const isNumber = v => typeof v === 'number';
-
-export const isBoolean = v => typeof v === 'boolean';
-
 /**
  * This function returns a blob object from the given file path
  * @param filepath
@@ -987,7 +992,7 @@ export const AppConstants = {
 };
 
 export const openLink = (link: string, target: string = '_self') => {
-    if (hasCordova() && _.startsWith(link, '#')) {
+    if (hasCordova() && startsWith(link, '#')) {
         location.hash = link;
     } else {
         window.open(link, target);
@@ -1031,12 +1036,12 @@ export const retryIfFails = (fn: () => any, interval: number, maxRetries: number
     let retryCount = 0;
     const tryFn = () => {
         retryCount++;
-        if (_.isFunction(fn)) {
+        if (isFunction(fn)) {
             return fn();
         }
     };
-    maxRetries = (_.isNumber(maxRetries) && maxRetries > 0 ? maxRetries : 0);
-    interval = (_.isNumber(interval) && interval > 0 ? interval : 0);
+    maxRetries = (isNumber(maxRetries) && maxRetries > 0 ? maxRetries : 0);
+    interval = (isNumber(interval) && interval > 0 ? interval : 0);
     return new Promise((resolve, reject) => {
         const errorFn = function () {
             const errArgs = arguments;
@@ -1088,10 +1093,10 @@ export const getUrlParams = (link) => {
     // If url params are present, construct params object and pass it to search
     const index = link.indexOf('?');
     if (index !== -1) {
-        const queryParams = _.split(link.substring(index + 1, link.length), '&');
+        const queryParams = split(link.substring(index + 1, link.length), '&');
         queryParams.forEach((param) => {
-            param = _.split(param, '=');
-            params[param[0]] = param[1];
+            let paramArray = split(param, '=');
+            params[paramArray[0]] = paramArray[1];
         });
     }
     return params;
@@ -1129,8 +1134,8 @@ export const executePromiseChain = (fns, args, d?, i?) => {
     d = d || defer();
     i = i || 0;
     if (i === 0) {
-        fns = _.filter(fns, function (fn) {
-            return !(_.isUndefined(fn) || _.isNull(fn));
+        fns = filter(fns, function (fn) {
+            return !(isUndefined(fn) || isNull(fn));
         });
     }
     if (fns && i < fns.length) {
@@ -1153,7 +1158,7 @@ export const executePromiseChain = (fns, args, d?, i?) => {
  */
 export const isDataSourceEqual = (d1, d2) => {
     return d1.execute(DataSource.Operation.GET_UNIQUE_IDENTIFIER) === d2.execute(DataSource.Operation.GET_UNIQUE_IDENTIFIER) &&
-        _.isEqual(d1.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER), d2.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER));
+        isEqual(d1.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER), d2.execute(DataSource.Operation.GET_CONTEXT_IDENTIFIER));
 };
 
 /**
@@ -1173,16 +1178,16 @@ export const validateDataSourceCtx = (ds, ctx) => {
  * @param context scope of the variable
  */
 export const processFilterExpBindNode = (context, filterExpressions, variable?) => {
-    const destroyFn = context.registerDestroyListener ? context.registerDestroyListener.bind(context) : _.noop;
+    const destroyFn = context.registerDestroyListener ? context.registerDestroyListener.bind(context) : _noop;
     const filter$ = new Subject();
 
     const bindFilExpObj = (obj, targetNodeKey) => {
        const listener = (newVal, oldVal) => {
-            if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && !_.isUndefined(oldVal))) {
+           if ((newVal === oldVal && isUndefined(newVal)) || (isUndefined(newVal) && !isUndefined(oldVal))) {
                 return;
             }
             // Skip cloning for blob column
-            if (!_.includes(['blob', 'file'], obj.type)) {
+           if (!includes(['blob', 'file'], obj.type)) {
                 newVal = getClonedObject(newVal);
             }
             // backward compatibility: where we are allowing the user to bind complete object
@@ -1190,7 +1195,7 @@ export const processFilterExpBindNode = (context, filterExpressions, variable?) 
                 // remove the existing databinding element
                 filterExpressions.rules = [];
                 // now add all the returned values
-                _.forEach(newVal, function (value, target) {
+                forEach(newVal, function (value, target) {
                     filterExpressions.rules.push({
                         'target': target,
                         'value': value,
@@ -1209,14 +1214,14 @@ export const processFilterExpBindNode = (context, filterExpressions, variable?) 
         if (stringStartsWith(obj[targetNodeKey], 'bind:')) {
             // [Todo-CSP]: needs a check, where is this used
             destroyFn(
-                $watch(obj[targetNodeKey].replace('bind:', ''), context, {}, variable ? variable.invokeOnFiltertExpressionChange.bind(variable, obj, targetNodeKey) : listener, undefined, false, { arrayType: _.includes(['in', 'notin'], obj.matchMode) })
+                $watch(obj[targetNodeKey].replace('bind:', ''), context, {}, variable ? variable.invokeOnFiltertExpressionChange.bind(variable, obj, targetNodeKey) : listener, undefined, false, {arrayType: includes(['in', 'notin'], obj.matchMode)})
             );
         }
     };
 
     const traverseFilterExpressions = expressions => {
         if (expressions.rules) {
-            _.forEach(expressions.rules, (filExpObj, i) => {
+            forEach(expressions.rules, (filExpObj, i) => {
                 if (filExpObj.rules) {
                     traverseFilterExpressions(filExpObj);
                 } else {
@@ -1248,12 +1253,12 @@ export const extendProto = (target, proto) => {
 
 export const removeExtraSlashes = function (url) {
     const base64regex = /^data:image\/([a-z]{2,});base64,/;
-    if (_.isString(url)) {
+    if (isString(url)) {
         /*
         * support for mobile apps having local file path url starting with file:/// and
         * support for base64 format
         * */
-        if (_.startsWith(url, 'file:///') || base64regex.test(url)) {
+        if (startsWith(url, 'file:///') || base64regex.test(url)) {
             return url;
         }
         return url.replace(new RegExp('([^:]\/)(\/)+', 'g'), '$1');
@@ -1317,7 +1322,7 @@ const DEFAULT_DISPLAY_FORMATS = {
 };
 // This method returns the display date format for given type
 export const getDisplayDateTimeFormat = type => {
-    return DEFAULT_DISPLAY_FORMATS[_.toUpper(type)];
+    return DEFAULT_DISPLAY_FORMATS[toUpper(type)];
 };
 
 // Generate for attribute on label and ID on input element, so that label elements are associated to form controls
@@ -1376,7 +1381,7 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
  * @param ele Child element(jquery). For some of the widgets(time, search) containerElem doesn't have height. The inner element(dropdown-menu) has height so passing it as optional.
  */
    export const adjustContainerRightEdges = (containerElem, parentElem, ref, ele?) => {
-        const containerWidth = ele ? _.parseInt(ele.css('width')) : _.parseInt(containerElem.css('width'));
+    const containerWidth = ele ? parseInt(ele.css('width')) : parseInt(containerElem.css('width'));
         const viewPortWidth = $(window).width() + window.scrollX;
         const parentDimesion = parentElem.getBoundingClientRect();
         const parentRight = parentDimesion.right + window.scrollX;
@@ -1428,7 +1433,7 @@ export const adjustContainerPosition = (containerElem, parentElem, ref, ele?) =>
 export const closePopover = (element) => {
     if (!element.closest('.app-popover').length) {
         const popoverElements = document.querySelectorAll('.app-popover-wrapper');
-        _.forEach(popoverElements, (ele) => {
+        forEach(popoverElements, (ele) => {
             if (ele.widget.isOpen) {
                 ele.widget.isOpen = false;
             }
@@ -1465,7 +1470,7 @@ export const triggerItemAction = (scope, item) => {
         if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
             const queryParams = getUrlParams(itemLink);
             itemLink = getRouteNameFromLink(itemLink);
-            const router = _.get(scope, 'route') || _.get(scope, 'menuRef.route');
+            const router = get(scope, 'route') || get(scope, 'menuRef.route');
             router.navigate([itemLink], { queryParams });
         } else {
             openLink(itemLink, linkTarget);
@@ -1481,14 +1486,14 @@ export const triggerItemAction = (scope, item) => {
  * Example2: expr - "Widgets.list1.currentItem.addresses" and list1 is bound to "Variables.staticVar1.dataSet.details" then the method will return datasource as Variables.staticVar1
  */
 export const getDatasourceFromExpr = (expr, scope) => {
-    const isBoundToVariable = _.startsWith(expr, 'Variables.');
-    const isBoundToWidget = _.startsWith(expr, 'Widgets.');
+    const isBoundToVariable = startsWith(expr, 'Variables.');
+    const isBoundToWidget = startsWith(expr, 'Widgets.');
     const parts = expr.split('.');
     if (isBoundToVariable) {
-        return _.get(scope.viewParent.Variables, parts[1]);
+        return get(scope.viewParent.Variables, parts[1]);
     }
     if (isBoundToWidget) {
-        const widgetScope = _.get(scope.viewParent.Widgets, parts[1]);
+        const widgetScope = get(scope.viewParent.Widgets, parts[1]);
         const widgetDatasetBoundExpr = widgetScope.$attrs.get('datasetboundexpr');
         let widgetBoundExpression;
         widgetBoundExpression = (!widgetScope.datasource && widgetDatasetBoundExpr) ? widgetDatasetBoundExpr : widgetScope.binddataset;
@@ -1506,7 +1511,7 @@ export const extractCurrentItemExpr = (expr, scope) => {
     const currentItemRegEx = /^Widgets\..*\.currentItem/g;
     if (currentItemRegEx.test(expr)) {
         const parts = expr.split('.');
-        const widgetScope = _.get(scope.viewParent.Widgets, parts[1]);
+        const widgetScope = get(scope.viewParent.Widgets, parts[1]);
         const widgetDatasetBoundExpr = widgetScope.$attrs.get('datasetboundexpr');
         if (!widgetScope.datasource && widgetDatasetBoundExpr) {
             expr = expr.replace(/^Widgets\..*\.currentItem/g, `${widgetDatasetBoundExpr}[$i]`);
@@ -1548,7 +1553,7 @@ export const VALIDATOR = {
 };
 
 export const transformFileURI = (url) => {
-    if (_.isString(url) && hasCordova() && url.startsWith('file://')) {
+    if (isString(url) && hasCordova() && url.startsWith('file://')) {
         if (isIos()) {
             return url.replace('file://', '/_app_file_');
         } else if (isAndroid() && location.href.startsWith('http')) {
@@ -1577,7 +1582,7 @@ export const appendScriptToHead = (callback) =>{
 };
 
 export const getAppSetting = (key, defaultValue) => {
-    return (_WM_APP_PROPERTIES.extra_settings && _.get(_WM_APP_PROPERTIES.extra_settings, key)) || defaultValue;
+    return (_WM_APP_PROPERTIES.extra_settings && get(_WM_APP_PROPERTIES.extra_settings, key)) || defaultValue;
 };
 
 /* this function sets the itemclass depending on itemsperrow.
@@ -1589,8 +1594,8 @@ export const setListClass = (scope) => {
     if (scope.itemsperrow) {
         if (isNaN(parseInt(scope.itemsperrow, 10))) {
             // handling itemsperrow containing string of classes
-            _.split(scope.itemsperrow, ' ').forEach((cls: string) => {
-                const keys = _.split(cls, '-');
+            split(scope.itemsperrow, ' ').forEach((cls: string) => {
+                const keys = split(cls, '-');
                 cls = `${keys[0]}-${(12 / parseInt(keys[1], 10))}`;
                 temp += ` col-${cls}`;
             });
