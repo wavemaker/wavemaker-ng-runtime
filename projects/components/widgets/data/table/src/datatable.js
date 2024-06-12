@@ -1664,7 +1664,7 @@ $.widget('wm.datatable', {
     // triggered on capture phase of click listener.
     // sets the selected rowdata on click.
     rowClickHandlerOnCapture: function (e, $row, options) {
-        if(this.getColInfo(e) && (e.target.type != 'checkbox')) {
+        if(this.getColInfo(e) && (e.target.type != 'checkbox' && e.target.type != 'radio')) {
             return;
         }
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
@@ -1680,7 +1680,7 @@ $.widget('wm.datatable', {
 
     /* Handles row selection. */
     rowSelectionHandler: function (e, $row, options) {
-        if(this.getColInfo(e) && (e.target.type != 'checkbox')) {
+        if(this.getColInfo(e) && (e.target.type != 'checkbox' && e.target.type != 'radio')) {
             return;
         }
         options = options || {};
