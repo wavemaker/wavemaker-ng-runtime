@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, ViewChild, AfterViewInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
@@ -39,7 +39,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(DateComponent)
     ]
 })
-export class DateComponent extends BaseDateTimeComponent implements AfterViewInit {
+export class DateComponent extends BaseDateTimeComponent {
     static initializeProps = registerProps();
 
     public bsDataValue;
@@ -294,12 +294,16 @@ export class DateComponent extends BaseDateTimeComponent implements AfterViewIni
         this.setDataValue(newVal);
     }
 
-    ngAfterViewInit() {
-        super.ngAfterViewInit();
-        this.imask.destroyMask();
-        if (this.showdateformatasplaceholder && this.datepattern !== 'timestamp') {
-            this.mask = validateTheMaskedDate(this.datepattern, this.selectedLocale);
-            this.updateIMask();
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'showdateformatasplaceholder') {
+            this.showdateformatasplaceholder = nv;
+            this.imask.destroyMask();
+            if (this.showdateformatasplaceholder && this.datepattern !== 'timestamp') {
+                this.mask = validateTheMaskedDate(this.datepattern, this.selectedLocale);
+                this.updateIMask();
+            }
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }
