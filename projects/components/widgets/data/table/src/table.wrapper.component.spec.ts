@@ -36,10 +36,10 @@ import { DateComponent } from "../../../input/epoch/src/date/date.component";
 import { TimeComponent } from "../../../input/epoch/src/time/time.component";
 
 const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="quickedit"
-                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false" rowselect.event="UserTable1Rowselect($event, widget, row)">
+                                name="UserTable1" title="User List" navigation="Basic" filtermode="search" isdynamictable="false" rowselect.event="UserTable1Rowselect($event, widget, row)">
 
                                 <div wmTableColumn index="0" headerIndex="0" binding="firstname" caption="Firstname" edit-widget-type="text" type="string"
-                                    mobiledisplay="false" searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
+                                    mobiledisplay="false" searchable="true" show="true" readonly="false" [formGroup]="table_1.ngform">
                                     <ng-template #inlineWidgetTmpl let-row="row" let-getControl="getControl"
                                         let-getValidationMessage="getValidationMessage" let-getPendingSpinnerStatus="getPendingSpinnerStatus">
                                         <div data-col-identifier="firstname">
@@ -159,7 +159,7 @@ const quick_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 da
                             </div>`;
 
 const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="inline"
-                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false">
+                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false" filtermode="multicolumn" >
 
                                 <div wmTableColumn index="0" headerIndex="0" binding="firstname" caption="Firstname" edit-widget-type="text" type="string"
                                     mobiledisplay="false" searchable="false" show="true" readonly="false" [formGroup]="table_1.ngform">
@@ -926,6 +926,31 @@ describe("DataTable", () => {
                 it('should trigger custom validator(async)', fakeAsync(() => {
                     customValidatorAsync(false, wmComponent, inline_edit_fixture);
                 }));
+
+                it("Should add new row when clicked on add new row button", () => {
+                    const debugEl = inline_edit_fixture.debugElement.nativeElement;
+                    const addNewRowBtnEl = debugEl.querySelector(".app-datagrid-actions button");
+                    addNewRowBtnEl.click();
+                    inline_edit_fixture.detectChanges();
+                    const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
+                    const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row");
+                    expect(tableRowEls.length).toEqual(4);
+                });
+
+                it('should update when click update button', () => {
+                    clickEditElement(false, inline_edit_fixture);
+                    const rowEl = inline_edit_fixture.debugElement.nativeElement.querySelector('tr.app-datagrid-row:first-child')
+                    rowEl.querySelector('td .save-edit-row-button').click();
+                    inline_edit_fixture.detectChanges();
+                    expect(rowEl.querySelector('td .save-edit-row-button').classList.contains('hidden')).toBeTruthy();
+                });
+
+                it('should show mutlicolumn filter', () => {
+                    const debugEl = inline_edit_fixture.debugElement.nativeElement;
+                    const filterRowElem = debugEl.querySelector(".filter-row");
+                    expect(filterRowElem).toBeDefined()
+                });
+
             });
 
             describe("Quick Edit", () => {
@@ -1173,6 +1198,71 @@ describe("DataTable", () => {
                 it('should trigger custom validator(async)', fakeAsync(() => {
                     customValidatorAsync(true, wmComponent, quick_edit_fixture);
                 }));
+
+                it('should sort the column on click of the column header', () => {
+                    const debugEl = quick_edit_fixture.debugElement.nativeElement;
+                    const tableHeaderEl = debugEl.querySelectorAll(".app-datagrid-header-cell");
+                    tableHeaderEl[0].click();
+                    const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
+                    const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row");
+                    const firstRowColEls = tableRowEls[0].querySelectorAll("td");
+                    expect(firstRowColEls[0].textContent.trim()).toEqual('admin');
+                });
+
+                it('should sort the column in descending order on click of the column header twice', () => {
+                    const debugEl = quick_edit_fixture.debugElement.nativeElement;
+                    const tableHeaderEl = debugEl.querySelectorAll(".app-datagrid-header-cell");
+                    tableHeaderEl[0].click();
+                    tableHeaderEl[0].click();
+                    const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
+                    const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row");
+                    const firstRowColEls = tableRowEls[0].querySelectorAll("td");
+                    expect(firstRowColEls[0].textContent.trim()).toEqual('admin');
+                });
+
+                it('should filter the data on entering the text in the filter input', async () => {
+                    const debugEl = quick_edit_fixture.debugElement.nativeElement;
+                    const filterSelect = debugEl.querySelector(".form-search select");
+                    filterSelect.value = 'firstname';
+                    filterSelect.dispatchEvent(new Event('change'));
+                    quick_edit_fixture.detectChanges();
+
+                    const filterInputEl = debugEl.querySelector(".form-search input");
+                    expect(filterInputEl.attributes['data-element'].value).toEqual('dgSearchText');
+                    filterInputEl.value = 'admin';
+                    filterInputEl.dispatchEvent(new Event('input'));
+                    filterInputEl.dispatchEvent(new Event('keyup'));
+
+
+                    quick_edit_fixture.detectChanges();
+
+                    await quick_edit_fixture.whenStable();
+                    const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
+                    const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row");
+                    expect(tableRowEls.length).toEqual(4);
+                });
+
+                it('should add load more button to table when data is more than 10', () => {
+                    wmComponent.populateGridData(testData.concat(testData).concat(testData).concat(testData).concat(testData));
+                    const debugEl = quick_edit_fixture.debugElement.nativeElement;
+                    const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
+                    const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row");
+                    expect(tableRowEls.length).toEqual(16);
+                    const loadMoreBtnEl = debugEl.querySelector(".app-datagrid-load-more");
+                    expect(loadMoreBtnEl).toBeDefined();
+                });
+
+
+                it('should open confirmaion dialog on click of delete icon', () => {
+                    const debugEl = quick_edit_fixture.debugElement.nativeElement;
+                    const tableBodyEl = debugEl.querySelector(".app-datagrid-body");
+                    const tableRowEls = tableBodyEl.querySelectorAll("tr.app-datagrid-row");
+                    const deleteIconEl = tableRowEls[0].querySelector(".delete-row-button");
+                    deleteIconEl.click();
+                    const modalEl = document.querySelector(".modal-dialog");
+                    expect(modalEl).toBeDefined();
+                });
+               
 
                 it("Tab out between columns", () => { });
                 it("Tab out of last columns with empty new-row", () => { });

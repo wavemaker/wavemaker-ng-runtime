@@ -212,7 +212,75 @@ describe('ListComponent', () => {
 
     }));
  */
+    it('should apply pagination type as inline', () => {
+        listComponent.navigation = 'Inline';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Inline');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pager'));
+        expect(paginationElem).toBeTruthy();
+    });
 
+    it('should apply pagination type as classic', () => {
+        listComponent.navigation = 'Classic';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Classic');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.advanced'));
+        expect(paginationElem).toBeTruthy();
+    });
+
+    it('should apply pagination type as basic', () => {
+        listComponent.navigation = 'Basic';
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.basic'));
+        expect(paginationElem).toBeTruthy();
+    });
+
+    it('should apply pagination type as none', () => {
+        listComponent.navigation = 'None';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'None');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pagination'));
+        expect(paginationElem).toBeFalsy();
+    });
+
+    it('should apply pagination type as loadmore', () => {
+        listComponent.navigation = 'On-Demand';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'On-Demand');
+        fixture.detectChanges();
+        const loadMoreBtn = fixture.debugElement.query(By.css('.app-button'));
+        expect(loadMoreBtn.nativeElement.textContent).toBe('Load More');
+    });
+
+    it('should apply pagination type as scroll', () => {
+        listComponent.navigation = 'Scroll';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Scroll');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pagination'));
+        expect(paginationElem).toBeFalsy();
+    });
+
+    it('should apply pagination type as advanced', () => {
+        listComponent.navigation = 'Advanced';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Advanced');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pagination'));
+        expect(paginationElem).toBeTruthy();
+    });
+
+    it('should apply pagination type as pager', () => {
+        listComponent.navigation = 'Pager';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Pager');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pager'));
+        expect(paginationElem).toBeTruthy();
+    });
 
 });
 

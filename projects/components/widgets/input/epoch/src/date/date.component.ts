@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, ViewChild, AfterViewInit } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
@@ -13,14 +13,15 @@ import {
     getDisplayDateTimeFormat,
     getFormattedDate,
     adjustContainerRightEdges,
-    getMomentLocaleObject,
-    App
+    getMomentLocaleObject
 } from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler } from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
+import { validateTheMaskedDate } from './imaskUtil';
+import { IMaskDirective } from 'angular-imask';
 
-declare const _, $, moment;
+declare const _, $;
 
 const CURRENT_DATE = 'CURRENT_DATE';
 const DEFAULT_CLS = 'app-date input-group';
@@ -38,7 +39,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(DateComponent)
     ]
 })
-export class DateComponent extends BaseDateTimeComponent {
+export class DateComponent extends BaseDateTimeComponent implements AfterViewInit {
     static initializeProps = registerProps();
 
     public bsDataValue;
@@ -52,6 +53,8 @@ export class DateComponent extends BaseDateTimeComponent {
     private deregisterEventListener;
     private isCurrentDate;
     private focusTrap;
+    private showdateformatasplaceholder = false;
+    mask;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -93,6 +96,7 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     @ViewChild(BsDatepickerDirective) protected bsDatePickerDirective;
+    @ViewChild('dateInput', {read: IMaskDirective}) imask: IMaskDirective<any>;
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
     constructor(
@@ -110,11 +114,11 @@ export class DateComponent extends BaseDateTimeComponent {
         this.datepattern = this.appDefaults.dateFormat || getDisplayDateTimeFormat(FormWidgetType.DATE);
         this.updateFormat('datepattern');
     }
-
     /**
      * This is an internal method triggered when the date input changes
      */
     onDisplayDateChange($event, isNativePicker: boolean = false) {
+        this.updateIMask();
         if (this.isEnterPressedOnDateInput) {
             this.isEnterPressedOnDateInput = false;
             return;
@@ -144,6 +148,7 @@ export class DateComponent extends BaseDateTimeComponent {
         }
         if (newVal) {
             this.bsDataValue = newVal;
+            this.updateIMask();
         } else {
             this.bsDataValue = undefined;
         }
@@ -156,6 +161,7 @@ export class DateComponent extends BaseDateTimeComponent {
         if (!this.bsDataValue) {
             this.hightlightToday(this.activeDate);
         }
+        this.updateIMask();
 
         // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
         // So actual bootstrap input target width we made it to 0, so bootstrap calculating the calendar container top position improperly.
@@ -172,10 +178,15 @@ export class DateComponent extends BaseDateTimeComponent {
         adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
     }
     onInputBlur($event) {
+        this.updateIMask();
         if (!$($event.relatedTarget).hasClass('current-date')) {
             this.invokeOnTouched();
             this.invokeEventCallback('blur', { $event });
         }
+    }
+
+    updateIMask() {
+        this.imask?.maskRef?.updateValue();
     }
 
     public hideDatepickerDropdown() {
@@ -254,6 +265,7 @@ export class DateComponent extends BaseDateTimeComponent {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
                     this.bsDatePickerDirective.bsValue =  event.target.value ? newVal : '';
+                    this.updateIMask();
                 }
                 this.toggleDpDropdown(event);
             } else {
@@ -280,5 +292,14 @@ export class DateComponent extends BaseDateTimeComponent {
         }
 
         this.setDataValue(newVal);
+    }
+
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        this.imask.destroyMask();
+        if (this.showdateformatasplaceholder && this.datepattern !== 'timestamp') {
+            this.mask = validateTheMaskedDate(this.datepattern, this.selectedLocale);
+            this.updateIMask();
+        }
     }
 }

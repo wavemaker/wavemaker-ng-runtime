@@ -33,7 +33,8 @@ export const dateProps = new Map(
         ['clearbutton',  { value: true, ...PROP_BOOLEAN }],
         ['adaptiveposition', {value: true, ...PROP_BOOLEAN}],
         ['todaybuttonlabel',  { value: 'LABEL_TODAY_DATE', ...PROP_STRING }],
-        ['clearbuttonlabel',  { value: 'LABEL_CLEAR_DATE', ...PROP_STRING }]
+        ['clearbuttonlabel',  { value: 'LABEL_CLEAR_DATE', ...PROP_STRING }],
+        ['showdateformatasplaceholder', PROP_BOOLEAN],
 
     ]
 );

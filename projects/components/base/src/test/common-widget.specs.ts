@@ -375,7 +375,7 @@ export class ComponentTestBase {
                         // });
                     }))
                 } else if (evtObj.mouseSelectionEle) {
-                    it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {
+                    it('Should trigger the ' + evtObj.eventName + ' event', (() => {
                         fixture.whenStable().then(() => {
                             jest.spyOn(fixture.componentInstance, evtObj.callbackMethod);
                             let eleControl = getHtmlSelectorElement(fixture, evtObj.mouseSelectionEle);

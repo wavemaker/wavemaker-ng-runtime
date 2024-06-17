@@ -6,11 +6,17 @@ export function validateTheMaskedDate (format, locale)  {
         return false;
     }
     const modifiedFormat = format.toUpperCase().replace(/E/g, 'd');
+    const parseFn=  str => {
+        return moment(str, modifiedFormat).toDate();
+    };
+    const formatFn = date => {
+            return moment(date, modifiedFormat).format(modifiedFormat);
+        };
     return {
         mask: Date,
         pattern: modifiedFormat,
-        format: (str) => moment(str, modifiedFormat).toDate(),
-        parse: (str) => {return moment(str, modifiedFormat).toDate();},
+        format: formatFn,
+        parse: parseFn,
 
         blocks: {
             YYYY: {

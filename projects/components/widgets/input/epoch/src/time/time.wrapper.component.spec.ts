@@ -167,7 +167,7 @@ describe("TimeComponent", () => {
 
 
     /************************* Properties starts ****************************************** **/
-    it('should not add the hidden property, element always visible', waitForAsync(async () => {
+    it('should not add the hidden property, element always visible', (async () => {
         await notHavingTheAttribute(fixture, '.app-timeinput', 'hidden');
     }));
 
@@ -269,7 +269,8 @@ describe("TimeComponent", () => {
         datepatternTest(fixture, '.app-timeinput', '.app-textbox', 'timepattern', true);
     }));
 
-    it('should get the time outputformat as hh:mm:ss ', waitForAsync(() => {
+    it('should get the time outputformat as hh:mm:ss ', (() => {
+        wmComponent.outputformat = 'hh:mm:ss';
         outputpatternTest(fixture, '.app-timeinput', wmComponent.datavalue, true);
     }));
 
@@ -435,7 +436,7 @@ describe('TimeComponent with localization', () => {
         expect(timeWrapperComponent).toBeTruthy() ;
     });
 
-    it ('should display localized meriains in time picker', fakeAsync(() => {
+    it ('should display localized meriains in time picker', (() => {
          localizedTimePickerTest(fixture,  (wmComponent as any).meridians, '.btn-date');
     }));
 

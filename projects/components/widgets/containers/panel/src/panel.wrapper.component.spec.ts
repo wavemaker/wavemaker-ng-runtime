@@ -19,7 +19,7 @@ const mockApp = {
     subscribe: () => { return () => {}}
 };
 
-const markup = `<div wmPanel badgevalue="Test val" #wm_panel1="wmPanel" partialContainer [attr.aria-label]="wm_panel1.hint || 'panel hint'" wm-navigable-element="true"  subheading="subheading" iconclass="wi wi-account-circle" actions="testData" autoclose="outsideClick" title="Title" name="panel1" hint="panel hint" actionsclick.event="panel1Actionsclick($item)">`;
+const markup = `<div wmPanel badgevalue="Test val" #wm_panel1="wmPanel" expanded="true" helptext="samplePanel" partialContainer [attr.aria-label]="wm_panel1.hint || 'panel hint'" wm-navigable-element="true"  subheading="subheading" iconclass="wi wi-account-circle" actions="testData" autoclose="outsideClick" title="Title" enablefullscreen="true" closable="true" collapsible="true" name="panel1" hint="panel hint" actionsclick.event="panel1Actionsclick($item)">`;
 @Component({
     template: markup
 })
@@ -86,6 +86,20 @@ describe("PanelComponent", () => {
         fixture.detectChanges();
     }));
 
+    async function togglePanel(expand : string){
+        let panelHeaderEle = fixture.debugElement.query(By.css('.panel-heading'));
+        const collapseBtn = panelHeaderEle.query(By.css(expand));
+        // Click the panel header element
+        collapseBtn.nativeElement.click();
+    
+        // Wait for the fixture to stabilize
+        await fixture.whenStable();
+    
+        // Trigger change detection
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
     it('should create the Panel component', () => {
         expect(panelWrapperComponent).toBeTruthy();
     });
@@ -123,7 +137,85 @@ describe("PanelComponent", () => {
         expect(panelWrapperComponent.panel1Actionsclick).toHaveBeenCalledTimes(1);
     }, 10000); // Increase the timeout if necessary
 
+    it('should expand the panel on click the expand icon', async () => {
+        // Get the panel header element
+        let panelHeaderEle = fixture.debugElement.query(By.css('.panel-heading'));
+        const fullscreenBtn = panelHeaderEle.query(By.css('.wi-fullscreen'));
+        // Click the panel header element
+        fullscreenBtn.nativeElement.click();
+        // Wait for the fixture to stabilize
+        await fixture.whenStable();
 
+        // Trigger change detection
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        // Assert that the panel is expanded
+        expect(wmComponent.expanded).toBeTruthy();
+    });
+
+    it('should close the panel on click the close icon', async () => {
+        const closeBtn = fixture.debugElement.query(By.css('.wi-close'));
+        closeBtn.nativeElement.click();
+
+        // Wait for the fixture to stabilize
+        await fixture.whenStable();
+
+        // Trigger change detection
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(wmComponent.getWidget().show).toBeFalsy();
+    });
+
+    it('should collapse the panel on click the collapse icon', async () => {
+        togglePanel('.wi-minus');
+        expect(wmComponent.expanded).toBeFalsy();
+    });
+
+    it('should expand the panel after collapse on click the expand icon', async () => {
+        let panelHeaderEle = fixture.debugElement.query(By.css('.panel-heading'));
+        const collapseBtn = panelHeaderEle.query(By.css('.wi-minus'));
+        collapseBtn.nativeElement.click();
+
+        await fixture.whenStable();
+
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        panelHeaderEle = fixture.debugElement.query(By.css('.panel-heading'));
+        const expandBtn = panelHeaderEle.query(By.css('.wi-plus'));
+        expandBtn.nativeElement.click();
+
+        await fixture.whenStable();
+
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        // Assert that the panel is expanded
+        expect(wmComponent.expanded).toBeTruthy();
+    });
+
+    it('should show help icon when helptext is provided', () => {
+        let helpIcon = fixture.debugElement.query(By.css('.wi-question'));
+        expect(helpIcon).toBeTruthy();
+    });
+
+    it('should show help text on click of help icon', async () => {
+        let helpIcon = fixture.debugElement.query(By.css('.wi-question'));
+        helpIcon.nativeElement.click();
+
+        await fixture.whenStable();
+
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        let helpTextContainer = fixture.debugElement.query(By.css('.show-help'));
+        expect(helpTextContainer).toBeTruthy();
+
+        const helpText = fixture.debugElement.query(By.css('.panel-help-content'))
+        expect(helpText.nativeElement.textContent).toBe('samplePanel');
+    });
 
 
 });
