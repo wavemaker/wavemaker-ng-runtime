@@ -92,7 +92,7 @@ describe('Fileupload Component', () => {
 
     it ('should trigger error callback if filesize exceeds 1MB', () => {
         const mockFiles = getHugeFile();
-        spyOn(wrapperComponent, 'onError');
+        jest.spyOn(wrapperComponent, 'onError');
         wmComponent.onFileSelect({}, mockFiles);
         fixture.detectChanges();
         expect(wrapperComponent.onError).toHaveBeenCalledTimes(1);
@@ -131,7 +131,7 @@ describe('Fileupload Component WIth multiple', () => {
         validFiles.push(getFile('hello world'));
         validFiles.push(getFile('my custom file'));
         errorFiles.push(getFile(''));
-        spyOn(wrapperComponent, 'onError');
+        jest.spyOn(wrapperComponent, 'onError');
         wmComponent.onFileSelect({}, [...validFiles, ...errorFiles]);
         fixture.detectChanges();
         // selected item should be same as validFiles

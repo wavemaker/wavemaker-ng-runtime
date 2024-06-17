@@ -4,15 +4,16 @@ import { By } from '@angular/platform-browser';
 
 import {TreeComponent} from "./tree.component";
 import {PipeProvider} from "../../../../../runtime-base/src/services/pipe-provider.service";
-import {App, setPipeProvider} from "@wm/core";
-import {TrustAsPipe} from "../../../../base/src/pipes/trust-as.pipe";
+import {App, setPipeProvider, AbstractI18nService} from "@wm/core";
+import {TrustAsPipe} from '../../../../base';
+import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 
 const mockApp = {
-    subscribe: ()=>{}
+    subscribe: () => { return () => {}}
 };
 
 const markup = `
-    <div wmTree 
+    <div wmTree
         name="tree1"
         dataset.bind="Variables.staticVariable1.dataSet"
         nodelabel="key"
@@ -67,6 +68,7 @@ describe('wm-tree: Widget specific test cases', () => {
             providers: [
                 {provide: App, useValue: mockApp},
                 {provide: TrustAsPipe, useClass: TrustAsPipe},
+                { provide: AbstractI18nService, useClass:MockAbstractI18nService  }
             ]
         })
             .compileComponents();
@@ -83,7 +85,7 @@ describe('wm-tree: Widget specific test cases', () => {
     });
 
     it('should pass proper parameters in onSelect event', waitForAsync(() => {
-        spyOn(fixture.componentInstance, 'onNodeSelect').and.callFake(function () {
+        jest.spyOn(fixture.componentInstance, 'onNodeSelect').mockImplementation(function () {
             const path = arguments[3];
             const firstLeafNodePath = "/a val/a child1";
             expect(path).toEqual(firstLeafNodePath);

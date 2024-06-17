@@ -1,19 +1,22 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { DatePipe } from '@angular/common';
 
-import { App, AppDefaults } from '@wm/core';
+import {AbstractI18nService, App, AppDefaults} from '@wm/core';
 import { ChipsComponent } from './chips.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue } from '../../../../base/src/test/util/component-test-util';
 import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
 import { SearchComponent } from '@wm/components/basic/search';
 import { PartialRefProvider } from '@wm/core';
+import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<ul wmChips name="chips1" readonly="false" class= "text-success" show="true" width="800" height="200" backgroundcolor="#00ff29"
                     placeholder="" tabindex="0" overflow="auto"></ul>`; // placeholder and tabindex are not working because .bind is not working
@@ -42,7 +45,8 @@ const testModuleDef: ITestModuleDef = {
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
         { provide: AppDefaults, useClass: AppDefaults },
-        { provide: PartialRefProvider, useClass: PartialRefProvider }
+        { provide: PartialRefProvider, useClass: PartialRefProvider },
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService }
     ]
 };
 
@@ -93,17 +97,18 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
     /* ****************************************** TestCase for "CONTAINS" match mode ********************************************** */
-    it('should add chipitems with "CONTAINS" matchmode',  (done) => {
-        applyMatchMode('anywhere', 'Option 2', 'option 2', done);
-    });
-    it ('should add chipitems with "CONTAINS" matchmode with search key', (done) => {
+    it('should add chipitems with "CONTAINS" matchmode', waitForAsync(() => {
+        applyMatchMode('anywhere', 'Option 2', 'option 2');
+    }))
+    
+    it ('should add chipitems with "CONTAINS" matchmode with search key', waitForAsync(() => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
         fixture.detectChanges();
-        applyMatchMode('anywhere', 'Tony', 'tony', done);
-    });
+        applyMatchMode('anywhere', 'Tony', 'tony');
+    }));
 
     /* ****************************************** TestCase for "CONTAINS_IGNORE_CASE" match mode *********************************** */
     it('should add chipitems with "CONTAINS_IGNORE_CASE" matchmode',  (done) => {
@@ -119,17 +124,17 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
     /* ****************************************** TestCase for "STARTS_WITH" match mode ******************************************** */
-    it('should add chipitems with "STARTS_WITH" matchmode',  (done) => {
-        applyMatchMode('start', 'Option 2', 'option 2', done);
-    });
-    it ('should add chipitems with "STARTS_WITH" matchmode with search key', (done) => {
+    it('should add chipitems with "STARTS_WITH" matchmode',  waitForAsync(() => {
+        applyMatchMode('start', 'Option 2', 'option 2');
+    }))
+    it ('should add chipitems with "STARTS_WITH" matchmode with search key', waitForAsync(() => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
         fixture.detectChanges();
-        applyMatchMode('start', 'Tony', 'tony', done);
-    });
+        applyMatchMode('start', 'Tony', 'tony');
+    }));
 
     /* ****************************************** TestCase for "STARTS_WITH_IGNORE_CASE" match mode ********************************** */
     it('should add chipitems with "STARTS_WITH_IGNORE_CASE" matchmode',  (done) => {
@@ -145,19 +150,20 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
     /* ****************************************** TestCase for "ENDS_WITH" match mode ************************************************ */
-    it('should add chipitems with "ENDS_WITH" matchmode',  (done) => {
+    it('should add chipitems with "ENDS_WITH" matchmode',  waitForAsync(() => {
         wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
         fixture.detectChanges();
-        applyMatchMode('end', 'script', 'Script', done);
-    });
-    it ('should add chipitems with "ENDS_WITH" matchmode with search key', (done) => {
+        applyMatchMode('end', 'script', 'Script');
+    }));
+
+    it ('should add chipitems with "ENDS_WITH" matchmode with search key', waitForAsync(() => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
         fixture.detectChanges();
-        applyMatchMode('end', 'Son', 'son', done);
-    });
+        applyMatchMode('end', 'Son', 'son');
+    }));
 
     /* ****************************************** TestCase for "ENDS_WITH_IGNORE_CASE" match mode ************************************* */
     it('should add chipitems with "ENDS_WITH_IGNORE_CASE" matchmode',  (done) => {
@@ -175,19 +181,19 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
     /* ****************************************** TestCase for "IS_EQUAL" match mode ************************************************** */
-    it('should add chipitems with "IS_EQUAL" matchmode',  (done) => {
+    it('should add chipitems with "IS_EQUAL" matchmode',  waitForAsync(() => {
         wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
         fixture.detectChanges();
-        applyMatchMode('exact', 'java', 'Java', done);
-    });
-    it ('should add chipitems with "IS_EQUAL" matchmode with search key', (done) => {
+        applyMatchMode('exact', 'java', 'Java');
+    }));
+    it ('should add chipitems with "IS_EQUAL" matchmode with search key', waitForAsync(() => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
         fixture.detectChanges();
-        applyMatchMode('exact', 'Peter', 'peter', done);
-    });
+        applyMatchMode('exact', 'Peter', 'peter');
+    }));
 
     /* ****************************************** TestCase for "IS_EQUAL_WITH_IGNORE_CASE" match mode ********************************** */
     it('should add chipitems with "IS_EQUAL_WITH_IGNORE_CASE" matchmode',  (done) => {
@@ -204,6 +210,144 @@ describe('wm-chips: Component Specific Tests', () => {
         applyIgnoreCaseMatchMode('exactignorecase', 'Peter', 'peter', done);
     });
 
+
+   it('should delete chip item', waitForAsync(() => {
+        const testValue = 'Option 3';
+        addItem(testValue, 'keyup').then(() => {
+            expect(wmComponent.chipsList.length).toEqual(1);
+            const chipItem = wmComponent.chipsList[0];
+            chipItem.removeChipItem();
+            expect(wmComponent.chipsList.length).toEqual(0);
+        });
+    }));
+
+    it('should trigger onArrowLeft when left arrow key is pressed', () => {
+        wmComponent.readonly = true;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        jest.spyOn(wmComponent, 'onArrowLeft');
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+        chipItem.nativeElement.dispatchEvent(event);
+        expect(wmComponent.onArrowLeft).toHaveBeenCalled();
+    });
+
+    it('should trigger onArrowRight when right arrow key is pressed', () => {
+        wmComponent.readonly = true;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        jest.spyOn(wmComponent, 'onArrowRight');
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+        chipItem.nativeElement.dispatchEvent(event);
+        expect(wmComponent.onArrowRight).toHaveBeenCalled();
+    });
+
+    it('should trigger onBackspace when backspace key is pressed', () => {
+        wmComponent.readonly = true;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'Backspace' });
+        chipItem.nativeElement.dispatchEvent(event);
+    });
+    
+    it('should trigger onArrowLeft when search input query is empty', () => {
+        wmComponent.readonly = false;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        jest.spyOn(wmComponent, 'onArrowLeft');
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+        chipItem.nativeElement.dispatchEvent(event);
+        expect(wmComponent.onArrowLeft).toHaveBeenCalled();
+    });
+
+    it('should trigger onArrowRight when search input query is empty', () => {
+        wmComponent.readonly = false;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+        chipItem.nativeElement.dispatchEvent(event);
+    });
+
+    it('should set displayfield', () => {
+        wmComponent.getWidget().displayfield = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().displayfield).toEqual('java, javascript, mongoDB');
+    });
+
+    it('should limit the number of chips', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().limit = 2;
+        fixture.detectChanges();
+        const testValue = 'java';
+        addItem(testValue, 'keydown').then(() => {
+            expect(wmComponent.chipsList.length).toEqual(1);
+        });
+    });
+
+    it('should set readonly property', () => {
+        wmComponent.readonly = true;
+        fixture.detectChanges();
+        expect(wmComponent.readonly).toBeTruthy();
+    });
+
+    it('should enable order property', () => {
+        wmComponent.enablereorder = true;
+        fixture.detectChanges();
+        expect(wmComponent.enablereorder).toBeTruthy();
+    });
+
+    it('should set displayimagesrc property', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().displayimagesrc = 'https://www.w3schools.com/howto/img_avatar.png';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().displayimagesrc).toEqual('https://www.w3schools.com/howto/img_avatar.png');
+    });
+
+    it('should set displayexpression property', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().displayexpression = 'java';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().displayexpression).toEqual('java');
+    });
+
+    it('should set datafield property', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().datafield = 'java';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().datafield).toEqual('java');
+    });
+
+    it('should set dataoptions property', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().dataoptions = 'java';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().dataoptions).toEqual('java');
+    });
+
+    it('should set groupby property', () => {
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        wmComponent.getWidget().groupby = 'chips1groupby(row)';
+        fixture.detectChanges();
+        expect(wmComponent.getWidget().groupby).toEqual('chips1groupby(row)');
+    });
+
+
+    it('should onTextDelete when delete key is pressed', () => {
+        wmComponent.readonly = true;
+        wmComponent.getWidget().dataset = 'java, javascript, mongoDB';
+        fixture.detectChanges();
+        jest.spyOn(wmComponent, 'onTextDelete');
+        const  chipItem= fixture.debugElement.query(By.css('.app-chip-input'));
+        const event = new KeyboardEvent('keydown', { key: 'Delete' });
+        chipItem.nativeElement.dispatchEvent(event);
+        expect(wmComponent.onTextDelete).toHaveBeenCalled();
+    });
+
+
     function applyIgnoreCaseMatchMode(matchMode, value1, value2, done) {
         wmComponent.setProperty('matchmode', matchMode);
         fixture.detectChanges();
@@ -216,7 +360,7 @@ describe('wm-chips: Component Specific Tests', () => {
             });
         });
     }
-    function applyMatchMode(matchMode, value1, value2, done) {
+    function applyMatchMode(matchMode, value1, value2) {
         wmComponent.setProperty('matchmode', matchMode);
         fixture.detectChanges();
         addItem(value1, 'keyup').then(async () => {
@@ -224,7 +368,6 @@ describe('wm-chips: Component Specific Tests', () => {
             expect(wmComponent.chipsList.length).toEqual(1);
             addItem(value2, 'keydown').then(() => {
                 expect(wmComponent.chipsList.length).toEqual(2);
-                done();
             });
         });
     }

@@ -1,9 +1,48 @@
 <button *ngIf="isClosable" aria-label="Close" class="app-dialog-close close" (click)="closeDialog();" title="Close">
     <span aria-hidden="true">&times;</span>
 </button>
-<h4 class="app-dialog-title modal-title">
-    <i [ngClass]="iconclass" [ngStyle]="{width: iconwidth, height: iconheight, margin: iconmargin}"  *ngIf="iconclass && !iconurl"></i>
-    <img data-identifier="img" [src]="iconurl | image" *ngIf="iconurl" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
+
+<ng-container [ngSwitch]="headinglevel">
+    <ng-container *ngSwitchCase="'h1'">
+        <h1 class="app-dialog-title modal-title">
+            <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        </h1>
+    </ng-container>
+    <ng-container *ngSwitchCase="'h2'">
+        <h2 class="app-dialog-title modal-title">
+            <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        </h2>
+    </ng-container>
+    <ng-container *ngSwitchCase="'h3'">
+        <h3 class="app-dialog-title modal-title">
+            <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        </h3>
+    </ng-container>
+    <ng-container *ngSwitchCase="'h4'">
+        <h4 class="app-dialog-title modal-title">
+            <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        </h4>
+    </ng-container>
+    <ng-container *ngSwitchCase="'h5'">
+        <h5 class="app-dialog-title modal-title">
+            <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        </h5>
+    </ng-container>
+    <ng-container *ngSwitchCase="'h6'">
+        <h6 class="app-dialog-title modal-title">
+            <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        </h6>
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+        <h4 class="app-dialog-title modal-title">
+            <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        </h4>
+    </ng-container>
+</ng-container>
+
+<ng-template #headerTemplate>
+    <i [ngClass]="iconclass" [ngStyle]="{width: iconwidth, height: iconheight, margin: iconmargin}" *ngIf="iconclass && !iconurl"></i>
+    <img data-identifier="img" [src]="iconurl | image" *ngIf="iconurl" [ngStyle]="{width: iconwidth, height: iconheight, margin: iconmargin}"/>
     <span class="dialog-heading" [textContent]="heading" [id]="titleid"></span>
     <span class="dialog-sub-heading" *ngIf="subheading" [title]="subheading" [textContent]="subheading"></span>
-</h4>
+</ng-template>

@@ -6,11 +6,11 @@ import { PopoverConfig, PopoverModule } from 'ngx-bootstrap/popover';
 import { compileTestComponent, getHtmlSelectorElement } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { AnchorComponent } from '../../../basic/default/src/anchor/anchor.component';
-import { TrustAsPipe } from '../../../../base/src/pipes/trust-as.pipe';
-import { ImagePipe } from '../../../../base/src/pipes/image.pipe';
+import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
 
-
-const mockApp = {};
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `
         <wm-popover
@@ -23,6 +23,7 @@ const markup = `
             shortcutkey="enter"
             popoverwidth="240"
             popoverheight="360"
+            container=".wm-app"
             popoverarrow="true"
             fontsize="16"
             fontfamily="Times New Roman"
@@ -78,9 +79,10 @@ class PopoverwrapperComponent {
 
 const testModuleDef: ITestModuleDef = {
     imports: [
+        ComponentsTestModule,
         PopoverModule.forRoot(),
     ],
-    declarations: [PopoverwrapperComponent, PopoverComponent, AnchorComponent, ImagePipe, TrustAsPipe],
+    declarations: [PopoverwrapperComponent, PopoverComponent, AnchorComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: PopoverConfig },
@@ -111,6 +113,7 @@ describe('PopoverComponent', () => {
         fixture = compileTestComponent(testModuleDef, PopoverwrapperComponent);
         popoverWrapperComponent = fixture.componentInstance;
         wmComponent = popoverWrapperComponent.wmComponent;
+        //$('body').addClass('wm-app');
         fixture.detectChanges();
     }));
 
@@ -156,7 +159,7 @@ describe('PopoverComponent', () => {
         })
     }))
 
-    xit('popover width ', waitForAsync(() => {
+    it('popover width ', waitForAsync(() => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
         fixture.detectChanges();
         fixture.whenStable().then(() => {
@@ -216,7 +219,7 @@ describe('PopoverComponent', () => {
 
     it('should open the popover on mouse click', waitForAsync(() => {
         fixture.whenStable().then(() => {
-            spyOn(popoverWrapperComponent, 'onClick');
+            jest.spyOn(popoverWrapperComponent, 'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
             fixture.detectChanges();
             expect(document.getElementsByTagName('popover-container').length).toBe(1);
@@ -225,7 +228,7 @@ describe('PopoverComponent', () => {
 
     it('should close the popover when user click outside', waitForAsync(() => {
         fixture.whenStable().then(() => {
-            spyOn(popoverWrapperComponent, 'onClick');
+            jest.spyOn(popoverWrapperComponent, 'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
             fixture.detectChanges();
             expect(document.getElementsByTagName('popover-container').length).toBe(1);
@@ -237,11 +240,12 @@ describe('PopoverComponent', () => {
         })
     }))
 
-    xit('should open the popover on mouse hover', waitForAsync(() => {
+
+    it('should open the popover on mouse hover', waitForAsync(() => {
 
         fixture.whenStable().then(() => {
             wmComponent.getWidget().nativeElement.interaction = 'hover';
-            spyOn(popoverWrapperComponent, 'onHover');
+            jest.spyOn(popoverWrapperComponent, 'onHover');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.dispatchEvent(new MouseEvent('mouseenter'));
             fixture.detectChanges();
             expect(popoverWrapperComponent.onHover).toHaveBeenCalledTimes(1);

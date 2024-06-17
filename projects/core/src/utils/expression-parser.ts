@@ -498,7 +498,6 @@ enum ExpressionType {
 export function $parseExpr(expr: string, defOnly?: boolean): ParseExprResult {
 
     if (!pipeProvider) {
-        console.log('set pipe provider');
         return noop;
     }
 

@@ -6,7 +6,9 @@ import {App, AppDefaults} from "@wm/core";
 import {ToDatePipe} from "@wm/components/base";
 import {DatePipe} from "@angular/common";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<wm-textarea name="textarea1" hint="textarea field">`;
 

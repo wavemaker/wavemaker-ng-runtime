@@ -1,12 +1,13 @@
-import { ComponentFixture, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync, fakeAsync, tick } from '@angular/core/testing';
 import {Component, LOCALE_ID, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
     UserDefinedExecutionContext,
     AppDefaults,
     AbstractI18nService,
     getNativeDateObject,
-    getFormattedDate
+    getFormattedDate, App
 } from '@wm/core';
 import { WmComponentsModule } from '@wm/components/base';
 import { SecurityService } from '@wm/security';
@@ -21,7 +22,6 @@ import {
 import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
 import { DatetimeComponent } from './date-time.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
-import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
 import {
     compileTestComponent,
     getHtmlSelectorElement,
@@ -47,6 +47,11 @@ import {
 } from '../../../../../base/src/test/util/date-test-util';
 import localeDE from '@angular/common/locales/de';
 import localeRO from '@angular/common/locales/ro';
+
+
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const getFormatedDate = (date?) => {
     if (!date) {
@@ -105,15 +110,17 @@ class DatetimeWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent, DatetimeComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [{ provide: Router, useValue: Router },
+    { provide: App, useValue: mockApp },
     { provide: SecurityService, useValue: SecurityService },
     { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
     { provide: AppDefaults, useValue: AppDefaults },
     { provide: ToDatePipe, useClass: ToDatePipe },
     { provide: DatePipe, useClass: DatePipe },
     { provide: AbstractI18nService, useClass: MockAbstractI18nService }
-    ]
+    ],
+    teardown: {destroyAfterEach: false}  
 };
 
 const dateComponentDef: ITestComponentDef = {
@@ -175,23 +182,29 @@ describe("DatetimeComponent", () => {
         fixture.detectChanges();
     }));
 
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
+
+
 
     /************************* Properties starts ****************************************** **/
-    it('should not add the hidden property, element always visible', waitForAsync(async () => {
+    it('should not add the hidden property, element always visible', fakeAsync(async () => {
         await notHavingTheAttribute(fixture, '.app-datetime', 'hidden');
     }));
 
 
-    it('should autofocus the date control ', waitForAsync(() => {
+    it('should autofocus the date control ', fakeAsync(() => {
         let inputEle = getHtmlSelectorElement(fixture, '.app-textbox').nativeElement;
-        fixture.whenStable().then(() => {
-            expect(inputEle).toEqual(document.activeElement);
-        });
+        tick();
+        expect(inputEle).toEqual(document.activeElement);
 
     }));
 
 
-    it("should show the calendar panel on click the date button (date entry mode) ", waitForAsync(() => {
+    it("should show the calendar panel on click the date button (date entry mode) ", (() => {
 
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1);
 
@@ -349,6 +362,8 @@ describe("DatetimeComponent", () => {
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
 
     }));
+
+
     it('should disable the excluded days on the calendar panel', waitForAsync(() => {
         wmComponent.getWidget().excludedays = '1,6';
         onClickCheckTaglengthOnBody(fixture, '.btn-date', 'bs-datepicker-container', 1, (ele) => {
@@ -435,15 +450,15 @@ describe("DatetimeComponent", () => {
 
     /************************* Events starts ****************************************** **/
 
-    it('Should trigger the date control change event', waitForAsync(() => {
+    it('Should trigger the date control change event', (async() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.btn-time');
         dateInputControl.nativeElement.click();
-        spyOn(dateWrapperComponent, 'datetime1Change').and.callThrough();
-        fixture.whenStable().then(() => {
-            triggerTimerClickonArrowsByIndex(0);
+        jest.spyOn(dateWrapperComponent, 'datetime1Change');
+        await fixture.whenStable();
 
-            expect(dateWrapperComponent.datetime1Change).toHaveBeenCalledTimes(1);
-        });
+        triggerTimerClickonArrowsByIndex(0);
+
+        expect(dateWrapperComponent.datetime1Change).toHaveBeenCalledTimes(1);
     }));
 
 
@@ -454,8 +469,9 @@ describe("DatetimeComponent", () => {
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent, DatetimeComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
+        { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
         { provide: Router, useValue: Router },
         { provide: SecurityService, useValue: SecurityService },
@@ -481,36 +497,42 @@ describe(('Datetime Component with Localization'), () => {
         wmComponent = dateWrapperComponent.wmComponent;
         fixture.detectChanges();
     }));
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
 
-    it('should create the datetime Component with de locale', waitForAsync(() => {
+    it('should create the datetime Component with de locale', fakeAsync(() => {
         expect(dateWrapperComponent).toBeTruthy();
     }));
 
-    it ('should display localized dates in date picker', waitForAsync(() => {
+    it ('should display localized dates in date picker', (() => {
         localizedDatePickerTest(fixture, '.btn-date');
 
     }));
 
-    it ('should display localized meriains in time picker', waitForAsync(() => {
+    it ('should display localized meriains in time picker', (() => {
         localizedTimePickerTest(fixture,  (wmComponent as any).meridians, '.btn-time');
     }));
 
-    it ('should display the defult value in de format',  waitForAsync(() => {
+    it ('should display the defult value in de format',  fakeAsync(() => {
         const datetime = '2020-02-20 02:00 PM', datepattern = 'yyyy-MM-dd hh:mm a';
         wmComponent.getWidget().datepattern = datepattern;
         wmComponent.datavalue = datetime;
         fixture.detectChanges();
+        tick();
         const dateObj = getNativeDateObject(datetime);
         expect(getFormattedDate((wmComponent as any).datePipe, dateObj, datepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
     }));
 
-    it('should update the datavalue without error when we type "de" format datetime in inputbox with "12H" format ',  waitForAsync(() => {
+    it('should update the datavalue without error when we type "de" format datetime in inputbox with "12H" format ',  fakeAsync(() => {
         const datepattern = 'yyyy, dd MMMM hh:mm:ss a';
         wmComponent.getWidget().datepattern = datepattern;
         localizedValueOnInputTest(fixture, '2020, 21 Februar 03:15:00 AM', wmComponent, datepattern);
     }));
 
-    it('should update the datavalue without error when we type "de" format datetime in inputbox with "24H" format',  waitForAsync(() => {
+    it('should update the datavalue without error when we type "de" format datetime in inputbox with "24H" format',  fakeAsync(() => {
         const datetime = '2020, 21 Februar 15:15:00', datepattern = 'yyyy, dd MMMM HH:mm:ss';
         wmComponent.getWidget().datepattern = datepattern;
         localizedValueOnInputTest(fixture, '2020, 21 Februar 15:15:00', wmComponent, datepattern);
@@ -521,8 +543,9 @@ describe(('Datetime Component with Localization'), () => {
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent, DatetimeComponent],
-    imports: [ComponentsTestModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
+        { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },
         { provide: Router, useValue: Router },
         { provide: SecurityService, useValue: SecurityService },
@@ -549,8 +572,14 @@ describe(('Datetime Component with ro(Romania) Localization'), () => {
         fixture.detectChanges();
     }));
 
+    afterEach(() => {
+        if (fixture) {
+            fixture.destroy();
+        }
+    });
 
-    it('should update the datavalue without error when we type "ro" format datetime in inputbox with "12H" format ',  waitForAsync(() => {
+
+    it('should update the datavalue without error when we type "ro" format datetime in inputbox with "12H" format ',  fakeAsync(() => {
         const  datepattern = 'yyyy, dd MMMM hh:mm:ss a';
         wmComponent.getWidget().datepattern = datepattern;
         localizedValueOnInputTest(fixture, '2020, 21 februarie 03:15:00 a.m.', wmComponent, datepattern);

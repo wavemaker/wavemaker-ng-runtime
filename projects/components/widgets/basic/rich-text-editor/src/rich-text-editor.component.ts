@@ -7,6 +7,7 @@ import { BaseFormCustomComponent } from '@wm/components/input';
 
 import { registerProps } from './rich-text-editor.props';
 
+
 const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
 
 const getChangeEvt = () => {

@@ -1,5 +1,5 @@
 import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import {App, AppDefaults, setPipeProvider} from '@wm/core';
+import {AbstractI18nService, App, AppDefaults, setPipeProvider} from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -8,11 +8,13 @@ import { ListItemDirective } from './list-item.directive';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
 import { PaginationModule as WmPaginationModule } from '@wm/components/data/pagination';
-import { WmComponentsModule, ToDatePipe, TrustAsPipe } from '@wm/components/base';
+import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
+import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
+import { DatePipe } from '@angular/common';
 // import { setPipeProvider } from '../../../../../core/src/utils/expression-parser';
 
 let mockApp = {
-    subscribe: () => {}
+    subscribe: () => { return () => {}}
 };
 
 @Component({
@@ -65,9 +67,11 @@ describe('ListComponent', () => {
            ],
            declarations: [ListWrapperComponent, ListComponent, ListItemDirective],
            providers: [
-               {provide: App, useValue: mockApp},
-               {provide: ToDatePipe, useValue: mockApp},
-               {provide: AppDefaults, useClass: AppDefaults}
+               { provide: App, useValue: mockApp },
+               { provide: ToDatePipe, useClass: ToDatePipe },
+               { provide: AppDefaults, useClass: AppDefaults },
+               { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+               { provide: DatePipe, useValue: DatePipe }
            ]
        })
            .compileComponents();
@@ -119,7 +123,7 @@ describe('ListComponent', () => {
         const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
         expect(liElem.nativeElement.classList).toContain('disable-item');
         // the click handler should not be called on disabling the item
-        spyOn(wrapperComponent, 'onListClick');
+        jest.spyOn(wrapperComponent, 'onListClick');
         listComponent.getNativeElement().click();
         expect(wrapperComponent.onListClick).toHaveBeenCalledTimes(0);
     });
@@ -136,8 +140,9 @@ describe('ListComponent', () => {
     // });
 
     it('should select item by index from the script in on-render event', () => {
-        spyOn(wrapperComponent, 'onRender');
+        jest.spyOn(wrapperComponent, 'onRender');
         fixture.detectChanges();
+
         expect(wrapperComponent.onRender).toHaveBeenCalledTimes(1);
         // select item by passing index
         listComponent.selectItem(1);
@@ -148,7 +153,7 @@ describe('ListComponent', () => {
     });
 
     it('should render items depending on the page size provided', (done) => {
-        spyOn(wrapperComponent, 'onRender');
+        jest.spyOn(wrapperComponent, 'onRender');
         listComponent.setProperty('pagesize', 1);
         fixture.detectChanges();
         expect(wrapperComponent.onRender).toHaveBeenCalledTimes(1);
@@ -168,7 +173,7 @@ describe('ListComponent', () => {
 
         expect(index).toEqual(0);
 
-        // object does not exist in test data      
+        // object does not exist in test data
         const obj = {name: 'Jack', age: 24};
         const val = listComponent.getIndex(obj);
         fixture.detectChanges();
@@ -207,7 +212,75 @@ describe('ListComponent', () => {
 
     }));
  */
+    it('should apply pagination type as inline', () => {
+        listComponent.navigation = 'Inline';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Inline');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pager'));
+        expect(paginationElem).toBeTruthy();
+    });
 
+    it('should apply pagination type as classic', () => {
+        listComponent.navigation = 'Classic';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Classic');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.advanced'));
+        expect(paginationElem).toBeTruthy();
+    });
+
+    it('should apply pagination type as basic', () => {
+        listComponent.navigation = 'Basic';
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.basic'));
+        expect(paginationElem).toBeTruthy();
+    });
+
+    it('should apply pagination type as none', () => {
+        listComponent.navigation = 'None';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'None');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pagination'));
+        expect(paginationElem).toBeFalsy();
+    });
+
+    it('should apply pagination type as loadmore', () => {
+        listComponent.navigation = 'On-Demand';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'On-Demand');
+        fixture.detectChanges();
+        const loadMoreBtn = fixture.debugElement.query(By.css('.app-button'));
+        expect(loadMoreBtn.nativeElement.textContent).toBe('Load More');
+    });
+
+    it('should apply pagination type as scroll', () => {
+        listComponent.navigation = 'Scroll';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Scroll');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pagination'));
+        expect(paginationElem).toBeFalsy();
+    });
+
+    it('should apply pagination type as advanced', () => {
+        listComponent.navigation = 'Advanced';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Advanced');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pagination'));
+        expect(paginationElem).toBeTruthy();
+    });
+
+    it('should apply pagination type as pager', () => {
+        listComponent.navigation = 'Pager';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Pager');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pager'));
+        expect(paginationElem).toBeTruthy();
+    });
 
 });
 
@@ -227,8 +300,10 @@ describe('ListComponent With groupby', () => {
             declarations: [ListWrapperComponent, ListComponent, ListItemDirective],
             providers: [
                 {provide: App, useValue: mockApp},
-                {provide: ToDatePipe, useValue: mockApp},
-                {provide: AppDefaults, useClass: AppDefaults}
+                {provide: ToDatePipe, useClass: ToDatePipe},
+                {provide: AppDefaults, useClass: AppDefaults},
+                {provide: AbstractI18nService, useClass: MockAbstractI18nService},
+                { provide: DatePipe, useValue: DatePipe }
             ]
         })
             .compileComponents();
@@ -246,15 +321,19 @@ describe('ListComponent With groupby', () => {
 
 
     it('should select item by model from the script with groupby property in on-render event', () => {
-        spyOn(wrapperComponent, 'onRender');
+        jest.spyOn(wrapperComponent, 'onRender');
         fixture.detectChanges();
-        // select item by passing its model
+    
+        // Ensure dataset is populated
+        expect(listComponent.dataset.length).toBeGreaterThan(0);
+    
+        // Select item by passing its model
         listComponent.selectItem(listComponent.dataset[0]);
         fixture.detectChanges();
-
-        // selected item should be the second one in dataset
+    
+        // Selected item should be the first one in dataset
         expect(listComponent.selecteditem).toEqual(listComponent.dataset[0]);
-    });
+      });
 
     it('should display header as others when grouping is done with a column having empty value', () => {
         fixture.detectChanges();

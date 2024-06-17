@@ -8,7 +8,9 @@ import { compileTestComponent } from '../../../../base/src/test/util/component-t
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { App } from '@wm/core';
 
-const mockApp = {};
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `
         <div wmWizard role="tablist" stepstyle="justified" name="wizard1" class="classic" show="true" width="800" height="200"
@@ -86,30 +88,40 @@ describe('wm-wizard: Component Specific Tests', () => {
         expect(wrapperComponent).toBeTruthy();
     });
 
-    it('should have correct param values in onNext/onLoad callback event',  async (done) => {
+    it('should have correct param values in onNext/onLoad callback event', async () => {
         const frstStepRef = wmComponent.getWidget().getStepRefByIndex(0);
         const secondStepRef = wmComponent.getWidget().getStepRefByIndex(1);
-        fixture.whenStable().then(() => {
-            spyOn(frstStepRef, 'invokeEventCallback');
-            wmComponent.next();
-            fixture.detectChanges();
-            expect(frstStepRef.invokeEventCallback).toHaveBeenCalledTimes(1);
-            expect(frstStepRef.invokeEventCallback).toHaveBeenCalledWith('next', {currentStep: frstStepRef, stepIndex: 0});
 
-            spyOn(secondStepRef, 'invokeEventCallback');
-            // We have setTimeout in wizardstep directive redraw chilsdren method So adding same here.
-            setTimeout(() => {
-                expect(secondStepRef.invokeEventCallback).toHaveBeenCalledTimes(1);
-                expect(secondStepRef.invokeEventCallback).toHaveBeenCalledWith('load', {stepIndex: 1});
-                done();
-            }, 100);
-        });
+        // Wait for the component to be stable
+        await fixture.whenStable();
+
+        // Spy on the invokeEventCallback method
+        jest.spyOn(frstStepRef, 'invokeEventCallback');
+
+        // Trigger the next step
+        wmComponent.next();
+        fixture.detectChanges();
+
+        // Assert that the invokeEventCallback was called correctly for the first step
+        expect(frstStepRef.invokeEventCallback).toHaveBeenCalledTimes(1);
+        expect(frstStepRef.invokeEventCallback).toHaveBeenCalledWith('next', { currentStep: frstStepRef, stepIndex: 0 });
+
+        // Spy on the invokeEventCallback method for the second step
+        jest.spyOn(secondStepRef, 'invokeEventCallback');
+
+        // Use a Promise to handle the setTimeout delay
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Assert that the invokeEventCallback was called correctly for the second step
+        expect(secondStepRef.invokeEventCallback).toHaveBeenCalledTimes(1);
+        expect(secondStepRef.invokeEventCallback).toHaveBeenCalledWith('load', { stepIndex: 1 });
     });
+
 
     it('should have correct param values in onPrev callback event',  async () => {
         const secondStepRef = wmComponent.getWidget().getStepRefByIndex(1);
         fixture.whenStable().then(() => {
-            spyOn(secondStepRef, 'invokeEventCallback');
+            jest.spyOn(secondStepRef, 'invokeEventCallback');
             wmComponent.next();
             fixture.detectChanges();
             wmComponent.prev();
@@ -122,7 +134,7 @@ describe('wm-wizard: Component Specific Tests', () => {
         const frstStepRef = wmComponent.getWidget().getStepRefByIndex(0);
         fixture.whenStable().then(() => {
             frstStepRef.setProperty('enableskip', true);
-            spyOn(frstStepRef, 'invokeEventCallback');
+            jest.spyOn(frstStepRef, 'invokeEventCallback');
             wmComponent.skip();
             fixture.detectChanges();
             expect(frstStepRef.invokeEventCallback).toHaveBeenCalledWith('skip', {currentStep: frstStepRef, stepIndex: 0});

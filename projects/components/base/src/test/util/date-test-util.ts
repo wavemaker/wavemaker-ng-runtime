@@ -1,4 +1,5 @@
 import { getElementByTagOnDocQuery, getHtmlSelectorElement, onClickCheckTaglengthOnBody } from "./component-test-util";
+import { tick } from '@angular/core/testing';
 import { deLocale } from "ngx-bootstrap/locale";
 import { getFormattedDate, getNativeDateObject } from "@wm/core";
 import { defineLocale } from "ngx-bootstrap/chronos";
@@ -14,11 +15,11 @@ export const datepatternTest = (fixture, selector: string, inputSelector: string
             let splitHrmMin = attrVal.split('T');
             if(splitHrmMin && splitHrmMin.length > 1) {
                 let hrsmin = splitHrmMin[1].replaceAll('M','m');
-                attrVal = splitHrmMin[0] + 'T' + hrsmin; 
+                attrVal = splitHrmMin[0] + 'T' + hrsmin;
             }
         } else {
             attrVal = attrVal.replaceAll('y', 'Y').replaceAll('d', 'D');
-           
+
         }
         expect(moment(dateInputControl.nativeElement.value, attrVal, true).isValid()).toBe(true);
     })
@@ -91,29 +92,31 @@ export const getTimePickerElement = () => {
     return document.getElementsByTagName('timepicker')[0].getElementsByClassName('btn-link');
 }
 
-export const localizedDatePickerTest = (fixture, btnClass) => {
+export const localizedDatePickerTest = async(fixture, btnClass) => {
     onClickCheckTaglengthOnBody(fixture, btnClass, 'bs-datepicker-container', 1);
-    fixture.whenStable().then(() => {
+    await fixture.whenStable();
         expect($('bs-datepicker-container').find('.bs-datepicker-head button.current span')[0].innerText).toBe(deLocale.months[new Date().getMonth()]);
         expect($('bs-datepicker-container').find('.days.weeks th')[new Date().getDay()].innerText).toBe(deLocale.weekdaysShort[new Date().getDay()]);
-    });
+
 }
 
-export const localizedTimePickerTest = (fixture, meridians, btnClass) => {
+export const localizedTimePickerTest = (async(fixture, meridians, btnClass) => {
     onClickCheckTaglengthOnBody(fixture, btnClass, null, null);
-    fixture.whenStable().then(() => {
-        const timePicker = getElementByTagOnDocQuery('timepicker');
-        expect(timePicker[0].querySelector('button').innerHTML).toEqual(meridians[0]);
-    });
-}
+    await fixture.whenStable();
+    const timePicker = getElementByTagOnDocQuery('timepicker');
+    expect(timePicker[0].querySelector('button').innerHTML).toEqual(meridians[0]);
+
+})
 
 export const localizedValueOnInputTest = (fixture, value, wmComponent, pattern?) => {
     const input =  getHtmlSelectorElement(fixture, '.app-textbox');
     input.nativeElement.value = value;
     input.triggerEventHandler('change', {target: input.nativeElement});
     fixture.detectChanges();
-    const dateObj = getNativeDateObject(value, {meridians: (wmComponent as any).meridians, pattern: pattern});
-    expect(getFormattedDate((wmComponent as any).datePipe, dateObj, (wmComponent as any).outputformat)).toEqual(wmComponent.datavalue);
+    tick();
+    const dateObj = getNativeDateObject(value, { meridians: wmComponent.meridians, pattern: pattern });
+    expect(getFormattedDate(wmComponent.datePipe, dateObj, wmComponent.outputformat)).toEqual(wmComponent.datavalue);
+
 }
 
 export class MockAbstractI18nService {
@@ -123,6 +126,15 @@ export class MockAbstractI18nService {
 
     public getLocalizedMessage(val) {
         return val;
+    }
+    public getwidgetLocale() {
+        return 'en';
+    }
+    public initCalendarLocale() {
+
+    }
+    public getTimezone() {
+
     }
 
 }
@@ -140,6 +152,15 @@ export class MockAbstractI18nServiceDe {
     public getLocalizedMessage(val) {
         return val;
     }
+    public getwidgetLocale() {
+        return 'en';
+    }
+    public initCalendarLocale() {
+
+    }
+    public getTimezone() {
+
+    }
 }
 
 
@@ -154,5 +175,14 @@ export class MockAbstractI18nServiceRO {
 
     public getLocalizedMessage(val) {
         return val;
+    }
+    public getwidgetLocale() {
+        return 'en';
+    }
+    public initCalendarLocale() {
+
+    }
+    public getTimezone() {
+
     }
 }

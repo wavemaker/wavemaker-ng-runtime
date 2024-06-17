@@ -6,20 +6,17 @@ import {FormsModule} from '@angular/forms';
 import {DecimalPipe, registerLocaleData} from '@angular/common';
 import {TrailingZeroDecimalPipe} from '@wm/components/base';
 import {PipeProvider} from '../../../../../../runtime-base/src/services/pipe-provider.service';
-import localePT from '@angular/common/locales/pt.js';
+import localePT from '@angular/common/locales/pt';
 import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
 import {compileTestComponent} from "../../../../../base/src/test/util/component-test-util";
 import { By } from '@angular/platform-browser';
+import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div wmNumber hint="Number" name="testnumber" tabindex="1" ngModel change.event="onChange($event, widget, newVal, oldVal)"></div>`;
-
-class MockAbstractI18nService {
-    public getSelectedLocale() {
-        return 'en';
-    }
-}
 
 class MockAbstractI18nServicePt {
     public getSelectedLocale() {
@@ -94,7 +91,7 @@ describe('NumberComponent', () => {
 
     it('should not invoke change callback when datavalue is set null and does not have previous value', () => {
         numberComponent.datavalue = null;
-        spyOn(wrapperComponent, 'onChange');
+        jest.spyOn(wrapperComponent, 'onChange');
         expect((numberComponent as any).prevDatavalue).toEqual(undefined);
         expect(wrapperComponent.onChange).not.toHaveBeenCalled();
     });
@@ -102,24 +99,24 @@ describe('NumberComponent', () => {
     it('should not invoke change callback when datavalue is set null, has previous value and isDefaultQuery is true - WMS-20953', () => {
         (numberComponent as any).prevDatavalue = 123
         numberComponent.datavalue = null;
-        spyOn(wrapperComponent, 'onChange');
+        jest.spyOn(wrapperComponent, 'onChange');
 
         expect(wrapperComponent.onChange).not.toHaveBeenCalled();
     });
 
     it('should invoke change callback when datavalue is modified', () => {
-        spyOn(wrapperComponent, 'onChange');
+        jest.spyOn(wrapperComponent, 'onChange');
 
         const input = fixture.debugElement.query(By.css('.app-number-input')).nativeElement;
         const options = { 'key': '2', 'keyCode': 50, 'code': 'Digit2' };
         input.dispatchEvent(new KeyboardEvent('keypress', options));
 
         // previous value undefined, current value is present
-        numberComponent.datavalue = 123;        
+        numberComponent.datavalue = 123;
         expect(wrapperComponent.onChange).toHaveBeenCalledTimes(1);
 
         // previous value present, current value is undefined
-        numberComponent.datavalue = null; 
+        numberComponent.datavalue = null;
         expect(wrapperComponent.onChange).toHaveBeenCalledTimes(2);
 
     });

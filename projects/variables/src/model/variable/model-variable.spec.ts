@@ -1,5 +1,5 @@
 import { ModelVariable} from '@wavemaker/variables';
-declare const _;
+import _ from 'lodash';
 describe('Model Variable dataset as list', () => {
     let modelVariable: ModelVariable;
     beforeEach(() => {

@@ -1352,7 +1352,7 @@ $.widget('wm.datatable', {
                                         currentNode = currentNode.parent();
                                         elemWidth = currentNode.width();
                                         // Find padding of all the elements which are on top of table
-                                        if (currentNode.find('table').length) {
+                                        if (currentNode.find('table').length && currentNode.prop('style')) {
                                             padding = padding + parseFloat(currentNode.css('padding-left')) + parseFloat(currentNode.css('padding-right'));
                                         }
                                     }
@@ -1664,7 +1664,7 @@ $.widget('wm.datatable', {
     // triggered on capture phase of click listener.
     // sets the selected rowdata on click.
     rowClickHandlerOnCapture: function (e, $row, options) {
-        if(this.getColInfo(e) && (e.target.type != 'checkbox')) {
+        if(this.getColInfo(e) && (e.target.type != 'checkbox' && e.target.type != 'radio')) {
             return;
         }
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
@@ -1680,7 +1680,7 @@ $.widget('wm.datatable', {
 
     /* Handles row selection. */
     rowSelectionHandler: function (e, $row, options) {
-        if(this.getColInfo(e) && (e.target.type != 'checkbox')) {
+        if(this.getColInfo(e) && (e.target.type != 'checkbox' && e.target.type != 'radio')) {
             return;
         }
         options = options || {};

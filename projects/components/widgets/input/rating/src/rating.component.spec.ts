@@ -12,7 +12,12 @@ import { RatingComponent } from "./rating.component";
 import { ComponentFixture } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { Component, ViewChild } from "@angular/core";
-import { AppDefaults } from "@wm/core";
+import {AbstractI18nService, App, AppDefaults} from '@wm/core';
+import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
+
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div tabindex="1"  wmRating  name="rating1"></div>`;
 @Component({
@@ -26,6 +31,8 @@ const testModuleDef: ITestModuleDef = {
     declarations: [RatingComponent, TestComponent],
     imports: [FormsModule, ComponentsTestModule],
     providers: [
+        { provide: App, useValue: mockApp },
+        {provide: AbstractI18nService, useClass: MockAbstractI18nService},
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
         { provide: AppDefaults, useClass: AppDefaults }
@@ -61,12 +68,12 @@ describe("wm-rating: Component Specific tests", () => {
         fixture.detectChanges();
         expect(
             fixture.debugElement.queryAll(By.css("label.active")).length
-        ).toBeTruthy(wmComponent.datavalue);
+        ).toBeTruthy();
         wmComponent.datavalue = 5;
         fixture.detectChanges();
         expect(
             fixture.debugElement.queryAll(By.css("label.active")).length
-        ).toBeTruthy(wmComponent.datavalue);
+        ).toBeTruthy();
     });
     it("should set the caption as per datavalue", () => {
         wmComponent.datavalue = 5;
@@ -91,7 +98,7 @@ describe("wm-rating: Component Specific tests", () => {
         ).toBe(testVal);
     });
     it("should call MouseOver event listener", () => {
-        spyOn(wmComponent, "onMouseOver");
+        jest.spyOn(wmComponent, "onMouseOver");
         testElement.nativeElement.dispatchEvent(new MouseEvent("mouseover"));
         expect(wmComponent.onMouseOver).toHaveBeenCalled();
     });
@@ -103,9 +110,9 @@ describe("wm-rating: Component Specific tests", () => {
         );
     });
     it('should call TouchStart event listener',()=>{
-        spyOn(wmComponent,"onTouchStart");
+        const onTouchStartSpy = jest.spyOn(wmComponent,"onTouchStart");
         testElement.nativeElement.dispatchEvent(new Event("touchstart"));
-        expect(wmComponent.onTouchStart).toHaveBeenCalled();
+        expect(onTouchStartSpy).toHaveBeenCalled();
     });
     it('should not set "rating-label-hover" class on mouseover for touch enabled devices',()=>{
         testElement.nativeElement.dispatchEvent(new Event("touchstart"));

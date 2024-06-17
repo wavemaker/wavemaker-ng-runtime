@@ -10,7 +10,7 @@ const markup = `
                 #wm_button1="wmButton"
                 hint="Help text for test label"
                 caption="Test Button"
-                [attr.aria-label]="wm_button1.hint || wm_button1.caption || 'Button'"
+                [attr.aria-label]="wm_button1.hint || wm_button1.caption || 'Help text for test label'"
                 type="button"
                 tabindex="1" badgevalue="1"
                 disabled="false"
@@ -152,7 +152,7 @@ describe('wm-button: Component specific tests: ', () => {
     // click event
     it('callback event should be called on click', () => {
         btnEl = getButtonEl();
-        spyOn(wrapperComponent, 'onButtonClick');
+        jest.spyOn(wrapperComponent, 'onButtonClick');
         btnEl.click();
         expect(wrapperComponent.onButtonClick).toHaveBeenCalled();
     });
@@ -171,7 +171,7 @@ describe('wm-button: Component specific tests: ', () => {
     });
 
     it('should trigger callback events invoke through script', () => {
-        spyOn(wrapperComponent, 'onButtonTap');
+        jest.spyOn(wrapperComponent, 'onButtonTap');
         // Invoke onTap event
         wmComponent.getWidget().onTap();
         fixture.detectChanges();

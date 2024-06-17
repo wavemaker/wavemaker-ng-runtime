@@ -5,7 +5,9 @@ import {App, AppDefaults} from "@wm/core";
 import {ImagePipe, ToDatePipe, TrustAsPipe} from "@wm/components/base";
 import {DatePipe} from "@angular/common";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div wmSpinner #wm_spinner1="wmSpinner" [attr.aria-label]="wm_spinner1.hint || 'Loading...'" hint="Loading..." name="spinner1">`;
 

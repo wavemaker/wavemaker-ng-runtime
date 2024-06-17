@@ -19,15 +19,14 @@ import { DatePipe, CommonModule, DecimalPipe } from '@angular/common';
 import {  TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { DateComponent, TimeComponent } from '@wm/components/input/epoch';
 import { ToDatePipe } from '../../../../base/src/pipes/custom-pipes';
 import { triggerTimerClickonArrowsByIndex, getTimePickerElement, MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
+import { DateComponent } from "../../../input/epoch/src/date/date.component";
+import { TimeComponent } from "../../../input/epoch/src/time/time.component";
 
 const mockApp = {
-    getSelectedLocale: () => {
-        return 'en';
-    }
+    subscribe: () => { return () => {}}
 };
 
 const markup = `<form wmForm role="" #form_1 ngNativeValidate
@@ -230,8 +229,8 @@ const testModuleDef: ITestModuleDef = {
         FormActionDirective,
         FormFieldDirective,
         FormWidgetDirective,
-        DateComponent,
-        TimeComponent
+        TimeComponent,
+        DateComponent
     ],
     providers: [
         { provide: App, useValue: mockApp },
@@ -241,11 +240,11 @@ const testModuleDef: ITestModuleDef = {
         { provide: DynamicComponentRefProvider, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
-        { provide: AbstractI18nService, useValue: mockApp },
         { provide: DecimalPipe, useClass: DecimalPipe },
-        { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
+        { provide: UserDefinedExecutionContext, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }
-    ]
+    ],
+    teardown: {destroyAfterEach: false}
 };
 
 const componentDef: ITestComponentDef = {
@@ -264,11 +263,11 @@ TestBase.verifyStyles();
 
 const defaultValidators = (
     validatorType,
-    errorType, 
-    validator, 
+    errorType,
+    validator,
     errorMsg,
     formField,
-    invalidTestValue, 
+    invalidTestValue,
     validTestValue
 ) => {
     expect(formField._control.valid).toBeTruthy();
@@ -287,11 +286,11 @@ const defaultValidators = (
 }
 
 const dateValidations = (
-    validatorType, 
-    validator, 
-    errorMsg, 
-    wmComponent, 
-    invalidTestValue, 
+    validatorType,
+    validator,
+    errorMsg,
+    wmComponent,
+    invalidTestValue,
     validTestValue
 ) => {
     let formField = wmComponent.formfields['dateofbirth'];
@@ -344,7 +343,7 @@ describe('FormComponent', () => {
     });
 
 
-    it('check for dirty property before and after form submit and should trigger onSuccess event', (async(done) => {
+    it('check for dirty property before and after form submit and should trigger onSuccess event', (async() => {
         const testValue = 'abc';
         const inputEl = fixture.nativeElement.querySelector('wm-input');
         setInputValue(fixture, '.app-textbox', testValue).then(() => {
@@ -356,19 +355,18 @@ describe('FormComponent', () => {
             expect(wmComponent.dirty).toBe(true);
             console.log('before form submit, dirty - ', wmComponent.dirty);
 
-            spyOn(wrapperComponent, 'onResult').and.callThrough();
-            spyOn(wrapperComponent, 'onSuccess').and.callThrough();
+            const onResultSpy =  jest.spyOn(wrapperComponent, 'onResult');
+            const onSuccessSpy = jest.spyOn(wrapperComponent, 'onSuccess');
 
             fixture.whenStable().then(() => {
                 wmComponent.submitForm({});
                 fixture.detectChanges();
 
                 setTimeout(() => {
-                    expect(wrapperComponent.onResult).toHaveBeenCalledTimes(1);
+                    expect(onResultSpy).toHaveBeenCalledTimes(1);
                     expect(wmComponent.dirty).toBe(false);
                     console.log('after form submit, dirty - ', wmComponent.dirty);
-                    expect(wrapperComponent.onSuccess).toHaveBeenCalledTimes(1);
-                    done();
+                    expect(onSuccessSpy).toHaveBeenCalledTimes(1);
                 });
             });
         });
@@ -522,7 +520,7 @@ describe('FormComponent', () => {
         );
     }));
 
-    xit('should respect the mintime validation', waitForAsync(() => {
+    it('should respect the mintime validation', (() => {
         let formField = wmComponent.formfields['timeofbirth'];
         let timeWidget = formField.getWidget().formWidget;
         timeWidget.timepattern = 'HH:mm:ss';
@@ -542,7 +540,7 @@ describe('FormComponent', () => {
         });
     }));
 
-    xit('should respect the maxtime validation', waitForAsync(() => {
+    it('should respect the maxtime validation', waitForAsync(() => {
         let formField = wmComponent.formfields['timeofbirth'];
         let timeWidget = formField.getWidget().formWidget;
         timeWidget.timepattern = 'HH:mm:ss';

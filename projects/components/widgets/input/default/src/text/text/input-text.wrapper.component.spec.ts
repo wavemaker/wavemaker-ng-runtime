@@ -11,7 +11,9 @@ import {
 } from "../../../../../../base/src/test/common-widget.specs";
 import {IMaskModule} from "angular-imask";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<wm-input name="text1">`;
 

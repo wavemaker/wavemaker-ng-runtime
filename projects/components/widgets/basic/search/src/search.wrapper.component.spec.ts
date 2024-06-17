@@ -1,13 +1,13 @@
 import {
     waitForAsync, ComponentFixture, ComponentFixtureAutoDetect
 } from '@angular/core/testing';
-import { App } from '@wm/core';
+import {AbstractI18nService, App} from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 
-import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
-
+import { TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import {BaseComponent} from '@wm/components/base';
 import { By } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 import { ScrollableDirective } from './scrollable.directive';
@@ -15,11 +15,13 @@ import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
 import { PartialRefProvider, AppDefaults } from '@wm/core';
 import { BaseFormComponent } from 'projects/components/widgets/input/default/src/base-form.component';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
-import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck, getHtmlSelectorElement } from 'projects/components/base/src/test/util/component-test-util';
+import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck } from 'projects/components/base/src/test/util/component-test-util';
+import {MockAbstractI18nService} from 'projects/components/base/src/test/util/date-test-util';
 
 
-
-const mockApp = {};
+const mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `
         <div wmSearch name="testsearch"
@@ -89,7 +91,9 @@ const testModuleDef: ITestModuleDef = {
         { provide: AppDefaults, useClass: AppDefaults },
         { provide: TypeaheadMatch, useValue: TypeaheadMatch },
         { provide: ComponentFixtureAutoDetect, useValue: true },
-        { provide: PartialRefProvider, useClass: PartialRefProvider }
+        { provide: PartialRefProvider, useClass: PartialRefProvider },
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+        { provide: BaseComponent, useClass: BaseComponent }
     ]
 };
 
@@ -139,6 +143,7 @@ describe('SearchComponent', () => {
         fixture = compileTestComponent(testModuleDef, SearchWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
+       // $('body').addClass('wm-app');
         fixture.detectChanges();
     }));
 
@@ -153,7 +158,7 @@ describe('SearchComponent', () => {
 
     it('should change the input and call the onChange event', waitForAsync(async () => {
         const testValue = 'abc';
-        spyOn(wrapperComponent, 'onChange');
+        jest.spyOn(wrapperComponent, 'onChange');
         await fixture.whenStable();
         await setInputValue(fixture, '.app-search-input', testValue);
         expect(wmComponent.query).toEqual(testValue);
@@ -163,7 +168,7 @@ describe('SearchComponent', () => {
     it('should trigger the onSubmit callback', waitForAsync(() => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         const testValue = 'te';
-        spyOn(wrapperComponent, 'search1Submit').and.callThrough();
+        jest.spyOn(wrapperComponent, 'search1Submit');
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
             let liElement = getLIElement();
             liElement[0].click();
@@ -179,7 +184,7 @@ describe('SearchComponent', () => {
     it('should trigger the onselect callback', waitForAsync(async () => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         const testValue = 'te';
-        spyOn(wrapperComponent, 'search1Select').and.callThrough();
+        jest.spyOn(wrapperComponent, 'search1Select');
         await setInputValue(fixture, '.app-search-input', testValue);
         let liElement = getLIElement();
         liElement[0].click();
@@ -192,7 +197,7 @@ describe('SearchComponent', () => {
         wmComponent.getWidget().type = 'autocomplete';
         wmComponent.getWidget().showclear = true;
         const testValue = 'te';
-        spyOn((wmComponent as any), 'clearSearch').and.callThrough();
+        jest.spyOn(wmComponent as any, 'clearSearch' as any);
         await setInputValue(fixture, '.app-search-input', testValue);
         let searchBtnEle = fixture.debugElement.query(By.css('.clear-btn'));
         searchBtnEle.nativeElement.click();
@@ -224,7 +229,7 @@ describe('SearchComponent', () => {
     }));
 
 
-    xit('should be able show the typehead values in descending order', waitForAsync(() => {
+    it('should be able show the typehead values in descending order', waitForAsync(() => {
         wmComponent.getWidget().dataset = [{ name: 'Aman', age: 21 }, { name: 'Tony', age: 42 }, { name: 'John', age: 25 }, { name: 'Berf', age: 28 }];
         wmComponent.getWidget().searchkey = 'name';
         wmComponent.getWidget().displaylabel = 'name';
@@ -388,7 +393,8 @@ describe('SearchComponent', () => {
 
     it('should invoke getDatasource method on entering the query', waitForAsync(() => {
         const testValue = 'abc';
-        spyOn(wmComponent, 'getDataSource').and.returnValue(Promise.resolve([]));
+        jest.spyOn(wmComponent, 'getDataSource').mockReturnValue(Promise.resolve([]));
+
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
             expect(wmComponent.getDataSource).toHaveBeenCalled();
 
@@ -398,7 +404,7 @@ describe('SearchComponent', () => {
     it('should invoke onscroll method ', waitForAsync(() => {
         const testValue = 'te';
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
-        spyOn(wmComponent, 'onScroll');
+        jest.spyOn(wmComponent, 'onScroll');
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
             let ulElement = getUlElement();
             ulElement[0].dispatchEvent(new CustomEvent('scroll'));
@@ -410,14 +416,13 @@ describe('SearchComponent', () => {
     it('should invoke typeaheadOnSelect method on select of the typehead option', (waitForAsync((done) => {
         const testValue = 'te';
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
-        spyOn(wmComponent, 'typeaheadOnSelect');
+        jest.spyOn(wmComponent, 'typeaheadOnSelect');
         setInputValue(fixture, '.app-search-input', testValue).then(() => {
             let liElement = getLIElement();
             liElement[2].click();
             setTimeout(() => {
 
                 expect(wmComponent.typeaheadOnSelect).toHaveBeenCalled();
-                done();
             }, 50);
 
         });
@@ -433,24 +438,25 @@ describe('SearchComponent', () => {
         expect(input.value).toBe('');
     }));
 
-    xit('should invoke getTransformedData method ', waitForAsync(() => {
+    it('should invoke getTransformedData method ', waitForAsync(() => {
         const testValue = 'te';
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
-        spyOn(wmComponent, 'getTransformedData');
-        // setInputValue(fixture, '.app-search-input', testValue).then(() => {
-        // let ulElement = getUlElement();
-        // ulElement[0].dispatchEvent(new CustomEvent('scroll'));
-        fixture.whenStable().then(() => {
-            expect(wmComponent.getTransformedData).toHaveBeenCalled();
+        jest.spyOn(wmComponent, 'getTransformedData');
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
+            let ulElement = getUlElement();
+            ulElement[0].dispatchEvent(new CustomEvent('scroll'));
+            fixture.whenStable().then(() => {
+                expect(wmComponent.getTransformedData).toHaveBeenCalled();
+            });
         });
 
         // });
     }));
 
-    xit('datavalue change should update the static variable bound to the dataset', ((done) => {
+    it('datavalue change should update the static variable bound to the dataset', ((done) => {
         const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
         const baseformComponent = new (BaseFormComponent as any)((wmComponent as any).inj, WIDGET_CONFIG);
-        spyOn(baseformComponent.__proto__, 'updateBoundVariable');
+        jest.spyOn(baseformComponent.__proto__, 'updateBoundVariable');
         const sampleData = ['java', 'oracle', 'angular'];
         wmComponent.dataset = sampleData;
         wmComponent.onPropertyChange('dataset', sampleData, []);

@@ -4,7 +4,9 @@ import {App} from "@wm/core";
 import {ProgressBarComponent} from "./progress-bar.component";
 import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
 
-let mockApp = {};
+let mockApp = {
+    subscribe: () => { return () => {}}
+};
 
 const markup = `<div wmProgressBar name="progress_bar1" hint="Progress bar" tabindex="1">`;
 
