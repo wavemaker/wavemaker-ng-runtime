@@ -134,6 +134,7 @@ export class NativeXMLHttpRequest {
     public statusText = '';
     public ontimeout = null;
     public onload = null;
+    public onloadend = null;
     public onerror = null;
     public timeout = 0;
     public withCredentials = false;
@@ -293,6 +294,7 @@ export class NativeXMLHttpRequest {
             this._internal.copyNativeResponse(res);
             this._internal.triggerListeners(EVENT.LOAD);
             this.onload && this.onload();
+            this.onloadend && this.onloadend();
             clearTimeout(timerId);
         };
         const onError = (response) => {
@@ -300,6 +302,7 @@ export class NativeXMLHttpRequest {
             this._internal.triggerListeners(EVENT.LOAD, [response]);
             this._internal.triggerListeners(EVENT.ERROR, [response]);
             this.onerror && this.onerror();
+            this.onloadend && this.onloadend();
             clearTimeout(timerId);
         };
         cordova.plugin.http.downloadFile(new URL(this._internal.url).href, {}, options.headers, tempfile,
@@ -327,6 +330,7 @@ export class NativeXMLHttpRequest {
             this._internal.copyNativeResponse(response);
             this._internal.triggerListeners(EVENT.LOAD);
             this.onload && this.onload();
+            this.onloadend && this.onloadend();
         }, response => {
             this.progress.close();
             this._internal.copyNativeResponse(response);
@@ -334,6 +338,7 @@ export class NativeXMLHttpRequest {
             this._internal.triggerListeners(EVENT.LOAD, [response]);
             this._internal.triggerListeners(EVENT.ERROR, [response]);
             this.onerror && this.onerror();
+            this.onloadend && this.onloadend();
         }).finally(() => clearTimeout(timerId));
     }
 
