@@ -297,7 +297,7 @@ export class DateComponent extends BaseDateTimeComponent {
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'showdateformatasplaceholder') {
             this.showdateformatasplaceholder = nv;
-            this.imask.destroyMask();
+            this.imask?.destroyMask();
             if (this.showdateformatasplaceholder && this.datepattern !== 'timestamp') {
                 this.mask = validateTheMaskedDate(this.datepattern, this.selectedLocale);
                 this.updateIMask();
