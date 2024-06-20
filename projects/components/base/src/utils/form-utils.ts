@@ -182,10 +182,7 @@ export const transformFormData = (context: any, dataSet: any, myDataField?: stri
         const i = 0;
         forEach(dataSet, (value, key) => {
             // @ts-ignore
-            const dataSetItem = {
-                key: trim(key),
-                value: key,
-                label: (isDefined(value) && value !== null) ? value.toString() : '',
+            const dataSetItem = { key: trim(key), value: key, label: (isDefined(value) && value !== null) ? value.toString() : '',
                 index: startIndex,
                 dataObject: dataSet
             };

@@ -20,6 +20,7 @@ export class MultiPartParamTransformer implements Worker {
                     forEach(change.params.data, v => {
                         // @ts-ignore
                         if (isObject(v) && v.wmLocalPath) {
+                            // @ts-ignore
                             this.deviceFileService.removeFile(v.wmLocalPath);
                         }
                     });
