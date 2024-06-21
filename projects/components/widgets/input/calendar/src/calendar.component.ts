@@ -24,7 +24,7 @@ import {
 
 import {registerProps} from './calendar.props';
 import {capitalize, clone, each, extend, get, includes, isDate, isEmpty, isObject, mapKeys} from "lodash-es";
-import { Calendar  } from '@fullcalendar/core';
+import { Calendar  } from 'fullcalendar' ;
 
 declare const $;
 declare const moment;
