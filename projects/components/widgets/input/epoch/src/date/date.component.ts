@@ -157,7 +157,7 @@ export class DateComponent extends BaseDateTimeComponent {
 
     onDatePickerOpen() {
         this.isOpen = true;
-        this.bsDataValue ? this.activeDate = this.bsDataValue : this.activeDate = new Date();
+        this.activeDate = this.bsDataValue ? this.bsDataValue : (this.timeZone ? getMomentLocaleObject(this.timeZone) : new Date());
         if (!this.bsDataValue) {
             this.hightlightToday(this.activeDate);
         }
@@ -176,6 +176,18 @@ export class DateComponent extends BaseDateTimeComponent {
         this.addDatepickerKeyboardEvents(this, false);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
         adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
+
+        if(this.timeZone) {
+            const todayBtn = document.querySelector(`.${this.dateContainerCls} .bs-datepicker-buttons .btn-today-wrapper button`) as HTMLElement;
+            const setTodayTZHandler = (event) => {
+                const todayTZ = getMomentLocaleObject(this.timeZone);
+                if(new Date(this.bsDataValue).toDateString() !== new Date(todayTZ).toDateString()) {
+                    this.bsDataValue = todayTZ;
+                }
+                todayBtn.removeEventListener('click', setTodayTZHandler);
+            };
+            todayBtn.addEventListener('click', setTodayTZHandler)
+        }
     }
     onInputBlur($event) {
         this.updateIMask();

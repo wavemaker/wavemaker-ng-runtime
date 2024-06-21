@@ -290,10 +290,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected hightlightToday(newDate) {
         const activeMonth = $(`.bs-datepicker-head .current`).first().text();
         const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
-        const monthName = new Date().toLocaleString('default', { month: 'long' });
+        const month = new Date(newDate).toLocaleString('default', { month: 'long' });
+        const year = newDate.getFullYear().toString();
 
-        if(activeMonth == monthName && activeYear == new Date().getFullYear() && newDate.getDate() === new Date().getDate() && newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
-            const toDay = new Date().getDate().toString();
+        if(activeMonth == month && activeYear == year) {
+            const toDay = newDate.getDate().toString();
             _.filter($(`span:contains(${toDay})`).not('.is-other-month'), (obj) => {
                 if ($(obj).text() === toDay) {
                     $(obj).addClass('current-date text-info');
