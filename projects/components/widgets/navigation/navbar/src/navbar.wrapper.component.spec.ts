@@ -4,10 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from './navbar.component'; // Make sure to replace these with actual paths
 import { App } from '@wm/core';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
-
-let mockApp = {
-    subscribe: () => { return () => { } }
-};
+import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
 const markup = `<div wmNavbar name="navbar1" aria-label="navbar" hint="navbar" tabindex="1"  ></div>`;
 
