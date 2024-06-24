@@ -24,6 +24,7 @@ import {
 
 import {registerProps} from './calendar.props';
 import {capitalize, clone, each, extend, get, includes, isDate, isEmpty, isObject, mapKeys} from "lodash-es";
+import { Calendar } from 'fullcalendar';
 
 declare const $;
 declare const moment;
@@ -123,7 +124,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     };
     private oldData;
     // map the fullcalendar Element rendered
-    private $fullCalendar;
+    private $fullCalendar: any;
     // model to the mobile calendar
     private proxyModel;
     private eventData;
@@ -508,8 +509,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     ngAfterViewInit() {
         super.ngAfterViewInit();
         const calendarEl = this._calendar.nativeElement;
-        const FullCalendar = window['FullCalendar'];
-        const calendar = new FullCalendar.Calendar(calendarEl, this.calendarOptions.calendar);
+        const calendar = new Calendar(calendarEl, this.calendarOptions.calendar);
         this.$fullCalendar =  calendar;
         this.invokeEventCallback('beforerender', {'$event' : {}});
         calendar.render();
