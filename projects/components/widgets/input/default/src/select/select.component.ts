@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, Injector, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
 
-import {App, DataSource, isIos, removeAttr, setAttr} from '@wm/core';
+import {App, DataSource, removeAttr, setAttr} from '@wm/core';
 import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
 import {DatasetAwareFormComponent} from '../dataset-aware-form.component';
 
@@ -52,10 +52,6 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     ngAfterViewInit() {
         super.ngAfterViewInit();
         styler(this.selectEl.nativeElement as HTMLElement, this);
-        setTimeout(() => {
-            this.checkForFloatingLabel(null);
-        }, 10)
-
     }
 
     // Change event is registered from the template, Prevent the framework from registering one more event
@@ -104,17 +100,6 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         super.onPropertyChange(key, nv, ov);
     }
 
-    isSafariBrowser() {
-        var reg = {
-            MAC: /Mac/i,
-            MACINTEL: /MacIntel/i
-        }
-        return reg.MAC.test(window.navigator.platform) || reg.MACINTEL.test(window.navigator.platform);
-    }
-
-    isIosPlatform() {
-        return isIos() || this.isSafariBrowser();
-    }
     /**
      * When caption floating is enabled and placeholder is given, do not show placeholder until user focuses on the field
      * When focused add the placeholder to the option which is selected
@@ -124,22 +109,12 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     checkForFloatingLabel($event) {
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
         if (captionEl.length > 0) {
-            if ((!$event || $event.type === 'focus') && (($(this.selectEl).find('select option:selected').text() === '' && (this.placeholder || (this.datavalue || this.binddatavalue) || this.isIosPlatform())))) {
-                if (!$event && (this.placeholder || this.datavalue || this.binddatavalue || this.isIosPlatform())) {
-                    this.app.notify('captionPositionAnimate', {isSelect: true, nativeEl: captionEl});
-                }
-                if (this.placeholder) {
+            if ($event.type === 'focus' && (!this.datavalue || (this.datavalue && $(this.selectEl).find('select option:selected').text() === '' && this.placeholder))) {
                     $(this.selectEl.nativeElement).find('option:first').text(this.placeholder);
-                }
             } else if (!this.datavalue) {
-                if (!this.placeholder) {
-                    //  $(this.selectEl.nativeElement).find('option:first').text('');
-                    if (!this.isIosPlatform()) {
+                $(this.selectEl.nativeElement).find('option:selected').text('');
                         captionEl.removeClass('float-active');
                     }
                 }
-
-            }
-        }
     }
 }
