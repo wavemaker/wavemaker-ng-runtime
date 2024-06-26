@@ -157,7 +157,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
             }
         } else if (eventAction === KEY_MOVEMENTS.ON_ENTER || (eventAction === KEY_MOVEMENTS.ON_MOUSE_ENTER && this.showonhover)) {
             this.bsDropdown.toggle(true);
-        } else if (_.includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT], eventAction) || (eventAction ==  KEY_MOVEMENTS.ON_MOUSE_LEAVE && this.autoclose == AUTOCLOSE_TYPE.ALWAYS)) {
+        } else if (_.includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT], eventAction) || (eventAction ==  KEY_MOVEMENTS.ON_MOUSE_LEAVE && this.autoclose == AUTOCLOSE_TYPE.ALWAYS && this.showonhover)) {
             this.bsDropdown.hide();
         }
         $event.preventDefault();
