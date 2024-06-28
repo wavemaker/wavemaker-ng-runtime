@@ -3,14 +3,10 @@ import { App } from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { PopoverComponent } from './popover.component';
 import { PopoverConfig, PopoverModule } from 'ngx-bootstrap/popover';
-import { compileTestComponent, getHtmlSelectorElement } from '../../../../base/src/test/util/component-test-util';
+import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { AnchorComponent } from '../../../basic/default/src/anchor/anchor.component';
 import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
-
-const mockApp = {
-    subscribe: () => { return () => {}}
-};
 
 const markup = `
         <wm-popover
@@ -65,7 +61,7 @@ const markup = `
     template: markup
 })
 class PopoverwrapperComponent {
-    @ViewChild(PopoverComponent, /* TODO: add static flag */ {static: true})
+    @ViewChild(PopoverComponent, /* TODO: add static flag */ { static: true })
     wmComponent: PopoverComponent;
 
     onClick() {
@@ -125,23 +121,43 @@ describe('PopoverComponent', () => {
 
     /************************* Properties starts ****************************************** **/
 
-    it('should show popover title as wavemaker', () => {
-        getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
+    it('should show popover title as wavemaker', async () => {
+        await fixture.whenStable();
+        const anchorElement = getHtmlSelectorElement(fixture, '[wmanchor]');
+        console.log(anchorElement)
+        if (!anchorElement) {
+            throw new Error('Anchor element not found');
+        }
+        anchorElement.nativeElement.click();
         fixture.detectChanges();
-        expect(document.getElementsByClassName('popover-title')[0].innerHTML).toBe('wavemaker')
-    })
+        const popoverTitleElement = document.getElementsByClassName('popover-title')[0];
+        if (!popoverTitleElement) {
+            throw new Error('Popover title element not found');
+        }
+        expect(popoverTitleElement.innerHTML).toBe('wavemaker');
+    });
 
 
-    it('should display caption as clickable', () => {
-        getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.widget.caption = 'clickable';
+    it('should display caption as clickable', async () => {
+        await fixture.whenStable();
+        const anchorElement = getHtmlSelectorElement(fixture, '[wmanchor]');
+        console.log(anchorElement)
+        if (!anchorElement) {
+            throw new Error('Anchor element not found');
+        }
+        anchorElement.nativeElement.widget.caption = 'clickable';
         fixture.detectChanges();
-        expect(document.getElementsByClassName('anchor-caption')[0].innerHTML).toBe('clickable');
-    })
+        const anchorCaptionElement = document.getElementsByClassName('anchor-caption')[0];
+        if (!anchorCaptionElement) {
+            throw new Error('Anchor caption element not found');
+        }
+        expect(anchorCaptionElement.innerHTML).toBe('clickable');
+    });
+
 
     it('should show the content', () => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
         fixture.detectChanges();
-        console.log("conten")
         expect(document.getElementsByClassName('popover-body')[0].textContent).toContain('qwerty');
     })
 
@@ -152,12 +168,20 @@ describe('PopoverComponent', () => {
     })
 
     it('should apply popover height 360px ', waitForAsync(() => {
-        getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
+        const anchorElement = getHtmlSelectorElement(fixture, '[wmanchor]');
+        if (!anchorElement) {
+            throw new Error('Anchor element not found');
+        }
+        anchorElement.nativeElement.click();
         fixture.detectChanges();
         fixture.whenStable().then(() => {
-            expect(document.getElementsByTagName('popover-container')[0]['style'].height).toBe('360px');
-        })
-    }))
+            const popoverContainerElement = document.getElementsByTagName('popover-container')[0] as HTMLElement;
+            if (!popoverContainerElement) {
+                throw new Error('Popover container element not found');
+            }
+            expect(popoverContainerElement.style.height).toBe('360px');
+        });
+    }));
 
     it('popover width ', waitForAsync(() => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
@@ -255,4 +279,3 @@ describe('PopoverComponent', () => {
 
     /************************ Scenarios end **************************************** */
 });
-
