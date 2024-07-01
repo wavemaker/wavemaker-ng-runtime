@@ -271,6 +271,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         }
         if ($event.key === 'Enter') {
             $event.stopPropagation();
+            $event.preventDefault();
             this.showPopover();
         }
     }

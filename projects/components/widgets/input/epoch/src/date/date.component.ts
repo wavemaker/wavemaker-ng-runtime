@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, ViewChild, AfterViewInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
@@ -39,7 +39,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(DateComponent)
     ]
 })
-export class DateComponent extends BaseDateTimeComponent implements AfterViewInit {
+export class DateComponent extends BaseDateTimeComponent {
     static initializeProps = registerProps();
 
     public bsDataValue;
@@ -157,7 +157,7 @@ export class DateComponent extends BaseDateTimeComponent implements AfterViewIni
 
     onDatePickerOpen() {
         this.isOpen = true;
-        this.bsDataValue ? this.activeDate = this.bsDataValue : this.activeDate = new Date();
+        this.activeDate = this.bsDataValue ? this.bsDataValue : (this.timeZone ? getMomentLocaleObject(this.timeZone) : new Date());
         if (!this.bsDataValue) {
             this.hightlightToday(this.activeDate);
         }
@@ -176,6 +176,18 @@ export class DateComponent extends BaseDateTimeComponent implements AfterViewIni
         this.addDatepickerKeyboardEvents(this, false);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
         adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
+
+        if(this.timeZone) {
+            const todayBtn = document.querySelector(`.${this.dateContainerCls} .bs-datepicker-buttons .btn-today-wrapper button`) as HTMLElement;
+            const setTodayTZHandler = (event) => {
+                const todayTZ = getMomentLocaleObject(this.timeZone);
+                if(new Date(this.bsDataValue).toDateString() !== new Date(todayTZ).toDateString()) {
+                    this.bsDataValue = todayTZ;
+                }
+                todayBtn.removeEventListener('click', setTodayTZHandler);
+            };
+            todayBtn.addEventListener('click', setTodayTZHandler)
+        }
     }
     onInputBlur($event) {
         this.updateIMask();
@@ -294,12 +306,16 @@ export class DateComponent extends BaseDateTimeComponent implements AfterViewIni
         this.setDataValue(newVal);
     }
 
-    ngAfterViewInit() {
-        super.ngAfterViewInit();
-        this.imask.destroyMask();
-        if (this.showdateformatasplaceholder && this.datepattern !== 'timestamp') {
-            this.mask = validateTheMaskedDate(this.datepattern, this.selectedLocale);
-            this.updateIMask();
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'showdateformatasplaceholder') {
+            this.showdateformatasplaceholder = nv;
+            this.imask?.destroyMask();
+            if (this.showdateformatasplaceholder && this.datepattern !== 'timestamp') {
+                this.mask = validateTheMaskedDate(this.datepattern, this.selectedLocale);
+                this.updateIMask();
+            }
+        } else {
+            super.onPropertyChange(key, nv, ov);
         }
     }
 }
