@@ -1167,6 +1167,26 @@
         }
       }
     },
+      "@wm/components/advanced/custom": {
+          "root": "projects/components/widgets/advanced/custom",
+          "sourceRoot": "projects/components/widgets/advanced/custom/src",
+          "projectType": "library",
+          "prefix": "lib",
+          "architect": {
+              "build": {
+                  "builder": "@angular-devkit/build-angular:ng-packagr",
+                  "options": {
+                      "tsConfig": "projects/components/widgets/tsconfig.lib.json",
+                      "project": "projects/components/widgets/advanced/custom/ng-package.json"
+                  },
+                  "configurations": {
+                      "production": {
+                          "tsConfig": "projects/components/widgets/advanced/custom/tsconfig.lib.prod.json"
+                      }
+                  }
+              }
+          }
+      },
     "@wm/components/page": {
       "root": "projects/components/widgets/page/default",
       "sourceRoot": "projects/components/widgets/page/default/src",

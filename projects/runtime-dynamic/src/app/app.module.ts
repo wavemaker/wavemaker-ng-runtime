@@ -19,7 +19,7 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
 import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 
-import {App, getWmProjectProperties, PartialRefProvider} from '@wm/core';
+import {App, getWmProjectProperties, PartialRefProvider, CustomRefProvider} from '@wm/core';
 // Basic widgets
 
 import { BasicModule } from '@wm/components/basic';
@@ -77,6 +77,7 @@ import { PopoverModule } from '@wm/components/navigation/popover';
 import { CarouselModule } from '@wm/components/advanced/carousel';
 import { LoginModule } from '@wm/components/advanced/login';
 import { MarqueeModule } from '@wm/components/advanced/marquee';
+import { CustomModule } from '@wm/components/advanced/custom';
 
 import { PageModule } from '@wm/components/page';
 import { FooterModule } from '@wm/components/page/footer';
@@ -202,6 +203,7 @@ const componentsModule = [
     CarouselModule,
     LoginModule,
     MarqueeModule,
+    CustomModule,
 
     PageModule,
     FooterModule,
@@ -254,6 +256,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         { provide: AppExtensionProvider,useClass:AppExtensionProviderService},
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
+        { provide: CustomRefProvider, useClass: ComponentRefProviderService },
         { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService },
         { provide: RouteReuseStrategy, useClass: WmRouteReuseStrategy }
     ],

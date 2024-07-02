@@ -733,6 +733,16 @@ export default [
         }
     },
     {
+        input: './libraries/components/advanced/custom/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/advanced/custom/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.advanced.custom',
+            globals: rollupGlobals
+        }
+    },
+    {
         input: './libraries/variables/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {

@@ -615,7 +615,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * @private
      * _tNode.attrs attributes are stored in array(even index: key, odd index: value)
      */
-    private getAttributes() {
+    protected getAttributes() {
         let _tNodeAttrs = (this.inj as any)._tNode.attrs, actualAttrs = Array.from(this.nativeElement.attributes).map(attr => attr.name);
         if(_tNodeAttrs === null) {
             return actualAttrs.sort();
