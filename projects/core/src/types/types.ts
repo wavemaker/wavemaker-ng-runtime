@@ -222,3 +222,7 @@ export abstract class DynamicComponentRefProvider {
 export abstract class PartialRefProvider {
     abstract getComponentFactoryRef(partialName: string, componentType: ComponentType, options?: any): Promise<any>;
 }
+
+export abstract class CustomRefProvider {
+    abstract getComponentFactoryRef(customWidgetName: string, componentType: ComponentType, options?: any): Promise<any>;
+}

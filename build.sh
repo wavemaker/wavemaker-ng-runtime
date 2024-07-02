@@ -205,6 +205,7 @@ bundleWeb() {
         ./libraries/components/advanced/carousel/bundles/index.umd.js \
         ./libraries/components/advanced/marquee/bundles/index.umd.js \
         ./libraries/components/advanced/login/bundles/index.umd.js \
+        ./libraries/components/advanced/custom/bundles/index.umd.js \
         ./libraries/variables/bundles/index.umd.js \
         ./libraries/mobile/placeholder/runtime/bundles/index.umd.js \
         ./libraries/mobile/placeholder/runtime-dynamic/bundles/index.umd.js \
@@ -282,6 +283,7 @@ bundleMobile() {
         ./libraries/components/advanced/carousel/bundles/index.umd.js \
         ./libraries/components/advanced/marquee/bundles/index.umd.js \
         ./libraries/components/advanced/login/bundles/index.umd.js \
+        ./libraries/components/advanced/custom/bundles/index.umd.js \
         ./libraries/mobile/core/bundles/index.umd.js \
         ./libraries/mobile/components/basic/default/bundles/index.umd.js \
         ./libraries/mobile/components/basic/search/bundles/index.umd.js \
@@ -382,6 +384,7 @@ buildApp() {
     ngPackagrBuild components-advanced-carousel projects/components/widgets/advanced/carousel '@wm/components/advanced/carousel'
     ngPackagrBuild components-advanced-marquee projects/components/widgets/advanced/marquee '@wm/components/advanced/marquee'
     ngPackagrBuild components-advanced-login projects/components/widgets/advanced/login '@wm/components/advanced/login'
+    ngPackagrBuild components-advanced-custom projects/components/widgets/advanced/custom '@wm/components/advanced/custom'
 
     ngPackagrBuild mobile-core projects/mobile/core '@wm/mobile/core'
     ngPackagrBuild mobile-offline projects/mobile/offline '@wm/mobile/offline'

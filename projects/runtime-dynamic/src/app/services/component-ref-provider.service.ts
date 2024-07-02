@@ -44,11 +44,12 @@ const componentFactoryRefCache = new Map<ComponentType, Map<string, any>>();
 componentFactoryRefCache.set(ComponentType.PAGE, new Map<string, any>());
 componentFactoryRefCache.set(ComponentType.PARTIAL, new Map<string, any>());
 componentFactoryRefCache.set(ComponentType.PREFAB, new Map<string, any>());
+componentFactoryRefCache.set(ComponentType.CUSTOM, new Map<string, any>());
 
 const _decodeURIComponent = (str: string) => decodeURIComponent(str.replace(/\+/g, ' '));
 
 const getFragmentUrl = (fragmentName: string, type: ComponentType, options?) => {
-    if (type === ComponentType.PAGE || type === ComponentType.PARTIAL) {
+    if (type === ComponentType.PAGE || type === ComponentType.PARTIAL || type === ComponentType.CUSTOM) {
         return options && options.prefab ? getPrefabPartialJsonUrl(options.prefab, fragmentName) : `./pages/${fragmentName}/page.min.json`;
     } else if (type === ComponentType.PREFAB) {
         return getPrefabMinJsonUrl(fragmentName);
@@ -122,6 +123,11 @@ const getDynamicComponent = (
             selector = `app-prefab-${componentName}`;
             context = 'Prefab';
             break;
+        case ComponentType.CUSTOM:
+            BaseClass = BasePartialComponent;
+            selector = `app-custom-${componentName}`;
+            context = 'Custom';
+            break;
     }
 
     class DynamicComponent extends BaseClass {
@@ -129,6 +135,7 @@ const getDynamicComponent = (
         pageName;
         partialName;
         prefabName;
+        customName;
         constructor(@Inject(Injector) public injector: Injector) {
             super();
             this.injector = injector;
@@ -141,6 +148,9 @@ const getDynamicComponent = (
                     break;
                 case ComponentType.PREFAB:
                     this.prefabName = componentName;
+                    break;
+                case ComponentType.CUSTOM:
+                    this.customName = componentName;
                     break;
             }
 
