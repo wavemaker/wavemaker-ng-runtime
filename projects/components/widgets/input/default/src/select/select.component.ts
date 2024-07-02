@@ -110,11 +110,29 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
         if (captionEl.length > 0) {
             if ($event.type === 'focus' && (!this.datavalue || (this.datavalue && $(this.selectEl).find('select option:selected').text() === '' && this.placeholder))) {
+                if(!(this.datavalue || this.placeholder)) {
+                    this.removePlaceholderOption();
+                } else {
                     $(this.selectEl.nativeElement).find('option:first').text(this.placeholder);
+                }
             } else if (!this.datavalue) {
                 $(this.selectEl.nativeElement).find('option:selected').text('');
-                        captionEl.removeClass('float-active');
-                    }
-                }
+                captionEl.removeClass('float-active');
+            }
+        } else if(!(this.datavalue || this.placeholder)) {
+            this.removePlaceholderOption();
+        }
+    }
+
+    /*
+    * Removing the placeholder option if no placeholder is provided.
+    * In html we are hiding the placeholder option using css but in apple devices and safari option is showing.
+    * */
+    private removePlaceholderOption() {
+        const hiddenEle = $(this.selectEl.nativeElement).find('#placeholderOption');
+        if (hiddenEle.length) {
+            hiddenEle.remove();
+            this.selectEl.nativeElement.value = '';
+        }
     }
 }
