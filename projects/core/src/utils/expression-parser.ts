@@ -638,7 +638,7 @@ export function $parseEvent(expr, defOnly?): ParseExprResult {
             fn = simpleFunctionEvaluator.bind(undefined, expr);
         } else {
             const parser = new Parser(new Lexer);
-            const ast = parser.parseAction(expr, false, '',0);
+            const ast = parser.parseAction(expr, '', 0);
 
             if (ast.errors.length) {
                 return noop;
