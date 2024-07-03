@@ -1,7 +1,8 @@
 export enum ComponentType {
     PAGE,
     PREFAB,
-    PARTIAL
+    PARTIAL,
+    CUSTOM
 }
 
 export class IDataSource {

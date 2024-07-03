@@ -8,6 +8,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['hint', PROP_STRING],
                 ['name', PROP_STRING],
+                ['widgetname', PROP_STRING],
                 ['show', {value: true, ...PROP_BOOLEAN}]
             ]
         )

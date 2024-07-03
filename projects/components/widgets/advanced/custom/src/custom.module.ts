@@ -4,9 +4,11 @@ import { CommonModule } from '@angular/common';
 import { WmComponentsModule } from '@wm/components/base';
 
 import { CustomDirective } from './custom.directive';
-
+import { CustomPropDirective, CustomPropHandlerDirective} from './custom-prop/custom-prop.directive'
 const components = [
-    CustomDirective
+    CustomDirective,
+    CustomPropDirective,
+    CustomPropHandlerDirective
 ];
 
 @NgModule({
