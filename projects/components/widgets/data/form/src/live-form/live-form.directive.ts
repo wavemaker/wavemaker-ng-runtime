@@ -40,8 +40,10 @@ export class LiveFormDirective {
         @Attribute('formlayout') formlayout: string
     ) {
         // If parent live table is present and this form is first child of live table, set this form instance on livetable
-        if (liveTable && !this.form.parentForm) {
-            this.form._liveTableParent = liveTable;
+        if (liveTable) {
+            if (!this.form.parentForm) {
+                this.form._liveTableParent = liveTable;
+            }
             this.form.isLayoutDialog = liveTable.isLayoutDialog;
             liveTable.onFormReady(this.form);
         } else {
