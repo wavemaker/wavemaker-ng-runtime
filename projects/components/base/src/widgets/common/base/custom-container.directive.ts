@@ -57,6 +57,17 @@ export class CustomContainerDirective {
         private resolver: ComponentFactoryResolver,
         private customRefProvider: CustomRefProvider
     ) {
-        this.renderCustom(widgetname);
+        componentInstance.registerPropertyChangeListener((key: string, nv: any, ov?: any) => {
+            if (key === 'widgetname') {
+                if (componentInstance.$lazyLoad) {
+                    componentInstance.$lazyLoad = () => {
+                        this.renderCustom(nv);
+                        componentInstance.$lazyLoad = noop;
+                    };
+                } else {
+                    this.renderCustom(nv);
+                }
+            }
+        });
     }
 }

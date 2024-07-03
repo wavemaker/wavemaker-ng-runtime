@@ -39,7 +39,6 @@ export class CustomDirective extends StylableComponent implements OnInit {
 
     ngOnInit() {
         super.ngOnInit();
-        console.log(this.nativeElement.innerHTML);
         const attrs = this.nativeElement.attributes;
         for (let attrName, attrVal, i = 0; i < attrs.length; i++){
             attrName = attrs[i].nodeName;

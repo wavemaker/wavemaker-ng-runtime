@@ -15,6 +15,7 @@ import {
     AppManagerService,
     BasePageComponent,
     BasePartialComponent,
+    BaseCustomComponent,
     BasePrefabComponent,
     ComponentRefProvider,
     ComponentType,
@@ -124,9 +125,9 @@ const getDynamicComponent = (
             context = 'Prefab';
             break;
         case ComponentType.CUSTOM:
-            BaseClass = BasePartialComponent;
+            BaseClass = BaseCustomComponent;
             selector = `app-custom-${componentName}`;
-            context = 'Custom';
+            context = 'Widget';
             break;
     }
 
@@ -135,7 +136,7 @@ const getDynamicComponent = (
         pageName;
         partialName;
         prefabName;
-        customName;
+        customWidgetName;
         constructor(@Inject(Injector) public injector: Injector) {
             super();
             this.injector = injector;
@@ -150,7 +151,7 @@ const getDynamicComponent = (
                     this.prefabName = componentName;
                     break;
                 case ComponentType.CUSTOM:
-                    this.customName = componentName;
+                    this.customWidgetName = componentName;
                     break;
             }
 
@@ -241,7 +242,8 @@ export class ComponentRefProviderService extends ComponentRefProvider {
 
         return this.loadResourcesOfFragment(componentName, componentType, options)
             .then(({markup, script, styles, variables})  => {
-
+                if(componentType === ComponentType.CUSTOM){
+                }
                 const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, JSON.stringify(variables));
                 const moduleDef = getDynamicModule(componentDef);
 
