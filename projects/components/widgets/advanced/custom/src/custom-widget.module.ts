@@ -5,10 +5,12 @@ import { WmComponentsModule } from '@wm/components/base';
 
 import { CustomWidgetContainerDirective } from './custom-widget-container/custom-widget-container.directive';
 import { CustomWidgetPropDirective, CustomWidgetPropHandlerDirective} from './custom-widget-container-prop/custom-widget-container-prop.directive'
+import { CustomWidgetDirective } from './custom-widget.directive'
 const components = [
     CustomWidgetContainerDirective,
     CustomWidgetPropDirective,
-    CustomWidgetPropHandlerDirective
+    CustomWidgetPropHandlerDirective,
+    CustomWidgetDirective
 ];
 
 @NgModule({
