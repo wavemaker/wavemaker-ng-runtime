@@ -239,6 +239,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
 
         //     }, 100);
         // });
+        this.invokeOnReady()
     }
 
     ngOnDestroy(): void {
