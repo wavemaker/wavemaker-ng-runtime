@@ -50,10 +50,12 @@ componentFactoryRefCache.set(ComponentType.WIDGET, new Map<string, any>());
 const _decodeURIComponent = (str: string) => decodeURIComponent(str.replace(/\+/g, ' '));
 
 const getFragmentUrl = (fragmentName: string, type: ComponentType, options?) => {
-    if (type === ComponentType.PAGE || type === ComponentType.PARTIAL || type === ComponentType.WIDGET) {
+    if (type === ComponentType.PAGE || type === ComponentType.PARTIAL) {
         return options && options.prefab ? getPrefabPartialJsonUrl(options.prefab, fragmentName) : `./pages/${fragmentName}/page.min.json`;
     } else if (type === ComponentType.PREFAB) {
         return getPrefabMinJsonUrl(fragmentName);
+    } else if (type === ComponentType.WIDGET){
+        return `./custom-widgets/${fragmentName}/page.min.json`
     }
 };
 

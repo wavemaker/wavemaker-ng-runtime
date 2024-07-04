@@ -301,7 +301,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     }
 
     public notifyPropertyChange(key: string, nv: any, ov: any) {
-        if(key === 'caption')console.log("From Base :", key, nv, ov);
         this.propertyChange.next({key, nv, ov});
     }
 
