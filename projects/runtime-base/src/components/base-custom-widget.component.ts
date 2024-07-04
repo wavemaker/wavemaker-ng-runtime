@@ -28,6 +28,7 @@ import { VariablesService } from '@wm/variables';
 
 import { FragmentMonitor } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
+import {commonPartialWidgets} from "./base-partial.component";
 
 declare const _;
 
@@ -94,6 +95,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
 
         this.registerWidgets();
         this.initVariables();
+        this.registerEvents();
 
         this.activePageName = this.App.activePageName; // Todo: remove this
         this.registerPageParams();
@@ -118,6 +120,19 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     }
 
     registerWidgets() {
+        // common partial widgets should be accessible from page
+        this.Widgets = Object.create(commonPartialWidgets);
+
+        // expose current page widgets on app
+        (this.App as any).Widgets = Object.create(this.Widgets);
+    }
+
+    registerEvents() {
+        this.containerWidget.eventHandlers.forEach((callback: any, key: string) => {
+            this[key] = (...args) => {
+                this.containerWidget.invokeEventCallback(key, {$event: args[0], $data: args[1]});
+            };
+        });
     }
 
     registerDestroyListener(fn: Function) {
