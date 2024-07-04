@@ -9,9 +9,9 @@ import { WidgetRef } from '@wm/components/base';
 declare const _;
 
 @Directive({
-    selector: '[customContainer]',
+    selector: '[customWidgetContainer]',
 })
-export class CustomPropHandlerDirective {
+export class CustomWidgetPropHandlerDirective {
     constructor (@Self() @Inject(WidgetRef) private widgetRef) {
         this.widgetRef.props = {};
         this.widgetRef.pageParams = this.widgetRef.props;
@@ -20,6 +20,7 @@ export class CustomPropHandlerDirective {
 
     registerParams(name: string, value: string, bindExpr: string, type: string) {
         this.widgetRef.props[name] = value;
+        console.log(name + ": " + value+ ":" + bindExpr);
         if (!value && bindExpr) {
             this.widgetRef.registerDestroyListener(
                 //[Todo-CSP]: expr fn should be generated be default
@@ -40,7 +41,7 @@ export class CustomPropHandlerDirective {
 @Directive({
     selector: '[wmProp]',
 })
-export class CustomPropDirective implements OnInit {
+export class CustomWidgetPropDirective implements OnInit {
 
     @Input() name: string;
     @Input() value: any;
@@ -48,11 +49,11 @@ export class CustomPropDirective implements OnInit {
     constructor(
         @Attribute('value.bind') public bindValue,
         @Attribute('type') public type,
-        private customPropsProvider: CustomPropHandlerDirective
+        private customWidgetPropsProvider: CustomWidgetPropHandlerDirective
     ) {
     }
 
     ngOnInit() {
-        this.customPropsProvider.registerParams(this.name, this.value, this.bindValue, this.type);
+        this.customWidgetPropsProvider.registerParams(this.name, this.value, this.bindValue, this.type);
     }
 }

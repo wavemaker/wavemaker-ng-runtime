@@ -16,7 +16,7 @@ import {
     PartialParamHandlerDirective
 } from './widgets/common/partial-param/partial-param.directive';
 import { PartialContainerDirective} from "./widgets/common/base/partial-container.directive";
-import { CustomContainerDirective} from "./widgets/common/base/custom-container.directive";
+import { CustomWidgetContainerDirective} from "./widgets/common/base/custom-widget-container.directive";
 import { RedrawableDirective } from './widgets/common/redraw/redrawable.directive';
 import { ShowInDeviceDirective } from './directives/show-in-device.directive';
 import { SmoothScrollDirective } from './widgets/common/smooth-scroll/smooth-scroll.directive';
@@ -52,7 +52,7 @@ const wmComponents = [
     PartialParamHandlerDirective,
     PartialParamDirective,
     PartialContainerDirective,
-    CustomContainerDirective,
+    CustomWidgetContainerDirective,
     RedrawableDirective,
     ShowInDeviceDirective,
     SmoothScrollDirective,

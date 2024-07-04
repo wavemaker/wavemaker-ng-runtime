@@ -19,7 +19,7 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
 import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 
-import {App, getWmProjectProperties, PartialRefProvider, CustomRefProvider} from '@wm/core';
+import {App, getWmProjectProperties, PartialRefProvider, CustomWidgetRefProvider} from '@wm/core';
 // Basic widgets
 
 import { BasicModule } from '@wm/components/basic';
@@ -256,7 +256,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         { provide: AppExtensionProvider,useClass:AppExtensionProviderService},
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
-        { provide: CustomRefProvider, useClass: ComponentRefProviderService },
+        { provide: CustomWidgetRefProvider, useClass: ComponentRefProviderService },
         { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService },
         { provide: RouteReuseStrategy, useClass: WmRouteReuseStrategy }
     ],

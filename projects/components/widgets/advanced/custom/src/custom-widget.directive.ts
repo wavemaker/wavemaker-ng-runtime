@@ -3,22 +3,22 @@ import {Attribute, Directive, Injector, OnInit, Optional, SecurityContext} from 
 import {setCSS, setProperty} from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, SanitizePipe, StylableComponent, styler } from '@wm/components/base';
 
-import { registerProps } from './custom.props';
+import { registerProps } from './custom-widget.props';
 
 const DEFAULT_CLS = 'app-html-container';
 const WIDGET_CONFIG: IWidgetConfig = {
-    widgetType: 'wm-custom',
+    widgetType: 'wm-custom-widget',
     hostClass: DEFAULT_CLS
 };
 
 @Directive({
-    selector: '[wmCustom]',
+    selector: '[wmCustomWidget]',
     providers: [
-        provideAsWidgetRef(CustomDirective)
+        provideAsWidgetRef(CustomWidgetDirective)
     ],
-    exportAs: 'wmCustom'
+    exportAs: 'wmCustomWidget'
 })
-export class CustomDirective extends StylableComponent implements OnInit {
+export class CustomWidgetDirective extends StylableComponent implements OnInit {
     static initializeProps = registerProps();
     public content: string;
     public prop: any = {};

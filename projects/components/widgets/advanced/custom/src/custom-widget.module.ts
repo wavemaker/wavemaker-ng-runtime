@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components/base';
 
-import { CustomDirective } from './custom.directive';
-import { CustomPropDirective, CustomPropHandlerDirective} from './custom-prop/custom-prop.directive'
+import { CustomWidgetDirective } from './custom-widget.directive';
+import { CustomWidgetPropDirective, CustomWidgetPropHandlerDirective} from './custom-widget-prop/custom-widget-prop.directive'
 const components = [
-    CustomDirective,
-    CustomPropDirective,
-    CustomPropHandlerDirective
+    CustomWidgetDirective,
+    CustomWidgetPropDirective,
+    CustomWidgetPropHandlerDirective
 ];
 
 @NgModule({

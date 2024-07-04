@@ -32,10 +32,9 @@ import { AppManagerService } from '../services/app.manager.service';
 declare const _;
 
 // export const commonPartialWidgets = {};
-const commonPartialWidgets = {};
 
 @Directive()
-export abstract class BaseCustomComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
+export abstract class BaseCustomWidgetComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
     Widgets: any;
     Variables: any;
     Actions: any;
@@ -51,7 +50,7 @@ export abstract class BaseCustomComponent extends FragmentMonitor implements Aft
     containerWidget: any;
     i18nService: AbstractI18nService;
     appLocale: any;
-    @ViewChild(PartialDirective) partialDirective;
+    // @ViewChild(PartialDirective) partialDirective;
     pageDirective: PageDirective | SpaPageDirective;
     Prefab: PrefabDirective;
     scriptLoaderService: ScriptLoaderService;
@@ -181,7 +180,6 @@ export abstract class BaseCustomComponent extends FragmentMonitor implements Aft
     }
 
     registerPageParams() {
-        console.log(this.containerWidget.props)
         this.pageParams = this.containerWidget.props;
     }
 

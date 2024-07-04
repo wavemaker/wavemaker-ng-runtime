@@ -2,7 +2,7 @@ export enum ComponentType {
     PAGE,
     PREFAB,
     PARTIAL,
-    CUSTOM
+    WIDGET
 }
 
 export abstract class ComponentRefProvider {

@@ -1,3 +1,3 @@
-export * from './custom.module';
-export * from './custom.directive';
-export * from './custom-prop/custom-prop.directive'
+export * from './custom-widget.module';
+export * from './custom-widget.directive';
+export * from './custom-widget-prop/custom-widget-prop.directive'

@@ -1,14 +1,14 @@
 import { Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
-import { App, $invokeWatchers, noop, ComponentType, CustomRefProvider } from '@wm/core';
+import { App, $invokeWatchers, noop, ComponentType, CustomWidgetRefProvider } from '@wm/core';
 import { WidgetRef } from "../../framework/types";
 
 
 declare const _;
 
 @Directive({
-    selector: '[customContainer]'
+    selector: '[customWidgetContainer]'
 })
-export class CustomContainerDirective {
+export class CustomWidgetContainerDirective {
     private contentInitialized = false;
     private $target;
 
@@ -19,7 +19,7 @@ export class CustomContainerDirective {
         // when the container-target is inside the component template, it can be queried after viewInit of the component.
         $invokeWatchers(true);
 
-        const componentFactory = await this.customRefProvider.getComponentFactoryRef(widgetName, ComponentType.CUSTOM);
+        const componentFactory = await this.customWidgetRefProvider.getComponentFactoryRef(widgetName, ComponentType.WIDGET);
 
         if (componentFactory) {
             const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);
@@ -55,7 +55,7 @@ export class CustomContainerDirective {
         private app: App,
         @Attribute('widgetname') widgetname: string,
         private resolver: ComponentFactoryResolver,
-        private customRefProvider: CustomRefProvider
+        private customWidgetRefProvider: CustomWidgetRefProvider
     ) {
         componentInstance.registerPropertyChangeListener((key: string, nv: any, ov?: any) => {
             if (key === 'widgetname') {
