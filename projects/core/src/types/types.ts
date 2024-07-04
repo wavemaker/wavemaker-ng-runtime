@@ -2,7 +2,7 @@ export enum ComponentType {
     PAGE,
     PREFAB,
     PARTIAL,
-    CUSTOM
+    WIDGET
 }
 
 export class IDataSource {
@@ -224,6 +224,6 @@ export abstract class PartialRefProvider {
     abstract getComponentFactoryRef(partialName: string, componentType: ComponentType, options?: any): Promise<any>;
 }
 
-export abstract class CustomRefProvider {
+export abstract class CustomWidgetRefProvider {
     abstract getComponentFactoryRef(customWidgetName: string, componentType: ComponentType, options?: any): Promise<any>;
 }

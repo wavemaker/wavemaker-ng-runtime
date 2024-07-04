@@ -15,7 +15,7 @@ import {
     AppManagerService,
     BasePageComponent,
     BasePartialComponent,
-    BaseCustomComponent,
+    BaseCustomWidgetComponent,
     BasePrefabComponent,
     ComponentRefProvider,
     ComponentType,
@@ -45,12 +45,12 @@ const componentFactoryRefCache = new Map<ComponentType, Map<string, any>>();
 componentFactoryRefCache.set(ComponentType.PAGE, new Map<string, any>());
 componentFactoryRefCache.set(ComponentType.PARTIAL, new Map<string, any>());
 componentFactoryRefCache.set(ComponentType.PREFAB, new Map<string, any>());
-componentFactoryRefCache.set(ComponentType.CUSTOM, new Map<string, any>());
+componentFactoryRefCache.set(ComponentType.WIDGET, new Map<string, any>());
 
 const _decodeURIComponent = (str: string) => decodeURIComponent(str.replace(/\+/g, ' '));
 
 const getFragmentUrl = (fragmentName: string, type: ComponentType, options?) => {
-    if (type === ComponentType.PAGE || type === ComponentType.PARTIAL || type === ComponentType.CUSTOM) {
+    if (type === ComponentType.PAGE || type === ComponentType.PARTIAL || type === ComponentType.WIDGET) {
         return options && options.prefab ? getPrefabPartialJsonUrl(options.prefab, fragmentName) : `./pages/${fragmentName}/page.min.json`;
     } else if (type === ComponentType.PREFAB) {
         return getPrefabMinJsonUrl(fragmentName);
@@ -124,8 +124,8 @@ const getDynamicComponent = (
             selector = `app-prefab-${componentName}`;
             context = 'Prefab';
             break;
-        case ComponentType.CUSTOM:
-            BaseClass = BaseCustomComponent;
+        case ComponentType.WIDGET:
+            BaseClass = BaseCustomWidgetComponent;
             selector = `app-custom-${componentName}`;
             context = 'Widget';
             break;
@@ -150,7 +150,7 @@ const getDynamicComponent = (
                 case ComponentType.PREFAB:
                     this.prefabName = componentName;
                     break;
-                case ComponentType.CUSTOM:
+                case ComponentType.WIDGET:
                     this.customWidgetName = componentName;
                     break;
             }
@@ -242,8 +242,6 @@ export class ComponentRefProviderService extends ComponentRefProvider {
 
         return this.loadResourcesOfFragment(componentName, componentType, options)
             .then(({markup, script, styles, variables})  => {
-                if(componentType === ComponentType.CUSTOM){
-                }
                 const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, JSON.stringify(variables));
                 const moduleDef = getDynamicModule(componentDef);
 

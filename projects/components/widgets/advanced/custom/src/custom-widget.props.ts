@@ -2,7 +2,7 @@ import { PROP_BOOLEAN, PROP_STRING, register } from '@wm/components/base';
 
 export const registerProps = () => {
     register(
-        'wm-custom',
+        'wm-custom-widget',
         new Map(
             [
                 ['class', PROP_STRING],
