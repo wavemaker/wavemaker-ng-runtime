@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components/base';
 
-import { CustomWidgetDirective } from './custom-widget.directive';
-import { CustomWidgetPropDirective, CustomWidgetPropHandlerDirective} from './custom-widget-prop/custom-widget-prop.directive'
+import { CustomWidgetContainerDirective } from './custom-widget-container/custom-widget-container.directive';
+import { CustomWidgetPropDirective, CustomWidgetPropHandlerDirective} from './custom-widget-container-prop/custom-widget-container-prop.directive'
 const components = [
-    CustomWidgetDirective,
+    CustomWidgetContainerDirective,
     CustomWidgetPropDirective,
     CustomWidgetPropHandlerDirective
 ];

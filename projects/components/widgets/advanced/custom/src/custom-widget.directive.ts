@@ -1,56 +1,44 @@
-import {Attribute, Directive, Injector, OnInit, Optional, SecurityContext} from '@angular/core';
+import {Directive, Injector, OnDestroy, Optional} from '@angular/core';
 
-import {setCSS, setProperty} from '@wm/core';
-import { IWidgetConfig, provideAsWidgetRef, SanitizePipe, StylableComponent, styler } from '@wm/components/base';
+import {Viewport, ViewportEvent} from '@wm/core';
+import { registerProps } from './custom-widget-prop';
+import { StylableComponent, provideAsWidgetRef } from '@wm/components/base';
 
-import { registerProps } from './custom-widget.props';
-
-const DEFAULT_CLS = 'app-html-container';
-const WIDGET_CONFIG: IWidgetConfig = {
-    widgetType: 'wm-custom-widget',
-    hostClass: DEFAULT_CLS
-};
+const DEFAULT_CLS = 'app-custom-widget-container clearfix';
+const WIDGET_CONFIG = {widgetType: 'wm-custom-widget-container', hostClass: DEFAULT_CLS};
+declare const _;
 
 @Directive({
     selector: '[wmCustomWidget]',
     providers: [
         provideAsWidgetRef(CustomWidgetDirective)
-    ],
-    exportAs: 'wmCustomWidget'
+    ]
 })
-export class CustomWidgetDirective extends StylableComponent implements OnInit {
+export class CustomWidgetDirective extends StylableComponent implements OnDestroy {
     static initializeProps = registerProps();
-    public content: string;
-    public prop: any = {};
-
-    constructor(
-        inj: Injector,
-        @Attribute('height') height: string,
-    ) {
+    constructor(inj: Injector, private viewport: Viewport) {
         super(inj, WIDGET_CONFIG);
 
-        // if the height is provided set the overflow to auto
-        if (height) {
-            setCSS(this.nativeElement, 'overflow', 'auto');
-        }
-
-        styler(this.nativeElement, this);
+        this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.RESIZE, data => this.callback('resize', data)));
+        this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.ORIENTATION_CHANGE, data => this.callback('orientationchange', data)));
     }
 
-    ngOnInit() {
-        super.ngOnInit();
-        const attrs = this.nativeElement.attributes;
-        for (let attrName, attrVal, i = 0; i < attrs.length; i++){
-            attrName = attrs[i].nodeName;
-            attrVal = attrs[i].nodeValue;
-            if (attrName.startsWith('prop-')) {
-                attrName = attrName.replace('prop-', '');
-                this.prop[attrName] = attrVal;
-            }
-        }
+    private callback(eventName, locals?: object) {
+        locals = _.assign({ widget: this }, locals);
+        this.invokeEventCallback(eventName, locals);
     }
 
-    onPropertyChange(key: string, nv: any, ov?: any) {
-        super.onPropertyChange(key, nv, ov);
+    public ngOnAttach() {
+        this.callback('attach');
     }
+
+    public ngOnDetach() {
+        this.callback('detach');
+    }
+
+    public ngOnDestroy() {
+        this.callback('destroy');
+        super.ngOnDestroy();
+    }
+
 }

@@ -8,7 +8,7 @@ register('wm-custom-widget', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmCustomWidget customWidgetContainer #${counter}="wmCustomWidget" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmWidgetContainer customWidgetContainer #${counter}="wmWidgetContainer" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

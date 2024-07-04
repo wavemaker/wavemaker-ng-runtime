@@ -35,5 +35,6 @@ export class ButtonComponent extends StylableComponent {
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+        console.log("From buttonComp", this.caption)
     }
 }
