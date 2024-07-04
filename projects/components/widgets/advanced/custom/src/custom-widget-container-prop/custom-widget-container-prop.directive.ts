@@ -20,7 +20,6 @@ export class CustomWidgetPropHandlerDirective {
 
     registerParams(name: string, value: string, bindExpr: string, type: string) {
         this.widgetRef.props[name] = value;
-        console.log(name + ": " + value+ ":" + bindExpr);
         if (!value && bindExpr) {
             this.widgetRef.registerDestroyListener(
                 //[Todo-CSP]: expr fn should be generated be default
