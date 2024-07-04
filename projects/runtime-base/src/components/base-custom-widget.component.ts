@@ -58,6 +58,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     Viewport: Viewport;
     compileContent = false;
     spa: boolean;
+    events: any;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -127,9 +128,14 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         (this.App as any).Widgets = Object.create(this.Widgets);
     }
 
+    invokeEvent = (eventName: string) => {
+        this.events[eventName]();
+    }
+
     registerEvents() {
+        this.events = {};
         this.containerWidget.eventHandlers.forEach((callback: any, key: string) => {
-            this[key] = (...args) => {
+            this.events[key] = (...args) => {
                 this.containerWidget.invokeEventCallback(key, {$event: args[0], $data: args[1]});
             };
         });
