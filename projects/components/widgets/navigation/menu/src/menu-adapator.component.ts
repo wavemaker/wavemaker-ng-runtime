@@ -1,4 +1,4 @@
-import {AfterViewInit, QueryList, ViewChildren, Directive, Optional} from '@angular/core';
+import {AfterViewInit, QueryList, ViewChildren, Directive, Optional, Inject} from '@angular/core';
 
 import { StylableComponent } from '@wm/components/base';
 import { MenuComponent } from './menu.component';
@@ -27,8 +27,9 @@ export class MenuAdapterComponent extends BaseContainerComponent implements Afte
     constructor(
         inj,
         WIDGET_CONFIG,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         this.pageScope = this.viewParent;
         this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');

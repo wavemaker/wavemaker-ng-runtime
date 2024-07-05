@@ -131,9 +131,10 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         inj: Injector,
         private ngZone: NgZone,
         private appDefaults: AppDefaults,
-        app: App
+        app: App,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this);
         /**

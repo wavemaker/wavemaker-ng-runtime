@@ -7,7 +7,8 @@ import {
     ViewChild,
     HostListener,
     Optional,
-    SkipSelf
+    SkipSelf,
+    Inject
 } from '@angular/core';
 
 import {toBoolean} from '@wm/core';
@@ -35,7 +36,8 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
         inj: Injector,
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
-        @Attribute('closable') closable: string | boolean
+        @Attribute('closable') closable: string | boolean,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         if (modal === null || modal === undefined) {
             modal = false;
@@ -55,7 +57,8 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,
                 keyboard: !toBoolean(modal)
-            }
+            },
+            explicitContext
         );
     }
 

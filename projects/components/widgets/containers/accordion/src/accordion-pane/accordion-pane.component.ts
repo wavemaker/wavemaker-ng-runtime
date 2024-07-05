@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ContentChildren, Injector, Optional} from '@angular/core';
+import {AfterViewInit, Component, ContentChildren, Inject, Injector, Optional} from '@angular/core';
 
 import {noop, removeAttr} from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, StylableComponent, styler,  } from '@wm/components/base';
@@ -35,8 +35,8 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
     // reference to the components which needs a redraw(eg, grid, chart) when the height of this component changes
     @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
 
-    constructor(inj: Injector, private accordionRef: AccordionDirective) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private accordionRef: AccordionDirective, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
 

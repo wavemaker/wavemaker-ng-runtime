@@ -1,4 +1,16 @@
-import { AfterContentInit, AfterViewInit, Attribute, ContentChild, ContentChildren, TemplateRef, Directive, Injector, OnInit, Optional } from '@angular/core';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Attribute,
+    ContentChild,
+    ContentChildren,
+    TemplateRef,
+    Directive,
+    Injector,
+    OnInit,
+    Optional,
+    Inject
+} from '@angular/core';
 
 import {
     $watch,
@@ -152,9 +164,10 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         @Optional() public table: TableComponent,
         @Optional() public group: TableColumnGroupDirective,
         @Attribute('filterdataset.bind') public bindfilterdataset,
-        @Attribute('dataset.bind') public binddataset
+        @Attribute('dataset.bind') public binddataset,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         this.notifyForFields = [];
     }

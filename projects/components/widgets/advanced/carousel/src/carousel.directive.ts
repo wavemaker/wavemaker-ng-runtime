@@ -1,7 +1,7 @@
 import {
     AfterContentInit,
     ContentChildren,
-    Directive,
+    Directive, Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -49,8 +49,8 @@ export class CarouselDirective extends StylableComponent implements AfterContent
 
     @ContentChildren(SlideComponent) slides: QueryList<SlideComponent>;
 
-    constructor(public component: CarouselComponent, inj: Injector, private ngZone: NgZone) {
-        super(inj, WIDGET_CONFIG);
+    constructor(public component: CarouselComponent, inj: Injector, private ngZone: NgZone, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }
 

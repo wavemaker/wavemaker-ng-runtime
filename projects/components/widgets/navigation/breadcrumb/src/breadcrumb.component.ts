@@ -1,4 +1,4 @@
-import { Attribute, Component, Injector } from '@angular/core';
+import {Attribute, Component, Inject, Injector, Optional} from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 
@@ -27,9 +27,10 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent {
         inj: Injector,
         private route: Router,
         private location: Location,
-        @Attribute('beforenavigate.event') beforeNavigateCB: string
+        @Attribute('beforenavigate.event') beforeNavigateCB: string,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.disableMenuContext = !!beforeNavigateCB;
     }

@@ -13,7 +13,9 @@ register('wm-repeat-template', (): IBuildTaskDef => {
             if (widgetRef) {
                 return `<div *ngIf="${widgetRef}.fieldDefs && !${widgetRef}.fieldDefs.length">{{${widgetRef}.nodatamessage}}</div>
                     <${dynamicTemplateTagName} wmRepeatTemplate  ${getAttrMarkup(attrs)} *ngFor="let item of ${widgetRef}.fieldDefs; let i = index;">
-                        <ng-container [ngTemplateOutlet]="widgetRef${counter}" [ngTemplateOutletContext]="{item:item, index:i}"></ng-container>
+                        <ng-container [ngTemplateOutlet]="widgetRef${counter}"
+                            [ngTemplateOutletContext]="{item:item, index:i}"
+                            [ngTemplateOutletInjector]="${widgetRef}.createCustomInjector('dynamic_widget_'+ i, {item:item, index:i})"></ng-container>
                     </${dynamicTemplateTagName}>
                     <ng-template #widgetRef${counter++} let-item="item" let-index="index">`;
             }

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Injector, Optional, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { CircleProgressComponent, CircleProgressOptionsInterface } from 'ng-circle-progress';
 
 
@@ -63,8 +63,8 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     @ViewChild(CircleProgressComponent, { static: true }) circleRef: CircleProgressComponent;
 
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         this.options = _.clone(DEFAULT_OPTIONS);
         this.redraw = _.debounce(this._redraw, 100);

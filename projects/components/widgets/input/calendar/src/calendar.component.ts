@@ -3,9 +3,11 @@ import {
     AfterViewInit,
     Component,
     ElementRef,
+    Inject,
     Injector,
     OnDestroy,
     OnInit,
+    Optional,
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
@@ -396,8 +398,8 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         }
     }
 
-    constructor(inj: Injector, i18nService: AbstractI18nService) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, i18nService: AbstractI18nService, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         this.eventSources.push(this.dataSetEvents);
         const FullCalendar = window['FullCalendar'];

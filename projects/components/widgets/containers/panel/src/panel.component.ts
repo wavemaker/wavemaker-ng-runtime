@@ -3,6 +3,7 @@ import {
     Component,
     ContentChildren,
     ElementRef,
+    Inject,
     Injector,
     OnInit,
     Optional,
@@ -64,8 +65,8 @@ export class PanelComponent extends MenuAdapterComponent implements OnInit, Afte
         return this.iconurl || this.iconclass || this.collapsible || this.actions || this.title || this.subheading || this.enablefullscreen;
     }
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
 

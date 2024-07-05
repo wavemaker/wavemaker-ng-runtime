@@ -120,7 +120,10 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                                                      tabindex.bind="btn.tabindex" [class.hidden]="btn.updateMode ? !${counter}.isUpdateMode : ${counter}.isUpdateMode"></button>
                                         </ng-template>`;
                 mobileFormContentTmpl = `<header wmMobileNavbar name="${name}" ${getAttrMarkup(navbarAttrsMap)}>
-                                            <ng-container *ngFor="let btn of ${counter}.buttonArray" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+                                            <ng-container *ngFor="let btn of ${counter}.buttonArray; let i = index"
+                                                [ngTemplateOutlet]="buttonRef"
+                                                [ngTemplateOutletContext]="{btn:btn}"
+                                                [ngTemplateOutletInjector]="${counter}.createCustomInjector('mobile_' + i, {item:item, index:i})">
                                             </ng-container>
                                         </header>
                                         <div class="form-elements panel-body" >`;

@@ -1,4 +1,4 @@
-import {Attribute, Component, HostListener, Injector, Optional} from '@angular/core';
+import {Attribute, Component, HostListener, Inject, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import {AppDefaults, noop, setListClass, switchClass} from '@wm/core';
@@ -36,8 +36,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         this.multiple = true;
     }

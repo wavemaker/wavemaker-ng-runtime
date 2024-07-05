@@ -1,4 +1,13 @@
-import {AfterViewInit, OnDestroy, Component, HostBinding, Injector, ViewEncapsulation, Optional} from '@angular/core';
+import {
+    AfterViewInit,
+    OnDestroy,
+    Component,
+    HostBinding,
+    Injector,
+    ViewEncapsulation,
+    Optional,
+    Inject
+} from '@angular/core';
 
 import {
     App,
@@ -1086,8 +1095,8 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
     }
 
-    constructor(inj: Injector, private app: App) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['fontsize', 'fontunit', 'color', 'fontfamily', 'fontweight', 'fontstyle', 'textdecoration']);
 
         // generate unique id for the component

@@ -3,6 +3,7 @@ import {
     AfterViewInit,
     Component,
     ContentChildren,
+    Inject,
     Injector,
     OnInit,
     Optional,
@@ -79,10 +80,10 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         return this.currentStep.enableDone && this.currentStep.isValid;
     }
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
 
         this.promiseResolverFn = resolveFn;

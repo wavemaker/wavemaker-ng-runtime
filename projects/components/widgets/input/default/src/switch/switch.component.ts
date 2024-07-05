@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Injector, Optional} from '@angular/core';
+import {AfterViewInit, Component, Inject, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import {$appDigest, debounce, isDefined, setCSS, toBoolean} from '@wm/core';
@@ -33,8 +33,8 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     private _debounceSetSelectedValue: Function;
     public name: string;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         this._debounceSetSelectedValue = debounce((val) => {
             this.setSelectedValue();

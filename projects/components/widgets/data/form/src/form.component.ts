@@ -5,7 +5,7 @@ import {
     Component,
     ContentChildren,
     HostBinding,
-    HostListener,
+    HostListener, Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -307,9 +307,10 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         @Attribute('wmLiveFilter') isLiveFilter,
         @Attribute('data-role') role,
         @Attribute('key') key,
-        @Attribute('name') name
+        @Attribute('name') name,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, getWidgetConfig(isLiveForm, isLiveFilter, role),);
+        super(inj, getWidgetConfig(isLiveForm, isLiveFilter, role), explicitContext);
 
         styler(this.nativeElement, this);
 

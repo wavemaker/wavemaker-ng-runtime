@@ -3,6 +3,7 @@ import {
     Attribute,
     Component,
     HostListener,
+    Inject,
     Injector,
     OnDestroy,
     OnInit,
@@ -170,9 +171,10 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         private app: App,
         @Self() @Optional() public bsDropdown: BsDropdownDirective,
         @Optional() private parentNav: NavComponent,
-        @Attribute('select.event') public selectEventCB: string
+        @Attribute('select.event') public selectEventCB: string,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         if (parentNav) {
             this.disableMenuContext = !!parentNav.disableMenuContext;
         } else {

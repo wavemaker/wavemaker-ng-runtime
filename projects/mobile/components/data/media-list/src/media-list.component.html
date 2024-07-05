@@ -2,10 +2,14 @@
     <li *ngFor="let item of fieldDefs; index as index;" [ngStyle]="{width: thumbnailwidth, height: thumbnailheight}" (click)="showFullScreen(index)">
         <div class="thumbnail">
             <ng-container [ngTemplateOutlet]="imgTemplate"
-                          [ngTemplateOutletContext]="{src: item.thumbnailUrlVal, class: 'thumbnail-image'}">
+                          [ngTemplateOutletContext]="{src: item.thumbnailUrlVal, class: 'thumbnail-image'}"
+                          [ngTemplateOutletInjector]="createCustomInjector('thumbnail_' + index, {src: item.thumbnailUrlVal, class: 'thumbnail-image'})">
             </ng-container>
             <div class="thumbnail-details">
-                <ng-container [ngTemplateOutlet]="mediaListTemplate" [ngTemplateOutletContext]="{item:item, index:index}" [wmMediaListItem]="item">
+                <ng-container [ngTemplateOutlet]="mediaListTemplate"
+                              [ngTemplateOutletContext]="{item:item, index:index}"
+                              [ngTemplateOutletInjector]="createCustomInjector('thumbnail_details_' + index, {item:item, index:index})"
+                              [wmMediaListItem]="item">
                 </ng-container>
             </div>
         </div>
@@ -24,7 +28,8 @@
             <div class="media-content">
                 <div class="image-container"  (swipeleft)="showNext()" (swiperight)="showPrev()">
                     <ng-container [ngTemplateOutlet]="imgTemplate"
-                                  [ngTemplateOutletContext]="{field: 'mediaUrlVal', class: 'center-block'}">
+                                  [ngTemplateOutletContext]="{field: 'mediaUrlVal', class: 'center-block'}"
+                                  [ngTemplateOutletInjector]="createCustomInjector('image_', {field: 'mediaUrlVal', class: 'center-block'})">
                     </ng-container>
                     <a class="app-media-fullscreen-nav-control left" [hidden]="!(selectedMediaIndex > 0)" (click)="showPrev()">
                         <i class="wi wi-chevron-left"></i>

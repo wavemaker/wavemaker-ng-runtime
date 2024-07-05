@@ -1,4 +1,4 @@
-import { Injector } from '@angular/core';
+import {Inject, Injector, Optional} from '@angular/core';
 import { AbstractControl, Validator } from '@angular/forms';
 import { getLocaleNumberSymbol, NumberSymbol } from '@angular/common';
 
@@ -37,9 +37,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         inj: Injector,
         config: IWidgetConfig,
         private i18nService: AbstractI18nService,
-        private trailingZeroDecimalPipe: TrailingZeroDecimalPipe
+        private trailingZeroDecimalPipe: TrailingZeroDecimalPipe,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, config);
+        super(inj, config, explicitContext);
         this.selectedLocale = i18nService.getSelectedLocale();
         this.DECIMAL = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Decimal);
         this.GROUP = getLocaleNumberSymbol(this.localefilter || this.selectedLocale, NumberSymbol.Group);

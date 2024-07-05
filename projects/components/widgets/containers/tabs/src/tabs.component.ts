@@ -3,7 +3,7 @@ import {
     AfterViewInit,
     Attribute,
     Component,
-    ContentChildren,
+    ContentChildren, Inject,
     Injector,
     OnInit,
     Optional,
@@ -78,11 +78,12 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         dynamicComponentProvider: DynamicComponentRefProvider,
         @Attribute('transition') _transition: string,
         @Attribute('tabsposition') _tabsPosition: string,
-        statePersistence: StatePersistence
+        statePersistence: StatePersistence,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         // handle to the promise resolver
         let resolveFn: Function = noop;
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
 
         this.transition = _transition;
         this.tabsposition = _tabsPosition;

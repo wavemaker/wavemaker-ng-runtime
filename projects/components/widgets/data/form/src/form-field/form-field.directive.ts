@@ -157,7 +157,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Attribute('pc-display') pcDisplay,
         @Attribute('mobile-display') mobileDisplay,
         @Attribute('tablet-display') tabletDisplay,
-        @Self() @Inject(Context) contexts: Array<any>
+        @Self() @Inject(Context) contexts: Array<any>,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         const WIDGET_CONFIG = {
             widgetType: 'wm-form-field',
@@ -166,7 +167,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         };
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
         this._initPropsRes = resolveFn;
         this.app = app;
         this.fieldDefConfig = {};
