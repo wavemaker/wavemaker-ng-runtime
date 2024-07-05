@@ -282,6 +282,15 @@ describe('ListComponent', () => {
         expect(paginationElem).toBeTruthy();
     });
 
+    it('should apply pagination type as thumbnail', () => { 
+        listComponent.navigation = 'Thumbnail';
+        jest.spyOn(listComponent, 'onPropertyChange');
+        listComponent.onPropertyChange('navigation', 'Thumbnail');
+        fixture.detectChanges();
+        const paginationElem = fixture.debugElement.query(By.css('.pagination'));
+        expect(paginationElem).toBeFalsy();
+    });
+
 });
 
 describe('ListComponent With groupby', () => {
