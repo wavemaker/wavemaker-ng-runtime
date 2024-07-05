@@ -1,8 +1,8 @@
-import {Component, HostBinding, Injector, Optional} from '@angular/core';
+import {Component, HostBinding, Injector, Input, OnInit} from '@angular/core';
 
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
 
-import { registerProps } from './button.props';
+import {registerProps} from './button.props';
 
 const DEFAULT_CLS = 'btn app-button';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -19,7 +19,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ],
     exportAs: 'wmButton'
 })
-export class ButtonComponent extends StylableComponent {
+export class ButtonComponent extends StylableComponent implements OnInit {
     static initializeProps = registerProps();
 
     public iconurl: string;
@@ -31,9 +31,14 @@ export class ButtonComponent extends StylableComponent {
     @HostBinding('disabled') disabled: boolean;
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;
+    @Input() explicitContext: any;
 
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
     }
 }
