@@ -41,8 +41,9 @@ register(wmListTag, (): IBuildTaskDef => {
 
 register('wm-listtemplate', (): IBuildTaskDef => {
     return {
-        pre: () => `<ng-template #listTemplate let-item="item" let-$index="$index" let-itemRef="itemRef" let-$first="$first" let-$last="$last"  let-currentItemWidgets="currentItemWidgets" >`,
-        post: () => `</ng-template>`
+        pre: () => `<ng-template #listTemplate let-item="item" let-$index="$index" let-itemRef="itemRef" let-$first="$first" let-$last="$last"  let-currentItemWidgets="currentItemWidgets">
+            <div wmContextWrapper [explicitContext]="{item, $index, itemRef, $first, $last, currentItemWidgets}">`,
+        post: () => `</div></ng-template>`
     };
 });
 

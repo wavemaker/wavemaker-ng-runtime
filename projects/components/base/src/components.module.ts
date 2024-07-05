@@ -20,6 +20,7 @@ import { RedrawableDirective } from './widgets/common/redraw/redrawable.directiv
 import { ShowInDeviceDirective } from './directives/show-in-device.directive';
 import { SmoothScrollDirective } from './widgets/common/smooth-scroll/smooth-scroll.directive';
 import { TextContentDirective } from './widgets/common/base/text-content.directive';
+import { ContextWrapperComponent } from "./widgets/common/base/context-wrapper.component";
 import {
     FileExtensionFromMimePipe,
     FileIconClassPipe,
@@ -54,7 +55,8 @@ const wmComponents = [
     RedrawableDirective,
     ShowInDeviceDirective,
     SmoothScrollDirective,
-    TextContentDirective
+    TextContentDirective,
+    ContextWrapperComponent
 ];
 
 const PIPES = [

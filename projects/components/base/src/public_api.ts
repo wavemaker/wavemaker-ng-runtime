@@ -78,6 +78,7 @@ export {
 export {
     BaseComponent
 } from './widgets/common/base/base.component';
+export { ContextWrapperComponent } from  './widgets/common/base/context-wrapper.component';
 export * from './widgets/common/base/base-container.component';
 export {
     DatasetAwareNavComponent,

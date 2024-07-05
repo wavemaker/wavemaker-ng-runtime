@@ -14,6 +14,7 @@
 
 <ng-template #anchorRef let-item="item" let-index="index" let-liRef="liRef">
     <a wmAnchor
+        [explicitContext]="{item, index, liRef}"
        [disableMenuContext]="disableMenuContext || !!item.action"
        [wmNavigationControl]="item.link"
        [attr.aria-current]="item._selected || (!isactive && item.link === '#/' + activePageName) ? 'page' : ''"

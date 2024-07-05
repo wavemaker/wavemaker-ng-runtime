@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostBinding, Injector, OnDestroy, Optional } from '@angular/core';
+import {AfterViewInit, Component, HostBinding, Injector, Input, OnDestroy, OnInit} from '@angular/core';
 
 import { addClass, App, encodeUrl, EventNotifier, getRouteNameFromLink, setAttr, removeAttr, removeClass } from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
@@ -25,8 +25,13 @@ export const disableContextMenu = ($event: Event) => {
     ],
     exportAs: 'wmAnchor'
 })
-export class AnchorComponent extends StylableComponent implements AfterViewInit, OnDestroy {
+export class AnchorComponent extends StylableComponent implements AfterViewInit, OnDestroy, OnInit {
     static initializeProps = registerProps();
+    /*
+    * After NG17 upgrade, Angular is not passing the ngTemplateContext to the components inside the ng-template.
+    * So are passing the context explicitly to the components. This context is required to evaluate the bind expressions.
+    */
+    @Input() explicitContext: any;
 
     private hasNavigationToCurrentPageExpr: boolean;
     private hasGoToPageExpr: boolean;
@@ -52,6 +57,9 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     ) {
         super(inj, WIDGET_CONFIG);
         styler(this.nativeElement, this);
+    }
+    ngOnInit() {
+        super.ngOnInit();
     }
 
     protected processEventAttr(eventName: string, expr: string, meta?: string) {

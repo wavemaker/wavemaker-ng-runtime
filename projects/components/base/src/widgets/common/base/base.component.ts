@@ -8,7 +8,6 @@ import {
     OnDestroy,
     OnInit,
     ViewContainerRef,
-    Optional,
     inject
 } from '@angular/core';
 import {EventManager} from '@angular/platform-browser';
@@ -189,6 +188,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     public viewContainerRef: ViewContainerRef;
     public viewParentApp: App;
+    explicitContext: any;
 
     protected constructor(
         protected inj: Injector,
@@ -663,7 +663,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.initState = new Map<string, any>();
 
         // get the widget properties
-        const widgetProps: Map<string, any> = getWidgetPropsByType(this.widgetSubType);
+        const widgetProps: Map<string, any> = getWidgetPropsByType(this.widgetSubType) || new Map<string, any>();
         widgetProps.forEach((v, k) => {
             if (isDefined(v.value)) {
                 this.initState.set(k, v.value);
@@ -759,6 +759,14 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     ngOnInit() {
         if (!this.delayedInit) {
             this.setInitProps();
+        }
+        if(this.explicitContext) {
+            _.extend(this.context, this.explicitContext);
+        }
+        const wmContextWrapperComponent = $(this.nativeElement).closest('div[wmcontextwrapper]');
+        if(wmContextWrapperComponent.length) {
+            const context = wmContextWrapperComponent[0].widget?.context || {};
+            _.extend(this.context, context);
         }
     }
 
