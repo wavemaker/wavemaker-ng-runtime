@@ -27,7 +27,7 @@ export const LIVE_CONSTANTS = {
 };
 
 // Returns true if widget is autocomplete or chips
-function isSearchWidgetType(widget) {
+export function isSearchWidgetType(widget) {
     return _.includes([FormWidgetType.AUTOCOMPLETE, FormWidgetType.TYPEAHEAD, FormWidgetType.CHIPS], widget);
 }
 
