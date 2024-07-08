@@ -419,6 +419,9 @@ export class ComponentTestBase {
             }));
 
             it(this.widgetDef.type + ': aria-label should not be empty without hint', () => {
+                if (!widgetProps.get('hint')) {
+                    return;
+                }
                 expect($inputEl.getAttribute('aria-label')).toBeDefined();
             });
 

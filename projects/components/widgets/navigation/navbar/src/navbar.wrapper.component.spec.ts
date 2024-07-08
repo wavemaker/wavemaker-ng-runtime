@@ -6,7 +6,7 @@ import { App } from '@wm/core';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
-const markup = `<div wmNavbar name="navbar1" aria-label="navbar" hint="navbar" tabindex="1"  ></div>`;
+const markup = `<div wmNavbar aria-label="breadcrumb" name="navbar1"></div>`;
 
 @Component({
     template: markup

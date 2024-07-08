@@ -27,6 +27,7 @@ export class AudioComponent extends StylableComponent {
     public audiopreload: any;
     public audiosupportmessage: any;
     public autoplay: boolean;
+    public hint: string;
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
 

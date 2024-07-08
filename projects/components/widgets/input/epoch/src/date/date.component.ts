@@ -55,6 +55,7 @@ export class DateComponent extends BaseDateTimeComponent {
     private focusTrap;
     private showdateformatasplaceholder = false;
     mask;
+    private maskDateInputFormat;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -65,6 +66,9 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     get displayValue() {
+        if(this.showdateformatasplaceholder && this.imask?.maskRef && this.maskDateInputFormat) {
+            return getFormattedDate(this.datePipe, this.bsDataValue, this.maskDateInputFormat, this.timeZone, null, this.isCurrentDate, this) || '';
+        }
         return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this) || '';
     }
 
@@ -312,6 +316,9 @@ export class DateComponent extends BaseDateTimeComponent {
             this.imask?.destroyMask();
             if (this.showdateformatasplaceholder && this.datepattern !== 'timestamp') {
                 this.mask = validateTheMaskedDate(this.datepattern, this.selectedLocale);
+                this.maskDateInputFormat = this.dateInputFormat;
+                this.maskDateInputFormat = (this.dateInputFormat.split('d').length - 1) === 1 ? this.maskDateInputFormat.replace('d', 'dd') : this.maskDateInputFormat;
+                this.maskDateInputFormat = (this.dateInputFormat.split('M').length - 1) === 1 ? this.maskDateInputFormat.replace('M', 'MM') : this.maskDateInputFormat;
                 this.updateIMask();
             }
         } else {

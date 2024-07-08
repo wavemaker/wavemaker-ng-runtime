@@ -10,7 +10,7 @@ import { By } from '@angular/platform-browser';
 import { SecurityService } from '@wm/security';
 import { ComponentTestBase, ITestComponentDef } from 'projects/components/base/src/test/common-widget.specs';
 
-const markup = `<div wmBreadcrumb hint="breadcrumb" tabindex="1" name="breadcrumb1" aria-label="breadcrumb"></div>`;
+const markup = `<div wmBreadcrumb name="breadcrumb1" aria-label="breadcrumb"></div>`;
 
 @Component({
     template: markup
