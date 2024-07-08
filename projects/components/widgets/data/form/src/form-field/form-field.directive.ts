@@ -476,7 +476,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 const hasValue = ((isDefined(val) && val !== '' && val !== null) || captionEl.find('input').val()) || captionEl.find('input:-webkit-autofill').length;
 
                 this.app.notify('captionPositionAnimate', {
-                    isSelect: true,
                     displayVal: hasValue,
                     nativeEl: captionEl,
                     isSelectMultiple: this.formWidget && this.formWidget.multiple,

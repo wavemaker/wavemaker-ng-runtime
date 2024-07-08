@@ -12,13 +12,13 @@
         [attr.name]="name"
         [attr.aria-label]="hint"
         [attr.aria-multiselectable]="multiple"
-        [autofocus]="autofocus"
->
-    <option
-    value="undefined"
-    [textContent]="placeholder"
-    *ngIf="!isIosPlatform() || !!placeholder"
-    [hidden]="!placeholder"></option>
+        [autofocus]="autofocus">
+
+        <option selected
+                value="undefined"
+                [textContent]="placeholder"
+                id="placeholderOption"
+                [hidden]="!placeholder"></option>
 
     <ng-container *ngIf="groupby">
         <optgroup *ngFor="let groupObj of groupedData"

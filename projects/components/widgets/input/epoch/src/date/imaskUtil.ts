@@ -5,7 +5,13 @@ export function validateTheMaskedDate (format, locale)  {
     if(format == 'timestamp') {
         return false;
     }
-    const modifiedFormat = format.toUpperCase().replace(/E/g, 'd');
+    let modifiedFormat = format.toUpperCase().replace(/E/g, 'd');
+    if((modifiedFormat.split('D').length - 1) === 1) {
+        modifiedFormat = modifiedFormat.replace('D', 'DD');
+    }
+    if((modifiedFormat.split('M').length - 1) === 1 ) {
+        modifiedFormat = modifiedFormat.replace('M', 'MM');
+    }
     const parseFn=  str => {
         return moment(str, modifiedFormat).toDate();
     };
@@ -107,22 +113,10 @@ export function validateTheMaskedDate (format, locale)  {
                 placeholderChar:'E',
                 minLength: 6,
             },
-    },
+        },
         autofix: true,
         lazy: false,
         overwrite: true,
         skipInvalid: true
-
     }
 }
-
-
-
-
-
-
-
-
-
-
-
