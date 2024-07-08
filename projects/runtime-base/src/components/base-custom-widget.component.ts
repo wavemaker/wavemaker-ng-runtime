@@ -19,9 +19,11 @@ import {
     Viewport,
     ScriptLoaderService,
     UtilsService,
-    registerFnByExpr
+    registerFnByExpr,
+    $watch,
+    isIE
 } from '@wm/core';
-import { PartialDirective, WidgetRef} from '@wm/components/base';
+import { WidgetRef} from '@wm/components/base';
 import { PageDirective, SpaPageDirective } from '@wm/components/page';
 import {PrefabDirective} from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
@@ -100,7 +102,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
 
         this.activePageName = this.App.activePageName; // Todo: remove this
         this.registerPageParams();
-
+        this.registerProps();
         this.defineI18nProps();
 
         this.viewInit$.subscribe(noop, noop, () => {
@@ -143,6 +145,11 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
 
     registerDestroyListener(fn: Function) {
         this.destroy$.subscribe(noop, noop, () => fn());
+    }
+    
+    registerChangeListeners() {
+        this.containerWidget.registerPropertyChangeListener(this.onPropertyChange);
+        this.containerWidget.registerStyleChangeListener(this.onPropertyChange);
     }
 
     initUserScript() {
@@ -231,6 +238,38 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         //     }
         // });
     }
+    registerProps() {
+        window['resourceCache'].get(`./custom-widgets/${this.customWidgetName}/page.min.json`).then(({ config }) => {
+            if (config) {
+                Object.entries((config.properties || {})).forEach(([key, prop]: [string, any]) => {
+                    let expr;
+                    const value = _.trim(prop.value);
+
+                    if (_.startsWith(value, 'bind:')) {
+                        expr = value.replace('bind:', '');
+                    }
+
+                    Object.defineProperty(this, key, {
+                        get: () => this.containerWidget[key],
+                        set: nv => this.containerWidget.widget[key] = nv
+                    });
+
+                    if (expr) {
+                        //[Todo-CSP]: expr will be generated with prefab.comp.expr.ts
+                        this.registerDestroyListener(
+                            $watch(expr, this, {}, nv => this.containerWidget.widget[key] = nv)
+                        );
+                    }
+                })
+            }
+            this.containerWidget.setProps(config);
+            // Reassigning the proxy handler for prefab inbound properties as we
+            // will get them only after the prefab config call.
+            if (isIE()) {
+                this.containerWidget.widget = this.containerWidget.createProxy();
+            }
+        })
+    }
 
     mute() {
         const m = o => { o && o.mute && o.mute(); };
@@ -260,6 +299,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
 
         //     }, 100);
         // });
+        this.registerChangeListeners();
         this.invokeOnReady()
     }
 
@@ -281,6 +321,9 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         this.mute();
         _.each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
     }
+
+    // user overrides this
+    onPropertyChange() { }
 
     onReady(params?) {
     }

@@ -196,18 +196,19 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         const resource = fragmentCache.get(url);
 
         if (resource) {
-            return Promise.resolve(resource);
+            return resource;
         }
 
-        return this.resouceMngr.get(url, true)
-            .then(({markup, script, styles, variables}: IPageMinJSON) => {
+        const promise = this.resouceMngr.get(url, true)
+            .then(({markup, script, styles, variables, config}: IPageMinJSON) => {
                 const response = {
                     markup: transpile(_decodeURIComponent(markup)).markup,
                     script: _decodeURIComponent(script),
                     styles: scopeComponentStyles(componentName, componentType, _decodeURIComponent(styles)),
-                    variables: getValidJSON(_decodeURIComponent(variables))
+                    variables: getValidJSON(_decodeURIComponent(variables)),
+                    ...(config? {config : getValidJSON(_decodeURIComponent(config))} : {})
                 };
-                fragmentCache.set(url, response);
+                fragmentCache.set(url, Promise.resolve(response));
 
                 return response;
             }, e => {
@@ -218,6 +219,8 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                 };
                 return Promise.reject(errorMsgMap[status]);
             });
+            fragmentCache.set(url, promise);
+            return promise;
     }
 
     constructor(
