@@ -1730,6 +1730,7 @@ $.widget('wm.datatable', {
         }
         this.options.callOnRowClickEvent(data, e);
         selected = !selected;
+        this.options.assignSelectedItems(data, e, {'rowId': rowId, '_selected': selected});
         this.toggleRowSelection($row, selected, e);
         callRowSelectionEvents();
     },
