@@ -16,6 +16,7 @@
         "owasp": "owasp-dependency-check --project \"wavemaker-ng-runtime\" -f \"ALL\""
     },
     "private": true,
+    "bundledDependencies": true,
     "dependencies": {
         "@angular/animations": "16.2.12",
         "@angular/common": "16.2.12",
