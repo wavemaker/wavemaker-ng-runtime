@@ -1,4 +1,4 @@
-import { compileTestComponent } from "../../../../base/src/test/util/component-test-util";
+import { compileTestComponent, mockApp } from "../../../../base/src/test/util/component-test-util";
 import {
     ITestModuleDef,
     ITestComponentDef,
@@ -14,10 +14,6 @@ import { By } from "@angular/platform-browser";
 import { Component, ViewChild } from "@angular/core";
 import { AbstractI18nService, App, AppDefaults } from '@wm/core';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
-
-let mockApp = {
-    subscribe: () => { return () => { } }
-};
 
 const markup = `<div tabindex="1"  wmRating  name="rating1"></div>`;
 @Component({
