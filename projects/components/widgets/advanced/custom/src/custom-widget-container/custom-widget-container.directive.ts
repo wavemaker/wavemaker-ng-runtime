@@ -47,7 +47,7 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         });
     }
 
-    public setProps(config) {
+    public setProps(config, resolveFn: Function) {
         if (!config || !config.properties) {
             return;
         }
@@ -55,7 +55,7 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
             register(this.widgetType, this.prepareProps(config.properties));
         }
 
-        this.propsReady();
+        this.propsReady(resolveFn);
     }
 
     private prepareProps(props = {}) {
