@@ -58,6 +58,7 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     public percentagevalue: number;
     public redraw: Function;
     public options: CircleProgressOptionsInterface;
+    public hint: string;
 
     @ViewChild(CircleProgressComponent, { static: true }) circleRef: CircleProgressComponent;
 
