@@ -76,7 +76,8 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     }
 
     init() {
-
+        let resolveFn: Function;
+        const promise = new Promise((res)=> resolveFn = res)
         this.App = this.injector ? this.injector.get(App) : inject(App);
         //making the code compatible in both the JIT and AOT modes
         this.containerWidget = this.injector ? this.injector.get(WidgetRef) : inject(WidgetRef);
@@ -95,14 +96,15 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         // register functions for binding evaluation
         this.registerExpressions();
         this.initUserScript();
+        this.registerProps(resolveFn);
+        // Using promise to make sure the props are registered in the container widget before registering events, Otherwise no events will be registered 
+        promise.then(() => this.registerEvents());
 
         this.registerWidgets();
         this.initVariables();
-        this.registerEvents();
 
         this.activePageName = this.App.activePageName; // Todo: remove this
         this.registerPageParams();
-        this.registerProps();
         this.defineI18nProps();
 
         this.viewInit$.subscribe(noop, noop, () => {
@@ -238,7 +240,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         //     }
         // });
     }
-    registerProps() {
+    registerProps(resolveFn: Function) {
         window['resourceCache'].get(`./custom-widgets/${this.customWidgetName}/page.min.json`).then(({ config }) => {
             if (config) {
                 Object.entries((config.properties || {})).forEach(([key, prop]: [string, any]) => {
@@ -262,7 +264,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
                     }
                 })
             }
-            this.containerWidget.setProps(config);
+            this.containerWidget.setProps(config, resolveFn);
             // Reassigning the proxy handler for prefab inbound properties as we
             // will get them only after the prefab config call.
             if (isIE()) {

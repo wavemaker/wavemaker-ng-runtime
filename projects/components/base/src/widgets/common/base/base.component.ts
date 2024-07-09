@@ -265,9 +265,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             this.initWidget();
         } else {
             this.delayedInit = true;
-            initPromise.then(() => {
+            initPromise.then((resolveFn) => {
                 this.initWidget();
                 this.setInitProps();
+                resolveFn && resolveFn()
             });
         }
     }
