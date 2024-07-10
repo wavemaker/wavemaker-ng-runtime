@@ -8,10 +8,16 @@ register('wm-menu', (): IBuildTaskDef => {
             const menuWidth = attrs.get("width");
             let styleBinding = '';
             if(menuWidth){
-                if(menuWidth.indexOf('%') > -1 || menuWidth.indexOf('px') > -1){
+                const units = ['%', 'px'];
+                const hasUnit = units.some(unit => menuWidth.includes(unit));
+                if(hasUnit){
                     styleBinding = `[ngStyle]="{'width': '${menuWidth}'}"`;
-                    return `<${tagName} wmMenu dropdown ${getAttrMarkup(attrs)} ${styleBinding}>`
-                } 
+                }
+                else{
+                    styleBinding = `[ngStyle]="{'width': '${menuWidth}px'}"`;
+                }
+
+                return `<${tagName} wmMenu dropdown ${getAttrMarkup(attrs)} ${styleBinding}>`
             }  
             else{        
             return `<${tagName} wmMenu dropdown ${getAttrMarkup(attrs)}>`
