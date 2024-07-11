@@ -1,4 +1,4 @@
-import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import {generateGUId, setCSS, noop} from '@wm/core';
@@ -50,8 +50,8 @@ export class RatingComponent extends DatasetAwareFormComponent {
         this.calculateRatingsWidth();
     }
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         this._id = generateGUId();
         styler(this.nativeElement, this);
 

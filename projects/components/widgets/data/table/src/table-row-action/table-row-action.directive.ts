@@ -39,9 +39,10 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
     constructor(
         inj: Injector,
         @Optional() public table: TableComponent,
-        @Self() @Inject(Context) contexts: Array<any>
+        @Self() @Inject(Context) contexts: Array<any>,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         contexts[0].editRow = (evt) => this.table.editRow(evt);
         contexts[0].deleteRow = (evt) => this.table.deleteRow(evt);

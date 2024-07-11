@@ -1,4 +1,4 @@
-import {Attribute, ChangeDetectorRef, Component, Injector, OnInit} from '@angular/core';
+import {Attribute, ChangeDetectorRef, Component, Inject, Injector, OnInit, Optional} from '@angular/core';
 import {Router} from '@angular/router';
 
 import {addClass, App, removeClass, triggerItemAction, UserDefinedExecutionContext} from '@wm/core';
@@ -45,9 +45,10 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
         private route: Router,
         private userDefinedExecutionContext: UserDefinedExecutionContext,
         private app: App,
-        @Attribute('select.event') selectEventCB
+        @Attribute('select.event') selectEventCB,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.disableMenuContext = !!selectEventCB;
         this.pageScope = this.viewParent;

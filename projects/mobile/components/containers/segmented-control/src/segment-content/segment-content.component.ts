@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Injector, Optional} from '@angular/core';
+import {AfterViewInit, Component, Inject, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 
@@ -24,8 +24,8 @@ export class SegmentContentComponent extends StylableComponent implements AfterV
     public compile = false;
     private loaddelay: number;
 
-    constructor(private segmentedControl: SegmentedControlComponent, inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(private segmentedControl: SegmentedControlComponent, inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
         segmentedControl.addContent(this);
     }

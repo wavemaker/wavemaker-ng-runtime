@@ -1,4 +1,4 @@
-import {AfterContentInit, ContentChildren, Directive, Injector, Optional, QueryList} from '@angular/core';
+import {AfterContentInit, ContentChildren, Directive, Inject, Injector, Optional, QueryList} from '@angular/core';
 
 import {DynamicComponentRefProvider, isNumber, noop, StatePersistence} from '@wm/core';
 import {
@@ -47,9 +47,9 @@ export class AccordionDirective extends StylableComponent implements AfterConten
 
     @ContentChildren(AccordionPaneComponent) panes: QueryList<AccordionPaneComponent>;
 
-    constructor(inj: Injector, statePersistence: StatePersistence, dynamicComponentProvider: DynamicComponentRefProvider) {
+    constructor(inj: Injector, statePersistence: StatePersistence, dynamicComponentProvider: DynamicComponentRefProvider, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         let resolveFn: Function = noop;
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
         this.promiseResolverFn = resolveFn;
         this.statePersistence = statePersistence;
         this.dynamicComponentProvider = dynamicComponentProvider;

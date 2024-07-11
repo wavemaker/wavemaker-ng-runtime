@@ -1,4 +1,14 @@
-import {AfterViewInit, Attribute, Component, Injector, OnInit, Optional, SkipSelf, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    Attribute,
+    Component,
+    Inject,
+    Injector,
+    OnInit,
+    Optional,
+    SkipSelf,
+    ViewChild
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import {
@@ -75,9 +85,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         @Attribute('displayimagesrc.bind') private bindDisplayImgSrc,
         @Attribute('datafield.bind') private bindDataField,
         @Attribute('dataset.bind') private bindDataSet,
-        @Attribute('chipclass.bind') private bindChipclass
+        @Attribute('chipclass.bind') private bindChipclass,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
 
         // set the showsearchicon as false by default.

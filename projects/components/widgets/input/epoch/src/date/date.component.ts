@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, ViewChild } from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
@@ -106,9 +106,10 @@ export class DateComponent extends BaseDateTimeComponent {
     constructor(
         inj: Injector,
         private cdRef: ChangeDetectorRef,
-        private appDefaults: AppDefaults
+        private appDefaults: AppDefaults,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
 
         this.dateContainerCls = `app-date-${this.widgetId}`;

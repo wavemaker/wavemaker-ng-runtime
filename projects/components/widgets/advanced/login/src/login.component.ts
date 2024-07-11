@@ -3,6 +3,7 @@ import {
     Component,
     ContentChild,
     ContentChildren,
+    Inject,
     Injector,
     Optional,
     QueryList,
@@ -38,8 +39,8 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     errormessage: any;
     eventsource;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_INFO);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_INFO, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 

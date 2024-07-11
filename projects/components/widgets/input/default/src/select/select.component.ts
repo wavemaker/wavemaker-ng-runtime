@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Injector, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 import {App, DataSource, removeAttr, setAttr} from '@wm/core';
@@ -43,8 +43,8 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         }
     }
 
-    constructor(inj: Injector, app: App) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         this.app = app;
         this.acceptsArray = true;
     }

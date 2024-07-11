@@ -1,5 +1,5 @@
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 
 import {AbstractI18nService} from '@wm/core';
 import { IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe } from '@wm/components/base';
@@ -37,7 +37,7 @@ export class NumberComponent extends NumberLocale {
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel, {static: true}) ngModel: NgModel;
 
-    constructor(inj: Injector, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe) {
-        super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe);
+    constructor(inj: Injector, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe, explicitContext);
     }
 }

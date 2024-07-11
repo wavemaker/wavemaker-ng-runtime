@@ -1,4 +1,4 @@
-import {ContentChildren, Directive, Injector, Optional} from '@angular/core';
+import {ContentChildren, Directive, Inject, Injector, Optional} from '@angular/core';
 import { StylableComponent } from "./stylable.component";
 import { RedrawableDirective } from "../redraw/redrawable.directive";
 import { IWidgetConfig } from '../../framework/types';
@@ -11,8 +11,8 @@ export abstract class BaseContainerComponent extends StylableComponent {
     public content;
     public Widgets;
 
-    constructor(inj: Injector, WIDGET_CONFIG: IWidgetConfig) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, WIDGET_CONFIG: IWidgetConfig, explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 
     private updateRedrawableComponents(widgets) {

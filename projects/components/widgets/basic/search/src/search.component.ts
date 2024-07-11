@@ -2,7 +2,7 @@ import {
     AfterViewInit,
     Attribute,
     Component,
-    ElementRef,
+    ElementRef, Inject,
     Injector,
     OnInit,
     Optional,
@@ -119,9 +119,10 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         inj: Injector,
         app: App,
         @Attribute('datavalue.bind') public binddatavalue,
-        @Attribute('dataset.bind') public binddataset
+        @Attribute('dataset.bind') public binddataset,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         // this flag will not allow the empty datafield values.
         this.allowempty = false;
         this.app = app;

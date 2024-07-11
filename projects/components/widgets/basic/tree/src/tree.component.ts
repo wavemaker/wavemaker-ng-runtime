@@ -1,4 +1,4 @@
-import { Attribute, Component, Injector, OnInit, ViewEncapsulation } from '@angular/core';
+import {Attribute, Component, Inject, Injector, OnInit, Optional, ViewEncapsulation} from '@angular/core';
 import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
 import { $parseEvent, getClonedObject } from "@wm/core";
@@ -60,9 +60,10 @@ export class TreeComponent extends StylableComponent implements OnInit {
         @Attribute('nodelabel.bind') private bindnodelabel,
         @Attribute('nodeicon.bind') private bindnodeicon,
         @Attribute('nodechildren.bind') private bindnodechildren,
-        @Attribute('nodeid.bind') private bindnodeid
+        @Attribute('nodeid.bind') private bindnodeid,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_INFO);
+        super(inj, WIDGET_INFO, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
 
         this.setting.view['nodeClasses']    = this.setNodeClasses;

@@ -1,5 +1,3 @@
-import rollupGlobals, {rollupExternals} from './rollup-utils.mjs';
-
 export default [
     {
         input: "node_modules/@angular/core/fesm2022/core.mjs",
@@ -9,11 +7,12 @@ export default [
             name: "ng.core",
             globals: {
                 "@angular/core": "ng.core",
+                "@angular/core/primitives/signals": "ng.signals",
                 "rxjs": "rxjs",
                 "rxjs/operators": "rxjs.operators",
             }
         },
-        external: ["rxjs", "rxjs/operators"],
+        external: ["rxjs", "rxjs/operators", "@angular/core/primitives/signals"],
     },
     {
         input: "node_modules/@angular/animations/fesm2022/animations.mjs",
@@ -23,8 +22,11 @@ export default [
             name: "ng.animations",
             globals: {
                 "@angular/animations": "ng.animations",
+                "@angular/core": "ng.core",
+                "@angular/common": "ng.common",
             }
-        }
+        },
+        external: ["@angular/core", "@angular/common"]
     },
     {
         input: "node_modules/@angular/common/fesm2022/common.mjs",
@@ -55,10 +57,11 @@ export default [
             name: "ng.platformBrowser",
             globals: {
                 "@angular/common": "ng.common",
+                "@angular/common/http": "ng.common.http",
                 "@angular/core": "ng.core",
             }
         },
-        external: ["@angular/core", "@angular/common"],
+        external: ["@angular/core", "@angular/common", "@angular/common/http"],
     },
     {
         input: "node_modules/@angular/platform-browser-dynamic/fesm2022/platform-browser-dynamic.mjs",
@@ -95,6 +98,16 @@ export default [
             },
         },
         external: ["@angular/core", "@angular/common", "rxjs", "rxjs/operators"],
+    },
+    {
+        input: 'node_modules/@angular/core/fesm2022/primitives/signals.mjs',
+        output: {
+            file: 'node_modules/@angular/core/bundles/core-signals.umd.js',
+            format: 'umd',
+            name: 'ng.signals',
+            globals: {}
+        },
+        external: [],
     },
     {
         input: "node_modules/@angular/forms/fesm2022/forms.mjs",

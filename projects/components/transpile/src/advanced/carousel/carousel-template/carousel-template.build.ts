@@ -18,7 +18,9 @@ register('wm-carousel-template', (): IBuildTaskDef => {
             const carouselRef = parentCarousel.get('carousel_ref');
             return `<div *ngIf="!${carouselRef}.fieldDefs">{{${carouselRef}.nodatamessage}}</div>
                     <${carouselContentTagName} wmCarouselTemplate  ${getAttrMarkup(attrs)} *ngFor="let item of ${carouselRef}.fieldDefs; let i = index;">
-                        <ng-container [ngTemplateOutlet]="carouselTempRef${counter}" [ngTemplateOutletContext]="{item:item, index:i}"></ng-container>
+                        <ng-container [ngTemplateOutlet]="carouselTempRef${counter}"
+                            [ngTemplateOutletContext]="{item:item, index:i}"
+                            [ngTemplateOutletInjector]="${carouselRef}.createCustomInjector('carousel_item_' + i, {item:item, index:i})"></ng-container>
                     </${carouselContentTagName}>
                     <ng-template #carouselTempRef${counter++} let-item="item" let-index="index">`;
         },

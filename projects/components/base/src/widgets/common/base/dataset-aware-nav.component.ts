@@ -1,4 +1,4 @@
-import {Injector, Optional} from '@angular/core';
+import {Inject, Injector, Optional} from '@angular/core';
 
 import { Subject } from 'rxjs';
 
@@ -60,8 +60,8 @@ export class DatasetAwareNavComponent extends StylableComponent {
     protected binditemid: string | null;
     protected nodes$ = new Subject();
 
-    constructor(inj: Injector, WIDGET_CONFIG) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, WIDGET_CONFIG, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         this.securityService = this.inj.get(SecurityService);
         this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');
         this.binditemicon = this.nativeElement.getAttribute('itemicon.bind');

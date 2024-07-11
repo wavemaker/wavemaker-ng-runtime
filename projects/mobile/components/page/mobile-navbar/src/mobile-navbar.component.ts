@@ -1,4 +1,4 @@
-import {AfterViewInit, Attribute, Component, Injector, OnDestroy, Optional, ViewChild} from '@angular/core';
+import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, Optional, ViewChild} from '@angular/core';
 
 import {AbstractNavigationService, App} from '@wm/core';
 import { BaseComponent, getImageUrl, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
@@ -63,8 +63,9 @@ export class MobileNavbarComponent extends BaseComponent implements OnDestroy, A
         private navigationService: AbstractNavigationService,
         inj: Injector,
         @Attribute('backbtnclick.event') private backbtnClickEvt,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         page.subscribe('wmLeftPanel:ready', (leftNavPanel: LeftPanelDirective) => {
             if (this.showLeftnavbtn) {
                 this.leftNavPanel = leftNavPanel;

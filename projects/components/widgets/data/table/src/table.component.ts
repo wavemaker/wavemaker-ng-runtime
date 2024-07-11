@@ -5,7 +5,7 @@ import {
     ContentChild,
     ContentChildren,
     ElementRef,
-    HostListener,
+    HostListener, Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -1007,9 +1007,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         @Attribute('datasource.bind') public binddatasource,
         @Attribute('readonlygrid') public readonlygrid,
         private ngZone: NgZone,
-        private trustAsPipe: TrustAsPipe
+        private trustAsPipe: TrustAsPipe,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG,);
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
 
         this.ngform = fb.group({});

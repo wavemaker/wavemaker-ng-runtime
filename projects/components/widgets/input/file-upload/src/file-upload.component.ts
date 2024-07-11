@@ -1,4 +1,4 @@
-import {AfterViewInit, Attribute, Component, Injector, OnInit, OnDestroy, Optional} from '@angular/core';
+import {AfterViewInit, Attribute, Component, Injector, OnInit, OnDestroy, Optional, Inject} from '@angular/core';
 
 import { Subject } from 'rxjs';
 
@@ -348,8 +348,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         super.onPropertyChange(key, nv, ov);
     }
 
-    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         // styler(this.nativeElement, this);
     }
 

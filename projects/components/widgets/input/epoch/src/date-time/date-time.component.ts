@@ -145,9 +145,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         private ngZone: NgZone,
         private cdRef: ChangeDetectorRef,
         private appDefaults: AppDefaults,
-        app: App
+        app: App,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         this.registerDestroyListener(() => this.clearTimeInterval());
         styler(this.nativeElement, this);
         this.app = app;

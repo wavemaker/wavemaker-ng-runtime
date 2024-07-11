@@ -1,4 +1,4 @@
-import { AfterViewInit, ElementRef, Inject, Injectable, Injector } from '@angular/core';
+import {AfterViewInit, ElementRef, Inject, Injectable, Injector, Optional} from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import {$appDigest, addClass, switchClass} from '@wm/core';
@@ -95,9 +95,10 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
 
     protected constructor(
         inj: Injector,
-        @Inject(WidgetConfig) config: IWidgetConfig
+        @Inject(WidgetConfig) config: IWidgetConfig,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, config);
+        super(inj, config, explicitContext);
         let updateOn = this.nativeElement.getAttribute('updateon') || 'blur';
         updateOn = updateOn === 'default' ? 'change' : updateOn;
         this.ngModelOptions.updateOn = updateOn;

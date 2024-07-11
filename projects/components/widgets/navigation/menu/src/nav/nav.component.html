@@ -25,8 +25,14 @@
 </ng-template>
 
 <li class="app-nav-item {{item.class}}" *ngFor="let item of nodes; let index = index;" #liRef [ngClass]="{active: item._selected || (!isactive && item.link === '#/' + activePageName)}">
-    <ng-container [ngTemplateOutlet]="anchorRef" [ngTemplateOutletContext]="{item: item, index:index, liRef: liRef}" *ngIf="!item.children.length"></ng-container>
-    <ng-container [ngTemplateOutlet]="menuRef" [ngTemplateOutletContext]="{item: item, index:index}"  *ngIf="item.children.length"></ng-container>
+    <ng-container [ngTemplateOutlet]="anchorRef"
+                  [ngTemplateOutletContext]="{item: item, index:index, liRef: liRef}"
+                  [ngTemplateOutletInjector]="createCustomInjector('anchor_' + index, {item: item, index:index, liRef: liRef})"
+                  *ngIf="!item.children.length"></ng-container>
+    <ng-container [ngTemplateOutlet]="menuRef"
+                  [ngTemplateOutletContext]="{item: item, index:index}"
+                  [ngTemplateOutletInjector]="createCustomInjector('menu_' + index, {item: item, index:index})"
+                  *ngIf="item.children.length"></ng-container>
 </li>
 
 <ng-content *ngIf="!nodes.length" select="[wmNavItem]"></ng-content>

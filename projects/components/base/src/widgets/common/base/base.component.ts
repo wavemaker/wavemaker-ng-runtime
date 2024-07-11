@@ -8,8 +8,8 @@ import {
     OnDestroy,
     OnInit,
     ViewContainerRef,
-    Optional,
-    inject
+    inject,
+    Optional
 } from '@angular/core';
 import {EventManager} from '@angular/platform-browser';
 
@@ -193,6 +193,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     protected constructor(
         protected inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any,
         initPromise?: Promise<any> // Promise on which the initialization has to wait
     ) {
         const elementRef = inj.get(ElementRef);
@@ -269,6 +270,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 this.initWidget();
                 this.setInitProps();
             });
+        }
+        if(explicitContext) {
+            _.extend(this.context, explicitContext);
         }
     }
 
@@ -735,6 +739,24 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     public unmute() {
         this.isMuted = false;
+    }
+
+    customInjectorMap: any = {};
+    createCustomInjector(contextKey: string, context: any) {
+        if(this.customInjectorMap[contextKey]) {
+            if( this.customInjectorMap[contextKey].context === context) {
+                return this.customInjectorMap[contextKey].injector;
+            }
+            delete this.customInjectorMap[contextKey];
+        }
+        const inj = Injector.create({
+            providers: [{ provide: 'EXPLICIT_CONTEXT', useValue: context }],
+        });
+        this.customInjectorMap[contextKey] = {
+            context: context,
+            injector: inj
+        }
+        return inj;
     }
 
     /**

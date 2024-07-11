@@ -5,7 +5,7 @@ import {
     Component,
     ContentChild,
     ContentChildren,
-    ElementRef,
+    ElementRef, Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -245,11 +245,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
         statePersistence: StatePersistence,
-        paginationService: PaginationService
+        paginationService: PaginationService,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
-        super(inj, WIDGET_CONFIG, propsInitPromise);
+        super(inj, WIDGET_CONFIG, explicitContext, propsInitPromise);
         this.propsInitPromise = propsInitPromise;
         this.promiseResolverFn = resolveFn;
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);

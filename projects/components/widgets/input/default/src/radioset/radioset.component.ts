@@ -1,4 +1,4 @@
-import {Component, Injector, Optional} from '@angular/core';
+import {Component, Inject, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import {setListClass} from '@wm/core';
@@ -30,8 +30,8 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         this.multiple = false;
     }

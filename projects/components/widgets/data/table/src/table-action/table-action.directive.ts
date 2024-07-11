@@ -1,4 +1,4 @@
-import { Directive, Injector, OnInit, Optional } from '@angular/core';
+import {Directive, Inject, Injector, OnInit, Optional} from '@angular/core';
 
 import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 
@@ -40,8 +40,8 @@ export class TableActionDirective extends BaseComponent implements OnInit {
 
     private _propsInitialized: boolean;
 
-    constructor(inj: Injector, @Optional() public table: TableComponent) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public table: TableComponent, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 
     populateAction() {
