@@ -1,14 +1,13 @@
-import { Component, ViewChild } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
-import { ElementRef, Injector } from '@angular/core';
-import { TextareaComponent } from './textarea.component';
-import { By } from '@angular/platform-browser';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
-import { App, AppDefaults } from '@wm/core';
-import { ToDatePipe } from '@wm/components/base';
-import { DatePipe } from '@angular/common';
-import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
+import { Component, ViewChild } from "@angular/core";
+import { TextareaComponent } from "./textarea.component";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
+import { FormsModule, NgModel } from "@angular/forms";
+import { App, AppDefaults } from "@wm/core";
+import { ToDatePipe } from "@wm/components/base";
+import { DatePipe } from "@angular/common";
+import { ComponentFixture } from "@angular/core/testing";
+import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { By } from "@angular/platform-browser";
 
 const markup = `<wm-textarea name="textarea1" hint="textarea field">`;
 

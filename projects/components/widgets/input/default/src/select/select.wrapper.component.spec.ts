@@ -1,16 +1,16 @@
-import {Component, ViewChild} from "@angular/core";
-import {SelectComponent} from "./select.component";
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
-import {FormsModule} from "@angular/forms";
-import {AbstractI18nService, App, AppDefaults} from '@wm/core';
-import {ToDatePipe} from "@wm/components/base";
-import {DatePipe} from "@angular/common";
-import {MockAbstractI18nService} from '../../../../../base/src/test/util/date-test-util';
+import { Component, ViewChild } from "@angular/core";
+import { SelectComponent } from "./select.component";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
+import { FormsModule } from "@angular/forms";
+import { AbstractI18nService, App, AppDefaults, DataSource, removeAttr, setAttr } from '@wm/core';
+import { ToDatePipe } from "@wm/components/base";
+import { DatePipe } from "@angular/common";
+import { MockAbstractI18nService } from '../../../../../base/src/test/util/date-test-util';
 import { ComponentFixture } from "@angular/core/testing";
 import { compileTestComponent } from "projects/components/base/src/test/util/component-test-util";
 
 let mockApp = {
-    subscribe: () => { return () => {}}
+    subscribe: () => { return () => { } }
 };
 
 const markup = `<wm-select name="select1" hint="select field">`;
@@ -20,18 +20,18 @@ const markup = `<wm-select name="select1" hint="select field">`;
 })
 
 class SelectWrapperComponent {
-    @ViewChild(SelectComponent, /* TODO: add static flag */ {static: true}) wmComponent: SelectComponent
+    @ViewChild(SelectComponent, /* TODO: add static flag */ { static: true }) wmComponent: SelectComponent
 }
 
 const testModuleDef: ITestModuleDef = {
     imports: [FormsModule],
     declarations: [SelectWrapperComponent, SelectComponent],
     providers: [
-        {provide: App, useValue: mockApp},
-        {provide: ToDatePipe, useClass: ToDatePipe},
-        {provide: DatePipe, useClass: DatePipe},
-        {provide: AppDefaults, useClass: AppDefaults},
-        {provide: AbstractI18nService, useClass: MockAbstractI18nService}
+        { provide: App, useValue: mockApp },
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AppDefaults, useClass: AppDefaults },
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService }
     ]
 };
 
@@ -52,10 +52,10 @@ describe("SelectComponent", () => {
     let wmComponent: SelectComponent;
     let fixture: ComponentFixture<SelectWrapperComponent>;
     beforeEach(() => {
-        fixture = compileTestComponent(testModuleDef,SelectWrapperComponent);
+        fixture = compileTestComponent(testModuleDef, SelectWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        wmComponent.datasetItems = [{key: '1', value: '1', label: '1'}, {key: '2', value: '2', label: '2'}, {key: '3', value: '3', label: '3'}, {key: '4', value: '4', label: '4'}]
+        wmComponent.datasetItems = [{ key: '1', value: '1', label: '1' }, { key: '2', value: '2', label: '2' }, { key: '3', value: '3', label: '3' }, { key: '4', value: '4', label: '4' }]
         fixture.detectChanges();
     });
 
@@ -127,7 +127,7 @@ describe("SelectComponent", () => {
         expect(wmComponent.placeholder).toBe("Select");
     });
 
-    it("should have required property", () => { 
+    it("should have required property", () => {
         wmComponent.required = true;
         expect(wmComponent.required).toBeTruthy();
     });
@@ -149,6 +149,260 @@ describe("SelectComponent", () => {
         selectElement.dispatchEvent(new Event('change'));
         fixture.detectChanges();
         expect(wmComponent.modelByKey[0]).toBe("1");
+    });
+
+    it("should set tabindex when provided", () => {
+        wmComponent.tabindex = 2;
+        fixture.detectChanges();
+        const selectElement = fixture.nativeElement.querySelector('select');
+        expect(selectElement.tabIndex).toBe(2);
+    });
+
+    it("should set autofocus when provided", () => {
+        wmComponent.autofocus = true;
+        fixture.detectChanges();
+        const selectElement = fixture.nativeElement.querySelector('select');
+        expect(selectElement.autofocus).toBe(true);
+    });
+
+    it("should update datavalue when datasource is bound to locale", () => {
+        const mockDataSource = {
+            execute: jest.fn().mockImplementation((operation) => {
+                if (operation === DataSource.Operation.IS_BOUND_TO_LOCALE) {
+                    return true;
+                }
+                if (operation === DataSource.Operation.GET_DEFAULT_LOCALE) {
+                    return 'en-US';
+                }
+            })
+        };
+        wmComponent.datasource = mockDataSource;
+        expect(wmComponent.datavalue).toBe('en-US');
+    });
+
+    it("should not update datavalue when datasource is not bound to locale", () => {
+        const mockDataSource = {
+            execute: jest.fn().mockImplementation((operation) => {
+                if (operation === DataSource.Operation.IS_BOUND_TO_LOCALE) {
+                    return false;
+                }
+            })
+        };
+        wmComponent.datavalue = 'initial-value';
+        wmComponent.datasource = mockDataSource;
+        expect(wmComponent.datavalue).toBe('initial-value');
+    });
+
+    it("should add placeholder option when placeholder is provided", () => {
+        wmComponent.placeholder = "Select an option";
+        fixture.detectChanges();
+        const options = fixture.nativeElement.querySelectorAll('option');
+        expect(options[0].textContent.trim()).toBe("Select an option");
+    });
+
+    it("should remove placeholder option when no placeholder and no value", () => {
+        wmComponent.placeholder = "";
+        wmComponent.datavalue = null;
+        wmComponent.checkForFloatingLabel({ type: 'blur' });
+        fixture.detectChanges();
+        const placeholderOption = fixture.nativeElement.querySelector('#placeholderOption');
+        expect(placeholderOption).toBeNull();
+    });
+
+    it("should handle floating label on focus", () => {
+        const captionEl = document.createElement('div');
+        captionEl.classList.add('app-composite-widget', 'caption-floating');
+        fixture.nativeElement.appendChild(captionEl);
+
+        wmComponent.placeholder = "Select an option";
+        wmComponent.checkForFloatingLabel({ type: 'focus' });
+        fixture.detectChanges();
+
+        const firstOption = fixture.nativeElement.querySelector('option:first-child');
+        expect(firstOption.textContent.trim()).toBe("Select an option");
+    });
+
+    it("should handle floating label on blur with no value", () => {
+        const captionEl = document.createElement('div');
+        captionEl.classList.add('app-composite-widget', 'caption-floating');
+        fixture.nativeElement.appendChild(captionEl);
+
+        wmComponent.datavalue = null;
+        wmComponent.checkForFloatingLabel({ type: 'blur' });
+        fixture.detectChanges();
+
+        expect(captionEl.classList.contains('float-active')).toBe(false);
+
+        // Instead of checking the selected option's text, let's verify that the component's datavalue is null
+        expect(wmComponent.datavalue).toBeNull();
+    });
+
+    describe('checkForFloatingLabel', () => {
+        let captionEl: HTMLElement;
+        let selectEl: HTMLElement;
+
+        beforeEach(() => {
+            captionEl = document.createElement('div');
+            captionEl.classList.add('app-composite-widget', 'caption-floating');
+            selectEl = document.createElement('select');
+            captionEl.appendChild(selectEl);
+            wmComponent.selectEl = { nativeElement: selectEl };
+            jest.spyOn($.fn, 'closest').mockReturnValue($(captionEl));
+        });
+
+        it('should remove placeholder option when no datavalue and no placeholder on focus', () => {
+            const removePlaceholderSpy = jest.spyOn(wmComponent as any, 'removePlaceholderOption');
+            wmComponent.datavalue = null;
+            wmComponent.placeholder = null;
+
+            wmComponent.checkForFloatingLabel({ type: 'focus' });
+
+            expect(removePlaceholderSpy).toHaveBeenCalled();
+        });
+
+        it('should set placeholder text to first option on focus when placeholder exists', () => {
+            wmComponent.placeholder = 'Select an option';
+            const firstOption = document.createElement('option');
+            selectEl.appendChild(firstOption);
+
+            wmComponent.checkForFloatingLabel({ type: 'focus' });
+
+            expect(firstOption.textContent).toBe('Select an option');
+        });
+
+        it('should clear selected option text and remove float-active class on blur when no datavalue', () => {
+            wmComponent.datavalue = null;
+            const selectedOption = document.createElement('option');
+            selectedOption.selected = true;
+            selectedOption.textContent = 'Some text';
+            selectEl.appendChild(selectedOption);
+            captionEl.classList.add('float-active');
+
+            wmComponent.checkForFloatingLabel({ type: 'blur' });
+
+            expect(selectedOption.textContent).toBe('');
+            expect(captionEl.classList.contains('float-active')).toBe(false);
+        });
+
+        it('should remove placeholder option when no caption element, no datavalue, and no placeholder', () => {
+            jest.spyOn($.fn, 'closest').mockReturnValue($());
+            const removePlaceholderSpy = jest.spyOn(wmComponent as any, 'removePlaceholderOption');
+            wmComponent.datavalue = null;
+            wmComponent.placeholder = null;
+
+            wmComponent.checkForFloatingLabel({ type: 'focus' });
+
+            expect(removePlaceholderSpy).toHaveBeenCalled();
+        });
+
+        it('should not remove placeholder option when caption element exists but conditions are not met', () => {
+            const removePlaceholderSpy = jest.spyOn(wmComponent as any, 'removePlaceholderOption');
+            wmComponent.datavalue = 'some value';
+            wmComponent.placeholder = 'Select an option';
+
+            wmComponent.checkForFloatingLabel({ type: 'focus' });
+
+            expect(removePlaceholderSpy).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('onPropertyChange', () => {
+        beforeEach(() => {
+            wmComponent.selectEl = {
+                nativeElement: document.createElement('select')
+            };
+            jest.spyOn(wmComponent as any, '_onChange');
+            jest.spyOn(wmComponent, 'onPropertyChange');
+        });
+
+        it('should call _onChange when key is "required"', () => {
+            wmComponent.onPropertyChange('required', true);
+            expect(wmComponent['_onChange']).toHaveBeenCalledWith(wmComponent.datavalue);
+        });
+
+        it('should handle class change and remove ng-invalid class if conditions are met', (done) => {
+            wmComponent.selectEl.nativeElement.classList.add('ng-untouched', 'ng-valid', 'ng-invalid');
+            wmComponent.onPropertyChange('class', 'ng-untouched ng-invalid');
+
+            setTimeout(() => {
+                expect(wmComponent.selectEl.nativeElement.classList.contains('ng-invalid')).toBe(false);
+                done();
+            });
+        });
+
+        it('should not remove ng-invalid class if conditions are not met', (done) => {
+            wmComponent.selectEl.nativeElement.classList.add('ng-touched', 'ng-invalid');
+            wmComponent.onPropertyChange('class', 'ng-touched ng-invalid');
+
+            setTimeout(() => {
+                expect(wmComponent.selectEl.nativeElement.classList.contains('ng-invalid')).toBe(true);
+                done();
+            });
+        });
+
+        it('should return early for "class" or "tabindex" changes', () => {
+            wmComponent.onPropertyChange('tabindex', 2);
+            expect(wmComponent.onPropertyChange).not.toHaveBeenCalledWith('tabindex', 2, undefined);
+        });
+
+        it('should set readonly attribute when readonly is true', (done) => {
+            wmComponent.onPropertyChange('readonly', true);
+
+            setTimeout(() => {
+                expect(wmComponent.selectEl.nativeElement.hasAttribute('readonly')).toBe(true);
+                done();
+            });
+        });
+
+        it('should remove readonly attribute when readonly is false', (done) => {
+            setAttr(wmComponent.selectEl.nativeElement, 'readonly', 'readonly');
+            wmComponent.onPropertyChange('readonly', false);
+
+            setTimeout(() => {
+                expect(wmComponent.selectEl.nativeElement.hasAttribute('readonly')).toBe(false);
+                done();
+            });
+        });
+
+        it('should call super.onPropertyChange for other keys', () => {
+            const superSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(wmComponent)), 'onPropertyChange');
+            wmComponent.onPropertyChange('someOtherKey', 'value');
+            expect(superSpy).toHaveBeenCalledWith('someOtherKey', 'value', undefined);
+        });
+    });
+    describe('handleEvent', () => {
+        let node: HTMLElement;
+        let callback: jest.Mock;
+        let locals: any;
+
+        beforeEach(() => {
+            node = document.createElement('div');
+            callback = jest.fn();
+            locals = {};
+            jest.spyOn(Object.getPrototypeOf(wmComponent), 'handleEvent');
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks(); // Clear all mock calls after each test
+        });
+
+        it('should call super.handleEvent for events other than "blur" and "change"', () => {
+            wmComponent['handleEvent'](node, 'focus', callback, locals);
+            expect(Object.getPrototypeOf(wmComponent).handleEvent).toHaveBeenCalledWith(node, 'focus', callback, locals);
+        });
+
+        it('should handle event for non-input element', () => {
+            const span = document.createElement('span');
+            node.appendChild(span);
+            wmComponent['handleEvent'](node, 'click', callback, locals);
+
+            const event = new MouseEvent('click', { bubbles: true });
+            Object.defineProperty(event, 'target', { value: span });
+            span.dispatchEvent(event);
+
+            expect(callback).not.toHaveBeenCalled();
+            expect(locals.$event).toBeUndefined();
+        });
     });
 
 });

@@ -1,5 +1,5 @@
-import { Component, ViewChild } from "@angular/core";
-import { CheckboxComponent } from "./checkbox.component";
+import { Component, ElementRef, ViewChild } from "@angular/core";
+import { CheckboxComponent, unStringify } from "./checkbox.component";
 import { waitForAsync, ComponentFixture } from "@angular/core/testing";
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from "../../../../../base/src/test/util/component-test-util";
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
@@ -114,6 +114,30 @@ describe('Checkbox component', () => {
             checkboxComponent.onPropertyChange('someOtherKey', 'newValue', 'oldValue');
             expect(Object.getPrototypeOf(CheckboxComponent.prototype).onPropertyChange)
                 .toHaveBeenCalledWith('someOtherKey', 'newValue', 'oldValue');
+        });
+    });
+    describe('unStringify function', () => {
+        it('should return defaultVal when input is null', () => {
+            expect(unStringify(null, 'default')).toBe('default');
+        });
+
+        it('should return true for true or "true"', () => {
+            expect(unStringify(true)).toBe(true);
+            expect(unStringify('true')).toBe(true);
+        });
+
+        it('should return false for false or "false"', () => {
+            expect(unStringify(false)).toBe(false);
+            expect(unStringify('false')).toBe(false);
+        });
+
+        it('should return a number if the input can be parsed as an integer', () => {
+            expect(unStringify('123')).toBe(123);
+            expect(unStringify('-456')).toBe(-456);
+        });
+
+        it('should return the original value if it cannot be converted', () => {
+            expect(unStringify('hello')).toBe('hello');
         });
     });
 });

@@ -27,7 +27,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 /*
  * try to convert the chekedvalue and unchecked values to boolean/number
  */
-const unStringify = (val, defaultVal?) => {
+export const unStringify = (val, defaultVal?) => {
     if (val === null) {
         return defaultVal;
     }

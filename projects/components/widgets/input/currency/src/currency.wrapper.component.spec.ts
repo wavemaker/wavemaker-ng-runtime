@@ -1,18 +1,15 @@
-import {Component, ViewChild} from "@angular/core";
-import {CurrencyComponent} from "./currency.component";
-import {FormsModule} from "@angular/forms";
-import {AbstractI18nService, App, AppDefaults, setPipeProvider} from "@wm/core";
-import {TrailingZeroDecimalPipe} from "@wm/components/base";
-import {DecimalPipe} from "@angular/common";
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../base/src/test/common-widget.specs";
+import { Component, ViewChild } from "@angular/core";
+import { CurrencyComponent } from "./currency.component";
+import { FormsModule } from "@angular/forms";
+import { AbstractI18nService, App, AppDefaults, CURRENCY_INFO, setPipeProvider } from "@wm/core";
+import { TrailingZeroDecimalPipe } from "@wm/components/base";
+import { DecimalPipe } from "@angular/common";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
 import { PipeProvider } from "../../../../../runtime-base/src/services/pipe-provider.service";
-import {waitForAsync, ComponentFixture} from '@angular/core/testing';
-import {compileTestComponent, setInputValue} from "../../../../base/src/test/util/component-test-util";
+import { waitForAsync, ComponentFixture } from '@angular/core/testing';
+import { compileTestComponent, mockApp, setInputValue } from "../../../../base/src/test/util/component-test-util";
 import { MockAbstractI18nService } from "projects/components/base/src/test/util/date-test-util";
-
-let mockApp = {
-    subscribe: () => { return () => {}}
-};
+import { NumberLocale } from "../../default/src/public_api";
 
 const markup = `<div blur.event="onBlur($event, widget)"
                  focus.event="onFocus($event, widget)"
@@ -25,7 +22,7 @@ const markup = `<div blur.event="onBlur($event, widget)"
 })
 
 class CurrencyWrapperComponent {
-    @ViewChild(CurrencyComponent, /* TODO: add static flag */ {static: true}) wmComponent: CurrencyComponent;
+    @ViewChild(CurrencyComponent, /* TODO: add static flag */ { static: true }) wmComponent: CurrencyComponent;
 
     public onChange($event, widget, newVal, oldVal) {
         console.log('Change callback triggered');
@@ -48,11 +45,11 @@ const testModuleDef: ITestModuleDef = {
     imports: [FormsModule],
     declarations: [CurrencyWrapperComponent, CurrencyComponent],
     providers: [
-        {provide: App, useValue: mockApp},
-        {provide: AppDefaults, useValue: AppDefaults},
-        {provide: AbstractI18nService, useClass: MockAbstractI18nService},
-        {provide: DecimalPipe, useClass: DecimalPipe},
-        {provide: TrailingZeroDecimalPipe, useClass: TrailingZeroDecimalPipe}
+        { provide: App, useValue: mockApp },
+        { provide: AppDefaults, useValue: AppDefaults },
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+        { provide: DecimalPipe, useClass: DecimalPipe },
+        { provide: TrailingZeroDecimalPipe, useClass: TrailingZeroDecimalPipe }
     ]
 };
 
@@ -84,11 +81,11 @@ describe('CurrencyComponent', () => {
     let validateOnEvt = (evtName, expectedVal) => {
         let inputEl = getInputEl();
 
-        inputEl.dispatchEvent( new InputEvent(evtName));
+        inputEl.dispatchEvent(new InputEvent(evtName));
         expect(currencyComp.displayValue).toEqual(expectedVal);
     }
 
-    let validateInput = (options) => {
+    let validateInput = (options: { [x: string]: any; key?: string; keyCode?: number; code?: string; }) => {
         let inputEl = getInputEl();
         options['target'] = inputEl;
 
@@ -101,11 +98,13 @@ describe('CurrencyComponent', () => {
         wrapperComponent = fixture.componentInstance;
         currencyComponent = wrapperComponent.wmComponent;
         currencyComp = currencyComponent as any;
+        // Mock CURRENCY_INFO
+
         fixture.detectChanges();
     }));
 
     it('should create the Currency Component', () => {
-        expect(wrapperComponent).toBeTruthy() ;
+        expect(wrapperComponent).toBeTruthy();
     });
 
     it('should show formatted value when default value is provided and on focus should remove step formatting. Test focus and blur cb', () => {
@@ -214,13 +213,13 @@ describe('CurrencyComponent', () => {
     it('should not allow user to enter more than 16 digits', () => {
         currencyComp.datavalue = 1234567890123456;
 
-        validateInput({ 'key': '7', 'keyCode': 50, 'code': 'Digit7'});
+        validateInput({ 'key': '7', 'keyCode': 50, 'code': 'Digit7' });
     });
 
     it('should not allow user to enter decimals exceeding the limit set in step', () => {
         currencyComp.datavalue = 123.45;
 
-        validateInput({ 'key': '7', 'keyCode': 50, 'code': 'Digit7'});
+        validateInput({ 'key': '7', 'keyCode': 50, 'code': 'Digit7' });
     });
 
     it('should  allow user to enter decimals exceeding the limit set in step when input mode is financial', () => {
@@ -229,7 +228,7 @@ describe('CurrencyComponent', () => {
 
         let inputEl = getInputEl();
 
-        const options = { 'key': '7', 'keyCode': 50, 'code': 'Digit7','target': inputEl};
+        const options = { 'key': '7', 'keyCode': 50, 'code': 'Digit7', 'target': inputEl };
         const validateVal = currencyComp.validateInputEntry(options);
         expect(validateVal).toEqual(undefined);
 
@@ -240,7 +239,7 @@ describe('CurrencyComponent', () => {
         let inputEl = getInputEl();
         currencyComp.datavalue = 123.45;
 
-        let options = { 'key': '7', 'keyCode': 50, 'code': 'Digit7','target': inputEl};
+        let options = { 'key': '7', 'keyCode': 50, 'code': 'Digit7', 'target': inputEl };
 
         // make change to integral part
         options.target.setSelectionRange(2, 2);
@@ -300,5 +299,28 @@ describe('CurrencyComponent', () => {
 
         expect(currencyComp.numberNotInRange).toEqual(true);
     });
+    it('should update currencyCode and currencySymbol when key is "currency"', () => {
+        const newCurrency = 'EUR';
+        const oldCurrency = 'USD';
 
+        // Simulate a property change event
+        currencyComp.onPropertyChange('currency', newCurrency, oldCurrency);
+
+        // Expectations
+        expect(currencyComp.currencyCode).toEqual(newCurrency);
+    });
+    it('should call super.onPropertyChange for other keys', () => {
+        const key = 'someKey';
+        const newValue = 'someValue';
+        const oldValue = 'oldValue';
+
+        // Spy on super method
+        const superSpy = jest.spyOn(NumberLocale.prototype, 'onPropertyChange');
+
+        // Simulate a property change event
+        currencyComp.onPropertyChange(key, newValue, oldValue);
+
+        // Expectations
+        expect(superSpy).toHaveBeenCalledWith(key, newValue, oldValue);
+    })
 });
