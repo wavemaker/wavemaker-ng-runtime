@@ -1,8 +1,8 @@
-import { Injector, AfterViewInit, Injectable, Inject } from '@angular/core';
+import {AfterViewInit, Inject, Injectable, Injector, Optional} from '@angular/core';
 
 import {DataSource} from '@wm/core';
 
-import { IWidgetConfig, StylableComponent, WidgetConfig } from '@wm/components/base';
+import {IWidgetConfig, StylableComponent, WidgetConfig} from '@wm/components/base';
 
 declare const _;
 
@@ -17,9 +17,10 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
     protected constructor(
         protected inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any,
         initPromise?: Promise<any>
     ) {
-        super(inj, config, initPromise);
+        super(inj, config, explicitContext, initPromise);
         this.binddatavalue = this.$element.attr('datavalue.bind');
     }
 
