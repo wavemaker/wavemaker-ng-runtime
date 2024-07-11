@@ -1,5 +1,5 @@
 {
-    "name": "wavemaker-ng-runtime-new",
+    "name": "@wavemaker/app-ng-runtime",
     "version": "0.0.0",
     "scripts": {
         "ng": "ng",
@@ -15,7 +15,8 @@
         "optimizecss": "gulp --gulpfile build-scripts/optimize-css.gulpfile.js",
         "owasp": "owasp-dependency-check --project \"wavemaker-ng-runtime\" -f \"ALL\""
     },
-    "private": true,
+    "author": "Wavemaker",
+    "license": "MIT",
     "bundledDependencies": true,
     "dependencies": {
         "@angular/animations": "16.2.12",

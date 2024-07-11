@@ -60,15 +60,24 @@ if [[ "${dev}" == true ]]; then
     cp -r libraries dist/runtime-cli/angular-app
 fi
 cp angular.json package.json package-lock.json .npmrc tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
+cp angular.json package.json package-lock.json .npmrc tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
 cp ./wm.package.json libraries/package.json
 
 if [[ "${publish}" == true ]]; then
     node bundle-runtime-cli.js --publishVersion=${publishVersion}
 fi
+
 mkdir -p dist/npm-packages/app-ng-runtime
 cp -r libraries/. dist/npm-packages/app-ng-runtime
-tar -zcf dist/npm-packages/app-ng-runtime.tar.gz -C dist/npm-packages app-ng-runtime
-rm -r dist/npm-packages/app-ng-runtime
 
+cd dist/npm-packages/app-ng-runtime
+npm_package=$(npm pack)
+npm_package_destination="../npm-packages"
+cp "wavemaker-app-ng-runtime-${publishVersion}.tgz" "../"
+
+cd ..
+rm -r app-ng-runtime
+
+cd ../..
 cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/transpilation/expression-parser.cjs.js dist/transpilation/pipe-provider.cjs.js projects/runtime-base/src/components/app-component/app.component.html dist/runtime-cli/dependencies
 cd -
