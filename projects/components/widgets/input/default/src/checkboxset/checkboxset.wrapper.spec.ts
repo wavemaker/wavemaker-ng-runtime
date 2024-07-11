@@ -1,14 +1,15 @@
 import { DatePipe } from "@angular/common";
 import { Component, ViewChild } from "@angular/core";
-import { ComponentFixture, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
+import { EventManager } from "@angular/platform-browser";
 import { ToDatePipe } from "@wm/components/base";
 import { App, AppDefaults, AbstractI18nService } from "@wm/core";
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from "projects/components/base/src/test/common-widget.specs";
 import { mockApp, compileTestComponent, getHtmlSelectorElement } from "projects/components/base/src/test/util/component-test-util";
 import { MockAbstractI18nService } from "projects/components/base/src/test/util/date-test-util";
 import { CheckboxsetComponent } from "./checkboxset.component";
-
+declare const _: any;
 
 const markup = `<div wmCheckboxset hint="checkboxset1" caption="Label" required itemsperrow="3" name="checkboxset1" tabindex="1"></div>`;
 @Component({
@@ -16,7 +17,7 @@ const markup = `<div wmCheckboxset hint="checkboxset1" caption="Label" required 
 })
 
 class checkboxSetWrapperComponent {
-    @ViewChild(CheckboxsetComponent, /* TODO: add static flag */ {static: true}) wmComponent: CheckboxsetComponent
+    @ViewChild(CheckboxsetComponent, /* TODO: add static flag */ { static: true }) wmComponent: CheckboxsetComponent
 }
 
 
@@ -24,8 +25,8 @@ const checkboxSetModuleDef: ITestModuleDef = {
     imports: [FormsModule],
     declarations: [checkboxSetWrapperComponent, CheckboxsetComponent],
     providers: [
-        {provide: App, useValue: mockApp},
-        {provide: ToDatePipe, useClass: ToDatePipe},
+        { provide: App, useValue: mockApp },
+        { provide: ToDatePipe, useClass: ToDatePipe },
         { provide: DatePipe, useClass: DatePipe },
         { provide: AppDefaults, useClass: AppDefaults },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }
@@ -51,10 +52,12 @@ describe('CheckboxSet component', () => {
     let wrapperComponent: checkboxSetWrapperComponent;
     let checkboxsetComponent: CheckboxsetComponent;
     let fixture: ComponentFixture<checkboxSetWrapperComponent>;
+    let eventManager: EventManager;
     beforeEach(waitForAsync(() => {
         fixture = compileTestComponent(checkboxSetModuleDef, checkboxSetWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         checkboxsetComponent = wrapperComponent.wmComponent;
+        eventManager = TestBed.inject(EventManager);
         fixture.detectChanges();
     }));
 
@@ -69,10 +72,91 @@ describe('CheckboxSet component', () => {
     it('should check checkbox  on keyboard enter', () => {
         expect(checkboxsetComponent.datavalue).toBeFalsy();
         const checkboxElement = getHtmlSelectorElement(fixture, '[wmCheckboxset]');
-        checkboxElement.triggerEventHandler('keydown.enter', { preventDefault: () => {}});
+        checkboxElement.triggerEventHandler('keydown.enter', { preventDefault: () => { } });
         fixture.whenStable().then(() => {
             expect(checkboxsetComponent.datavalue).toBeTruthy();
         });
     });
-   
+    describe('onCheckboxLabelClick', () => {
+        it('should not update model if target is not input', () => {
+            const mockEvent = { target: document.createElement('div') };
+            const spy = jest.spyOn(checkboxsetComponent, 'invokeOnChange');
+
+            checkboxsetComponent.onCheckboxLabelClick(mockEvent, 'key');
+
+            expect(spy).not.toHaveBeenCalled();
+        });
+        it('should update model and invoke change when input is checked', () => {
+            // Create a mock event with an input target
+            const mockEvent = { target: document.createElement('input') };
+
+            // Create mock checked inputs
+            const mockCheckedInputs = [
+                { value: 'value1' },
+                { value: 'value2' }
+            ];
+
+            // Spy on nativeElement.querySelectorAll
+            const querySelectorAllSpy = jest.spyOn(checkboxsetComponent.nativeElement, 'querySelectorAll')
+                .mockReturnValue(mockCheckedInputs as any);
+
+            // Spy on lodash forEach
+            const forEachSpy = jest.spyOn(_, 'forEach');
+
+            const changeSpy = jest.spyOn(checkboxsetComponent, 'invokeOnChange');
+            const touchedSpy = jest.spyOn(checkboxsetComponent, 'invokeOnTouched');
+
+            checkboxsetComponent.onCheckboxLabelClick(mockEvent, 'key');
+
+            expect(querySelectorAllSpy).toHaveBeenCalledWith('input:checked');
+            expect(forEachSpy).toHaveBeenCalledWith(mockCheckedInputs, expect.any(Function));
+            expect(checkboxsetComponent.modelByKey).toEqual(['value1', 'value2']);
+            expect(touchedSpy).toHaveBeenCalled();
+            expect(changeSpy).toHaveBeenCalledWith(checkboxsetComponent.datavalue, expect.anything(), true);
+        });
+    });
+
+    describe('handleEvent', () => {
+        it('should add event listener for click events on input elements', () => {
+            const mockNode = document.createElement('div');
+            const mockCallback = jest.fn();
+            const addEventListenerSpy = jest.spyOn(eventManager, 'addEventListener')
+                .mockImplementation((node, eventName, handler) => {
+                    // Simulate the event
+                    handler({ target: document.createElement('input') });
+                    return () => { }; // Return a removal function
+                });
+
+            checkboxsetComponent['handleEvent'](mockNode, 'click', mockCallback, {});
+
+            expect(addEventListenerSpy).toHaveBeenCalled();
+            expect(mockCallback).toHaveBeenCalled();
+        });
+
+        it('should not call callback for click events on non-input elements', () => {
+            const mockNode = document.createElement('div');
+            const mockCallback = jest.fn();
+            const addEventListenerSpy = jest.spyOn(eventManager, 'addEventListener')
+                .mockImplementation((node, eventName, handler) => {
+                    // Simulate the event on a non-input element
+                    handler({ target: document.createElement('div') });
+                    return () => { }; // Return a removal function
+                });
+
+            checkboxsetComponent['handleEvent'](mockNode, 'click', mockCallback, {});
+
+            expect(addEventListenerSpy).toHaveBeenCalled();
+            expect(mockCallback).not.toHaveBeenCalled();
+        });
+
+        it('should call super.handleEvent for non-click events', () => {
+            const mockNode = document.createElement('div');
+            const mockCallback = jest.fn();
+            const superHandleEventSpy = jest.spyOn(Object.getPrototypeOf(CheckboxsetComponent.prototype), 'handleEvent');
+
+            checkboxsetComponent['handleEvent'](mockNode, 'focus', mockCallback, {});
+
+            expect(superHandleEventSpy).toHaveBeenCalledWith(mockNode, 'focus', mockCallback, {});
+        });
+    });
 });
