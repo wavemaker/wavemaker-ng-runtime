@@ -65,12 +65,13 @@ const setDefaultPlaceholder = (attrs, widgetType, index) => {
 
 const getWidgetTemplate = (attrs, options) => {
     const name = attrs.get('name');
+    const customWidgetName = attrs.get('widgetname');
     const fieldName = (attrs.get('key') || name || '').trim();
     const formControl = options.isMaxWidget ? `formControlName="${fieldName}_max"` : (options.isInList ? `[formControlName]="${options.counter}._fieldName"` : `formControlName="${fieldName}"`);
     const tmplRef = options.isMaxWidget ? `#formWidgetMax` : `#formWidget`;
     const widgetName = name ? (options.isMaxWidget ? `name="${name}_formWidgetMax"` : `name="${name}_formWidget"`) : '';
     const conditionalClass = `[ngClass]="${attrs.get('ngclass')}"`;
-    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${conditionalClass} ${tmplRef} ${widgetName}`;
+    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${conditionalClass} ${tmplRef} ${widgetName} ${customWidgetName ? `widgetname=${customWidgetName}`:''}` ;
     return getFormWidgetTemplate(options.widgetType, defaultTmpl, attrs, {counter: options.counter, pCounter: options.pCounter});
 };
 

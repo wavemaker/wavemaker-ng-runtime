@@ -21,7 +21,8 @@ export enum FormWidgetType {
     TIME = 'time',
     TIMESTAMP = 'timestamp',
     TYPEAHEAD = 'typeahead',
-    UPLOAD = 'upload'
+    UPLOAD = 'upload',
+    CUSTOM = 'custom'
 }
 
 export enum DataType {

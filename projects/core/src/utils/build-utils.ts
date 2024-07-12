@@ -90,6 +90,9 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
         case FormWidgetType.TIMESTAMP:
             tmpl = `<div wmDateTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} role="input" ${showTmpl}></div>`;
             break;
+        case FormWidgetType.CUSTOM:
+            tmpl = `<div wmWidgetContainer customWidgetContainer ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl} ${showTmpl}></div>`;
+            break;
         case FormWidgetType.UPLOAD:
             const counter = options.counter;
             const pCounter = options.pCounter;
@@ -140,6 +143,8 @@ export const getRequiredFormWidget = (widgetType): string => {
             return 'wm-richtexteditor';
         case FormWidgetType.SLIDER:
             return 'wm-slider';
+        case FormWidgetType.CUSTOM:
+            return 'wm-custom-widget';
         default:
             return 'wm-text';
     }
