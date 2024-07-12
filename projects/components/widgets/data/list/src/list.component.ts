@@ -1335,6 +1335,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.invokeEventCallback('paginationchange', {$event, $index});
     }
 
+    trackByFn($index: number) {
+        return $index; // Return a unique identifier for each item
+    }
+
     // Invoke the datasource variable by default when pulltorefresh event is not specified.
     private subscribeToPullToRefresh() {
         this._listenerDestroyers.push(this.app.subscribe('pulltorefresh', () => {

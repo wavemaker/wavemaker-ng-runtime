@@ -119,7 +119,7 @@
                 </h4>
             </li>
             <ul class="list-group clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}}">
-                <li *ngFor="let item of groupObj.data; index as $index; first as $first; last as $last;" [attr.tabindex]="tabindex"
+                <li *ngFor="let item of groupObj.data; index as $index; trackBy: trackByFn; first as $first; last as $last;" [attr.tabindex]="tabindex"
                     class="app-list-item group-list-item {{itemsPerRowClass}}"
                     [ngClass]="listItemRef.itemClass"
                     [wmListItem]="item" #listItemRef="listItemRef">
