@@ -1,7 +1,19 @@
-import { Validators } from '@angular/forms';
+import {Validators} from '@angular/forms';
 
-import { VALIDATOR, $watch, $unwatch, FormWidgetType } from '@wm/core';
-import {cloneDeep, concat, extend, filter, find, forEach, get, isEmpty, isFunction, toUpper} from "lodash-es";
+import {$unwatch, $watch, FormWidgetType, VALIDATOR} from '@wm/core';
+import {
+    cloneDeep,
+    concat,
+    extend,
+    filter,
+    find,
+    forEach,
+    get,
+    isEmpty,
+    isFunction,
+    keys as _keys,
+    toUpper
+} from "lodash-es";
 
 const DEFAULT_VALIDATOR = {
     pattern: 'regexp',
@@ -128,8 +140,7 @@ export class BaseFieldValidations {
                     if (err.hasOwnProperty('errorMessage')) {
                         this.instance.validationmessage = get(err, 'errorMessage');
                     } else {
-                        // @ts-ignore
-                        const keys = keys(err);
+                        const keys = _keys(err);
                         this.instance.validationmessage = (err[keys[0]]).toString();
                     }
                     return err;
@@ -277,8 +288,7 @@ export class BaseFieldValidations {
         if (fieldErrors.hasOwnProperty('errorMessage')) {
             this.instance.validationmessage = get(fieldErrors, 'errorMessage');
         } else {
-            // @ts-ignore
-            const keys = keys(fieldErrors);
+            const keys = _keys(fieldErrors);
             const key = keys[0];
             const validationMsgKey = get(DEFAULT_VALIDATOR, key) || this.formwidget.validateType;
             if (validationMsgKey) {
