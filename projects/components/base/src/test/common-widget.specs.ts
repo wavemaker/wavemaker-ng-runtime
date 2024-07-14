@@ -88,25 +88,25 @@ export class ComponentTestBase {
                     // convert the type of the attr.value and compare with its corresponding iScope property
                     if (attrProps.type === 1) {
                         if (isBooleanAttr(attrName)) {
-                            processedAttrValue = attrValue === attrName || attrValue === true || attrValue === 'true';
+                            processedAttrValue = (attrValue === attrName || Boolean(attrValue) === true || attrValue === 'true').toString();
                         } else {
-                            processedAttrValue = attrValue === true || attrValue === 'true';
+                            processedAttrValue = (Boolean(attrValue) === true || attrValue === 'true').toString();
                         }
                     } else if (isBooleanAttr(attrName)) {
-                        processedAttrValue = attrValue === attrName || attrValue === true || attrValue === 'true';
+                        processedAttrValue = (attrValue === attrName || Boolean(attrValue) === true || attrValue === 'true').toString();
                     } else if (attrProps.type === 2) {
-                        processedAttrValue = +attrValue;
+                        processedAttrValue = (+attrValue).toString();
                     }
 
                     // dimension properties like height, width, etc
                     if (isDimensionProp(attrName)) {
-                        processedAttrValue = toDimension(processedAttrValue);
+                        processedAttrValue = (toDimension(processedAttrValue)).toString();
                     }
 
                     if (attr.name == 'container') {
                         attrName = 'containerTarget';
                     }
-                    expect(component[attrName]).toBe(processedAttrValue);
+                    expect(component[attrName].toString()).toBe(processedAttrValue);
                 });
 
             });
@@ -293,8 +293,8 @@ export class ComponentTestBase {
             ], (prop) => {
                 let cssName, propName, initValue, cssValue;
                 if (isObject(prop)) {
-                    cssName = prop.cssName;
-                    propName = prop.wmPropName;
+                    cssName = prop[cssName];
+                    propName = prop[propName];
                 } else {
                     cssName = prop;
                     propName = cssName.toLowerCase();

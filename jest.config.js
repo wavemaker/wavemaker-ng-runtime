@@ -1,9 +1,14 @@
 module.exports = {
   preset: "jest-preset-angular",
+
   roots: ["<rootDir>/projects"],
   testEnvironment: "jsdom",
+    transformIgnorePatterns: [
+        '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
+    ],
   testMatch: [
     "**/projects/**/*.spec.ts",
+    //  "**/projects/components/widgets/input/default/src/text/color/input-color.wrapper.component.spec.ts"
     //  "**/projects/components/widgets/input/epoch/src/time/time.wrapper.component.spec.ts"
   ],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
