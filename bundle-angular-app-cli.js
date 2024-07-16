@@ -17,7 +17,7 @@ const argv = require("yargs")
 		}
 	}).argv;
 
-const DEBUG_LOG = 'NG-RUNTIME: ';
+const DEBUG_LOG = 'ANGULAR-APP: ';
 
 
 /**
