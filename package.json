@@ -1,5 +1,5 @@
 {
-    "name": "@wavemaker/app-ng-runtime",
+    "name": "@wavemaker/angular-app",
     "version": "0.0.0",
     "scripts": {
         "ng": "ng",
