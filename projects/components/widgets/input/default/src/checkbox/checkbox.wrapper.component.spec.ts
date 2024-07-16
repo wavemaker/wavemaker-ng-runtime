@@ -140,4 +140,115 @@ describe('Checkbox component', () => {
             expect(unStringify('hello')).toBe('hello');
         });
     });
+
+    describe('handleEvent', () => {
+        let mockNativeElement: { querySelector: jest.Mock };
+        let mockCheckboxEl: { nativeElement: HTMLElement };
+        let mockCallback: jest.Mock;
+        let mockLocals: any;
+
+        beforeEach(() => {
+            mockNativeElement = {
+                querySelector: jest.fn().mockReturnValue(document.createElement('label'))
+            };
+            mockCheckboxEl = {
+                nativeElement: document.createElement('input')
+            };
+            mockCallback = jest.fn();
+            mockLocals = {};
+
+            (checkboxComponent as any)['nativeElement'] = mockNativeElement as any;
+            checkboxComponent['checkboxEl'] = mockCheckboxEl as any;
+
+            // Mock the super.handleEvent method
+            jest.spyOn(Object.getPrototypeOf(CheckboxComponent.prototype), 'handleEvent').mockImplementation();
+        });
+
+        it('should not call super.handleEvent for "change" event', () => {
+            checkboxComponent['handleEvent'](document.createElement('div'), 'change', mockCallback, mockLocals);
+
+            expect(Object.getPrototypeOf(CheckboxComponent.prototype).handleEvent).not.toHaveBeenCalled();
+        });
+
+        it('should not call super.handleEvent for "blur" event', () => {
+            checkboxComponent['handleEvent'](document.createElement('div'), 'blur', mockCallback, mockLocals);
+
+            expect(Object.getPrototypeOf(CheckboxComponent.prototype).handleEvent).not.toHaveBeenCalled();
+        });
+
+        it('should call super.handleEvent with label element for "tap" event', () => {
+            const mockNode = document.createElement('div');
+            checkboxComponent['handleEvent'](mockNode, 'tap', mockCallback, mockLocals);
+
+            expect(mockNativeElement.querySelector).toHaveBeenCalledWith('label');
+            expect(Object.getPrototypeOf(CheckboxComponent.prototype).handleEvent)
+                .toHaveBeenCalledWith(expect.any(HTMLLabelElement), 'tap', mockCallback, mockLocals);
+        });
+
+        it('should call super.handleEvent with checkbox element for other events', () => {
+            const mockNode = document.createElement('div');
+            checkboxComponent['handleEvent'](mockNode, 'click', mockCallback, mockLocals);
+
+            expect(Object.getPrototypeOf(CheckboxComponent.prototype).handleEvent)
+                .toHaveBeenCalledWith(mockCheckboxEl.nativeElement, 'click', mockCallback, mockLocals);
+        });
+    });
+
+
+    describe('datavalue', () => {
+        beforeEach(() => {
+            checkboxComponent['_checkedvalue'] = 'checked';
+            checkboxComponent['_uncheckedvalue'] = 'unchecked';
+            jest.spyOn((checkboxComponent as any), 'updatePrevDatavalue');
+        });
+
+        describe('getter', () => {
+            it('should return _checkedvalue when proxyModel is true', () => {
+                checkboxComponent['proxyModel'] = true;
+                expect(checkboxComponent.datavalue).toBe('checked');
+            });
+
+            it('should return _uncheckedvalue when proxyModel is false', () => {
+                checkboxComponent['proxyModel'] = false;
+                expect(checkboxComponent.datavalue).toBe('unchecked');
+            });
+
+            it('should return undefined when proxyModel is undefined', () => {
+                checkboxComponent['proxyModel'] = undefined;
+                expect(checkboxComponent.datavalue).toBeUndefined();
+            });
+        });
+
+        describe('setter', () => {
+            it('should set proxyModel to true when value equals _checkedvalue', () => {
+                checkboxComponent.datavalue = 'checked';
+                expect(checkboxComponent['proxyModel']).toBe(true);
+                expect(checkboxComponent['updatePrevDatavalue']).toHaveBeenCalledWith('checked');
+            });
+
+            it('should set proxyModel to false when value equals _uncheckedvalue', () => {
+                checkboxComponent.datavalue = 'unchecked';
+                expect(checkboxComponent['proxyModel']).toBe(false);
+                expect(checkboxComponent['updatePrevDatavalue']).toHaveBeenCalledWith('unchecked');
+            });
+
+            it('should set proxyModel to undefined when value is undefined', () => {
+                checkboxComponent.datavalue = undefined;
+                expect(checkboxComponent['proxyModel']).toBeUndefined();
+                expect(checkboxComponent['updatePrevDatavalue']).toHaveBeenCalledWith(undefined);
+            });
+
+            it('should set proxyModel to undefined when value is an empty string', () => {
+                checkboxComponent.datavalue = '';
+                expect(checkboxComponent['proxyModel']).toBeUndefined();
+                expect(checkboxComponent['updatePrevDatavalue']).toHaveBeenCalledWith(undefined);
+            });
+
+            it('should set proxyModel to false when value is defined but not equal to _checkedvalue', () => {
+                checkboxComponent.datavalue = 'some other value';
+                expect(checkboxComponent['proxyModel']).toBe(false);
+                expect(checkboxComponent['updatePrevDatavalue']).toHaveBeenCalledWith('unchecked');
+            });
+        });
+    });
 });

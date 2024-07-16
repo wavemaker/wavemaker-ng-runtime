@@ -1,5 +1,5 @@
 import { DataSource, FormWidgetType, MatchMode } from '@wm/core';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
     isSearchWidgetType,
     performDataOperation,
@@ -11,8 +11,7 @@ import {
     transformData,
     refreshDataSource,
     fetchRelatedFieldData,
-    Live_Operations,
-    interpolateBindExpressions
+    Live_Operations
 } from './data-utils'; // Replace with the actual file name
 
 // Mock the DataSource class

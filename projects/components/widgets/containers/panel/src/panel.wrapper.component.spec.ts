@@ -7,17 +7,13 @@ import { MenuDropdownComponent } from "../../../navigation/menu/src//menu-dropdo
 import { NavigationControlDirective } from "../../../navigation/menu/src/nav/navigation-control.directive";
 import { MenuComponent } from "../../../navigation/menu/src//menu.component";
 import { Router } from '@angular/router';
-import {App, UserDefinedExecutionContext} from '@wm/core';
+import { App, UserDefinedExecutionContext } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { DatasetAwareNavComponent, NavNode } from '../../../../base/src/widgets/common/base/dataset-aware-nav.component';
 import { BsDropdownModule, BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
 import { ComponentsTestModule } from "../../../../base/src/test/components.test.module";
-import { compileTestComponent } from "../../../../base/src/test/util/component-test-util";
-
-const mockApp = {
-    subscribe: () => { return () => {}}
-};
+import { compileTestComponent, mockApp } from "../../../../base/src/test/util/component-test-util";
 
 const markup = `<div wmPanel badgevalue="Test val" #wm_panel1="wmPanel" expanded="true" helptext="samplePanel" partialContainer [attr.aria-label]="wm_panel1.hint || 'panel hint'" wm-navigable-element="true"  subheading="subheading" iconclass="wi wi-account-circle" actions="testData" autoclose="outsideClick" title="Title" enablefullscreen="true" closable="true" collapsible="true" name="panel1" hint="panel hint" actionsclick.event="panel1Actionsclick($item)">`;
 @Component({
@@ -25,7 +21,7 @@ const markup = `<div wmPanel badgevalue="Test val" #wm_panel1="wmPanel" expanded
 })
 
 class PanelWrapperComponent {
-    @ViewChild(PanelComponent, /* TODO: add static flag */ {static: true})
+    @ViewChild(PanelComponent, /* TODO: add static flag */ { static: true })
     wmComponent: PanelComponent;
 
     public testData = "Option1, Option2, Option3";
@@ -39,11 +35,12 @@ class PanelWrapperComponent {
 const panelComponentModuleDef: ITestModuleDef = {
     declarations: [PanelWrapperComponent, PanelComponent, MenuComponent, MenuDropdownItemComponent, MenuDropdownComponent, NavigationControlDirective],
     imports: [ComponentsTestModule, BsDropdownModule.forRoot()],
-    providers: [{ provide: Router, useValue: Router },
+    providers: [
+        { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
         { provide: SecurityService, useValue: SecurityService },
-    { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
-    { provide: DatasetAwareNavComponent, useValue: DatasetAwareNavComponent }]
+        { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
+        { provide: DatasetAwareNavComponent, useValue: DatasetAwareNavComponent }]
 }
 
 const panelComponentDef: ITestComponentDef = {
@@ -86,15 +83,15 @@ describe("PanelComponent", () => {
         fixture.detectChanges();
     }));
 
-    async function togglePanel(expand : string){
+    async function togglePanel(expand: string) {
         let panelHeaderEle = fixture.debugElement.query(By.css('.panel-heading'));
         const collapseBtn = panelHeaderEle.query(By.css(expand));
         // Click the panel header element
         collapseBtn.nativeElement.click();
-    
+
         // Wait for the fixture to stabilize
         await fixture.whenStable();
-    
+
         // Trigger change detection
         fixture.detectChanges();
         await fixture.whenStable();
@@ -217,5 +214,216 @@ describe("PanelComponent", () => {
         expect(helpText.nativeElement.textContent).toBe('samplePanel');
     });
 
+    describe('onPropertyChange', () => {
+        it('should set expanded property when key is "expanded"', () => {
+            wmComponent.onPropertyChange('expanded', true);
+            expect(wmComponent.expanded).toBe(true);
 
+            wmComponent.onPropertyChange('expanded', false);
+            expect(wmComponent.expanded).toBe(false);
+        });
+
+        it('should call $lazyLoad after timeout when key is "content" and expanded is true', (done) => {
+            wmComponent.expanded = true;
+            wmComponent.collapsible = true;
+            wmComponent.$lazyLoad = jest.fn();
+
+            wmComponent.onPropertyChange('content', 'new content');
+
+            setTimeout(() => {
+                expect(wmComponent.$lazyLoad).toHaveBeenCalled();
+                done();
+            }, 30);
+        });
+
+        it('should call $lazyLoad after timeout when key is "content" and collapsible is false', (done) => {
+            wmComponent.expanded = false;
+            wmComponent.collapsible = false;
+            wmComponent.$lazyLoad = jest.fn();
+
+            wmComponent.onPropertyChange('content', 'new content');
+
+            setTimeout(() => {
+                expect(wmComponent.$lazyLoad).toHaveBeenCalled();
+                done();
+            }, 30);
+        });
+
+        it('should not call $lazyLoad when key is "content" and expanded is false and collapsible is true', (done) => {
+            wmComponent.expanded = false;
+            wmComponent.collapsible = true;
+            wmComponent.$lazyLoad = jest.fn();
+
+            wmComponent.onPropertyChange('content', 'new content');
+
+            setTimeout(() => {
+                expect(wmComponent.$lazyLoad).not.toHaveBeenCalled();
+                done();
+            }, 30);
+        });
+
+        it('should call super.onPropertyChange for other keys', () => {
+            const superOnPropertyChange = jest.spyOn(Object.getPrototypeOf(PanelComponent.prototype), 'onPropertyChange');
+
+            wmComponent.onPropertyChange('someOtherKey', 'newValue', 'oldValue');
+
+            expect(superOnPropertyChange).toHaveBeenCalledWith('someOtherKey', 'newValue', 'oldValue');
+        });
+    });
+
+    describe('expand', () => {
+        it('should call toggle when expanded is false', () => {
+            wmComponent.expanded = false;
+            wmComponent.toggle = jest.fn();
+            const event = new Event('click');
+
+            wmComponent.expand(event);
+
+            expect(wmComponent.toggle).toHaveBeenCalledWith(event);
+        });
+
+        it('should not call toggle when expanded is true', () => {
+            wmComponent.expanded = true;
+            wmComponent.toggle = jest.fn();
+            const event = new Event('click');
+
+            wmComponent.expand(event);
+
+            expect(wmComponent.toggle).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('collapse', () => {
+        it('should call toggle when expanded is true', () => {
+            wmComponent.expanded = true;
+            wmComponent.toggle = jest.fn();
+            const event = new Event('click');
+
+            wmComponent.collapse(event);
+
+            expect(wmComponent.toggle).toHaveBeenCalledWith(event);
+        });
+
+        it('should not call toggle when expanded is false', () => {
+            wmComponent.expanded = false;
+            wmComponent.toggle = jest.fn();
+            const event = new Event('click');
+
+            wmComponent.collapse(event);
+
+            expect(wmComponent.toggle).not.toHaveBeenCalled();
+        });
+    });
+
+
+    describe('hideFooter', () => {
+        it('should return true when hasFooter is false', () => {
+            (wmComponent as any).hasFooter = false;
+            wmComponent.expanded = true;
+            expect(wmComponent.hideFooter).toBe(true);
+        });
+
+        it('should return true when expanded is false', () => {
+            (wmComponent as any).hasFooter = true;
+            wmComponent.expanded = false;
+            expect(wmComponent.hideFooter).toBe(true);
+        });
+
+        it('should return true when both hasFooter and expanded are false', () => {
+            (wmComponent as any).hasFooter = false;
+            wmComponent.expanded = false;
+            expect(wmComponent.hideFooter).toBe(true);
+        });
+
+        it('should return false when both hasFooter and expanded are true', () => {
+            (wmComponent as any).hasFooter = true;
+            wmComponent.expanded = true;
+            expect(wmComponent.hideFooter).toBe(false);
+        });
+    });
+
+    describe('showHeader', () => {
+        beforeEach(() => {
+            wmComponent.iconurl = '';
+            wmComponent.iconclass = '';
+            wmComponent.collapsible = false;
+            wmComponent.actions = null;
+            wmComponent.title = '';
+            wmComponent.subheading = '';
+            wmComponent.enablefullscreen = false;
+        });
+
+        it('should return true when iconurl is set', () => {
+            wmComponent.iconurl = 'some-url';
+            expect(wmComponent.showHeader).toBe("some-url");
+        });
+
+        it('should return true when iconclass is set', () => {
+            wmComponent.iconclass = 'some-class';
+            expect(wmComponent.showHeader).toBe('some-class');
+        });
+
+        it('should return true when collapsible is true', () => {
+            wmComponent.collapsible = true;
+            expect(wmComponent.showHeader).toBe(true);
+        });
+
+        // it('should return true when actions is set', () => {
+        //     wmComponent.actions = [{ name: 'Action' }];
+        //     expect(wmComponent.showHeader).toBe([{ name: 'Action' }]);
+        // });
+
+        it('should return true when title is set', () => {
+            wmComponent.title = 'Some Title';
+            expect(wmComponent.showHeader).toBe('Some Title');
+        });
+
+        it('should return true when subheading is set', () => {
+            wmComponent.subheading = 'Some Subheading';
+            expect(wmComponent.showHeader).toBe('Some Subheading');
+        });
+
+        it('should return true when enablefullscreen is true', () => {
+            wmComponent.enablefullscreen = true;
+            expect(wmComponent.showHeader).toBe(true);
+        });
+
+        it('should return false when all conditions are false or unset', () => {
+            expect(wmComponent.showHeader).toBe(false);
+        });
+    });
+
+    describe('computeDimensions', () => {
+        let mockPanelHeader: { nativeElement: { offsetHeight: number } };
+        let mockPanelContent: { nativeElement: HTMLElement };
+        let mockNativeElement: { querySelector: jest.Mock };
+        let mockFooter: { offsetHeight: number };
+        let originalInnerHeight: number;
+
+        beforeEach(() => {
+            mockPanelHeader = { nativeElement: { offsetHeight: 50 } };
+            mockPanelContent = { nativeElement: document.createElement('div') };
+            mockFooter = { offsetHeight: 30 };
+            mockNativeElement = {
+                querySelector: jest.fn().mockReturnValue(mockFooter)
+            };
+
+            wmComponent['panelHeader'] = mockPanelHeader as any;
+            wmComponent['panelContent'] = mockPanelContent as any;
+            (wmComponent as any)['nativeElement'] = mockNativeElement as any;
+
+            originalInnerHeight = window.innerHeight;
+            Object.defineProperty(window, 'innerHeight', { value: 1000, configurable: true });
+        });
+
+        afterEach(() => {
+            Object.defineProperty(window, 'innerHeight', { value: originalInnerHeight });
+        });
+        it('should set height to empty string when fullscreen is false and height is not set', () => {
+            wmComponent.fullscreen = false;
+            wmComponent.height = '';
+            wmComponent['computeDimensions']();
+            expect(mockPanelContent.nativeElement.style.height).toBe('');
+        });
+    });
 });
