@@ -1,23 +1,24 @@
 import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
-import { By } from '@angular/platform-browser';
 
 import {TreeComponent} from "./tree.component";
 import {PipeProvider} from "../../../../../runtime-base/src/services/pipe-provider.service";
 import {App, setPipeProvider, AbstractI18nService} from "@wm/core";
 import {TrustAsPipe} from '../../../../base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
+import '@ztree/ztree_v3/js/jquery.ztree.all.js';
+import "libraries/scripts/tree-keyboard-navigation/keyboard-navigation.js";
 
 const mockApp = {
     subscribe: () => { return () => {}}
 };
 
 const markup = `
-    <div wmTree
+    <ul wmTree
         name="tree1"
         dataset.bind="Variables.staticVariable1.dataSet"
         nodelabel="key"
-        select.event="onNodeSelect($event, widget, $item, $path)"></div>
+        select.event="onNodeSelect($event, widget, $item, $path)"></ul>
 `;
 
 @Component({
@@ -96,8 +97,9 @@ describe('wm-tree: Widget specific test cases', () => {
         });
 
         fixture.whenStable().then(() => {
+            expect(fixture).toMatchSnapshot();
             // trigger click on first leaf node
-            fixture.debugElement.nativeElement.querySelector('li.leaf-node > .title').click();
+            fixture.debugElement.nativeElement.querySelector('li > .button').click();
         });
     }));
 
