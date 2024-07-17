@@ -12,6 +12,7 @@ import { BasicModule } from '@wm/components/basic';
 import { InputModule } from '@wm/components/input';
 import { MenuModule } from '@wm/components/navigation/menu';
 import { ListModule } from '@wm/components/data/list';
+import { IMaskModule } from 'angular-imask';
 
 import { TableComponent } from './table.component';
 import { TableCUDDirective } from './table-cud.directive';
@@ -266,7 +267,7 @@ const inline_edit_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 d
                             </div>`;
 
 const summary_row_markup = `<div wmTable wmTableFilterSort wmTableCUD #table_1 data-identifier="table" tabindex="0" editmode="quickedit"
-                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false" 
+                                name="UserTable1" title="User List" navigation="Basic" isdynamictable="false"
                                 beforedatarender.event="UserTable1Beforedatarender(widget, data, columns)">
 
                                 <div wmTableColumn index="0" headerIndex="0" binding="exam" caption="Exam" edit-widget-type="text" type="string"
@@ -378,6 +379,7 @@ let imports = [
     InputModule,
     ListModule,
     MenuModule,
+    IMaskModule,
     WmComponentsModule.forRoot(),
     BsDatepickerModule.forRoot(),
     TimepickerModule.forRoot(),
@@ -414,7 +416,7 @@ const testModuleDef: ITestModuleDef = {
     imports: imports,
     declarations: [...declarations, TableWrapperComponent],
     providers: providers,
-    teardown: {destroyAfterEach: false}   
+    teardown: {destroyAfterEach: false}
 };
 
 const componentDef: ITestComponentDef = {
@@ -751,7 +753,7 @@ describe("DataTable", () => {
                     imports: imports,
                     declarations: [...declarations, InlineTableWrapperComponent],
                     providers: providers,
-                    teardown: {destroyAfterEach: false}   
+                    teardown: {destroyAfterEach: false}
                 };
 
                 let wrapperComponent: InlineTableWrapperComponent;
@@ -970,7 +972,7 @@ describe("DataTable", () => {
                     imports: imports,
                     declarations: [...declarations, QuickEditTableWrapperComponent],
                     providers: providers,
-                    teardown: {destroyAfterEach: false}   
+                    teardown: {destroyAfterEach: false}
                 };
 
                 let wrapperComponent: QuickEditTableWrapperComponent;
@@ -1262,7 +1264,7 @@ describe("DataTable", () => {
                     const modalEl = document.querySelector(".modal-dialog");
                     expect(modalEl).toBeDefined();
                 });
-               
+
 
                 it("Tab out between columns", () => { });
                 it("Tab out of last columns with empty new-row", () => { });
@@ -1365,7 +1367,7 @@ describe("DataTable", () => {
                     imports: imports,
                     declarations: [...declarations, SummaryRowWrapperComponent],
                     providers: providers,
-                    teardown: {destroyAfterEach: false}   
+                    teardown: {destroyAfterEach: false}
                 };
 
                 let wrapperComponent: SummaryRowWrapperComponent;

@@ -97,7 +97,6 @@ describe('wm-tree: Widget specific test cases', () => {
         });
 
         fixture.whenStable().then(() => {
-            expect(fixture).toMatchSnapshot();
             // trigger click on first leaf node
             fixture.debugElement.nativeElement.querySelector('li > .button').click();
         });

@@ -8,6 +8,8 @@ import { compileTestComponent } from 'projects/components/base/src/test/util/com
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import { DatePipe } from '@angular/common';
+import { IMaskModule } from 'angular-imask';
+
 import { AbstractI18nService, App } from '@wm/core';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import {
@@ -52,7 +54,7 @@ class CalendarWrapperComponent {
 
 const calendarComponentModuleDef: ITestModuleDef = {
     declarations: [CalendarWrapperComponent, CalendarComponent],
-    imports: [ComponentsTestModule, FormsModule, BsDatepickerModule],
+    imports: [ComponentsTestModule, FormsModule, BsDatepickerModule, IMaskModule],
     providers: [{ provide: ToDatePipe, useClass: ToDatePipe },
     { provide: App, useValue: mockApp },
     { provide: DatePipe, useClass: DatePipe },

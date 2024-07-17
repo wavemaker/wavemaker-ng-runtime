@@ -89,3 +89,32 @@ beforeEach(() => {
     },
   });
 });
+
+// jest.setup.js
+Object.defineProperty(global.HTMLMediaElement.prototype, 'load', {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: jest.fn(),
+});
+
+Object.defineProperty(global.HTMLMediaElement.prototype, 'play', {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: jest.fn().mockResolvedValue(),
+});
+
+Object.defineProperty(global.HTMLMediaElement.prototype, 'pause', {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: jest.fn(),
+});
+
+Object.defineProperty(global.HTMLMediaElement.prototype, 'addTextTrack', {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: jest.fn(),
+});

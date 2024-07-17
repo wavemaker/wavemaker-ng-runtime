@@ -35,8 +35,7 @@ import { WmComponentsModule } from '@wm/components/base';
 import localeDE from '@angular/common/locales/de';
 import localeRO from '@angular/common/locales/ro';
 import {BsLocaleService} from 'ngx-bootstrap/datepicker';
-
-declare const moment;
+import moment from 'moment';
 
 const currentTime = moment(new Date()).format('hh:mm:ss');
 const mockApp = {

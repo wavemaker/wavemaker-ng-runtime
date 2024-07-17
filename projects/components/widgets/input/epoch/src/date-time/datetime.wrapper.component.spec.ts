@@ -16,6 +16,7 @@ import {
 
     BsLocaleService
 } from 'ngx-bootstrap/datepicker';
+import { IMaskModule } from 'angular-imask';
 import {
     TimepickerModule
 } from 'ngx-bootstrap/timepicker';
@@ -110,7 +111,7 @@ class DatetimeWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent, DatetimeComponent],
-    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot(), IMaskModule],
     providers: [{ provide: Router, useValue: Router },
     { provide: App, useValue: mockApp },
     { provide: SecurityService, useValue: SecurityService },
@@ -120,7 +121,7 @@ const dateComponentModuleDef: ITestModuleDef = {
     { provide: DatePipe, useClass: DatePipe },
     { provide: AbstractI18nService, useClass: MockAbstractI18nService }
     ],
-    teardown: {destroyAfterEach: false}  
+    teardown: {destroyAfterEach: false}
 };
 
 const dateComponentDef: ITestComponentDef = {
