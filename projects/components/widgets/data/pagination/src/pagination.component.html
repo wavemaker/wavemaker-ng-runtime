@@ -18,7 +18,9 @@
     </li>
     <li class="pagecount disabled">
         <a href="javascript:void(0);">
-            <input type="number" [disabled]="isDisableCurrent" [(ngModel)]="dn.currentPage" [attr.aria-label]="'Showing Page ' + dn.currentPage + ' of ' + pageCount"
+            <input [(ngModel)]="dn.currentPage" [attr.aria-label]="'Showing Page ' + dn.currentPage + ' of ' + pageCount" [disabled]="isDisableCurrent"
+                   [ngModelOptions]="{standalone: true}"
+                   type="number"
                   (keydown)="onKeyDown($event)" (change)="onModelChange($event)" class="form-control"/>
         </a>
     </li>

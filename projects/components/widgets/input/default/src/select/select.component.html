@@ -5,6 +5,7 @@
         [required]="required"
         [tabindex]="tabindex"
         [(ngModel)]="modelByKey"
+        [ngModelOptions]="{standalone: true}"
         [multiple]="multiple"
         (change)="onSelectValueChange($event)"
         (focus)="checkForFloatingLabel($event)"
