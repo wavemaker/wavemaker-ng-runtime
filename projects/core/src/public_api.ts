@@ -164,6 +164,7 @@ export * from './services/field-type.service';
 export * from './services/field-widget.service';
 export * from './services/script-loader.service';
 export * from './services/user-custom-pipe-manager.service';
+export * from './services/custom-icons-loader.service';
 export { StatePersistence } from './services/state-persistence.service';
 export { PaginationService } from './services/pagination.service';
 export * from './core.module';
