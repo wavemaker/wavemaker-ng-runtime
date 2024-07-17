@@ -7,6 +7,7 @@
            [attr.aria-checked]="!!proxyModel"
            focus-target
            [(ngModel)]="proxyModel"
+           [ngModelOptions]="{standalone: true}"
            [readonly]="readonly"
            [required]="required"
            [disabled]="disabled || readonly"

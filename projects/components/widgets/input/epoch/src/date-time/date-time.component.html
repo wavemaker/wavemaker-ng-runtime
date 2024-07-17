@@ -80,6 +80,7 @@
                 [showMeridian]="ismeridian"
                 [readonlyInput]="disabled || readonly || isCurrentDate"
                 [(ngModel)]="bsTimeValue"
+                        [ngModelOptions]="{standalone: true}"
                 [min]="minTime"
                 [max]="maxTime"
                 [hourStep]="hourstep"
