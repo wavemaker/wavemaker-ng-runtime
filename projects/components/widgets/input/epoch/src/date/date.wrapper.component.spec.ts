@@ -34,6 +34,7 @@ import {
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import localeDE from '@angular/common/locales/de';
 import { IMaskDirective, IMaskModule } from 'angular-imask';
+import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 
 const mockApp = {
     subscribe: () => { return () => { } }
@@ -98,7 +99,8 @@ const dateComponentModuleDef: ITestModuleDef = {
     { provide: ToDatePipe, useClass: ToDatePipe },
     { provide: DatePipe, useClass: DatePipe },
     { provide: AbstractI18nService, useClass: MockAbstractI18nService },
-    { provide: IMaskDirective, useClass: MockIMaskDirective }
+    { provide: IMaskDirective, useClass: MockIMaskDirective },
+    { provide : BsDatepickerDirective, useClass: BsDatepickerDirective}
     ],
     teardown: { destroyAfterEach: false }
 };

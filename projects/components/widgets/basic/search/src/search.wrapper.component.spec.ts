@@ -31,7 +31,7 @@ const markup = `
              type="button"
              tabindex="1"
 
-             disabled="false"
+             disabled="true"
              width="200" height="200" show="true" class="btn-primary"
              fontsize="20" fontfamily="Segoe UI" color="#0000FF" fontweight="700" whitespace="nowrap"
              fontstyle="italic" textdecoration="underline" textalign="center" backgroundcolor="#00ff29"

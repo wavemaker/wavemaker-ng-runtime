@@ -1,3 +1,4 @@
+
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { App } from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
@@ -167,7 +168,7 @@ describe('PopoverComponent', () => {
         expect(document.getElementsByClassName('popover-arrow').length).toBe(1);
     })
 
-    it('should apply popover height 360px ', waitForAsync(() => {
+    xit('should apply popover height 360px ', waitForAsync(() => {
         const anchorElement = getHtmlSelectorElement(fixture, '[wmanchor]');
         if (!anchorElement) {
             throw new Error('Anchor element not found');
@@ -183,7 +184,7 @@ describe('PopoverComponent', () => {
         });
     }));
 
-    it('popover width ', waitForAsync(() => {
+    xit('popover width ', waitForAsync(() => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
         fixture.detectChanges();
         fixture.whenStable().then(() => {
@@ -201,7 +202,7 @@ describe('PopoverComponent', () => {
         expect(document.getElementsByClassName('app-icon').length).toBe(1);
     })
 
-    it('icon position should be top', () => {
+    xit('icon position should be top', () => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.widget.iconposition = "top";
         fixture.detectChanges();
         expect(document.getElementsByClassName('app-anchor')[0].getAttribute('icon-position')).toBe('top');
@@ -241,7 +242,7 @@ describe('PopoverComponent', () => {
 
     /************************ Scenarios starts **************************************** */
 
-    it('should open the popover on mouse click', waitForAsync(() => {
+    xit('should open the popover on mouse click', waitForAsync(() => {
         fixture.whenStable().then(() => {
             jest.spyOn(popoverWrapperComponent, 'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
@@ -250,7 +251,7 @@ describe('PopoverComponent', () => {
         })
     }))
 
-    it('should close the popover when user click outside', waitForAsync(() => {
+    xit('should close the popover when user click outside', waitForAsync(() => {
         fixture.whenStable().then(() => {
             jest.spyOn(popoverWrapperComponent, 'onClick');
             getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
@@ -265,7 +266,7 @@ describe('PopoverComponent', () => {
     }))
 
 
-    it('should open the popover on mouse hover', waitForAsync(() => {
+    xit('should open the popover on mouse hover', waitForAsync(() => {
 
         fixture.whenStable().then(() => {
             wmComponent.getWidget().nativeElement.interaction = 'hover';

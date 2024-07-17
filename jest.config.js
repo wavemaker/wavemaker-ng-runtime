@@ -8,6 +8,8 @@ module.exports = {
   ],
   testMatch: [
     "**/projects/**/*.spec.ts",
+     // "**/projects/components/widgets/data/table/src/table.wrapper.component.spec.ts"
+    //  "**/projects/components/widgets/input/epoch/src/date-time/datetime.wrapper.component.spec.ts"
     //  "**/projects/components/widgets/input/default/src/text/color/input-color.wrapper.component.spec.ts"
   ],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],

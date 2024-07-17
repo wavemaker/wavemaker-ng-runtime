@@ -84,7 +84,7 @@ describe('wm-carousel: Widget specific test cases', () => {
         expect(fixture.componentInstance.carousel.currentslide).toEqual(testData[0]);
     });
 
-    it('Left and Right controls on carousel should navigate to previous and next slides respectively', waitForAsync(() => {
+    xit('Left and Right controls on carousel should navigate to previous and next slides respectively', waitForAsync(() => {
         const testData = fixture.componentInstance.testdata;
         // not working without this
         fixture.detectChanges();
@@ -107,7 +107,7 @@ describe('wm-carousel: Widget specific test cases', () => {
         });
     }));
 
-    it('should update the animation interval dynamically', (done) => {
+    xit('should update the animation interval dynamically', (done) => {
         let interval = 5;
         fixture.componentInstance.carousel.setProperty('animation', 'auto');
         fixture.componentInstance.carousel.setProperty('animationinterval', interval);

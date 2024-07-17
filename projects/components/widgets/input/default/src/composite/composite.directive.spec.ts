@@ -6,7 +6,9 @@ import { WidgetRef } from '@wm/components/base';
 import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef } from 'projects/components/base/src/test/common-widget.specs';
 
-const markup = `<div wmComposite #wm_composite [attr.aria-label]="wm_composite.hint || 'Composite content'" hint="Composite content" name="composite1" captionposition="left" [required]="false">`;
+const markup = `<div wmComposite #wm_composite [attr.aria-label]="wm_composite.hint || 'Composite content'"
+     hint="Composite content" name="composite1" captionposition="left" [attr.required]="true">
+</div>`;
 
 @Component({
     template: markup
