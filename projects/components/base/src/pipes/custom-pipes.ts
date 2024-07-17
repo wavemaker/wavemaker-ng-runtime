@@ -4,13 +4,7 @@ import { CURRENCY_INFO, isDefined, App, CustomPipeManager, AbstractI18nService, 
 import { WmPipe } from "./wm-pipe";
 import {filter, includes, isDate, isFunction, isObject, isUndefined, startsWith} from "lodash-es";
 
-import momentTimezone from 'moment-timezone';
-import momentLib from 'moment';
-
-declare let moment: any;
-moment = momentLib;
-moment.tz = momentTimezone.tz;
-
+declare const moment;
 
 const getEpochValue = data => {
     let epoch;
