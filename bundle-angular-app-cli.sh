@@ -34,6 +34,7 @@ cp -rf dist/runtime-cli/angular-app/. dist/npm-packages/angular-app
 
 cd dist/npm-packages/angular-app
 npm install
+npm shrinkwrap
 npm pack
 cp "wavemaker-angular-app-${publishVersion}.tgz" "../"
 
