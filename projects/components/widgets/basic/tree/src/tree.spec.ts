@@ -1,17 +1,15 @@
 import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 
-import {TreeComponent} from "./tree.component";
-import {PipeProvider} from "../../../../../runtime-base/src/services/pipe-provider.service";
-import {App, setPipeProvider, AbstractI18nService} from "@wm/core";
-import {TrustAsPipe} from '../../../../base';
+import { TreeComponent } from "./tree.component";
+import { PipeProvider } from "../../../../../runtime-base/src/services/pipe-provider.service";
+import { App, setPipeProvider, AbstractI18nService } from "@wm/core";
+import { TrustAsPipe } from '../../../../base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import '@ztree/ztree_v3/js/jquery.ztree.all.js';
 import "libraries/scripts/tree-keyboard-navigation/keyboard-navigation.js";
+import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
-const mockApp = {
-    subscribe: () => { return () => {}}
-};
 
 const markup = `
     <ul wmTree
@@ -25,7 +23,7 @@ const markup = `
     template: markup
 })
 class TreeSpec {
-    @ViewChild(TreeComponent, /* TODO: add static flag */ {static: true}) tree: TreeComponent;
+    @ViewChild(TreeComponent, /* TODO: add static flag */ { static: true }) tree: TreeComponent;
     public testdata: any = [
         {
             "key": "a val",
@@ -63,13 +61,13 @@ class TreeSpec {
 describe('wm-tree: Widget specific test cases', () => {
     let fixture: ComponentFixture<TreeSpec>;
 
-    beforeEach(waitForAsync(()=>{
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [TreeSpec, TreeComponent],
             providers: [
-                {provide: App, useValue: mockApp},
-                {provide: TrustAsPipe, useClass: TrustAsPipe},
-                { provide: AbstractI18nService, useClass:MockAbstractI18nService  }
+                { provide: App, useValue: mockApp },
+                { provide: TrustAsPipe, useClass: TrustAsPipe },
+                { provide: AbstractI18nService, useClass: MockAbstractI18nService }
             ]
         })
             .compileComponents();
