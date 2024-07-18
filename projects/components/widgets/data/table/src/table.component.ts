@@ -409,7 +409,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (!this.multiselect) {
                     this.items.length = 0;
                 }
-                this.callDataGridMethod('selectRows', this.items);
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
                 if(this.selectedItems.length) {
                     this.selectedItemChange.next(this.selectedItems);
