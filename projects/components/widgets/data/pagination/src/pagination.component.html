@@ -68,7 +68,7 @@
 
 <pagination class="pagination basic" [ngClass]="navigationClass" *ngIf="navcontrols === 'Basic'" role="navigation"
             [itemsPerPage]="maxResults" [totalItems]="dataSize"
-            [ngModel]="dn.currentPage" (pageChanged)="pageChanged($event)"
+            (pageChanged)="pageChanged($event)" [ngModelOptions]="{standalone:true}" [ngModel]="dn.currentPage"
             [attr.aria-label]="'Showing Page ' + dn.currentPage + ' of ' + pageCount + ' pages'"
             [boundaryLinks]="boundarylinks" [maxSize]="maxsize"
             [directionLinks]="directionlinks"
