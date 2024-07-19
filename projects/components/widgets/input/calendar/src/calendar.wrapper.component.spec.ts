@@ -4,7 +4,7 @@ import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
 import { FormsModule } from '@angular/forms';
-import { compileTestComponent } from 'projects/components/base/src/test/util/component-test-util';
+import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import { DatePipe } from '@angular/common';
@@ -17,9 +17,6 @@ import {
 } from '@wm/components/base';
 import "fullcalendar/main.min.js";
 
-const mockApp = {
-    subscribe: () => { return () => { } }
-};
 declare global {
     interface Window {
         FullCalendar: any;

@@ -4,13 +4,9 @@ import { WizardStepDirective } from './wizard-step/wizard-step.directive';
 import { WmComponentsModule } from '@wm/components/base';
 import { FormsModule } from '@angular/forms';
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
-import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
+import { compileTestComponent, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { App } from '@wm/core';
-
-const mockApp = {
-    subscribe: () => { return () => {}}
-};
 
 const markup = `
         <div wmWizard role="tablist" stepstyle="justified" name="wizard1" class="classic" show="true" width="800" height="200"

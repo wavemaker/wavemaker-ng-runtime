@@ -9,17 +9,7 @@ import { BasicModule } from '@wm/components/basic';
 import { WmComponentsModule } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import 'libraries/scripts/swipey/swipey.jquery.plugin.js';
-
-const mockI18 = {
-    getwidgetLocale() {
-
-    }
-}
-//SwipeAnimation.expressionEvaluator = $parseExpr;
-
-const mockApp = {
-    subscribe: () => { return () => {}}
-};
+import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
 const markup = `
         <div class="app-carousel carousel">
