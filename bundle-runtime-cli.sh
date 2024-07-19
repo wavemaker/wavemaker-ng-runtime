@@ -70,7 +70,9 @@ mkdir -p dist/npm-packages/app-ng-runtime
 cp -r libraries/. dist/npm-packages/app-ng-runtime
 
 cd dist/npm-packages/app-ng-runtime
-npm_package=$(npm pack)
+npm install
+npm shrinkwrap
+npm pack
 cp "wavemaker-app-ng-runtime-${publishVersion}.tgz" "../"
 
 cd ..
