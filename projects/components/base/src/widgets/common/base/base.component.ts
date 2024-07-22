@@ -742,22 +742,16 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.isMuted = false;
     }
 
-    customInjectorMap: any = {};
+    private customInjectorMap: any = {};
     createCustomInjector(contextKey: string, context: any) {
         if(this.customInjectorMap[contextKey]) {
-            if( this.customInjectorMap[contextKey].context === context) {
-                return this.customInjectorMap[contextKey].injector;
-            }
-            delete this.customInjectorMap[contextKey];
+            return this.customInjectorMap[contextKey].injector;
         }
-        const inj = Injector.create({
-            providers: [{ provide: 'EXPLICIT_CONTEXT', useValue: context }],
+        const injector = Injector.create({
+            providers: [{ provide: 'EXPLICIT_CONTEXT', useFactory: () => context }]
         });
-        this.customInjectorMap[contextKey] = {
-            context: context,
-            injector: inj
-        }
-        return inj;
+        this.customInjectorMap[contextKey] = { context, injector };
+        return injector;
     }
 
     /**
