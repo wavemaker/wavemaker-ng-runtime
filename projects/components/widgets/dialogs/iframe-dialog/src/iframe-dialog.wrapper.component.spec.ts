@@ -3,12 +3,11 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { IframeDialogComponent } from './iframe-dialog.component';
 import { Context, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog } from '@wm/components/dialogs';
 import { By } from '@angular/platform-browser';
-import { ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
+import { ITestComponentDef } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { AbstractDialogService, App } from '@wm/core';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 
 // Mock Services
@@ -72,18 +71,11 @@ describe('IframeDialogComponent', () => {
     let fixture: ComponentFixture<IframeDialogWrapperComponent>;
 
     beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule(testModuleDef)
-            .compileComponents()
-            .then(() => {
-                fixture = compileTestComponent(testModuleDef, IframeDialogWrapperComponent);
-                wrapperComponent = fixture.componentInstance;
-                dialogComponent = wrapperComponent.wmComponent;
-
-                // Mock TemplateRefs
-                dialogComponent.dialogTemplate = {} as TemplateRef<any>;
-
-                fixture.detectChanges();
-            });
+        fixture = compileTestComponent(testModuleDef, IframeDialogWrapperComponent);
+        wrapperComponent = fixture.componentInstance;
+        dialogComponent = wrapperComponent.wmComponent;
+        dialogComponent.dialogTemplate = {} as TemplateRef<any>;
+        fixture.detectChanges();
     }));
 
     it('should create iframe dialog component', () => {
@@ -106,4 +98,23 @@ describe('IframeDialogComponent', () => {
         const dialogElement = fixture.debugElement.query(By.css('[wmIframeDialog]'));
         expect(dialogElement).not.toBeNull();
     });
+
+    describe('getTemplateRef', () => {
+        it('should return the dialogTemplate', () => {
+            const mockTemplateRef = {} as TemplateRef<any>;
+            dialogComponent.dialogTemplate = mockTemplateRef;
+            const result = dialogComponent['getTemplateRef']();
+            expect(result).toBe(mockTemplateRef);
+        });
+    });
+
+    describe('onOk', () => {
+        it('should invoke the ok event callback', () => {
+            const mockEvent = new Event('click');
+            const invokeEventCallbackSpy = jest.spyOn(dialogComponent as any, 'invokeEventCallback');
+            dialogComponent.onOk(mockEvent);
+            expect(invokeEventCallbackSpy).toHaveBeenCalledWith('ok', { $event: mockEvent });
+        });
+    });
+
 });

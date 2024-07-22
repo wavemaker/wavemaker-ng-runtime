@@ -4,14 +4,19 @@ import { By } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { DatePipe } from '@angular/common';
-import { AbstractI18nService, App, AppDefaults } from '@wm/core';
+import { AbstractI18nService, App, AppDefaults, isAppleProduct } from '@wm/core';
 import { ChipsComponent } from './chips.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, mockApp, setInputValue } from '../../../../base/src/test/util/component-test-util';
-import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
+import { WmComponentsModule, ToDatePipe, DataSetItem } from '@wm/components/base';
 import { SearchComponent } from '@wm/components/basic/search';
 import { PartialRefProvider } from '@wm/core';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
+
+jest.mock('@wm/core', () => ({
+    ...jest.requireActual('@wm/core'),
+    isAppleProduct: jest.fn()
+}));
 
 const markup = `<ul wmChips name="chips1" readonly="false" class= "text-success" show="true" width="800" height="200" backgroundcolor="#00ff29"
                     placeholder="" tabindex="0" overflow="auto"></ul>`; // placeholder and tabindex are not working because .bind is not working
@@ -342,6 +347,153 @@ describe('wm-chips: Component Specific Tests', () => {
         expect(wmComponent.onTextDelete).toHaveBeenCalled();
     });
 
+
+    describe('onTextDelete', () => {
+        it('should call onInputClear when on Apple product', () => {
+            const mockEvent = new Event('keydown');
+            (isAppleProduct as unknown as jest.Mock).mockReturnValue(true);
+            jest.spyOn(wmComponent, 'onInputClear');
+
+            wmComponent.onTextDelete(mockEvent);
+
+            expect(wmComponent.onInputClear).toHaveBeenCalledWith(mockEvent);
+        });
+    });
+
+    describe('onInputClear', () => {
+        it('should focus on last chip when conditions are met', () => {
+            const mockEvent = new Event('keydown');
+            wmComponent.chipsList = [{}, {}];
+            wmComponent.searchComponent = { query: '' } as any;
+            const lastChipMock = { focus: jest.fn() };
+            jest.spyOn($.fn, 'last').mockReturnValue(lastChipMock as any);
+            jest.spyOn(wmComponent, 'stopEvent');
+
+            wmComponent.onInputClear(mockEvent);
+
+            expect(lastChipMock.focus).toHaveBeenCalled();
+            expect(wmComponent.stopEvent).toHaveBeenCalledWith(mockEvent);
+        });
+
+        it('should not focus when conditions are not met', () => {
+            const mockEvent = new Event('keydown');
+            wmComponent.chipsList = [];
+            wmComponent.searchComponent = { query: 'test' } as any;
+            const lastChipMock = { focus: jest.fn() };
+            jest.spyOn($.fn, 'last').mockReturnValue(lastChipMock as any);
+            jest.spyOn(wmComponent, 'stopEvent');
+
+            wmComponent.onInputClear(mockEvent);
+
+            expect(lastChipMock.focus).not.toHaveBeenCalled();
+            expect(wmComponent.stopEvent).not.toHaveBeenCalled();
+        });
+    });
+    describe('onBackspace', () => {
+        it('should call removeItem when not readonly', () => {
+            const mockEvent = new Event('keydown');
+            const mockItem = {} as DataSetItem;
+            wmComponent.readonly = false;
+            jest.spyOn(wmComponent as any, 'removeItem');
+
+            (wmComponent as any).onBackspace(mockEvent, mockItem, 0);
+
+            expect(wmComponent['removeItem']).toHaveBeenCalledWith(mockEvent, mockItem, 0, true);
+        });
+
+        it('should not call removeItem when readonly', () => {
+            const mockEvent = new Event('keydown');
+            const mockItem = {} as DataSetItem;
+            wmComponent.readonly = true;
+            jest.spyOn(wmComponent as any, 'removeItem');
+
+            (wmComponent as any).onBackspace(mockEvent, mockItem, 0);
+
+            expect(wmComponent['removeItem']).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('onDelete', () => {
+        it('should call removeItem when not readonly', () => {
+            const mockEvent = new Event('keydown');
+            const mockItem = {} as DataSetItem;
+            wmComponent.readonly = false;
+            jest.spyOn(wmComponent as any, 'removeItem');
+
+            (wmComponent as any).onDelete(mockEvent, mockItem, 0);
+
+            expect(wmComponent['removeItem']).toHaveBeenCalledWith(mockEvent, mockItem, 0);
+        });
+
+        it('should not call removeItem when readonly', () => {
+            const mockEvent = new Event('keydown');
+            const mockItem = {} as DataSetItem;
+            wmComponent.readonly = true;
+            jest.spyOn(wmComponent as any, 'removeItem');
+
+            (wmComponent as any).onDelete(mockEvent, mockItem, 0);
+
+            expect(wmComponent['removeItem']).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('handleChipClick', () => {
+        it('should focus on the clicked chip and invoke chipclick callback when not readonly', () => {
+            const mockEvent = { currentTarget: { focus: jest.fn() } } as any;
+            const mockChip = {} as DataSetItem;
+            wmComponent.readonly = false;
+            jest.spyOn(wmComponent as any, 'invokeEventCallback');
+
+            (wmComponent as any).handleChipClick(mockEvent, mockChip);
+
+            expect(mockEvent.currentTarget.focus).toHaveBeenCalled();
+            expect(wmComponent['invokeEventCallback']).toHaveBeenCalledWith('chipclick', {
+                $event: mockEvent,
+                $item: mockChip
+            });
+        });
+
+        it('should not focus or invoke callback when readonly', () => {
+            const mockEvent = { currentTarget: { focus: jest.fn() } } as any;
+            const mockChip = {} as DataSetItem;
+            wmComponent.readonly = true;
+            jest.spyOn(wmComponent as any, 'invokeEventCallback');
+
+            (wmComponent as any).handleChipClick(mockEvent, mockChip);
+
+            expect(mockEvent.currentTarget.focus).not.toHaveBeenCalled();
+            expect(wmComponent['invokeEventCallback']).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('handleChipFocus', () => {
+        it('should set chip as active and invoke chipselect callback when not readonly', () => {
+            const mockEvent = {} as Event;
+            const mockChip = {} as any;
+            wmComponent.readonly = false;
+            jest.spyOn(wmComponent as any, 'invokeEventCallback');
+
+            (wmComponent as any).handleChipFocus(mockEvent, mockChip);
+
+            expect(mockChip.active).toBe(true);
+            expect(wmComponent['invokeEventCallback']).toHaveBeenCalledWith('chipselect', {
+                $event: mockEvent,
+                $item: mockChip
+            });
+        });
+
+        it('should not set chip as active or invoke callback when readonly', () => {
+            const mockEvent = {} as Event;
+            const mockChip = {} as any;
+            wmComponent.readonly = true;
+            jest.spyOn(wmComponent as any, 'invokeEventCallback');
+
+            (wmComponent as any).handleChipFocus(mockEvent, mockChip);
+
+            expect(mockChip.active).toBeUndefined();
+            expect(wmComponent['invokeEventCallback']).not.toHaveBeenCalled();
+        });
+    });
 
     function applyIgnoreCaseMatchMode(matchMode, value1, value2, done) {
         wmComponent.setProperty('matchmode', matchMode);
