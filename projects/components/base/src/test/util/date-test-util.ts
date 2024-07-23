@@ -143,7 +143,7 @@ export class MockAbstractI18nServiceDe {
     constructor(bsLocaleService) {
         defineLocale('de', deLocale);
         bsLocaleService.use('de');
-        moment.defineLocale('de', deLocale);
+        moment.updateLocale('de', deLocale);
     }
     public getSelectedLocale() {
         return 'de';

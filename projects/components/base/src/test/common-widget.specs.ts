@@ -106,7 +106,6 @@ export class ComponentTestBase {
                     if (attr.name == 'container') {
                         attrName = 'containerTarget';
                     }
-                    console.log(component[attrName], 'component[attrName]')
                     expect(component[attrName].toString()).toBe(processedAttrValue);
                 });
 
