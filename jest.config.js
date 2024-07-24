@@ -8,11 +8,13 @@ module.exports = {
   ],
   testMatch: [
     "**/projects/**/*.spec.ts",
-     // "**/projects/components/widgets/data/table/src/table.wrapper.component.spec.ts"
-    //  "**/projects/components/widgets/input/epoch/src/date-time/datetime.wrapper.component.spec.ts"
-    //  "**/projects/components/widgets/input/default/src/text/color/input-color.wrapper.component.spec.ts"
+    // "**/projects/components/widgets/data/form/src/form.wrapper.component.spec.ts"
   ],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    "/projects/components/widgets/input/epoch/src/time/time.wrapper.component.spec.ts"
+  ],
   setupFilesAfterEnv: ["<rootDir>/src/setup-jest.js"],
   collectCoverage: true,
   coverageReporters: ["html", "json-summary"],

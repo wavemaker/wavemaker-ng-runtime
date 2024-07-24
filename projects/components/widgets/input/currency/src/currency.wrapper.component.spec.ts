@@ -623,14 +623,14 @@ describe('CurrencyComponent', () => {
 
             it('should set datavalue when inputmode is FINANCIAL and updateOn is blur', () => {
                 currencyComponent.inputmode = 'financial';
-                currencyComponent.ngModelOptions = { updateOn: 'blur' };
+                currencyComponent.ngModelOptions = { updateOn: 'blur', standalone: true };
                 currencyComponent.onModelChange('100');
                 expect(currencyComponent.datavalue).toBe(100);
             });
 
             it('should not set datavalue when inputmode is FINANCIAL and updateOn is not blur', () => {
                 currencyComponent.inputmode = 'financial';
-                currencyComponent.ngModelOptions = { updateOn: 'change' };
+                currencyComponent.ngModelOptions = { updateOn: 'change', standalone: true };
                 (currencyComponent as any).datavalue = '50';
                 currencyComponent.onModelChange('100');
                 expect(currencyComponent.datavalue).toBe(50);
