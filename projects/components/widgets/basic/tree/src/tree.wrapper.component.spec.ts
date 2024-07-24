@@ -411,4 +411,290 @@ describe('wm-tree: Component Specific Tests', () => {
             expect((wmComponent as any).selectNode).toHaveBeenCalledWith(mockEvent, mockTreeNode);
         });
     });
+
+    describe('selectNode', () => {
+        let mockEvent: any;
+        let mockNode: any;
+        let jquerySpy: jest.SpyInstance;
+        let addClassSpy: jest.SpyInstance;
+        let removeClassSpy: jest.SpyInstance;
+
+        beforeEach(() => {
+            mockEvent = { type: 'click' };
+            mockNode = {
+                tId: 'node1',
+                data: { name: 'Node 1' }
+            };
+            (wmComponent as any).name = 'testTree';
+            wmComponent['treeClass'] = 'Classic';
+            wmComponent['getPath'] = jest.fn().mockReturnValue('/path/to/node');
+            wmComponent['setChecked'] = jest.fn();
+            wmComponent['invokeEventCallback'] = jest.fn();
+
+            // Mock jQuery
+            jquerySpy = jest.spyOn(global, '$' as any).mockReturnValue({
+                removeClass: removeClassSpy = jest.fn().mockReturnThis(),
+                addClass: addClassSpy = jest.fn().mockReturnThis()
+            });
+
+            // Mock getClonedObject
+            (global as any).getClonedObject = jest.fn(obj => ({ ...obj }));
+
+            // Mock $parseEvent
+            (global as any).$parseEvent = jest.fn(() => jest.fn());
+        });
+
+        it('should deselect previously selected node and select new node', () => {
+            wmComponent['selectNode'](mockEvent, mockNode);
+
+            expect(jquerySpy).toHaveBeenCalledWith('.app-tree[name=testTree] li[treenode].selected');
+            expect(removeClassSpy).toHaveBeenCalledWith('selected');
+            expect(jquerySpy).toHaveBeenCalledWith('#node1:has(.curSelectedNode)');
+            expect(addClassSpy).toHaveBeenCalledWith('selected');
+        });
+
+        it('should not select a new node if node is null', () => {
+            wmComponent['selectNode'](mockEvent, null);
+
+            expect(jquerySpy).toHaveBeenCalledWith('.app-tree[name=testTree] li[treenode].selected');
+            expect(removeClassSpy).toHaveBeenCalledWith('selected');
+            expect(jquerySpy).toHaveBeenCalledTimes(3);
+            expect(addClassSpy).not.toHaveBeenCalled();
+        });
+
+        it('should call setChecked for Checkbox class', () => {
+            wmComponent['treeClass'] = 'Checkbox';
+            wmComponent['selectNode'](mockEvent, mockNode);
+
+            expect(wmComponent['setChecked']).toHaveBeenCalledWith(mockNode, mockNode.data);
+        });
+
+        it('should call setChecked for Radio class', () => {
+            wmComponent['treeClass'] = 'Radio';
+            wmComponent['selectNode'](mockEvent, mockNode);
+
+            expect(wmComponent['setChecked']).toHaveBeenCalledWith(mockNode, mockNode.data);
+        });
+
+        it('should set selecteditem with path', () => {
+            wmComponent['selectNode'](mockEvent, mockNode);
+
+            expect(wmComponent['selecteditem']).toEqual({
+                name: 'Node 1',
+                path: '/path/to/node'
+            });
+        });
+
+        it('should invoke select event callback', () => {
+            wmComponent['selectNode'](mockEvent, mockNode);
+
+            expect(wmComponent['invokeEventCallback']).toHaveBeenCalledWith('select', {
+                '$event': mockEvent,
+                '$item': { name: 'Node 1' },
+                '$path': '/path/to/node'
+            });
+        });
+    })
+    describe('expandNode', () => {
+        let mockNode: any;
+        let mockZTree: any;
+        let jquerySpy: jest.SpyInstance;
+        let addClassSpy: jest.SpyInstance;
+
+        beforeEach(() => {
+            mockNode = {
+                tId: 'node1'
+            };
+            mockZTree = {
+                expandNode: jest.fn()
+            };
+            wmComponent['zTree'] = mockZTree;
+            // Mock jQuery
+            jquerySpy = jest.spyOn(global, '$' as any).mockReturnValue({
+                addClass: addClassSpy = jest.fn().mockReturnThis()
+            });
+            // The default tree icon class is now 'plus-minus'
+            (wmComponent as any).defaultTreeIconClass = 'plus-minus';
+        });
+
+        it('should call zTree.expandNode with correct parameters', () => {
+            wmComponent['expandNode'](mockNode, true, true);
+            expect(mockZTree.expandNode).toHaveBeenCalledWith(mockNode, true, false, false, true);
+        });
+
+        it('should add default tree icon class when treeicons is not set', () => {
+            wmComponent['expandNode'](mockNode, true, true);
+
+            expect(jquerySpy).toHaveBeenCalledWith('#node1_switch');
+            expect(addClassSpy).toHaveBeenCalledWith('plus-minus');
+        });
+
+        it('should add custom tree icon class when treeicons is set', () => {
+            wmComponent.treeicons = 'custom-tree-icon';
+            wmComponent['expandNode'](mockNode, true, true);
+
+            expect(jquerySpy).toHaveBeenCalledWith('#node1_switch');
+            expect(addClassSpy).toHaveBeenCalledWith('custom-tree-icon');
+        });
+
+        it('should work correctly when expanding a node', () => {
+            wmComponent['expandNode'](mockNode, true, false);
+
+            expect(mockZTree.expandNode).toHaveBeenCalledWith(mockNode, true, false, false, false);
+            expect(jquerySpy).toHaveBeenCalledWith('#node1_switch');
+            expect(addClassSpy).toHaveBeenCalledWith('plus-minus');
+        });
+
+        it('should work correctly when collapsing a node', () => {
+            wmComponent['expandNode'](mockNode, false, true);
+
+            expect(mockZTree.expandNode).toHaveBeenCalledWith(mockNode, false, false, false, true);
+            expect(jquerySpy).toHaveBeenCalledWith('#node1_switch');
+            expect(addClassSpy).toHaveBeenCalledWith('plus-minus');
+        });
+    });
+
+    describe('selectById', () => {
+        let mockZTree: any;
+        let mockNodes: any[];
+
+        beforeEach(() => {
+            mockNodes = [
+                { nodeId: '1', name: 'Node 1' },
+                { nodeId: '2', name: 'Node 2' },
+                { nodeId: '3', name: 'Node 3' }
+            ];
+            mockZTree = {
+                transformToArray: jest.fn().mockReturnValue(mockNodes),
+                getNodes: jest.fn().mockReturnValue(mockNodes),
+                selectNode: jest.fn()
+            };
+            wmComponent['zTree'] = mockZTree;
+            wmComponent['selectNode'] = jest.fn();
+        });
+
+        it('should select node by id when node exists', () => {
+            wmComponent['selectById']('2');
+
+            expect(mockZTree.transformToArray).toHaveBeenCalledWith(mockNodes);
+            expect(mockZTree.selectNode).toHaveBeenCalledWith(mockNodes[1], false);
+            expect(wmComponent['selectNode']).toHaveBeenCalledWith(undefined, mockNodes[1]);
+        });
+
+        it('should not select node when node does not exist', () => {
+            wmComponent['selectById']('4');
+
+            expect(mockZTree.transformToArray).toHaveBeenCalledWith(mockNodes);
+            expect(mockZTree.selectNode).not.toHaveBeenCalled();
+            expect(wmComponent['selectNode']).not.toHaveBeenCalled();
+        });
+
+        it('should handle undefined value', () => {
+            wmComponent['selectById'](undefined);
+
+            expect(mockZTree.transformToArray).toHaveBeenCalledWith(mockNodes);
+            expect(mockZTree.selectNode).not.toHaveBeenCalled();
+            expect(wmComponent['selectNode']).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('deselectById', () => {
+        beforeEach(() => {
+            wmComponent['selectById'] = jest.fn();
+        });
+
+        it('should clear selecteditem and call selectById', () => {
+            wmComponent['deselectById']();
+
+            expect(wmComponent['selecteditem']).toEqual({});
+        });
+
+        it('should ignore passed value', () => {
+            wmComponent['deselectById']('someValue');
+
+            expect(wmComponent['selecteditem']).toEqual({});
+        });
+    });
+
+    describe('setChecked', () => {
+        let mockGetEvaluatedData: jest.Mock;
+
+        beforeEach(() => {
+            mockGetEvaluatedData = jest.fn();
+            (global as any).getEvaluatedData = mockGetEvaluatedData;
+            wmComponent.nodechildren = 'children';
+            (wmComponent as any).bindnodechildren = 'bindChildren';
+            (wmComponent as any).viewParent = {};
+        });
+
+        it('should set checked state for a single node without children', () => {
+            const zNode = { checked: true };
+            const node = {};
+
+            wmComponent['setChecked'](zNode, node);
+
+            expect(node).toHaveProperty('checked', true);
+        });
+
+        it('should set checked state for a node and its children', () => {
+            const zNode = {
+                checked: true,
+                children: [
+                    { checked: true },
+                    { checked: true }
+                ]
+            };
+            const node = {
+                children: [{}, {}]
+            };
+
+            mockGetEvaluatedData.mockReturnValue(node.children);
+
+            wmComponent['setChecked'](zNode, node);
+
+            expect(node).toHaveProperty('checked', true);
+            expect(node.children[0]).toHaveProperty('checked', true);
+            expect(node.children[1]).toHaveProperty('checked', true);
+        });
+
+        it('should handle nodes with no children', () => {
+            const zNode = { checked: true };
+            const node = {};
+
+            mockGetEvaluatedData.mockReturnValue(null);
+
+            wmComponent['setChecked'](zNode, node);
+
+            expect(node).toHaveProperty('checked', true);
+        }); 
+
+        it('should handle deeply nested children', () => {
+            const zNode = {
+                checked: true,
+                children: [
+                    {
+                        checked: true,
+                        children: [
+                            { checked: true }
+                        ]
+                    }
+                ]
+            };
+            const node = {
+                children: [
+                    {
+                        children: [{}]
+                    }
+                ]
+            };
+
+            mockGetEvaluatedData.mockReturnValue(node.children);
+
+            wmComponent['setChecked'](zNode, node);
+
+            expect(node).toHaveProperty('checked', true);
+            expect(node.children[0]).toHaveProperty('checked', true);
+            expect(node.children[0].children[0]).toHaveProperty('checked', true);
+        });
+    });
 });
