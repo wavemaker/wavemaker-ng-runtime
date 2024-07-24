@@ -13,6 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-nav-item', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmNavItem]',
+    exportAs: 'navItemRef',
     providers: [
         provideAsWidgetRef(NavItemDirective)
     ]

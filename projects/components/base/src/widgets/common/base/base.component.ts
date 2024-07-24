@@ -2,14 +2,14 @@ import {
     AfterContentInit,
     AfterViewInit,
     ElementRef,
+    Inject,
+    inject,
     Injectable,
     Injector,
-    Inject,
     OnDestroy,
     OnInit,
-    ViewContainerRef,
-    inject,
-    Optional
+    Optional,
+    ViewContainerRef
 } from '@angular/core';
 import {EventManager} from '@angular/platform-browser';
 
@@ -22,6 +22,7 @@ import {
     $watch,
     addClass,
     App,
+    findParent,
     isDefined,
     isMobileApp,
     removeAttr,
@@ -29,8 +30,7 @@ import {
     setAttr,
     setCSS,
     setCSSFromObj,
-    switchClass,
-    findParent
+    switchClass
 } from '@wm/core';
 
 import {getWidgetPropsByType} from '../../framework/widget-props';
@@ -41,7 +41,7 @@ import {widgetIdGenerator} from '../../framework/widget-id-generator';
 import {DISPLAY_TYPE, EVENTS_MAP} from '../../framework/constants';
 import {WidgetProxyProvider} from '../../framework/widget-proxy-provider';
 import {getWatchIdentifier} from '../../../utils/widget-utils';
-import {camelCase, forEach, isArray, isObject, join, map, extend} from "lodash-es";
+import {camelCase, extend, forEach, isArray, isObject, join, map} from "lodash-es";
 
 declare const $;
 
@@ -190,6 +190,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     public viewContainerRef: ViewContainerRef;
     public viewParentApp: App;
+    /**
+     * To avoid re-rendering of widget, passing unique id as contextKey to createCustomInjector
+     * (for List, Dynamic Tabs, Accordion, Nav, Carousel)
+     */
+    public trackId: string;
 
     protected constructor(
         protected inj: Injector,
@@ -256,6 +261,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         }
 
         this.widgetId = this.generateWidgetId();
+        this.trackId = this.generateWidgetId();
         setAttr(this.nativeElement, 'widget-id', this.widgetId, true);
 
         // register default property change handler and style change handler
@@ -743,6 +749,19 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     }
 
     private customInjectorMap: any = {};
+
+    /**
+     * After the Angular 17 upgrade, Angular is no longer sending ngTemplateContext to components in ng-template.
+     * Wavemaker widgets inside ng-template require context to evaluate bind expressions.
+     * So we're creating an injectionToken that returns the context as a value.
+     * We are passing the injectionToken to the ngTemplateOutletInjector.
+     * This injects the context into each widget in the ng-template.
+     * In the widget component constructor we are getting the injectionToken using dependency injection.
+     * If injectionToken is present, we extend the component context with the value of injectionToken.
+     * @param contextKey
+     * @param context
+     * @returns injector
+     */
     createCustomInjector(contextKey: string, context: any) {
         if(this.customInjectorMap[contextKey]) {
             return this.customInjectorMap[contextKey].injector;
