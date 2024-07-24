@@ -771,7 +771,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 const fd = get(formData, field.form.formGroupName, {});
                 fd[fieldName] = fieldValue;
                 set(formData, field.form.formGroupName, fd);
-            } else if (this.parentForm && this.parentForm.ngform && field.form.isParentList) { // Fix for [WMS-25806]: use formArrayIndex only if form has a parent form
+            } else if ((typeof field.form.formArrayIndex === 'number') && field.form.isParentList && !this.parentForm) { // Fix for [WMS-25806]: use formArrayIndex only if form has a parent form
                 // setting formdata based on formArrayIndex
                 const fd = get(formData, field.form.parentList.name, []);
                 fd[field.form.formArrayIndex] = fd[field.form.formArrayIndex] || {};
