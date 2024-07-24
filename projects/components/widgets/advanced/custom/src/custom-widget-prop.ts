@@ -5,7 +5,8 @@ export const registerProps = () => {
         'wm-custom-widget-container',
         new Map(
             [
-                ['name', PROP_STRING]
+                ['name', PROP_STRING],
+                ['class', PROP_STRING]
             ]
         )
     );

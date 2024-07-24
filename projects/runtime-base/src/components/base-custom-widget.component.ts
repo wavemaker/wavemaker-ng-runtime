@@ -98,7 +98,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         this.registerExpressions();
         this.initUserScript();
         this.registerProps(resolveFn);
-        // Using promise to make sure the props are registered in the container widget before registering events, Otherwise no events will be registered 
+        // Using promise to make sure the props are registered in the container widget before registering events, Otherwise no events will be registered
         promise.then(() => this.registerEvents());
 
         this.registerWidgets();
@@ -149,7 +149,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     registerDestroyListener(fn: Function) {
         this.destroy$.subscribe(noop, noop, () => fn());
     }
-    
+
     registerChangeListeners() {
         this.containerWidget.registerPropertyChangeListener(this.onPropertyChange);
         this.containerWidget.registerStyleChangeListener(this.onPropertyChange);
@@ -247,9 +247,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
                 this.customWidgetType = config.widgetType;
                 const inheritedWidgetProps: Map<string, any> = getWidgetPropsByType(this.customWidgetType);
                 inheritedWidgetProps.forEach((v, k) => {
-                    if (isDefined(v.value)) {
-                        this[k] =v.value;
-                    }
+                    this[k] =v.value;
                 });
                 Object.entries((config.properties || {})).forEach(([key, prop]: [string, any]) => {
                     let expr;

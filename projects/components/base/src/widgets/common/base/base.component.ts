@@ -68,6 +68,11 @@ const updateStyles = (nv, ov, el) => {
 
 };
 
+interface Child {
+    widget: any,
+    nativeElement: any
+}
+
 @Injectable()
 export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
 
@@ -496,11 +501,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * @param {string} eventName
      * @param {string} expr
      */
-    protected processEventAttr(eventName: string, expr: string, meta?: string) {
+    protected processEventAttr(eventName: string, expr: string, meta?: string, child?: Child) {
         const fn = $parseEvent(expr);
         const locals = this.context;
-        locals.widget = this.widget;
-        const boundFn = fn.bind(undefined, this.viewParent, locals);
+        locals.widget = child ? child.widget : this.widget;
+        const boundFn = fn.bind(undefined, child ? this.viewParent.viewParent : this.viewParent, locals);
 
         const eventCallback = () => {
             let boundFnVal;
@@ -519,17 +524,29 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 console.error(e);
             }
         };
-
-        this.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
+        if(child) {
+            if(!child.widget.eventHandlers)
+                child.widget.eventHandlers = new Map<string, {callback: Function, locals: any}>()
+            child.widget.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
+        }
+        else
+            this.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
         // prepend eventName with on and convert it to camelcase.
         // eg, "click" ---> onClick
         const onEventName =  _.camelCase(`on-${eventName}`);
         // save the eventCallback in widgetScope.
-        this[onEventName] = eventCallback;
+        if(child) {
+            child.widget[onEventName] = eventCallback;
+        }
+        else
+            this[onEventName] = eventCallback;
 
         // events needs to be setup after viewInit
         this.toBeSetupEventsQueue.push(() => {
-            this.handleEvent(this.nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta);
+            if(child) {
+                this.handleEvent(child.nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta);
+            } else
+                this.handleEvent(this.nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta);
         });
     }
 
@@ -577,15 +594,17 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             }
         }
     }
-
+    protected processChildAttr(attrName: string, attrValue: string, child: Child) {
+        this.processAttr(attrName, attrValue, child)
+    }
     /**
      * Process the attribute
      * If the attribute is an event expression, generate a functional representation of the expression
      *      and keep in eventHandlers
      * If the attribute is a bound expression, register a watch on the expression
      */
-    protected processAttr(attrName: string, attrValue: string) {
-        // console.log("====attrName=====", attrName, "=====typeof attrname=====", typeof attrName, "-----attrValue----", attrValue);
+    protected processAttr(attrName: string, attrValue: string, child?: Child) {
+         // console.log("====attrName=====", attrName, "=====typeof attrname=====", typeof attrName, "-----attrValue----", attrValue);
         const {0: propName, 1: type, 2: meta, length} = attrName.split('.');
         if (type === 'bind') {
             // if the show property is bound, set the initial value to false
@@ -594,7 +613,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             }
             this.processBindAttr(propName, attrValue);
         } else if (type === 'event') {
-            this.processEventAttr(propName, attrValue, meta);
+            this.processEventAttr(propName, attrValue, meta, child);
         } else if (length === 1) {
             // remove class and name attributes. Component will set them on the proper node
             if (attrName === 'class') {
