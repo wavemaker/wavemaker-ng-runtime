@@ -58,29 +58,29 @@ class DateWrapperComponent {
 
 
     date1Tap(evt, widget) {
-        console.log('Date control tap action triggered');
+        // console.log('Date control tap action triggered');
     }
     date1Click(evt, widget) {
-        console.log('Date control click action triggered');
+        // console.log('Date control click action triggered');
 
     }
 
     date1Mouseenter(evt, widget) {
-        console.log('Mouse enter event triggered');
+        // console.log('Mouse enter event triggered');
     }
     date1Mouseleave(evt, wiget) {
-        console.log('Mouse leave event triggered');
+        // console.log('Mouse leave event triggered');
     }
 
     date1Focus(evt, widget) {
-        console.log('Focus event triggered');
+        // console.log('Focus event triggered');
     }
     date1Blur(evt, widget) {
-        console.log('Blur event triggered');
+        // console.log('Blur event triggered');
     }
 
     date1Change(evt, widget, newVal, oldVal) {
-        console.log('Change event triggered!');
+        // console.log('Change event triggered!');
     }
 
 }
