@@ -39,12 +39,12 @@ declare const _;
 @Directive()
 export abstract class BaseCustomWidgetComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
     Widgets: any;
+    BaseWidget: any = {};
     Variables: any;
     Actions: any;
     App: App;
     injector: Injector;
     customWidgetName: string;
-    customWidgetType: string;
     activePageName: string;
     route: ActivatedRoute;
     appManager: AppManagerService;
@@ -121,7 +121,6 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
             this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
         }
-
         super.init();
     }
 
@@ -131,6 +130,16 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
 
         // expose current page widgets on app
         (this.App as any).Widgets = Object.create(this.Widgets);
+    }
+
+    registerBaseWidget() {
+        for(let widget in this.Widgets) {
+            let widgetInstance = this.Widgets[widget];
+            if(widgetInstance.widget.$attrs.has('base-widget')) {
+                this.BaseWidget = widgetInstance;
+                break;
+            }
+        }
     }
 
     invokeEvent = (eventName: string) => {
@@ -244,11 +253,6 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     registerProps(resolveFn: Function) {
         window['resourceCache'].get(`./custom-widgets/${this.customWidgetName}/page.min.json`).then(({ config }) => {
             if (config) {
-                this.customWidgetType = config.widgetType;
-                const inheritedWidgetProps: Map<string, any> = getWidgetPropsByType(this.customWidgetType);
-                inheritedWidgetProps.forEach((v, k) => {
-                    this[k] =v.value;
-                });
                 Object.entries((config.properties || {})).forEach(([key, prop]: [string, any]) => {
                     let expr;
                     const value = _.trim(prop.value);
@@ -308,6 +312,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         //     }, 100);
         // });
         this.registerChangeListeners();
+        this.registerBaseWidget();
         this.invokeOnReady()
     }
 
