@@ -40,13 +40,13 @@ export class CustomWidgetDirective extends StylableComponent implements OnDestro
                 this.processChildren(child.children, inheritedProps);
             else {
                 for (const [key, value] of Object.entries(inheritedProps)) {
-                    if(key.includes(".event"))
-                        this.processChildAttr(key, value, {widget: child.widget, nativeElement: child});
+                    if(key.includes(".event") || key.includes('.bind'))
+                        this.processAttr(key, value, {widget: child.widget, nativeElement: child});
                     else
                         child.widget[key] = value;
                 }
             }
-        })
+        });
     }
 
     private callback(eventName, locals?: object) {
