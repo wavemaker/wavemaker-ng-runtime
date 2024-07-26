@@ -507,6 +507,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         locals.widget = child ? child.widget : this.widget;
         const boundFn = fn.bind(undefined, child ? this.viewParent.viewParent : this.viewParent, locals);
 
+        let widget          = child ? child.widget : this,
+            nativeElement   = child ? child.nativeElement : this.nativeElement;
+
         const eventCallback = () => {
             let boundFnVal;
             $invokeWatchers(true);
@@ -524,29 +527,20 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 console.error(e);
             }
         };
-        if(child) {
-            if(!child.widget.eventHandlers)
-                child.widget.eventHandlers = new Map<string, {callback: Function, locals: any}>()
-            child.widget.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
-        }
-        else
-            this.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
+        if(child && !child.widget.eventHandlers)
+            child.widget.eventHandlers = new Map<string, {callback: Function, locals: any}>()
+
+        widget.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
         // prepend eventName with on and convert it to camelcase.
         // eg, "click" ---> onClick
         const onEventName =  _.camelCase(`on-${eventName}`);
         // save the eventCallback in widgetScope.
-        if(child) {
-            child.widget[onEventName] = eventCallback;
-        }
-        else
-            this[onEventName] = eventCallback;
+
+        widget[onEventName] = eventCallback;
 
         // events needs to be setup after viewInit
         this.toBeSetupEventsQueue.push(() => {
-            if(child) {
-                this.handleEvent(child.nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta);
-            } else
-                this.handleEvent(this.nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta);
+            this.handleEvent(nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta);
         });
     }
 
@@ -554,19 +548,25 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Process the bound property
      * Register a watch on the bound expression
      */
-    protected processBindAttr(propName: string, expr: string) {
-
-        this.initState.delete(propName);
+    protected processBindAttr(propName: string, expr: string, child ?: any) {
+        if(!child)
+            this.initState.delete(propName);
+        let viewParent  = child ? child.widget.viewParent.viewParent : this.viewParent,
+            context     = child ? child.widget.context : this.context,
+            widget      = child ? child.widget : this.widget,
+            isMuted     = child ? child.widget.isMuted : this.isMuted,
+            widgetProps = child ? child.widget.widgetProps : this.widgetProps,
+            widgetId    = child ? child.widget.widgetId : this.widgetId;
         this.registerDestroyListener(
             $watch(
                 expr,
-                this.viewParent,
-                this.context,
-                nv => this.widget[propName] = nv,
-                getWatchIdentifier(this.widgetId, propName),
+                viewParent,
+                context,
+                nv => widget[propName] = nv,
+                getWatchIdentifier(widgetId, propName),
                 propName === 'datasource',
-                this.widgetProps.get(propName),
-                () => this.isMuted
+                widgetProps.get(propName),
+                () => isMuted
             )
         );
     }
@@ -594,9 +594,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             }
         }
     }
-    protected processChildAttr(attrName: string, attrValue: string, child: Child) {
-        this.processAttr(attrName, attrValue, child)
-    }
     /**
      * Process the attribute
      * If the attribute is an event expression, generate a functional representation of the expression
@@ -611,7 +608,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             if (propName === 'show') {
                 this.nativeElement.hidden = true;
             }
-            this.processBindAttr(propName, attrValue);
+            this.processBindAttr(propName, attrValue, child);
         } else if (type === 'event') {
             this.processEventAttr(propName, attrValue, meta, child);
         } else if (length === 1) {

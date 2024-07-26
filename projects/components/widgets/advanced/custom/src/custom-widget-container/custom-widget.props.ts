@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_STRING } from '@wm/components/base';
+import {PROP_BOOLEAN, PROP_STRING, register} from '@wm/components/base';
 
 export const customWidgetProps =
     new Map(
@@ -10,3 +10,10 @@ export const customWidgetProps =
             ['show', { value: true, ...PROP_BOOLEAN }]
         ]
     )
+
+export const registerProps = () => {
+    register(
+        'wm-custom-widget',
+        customWidgetProps
+    );
+};
