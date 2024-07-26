@@ -7,7 +7,7 @@ import { AbstractI18nService, App } from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
-import { TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { TypeaheadDirective, TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { BaseComponent } from '@wm/components/base';
 import { By } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
@@ -19,6 +19,7 @@ import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/c
 import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { Observable } from 'rxjs';
+import { DataProvider } from './data-provider/data-provider';
 
 const markup = `
         <div wmSearch name="testsearch"
@@ -1209,7 +1210,78 @@ describe('SearchComponent', () => {
             result.subscribe(data => {
                 expect(data).toEqual(['newResult1', 'newResult2']);
                 expect(mockGetDataSource).toHaveBeenCalledWith('newQuery');
-                expect(wmComponent['_lastQuery']).toBe('newQuery');
+            });
+        });
+    });
+
+
+
+    describe('loadMoreData', () => { 
+        let dataProviderMock: jest.Mocked<DataProvider>;
+        let typeaheadMock: jest.Mocked<TypeaheadDirective>;
+
+        beforeEach(async () => {
+            dataProviderMock = {
+                isLastPage: false,
+            } as any;
+
+            typeaheadMock = {
+                onInput: jest.fn(),
+            } as any;  
+            wmComponent.typeahead = typeaheadMock;
+            wmComponent['dataProvider'] = dataProviderMock;
+            fixture.detectChanges();
+        });
+
+        it('should not load more data if isLastPage is true', () => {
+            dataProviderMock.isLastPage = true;
+            wmComponent['loadMoreData']();
+            expect(typeaheadMock.onInput).not.toHaveBeenCalled();
+        });
+
+        it('should increment page number when incrementPage is true', () => {
+            wmComponent['page'] = 1;
+            wmComponent['loadMoreData'](true);
+            expect(wmComponent['page']).toBe(2);
+        });
+
+        it('should not increment page number when incrementPage is false', () => {
+            wmComponent['page'] = 1;
+            wmComponent['loadMoreData'](false);
+            expect(wmComponent['page']).toBe(1);
+        });
+
+        it('should set isScrolled and _loadingItems to true', () => {
+            wmComponent['loadMoreData']();
+            expect(wmComponent['isScrolled']).toBe(true);
+            expect(wmComponent['_loadingItems']).toBe(true);
+        });
+
+        it('should reset _lastQuery when incrementPage is true', () => {
+            wmComponent['_lastQuery'] = 'previous query';
+            wmComponent['loadMoreData'](true);
+            expect(wmComponent['_lastQuery']).toBeUndefined();
+        });
+
+        it('should not reset _lastQuery when incrementPage is false', () => {
+            wmComponent['_lastQuery'] = 'previous query';
+            wmComponent['loadMoreData'](false);
+            expect(wmComponent['_lastQuery']).toBe('previous query');
+        });
+
+        it('should call typeahead.onInput with trimmed query', () => {
+            wmComponent.query = '  test query  ';
+            wmComponent['loadMoreData']();
+            expect(typeaheadMock.onInput).toHaveBeenCalledWith({
+                target: { value: 'test query' }
+            });
+        });
+
+        it('should call typeahead.onInput with "0" when query is empty', () => {
+            wmComponent.query = '';
+            wmComponent['loadMoreData']();
+            expect(typeaheadMock.onInput).toHaveBeenCalledWith({
+                target: { value: '0' }
             });
         });
     });

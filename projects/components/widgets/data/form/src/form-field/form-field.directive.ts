@@ -210,10 +210,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         switch (widgetType) {
             case 'select':
                 return this.nativeElement.querySelector('select');
-                break;
             case 'textarea':
                 return this.nativeElement.querySelector('textarea');
-                break;
             default:
                 return this.nativeElement.querySelector('input');
         }
