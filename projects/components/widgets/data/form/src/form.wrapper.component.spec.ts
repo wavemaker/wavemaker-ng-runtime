@@ -1,9 +1,9 @@
-import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick, discardPeriodicTasks } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { App, AppDefaults, DynamicComponentRefProvider, AbstractI18nService, UserDefinedExecutionContext, Viewport } from '@wm/core';
 import { FormComponent } from './form.component';
 import { FormWidgetDirective } from './form-widget.directive';
 import { InputModule } from '@wm/components/input';
-import { FormBuilder, FormsModule, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Component, ViewChild } from '@angular/core';
 import { IMaskModule } from 'angular-imask';
 import { FormActionDirective } from './form-action/form-action.directive';
@@ -16,7 +16,7 @@ import { LayoutGridModule } from '@wm/components/containers/layout-grid';
 import { BasicModule } from '@wm/components/basic';
 import { VALIDATOR } from '@wm/core';
 import { DatePipe, CommonModule, DecimalPipe } from '@angular/common';
-import {  TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ToDatePipe } from '../../../../base/src/pipes/custom-pipes';
@@ -180,27 +180,27 @@ const markup = `<form wmForm role="" #form_1 ngNativeValidate
 })
 
 class FormWrapperComponent {
-    @ViewChild(FormComponent, /* TODO: add static flag */ {static: true})
+    @ViewChild(FormComponent, /* TODO: add static flag */ { static: true })
     wmComponent: FormComponent;
     public testdata: any = [{ name: 'Ram', age: 24, dob: '2019-12-02' }, { name: 'Sita', age: 22, dob: '2019-12-02' }];
 
     onBeforeSubmit($event, widget, $data) {
-        console.log('calling on before submit');
+        // console.log('calling on before submit');
     }
 
     onResult($event, widget, $data) {
-        console.log('calling on result');
+        // console.log('calling on result');
     }
     onSuccess($event, widget, $data) {
-        console.log('calling on success');
+        // console.log('calling on success');
     }
 
     onSubmit($event, widget, $formData) {
-        console.log('calling on submit');
+        // console.log('calling on submit');
     }
 
     onError($event, widget, $data) {
-        console.log('calling on error');
+        // console.log('calling on error');
     }
 }
 
@@ -240,7 +240,7 @@ const testModuleDef: ITestModuleDef = {
         { provide: UserDefinedExecutionContext, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }
     ],
-    teardown: {destroyAfterEach: false}
+    teardown: { destroyAfterEach: false }
 };
 
 const componentDef: ITestComponentDef = {
@@ -333,13 +333,12 @@ describe('FormComponent', () => {
     }));
 
     it('should create Form Component', () => {
-        console.log('creating Form Component');
         fixture.detectChanges();
         expect(wrapperComponent).toBeTruthy();
     });
 
 
-    it('check for dirty property before and after form submit and should trigger onSuccess event', (async() => {
+    it('check for dirty property before and after form submit and should trigger onSuccess event', (async () => {
         const testValue = 'abc';
         const inputEl = fixture.nativeElement.querySelector('wm-input');
         setInputValue(fixture, '.app-textbox', testValue).then(() => {
@@ -349,9 +348,8 @@ describe('FormComponent', () => {
             formField._control.markAsDirty();
             fixture.detectChanges();
             expect(wmComponent.dirty).toBe(true);
-            console.log('before form submit, dirty - ', wmComponent.dirty);
 
-            const onResultSpy =  jest.spyOn(wrapperComponent, 'onResult');
+            const onResultSpy = jest.spyOn(wrapperComponent, 'onResult');
             const onSuccessSpy = jest.spyOn(wrapperComponent, 'onSuccess');
 
             fixture.whenStable().then(() => {
@@ -637,4 +635,49 @@ describe('FormComponent', () => {
         expect(formField._control.valid).toBeTruthy();
         discardPeriodicTasks();
     }));
+
+
+    describe('onDataSourceChange', () => {
+        it('should update isDataSourceUpdated when formFields exist and bindformdata is false', () => {
+            wmComponent.formFields = [{}, {}];
+            (wmComponent as any).bindformdata = false;
+            wmComponent.getNearestParentFormData = jest.fn().mockReturnValue({ field1: 'value1' });
+            wmComponent.setFormDataFromParentFormData = jest.fn();
+
+            wmComponent.onDataSourceChange();
+
+            expect(wmComponent.isDataSourceUpdated).toBe(true);
+            expect(wmComponent.getNearestParentFormData).toHaveBeenCalledWith(wmComponent);
+            expect(wmComponent.setFormDataFromParentFormData).toHaveBeenCalledWith({ field1: 'value1' });
+        });
+
+        it('should not update isDataSourceUpdated when formFields do not exist', () => {
+            wmComponent.formFields = [];
+            (wmComponent as any).bindformdata = false;
+
+            wmComponent.onDataSourceChange();
+
+            expect(wmComponent.isDataSourceUpdated).toBeFalsy();
+        });
+
+        it('should not update isDataSourceUpdated when bindformdata is true', () => {
+            wmComponent.formFields = [{}, {}];
+            (wmComponent as any).bindformdata = true;
+
+            wmComponent.onDataSourceChange();
+
+            expect(wmComponent.isDataSourceUpdated).toBeFalsy();
+        });
+    });
+
+    describe('onFormDataSourceChange', () => {
+        it('should call updateFieldSource', () => {
+            (wmComponent as any).updateFieldSource = jest.fn();
+
+            wmComponent.onFormDataSourceChange();
+
+            expect((wmComponent as any).updateFieldSource).toHaveBeenCalled();
+        });
+    });
+
 });
