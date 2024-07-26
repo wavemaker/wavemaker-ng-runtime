@@ -4,6 +4,7 @@ import { noop } from '@wm/core';
 import { IWidgetConfig, PROP_TYPE, provideAsWidgetRef, register, SanitizePipe, StylableComponent, styler } from '@wm/components/base';
 
 import { customWidgetProps } from './custom-widget.props';
+import {registerProps} from "../custom-widget-container/custom-widget.props";
 
 const registeredPropsSet = new Set<string>();
 
@@ -23,6 +24,8 @@ declare const _;
     exportAs: 'wmWidgetContainer'
 })
 export class CustomWidgetContainerDirective extends StylableComponent implements OnInit {
+    static initializeProps = registerProps();
+
     widgetType: string;
     name: string;
     propsReady: Function;
@@ -33,7 +36,7 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         @Attribute('widgetname') widgetname: string,
     ) {
         let resolveFn: Function = noop;
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG);
         this.propsReady = resolveFn;
         this.widgetType = WIDGET_CONFIG.widgetType;
         this.widgetName = widgetname;
