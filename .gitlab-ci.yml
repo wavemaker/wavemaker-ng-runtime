@@ -3,6 +3,15 @@ stages:
         - jira_next_release
         - jira_hotfix_release
         - jira_verification_merge
+        - npm_test
+
+before_script:
+  - export NVM_DIR="$HOME/.nvm"
+  - '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # Load nvm'
+  - '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # Load nvm bash_completion'  
+
+variables:
+  NODE_OPTIONS: "--max-old-space-size=16384"    
 
 jira_feature_dev:
   stage: jira_feature_dev
@@ -45,4 +54,25 @@ jira_verification_merge:
   script:
     - echo "$CI_COMMIT_MESSAGE" "$CI_COMMIT_BRANCH" "$JIRA_MSG" "$TOKEN" "$CI_PROJECT_ID" "$GITLAB_TOKEN" "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" "$NEXT_HOT_FIX_VERSION"
     - python3 /home/gitlab-runner/jira-ci-scripts/verify_tickets_in_commits.py "$TOKEN" "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" "$CI_PROJECT_ID" "$GITLAB_TOKEN"
+
+npm_test:
+  stage: npm_test
+  tags:
+    - npm
+  only:
+    - merge_requests
+  script:
+    - date
+    - node --version
+    - npm --version
+    - rm -rf ../wavemaker-ui-variables ; git clone --depth 1 https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/wavemaker-ui-variables.git ../wavemaker-ui-variables
+    - cd ../wavemaker-ui-variables ; pwd ; npm install ; npm install --save-dev @types/babel__core @types/babel__generator @types/babel__template @types/babel__traverse @types/graceful-fs @types/istanbul-lib-coverage @types/istanbul-lib-report @types/istanbul-reports @types/stack-utils @types/yargs @types/yargs-parser
+    - npm run build ; cd ../wavemaker-ng-runtime 
+    - npm install 
+    - npm i yalc -g
+    - yalc add @wavemaker/variables
+    - bash build.sh
+    - bash bundle-runtime-cli.sh
+    - npm run test
+    - sleep 600
 
