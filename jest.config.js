@@ -8,7 +8,7 @@ module.exports = {
   ],
   testMatch: [
     "**/projects/**/*.spec.ts",
-    // "**/projects/components/widgets/data/form/src/form.wrapper.component.spec.ts"
+    // "**/projects/components/widgets/data/form/src/form.wrapper.component.spec.ts",
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
