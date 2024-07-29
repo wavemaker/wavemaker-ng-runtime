@@ -66,19 +66,20 @@ if [[ "${publish}" == true ]]; then
     node bundle-runtime-cli.js --publishVersion=${publishVersion}
 fi
 
-mkdir -p dist/npm-packages/app-ng-runtime
-cp -r libraries/. dist/npm-packages/app-ng-runtime
+mkdir -p dist/npm-packages/package
+cp -r libraries/. dist/npm-packages/package
 
-cd dist/npm-packages/app-ng-runtime
-npm install
-npm shrinkwrap
-npm pack
-cp "wavemaker-app-ng-runtime-${publishVersion}.tgz" "../"
+TARBALL_NAME="wavemaker-app-ng-runtime-${publishVersion}.tgz"
 
-cd ..
-rm -r app-ng-runtime
+cd dist/npm-packages/package
+npm install && rm -rf node_modules
+cd ../../..
+tar -zcf dist/npm-packages/${TARBALL_NAME} -C dist/npm-packages/ package
 
-cd ../..
+if [[ "${publish}" == true ]]; then
+    node ../process-npm-package-stats.js --path=dist/npm-packages/${TARBALL_NAME} --packageName=@wavemaker/app-ng-runtime --publishVersion=${publishVersion}
+fi
+
+rm -r dist/npm-packages/package
+
 cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/transpilation/expression-parser.cjs.js dist/transpilation/pipe-provider.cjs.js projects/runtime-base/src/components/app-component/app.component.html dist/runtime-cli/dependencies
-cd -
-

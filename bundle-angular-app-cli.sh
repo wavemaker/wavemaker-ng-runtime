@@ -29,12 +29,18 @@ if [[ "${publish}" == true ]]; then
     node bundle-angular-app-cli.js --publishVersion=${publishVersion}
 fi
 
-mkdir -p dist/npm-packages/angular-app
-cp -rf dist/runtime-cli/angular-app/. dist/npm-packages/angular-app
+mkdir -p dist/npm-packages/package
+cp -rf dist/runtime-cli/angular-app/. dist/npm-packages/package
 
-cd dist/npm-packages/angular-app
-npm install
-npm shrinkwrap
-npm pack
-cp "wavemaker-angular-app-${publishVersion}.tgz" "../"
+TARBALL_NAME="wavemaker-angular-app-${publishVersion}.tgz"
 
+cd dist/npm-packages/package
+npm install && rm -rf node_modules
+cd ../../..
+tar -zcf dist/npm-packages/${TARBALL_NAME} -C dist/npm-packages/ package
+
+if [[ "${publish}" == true ]]; then
+    node ../process-npm-package-stats.js --path=dist/npm-packages/${TARBALL_NAME} --packageName=@wavemaker/app-ng-runtime --publishVersion=${publishVersion}
+fi
+
+rm -r dist/npm-packages/package
