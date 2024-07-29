@@ -1,4 +1,4 @@
-import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import {generateGUId, setCSS, noop} from '@wm/core';
@@ -6,8 +6,7 @@ import { getOrderedDataset, provideAs, provideAsWidgetRef, styler } from '@wm/co
 import { DatasetAwareFormComponent } from '@wm/components/input';
 
 import { registerProps } from './rating.props';
-
-declare const _;
+import {find, isEmpty, isUndefined, slice, toString} from "lodash-es";
 
 const DEFAULT_CLS = 'app-ratings';
 const WIDGET_CONFIG = {widgetType: 'wm-rating', hostClass: DEFAULT_CLS};
@@ -50,8 +49,8 @@ export class RatingComponent extends DatasetAwareFormComponent {
         this.calculateRatingsWidth();
     }
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         this._id = generateGUId();
         styler(this.nativeElement, this);
 
@@ -91,7 +90,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
          * 3. If maxvalue / i value is more than datasetItems length, prepare default rating items for i values more than datasetItems.length
          */
         if (data.length && data.length > maxValue) {
-            data = _.slice(data, 0, maxValue);
+            data = slice(data, 0, maxValue);
         }
 
         for (let i = maxValue; i > 0; i--) {
@@ -138,12 +137,12 @@ export class RatingComponent extends DatasetAwareFormComponent {
      * @param dataVal datavalue
      */
     onDatavalueChange(dataVal) {
-        if (!_.isEmpty(this.datasetItems)) {
-            let selectedItem = _.find(this.datasetItems, {'selected': true});
+        if (!isEmpty(this.datasetItems)) {
+            let selectedItem = find(this.datasetItems, {'selected': true});
 
-            if (!selectedItem && !_.isUndefined(dataVal)) {
-                selectedItem = _.find(this.datasetItems, function (item) {
-                    return _.toString(item.index) === dataVal;
+            if (!selectedItem && !isUndefined(dataVal)) {
+                selectedItem = find(this.datasetItems, function (item) {
+                    return toString(item.index) === dataVal;
                 });
                 if (selectedItem) {
                     selectedItem.selected = true;
@@ -210,7 +209,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
             this.prepareRatingDataset();
             // reset all the items.
             this.resetDatasetItems();
-            if (!_.isUndefined(tempDataValue)) {
+            if (!isUndefined(tempDataValue)) {
                 this.datavalue = tempDataValue;
             }
         } else {

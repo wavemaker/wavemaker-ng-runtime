@@ -6,8 +6,7 @@ import { FileSelectorService, ProcessApi, ProcessManagementService } from '@wm/m
 import { Change, ChangeLogService, LocalDBManagementService, LocalDBDataPullService, PushInfo, PullInfo } from '@wm/mobile/offline';
 import { DeviceVariableService, IDeviceVariableOperation, initiateCallback, VARIABLE_CONSTANTS } from '@wm/variables';
 import { SecurityService } from '@wm/security';
-
-declare const _;
+import {clone, filter} from "lodash-es";
 
 const APP_IS_OFFLINE = 'App is offline.';
 const OFFLINE_PLUGIN_NOT_FOUND = 'Offline DB Plugin is required, but missing.';
@@ -295,7 +294,7 @@ class PushOperation implements IDeviceVariableOperation {
             .then(() => getOfflineChanges(this.changeLogService))
             .then(changes => {
                 if (changes.pendingToSync.total <= 0) {
-                    return Promise.reject(_.clone(this.model));
+                    return Promise.reject(clone(this.model));
                 }
             }).then(() => {
                 if (variable.showProgress) {
@@ -343,7 +342,7 @@ class PushOperation implements IDeviceVariableOperation {
  * @returns {*}
  */
 const addOldPropertiesForPushData = data => {
-    const result = _.clone(data);
+    const result = clone(data);
     result.success = data.successfulTaskCount;
     result.error = data.failedTaskCount;
     result.completed = data.completedTaskCount;
@@ -369,11 +368,11 @@ const canExecute = (variable: any, networkService: NetworkService, securityServi
 };
 
 const generateChangeSet = (changes: Change[]) => {
-    const createChanges =  _.filter(changes, c => {
+    const createChanges = filter(changes, c => {
         return c.service === 'DatabaseService' &&
             (c.operation === 'insertTableData'
                 || c.operation === 'insertMultiPartTableData');
-    }), updateChanges =  _.filter(changes, c => {
+    }), updateChanges = filter(changes, c => {
         return c.service === 'DatabaseService' &&
             (c.operation === 'updateTableData'
                 || c.operation === 'updateMultiPartTableData');
@@ -383,9 +382,9 @@ const generateChangeSet = (changes: Change[]) => {
         database: {
             create: createChanges,
             update: updateChanges,
-            delete: _.filter(changes, {service: 'DatabaseService', operation: 'deleteTableData'})
+            delete: filter(changes, {service: 'DatabaseService', operation: 'deleteTableData'})
         },
-        uploads: _.filter(changes, {service: 'OfflineFileUploadService', operation: 'uploadToServer'})
+        uploads: filter(changes, {service: 'OfflineFileUploadService', operation: 'uploadToServer'})
     };
 };
 
@@ -393,8 +392,8 @@ const getOfflineChanges = (changeLogService: ChangeLogService) => {
     return changeLogService.getChanges().then(changes => {
         return {
             'total' : changes ? changes.length : 0,
-            'pendingToSync' : generateChangeSet(_.filter(changes, {'hasError' : 0})),
-            'failedToSync' : generateChangeSet(_.filter(changes, {'hasError' : 1}))
+            'pendingToSync': generateChangeSet(filter(changes, {'hasError': 0})),
+            'failedToSync': generateChangeSet(filter(changes, {'hasError': 1}))
         };
     });
 };

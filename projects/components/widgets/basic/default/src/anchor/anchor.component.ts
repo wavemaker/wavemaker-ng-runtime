@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostBinding, Injector, OnDestroy, Optional } from '@angular/core';
+import { AfterViewInit, Component, HostBinding, Injector, OnDestroy, Optional, Inject } from '@angular/core';
 
 import { addClass, App, encodeUrl, EventNotifier, getRouteNameFromLink, setAttr, removeAttr, removeClass } from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
@@ -48,9 +48,10 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
 
     constructor(
         inj: Injector,
-        private app: App
+        private app: App,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }
 

@@ -1,4 +1,15 @@
-import {AfterViewInit, Component, ElementRef, Injector, OnInit, Renderer2, Optional, SkipSelf, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Injector,
+    OnInit,
+    Renderer2,
+    Optional,
+    SkipSelf,
+    ViewChild,
+    Inject
+} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler } from '@wm/components/base';
 import { MenuAdapterComponent } from '@wm/components/navigation/menu';
@@ -32,8 +43,8 @@ export class CardComponent extends MenuAdapterComponent implements OnInit, After
 
     @ViewChild('cardContainerWrapper', { static: true }) private cardContainerElRef: ElementRef;
 
-    constructor(inj: Injector, private render2: Renderer2) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private render2: Renderer2, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
     }
 

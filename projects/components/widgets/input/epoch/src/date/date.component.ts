@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, Injector, ViewChild } from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
+
 
 import {
     adjustContainerPosition,
@@ -20,6 +21,7 @@ import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
 import { validateTheMaskedDate } from './imaskUtil';
 import { IMaskDirective } from 'angular-imask';
+import {includes, isNaN, parseInt} from "lodash-es";
 
 declare const _, $;
 
@@ -55,6 +57,7 @@ export class DateComponent extends BaseDateTimeComponent {
     private focusTrap;
     private showdateformatasplaceholder = false;
     mask;
+    private maskDateInputFormat;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -65,6 +68,9 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     get displayValue() {
+        if(this.showdateformatasplaceholder && this.imask?.maskRef && this.maskDateInputFormat) {
+            return getFormattedDate(this.datePipe, this.bsDataValue, this.maskDateInputFormat, this.timeZone, null, this.isCurrentDate, this) || '';
+        }
         return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this) || '';
     }
 
@@ -102,9 +108,10 @@ export class DateComponent extends BaseDateTimeComponent {
     constructor(
         inj: Injector,
         private cdRef: ChangeDetectorRef,
-        private appDefaults: AppDefaults
+        private appDefaults: AppDefaults,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
 
         this.dateContainerCls = `app-date-${this.widgetId}`;
@@ -214,7 +221,7 @@ export class DateComponent extends BaseDateTimeComponent {
 
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
-        if (!_.includes(['blur', 'focus', 'change', 'click'], eventName)) {
+        if (!includes(['blur', 'focus', 'change', 'click'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
     }
@@ -266,7 +273,7 @@ export class DateComponent extends BaseDateTimeComponent {
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
-                    if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                    if (!isNaN(inputVal) && parseInt(inputVal) !== formattedDate) {
                         this.invalidDateTimeFormat = true;
                         this.invokeOnChange(this.datavalue, event, false);
                     }
@@ -312,6 +319,9 @@ export class DateComponent extends BaseDateTimeComponent {
             this.imask?.destroyMask();
             if (this.showdateformatasplaceholder && this.datepattern !== 'timestamp') {
                 this.mask = validateTheMaskedDate(this.datepattern, this.selectedLocale);
+                this.maskDateInputFormat = this.dateInputFormat;
+                this.maskDateInputFormat = (this.dateInputFormat.split('d').length - 1) === 1 ? this.maskDateInputFormat.replace('d', 'dd') : this.maskDateInputFormat;
+                this.maskDateInputFormat = (this.dateInputFormat.split('M').length - 1) === 1 ? this.maskDateInputFormat.replace('M', 'MM') : this.maskDateInputFormat;
                 this.updateIMask();
             }
         } else {

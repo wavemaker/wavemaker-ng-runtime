@@ -4,6 +4,7 @@ import {
     Component,
     ElementRef,
     HostListener,
+    Inject,
     Injector,
     OnInit,
     Optional,
@@ -26,7 +27,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 /*
  * try to convert the chekedvalue and unchecked values to boolean/number
  */
-const unStringify = (val, defaultVal?) => {
+export const unStringify = (val, defaultVal?) => {
     if (val === null) {
         return defaultVal;
     }
@@ -89,9 +90,10 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         inj: Injector,
         @Attribute('checkedvalue') checkedVal,
         @Attribute('uncheckedvalue') uncheckedVal,
-        @Attribute('type') public type
+        @Attribute('type') public type,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         this._checkedvalue = unStringify(checkedVal, true);
         this._uncheckedvalue = unStringify(uncheckedVal, false);

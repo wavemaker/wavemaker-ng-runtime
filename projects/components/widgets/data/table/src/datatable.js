@@ -1730,6 +1730,7 @@ $.widget('wm.datatable', {
         }
         this.options.callOnRowClickEvent(data, e);
         selected = !selected;
+        this.options.assignSelectedItems(data, e, {'rowId': rowId, '_selected': selected});
         this.toggleRowSelection($row, selected, e);
         callRowSelectionEvents();
     },
@@ -2724,7 +2725,7 @@ $.widget('wm.datatable', {
                     var colId = column.attr('data-col-id');
                     var id = Number(colId);
                     var colDefination = self.preparedHeaderData[id];
-                    if(colDefination.readonly) {
+                    if (colDefination.readonly && colDefination.field !== 'rowOperations') {
                         self.columnClickInfo[rowId] = {};
                         self.columnClickInfo[rowId][colId] = true;
                     }
@@ -3019,12 +3020,12 @@ $.widget('wm.datatable', {
                 var $row = $(this).closest('tr.app-datagrid-row'),
                     rowId = $row.attr('data-row-id'),
                     rowData = self.options.data[rowId];
+                self.toggleRowSelection($row, checked, e, true);
                 // If we enable multiselect and check header checkbox then updating selecteditem in datatable.
                 self.options.assignSelectedItems(rowData, e, {
                     'rowId': rowId,
                     '_selected': self.preparedData[rowId]?._selected
                 });
-                self.toggleRowSelection($row, checked, e, true);
                 if (checked && _.isFunction(self.options.onRowSelect)) {
                     self.options.onRowSelect(rowData, e);
                 }

@@ -3,7 +3,7 @@
 
 // initSwipeyJqueryPlugin();
 
-declare const  $;
+declare const $;
 
 export abstract class SwipeAnimation {
 

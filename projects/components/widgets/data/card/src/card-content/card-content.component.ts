@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './card-content.props';
@@ -21,8 +21,8 @@ export class CardContentComponent extends StylableComponent implements AfterView
 
     @ViewChild('cardContentContainer') private cardContentContainerElRef: ElementRef;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 
     ngAfterViewInit() {

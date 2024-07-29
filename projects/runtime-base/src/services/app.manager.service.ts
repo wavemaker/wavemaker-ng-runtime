@@ -15,7 +15,7 @@ import {
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService } from '@wm/variables';
-declare const _;
+import {extend, forEach, get, isEmpty, isObject, isUndefined, merge, trim} from "lodash-es";
 
 enum POST_MESSAGES {
     HIDE_TEMPLATES_SHOW_CASE = 'hide-templates-show-case',
@@ -56,12 +56,12 @@ export class AppManagerService {
         this.$app.subscribe('toggle-variable-state', (data) => {
             const variable = data.variable,
                 active = data.active;
-            if (!_.isEmpty(_.trim(variable.spinnerContext))) {
+            if (!isEmpty(trim(variable.spinnerContext))) {
                 if (active) {
                     let spinnerExists;
                     // WMS-21117 : Do not trigger spinner, if the current variable is same as spinner which is in context
                     if (variable._spinnerId && variable._spinnerId.length) {
-                        _.forEach(variable._spinnerId, (item) => {
+                        forEach(variable._spinnerId, (item) => {
                             if (item.slice(0, item.lastIndexOf('_')) === variable._id && (this.$spinner as any).messagesByContext && (this.$spinner as any).messagesByContext[variable.spinnerContext] &&
                                 (variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext]["finalMessage"] || variable.spinnerMessage === (this.$spinner as any).messagesByContext[variable.spinnerContext][item])) {
                                 spinnerExists = true;
@@ -140,8 +140,8 @@ export class AppManagerService {
         const init = response => {
             const data = this.$variables.register('app', response, this.$app);
             // not assigning directly to this.$app to keep the reference in tact
-            _.extend(this.$app.Variables, data.Variables);
-            _.extend(this.$app.Actions, data.Actions);
+            extend(this.$app.Variables, data.Variables);
+            extend(this.$app.Actions, data.Actions);
             this.updateLoggedInUserVariable();
             this.updateSupportedLocaleVariable();
             this.appVariablesLoaded = true;
@@ -179,7 +179,7 @@ export class AppManagerService {
     }
 
     private updateLoggedInUserVariable() {
-        const loggedInUser = _.get(this.$app, 'Variables.loggedInUser.dataSet');
+        const loggedInUser = get(this.$app, 'Variables.loggedInUser.dataSet');
 
         // sanity check
         if (!loggedInUser) {
@@ -219,7 +219,7 @@ export class AppManagerService {
      *
      */
     updateSupportedLocaleVariable() {
-        const supportedLocaleVar = _.get(this.$app, 'Variables.supportedLocale');
+        const supportedLocaleVar = get(this.$app, 'Variables.supportedLocale');
     }
 
     handleSSOLogin(config) {
@@ -234,11 +234,11 @@ export class AppManagerService {
 
         if (CONSTANTS.hasCordova) {
             // get previously loggedInUser name (if any)
-            const lastLoggedInUsername = _.get(this.$security.get(), 'userInfo.userName');
+            const lastLoggedInUsername = get(this.$security.get(), 'userInfo.userName');
             this.$security.authInBrowser()
                 .then(() => this.reloadAppData())
                 .then(() => {
-                    const presentLoggedInUsername = _.get(this.$security.get(), 'userInfo.userName');
+                    const presentLoggedInUsername = get(this.$security.get(), 'userInfo.userName');
                     if (presentLoggedInUsername && presentLoggedInUsername === lastLoggedInUsername) {
                         routerService.navigate([page]);
                     } else {
@@ -250,7 +250,7 @@ export class AppManagerService {
             pageParams = this.$security.getQueryString(this.$security.getRedirectedRouteQueryParams());
             pageParams = pageParams ? '?' + pageParams : '';
             // showing a redirecting message
-            document.body.textContent = _.get(this.getAppLocale(), ['MESSAGE_LOGIN_REDIRECTION']) || 'Redirecting to sso login...';
+            document.body.textContent = get(this.getAppLocale(), ['MESSAGE_LOGIN_REDIRECTION']) || 'Redirecting to sso login...';
             // appending redirect to page and page params
             const ssoUrl = this.getDeployedURL() + SSO_URL + page + pageParams;
             /*
@@ -317,7 +317,7 @@ export class AppManagerService {
                     }
                     queryParamsObj['redirectTo'] = page;
                     // Adding query params(page params of page being redirected to) to the URL.
-                    queryParamsObj = _.merge(queryParamsObj, this.$security.getRedirectedRouteQueryParams());
+                    queryParamsObj = merge(queryParamsObj, this.$security.getRedirectedRouteQueryParams());
                     // the redirect page should not be same as session timeout login page
                     if ( page !== sessionTimeoutConfig.pageName) {
                         this.$router.navigate([sessionTimeoutConfig.pageName], {queryParams: queryParamsObj});
@@ -344,7 +344,7 @@ export class AppManagerService {
                     page = this.$security.getRedirectPage(config, page);
                     queryParamsObj['redirectTo'] = page;
                     const extraQueryParams = (options && options.queryParams) || this.$security.getRedirectedRouteQueryParams();
-                    queryParamsObj = _.merge(queryParamsObj, extraQueryParams);
+                    queryParamsObj = merge(queryParamsObj, extraQueryParams);
                     this.$router.navigate([loginConfig.pageName], {queryParams: queryParamsObj});
                     this.$app.landingPageName = loginConfig.pageName;
                     break;
@@ -370,7 +370,7 @@ export class AppManagerService {
     }
 
     noRedirect(value?: boolean) {
-        if (_.isUndefined(value)) {
+        if (isUndefined(value)) {
             return this._noRedirect;
         }
 
@@ -509,10 +509,11 @@ export class AppManagerService {
         window.onmessage = (evt) => {
             const msgData = evt.data;
 
-            if (!_.isObject(msgData)) {
+            if (!isObject(msgData)) {
                 return;
             }
 
+            // @ts-ignore
             const key = msgData.key;
 
             switch (key) {
@@ -520,6 +521,7 @@ export class AppManagerService {
                     // scope.hideShowCase = true;
                     break;
                 case POST_MESSAGES.SELECT_TEMPLATE:
+                    // @ts-ignore
                     this.showTemplate(msgData.templateIndex);
                     break;
             }

@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core
 
 import { $appDigest, isIos } from '@wm/core';
 import { DeviceService } from '@wm/mobile/core';
+import {endsWith, filter, findIndex, forEach, isEmpty, remove, sortBy, split} from "lodash-es";
 
-declare const _;
 declare const cordova;
 declare const resolveLocalFileSystemURL;
 
@@ -94,8 +94,9 @@ export class FileBrowserComponent implements OnDestroy {
     public submit() {
         const files = [];
         this.loadFileSize(this.selectedFiles).then(() => {
-            _.forEach(this.selectedFiles, function (f) {
+            forEach(this.selectedFiles, function (f) {
                 f.isSelected = false;
+                // @ts-ignore
                 files.push({ path: f.nativeURL,
                     name: f.name,
                     size : f.size});
@@ -107,7 +108,7 @@ export class FileBrowserComponent implements OnDestroy {
     }
 
     private deselectFile(file: File): void {
-        _.remove(this.selectedFiles, file);
+        remove(this.selectedFiles, file);
         file.isSelected = false;
     }
 
@@ -139,13 +140,15 @@ export class FileBrowserComponent implements OnDestroy {
         return new Promise((resolve, reject) => {
             let fileTypeToShow;
             folder.createReader().readEntries((entries:  File[]) => {
-                if (!_.isEmpty(fileTypeToSelect)) {
-                    fileTypeToShow = _.split(fileTypeToSelect, ',');
-                    entries = _.filter(entries, e => {
-                        return !e.isFile || _.findIndex(fileTypeToShow, ext => _.endsWith(e.name, '.' + ext)) >= 0;
+                if (!isEmpty(fileTypeToSelect)) {
+                    fileTypeToShow = split(fileTypeToSelect, ',');
+                    entries = filter(entries, e => {
+                        // @ts-ignore
+                        return !e.isFile || findIndex(fileTypeToShow, ext => endsWith(e.name, '.' + ext)) >= 0;
                     });
                 }
-                resolve(_.sortBy(entries, e => (e.isFile ? '1_' : '0_') + e.name.toLowerCase()));
+                // @ts-ignore
+                resolve(sortBy(entries, e => (e.isFile ? '1_' : '0_') + e.name.toLowerCase()));
             }, reject);
         });
     }

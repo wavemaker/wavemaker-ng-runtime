@@ -95,7 +95,7 @@ export const getTimePickerElement = () => {
 export const localizedDatePickerTest = async(fixture, btnClass) => {
     onClickCheckTaglengthOnBody(fixture, btnClass, 'bs-datepicker-container', 1);
     await fixture.whenStable();
-        expect($('bs-datepicker-container').find('.bs-datepicker-head button.current span')[0].innerText).toBe(deLocale.months[new Date().getMonth()]);
+        expect($('bs-datepicker-container').find('.bs-datepicker-head button.current')[0].innerText).toBe(deLocale.months[new Date().getMonth()]);
         expect($('bs-datepicker-container').find('.days.weeks th')[new Date().getDay()].innerText).toBe(deLocale.weekdaysShort[new Date().getDay()]);
 
 }
@@ -143,7 +143,7 @@ export class MockAbstractI18nServiceDe {
     constructor(bsLocaleService) {
         defineLocale('de', deLocale);
         bsLocaleService.use('de');
-        moment.defineLocale('de', deLocale);
+        moment.updateLocale('de', deLocale);
     }
     public getSelectedLocale() {
         return 'de';

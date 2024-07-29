@@ -5,8 +5,9 @@ import { hasLinkToCurrentPage } from '@wm/components/base';
 import { NavComponent } from '../nav/nav.component';
 
 import { KEYBOARD_MOVEMENTS, MENU_POSITION, MenuComponent } from '../menu.component';
+import {clone, includes} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 const menuAlignClass = {
     'pull-right' : 'fa-caret-left',
@@ -61,7 +62,7 @@ export class MenuDropdownItemComponent implements OnInit, OnDestroy {
     }
 
     getInitialKeyMovements() {
-        const KEY_MOVEMENTS = _.clone(KEYBOARD_MOVEMENTS);
+        const KEY_MOVEMENTS = clone(KEYBOARD_MOVEMENTS);
         if (this.menuRef.menulayout === MENU_LAYOUT_TYPE.HORIZONTAL) {
             KEY_MOVEMENTS.MOVE_UP = 'LEFT-ARROW';
             KEY_MOVEMENTS.MOVE_LEFT = 'UP-ARROW';
@@ -96,7 +97,7 @@ export class MenuDropdownItemComponent implements OnInit, OnDestroy {
         const ARROW_KEYS = ['LEFT-ARROW', 'RIGHT-ARROW', 'UP-ARROW', 'DOWN-ARROW'];
         const KEY_MOVEMENTS = this.getInitialKeyMovements();
 
-        if (_.includes(ARROW_KEYS, eventAction)) {
+        if (includes(ARROW_KEYS, eventAction)) {
             // preventing from page scroll when up/down arrow is pressed, in case of menu is opened.
             $event.preventDefault();
         }
@@ -164,7 +165,7 @@ export class MenuDropdownItemComponent implements OnInit, OnDestroy {
         $event.preventDefault();
         const args = {$event, $item: item};
         this.menuRef.onMenuItemSelect(args);
-        const selectedItem = _.clone(item);
+        const selectedItem = clone(item);
         selectedItem.target = selectedItem.target || this.menuRef.linktarget;
         // Trigger the action associated with active item
         triggerItemAction(this, selectedItem);

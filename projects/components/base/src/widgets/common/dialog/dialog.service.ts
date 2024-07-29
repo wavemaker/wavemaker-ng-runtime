@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import {isMobile, isMobileApp} from '@wm/core';
+import {forEach} from "lodash-es";
+
 const openedDialogs = [];
 /*We need closedDialogs array because onHidden event is asynchronous,
 and if the user uses script and calls dialog1.close() and then dialog2.close() then
 we cannot be sure if both the dialogs onClose callback will be called or not.*/
 const closeDialogsArray = [];
 
-declare const _;
 
 @Injectable()
 export class DialogServiceImpl {
@@ -122,7 +123,7 @@ export class DialogServiceImpl {
      * closes all the opened dialogs
      */
     closeAllDialogs() {
-        _.forEach(openedDialogs.reverse(), (dialog) => {
+        forEach(openedDialogs.reverse(), (dialog) => {
             dialog.close();
         });
     }

@@ -2,8 +2,7 @@ import { IDGenerator } from './id-generator';
 
 import { $parseExpr } from './expression-parser';
 import { findValueOf } from './utils';
-
-declare const _;
+import {clone, flatten, isArray, isEqual, isObject} from "lodash-es";
 
 const registry = new Map<string, any>();
 
@@ -39,14 +38,14 @@ const arrayConsumer = (listenerFn, restExpr, newVal, oldVal) => {
     let data = newVal,
         formattedData;
 
-    if (_.isArray(data)) {
+    if (isArray(data)) {
         formattedData = data.map(function (datum) {
             return findValueOf(datum, restExpr);
         });
 
         // If resulting structure is an array of array, flatten it
-        if (_.isArray(formattedData[0])) {
-            formattedData = _.flatten(formattedData);
+        if (isArray(formattedData[0])) {
+            formattedData = flatten(formattedData);
         }
 
         listenerFn(formattedData, oldVal);
@@ -138,13 +137,14 @@ const triggerWatchers = (ignoreMuted?: boolean) => {
                 console.warn(`error in executing expression: '${watchInfo.expr}'`);
             }
 
-            if (!_.isEqual(nv, ov)) {
+            if (!isEqual(nv, ov)) {
                 changeDetected = true;
                 changedByWatch = true;
                 watchInfo.last = nv;
 
-                if (_.isObject(nv) && !watchInfo.doNotClone && nv.__cloneable__ !== false) {
-                    watchInfo.last = _.clone(nv);
+                // @ts-ignore
+                if (isObject(nv) && !watchInfo.doNotClone && nv.__cloneable__ !== false) {
+                    watchInfo.last = clone(nv);
                 }
                 listener(nv, ov);
                 resetChangeFromWatch();

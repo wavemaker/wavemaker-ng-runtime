@@ -1,4 +1,4 @@
-import {Component, HostBinding, Injector, Optional} from '@angular/core';
+import {Component, HostBinding, Inject, Injector, Optional} from '@angular/core';
 
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './icon.props';
@@ -24,8 +24,8 @@ export class IconComponent extends StylableComponent {
     @HostBinding('attr.icon-position') iconposition: string;
     @HostBinding('style.fontSize') iconsize: string;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this);
     }

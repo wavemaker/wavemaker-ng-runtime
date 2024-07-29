@@ -1,4 +1,4 @@
-declare const _;
+import {findIndex, isArray, isEqual, isObject, isUndefined} from "lodash-es";
 
 export const setData = (variable: any, dataSet: any) => {
     /* check dataset sanity */
@@ -6,7 +6,7 @@ export const setData = (variable: any, dataSet: any) => {
         return variable.dataSet;
     }
     /* check array type dataset for list type variable */
-    if (variable.isList && !_.isArray(dataSet)) {
+    if (variable.isList && !isArray(dataSet)) {
         return variable.dataSet;
     }
 
@@ -45,11 +45,11 @@ export const getItem = (variable, index) => {
 export const setItem = (variable, i, value) => {
     let index;
     /* check param sanity */
-    if (_.isUndefined(i) || _.isUndefined(value) || !variable.isList) {
+    if (isUndefined(i) || isUndefined(value) || !variable.isList) {
         return variable.dataSet;
     }
-    if (_.isObject(i)) {
-        index = _.findIndex(variable.dataSet, i);
+    if (isObject(i)) {
+        index = findIndex(variable.dataSet, i);
     } else {
         index = i;
     }
@@ -84,10 +84,10 @@ export const removeItem = (variable, i, exactMatch) => {
     /* check for index sanity */
     i = i !== undefined ? i : variable.dataSet.length - 1;
 
-    if (_.isObject(i)) {
-        index = _.findIndex(variable.dataSet, i);
+    if (isObject(i)) {
+        index = findIndex(variable.dataSet, i);
         /*When exactMatch property is set to true delete only when every property values are same*/
-        if (index > -1 && (!exactMatch || (exactMatch && _.isEqual(variable.dataSet[index], i)))) {
+        if (index > -1 && (!exactMatch || (exactMatch && isEqual(variable.dataSet[index], i)))) {
             variable.dataSet.splice(index, 1);
         }
     } else {

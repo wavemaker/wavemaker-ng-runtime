@@ -6,8 +6,8 @@ import { NetworkService } from '@wm/mobile/core';
 import { ChangeLogService } from '../services/change-log.service';
 import { LocalDBManagementService } from '../services/local-db-management.service';
 import { WM_LOCAL_OFFLINE_CALL } from './utils';
+import {extend, get, isEmpty, trim} from "lodash-es";
 
-declare const _;
 const NUMBER_REGEX = /^\d+(\.\d+)?$/;
 let isOfflineBehaviourAdded = false;
 export class NamedQueryExecutionOfflineBehaviour {
@@ -28,7 +28,7 @@ export class NamedQueryExecutionOfflineBehaviour {
         isOfflineBehaviourAdded = true;
         const orig = this.httpService.sendCallAsObservable;
         this.httpService.sendCallAsObservable = (reqParams: any, params?: any): Observable<any> => {
-            if (!params && _.get(reqParams, 'url')) {
+            if (!params && get(reqParams, 'url')) {
                 params = {url: reqParams.url};
             }
             if (!this.networkService.isConnected() && params.url.indexOf('/queryExecutor/') > 0) {
@@ -46,7 +46,7 @@ export class NamedQueryExecutionOfflineBehaviour {
             queryName = this.substring(url, 'queries/', hasUrlParams ? '?' : undefined),
             urlParams = hasUrlParams ? this.getHttpParamMap(this.substring(url, '?', undefined)) : {},
             dataParams = this.getHttpParamMap(params.dataParams),
-            queryParams = _.extend(urlParams, dataParams);
+            queryParams = extend(urlParams, dataParams);
         return this.localDBManagementService.executeNamedQuery(dbName, queryName, queryParams)
             .then(result => {
                 const rows = result.rows;
@@ -87,7 +87,7 @@ export class NamedQueryExecutionOfflineBehaviour {
             str = decodeURIComponent(str);
             str.split('&').forEach(c => {
                 const csplits = c.split('=');
-                if (_.isEmpty(_.trim(csplits[1])) || !NUMBER_REGEX.test(csplits[1])) {
+                if (isEmpty(trim(csplits[1])) || !NUMBER_REGEX.test(csplits[1])) {
                     result[csplits[0]] = csplits[1];
                 } else {
                     result[csplits[0]] = parseInt(csplits[1], 10);

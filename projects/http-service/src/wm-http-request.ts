@@ -1,7 +1,5 @@
 import { HttpRequest } from '@angular/common/http';
 
-declare const _;
-
 /**
  * This class creates a custom WmHttpRequest.
  */

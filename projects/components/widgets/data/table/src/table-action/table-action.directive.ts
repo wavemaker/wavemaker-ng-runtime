@@ -1,11 +1,10 @@
-import { Directive, Injector, OnInit, Optional } from '@angular/core';
+import {Directive, Inject, Injector, OnInit, Optional} from '@angular/core';
 
 import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './table-action.props';
 import { TableComponent } from '../table.component';
-
-declare const _;
+import {isUndefined} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
 
@@ -40,8 +39,8 @@ export class TableActionDirective extends BaseComponent implements OnInit {
 
     private _propsInitialized: boolean;
 
-    constructor(inj: Injector, @Optional() public table: TableComponent) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public table: TableComponent, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 
     populateAction() {
@@ -51,7 +50,7 @@ export class TableActionDirective extends BaseComponent implements OnInit {
             show: this.show,
             class: this.class || '',
             iconclass: this.iconclass || '',
-            title: _.isUndefined(this.title) ? (this['display-name'] || '') : this.title,
+            title: isUndefined(this.title) ? (this['display-name'] || '') : this.title,
             action: this.action,
             accessroles: this.accessroles,
             shortcutkey: this.shortcutkey,

@@ -80,6 +80,7 @@
                 [showMeridian]="ismeridian"
                 [readonlyInput]="disabled || readonly || isCurrentDate"
                 [(ngModel)]="bsTimeValue"
+                        [ngModelOptions]="{standalone: true}"
                 [min]="minTime"
                 [max]="maxTime"
                 [hourStep]="hourstep"
@@ -105,7 +106,7 @@
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
         [tabindex]="tabindex || 0"
-         (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal(bsDateValue)"
+         (click)="!(disabled || readonly) && showDatePickerModal(bsDateValue)"
          [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : hint || 'Choose Date'"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"

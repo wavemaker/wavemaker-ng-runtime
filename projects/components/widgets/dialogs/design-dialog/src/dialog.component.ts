@@ -43,7 +43,8 @@ export class DialogComponent extends BaseDialog implements OnInit {
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
         @Attribute('closable') closable: string | boolean,
-        @Self() @Inject(Context) contexts: Array<any>
+        @Self() @Inject(Context) contexts: Array<any>,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         if (modal === null || modal === undefined) {
             modal = true;
@@ -67,7 +68,8 @@ export class DialogComponent extends BaseDialog implements OnInit {
                 backdrop,
                 keyboard: toBoolean(closable) ? true : !toBoolean(modal)
 
-            }
+            },
+            explicitContext
         );
     }
 

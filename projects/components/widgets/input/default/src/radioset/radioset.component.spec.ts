@@ -91,4 +91,80 @@ describe('RadiosetComponent', () => {
 
         expect(component.onPropertyChange).toHaveBeenCalledWith('itemsperrow', '3');
     });
+    describe('handleEvent', () => {
+        let node: HTMLElement;
+        let callback: jest.Mock;
+        let locals: any;
+
+        beforeEach(() => {
+            node = document.createElement('div');
+            callback = jest.fn();
+            locals = {};
+            jest.spyOn(Object.getPrototypeOf(component), 'handleEvent');
+        });
+
+        it('should handle click event on input element', () => {
+            const input = document.createElement('input');
+            node.appendChild(input);
+            component['handleEvent'](node, 'click', callback, locals);
+
+            const event = new MouseEvent('click', { bubbles: true });
+            Object.defineProperty(event, 'target', { value: input });
+            input.dispatchEvent(event);
+
+            expect(callback).toHaveBeenCalled();
+            expect(locals.$event).toBe(event);
+        });
+
+        it('should not handle click event on non-input element', () => {
+            const span = document.createElement('span');
+            node.appendChild(span);
+            component['handleEvent'](node, 'click', callback, locals);
+
+            const event = new MouseEvent('click', { bubbles: true });
+            Object.defineProperty(event, 'target', { value: span });
+            span.dispatchEvent(event);
+
+            expect(callback).not.toHaveBeenCalled();
+            expect(locals.$event).toBeUndefined();
+        });
+
+        it('should call super.handleEvent for events other than "click" and "change"', () => {
+            component['handleEvent'](node, 'focus', callback, locals);
+            expect(Object.getPrototypeOf(component).handleEvent).toHaveBeenCalledWith(node, 'focus', callback, locals);
+        });
+    });
+    describe('onRadioLabelClick', () => {
+        let event: MouseEvent;
+
+        beforeEach(() => {
+            jest.spyOn(component, 'invokeOnTouched');
+            jest.spyOn(component, 'invokeOnChange');
+            Object.defineProperty(component, 'datavalue', {
+                get: jest.fn(() => 'testValue')
+            });
+        });
+
+        it('should do nothing if the target is not an input', () => {
+            const divElement = document.createElement('div');
+            event = new MouseEvent('click');
+            Object.defineProperty(event, 'target', { value: divElement });
+
+            component.onRadioLabelClick(event, 'testKey');
+
+            expect(component.invokeOnTouched).not.toHaveBeenCalled();
+            expect(component.invokeOnChange).not.toHaveBeenCalled();
+        });
+
+        it('should invoke methods if target is an input', () => {
+            const inputElement = document.createElement('input');
+            event = new MouseEvent('click');
+            Object.defineProperty(event, 'target', { value: inputElement });
+
+            component.onRadioLabelClick(event, 'testKey');
+
+            expect(component.invokeOnTouched).toHaveBeenCalled();
+            expect(component.invokeOnChange).toHaveBeenCalledWith('testValue', event, true);
+        });
+    });
 });

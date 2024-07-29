@@ -1,4 +1,4 @@
-import {AfterViewInit, Directive, Injector, Optional} from '@angular/core';
+import {AfterViewInit, Directive, Inject, Injector, Optional} from '@angular/core';
 
 import {EventNotifier} from '@wm/core';
 import { updateDeviceView, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
@@ -20,8 +20,8 @@ export class LayoutDirective extends StylableComponent implements AfterViewInit 
 
     private _eventNotifier = new EventNotifier(false);
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 
     /**

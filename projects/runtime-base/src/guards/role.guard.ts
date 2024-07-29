@@ -6,8 +6,7 @@ import { SecurityService } from '@wm/security';
 
 import { AuthGuard } from './auth.guard';
 import { AppManagerService } from '../services/app.manager.service';
-
-declare const _: any;
+import {intersection} from "lodash-es";
 
 @Injectable()
 export class RoleGuard {
@@ -27,7 +26,7 @@ export class RoleGuard {
             .then((isLoggedIn: boolean) => {
                 if (isLoggedIn) {
                     const userRoles = this.securityService.get().userInfo.userRoles;
-                    const hasAccess = _.intersection(allowedRoles, userRoles).length > 0;
+                    const hasAccess = intersection(allowedRoles, userRoles).length > 0;
 
                     if (hasAccess) {
                         return Promise.resolve(true);

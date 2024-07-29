@@ -38,8 +38,9 @@ import {ListComponent} from '@wm/components/data/list';
 
 import {registerProps} from './form-field.props';
 import {FormComponent} from '../form.component';
+import {forEach, get, isArray, isObject, join} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 // Custom validator to show validation error, if setValidationMessage method is used
 const customValidatorFn = () => {
@@ -157,7 +158,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         @Attribute('pc-display') pcDisplay,
         @Attribute('mobile-display') mobileDisplay,
         @Attribute('tablet-display') tabletDisplay,
-        @Self() @Inject(Context) contexts: Array<any>
+        @Self() @Inject(Context) contexts: Array<any>,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         const WIDGET_CONFIG = {
             widgetType: 'wm-form-field',
@@ -166,7 +168,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         };
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
         this._initPropsRes = resolveFn;
         this.app = app;
         this.fieldDefConfig = {};
@@ -261,28 +263,28 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         const value = this.value;
         const displayField = this.displayfield || this.displaylabel
         const displayExpr = this.displayexpression;
-        if (_.isObject(value)) {
-            if (_.isArray(value)) {
-                _.forEach(value, obj => {
-                    if (_.isObject(obj)) {
+        if (isObject(value)) {
+            if (isArray(value)) {
+                forEach(value, obj => {
+                    if (isObject(obj)) {
                         caption.push(this.evaluateExpr(obj, displayField, displayExpr));
                     }
                 });
             } else {
                 caption.push(this.evaluateExpr(value, displayField, displayExpr));
             }
-            return _.join(caption, ',');
+            return join(caption, ',');
         }
         return (value === undefined || value === null) ? '' : this.value;
     }
 
     getCaption() {
-        return (this.value === undefined || this.value === null) ? (_.get(this.form.dataoutput, this._fieldName) || '') : this.value;
+        return (this.value === undefined || this.value === null) ? (get(this.form.dataoutput, this._fieldName) || '') : this.value;
     }
 
     // Notifies changes to observing validation fields
     notifyChanges() {
-        _.forEach(this.notifyForFields, field => {
+        forEach(this.notifyForFields, field => {
             field.fieldValidations.validate();
         });
     }
@@ -476,7 +478,6 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 const hasValue = ((isDefined(val) && val !== '' && val !== null) || captionEl.find('input').val()) || captionEl.find('input:-webkit-autofill').length;
 
                 this.app.notify('captionPositionAnimate', {
-                    isSelect: true,
                     displayVal: hasValue,
                     nativeEl: captionEl,
                     isSelectMultiple: this.formWidget && this.formWidget.multiple,
@@ -590,7 +591,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 .subscribe(this.onValueChange.bind(this));
             this.registerDestroyListener(() => onMaxValueChangeSubscription.unsubscribe());
         }
-        this.value = _.get(this.form.formdata, this._fieldName);
+        this.value = get(this.form.formdata, this._fieldName);
     }
 
     ngOnInit() {

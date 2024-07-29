@@ -2,9 +2,9 @@ import {
     AfterViewInit,
     Component,
     ContentChild,
-    ElementRef,
+    ElementRef, Inject,
     Injector,
-    OnInit,
+    OnInit, Optional,
     TemplateRef,
     ViewChild
 } from '@angular/core';
@@ -30,7 +30,7 @@ import {
 
 import {registerProps} from './popover.props';
 
-declare const _, $;
+declare const $;
 
 const DEFAULT_CLS = 'app-popover-wrapper';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -90,8 +90,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     @ContentChild(TemplateRef) popoverTemplate;
     @ContentChild('partial') partialRef;
 
-    constructor(inj: Injector, private app: App) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         this.popoverContainerCls = `app-popover-${this.widgetId}`;
     }
 

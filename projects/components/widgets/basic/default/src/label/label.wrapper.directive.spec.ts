@@ -3,10 +3,7 @@ import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../
 import {LabelDirective} from "./label.directive";
 import {App} from "@wm/core";
 import {SanitizePipe} from "@wm/components/base";
-
-let mockApp = {
-    subscribe: () => { return () => {}}
-};
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
 
 const markup = `<label wmLabel #wm_label1="wmLabel" [attr.aria-label]="wm_label1.hint || 'Label text'" hint="Label text"  name="label1" paddingright="0.5em" paddingleft="0.5em"></label>
 `;

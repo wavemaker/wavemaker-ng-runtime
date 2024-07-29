@@ -15,9 +15,9 @@ import { filter, map } from 'rxjs/operators';
 import { FileExtensionFromMimePipe } from '@wm/components/base';
 
 import { DeviceFileService } from './device-file.service';
+import {endsWith, find, isArray, isEmpty} from "lodash-es";
 
 const MAX_CONCURRENT_DOWNLOADS = 2;
-declare const _;
 
 @Injectable({ providedIn: 'root' })
 export class DeviceFileDownloadService {
@@ -126,12 +126,12 @@ export class DeviceFileDownloadService {
         }
         let hasFileExtension;
         // one or more file extensions can have same mimeType then loop over the file extensions.
-        if (_.isArray(fileExtension) && !_.isEmpty(fileExtension)) {
-            hasFileExtension = _.find(fileExtension, extension => _.endsWith(filename, extension));
+        if (isArray(fileExtension) && !isEmpty(fileExtension)) {
+            hasFileExtension = find(fileExtension, extension => endsWith(filename, extension));
             //File extension will be array for some file formats
             fileExtension = fileExtension[0];
         }
-        if (!hasFileExtension && !_.endsWith(filename, fileExtension)) {
+        if (!hasFileExtension && !endsWith(filename, fileExtension)) {
             filename = filename + fileExtension;
         }
 

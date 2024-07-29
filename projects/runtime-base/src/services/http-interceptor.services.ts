@@ -6,8 +6,7 @@ import { tap } from 'rxjs/operators';
 
 import { httpService, appManager } from '@wm/variables';
 import { WmHttpRequest, WmHttpResponse } from '@wm/http';
-
-declare const _;
+import {extend} from "lodash-es";
 
 /**
  * This Interceptor intercepts all network calls and if a network call fails
@@ -51,7 +50,7 @@ export class HttpCallInterceptor implements HttpInterceptor {
                         if (modifiedResp) {
                             // Convert the wm HttpResponse to angular HttpResponse
                             modifiedResp = this.wmHttpResponse.wmToAngularResponse(modifiedResp);
-                            _.extend(response, modifiedResp);
+                            extend(response, modifiedResp);
                         }
                     }
                 },
@@ -68,7 +67,7 @@ export class HttpCallInterceptor implements HttpInterceptor {
                         if (modifiedResp) {
                             // Convert the wm HttpResponse to angular HttpResponse
                             modifiedResp = this.wmHttpResponse.wmToAngularResponse(modifiedResp);
-                            _.extend(error, modifiedResp);
+                            extend(error, modifiedResp);
                         }
                     }
                 }

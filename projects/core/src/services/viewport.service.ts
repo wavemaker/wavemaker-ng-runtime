@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { EventNotifier } from '../utils/event-notifier';
 import { isAndroid, isAndroidTablet, isIos, isIpad } from '../utils/utils';
+import {get} from "lodash-es";
 
 let MINIMUM_MOBILE_WIDTH = 480;
 let MINIMUM_TAB_WIDTH = 768;
@@ -11,7 +12,6 @@ const enum SCREEN_TYPE {
     TABLET,
     LARGE_SCREEN_DEVICES
 }
-declare const _;
 
 export class IViewportService {
     notify: (eventname: ViewportEvent, options?: Array<any>) => void;
@@ -94,7 +94,7 @@ export class Viewport implements IViewportService, OnDestroy {
         this.isTabletType = false;
         this.isMobileType = false;
 
-        if (_.get(this.selectedViewPort, 'deviceCategory')) {
+        if (get(this.selectedViewPort, 'deviceCategory')) {
             const deviceCategory = this.selectedViewPort.deviceCategory;
             if (deviceCategory === 'Tab') {
                 this.isTabletType = true;

@@ -10,7 +10,7 @@
  * </li>
  */
 
-import { Directive, ElementRef, Injector, Input, Optional, ViewContainerRef } from '@angular/core';
+import {Directive, ElementRef, Inject, Injector, Input, Optional, ViewContainerRef} from '@angular/core';
 import { NgForOfContext } from '@angular/common';
 
 import {App} from '@wm/core';
@@ -45,8 +45,8 @@ export class ItemTemplateDirective extends StylableComponent {
         this.widget.content = value;
     }
 
-    constructor(inj: Injector, elRef: ElementRef, private app: App) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, elRef: ElementRef, private app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         this.nativeElement = elRef.nativeElement;
         // this.context = (<NgForOfContext<ItemTemplateDirective>>(<any>inj).view.context);
         this.context = (this.inj as any)._lView[8];

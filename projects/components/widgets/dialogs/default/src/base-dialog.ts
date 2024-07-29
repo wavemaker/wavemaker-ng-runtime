@@ -1,22 +1,13 @@
-import {Injector, OnDestroy, TemplateRef, Injectable, Inject, Optional} from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import {Inject, Injectable, Injector, OnDestroy, Optional, TemplateRef} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
+import {BsModalRef, BsModalService, ModalOptions} from 'ngx-bootstrap/modal';
 
-import { Subscription } from 'rxjs';
+import {Subscription} from 'rxjs';
 
-import {
-    AbstractDialogService,
-    closePopover,
-    findRootContainer,
-    generateGUId,
-    isMobile,
-    isMobileApp
-} from '@wm/core';
+import {AbstractDialogService, findRootContainer, generateGUId, isMobile, isMobileApp} from '@wm/core';
 
-import { BaseComponent, IDialog, IWidgetConfig, WidgetConfig } from '@wm/components/base';
-import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
-
-declare const _;
+import {BaseComponent, IDialog, IWidgetConfig, WidgetConfig} from '@wm/components/base';
+import {createFocusTrap} from '@wavemaker/focus-trap';
 
 const eventsRegistered = false;
 
@@ -78,9 +69,10 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
     protected constructor(
         inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
-        protected modalOptions: ModalOptions
+        protected modalOptions: ModalOptions,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, config);
+        super(inj, config, explicitContext);
         this.dialogService = inj.get(AbstractDialogService);
         this.bsModal = inj.get(BsModalService);
         const router = inj.get(Router);

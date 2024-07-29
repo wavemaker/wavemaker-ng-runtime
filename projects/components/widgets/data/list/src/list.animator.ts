@@ -5,8 +5,9 @@ import { SwipeAnimation } from '@swipey';
 import { ButtonComponent } from '@wm/components/input';
 
 import { ListComponent } from './list.component';
+import {map, reduce} from "lodash-es";
 
-declare  const _, $;
+declare const $;
 
 export class ListAnimator extends SwipeAnimation {
     private $el: JQuery<HTMLElement>;
@@ -54,7 +55,7 @@ export class ListAnimator extends SwipeAnimation {
 
     // Returns the total width occupied by all the children inside the element
     private computeTotalChildrenWidth($ele: JQuery<HTMLElement>): number {
-        return _.reduce($ele.children(), (totalWidth, el) => {
+        return reduce($ele.children(), (totalWidth, el) => {
             return totalWidth + $(el).outerWidth();
         }, 0);
     }
@@ -64,7 +65,8 @@ export class ListAnimator extends SwipeAnimation {
         const totalWidth = this.computeTotalChildrenWidth($ele);
         const reverse = this.position === 'right';
         let d = 0;
-        return _.map($ele.children(), e => {
+        // @ts-ignore
+        return map($ele.children(), e => {
             const f = (totalWidth - d) / totalWidth;
             d += $(e).outerWidth();
             return reverse ? f : (d / totalWidth);

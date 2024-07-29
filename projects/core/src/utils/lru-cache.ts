@@ -1,5 +1,4 @@
-
-declare const _;
+import {isNil} from "lodash-es";
 
 interface CachedData<T> {
     instance: T;
@@ -49,7 +48,7 @@ export class LRUCache<T> {
     }
 
     public set(key: string, dataToCache: T): void {
-        if (_.isNil(dataToCache)) {
+        if (isNil(dataToCache)) {
             return;
         }
         const cachedData = {

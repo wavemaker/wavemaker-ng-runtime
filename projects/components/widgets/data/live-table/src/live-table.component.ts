@@ -5,6 +5,7 @@ import {
     Component,
     ContentChild,
     ElementRef,
+    Inject,
     Injector,
     Optional
 } from '@angular/core';
@@ -24,7 +25,6 @@ import { TableComponent } from '@wm/components/data/table';
 
 import { registerProps } from './live-table.props';
 
-declare const _;
 declare var $: any;
 
 const DEFAULT_CLS = 'app-livegrid';
@@ -59,9 +59,10 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         private dialogService: AbstractDialogService,
         private app: App,
         @Attribute('formlayout') layoutType: string,
-        @Attribute('dialogid') dialogId: string
+        @Attribute('dialogid') dialogId: string,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         if (layoutType === 'dialog') {
             this.isLayoutDialog = true;

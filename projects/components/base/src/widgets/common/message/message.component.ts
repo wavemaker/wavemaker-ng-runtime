@@ -1,4 +1,4 @@
-import {Component, Injector, Optional} from '@angular/core';
+import {Component, Inject, Injector, Optional} from '@angular/core';
 
 import {switchClass} from '@wm/core';
 
@@ -27,8 +27,8 @@ export class MessageComponent extends StylableComponent {
     caption: string;
     public hideclose: any;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }
 

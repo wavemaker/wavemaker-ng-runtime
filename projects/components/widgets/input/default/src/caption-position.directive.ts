@@ -1,7 +1,8 @@
 import {AfterViewInit, Directive, ElementRef, Injector, OnDestroy, OnInit} from '@angular/core';
 import {App} from '@wm/core';
+import {forEach} from "lodash-es";
 
-declare const _, $;
+declare const $;
 @Directive({
     selector: '[wmCaptionPosition]'
 })
@@ -29,7 +30,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         let mobileInputVal;
         // In case of mobile date / time picker check for input element's value which has 'mobile-input' class
         if (this.inputEl.length > 1 && this.inputEl.hasClass('mobile-input')) {
-            _.forEach(this.inputEl, (el) => {
+            forEach(this.inputEl, (el) => {
                 if ($(el).hasClass('mobile-input') && el.value) {
                     mobileInputVal = el.value;
                 }
@@ -149,8 +150,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
             // isSelectMultiple is set to true when for select widget, multiple option is enabled
             // Checking inputEl focus - when form is represented as dialog and the first field is automatically in focus
             const isInputElFocused = this.inputEl && this.inputEl.is(':focus');
-            const localName = this.inputEl && this.inputEl.length && this.inputEl[0].localName;
-            if ((data.isSelect && localName == 'select') || data.displayVal || data.isFocused || data.isSelectMultiple || isInputElFocused) {
+            if (data.displayVal || data.isFocused || data.isSelectMultiple || isInputElFocused) {
                 data.nativeEl.addClass('float-active');
                 if (!data.displayVal && isInputElFocused) {
                     this.inputEl.attr('placeholder', this.placeholder);

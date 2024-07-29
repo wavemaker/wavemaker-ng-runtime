@@ -3,10 +3,10 @@ import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpRespon
 
 import { Observable, Subject } from 'rxjs';
 
-import { AbstractHttpService, replace, isNumber, isBoolean } from '@wm/core';
+import {AbstractHttpService} from '@wm/core';
 import { HttpClientService, getErrMessage } from '@wavemaker/variables';
+import {includes, isBoolean, isFunction, isNumber} from "lodash-es";
 
-declare const _;
 enum HTTP_EVENT_TYPE {
     Sent = 0,
     UploadProgress = 1,
@@ -81,7 +81,7 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
             withCredentials: withCredentials
         };
         // Even if method is not expecting request body, if body is passed in request, pass it on.
-        if (_.includes(this.nonBodyTypeMethods, options.method && options.method.toUpperCase()) && options.data === undefined) {
+        if (includes(this.nonBodyTypeMethods, options.method && options.method.toUpperCase()) && options.data === undefined) {
             third = reqOptions;
             fourth = null;
         } else {
@@ -274,7 +274,7 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
         const that = this;
         that.sessionTimeoutQueue = [];
         queue.forEach(data => {
-            if (_.isFunction(data.callback)) {
+            if (isFunction(data.callback)) {
                 data.callback();
             } else {
                 data.requestInfo.headers.headers.delete('x-wm-xsrf-token');

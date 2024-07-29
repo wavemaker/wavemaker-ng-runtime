@@ -3,15 +3,14 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
-import { compileTestComponent } from './util/component-test-util';
+import { compileTestComponent, mockApp } from './util/component-test-util';
 import { ITestModuleDef } from './common-widget.specs';
 import { CustomPipe, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe, SanitizePipe } from '@wm/components/base';
 import {AbstractI18nService, App, CustomPipeManager} from '@wm/core';
 import {MockAbstractI18nService} from './util/date-test-util';
 
-const mockApp = {
-    subscribe: () => { return () => {}}
-};
+declare const moment;
+
 @Component({
     template: '<div></div>'
 })
@@ -31,8 +30,6 @@ const testModuleDef: ITestModuleDef = {
         DecimalPipe, DatePipe, TrustAsPipe, SanitizePipe, CustomPipeManager
     ]
 };
-
-declare const moment;
 
 describe('ToNumber pipe', () => {
     let fixture: ComponentFixture<PipeWrapperComponent>;

@@ -1,4 +1,4 @@
-import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { ColorPickerDirective} from 'ngx-color-picker';
 
@@ -43,8 +43,8 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     @ViewChild('input', { static: true, read: ElementRef }) inputEl: ElementRef;
     @ViewChild(ColorPickerDirective) cpDirective: ColorPickerDirective;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }
 

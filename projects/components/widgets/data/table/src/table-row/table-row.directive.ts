@@ -1,4 +1,4 @@
-import { Directive, Injector, OnInit, Optional, SkipSelf } from '@angular/core';
+import {Directive, Inject, Injector, OnInit, Optional, SkipSelf} from '@angular/core';
 
 import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 
@@ -27,8 +27,8 @@ export class TableRowDirective extends BaseComponent implements OnInit {
 
     constructor(
         inj: Injector,
-        @Optional() @SkipSelf() public table: TableComponent) {
-        super(inj, WIDGET_CONFIG);
+        @Optional() @SkipSelf() public table: TableComponent, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 
     populateConfig() {

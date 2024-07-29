@@ -3,6 +3,7 @@ import {
     Attribute,
     Component,
     HostListener,
+    Inject,
     Injector,
     OnDestroy,
     OnInit,
@@ -23,6 +24,7 @@ import {
     UserDefinedExecutionContext
 } from '@wm/core';
 import {
+    APPLY_STYLES_TYPE,
     AUTOCLOSE_TYPE,
     DatasetAwareNavComponent,
     hasLinkToCurrentPage,
@@ -32,8 +34,7 @@ import {
 import {NavComponent} from './nav/nav.component';
 
 import {registerProps} from './menu.props';
-
-declare const _;
+import {clone, forEach, includes, isEmpty} from "lodash-es";
 
 export const KEYBOARD_MOVEMENTS = {
     MOVE_UP: 'UP-ARROW',
@@ -134,7 +135,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     @HostListener('keydown.arrowright', ['$event', '"RIGHT-ARROW"'])
     @HostListener('keydown.arrowleft', ['$event', '"LEFT-ARROW"'])
     @HostListener('keydown.enter', ['$event', '"ENTER"']) onKeyDown($event, eventAction) {
-        const KEY_MOVEMENTS = _.clone(KEYBOARD_MOVEMENTS);
+        const KEY_MOVEMENTS = clone(KEYBOARD_MOVEMENTS);
         if (this.menuposition === MENU_POSITION.UP_RIGHT) {
             KEY_MOVEMENTS.MOVE_UP = 'DOWN-ARROW';
             KEY_MOVEMENTS.MOVE_DOWN = 'UP-ARROW';
@@ -148,7 +149,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
             KEY_MOVEMENTS.MOVE_RIGHT = 'LEFT-ARROW';
         }
 
-        if (_.includes([KEY_MOVEMENTS.MOVE_DOWN, KEY_MOVEMENTS.MOVE_RIGHT], eventAction)) {
+        if (includes([KEY_MOVEMENTS.MOVE_DOWN, KEY_MOVEMENTS.MOVE_RIGHT], eventAction)) {
             if (!this.bsDropdown.isOpen) {
                 this._selectFirstItem = true;
                 this.bsDropdown.show();
@@ -157,7 +158,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
             }
         } else if (eventAction === KEY_MOVEMENTS.ON_ENTER || (eventAction === KEY_MOVEMENTS.ON_MOUSE_ENTER && this.showonhover)) {
             this.bsDropdown.toggle(true);
-        } else if (_.includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT], eventAction) || (eventAction ==  KEY_MOVEMENTS.ON_MOUSE_LEAVE && this.autoclose == AUTOCLOSE_TYPE.ALWAYS && this.showonhover)) {
+        } else if (includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT], eventAction) || (eventAction == KEY_MOVEMENTS.ON_MOUSE_LEAVE && this.autoclose == AUTOCLOSE_TYPE.ALWAYS)) {
             this.bsDropdown.hide();
         }
         $event.preventDefault();
@@ -170,9 +171,10 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         private app: App,
         @Self() @Optional() public bsDropdown: BsDropdownDirective,
         @Optional() private parentNav: NavComponent,
-        @Attribute('select.event') public selectEventCB: string
+        @Attribute('select.event') public selectEventCB: string,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         if (parentNav) {
             this.disableMenuContext = !!parentNav.disableMenuContext;
         } else {
@@ -180,7 +182,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
         }
         // For selecting the item on load
         const datasetSubscription = this.nodes$.subscribe(() => {
-            if (!_.isEmpty(this.nodes)) {
+            if (!isEmpty(this.nodes)) {
                 if (hasLinkToCurrentPage(this.nodes, this.route.url)) {
                     addClass(this.nativeElement.querySelector('.dropdown-toggle') as HTMLElement, 'active');
                 }
@@ -190,7 +192,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
                 }
                 let itemFound = false;
                 const getItem = (nodes) => {
-                    _.forEach(nodes, (item) => {
+                    forEach(nodes, (item) => {
                         if (itemFound) {
                             return;
                         }
@@ -201,7 +203,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
                             triggerItemAction(this, item);
                             return false;
                         }
-                        if (!_.isEmpty(item.children)) {
+                        if (!isEmpty(item.children)) {
                             getItem(item.children);
                         }
 
