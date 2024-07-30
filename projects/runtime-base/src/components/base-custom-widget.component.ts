@@ -50,7 +50,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     appManager: AppManagerService;
     navigationService: AbstractNavigationService;
     router: Router;
-    pageParams: any;
+    pageProps: any;
     containerWidget: any;
     i18nService: AbstractI18nService;
     appLocale: any;
@@ -109,7 +109,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         this.defineI18nProps();
 
         this.viewInit$.subscribe(noop, noop, () => {
-            this.pageParams = this.containerWidget.props;
+            this.pageProps = this.containerWidget.pageProps;
         });
 
         if(this.spa) {
@@ -220,7 +220,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     }
 
     registerPageParams() {
-        this.pageParams = this.containerWidget.props;
+        this.pageProps = this.containerWidget.pageProps;
     }
 
     defineI18nProps() {
