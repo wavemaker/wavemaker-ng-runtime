@@ -106,7 +106,6 @@ export * as videoBuild from './basic/default/video/video.build';
 export * as linearLayoutBuild from './containers/linear-layout/linear-layout.build';
 export * as linearLayoutItemBuild from './containers/linear-layout/linear-layout-item/linear-layout-item.build';
 export * as customWidgetBuild from './advanced/custom-widget-container/custom-widget-container.build';
-export * as customWidgetPropBuild from './advanced/custom-widget-prop/custom-widget-prop.build';
 export * as customWidgetWrapperBuild from './advanced/custom-widget-wrapper/custom-widget-wrapper.build';
 
 export * from '@wm/transpiler';

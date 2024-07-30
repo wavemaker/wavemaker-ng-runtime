@@ -4,15 +4,11 @@ import { noop } from '@wm/core';
 import { IWidgetConfig, PROP_TYPE, provideAsWidgetRef, register, SanitizePipe, StylableComponent, styler } from '@wm/components/base';
 
 import { customWidgetProps } from './custom-widget.props';
-import {registerProps} from "../custom-widget-container/custom-widget.props";
+import { registerProps } from "../custom-widget-container/custom-widget.props";
 
 const registeredPropsSet = new Set<string>();
 
 const DEFAULT_CLS = 'app-html-container';
-const WIDGET_CONFIG: IWidgetConfig = {
-    widgetType: 'wm-custom-widget',
-    hostClass: DEFAULT_CLS
-};
 
 declare const _;
 
@@ -30,16 +26,19 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
     name: string;
     propsReady: Function;
     widgetName: string;
+    private pageProps: any = {};
 
     constructor(
         inj: Injector, elRef: ElementRef,
         @Attribute('widgetname') widgetname: string,
     ) {
+        const widgetType = `wm-custom-${widgetname}`;
+        const WIDGET_CONFIG = { widgetType, hostClass: DEFAULT_CLS };
         let resolveFn: Function = noop;
-        super(inj, WIDGET_CONFIG);
+
+        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
         this.propsReady = resolveFn;
-        this.widgetType = WIDGET_CONFIG.widgetType;
-        this.widgetName = widgetname;
+        this.widgetType = widgetType;
         this.name = elRef.nativeElement.getAttribute('name');
 
         styler(this.nativeElement, this);
@@ -48,6 +47,14 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         this.registerReadyStateListener(() => {
             super.onPropertyChange('name', this.name);
         });
+
+        this.registerPropertyChangeListener(((key: string, nv: any, ov?: any) => {
+            if (!key.startsWith('prop-')) return;
+            const propName = key.slice(5)
+            if (this.pageProps.hasOwnProperty(propName) && this.pageProps[propName] !== nv) {
+                this.pageProps[propName] = nv;
+            }
+        }))
     }
 
     public setProps(config, resolveFn: Function) {
@@ -63,7 +70,6 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
 
     private prepareProps(props = {}) {
         const propsMap = new Map(customWidgetProps);
-        // propsMap.set('widgetname', this.widgetName);
         Object.entries(props).forEach(([k, v]: [string, any]) => {
             let type = PROP_TYPE.STRING;
 
@@ -76,7 +82,8 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
             }
 
             // Do not set the 'bind:*' values
-            propsMap.set(k, { type, value: _.startsWith(v.value, 'bind:') ? undefined : v.value });
+            propsMap.set(`prop-${k}`, { type, value: _.startsWith(v.value, 'bind:') ? undefined : v.value });
+            this.pageProps[k] = v.value;
         });
 
         registeredPropsSet.add(this.widgetType);
