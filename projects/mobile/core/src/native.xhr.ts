@@ -88,7 +88,7 @@ class Internals {
         this.nXhr.responseXML = req.responseXML;
         this.nXhr.responseText = req.responseText;
         this.responseHeaderText = req.getAllResponseHeaders();
-        this.nXhr.readyState = this.xhr.readyState;
+        this.nXhr.readyState = req.readyState;
         this.nXhr.getResponseHeader = header => req.getResponseHeader(header);
     }
 
