@@ -1,37 +1,21 @@
-import {
-    Attribute,
-    Directive,
-    ElementRef,
-    ViewContainerRef,
-    Inject,
-    Input,
-    Injector,
-    TemplateRef,
-    OnDestroy
-} from '@angular/core';
-import { isLargeTabletLandscape, isLargeTabletPortrait } from '@wm/core';
-
-import { WidgetRef } from '../widgets/framework/types';
-import { BaseComponent } from '../widgets/common/base/base.component';
-declare const _, $;
+import {Directive, Inject, Injector, Input, OnDestroy, Optional, TemplateRef, ViewContainerRef} from '@angular/core';
+import {isLargeTabletLandscape, isLargeTabletPortrait} from '@wm/core';
+import {extend} from "lodash-es";
 
 @Directive({
     selector: '[wmShowInDevice]'
 })
 export class ShowInDeviceDirective implements OnDestroy {
-    private readonly context;
+    private readonly context = {};
     private devices;
     private embeddedView;
     constructor(
-        private elRef: ElementRef,
-        @Inject(WidgetRef) private widget: BaseComponent,
         private viewContainerRef: ViewContainerRef,
         inj: Injector,
-        private templateRef: TemplateRef<any>
+        private templateRef: TemplateRef<any>,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-
-        //this.context = (inj as any).view.context;
-        this.context = (inj as any)._lView[8];
+        extend(this.context, (inj as any)._lView[8], explicitContext);
 
         window.addEventListener('resize', this.onResize.bind(this));
     }

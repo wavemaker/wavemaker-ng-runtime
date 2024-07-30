@@ -1,8 +1,7 @@
 import { BaseActionManager } from './base-action.manager';
-import { VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { initiateCallback, toasterService, dialogService } from '../../util/variable/variables.utils';
 import { getWmProjectProperties } from '@wm/core';
-declare const _;
+import {capitalize, isString} from "lodash-es";
 
 export class NotificationActionManager extends BaseActionManager {
 
@@ -69,7 +68,7 @@ export class NotificationActionManager extends BaseActionManager {
     private notifyViaDialog(variable, options) {
         const isPrefabType = getWmProjectProperties().type === 'PREFAB';
         const dialogPrefix = isPrefabType ? 'Prefab' : 'Common';
-        const dialogId = dialogPrefix + _.capitalize(variable.operation) + 'Dialog';
+        const dialogId = dialogPrefix + capitalize(variable.operation) + 'Dialog';
         const closeCallBackFn = () => initiateCallback('onOk', variable, options.data);
 
 
@@ -96,7 +95,7 @@ export class NotificationActionManager extends BaseActionManager {
     }
 
     setMessage(variable, text) {
-        if (_.isString(text)) {
+        if (isString(text)) {
             variable.dataBinding.text = text;
         }
         return variable.dataBinding.text;
@@ -106,7 +105,7 @@ export class NotificationActionManager extends BaseActionManager {
         return variable.dataBinding.okButtonText;
     }
     setOkButtonText(variable, text) {
-        if (_.isString(text)) {
+        if (isString(text)) {
             variable.dataBinding.okButtonText = text;
         }
         return variable.dataBinding.okButtonText;
@@ -126,7 +125,7 @@ export class NotificationActionManager extends BaseActionManager {
     }
 
     setToasterClass(variable, type) {
-        if (_.isString(type)) {
+        if (isString(type)) {
             variable.dataBinding.class = type;
         }
         return variable.dataBinding.class;
@@ -137,7 +136,7 @@ export class NotificationActionManager extends BaseActionManager {
     }
 
     setToasterPosition(variable, position) {
-        if (_.isString(position)) {
+        if (isString(position)) {
             variable.dataBinding.position = position;
         }
         return variable.dataBinding.position;
@@ -148,7 +147,7 @@ export class NotificationActionManager extends BaseActionManager {
     }
 
     setAlertType(variable, alerttype) {
-        if (_.isString(alerttype)) {
+        if (isString(alerttype)) {
             variable.dataBinding.alerttype = alerttype;
         }
         return variable.dataBinding.alerttype;
@@ -159,7 +158,7 @@ export class NotificationActionManager extends BaseActionManager {
     }
 
     setCancelButtonText(variable, text) {
-        if (_.isString(text)) {
+        if (isString(text)) {
             variable.dataBinding.cancelButtonText = text;
         }
         return variable.dataBinding.cancelButtonText;

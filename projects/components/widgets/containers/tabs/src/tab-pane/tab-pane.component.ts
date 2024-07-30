@@ -3,7 +3,7 @@ import {
     Attribute,
     Component,
     ContentChildren,
-    HostBinding,
+    HostBinding, Inject,
     Injector,
     OnInit,
     Optional
@@ -50,9 +50,10 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         inj: Injector,
         private tabsRef: TabsComponent,
         @Attribute('heading') public heading,
-        @Attribute('title') public title
+        @Attribute('title') public title,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         // title property here serves the purpose of heading.
         // TODO: make it common for all the widget.

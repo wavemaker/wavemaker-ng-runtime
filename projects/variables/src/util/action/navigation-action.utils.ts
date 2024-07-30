@@ -1,7 +1,5 @@
-import { isString } from '@wm/core';
 import { navigationService } from '../variable/variables.utils';
-
-declare const _;
+import {clone, isNil, isString} from "lodash-es";
 
 /**
  * Handles variable navigation operations
@@ -13,11 +11,11 @@ export const navigate = (variable, options) => {
     let viewName;
     const pageName = variable.dataBinding.pageName || variable.pageName,
         operation = variable.operation,
-        urlParams = _.clone(variable.dataSet),
-        cacheable = _.isNil(options?.cacheable) ? variable.cacheable : options.cacheable;
+        urlParams = clone(variable.dataSet),
+        cacheable = isNil(options?.cacheable) ? variable.cacheable : options.cacheable;
     options = options || {};
 
-    if (!_.isNil(cacheable) && (!isString(cacheable) || cacheable.trim() !== '')) {
+    if (!isNil(cacheable) && (!isString(cacheable) || cacheable.trim() !== '')) {
         urlParams['_cache_page'] = cacheable;
     }
 

@@ -1,4 +1,4 @@
-import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
@@ -42,7 +42,7 @@ export class InputEmailComponent extends BaseInput {
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 }

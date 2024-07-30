@@ -25,6 +25,7 @@ import {
 } from '@wm/runtime/base';
 
 import { AppResourceManagerService } from './app-resource-manager.service';
+import {isString, isUndefined} from "lodash-es";
 
 interface IPageMinJSON {
     markup: string;
@@ -34,7 +35,7 @@ interface IPageMinJSON {
     config?: string;
 }
 
-declare const window: any, _;
+declare const window: any;
 
 const fragmentCache = new Map<string, any>();
 
@@ -70,7 +71,7 @@ const execScript = (
 ) => {
     let fn = scriptCache.get(identifier);
     // Fix for [WMS-21196]: Incorrect script is being assigned,  when 2 prefabs have same partial name (i.e. same identifier).
-    if ((ctx === 'Partial' && !_.isUndefined(instance.Prefab)) || !fn) {
+    if ((ctx === 'Partial' && !isUndefined(instance.Prefab)) || !fn) {
         fn = new Function(ctx, 'App', 'Utils', script);
         scriptCache.set(identifier, fn);
     }
@@ -265,7 +266,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                     // console the error for easy debugging
                     console.log(msg, err);
                     this.appManager.notifyApp(
-                        _.isString(err) ? err : msg + ', check browser console for error details',
+                        isString(err) ? err : msg + ', check browser console for error details',
                         'error'
                     );
                 }

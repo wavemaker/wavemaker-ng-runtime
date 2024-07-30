@@ -3,8 +3,7 @@ import { RouterOutlet } from '@angular/router';
 
 import { PageDirective } from "@wm/components/page";
 import { registerFnByExpr, App } from "@wm/core";
-
-declare const _;
+import {each, extend} from "lodash-es";
 
 @Directive()
 export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
@@ -25,7 +24,7 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
      */
     registerExpressions() {
         const expressions = this.getExpressions();
-        _.each(expressions, (fn, expr)=>{
+        each(expressions, (fn, expr) => {
             registerFnByExpr(expr, fn[0], fn[1]);
         });
     }
@@ -75,6 +74,6 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
     // This will be called when child route (Page component in the layout) is activated
     onActivate(pageComponent: any) {
         //Add page component scope to layout component so that bindings and watchers in the layout will use the page scope
-        _.extend(this, pageComponent);
+        extend(this, pageComponent);
     }
 }

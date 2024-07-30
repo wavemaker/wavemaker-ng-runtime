@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Injector, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 import {App, DataSource, removeAttr, setAttr} from '@wm/core';
@@ -6,8 +6,7 @@ import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
 import {DatasetAwareFormComponent} from '../dataset-aware-form.component';
 
 import {registerProps} from './select.props';
-
-declare const _;
+import {includes} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'};
 
@@ -43,8 +42,8 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         }
     }
 
-    constructor(inj: Injector, app: App) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         this.app = app;
         this.acceptsArray = true;
     }
@@ -56,7 +55,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
 
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (!_.includes(['blur', 'change'], eventName)) {
+        if (!includes(['blur', 'change'], eventName)) {
             super.handleEvent(this.selectEl.nativeElement, eventName, eventCallback, locals);
         }
     }

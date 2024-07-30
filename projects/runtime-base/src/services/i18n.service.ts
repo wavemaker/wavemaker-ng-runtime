@@ -1,6 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { registerLocaleData } from '@angular/common';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 
@@ -19,8 +18,9 @@ import {
     App
 } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
+import {find, forEach, get, includes, intersection, isObject, map, toLower} from "lodash-es";
 
-declare const _, moment;
+declare const moment;
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
 const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',
@@ -198,11 +198,11 @@ export class I18nServiceImpl extends AbstractI18nService {
                     if (localeIndex > 0) {
                         locale = locale.substr(localeIndex);
                     }
-                    localeObj['timezone'] = _.find(moment.tz.names(), (timezoneName) => {
+                    localeObj['timezone'] = find(moment.tz.names(), (timezoneName) => {
                         return locale === moment.tz(timezoneName).format('Z');
                     });
                 }
-                moment.tz.setDefault(locale);
+                this.formatsByLocale.timezone = locale;
                 const localeData =  compInstance && compInstance.formatsByLocale ? compInstance.formatsByLocale : this.formatsByLocale;
                 Object.assign(localeData, localeObj);
                 resolve();
@@ -236,8 +236,8 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     public getTimezone(compInstance?) {
-        const pageConfig = _.get(this.app, 'activePage.formatsByLocale.timezone');
-        const compConfig = _.get(compInstance, 'formatsByLocale.timezone');
+        const pageConfig = get(this.app, 'activePage.formatsByLocale.timezone');
+        const compConfig = get(compInstance, 'formatsByLocale.timezone');
         if (compConfig) {
             return compConfig;
         } else if (pageConfig) {
@@ -254,14 +254,15 @@ export class I18nServiceImpl extends AbstractI18nService {
     public setSelectedLocale(locale) {
 
         // check if the event is propagated from the select or any such widget
-        if (_.isObject(locale)) {
+        if (isObject(locale)) {
+            // @ts-ignore
             locale = locale.datavalue;
         }
 
         const libLocale = getWmProjectProperties().supportedLanguages[locale];
         const supportedLocale = Object.keys(getWmProjectProperties().supportedLanguages);
 
-        if (!_.includes(supportedLocale, locale)) {
+        if (!includes(supportedLocale, locale)) {
             return Promise.resolve();
         }
 
@@ -317,8 +318,8 @@ export class I18nServiceImpl extends AbstractI18nService {
          */
         if (CONSTANTS.hasCordova) {
             let supportedLang = [];
-            _.forEach(_acceptLang, function(lang) {
-                let matchedLang = _.find(_supportedLang, (val) => lang === val) || _.find(_supportedLang, (val) => lang.startsWith(val));
+            forEach(_acceptLang, function (lang) {
+                let matchedLang = find(_supportedLang, (val) => lang === val) || find(_supportedLang, (val) => lang.startsWith(val));
                 if (matchedLang) {
                     supportedLang.push(matchedLang);
                 }
@@ -326,7 +327,7 @@ export class I18nServiceImpl extends AbstractI18nService {
             _appSupportedLang = supportedLang[0];
         }
         // check for the session storage to load any pre-requested locale
-        const _defaultLang = getSessionStorageItem('selectedLocale') || _selectedDefaultLang || _appSupportedLang || _.intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
+        const _defaultLang = getSessionStorageItem('selectedLocale') || _selectedDefaultLang || _appSupportedLang || intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
         // if the supportedLocale is not available set it to defaultLocale
         _supportedLang = _supportedLang || [_defaultLang];
 
@@ -362,7 +363,7 @@ export class I18nServiceImpl extends AbstractI18nService {
                 return locale.split(';')[0];
             });
         }
-        return _.map(languages, _.toLower);
+        return map(languages, toLower);
     }
 
     public initCalendarLocale(): Promise<any> {

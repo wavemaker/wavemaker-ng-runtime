@@ -20,8 +20,7 @@ import { VariablesService } from '@wm/variables';
 
 import { PrefabManagerService } from '../services/prefab-manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
-
-declare const _;
+import {each, startsWith, trim} from "lodash-es";
 
 @Directive()
 export abstract class BasePrefabComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
@@ -128,9 +127,9 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
                     Object.entries((config.properties || {}))
                         .forEach(([key, prop]: [string, any]) => {
                             let expr;
-                            const value = _.trim(prop.value);
+                            const value = trim(prop.value);
 
-                            if (_.startsWith(value, 'bind:')) {
+                            if (startsWith(value, 'bind:')) {
                                 expr = value.replace('bind:', '');
                             }
 
@@ -207,7 +206,7 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
      */
     registerExpressions() {
         const expressions = this.getExpressions();
-        _.each(expressions, (fn, expr)=>{
+        each(expressions, (fn, expr) => {
             registerFnByExpr(expr, fn[0], fn[1]);
         });
     }
@@ -237,31 +236,31 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
 
     mute() {
         const m = o => { o && o.mute && o.mute(); };
-        _.each(this.Widgets, m);
-        _.each(this.Variables, m);
-        _.each(this.Actions, m);
+        each(this.Widgets, m);
+        each(this.Variables, m);
+        each(this.Actions, m);
     }
 
     unmute() {
         const um = o => { o && o.unmute && o.unmute(); };
-        _.each(this.Widgets, um);
-        _.each(this.Variables, um);
-        _.each(this.Actions, um);
+        each(this.Widgets, um);
+        each(this.Variables, um);
+        each(this.Actions, um);
     }
 
     ngOnAttach(refreshData) {
         this.unmute();
         if(refreshData) {
             const refresh = v => { v && v.startUpdate && v.invoke && v.invoke(); };
-            _.each(this.Variables, refresh);
-            _.each(this.Actions, refresh);
+            each(this.Variables, refresh);
+            each(this.Actions, refresh);
         }
-        _.each(this.Widgets, w => w && w.ngOnAttach && w.ngOnAttach());
+        each(this.Widgets, w => w && w.ngOnAttach && w.ngOnAttach());
     }
 
     ngOnDetach() {
         this.mute();
-        _.each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
+        each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
     }
 
 

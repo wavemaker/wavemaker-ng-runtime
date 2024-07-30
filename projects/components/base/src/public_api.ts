@@ -99,6 +99,7 @@ export {
 } from './widgets/framework/deviceview';
 export * from './widgets/framework/styler';
 export * from './widgets/framework/types';
+export * from './widgets/framework/widget-id-generator';
 export {
     getWidgetPropsByType,
     register,

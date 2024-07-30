@@ -55,7 +55,9 @@
             #listItemRef="listItemRef"
             [attr.tabindex]="tabindex"
             role="listitem">
-            <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
+            <ng-container [ngTemplateOutlet]="listTemplate"
+                          [ngTemplateOutletInjector]="createCustomInjector('falt_' + listItemRef.trackId, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
+                          [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
         </li>
     </ng-template>
     <ng-container [ngTemplateOutlet]="listLeftActionTemplate"></ng-container>
@@ -106,7 +108,7 @@
 
 <!--This template will be displayed when groupby is specified-->
 <ng-template #groupedListTemplate>
-    <li *ngFor="let groupObj of groupedData" class="app-list-item-group clearfix">
+    <li *ngFor="let groupObj of groupedData; let groupIndex = index;" class="app-list-item-group clearfix">
         <ul [attr.tabindex]="tabindex" class="list-group item-group" [ngClass]="listclass">
             <li class="app-list-item-header list-item list-group-header" (click)="handleHeaderClick($event)" [ngClass]="{'collapsible-content': collapsible}">
             <h4>{{groupObj.key}}
@@ -117,11 +119,13 @@
                 </h4>
             </li>
             <ul class="list-group clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}}">
-                <li *ngFor="let item of groupObj.data; index as $index; first as $first; last as $last;" [attr.tabindex]="tabindex"
+                <li *ngFor="let item of groupObj.data; index as $index; trackBy: trackByFn; first as $first; last as $last;" [attr.tabindex]="tabindex"
                     class="app-list-item group-list-item {{itemsPerRowClass}}"
                     [ngClass]="listItemRef.itemClass"
                     [wmListItem]="item" #listItemRef="listItemRef">
-                    <ng-container [ngTemplateOutlet]="listTemplate" [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
+                    <ng-container [ngTemplateOutlet]="listTemplate"
+                                  [ngTemplateOutletInjector]="createCustomInjector('group_' + listItemRef.trackId, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
+                                  [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
                 </li>
             </ul>
         </ul>

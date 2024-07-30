@@ -3,8 +3,9 @@ import { AfterViewInit, Component, ViewChild, ViewContainerRef, TemplateRef, OnD
 import { Toast, ToastPackage, ToastrService } from 'ngx-toastr';
 
 import { $watch, $appDigest } from '@wm/core';
+import {forEach, isString} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 @Component({
     selector: '[custom-toaster-component]',
@@ -39,8 +40,8 @@ export class CustomToasterComponent extends Toast implements AfterViewInit, OnDe
 
     // Generate the params for partial page. If bound, watch the expression and set the value
     generateParams() {
-        _.forEach((<any>this.options).partialParams, (param) => {
-            if (_.isString(param.value) && param.value.indexOf('bind:') === 0) {
+        forEach((<any>this.options).partialParams, (param) => {
+            if (isString(param.value) && param.value.indexOf('bind:') === 0) {
                 //[Todo-CSP]: bind expr fn should be generated in the toaster action for this
                 this.watchers.push($watch(
                     param.value.substr(5),
@@ -70,7 +71,7 @@ export class CustomToasterComponent extends Toast implements AfterViewInit, OnDe
     }
 
     ngOnDestroy() {
-        _.forEach(this.watchers, watcher => watcher());
+        forEach(this.watchers, watcher => watcher());
         super.ngOnDestroy();
     }
 }

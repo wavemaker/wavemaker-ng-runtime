@@ -1,6 +1,5 @@
 import {
     AfterViewInit,
-    ContentChildren,
     Directive,
     ElementRef,
     HostBinding,
@@ -9,17 +8,17 @@ import {
     Input,
     OnInit,
     Optional,
-    QueryList, ViewContainerRef
+    ViewContainerRef
 } from '@angular/core';
-import { NgForOfContext } from '@angular/common';
 
-import { Observable, Subject } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
-import {$invokeWatchers, $watch, App} from '@wm/core';
+import {$watch, App} from '@wm/core';
 
-import { ListComponent } from './list.component';
+import {ListComponent} from './list.component';
+import {widgetIdGenerator} from "@wm/components/base";
 
-declare const $, _;
+declare const $;
 
 @Directive({
     selector: '[wmListItem]',
@@ -37,6 +36,10 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     private itemClass = '';
     private _currentItemWidgets = {};
     private viewContainerRef: ViewContainerRef;
+    /**
+     * To avoid re-rendering of widget, passing unique id as contextKey to createCustomInjector
+     */
+    protected trackId = widgetIdGenerator.nextUid();
 
     @HostBinding('class.active') isActive = false;
     @HostBinding('class.disable-item') disableItem = false;

@@ -3,9 +3,8 @@ import { NgZone } from '@angular/core';
 import { SwipeAnimation } from '@swipey';
 
 import { CarouselDirective } from './carousel.directive';
-
+import {findIndex} from "lodash-es";
 declare const $;
-declare const _;
 
 export class CarouselAnimator extends SwipeAnimation {
 
@@ -104,7 +103,7 @@ export class CarouselAnimator extends SwipeAnimation {
         const newIndex = (this._items.length + this._activeIndex) % this._items.length;
         this.carousel.onChangeCB(newIndex, this._oldIndex);
         this._oldIndex = newIndex;
-        const activeElementIndex = _.findIndex(this._items, this._$el.find('>.carousel-inner >.carousel-item.active')[0]);
+        const activeElementIndex = findIndex(this._items, this._$el.find('>.carousel-inner >.carousel-item.active')[0]);
         this._$el.find('>.left.carousel-control').attr('aria-label', (activeElementIndex === 0 ? this._items.length : activeElementIndex) + ' of ' + this._items.length);
         this._$el.find('>.right.carousel-control').attr('aria-label', (activeElementIndex === this._items.length - 1 ? 1 : activeElementIndex + 2) + ' of ' + this._items.length);
     }

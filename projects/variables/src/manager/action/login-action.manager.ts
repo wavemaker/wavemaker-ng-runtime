@@ -3,8 +3,7 @@ import { getClonedObject, triggerFn } from '@wm/core';
 import { BaseActionManager } from './base-action.manager';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { appManager, dialogService, initiateCallback, routerService, securityService } from '../../util/variable/variables.utils';
-
-declare const _;
+import {each, get, isBoolean, isEmpty, isObject, set} from "lodash-es";
 
 export class LoginActionManager extends BaseActionManager {
 
@@ -15,7 +14,7 @@ export class LoginActionManager extends BaseActionManager {
 
         // for older projects
         LOGIN_PARAM_REMEMBER_ME_OLD.forEach((old_key) => {
-            if (_.isBoolean(params[old_key])) {
+            if (isBoolean(params[old_key])) {
                 remembermeKey = old_key;
             }
         });
@@ -23,7 +22,7 @@ export class LoginActionManager extends BaseActionManager {
         remembermeKey =  remembermeKey || LOGIN_PARAM_REMEMBER_ME;
 
         // check remember me
-        params[remembermeKey] = _.isBoolean(params[remembermeKey]) ? params[remembermeKey] : false;
+        params[remembermeKey] = isBoolean(params[remembermeKey]) ? params[remembermeKey] : false;
 
         for (paramKey in params) {
             if (params.hasOwnProperty(paramKey) &&
@@ -47,7 +46,7 @@ export class LoginActionManager extends BaseActionManager {
             'rememberme': 'j_rememberme'
         };
 
-        _.each(params, function(value, key) {
+        each(params, function (value, key) {
             if (paramMigrationMap[key]) {
                 loginParams[paramMigrationMap[key]] = value;
             } else {
@@ -89,7 +88,7 @@ export class LoginActionManager extends BaseActionManager {
         // Triggering 'onBeforeUpdate' and considering
         let params: any = getClonedObject(loginInfo);
         const output: any = initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_UPDATE, variable, params);
-        if (_.isObject(output)) {
+        if (isObject(output)) {
             params = output;
         } else if (output === false) {
             triggerFn(error);
@@ -100,7 +99,7 @@ export class LoginActionManager extends BaseActionManager {
         params = this.migrateOldParams(params);
 
         // get previously loggedInUser name (if any)
-        const lastLoggedInUsername = _.get(securityService.get(), 'userInfo.userName');
+        const lastLoggedInUsername = get(securityService.get(), 'userInfo.userName');
 
         this.notifyInflight(variable, true);
         variable.promise = securityService.appLogin(params, (response) => {
@@ -115,19 +114,19 @@ export class LoginActionManager extends BaseActionManager {
             appManager.reloadAppData().
             then((config) => {
                 // EVENT: ON_RESULT
-                initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, _.get(config, 'userInfo'));
+                initiateCallback(VARIABLE_CONSTANTS.EVENT.RESULT, variable, get(config, 'userInfo'));
                 // EVENT: ON_PREPARESETDATA
-                newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, _.get(config, 'userInfo'));
+                newDataSet = initiateCallback(VARIABLE_CONSTANTS.EVENT.PREPARE_SETDATA, variable, get(config, 'userInfo'));
                 if (newDataSet) {
                         // setting newDataSet as the response to service variable onPrepareSetData
-                        _.set(config, 'userInfo', newDataSet);
+                    set(config, 'userInfo', newDataSet);
                 }
                 // hide the spinner after all the n/w calls are completed
                 this.notifyInflight(variable, false, response);
                 triggerFn(success);
                 setTimeout(() => {
                     // EVENT: ON_SUCCESS
-                    initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, _.get(config, 'userInfo'));
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.SUCCESS, variable, get(config, 'userInfo'));
 
                     /* handle navigation if defaultSuccessHandler on variable is true */
                     if (variable.useDefaultSuccessHandler) {
@@ -149,7 +148,7 @@ export class LoginActionManager extends BaseActionManager {
                         // first time login
                         if (!lastLoggedInUsername) {
                             // if redirect page found, navigate to it.
-                            if (!_.isEmpty(redirectPage)) {
+                            if (!isEmpty(redirectPage)) {
                                 routerService.navigate([`/${redirectPage}`], { queryParams : queryParamsObj});
                             } else if (!noRedirect) {
                                 // simply reset the URL, route handling will take care of page redirection
@@ -158,7 +157,7 @@ export class LoginActionManager extends BaseActionManager {
                         } else {
                         // login after a session timeout
                             // if redirect page found and same user logs in again, just navigate to redirect page
-                            if (!_.isEmpty(redirectPage)) {
+                            if (!isEmpty(redirectPage)) {
                                 // same user logs in again, just redirect to the redirectPage
                                 if (lastLoggedInUsername === params['j_username']) {
                                     routerService.navigate([`/${redirectPage}`], { queryParams : queryParamsObj});
@@ -168,7 +167,7 @@ export class LoginActionManager extends BaseActionManager {
                                 }
                             } else {
                                 const securityConfig = securityService.get(),
-                                    sessionTimeoutLoginMode = _.get(securityConfig, 'loginConfig.sessionTimeout.type') || 'PAGE';
+                                    sessionTimeoutLoginMode = get(securityConfig, 'loginConfig.sessionTimeout.type') || 'PAGE';
                                 // if in dialog mode and a new user logs in OR login happening through page, reload the app
                                 if (!isSameUserReloggedIn || sessionTimeoutLoginMode !== 'DIALOG') {
                                     this.redirectToAppBasePath();
@@ -178,7 +177,7 @@ export class LoginActionManager extends BaseActionManager {
                         }
                     }
                     // EVENT: ON_CAN_UPDATE
-                    initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, _.get(config, 'userInfo'));
+                    initiateCallback(VARIABLE_CONSTANTS.EVENT.CAN_UPDATE, variable, get(config, 'userInfo'));
                 });
 
             });

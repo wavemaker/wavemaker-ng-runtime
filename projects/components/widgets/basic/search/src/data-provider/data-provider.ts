@@ -3,8 +3,6 @@ import { DataSource } from '@wm/core';
 import { LocalDataProvider } from './local-data-provider';
 import { RemoteDataProvider } from './remote-data-provider';
 
-declare const _;
-
 export interface IDataProviderConfig {
     dataoptions?: any;
     viewParent?: any;

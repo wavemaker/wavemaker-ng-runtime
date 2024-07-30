@@ -1,6 +1,4 @@
-import { isString } from '@wm/core';
-
-declare const _;
+import {isNaN, isString} from "lodash-es";
 
 // This function returns the maximum number of decimal digits allowed.
 export const getDecimalCount = (val: string) => {
@@ -24,7 +22,7 @@ export const isPercentageValue = (val: string): boolean => {
 export const calculatePercent = (value: number , min: number = 0, max: number = 0): number => {
     const percent: number = ((value - min) / (max - min)) * 100;
 
-    if (_.isNaN(percent)) {
+    if (isNaN(percent)) {
         console.warn('Circle Progress Bar: One of the properties Min, Max or datavalue is not a valid number');
         return 0;
     }

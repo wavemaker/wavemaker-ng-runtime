@@ -12,8 +12,25 @@ import {
 } from '@wm/core';
 
 import {CONSTANTS, VARIABLE_CONSTANTS, WS_CONSTANTS} from '../../constants/variables.constants';
+import {
+    debounce, filter,
+    forEach,
+    get, includes, isArray, isDate,
+    isEmpty,
+    isFunction, isNumber, isObject,
+    isString,
+    isUndefined,
+    join, keys, last, map,
+    noop,
+    pickBy, remove, replace, set,
+    slice,
+    split, toLower, toUpper, trim
+} from "lodash-es";
 
-declare const window, _, $, moment, he;
+declare const $;
+declare const he;
+declare const moment;
+declare const window;
 
 const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};
 
@@ -33,17 +50,17 @@ const DOT_EXPR_REX = /^\[("|')[\w\W]*(\1)\]$/,
 
 const _invoke = (variable, op) => {
     let debouncedFn,
-        cancelFn = _.noop,
+        cancelFn = noop,
         retVal;
     if (timers.has(variable)) {
         cancelFn = timers.get(variable).cancel;
     }
     cancelFn();
-    debouncedFn = _.debounce(function () {
+    debouncedFn = debounce(function () {
         retVal = variable[op]();
         // handle promises to avoid uncaught promise errors in console
         if (retVal instanceof Promise) {
-            retVal.catch(_.noop);
+            retVal.catch(noop);
         }
     }, 100);
     timers.set(variable, debouncedFn);
@@ -55,7 +72,7 @@ const processVariablePostBindUpdate = (nodeName, nodeVal, nodeType, variable, no
         case VARIABLE_CONSTANTS.CATEGORY.LIVE:
             if (variable.operation === 'read') {
                 if (nodeName === 'dataBinding') {
-                    _.forEach(nodeVal, function (val, key) {
+                    forEach(nodeVal, function (val, key) {
                         variable.filterFields[key] = {
                             'value': val
                         };
@@ -67,7 +84,7 @@ const processVariablePostBindUpdate = (nodeName, nodeVal, nodeType, variable, no
                     };
                 }
                 /* if auto-update set for the variable with read operation only, get its data */
-                if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.listRecords) && !noUpdate) {
+                if (variable.autoUpdate && !isUndefined(nodeVal) && isFunction(variable.listRecords) && !noUpdate) {
                     _invoke(variable, 'listRecords');
                 }
             } else {
@@ -77,25 +94,25 @@ const processVariablePostBindUpdate = (nodeName, nodeVal, nodeType, variable, no
                     variable.inputFields[nodeName] = nodeVal;
                 }
                 /* if auto-update set for the variable with read operation only, get its data */
-                if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable[variable.operation + 'Record']) && !noUpdate) {
+                if (variable.autoUpdate && !isUndefined(nodeVal) && isFunction(variable[variable.operation + 'Record']) && !noUpdate) {
                     _invoke(variable, variable.operation + 'Record');
                 }
             }
             break;
         case VARIABLE_CONSTANTS.CATEGORY.CRUD:
-            if (variable.operationType === 'list' && variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
+            if (variable.operationType === 'list' && variable.autoUpdate && !isUndefined(nodeVal) && isFunction(variable.invoke) && !noUpdate) {
                 _invoke(variable, 'invoke');
             }
             break;
         case VARIABLE_CONSTANTS.CATEGORY.SERVICE:
         case VARIABLE_CONSTANTS.CATEGORY.LOGIN:
-            if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
+            if (variable.autoUpdate && !isUndefined(nodeVal) && isFunction(variable.invoke) && !noUpdate) {
                 _invoke(variable, 'invoke');
             }
             break;
         case VARIABLE_CONSTANTS.CATEGORY.DEVICE:
             variable[nodeName] = nodeVal;
-            if (variable.autoUpdate && !_.isUndefined(nodeVal) && _.isFunction(variable.invoke) && !noUpdate) {
+            if (variable.autoUpdate && !isUndefined(nodeVal) && isFunction(variable.invoke) && !noUpdate) {
                 _invoke(variable, 'invoke');
             }
             break;
@@ -151,7 +168,7 @@ export const initiateCallback = (type: string, variable: any, data: any, options
             errorVariable = callBackScope.Actions[VARIABLE_CONSTANTS.DEFAULT_VAR.NOTIFICATION];
             if (errorVariable) {
                 data = errorVariable.getMessage() || data;
-                data = _.isString(data) ? data : 'An error has occured. Please check the app logs.';
+                data = isString(data) ? data : 'An error has occured. Please check the app logs.';
                 errorVariable.invoke({ 'message' : data}, undefined, undefined);
                  // $rootScope.$evalAsync(function () {
                     // $rootScope.$emit("invoke-service", VARIABLE_CONSTANTS.DEFAULT_VAR.NOTIFICATION, {scope: callBackScope, message: response});
@@ -271,10 +288,10 @@ const getService = (serviceName) => {
  * @param params
  */
 const setParamsFromURL = (queryParams, params) => {
-    queryParams = _.split(queryParams, '&');
-    _.forEach(queryParams, function (param) {
-        param = _.split(param, '=');
-        params[param[0]] = decodeURIComponent(_.join(_.slice(param, 1), '='));
+    queryParams = split(queryParams, '&');
+    forEach(queryParams, function (param) {
+        param = split(param, '=');
+        params[param[0]] = decodeURIComponent(join(slice(param, 1), '='));
     });
 };
 
@@ -311,8 +328,10 @@ const downloadThroughIframe = (requestParams, success, dataBinding) => {
         FORM_NAME       = 'fileDownloadForm',
         CONTENT_TYPE    = 'Content-Type',
         url             = requestParams.url,
-        encType         = _.get(requestParams.headers, CONTENT_TYPE),
-        params          = _.pickBy(requestParams.headers, function (val, key) {return key !== CONTENT_TYPE; });
+        encType = get(requestParams.headers, CONTENT_TYPE),
+        params = pickBy(requestParams.headers, function (val, key) {
+            return key !== CONTENT_TYPE;
+        });
     /* Todo: shubham : define getService method
      WS_CONSTANTS    = getService('WS_CONSTANTS');*/
 
@@ -332,20 +351,20 @@ const downloadThroughIframe = (requestParams, success, dataBinding) => {
         'target'  : iFrameElement.attr('name'),
         'action'  : url,
         'method'  : requestParams.method,
-        'enctype': !(_.isEmpty(requestParams.data) && _.isEmpty(queryParams)) ? encType : WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA
+        'enctype': !(isEmpty(requestParams.data) && isEmpty(queryParams)) ? encType : WS_CONSTANTS.CONTENT_TYPES.MULTIPART_FORMDATA
     });
 
     // For Non body methods only, set the input fields from query parameters
-    if (_.includes(WS_CONSTANTS.NON_BODY_HTTP_METHODS, _.toUpper(requestParams.method))) {
+    if (includes(WS_CONSTANTS.NON_BODY_HTTP_METHODS, toUpper(requestParams.method))) {
         setParamsFromURL(queryParams, params); // Set params for URL query params
     }
-    if (!_.isEmpty(requestParams.data)) {
+    if (!isEmpty(requestParams.data)) {
         setParamsFromURL(requestParams.data, params);// Set params for request data
         data = params;
     } else {
-        data = _.isEmpty(dataBinding) ? params : dataBinding;
+        data = isEmpty(dataBinding) ? params : dataBinding;
     }
-    _.forEach(data, function (val, key) {
+    forEach(data, function (val, key) {
         paramElement = $('<input type="hidden">');
         paramElement.attr({
             'name'  : key,
@@ -413,8 +432,8 @@ const getModifiedFileName = (fileName, exportFormat) => {
     if (exportFormat) {
         fileExtension = exportTypesMap[exportFormat];
     } else {
-        fileExtension = '.' + _.last(_.split(fileName, '.'));
-        fileName = _.replace(fileName, fileExtension, '');
+        fileExtension = '.' + last(split(fileName, '.'));
+        fileName = replace(fileName, fileExtension, '');
     }
     return fileName + '_' + currentTimestamp + fileExtension;
 };
@@ -507,7 +526,7 @@ const getTargetNodeKey = (target) => {
 const setValueToNode = (target, obj, root, variable, value, noUpdate?) => {
     const targetNodeKey = getTargetNodeKey(target),
         targetObj = getTargetObj(obj, root, variable);
-    value = !_.isUndefined(value) ? value : obj.value;
+    value = !isUndefined(value) ? value : obj.value;
     /* sanity check, user can bind parent nodes to non-object values, so child node bindings may fail */
     if (targetObj) {
         targetObj[targetNodeKey] = value;
@@ -550,19 +569,19 @@ const setValueToNode = (target, obj, root, variable, value, noUpdate?) => {
  * @param variable
  */
 const updateInternalNodes = (target, root, variable) => {
-    const boundInternalNodes = _.keys(_.get(internalBoundNodeMap.get(variable), [variable.name, root])),
+    const boundInternalNodes = keys(get(internalBoundNodeMap.get(variable), [variable.name, root])),
         targetNodeKey = getTargetNodeKey(target);
     let internalNodes;
     function findInternalNodeBound() {
-        return _.filter(boundInternalNodes, function (node) {
+        return filter(boundInternalNodes, function (node) {
             // the later condition in check (targetNodeKey === root || targetNodeKey === 'dataBinding') is specifically for live variable of insert/update types
-            return (node !== targetNodeKey && _.includes(node, targetNodeKey)) || ((targetNodeKey === root || targetNodeKey === 'dataBinding') && node !== targetNodeKey);
+            return (node !== targetNodeKey && includes(node, targetNodeKey)) || ((targetNodeKey === root || targetNodeKey === 'dataBinding') && node !== targetNodeKey);
         });
     }
     internalNodes = findInternalNodeBound();
     if ((internalNodes.length)) {
-        _.forEach(internalNodes, function (node) {
-            setValueToNode(node, {target: node}, root, variable, _.get(internalBoundNodeMap.get(variable), [variable.name, root, node]));
+        forEach(internalNodes, function (node) {
+            setValueToNode(node, {target: node}, root, variable, get(internalBoundNodeMap.get(variable), [variable.name, root, node]));
         });
     }
 };
@@ -580,15 +599,15 @@ const processBindObject = (obj, scope, root, variable) => {
         targetObj = getTargetObj(obj, root, variable),
         targetNodeKey = getTargetNodeKey(target),
         runMode = true;
-    const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : _.noop;
+    const destroyFn = scope.registerDestroyListener ? scope.registerDestroyListener.bind(scope) : noop;
 
     if (stringStartsWith(obj.value, 'bind:')) {
         const listener = (newVal, oldVal) => {
-            if ((newVal === oldVal && _.isUndefined(newVal)) || (_.isUndefined(newVal) && (!_.isUndefined(oldVal) || !_.isUndefined(targetObj[targetNodeKey])))) {
+            if ((newVal === oldVal && isUndefined(newVal)) || (isUndefined(newVal) && (!isUndefined(oldVal) || !isUndefined(targetObj[targetNodeKey])))) {
                 return;
             }
             // Skip cloning for blob column
-            if (!_.includes(['blob', 'file'], obj.type)) {
+            if (!includes(['blob', 'file'], obj.type)) {
                 newVal = getClonedObject(newVal);
             }
             setValueToNode(target, obj, root, variable, newVal); // cloning newVal to keep the source clean
@@ -598,21 +617,21 @@ const processBindObject = (obj, scope, root, variable) => {
                 if (!internalBoundNodeMap.has(variable)) {
                     internalBoundNodeMap.set(variable, {});
                 }
-                _.set(internalBoundNodeMap.get(variable), [variable.name, root, target], newVal);
+                set(internalBoundNodeMap.get(variable), [variable.name, root, target], newVal);
                 /*update the internal nodes after internal node map is set*/
-                if (_.isObject(newVal)) {
+                if (isObject(newVal)) {
                     updateInternalNodes(target, root, variable);
                 }
             }
         };
         destroyFn($watch(obj.value.replace('bind:', ''), scope, {}, listener, undefined, undefined, undefined, () => variable.isMuted));
-    } else if (!_.isUndefined(obj.value)) {
+    } else if (!isUndefined(obj.value)) {
         setValueToNode(target, obj, root, variable, obj.value, true);
         if (runMode && root !== targetNodeKey) {
             if (!internalBoundNodeMap.has(variable)) {
                 internalBoundNodeMap.set(variable, {});
             }
-            _.set(internalBoundNodeMap.get(variable), [variable.name, root, target], obj.value);
+            set(internalBoundNodeMap.get(variable), [variable.name, root, target], obj.value);
         }
     }
 };
@@ -635,7 +654,7 @@ export const processBinding = (variable: any, context: any, bindSource?: string,
     const bindMap = variable[bindSource];
     variable[bindSource] = {};
     variable['_bind' + bindSource] = bindMap;
-    if (!bindMap || !_.isArray(bindMap)) {
+    if (!bindMap || !isArray(bindMap)) {
         return;
     }
     bindMap.forEach(function (node) {
@@ -673,7 +692,7 @@ export const simulateFileDownload = (requestParams, fileName, exportFormat, succ
             fileExtension = exportTypesMap[exportFormat];
         }
         appManager.notify('device-file-download', { url: requestParams.url, name: fileName, extension: fileExtension, headers: requestParams.headers, successCb: success, errorCb: error});
-    } else if (!_.isEmpty(requestParams.headers) || isXsrfEnabled()) {
+    } else if (!isEmpty(requestParams.headers) || isXsrfEnabled()) {
         downloadThroughAnchor(requestParams, success, error);
     } else {
         downloadThroughIframe(requestParams, success, dataBinding);
@@ -700,18 +719,20 @@ export const setInput = (targetObj: any, key: any, val: any, options: any) => {
         paramObj = {};
 
     // content type check
-    if (_.isObject(options)) {
+    if (isObject(options)) {
+        // @ts-ignore
         switch (options.type) {
             case 'file':
+                // @ts-ignore
                 val = getBlob(val, options.contentType);
                 break;
             case 'number':
-                val = _.isNumber(val) ? val : parseInt(val, 10);
+                val = isNumber(val) ? val : parseInt(val, 10);
                 break;
         }
     }
 
-    if (_.isObject(key)) {
+    if (isObject(key)) {
         // check if the passed parameter is an object itself
         paramObj = key;
     } else if (key.indexOf('.') > -1) {
@@ -726,7 +747,7 @@ export const setInput = (targetObj: any, key: any, val: any, options: any) => {
         paramObj[key] = val;
     }
 
-    _.forEach(paramObj, function (paramVal, paramKey) {
+    forEach(paramObj, function (paramVal, paramKey) {
         targetObj[paramKey] = paramVal;
     });
     return targetObj;
@@ -750,7 +771,7 @@ export const getEvaluatedOrderBy = (varOrder, optionsOrder) => {
     let optionFields,
         varOrderBy;
     // If options order by is not defined, return variable order
-    if (!optionsOrder || _.isEmpty(optionsOrder)) {
+    if (!optionsOrder || isEmpty(optionsOrder)) {
         return varOrder;
     }
     // If variable order by is not defined, return options order
@@ -758,17 +779,17 @@ export const getEvaluatedOrderBy = (varOrder, optionsOrder) => {
         return optionsOrder;
     }
     // If both are present, combine the options order and variable order, with options order as precedence
-    varOrder     = _.split(varOrder, ',');
-    optionsOrder = _.split(optionsOrder, ',');
-    optionFields = _.map(optionsOrder, function (order) {
-        return _.split(_.trim(order), ' ')[0];
+    varOrder = split(varOrder, ',');
+    optionsOrder = split(optionsOrder, ',');
+    optionFields = map(optionsOrder, function (order) {
+        return split(trim(order), ' ')[0];
     });
     // If a field is present in both options and variable, remove the variable orderby
-    _.remove(varOrder, function (orderBy) {
-        return _.includes(optionFields, _.split(_.trim(orderBy), ' ')[0]);
+    remove(varOrder, function (orderBy: string) {
+        return includes(optionFields, split(trim(orderBy), ' ')[0]);
     });
-    varOrderBy = varOrder.length ? ',' + _.join(varOrder, ',') : '';
-    return _.join(optionsOrder, ',') + varOrderBy;
+    varOrderBy = varOrder.length ? ',' + join(varOrder, ',') : '';
+    return join(optionsOrder, ',') + varOrderBy;
 };
 
 /**
@@ -777,7 +798,7 @@ export const getEvaluatedOrderBy = (varOrder, optionsOrder) => {
  * returns fieldDefs
  */
 export const formatExportExpression = fieldDefs => {
-    _.forEach(fieldDefs, function (fieldDef) {
+    forEach(fieldDefs, function (fieldDef) {
         if (fieldDef.expression) {
             fieldDef.expression = '${' + fieldDef.expression + '}';
         }
@@ -788,13 +809,13 @@ export const formatExportExpression = fieldDefs => {
 export const debounceVariableCall = _invoke;
 
 const getDateTimeFormatForType = (type) => {
-    return DEFAULT_FORMATS[_.toUpper(type)];
+    return DEFAULT_FORMATS[toUpper(type)];
 };
 
 // Format value for datetime types
 const _formatDate = (dateValue, type) => {
     let epoch;
-    if (_.isDate(dateValue)) {
+    if (isDate(dateValue)) {
         epoch = dateValue.getTime();
     } else {
         if (!isNaN(dateValue)) {
@@ -816,11 +837,11 @@ const _formatDate = (dateValue, type) => {
 
 // Function to convert values of date time types into default formats
 export const formatDate = (value, type) => {
-    if (_.includes(type, '.')) {
-        type = _.toLower(extractType(type));
+    if (includes(type, '.')) {
+        type = toLower(extractType(type));
     }
-    if (_.isArray(value)) {
-        return _.map(value, function (val) {
+    if (isArray(value)) {
+        return map(value, function (val) {
             return _formatDate(val, type);
         });
     }
@@ -837,29 +858,29 @@ export const decodeData = (responseContent) => {
     if (!responseContent) {
         return responseContent;
     }
-    if (_.isArray(responseContent)) {
-        _.forEach(responseContent, data => {
-            if (_.isString(data)) {
+    if (isArray(responseContent)) {
+        forEach(responseContent, data => {
+            if (isString(data)) {
                 data = htmlDecode(data);
-            } else if (_.isObject(data)) {
-                _.forEach(data, (value, key) => {
-                    if (value && _.isString(value)) {
+            } else if (isObject(data)) {
+                forEach(data, (value, key) => {
+                    if (value && isString(value)) {
                         data[key] = htmlDecode(value);
-                    } else if (_.isObject(value)) {
+                    } else if (isObject(value)) {
                         decodeData(value);
                     }
                 });
             }
         });
-    } else if (_.isObject(responseContent)) {
-        _.forEach(responseContent, (value, key) => {
-            if (value && _.isString(value)) {
+    } else if (isObject(responseContent)) {
+        forEach(responseContent, (value, key) => {
+            if (value && isString(value)) {
                 responseContent[key] = htmlDecode(value);
-            } else if (_.isObject(value)) {
+            } else if (isObject(value)) {
                 decodeData(value);
             }
         });
-    } else if (_.isString(responseContent)) {
+    } else if (isString(responseContent)) {
         responseContent = htmlDecode(responseContent);
         return responseContent;
     }

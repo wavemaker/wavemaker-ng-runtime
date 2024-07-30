@@ -11,8 +11,7 @@ import { ChangeLogService } from '../services/change-log.service';
 import { LocalDBManagementService } from '../services/local-db-management.service';
 import { LocalDbService } from '../services/local-db.service';
 import { WM_LOCAL_OFFLINE_CALL } from './utils';
-
-declare const _;
+import {clone, cloneDeep, extend, filter, find, forEach, get, isArray, isObject} from "lodash-es";
 
 const apiConfiguration = [{
         'name' : 'insertTableData',
@@ -67,15 +66,15 @@ export class LiveVariableOfflineBehaviour {
             const onlineHandler = this.httpService.sendCallAsObservable;
             if (onlineHandler) {
                 this.httpService.sendCallAsObservable = (reqParams, params): any => {
-                    if (!params && _.get(reqParams, 'url')) {
+                    if (!params && get(reqParams, 'url')) {
                         params = {url: reqParams.url};
                     }
                     // reqParams will contain the full path of insert/update call which will be processed again in parseConfig method
                     // and will be appended again with '/services/./.' which will result in deployedUrl + '/service/./.' + '/service/./.' which is wrong.
                     // Hence passing url in params
-                    const clonedParamsUrl = _.clone(params.url);
-                    params = _.extend(params, reqParams);
-                    const operation = _.find(apiConfiguration, {name: _.get(params, 'operation')});
+                    const clonedParamsUrl = clone(params.url);
+                    params = extend(params, reqParams);
+                    const operation = find(apiConfiguration, {name: get(params, 'operation')});
                     if (this.networkService.isConnected() || params.onlyOnline || !operation || !params.dataModelName) {
                         return from(this.remoteDBcall(operation, onlineHandler, params));
                     }
@@ -125,7 +124,7 @@ export class LiveVariableOfflineBehaviour {
 
     // set hasBlob flag on params when blob field is present
     private hasBlob(store) {
-        const blobColumns = _.filter(store.entitySchema.columns, {
+        const blobColumns = filter(store.entitySchema.columns, {
             'sqlType' : 'blob'
         });
         return !!blobColumns.length;
@@ -168,8 +167,8 @@ export class LiveVariableOfflineBehaviour {
                             if (operation.type === 'READ' && operation.saveResponse) {
                                 store.saveAll(response.body.content);
                             } else if (operation.type === 'INSERT') {
-                                params = _.clone(params);
-                                params.data = _.clone(response.body);
+                                params = clone(params);
+                                params.data = clone(response.body);
                                 this.offlineDBService[operation.name](params, noop, noop, {
                                     resetPrimaryKey: false
                                 });
@@ -192,12 +191,12 @@ export class LiveVariableOfflineBehaviour {
     private prepareToCascade(params): Promise<any> {
         return this.getStore(params).then(store => {
             const childObjectPromises = [];
-            _.forEach(params.data, (v, k) => {
+            forEach(params.data, (v, k) => {
                 let column: ColumnInfo,
                     foreignRelation: ForeignRelationInfo,
                     childParams;
                 // NOTE: Save only one-to-one relations for cascade
-                if (_.isObject(v) && !_.isArray(v)) {
+                if (isObject(v) && !isArray(v)) {
                     column = store.entitySchema.columns.find(c => {
                         if (c.primaryKey && c.foreignRelations) {
                             foreignRelation = c.foreignRelations.find( f => f.sourceFieldName === k);
@@ -206,7 +205,7 @@ export class LiveVariableOfflineBehaviour {
                     });
                 }
                 if (column) {
-                    childParams = _.cloneDeep(params);
+                    childParams = cloneDeep(params);
                     childParams.entityName = foreignRelation.targetEntity;
                     childParams.data = v;
                     const childPromise = this.getStore(childParams).then(childStore => {

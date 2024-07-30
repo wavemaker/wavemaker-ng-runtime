@@ -5,7 +5,7 @@ import {
     Component,
     ContentChild,
     ContentChildren,
-    ElementRef,
+    ElementRef, Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -17,7 +17,7 @@ import {
     ViewChildren
 } from '@angular/core';
 
-import { Subscription } from 'rxjs';
+import {Subscription} from 'rxjs';
 
 import {
     $appDigest,
@@ -30,7 +30,6 @@ import {
     isDefined,
     isMobile,
     isMobileApp,
-    isNumber,
     isObject,
     noop,
     switchClass,
@@ -39,15 +38,44 @@ import {
     setListClass,
     generateGUId
 } from '@wm/core';
-import { APPLY_STYLES_TYPE, configureDnD, DEBOUNCE_TIMES, getOrderedDataset, groupData, handleHeaderClick, NAVIGATION_TYPE, unsupportedStatePersistenceTypes, provideAsWidgetRef, StylableComponent, styler, ToDatePipe, toggleAllHeaders, WidgetRef, extractDataSourceName } from '@wm/components/base';
-import { PaginationComponent } from '@wm/components/data/pagination';
-import { ButtonComponent } from '@wm/components/input';
+import {
+    APPLY_STYLES_TYPE,
+    configureDnD,
+    DEBOUNCE_TIMES,
+    getOrderedDataset,
+    groupData,
+    handleHeaderClick,
+    NAVIGATION_TYPE,
+    unsupportedStatePersistenceTypes,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+    ToDatePipe,
+    toggleAllHeaders,
+    WidgetRef,
+    extractDataSourceName
+} from '@wm/components/base';
+import {PaginationComponent} from '@wm/components/data/pagination';
+import {ButtonComponent} from '@wm/components/input';
 
-import { registerProps } from './list.props';
-import { ListItemDirective } from './list-item.directive';
-import { ListAnimator } from './list.animator';
+import {registerProps} from './list.props';
+import {ListItemDirective} from './list-item.directive';
+import {ListAnimator} from './list.animator';
+import {
+    clone,
+    cloneDeep,
+    forEach,
+    get, has,
+    includes,
+    isArray,
+    isEmpty,
+    isEqual,
+    isNumber,
+    isString,
+    isUndefined,
+    last, max, min, pullAllWith, pullAt, remove, some, toNumber
+} from "lodash-es";
 
-declare const _;
 declare const $;
 
 const DEFAULT_CLS = 'app-livelist app-panel';
@@ -65,31 +93,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     @ContentChild('listTemplate') listTemplate: TemplateRef<ElementRef>;
 
-    @ContentChild('listLeftActionTemplate') listLeftActionTemplate:  TemplateRef<ElementRef>;
-    @ContentChild('listRightActionTemplate') listRightActionTemplate:  TemplateRef<ElementRef>;
+    @ContentChild('listLeftActionTemplate') listLeftActionTemplate: TemplateRef<ElementRef>;
+    @ContentChild('listRightActionTemplate') listRightActionTemplate: TemplateRef<ElementRef>;
     @ContentChildren(ButtonComponent) btnComponents;
 
     @ViewChild(PaginationComponent) dataNavigator;
     @ViewChildren(ListItemDirective) listItems: QueryList<ListItemDirective>;
-
-    private itemsPerRowClass: string;
-    private firstSelectedItem: ListItemDirective;
-    private navigatorMaxResultWatch: Subscription;
-    private navigatorResultWatch: Subscription;
-    private navControls: string;
-    private onDemandLoad: boolean;
-    private _items: Array<any>;
-    private dataNavigatorWatched: boolean;
-    private datasource: any;
-    private showNavigation: boolean;
     public noDataFound: boolean;
-    private reorderProps: any;
-    private app: any;
-    private appDefaults: any;
-    private ngZone: NgZone;
-    private statePersistence: StatePersistence;
-    private paginationService: PaginationService;
-
     public lastSelectedItem: ListItemDirective;
     public fieldDefs: Array<any>;
     public disableitem;
@@ -115,7 +125,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public currentPage;
     public direction;
     public tabindex;
-
     public handleHeaderClick: Function;
     public toggleAllHeaders: void;
     public groupby: string;
@@ -124,10 +133,34 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public binditemclass: string;
     public binddisableitem: string;
     public binddataset: string;
-    private binddatasource: string;
     public mouseEnterCB: string;
     public mouseLeaveCB: string;
-
+    public pulltorefresh: boolean;
+    public title: string;
+    public subheading: string;
+    public iconclass: string;
+    public listclass: any;
+    public statehandler: any;
+    public currentIndex: number;
+    public titleId: string;
+    _isDependent;
+    private itemsPerRowClass: string;
+    private firstSelectedItem: ListItemDirective;
+    private navigatorMaxResultWatch: Subscription;
+    private navigatorResultWatch: Subscription;
+    private navControls: string;
+    private onDemandLoad: boolean;
+    private _items: Array<any>;
+    private dataNavigatorWatched: boolean;
+    private datasource: any;
+    private showNavigation: boolean;
+    private reorderProps: any;
+    private app: any;
+    private appDefaults: any;
+    private ngZone: NgZone;
+    private statePersistence: StatePersistence;
+    private paginationService: PaginationService;
+    private binddatasource: string;
     private match: string;
     private dateformat: string;
     private groupedData: any;
@@ -136,100 +169,16 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private propsInitPromise: Promise<any>;
     private $ulEle: any;
     private _listAnimator: ListAnimator;
-    public pulltorefresh: boolean;
     private _listenerDestroyers: Array<any>;
     private debouncedFetchNextDatasetOnScroll: Function;
-
-    public title: string;
-    public subheading: string;
-    public iconclass: string;
-    public listclass: any;
     private isDataChanged: boolean;
-    public statehandler: any;
-    private isListElementMovable : boolean;
-    public currentIndex: number;
+    private isListElementMovable: boolean;
     private ariaText: String;
-    public titleId: string ;
-
-    _isDependent;
     private _pageLoad;
     private _selectedItemsExist;
 
     private touching;
     private touched;
-
-    public get selecteditem() {
-        if (this.multiselect) {
-            return getClonedObject(this._items);
-        }
-        if (_.isEmpty(this._items)) {
-            return {};
-        }
-        return getClonedObject(this._items[0]);
-    }
-
-    /**
-     * Returns list of widgets present on list item by considering name and index of the widget.
-     * If we did'nt pass index, it returns array of all the widgets which are matching to widget name
-     * @param widgteName: Name of the widget
-     * @param index: Index of the widget
-     */
-    public getWidgets(widgteName: string, index?: number) {
-        let $target;
-        const retVal = [];
-
-        if (!widgteName) {
-            return;
-        }
-
-        if (!isDefined(index)) {
-            _.forEach(this.listItems.toArray(), (el) => {
-                $target = _.get(el.currentItemWidgets, widgteName);
-                if ($target) {
-                    retVal.push($target);
-                }
-            });
-
-            return retVal;
-        }
-        index = +index || 0;
-
-        $target = _.get(this.listItems.toArray(), index);
-
-        if ($target) {
-            return [_.get($target.currentItemWidgets, widgteName)];
-        }
-    }
-
-    // returns listitem reference by index value. This refers to the same method getListItemByIndex.
-    public getItem(index: number) {
-        return this.getListItemByIndex(index);
-    }
-
-    /**
-     * Returns index of listItem(listItemDirective / listItemObject)
-     * If item is a directive, index is fetched from listItems
-     * If item is an object, index is fetched from fieldDefs
-    */
-    public getIndex(item: any) {
-        if (item instanceof ListItemDirective) {
-            return this.getListItemIndex(item);
-        } else if (item) {
-            return this.fieldDefs.findIndex((obj) => _.isEqual(obj, item));
-        }
-    }
-
-    public set selecteditem(items) {
-        this._items.length = 0;
-        this.deselectListItems();
-
-        if (_.isArray(items)) {
-            items.forEach(item => this.selectItem(item));
-        } else {
-            this.selectItem(items);
-        }
-        $appDigest();
-    }
 
     constructor(
         inj: Injector,
@@ -245,11 +194,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         @Attribute('mouseenter.event') mouseEnterCB: string,
         @Attribute('mouseleave.event') mouseLeaveCB: string,
         statePersistence: StatePersistence,
-        paginationService: PaginationService
+        paginationService: PaginationService,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         let resolveFn: Function = noop;
         const propsInitPromise = new Promise(res => resolveFn = res);
-        super(inj, WIDGET_CONFIG, propsInitPromise);
+        super(inj, WIDGET_CONFIG, explicitContext, propsInitPromise);
         this.propsInitPromise = propsInitPromise;
         this.promiseResolverFn = resolveFn;
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
@@ -277,12 +227,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         // Updates pagination, filter, sort etc options for service and crud variables
         this._listenerDestroyers = [
             this.app.subscribe('check-state-persistence-options', options => {
-                let dataSourceName = _.get(this.datasource, 'name');
+                let dataSourceName = get(this.datasource, 'name');
                 // in Prefabs, this.datasource is not resolved at the time of variable invocation, so additional check is required.
                 if (!dataSourceName) {
                     dataSourceName = extractDataSourceName(this.binddatasource);
                 }
-                if (_.get(options, 'variable.name') !== dataSourceName) {
+                if (get(options, 'variable.name') !== dataSourceName) {
                     return;
                 }
                 this.handleStateParams(options);
@@ -298,33 +248,77 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         ];
     }
 
-    private getConfiguredState() {
-        const mode = this.statePersistence.computeMode(this.statehandler);
-        return mode && mode.toLowerCase();
+    public get selecteditem() {
+        if (this.multiselect) {
+            return getClonedObject(this._items);
+        }
+        if (isEmpty(this._items)) {
+            return {};
+        }
+        return getClonedObject(this._items[0]);
     }
 
-    private handleStateParams(options) {
-        if (this._pageLoad && this.getConfiguredState() !== 'none') {
-            this._pageLoad = false;
-            const widgetState = this.statePersistence.getWidgetState(this);
-            if (_.get(widgetState, 'pagination')) {
-                options.options = options.options || {};
-                options.options.page = widgetState.pagination;
-            }
-            if (_.get(widgetState, 'selectedItem')) {
-                this._selectedItemsExist = true;
-            }
+    public set selecteditem(items) {
+        this._items.length = 0;
+        this.deselectListItems();
+
+        if (isArray(items)) {
+            items.forEach(item => this.selectItem(item));
+        } else {
+            this.selectItem(items);
+        }
+        $appDigest();
+    }
+
+    /**
+     * Returns list of widgets present on list item by considering name and index of the widget.
+     * If we did'nt pass index, it returns array of all the widgets which are matching to widget name
+     * @param widgteName: Name of the widget
+     * @param index: Index of the widget
+     */
+    public getWidgets(widgteName: string, index?: number) {
+        let $target;
+        const retVal = [];
+
+        if (!widgteName) {
+            return;
+        }
+
+        if (!isDefined(index)) {
+            forEach(this.listItems.toArray(), (el) => {
+                $target = get(el.currentItemWidgets, widgteName);
+                if ($target) {
+                    retVal.push($target);
+                }
+            });
+
+            return retVal;
+        }
+        index = +index || 0;
+
+        $target = get(this.listItems.toArray(), index);
+
+        if ($target) {
+            return [get($target.currentItemWidgets, widgteName)];
         }
     }
 
-    private triggerWMEvent(eventName, item?) {
-        $invokeWatchers(true);
-        // If we have multiselect for the livelist(List with form template), in run mode deleting a record is getting failed. Becuase the selecteditem will be array of objects. So consider the last object.
-        let row = this.multiselect ? _.last(this.selecteditem) : this.selecteditem;
-        if (item) {
-            row = item;
+    // returns listitem reference by index value. This refers to the same method getListItemByIndex.
+    public getItem(index: number) {
+        return this.getListItemByIndex(index);
+    }
+
+    /**
+     * Returns index of listItem(listItemDirective / listItemObject)
+     * If item is a directive, index is fetched from listItems
+     * If item is an object, index is fetched from fieldDefs
+     */
+    public getIndex(item: any) {
+        if (item instanceof ListItemDirective) {
+            return this.getListItemIndex(item);
+        } else if (item) {
+            return this.fieldDefs.findIndex((obj) => isEqual(obj, item));
         }
-        this.app.notify('wm-event', {eventName, widgetName: this.name, row: row});
     }
 
     create() {
@@ -360,6 +354,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     delete(item?) {
         this.deleteRow(item);
     }
+
     handleLoading(data) {
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
@@ -368,13 +363,408 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.variableInflight = data.active;
                 // Fix for [WMS-23772] Update nodatafound flag once the response is recieved from the server
                 const totalEle = data.data?.pagination?.totalElements;
-                if (!_.isUndefined(totalEle)) {
+                if (!isUndefined(totalEle)) {
                     this.noDataFound = totalEle === 0 ? true : false;
                 } else { // totalelements is undefined
-                    this.noDataFound = _.isEmpty(data.data?.data);
+                    this.noDataFound = isEmpty(data.data?.data);
                 }
             });
         }
+    }
+
+    public triggerListItemSelection($el: JQuery<HTMLElement>, $event: Event) {
+        if ($el && $el[0]) {
+            const listItemContext = $el.data('listItemContext');
+            // Trigger click event only if the list item is from the corresponding list.
+            if (listItemContext.listComponent === this) {
+                this.onItemClick($event, listItemContext);
+            }
+        }
+    }
+
+    // this method is called form other data widgets like table.
+    public execute(operation, options) {
+        if ([DataSource.Operation.IS_API_AWARE, DataSource.Operation.IS_PAGEABLE, DataSource.Operation.SUPPORTS_SERVER_FILTER].includes(operation)) {
+            return false;
+        }
+        return this.datasource.execute(operation, options);
+    }
+
+    public handleKeyDown($event, action: string) {
+        $event.stopPropagation();
+        if ($event.keyCode !== 13 && $event.keyCode !== 9 && !(($event.target.classList.contains('form-control') || $event.target.classList.contains('note-editable')) && $event.keyCode === 32)) {
+            $event.preventDefault();
+        }
+
+        const listItems: QueryList<ListItemDirective> = this.listItems;
+
+        let presentIndex: number = this.getListItemIndex(this.lastSelectedItem);
+
+        if (this.multiselect) {
+            const firstIndex: number = this.getListItemIndex(this.firstSelectedItem);
+            const selectCount: number = isArray(this.selecteditem) ? this.selecteditem.length : (isObject(this.selecteditem) ? 1 : 0);
+            if (action === 'selectPrev') {
+                if (presentIndex > 0) {
+                    if ((presentIndex <= firstIndex) && this.checkSelectionLimit(selectCount)) {
+                        this.lastSelectedItem = this.getListItemByIndex(presentIndex - 1);
+                        this.toggleListItemSelection(this.lastSelectedItem);
+                    } else if (presentIndex > firstIndex) {
+                        this.toggleListItemSelection(this.getListItemByIndex(presentIndex));
+                        this.lastSelectedItem = this.getListItemByIndex(presentIndex - 1);
+                    } else {
+                        this.invokeEventCallback('selectionlimitexceed', {$event});
+                    }
+                }
+            } else if (action === 'selectNext') {
+                if (presentIndex < listItems.length - 1) {
+                    if ((presentIndex >= firstIndex) && this.checkSelectionLimit(selectCount)) {
+                        this.lastSelectedItem = this.getListItemByIndex(presentIndex + 1);
+                        this.toggleListItemSelection(this.lastSelectedItem);
+                    } else if (presentIndex < firstIndex) {
+                        this.toggleListItemSelection(this.getListItemByIndex(presentIndex));
+                        this.lastSelectedItem = this.getListItemByIndex(presentIndex + 1);
+                    } else {
+                        this.invokeEventCallback('selectionlimitexceed', {$event});
+                    }
+                }
+            }
+        }
+        if (action === 'focusPrev') {
+            if (this.isListElementMovable) {
+                presentIndex = presentIndex <= 0 ? 0 : (presentIndex);
+                if (presentIndex === 0) {
+                    return;
+                }
+
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                const prevElt = this.getListItemByIndex(presentIndex - 1);
+                prevElt.nativeElement.before(this.lastSelectedItem.nativeElement);
+                this.lastSelectedItem.nativeElement.focus();
+                this.statePersistence.removeWidgetState(this, 'selectedItem');
+                const arr = this.listItems.toArray();
+                [arr[presentIndex - 1], arr[presentIndex]] = [arr[presentIndex], arr[presentIndex - 1]];
+                this.listItems.reset(arr);
+                this.currentIndex = presentIndex;
+                this.ariaText = "selected ";
+            } else {
+                presentIndex = presentIndex <= 0 ? 0 : (presentIndex - 1);
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                this.lastSelectedItem.nativeElement.focus();
+                this.currentIndex = presentIndex + 1;
+                this.ariaText = "selected ";
+            }
+        } else if (action === 'focusNext') {
+            if (this.isListElementMovable) {
+                presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex) : (listItems.length - 1);
+                if (presentIndex === this.listItems.length - 1) {
+                    return;
+                }
+
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                const nextElt = this.getListItemByIndex(presentIndex + 1);
+                nextElt.nativeElement.after(this.lastSelectedItem.nativeElement);
+                this.lastSelectedItem.nativeElement.focus();
+                this.statePersistence.removeWidgetState(this, 'selectedItem');
+                const arr = this.listItems.toArray();
+                [arr[presentIndex], arr[presentIndex + 1]] = [arr[presentIndex + 1], arr[presentIndex]];
+                this.listItems.reset(arr);
+                this.currentIndex = presentIndex + 2;
+                this.ariaText = "selected ";
+            } else {
+                presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length - 1);
+                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
+                this.lastSelectedItem.nativeElement.focus();
+                this.currentIndex = presentIndex + 1;
+                this.ariaText = "selected ";
+            }
+        } else if (action === 'select') {
+            // if the enter click is pressed on the item which is not the last selected item, the find the item from which the event is originated.
+            if (presentIndex === -1 || !$($event.target).closest(this.lastSelectedItem.nativeElement)) {
+                const $li = $($event.target).closest('li.app-list-item');
+                const $ul = $li.closest('ul.app-livelist-container');
+                presentIndex = $ul.find('li.app-list-item').index($li);
+            }
+            this.onItemClick($event, this.getListItemByIndex(presentIndex));
+        } else if (action === 'space') {
+            if (!this.enablereorder) {
+                return;
+            }
+            this.isListElementMovable = !this.isListElementMovable;
+            this.onItemClick($event, this.getListItemByIndex(presentIndex));
+            this.currentIndex = presentIndex + 1;
+            if (this.isListElementMovable) {
+                this.ariaText = `Item ${this.currentIndex} grabbed, current position `;
+                this.$ulEle.data('oldIndex', presentIndex);
+            } else {
+                this.ariaText = `Item ${this.currentIndex} dropped, final position `;
+                this.onUpdate($event, undefined, presentIndex);
+            }
+        }
+    }
+
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'dataset') {
+            if (!nv && this.binddatasource && !this.datasource) {
+                return;
+            }
+            this.onDataSetChange(nv);
+        } else if (key === 'datasource') {
+            if (this.dataset) {
+                this.onDataSetChange(this.dataset);
+            }
+        } else if (key === 'navigation') {
+            // Support for older projects where navigation type was advanced instead of classic
+            if (nv === 'Advanced') {
+                this.navigation = 'Classic';
+                return;
+            }
+            switchClass(this.nativeElement, nv, ov);
+            this.onNavigationTypeChange(nv);
+            if (this.dataNavigator) {
+                this.dataNavigator.navigationClass = this.paginationclass;
+            }
+        } else if (key === 'itemsperrow') {
+            setListClass(this);
+        } else if (key === 'tabindex') {
+            return;
+        } else if (key === 'pulltorefresh' && nv) {
+            this.app.notify('pullToRefresh:enable');
+            this.subscribeToPullToRefresh();
+        } else if (key === 'paginationclass') {
+            if (this.dataNavigator) {
+                // Adding setTimeout because in pagination component updateNavSize method is overriding navigationclass
+                setTimeout(() => this.dataNavigator.navigationClass = nv);
+            }
+        } else if (key === 'pagesize') {
+            this.dataNavigator.options = {
+                maxResults: nv
+            };
+            this.dataNavigator.widget.maxResults = nv;
+            this.dataNavigator.maxResults = nv;
+        } else if (key === 'enablereorder') {
+            if (nv && this.$ulEle) {
+                this.$ulEle.attr('aria-describedby', this.titleId);
+                this.configureDnD();
+                this.$ulEle.sortable('enable');
+            } else if (this.$ulEle && !nv) {
+                this.$ulEle.removeAttr('aria-describedby');
+                this.$ulEle.sortable('disable');
+            }
+        } else {
+            super.onPropertyChange(key, nv, ov);
+        }
+    }
+
+    public onItemClick(evt: any, $listItem: ListItemDirective) {
+        let selectCount: number;
+
+        if (!$listItem.disableItem) {
+            this.firstSelectedItem = this.firstSelectedItem || $listItem;
+            // Setting selectCount value based number of items selected.
+            selectCount = isArray(this.selecteditem) ? this.selecteditem.length : (isObject(this.selecteditem) ? 1 : 0);
+
+            // Handling multiselect for mobile device
+            if (this.multiselect && isMobile()) {
+                if (this.checkSelectionLimit(selectCount) || $listItem.isActive) {
+                    this.toggleListItemSelection($listItem);
+                } else {
+                    this.invokeEventCallback('selectionlimitexceed', {$event: evt});
+                }
+            } else if ((evt.ctrlKey || evt.metaKey) && this.multiselect) {
+                if (this.checkSelectionLimit(selectCount) || $listItem.isActive) {
+                    this.firstSelectedItem = this.lastSelectedItem = $listItem;
+                    this.toggleListItemSelection($listItem);
+                } else {
+                    this.invokeEventCallback('selectionlimitexceed', {$event: evt});
+                }
+            } else if (evt.shiftKey && this.multiselect) {
+                let first = $listItem.context.index;
+                let last = this.firstSelectedItem.context.index;
+
+                // if first is greater than last, then swap values
+                if (first > last) {
+                    last = [first, first = last][0];
+                }
+                if (this.checkSelectionLimit(last - first)) {
+                    this.clearSelectedItems();
+                    this.listItems.forEach(($liItem: ListItemDirective) => {
+                        const index = $liItem.context.index;
+                        if (index >= first && index <= last) {
+                            this.toggleListItemSelection($liItem);
+                        }
+                    });
+                    this.lastSelectedItem = $listItem;
+                } else {
+                    this.invokeEventCallback('selectionlimitexceed', {$event: evt});
+                }
+
+            } else {
+                if (!$listItem.isActive || selectCount > 1) {
+                    this.clearSelectedItems();
+                    this.toggleListItemSelection($listItem);
+                    this.firstSelectedItem = this.lastSelectedItem = $listItem;
+                }
+            }
+            $appDigest();
+        }
+    }
+
+    // Empty the list content on clear
+    public clear() {
+        this.updateFieldDefs([]);
+    }
+
+    /**
+     * deselects item in the list.
+     * @param val: index | model of the list item.
+     */
+    public deselectItem(val: any) {
+        const listItem = this.getItemRefByIndexOrModel(val);
+        if (listItem && listItem.isActive) {
+            this.toggleListItemSelection(listItem);
+        }
+    }
+
+    /**
+     * selects item in the list.
+     * @param val: index | model of the list item.
+     */
+    public selectItem(val, statePersistenceTriggered?) {
+        const listItem = this.getItemRefByIndexOrModel(val);
+        if (!listItem) {
+            return;
+        }
+        if (!listItem.isActive) {
+            this.toggleListItemSelection(listItem, statePersistenceTriggered);
+        }
+        // focus the element.
+        listItem.nativeElement.focus();
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        this.handleHeaderClick = noop;
+        setTimeout(() => {
+            this.debouncedFetchNextDatasetOnScroll = this.paginationService.debouncedFetchNextDatasetOnScroll(this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME, this);
+        }, 0);
+        this._items = [];
+        this.fieldDefs = [];
+        this.reorderProps = {
+            minIndex: null,
+            maxIndex: null
+        };
+    }
+
+    ngAfterViewInit() {
+        this.promiseResolverFn();
+        this.propsInitPromise.then(() => {
+            super.ngAfterViewInit();
+            this.setUpCUDHandlers();
+            this.selectedItemWidgets = this.multiselect ? [] : {};
+            var ele = $(this.nativeElement).find('.app-livelist-container');
+
+            if (this.enablereorder && !this.groupby) {
+                if (ele) {
+                    ele.attr('aria-describedby', this.titleId);
+                }
+                this.configureDnD();
+            }
+            if (!this.enablereorder) {
+                if (ele) {
+                    ele.removeAttr('aria-describedby');
+                }
+            }
+            if (this.groupby && this.collapsible) {
+                this.handleHeaderClick = handleHeaderClick;
+                this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
+            }
+            setListClass(this);
+        });
+        this.setupHandlers();
+        const $ul = this.nativeElement.querySelector('ul.app-livelist-container');
+        styler($ul as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+        if (this.enablereorder) {
+            if ($ul) {
+                $ul.setAttribute('aria-describedby', this.titleId);
+            }
+        }
+        if (!this.enablereorder) {
+            if ($ul) {
+                $ul.removeAttribute('aria-describedby');
+            }
+        }
+        if (isMobileApp() && $ul.querySelector('.app-list-item-action-panel')) {
+            this._listAnimator = new ListAnimator(this);
+        }
+    }
+
+    ngOnDestroy() {
+        if (this._listAnimator && this._listAnimator.$btnSubscription) {
+            this._listAnimator.$btnSubscription.unsubscribe();
+        }
+        this._listenerDestroyers.forEach(d => d && d());
+        super.ngOnDestroy();
+    }
+
+    ngOnDetach() {
+        super.ngOnDetach();
+        this._pageLoad = true;
+    }
+
+    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
+        // tap and doubleTap events are not getting propagated.So, using mouse events instead.
+        const touchToMouse = {
+            tap: 'click',
+            doubletap: 'dblclick'
+        };
+        if (includes(['click', 'tap', 'dblclick', 'doubletap'], eventName)) {
+            this.eventManager.addEventListener(
+                this.nativeElement,
+                touchToMouse[eventName] || eventName,
+                (evt) => {
+                    const target = $(evt.target).closest('.app-list-item');
+                    if (target.length) {
+                        const listItemContext: ListItemDirective = target.data('listItemContext');
+                        if (!listItemContext.disableItem) {
+                            this.invokeEventCallback(eventName, {
+                                widget: listItemContext,
+                                $event: evt,
+                                item: listItemContext.item
+                            });
+                        }
+                    }
+                }
+            );
+        }
+    }
+
+    private getConfiguredState() {
+        const mode = this.statePersistence.computeMode(this.statehandler);
+        return mode && mode.toLowerCase();
+    }
+
+    private handleStateParams(options) {
+        if (this._pageLoad && this.getConfiguredState() !== 'none') {
+            this._pageLoad = false;
+            const widgetState = this.statePersistence.getWidgetState(this);
+            if (get(widgetState, 'pagination')) {
+                options.options = options.options || {};
+                options.options.page = widgetState.pagination;
+            }
+            if (get(widgetState, 'selectedItem')) {
+                this._selectedItemsExist = true;
+            }
+        }
+    }
+
+    private triggerWMEvent(eventName, item?) {
+        $invokeWatchers(true);
+        // If we have multiselect for the livelist(List with form template), in run mode deleting a record is getting failed. Becuase the selecteditem will be array of objects. So consider the last object.
+        let row = this.multiselect ? last(this.selecteditem) : this.selecteditem;
+        if (item) {
+            row = item;
+        }
+        this.app.notify('wm-event', {eventName, widgetName: this.name, row: row});
     }
 
     private resetNavigation() {
@@ -478,32 +868,32 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     private onDataChange(newVal) {
         // Check for newVal is not empty
-        if (!_.isEmpty(newVal)) {
+        if (!isEmpty(newVal)) {
 
             this.noDataFound = false;
             this.isDataChanged = true;
 
             if (this.datasource && this.datasource.execute(DataSource.Operation.IS_API_AWARE)) {
                 // clone the the data in case of live and service variables to prevent the two-way binding for these variables.
-                newVal = _.cloneDeep(newVal);
+                newVal = cloneDeep(newVal);
             }
 
-            if (isObject(newVal) && !_.isArray(newVal)) {
-                newVal = _.isEmpty(newVal) ? [] : [newVal];
+            if (isObject(newVal) && !isArray(newVal)) {
+                newVal = isEmpty(newVal) ? [] : [newVal];
             }
 
-            if (_.isString(newVal)) {
+            if (isString(newVal)) {
                 newVal = newVal.split(',');
             }
 
             // if the page number is greater than 1 on initial load then we render the first page.
             if (this.datasource && this.datasource.owner === 'App' && (this.infScroll || this.onDemandLoad) && !this.currentPage && this.datasource.execute(DataSource.Operation.GET_PAGING_OPTIONS).number > 0) {
                 newVal = this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
-                 'page': 1
-             });
-             }
+                    'page': 1
+                });
+            }
 
-            if (_.isArray(newVal)) {
+            if (isArray(newVal)) {
                 if (newVal.length) {
                     this.invokeEventCallback('beforedatarender', {$data: newVal});
                 }
@@ -557,13 +947,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     }
 
     private onDataSetChange(newVal) {
-        if (_.get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none' && this._pageLoad) {
+        if (get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none' && this._pageLoad) {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
-            if (_.get(widgetState, 'pagination')) {
+            if (get(widgetState, 'pagination')) {
                 this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
             }
-            if (_.get(widgetState, 'selectedItem')) {
+            if (get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = true;
             }
         }
@@ -599,12 +989,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private getListItemByModel(listModel): ListItemDirective {
         return this.listItems.find((listItem) => {
             let itemObj = listItem.item;
-            if (this.groupby && !_.has(listModel, '_groupIndex')) {
+            if (this.groupby && !has(listModel, '_groupIndex')) {
                 // If groupby is enabled, item contains _groupIndex property which should be excluded while comparing model.
-                itemObj = _.clone(itemObj);
+                itemObj = clone(itemObj);
                 delete itemObj._groupIndex;
             }
-            if (_.isEqual(itemObj, listModel)) {
+            if (isEqual(itemObj, listModel)) {
                 return true;
             }
         }) || null;
@@ -612,16 +1002,16 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
     private updateSelectedItemsWidgets(statePersistenceTriggered?) {
         let obj = {}, widgetState;
-        const pageNum = _.get(this.dataNavigator, 'dn.currentPage') || 1;
+        const pageNum = get(this.dataNavigator, 'dn.currentPage') || 1;
         if (this.getConfiguredState() !== 'none') {
             // remove previously configured selected items for current page and construct new ones later below.
             widgetState = this.statePersistence.getWidgetState(this) || {};
-            if (_.get(widgetState, 'selectedItem')) {
+            if (get(widgetState, 'selectedItem')) {
                 // when multiselect is on and an item is selected without pressing CTRL, previously selected items in state should be empty.
                 if (this.multiselect && this.selecteditem.length === 1) {
                     widgetState.selectedItem = [];
                 } else {
-                    _.remove(widgetState.selectedItem, function(selectedItem) {
+                    remove(widgetState.selectedItem, function (selectedItem: any) {
                         return selectedItem.page === pageNum;
                     });
                 }
@@ -638,8 +1028,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     this.selectedItemWidgets = item.currentItemWidgets;
                 }
                 obj = {page: pageNum, index: index};
-                if (_.get(widgetState, 'selectedItem')  && this.multiselect) {
-                    if (!_.some(widgetState.selectedItem, obj)) {
+                if (get(widgetState, 'selectedItem') && this.multiselect) {
+                    if (!some(widgetState.selectedItem, obj)) {
                         widgetState.selectedItem.push(obj);
                     }
                 } else {
@@ -666,13 +1056,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         // item is not allowed to get selected if it is disabled.
         if ($listItem && !$listItem.disableItem) {
             let item = $listItem.item;
-            if (this.groupby && _.has(item, '_groupIndex')) {
+            if (this.groupby && has(item, '_groupIndex')) {
                 // If groupby is enabled, item contains _groupIndex property which should be excluded from selecteditem.
-                item = _.clone(item);
+                item = clone(item);
                 delete item._groupIndex;
             }
             if ($listItem.isActive) {
-                this._items = _.pullAllWith(this._items, [item], _.isEqual);
+                this._items = pullAllWith(this._items, [item], isEqual);
                 $listItem.isActive = false;
             } else {
                 // if multiselect is false, clear the selectItem list before adding an item to the selectItem list.
@@ -700,10 +1090,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
         if (this.isDataChanged && this.getConfiguredState() !== 'none' && listItems.length && this._selectedItemsExist) {
             const widgetState = this.statePersistence.getWidgetState(this);
-            if (_.get(widgetState, 'selectedItem')) {
+            if (get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = false;
-                const selectedItemsLength = _.isArray(this.selecteditem) ? this.selecteditem.length : _.toNumber(!_.isEmpty(this.selecteditem));
-                const currentPage = _.get(this.dataNavigator, 'dn.currentPage') || 1;
+                const selectedItemsLength = isArray(this.selecteditem) ? this.selecteditem.length : toNumber(!isEmpty(this.selecteditem));
+                const currentPage = get(this.dataNavigator, 'dn.currentPage') || 1;
                 widgetState.pagination = widgetState.pagination || 1;
                 // to prevent item selection from being triggered more than once
                 if (selectedItemsLength !== widgetState.selectedItem.length && widgetState.pagination === currentPage) {
@@ -715,13 +1105,13 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 }
             }
         }
-        const selectedItems = _.isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];
+        const selectedItems = isArray(this.selecteditem) ? this.selecteditem : [this.selecteditem];
 
         this.firstSelectedItem = this.lastSelectedItem = null;
 
         // don't select first item if multi-select is enabled and at least item is already selected in the list.
         // don't select first item if state information has selected items
-        if (listItems.length && this.selectfirstitem && !( this._items.length && this.multiselect) && this._selectedItemsExist !== false) {
+        if (listItems.length && this.selectfirstitem && !(this._items.length && this.multiselect) && this._selectedItemsExist !== false) {
             const $firstItem: ListItemDirective = listItems.first;
 
             if (
@@ -772,18 +1162,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         this.isDataChanged = false;
     }
 
-    public triggerListItemSelection($el: JQuery<HTMLElement>, $event: Event) {
-        if ($el && $el[0]) {
-            const listItemContext = $el.data('listItemContext');
-            // Trigger click event only if the list item is from the corresponding list.
-            if (listItemContext.listComponent === this) {
-                this.onItemClick($event, listItemContext);
-            }
-        }
-    }
-
     private setupHandlers() {
-        this.listItems.changes.subscribe( listItems => {
+        this.listItems.changes.subscribe(listItems => {
             this.onListRender(listItems);
             this.cdRef.detectChanges();
         });
@@ -817,7 +1197,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
 
-
     // Triggers after the sorting.
     private onUpdate(evt, ui, presentIndex?) {
         const data = this.fieldDefs;
@@ -825,18 +1204,18 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const newIndex = ui === undefined ? presentIndex : ui.item.index();
         const oldIndex = this.$ulEle.data('oldIndex');
 
-        const minIndex = _.min([newIndex, oldIndex]);
-        const maxIndex = _.max([newIndex, oldIndex]);
+        const minIndex = min([newIndex, oldIndex]);
+        const maxIndex = max([newIndex, oldIndex]);
 
-        const draggedItem = _.pullAt(data, oldIndex)[0];
+        const draggedItem = pullAt(data, oldIndex)[0];
         // Modify the data list only if we find a draggedItem
         if (draggedItem) {
             if (this.getConfiguredState() !== 'none') {
                 this.statePersistence.removeWidgetState(this, 'selectedItem');
             }
 
-            this.reorderProps.minIndex = _.min([minIndex, this.reorderProps.minIndex]);
-            this.reorderProps.maxIndex = _.max([maxIndex, this.reorderProps.maxIndex]);
+            this.reorderProps.minIndex = min([minIndex, this.reorderProps.minIndex]);
+            this.reorderProps.maxIndex = max([maxIndex, this.reorderProps.maxIndex]);
 
             data.splice(newIndex, 0, draggedItem);
 
@@ -857,7 +1236,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         let appendTo;
         const modalEl = $(document).find('.modal');
         if (this.getAttr('height')) { // when height is applied to the list, append should be the ul's parent as scroll is applied to the parent
-          appendTo = 'parent';
+            appendTo = 'parent';
         } else if (modalEl.length) { // In case of dialog, appendTo should be the modal ele
             appendTo = modalEl[modalEl.length - 1];
         } else { // As default append to should be body
@@ -877,7 +1256,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         if (isMobileApp()) {
             this.$ulEle.sortable('disable');
-            this.$ulEle.on('touchstart', function(event) {
+            this.$ulEle.on('touchstart', function (event) {
                 let self = this;
                 if (!self.touching) {
                     if (self.touched) {
@@ -937,238 +1316,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         return this.listItems.toArray().indexOf(item);
     }
 
-    // this method is called form other data widgets like table.
-    public execute(operation, options) {
-        if ([DataSource.Operation.IS_API_AWARE, DataSource.Operation.IS_PAGEABLE, DataSource.Operation.SUPPORTS_SERVER_FILTER].includes(operation)) {
-            return false;
-        }
-        return this.datasource.execute(operation, options);
-    }
-
-    public handleKeyDown($event, action: string) {
-        $event.stopPropagation();
-        if($event.keyCode !== 13 && $event.keyCode !== 9 && !(($event.target.classList.contains('form-control') || $event.target.classList.contains('note-editable')) && $event.keyCode === 32) ) {
-            $event.preventDefault();
-        }
-
-        const listItems: QueryList<ListItemDirective> = this.listItems;
-
-        let presentIndex: number = this.getListItemIndex(this.lastSelectedItem);
-
-        if (this.multiselect) {
-            const firstIndex: number = this.getListItemIndex(this.firstSelectedItem);
-            const selectCount: number = _.isArray(this.selecteditem) ? this.selecteditem.length : (_.isObject(this.selecteditem) ? 1 : 0);
-            if (action === 'selectPrev') {
-                if (presentIndex > 0) {
-                    if ((presentIndex <= firstIndex) && this.checkSelectionLimit(selectCount)) {
-                        this.lastSelectedItem = this.getListItemByIndex( presentIndex - 1);
-                        this.toggleListItemSelection(this.lastSelectedItem);
-                    } else if (presentIndex > firstIndex) {
-                        this.toggleListItemSelection(this.getListItemByIndex(presentIndex));
-                        this.lastSelectedItem = this.getListItemByIndex(presentIndex - 1);
-                    } else {
-                        this.invokeEventCallback('selectionlimitexceed', {$event});
-                    }
-                }
-            } else if (action === 'selectNext') {
-                if (presentIndex < listItems.length - 1) {
-                    if ((presentIndex >= firstIndex) && this.checkSelectionLimit(selectCount)) {
-                        this.lastSelectedItem = this.getListItemByIndex(presentIndex + 1);
-                        this.toggleListItemSelection(this.lastSelectedItem);
-                    } else if (presentIndex < firstIndex) {
-                        this.toggleListItemSelection(this.getListItemByIndex(presentIndex));
-                        this.lastSelectedItem = this.getListItemByIndex(presentIndex + 1);
-                    } else {
-                        this.invokeEventCallback('selectionlimitexceed', {$event});
-                    }
-                }
-            }
-        }
-        if (action === 'focusPrev') {
-            if(this.isListElementMovable) {
-                presentIndex = presentIndex <= 0 ? 0 : (presentIndex);
-                if(presentIndex === 0) {
-                    return;
-                }
-
-                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
-                const prevElt = this.getListItemByIndex(presentIndex - 1);
-                prevElt.nativeElement.before(this.lastSelectedItem.nativeElement);
-                this.lastSelectedItem.nativeElement.focus();
-                this.statePersistence.removeWidgetState(this, 'selectedItem');
-                const arr = this.listItems.toArray();
-                [arr[presentIndex - 1], arr[presentIndex]] = [arr[presentIndex], arr[presentIndex - 1]];
-                this.listItems.reset(arr);
-                this.currentIndex = presentIndex;
-                this.ariaText = "selected ";
-            } else {
-                presentIndex = presentIndex <= 0 ? 0 : (presentIndex - 1);
-                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
-                this.lastSelectedItem.nativeElement.focus();
-                this.currentIndex = presentIndex + 1;
-                this.ariaText = "selected ";
-            }
-        } else if (action === 'focusNext') {
-            if(this.isListElementMovable) {
-                presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex) : (listItems.length - 1);
-                if(presentIndex === this.listItems.length - 1 ) {
-                    return;
-                }
-
-                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
-                const nextElt = this.getListItemByIndex(presentIndex + 1);
-                nextElt.nativeElement.after(this.lastSelectedItem.nativeElement);
-                this.lastSelectedItem.nativeElement.focus();
-                this.statePersistence.removeWidgetState(this, 'selectedItem');
-                const arr = this.listItems.toArray();
-                [arr[presentIndex], arr[presentIndex + 1]] = [arr[presentIndex + 1], arr[presentIndex]];
-                this.listItems.reset(arr);
-                this.currentIndex = presentIndex + 2;
-                this.ariaText = "selected ";
-            } else {
-                presentIndex = presentIndex < (listItems.length - 1) ? (presentIndex + 1) : (listItems.length - 1);
-                this.lastSelectedItem = this.getListItemByIndex(presentIndex);
-                this.lastSelectedItem.nativeElement.focus();
-                this.currentIndex = presentIndex + 1;
-                this.ariaText = "selected ";
-            }
-        } else if (action === 'select') {
-            // if the enter click is pressed on the item which is not the last selected item, the find the item from which the event is originated.
-            if (presentIndex === -1 || !$($event.target).closest(this.lastSelectedItem.nativeElement)) {
-                const $li = $($event.target).closest('li.app-list-item');
-                const $ul = $li.closest('ul.app-livelist-container');
-                presentIndex = $ul.find('li.app-list-item').index($li);
-            }
-            this.onItemClick($event, this.getListItemByIndex(presentIndex));
-        } else if (action === 'space') {
-            if(!this.enablereorder) {
-                return;
-            }
-            this.isListElementMovable = !this.isListElementMovable;
-            this.onItemClick($event, this.getListItemByIndex(presentIndex));
-            this.currentIndex = presentIndex + 1;
-            if(this.isListElementMovable) {
-                this.ariaText = `Item ${this.currentIndex} grabbed, current position `;
-                this.$ulEle.data('oldIndex', presentIndex);
-            }   else {
-                this.ariaText = `Item ${this.currentIndex} dropped, final position `;
-                this.onUpdate($event, undefined, presentIndex);
-            }
-        }
-    }
-
-    onPropertyChange(key: string, nv: any, ov?: any) {
-        if (key === 'dataset') {
-            if (!nv && this.binddatasource && !this.datasource) {
-                return;
-            }
-            this.onDataSetChange(nv);
-        } else if (key === 'datasource') {
-            if (this.dataset) {
-                this.onDataSetChange(this.dataset);
-            }
-        } else if (key === 'navigation') {
-            // Support for older projects where navigation type was advanced instead of classic
-            if (nv === 'Advanced') {
-                this.navigation = 'Classic';
-                return;
-            }
-            switchClass(this.nativeElement, nv, ov);
-            this.onNavigationTypeChange(nv);
-            if (this.dataNavigator) {
-                this.dataNavigator.navigationClass = this.paginationclass;
-            }
-        } else if (key === 'itemsperrow') {
-            setListClass(this);
-        } else if (key === 'tabindex') {
-            return;
-        } else if (key === 'pulltorefresh' && nv) {
-            this.app.notify('pullToRefresh:enable');
-            this.subscribeToPullToRefresh();
-        } else if (key === 'paginationclass') {
-            if (this.dataNavigator) {
-                // Adding setTimeout because in pagination component updateNavSize method is overriding navigationclass
-                setTimeout( () => this.dataNavigator.navigationClass = nv);
-            }
-        } else if (key === 'pagesize') {
-            this.dataNavigator.options = {
-                maxResults: nv
-            };
-            this.dataNavigator.widget.maxResults = nv;
-            this.dataNavigator.maxResults = nv;
-        } else if (key === 'enablereorder') {
-            if (nv && this.$ulEle) {
-                this.$ulEle.attr('aria-describedby', this.titleId);
-                this.configureDnD();
-                this.$ulEle.sortable('enable');
-            } else if (this.$ulEle && !nv) {
-                this.$ulEle.removeAttr('aria-describedby');
-                this.$ulEle.sortable('disable');
-            }
-        } else {
-            super.onPropertyChange(key, nv, ov);
-        }
-    }
-
-    public onItemClick(evt: any, $listItem: ListItemDirective) {
-        let selectCount: number;
-
-        if (!$listItem.disableItem) {
-            this.firstSelectedItem = this.firstSelectedItem || $listItem;
-            // Setting selectCount value based number of items selected.
-            selectCount = _.isArray(this.selecteditem) ? this.selecteditem.length : (_.isObject(this.selecteditem) ? 1 : 0);
-
-            // Handling multiselect for mobile device
-            if (this.multiselect && isMobile()) {
-                if (this.checkSelectionLimit(selectCount) || $listItem.isActive) {
-                    this.toggleListItemSelection($listItem);
-                } else {
-                    this.invokeEventCallback('selectionlimitexceed', {$event: evt});
-                }
-            } else if ((evt.ctrlKey || evt.metaKey) && this.multiselect) {
-                if (this.checkSelectionLimit(selectCount) || $listItem.isActive) {
-                    this.firstSelectedItem = this.lastSelectedItem = $listItem;
-                    this.toggleListItemSelection($listItem);
-                } else {
-                    this.invokeEventCallback('selectionlimitexceed', {$event: evt});
-                }
-            } else if (evt.shiftKey && this.multiselect) {
-                let first = $listItem.context.index;
-                let last = this.firstSelectedItem.context.index;
-
-                // if first is greater than last, then swap values
-                if (first > last) {
-                    last = [first, first = last][0];
-                }
-                if (this.checkSelectionLimit(last - first)) {
-                    this.clearSelectedItems();
-                    this.listItems.forEach(($liItem: ListItemDirective) => {
-                        const index = $liItem.context.index;
-                        if (index >= first && index <= last) {
-                            this.toggleListItemSelection($liItem);
-                        }
-                    });
-                    this.lastSelectedItem = $listItem;
-                }  else {
-                    this.invokeEventCallback('selectionlimitexceed', {$event: evt});
-                }
-
-            } else {
-                if (!$listItem.isActive || selectCount > 1) {
-                    this.clearSelectedItems();
-                    this.toggleListItemSelection($listItem);
-                    this.firstSelectedItem = this.lastSelectedItem = $listItem;
-                }
-            }
-            $appDigest();
-        }
-    }
-
-    // Empty the list content on clear
-    public clear () {
-        this.updateFieldDefs([]);
-    }
-
     /**
      *  Returns ListItem Reference based on the input provided.
      * @param val: index | model of the list item.
@@ -1184,58 +1331,12 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         return listItem;
     }
 
-    /**
-     * deselects item in the list.
-     * @param val: index | model of the list item.
-     */
-    public deselectItem (val: any) {
-        const listItem = this.getItemRefByIndexOrModel(val);
-        if (listItem && listItem.isActive) {
-            this.toggleListItemSelection(listItem);
-        }
-    }
-
-    /**
-     * selects item in the list.
-     * @param val: index | model of the list item.
-     */
-    public selectItem(val, statePersistenceTriggered?) {
-        const listItem = this.getItemRefByIndexOrModel(val);
-        if (!listItem) {
-            return;
-        }
-        if (!listItem.isActive) {
-            this.toggleListItemSelection(listItem, statePersistenceTriggered);
-        }
-        // focus the element.
-        listItem.nativeElement.focus();
-    }
-
     private beforePaginationChange($event, $index) {
         this.invokeEventCallback('paginationchange', {$event, $index});
     }
 
-    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        // tap and doubleTap events are not getting propagated.So, using mouse events instead.
-        const touchToMouse = {
-            tap: 'click',
-            doubletap: 'dblclick'
-        };
-        if (_.includes(['click', 'tap', 'dblclick', 'doubletap'], eventName)) {
-            this.eventManager.addEventListener(
-                this.nativeElement,
-                touchToMouse[eventName] || eventName,
-                (evt) => {
-                    const target = $(evt.target).closest('.app-list-item');
-                    if (target.length) {
-                        const listItemContext: ListItemDirective = target.data('listItemContext');
-                        if (!listItemContext.disableItem) {
-                            this.invokeEventCallback(eventName, {widget: listItemContext, $event: evt, item: listItemContext.item});
-                        }
-                    }
-                }
-            );
-        }
+    trackByFn($index: number) {
+        return $index; // Return a unique identifier for each item
     }
 
     // Invoke the datasource variable by default when pulltorefresh event is not specified.
@@ -1247,20 +1348,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }));
     }
 
-    ngOnInit() {
-        super.ngOnInit();
-        this.handleHeaderClick = noop;
-        setTimeout(() => {
-            this.debouncedFetchNextDatasetOnScroll = this.paginationService.debouncedFetchNextDatasetOnScroll(this.dataNavigator, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME, this);
-        }, 0);
-        this._items = [];
-        this.fieldDefs = [];
-        this.reorderProps = {
-            minIndex: null,
-            maxIndex: null
-        };
-    }
-
     private setUpCUDHandlers() {
         const $addItem = document.getElementsByClassName("add-list-item")[0];
         if ($addItem) {
@@ -1269,61 +1356,5 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.create();
             });
         }
-    }
-
-    ngAfterViewInit() {
-        this.promiseResolverFn();
-        this.propsInitPromise.then(() => {
-            super.ngAfterViewInit();
-            this.setUpCUDHandlers();
-            this.selectedItemWidgets = this.multiselect ? [] : {};
-            var ele = $(this.nativeElement).find('.app-livelist-container');
-
-            if (this.enablereorder && !this.groupby) {
-                if(ele) {
-                    ele.attr('aria-describedby', this.titleId);
-                }
-                this.configureDnD();
-            }
-            if (!this.enablereorder) {
-                if (ele) {
-                    ele.removeAttr('aria-describedby');
-                }
-            }
-            if (this.groupby && this.collapsible) {
-                this.handleHeaderClick = handleHeaderClick;
-                this.toggleAllHeaders = toggleAllHeaders.bind(undefined, this);
-            }
-            setListClass(this);
-        });
-        this.setupHandlers();
-        const $ul = this.nativeElement.querySelector('ul.app-livelist-container');
-        styler($ul as HTMLElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
-        if (this.enablereorder) {
-            if ($ul){
-                $ul.setAttribute('aria-describedby', this.titleId);
-            }
-        }
-        if (!this.enablereorder)  {
-            if($ul) {
-                $ul.removeAttribute('aria-describedby');
-            }
-        }
-        if (isMobileApp() && $ul.querySelector('.app-list-item-action-panel')) {
-            this._listAnimator = new ListAnimator(this);
-        }
-    }
-
-    ngOnDestroy() {
-        if (this._listAnimator && this._listAnimator.$btnSubscription) {
-            this._listAnimator.$btnSubscription.unsubscribe();
-        }
-        this._listenerDestroyers.forEach(d => d && d());
-        super.ngOnDestroy();
-    }
-
-    ngOnDetach() {
-        super.ngOnDetach();
-        this._pageLoad = true;
     }
 }

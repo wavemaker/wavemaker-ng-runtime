@@ -2,14 +2,14 @@ import {
     AfterContentInit,
     AfterViewInit,
     ElementRef,
+    Inject,
+    inject,
     Injectable,
     Injector,
-    Inject,
     OnDestroy,
     OnInit,
-    ViewContainerRef,
     Optional,
-    inject
+    ViewContainerRef
 } from '@angular/core';
 import {EventManager} from '@angular/platform-browser';
 
@@ -22,6 +22,7 @@ import {
     $watch,
     addClass,
     App,
+    findParent,
     isDefined,
     isMobileApp,
     removeAttr,
@@ -29,8 +30,7 @@ import {
     setAttr,
     setCSS,
     setCSSFromObj,
-    switchClass,
-    findParent
+    switchClass
 } from '@wm/core';
 
 import {getWidgetPropsByType} from '../../framework/widget-props';
@@ -41,28 +41,29 @@ import {widgetIdGenerator} from '../../framework/widget-id-generator';
 import {DISPLAY_TYPE, EVENTS_MAP} from '../../framework/constants';
 import {WidgetProxyProvider} from '../../framework/widget-proxy-provider';
 import {getWatchIdentifier} from '../../../utils/widget-utils';
+import {camelCase, extend, forEach, isArray, isObject, join, map} from "lodash-es";
 
-declare const $, _;
+declare const $;
 
 // Gets list of classes to add and remove and applies on the $el
 const updateClasses = (toAdd, toRemove, el) => {
     if (toRemove && toRemove.length) {
-        removeClass(el, _.join(toRemove, ' '));
+        removeClass(el, join(toRemove, ' '));
     }
     if (toAdd && toAdd.length) {
-        addClass(el, _.join(toAdd, ' '));
+        addClass(el, join(toAdd, ' '));
     }
 };
 
 // To add and remove styles on the $el
 const updateStyles = (nv, ov, el) => {
-    if (ov && _.isObject(ov)) {
+    if (ov && isObject(ov)) {
         const keys = Object.keys(ov || {});
         keys.forEach(function(key) {
             setCSS(el, key, '');
         });
     }
-    if (nv && _.isObject(nv)) {
+    if (nv && isObject(nv)) {
         setCSSFromObj(el, nv);
     }
 
@@ -194,10 +195,16 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     public viewContainerRef: ViewContainerRef;
     public viewParentApp: App;
+    /**
+     * To avoid re-rendering of widget, passing unique id as contextKey to createCustomInjector
+     * (for List, Dynamic Tabs, Accordion, Nav, Carousel)
+     */
+    public trackId: string;
 
     protected constructor(
         protected inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any,
         initPromise?: Promise<any> // Promise on which the initialization has to wait
     ) {
         const elementRef = inj.get(ElementRef);
@@ -259,6 +266,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         }
 
         this.widgetId = this.generateWidgetId();
+        this.trackId = this.generateWidgetId();
         setAttr(this.nativeElement, 'widget-id', this.widgetId, true);
 
         // register default property change handler and style change handler
@@ -275,6 +283,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 this.setInitProps();
                 resolveFn && resolveFn()
             });
+        }
+        if(explicitContext) {
+            extend(this.context, explicitContext);
         }
     }
 
@@ -365,8 +376,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
         if (parentContexts) {
             let parentContextObj = {};
-            if (_.isArray(parentContexts)) {
-                _.forEach(parentContexts, (contextObj) => {
+            if (isArray(parentContexts)) {
+                forEach(parentContexts, (contextObj) => {
                     Object.assign(parentContextObj, contextObj);
                 });
             } else {
@@ -533,7 +544,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         widget.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
         // prepend eventName with on and convert it to camelcase.
         // eg, "click" ---> onClick
-        const onEventName =  _.camelCase(`on-${eventName}`);
+        const onEventName = camelCase(`on-${eventName}`);
         // save the eventCallback in widgetScope.
 
         widget[onEventName] = eventCallback;
@@ -637,7 +648,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         if(_tNodeAttrs === null) {
             return actualAttrs.sort();
         }
-        _.forEach(_tNodeAttrs, (attr, i) => {
+        forEach(_tNodeAttrs, (attr, i: any) => {
             if (typeof attr === 'number') {
                 return false;
             }
@@ -664,7 +675,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Process the attributes
      */
     private processAttrs() {
-        _.map(this.getAttributes(), (attrName: string) => {
+        map(this.getAttributes(), (attrName: string) => {
             let attrValue = this.nativeElement.attributes[attrName].value
             this.$attrs.set(attrName, attrValue);
             this.processAttr(attrName, attrValue);
@@ -752,6 +763,31 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
     public unmute() {
         this.isMuted = false;
+    }
+
+    private customInjectorMap: any = {};
+
+    /**
+     * After the Angular 17 upgrade, Angular is no longer sending ngTemplateContext to components in ng-template.
+     * Wavemaker widgets inside ng-template require context to evaluate bind expressions.
+     * So we're creating an injectionToken that returns the context as a value.
+     * We are passing the injectionToken to the ngTemplateOutletInjector.
+     * This injects the context into each widget in the ng-template.
+     * In the widget component constructor we are getting the injectionToken using dependency injection.
+     * If injectionToken is present, we extend the component context with the value of injectionToken.
+     * @param contextKey
+     * @param context
+     * @returns injector
+     */
+    createCustomInjector(contextKey: string, context: any) {
+        if(this.customInjectorMap[contextKey]) {
+            return this.customInjectorMap[contextKey].injector;
+        }
+        const injector = Injector.create({
+            providers: [{ provide: 'EXPLICIT_CONTEXT', useFactory: () => context }]
+        });
+        this.customInjectorMap[contextKey] = { context, injector };
+        return injector;
     }
 
     /**

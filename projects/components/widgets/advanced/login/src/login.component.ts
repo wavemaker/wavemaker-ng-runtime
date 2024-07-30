@@ -3,6 +3,7 @@ import {
     Component,
     ContentChild,
     ContentChildren,
+    Inject,
     Injector,
     Optional,
     QueryList,
@@ -14,10 +15,9 @@ import { FormComponent } from '@wm/components/data/form';
 import { ButtonComponent } from '@wm/components/input';
 
 import { registerProps } from './login.props';
+import {includes} from "lodash-es";
 
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
-
-declare const _;
 
 @Component({
     selector: 'div[wmLogin]',
@@ -38,8 +38,8 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     errormessage: any;
     eventsource;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_INFO);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_INFO, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 
@@ -87,7 +87,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
 
         // get login button component
         this.buttonComponents.forEach(cmp => {
-            if (cmp.getNativeElement().getAttribute('name') === 'loginButton' || _.includes(cmp.getNativeElement().classList, 'app-login-button')) {
+            if (cmp.getNativeElement().getAttribute('name') === 'loginButton' || includes(cmp.getNativeElement().classList, 'app-login-button')) {
                 if (this.loginBtnCmp) {
                     return;
                 }

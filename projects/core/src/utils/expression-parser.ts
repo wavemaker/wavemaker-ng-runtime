@@ -16,8 +16,7 @@ import {
     PropertyWrite,
     Unary
 } from '@angular/compiler';
-
-declare const _;
+import {get} from "lodash-es";
 
 const isDef = v => v !== void 0;
 const ifDef = (v, d) => v === void 0 ? d : v;
@@ -535,7 +534,7 @@ export function $parseExpr(expr: string, defOnly?: boolean): ParseExprResult {
                 // handle internal bindings for wm widgets used inside a component
                 let _ctx = Object.assign({}, locals);
                 Object.setPrototypeOf(_ctx, ctx);
-                return _.get(_ctx, expr);
+                return get(_ctx, expr);
             };
         } else {
             const parser = new Parser(new Lexer);
@@ -597,7 +596,7 @@ function simpleFunctionEvaluator(expr, ctx, locals) {
 
     let parts = expr.split('(');
     let fnName = parts[0];
-    let computedFn = _.get(ctx, fnName);
+    let computedFn = get(ctx, fnName);
 
     if (computedFn) {
         let args = parts[1].replace(')', '');
@@ -605,7 +604,7 @@ function simpleFunctionEvaluator(expr, ctx, locals) {
         let computedArgs = [];
         args.forEach((arg)=> {
             arg = arg && arg.trim();
-            computedArgs.push(_.get(_ctx, arg));
+            computedArgs.push(get(_ctx, arg));
         });
         return computedFn.bind(_ctx)(...computedArgs);
     }
@@ -638,7 +637,7 @@ export function $parseEvent(expr, defOnly?): ParseExprResult {
             fn = simpleFunctionEvaluator.bind(undefined, expr);
         } else {
             const parser = new Parser(new Lexer);
-            const ast = parser.parseAction(expr, false, '',0);
+            const ast = parser.parseAction(expr, '', 0);
 
             if (ast.errors.length) {
                 return noop;

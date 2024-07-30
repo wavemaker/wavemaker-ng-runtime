@@ -8,8 +8,9 @@ import { App, getAbortableDefer, hasCordova, isIos, noop, retryIfFails } from '@
 import { IDeviceStartUpService } from './device-start-up-service';
 import { NativeXMLHttpRequest } from './../native.xhr';
 import { DeviceService } from './device.service';
+import {clone, endsWith, find, get, isEqual, startsWith} from "lodash-es";
 
-declare const _, cordova, Connection, navigator;
+declare const navigator;
 
 const AUTO_CONNECT_KEY = 'WM.NetworkService._autoConnect',
     IS_CONNECTED_KEY = 'WM.NetworkService.isConnected',
@@ -31,9 +32,9 @@ let XML_HTTP_REQUEST = null;
  * @returns {boolean}
  */
 const blockUrl = url => {
-    let block = !networkState.isConnected && _.startsWith(url, 'http');
+    let block = !networkState.isConnected && startsWith(url, 'http');
     if (block) {
-        block = !_.find(excludedList, regExp => regExp.test(url));
+        block = !find(excludedList, regExp => regExp.test(url));
     }
     return block;
 };
@@ -120,7 +121,7 @@ export class NetworkService implements IDeviceStartUpService {
      */
     public isConnected = () => {
         // checking for connection type.
-        if (_.get(navigator, 'connection') && navigator.connection.type) {
+        if (get(navigator, 'connection') && navigator.connection.type) {
             networkState.isConnected = networkState.isConnected && (navigator.connection.type !== 'none');
         }
         this.checkForNetworkStateChange();
@@ -241,12 +242,12 @@ export class NetworkService implements IDeviceStartUpService {
     }
 
     public getState() {
-        return _.clone(networkState);
+        return clone(networkState);
     }
 
     private checkForNetworkStateChange() {
-        if (!_.isEqual(this._lastKnownNetworkState, networkState)) {
-            this._lastKnownNetworkState = _.clone(networkState);
+        if (!isEqual(this._lastKnownNetworkState, networkState)) {
+            this._lastKnownNetworkState = clone(networkState);
             this.app.notify('onNetworkStateChange', this._lastKnownNetworkState);
         }
     }
@@ -302,7 +303,7 @@ export class NetworkService implements IDeviceStartUpService {
         return new Promise<boolean>(resolve => {
             const oReq = new XML_HTTP_REQUEST();
             let baseURL = this.app.deployedUrl;
-            if (baseURL && !_.endsWith(baseURL, '/')) {
+            if (baseURL && !endsWith(baseURL, '/')) {
                 baseURL += '/';
             } else {
                 baseURL = baseURL || '';

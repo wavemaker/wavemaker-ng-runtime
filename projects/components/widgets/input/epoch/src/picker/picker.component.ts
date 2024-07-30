@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Injector, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
 
-declare const _, moment, $;
+declare const $;
 
 @Component({
     selector: 'wm-pickergroup',

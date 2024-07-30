@@ -1,10 +1,10 @@
 /*global describe, it, WM, beforeEach, expect, module, inject, _, parseInt, document, Hammer*/
 
 import { waitForAsync } from '@angular/core/testing';
-import * as _ from '../../../../../node_modules/lodash/lodash.min';
 import { isBooleanAttr, isDimensionProp } from '../widgets/framework/constants';
 import { toDimension } from '../../../../core/src/utils/dom';
 import { compileTestComponent, getHtmlSelectorElement } from './util/component-test-util';
+import {forEach, isObject, replace} from "lodash-es";
 
 // TODO: Pending basic common Events, basic touch events, dialog events and properties
 
@@ -59,7 +59,7 @@ export class ComponentTestBase {
             let component,
                 fixture,
                 widgetProps,
-                widgetAttr = _.replace(this.widgetDef.type, '-', '');
+                widgetAttr = replace(this.widgetDef.type, '-', '');
 
             beforeEach(waitForAsync(() => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
@@ -69,8 +69,7 @@ export class ComponentTestBase {
             }));
             let count = 0;
             // iterate through all the attributes specified in the markup and verify them against corresponding iScope properties
-            _.forEach(this.widgetDef.$unCompiled[0].attributes, (attr) => {
-
+            forEach(this.widgetDef.$unCompiled[0].attributes, (attr) => {
                 let attrName = attr.name,
                     attrValue = attr.value,
                     processedAttrValue = attrValue;
@@ -84,30 +83,30 @@ export class ComponentTestBase {
 
                 it('"' + attrName + '" should be on the widget with value as: ' + processedAttrValue, () => {
                     let attrProps = widgetProps.get(attrName) || {};
-                    //  console.log(++count, ' checking', attrName, ' of type', attrProps.type, ' for value', processedAttrValue)
+                    // console.log(++count, ' checking', attrName, ' of type', attrProps.type, ' for value', processedAttrValue)
 
                     // convert the type of the attr.value and compare with its corresponding iScope property
                     if (attrProps.type === 1) {
                         if (isBooleanAttr(attrName)) {
-                            processedAttrValue = attrValue === attrName || attrValue === true || attrValue === 'true';
+                            processedAttrValue = (attrValue === attrName || Boolean(attrValue) === true || attrValue === 'true').toString();
                         } else {
-                            processedAttrValue = attrValue === true || attrValue === 'true';
+                            processedAttrValue = (Boolean(attrValue) === true || attrValue === 'true').toString();
                         }
                     } else if (isBooleanAttr(attrName)) {
-                        processedAttrValue = attrValue === attrName || attrValue === true || attrValue === 'true';
+                        processedAttrValue = (attrValue === attrName || Boolean(attrValue) === true || attrValue === 'true').toString();
                     } else if (attrProps.type === 2) {
-                        processedAttrValue = +attrValue;
+                        processedAttrValue = (+attrValue).toString();
                     }
 
                     // dimension properties like height, width, etc
                     if (isDimensionProp(attrName)) {
-                        processedAttrValue = toDimension(processedAttrValue);
+                        processedAttrValue = (toDimension(processedAttrValue)).toString();
                     }
 
                     if (attr.name == 'container') {
                         attrName = 'containerTarget';
                     }
-                    expect(component[attrName]).toBe(processedAttrValue);
+                    expect(component[attrName].toString()).toBe(processedAttrValue);
                 });
 
             });
@@ -246,7 +245,7 @@ export class ComponentTestBase {
             // TODO
             // This has to refactor for dialogues
             if (!isDialog) {
-                _.forEach(['width', 'height'], (cssName) => {
+                forEach(['width', 'height'], (cssName) => {
                     // check if property is given
                     const propName = cssName.toLowerCase();
                     if (!this.widgetDef.$unCompiled.attr(propName)) {
@@ -266,7 +265,7 @@ export class ComponentTestBase {
             }
 
             // check com
-            _.forEach(['fontsize',
+            forEach(['fontsize',
                 'fontweight',
                 'fontstyle',
                 'fontfamily',
@@ -293,9 +292,9 @@ export class ComponentTestBase {
                 'margin'
             ], (prop) => {
                 let cssName, propName, initValue, cssValue;
-                if (_.isObject(prop)) {
-                    cssName = prop.cssName;
-                    propName = prop.wmPropName;
+                if (isObject(prop)) {
+                    cssName = prop[cssName];
+                    propName = prop[propName];
                 } else {
                     cssName = prop;
                     propName = cssName.toLowerCase();
@@ -361,7 +360,7 @@ export class ComponentTestBase {
                 fixture.detectChanges();
             }));
 
-            _.forEach(eventList, (evtObj) => {
+            forEach(eventList, (evtObj) => {
 
                 if (evtObj.clickableEle) {
                     it('Should trigger the ' + evtObj.eventName + ' event', waitForAsync(() => {

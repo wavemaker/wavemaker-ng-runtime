@@ -1,4 +1,4 @@
-import {Component, Injector, Optional, ViewChild} from '@angular/core';
+import {Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
@@ -36,8 +36,8 @@ export class SliderComponent extends BaseFormCustomComponent {
 
     @ViewChild(NgModel) ngModel: NgModel;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }
 

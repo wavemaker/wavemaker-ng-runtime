@@ -1,10 +1,10 @@
-import { AfterViewInit, ElementRef, Inject, Injectable, Injector } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import {AfterViewInit, ElementRef, Inject, Injectable, Injector, Optional} from '@angular/core';
+import {NgModel} from '@angular/forms';
 
 import {$appDigest, addClass, switchClass} from '@wm/core';
-import { IWidgetConfig, styler, WidgetConfig } from '@wm/components/base';
-import { BaseFormCustomComponent } from '../../base-form-custom.component';
-declare const _;
+import {IWidgetConfig, styler, WidgetConfig} from '@wm/components/base';
+import {BaseFormCustomComponent} from '../../base-form-custom.component';
+import {get, isString} from "lodash-es";
 
 @Injectable()
 export abstract class BaseInput extends BaseFormCustomComponent implements AfterViewInit {
@@ -15,7 +15,8 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
     // possible values for ngModelOptions are 'blur' and 'change'
     // default is 'blur'
     public ngModelOptions = {
-        updateOn: ''
+        updateOn: '',
+        standalone: true
     };
 
     /**
@@ -57,7 +58,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
 
     // invoke the change callback
     handleChange(newValue: any) {
-        if (this.autotrim && this.datavalue && _.isString(this.datavalue)) {
+        if (this.autotrim && this.datavalue && isString(this.datavalue)) {
             this.datavalue = this.datavalue.trim();
         }
 
@@ -79,7 +80,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
     // Update the model on enter key press
     flushViewChanges(val) {
         // when val contains masked value, update the model with unmasked value
-        const unMaskedVal = _.get(this.imask, 'maskRef.unmaskedValue');
+        const unMaskedVal = get(this.imask, 'maskRef.unmaskedValue');
         val = unMaskedVal ? unMaskedVal : val;
         this.ngModel.update.next(val);
         $appDigest();
@@ -97,9 +98,10 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
 
     protected constructor(
         inj: Injector,
-        @Inject(WidgetConfig) config: IWidgetConfig
+        @Inject(WidgetConfig) config: IWidgetConfig,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, config);
+        super(inj, config, explicitContext);
         let updateOn = this.nativeElement.getAttribute('updateon') || 'blur';
         updateOn = updateOn === 'default' ? 'change' : updateOn;
         this.ngModelOptions.updateOn = updateOn;

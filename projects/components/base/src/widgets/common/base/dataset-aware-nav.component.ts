@@ -1,4 +1,4 @@
-import {Injector, Optional} from '@angular/core';
+import {Inject, Injector, Optional} from '@angular/core';
 
 import { Subject } from 'rxjs';
 
@@ -9,17 +9,16 @@ import { createArrayFrom } from '../../../utils/data-utils';
 import { getEvaluatedData } from '../../../utils/widget-utils';
 import { getOrderedDataset } from '../../../utils/form-utils';
 import { StylableComponent } from './stylable.component';
-
-declare const _;
+import {debounce, first, get, isUndefined, omitBy, startsWith} from "lodash-es";
 
 const getValidLink = (link) => {
     const routRegex = /^(\/|#\/|#)(?!\W).*/;
     if (link) {
         if (routRegex.test(link)) {
-            link = _.first(link.match(/[\w]+.*/g)) || '';
+            link = first(link.match(/[\w]+.*/g)) || '';
             return `#/${link}`;
         }
-        if (_.startsWith(link, 'www.')) {
+        if (startsWith(link, 'www.')) {
             return `//${link}`;
         }
         return link;
@@ -60,8 +59,8 @@ export class DatasetAwareNavComponent extends StylableComponent {
     protected binditemid: string | null;
     protected nodes$ = new Subject();
 
-    constructor(inj: Injector, WIDGET_CONFIG) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, WIDGET_CONFIG, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         this.securityService = this.inj.get(SecurityService);
         this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');
         this.binditemicon = this.nativeElement.getAttribute('itemicon.bind');
@@ -82,24 +81,49 @@ export class DatasetAwareNavComponent extends StylableComponent {
      */
     private getNode(fields, node): NavNode {
         const context = this.viewParent.pageScope || this.viewParent;
-        const children = getEvaluatedData(node, {field: this.itemchildren, bindExpression: this.binditemchildren}, context) || _.get(node, fields.childrenField);
+        const children = getEvaluatedData(node, {
+            field: this.itemchildren,
+            bindExpression: this.binditemchildren
+        }, context) || get(node, fields.childrenField);
         const navNode = {
-            action: getEvaluatedData(node, {field: this.itemaction, bindExpression: this.binditemaction}, context) || _.get(node, fields.actionField),
-            badge: getEvaluatedData(node, {field: this.itembadge, bindExpression: this.binditembadge}, context) || _.get(node, fields.badgeField),
+            action: getEvaluatedData(node, {
+                field: this.itemaction,
+                bindExpression: this.binditemaction
+            }, context) || get(node, fields.actionField),
+            badge: getEvaluatedData(node, {
+                field: this.itembadge,
+                bindExpression: this.binditembadge
+            }, context) || get(node, fields.badgeField),
             children: Array.isArray(children) ? this.getNodes(children) : [],
-            class: _.get(node, fields.classField),
+            class: get(node, fields.classField),
             disabled: node.disabled,
-            icon: getEvaluatedData(node, {field: this.itemicon, bindExpression: this.binditemicon}, context) || _.get(node, fields.iconField),
-            id: getEvaluatedData(node, {field: this.itemid, bindExpression: this.binditemid}, context) || _.get(node, fields.idField),
-            label: getEvaluatedData(node, {field: this.itemlabel, bindExpression: this.binditemlabel}, context) || _.get(node, fields.labelField),
-            link: getValidLink(getEvaluatedData(node, {field: this.itemlink, bindExpression: this.binditemlink}, context) || _.get(node, fields.linkField)),
-            target: getValidLink(getEvaluatedData(node, {field: this.itemtarget, bindExpression: this.binditemtarget}, context) || _.get(node, fields.targetField)),
+            icon: getEvaluatedData(node, {
+                field: this.itemicon,
+                bindExpression: this.binditemicon
+            }, context) || get(node, fields.iconField),
+            id: getEvaluatedData(node, {
+                field: this.itemid,
+                bindExpression: this.binditemid
+            }, context) || get(node, fields.idField),
+            label: getEvaluatedData(node, {
+                field: this.itemlabel,
+                bindExpression: this.binditemlabel
+            }, context) || get(node, fields.labelField),
+            link: getValidLink(getEvaluatedData(node, {
+                field: this.itemlink,
+                bindExpression: this.binditemlink
+            }, context) || get(node, fields.linkField)),
+            target: getValidLink(getEvaluatedData(node, {
+                field: this.itemtarget,
+                bindExpression: this.binditemtarget
+            }, context) || get(node, fields.targetField)),
             role: getEvaluatedData(node, {field: this.userrole, bindExpression: this.binduserrole}, context),
             isactive: getEvaluatedData(node, {field: this.isactive, bindExpression: this.bindisactive}, context),
             // older projects have display field & data field property for menu.
             value: this.datafield ? (this.datafield === 'All Fields' ? node : findValueOf(node, this.datafield)) : node
         };
-        return _.omitBy(navNode, _.isUndefined);
+        // @ts-ignore
+        return omitBy(navNode, isUndefined);
     }
 
     resetItemFieldMap() {
@@ -174,7 +198,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
     }
 
     // debounce function for reset nodes functions.
-    private _resetNodes = _.debounce(this.resetNodes, 50);
+    private _resetNodes = debounce(this.resetNodes, 50);
 
     onPropertyChange(key, nv, ov) {
         switch (key) {

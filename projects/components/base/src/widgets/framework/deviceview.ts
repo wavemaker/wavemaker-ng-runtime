@@ -1,6 +1,6 @@
 import { isMobile, setCSS } from '@wm/core';
 
-declare const $, _;
+declare const $;
 
 enum CLASS_NAME {
     LEFT_PANEL = 'page-left-panel',

@@ -1,10 +1,9 @@
-import { Injector, AfterViewInit, Injectable, Inject } from '@angular/core';
+import {AfterViewInit, Inject, Injectable, Injector, Optional} from '@angular/core';
 
 import {DataSource} from '@wm/core';
 
 import { IWidgetConfig, StylableComponent, WidgetConfig } from '@wm/components/base';
-
-declare const _;
+import {has, set} from "lodash-es";
 
 @Injectable()
 export abstract class BaseFormComponent extends StylableComponent implements AfterViewInit{
@@ -17,9 +16,10 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
     protected constructor(
         protected inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any,
         initPromise?: Promise<any>
     ) {
-        super(inj, config, initPromise);
+        super(inj, config, explicitContext, initPromise);
         this.binddatavalue = this.$element.attr('datavalue.bind');
     }
 
@@ -53,10 +53,10 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
         binddatavalue = binddatavalue.replace(/\[\$i\]/g, '[0]');
 
         // In case of list widget context will be the listItem.
-        if (_.has(this.context, binddatavalue.split('.')[0])) {
-            _.set(this.context, binddatavalue, value);
+        if (has(this.context, binddatavalue.split('.')[0])) {
+            set(this.context, binddatavalue, value);
         } else {
-            _.set(this.viewParent, binddatavalue, value);
+            set(this.viewParent, binddatavalue, value);
         }
     }
 

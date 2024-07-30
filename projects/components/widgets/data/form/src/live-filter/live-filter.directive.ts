@@ -4,8 +4,7 @@ import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, get
 
 import { FormComponent } from '../form.component';
 import { registerLiveFilterProps } from '../form.props';
-
-declare const _;
+import {find} from "lodash-es";
 
 const FILTER_CONSTANTS = {
     'EMPTY_KEY'   : 'EMPTY_NULL_FILTER'
@@ -331,7 +330,7 @@ export class LiveFilterDirective {
     // Calls the filter function if default values are present
     filterOnDefault() {
         /*Check if default value is present for any filter field*/
-        const defaultObj = _.find(this.form.formFields, obj => {
+        const defaultObj = find(this.form.formFields, obj => {
             return isDefined(obj.value) || isDefined(obj.minValue) || isDefined(obj.maxValue);
         });
         /*If default value exists and data is loaded, apply the filter*/

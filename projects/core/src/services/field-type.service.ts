@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-
-declare const _;
+import {assign} from "lodash-es";
 
 @Injectable({providedIn: 'root'})
 export class FieldTypeService {
     constructor() {
-        _.assign(this, {
+        assign(this, {
             INTEGER : 'integer',
             BIG_INTEGER : 'big_integer',
             SHORT : 'short',

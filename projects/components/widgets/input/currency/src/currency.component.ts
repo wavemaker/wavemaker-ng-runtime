@@ -1,4 +1,4 @@
-import {Component, ElementRef, Injector, Optional, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import {  DecimalPipe } from '@angular/common';
 
@@ -41,8 +41,8 @@ export class CurrencyComponent extends NumberLocale {
     @ViewChild(NgModel, {static: true}) ngModel: NgModel;
     @ViewChild('input', { static: true, read: ElementRef }) inputEl: ElementRef;
 
-    constructor(inj: Injector,  private appDefaults: AppDefaults, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe) {
-        super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe);
+    constructor(inj: Injector,  private appDefaults: AppDefaults, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe, explicitContext);
         this.currencyCode = this.appDefaults.currencyCode || 'USD';
         this.currencySymbol = CURRENCY_INFO[this.appDefaults.currencyCode || "USD"].symbol;
     }
