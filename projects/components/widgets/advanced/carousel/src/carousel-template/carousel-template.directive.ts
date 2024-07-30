@@ -1,7 +1,7 @@
 import {Directive, Inject, Injector, Optional} from '@angular/core';
 
-import { IWidgetConfig, StylableComponent, styler } from '@wm/components/base';
-import { registerProps } from './carousel-template.props';
+import {IWidgetConfig, StylableComponent, styler} from '@wm/components/base';
+import {registerProps} from './carousel-template.props';
 
 const DEFAULT_CLS = 'app-carousel-item';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -10,7 +10,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Directive({
-    selector: '[wmCarouselTemplate]'
+    selector: '[wmCarouselTemplate]',
+    exportAs: 'carouselTemplateRef',
 })
 export class CarouselTemplateDirective extends StylableComponent {
     static initializeProps = registerProps();

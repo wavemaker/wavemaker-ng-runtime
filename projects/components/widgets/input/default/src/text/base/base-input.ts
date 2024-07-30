@@ -1,9 +1,9 @@
 import {AfterViewInit, ElementRef, Inject, Injectable, Injector, Optional} from '@angular/core';
-import { NgModel } from '@angular/forms';
+import {NgModel} from '@angular/forms';
 
 import {$appDigest, addClass, switchClass} from '@wm/core';
-import { IWidgetConfig, styler, WidgetConfig } from '@wm/components/base';
-import { BaseFormCustomComponent } from '../../base-form-custom.component';
+import {IWidgetConfig, styler, WidgetConfig} from '@wm/components/base';
+import {BaseFormCustomComponent} from '../../base-form-custom.component';
 import {get, isString} from "lodash-es";
 
 @Injectable()
@@ -15,7 +15,8 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
     // possible values for ngModelOptions are 'blur' and 'change'
     // default is 'blur'
     public ngModelOptions = {
-        updateOn: ''
+        updateOn: '',
+        standalone: true
     };
 
     /**

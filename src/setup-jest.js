@@ -2,6 +2,7 @@ import "jest-preset-angular/setup-jest";
 import { ToastrModule } from 'ngx-toastr';
 import { TestBed } from '@angular/core/testing';
 import _ from 'lodash-es';
+import 'jest-canvas-mock';
 
 // Mock global objects if necessary
 global.jQuery = require("jquery");
@@ -10,6 +11,7 @@ global._ = _;
 
 
 global.moment = require("moment");
+
 class IntersectionObserver {
     constructor(callback, options) {
 
@@ -86,4 +88,33 @@ beforeEach(() => {
       },
     },
   });
+});
+
+// jest.setup.js
+Object.defineProperty(global.HTMLMediaElement.prototype, 'load', {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: jest.fn(),
+});
+
+Object.defineProperty(global.HTMLMediaElement.prototype, 'play', {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: jest.fn().mockResolvedValue(),
+});
+
+Object.defineProperty(global.HTMLMediaElement.prototype, 'pause', {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: jest.fn(),
+});
+
+Object.defineProperty(global.HTMLMediaElement.prototype, 'addTextTrack', {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: jest.fn(),
 });

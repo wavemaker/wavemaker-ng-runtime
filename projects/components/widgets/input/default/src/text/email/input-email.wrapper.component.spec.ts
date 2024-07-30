@@ -10,10 +10,7 @@ import {
 } from "../../../../../../base/src/test/common-widget.specs";
 import {IMaskModule} from "angular-imask";
 import {InputEmailComponent} from "./input-email.component";
-
-let mockApp = {
-    subscribe: () => { return () => {}}
-};
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
 
 const markup = `<wm-input type="email" name="text1" hint="email field">`;
 

@@ -56,7 +56,7 @@
             [attr.tabindex]="tabindex"
             role="listitem">
             <ng-container [ngTemplateOutlet]="listTemplate"
-                          [ngTemplateOutletInjector]="createCustomInjector('flat_' + $index, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
+                          [ngTemplateOutletInjector]="createCustomInjector('falt_' + listItemRef.trackId, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
                           [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
         </li>
     </ng-template>
@@ -124,7 +124,7 @@
                     [ngClass]="listItemRef.itemClass"
                     [wmListItem]="item" #listItemRef="listItemRef">
                     <ng-container [ngTemplateOutlet]="listTemplate"
-                                  [ngTemplateOutletInjector]="createCustomInjector('group_' + groupIndex + '_item_' + $index, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
+                                  [ngTemplateOutletInjector]="createCustomInjector('group_' + listItemRef.trackId, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
                                   [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
                 </li>
             </ul>

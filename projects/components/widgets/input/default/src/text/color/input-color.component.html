@@ -4,6 +4,7 @@
        role="textbox"
        [attr.name]="name"
        [(ngModel)]="datavalue"
+       [ngModelOptions]="{standalone: true}"
        [readonly]="readonly"
        [required]="required"
        [disabled]="disabled"

@@ -21,17 +21,20 @@
        iconclass.bind="item.icon"
        badgevalue.bind="item.badge"
        iconposition.bind="iconposition"
-       click.event="onNavSelect($event, item, liRef)"></a>
+       click.event="onNavSelect($event, item)"></a>
 </ng-template>
 
-<li class="app-nav-item {{item.class}}" *ngFor="let item of nodes; let index = index;" #liRef [ngClass]="{active: item._selected || (!isactive && item.link === '#/' + activePageName)}">
+<li #liRef="navItemRef" *ngFor="let item of nodes; let index = index;"
+    [ngClass]="{active: item._selected || (!isactive && item.link === '#/' + activePageName)}"
+    class="app-nav-item {{item.class}}"
+    wmNavItem>
     <ng-container [ngTemplateOutlet]="anchorRef"
                   [ngTemplateOutletContext]="{item: item, index:index, liRef: liRef}"
-                  [ngTemplateOutletInjector]="createCustomInjector('anchor_' + index, {item: item, index:index, liRef: liRef})"
+                  [ngTemplateOutletInjector]="createCustomInjector('anchor_' + liRef.trackId, {item: item, index:index, liRef: liRef})"
                   *ngIf="!item.children.length"></ng-container>
     <ng-container [ngTemplateOutlet]="menuRef"
                   [ngTemplateOutletContext]="{item: item, index:index}"
-                  [ngTemplateOutletInjector]="createCustomInjector('menu_' + index, {item: item, index:index})"
+                  [ngTemplateOutletInjector]="createCustomInjector('menu_' + liRef.trackId, {item: item, index:index})"
                   *ngIf="item.children.length"></ng-container>
 </li>
 

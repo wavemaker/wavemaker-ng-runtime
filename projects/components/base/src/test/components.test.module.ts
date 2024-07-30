@@ -9,10 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import {SanitizePipe} from "../pipes/sanitize.pipe";
-
-const mockApp = {
-    subscribe: () => { return () => {}}
-};
+import { mockApp } from './util/component-test-util';
 
 @NgModule({
     declarations: [

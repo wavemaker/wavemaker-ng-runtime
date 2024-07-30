@@ -26,6 +26,7 @@
                         [showMeridian]="ismeridian"
                         [readonlyInput]="isDisabled"
                         [(ngModel)]="bsTimeValue"
+                        [ngModelOptions]="{standalone: true}"
                         [disabled]="disabled || readonly || isCurrentTime"
                         [min]="minTime"
                         [max]="maxTime"

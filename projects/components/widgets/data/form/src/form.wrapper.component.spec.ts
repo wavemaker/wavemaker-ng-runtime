@@ -8,7 +8,7 @@ import { Component, ViewChild } from '@angular/core';
 import { IMaskModule } from 'angular-imask';
 import { FormActionDirective } from './form-action/form-action.directive';
 import { FormFieldDirective } from './form-field/form-field.directive';
-import { compileTestComponent, setInputValue, onClickCheckTaglengthOnBody, checkCustomElementClass, mockViewport } from '../../../../base/src/test/util/component-test-util';
+import { compileTestComponent, setInputValue, onClickCheckTaglengthOnBody, checkCustomElementClass, mockViewport, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { WmComponentsModule } from '@wm/components/base';
@@ -24,10 +24,6 @@ import { triggerTimerClickonArrowsByIndex, getTimePickerElement, MockAbstractI18
 import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
 import { DateComponent } from "../../../input/epoch/src/date/date.component";
 import { TimeComponent } from "../../../input/epoch/src/time/time.component";
-
-const mockApp = {
-    subscribe: () => { return () => {}}
-};
 
 const markup = `<form wmForm role="" #form_1 ngNativeValidate
                     errormessage captionposition="top"

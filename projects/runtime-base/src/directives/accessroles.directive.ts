@@ -1,7 +1,7 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, Injector } from '@angular/core';
+import {Directive, Inject, Injector, Input, Optional, TemplateRef, ViewContainerRef} from '@angular/core';
 
-import { SecurityService } from '@wm/security';
-import {get, includes, split, trim} from "lodash-es";
+import {SecurityService} from '@wm/security';
+import {extend, get, includes, split, trim} from "lodash-es";
 
 enum USER_ROLE {
     EVERYONE = 'Everyone',
@@ -17,18 +17,21 @@ export class AccessrolesDirective {
     private processed = false;
     private readonly isUserAuthenticated;
     private readonly userRoles;
+    private readonly context = {};
     private securityEnabled: boolean;
 
     constructor(
         private templateRef: TemplateRef<any>,
         private viewContainerRef: ViewContainerRef,
         private securityService: SecurityService,
-        private inj: Injector
+        private inj: Injector,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         const securityConfig = this.securityService.get();
         this.securityEnabled = get(securityConfig, 'securityEnabled');
         this.isUserAuthenticated = get(securityConfig, 'authenticated');
         this.userRoles = get(securityConfig, 'userInfo.userRoles');
+        extend(this.context, (inj as any)._lView[8], explicitContext);
     }
 
     /**
@@ -99,7 +102,7 @@ export class AccessrolesDirective {
         const isAccessible = !this.securityEnabled || this.hasAccessToWidget(widgetRoles, this.userRoles);
         if (isAccessible) {
             // [WMS-19294] pass on the previous context as second param.
-            this.viewContainerRef.createEmbeddedView(this.templateRef, (this.inj as any)._lView[8]);
+            this.viewContainerRef.createEmbeddedView(this.templateRef, this.context);
         } else {
             this.viewContainerRef.clear();
         }

@@ -11,11 +11,7 @@ import {
 } from "../../../../../../base/src/test/common-widget.specs";
 import { IMaskModule } from "angular-imask";
 import { ComponentFixture, fakeAsync, tick } from "@angular/core/testing";
-import { compileTestComponent } from "projects/components/base/src/test/util/component-test-util";
-
-let mockApp = {
-    subscribe: () => { return () => { } }
-};
+import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
 
 const markup = `<wm-input name="text1">`;
 

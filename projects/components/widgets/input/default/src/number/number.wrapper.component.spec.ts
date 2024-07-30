@@ -1,4 +1,4 @@
-import {waitForAsync, ComponentFixture, TestBed} from '@angular/core/testing';
+import {waitForAsync, ComponentFixture} from '@angular/core/testing';
 import {AbstractI18nService, App, setPipeProvider} from '@wm/core';
 import {Component, ViewChild} from '@angular/core';
 import {NumberComponent} from './number.component';
@@ -8,13 +8,9 @@ import {TrailingZeroDecimalPipe} from '@wm/components/base';
 import {PipeProvider} from '../../../../../../runtime-base/src/services/pipe-provider.service';
 import localePT from '@angular/common/locales/pt';
 import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
-import {compileTestComponent} from "../../../../../base/src/test/util/component-test-util";
+import {compileTestComponent, mockApp} from "../../../../../base/src/test/util/component-test-util";
 import { By } from '@angular/platform-browser';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
-
-let mockApp = {
-    subscribe: () => { return () => {}}
-};
 
 const markup = `<div wmNumber hint="Number" name="testnumber" tabindex="1" ngModel change.event="onChange($event, widget, newVal, oldVal)"></div>`;
 
