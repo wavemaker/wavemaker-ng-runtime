@@ -204,7 +204,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
     protected constructor(
         protected inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
-        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext?: any,
         initPromise?: Promise<any> // Promise on which the initialization has to wait
     ) {
         const elementRef = inj.get(ElementRef);

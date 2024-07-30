@@ -36,7 +36,7 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         const WIDGET_CONFIG = { widgetType, hostClass: DEFAULT_CLS };
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, undefined, new Promise(res => resolveFn = res));
         this.propsReady = resolveFn;
         this.widgetType = widgetType;
         this.name = elRef.nativeElement.getAttribute('name');
