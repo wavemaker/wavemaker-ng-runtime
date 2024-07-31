@@ -1,3 +1,4 @@
+<!--Updated focus with mousedown event. IOS devices not allow update of option value after opening dropdown-->
 <select role="listbox" aria-haspopup="true" aria-expanded="false" #select
         focus-target
         [ngClass]="['app-select form-control', class]"
@@ -8,7 +9,7 @@
         [ngModelOptions]="{standalone: true}"
         [multiple]="multiple"
         (change)="onSelectValueChange($event)"
-        (focus)="checkForFloatingLabel($event)"
+        (mousedown)="checkForFloatingLabel($event)"
         (blur)="invokeOnTouched($event); checkForFloatingLabel($event)"
         [attr.name]="name"
         [attr.aria-label]="hint"
