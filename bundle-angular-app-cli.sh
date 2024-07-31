@@ -40,7 +40,7 @@ cd ../../..
 tar -zcf dist/npm-packages/${TARBALL_NAME} -C dist/npm-packages/ package
 
 if [[ "${publish}" == true ]]; then
-    node ../process-npm-package-stats.js --path=dist/npm-packages/${TARBALL_NAME} --packageName=@wavemaker/app-ng-runtime --publishVersion=${publishVersion}
+    node ../process-npm-package-stats.js --path=dist/npm-packages/${TARBALL_NAME} --packageName=@wavemaker/angular-app --publishVersion=${publishVersion}
 fi
 
 rm -r dist/npm-packages/package
