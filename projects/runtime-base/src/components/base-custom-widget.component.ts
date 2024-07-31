@@ -23,7 +23,7 @@ import {
     $watch,
     isIE, isDefined
 } from '@wm/core';
-import {getWidgetPropsByType, WidgetRef} from '@wm/components/base';
+import {WidgetRef} from '@wm/components/base';
 import { PageDirective, SpaPageDirective } from '@wm/components/page';
 import {PrefabDirective} from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
@@ -132,11 +132,22 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         (this.App as any).Widgets = Object.create(this.Widgets);
     }
 
+    setBaseWidgetOnCustomWidget(children: any) {
+        Array.from(children).forEach((child: any) => {
+            if(!child.widget || child.widget.widgetSubType !== 'wm-custom-widget')
+                this.setBaseWidgetOnCustomWidget(child.children);
+            else {
+                child.widget.BaseWidget = this.BaseWidget;
+            }
+        });
+    }
+
     registerBaseWidget() {
         for(let widget in this.Widgets) {
             let widgetInstance = this.Widgets[widget];
             if(widgetInstance.widget.$attrs.has('base-widget')) {
                 this.BaseWidget = widgetInstance;
+                this.setBaseWidgetOnCustomWidget(this.pageDirective.nativeElement.children)
                 break;
             }
         }
@@ -339,5 +350,13 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     onPropertyChange() { }
 
     onReady(params?) {
+    }
+
+    set(key: string, value: any):void {
+        this.BaseWidget[key] = value;
+    }
+
+    get(key: string): any {
+        return this.BaseWidget[key];
     }
 }
