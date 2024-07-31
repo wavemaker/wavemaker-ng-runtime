@@ -2725,7 +2725,7 @@ $.widget('wm.datatable', {
                     var colId = column.attr('data-col-id');
                     var id = Number(colId);
                     var colDefination = self.preparedHeaderData[id];
-                    if (colDefination.readonly && colDefination.field !== 'rowOperations') {
+                    if (colDefination && colDefination.readonly && colDefination.field !== 'rowOperations') {
                         self.columnClickInfo[rowId] = {};
                         self.columnClickInfo[rowId][colId] = true;
                     }
