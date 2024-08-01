@@ -50,7 +50,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     appManager: AppManagerService;
     navigationService: AbstractNavigationService;
     router: Router;
-    pageProps: any;
+    props: any;
     containerWidget: any;
     i18nService: AbstractI18nService;
     appLocale: any;
@@ -97,7 +97,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         // register functions for binding evaluation
         this.registerExpressions();
         this.initUserScript();
-        this.registerProps(resolveFn);
+        this.registerPropsInContainerWidget(resolveFn);
         // Using promise to make sure the props are registered in the container widget before registering events, Otherwise no events will be registered
         promise.then(() => this.registerEvents());
 
@@ -105,11 +105,11 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         this.initVariables();
 
         this.activePageName = this.App.activePageName; // Todo: remove this
-        this.registerPageParams();
+        this.registerProps();
         this.defineI18nProps();
 
         this.viewInit$.subscribe(noop, noop, () => {
-            this.pageProps = this.containerWidget.pageProps;
+            this.props = this.containerWidget.props;
         });
 
         if(this.spa) {
@@ -219,8 +219,8 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         });
     }
 
-    registerPageParams() {
-        this.pageProps = this.containerWidget.pageProps;
+    registerProps() {
+        this.props = this.containerWidget.props;
     }
 
     defineI18nProps() {
@@ -250,7 +250,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         //     }
         // });
     }
-    registerProps(resolveFn: Function) {
+    registerPropsInContainerWidget(resolveFn: Function) {
         window['resourceCache'].get(`./custom-widgets/${this.customWidgetName}/page.min.json`).then(({ config }) => {
             if (config) {
                 Object.entries((config.properties || {})).forEach(([key, prop]: [string, any]) => {

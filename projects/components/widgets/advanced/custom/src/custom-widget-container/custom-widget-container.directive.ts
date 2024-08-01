@@ -1,7 +1,7 @@
-import { Attribute, Directive, ElementRef, Injector, OnInit, Optional, SecurityContext } from '@angular/core';
+import { Attribute, Directive, ElementRef, Injector, OnInit } from '@angular/core';
 
 import { noop } from '@wm/core';
-import { IWidgetConfig, PROP_TYPE, provideAsWidgetRef, register, SanitizePipe, StylableComponent, styler } from '@wm/components/base';
+import { PROP_TYPE, provideAsWidgetRef, register, StylableComponent, styler } from '@wm/components/base';
 
 import { customWidgetProps } from './custom-widget.props';
 import { registerProps } from "../custom-widget-container/custom-widget.props";
@@ -26,7 +26,7 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
     name: string;
     propsReady: Function;
     widgetName: string;
-    private pageProps: any = {};
+    private props: any = {};
 
     constructor(
         inj: Injector, elRef: ElementRef,
@@ -51,8 +51,8 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         this.registerPropertyChangeListener(((key: string, nv: any, ov?: any) => {
             if (!key.startsWith('prop-')) return;
             const propName = key.slice(5)
-            if (this.pageProps.hasOwnProperty(propName) && this.pageProps[propName] !== nv) {
-                this.pageProps[propName] = nv;
+            if (this.props.hasOwnProperty(propName) && this.props[propName] !== nv) {
+                this.props[propName] = nv;
             }
         }))
     }
@@ -83,7 +83,7 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
 
             // Do not set the 'bind:*' values
             propsMap.set(`prop-${k}`, { type, value: _.startsWith(v.value, 'bind:') ? undefined : v.value });
-            this.pageProps[k] = v.value;
+            this.props[k] = v.value;
         });
 
         registeredPropsSet.add(this.widgetType);
