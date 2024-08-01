@@ -134,7 +134,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
 
     setBaseWidgetOnCustomWidget(children: any) {
         Array.from(children).forEach((child: any) => {
-            if(!child.widget || child.widget.widgetSubType !== 'wm-custom-widget')
+            if(!child.widget || !child.widget.widgetSubType.startsWith('wm-custom-'))
                 this.setBaseWidgetOnCustomWidget(child.children);
             else {
                 child.widget.BaseWidget = this.BaseWidget;
