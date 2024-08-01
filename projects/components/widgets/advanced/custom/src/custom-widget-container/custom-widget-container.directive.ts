@@ -5,8 +5,11 @@ import { PROP_TYPE, provideAsWidgetRef, register, StylableComponent, styler } fr
 
 import { customWidgetProps } from './custom-widget.props';
 import { registerProps } from "../custom-widget-container/custom-widget.props";
+import { cloneDeep } from 'lodash-es';
 
 const registeredPropsSet = new Set<string>();
+
+let customWidgetPropsMap: { [key: string]: any } = {};
 
 const DEFAULT_CLS = 'app-html-container';
 
@@ -63,6 +66,8 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         }
         if (!registeredPropsSet.has(this.widgetType)) {
             register(this.widgetType, this.prepareProps(config.properties));
+        }else{
+            this.props = Object.assign(this.props, cloneDeep(customWidgetPropsMap[this.widgetType]))
         }
 
         this.propsReady(resolveFn);
@@ -87,6 +92,7 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         });
 
         registeredPropsSet.add(this.widgetType);
+        customWidgetPropsMap[this.widgetType] = this.props
 
         return propsMap;
     }
