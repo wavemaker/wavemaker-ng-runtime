@@ -2835,6 +2835,9 @@ $.widget('wm.datatable', {
     collapseRow: function(rowId) {
         this.toggleExpandRow(rowId, false)
     },
+    hasAllClasses: function (element, classNames) { // function to check if all the class names are present in the element
+        return classNames && classNames.every(cls => element.hasClass(cls));
+    },
     _collapseRow: function(e, rowData, rowId, $nextDetailRow, $icon) {
         var self = this,
             $tbody = self.gridElement,
@@ -2844,7 +2847,7 @@ $.widget('wm.datatable', {
         if (this.options.onBeforeRowCollapse(e, rowData, rowId) === false) {
             return;
         }
-        if ($icon.length && $icon.hasClass(this.options.cssClassNames.rowExpandIcon)) {
+        if ($icon.length && this.hasAllClasses($icon, this.options.cssClassNames.rowExpandIcon?.split(' '))) {
             $icon.removeClass(this.options.cssClassNames.rowExpandIcon).addClass(this.options.cssClassNames.rowCollapseIcon);
         }
         $nextDetailRow.hide();
@@ -2884,7 +2887,7 @@ $.widget('wm.datatable', {
             }
             self.options.generateRowDetailView(e, rowData, rowId, $nextDetailRow.find('td.app-datagrid-row-details-cell .details-section'),
                 $nextDetailRow.find('td.app-datagrid-row-details-cell .row-overlay'), function () {
-                    if ($icon.length && $icon.hasClass(self.options.cssClassNames.rowCollapseIcon)) {
+                    if ($icon.length && self.hasAllClasses($icon, self.options.cssClassNames.rowCollapseIcon?.split(' '))) {
                         $icon.removeClass(self.options.cssClassNames.rowCollapseIcon).addClass(self.options.cssClassNames.rowExpandIcon);
                     }
                     $nextDetailRow.show();
