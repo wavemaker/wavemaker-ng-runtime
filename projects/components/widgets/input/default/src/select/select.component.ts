@@ -43,6 +43,22 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
         this.acceptsArray = true;
+
+        /*
+        * When the dataset for a select element is updated and no longer includes the previously selected value:
+        * The select element becomes empty, and the ngModel value is updated to reflect this change.
+        * However, the change event is not triggered, preventing the form control from recognizing the update and applying necessary validations.
+        * As this widget implements ControlValueAccessor, manually updating the ngModel (or modelByKey) is necessary to ensure correct form behavior.
+        * */
+        const datasetSubscription = this.dataset$.subscribe(() => {
+            if (this.datavalue !== undefined) {
+                const selectedItem = this.datasetItems.find(item => item.selected);
+                if (!selectedItem) {
+                    this.modelByKey = undefined;
+                }
+            }
+        });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
     }
 
     ngAfterViewInit() {
