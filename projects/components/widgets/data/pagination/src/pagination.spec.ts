@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { PaginationComponent } from './pagination.component';
-import { App, AppConstants } from '@wm/core';
+import { App, AppConstants, DataSource } from '@wm/core';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
-import { WidgetRef } from '@wm/components/base';
+import { DEBOUNCE_TIMES, WidgetRef } from '@wm/components/base';
 import { NO_ERRORS_SCHEMA } from '@angular/compiler';
 describe('PaginationComponent', () => {
     let component: PaginationComponent;
@@ -182,4 +182,683 @@ describe('PaginationComponent', () => {
             expect(component.showrecordcount).toBe(true);
         });
     });
+
+    describe('setPagingValues', () => {
+        it('should set paging values for datasource with paging', () => {
+            component.binddataset = true;
+            component.datasource = {
+                execute: jest.fn().mockReturnValue({
+                    totalElements: 100,
+                    size: 10,
+                    number: 0,
+                    numberOfElements: 10,
+                    sort: [{ field: 'name', direction: 'asc' }]
+                }),
+                _options: {
+                    filterFields: { name: 'John' },
+                    logicalOp: 'AND',
+                    orderBy: 'name ASC'
+                }
+            };
+            component['isDataSourceHasPaging'] = jest.fn().mockReturnValue(true);
+            component['setDefaultPagingValues'] = jest.fn();
+            component['disableNavigation'] = jest.fn();
+            component['checkDataSize'] = jest.fn();
+            component['setResult'] = jest.fn();
+            component['_setAriaForBasicNavigation'] = jest.fn();
+
+            component['setPagingValues']([{ id: 1, name: 'John' }]);
+
+            expect(component.datasource.execute).toHaveBeenCalledWith(DataSource.Operation.GET_PAGING_OPTIONS);
+            expect(component['setDefaultPagingValues']).toHaveBeenCalledWith(100, 10, 1);
+            expect(component['disableNavigation']).toHaveBeenCalled();
+            expect(component['checkDataSize']).toHaveBeenCalledWith(100, 10, 10);
+            expect(component['setResult']).toHaveBeenCalledWith([{ id: 1, name: 'John' }]);
+            expect(component.filterFields).toEqual({ name: 'John' });
+            expect(component.logicalOp).toBe('AND');
+            expect(component.sortOptions).toBe('name ASC');
+        });
+
+        it('should set non-pageable data when datasource does not have paging', () => {
+            component.binddataset = true;
+            component['isDataSourceHasPaging'] = jest.fn().mockReturnValue(false);
+            component['setNonPageableData'] = jest.fn();
+            component['_setAriaForBasicNavigation'] = jest.fn();
+
+            component['setPagingValues']([{ id: 1, name: 'John' }]);
+
+            expect(component['setNonPageableData']).toHaveBeenCalledWith([{ id: 1, name: 'John' }]);
+        });
+
+        it('should reset page navigation when newVal is falsy', () => {
+            component.binddataset = true;
+            component['setResult'] = jest.fn();
+            component['resetPageNavigation'] = jest.fn();
+            component['_setAriaForBasicNavigation'] = jest.fn();
+
+            component['setPagingValues'](null);
+
+            expect(component['setResult']).toHaveBeenCalledWith(null);
+            expect(component['resetPageNavigation']).toHaveBeenCalled();
+        });
+
+        it('should set non-pageable data when binddataset is false', () => {
+            component.binddataset = false;
+            component['setNonPageableData'] = jest.fn();
+
+            component['setPagingValues']([{ id: 1, name: 'John' }]);
+
+            expect(component['setNonPageableData']).toHaveBeenCalledWith([{ id: 1, name: 'John' }]);
+        });
+    });
+
+    describe('goToPage', () => {
+
+        beforeEach(() => {
+            component.dn = { currentPage: 1 };
+            component.maxResults = 10;
+            component.statehandler = 'url';
+            component['getPageData'] = jest.fn();
+            jest.spyOn(component, 'isFirstPage');
+            jest.spyOn(component, 'isFirstPage').mockReturnValue(false);
+            component.parent.statePersistence.computeMode.mockReturnValue('url');
+            component['unsupportedStatePersistenceTypes'] = ['Advanced', 'Classic'];
+            fixture.detectChanges();
+        });
+        it('should set firstRow correctly', () => {
+            component.dn.currentPage = 3;
+            component.maxResults = 10;
+            component.goToPage();
+            expect(component.firstRow).toBe(20);
+        });
+        it('should call getPageData', () => {
+            const event = { page: 2 };
+            const callback = jest.fn();
+            component.goToPage(event, callback);
+            expect(component['getPageData']).toHaveBeenCalledWith(event, callback);
+        });
+
+        it('should not perform state persistence operations when mode is none', () => {
+            component.parent.statePersistence.computeMode.mockReturnValue('none');
+            component.goToPage();
+            expect(component.parent.statePersistence.removeWidgetState).not.toHaveBeenCalled();
+            expect(component.parent.statePersistence.setWidgetState).not.toHaveBeenCalled();
+        });
+
+        it('should set _selectedItemsExist to true for table and list widgets', () => {
+            component.parent.statePersistence.computeMode.mockReturnValue('url');
+            component.parent.widgetType = 'wm-list';
+            component.goToPage();
+            expect(component.parent._selectedItemsExist).toBe(true);
+        });
+
+        it('should not log warning for unsupported navigation type if widget is not wm-list or wm-table', () => {
+            jest.spyOn(component, 'isFirstPage').mockReturnValue(false);
+            component.parent.statePersistence.computeMode.mockReturnValue('url');
+            component.parent.navigation = 'Advanced';
+            component.parent.widgetType = 'other-widget';
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => { });
+            component.goToPage();
+            expect(component.parent.statePersistence.setWidgetState).not.toHaveBeenCalled();
+            expect(consoleWarnSpy).not.toHaveBeenCalled();
+            consoleWarnSpy.mockRestore();
+        });
+
+    });
+
+    describe('PaginationComponent - getPageData', () => {
+        let mockDataSource: jest.Mocked<any>;
+
+        beforeEach(() => {
+            mockDataSource = { execute: jest.fn() } as any;
+            component.datasource = mockDataSource;
+            component.dn = { currentPage: 1 };
+            component.maxResults = 10;
+            component.parent = {
+                statePersistence: {
+                    computeMode: jest.fn(),
+                    removeWidgetState: jest.fn(),
+                    setWidgetState: jest.fn()
+                },
+                invokeEventCallback: jest.fn(),
+                gridOptions: { lastActionPerformed: '' },
+                actionRowPage: 1
+            } as any;
+        });
+
+        it('should fetch data from datasource when isDataSourceHasPaging is true', async () => {
+            const mockResponse = { data: [{ id: 1 }, { id: 2 }] };
+            mockDataSource.execute.mockResolvedValue(mockResponse);
+            jest.spyOn(component, 'isDataSourceHasPaging').mockReturnValue(true);
+            jest.spyOn(component, 'onPageDataReady').mockImplementation();
+
+            await component.getPageData({}, jest.fn());
+
+            expect(mockDataSource.execute).toHaveBeenCalledWith(DataSource.Operation.LIST_RECORDS, {
+                'page': 1,
+                'filterFields': component.filterFields,
+                'orderBy': component.sortOptions,
+                'logicalOp': component.logicalOp,
+                'matchMode': 'anywhereignorecase'
+            });
+            expect(component.onPageDataReady).toHaveBeenCalledWith({}, mockResponse.data, expect.any(Function));
+        });
+
+
+        it('should handle error when datasource execution fails', async () => {
+            const mockError = 'Test error';
+            mockDataSource.execute.mockRejectedValue(mockError);
+            jest.spyOn(component, 'isDataSourceHasPaging').mockReturnValue(true);
+            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+            component.getPageData({}, jest.fn());
+
+            expect(mockDataSource.execute).toHaveBeenCalled();
+        });
+
+        it('should use local data when isDataSourceHasPaging is false', () => {
+            const mockData = [{ id: 1 }, { id: 2 }, { id: 3 }];
+            jest.spyOn(component, 'isDataSourceHasPaging').mockReturnValue(false);
+            jest.spyOn(component, 'isEditNotInCurrentPage').mockReturnValue(false);
+            jest.spyOn(component, 'setResult').mockImplementation();
+            jest.spyOn(component, 'onPageDataReady').mockImplementation();
+            component.__fullData = mockData;
+
+            component.getPageData({}, jest.fn());
+
+            expect(component.setResult).toHaveBeenCalledWith(mockData.slice(0, 10));
+            expect(component.onPageDataReady).toHaveBeenCalledWith({}, mockData.slice(0, 10), expect.any(Function));
+        });
+
+        it('should handle edit not in current page', () => {
+            const mockData = Array(20).fill(null).map((_, i) => ({ id: i + 1 }));
+            jest.spyOn(component, 'isDataSourceHasPaging').mockReturnValue(false);
+            jest.spyOn(component, 'isEditNotInCurrentPage').mockReturnValue(true);
+            jest.spyOn(component, 'setResult').mockImplementation();
+            jest.spyOn(component, 'onPageDataReady').mockImplementation();
+            component.__fullData = mockData;
+            component.parent.actionRowPage = 2;
+
+            component.getPageData({}, jest.fn());
+
+            expect(component.setResult).toHaveBeenCalledWith(mockData.slice(10, 20));
+            expect(component.onPageDataReady).toHaveBeenCalledWith({}, mockData.slice(10, 20), expect.any(Function));
+        });
+    });
+
+    describe('validateCurrentPage', () => {
+        beforeEach(() => {
+            component.dn = { currentPage: 1 };
+            component.pageCount = 10;
+        });
+
+        it('should return true for valid input', () => {
+            expect(component.validateCurrentPage({})).toBe(true);
+        });
+
+        it('should return false and set currentPage to 1 when input is 0', () => {
+            component.dn.currentPage = 0;
+            expect(component.validateCurrentPage({})).toBe(false);
+            expect(component.dn.currentPage).toBe(1);
+        });
+
+        it('should return false and set currentPage to pageCount when input exceeds pageCount', () => {
+            component.dn.currentPage = 15;
+            expect(component.validateCurrentPage({})).toBe(false);
+            expect(component.dn.currentPage).toBe(10);
+        });
+
+        it('should return false for NaN input', () => {
+            component.dn.currentPage = NaN;
+            expect(component.validateCurrentPage({})).toBe(false);
+        });
+
+        it('should return false for null input', () => {
+            component.dn.currentPage = null;
+            expect(component.validateCurrentPage({})).toBe(false);
+        });
+
+        it('should not modify currentPage for valid input', () => {
+            component.dn.currentPage = 5;
+            expect(component.validateCurrentPage({})).toBe(true);
+            expect(component.dn.currentPage).toBe(5);
+        });
+    });
+
+
+    describe('onModelChange', () => {
+        beforeEach(() => {
+            jest.spyOn(component, 'validateCurrentPage');
+            jest.spyOn(component, 'goToPage');
+        });
+
+        it('should call validateCurrentPage and goToPage for valid input', () => {
+            (component.validateCurrentPage as jest.Mock).mockReturnValue(true);
+            component.onModelChange(5);
+            expect(component.validateCurrentPage).toHaveBeenCalledWith(5);
+            expect(component.goToPage).toHaveBeenCalledWith(5);
+        });
+
+        it('should not call goToPage for invalid input', () => {
+            (component.validateCurrentPage as jest.Mock).mockReturnValue(false);
+            component.onModelChange(0);
+            expect(component.validateCurrentPage).toHaveBeenCalledWith(0);
+            expect(component.goToPage).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('onKeyDown', () => {
+        let mockEvent: { target: any; code: any; };
+        let mockTargetEle: { addClass: any; removeClass: any; };
+
+        beforeEach(() => {
+            mockTargetEle = {
+                addClass: jest.fn(),
+                removeClass: jest.fn()
+            };
+            mockEvent = {
+                target: {
+                    closest: jest.fn().mockReturnValue(mockTargetEle)
+                },
+                code: ''
+            };
+            (global as any).$ = jest.fn().mockReturnValue({ closest: mockEvent.target.closest });
+        });
+
+        it('should add ng-invalid class and return false for KeyE', () => {
+            mockEvent.code = 'KeyE';
+            const result = component.onKeyDown(mockEvent);
+            expect(mockTargetEle.addClass).toHaveBeenCalledWith('ng-invalid');
+            expect(result).toBe(false);
+        });
+
+        it('should remove ng-invalid class and return true for non-KeyE', () => {
+            mockEvent.code = 'Enter';
+            const result = component.onKeyDown(mockEvent);
+            expect(mockTargetEle.removeClass).toHaveBeenCalledWith('ng-invalid');
+            expect(result).toBe(true);
+        });
+    });
+
+    describe('pageChanged', () => {
+        beforeEach(() => {
+            (component as any)._debouncedPageChanged = jest.fn();
+        });
+
+        it('should call _debouncedPageChanged with the event', () => {
+            const mockEvent = { page: 2 };
+            component.pageChanged(mockEvent);
+            expect((component as any)._debouncedPageChanged).toHaveBeenCalledWith(mockEvent);
+        });
+    });
+
+    describe('navigatePage', () => {
+        beforeEach(() => {
+            component.parent = {
+                isDataLoading: false,
+                infScroll: false,
+                variableInflight: false,
+                callDataGridMethod: jest.fn(),
+                widgetType: '',
+                gridOptions: {
+                    isNavTypeScrollOrOndemand: jest.fn(),
+                    setLastActionPerformed: jest.fn(),
+                    setIsDatasetUpdated: jest.fn(),
+                    ACTIONS: { DEFAULT: 'default' }
+                }
+            } as any;
+            component.dn = { currentPage: 1 };
+            component.datasource = { pagination: {} } as any;
+            component.invokeEventCallback = jest.fn();
+            component.goToFirstPage = jest.fn();
+            component.goToLastPage = jest.fn();
+            component.goToPage = jest.fn();
+            component.isFirstPage = jest.fn();
+            component.isLastPage = jest.fn();
+            component.validateCurrentPage = jest.fn().mockReturnValue(true);
+        });
+
+        it('should set isDataLoading to true when defined and not disabled', () => {
+            component.isDisableNext = false;
+            component.navigatePage('next', {}, false, null);
+            expect(component.parent.isDataLoading).toBe(true);
+        });
+        it('should reset last action performed for wm-table', () => {
+            component.parent.widgetType = 'wm-table';
+            component.parent.gridOptions.isNavTypeScrollOrOndemand.mockReturnValue(true);
+            component.navigatePage('next', {}, false, null);
+            expect(component.parent.gridOptions.setLastActionPerformed).toHaveBeenCalledWith('default');
+            expect(component.parent.gridOptions.setIsDatasetUpdated).toHaveBeenCalledWith(false);
+        });
+
+        it('should invoke paginationchange event callback', () => {
+            component.navigatePage('next', {}, false, null);
+            expect(component.invokeEventCallback).toHaveBeenCalledWith('paginationchange', { $event: undefined, $index: 1 });
+        });
+
+        it('should go to first page', () => {
+            component.navigatePage('first', {}, true, null);
+            expect(component.goToFirstPage).toHaveBeenCalledWith(true, {}, null);
+        });
+
+        it('should go to last page', () => {
+            component.navigatePage('last', {}, true, null);
+            expect(component.goToLastPage).toHaveBeenCalledWith(true, {}, null);
+        });
+
+        it('should decrement page when going prev', () => {
+            component.dn.currentPage = 2;
+            component.navigatePage('prev', {}, false, null);
+            expect(component.dn.currentPage).toBe(1);
+        });
+
+        it('should increment page when going next', () => {
+            component.navigatePage('next', {}, false, null);
+            expect(component.dn.currentPage).toBe(2);
+        });
+
+        it('should handle server-side pagination for prev', () => {
+            component.pagination = { next: true };
+            component.navigatePage('prev', {}, false, null);
+            expect(component.datasource.pagination.isNext).toBe(false);
+            expect(component.datasource.pagination.isPrev).toBe(true);
+        });
+
+        it('should handle server-side pagination for next', () => {
+            component.pagination = { next: true };
+            component.navigatePage('next', {}, false, null);
+            expect(component.datasource.pagination.isNext).toBe(true);
+            expect(component.datasource.pagination.isPrev).toBe(false);
+        });
+
+        it('should call goToPage after navigation', () => {
+            component.navigatePage('next', {}, false, null);
+            expect(component.goToPage).toHaveBeenCalledWith({}, null);
+        });
+    });
+
+    describe('setBindDataSet', () => {
+        it('should set dataset and call _debouncedApplyDataset when only dataset is provided', () => {
+            const mockDataset = [{ id: 1 }, { id: 2 }];
+            (component as any)._debouncedApplyDataset = jest.fn();
+
+            component.setBindDataSet('', null, null, mockDataset);
+
+            expect(component.dataset).toBe(mockDataset);
+            expect((component as any)._debouncedApplyDataset).toHaveBeenCalled();
+        });
+        it('should set datasource when datasetBoundExpr is false', (done) => {
+            const mockParent = {};
+            const mockDataSource = { someData: 'data' };
+            const mockWatch = jest.fn();
+            (global as any).$watch = mockWatch;
+
+            component.setBindDataSet('someDataset', mockParent, mockDataSource);
+
+            setTimeout(() => {
+                expect(component.binddataset).toBe('someDataset');
+                expect(component.datasource).toBe(mockDataSource);
+                done();
+            });
+        });
+    });
+
+    describe('onPropertyChange', () => {
+        it('should handle dataset change with parent onDataNavigatorDataSetChange', () => {
+            const mockData = [{ id: 1 }, { id: 2 }];
+            component.parent = {
+                onDataNavigatorDataSetChange: jest.fn().mockReturnValue(mockData),
+                widgetType: 'wm-table'
+            };
+            component.setResult = jest.fn();
+            (component as any).setPagingValues = jest.fn();
+            component.isEditNotInCurrentPage = jest.fn().mockReturnValue(false);
+
+            component.onPropertyChange('dataset', mockData, null);
+
+            expect(component.parent.onDataNavigatorDataSetChange).toHaveBeenCalledWith(mockData);
+            expect(component.parent._triggeredByUser).toBe(false);
+            expect((component as any).setPagingValues).toHaveBeenCalledWith(mockData);
+        });
+
+        it('should handle dataset change without parent onDataNavigatorDataSetChange', () => {
+            const mockData = [{ id: 1 }, { id: 2 }];
+            component.parent = { widgetType: 'other' };
+            component.setResult = jest.fn();
+            (component as any).setPagingValues = jest.fn();
+            component.isEditNotInCurrentPage = jest.fn().mockReturnValue(false);
+            component.onPropertyChange('dataset', mockData, null);
+            expect((component as any).setPagingValues).toHaveBeenCalledWith(mockData);
+        });
+
+        it('should call setResult when isEditNotInCurrentPage returns true', () => {
+            const mockData = [{ id: 1 }, { id: 2 }];
+            component.parent = {};
+            component.setResult = jest.fn();
+            (component as any).setPagingValues = jest.fn();
+            component.isEditNotInCurrentPage = jest.fn().mockReturnValue(true);
+
+            component.onPropertyChange('dataset', mockData, null);
+
+            expect(component.setResult).toHaveBeenCalledWith(mockData);
+            expect((component as any).setPagingValues).not.toHaveBeenCalled();
+        });
+
+        it('should handle navigation change to "Advanced"', () => {
+            (component as any).updateNavSize = jest.fn();
+
+            component.onPropertyChange('navigation', 'Advanced', 'Basic');
+
+            expect(component.navigation).toBe('Classic');
+            expect(component.navcontrols).toBe('Advanced');
+            expect((component as any).updateNavSize).toHaveBeenCalled();
+        });
+
+        it('should handle navigation change to other values', () => {
+            (component as any).updateNavSize = jest.fn();
+            component.onPropertyChange('navigation', 'Basic', 'Advanced');
+            expect(component.navigation).toBe('Basic');
+            expect((component as any).updateNavSize).toHaveBeenCalled();
+        });
+
+        it('should handle navigationsize change', () => {
+            (component as any).updateNavSize = jest.fn();
+
+            component.onPropertyChange('navigationsize', 'large', 'small');
+
+            expect((component as any).updateNavSize).toHaveBeenCalled();
+        });
+
+        it('should handle maxResults change', () => {
+            component.dataset = [{ id: 1 }, { id: 2 }];
+            (component as any).setPagingValues = jest.fn();
+
+            component.onPropertyChange('maxResults', 10, 5);
+
+            expect((component as any).setPagingValues).toHaveBeenCalledWith(component.dataset);
+        });
+
+        it('should call super.onPropertyChange for other properties', () => {
+            const superOnPropertyChange = jest.spyOn(Object.getPrototypeOf(PaginationComponent.prototype), 'onPropertyChange');
+
+            component.onPropertyChange('someOtherProperty', 'newValue', 'oldValue');
+
+            expect(superOnPropertyChange).toHaveBeenCalledWith('someOtherProperty', 'newValue', 'oldValue');
+        });
+    });
+    describe('_setAriaForBasicNavigation', () => {
+        beforeEach(() => {
+            // Set up the DOM structure in the fixture's nativeElement
+            fixture.nativeElement.innerHTML = `
+            <a href="#"><span data-isacitvepage="true"></span></a>
+            <a href="#"><span data-isdisabled="true"></span></a>
+            <a href="#"><span></span></a>
+          `;
+            fixture.detectChanges();
+        });
+
+        it('should set href attribute for all links', () => {
+            component['_setAriaForBasicNavigation']();
+            const links = fixture.nativeElement.getElementsByTagName('a');
+            Array.from(links).forEach((link: HTMLAnchorElement) => {
+                expect(link.getAttribute('href')).toBe('javascript:void(0);');
+            });
+        });
+
+        it('should set aria-current attribute for active page', () => {
+            component['_setAriaForBasicNavigation']();
+            const activeLink = fixture.nativeElement.querySelector('a span[data-isacitvepage="true"]').parentElement;
+            expect(activeLink.getAttribute('aria-current')).toBe('true');
+        });
+
+        it('should set aria-disabled attribute for disabled link', () => {
+            component['_setAriaForBasicNavigation']();
+            const disabledLink = fixture.nativeElement.querySelector('a span[data-isdisabled="true"]').parentElement;
+            expect(disabledLink.getAttribute('aria-disabled')).toBe('true');
+        });
+
+        it('should remove aria-disabled attribute for enabled link', () => {
+            component['_setAriaForBasicNavigation']();
+            const enabledLink = fixture.nativeElement.querySelector('a span:not([data-isdisabled])').parentElement;
+            expect(enabledLink.getAttribute('aria-disabled')).toBe(null);
+        });
+    });
+
+    describe('_debouncedPageChanged', () => {
+        beforeEach(() => {
+            (component as any).widget = { dataset: undefined };
+            component.dn = { currentPage: 1 };
+            fixture.detectChanges();
+            component.goToPage = jest.fn();
+            component['_setAriaForBasicNavigation'] = jest.fn();
+        });
+
+        it('should not update currentPage if it has not changed', fakeAsync(() => {
+            component['_debouncedPageChanged']({ page: 1 });
+            tick(DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+            expect(component.dn.currentPage).toBe(1);
+            expect(component.parent.invokeEventCallback).not.toHaveBeenCalled();
+            expect(component.goToPage).not.toHaveBeenCalled();
+        }));
+        it('should not call _setAriaForBasicNavigation if navigation is not Basic', fakeAsync(() => {
+            component.navigation = 'Advanced';
+            component['_debouncedPageChanged']({ page: 2 });
+            tick(DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+            expect(component['_setAriaForBasicNavigation']).not.toHaveBeenCalled();
+        }));
+    });
+
+
+    describe('setNonPageableData', () => {
+        beforeEach(() => {
+            component.setDefaultPagingValues = jest.fn();
+            component.disableNavigation = jest.fn();
+            component.setResult = jest.fn();
+            component.dn = { currentPage: 2 };
+            component.maxResults = 10;
+        });
+
+        it('should handle non-array input', () => {
+            const input = { key: 'value' };
+            component.setNonPageableData(input);
+            expect(component.setDefaultPagingValues).toHaveBeenCalledWith(1, 1, 2);
+            expect(component.setResult).toHaveBeenCalledWith(input);
+        });
+
+        it('should handle empty input', () => {
+            component.setNonPageableData({});
+            expect(component.setDefaultPagingValues).toHaveBeenCalledWith(0, 0, 2);
+            expect(component.setResult).toHaveBeenCalledWith({});
+        });
+
+        it('should use maxResults from options if available', () => {
+            component.options = { maxResults: 20 };
+            component.setNonPageableData([1, 2, 3, 4, 5]);
+            expect(component.setDefaultPagingValues).toHaveBeenCalledWith(5, 20, 2);
+        });
+
+        it('should set currentPage to 1 for API-aware datasource', () => {
+            component.datasource = {
+                execute: jest.fn().mockReturnValue(true)
+            };
+            component.setNonPageableData([1, 2, 3, 4, 5]);
+            expect(component.setDefaultPagingValues).toHaveBeenCalledWith(5, 5, 1);
+        });
+
+        it('should set currentPage to 1 for specific table conditions', () => {
+            component.parent = {
+                widgetType: 'wm-table',
+                gridOptions: {
+                    isNavTypeScrollOrOndemand: jest.fn().mockReturnValue(true),
+                    lastActionPerformed: 'DATASET_UPDATE',
+                    ACTIONS: { DATASET_UPDATE: 'DATASET_UPDATE' }
+                }
+            };
+            component.setNonPageableData([1, 2, 3, 4, 5]);
+            expect(component.setDefaultPagingValues).toHaveBeenCalledWith(5, 5, 2);
+        });
+
+        it('should slice array result based on currentPage and maxResults', () => {
+            const input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            component.dn.currentPage = 2;
+            component.maxResults = 5;
+            component.setNonPageableData(input);
+            expect(component.setResult).toHaveBeenCalledWith([6, 7, 8, 9, 10]);
+        });
+    });
+
+    describe('setNonPageableData', () => {
+        beforeEach(() => {
+            component.setDefaultPagingValues = jest.fn();
+            component.disableNavigation = jest.fn();
+            component.setResult = jest.fn();
+            component.dn = { currentPage: 2 };
+            component.maxResults = 10;
+        });
+
+        it('should handle non-array input', () => {
+            const input = { key: 'value' };
+            component.setNonPageableData(input);
+            expect(component.setDefaultPagingValues).toHaveBeenCalledWith(1, 1, 2);
+            expect(component.setResult).toHaveBeenCalledWith(input);
+        });
+
+        it('should handle empty input', () => {
+            component.setNonPageableData({});
+            expect(component.setDefaultPagingValues).toHaveBeenCalledWith(0, 0, 2);
+            expect(component.setResult).toHaveBeenCalledWith({});
+        });
+
+        it('should use maxResults from options if available', () => {
+            component.options = { maxResults: 20 };
+            component.setNonPageableData([1, 2, 3, 4, 5]);
+            expect(component.setDefaultPagingValues).toHaveBeenCalledWith(5, 20, 2);
+        });
+
+        it('should set currentPage to 1 for API-aware datasource', () => {
+            component.datasource = {
+                execute: jest.fn().mockReturnValue(true)
+            };
+            component.setNonPageableData([1, 2, 3, 4, 5]);
+            expect(component.setDefaultPagingValues).toHaveBeenCalledWith(5, 5, 1);
+        });
+
+        it('should slice array result based on currentPage and maxResults', () => {
+            const input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            component.dn.currentPage = 2;
+            component.maxResults = 5;
+            component.setNonPageableData(input);
+            expect(component.setResult).toHaveBeenCalledWith([6, 7, 8, 9, 10]);
+        });
+
+        it('should use setDefaultPagingValues when dataSize or maxResults is truthy', () => {
+            component.options = { maxResults: 1 };
+            component.setNonPageableData([]);
+
+            expect(component.setDefaultPagingValues).toHaveBeenCalledWith(0, 1, 2);
+            expect(component.disableNavigation).toHaveBeenCalled();
+            expect(component.setResult).toHaveBeenCalledWith([]);
+        });
+    });
+
 });
