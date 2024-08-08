@@ -1,6 +1,6 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { AbstractI18nService, App, AppDefaults, setPipeProvider } from '@wm/core';
-import { Component, ViewChild } from '@angular/core';
+import { AbstractI18nService, App, AppDefaults, DataSource, setPipeProvider } from '@wm/core';
+import { Component, QueryList, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { ListComponent } from './list.component';
@@ -12,7 +12,20 @@ import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { DatePipe } from '@angular/common';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
+import { configureDnD } from '@wm/components/base';
+import { isMobile, isMobileApp } from '@wm/core';
+import { pullAt } from 'lodash';
 
+jest.mock('@wm/core', () => ({
+    ...jest.requireActual('@wm/core'),
+    isMobile: jest.fn(),
+    isMobileApp: jest.fn(),
+}));
+
+jest.mock('@wm/components/base', () => ({
+    ...jest.requireActual('@wm/components/base'),
+    configureDnD: jest.fn(),
+}));
 
 @Component({
     template: `
@@ -33,15 +46,15 @@ class ListWrapperComponent {
     public testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }];
     public testdata1: any = [{ firstname: 'Peter', id: 1 }, { firstname: '', id: 2 }];
     onBeforeRender(widget, $data) {
-        console.log('calling on before render');
+        // console.log('calling on before render');
     }
 
     onRender(widget, $data) {
-        console.log('calling on render');
+        // console.log('calling on render');
     }
 
     onListClick($event, widget) {
-        console.log('clicked list component ')
+        // console.log('clicked list component ')
     }
 
     constructor(_pipeProvider: PipeProvider) {
@@ -288,6 +301,615 @@ describe('ListComponent', () => {
         expect(paginationElem).toBeFalsy();
     });
 
+    describe('create', () => {
+        it('should trigger WM event "insert" when _isDependent is true', () => {
+            listComponent['_isDependent'] = true;
+            jest.spyOn((listComponent as any), 'triggerWMEvent');
+            listComponent.create();
+            expect((listComponent as any).triggerWMEvent).toHaveBeenCalledWith('insert');
+        });
+
+        it('should not trigger WM event when _isDependent is false', () => {
+            listComponent['_isDependent'] = false;
+            jest.spyOn((listComponent as any), 'triggerWMEvent');
+            listComponent.create();
+            expect((listComponent as any).triggerWMEvent).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('editRow', () => {
+        it('should trigger WM event "update" with listItem when _isDependent is true and item is provided', () => {
+            listComponent['_isDependent'] = true;
+            const mockItem = { id: 1, name: 'Test' };
+            jest.spyOn((listComponent as any), 'getItemRefByIndexOrModel').mockReturnValue({ item: mockItem });
+            jest.spyOn((listComponent as any), 'triggerWMEvent');
+            listComponent.editRow(mockItem);
+            expect((listComponent as any).triggerWMEvent).toHaveBeenCalledWith('update', mockItem);
+        });
+
+        it('should trigger WM event "update" without listItem when _isDependent is true and item is not provided', () => {
+            listComponent['_isDependent'] = true;
+            jest.spyOn((listComponent as any), 'triggerWMEvent');
+            listComponent.editRow();
+            expect((listComponent as any).triggerWMEvent).toHaveBeenCalledWith('update', undefined);
+        });
+
+        it('should not trigger WM event when _isDependent is false', () => {
+            listComponent['_isDependent'] = false;
+            jest.spyOn((listComponent as any), 'triggerWMEvent');
+            listComponent.editRow();
+            expect((listComponent as any).triggerWMEvent).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('update', () => {
+        it('should call editRow with the provided item', () => {
+            const mockItem = { id: 1, name: 'Test' };
+            jest.spyOn(listComponent, 'editRow');
+            listComponent.update(mockItem);
+            expect(listComponent.editRow).toHaveBeenCalledWith(mockItem);
+        });
+    });
+
+    describe('deleteRow', () => {
+        it('should trigger WM event "delete" with listItem when _isDependent is true and item is provided', () => {
+            listComponent['_isDependent'] = true;
+            const mockItem = { id: 1, name: 'Test' };
+            jest.spyOn((listComponent as any), 'getItemRefByIndexOrModel').mockReturnValue({ item: mockItem });
+            jest.spyOn((listComponent as any), 'triggerWMEvent');
+            listComponent.deleteRow(mockItem);
+            expect((listComponent as any).triggerWMEvent).toHaveBeenCalledWith('delete', mockItem);
+        });
+
+        it('should trigger WM event "delete" without listItem when _isDependent is true and item is not provided', () => {
+            listComponent['_isDependent'] = true;
+            jest.spyOn((listComponent as any), 'triggerWMEvent');
+            listComponent.deleteRow();
+            expect((listComponent as any).triggerWMEvent).toHaveBeenCalledWith('delete', undefined);
+        });
+
+        it('should not trigger WM event when _isDependent is false', () => {
+            listComponent['_isDependent'] = false;
+            jest.spyOn((listComponent as any), 'triggerWMEvent');
+            listComponent.deleteRow();
+            expect((listComponent as any).triggerWMEvent).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('delete', () => {
+        it('should call deleteRow with the provided item', () => {
+            const mockItem = { id: 1, name: 'Test' };
+            jest.spyOn(listComponent, 'deleteRow');
+            listComponent.delete(mockItem);
+            expect(listComponent.deleteRow).toHaveBeenCalledWith(mockItem);
+        });
+    });
+
+    describe('execute', () => {
+        let mockDatasource: any;
+
+        beforeEach(() => {
+            mockDatasource = {
+                execute: jest.fn().mockReturnValue(true)
+            };
+            (listComponent as any).datasource = mockDatasource;
+        });
+
+        it('should return false for API_AWARE operation', () => {
+            const result = listComponent.execute(DataSource.Operation.IS_API_AWARE, {});
+            expect(result).toBe(false);
+            expect(mockDatasource.execute).not.toHaveBeenCalled();
+        });
+
+        it('should return false for PAGEABLE operation', () => {
+            const result = listComponent.execute(DataSource.Operation.IS_PAGEABLE, {});
+            expect(result).toBe(false);
+            expect(mockDatasource.execute).not.toHaveBeenCalled();
+        });
+
+        it('should return false for SUPPORTS_SERVER_FILTER operation', () => {
+            const result = listComponent.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER, {});
+            expect(result).toBe(false);
+            expect(mockDatasource.execute).not.toHaveBeenCalled();
+        });
+
+        it('should execute datasource for other operations', () => {
+            const mockOperation = 'SOME_OTHER_OPERATION';
+            const mockOptions = { key: 'value' };
+            const result = listComponent.execute(mockOperation, mockOptions);
+            expect(result).toBe(true);
+            expect(mockDatasource.execute).toHaveBeenCalledWith(mockOperation, mockOptions);
+        });
+    });
+
+
+    describe('handleKeyDown', () => {
+        let mockEvent: any;
+        let mockListItems: QueryList<ListItemDirective>;
+
+        beforeEach(() => {
+            mockEvent = {
+                stopPropagation: jest.fn(),
+                preventDefault: jest.fn(),
+                keyCode: 0,
+                target: { classList: { contains: jest.fn() } }
+            };
+
+            mockListItems = new QueryList<ListItemDirective>();
+            mockListItems.reset([
+                { nativeElement: { focus: jest.fn(), before: jest.fn(), after: jest.fn() } },
+                { nativeElement: { focus: jest.fn(), before: jest.fn(), after: jest.fn() } },
+                { nativeElement: { focus: jest.fn(), before: jest.fn(), after: jest.fn() } }
+            ] as any);
+
+            listComponent.listItems = mockListItems;
+            (listComponent as any).getListItemIndex = jest.fn().mockReturnValue(1);
+            (listComponent as any).getListItemByIndex = jest.fn(index => mockListItems.toArray()[index]);
+            (listComponent as any).toggleListItemSelection = jest.fn();
+            (listComponent as any).checkSelectionLimit = jest.fn().mockReturnValue(true);
+            listComponent.invokeEventCallback = jest.fn();
+            listComponent.onItemClick = jest.fn();
+            (listComponent as any).onUpdate = jest.fn();
+            (listComponent as any).statePersistence = { removeWidgetState: jest.fn() };
+            (listComponent as any).$ulEle = { data: jest.fn() } as any;
+        });
+
+        it('should handle selectPrev action in multiselect mode', () => {
+            listComponent.multiselect = true;
+            listComponent.handleKeyDown(mockEvent, 'selectPrev');
+
+            expect((listComponent as any).toggleListItemSelection).toHaveBeenCalled();
+            expect(listComponent.lastSelectedItem).toBe(mockListItems.toArray()[0]);
+        });
+
+        it('should handle selectNext action in multiselect mode', () => {
+            listComponent.multiselect = true;
+            listComponent.handleKeyDown(mockEvent, 'selectNext');
+
+            expect((listComponent as any).toggleListItemSelection).toHaveBeenCalled();
+            expect(listComponent.lastSelectedItem).toBe(mockListItems.toArray()[2]);
+        });
+
+        it('should handle focusPrev action', () => {
+            listComponent.handleKeyDown(mockEvent, 'focusPrev');
+
+            expect(listComponent.lastSelectedItem.nativeElement.focus).toHaveBeenCalled();
+            expect(listComponent.currentIndex).toBe(1);
+        });
+
+        it('should not handle space action without enablereorder', () => {
+            listComponent.enablereorder = false;
+            listComponent.handleKeyDown(mockEvent, 'space');
+
+            expect((listComponent as any).isListElementMovable).toBeFalsy();
+            expect(listComponent.onItemClick).not.toHaveBeenCalled();
+        });
+
+        it('should prevent default for non-special keys', () => {
+            mockEvent.keyCode = 65; // 'A' key
+            listComponent.handleKeyDown(mockEvent, 'someAction');
+
+            expect(mockEvent.preventDefault).toHaveBeenCalled();
+        });
+
+        it('should not prevent default for enter key', () => {
+            mockEvent.keyCode = 13; // Enter key
+            listComponent.handleKeyDown(mockEvent, 'someAction');
+
+            expect(mockEvent.preventDefault).not.toHaveBeenCalled();
+        });
+
+        it('should not prevent default for tab key', () => {
+            mockEvent.keyCode = 9; // Tab key
+            listComponent.handleKeyDown(mockEvent, 'someAction');
+
+            expect(mockEvent.preventDefault).not.toHaveBeenCalled();
+        });
+
+        it('should not prevent default for space key on form controls', () => {
+            mockEvent.keyCode = 32; // Space key
+            mockEvent.target.classList.contains.mockReturnValue(true);
+            listComponent.handleKeyDown(mockEvent, 'someAction');
+
+            expect(mockEvent.preventDefault).not.toHaveBeenCalled();
+        });
+
+        it('should handle selectPrev action when presentIndex > firstIndex', () => {
+            listComponent.multiselect = true;
+            (listComponent as any).firstSelectedItem = mockListItems.toArray()[0];
+            listComponent.lastSelectedItem = mockListItems.toArray()[1];
+            (listComponent as any).getListItemIndex.mockReturnValueOnce(1).mockReturnValueOnce(0);
+
+            listComponent.handleKeyDown(mockEvent, 'selectPrev');
+
+            expect((listComponent as any).toggleListItemSelection).toHaveBeenCalledWith(mockListItems.toArray()[1]);
+            expect(listComponent.lastSelectedItem).toBe(mockListItems.toArray()[0]);
+        });
+
+        it('should handle selectNext action when presentIndex < firstIndex', () => {
+            listComponent.multiselect = true;
+            (listComponent as any).firstSelectedItem = mockListItems.toArray()[2];
+            listComponent.lastSelectedItem = mockListItems.toArray()[1];
+            (listComponent as any).getListItemIndex.mockReturnValueOnce(1).mockReturnValueOnce(2);
+
+            listComponent.handleKeyDown(mockEvent, 'selectNext');
+
+            expect((listComponent as any).toggleListItemSelection).toHaveBeenCalledWith(mockListItems.toArray()[1]);
+            expect(listComponent.lastSelectedItem).toBe(mockListItems.toArray()[2]);
+        });
+
+        it('should invoke selectionlimitexceed callback when limit is reached', () => {
+            listComponent.multiselect = true;
+            (listComponent as any).checkSelectionLimit.mockReturnValue(false);
+
+            listComponent.handleKeyDown(mockEvent, 'selectNext');
+
+            expect(listComponent.invokeEventCallback).toHaveBeenCalledWith('selectionlimitexceed', { $event: mockEvent });
+        });
+
+        it('should handle focusPrev action with isListElementMovable', () => {
+            (listComponent as any).isListElementMovable = true;
+            (listComponent as any).getListItemIndex.mockReturnValue(1);
+
+            listComponent.handleKeyDown(mockEvent, 'focusPrev');
+
+            expect(listComponent.lastSelectedItem.nativeElement.focus).toHaveBeenCalled();
+            expect((listComponent as any).statePersistence.removeWidgetState).toHaveBeenCalledWith(listComponent, 'selectedItem');
+            expect(listComponent.currentIndex).toBe(1);
+            expect((listComponent as any).ariaText).toBe("selected ");
+        });
+
+        it('should not move element when focusPrev is called on first item', () => {
+            (listComponent as any).isListElementMovable = true;
+            (listComponent as any).getListItemIndex.mockReturnValue(0);
+
+            listComponent.handleKeyDown(mockEvent, 'focusPrev');
+
+            expect(mockListItems.toArray()[0].nativeElement.before).not.toHaveBeenCalled();
+            expect(listComponent.lastSelectedItem).toBeUndefined();
+        });
+
+        it('should handle focusNext action with isListElementMovable', () => {
+            (listComponent as any).isListElementMovable = true;
+            (listComponent as any).getListItemIndex.mockReturnValue(1);
+
+            listComponent.handleKeyDown(mockEvent, 'focusNext');
+
+            expect(listComponent.lastSelectedItem.nativeElement.focus).toHaveBeenCalled();
+            expect((listComponent as any).statePersistence.removeWidgetState).toHaveBeenCalledWith(listComponent, 'selectedItem');
+            expect(listComponent.currentIndex).toBe(3);
+            expect((listComponent as any).ariaText).toBe("selected ");
+        });
+
+        it('should handle space action to toggle isListElementMovable', () => {
+            listComponent.enablereorder = true;
+            (listComponent as any).getListItemIndex.mockReturnValue(1);
+
+            listComponent.handleKeyDown(mockEvent, 'space');
+
+            expect((listComponent as any).isListElementMovable).toBe(true);
+            expect(listComponent.onItemClick).toHaveBeenCalled();
+            expect(listComponent.currentIndex).toBe(2);
+            expect((listComponent as any).ariaText).toBe("Item 2 grabbed, current position ");
+            expect((listComponent as any).$ulEle.data).toHaveBeenCalledWith('oldIndex', 1);
+
+            listComponent.handleKeyDown(mockEvent, 'space');
+
+            expect((listComponent as any).isListElementMovable).toBe(false);
+            expect((listComponent as any).ariaText).toBe("Item 2 dropped, final position ");
+            expect((listComponent as any).onUpdate).toHaveBeenCalledWith(mockEvent, undefined, 1);
+        });
+    });
+    describe('onItemClick', () => {
+        let mockEvent: any;
+        let mockListItem: ListItemDirective;
+
+        beforeEach(() => {
+            mockEvent = { ctrlKey: false, metaKey: false, shiftKey: false };
+            mockListItem = {
+                disableItem: false,
+                isActive: false,
+                context: { index: 0 }
+            } as ListItemDirective;
+
+            listComponent.multiselect = false;
+            listComponent['firstSelectedItem'] = null;
+            listComponent['lastSelectedItem'] = null;
+            (listComponent as any)['listItems'] = [];
+            listComponent['selectedItem'] = [];
+            listComponent['selectedItemWidgets'] = [];
+
+            jest.spyOn(listComponent as any, 'toggleListItemSelection');
+            jest.spyOn(listComponent as any, 'clearSelectedItems');
+            jest.spyOn(listComponent as any, 'invokeEventCallback');
+            jest.spyOn(listComponent as any, 'checkSelectionLimit').mockReturnValue(true);
+            jest.spyOn(listComponent as any, 'updateSelectedItemsWidgets');
+            (isMobile as jest.Mock).mockReturnValue(false);
+        });
+
+        it('should not select disabled items', () => {
+            mockListItem.disableItem = true;
+            listComponent.onItemClick(mockEvent, mockListItem);
+            expect(listComponent['toggleListItemSelection']).not.toHaveBeenCalled();
+        });
+
+        it('should handle single selection', () => {
+            listComponent.onItemClick(mockEvent, mockListItem);
+            expect(listComponent['clearSelectedItems']).toHaveBeenCalled();
+            expect(listComponent['toggleListItemSelection']).toHaveBeenCalledWith(mockListItem);
+        });
+
+        it('should handle multi-selection with ctrl/cmd key', () => {
+            listComponent.multiselect = true;
+            mockEvent.ctrlKey = true;
+            listComponent.onItemClick(mockEvent, mockListItem);
+            expect(listComponent['toggleListItemSelection']).toHaveBeenCalledWith(mockListItem);
+        });
+
+        it('should handle multi-selection on mobile devices', () => {
+            listComponent.multiselect = true;
+            (isMobile as jest.Mock).mockReturnValue(true);
+            listComponent.onItemClick(mockEvent, mockListItem);
+            expect(listComponent['toggleListItemSelection']).toHaveBeenCalledWith(mockListItem);
+        });
+
+        it('should invoke selectionlimitexceed callback when selection limit is reached on mobile', () => {
+            listComponent.multiselect = true;
+            (isMobile as jest.Mock).mockReturnValue(true);
+            (listComponent['checkSelectionLimit'] as jest.Mock).mockReturnValue(false);
+            listComponent.onItemClick(mockEvent, mockListItem);
+            expect(listComponent['invokeEventCallback']).toHaveBeenCalledWith('selectionlimitexceed', { $event: mockEvent });
+        });
+
+        it('should handle shift key multi-selection with range check', () => {
+            listComponent.multiselect = true;
+            mockEvent.shiftKey = true;
+            (listComponent as any)['firstSelectedItem'] = { context: { index: 2 } };
+            mockListItem.context.index = 5;
+            (listComponent as any)['listItems'] = [
+                { context: { index: 0 } },
+                { context: { index: 1 } },
+                { context: { index: 2 } },
+                { context: { index: 3 } },
+                { context: { index: 4 } },
+                mockListItem
+            ];
+            (listComponent['checkSelectionLimit'] as jest.Mock).mockReturnValue(true);
+
+            listComponent.onItemClick(mockEvent, mockListItem);
+
+            expect(listComponent['clearSelectedItems']).toHaveBeenCalled();
+            expect(listComponent['toggleListItemSelection']).toHaveBeenCalledTimes(4); // Items at index 2, 3, 4, 5
+            expect(listComponent['lastSelectedItem']).toBe(mockListItem);
+        });
+
+        it('should invoke selectionlimitexceed callback when shift selection exceeds limit', () => {
+            listComponent.multiselect = true;
+            mockEvent.shiftKey = true;
+            (listComponent as any)['firstSelectedItem'] = { context: { index: 0 } };
+            mockListItem.context.index = 5;
+            (listComponent['checkSelectionLimit'] as jest.Mock).mockReturnValue(false);
+
+            listComponent.onItemClick(mockEvent, mockListItem);
+
+            expect(listComponent['invokeEventCallback']).toHaveBeenCalledWith('selectionlimitexceed', { $event: mockEvent });
+        });
+
+        it('should clear selection if item is not active and selectCount > 1', () => {
+            listComponent.multiselect = true;
+            mockListItem.isActive = false;
+            listComponent['selectedItem'] = [{}, {}]; // selectCount > 1
+
+            listComponent.onItemClick(mockEvent, mockListItem);
+
+            expect(listComponent['clearSelectedItems']).toHaveBeenCalled();
+            expect(listComponent['toggleListItemSelection']).toHaveBeenCalledWith(mockListItem);
+        });
+
+        it('should clear selection if item is not active and selectCount > 1', () => {
+            listComponent.multiselect = true;
+            mockListItem.isActive = false;
+            listComponent['selectedItem'] = [{}, {}]; // selectCount > 1
+
+            listComponent.onItemClick(mockEvent, mockListItem);
+
+            expect(listComponent['clearSelectedItems']).toHaveBeenCalled();
+            expect(listComponent['toggleListItemSelection']).toHaveBeenCalledWith(mockListItem);
+        });
+        it('should invoke selectionlimitexceed callback when shift selection exceeds limit', () => {
+            listComponent.multiselect = true;
+            mockEvent.shiftKey = true;
+            (listComponent as any)['firstSelectedItem'] = { context: { index: 0 } };
+            mockListItem.context.index = 5;
+            (listComponent['checkSelectionLimit'] as jest.Mock).mockReturnValue(false);
+            listComponent.onItemClick(mockEvent, mockListItem);
+            expect(listComponent['invokeEventCallback']).toHaveBeenCalledWith('selectionlimitexceed', { $event: mockEvent });
+        });
+    });
+    describe('configureDnD', () => {
+        let $ulEle: JQuery<HTMLElement>;
+        let nativeElement: HTMLElement;
+        beforeEach(() => {
+            $ulEle = $(nativeElement).find('.app-livelist-container');
+            listComponent['$ulEle'] = $ulEle;
+            nativeElement = fixture.nativeElement;
+            nativeElement.innerHTML = '<div class="app-livelist-container"></div>';
+        })
+        it('should set appendTo to parent if height attribute is present', () => {
+            jest.spyOn(listComponent, 'getAttr').mockReturnValue('100px');
+            (isMobileApp as jest.Mock).mockReturnValue(false);
+
+            listComponent['configureDnD']();
+
+            expect(configureDnD).toHaveBeenCalledWith(
+                expect.anything(),
+                { appendTo: 'parent' },
+                expect.any(Function),
+                expect.any(Function),
+                expect.any(Function)
+            );
+        });
+
+        it('should set appendTo to the modal element if modal is present', () => {
+            jest.spyOn(listComponent, 'getAttr').mockReturnValue(null);
+            const modalElement = document.createElement('div');
+            modalElement.classList.add('modal');
+            document.body.appendChild(modalElement);
+
+            listComponent['configureDnD']();
+
+            expect(configureDnD).toHaveBeenCalledWith(
+                expect.anything(),
+                { appendTo: modalElement },
+                expect.any(Function),
+                expect.any(Function),
+                expect.any(Function)
+            );
+
+            document.body.removeChild(modalElement);
+        });
+
+        it('should set appendTo to body by default', () => {
+            jest.spyOn(listComponent, 'getAttr').mockReturnValue(null);
+            (isMobileApp as jest.Mock).mockReturnValue(false);
+
+            listComponent['configureDnD']();
+
+            expect(configureDnD).toHaveBeenCalledWith(
+                expect.anything(),
+                { appendTo: 'body' },
+                expect.any(Function),
+                expect.any(Function),
+                expect.any(Function)
+            );
+        });
+
+        it('should handle touchstart event on mobile app', () => {
+            (isMobileApp as jest.Mock).mockReturnValue(true);
+            const touchstartEvent = $.Event('touchstart', { cancelable: true });
+            const touchendEvent = $.Event('touchend');
+            const touchmoveEvent = $.Event('touchmove');
+            const sortableSpy = jest.fn();
+            //@ts-ignore
+            $.fn.sortable = sortableSpy;
+
+            listComponent['configureDnD']();
+
+            // Simulate touchstart event
+            (listComponent as any).$ulEle.trigger(touchstartEvent);
+
+            // Verify touchstart behavior
+            expect((listComponent as any).$ulEle.hasClass('no-selection')).toBe(false);
+        });
+    });
+    describe('onUpdate', () => {
+        let oldIndex: number;
+        let newIndex: number;
+        let $event: any;
+        let ui: any;
+
+        beforeEach(() => {
+            oldIndex = 1;
+            newIndex = 3;
+            $event = { /* Mock event object */ };
+            ui = { item: { index: () => newIndex } };
+
+            jest.spyOn(listComponent, 'invokeEventCallback');
+
+            (listComponent as any).$ulEle = {
+                data: jest.fn().mockReturnValue(oldIndex),
+                removeData: jest.fn()
+            };
+
+            (listComponent as any).reorderProps = { minIndex: 0, maxIndex: 4 };
+            listComponent.fieldDefs = [
+                { id: 1 },
+                { id: 2 },
+                { id: 3 },
+                { id: 4 },
+                { id: 5 }
+            ];
+        });
+
+        it('should update the list data when item is dragged and dropped', () => {
+            (listComponent as any).onUpdate($event, ui);
+
+            expect(listComponent.fieldDefs.length).toBe(5);
+            expect(listComponent.fieldDefs[newIndex]).toEqual({ id: 2 });
+            expect(listComponent.invokeEventCallback).toHaveBeenCalledWith(
+                'reorder',
+                expect.objectContaining({
+                    $event: $event,
+                    $data: listComponent.fieldDefs,
+                    $changedItem: expect.objectContaining({
+                        oldIndex: oldIndex,
+                        newIndex: newIndex,
+                        item: { id: 2 }
+                    })
+                })
+            );
+            expect((listComponent as any).$ulEle.removeData).toHaveBeenCalledWith('oldIndex');
+        });
+    });
+
+    describe('handleStateParams', () => {
+        let options: any;
+
+        beforeEach(() => {
+            options = { options: {} };
+            (listComponent as any)._pageLoad = true;
+            (listComponent as any)._selectedItemsExist = false;
+        });
+
+        it('should not modify options if _pageLoad is false', () => {
+            (listComponent as any)._pageLoad = false;
+            (listComponent as any).handleStateParams(options);
+            expect(options.options.page).toBeUndefined();
+            expect((listComponent as any)._selectedItemsExist).toBe(false);
+        });
+
+        it('should set options.options.page if widgetState.pagination is set', () => {
+            jest.spyOn((listComponent as any).statePersistence, 'getWidgetState').mockReturnValue({
+                pagination: 2,
+            });
+            (listComponent as any).handleStateParams(options);
+            expect(options.options.page).toBe(2);
+            expect((listComponent as any)._selectedItemsExist).toBe(false);
+        });
+
+        it('should set _selectedItemsExist if widgetState.selectedItem is set', () => {
+            jest.spyOn((listComponent as any).statePersistence, 'getWidgetState').mockReturnValue({
+                selectedItem: 'some-item',
+            });
+            (listComponent as any).handleStateParams(options);
+            expect(options.options.page).toBeUndefined();
+            expect((listComponent as any)._selectedItemsExist).toBe(true);
+        });
+    });
+
+    describe('onPropertyChange', () => {
+        it('should call onDataSetChange when key is "dataset"', () => {
+            jest.spyOn((listComponent as any), 'onDataSetChange');
+            listComponent.onPropertyChange('dataset', [1, 2, 3]);
+            expect((listComponent as any).onDataSetChange).toHaveBeenCalledWith([1, 2, 3]);
+        });
+
+        it('should call onDataSetChange when key is "datasource"', () => {
+            jest.spyOn((listComponent as any), 'onDataSetChange');
+            listComponent.dataset = [1, 2, 3];
+            listComponent.onPropertyChange('datasource', 'some-datasource');
+            expect((listComponent as any).onDataSetChange).toHaveBeenCalledWith([1, 2, 3]);
+        });
+
+
+        it('should update pagination options when key is "pagesize"', () => {
+            listComponent.dataNavigator = { options: {}, widget: { maxResults: 0 }, maxResults: 0 };
+            listComponent.onPropertyChange('pagesize', 20);
+            expect(listComponent.dataNavigator.options).toEqual({ maxResults: 20 });
+            expect(listComponent.dataNavigator.widget.maxResults).toBe(20);
+            expect(listComponent.dataNavigator.maxResults).toBe(20);
+        });
+    });
 });
 
 describe('ListComponent With groupby', () => {

@@ -84,12 +84,13 @@ export const notHavingTheAttribute = async <T>(fixture: ComponentFixture<T>, sel
     expect(element.nativeElement.hasAttribute(attribute)).toBe(false);
 }
 
-export const mockApp = { 
-    subscribe: () => { return () => {}},
+export const mockApp = {
+    subscribe: () => { return () => { } },
     getSelectedLocale: () => {
         return 'en';
     },
-    notifyApp : () => jest.fn()
+    notifyApp: () => jest.fn(),
+    notify: () => jest.fn()
 };
 
 export const mockViewport = {};
