@@ -282,6 +282,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
                 $(this.nativeElement).find('.display-input').val(this.displayValue);
             }
         }
+
+        if(newVal && !this.bsDateValue && this.timeZone) {
+            newVal = getMomentLocaleObject(this.timeZone, newVal);
+        }
+
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
         this.minDateMaxDateValidationOnInput(newVal);
