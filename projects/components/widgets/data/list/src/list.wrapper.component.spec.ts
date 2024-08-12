@@ -8,13 +8,12 @@ import { ListItemDirective } from './list-item.directive';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
 import { PaginationModule as WmPaginationModule } from '@wm/components/data/pagination';
-import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
+import { WmComponentsModule, ToDatePipe, NAVIGATION_TYPE } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { DatePipe } from '@angular/common';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { configureDnD } from '@wm/components/base';
 import { isMobile, isMobileApp } from '@wm/core';
-import { pullAt } from 'lodash';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -89,10 +88,10 @@ describe('ListComponent', () => {
         fixture = TestBed.createComponent(ListWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         listComponent = wrapperComponent.listComponent;
-
         fixture.detectChanges();
         listComponent.dataset = wrapperComponent.testdata;
         listComponent.onPropertyChange('dataset', listComponent.dataset);
+        listComponent.groupby = ""
     }));
 
     it('should create the List Component', () => {
@@ -909,6 +908,300 @@ describe('ListComponent', () => {
             expect(listComponent.dataNavigator.widget.maxResults).toBe(20);
             expect(listComponent.dataNavigator.maxResults).toBe(20);
         });
+    });
+
+    describe('clear()', () => {
+        it('should call updateFieldDefs with an empty array', () => {
+            const updateFieldDefsSpy = jest.spyOn((listComponent as any), 'updateFieldDefs');
+            listComponent.clear();
+            expect(updateFieldDefsSpy).toHaveBeenCalledWith([]);
+        });
+    });
+
+    describe('deselectItem()', () => {
+        it('should deselect an active item by index', () => {
+            listComponent.dataset = [{ name: 'Test1', age: 30 }, { name: 'Test2', age: 40 }];
+            listComponent.onPropertyChange('dataset', listComponent.dataset);
+            const mockListItem = { isActive: true };
+            jest.spyOn((listComponent as any), 'getItemRefByIndexOrModel').mockReturnValue(mockListItem);
+            const toggleSpy = jest.spyOn((listComponent as any), 'toggleListItemSelection');
+            listComponent.deselectItem(0);
+            expect((listComponent as any).getItemRefByIndexOrModel).toHaveBeenCalledWith(0);
+            expect(toggleSpy).toHaveBeenCalledWith(mockListItem);
+        });
+
+        it('should deselect an active item by model', () => {
+            const itemModel = { name: 'Test', age: 30 };
+            listComponent.dataset = [itemModel];
+            listComponent.onPropertyChange('dataset', listComponent.dataset);
+            const mockListItem = { isActive: true };
+            jest.spyOn((listComponent as any), 'getItemRefByIndexOrModel').mockReturnValue(mockListItem);
+            const toggleSpy = jest.spyOn((listComponent as any), 'toggleListItemSelection');
+            listComponent.deselectItem(itemModel);
+            expect((listComponent as any).getItemRefByIndexOrModel).toHaveBeenCalledWith(itemModel);
+            expect(toggleSpy).toHaveBeenCalledWith(mockListItem);
+        });
+
+        it('should not deselect an inactive item', () => {
+            listComponent.dataset = [{ name: 'Test', age: 30 }];
+            listComponent.onPropertyChange('dataset', listComponent.dataset);
+            const mockListItem = { isActive: false };
+            jest.spyOn((listComponent as any), 'getItemRefByIndexOrModel').mockReturnValue(mockListItem);
+            const toggleSpy = jest.spyOn((listComponent as any), 'toggleListItemSelection');
+            listComponent.deselectItem(0);
+            expect((listComponent as any).getItemRefByIndexOrModel).toHaveBeenCalledWith(0);
+            expect(toggleSpy).not.toHaveBeenCalled();
+        });
+
+        it('should do nothing if the item is not found', () => {
+            listComponent.dataset = [{ name: 'Test', age: 30 }];
+            listComponent.onPropertyChange('dataset', listComponent.dataset);
+            jest.spyOn((listComponent as any), 'getItemRefByIndexOrModel').mockReturnValue(null);
+            const toggleSpy = jest.spyOn((listComponent as any), 'toggleListItemSelection');
+            listComponent.deselectItem(1);
+            expect((listComponent as any).getItemRefByIndexOrModel).toHaveBeenCalledWith(1);
+            expect(toggleSpy).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('onDataSetChange', () => {
+        beforeEach(() => {
+            (listComponent as any).datasource = { category: 'wm.Variable' };
+            listComponent['_pageLoad'] = true;
+            (listComponent as any).statePersistence = {
+                getWidgetState: jest.fn(),
+                computeMode: jest.fn()
+            };
+            listComponent.dataNavigator = {
+                pageChanged: jest.fn(),
+                setDataSource: jest.fn()
+            };
+            (listComponent as any).setupDataSource = jest.fn();
+            (listComponent as any).onDataChange = jest.fn();
+            listComponent['statehandler'] = 'someStateHandler';
+        });
+
+        it('should handle widget state with pagination', () => {
+            const widgetState = { pagination: { page: 2 } };
+            (listComponent as any).statePersistence.getWidgetState.mockReturnValue(widgetState);
+            (listComponent as any).statePersistence.computeMode.mockReturnValue('someState');
+            listComponent['onDataSetChange']([]);
+            expect(listComponent.dataNavigator.pageChanged).toHaveBeenCalledWith({ page: { page: 2 } }, true);
+            expect(listComponent['_pageLoad']).toBe(false);
+        });
+
+        it('should set _selectedItemsExist when widget state has selectedItem', () => {
+            const widgetState = { selectedItem: {} };
+            (listComponent as any).statePersistence.getWidgetState.mockReturnValue(widgetState);
+            (listComponent as any).statePersistence.computeMode.mockReturnValue('someState');
+            listComponent['onDataSetChange']([]);
+            expect(listComponent['_selectedItemsExist']).toBe(true);
+        });
+
+        it('should setup data source when navigation is set and dataNavigatorWatched is false', () => {
+            listComponent.navigation = NAVIGATION_TYPE.BASIC;
+            listComponent['dataNavigatorWatched'] = false;
+            (listComponent as any).statePersistence.computeMode.mockReturnValue('someState');
+            listComponent['onDataSetChange']([]);
+            expect((listComponent as any).setupDataSource).toHaveBeenCalled();
+        });
+
+        it('should call onDataChange when navigation is NONE and dataNavigatorWatched is false', () => {
+            listComponent.navigation = NAVIGATION_TYPE.NONE;
+            listComponent['dataNavigatorWatched'] = false;
+            const newVal = [{ id: 1, name: 'Test' }];
+            (listComponent as any).statePersistence.computeMode.mockReturnValue('someState');
+            listComponent['onDataSetChange'](newVal);
+            expect((listComponent as any).onDataChange).toHaveBeenCalledWith(newVal);
+        });
+
+        it('should update dataNavigator dataSource when navigation is set and dataNavigatorWatched is true', () => {
+            listComponent.navigation = NAVIGATION_TYPE.BASIC;
+            listComponent['dataNavigatorWatched'] = true;
+            (listComponent as any).statePersistence.computeMode.mockReturnValue('someState');
+            listComponent['onDataSetChange']([]);
+            expect(listComponent.dataNavigator.setDataSource).toHaveBeenCalledWith((listComponent as any).datasource);
+        });
+    });
+    it('should subscribe to pull to refresh', () => {
+        const mockApp = {
+            subscribe: jest.fn().mockReturnValue(() => { })
+        };
+        listComponent['app'] = mockApp as any;
+        listComponent['_listenerDestroyers'] = [];
+        listComponent['datasource'] = {
+            listRecords: jest.fn()
+        };
+        (listComponent as any).subscribeToPullToRefresh();
+        expect(mockApp.subscribe).toHaveBeenCalledWith('pulltorefresh', expect.any(Function));
+        expect(listComponent['_listenerDestroyers'].length).toBe(1);
+        const pullToRefreshCallback = mockApp.subscribe.mock.calls[0][1];
+        pullToRefreshCallback();
+        expect(listComponent['datasource'].listRecords).toHaveBeenCalled();
+    });
+
+    describe('checkSelectionLimit', () => {
+        it('should return true when selection limit is not set', () => {
+            listComponent.selectionlimit = undefined;
+            expect(listComponent['checkSelectionLimit'](5)).toBeTruthy();
+        });
+        it('should return true when count is less than selection limit', () => {
+            listComponent.selectionlimit = 10;
+            expect(listComponent['checkSelectionLimit'](5)).toBeTruthy();
+        });
+        it('should return false when count is equal to selection limit', () => {
+            listComponent.selectionlimit = 5;
+            expect(listComponent['checkSelectionLimit'](5)).toBeFalsy();
+        });
+        it('should return false when count is greater than selection limit', () => {
+            listComponent.selectionlimit = 5;
+            expect(listComponent['checkSelectionLimit'](10)).toBeFalsy();
+        });
+    });
+
+    describe('beforePaginationChange', () => {
+        it('should invoke the paginationchange event callback', () => {
+            const mockEvent = { page: 2 };
+            const mockIndex = 1;
+            jest.spyOn(listComponent, 'invokeEventCallback');
+            listComponent['beforePaginationChange'](mockEvent, mockIndex);
+            expect(listComponent.invokeEventCallback).toHaveBeenCalledWith('paginationchange', {
+                $event: mockEvent,
+                $index: mockIndex
+            });
+        });
+    });
+
+    describe('setUpCUDHandlers', () => {
+        it('should set up click event listener for add-list-item', () => {
+            const mockAddItem = document.createElement('div');
+            mockAddItem.className = 'add-list-item';
+            document.body.appendChild(mockAddItem);
+            jest.spyOn(listComponent, 'create');
+            listComponent['setUpCUDHandlers']();
+            mockAddItem.click();
+            expect(listComponent.create).toHaveBeenCalled();
+            document.body.removeChild(mockAddItem);
+        });
+        it('should not set up click event listener when add-list-item is not found', () => {
+            jest.spyOn(listComponent, 'create');
+            listComponent['setUpCUDHandlers']();
+            expect(listComponent.create).not.toHaveBeenCalled();
+        });
+    });
+    describe('onSort', () => {
+        beforeEach(() => {
+            listComponent.infScroll = true;
+            listComponent.fieldDefs = [{}, {}, {}]; // Mock 3 field definitions
+            (listComponent as any).$ulEle = {
+                find: jest.fn().mockReturnValue({
+                    offset: () => ({ top: 100 })
+                })
+            };
+            (listComponent as any).paginationService = {
+                bindScrollEvt: jest.fn()
+            };
+            (listComponent as any).debouncedFetchNextDatasetOnScroll = jest.fn();
+        });
+
+        it('should not trigger pagination when dragged element is above last item', () => {
+            const evt = {};
+            const ui = { offset: { top: 50 } };
+            listComponent['onSort'](evt, ui);
+            expect((listComponent as any).paginationService.bindScrollEvt).not.toHaveBeenCalled();
+            expect((listComponent as any).debouncedFetchNextDatasetOnScroll).not.toHaveBeenCalled();
+        });
+
+        it('should trigger pagination when dragged element is below last item', () => {
+            const evt = {};
+            const ui = { offset: { top: 150 } };
+            listComponent['onSort'](evt, ui);
+            expect((listComponent as any).paginationService.bindScrollEvt).toHaveBeenCalledWith(
+                listComponent,
+                '> ul',
+                expect.any(Number)
+            );
+            expect((listComponent as any).debouncedFetchNextDatasetOnScroll).toHaveBeenCalled();
+        });
+
+        it('should not trigger pagination when infScroll is false', () => {
+            listComponent.infScroll = false;
+            const evt = {};
+            const ui = { offset: { top: 150 } };
+            listComponent['onSort'](evt, ui);
+            expect((listComponent as any).paginationService.bindScrollEvt).not.toHaveBeenCalled();
+            expect((listComponent as any).debouncedFetchNextDatasetOnScroll).not.toHaveBeenCalled();
+        });
+
+        it('should not trigger pagination when last item offset is not found', () => {
+            (listComponent as any).$ulEle.find = jest.fn().mockReturnValue({
+                offset: () => null
+            });
+            const evt = {};
+            const ui = { offset: { top: 150 } };
+            listComponent['onSort'](evt, ui);
+            expect((listComponent as any).paginationService.bindScrollEvt).not.toHaveBeenCalled();
+            expect((listComponent as any).debouncedFetchNextDatasetOnScroll).not.toHaveBeenCalled();
+        });
+    });
+    describe('onReorderStart', () => {
+        beforeEach(() => {
+            (listComponent as any).$ulEle = {
+                data: jest.fn()
+            } as any;
+        });
+
+        it('should set placeholder height and store old index', () => {
+            const mockEvent = {};
+            const mockUi = {
+                placeholder: {
+                    height: jest.fn()
+                },
+                item: {
+                    height: () => 100,
+                    index: () => 5
+                }
+            };
+
+            listComponent['onReorderStart'](mockEvent, mockUi);
+
+            expect(mockUi.placeholder.height).toHaveBeenCalledWith(100);
+            expect((listComponent as any).$ulEle.data).toHaveBeenCalledWith('oldIndex', 5);
+        });
+    });
+
+    it('should setup handlers correctly', () => {
+        // Mock the listItems
+        const mockChanges = {
+            subscribe: jest.fn()
+        };
+        Object.defineProperty(listComponent, 'listItems', {
+            value: { changes: mockChanges },
+            writable: true
+        });
+
+        // Mock the nativeElement and its querySelector method
+        const mockAddEventListener = jest.fn();
+        const mockQuerySelector = jest.fn().mockReturnValue({
+            addEventListener: mockAddEventListener
+        });
+        Object.defineProperty(listComponent, 'nativeElement', {
+            value: {
+                querySelector: mockQuerySelector
+            },
+            writable: false
+        });
+
+        // Mock the cdRef
+        listComponent['cdRef'] = { detectChanges: jest.fn() } as any;
+
+        // Call setupHandlers
+        listComponent['setupHandlers']();
+
+        // Assertions
+        expect(mockChanges.subscribe).toHaveBeenCalled();
+        expect(mockQuerySelector).toHaveBeenCalledWith('ul.app-livelist-container');
+        expect(mockAddEventListener).toHaveBeenCalledWith('click', expect.any(Function), true);
     });
 });
 
