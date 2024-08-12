@@ -75,7 +75,7 @@ npm_test:
     - bash bundle-runtime-cli.sh
     - echo "npm_test starting"
     - npm run test 
-    - echo "npm_test finished at $(date +%Y-%m-%d\ %H:%M:%S)"
+    - echo "npm_test finished $(date +%Y-%m-%d\ %H:%M:%S)"
     - date
   retry:
         max: 2
