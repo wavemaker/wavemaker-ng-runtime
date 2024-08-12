@@ -59,7 +59,7 @@ export class NavComponent extends DatasetAwareNavComponent implements OnInit {
                         if (itemFound) {
                             return;
                         }
-                        if (item.isactive || item.link == '#/'+this.activePageName) {
+                        if (item.isactive) {
                             itemFound = true;
                             this.selecteditem = isMenuWidget ? omit(item, ['children', 'value']) : item.value;
                             this.invokeEventCallback('select', {$event: {}, $item: item.value});
