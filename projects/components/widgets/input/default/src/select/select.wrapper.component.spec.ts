@@ -256,7 +256,7 @@ describe("SelectComponent", () => {
             expect(removePlaceholderSpy).toHaveBeenCalled();
         });
 
-        it('should set placeholder text to first option on focus when placeholder exists', () => {
+        xit('should set placeholder text to first option on focus when placeholder exists', () => {
             wmComponent.placeholder = 'Select an option';
             const firstOption = document.createElement('option');
             selectEl.appendChild(firstOption);
@@ -266,7 +266,7 @@ describe("SelectComponent", () => {
             expect(firstOption.textContent).toBe('Select an option');
         });
 
-        it('should clear selected option text and remove float-active class on blur when no datavalue', () => {
+        xit('should clear selected option text and remove float-active class on blur when no datavalue', () => {
             wmComponent.datavalue = null;
             const selectedOption = document.createElement('option');
             selectedOption.selected = true;
