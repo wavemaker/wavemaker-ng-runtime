@@ -71,6 +71,7 @@ import "hammerjs/hammer.min.js";
 import "iscroll/build/iscroll.js";
 import "tabbable/dist/index.umd.min.js";
 import "@wavemaker/focus-trap/dist/focus-trap.umd.min.js";
+import "x2js"
 
 
 
