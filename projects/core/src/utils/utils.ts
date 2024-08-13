@@ -20,9 +20,9 @@ import {
     split,
     startsWith, toLower, toUpper, trim
 } from "lodash-es";
+import *  as X2JS from "x2js";
 
 declare const $;
-declare const X2JS;
 declare const moment;
 declare const document;
 declare const resolveLocalFileSystemURL;
@@ -519,7 +519,7 @@ export const getValidJSON = (content) => {
 };
 
 export const xmlToJson = (xmlString) => {
-    const x2jsObj = new X2JS({ 'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false });
+    const x2jsObj = new X2JS({ 'emptyNodeForm': 'object', 'attributePrefix': '', 'enableToStringFunc': false });
     let json = x2jsObj.xml2js(xmlString);
     if (json) {
         json = get(json, Object.keys(json)[0]);
