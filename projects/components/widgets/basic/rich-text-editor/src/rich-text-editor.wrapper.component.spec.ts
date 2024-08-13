@@ -5,7 +5,7 @@ import { ComponentsTestModule } from '../../../../base/src/test/components.test.
 import { compileTestComponent } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { SanitizePipe } from "@wm/components/base";
-import jquery from "jquery";
+import jQuery from "jquery";
 import "summernote/dist/summernote-lite.min.js";
 import { DomSanitizer } from '@angular/platform-browser';
 
