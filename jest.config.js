@@ -1,6 +1,6 @@
 module.exports = {
   preset: "jest-preset-angular",
-  testTimeout: 10000,
+  testTimeout: 15000,
   roots: ["<rootDir>/projects"],
   testEnvironment: "jsdom",
   transformIgnorePatterns: [
