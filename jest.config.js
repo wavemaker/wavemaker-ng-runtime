@@ -18,7 +18,9 @@ module.exports = {
     "/projects/components/base/src/widgets/common/partial-param/partial-param.directive.ts",
     "/projects/components/base/src/widgets/common/smooth-scroll/smooth-scroll.directive.ts",
     "/projects/components/base/src/widgets/common/lazy-load/lazy-load.directive.ts",
-    "/projects/components/base/src/directives/show-in-device.directive.ts"
+    "/projects/components/base/src/directives/show-in-device.directive.ts",
+    "/projects/components/widgets/basic/rich-text-editor/src/rich-text-editor.wrapper.component.spec.ts"
+
   ],
   setupFilesAfterEnv: ["<rootDir>/src/setup-jest.js"],
   collectCoverage: true,
