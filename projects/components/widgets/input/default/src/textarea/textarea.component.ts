@@ -46,4 +46,9 @@ export class TextareaComponent extends BaseInput {
     public onInputChange() {
         this.charlength = this.inputEl.nativeElement.value.length;
     }
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.charlength = this.inputEl.nativeElement.value.length;
+          });
+    }
 }
