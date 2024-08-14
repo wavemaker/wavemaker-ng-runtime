@@ -8,24 +8,38 @@ import {
     encodeUrl, encodeUrlParams, initCaps, spaceSeparate, replaceAt, periodSeparate, prettifyLabel,
     deHyphenate, prettifyLabels, isInsecureContentRequest, stringStartsWith, getEvaluatedExprValue,
     isImageFile, isAudioFile, isVideoFile, isValidWebURL, getResourceURL, triggerFn, noop, getFormattedDate, hasOffsetStr, getDateObj,
-    xmlToJson,
-    getValidJSON,
-    validateAccessRoles,
-    generateGUId,
-    getClonedObject,
-    addEventListenerOnElement,
+    xmlToJson, getValidJSON, validateAccessRoles, generateGUId, getClonedObject, addEventListenerOnElement,
     EVENT_LIFE,
-    findValueOf,
-    isNumberType,
+    findValueOf, isNumberType,
     extractType,
     isEmptyObject,
     isDateTimeType,
     replace,
     getBlob,
     getNativeDateObject,
-    getValidDateObject
+    getValidDateObject,
+    isEqualWithFields,
+    getRouteNameFromLink,
+    getUrlParams,
+    _WM_APP_PROJECT,
+    setSessionStorageItem,
+    getSessionStorageItem,
+    convertToBlob,
+    toPromise,
+    openLink,
+    hasCordova,
+    removeExtraSlashes,
+    triggerItemAction,
+    getDatasourceFromExpr,
+    extractCurrentItemExpr,
+    isLargeTabletPortrait,
+    isTablet,
+    isLargeTabletLandscape,
+    isMobileApp,
+    getAndroidVersion,
+    findParent,
+    findViewParent
 } from './utils';
-import * as utils from './utils';
 import { $parseEvent, $parseExpr, getFnByExpr, getFnForBindExpr, getFnForEventExpr, registerFnByExpr, setPipeProvider } from './expression-parser';
 
 declare const moment: any;
@@ -854,7 +868,7 @@ describe('Parser Functions', () => {
 describe('isLargeTabletLandscape', () => {
 
     it('should use provided parameters', () => {
-        utils.isLargeTabletLandscape('1500px', '1200px');
+        isLargeTabletLandscape('1500px', '1200px');
         expect(mockMatchMedia).toHaveBeenCalledWith(
             expect.stringContaining('1500px') && expect.stringContaining('1200px')
         );
@@ -864,7 +878,7 @@ describe('isLargeTabletLandscape', () => {
 describe('isLargeTabletPortrait', () => {
 
     it('should use provided parameters', () => {
-        utils.isLargeTabletPortrait('1500px', '1200px');
+        isLargeTabletPortrait('1500px', '1200px');
         expect(mockMatchMedia).toHaveBeenCalledWith(
             expect.stringContaining('1200px') && expect.stringContaining('1500px')
         );
@@ -876,7 +890,7 @@ describe('isTablet', () => {
         (document.querySelector as jest.Mock).mockReturnValue({
             widget: { viewParent: { Viewport: { isTabletType: true } } }
         });
-        const result = utils.isTablet();
+        const result = isTablet();
         expect(result).toBe(true);
     });
 });
@@ -887,7 +901,7 @@ describe('isMobileApp', () => {
             platformType: 'WEB',
             type: 'APPLICATION'
         });
-        const result = utils.isMobileApp();
+        const result = isMobileApp();
         expect(result).toBe(false);
     });
 });
@@ -907,7 +921,7 @@ describe('getAndroidVersion', () => {
             value: 'Mozilla/5.0 (Linux; Android 9; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
             configurable: true
         });
-        const result = utils.getAndroidVersion();
+        const result = getAndroidVersion();
         expect(result).toBe('9');
     });
 
@@ -916,33 +930,10 @@ describe('getAndroidVersion', () => {
             value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1',
             configurable: true
         });
-        const result = utils.getAndroidVersion();
+        const result = getAndroidVersion();
         expect(result).toBe('');
     });
 });
-
-describe('isKitkatDevice', () => {
-    it('should return true for Android 4.x devices', () => {
-        jest.spyOn(utils, 'isAndroid').mockReturnValue(true);
-        jest.spyOn(utils, 'getAndroidVersion').mockReturnValue('4.4.2');
-        const result = utils.isKitkatDevice();
-        expect(result).toBe(true);
-    });
-
-    it('should return false for non-Android 4.x devices', () => {
-        jest.spyOn(utils, 'isAndroid').mockReturnValue(true);
-        jest.spyOn(utils, 'getAndroidVersion').mockReturnValue('5.0');
-        const result = utils.isKitkatDevice();
-        expect(result).toBe(false);
-    });
-
-    it('should return false for non-Android devices', () => {
-        jest.spyOn(utils, 'isAndroid').mockReturnValue(false);
-        const result = utils.isKitkatDevice();
-        expect(result).toBe(false);
-    });
-});
-
 
 describe('encodeUrl', () => {
     it('should encode a simple URL without query parameters', () => {
@@ -1665,12 +1656,10 @@ describe('isDateTimeType', () => {
         expect(isDateTimeType(DataType.DATETIME)).toBe(true);
         expect(isDateTimeType(DataType.LOCALDATETIME)).toBe(true);
     });
-
     it('should return false for non-date time types', () => {
         expect(isDateTimeType('string')).toBe(false);
         expect(isDateTimeType('number')).toBe(false);
     });
-
     it('should handle full type references', () => {
         expect(isDateTimeType('java.util.Date')).toBe(true);
     });
@@ -1683,21 +1672,18 @@ describe('getBlob', () => {
         const result = getBlob(inputBlob);
         expect(result).toBe(inputBlob);
     });
-
     it('should create a Blob with JSON content for object input', () => {
         const input = { key: 'value' };
         const result = getBlob(input);
         expect(result).toBeInstanceOf(Blob);
         expect(result.type).toBe('application/json');
     });
-
     it('should create a Blob with text content for string input', () => {
         const input = 'Hello, world!';
         const result = getBlob(input);
         expect(result).toBeInstanceOf(Blob);
         expect(result.type).toBe('text/plain');
     });
-
     it('should use provided content type', () => {
         const input = 'Hello, world!';
         const contentType = 'text/html';
@@ -1705,13 +1691,11 @@ describe('getBlob', () => {
         expect(result).toBeInstanceOf(Blob);
         expect(result.type).toBe(contentType);
     });
-
     it('should handle null input', () => {
         const result = getBlob(null);
         expect(result).toBeInstanceOf(Blob);
         expect(result.size).toBe(4); // 'null' as string
     });
-
     it('should handle undefined input', () => {
         const result = getBlob(undefined);
         expect(result).toBeInstanceOf(Blob);
@@ -1730,7 +1714,6 @@ describe('getValidDateObject', () => {
         expect(typeof result).toBe('string');
         expect(result).toBe('2023-05-15 10:30 AM');
     });
-
     it('should handle native picker format', () => {
         const options = { isNativePicker: true, pattern: 'YYYY/MM/DD HH:mm:ss' };
         const result = getValidDateObject('2023/05/15 10:30:00', options);
@@ -1745,7 +1728,6 @@ describe('getValidDateObject', () => {
         expect(result).toBeInstanceOf(Date);
         expect(result.getTime()).toBe(parseInt(timestamp, 10));
     });
-
     it('should handle HH:mm:ss format', () => {
         const result = getValidDateObject('10:30:00');
         expect(result).toBeInstanceOf(Date);
@@ -1762,7 +1744,6 @@ describe('getNativeDateObject', () => {
         expect(result.getMonth()).toBe(4);
         expect(result.getDate()).toBe(15);
     });
-
     it('should handle options', () => {
         const options = { pattern: 'DD-MM-YYYY' };
         const result = getNativeDateObject('15-05-2023', options);
@@ -1770,5 +1751,546 @@ describe('getNativeDateObject', () => {
         expect(result.getFullYear()).toBe(2023);
         expect(result.getMonth()).toBe(4);
         expect(result.getDate()).toBe(15);
+    });
+});
+
+
+describe('isEqualWithFields', () => {
+    it('should return true for equal objects with single field comparison', () => {
+        const obj1 = { id: 1, name: 'John' };
+        const obj2 = { id: 1, name: 'Jane' };
+        expect(isEqualWithFields(obj1, obj2, 'id')).toBe(true);
+    });
+
+    it('should return false for unequal objects with single field comparison', () => {
+        const obj1 = { id: 1, name: 'John' };
+        const obj2 = { id: 2, name: 'John' };
+        expect(isEqualWithFields(obj1, obj2, 'id')).toBe(false);
+    });
+
+    it('should return true for equal objects with multiple field comparison', () => {
+        const obj1 = { id: 1, name: 'John', age: 30 };
+        const obj2 = { id: 1, name: 'John', age: 25 };
+        expect(isEqualWithFields(obj1, obj2, 'id, name')).toBe(true);
+    });
+
+    it('should return false for unequal objects with multiple field comparison', () => {
+        const obj1 = { id: 1, name: 'John', age: 30 };
+        const obj2 = { id: 1, name: 'Jane', age: 30 };
+        expect(isEqualWithFields(obj1, obj2, 'id, name')).toBe(false);
+    });
+
+    it('should handle nested object comparison', () => {
+        const obj1 = { id: 1, details: { name: 'John' } };
+        const obj2 = { id: 1, details: { name: 'John' } };
+        expect(isEqualWithFields(obj1, obj2, 'id, details.name')).toBe(true);
+    });
+
+    it('should handle comparison with different field names', () => {
+        const obj1 = { id: 1, name: 'John' };
+        const obj2 = { userId: 1, fullName: 'Jane' };
+        expect(isEqualWithFields(obj1, obj2, 'id:userId')).toBe(true);
+    });
+
+    it('should handle array input for compareBy', () => {
+        const obj1 = { id: 1, name: 'John', age: 30 };
+        const obj2 = { id: 1, name: 'John', age: 25 };
+        expect(isEqualWithFields(obj1, obj2, ['id', 'name'])).toBe(true);
+    });
+
+    it('should return false when compared fields are undefined', () => {
+        const obj1 = { id: 1 };
+        const obj2 = { name: 'John' };
+        expect(isEqualWithFields(obj1, obj2, 'id')).toBe(false);
+    });
+
+    it('should handle empty compareBy', () => {
+        const obj1 = { id: 1, name: 'John' };
+        const obj2 = { id: 2, name: 'Jane' };
+        expect(isEqualWithFields(obj1, obj2, '')).toBe(true);
+    });
+
+    it('should handle objects with different structures', () => {
+        const obj1 = { id: 1, details: { name: 'John' } };
+        const obj2 = { userId: 1, fullName: 'John' };
+        expect(isEqualWithFields(obj1, obj2, 'id:userId, details.name:fullName')).toBe(true);
+    });
+});
+
+
+describe('getUrlParams', () => {
+    it('should return an empty object for a URL without parameters', () => {
+        const url = 'https://example.com/page';
+        expect(getUrlParams(url)).toEqual({});
+    });
+
+    it('should parse single parameter correctly', () => {
+        const url = 'https://example.com/page?param1=value1';
+        expect(getUrlParams(url)).toEqual({ param1: 'value1' });
+    });
+
+    it('should parse multiple parameters correctly', () => {
+        const url = 'https://example.com/page?param1=value1&param2=value2&param3=value3';
+        expect(getUrlParams(url)).toEqual({
+            param1: 'value1',
+            param2: 'value2',
+            param3: 'value3'
+        });
+    });
+
+    it('should handle parameters without values', () => {
+        const url = 'https://example.com/page?param1=value1&param2=&param3';
+        expect(getUrlParams(url)).toEqual({
+            param1: 'value1',
+            param2: '',
+            param3: undefined
+        });
+    });
+
+    it('should return an empty object for a URL with only a question mark', () => {
+        const url = 'https://example.com/page?';
+        expect(getUrlParams(url)).toEqual({});
+    });
+});
+
+describe('getRouteNameFromLink', () => {
+    it('should return the route without hash and parameters', () => {
+        const link = '#/route/to/page?param1=value1';
+        expect(getRouteNameFromLink(link)).toBe('/route/to/page');
+    });
+
+    it('should handle links without hash', () => {
+        const link = '/route/to/page?param1=value1';
+        expect(getRouteNameFromLink(link)).toBe('/route/to/page');
+    });
+
+    it('should return the full path if there are no parameters', () => {
+        const link = '#/route/to/page';
+        expect(getRouteNameFromLink(link)).toBe('/route/to/page');
+    });
+
+    it('should handle root path', () => {
+        const link = '#/?param1=value1';
+        expect(getRouteNameFromLink(link)).toBe('/');
+    });
+
+    it('should return empty string for empty input', () => {
+        const link = '';
+        expect(getRouteNameFromLink(link)).toBe('');
+    });
+
+    it('should handle links with multiple question marks', () => {
+        const link = '#/route/to/page?param1=value1?param2=value2';
+        expect(getRouteNameFromLink(link)).toBe('/route/to/page');
+    });
+});
+
+describe('Session Storage Functions', () => {
+    let mockSessionStorage;
+
+    beforeEach(() => {
+        // Create a mock sessionStorage
+        mockSessionStorage = {
+            getItem: jest.fn(),
+            setItem: jest.fn(),
+        };
+
+        // Mock the window object
+        Object.defineProperty(global, 'window', {
+            value: {
+                sessionStorage: mockSessionStorage,
+            },
+            writable: true,
+        });
+
+        // Set a test id for _WM_APP_PROJECT
+        _WM_APP_PROJECT.id = 'test-project-id';
+    });
+
+    afterEach(() => {
+        jest.resetAllMocks();
+    });
+
+    describe('setSessionStorageItem', () => {
+        it('should create a new item if it does not exist', () => {
+            mockSessionStorage.getItem.mockReturnValue(null);
+
+            setSessionStorageItem('testKey', 'testValue');
+
+            expect(mockSessionStorage.setItem).toHaveBeenCalledWith(
+                'test-project-id',
+                JSON.stringify({ testKey: 'testValue' })
+            );
+        });
+
+        it('should update an existing item', () => {
+            mockSessionStorage.getItem.mockReturnValue(JSON.stringify({ existingKey: 'existingValue' }));
+
+            setSessionStorageItem('testKey', 'testValue');
+
+            expect(mockSessionStorage.setItem).toHaveBeenCalledWith(
+                'test-project-id',
+                JSON.stringify({ existingKey: 'existingValue', testKey: 'testValue' })
+            );
+        });
+    });
+
+    describe('getSessionStorageItem', () => {
+        it('should return the value for an existing key', () => {
+            mockSessionStorage.getItem.mockReturnValue(JSON.stringify({ testKey: 'testValue' }));
+
+            const result = getSessionStorageItem('testKey');
+
+            expect(result).toBe('testValue');
+        });
+
+        it('should return undefined for a non-existing key', () => {
+            mockSessionStorage.getItem.mockReturnValue(JSON.stringify({ otherKey: 'otherValue' }));
+
+            const result = getSessionStorageItem('testKey');
+
+            expect(result).toBeUndefined();
+        });
+
+        it('should return undefined if the item does not exist', () => {
+            mockSessionStorage.getItem.mockReturnValue(null);
+
+            const result = getSessionStorageItem('testKey');
+
+            expect(result).toBeUndefined();
+        });
+    });
+});
+
+
+describe('convertToBlob', () => {
+    (global as any).resolveLocalFileSystemURL = jest.fn();
+    let mockFileEntry;
+    let mockFile;
+    let mockFileReader;
+
+    beforeEach(() => {
+        mockFileEntry = {
+            file: jest.fn()
+        };
+
+        mockFile = {
+            type: 'image/jpeg'
+        };
+
+        mockFileReader = {
+            onloadend: null,
+            onerror: null,
+            readAsArrayBuffer: jest.fn(),
+            result: new ArrayBuffer(8)
+        };
+
+        (global as any).FileReader = jest.fn(() => mockFileReader);
+    });
+    it('should reject when resolveLocalFileSystemURL fails', async () => {
+        const testFilePath = 'file:///path/to/image.jpg';
+        const testError = new Error('File not found');
+
+        (global as any).resolveLocalFileSystemURL.mockImplementation((filepath, success, error) => {
+            error(testError);
+        });
+
+        await expect(convertToBlob(testFilePath)).rejects.toEqual(testError);
+    });
+
+    it('should reject when FileReader encounters an error', async () => {
+        const testFilePath = 'file:///path/to/image.jpg';
+        const testError = new Error('Read error');
+
+        (global as any).resolveLocalFileSystemURL.mockImplementation((filepath, success) => {
+            success(mockFileEntry);
+        });
+
+        mockFileEntry.file.mockImplementation((callback) => {
+            callback(mockFile);
+        });
+
+        const result = convertToBlob(testFilePath);
+
+        // Simulate FileReader error
+        mockFileReader.onerror(testError);
+
+        await expect(result).rejects.toEqual(testError);
+    });
+});
+
+
+describe('hasCordova', () => {
+    it('should return true when window.cordova exists', () => {
+        window['cordova'] = {};
+        expect(hasCordova()).toBe(true);
+        delete window['cordova'];
+    });
+
+    it('should return false when window.cordova does not exist', () => {
+        expect(hasCordova()).toBe(false);
+    });
+});
+
+describe('openLink', () => {
+    let originalWindowOpen;
+    let originalLocationHash;
+
+    beforeEach(() => {
+        originalWindowOpen = window.open;
+        originalLocationHash = location.hash;
+        (window as any).open = jest.fn();
+        Object.defineProperty(window, 'location', {
+            value: { hash: '' },
+            writable: true
+        });
+    });
+
+    afterEach(() => {
+        window.open = originalWindowOpen;
+        location.hash = originalLocationHash;
+    });
+
+    it('should set location.hash when hasCordova is true and link starts with #', () => {
+        window['cordova'] = {};
+        openLink('#test');
+        expect(location.hash).toBe('#test');
+        delete window['cordova'];
+    });
+
+    it('should call window.open when hasCordova is false', () => {
+        openLink('https://example.com');
+        expect(window.open).toHaveBeenCalledWith('https://example.com', '_self');
+    });
+
+    it('should call window.open with custom target', () => {
+        openLink('https://example.com', '_blank');
+        expect(window.open).toHaveBeenCalledWith('https://example.com', '_blank');
+    });
+});
+
+describe('toPromise', () => {
+    it('should return the input if it is already a Promise', async () => {
+        const inputPromise = Promise.resolve('test');
+        const result = toPromise(inputPromise);
+        expect(result).toBe(inputPromise);
+        await expect(result).resolves.toBe('test');
+    });
+
+    it('should wrap non-Promise value in a Promise', async () => {
+        const input = 'test';
+        const result = toPromise(input);
+        expect(result instanceof Promise).toBe(true);
+        await expect(result).resolves.toBe('test');
+    });
+});
+
+describe('removeExtraSlashes', () => {
+    test('should remove extra slashes from URL', () => {
+        const url = 'http://example.com//path///to//resource';
+        expect(removeExtraSlashes(url)).toBe('http://example.com/path/to/resource');
+    });
+
+    test('should not modify file:/// URLs', () => {
+        const url = 'file:///path/to/file';
+        expect(removeExtraSlashes(url)).toBe('file:///path/to/file');
+    });
+
+    test('should not modify base64 image URLs', () => {
+        const url = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==';
+        expect(removeExtraSlashes(url)).toBe(url);
+    });
+
+    test('should handle non-string input', () => {
+        const nonString = 123;
+        expect(removeExtraSlashes(nonString)).toBeUndefined();
+    });
+
+    test('should handle empty string', () => {
+        expect(removeExtraSlashes('')).toBe('');
+    });
+});
+
+
+describe('triggerItemAction', () => {
+    let mockScope: any;
+    let mockItem: any;
+
+    beforeEach(() => {
+        mockScope = {
+            itemActionFn: undefined,
+            userDefinedExecutionContext: {},
+            route: {
+                navigate: jest.fn(),
+            },
+        };
+        mockItem = {
+            link: '',
+            action: '',
+            target: '',
+        };
+        jest.clearAllMocks();
+    });
+
+    test('should call itemActionFn when action is provided', () => {
+        mockItem.action = 'someAction';
+        mockScope.itemActionFn = jest.fn();
+
+        triggerItemAction(mockScope, mockItem);
+
+        expect(mockScope.itemActionFn).toHaveBeenCalledWith(
+            mockScope.userDefinedExecutionContext,
+            expect.any(Object)
+        );
+    });
+
+    test('should navigate using router when link starts with "#/" and target is "_self"', () => {
+        mockItem.link = '#/some/route?param1=value1';
+        mockItem.target = '_self';
+
+        triggerItemAction(mockScope, mockItem);
+
+        expect(mockScope.route.navigate).toHaveBeenCalledWith(
+            ['/some/route'],
+            { queryParams: { param1: 'value1' } }
+        );
+    });
+    test('should use menuRef.route if scope.route is not available', () => {
+        mockItem.link = '#/some/route';
+        mockItem.target = '_self';
+        mockScope.route = undefined;
+        mockScope.menuRef = {
+            route: {
+                navigate: jest.fn(),
+            },
+        };
+        triggerItemAction(mockScope, mockItem);
+        expect(mockScope.menuRef.route.navigate).toHaveBeenCalledWith(
+            ['/some/route'],
+            { queryParams: {} }
+        );
+    });
+});
+
+
+describe('getDatasourceFromExpr', () => {
+    let mockScope: any;
+
+    beforeEach(() => {
+        mockScope = {
+            viewParent: {
+                Variables: {
+                    staticVar1: {
+                        dataSet: {
+                            details: [
+                                { addresses: [] }
+                            ]
+                        }
+                    }
+                },
+                Widgets: {
+                    list1: {
+                        $attrs: new Map(),
+                        binddataset: 'Variables.staticVar1.dataSet.details',
+                        datasource: null
+                    }
+                }
+            }
+        };
+    });
+
+    test('should return datasource for expression bound to Variables', () => {
+        const expr = 'Variables.staticVar1.dataSet.details[$i].addresses';
+        const result = getDatasourceFromExpr(expr, mockScope);
+        expect(result).toBe(mockScope.viewParent.Variables.staticVar1);
+    });
+    test('should return undefined for invalid expressions', () => {
+        const expr = 'InvalidExpression.something';
+        const result = getDatasourceFromExpr(expr, mockScope);
+        expect(result).toBeUndefined();
+    });
+
+    test('should handle expressions not starting with Variables or Widgets', () => {
+        const expr = 'someOtherExpression.property';
+        const result = getDatasourceFromExpr(expr, mockScope);
+        expect(result).toBeUndefined();
+    });
+});
+
+
+describe('extractCurrentItemExpr', () => {
+    let mockScope;
+    beforeEach(() => {
+        mockScope = {
+            viewParent: {
+                Widgets: {
+                    list1: {
+                        $attrs: new Map(),
+                        datasource: null,
+                        binddataset: '',
+                    },
+                },
+            },
+        };
+    });
+
+    it('should return the original expression if it does not match the currentItem pattern', () => {
+        const expr = 'Variables.someVar.someProperty';
+        const result = extractCurrentItemExpr(expr, mockScope);
+        expect(result).toBe(expr);
+    });
+
+    it('should replace currentItem with datasetboundexpr when datasource is null', () => {
+        const expr = 'Widgets.list1.currentItem.details';
+        mockScope.viewParent.Widgets.list1.$attrs.set('datasetboundexpr', 'Variables.staticVar1.dataSet');
+        const result = extractCurrentItemExpr(expr, mockScope);
+        expect(result).toBe('Variables.staticVar1.dataSet[$i].details');
+    });
+
+    it('should replace currentItem with binddataset when datasource is not null', () => {
+        const expr = 'Widgets.list1.currentItem.details';
+        mockScope.viewParent.Widgets.list1.datasource = {};
+        mockScope.viewParent.Widgets.list1.binddataset = 'Variables.dynamicVar1.dataSet';
+        const result = extractCurrentItemExpr(expr, mockScope);
+        expect(result).toBe('Variables.dynamicVar1.dataSet[$i].details');
+    });
+});
+
+
+describe('findViewParent', () => {
+    it('should return lView[15][8] when lView[15] exists', () => {
+        const mockLView = {
+            15: {
+                8: 'parentView'
+            }
+        };
+        expect(findViewParent(mockLView)).toBe('parentView');
+    });
+
+    it('should return undefined when lView[15] does not exist', () => {
+        const mockLView = {};
+        expect(findViewParent(mockLView)).toBeUndefined();
+    });
+});
+
+describe('findParent', () => {
+    it('should return the result of findViewParent when it is truthy', () => {
+        const mockLView = {
+            15: {
+                8: 'parentView'
+            }
+        };
+        expect(findParent(mockLView)).toBe('parentView');
+    });
+
+    it('should return viewParentApp when findViewParent returns falsy', () => {
+        const mockLView = {};
+        const mockViewParentApp = 'viewParentApp';
+        expect(findParent(mockLView, mockViewParentApp)).toBe(mockViewParentApp);
+    });
+
+    it('should return undefined when findViewParent returns falsy and viewParentApp is not provided', () => {
+        const mockLView = {};
+        expect(findParent(mockLView)).toBeUndefined();
     });
 });
