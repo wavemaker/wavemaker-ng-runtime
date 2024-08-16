@@ -1,8 +1,7 @@
 import { _WM_APP_PROJECT, hasCordova, isIE, getWmProjectProperties } from '@wm/core';
 import {get, isUndefined} from "lodash-es";
-
+import jsSHA from "jssha"
 declare const moment;
-declare const jsSHA;
 
 const accessTokenSuffix = '.access_token', pkceIdentifier = 'pkce', implicitIdentifier = 'implicit';
 
@@ -267,7 +266,7 @@ function generateRandomString() {
 function getEncryptedCode(plain) {
     const encoder = new TextEncoder();
     const data = encoder.encode(plain);
-    const shaObj = new jsSHA("SHA-256", "UINT8ARRAY", { encoding: "UTF8" });
+    const shaObj = new jsSHA(("SHA-256" as any), "UINT8ARRAY", ({ encoding: "UTF8" } as any));
     shaObj.update(data);
     return shaObj.getHash("ARRAYBUFFER");
 }
