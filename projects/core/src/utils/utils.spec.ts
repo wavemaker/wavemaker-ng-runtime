@@ -41,6 +41,7 @@ import {
     findViewParent
 } from './utils';
 import { $parseEvent, $parseExpr, getFnByExpr, getFnForBindExpr, getFnForEventExpr, registerFnByExpr, setPipeProvider } from './expression-parser';
+import { getWmProjectProperties, setWmProjectProperties } from './wm-project-properties';
 
 declare const moment: any;
 jest.mock('rxjs');
@@ -2292,5 +2293,51 @@ describe('findParent', () => {
     it('should return undefined when findViewParent returns falsy and viewParentApp is not provided', () => {
         const mockLView = {};
         expect(findParent(mockLView)).toBeUndefined();
+    });
+});
+
+
+describe('WM Project Properties', () => {
+    let originalWindow: any;
+
+    beforeEach(() => {
+        // Store the original window object
+        originalWindow = (global as any).window;
+        // Create a mock window object
+        (global as any).window = {} as any;
+    });
+
+    afterEach(() => {
+        // Restore the original window object
+        (global as any).window = originalWindow;
+    });
+
+    describe('getWmProjectProperties', () => {
+        it('should return window._WM_APP_PROPERTIES when it exists', () => {
+            const mockProperties = { key: 'value' };
+            (global as any).window._WM_APP_PROPERTIES = mockProperties;
+
+            const result = getWmProjectProperties();
+
+            expect(result).toBe(mockProperties);
+        });
+
+        it('should return an empty object when window._WM_APP_PROPERTIES does not exist', () => {
+            const result = getWmProjectProperties();
+
+            expect(result).toEqual({});
+        });
+    });
+
+    describe('setWmProjectProperties', () => {
+        it('should set the prototype of the properties object', () => {
+            const mockProps = { key: 'value' };
+
+            setWmProjectProperties(mockProps);
+
+            const result = getWmProjectProperties();
+            expect(Object.getPrototypeOf(result)).toBe(mockProps);
+        });
+
     });
 });

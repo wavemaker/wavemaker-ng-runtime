@@ -3,7 +3,7 @@ import {
     tick,
     fakeAsync
 } from '@angular/core/testing';
-import { AbstractI18nService, App } from '@wm/core';
+import { AbstractI18nService, App, isMobile } from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
@@ -20,6 +20,11 @@ import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttr
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { Observable } from 'rxjs';
 import { DataProvider } from './data-provider/data-provider';
+
+jest.mock('@wm/core', () => ({
+    ...jest.requireActual('@wm/core'),
+    isMobile: jest.fn()
+}));
 
 const markup = `
         <div wmSearch name="testsearch"
@@ -54,23 +59,23 @@ class SearchWrapperComponent {
     public testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }, { name: 'John', age: 25 }, { name: 'Peter Son', age: 28 }];
 
     public onChange($event, widget, newVal, oldVal) {
-        console.log('Searching...');
+        // console.log('Searching...');
     }
 
     public search1Submit($event, widget) {
-        console.log('Search on submit triggered!');
+        // console.log('Search on submit triggered!');
     }
 
     public search1Select($event, widget, selectedValue) {
-        console.log('TYpehead select event!');
+        // console.log('TYpehead select event!');
     }
 
     public search1Focus = function ($event, widget) {
-        console.log('search on focus callback!');
+        // console.log('search on focus callback!');
     };
 
     public search1Blur = function ($event, widget) {
-        console.log('search on blur callback!');
+        // console.log('search on blur callback!');
     };
 }
 
@@ -1216,7 +1221,7 @@ describe('SearchComponent', () => {
 
 
 
-    describe('loadMoreData', () => { 
+    describe('loadMoreData', () => {
         let dataProviderMock: jest.Mocked<DataProvider>;
         let typeaheadMock: jest.Mocked<TypeaheadDirective>;
 
@@ -1227,7 +1232,7 @@ describe('SearchComponent', () => {
 
             typeaheadMock = {
                 onInput: jest.fn(),
-            } as any;  
+            } as any;
             wmComponent.typeahead = typeaheadMock;
             wmComponent['dataProvider'] = dataProviderMock;
             fixture.detectChanges();
@@ -1283,6 +1288,455 @@ describe('SearchComponent', () => {
             expect(typeaheadMock.onInput).toHaveBeenCalledWith({
                 target: { value: '0' }
             });
+        });
+    });
+
+    describe('triggerSearch', () => {
+        it('should not trigger search if dataProvider.isLastPage is true', () => {
+            (wmComponent as any).dataProvider.isLastPage = true;
+            const loadMoreDataSpy = jest.spyOn((wmComponent as any), 'loadMoreData');
+            wmComponent['triggerSearch']();
+            expect(loadMoreDataSpy).not.toHaveBeenCalled();
+        });
+
+        it('should not trigger search if element does not have "full-screen" class', () => {
+            (wmComponent as any).dataProvider.isLastPage = false;
+            wmComponent.$element.removeClass('full-screen');
+            const loadMoreDataSpy = jest.spyOn((wmComponent as any), 'loadMoreData');
+            wmComponent['triggerSearch']();
+            expect(loadMoreDataSpy).not.toHaveBeenCalled();
+        });
+
+
+        it('should trigger loadMoreData if conditions are met', () => {
+            (wmComponent as any).dataProvider.isLastPage = false;
+            wmComponent.$element.addClass('full-screen');
+
+            const mockLastItem = {
+                length: 1,
+                height: () => 50,
+                position: () => ({ top: 100 })
+            };
+            const mockDropdown = {
+                length: 1,
+                height: () => 200,
+                position: () => ({ top: 0 }),
+                find: jest.fn().mockReturnValue({
+                    last: jest.fn().mockReturnValue(mockLastItem)
+                })
+            };
+
+            // Mock the dropdownEl property
+            Object.defineProperty(wmComponent, 'dropdownEl', {
+                get: jest.fn().mockReturnValue(mockDropdown)
+            });
+
+            const loadMoreDataSpy = jest.spyOn((wmComponent as any), 'loadMoreData');
+
+            wmComponent['triggerSearch']();
+
+            expect(loadMoreDataSpy).toHaveBeenCalledWith(true);
+        });
+
+        it('should not trigger loadMoreData if last item is below the full screen', () => {
+            (wmComponent as any).dataProvider.isLastPage = false;
+            wmComponent.$element.addClass('full-screen');
+            const mockLastItem = {
+                length: 1,
+                height: () => 50,
+                position: () => ({ top: 300 })
+            };
+            const mockDropdown = {
+                length: 1,
+                height: () => 200,
+                position: () => ({ top: 0 }),
+                find: jest.fn().mockReturnValue({
+                    last: jest.fn().mockReturnValue(mockLastItem)
+                })
+            };
+            Object.defineProperty(wmComponent, 'dropdownEl', {
+                get: jest.fn().mockReturnValue(mockDropdown)
+            });
+            const loadMoreDataSpy = jest.spyOn((wmComponent as any), 'loadMoreData');
+            wmComponent['triggerSearch']();
+            expect(loadMoreDataSpy).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('handleFocus', () => {
+        it('should emit keyUpEventEmitter if conditions are met', () => {
+            wmComponent.type = 'search';
+            wmComponent.query = 'test query';
+            wmComponent['_lastQuery'] = 'test query';
+            wmComponent['_lastResult'] = ['some result'];
+            const mockTypeahead = {
+                keyUpEventEmitter: {
+                    emit: jest.fn()
+                }
+            };
+            (wmComponent as any).typeahead = mockTypeahead;
+            wmComponent['handleFocus']({} as FocusEvent);
+            expect(mockTypeahead.keyUpEventEmitter.emit).toHaveBeenCalledWith('test query');
+        });
+
+        it('should not emit keyUpEventEmitter if conditions are not met', () => {
+            wmComponent.type = 'not search';
+            wmComponent.query = 'test query';
+            wmComponent['_lastQuery'] = 'different query';
+            wmComponent['_lastResult'] = null;
+            const mockTypeahead = {
+                keyUpEventEmitter: {
+                    emit: jest.fn()
+                }
+            };
+            (wmComponent as any).typeahead = mockTypeahead;
+            wmComponent['handleFocus']({} as FocusEvent);
+            expect(mockTypeahead.keyUpEventEmitter.emit).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('typeaheadOnSelect', () => {
+        let mockMatch: TypeaheadMatch;
+        let mockEvent: Event;
+
+        beforeEach(() => {
+            mockMatch = {
+                item: {
+                    key: 'testKey',
+                    value: 'testValue',
+                    label: 'Test Label'
+                }
+            } as TypeaheadMatch;
+            mockEvent = {} as Event;
+            wmComponent.invokeOnTouched = jest.fn();
+            wmComponent.invokeOnChange = jest.fn();
+            wmComponent.updateBoundVariable = jest.fn();
+            (wmComponent as any).closeSearch = jest.fn();
+            wmComponent.invokeEventCallback = jest.fn();
+            (wmComponent as any).updatePrevDatavalue = jest.fn();
+            (wmComponent as any).eventData = jest.fn().mockReturnValue(mockEvent);
+        });
+
+        it('should update queryModel, query, and model properties', () => {
+            wmComponent.typeaheadOnSelect(mockMatch, mockEvent);
+            expect(wmComponent.queryModel).toBe(mockMatch.item);
+            expect(wmComponent.query).toBe('Test Label');
+            expect(wmComponent['_modelByKey']).toBe('testKey');
+            expect(wmComponent['_modelByValue']).toBe('testValue');
+        });
+
+        it('should set showClosebtn to true when query is not empty', () => {
+            wmComponent.typeaheadOnSelect(mockMatch, mockEvent);
+            expect((wmComponent as any).showClosebtn).toBe(true);
+        });
+
+        it('should set showClosebtn to false when query is empty', () => {
+            mockMatch.item.label = '';
+            wmComponent.typeaheadOnSelect(mockMatch, mockEvent);
+            expect((wmComponent as any).showClosebtn).toBe(false);
+        });
+
+        it('should invoke necessary methods', () => {
+            wmComponent.typeaheadOnSelect(mockMatch, mockEvent);
+            expect(wmComponent.invokeOnTouched).toHaveBeenCalled();
+            expect(wmComponent.invokeOnChange).toHaveBeenCalled();
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledTimes(2);
+        });
+
+        it('should invoke event callbacks', () => {
+            wmComponent.typeaheadOnSelect(mockMatch, mockEvent);
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('select', expect.any(Object));
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('submit', expect.any(Object));
+        });
+    });
+
+    describe('onSearchSelect', () => {
+        let mockEvent: Event;
+
+        beforeEach(() => {
+            mockEvent = {} as Event;
+            wmComponent.query = 'test query';
+            (wmComponent as any).eventData = jest.fn().mockReturnValue(mockEvent);
+            (wmComponent as any).isUpdateOnKeyPress = jest.fn();
+            wmComponent.invokeEventCallback = jest.fn();
+        });
+
+        it('should handle case when typeaheadContainer is not available', () => {
+            wmComponent['onSearchSelect'](mockEvent);
+
+            expect((wmComponent as any).eventData).toHaveBeenCalledWith(mockEvent, {});
+        });
+
+        it('should handle case when query does not match active typeahead element', () => {
+            wmComponent.typeaheadContainer = {
+                active: {
+                    value: 'different query',
+                    item: {}
+                }
+            } as any;
+
+            wmComponent['onSearchSelect'](mockEvent);
+
+            expect((wmComponent as any).eventData).toHaveBeenCalledWith(mockEvent, {});
+        });
+
+        it('should handle case when isUpdateOnKeyPress is false', () => {
+            (wmComponent as any).isUpdateOnKeyPress.mockReturnValue(false);
+            wmComponent.typeahead = {
+                onInput: jest.fn()
+            } as any;
+
+            wmComponent['onSearchSelect'](mockEvent);
+            expect((wmComponent as any).listenQuery).toBe(true);
+            expect(wmComponent.typeahead.onInput).toHaveBeenCalledWith({
+                target: { value: 'test query' }
+            });
+        });
+
+        it('should select active match when typeaheadContainer and liElements are available and query matches', () => {
+            wmComponent.typeaheadContainer = {
+                active: {
+                    value: 'test query',
+                    item: {}
+                },
+                selectActiveMatch: jest.fn()
+            } as any;
+            wmComponent.liElements = [{}] as any;
+            (wmComponent as any).isUpdateOnKeyPress.mockReturnValue(true);
+
+            wmComponent['onSearchSelect'](mockEvent);
+
+            expect(wmComponent.typeaheadContainer.selectActiveMatch).toHaveBeenCalled();
+        });
+
+        it('should update queryModel and invoke submit callback when no matches are available', () => {
+            wmComponent.typeaheadContainer = null;
+            (wmComponent as any).liElements = [];
+            (wmComponent as any).isUpdateOnKeyPress.mockReturnValue(true);
+
+            wmComponent['onSearchSelect'](mockEvent);
+
+            expect(wmComponent.queryModel).toBe('test query');
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('submit', { $event: mockEvent });
+        });
+
+        it('should update queryModel and invoke submit callback when query does not match active element', () => {
+            wmComponent.typeaheadContainer = {
+                active: {
+                    value: 'different query',
+                    item: {}
+                }
+            } as any;
+            wmComponent.liElements = [{}] as any;
+            (wmComponent as any).isUpdateOnKeyPress.mockReturnValue(true);
+            wmComponent['onSearchSelect'](mockEvent);
+            expect(wmComponent.queryModel).toBe('test query');
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('submit', { $event: mockEvent });
+        });
+    });
+
+    describe('onInputChange', () => {
+        it('should reset result, page, and listenQuery when called', () => {
+            (wmComponent as any).result = [1, 2, 3];
+            (wmComponent as any).page = 5;
+            (wmComponent as any).listenQuery = false;
+
+            wmComponent['onInputChange']({} as Event);
+
+            expect((wmComponent as any).result).toEqual([]);
+            expect((wmComponent as any).page).toBe(1);
+            expect((wmComponent as any).listenQuery).toBe(wmComponent['isUpdateOnKeyPress']());
+        });
+
+        it('should reset queryModel and _modelByValue when input is cleared', () => {
+            wmComponent.query = '';
+            wmComponent['_lastQuery'] = 'lastQuery';
+            wmComponent['_modelByValue'] = 'someValue';
+
+            const mockEvent = { which: 1 } as unknown as Event;
+            wmComponent['onInputChange'](mockEvent);
+
+            expect(wmComponent.queryModel).toBe('');
+            expect(wmComponent['_modelByValue']).toBe('');
+        });
+
+        it('should invoke clear and submit callbacks when input is cleared', () => {
+            wmComponent.query = '';
+            const clearSpy = jest.spyOn(wmComponent as any, 'invokeEventCallback');
+            const mockEvent = { which: 1 } as unknown as Event;
+
+            wmComponent['onInputChange'](mockEvent);
+
+            expect(clearSpy).toHaveBeenCalledWith('clear', { $event: mockEvent });
+            expect(clearSpy).toHaveBeenCalledWith('submit', { $event: mockEvent });
+        });
+
+        it('should not invoke submit callback when tab is pressed', () => {
+            wmComponent.query = '';
+            const clearSpy = jest.spyOn(wmComponent as any, 'invokeEventCallback');
+            const mockEvent = { which: 9 } as unknown as Event;
+
+            wmComponent['onInputChange'](mockEvent);
+
+            expect(clearSpy).toHaveBeenCalledWith('clear', { $event: mockEvent });
+            expect(clearSpy).not.toHaveBeenCalledWith('submit', { $event: mockEvent });
+        });
+
+        it('should invoke change callback when input is not empty', () => {
+            wmComponent.query = 'newQuery';
+            wmComponent['prevDatavalue'] = 'oldQuery';
+            const changeSpy = jest.spyOn(wmComponent as any, 'invokeEventCallback');
+            const mockEvent = {} as Event;
+
+            wmComponent['onInputChange'](mockEvent);
+
+            expect(changeSpy).toHaveBeenCalledWith('change', {
+                $event: mockEvent,
+                newVal: 'newQuery',
+                oldVal: 'oldQuery'
+            });
+        });
+
+        it('should set showClosebtn to true when query is not empty', () => {
+            wmComponent.query = 'someQuery';
+            wmComponent['onInputChange']({} as Event);
+            expect((wmComponent as any).showClosebtn).toBe(true);
+        });
+
+        it('should set showClosebtn to false when query is empty', () => {
+            wmComponent.query = '';
+            wmComponent['onInputChange']({} as Event);
+            expect((wmComponent as any).showClosebtn).toBe(false);
+        });
+    });
+
+    describe('clearSearch', () => {
+        it('should clear the query and trigger search when loadOnClear is true', () => {
+            wmComponent.query = 'test';
+            (wmComponent as any).listenQuery = true;
+            (wmComponent as any).dataProvider = { isLastPage: true };
+            wmComponent._loadingItems = true;
+            const mockEvent = { target: { value: '' } };
+            jest.spyOn((wmComponent as any), 'onInputChange');
+            jest.spyOn((wmComponent as any), 'loadMoreData');
+            jest.spyOn(wmComponent, 'invokeEventCallback');
+            (wmComponent as any).clearSearch(mockEvent, true);
+            expect(wmComponent.query).toBe('');
+            expect((wmComponent as any).onInputChange).toHaveBeenCalledWith(mockEvent);
+            expect((wmComponent as any).dataProvider.isLastPage).toBe(false);
+            expect((wmComponent as any).listenQuery).toBe(true);
+            expect((wmComponent as any)._unsubscribeDv).toBe(false);
+            expect((wmComponent as any).loadMoreData).toHaveBeenCalled();
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('clearsearch');
+            expect(wmComponent._loadingItems).toBe(false);
+        });
+
+        it('should clear the query without triggering search when loadOnClear is false', () => {
+            wmComponent.query = 'test';
+            (wmComponent as any).listenQuery = true;
+            (wmComponent as any).dataProvider = { isLastPage: true };
+            wmComponent._loadingItems = true;
+            const mockEvent = { target: { value: '' } };
+            jest.spyOn((wmComponent as any), 'onInputChange');
+            jest.spyOn((wmComponent as any), 'loadMoreData');
+            jest.spyOn(wmComponent, 'invokeEventCallback');
+            (wmComponent as any).clearSearch(mockEvent, false);
+            expect(wmComponent.query).toBe('');
+            expect((wmComponent as any).onInputChange).toHaveBeenCalledWith(mockEvent);
+            expect((wmComponent as any).dataProvider.isLastPage).toBe(false);
+            expect((wmComponent as any).loadMoreData).not.toHaveBeenCalled();
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('clearsearch');
+            expect(wmComponent._loadingItems).toBe(false);
+        });
+
+        it('should focus on the input field when event is provided', () => {
+            const mockEvent = { target: { value: '' } };
+            const mockFocus = jest.fn();
+            const mockFind = jest.fn().mockReturnValue({ focus: mockFocus });
+            // Create a temporary object with the same structure as $element
+            const tempElement = { find: mockFind };
+            // Use Object.defineProperty to mock the $element getter
+            Object.defineProperty(wmComponent, '$element', {
+                get: jest.fn(() => tempElement)
+            });
+            (wmComponent as any).clearSearch(mockEvent, false);
+            expect(mockFind).toHaveBeenCalledWith('.app-search-input');
+            expect(mockFocus).toHaveBeenCalled();
+        });
+
+        it('should not focus on the input field when event is not provided', () => {
+            const mockFocus = jest.fn();
+            const mockFind = jest.fn().mockReturnValue({ focus: mockFocus });
+            // Create a temporary object with the same structure as $element
+            const tempElement = { find: mockFind };
+            // Use Object.defineProperty to mock the $element getter
+            Object.defineProperty(wmComponent, '$element', {
+                get: jest.fn(() => tempElement)
+            });
+            (wmComponent as any).clearSearch(null, false);
+            expect(mockFind).not.toHaveBeenCalled();
+            expect(mockFocus).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('highlight', () => {
+        it('should call typeaheadContainer.highlight if typeaheadContainer exists', () => {
+            const match = new TypeaheadMatch({ label: 'test label' }, 'test label');
+            const query = 'test';
+            (wmComponent as any).typeaheadContainer = {
+                highlight: jest.fn().mockReturnValue('highlighted text')
+            };
+            const result = (wmComponent as any).highlight(match, query);
+            expect(wmComponent.typeaheadContainer.highlight).toHaveBeenCalledWith(match, query);
+            expect(result).toBe('highlighted text');
+            expect(match.value).toBe('test label');
+        });
+
+        it('should not call typeaheadContainer.highlight if typeaheadContainer does not exist', () => {
+            const match = new TypeaheadMatch({ label: 'test label' }, 'test label');
+            const query = 'test';
+            wmComponent.typeaheadContainer = null;
+            const result = (wmComponent as any).highlight(match, query);
+            expect(result).toBeUndefined();
+            // The value property should still be set even if typeaheadContainer doesn't exist
+            expect(match.value).toBe('test label');
+        });
+    });
+
+    describe('highlight', () => {
+        it('should call typeaheadContainer.highlight if typeaheadContainer exists', () => {
+            const match = new TypeaheadMatch({ label: 'test label' }, 'test label');
+            const query = 'test';
+            (wmComponent as any).typeaheadContainer = {
+                highlight: jest.fn().mockReturnValue('highlighted text')
+            };
+            const result = (wmComponent as any).highlight(match, query);
+            expect(wmComponent.typeaheadContainer.highlight).toHaveBeenCalledWith(match, query);
+            expect(result).toBe('highlighted text');
+            expect((match as any).value).toBe('test label');
+        });
+    });
+
+    describe('isMobileAutoComplete', () => {
+        it('should return true when type is autocomplete and isMobile returns true', () => {
+            wmComponent.type = 'autocomplete';
+            (isMobile as jest.Mock).mockReturnValue(true);
+            const result = wmComponent.isMobileAutoComplete();
+            expect(result).toBe(true);
+        });
+
+        it('should return false when type is not autocomplete', () => {
+            wmComponent.type = 'search';
+            (isMobile as jest.Mock).mockReturnValue(true);
+            const result = wmComponent.isMobileAutoComplete();
+            expect(result).toBe(false);
+        });
+
+        it('should return false when isMobile returns false', () => {
+            wmComponent.type = 'autocomplete';
+            (isMobile as jest.Mock).mockReturnValue(false);
+            const result = wmComponent.isMobileAutoComplete();
+            expect(result).toBe(false);
         });
     });
 });
