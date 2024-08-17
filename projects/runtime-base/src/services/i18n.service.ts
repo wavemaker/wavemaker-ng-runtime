@@ -202,7 +202,7 @@ export class I18nServiceImpl extends AbstractI18nService {
                         return locale === moment.tz(timezoneName).format('Z');
                     });
                 }
-                this.formatsByLocale.timezone = locale;
+                moment.tz.setDefault(locale);
                 const localeData =  compInstance && compInstance.formatsByLocale ? compInstance.formatsByLocale : this.formatsByLocale;
                 Object.assign(localeData, localeObj);
                 resolve();

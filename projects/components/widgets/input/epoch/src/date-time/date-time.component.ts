@@ -34,6 +34,7 @@ import { provideAsWidgetRef, provideAs, styler, setFocusTrap } from '@wm/compone
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
 import { registerProps } from './date-time.props';
 import {debounce, forEach, includes, isNaN, parseInt} from "lodash-es";
+import { IMaskDirective } from 'angular-imask';
 
 declare const $;
 declare const moment;
@@ -71,6 +72,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private isEnterPressedOnDateInput = false;
     private focusTrap;
 
+    private showdateformatasplaceholder = false;
+    mask;
+    private maskDateInputFormat;
+
     get timestamp() {
         return this.proxyModel ? this.proxyModel.valueOf() : undefined;
     }
@@ -83,8 +88,11 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      * The displayValue is the display value of the bsDateTimeValue after applying the datePattern on it.
      * @returns {any|string}
      */
-    get displayValue(): any {
-        return getFormattedDate(this.datePipe, this.proxyModel, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate, this) || '';
+    get displayValue() {
+        if(this.showdateformatasplaceholder && this.imask?.maskRef && this.maskDateInputFormat) {
+            return getFormattedDate(this.datePipe, this.bsDateValue, this.maskDateInputFormat, this.timeZone, null, this.isCurrentDate, this) || '';
+        }
+        return getFormattedDate(this.datePipe, this.bsDateValue, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this) || '';
     }
 
     get nativeDisplayValue() {
@@ -92,7 +100,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     }
 
     @ViewChild(BsDatepickerDirective) bsDatePickerDirective;
-
+    @ViewChild('dateInput', {read: IMaskDirective}) imask: IMaskDirective<any>;
     /**
      * This property checks if the timePicker is Open
      */
@@ -263,12 +271,24 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.focusTrap = setFocusTrap(datePickerContainer, true);
         this.focusTrap.activate();
 
-        this.bsDateValue ? this.activeDate = this.bsDateValue : this.activeDate = new Date();
+        this.activeDate = this.bsDateValue ? this.bsDateValue : (this.timeZone ? getMomentLocaleObject(this.timeZone) : new Date());
         if (!this.bsDateValue) {
             this.hightlightToday(this.activeDate);
         }
         this.addDatepickerKeyboardEvents(this, true);
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
+
+        if(this.timeZone) {
+            const todayBtn = document.querySelector(`.${this.dateContainerCls} .bs-datepicker-buttons .btn-today-wrapper button`) as HTMLElement;
+            const setTodayTZHandler = (event) => {
+                const todayTZ = getMomentLocaleObject(this.timeZone);
+                if(new Date(this.bsDateValue).toDateString() !== new Date(todayTZ).toDateString()) {
+                    this.bsDateValue = todayTZ;
+                }
+                todayBtn.removeEventListener('click', setTodayTZHandler);
+            };
+            todayBtn.addEventListener('click', setTodayTZHandler)
+        }
     }
 
     /**
@@ -281,6 +301,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate, this) === this.displayValue) {
                 $(this.nativeElement).find('.display-input').val(this.displayValue);
             }
+        }
+        if(newVal && !this.bsDateValue && this.timeZone) {
+            newVal = getMomentLocaleObject(this.timeZone, newVal);
         }
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
