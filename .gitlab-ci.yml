@@ -71,7 +71,7 @@ npm_test:
     - npm install 
     - npm i yalc -g
     - yalc add @wavemaker/variables
-      #- bash build.sh
+    - bash build.sh
     - bash bundle-runtime-cli.sh
     - echo "npm_test starting"
     - npm run test 
