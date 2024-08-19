@@ -42,44 +42,27 @@ cp ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js libraries/scrip
 mkdir -p libraries/scripts/tree-keyboard-navigation/
 cp projects/components/widgets/basic/tree/src/keyboard-navigation.js libraries/scripts/tree-keyboard-navigation/
 
-
 node --trace-warnings node_modules/.bin/rollup -c ./config/rollup.build-task.mjs
 
-node_modules/.bin/rimraf dist/runtime-cli
-
-mkdir -p dist/runtime-cli
-
-mkdir -p dist/runtime-cli/angular-app
-mkdir -p dist/runtime-cli/dependencies
-
-cp -r src dist/runtime-cli/angular-app
-cp -r build-scripts dist/runtime-cli/angular-app
-cp -r dist/bundles/wmapp/locales libraries
-cp -r pwa-assets dist/runtime-cli
-if [[ "${dev}" == true ]]; then
-    cp -r libraries dist/runtime-cli/angular-app
-fi
-cp angular.json package.json package-lock.json .npmrc tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
 cp ./wm.package.json libraries/package.json
+rm -rf dist/npm-packages/package
+mkdir -p dist/npm-packages/package
+
+TARBALL_NAME="wavemaker-app-ng-runtime-${publishVersion}.tgz"
+cd dist/npm-packages/package
 
 if [[ "${publish}" == true ]]; then
     node bundle-runtime-cli.js --publishVersion=${publishVersion}
-fi
+    cp -r libraries/. dist/npm-packages/package
+    # this will create package-lock.json file without actually installing the node modules
+    npm install --package-lock-only
+    cd ../../..
+    tar -zcf dist/npm-packages/${TARBALL_NAME} -C dist/npm-packages/ package
 
-mkdir -p dist/npm-packages/package
-cp -r libraries/. dist/npm-packages/package
-
-TARBALL_NAME="wavemaker-app-ng-runtime-${publishVersion}.tgz"
-
-cd dist/npm-packages/package
-npm install && rm -rf node_modules
-cd ../../..
-tar -zcf dist/npm-packages/${TARBALL_NAME} -C dist/npm-packages/ package
-
-if [[ "${publish}" == true ]]; then
     node ../process-npm-package-stats.js --path=dist/npm-packages/${TARBALL_NAME} --packageName=@wavemaker/app-ng-runtime --publishVersion=${publishVersion}
+else
+    cp -r libraries/. dist/npm-packages/package
+    # --node-dev-mode is required, otherwise while publishing yalc is deleting the devdependencies from the final package.json file`
+    yalc publish --no-dev-mod --no-sig --push --content
 fi
 
-rm -r dist/npm-packages/package
-
-cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/transpilation/expression-parser.cjs.js dist/transpilation/pipe-provider.cjs.js projects/runtime-base/src/components/app-component/app.component.html dist/runtime-cli/dependencies
