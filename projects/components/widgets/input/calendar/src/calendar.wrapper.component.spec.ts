@@ -12,9 +12,7 @@ import { IMaskModule } from 'angular-imask';
 
 import { AbstractI18nService, App } from '@wm/core';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
-import {
-    StylableComponent, BaseComponent
-} from '@wm/components/base';
+import { StylableComponent, BaseComponent } from '@wm/components/base';
 import "fullcalendar/main.min.js";
 
 declare global {
@@ -128,5 +126,59 @@ describe('CalendarComponent', () => {
             expect(document.getElementsByClassName('fc-title')[0].textContent).toBe('new event');
         })
     }))
+
+    describe('constructCalendarDataset', () => {
+        it('should map properties correctly', () => {
+            const eventSource = [
+                {
+                    title: 'Event 1',
+                    start: '2023-01-01',
+                    end: '2023-01-02',
+                    allday: true,
+                    className: 'custom-class'
+                }
+            ];
+            wmComponent.eventtitle = 'title';
+            wmComponent.eventstart = 'start';
+            wmComponent.eventend = 'end';
+            wmComponent.eventallday = 'allday';
+            wmComponent.eventclass = 'className';
+            const result = (wmComponent as any).constructCalendarDataset(eventSource);
+            expect(result[0].title).toBe('Event 1');
+            expect(result[0].start).toBe('2023-01-01');
+            expect(result[0].end).toBe('2023-01-02');
+            expect(result[0].allDay).toBe(true);
+            expect(result[0].className).toBe('custom-class');
+            expect(result[0]._eventMetadata).toBeDefined();
+        });
+
+        it('should handle missing properties', () => {
+            const eventSource = [
+                {
+                    title: 'Event 2'
+                }
+            ];
+            wmComponent.eventtitle = 'title';
+            const result = (wmComponent as any).constructCalendarDataset(eventSource);
+            expect(result[0].title).toBe('Event 2');
+            expect(result[0].start).toBeUndefined();
+            expect(result[0].end).toBeUndefined();
+            expect(result[0].allDay).toBeUndefined();
+            expect(result[0].className).toBeUndefined();
+        });
+
+        it('should remove empty url properties', () => {
+            const eventSource = [
+                {
+                    title: 'Event 3',
+                    url: ''
+                }
+            ];
+            wmComponent.eventtitle = 'title';
+            const result = (wmComponent as any).constructCalendarDataset(eventSource);
+            expect(result[0].url).toBeUndefined();
+            expect(result[0]._eventMetadata.url).toBeUndefined();
+        });
+    });
 
 });
