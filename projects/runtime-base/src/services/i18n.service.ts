@@ -19,6 +19,7 @@ import {
 } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
 import {find, forEach, get, includes, intersection, isObject, map, toLower} from "lodash-es";
+import "moment-timezone/builds/moment-timezone.min.js";
 
 declare const moment;
 

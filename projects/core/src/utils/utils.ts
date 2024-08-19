@@ -20,6 +20,7 @@ import {
     split,
     startsWith, toLower, toUpper, trim
 } from "lodash-es";
+import "moment-timezone/builds/moment-timezone.min.js";
 
 declare const $;
 declare const X2JS;
