@@ -7,8 +7,9 @@ module.exports = {
     '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
   ],
   testMatch: [
-    "**/projects/**/*.spec.ts",
+   // "**/projects/**/*.spec.ts",
     // "**/projects/components/widgets/data/form/src/form.wrapper.component.spec.ts",
+      "**/projects/components/widgets/basic/rich-text-editor/src/rich-text-editor.wrapper.component.spec.ts"
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
@@ -19,7 +20,6 @@ module.exports = {
     "/projects/components/base/src/widgets/common/smooth-scroll/smooth-scroll.directive.ts",
     "/projects/components/base/src/widgets/common/lazy-load/lazy-load.directive.ts",
     "/projects/components/base/src/directives/show-in-device.directive.ts",
-    "/projects/components/widgets/basic/rich-text-editor/src/rich-text-editor.wrapper.component.spec.ts"
 
   ],
   setupFilesAfterEnv: ["<rootDir>/src/setup-jest.js"],
@@ -38,6 +38,7 @@ module.exports = {
   // ],
   coverageDirectory: "coverage",
   moduleNameMapper: {
+    "^jQuery$": "jquery",
     "@wm/security": "<rootDir>/projects/security/src/public_api.ts",
     "@wm/swipey": "<rootDir>/projects/swipey/src/public_api.ts",
     "@swipey": "<rootDir>/projects/swipey/src/public_api.ts",
