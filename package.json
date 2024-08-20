@@ -15,8 +15,6 @@
         "optimizecss": "gulp --gulpfile build-scripts/optimize-css.gulpfile.js",
         "owasp": "owasp-dependency-check --project \"wavemaker-ng-runtime\" -f \"ALL\""
     },
-    "author": "Wavemaker",
-    "license": "MIT",
     "files": [
         "**/*",
         ".npmrc"
