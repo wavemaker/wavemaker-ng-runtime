@@ -6,7 +6,7 @@ import {setListClass} from '@wm/core';
 import { provideAsWidgetRef, styler, provideAs } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 import { registerProps } from './radioset.props';
-import {includes} from "lodash-es";
+import {forEach, includes} from "lodash-es";
 
 declare const $;
 
@@ -31,10 +31,19 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, @Inject(Object) data ?: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         this.multiple = false;
+        for (let [key, value] of Object.entries(data)) {
+            this[key] = value;
+        }
+    }
+
+    _select(item: any, $event: any) {
+        this.modelByKey = item.key;
+        this.invokeOnTouched();
+        this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 
     /**

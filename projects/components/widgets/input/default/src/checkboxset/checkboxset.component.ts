@@ -37,10 +37,27 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, @Inject(Object) data ?: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         this.multiple = true;
+        for (let [key, value] of Object.entries(data)) {
+            this[key] = value;
+        }
+    }
+
+    _select(item: any, $event: any) {
+        const keys = [];
+        forEach(this.datasetItems, (datasetItem: any) => {
+            if(datasetItem.key === item.key)
+                datasetItem.selected = !datasetItem.selected;
+
+            if(datasetItem.selected)
+                keys.push(datasetItem.key);
+        });
+        this.modelByKey = keys;
+        this.invokeOnTouched();
+        this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 
     onCheckboxLabelClick($event, key) {
