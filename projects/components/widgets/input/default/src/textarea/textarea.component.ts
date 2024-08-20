@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import { provideAs, provideAsWidgetRef } from '@wm/components/base';
@@ -19,7 +19,7 @@ const WIDGET_CONFIG = {
         provideAsWidgetRef(TextareaComponent)
     ]
 })
-export class TextareaComponent extends BaseInput {
+export class TextareaComponent extends BaseInput implements AfterViewChecked {
     static initializeProps = registerProps();
     public required: boolean;
     public maxchars: number;
@@ -46,9 +46,7 @@ export class TextareaComponent extends BaseInput {
     public onInputChange() {
         this.charlength = this.inputEl.nativeElement.value.length;
     }
-    ngAfterViewInit() {
-        setTimeout(() => {
-            this.charlength = this.inputEl.nativeElement.value.length;
-          });
-    }
+    ngAfterViewChecked(): void {
+        this.charlength = this.inputEl.nativeElement.value.length; 
+      }
 }
