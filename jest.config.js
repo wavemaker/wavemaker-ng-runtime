@@ -7,9 +7,9 @@ module.exports = {
     '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
   ],
   testMatch: [
-   // "**/projects/**/*.spec.ts",
+    "**/projects/**/*.spec.ts",
     // "**/projects/components/widgets/data/form/src/form.wrapper.component.spec.ts",
-      "**/projects/components/widgets/basic/rich-text-editor/src/rich-text-editor.wrapper.component.spec.ts"
+    //  "**/projects/components/widgets/basic/rich-text-editor/src/rich-text-editor.wrapper.component.spec.ts"
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
