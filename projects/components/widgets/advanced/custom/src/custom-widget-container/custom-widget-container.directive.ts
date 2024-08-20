@@ -5,7 +5,7 @@ import { PROP_TYPE, provideAsWidgetRef, register, StylableComponent, styler } fr
 
 import { customWidgetProps } from './custom-widget.props';
 import { registerProps } from "../custom-widget-container/custom-widget.props";
-import { cloneDeep } from 'lodash-es';
+import {capitalize, cloneDeep} from 'lodash-es';
 
 const registeredPropsSet = new Set<string>();
 
@@ -30,6 +30,7 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
     propsReady: Function;
     widgetName: string;
     private props: any = {};
+    private baseWidgetName: string;
 
     constructor(
         inj: Injector, elRef: ElementRef,
@@ -60,7 +61,17 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         }))
     }
 
+    setBaseWidgetName(baseWidgetType: string) {
+        let splitArr = baseWidgetType.split('-'), modifiedArr = [];
+        modifiedArr = splitArr.map((item: any) => {
+            item = item !== 'wm' ? capitalize(item) : item;
+            return item;
+        });
+        this.baseWidgetName = modifiedArr.join('');
+    }
+
     public setProps(config, resolveFn: Function) {
+        this.setBaseWidgetName(config.widgetType);
         if (!config || !config.properties) {
             return;
         }
@@ -95,5 +106,12 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         customWidgetPropsMap[this.widgetType] = this.props
 
         return propsMap;
+    }
+
+    updateData(key: string, value: any) {
+        let modifiedKey = key.replace('base-', '');
+        this[this.baseWidgetName][modifiedKey] = value;
+        this.nativeElement.childNodes[0]['widget'].viewParent[this.baseWidgetName][modifiedKey] = value;
+        this[this.baseWidgetName].initDatasetItems();
     }
 }
