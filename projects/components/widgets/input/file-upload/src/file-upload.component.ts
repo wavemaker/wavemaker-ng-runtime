@@ -1,11 +1,11 @@
-import {AfterViewInit, Attribute, Component, Injector, OnInit, OnDestroy, Optional, Inject} from '@angular/core';
+import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, OnInit, Optional} from '@angular/core';
 
-import { Subject } from 'rxjs';
+import {Subject} from 'rxjs';
 
-import {App, DataSource, isAudioFile, isImageFile, isVideoFile} from '@wm/core';
-import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {App, DataSource, getWmProjectProperties, isAudioFile, isImageFile, isVideoFile} from '@wm/core';
+import {provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
 
-import { registerProps } from './file-upload.props';
+import {registerProps} from './file-upload.props';
 import {forEach, includes, isEmpty, toLower} from "lodash-es";
 
 declare const $;
@@ -59,7 +59,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         file: undefined,
         uploadPath: undefined
     };
-    chooseFilter = '';
+    chooseFilter = getWmProjectProperties().allowedFileUploadExtensions.split(',').map(item => item.trim()).map(item => item.startsWith('image') ? item : `.${item}`);
     datasource;
     fileUploadMessage = 'Drop your files here or click here to browse';
     uploadedFiles = {
