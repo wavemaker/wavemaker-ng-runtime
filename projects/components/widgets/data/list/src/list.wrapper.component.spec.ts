@@ -1,5 +1,5 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { AbstractI18nService, App, AppDefaults, DataSource, setPipeProvider } from '@wm/core';
+import { AbstractI18nService, App, AppDefaults, DataSource, PartialRefProvider, setPipeProvider } from '@wm/core';
 import { Component, QueryList, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -13,7 +13,12 @@ import { MockAbstractI18nService } from 'projects/components/base/src/test/util/
 import { DatePipe } from '@angular/common';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { configureDnD } from '@wm/components/base';
-import { isMobile, isMobileApp } from '@wm/core';
+import { isMobile, isMobileApp } from '@wm/core';  
+import { ComponentRefProviderService } from 'projects/runtime-dynamic/src/app/services/component-ref-provider.service';
+import { AppResourceManagerService } from '@wm/runtime/dynamic';
+
+const testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }];
+
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -28,21 +33,25 @@ jest.mock('@wm/components/base', () => ({
 
 @Component({
     template: `
-        <div wmList template="true" itemsperrow="xs-1 sm-1 md-1 lg-1" class="media-list" name="testlist"
-             dataset.bind="testdata" navigation="Basic"
-             click.event="onListClick($event, widget)"
-             beforedatarender.event="onBeforeRender(widget, $data)"
-             render.event="onRender(widget, $data)">
-            <ng-template #listTemplate let-item="item" let-$index="$index" let-itemRef="itemRef" let-$first="$first" let-$last="$last" let-currentItemWidgets="currentItemWidgets" >
-                <label wmLabel name="Name" class="p media-heading" caption.bind="item.name" fontsize="1.143" fontunit="em"></label>
-            </ng-template>
-        </div>
+          <div wmList wmLiveActions  listclass="list-group" itemclass="list-group-item" template="true" template-name="Action List" itemsperrow="xs-1 sm-1 md-1 lg-1" class="media-list" statehandler="URL" name="NameDataList1" dataset.bind="testdata" navigation="Basic" datasource={{testdata}}>
+                <ng-template #listTemplate let-item="item" let-$index="$index" let-itemRef="itemRef" let-$first="$first" let-$last="$last"  let-currentItemWidgets="currentItemWidgets" >
+                    <div wmContainer partialContainer wmSmoothscroll="false"  class="media-left" name="container4">
+                        <img wmPicture #wm_picture4="wmPicture" alt="image" wmImageCache="true" [attr.aria-label]="wm_picture4.hint || 'Image'"  width="32pt" height="32pt" name="Picture" shape="circle" picturesource.bind="item.name" class="media-object">
+                    </div>
+                    <div wmContainer partialContainer wmSmoothscroll="false"  class="media-body" name="container5" paddingleft="1.25em">
+                        <p wmLabel #wm_label8="wmLabel" [attr.aria-label]="wm_label8.hint"  name="Name" class="p media-heading" caption.bind="item.name" fontsize="1.143" fontunit="em" type="p"></p>
+                        <p wmLabel #wm_label9="wmLabel" [attr.aria-label]="wm_label9.hint"  name="JobTitle" caption.bind="item.age" class="p text-muted" type="p"></p>
+                    </div>
+                    <div wmContainer partialContainer wmSmoothscroll="false"  class="media-right media-top" name="container6">
+                        <button wmButton #wm_button5="wmButton" [attr.aria-label]="wm_button5.hint || wm_button5.caption || null"  type="button" class="btn-transparent" iconclass="wi wi-share fa-2x" name="button2"></button>
+                    </div>
+                </ng-template>
+            </div>
     `
 })
 class ListWrapperComponent {
     @ViewChild(ListComponent, /* TODO: add static flag */ { static: true })
     listComponent: ListComponent;
-    public testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }];
     public testdata1: any = [{ firstname: 'Peter', id: 1 }, { firstname: '', id: 2 }];
     onBeforeRender(widget, $data) {
         // console.log('calling on before render');
@@ -80,7 +89,9 @@ describe('ListComponent', () => {
                 { provide: ToDatePipe, useClass: ToDatePipe },
                 { provide: AppDefaults, useClass: AppDefaults },
                 { provide: AbstractI18nService, useClass: MockAbstractI18nService },
-                { provide: DatePipe, useValue: DatePipe }
+                { provide: DatePipe, useValue: DatePipe },
+                { provide: PartialRefProvider, useClass: ComponentRefProviderService },
+                AppResourceManagerService
             ]
         })
             .compileComponents();
@@ -89,9 +100,10 @@ describe('ListComponent', () => {
         wrapperComponent = fixture.componentInstance;
         listComponent = wrapperComponent.listComponent;
         fixture.detectChanges();
-        listComponent.dataset = wrapperComponent.testdata;
+        listComponent.dataset = testdata;
         listComponent.onPropertyChange('dataset', listComponent.dataset);
         listComponent.groupby = ""
+        expect(fixture).toMatchSnapshot();
     }));
 
     it('should create the List Component', () => {

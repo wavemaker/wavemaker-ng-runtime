@@ -29,27 +29,57 @@ module.exports = {
     "libraries/scripts/swipey",
     ".yalc/@wavemaker/variables/src/"
   ],
-  // collectCoverageFrom: [
-  //     '**/*.{ts,tsx}',
-  //     '!**/node_modules/**',
-  //     '!**/dist/**'
-  // ],
   coverageDirectory: "coverage",
   moduleNameMapper: {
     "@wm/security": "<rootDir>/projects/security/src/public_api.ts",
     "@wm/swipey": "<rootDir>/projects/swipey/src/public_api.ts",
-    "@swipey": "<rootDir>/projects/swipey/src/public_api.ts",
-    "@wm/components/base": "<rootDir>/projects/components/base/index.ts",
-    "@wm/components/basic/search": "<rootDir>/projects/components/widgets/basic/search/src/public_api.ts",
-    "@wm/components/basic": "<rootDir>/projects/components/widgets/basic/default/src/public_api.ts",
-    "@wm/components/input": "<rootDir>/projects/components/widgets/input/default/src/public_api.ts",
-    "@wm/components/dialogs": "<rootDir>/projects/components/widgets/dialogs/default/src/public_api.ts",
-    "@wm/components/page": "<rootDir>/projects/components/widgets/page/default/src/public_api.ts",
+    "@wm/mobile/runtime/dynamic": "<rootDir>/projects/mobile/runtime-dynamic/src/public_api.ts",
+    "@wm/runtime/base": "<rootDir>/projects/runtime-base/src/public_api.ts",
+    "@wm/runtime/dynamic": "<rootDir>/projects/runtime-dynamic/src/public_api.ts",
+    "@wm/variables": "<rootDir>/projects/variables/src/public_api.ts",
+    "@wm/oAuth": "<rootDir>/projects/oAuth/src/public_api.ts",
+    "@wm/http": "<rootDir>/projects/http-service/src/public_api.ts",
+    "@wm/buildTask": "<rootDir>/projects/components/transpile/src/public_api.ts",
+    "projects/(.*)$": "<rootDir>/projects/$1",
+    "libraries/(.*)$": "<rootDir>/libraries/$1",
+
+    // Specific entries
+    "@wm/mobile/components/basic": "<rootDir>/projects/mobile/components/basic/default/src/public_api.ts",
+    "@wm/mobile/components/containers/segmented-control": "<rootDir>/projects/mobile/components/containers/segmented-control/src/public_api.ts",
+    "@wm/mobile/components/data/media-list": "<rootDir>/projects/mobile/components/data/media-list/src/public_api.ts",
+    "@wm/mobile/components/device/barcode-scanner": "<rootDir>/projects/mobile/components/device/barcode-scanner/src/public_api.ts",
+    "@wm/mobile/components/device/camera": "<rootDir>/projects/mobile/components/device/camera/src/public_api.ts",
+    "@wm/mobile/components/page/mobile-navbar": "<rootDir>/projects/mobile/components/page/mobile-navbar/src/public_api.ts",
+    "@wm/mobile/components/input/file-upload": "<rootDir>/projects/mobile/components/input/file-upload/src/public_api.ts",
+    "@wm/mobile/components/page": "<rootDir>/projects/mobile/components/page/default/src/public_api.ts",
+
+    // Wildcard entries (must be placed after specific ones)
+    "@wm/mobile/(.*)$": "<rootDir>/projects/mobile/$1/src/public_api.ts",
     "@wm/components/(.*)/(.*)$": "<rootDir>/projects/components/widgets/$1/$2/src/public_api.ts",
     "@wm/components/(.*)$": "<rootDir>/projects/components/widgets/$1/src/public_api.ts",
     "@wm/(.*)$": "<rootDir>/projects/$1/index.ts",
-    "projects/(.*)$": "<rootDir>/projects/$1",
-    "libraries/(.*)$": "<rootDir>/libraries/$1"
-  }
 
+    // Advanced components
+    "@wm/components/advanced/(.*)$": "<rootDir>/projects/components/widgets/advanced/$1/src/public_api.ts",
+    "@wm/components/chart/(.*)$": "<rootDir>/projects/components/widgets/chart/$1/src/public_api.ts",
+    "@wm/components/containers/(.*)$": "<rootDir>/projects/components/widgets/containers/$1/src/public_api.ts",
+    "@wm/components/data/(.*)$": "<rootDir>/projects/components/widgets/data/$1/src/public_api.ts",
+    "@wm/components/dialogs/(.*)$": "<rootDir>/projects/components/widgets/dialogs/$1/src/public_api.ts",
+    "@wm/components/input/(.*)$": "<rootDir>/projects/components/widgets/input/$1/src/public_api.ts",
+    "@wm/components/navigation/(.*)$": "<rootDir>/projects/components/widgets/navigation/$1/src/public_api.ts",
+    "@wm/components/page/(.*)$": "<rootDir>/projects/components/widgets/page/$1/src/public_api.ts",
+    "@wm/components/prefab/(.*)$": "<rootDir>/projects/components/widgets/prefab/$1/src/public_api.ts",
+    "@wm/components/base/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/base/$1/src/public_api.ts",
+    "@wm/components/container/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/container/$1/src/public_api.ts",
+    "@wm/components/dialog/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/dialog/$1/src/public_api.ts",
+    "@wm/components/item-template/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/item-template/$1/src/public_api.ts",
+    "@wm/components/lazy-load/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/lazy-load/$1/src/public_api.ts",
+    "@wm/components/message/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/message/$1/src/public_api.ts",
+    "@wm/components/partial/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/partial/$1/src/public_api.ts",
+    "@wm/components/partial-param/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/partial-param/$1/src/public_api.ts",
+    "@wm/components/pull-to-refresh/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/pull-to-refresh/$1/src/public_api.ts",
+    "@wm/components/redraw/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/redraw/$1/src/public_api.ts",
+    "@wm/components/repeat-template/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/repeat-template/$1/src/public_api.ts",
+    "@wm/components/smooth-scroll/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/smooth-scroll/$1/src/public_api.ts"
+  }
 };

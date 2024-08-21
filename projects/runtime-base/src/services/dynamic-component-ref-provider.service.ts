@@ -10,13 +10,13 @@ import {
 
 import {App, extendProto, isDefined} from '@wm/core';
 import {transpile} from '@wm/transpiler';
-import {initComponentsBuildTask} from '@wm/build-task';
+// import {initComponentsBuildTask} from '@wm/build-task';
 
 import {AppManagerService} from './app.manager.service';
 import {RuntimeBaseModule} from '../runtime-base.module';
 import {get} from "lodash-es";
 
-initComponentsBuildTask();
+// initComponentsBuildTask();
 
 const componentFactoryRefCache = new Map<string, any>();
 

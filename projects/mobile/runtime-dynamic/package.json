@@ -1,5 +1,5 @@
 {
-    "name": "@wm/mobile/components/runtime-dynamic",
+    "name": "@wm/mobile/runtime-dynamic",
     "sideEffects": false,
     "dependencies": {
       "tslib": "^2.0.0"

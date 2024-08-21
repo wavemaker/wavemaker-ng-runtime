@@ -19,7 +19,7 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
 import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 
-import {App, getWmProjectProperties, PartialRefProvider} from '@wm/core';
+import { App, getWmProjectProperties, PartialRefProvider } from '@wm/core';
 // Basic widgets
 
 import { BasicModule } from '@wm/components/basic';
@@ -118,7 +118,7 @@ let xsrfHeaderName = getWmProjectProperties().xsrf_header_name;
 let xsrfOptions = {
     cookieName: 'wm_xsrf_token'
 }
-if(xsrfHeaderName) {
+if (xsrfHeaderName) {
     xsrfOptions['headerName'] = xsrfHeaderName;
 }
 export const httpClientXsrfModule = HttpClientXsrfModule.withOptions(xsrfOptions);
@@ -212,7 +212,7 @@ const componentsModule = [
 
     PrefabModule
 ];
-
+console.log(MOBILE_COMPONENT_MODULES_FOR_ROOT)
 REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(...componentsModule);
 REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(...MOBILE_COMPONENT_MODULES_FOR_ROOT);
 REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
@@ -251,7 +251,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         AppResourceManagerService,
         { provide: AppJSProvider, useClass: AppJSProviderService },
         { provide: AppVariablesProvider, useClass: AppVariablesProviderService },
-        { provide: AppExtensionProvider,useClass:AppExtensionProviderService},
+        { provide: AppExtensionProvider, useClass: AppExtensionProviderService },
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
         { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService },
