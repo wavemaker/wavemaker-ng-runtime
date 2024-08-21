@@ -69,9 +69,9 @@ npm_test:
     - npm run build 
     - cd /home/gitlab-runner/builds/wm-eng/wavemaker-ng-runtime/
     - git fetch
-    - git checkout $CI_COMMIT_BRANCH
+    - git checkout $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
     - git pull
-    - git pull origin  $CI_COMMIT_BRANCH
+    - git pull origin $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
     - npm install 
     - npm i yalc -g
     - yalc add @wavemaker/variables
