@@ -49,11 +49,11 @@ rm -rf dist/npm-packages/package
 mkdir -p dist/npm-packages/package
 
 TARBALL_NAME="wavemaker-app-ng-runtime-${publishVersion}.tgz"
-cd dist/npm-packages/package
 
 if [[ "${publish}" == true ]]; then
     node bundle-runtime-cli.js --publishVersion=${publishVersion}
     cp -r libraries/. dist/npm-packages/package
+    cd dist/npm-packages/package
     # this will create package-lock.json file without actually installing the node modules
     npm install --package-lock-only
     cd ../../..
