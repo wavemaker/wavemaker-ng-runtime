@@ -59,7 +59,9 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         file: undefined,
         uploadPath: undefined
     };
-    chooseFilter = getWmProjectProperties().allowedFileUploadExtensions.split(',').map(item => item.trim()).map(item => item.startsWith('image') ? item : `.${item}`);
+    allowedFileUploadExtensions = getWmProjectProperties().allowedFileUploadExtensions;
+    defaultAllowedExtensions = this.allowedFileUploadExtensions.split(',').map(item => item.trim()).map(item => item.endsWith('/*') ? item : `.${item}`);
+    chooseFilter = this.defaultAllowedExtensions.includes('*/*') ? '' : this.defaultAllowedExtensions;
     datasource;
     fileUploadMessage = 'Drop your files here or click here to browse';
     uploadedFiles = {
@@ -336,7 +338,15 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                 this.changeServerUploadPath(nv);
                 break;
             case 'contenttype':
-                this.chooseFilter = nv.split(' ').join(',');
+                if (this.defaultAllowedExtensions.includes('*/*')) {
+                    this.chooseFilter = nv.split(' ').join(',')
+                } else {
+                    this.chooseFilter = this.defaultAllowedExtensions.filter(item => nv.split(' ').join(',').includes(item));
+                    if (isEmpty(this.chooseFilter)) {
+                        this.chooseFilter = this.defaultAllowedExtensions;
+                    }
+                }
+
                 break;
             case 'multiple':
                 this.formName = this.name + (this.multiple ? '-multiple-fileupload' : '-single-fileupload');
