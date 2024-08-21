@@ -68,9 +68,8 @@ npm_test:
     - cd /home/gitlab-runner/builds/wm-eng/wavemaker-ui-variables ; npm install ; npm install --save-dev @types/babel__core @types/babel__generator @types/babel__template @types/babel__traverse @types/graceful-fs @types/istanbul-lib-coverage @types/istanbul-lib-report @types/istanbul-reports @types/stack-utils @types/yargs @types/yargs-parser
     - npm run build 
     - cd /home/gitlab-runner/builds/wm-eng/wavemaker-ng-runtime/
-    - git fetch
-    - git checkout $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
     - git pull
+    - git checkout $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
     - git pull origin $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
     - npm install 
     - npm i yalc -g
