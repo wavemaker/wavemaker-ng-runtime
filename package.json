@@ -68,7 +68,6 @@
         "summernote": "0.8.20",
         "ts-jest": "29.1.1",
         "tslib": "2.4.1",
-        "wavemaker-ng-runtime-new": "file:",
         "x2js": "3.4.4",
         "zone.js": "0.14.7"
     },
