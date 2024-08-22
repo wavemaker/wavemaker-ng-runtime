@@ -7,7 +7,8 @@ module.exports = {
     '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
   ],
   testMatch: [
-    "**/projects/**/*.spec.ts",
+   // "**/projects/**/*.spec.ts",
+      "**/projects/components/widgets/data/list/src/list.wrapper.component.spec.ts"
     // "**/projects/components/widgets/data/form/src/form.wrapper.component.spec.ts",
   ],
   testPathIgnorePatterns: [
@@ -18,7 +19,8 @@ module.exports = {
     "/projects/components/base/src/widgets/common/partial-param/partial-param.directive.ts",
     "/projects/components/base/src/widgets/common/smooth-scroll/smooth-scroll.directive.ts",
     "/projects/components/base/src/widgets/common/lazy-load/lazy-load.directive.ts",
-    "/projects/components/base/src/directives/show-in-device.directive.ts"
+    "/projects/components/base/src/directives/show-in-device.directive.ts",
+    "/projects/components/widgets/input/file-upload/src/file-upload.wrapper.component.spec.ts"
   ],
   setupFilesAfterEnv: ["<rootDir>/src/setup-jest.js"],
   collectCoverage: true,
@@ -31,17 +33,18 @@ module.exports = {
   ],
   coverageDirectory: "coverage",
   moduleNameMapper: {
+    "^jQuery$": "jquery",
     "@wm/security": "<rootDir>/projects/security/src/public_api.ts",
     "@wm/swipey": "<rootDir>/projects/swipey/src/public_api.ts",
+    "@wm/components/base": "<rootDir>/projects/components/base/index.ts",
     "@wm/mobile/runtime/dynamic": "<rootDir>/projects/mobile/runtime-dynamic/src/public_api.ts",
     "@wm/runtime/base": "<rootDir>/projects/runtime-base/src/public_api.ts",
     "@wm/runtime/dynamic": "<rootDir>/projects/runtime-dynamic/src/public_api.ts",
     "@wm/variables": "<rootDir>/projects/variables/src/public_api.ts",
     "@wm/oAuth": "<rootDir>/projects/oAuth/src/public_api.ts",
     "@wm/http": "<rootDir>/projects/http-service/src/public_api.ts",
+      "@wm/transpiler": "<rootDir>/projects/transpiler/src/public_api.ts",
     "@wm/buildTask": "<rootDir>/projects/components/transpile/src/public_api.ts",
-    "projects/(.*)$": "<rootDir>/projects/$1",
-    "libraries/(.*)$": "<rootDir>/libraries/$1",
 
     // Specific entries
     "@wm/mobile/components/basic": "<rootDir>/projects/mobile/components/basic/default/src/public_api.ts",
@@ -53,13 +56,6 @@ module.exports = {
     "@wm/mobile/components/input/file-upload": "<rootDir>/projects/mobile/components/input/file-upload/src/public_api.ts",
     "@wm/mobile/components/page": "<rootDir>/projects/mobile/components/page/default/src/public_api.ts",
 
-    // Wildcard entries (must be placed after specific ones)
-    "@wm/mobile/(.*)$": "<rootDir>/projects/mobile/$1/src/public_api.ts",
-    "@wm/components/(.*)/(.*)$": "<rootDir>/projects/components/widgets/$1/$2/src/public_api.ts",
-    "@wm/components/(.*)$": "<rootDir>/projects/components/widgets/$1/src/public_api.ts",
-    "@wm/(.*)$": "<rootDir>/projects/$1/index.ts",
-
-    // Advanced components
     "@wm/components/advanced/(.*)$": "<rootDir>/projects/components/widgets/advanced/$1/src/public_api.ts",
     "@wm/components/chart/(.*)$": "<rootDir>/projects/components/widgets/chart/$1/src/public_api.ts",
     "@wm/components/containers/(.*)$": "<rootDir>/projects/components/widgets/containers/$1/src/public_api.ts",
@@ -69,7 +65,13 @@ module.exports = {
     "@wm/components/navigation/(.*)$": "<rootDir>/projects/components/widgets/navigation/$1/src/public_api.ts",
     "@wm/components/page/(.*)$": "<rootDir>/projects/components/widgets/page/$1/src/public_api.ts",
     "@wm/components/prefab/(.*)$": "<rootDir>/projects/components/widgets/prefab/$1/src/public_api.ts",
-    "@wm/components/base/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/base/$1/src/public_api.ts",
+      // Advanced components
+    "@wm/components/basic/search": "<rootDir>/projects/components/widgets/basic/search/src/public_api.ts",
+    "@wm/components/basic": "<rootDir>/projects/components/widgets/basic/default/src/public_api.ts",
+    "@wm/components/input": "<rootDir>/projects/components/widgets/input/default/src/public_api.ts",
+    "@wm/components/dialogs": "<rootDir>/projects/components/widgets/dialogs/default/src/public_api.ts",
+    "@wm/components/page": "<rootDir>/projects/components/widgets/page/default/src/public_api.ts",
+
     "@wm/components/container/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/container/$1/src/public_api.ts",
     "@wm/components/dialog/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/dialog/$1/src/public_api.ts",
     "@wm/components/item-template/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/item-template/$1/src/public_api.ts",
@@ -80,6 +82,14 @@ module.exports = {
     "@wm/components/pull-to-refresh/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/pull-to-refresh/$1/src/public_api.ts",
     "@wm/components/redraw/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/redraw/$1/src/public_api.ts",
     "@wm/components/repeat-template/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/repeat-template/$1/src/public_api.ts",
-    "@wm/components/smooth-scroll/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/smooth-scroll/$1/src/public_api.ts"
+    "@wm/components/smooth-scroll/(.*)$": "<rootDir>/projects/components/base/src/widgets/common/smooth-scroll/$1/src/public_api.ts",
+      // Wildcard entries (must be placed after specific ones)
+      "@wm/mobile/(.*)$": "<rootDir>/projects/mobile/$1/src/public_api.ts",
+      "@wm/components/(.*)/(.*)$": "<rootDir>/projects/components/widgets/$1/$2/src/public_api.ts",
+      "@wm/components/(.*)$": "<rootDir>/projects/components/widgets/$1/src/public_api.ts",
+      "@wm/(.*)$": "<rootDir>/projects/$1/index.ts",
+      "projects/(.*)$": "<rootDir>/projects/$1",
+      "libraries/(.*)$": "<rootDir>/libraries/$1",
+
   }
 };

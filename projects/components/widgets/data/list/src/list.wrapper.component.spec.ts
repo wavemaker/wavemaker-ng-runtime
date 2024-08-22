@@ -1,9 +1,20 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { AbstractI18nService, App, AppDefaults, DataSource, PartialRefProvider, setPipeProvider } from '@wm/core';
+import {
+    AbstractHttpService,
+    AbstractI18nService,
+    App,
+    AppDefaults,
+    DataSource,
+    PartialRefProvider,
+    setPipeProvider
+} from '@wm/core';
+import {MetadataService, VariablesService} from '@wm/variables';
+import { SecurityService } from '@wm/security';
 import { Component, QueryList, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { ListComponent } from './list.component';
+import { ListModule } from './list.module';
 import { ListItemDirective } from './list-item.directive';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
@@ -13,9 +24,11 @@ import { MockAbstractI18nService } from 'projects/components/base/src/test/util/
 import { DatePipe } from '@angular/common';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { configureDnD } from '@wm/components/base';
-import { isMobile, isMobileApp } from '@wm/core';  
+import { isMobile, isMobileApp } from '@wm/core';
 import { ComponentRefProviderService } from 'projects/runtime-dynamic/src/app/services/component-ref-provider.service';
 import { AppResourceManagerService } from '@wm/runtime/dynamic';
+import {AppManagerService} from '@wm/runtime/base';
+import {RouterModule} from '@angular/router';
 
 const testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }];
 
@@ -78,7 +91,9 @@ describe('ListComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
+                ListModule,
                 FormsModule,
+                RouterModule.forRoot([]),
                 PaginationModule.forRoot(),
                 WmPaginationModule,
                 WmComponentsModule.forRoot()
@@ -91,7 +106,12 @@ describe('ListComponent', () => {
                 { provide: AbstractI18nService, useClass: MockAbstractI18nService },
                 { provide: DatePipe, useValue: DatePipe },
                 { provide: PartialRefProvider, useClass: ComponentRefProviderService },
-                AppResourceManagerService
+                AppResourceManagerService,
+                AbstractHttpService,
+                AppManagerService,
+                SecurityService,
+                VariablesService,
+                MetadataService
             ]
         })
             .compileComponents();
@@ -1225,7 +1245,9 @@ describe('ListComponent With groupby', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
+                ListModule,
                 FormsModule,
+                RouterModule.forRoot([]),
                 PaginationModule.forRoot(),
                 WmPaginationModule,
                 WmComponentsModule.forRoot()
@@ -1236,7 +1258,14 @@ describe('ListComponent With groupby', () => {
                 { provide: ToDatePipe, useClass: ToDatePipe },
                 { provide: AppDefaults, useClass: AppDefaults },
                 { provide: AbstractI18nService, useClass: MockAbstractI18nService },
-                { provide: DatePipe, useValue: DatePipe }
+                { provide: DatePipe, useValue: DatePipe },
+                { provide: PartialRefProvider, useClass: ComponentRefProviderService },
+                AppResourceManagerService,
+                AbstractHttpService,
+                AppManagerService,
+                SecurityService,
+                VariablesService,
+                MetadataService
             ]
         })
             .compileComponents();

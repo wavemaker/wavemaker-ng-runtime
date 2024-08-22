@@ -33,7 +33,6 @@ export const MOBILE_COMPONENT_MODULES_FOR_ROOT = [
     MobileNavbarModule,
     TabBarModule
 ];
-console.log(MOBILE_COMPONENT_MODULES_FOR_ROOT)
 
 @NgModule({
     providers: [{
