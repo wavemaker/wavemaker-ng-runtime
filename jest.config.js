@@ -18,7 +18,8 @@ module.exports = {
     "/projects/components/base/src/widgets/common/partial-param/partial-param.directive.ts",
     "/projects/components/base/src/widgets/common/smooth-scroll/smooth-scroll.directive.ts",
     "/projects/components/base/src/widgets/common/lazy-load/lazy-load.directive.ts",
-    "/projects/components/base/src/directives/show-in-device.directive.ts"
+    "/projects/components/base/src/directives/show-in-device.directive.ts",
+    "/projects/components/widgets/input/file-upload/src/file-upload.wrapper.component.spec.ts"
   ],
   setupFilesAfterEnv: ["<rootDir>/src/setup-jest.js"],
   collectCoverage: true,
@@ -36,6 +37,7 @@ module.exports = {
   // ],
   coverageDirectory: "coverage",
   moduleNameMapper: {
+    "^jQuery$": "jquery",
     "@wm/security": "<rootDir>/projects/security/src/public_api.ts",
     "@wm/swipey": "<rootDir>/projects/swipey/src/public_api.ts",
     "@swipey": "<rootDir>/projects/swipey/src/public_api.ts",
