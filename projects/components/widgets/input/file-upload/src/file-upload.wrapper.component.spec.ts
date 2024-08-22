@@ -247,7 +247,7 @@ describe('Fileupload Component', () => {
 
         it('should update chooseFilter when contenttype changes', () => {
             wmComponent.onPropertyChange('contenttype', 'image/* video/*', 'image/*');
-            expect(wmComponent.chooseFilter).toBe('image/*,video/*');
+            expect(wmComponent.chooseFilter).toEqual(["image/*"]);
         });
 
         it('should update formName and caption when multiple changes to true', () => {
