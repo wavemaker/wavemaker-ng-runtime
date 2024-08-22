@@ -1,5 +1,5 @@
 import { ComponentFixture } from '@angular/core/testing';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { App } from '@wm/core';
 import { FileUploadComponent } from './file-upload.component';
 import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
@@ -7,6 +7,14 @@ import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../.
 import { compileTestComponent, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { FileSizePipe, FileIconClassPipe, StateClassPipe } from '../../../../base/src/pipes/custom-pipes';
 import { Subject } from 'rxjs/internal/Subject';
+
+jest.mock('@wm/core', () => ({
+    ...jest.requireActual('@wm/core'),
+    getWmProjectProperties: jest.fn(() => ({
+        "allowedFileUploadExtensions": "doc, docx, xls, xlsx, csv, pdf, txt, image/*, json, ogg",
+    }))
+}));
+
 
 const markup = `<div wmFileUpload name="testfileupload" select.event="onSelect($event, widget, selectedFiles)" error.event="onError($event, widget, files)" role="input"></div>`;
 

@@ -97,6 +97,18 @@ describe('CalendarComponent', () => {
         fixture = compileTestComponent(calendarComponentModuleDef, CalendarWrapperComponent);
         calenderWrapperComponent = fixture.componentInstance;
         wmComponent = calenderWrapperComponent.wmComponent;
+        (wmComponent as any).$fullCalendar = {
+            setOption: jest.fn(),
+            addEventSource: jest.fn(),
+            changeView: jest.fn(),
+            gotoDate: jest.fn(),
+            nextYear: jest.fn(),
+            prevYear: jest.fn(),
+            getDate: jest.fn().mockReturnValue(new Date()),
+            render: jest.fn(),
+            select: jest.fn(),
+            eventClick: jest.fn(),
+        };
         fixture.detectChanges();
     }));
 
@@ -417,6 +429,17 @@ describe('CalendarComponent', () => {
 
         describe('selectionmode', () => {
             it('should set selectable to true and update constraints for SINGLE mode', () => {
+                const newOptions = {
+                    header: {
+                        left: 'prev,next today myCustomButton',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+                    },
+                    navLinks: true,
+                    businessHours: true,
+                };
+
+                wmComponent.overrideDefaults(newOptions);
                 const updateSpy = jest.spyOn(wmComponent as any, 'updateCalendarOptions');
                 wmComponent.onPropertyChange('selectionmode', SELECTION_MODES.SINGLE);
                 expect((wmComponent as any).calendarOptions.calendar.selectable).toBe(true);
@@ -494,6 +517,94 @@ describe('CalendarComponent', () => {
                 wmComponent.onPropertyChange('show', true);
                 expect((wmComponent as any).$fullCalendar.changeView).toHaveBeenCalledWith('timeGridWeek');
             });
+        });
+    });
+
+    describe('getViewType', () => {
+        const VIEW_TYPES = {
+            BASIC: 'basic',
+            AGENDA: 'agenda',
+            LIST: 'list'
+        }
+        it('should return the correct view type for month', () => {
+            wmComponent.calendartype = VIEW_TYPES.BASIC;
+            wmComponent.view = 'month';
+            expect(wmComponent.getViewType('month')).toEqual('dayGridMonth');
+
+            wmComponent.calendartype = VIEW_TYPES.LIST;
+            expect(wmComponent.getViewType('month')).toEqual('listMonth');
+        });
+
+        it('should return the correct view type for week', () => {
+            wmComponent.calendartype = VIEW_TYPES.BASIC;
+            wmComponent.view = 'week';
+            expect(wmComponent.getViewType('week')).toEqual('dayGridWeek');
+
+            wmComponent.calendartype = VIEW_TYPES.AGENDA;
+            expect(wmComponent.getViewType('week')).toEqual('timeGridWeek');
+
+            wmComponent.calendartype = VIEW_TYPES.LIST;
+            expect(wmComponent.getViewType('week')).toEqual('listWeek');
+        });
+
+        it('should return the correct view type for day', () => {
+            wmComponent.calendartype = VIEW_TYPES.BASIC;
+            wmComponent.view = 'day';
+            expect(wmComponent.getViewType('day')).toEqual('dayGridDay');
+
+            wmComponent.calendartype = VIEW_TYPES.LIST;
+            expect(wmComponent.getViewType('day')).toEqual('listDay');
+
+            wmComponent.calendartype = VIEW_TYPES.AGENDA;
+            expect(wmComponent.getViewType('day')).toEqual('timeGridDay');
+        });
+
+        it('should return the correct view type for year', () => {
+            wmComponent.calendartype = VIEW_TYPES.LIST;
+            wmComponent.view = 'year';
+            expect(wmComponent.getViewType('year')).toEqual('listYear');
+
+            wmComponent.calendartype = VIEW_TYPES.BASIC;
+            expect(wmComponent.getViewType('year')).toEqual('');
+        });
+
+        it('should return the original view key if no match is found', () => {
+            wmComponent.view = 'custom-view';
+            expect(wmComponent.getViewType('custom-view')).toEqual('custom-view');
+        });
+
+        it('should return the correct view type for day', () => {
+            wmComponent.calendartype = VIEW_TYPES.BASIC;
+            wmComponent.view = 'day';
+            expect(wmComponent.getViewType('day')).toEqual('dayGridDay');
+
+            wmComponent.calendartype = VIEW_TYPES.LIST;
+            expect(wmComponent.getViewType('day')).toEqual('listDay');
+
+            wmComponent.calendartype = VIEW_TYPES.AGENDA;
+            expect(wmComponent.getViewType('day')).toEqual('timeGridDay');
+        });
+
+        it('should return the correct view type for year', () => {
+            wmComponent.calendartype = VIEW_TYPES.LIST;
+            wmComponent.view = 'year';
+            expect(wmComponent.getViewType('year')).toEqual('listYear');
+
+            wmComponent.calendartype = VIEW_TYPES.BASIC;
+            expect(wmComponent.getViewType('year')).toEqual('');
+        });
+
+        it('should return the original view key if no match is found', () => {
+            wmComponent.view = 'custom-view';
+            expect(wmComponent.getViewType('custom-view')).toEqual('custom-view');
+        });
+    });
+
+    describe('rerenderEvents', () => {
+        it('should rerender the events', () => {
+            const renderSpy = jest.spyOn((wmComponent as any).$fullCalendar, 'render');
+            wmComponent.rerenderEvents();
+            expect(renderSpy).toHaveBeenCalled();
         });
     });
 });
