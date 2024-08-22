@@ -366,7 +366,7 @@ export const getFormattedDate = (datePipe, dateObj, format, timeZone?, isTimeSta
         return new Date(dateObj).toISOString();
     }
 
-    if (timeZone) {
+    if (timeZone && timeZone !== moment.defaultZone?.name) {
         const momentFormat = format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A');
         if (isIntervalDateTime ) { // dates which are of type time widget (value is hh:mm:ss) but returned as date string from time comp
             return moment(dateObj).format(momentFormat);
