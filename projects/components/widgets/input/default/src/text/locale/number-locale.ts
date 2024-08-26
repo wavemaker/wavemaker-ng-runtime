@@ -59,7 +59,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             const prevDataValue =  (this as any).prevDatavalue;
             this.displayValue = input.value = this.proxyModel = null;
             this.resetValidations();
-            if (prevDataValue && !this.isDefaultQuery) {
+            if ((prevDataValue || prevDataValue == 0) && !this.isDefaultQuery) {
                 this.handleChange(value);
                 this._onChange();
             }
