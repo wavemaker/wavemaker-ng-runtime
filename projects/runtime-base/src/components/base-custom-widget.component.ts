@@ -302,18 +302,12 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     // }
 
     ngAfterViewInit(): void {
-        // this.loadScripts().then(() => {
-        //     this.compileContent = true;
-        //     setTimeout(() => {
-        //         this.viewInit$.complete();
-
-        //         this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
-
-        //     }, 100);
-        // });
         this.registerChangeListeners();
         this.registerBaseWidget();
-        this.invokeOnReady()
+            setTimeout(() => {
+                this.viewInit$.complete();
+                this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
+            }, 100);
     }
 
     ngOnDestroy(): void {
