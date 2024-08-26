@@ -553,6 +553,11 @@ buildWMComponentUmdLibs() {
 }
 
 bundleWebLibs() {
+    bundleJS
+    copyFoundationFolder
+}
+
+bundleJS() {
     echo "uglify: web-libs"
     ${TERSER} \
         ./dist/tmp/libs/tslib/tslib.umd.js \
@@ -622,6 +627,24 @@ bundleWebLibs() {
         echo "uglify: web-libs - success"
     else
         echo -e "uglify: web-libs - failure"
+    fi
+}
+
+copyFoundationFolder() {
+    echo "Copying foundation folder to bundle directory"
+
+    # Create destination directory if it doesn't exist
+    mkdir -p ./dist/bundles/wmapp/styles/foundation
+
+    # The foundation folder will be built through build-foundation-css target in studio front end build.xml
+    # Copy the entire foundation folder including CSS and fonts
+    cp -r ../wavemaker-foundation-css/dist/styles/foundation/* ./dist/bundles/wmapp/styles/foundation/
+
+    if [[ "$?" -eq "0" ]]; then
+        echo "Foundation folder copied successfully"
+    else
+        echo "Failed to copy foundation folder"
+        exit 1
     fi
 }
 
