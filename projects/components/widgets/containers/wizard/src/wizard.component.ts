@@ -277,6 +277,16 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         this.next('skip');
     }
 
+    public gotoStep(stepName: string) {
+        if(stepName) {
+            const gotoStepIndex = this.steps.toArray().map(step => step.name).indexOf(stepName);
+            const gotoStep: WizardStepDirective = this.getStepRefByIndex(gotoStepIndex);
+            if(gotoStep?.show) {
+                this.onWizardHeaderClick(event, gotoStep);
+            }
+        }
+    }
+
     // Method to invoke on-Done event on wizard
     public done() {
         this.currentStep.isDone = true;
