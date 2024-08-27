@@ -43,6 +43,12 @@ const invokeOpenedCallback = (ref) => {
                 setReturnFocus: focusTrapObj.activeElement,
             });
             focusTrapObj[ref.titleId].activate();
+            const openedDialogs = ref.dialogService.getOpenedDialogs();
+            if (openedDialogs.length > 1) {
+                let zIndex = Number($("[aria-labelledby= " + openedDialogs[openedDialogs.length - 2].titleId + "]").css('z-index'));
+                $('[aria-labelledby= ' + ref.dialogService.getLastOpenedDialog().titleId + ']').css('z-index', zIndex + 20);
+                $('bs-modal-backdrop').css('z-index', zIndex + 10);
+            }
         });
     }
 };
@@ -51,6 +57,11 @@ const invokeClosedCallback = (ref) => {
     if (ref) {
         ref.invokeEventCallback('close');
         ref.dialogRef = undefined;
+        const openedDialogs = ref.dialogService.getOpenedDialogs();
+        if (openedDialogs.length >= 1) {
+            let zIndex: any = Number($("[aria-labelledby= " + openedDialogs[openedDialogs.length - 1].titleId + "]").css('z-index'));
+            $('bs-modal-backdrop').css('z-index', zIndex - 10);
+        }
     }
 };
 
