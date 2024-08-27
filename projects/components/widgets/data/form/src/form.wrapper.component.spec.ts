@@ -680,4 +680,44 @@ describe('FormComponent', () => {
         });
     });
 
+    describe('setValidationOnInnerForms', () => {
+        beforeEach(() => {
+            wmComponent['setValidationOnFields'] = jest.fn();
+            wmComponent['getNativeElement'] = jest.fn().mockReturnValue({
+                querySelectorAll: jest.fn().mockReturnValue([])
+            });
+        });
+
+        it('should call setValidationOnFields for each form element', () => {
+            const mockFormElements = [
+                { widget: { name: 'form1' } },
+                { widget: { name: 'form2' } }
+            ];
+            (wmComponent as any)['getNativeElement'].mockReturnValue({
+                querySelectorAll: jest.fn().mockReturnValue(mockFormElements)
+            });
+
+            wmComponent['setValidationOnInnerForms'](true);
+
+            expect(wmComponent['setValidationOnFields']).toHaveBeenCalledTimes(2);
+            expect(wmComponent['setValidationOnFields']).toHaveBeenCalledWith(mockFormElements[0].widget, 'form1', true);
+            expect(wmComponent['setValidationOnFields']).toHaveBeenCalledWith(mockFormElements[1].widget, 'form2', true);
+        });
+
+        it('should handle form array index in form name', () => {
+            const mockFormElement = {
+                widget: {
+                    name: 'form1',
+                    formArrayIndex: 0
+                }
+            };
+            (wmComponent as any)['getNativeElement'].mockReturnValue({
+                querySelectorAll: jest.fn().mockReturnValue([mockFormElement])
+            });
+
+            wmComponent['setValidationOnInnerForms'](false);
+
+            expect(wmComponent['setValidationOnFields']).toHaveBeenCalledWith(mockFormElement.widget, 'form1[0]', false);
+        });
+    });
 });

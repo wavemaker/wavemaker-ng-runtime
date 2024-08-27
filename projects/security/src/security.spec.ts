@@ -430,10 +430,62 @@ describe('SecurityService', () => {
             const result = service.getQueryString(queryObject);
             expect(result).toBe('a=1&b=2&c=test');
         });
-
         it('should return empty string for empty object', () => {
             const result = service.getQueryString({});
             expect(result).toBe('');
+        });
+    });
+
+    describe('getRedirectedRouteQueryParams', () => {
+        it('should return all query params', (done) => {
+            const mockQueryParams = {
+                redirectTo: 'somePage',
+                param1: 'value1',
+                param2: 'value2'
+            };
+
+            // Mock the ActivatedRoute queryParams Observable
+            (service as any).activatedRoute.queryParams = of(mockQueryParams);
+
+            const result = service.getRedirectedRouteQueryParams();
+
+            // Use setTimeout to allow for asynchronous completion
+            setTimeout(() => {
+                expect(result).toEqual(mockQueryParams);
+                done();
+            }, 0);
+        });
+
+        it('should handle empty query params', (done) => {
+            // Mock the ActivatedRoute queryParams Observable with an empty object
+            (service as any).activatedRoute.queryParams = of({});
+
+            const result = service.getRedirectedRouteQueryParams();
+
+            setTimeout(() => {
+                expect(result).toEqual({});
+                done();
+            }, 0);
+        });
+
+        it('should combine multiple emissions', (done) => {
+            const mockQueryParams1 = { param1: 'value1' };
+            const mockQueryParams2 = { param2: 'value2' };
+
+            // Create a mock Observable that emits multiple values
+            const mockQueryParamsObservable = of(mockQueryParams1, mockQueryParams2);
+            (service as any).activatedRoute.queryParams = mockQueryParamsObservable;
+
+            const result = service.getRedirectedRouteQueryParams();
+
+            setTimeout(() => {
+                // The function should combine all emitted values
+                expect(result).toEqual({
+                    param1: 'value1',
+                    param2: 'value2'
+                });
+                done();
+            }, 0);
         });
     });
 });
