@@ -554,7 +554,7 @@ buildWMComponentUmdLibs() {
 
 bundleWebLibs() {
     bundleJS
-    copyFoundationFolder
+    cpRuntimeFoundationCss
 }
 
 bundleJS() {
@@ -630,7 +630,7 @@ bundleJS() {
     fi
 }
 
-copyFoundationFolder() {
+cpRuntimeFoundationCss() {
     echo "Copying foundation folder to bundle directory"
 
     # Create destination directory if it doesn't exist
