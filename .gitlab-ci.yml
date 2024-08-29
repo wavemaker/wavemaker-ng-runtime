@@ -83,6 +83,10 @@ npm_test:
         when: stuck_or_timeout_failure
 notify_job:
   stage: notify
+  tags:
+    - npm
+  only:
+    - merge_requests
   script:
     - apt-get update && apt-get install -y awscli
     - |
