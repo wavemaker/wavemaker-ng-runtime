@@ -329,6 +329,12 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         this.datasource.execute(DataSource.Operation.CANCEL, $file);
     }
 
+    isMimeType(file: string) {
+        return (this.defaultAllowedExtensions.includes('image/*') && isImageFile(file))
+            || (this.defaultAllowedExtensions.includes('audio/*') && isAudioFile(file))
+            || (this.defaultAllowedExtensions.includes('video/*') && isVideoFile(file));
+    }
+
     /* Define the property change handler. This function will be triggered when there is a change in the widget property */
     onPropertyChange(key, nv, ov) {
         /*Monitoring changes for styles or properties and accordingly handling respective changes.*/
@@ -341,7 +347,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                 if (this.defaultAllowedExtensions.includes('*/*')) {
                     this.chooseFilter = nv.split(' ').join(',')
                 } else {
-                    this.chooseFilter = this.defaultAllowedExtensions.filter(item => nv.split(' ').join(',').includes(item));
+                    this.chooseFilter = nv.split(' ').filter(item => this.defaultAllowedExtensions.includes(item) || this.isMimeType(item)).join(',');
                     if (isEmpty(this.chooseFilter)) {
                         this.chooseFilter = this.defaultAllowedExtensions;
                     }
