@@ -91,10 +91,12 @@ notify_job:
     - |
       if [ "$CI_JOB_STATUS" == "failed" ]; then
         MESSAGE="Pipeline failed in job: $CI_JOB_NAME on branch: $CI_COMMIT_REF_NAME."
+        echo "User Email is $GITLAB_USER_EMAIL"
       else
         MESSAGE="Pipeline succeeded in job: $CI_JOB_NAME on branch: $CI_COMMIT_REF_NAME."
+        echo "User Email is $GITLAB_USER_EMAIL"
       fi
-      aws sns publish --topic-arn arn:aws:sns:us-east-1:365654357229:gitlab-pipeline --message "$MESSAGE" --message-attributes '{"Recipient": {"DataType": "String", "StringValue": "vikas"}}'
+      aws sns publish --topic-arn arn:aws:sns:us-east-1:365654357229:gitlab-pipeline --message "$MESSAGE" --message-attributes '{"Recipient": {"DataType": "String", "StringValue": "$GITLAB_USER_EMAIL"}}'
 
   when: always
   dependencies:
