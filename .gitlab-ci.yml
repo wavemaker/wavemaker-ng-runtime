@@ -89,15 +89,16 @@ notify_job:
     - merge_requests
   script:
     - |
-      User_Email = "$GITLAB_USER_EMAIL"
       if [ "$CI_JOB_STATUS" == "failed" ]; then
+        UserEmail="$GITLAB_USER_EMAIL"
         MESSAGE="Pipeline failed in job: $CI_JOB_NAME on branch: $CI_COMMIT_REF_NAME."
-        echo "User Email is $USER_EMAIL"
+        echo "User Email is $USEREMAIL"
       else
+        UserEmail="$GITLAB_USER_EMAIL"
         MESSAGE="Pipeline succeeded in job: $CI_JOB_NAME on branch: $CI_COMMIT_REF_NAME."
-        echo "User Email is $USER_EMAIL"
+        echo "User Email is $USEREMAIL"
       fi
-      aws sns publish --topic-arn arn:aws:sns:us-east-1:365654357229:gitlab-pipeline --message "$MESSAGE" --message-attributes "{\"AttributeName\": {\"DataType\": \"String\", \"StringValue\": \"$USER_EMAIL\"}}"
+      aws sns publish --topic-arn arn:aws:sns:us-east-1:365654357229:gitlab-pipeline --message "$MESSAGE" --message-attributes "{\"AttributeName\": {\"DataType\": \"String\", \"StringValue\": \"$USEREMAIL\"}}"
 
 
   when: always
