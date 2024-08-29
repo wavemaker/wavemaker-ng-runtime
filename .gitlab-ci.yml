@@ -89,7 +89,7 @@ notify_job:
     - merge_requests
   script:
     - |
-      User_Email=$GITLAB_USER_EMAIL
+      User_Email = "$GITLAB_USER_EMAIL"
       if [ "$CI_JOB_STATUS" == "failed" ]; then
         MESSAGE="Pipeline failed in job: $CI_JOB_NAME on branch: $CI_COMMIT_REF_NAME."
         echo "User Email is $USER_EMAIL"
