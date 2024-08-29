@@ -57,7 +57,7 @@ const getFragmentUrl = (fragmentName: string, type: ComponentType, options?) => 
     } else if (type === ComponentType.PREFAB) {
         return getPrefabMinJsonUrl(fragmentName);
     } else if (type === ComponentType.WIDGET){
-        return `@wavemaker/m3-custom-widgets/${fragmentName}`
+        return `./custom-widgets/${fragmentName}/page.min.json`    
     }
 };
 
@@ -200,17 +200,8 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         if (resource) {
             return resource;
         }
-        const promise = (componentType !== ComponentType.WIDGET ? this.resouceMngr.get(url, true) : Promise.resolve(customWidgets))
-            .then((pageContent : any) => {
-
-                if(componentType === ComponentType.WIDGET){
-                    pageContent = pageContent[componentName]
-                }
-                
-                if(!pageContent){
-                    throw new Error(`No page content available for the widget : ${componentName}`);
-                }
-                const {markup, script, styles, variables, config}: IPageMinJSON = pageContent
+        const promise = (((componentType === ComponentType.WIDGET && !customWidgets[componentName]) || componentType !== ComponentType.WIDGET)  ? this.resouceMngr.get(url, true) : Promise.resolve(customWidgets[componentName]))
+            .then(({markup, script, styles, variables, config}: IPageMinJSON) => {
                 const response = {
                     markup: transpile(_decodeURIComponent(markup)).markup,
                     script: _decodeURIComponent(script),
