@@ -4,6 +4,7 @@ stages:
         - jira_hotfix_release
         - jira_verification_merge
         - npm_test
+        - notify
 
 before_script:
   - export NVM_DIR="$HOME/.nvm"
@@ -67,10 +68,7 @@ npm_test:
     - rm -rf /home/gitlab-runner/builds/wm-eng/wavemaker-ui-variables ; git clone --depth 1 https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/wavemaker-ui-variables.git /home/gitlab-runner/builds/wm-eng/wavemaker-ui-variables
     - cd /home/gitlab-runner/builds/wm-eng/wavemaker-ui-variables ; npm install ; npm install --save-dev @types/babel__core @types/babel__generator @types/babel__template @types/babel__traverse @types/graceful-fs @types/istanbul-lib-coverage @types/istanbul-lib-report @types/istanbul-reports @types/stack-utils @types/yargs @types/yargs-parser
     - npm run build 
-    - cd /home/gitlab-runner/builds/wm-eng/wavemaker-ng-runtime/
-    - git pull
-    - git checkout $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
-    - git pull origin $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+    - cd ../wavemaker-ng-runtime
     - npm install 
     - npm i yalc -g
     - yalc add @wavemaker/variables
@@ -83,3 +81,19 @@ npm_test:
   retry:
         max: 2
         when: stuck_or_timeout_failure
+notify_job:
+  stage: notify
+  script:
+    - apt-get update && apt-get install -y awscli
+    - |
+      if [ "$CI_JOB_STATUS" == "failed" ]; then
+        MESSAGE="Pipeline failed in job: $CI_JOB_NAME on branch: $CI_COMMIT_REF_NAME."
+      else
+        MESSAGE="Pipeline succeeded in job: $CI_JOB_NAME on branch: $CI_COMMIT_REF_NAME."
+      fi
+      aws sns publish --topic-arn arn:aws:sns:us-east-1:365654357229:gitlab-pipeline --message "$MESSAGE"
+  when: always
+  dependencies:
+    - npm_test
+
+
