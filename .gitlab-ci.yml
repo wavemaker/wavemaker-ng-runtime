@@ -96,7 +96,10 @@ notify_job:
         MESSAGE="Pipeline succeeded in job: $CI_JOB_NAME on branch: $CI_COMMIT_REF_NAME."
         echo "User Email is $GITLAB_USER_EMAIL"
       fi
-      aws sns publish --topic-arn arn:aws:sns:us-east-1:365654357229:gitlab-pipeline --message "$MESSAGE" --message-attributes "{\"Recipient\": {\"DataType\": \"String\", \"StringValue\": \"$GITLAB_USER_EMAIL\"}}"
+      aws ses send-email \
+          --from devops-notifications@wavemaker.com \
+          --destination "ToAddresses=vikas.sikakkoli@wavemaker.com" \
+          --message "Subject={Data=Pipeline Failure},Body={Text={Data=$MESSAGE}}"
 
 
   when: always
