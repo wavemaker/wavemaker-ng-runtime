@@ -3,7 +3,7 @@ stages:
         - jira_next_release
         - jira_hotfix_release
         - jira_verification_merge
-        - npm_test
+        - unit_tests
         - notify
 
 before_script:
@@ -56,8 +56,8 @@ jira_verification_merge:
     - echo "$CI_COMMIT_MESSAGE" "$CI_COMMIT_BRANCH" "$JIRA_MSG" "$TOKEN" "$CI_PROJECT_ID" "$GITLAB_TOKEN" "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" "$NEXT_HOT_FIX_VERSION"
     - python3 /home/gitlab-runner/jira-ci-scripts/verify_tickets_in_commits.py "$TOKEN" "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" "$CI_PROJECT_ID" "$GITLAB_TOKEN"
 
-npm_test:
-  stage: npm_test
+unit_tests:
+  stage: unit_tests
   tags:
     - npm
   only:
@@ -91,20 +91,20 @@ notify_job:
     - |
       MR_URL="https://gitlab.wavemaker.com/${CI_PROJECT_PATH}/merge_requests/${CI_MERGE_REQUEST_IID}"
       if [ "$CI_JOB_STATUS" == "failed" ]; then
-        MESSAGE="Pipeline failed in job: $CI_JOB_NAME on branch: $CI_COMMIT_REF_NAME.\n\nMerge Request: $MR_URL"
+        MESSAGE="Unit Test Cases  failed: on branch: $CI_COMMIT_REF_NAME. Merge Request: $MR_URL"
         echo "User Email is $GITLAB_USER_EMAIL"
       else
-        MESSAGE="Pipeline succeeded in job: $CI_JOB_NAME on branch: $CI_COMMIT_REF_NAME.\n\nMerge Request: $MR_URL"
+        MESSAGE="Unit Test Cases Success: on branch: $CI_COMMIT_REF_NAME. Merge Request: $MR_URL"
         echo "User Email is $GITLAB_USER_EMAIL"
       fi
       aws ses send-email \
           --from devops-notifications@wavemaker.com \
-          --destination "ToAddresses=vikas.sikakkoli@wavemaker.com" \
-          --message "Subject={Data=Pipeline Failure},Body={Text={Data=$MESSAGE}}"
+          --destination "ToAddresses=$GITLAB_USER_EMAIL" \
+          --message "Subject={Data=Unit Test Cases Pipeline Status},Body={Text={Data=$MESSAGE}}"
 
 
   when: always
   dependencies:
-    - npm_test
+    - unit_tests
 
 
