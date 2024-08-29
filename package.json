@@ -45,6 +45,7 @@
         "@metrichor/jmespath": "0.3.1",
         "@wavemaker/focus-trap": "1.0.1",
         "@wavemaker/nvd3": "1.8.11",
+        "@wavemaker/m3-custom-widgets": "file:.yalc/@wavemaker/m3-custom-widgets",
         "@wavemaker/variables": "file:.yalc/@wavemaker/variables",
         "@ztree/ztree_v3": "3.5.48",
         "angular-imask": "^7.6.1",

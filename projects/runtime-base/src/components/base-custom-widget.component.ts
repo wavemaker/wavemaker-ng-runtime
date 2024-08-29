@@ -251,7 +251,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         // });
     }
     registerPropsInContainerWidget(resolveFn: Function) {
-        window['resourceCache'].get(`./custom-widgets/${this.customWidgetName}/page.min.json`).then(({ config }) => {
+        window['resourceCache'].get(`@wavemaker/m3-custom-widgets/${this.customWidgetName}`).then(({ config }) => {
             if (config) {
                 Object.entries((config.properties || {})).forEach(([key, prop]: [string, any]) => {
                     let expr;

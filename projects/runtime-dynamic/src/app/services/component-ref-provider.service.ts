@@ -26,6 +26,7 @@ import {
 
 import { AppResourceManagerService } from './app-resource-manager.service';
 import {isString, isUndefined} from "lodash-es";
+import * as customWidgets from '@wavemaker/m3-custom-widgets';
 
 interface IPageMinJSON {
     markup: string;
@@ -56,7 +57,7 @@ const getFragmentUrl = (fragmentName: string, type: ComponentType, options?) => 
     } else if (type === ComponentType.PREFAB) {
         return getPrefabMinJsonUrl(fragmentName);
     } else if (type === ComponentType.WIDGET){
-        return `./custom-widgets/${fragmentName}/page.min.json`
+        return `@wavemaker/m3-custom-widgets/${fragmentName}`
     }
 };
 
@@ -199,9 +200,17 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         if (resource) {
             return resource;
         }
+        const promise = (componentType !== ComponentType.WIDGET ? this.resouceMngr.get(url, true) : Promise.resolve(customWidgets))
+            .then((pageContent : any) => {
 
-        const promise = this.resouceMngr.get(url, true)
-            .then(({markup, script, styles, variables, config}: IPageMinJSON) => {
+                if(componentType === ComponentType.WIDGET){
+                    pageContent = pageContent[componentName]
+                }
+                
+                if(!pageContent){
+                    throw new Error(`No page content available for the widget : ${componentName}`);
+                }
+                const {markup, script, styles, variables, config}: IPageMinJSON = pageContent
                 const response = {
                     markup: transpile(_decodeURIComponent(markup)).markup,
                     script: _decodeURIComponent(script),

@@ -27,6 +27,7 @@
             "@wm/mobile-build-task": ["libraries/mobile-build-task"],
             "@wm/core": ["libraries/core/index.d.ts"],
             "@wavemaker/variables": ["node_modules/@wavemaker/variables/"],
+            "@wavemaker/m3-custom-widgets": ["node_modules/@wavemaker/m3-custom-widgets/"],
             "@wm/components/base": ["libraries/components/base/public_api.d.ts"],
             "@wm/components/basic": [
                 "libraries/components/basic/default/index.d.ts"
