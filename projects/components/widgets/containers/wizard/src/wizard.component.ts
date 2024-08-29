@@ -280,9 +280,15 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     public gotoStep(stepName: string) {
         if(stepName) {
             const gotoStepIndex = this.steps.toArray().map(step => step.name).indexOf(stepName);
-            const gotoStep: WizardStepDirective = this.getStepRefByIndex(gotoStepIndex);
-            if(gotoStep?.show) {
-                this.onWizardHeaderClick(event, gotoStep);
+            if(gotoStepIndex !== -1) {
+                const gotoStep: WizardStepDirective = this.getStepRefByIndex(gotoStepIndex);
+                if(gotoStep?.show) {
+                    this.onWizardHeaderClick(event, gotoStep);
+                } else {
+                    console.error("The gotoStep function cannot navigate to hidden steps");
+                }
+            } else {
+                console.error(`Could not find step '${stepName}'`);
             }
         }
     }
