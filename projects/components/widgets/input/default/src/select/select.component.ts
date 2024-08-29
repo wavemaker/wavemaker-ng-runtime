@@ -51,11 +51,18 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         * As this widget implements ControlValueAccessor, manually updating the ngModel (or modelByKey) is necessary to ensure correct form behavior.
         * */
         const datasetSubscription = this.dataset$.subscribe(() => {
-            if (this.datavalue !== undefined) {
+            if (this.datavalue) {
                 const selectedItem = this.datasetItems.find(item => item.selected);
                 if (!selectedItem) {
-                    this.modelByKey = undefined;
+                    setTimeout(() => {
+                        this.selectEl.nativeElement.value = '';
+                        this.modelByKey = undefined;
+                    }, 100);
                 }
+            } else {
+                setTimeout(() => {
+                    this.selectEl.nativeElement.value = '';
+                }, 100);
             }
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
