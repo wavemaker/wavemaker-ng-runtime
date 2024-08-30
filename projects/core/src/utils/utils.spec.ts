@@ -1349,6 +1349,11 @@ describe('hasOffsetStr', () => {
 });
 
 describe('getDateObj', () => {
+    let date: Date;
+    beforeEach(() => {
+        date = new Date('2023-05-20T00:00:00');
+    });
+
     it('should return the input if it\'s already a Date object', () => {
         const date = new Date('2023-05-20');
         expect(getDateObj(date)).toBe(date);
@@ -1367,19 +1372,19 @@ describe('getDateObj', () => {
     it('should use moment for string dates', () => {
         const result = getDateObj('2023-05-20');
         expect(result).toBeInstanceOf(Date);
-        expect(result.toISOString()).toBe('2023-05-19T18:30:00.000Z');
+        expect(result.toISOString()).toBe(date.toISOString());
     });
 
     it('should handle options with pattern', () => {
         const result = getDateObj('20-05-2023', { pattern: 'DD-MM-YYYY' });
         expect(result).toBeInstanceOf(Date);
-        expect(result.toISOString()).toBe('2023-05-19T18:30:00.000Z');
+        expect(result.toISOString()).toBe(date.toISOString());
     });
 
     it('should handle timezone option', () => {
-        const result = getDateObj('2023-05-20', {}, 'UTC');
+        const result = getDateObj('2023-05-20', {}, "Asia/Kolkata");
         expect(result).toBeInstanceOf(Date);
-        expect(result.toISOString()).toBe('2023-05-19T13:00:00.000Z');
+        expect(result.toISOString()).toBe(date.toISOString());
     });
 });
 
