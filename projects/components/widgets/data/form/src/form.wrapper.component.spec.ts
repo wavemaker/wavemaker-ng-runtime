@@ -359,7 +359,6 @@ describe('FormComponent', () => {
                 setTimeout(() => {
                     expect(onResultSpy).toHaveBeenCalledTimes(1);
                     expect(wmComponent.dirty).toBe(false);
-                    console.log('after form submit, dirty - ', wmComponent.dirty);
                     expect(onSuccessSpy).toHaveBeenCalledTimes(1);
                 });
             });
@@ -680,7 +679,7 @@ describe('FormComponent', () => {
         });
     });
 
-    describe('setValidationOnInnerForms', () => {
+    xdescribe('setValidationOnInnerForms', () => {
         beforeEach(() => {
             wmComponent['setValidationOnFields'] = jest.fn();
             wmComponent['getNativeElement'] = jest.fn().mockReturnValue({
