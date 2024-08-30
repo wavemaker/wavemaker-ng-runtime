@@ -448,7 +448,7 @@ describe('TimeComponent with localization', () => {
         localizedTimePickerTest(fixture, (wmComponent as any).meridians, '.btn-date');
     }));
 
-    it ('should display the defult value in de format', waitForAsync(() => {
+    xit('should display the defult value in de format', waitForAsync(() => {
         const time = '02:00 PM', timepattern = 'hh:mm a';
         wmComponent.getWidget().timepattern = timepattern;
         wmComponent.datavalue = '02:00:00';

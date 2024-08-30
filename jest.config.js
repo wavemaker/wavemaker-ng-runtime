@@ -13,12 +13,6 @@ module.exports = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '/dist/',
-    "/projects/components/widgets/input/epoch/src/time/time.wrapper.component.spec.ts",
-    "/projects/components/base/src/widgets/common/pull-to-refresh/pull-to-refresh.ts",
-    "/projects/components/base/src/widgets/common/partial-param/partial-param.directive.ts",
-    "/projects/components/base/src/widgets/common/smooth-scroll/smooth-scroll.directive.ts",
-    "/projects/components/base/src/widgets/common/lazy-load/lazy-load.directive.ts",
-    "/projects/components/base/src/directives/show-in-device.directive.ts"
   ],
   setupFilesAfterEnv: ["<rootDir>/src/setup-jest.js"],
   collectCoverage: true,
