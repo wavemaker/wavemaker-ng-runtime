@@ -3,6 +3,16 @@ stages:
         - jira_next_release
         - jira_hotfix_release
         - jira_verification_merge
+        - unit_tests
+        - notify
+
+before_script:
+  - export NVM_DIR="$HOME/.nvm"
+  - '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # Load nvm'
+  - '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # Load nvm bash_completion'  
+
+variables:
+  NODE_OPTIONS: "--max-old-space-size=16384"    
 
 jira_feature_dev:
   stage: jira_feature_dev
@@ -45,4 +55,56 @@ jira_verification_merge:
   script:
     - echo "$CI_COMMIT_MESSAGE" "$CI_COMMIT_BRANCH" "$JIRA_MSG" "$TOKEN" "$CI_PROJECT_ID" "$GITLAB_TOKEN" "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" "$NEXT_HOT_FIX_VERSION"
     - python3 /home/gitlab-runner/jira-ci-scripts/verify_tickets_in_commits.py "$TOKEN" "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" "$CI_PROJECT_ID" "$GITLAB_TOKEN"
+
+unit_tests:
+  stage: unit_tests
+  tags:
+    - npm
+  only:
+    - merge_requests
+  script:
+    - node --version
+    - npm --version
+    - rm -rf /home/gitlab-runner/builds/wm-eng/wavemaker-ui-variables ; git clone --depth 1 https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/wavemaker-ui-variables.git /home/gitlab-runner/builds/wm-eng/wavemaker-ui-variables
+    - cd /home/gitlab-runner/builds/wm-eng/wavemaker-ui-variables ; npm install ; npm install --save-dev @types/babel__core @types/babel__generator @types/babel__template @types/babel__traverse @types/graceful-fs @types/istanbul-lib-coverage @types/istanbul-lib-report @types/istanbul-reports @types/stack-utils @types/yargs @types/yargs-parser
+    - npm run build 
+    - cd ../wavemaker-ng-runtime
+    - npm install 
+    - npm i yalc -g
+    - yalc add @wavemaker/variables
+    - bash build.sh
+    - bash bundle-runtime-cli.sh
+    - echo "npm_test starting"
+    - npm run test 
+    - echo "npm_test finished $(date +%Y-%m-%d\ %H:%M:%S)"
+    - date
+  retry:
+        max: 2
+        when: stuck_or_timeout_failure
+notify_job:
+  stage: notify
+  tags:
+    - npm
+  only:
+    - merge_requests
+  script:
+    - |
+      MR_URL="https://gitlab.wavemaker.com/${CI_PROJECT_PATH}/merge_requests/${CI_MERGE_REQUEST_IID}"
+      if [ "$CI_JOB_STATUS" == "failed" ]; then
+        MESSAGE="Unit Test Cases  failed: on branch: $CI_COMMIT_REF_NAME. Merge Request: $MR_URL"
+        echo "User Email is $GITLAB_USER_EMAIL"
+      else
+        MESSAGE="Unit Test Cases Success: on branch: $CI_COMMIT_REF_NAME. Merge Request: $MR_URL"
+        echo "User Email is $GITLAB_USER_EMAIL"
+      fi
+      aws ses send-email \
+          --from devops-notifications@wavemaker.com \
+          --destination "ToAddresses=$GITLAB_USER_EMAIL" \
+          --message "Subject={Data=Unit Test Cases Pipeline Status},Body={Text={Data=$MESSAGE}}"
+
+
+  when: always
+  dependencies:
+    - unit_tests
+
 
