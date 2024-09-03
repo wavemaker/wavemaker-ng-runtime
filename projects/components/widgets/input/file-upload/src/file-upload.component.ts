@@ -27,6 +27,7 @@ const WIDGET_CONFIG = {
 export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
     selectedFiles: any = [];
+    multipleSelectedFiles: any = [];
     selectedFolders: any = [];
     progressObservable;
     name;
@@ -185,6 +186,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
      * @param $files
      */
     onSelectEventCall($event, $files) {
+        this.multipleSelectedFiles = this.multiple ? [...this.multipleSelectedFiles, ...$files] : $files;
         this.selectedFiles = $files;
         setTimeout(() => {
             this.invokeEventCallback('select', {
@@ -212,7 +214,11 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
 
     /*this function to clear the specified file. if argument is not provided, it clears the complete list  */
     clear(fileObj) {
-        this.selectedFiles = (fileObj) ? this.selectedFiles.filter((file) => file !== fileObj) : [];
+        if (this.multiple) {
+            this.multipleSelectedFiles = (fileObj) ? this.multipleSelectedFiles.filter((file) => file !== fileObj) : [];
+        } else {
+            this.selectedFiles = (fileObj) ? this.selectedFiles.filter((file) => file !== fileObj) : [];
+        }
     }
 
     /*this function to set the class names for clear icon */
@@ -264,6 +270,10 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                                 file.status = progressObj.status;
                                 if (progressObj.errMsg) {
                                     file.errMsg = progressObj.errMsg;
+                                    this.invokeEventCallback('error', {
+                                        $event,
+                                        files: file
+                                    });
                                 }
                             }
                         }
