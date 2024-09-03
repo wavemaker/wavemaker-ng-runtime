@@ -1,27 +1,79 @@
-import { getClonedObject } from '@wm/core';
+import { $appDigest, DataSource, getClonedObject } from '@wm/core';
 import { TableFilterSortDirective } from './table-filter.directive';
 import { TableComponent } from './table.component';
-import { refreshDataSource } from '@wm/components/base';
+import { refreshDataSource, getMatchModeMsgs } from '@wm/components/base';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
     getClonedObject: jest.fn(),
+    $appDigest: jest.fn(),
 }));
 
 jest.mock('@wm/components/base', () => ({
     ...jest.requireActual('@wm/components/base'),
     refreshDataSource: jest.fn(),
+    getMatchModeMsgs: jest.fn(),
 }));
 
 describe('TableFilterSortDirective', () => {
     let directive: TableFilterSortDirective;
     let tableComponent: TableComponent;
+    let mockAppLocale;
 
     beforeEach(() => {
+        mockAppLocale = {
+            LABEL_STARTS_WITH: 'Starts with',
+            LABEL_STARTS_WITH_IGNORECASE: 'Starts with (ignore case)',
+            LABEL_ENDS_WITH: 'Ends with',
+            LABEL_ENDS_WITH_IGNORECASE: 'Ends with (ignore case)',
+            LABEL_CONTAINS: 'Contains',
+            LABEL_CONTAINS_IGNORECASE: 'Contains (ignore case)',
+            LABEL_IS_EQUAL_TO: 'Is equal to',
+            LABEL_IS_EQUAL_TO_IGNORECASE: 'Is equal to (ignore case)',
+            LABEL_IS_NOT_EQUAL_TO: 'Is not equal to',
+            LABEL_IS_NOT_EQUAL_TO_IGNORECASE: 'Is not equal to (ignore case)',
+            LABEL_LESS_THAN: 'Less than',
+            LABEL_LESS_THAN_OR_EQUALS_TO: 'Less than or equal to',
+            LABEL_GREATER_THAN: 'Greater than',
+            LABEL_GREATER_THAN_OR_EQUALS_TO: 'Greater than or equal to',
+            LABEL_IS_NULL: 'Is null',
+            LABEL_IS_NOT_NULL: 'Is not null',
+            LABEL_IS_EMPTY: 'Is empty',
+            LABEL_IS_NOT_EMPTY: 'Is not empty',
+            LABEL_IS_NULL_OR_EMPTY: 'Is null or empty',
+            LABEL_IN: 'In',
+            LABEL_NOT_IN: 'Not in',
+            LABEL_BETWEEN: 'Between'
+        };
+        (getMatchModeMsgs as jest.Mock).mockReturnValue({
+            start: mockAppLocale.LABEL_STARTS_WITH,
+            startignorecase: mockAppLocale.LABEL_STARTS_WITH_IGNORECASE,
+            end: mockAppLocale.LABEL_ENDS_WITH,
+            endignorecase: mockAppLocale.LABEL_ENDS_WITH_IGNORECASE,
+            anywhere: mockAppLocale.LABEL_CONTAINS,
+            anywhereignorecase: mockAppLocale.LABEL_CONTAINS_IGNORECASE,
+            exact: mockAppLocale.LABEL_IS_EQUAL_TO,
+            exactignorecase: mockAppLocale.LABEL_IS_EQUAL_TO_IGNORECASE,
+            notequals: mockAppLocale.LABEL_IS_NOT_EQUAL_TO,
+            notequalsignorecase: mockAppLocale.LABEL_IS_NOT_EQUAL_TO_IGNORECASE,
+            lessthan: mockAppLocale.LABEL_LESS_THAN,
+            lessthanequal: mockAppLocale.LABEL_LESS_THAN_OR_EQUALS_TO,
+            greaterthan: mockAppLocale.LABEL_GREATER_THAN,
+            greaterthanequal: mockAppLocale.LABEL_GREATER_THAN_OR_EQUALS_TO,
+            null: mockAppLocale.LABEL_IS_NULL,
+            isnotnull: mockAppLocale.LABEL_IS_NOT_NULL,
+            empty: mockAppLocale.LABEL_IS_EMPTY,
+            isnotempty: mockAppLocale.LABEL_IS_NOT_EMPTY,
+            nullorempty: mockAppLocale.LABEL_IS_NULL_OR_EMPTY,
+            in: mockAppLocale.LABEL_IN,
+            notin: mockAppLocale.LABEL_NOT_IN,
+            between: mockAppLocale.LABEL_BETWEEN
+        });
         tableComponent = {
             _searchSortHandler: jest.fn(),
             getSearchResult: jest.fn(),
             getSortResult: jest.fn(),
+            sortInfo: { field: 'name', direction: 'asc' },
             checkFiltersApplied: jest.fn(),
             getFilterFields: jest.fn(),
             onRowFilterChange: jest.fn(),
@@ -36,7 +88,6 @@ describe('TableFilterSortDirective', () => {
             clearFilter: jest.fn(),
             adjustContainer: jest.fn(),
             appLocale: 'en',
-            columns: {},
             filterInfo: {},
             rowFilterCompliedTl: {},
             datagridElement: {
@@ -70,7 +121,6 @@ describe('TableFilterSortDirective', () => {
             getConfiguredState: jest.fn().mockReturnValue('none'),
             filtermode: 'search',
             navigation: 'pagination',
-            sortInfo: {},
             primaryKey: [],
             datasource: {
                 execute: jest.fn()
@@ -80,14 +130,15 @@ describe('TableFilterSortDirective', () => {
                     .mockReturnValueOnce(false) // For IS_PAGEABLE
             },
             fieldDefs: [
-                { resetFilter: jest.fn() },
-                { resetFilter: jest.fn() },
+                { resetFilter: jest.fn() }, { resetFilter: jest.fn() }, { resetFilter: jest.fn() },
             ],
             setDataGridOption: jest.fn(),
             gridOptions: {
                 searchHandler: jest.fn(),
+                sortInfo: {},
             },
             nodatamessage: 'No data available',
+            columns: { name: { colDef: {} } },
         } as unknown as TableComponent;
 
         directive = new TableFilterSortDirective(tableComponent);
@@ -303,7 +354,6 @@ describe('TableFilterSortDirective', () => {
         it('should clone data from __fullData if navigation is enabled', () => {
             ((directive as any).table.isNavigationEnabled as jest.Mock).mockReturnValue(true);
             (getClonedObject as jest.Mock).mockReturnValue([{}]);
-
             directive['handleClientSideSortSearch']({}, null, 'search');
             expect(getClonedObject).toHaveBeenCalledWith((directive as any).table.__fullData);
         });
@@ -311,14 +361,12 @@ describe('TableFilterSortDirective', () => {
         it('should clone data from dataset if navigation is not enabled', () => {
             ((directive as any).table.isNavigationEnabled as jest.Mock).mockReturnValue(false);
             (getClonedObject as jest.Mock).mockReturnValue([{}]);
-
             directive['handleClientSideSortSearch']({}, null, 'search');
             expect(getClonedObject).toHaveBeenCalledWith((directive as any).table.dataset);
         });
 
         it('should reset page number and set paging values if navigation is enabled', () => {
             ((directive as any).table.isNavigationEnabled as jest.Mock).mockReturnValue(true);
-
             directive['handleClientSideSortSearch']({}, null, 'search');
             expect((directive as any).table.dataNavigator.dn.currentPage).toBe(1);
             expect((directive as any).table.dataNavigator.setPagingValues).toHaveBeenCalledWith((directive as any).table.serverData);
@@ -326,7 +374,6 @@ describe('TableFilterSortDirective', () => {
 
         it('should set grid data if navigation is not enabled', () => {
             ((directive as any).table.isNavigationEnabled as jest.Mock).mockReturnValue(false);
-
             directive['handleClientSideSortSearch']({}, null, 'search');
             expect((directive as any).table.setGridData).toHaveBeenCalledWith((directive as any).table.serverData);
         });
@@ -355,10 +402,163 @@ describe('TableFilterSortDirective', () => {
         it('should show error message if refreshDataSource fails', async () => {
             (refreshDataSource as jest.Mock).mockRejectedValue({});
             const toggleMessageSpy = jest.spyOn((directive as any).table, 'toggleMessage');
-
             await directive['handleServerSideSearch']({});
-
             expect(toggleMessageSpy).toHaveBeenCalledWith(true, 'error', (directive as any).table.nodatamessage);
+        });
+
+        it('should set filterInfo on the table', () => {
+            const searchObj = { key: 'value' };
+            directive['handleServerSideSearch'](searchObj);
+            expect((tableComponent as any).filterInfo).toEqual(searchObj);
+        });
+
+        it('should return if datasource is not defined', () => {
+            tableComponent.datasource = null;
+            const searchObj = { key: 'value' };
+            directive['handleServerSideSearch'](searchObj);
+            expect(tableComponent.toggleMessage).not.toHaveBeenCalled();
+        });
+
+        it('should call refreshDataSource with correct parameters', () => {
+            const searchObj = { key: 'value' };
+            const filterFields = ['field1', 'field2'];
+            const logicalOp = 'AND';
+            jest.spyOn(directive, 'getFilterFields').mockReturnValue(filterFields);
+            jest.spyOn(directive, 'getLogicalOperator').mockReturnValue(logicalOp);
+            directive['handleServerSideSearch'](searchObj);
+            expect(directive.getFilterFields).toHaveBeenCalledWith(searchObj);
+            expect(directive.getLogicalOperator).toHaveBeenCalledWith(filterFields);
+        });
+
+        it('should toggle error message if refreshDataSource is rejected', async () => {
+            tableComponent.datasource.execute = jest.fn().mockRejectedValue(false);
+            const searchObj = { key: 'value' };
+            directive['handleServerSideSearch'](searchObj);
+            try {
+                await Promise.reject();
+            } catch {
+                expect(tableComponent.toggleMessage).toHaveBeenCalledWith(true, 'error', tableComponent.nodatamessage);
+            }
+        });
+    });
+
+    describe('handleSeverSideSort', () => {
+        let directive: TableFilterSortDirective;
+        let tableComponent: TableComponent;
+
+        beforeEach(() => {
+            tableComponent = {
+                gridOptions: {
+                    sortInfo: {},
+                },
+                sortInfo: {},
+                datasource: {
+                    execute: jest.fn().mockResolvedValue({
+                        data: 'mockedData',
+                    }),
+                },
+                filterInfo: {},
+                columns: { name: { colDef: {} } },
+                getConfiguredState: jest.fn().mockReturnValue('someState'),
+                statePersistence: {
+                    removeWidgetState: jest.fn(),
+                },
+                invokeEventCallback: jest.fn(),
+            } as unknown as TableComponent;
+            directive = new TableFilterSortDirective(tableComponent);
+        });
+
+        it('should update sortInfo on the table and gridOptions', () => {
+            const sortObj = { field: 'name', direction: 'asc' };
+            const event = {};
+            directive['handleSeverSideSort'](sortObj, event);
+            expect(tableComponent.gridOptions.sortInfo.field).toBe(sortObj.field);
+            expect(tableComponent.gridOptions.sortInfo.direction).toBe(sortObj.direction);
+        });
+
+        it('should call getClonedObject with sortObj', () => {
+            const sortObj = { field: 'name', direction: 'asc' };
+            const event = {};
+            directive['handleSeverSideSort'](sortObj, event);
+            expect(getClonedObject).toHaveBeenCalledWith(sortObj);
+        });
+
+        it('should remove widget state if not triggered by state persistence', () => {
+            const sortObj = { field: 'name', direction: 'asc' };
+            const event = {};
+            const statePersistenceTriggered = false;
+            directive['handleSeverSideSort'](sortObj, event, statePersistenceTriggered);
+            expect((tableComponent as any).statePersistence.removeWidgetState).toHaveBeenCalledWith(tableComponent, 'pagination');
+        });
+
+        it('should not remove widget state if triggered by state persistence', () => {
+            const sortObj = { field: 'name', direction: 'asc' };
+            const event = {};
+            const statePersistenceTriggered = true;
+            directive['handleSeverSideSort'](sortObj, event, statePersistenceTriggered);
+            expect((tableComponent as any).statePersistence.removeWidgetState).not.toHaveBeenCalled();
+        });
+
+        it('should call refreshDataSource with correct parameters', () => {
+            const sortObj = { field: 'name', direction: 'asc' };
+            const event = {};
+            const filterFields = ['field1', 'field2'];
+            const condition = 'AND';
+            jest.spyOn(directive, 'getFilterFields').mockReturnValue(filterFields);
+            jest.spyOn(directive, 'getLogicalOperator').mockReturnValue(condition);
+            directive['handleSeverSideSort'](sortObj, event);
+            expect(directive.getFilterFields).toHaveBeenCalledWith((tableComponent as any).filterInfo);
+            expect(directive.getLogicalOperator).toHaveBeenCalledWith(filterFields);
+        });
+    });
+
+    describe('checkFiltersApplied', () => {
+        beforeEach(() => {
+            jest.spyOn(directive, 'resetSortStatus');
+            jest.spyOn((tableComponent as any), 'clearFilter');
+        });
+
+        it('should do nothing if datasource is not available', () => {
+            tableComponent.datasource = null;
+            directive.checkFiltersApplied(true);
+            expect(tableComponent.clearFilter).not.toHaveBeenCalled();
+            expect(directive.resetSortStatus).not.toHaveBeenCalled();
+        });
+
+        it('should reset sort status if server filter is supported and filter fields are present', () => {
+            tableComponent.datasource.execute = jest.fn()
+                .mockImplementation((operation) => {
+                    if (operation === DataSource.Operation.SUPPORTS_SERVER_FILTER) {
+                        return true; // SUPPORTS_SERVER_FILTER
+                    }
+                    if (operation === DataSource.Operation.GET_OPTIONS) {
+                        return { filterFields: ['field1'], orderBy: 'field1' }; // GET_OPTIONS with filterFields and orderBy
+                    }
+                    return null;
+                });
+
+            directive.checkFiltersApplied(true);
+
+            expect(tableComponent.clearFilter).not.toHaveBeenCalled();
+            expect(directive.resetSortStatus).toHaveBeenCalledWith(true);
+        });
+
+        it('should do nothing if datasource is neither pageable nor supports server filters', () => {
+            tableComponent.datasource.execute = jest.fn()
+                .mockImplementation((operation) => {
+                    if (operation === DataSource.Operation.SUPPORTS_SERVER_FILTER) {
+                        return false; // SUPPORTS_SERVER_FILTER
+                    }
+                    if (operation === DataSource.Operation.IS_PAGEABLE) {
+                        return false; // IS_PAGEABLE
+                    }
+                    return null;
+                });
+
+            directive.checkFiltersApplied(true);
+
+            expect(directive.resetSortStatus).not.toHaveBeenCalled();
+            expect(tableComponent.clearFilter).not.toHaveBeenCalled();
         });
     });
 });

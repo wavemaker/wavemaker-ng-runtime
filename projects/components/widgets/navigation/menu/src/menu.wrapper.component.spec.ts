@@ -74,7 +74,7 @@ const menuComponentModuleDef: ITestModuleDef = {
         { provide: ComponentFixtureAutoDetect, useValue: true },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }
     ],
-    teardown: {destroyAfterEach: false}
+    teardown: { destroyAfterEach: false }
 };
 
 const menuComponentDef: ITestComponentDef = {
@@ -320,7 +320,7 @@ describe('MenuComponent', () => {
     }));
     /***************************** actions end ************************************* */
 
-   it('should dropdown position be down,right', waitForAsync(() => {
+    it('should dropdown position be down,right', waitForAsync(() => {
         wmComponent.menuposition = 'down,right';
         jest.spyOn(wmComponent, 'setMenuPosition');
         wmComponent.setMenuPosition();
@@ -359,18 +359,17 @@ describe('MenuComponent', () => {
         });
     }));
 
-    // it('should dropdown position be up,left', waitForAsync(() => {
-    //     wmComponent.menuposition = 'up,left';
-    //     jest.spyOn(wmComponent, 'setMenuPosition');
-    //     wmComponent.setMenuPosition();
-    //     wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
-    //     buttonClickFunction();
-    //     fixture.detectChanges();
-    //     fixture.whenStable().then(() => {
-    //         const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
-    //         expect(menudropdownEle.nativeElement.classList).toContain('pull-left');
-    //     });
-    // }));
-
+    xit('should dropdown position be up,left', waitForAsync(() => {
+        wmComponent.menuposition = 'up,left';
+        jest.spyOn(wmComponent, 'setMenuPosition');
+        wmComponent.setMenuPosition();
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        buttonClickFunction();
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-left');
+        });
+    }));
 
 });
