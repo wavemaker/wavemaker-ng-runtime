@@ -83,6 +83,7 @@ describe('TableFilterSortDirective', () => {
             matchModeTypesMap: {},
             matchModeMsgs: {},
             emptyMatchModes: [],
+            name: 'TestWidget',
             getNavigationTargetBySortInfo: jest.fn(),
             refreshData: jest.fn(),
             clearFilter: jest.fn(),
@@ -136,6 +137,11 @@ describe('TableFilterSortDirective', () => {
             gridOptions: {
                 searchHandler: jest.fn(),
                 sortInfo: {},
+                setLastActionPerformed: jest.fn(),
+                setIsSearchTrigerred: jest.fn(),
+                ACTIONS: {
+                    SEARCH_OR_SORT: 'SEARCH_OR_SORT'
+                }
             },
             nodatamessage: 'No data available',
             columns: { name: { colDef: {} } },
@@ -561,4 +567,243 @@ describe('TableFilterSortDirective', () => {
             expect(tableComponent.clearFilter).not.toHaveBeenCalled();
         });
     });
+
+    describe('searchHandler', () => {
+        it('should filter searchSortObj when it is an array and update statePersistence', () => {
+            const searchSortObj = [
+                { matchMode: 'contains', value: 'test', field: 'field1' },
+                { value: 'test2', field: '' }, // Should be included due to empty field but with value
+                { matchMode: undefined, value: undefined }, // Should be filtered out
+            ];
+            const eventMock = {};
+
+            (tableComponent as any).getConfiguredState = jest.fn().mockReturnValue('someState');
+            tableComponent.navigation = 'pagination';
+            tableComponent.invokeEventCallback = jest.fn().mockReturnValue(true);
+
+            (directive as any).searchHandler(searchSortObj, eventMock, 'type');
+
+            expect((tableComponent as any).statePersistence.removeWidgetState).toHaveBeenCalledWith(tableComponent, 'search');
+            expect((tableComponent as any).statePersistence.setWidgetState).toHaveBeenCalledWith(tableComponent, { search: searchSortObj.slice(0, 2) });
+        });
+
+        it('should handle searchSortObj as an object and update statePersistence', () => {
+            const searchSortObj = { field: 'field1', value: 'test', type: 'type' };
+            const eventMock = {};
+
+            (tableComponent as any).getConfiguredState = jest.fn().mockReturnValue('someState');
+            tableComponent.navigation = 'pagination';
+            tableComponent.invokeEventCallback = jest.fn().mockReturnValue(true);
+
+            (directive as any).searchHandler(searchSortObj, eventMock, 'type');
+
+            expect((tableComponent as any).statePersistence.removeWidgetState).toHaveBeenCalledWith(tableComponent, 'search');
+            expect((tableComponent as any).statePersistence.setWidgetState).toHaveBeenCalledWith(tableComponent, { search: searchSortObj });
+        });
+
+        it('should call beforefilter callback and stop execution if it returns false', () => {
+            const searchSortObj = { field: 'field1', value: 'test', type: 'type' };
+            const eventMock = {};
+
+            tableComponent.invokeEventCallback = jest.fn().mockReturnValue(false); // Callback returns false
+
+            (directive as any).searchHandler(searchSortObj, eventMock, 'type');
+
+            expect(tableComponent.invokeEventCallback).toHaveBeenCalledWith('beforefilter', { $event: eventMock, $data: {}, columns: {} });
+            expect(tableComponent.datasource.execute).not.toHaveBeenCalled();
+        });
+
+        it('should return early if no datasource or dataset is available', () => {
+            const searchSortObj = { field: 'field1', value: 'test', type: 'type' };
+            const eventMock = {};
+
+            tableComponent.datasource = null;
+            tableComponent.dataset = null;
+
+            (directive as any).searchHandler(searchSortObj, eventMock, 'type');
+
+            expect(tableComponent.invokeEventCallback).not.toHaveBeenCalled();
+            expect((tableComponent as any).statePersistence.removeWidgetState).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('showClearIcon', () => {
+        it('should return true when value is defined and not empty', () => {
+            tableComponent.rowFilter = { name: { value: 'John' } };
+            expect(directive.showClearIcon('name')).toBe(true);
+        });
+
+        it('should return false when value is undefined', () => {
+            tableComponent.rowFilter = { name: { value: undefined } };
+            expect(directive.showClearIcon('name')).toBe(false);
+        });
+
+        it('should return false when value is an empty string', () => {
+            tableComponent.rowFilter = { name: { value: '' } };
+            expect(directive.showClearIcon('name')).toBe(false);
+        });
+
+        it('should return false when value is null', () => {
+            tableComponent.rowFilter = { name: { value: null } };
+            expect(directive.showClearIcon('name')).toBe(false);
+        });
+    });
+
+    describe('clearRowFilter', () => {
+        it('should reset filter and call onRowFilterChange when rowFilter exists', () => {
+            tableComponent.rowFilter = { name: { value: 'John' } };
+            tableComponent.columns = { name: { resetFilter: jest.fn() } };
+            directive.onRowFilterChange = jest.fn();
+
+            directive.clearRowFilter('name');
+
+            expect((tableComponent as any).columns.name.resetFilter).toHaveBeenCalled();
+            expect(directive.onRowFilterChange).toHaveBeenCalledWith('name');
+        });
+
+        it('should not do anything when rowFilter does not exist', () => {
+            tableComponent.rowFilter = {};
+            tableComponent.columns = { name: { resetFilter: jest.fn() } };
+            directive.onRowFilterChange = jest.fn();
+
+            directive.clearRowFilter('name');
+
+            expect((tableComponent as any).columns.name.resetFilter).not.toHaveBeenCalled();
+            expect(directive.onRowFilterChange).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('onFilterConditionSelect', () => {
+        beforeEach(() => {
+            tableComponent.rowFilter = {};
+            tableComponent.columns = {
+                name: {
+                    resetFilter: jest.fn(),
+                    filterInstance: { focus: jest.fn() }
+                }
+            };
+            tableComponent.onRowFilterChange = jest.fn();
+            tableComponent.emptyMatchModes = ['isNull', 'isNotNull'];
+        });
+
+        it('should set matchMode and call onRowFilterChange for non-empty match mode with value', () => {
+            directive.onFilterConditionSelect('name', 'contains');
+            expect(tableComponent.rowFilter.name.matchMode).toBe('contains');
+            expect(tableComponent.onRowFilterChange).not.toHaveBeenCalled();
+
+            tableComponent.rowFilter.name.value = 'John';
+            directive.onFilterConditionSelect('name', 'contains');
+            expect(tableComponent.onRowFilterChange).toHaveBeenCalled();
+        });
+
+        it('should reset filter and call onRowFilterChange for empty match mode', () => {
+            directive.onFilterConditionSelect('name', 'isNull');
+            expect((tableComponent as any).columns.name.resetFilter).toHaveBeenCalled();
+            expect(tableComponent.onRowFilterChange).toHaveBeenCalled();
+        });
+
+        it('should focus on filter instance for non-empty match mode without value', (done) => {
+            directive.onFilterConditionSelect('name', 'contains');
+            setTimeout(() => {
+                expect((tableComponent as any).columns.name.filterInstance.focus).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
+
+    describe('setLastActionPerformedToSearchSort', () => {
+        it('should set last action performed to SEARCH_OR_SORT', () => {
+            directive.setLastActionPerformedToSearchSort();
+            expect(tableComponent.gridOptions.setLastActionPerformed).toHaveBeenCalledWith(tableComponent.gridOptions.ACTIONS.SEARCH_OR_SORT);
+        });
+
+        it('should set isSearchTrigerred to true', () => {
+            directive.setLastActionPerformedToSearchSort();
+            expect(tableComponent.gridOptions.setIsSearchTrigerred).toHaveBeenCalledWith(true);
+        });
+    });
+
+    describe('searchSortHandler', () => {
+        let mockSearchSortObj;
+        let mockEvent;
+
+        beforeEach(() => {
+            mockSearchSortObj = { field: 'name', direction: 'asc' };
+            mockEvent = { type: 'change', stopPropagation: jest.fn() };
+            directive.setLastActionPerformedToSearchSort = jest.fn();
+            (directive as any).searchHandler = jest.fn();
+            (directive as any).sortHandler = jest.fn();
+        });
+
+        it('should stop propagation for change event when filtermode is not multicolumn', () => {
+            tableComponent.filtermode = 'singlecolumn';
+            directive.searchSortHandler(mockSearchSortObj, mockEvent, 'search');
+            expect(mockEvent.stopPropagation).toHaveBeenCalled();
+            expect(directive.setLastActionPerformedToSearchSort).not.toHaveBeenCalled();
+        });
+
+        it('should call setLastActionPerformedToSearchSort for non-change events', () => {
+            mockEvent.type = 'click';
+            directive.searchSortHandler(mockSearchSortObj, mockEvent, 'search');
+            expect(directive.setLastActionPerformedToSearchSort).toHaveBeenCalled();
+        });
+
+        it('should handle null event', () => {
+            directive.searchSortHandler(mockSearchSortObj, null, 'sort');
+            expect(directive.setLastActionPerformedToSearchSort).toHaveBeenCalled();
+            expect((directive as any).sortHandler).toHaveBeenCalledWith(mockSearchSortObj, null, 'sort', undefined);
+        });
+    });
+
+    describe('onRowFilterChange', () => {
+        beforeEach(() => {
+            (tableComponent as any).fullFieldDefs = [
+                { field: 'name', type: 'string' },
+                { field: 'age', type: 'number' }
+            ];
+            tableComponent.rowFilter = {};
+            tableComponent.emptyMatchModes = ['isNull', 'isNotNull'];
+            tableComponent.matchModeTypesMap = {
+                string: ['contains', 'startsWith', 'endsWith'],
+                number: ['equals', 'greaterThan', 'lessThan']
+            };
+            (tableComponent as any).getFilterOnFieldValues = jest.fn();
+            tableComponent.rowFilter = {
+                name: { value: 'John', matchMode: 'contains' },
+                age: { value: 30, matchMode: 'equals' }
+            };
+            tableComponent.gridOptions.searchHandler = jest.fn();
+        });
+
+        it('should create searchObj from rowFilter and call searchHandler', () => {
+            directive.onRowFilterChange('name');
+            expect(tableComponent.gridOptions.searchHandler).toHaveBeenCalledWith(
+                [
+                    { field: 'name', value: 'John', matchMode: 'contains', type: 'string' },
+                    { field: 'age', value: 30, matchMode: 'equals', type: undefined }
+                ],
+                undefined,
+                'search'
+            );
+        });
+
+        it('should handle empty values and empty match modes', () => {
+            tableComponent.rowFilter.age.value = '';
+            tableComponent.rowFilter.name.matchMode = 'isNull';
+            directive.onRowFilterChange('name');
+            expect(tableComponent.gridOptions.searchHandler).toHaveBeenCalledWith(
+                [
+                    { field: 'name', value: 'John', matchMode: 'isNull', type: 'string' }
+                ],
+                undefined,
+                'search'
+            );
+        });
+
+        it('should not call getFilterOnFieldValues when field is not provided', () => {
+            directive.onRowFilterChange('');
+            expect((tableComponent as any).getFilterOnFieldValues).not.toHaveBeenCalled();
+        });
+    });
+
 });
