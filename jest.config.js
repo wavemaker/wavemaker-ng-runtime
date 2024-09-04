@@ -7,7 +7,7 @@ module.exports = {
     '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
   ],
   testMatch: [
-    "**/projects/**/*.spec.ts",
+    "**/projects/**/*.spec.ts", 
     // "**/projects/components/widgets/data/table/src/table-filter.spec.ts",
   ],
   testPathIgnorePatterns: [
