@@ -26,7 +26,7 @@ import {
 
 import { AppResourceManagerService } from './app-resource-manager.service';
 import {isString, isUndefined} from "lodash-es";
-import * as customWidgets from '@wavemaker/m3-custom-widgets';
+import * as customWidgets from '@wavemaker/custom-widgets-m3';
 
 interface IPageMinJSON {
     markup: string;
