@@ -20,7 +20,7 @@ import {
     split,
     startsWith, toLower, toUpper, trim
 } from "lodash-es";
-import *  as X2JS from "x2js";
+import X2JS from "x2js";
 
 declare const $;
 declare const moment;
