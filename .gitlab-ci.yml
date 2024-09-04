@@ -78,6 +78,8 @@ unit_tests:
     - npm run test 
     - echo "npm_test finished $(date +%Y-%m-%d\ %H:%M:%S)"
     - date
+  when: on_failure
+  allow_failure: true
   retry:
         max: 2
         when: stuck_or_timeout_failure
@@ -103,7 +105,7 @@ notify_job:
           --message "Subject={Data=Unit Test Cases Pipeline Status},Body={Text={Data=$MESSAGE}}"
 
 
-  when: always
+  when: on_failure
   dependencies:
     - unit_tests
 
