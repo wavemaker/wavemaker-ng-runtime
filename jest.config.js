@@ -22,7 +22,7 @@ module.exports = {
     "libraries/scripts/jquery.ui.touch-punch",
     "libraries/scripts/swipey",
     ".yalc/@wavemaker/variables/src/",
-    "**/projects/core/src/services/script-loader.spec.ts",
+    "/projects/core/src/services/script-loader.spec.ts",
 
   ],
   // collectCoverageFrom: [

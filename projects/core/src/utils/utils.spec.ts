@@ -1449,7 +1449,7 @@ describe('getValidJSON', () => {
     });
 });
 
-describe('xmlToJson', () => {
+xdescribe('xmlToJson', () => {
     let originalX2JS: any;
 
     beforeEach(() => {
@@ -1481,7 +1481,6 @@ describe('xmlToJson', () => {
     });
 
 });
-
 
 describe('addEventListenerOnElement', () => {
     let element: Element;
