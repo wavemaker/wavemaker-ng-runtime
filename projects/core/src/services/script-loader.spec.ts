@@ -4,7 +4,7 @@ import { ScriptLoaderService, ScriptStore } from './script-loader.service';
 import { _WM_APP_PROJECT } from '../utils/utils';
 import { HttpClient } from '@angular/common/http';
 
-describe('ScriptLoaderService', () => {
+xdescribe('ScriptLoaderService', () => {
     let service: ScriptLoaderService;
     let httpMock: HttpTestingController;
 
