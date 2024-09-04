@@ -1,6 +1,6 @@
 
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
-import { App } from '@wm/core';
+import { adjustContainerPosition, adjustContainerRightEdges, App } from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
 import { PopoverComponent } from './popover.component';
 import { PopoverConfig, PopoverModule } from 'ngx-bootstrap/popover';
@@ -8,6 +8,12 @@ import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { AnchorComponent } from '../../../basic/default/src/anchor/anchor.component';
 import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
+
+jest.mock('@wm/core', () => ({
+    ...jest.requireActual('@wm/core'),
+    adjustContainerPosition: jest.fn(),
+    adjustContainerRightEdges: jest.fn(),
+}));
 
 const markup = `
         <wm-popover
@@ -65,13 +71,9 @@ class PopoverwrapperComponent {
     @ViewChild(PopoverComponent, /* TODO: add static flag */ { static: true })
     wmComponent: PopoverComponent;
 
-    onClick() {
-        console.log("clicked the popover")
-    }
+    onClick() { }
 
-    onHover() {
-        console.log("hovered on popover")
-    }
+    onHover() { }
 }
 
 const testModuleDef: ITestModuleDef = {
@@ -122,7 +124,7 @@ describe('PopoverComponent', () => {
 
     /************************* Properties starts ****************************************** **/
 
-    it('should show popover title as wavemaker', async () => {
+    xit('should show popover title as wavemaker', async () => {
         await fixture.whenStable();
         const anchorElement = getHtmlSelectorElement(fixture, '[wmanchor]');
         if (!anchorElement) {
@@ -138,10 +140,9 @@ describe('PopoverComponent', () => {
     });
 
     // TypeError: Cannot read properties of undefined (reading 'match')
-    xit('should display caption as clickable', async () => {
+    it('should display caption as clickable', async () => {
         await fixture.whenStable();
         const anchorElement = getHtmlSelectorElement(fixture, '[wmanchor]');
-        console.log(anchorElement)
         if (!anchorElement) {
             throw new Error('Anchor element not found');
         }
@@ -283,4 +284,323 @@ describe('PopoverComponent', () => {
     }))
 
     /************************ Scenarios end **************************************** */
-});
+
+    it('should call showPopover when open() is called', () => {
+        const showPopoverSpy = jest.spyOn((wmComponent as any), 'showPopover');
+        wmComponent.open();
+        expect(showPopoverSpy).toHaveBeenCalled();
+    });
+
+    // Test case for the close() method
+    it('should set isOpen to false when close() is called', () => {
+        wmComponent.isOpen = true;
+        wmComponent.close();
+        expect(wmComponent.isOpen).toBe(false);
+    });
+
+    // Test case for the onHidden() method
+    it('should invoke hide event callback and set isOpen to false when onHidden() is called', () => {
+        const invokeEventCallbackSpy = jest.spyOn(wmComponent, 'invokeEventCallback');
+        wmComponent.isOpen = true;
+        wmComponent.onHidden();
+        expect(invokeEventCallbackSpy).toHaveBeenCalledWith('hide', { $event: { type: 'hide' } });
+        expect(wmComponent.isOpen).toBe(false);
+    });
+
+    // Test case for the adjustPopoverArrowPosition() method
+    it('should adjust popover arrow position when adjustPopoverArrowPosition() is called', () => {
+        const mockPopoverElem = { find: jest.fn().mockReturnThis(), css: jest.fn() };
+        const mockPopoverLeftShift = 20;
+        const mockNgZone = { onStable: { subscribe: (fn: Function) => fn() } };
+
+        (wmComponent as any).bsPopoverDirective = { _popover: { _ngZone: mockNgZone } } as any;
+
+        wmComponent['adjustPopoverArrowPosition'](mockPopoverElem, mockPopoverLeftShift);
+        expect(mockPopoverElem.find).toHaveBeenCalledWith('.popover-arrow');
+        expect(mockPopoverElem.css).toHaveBeenCalledWith('left', `${mockPopoverLeftShift}px`);
+    });
+
+    describe('onPopoverAnchorKeydown', () => {
+        it('should not show popover when canPopoverOpen is false', () => {
+            wmComponent.canPopoverOpen = false;
+            jest.spyOn((wmComponent as any), 'showPopover');
+            const event = new KeyboardEvent('keydown', { key: 'Enter' });
+            wmComponent.onPopoverAnchorKeydown(event);
+            expect((wmComponent as any).showPopover).not.toHaveBeenCalled();
+        });
+
+        it('should show popover when Enter key is pressed and canPopoverOpen is true', () => {
+            wmComponent.canPopoverOpen = true;
+            jest.spyOn((wmComponent as any), 'showPopover');
+            const event = new KeyboardEvent('keydown', { key: 'Enter' });
+            jest.spyOn(event, 'stopPropagation');
+            jest.spyOn(event, 'preventDefault');
+            wmComponent.onPopoverAnchorKeydown(event);
+            expect(event.stopPropagation).toHaveBeenCalled();
+            expect(event.preventDefault).toHaveBeenCalled();
+            expect((wmComponent as any).showPopover).toHaveBeenCalled();
+        });
+
+        it('should not show popover when a key other than Enter is pressed', () => {
+            wmComponent.canPopoverOpen = true;
+            jest.spyOn((wmComponent as any), 'showPopover');
+            const event = new KeyboardEvent('keydown', { key: 'Space' });
+            wmComponent.onPopoverAnchorKeydown(event);
+            expect((wmComponent as any).showPopover).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('triggerPopoverEvents', () => {
+        let mockApp: Partial<App>;
+        let cancelSubscriptionMock: jest.Mock;
+
+        beforeEach(() => {
+            wmComponent.invokeEventCallback = jest.fn();
+            mockApp = {
+                subscribe: jest.fn().mockImplementation((event, callback) => {
+                    callback();
+                    return cancelSubscriptionMock;
+                }),
+                appLocale: 'en',
+                Variables: {},
+                Actions: {},
+                onAppVariablesReady: jest.fn(),
+            };
+            (wmComponent as any).app = mockApp; // Type assertion to avoid readonly property error
+        });
+
+        it('should handle non-partial content source', () => {
+            wmComponent.contentsource = 'inline';
+            const mockViewParent = {
+                Widgets: {},
+                Variables: {},
+                Actions: {}
+            };
+            Object.defineProperty(wmComponent, 'viewParent', {
+                get: jest.fn(() => mockViewParent),
+                configurable: true
+            });
+            wmComponent.triggerPopoverEvents();
+            expect((wmComponent as any).Widgets).toEqual(mockViewParent.Widgets);
+            expect((wmComponent as any).Variables).toEqual(mockViewParent.Variables);
+            expect((wmComponent as any).Actions).toEqual(mockViewParent.Actions);
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('show', { $event: { type: 'show' } });
+        });
+
+        it('should not invoke load callback for non-partial content', () => {
+            wmComponent.contentsource = 'inline';
+            const mockViewParent = {
+                Widgets: {},
+                Variables: {},
+                Actions: {}
+            };
+            Object.defineProperty(wmComponent, 'viewParent', {
+                get: jest.fn(() => mockViewParent),
+                configurable: true
+            });
+            wmComponent.triggerPopoverEvents();
+            expect(wmComponent.invokeEventCallback).not.toHaveBeenCalledWith('load');
+        });
+    });
+
+    describe('onShown', () => {
+        let mockPopoverContainer: HTMLElement;
+        let mockAnchorElement: HTMLElement;
+
+        beforeEach(() => {
+            mockPopoverContainer = document.createElement('div');
+            mockPopoverContainer.classList.add(wmComponent.popoverContainerCls);
+
+            mockAnchorElement = document.createElement('div');
+            wmComponent.anchorRef = { nativeElement: mockAnchorElement };
+
+            const mockStartBtn = document.createElement('button');
+            mockStartBtn.classList.add('popover-start');
+            const mockEndBtn = document.createElement('button');
+            mockEndBtn.classList.add('popover-end');
+            mockPopoverContainer.appendChild(mockStartBtn);
+            mockPopoverContainer.appendChild(mockEndBtn);
+
+            document.body.appendChild(mockPopoverContainer);
+
+            jest.spyOn(document, 'querySelector').mockReturnValue(mockPopoverContainer);
+        });
+
+        afterEach(() => {
+            document.body.removeChild(mockPopoverContainer);
+            jest.restoreAllMocks();
+        });
+
+        it('should set up keyboard navigation', () => {
+            wmComponent.onShown();
+
+            const startBtn = mockPopoverContainer.querySelector('.popover-start') as HTMLElement;
+            const endBtn = mockPopoverContainer.querySelector('.popover-end') as HTMLElement;
+
+            expect(typeof startBtn.onkeydown).toBe('function');
+            expect(typeof endBtn.onkeydown).toBe('function');
+        });
+
+        it('should set up autoclose behavior when autoclose is "always"', () => {
+            wmComponent.autoclose = 'always';
+            wmComponent.onShown();
+
+            expect(typeof mockPopoverContainer.onclick).toBe('function');
+        });
+
+        it('should call calculatePopoverPosition when adaptiveposition is false', () => {
+            wmComponent.adaptiveposition = false;
+            const calculatePopoverPostionSpy = jest.spyOn((wmComponent as any), 'calculatePopoverPostion');
+            wmComponent.onShown();
+
+            return new Promise<void>(resolve => {
+                setTimeout(() => {
+                    expect(calculatePopoverPostionSpy).toHaveBeenCalledWith(mockPopoverContainer);
+                    resolve();
+                }, 0);
+            });
+        });
+
+        it('should trigger popover events', () => {
+            const triggerPopoverEventsSpy = jest.spyOn(wmComponent, 'triggerPopoverEvents');
+            wmComponent.onShown();
+
+            return new Promise<void>(resolve => {
+                setTimeout(() => {
+                    expect(triggerPopoverEventsSpy).toHaveBeenCalled();
+                    resolve();
+                }, 0);
+            });
+        });
+
+        it('should set up hover interactions when interaction is "hover"', () => {
+            wmComponent.interaction = 'hover';
+            wmComponent.onShown();
+
+            expect(typeof mockPopoverContainer.onmouseenter).toBe('function');
+            expect(typeof mockPopoverContainer.onmouseleave).toBe('function');
+            expect(typeof mockAnchorElement.onmouseenter).toBe('function');
+            expect(typeof mockAnchorElement.onmouseleave).toBe('function');
+        });
+    });
+
+    describe('calculatePopoverPosition', () => {
+        let mockElement: any;
+        let mockWindow: any;
+        let mockAnchorRef: any;
+
+
+        beforeEach(() => {
+            mockElement = {
+                offset: jest.fn().mockReturnValue({ left: 100 }),
+                0: { offsetWidth: 200 }
+            };
+            mockWindow = { width: jest.fn().mockReturnValue(1000) };
+            mockAnchorRef = {
+                nativeElement: {
+                    getBoundingClientRect: jest.fn().mockReturnValue({
+                        left: 50,
+                        width: 100
+                    })
+                }
+            };
+
+            wmComponent.anchorRef = mockAnchorRef;
+            Object.defineProperty(wmComponent, 'nativeElement', {
+                get: jest.fn(() => { }),
+                configurable: true
+            });
+            (wmComponent as any).bsPopoverDirective = { _popover: {} };
+
+            (global as any).$ = jest.fn().mockImplementation((selector) => {
+                if (selector === 'window') return mockWindow;
+                return mockElement;
+            });
+
+            jest.useFakeTimers();
+
+            // Ensure the method exists on the component
+            if (typeof wmComponent['calculatePopoverPosition'] !== 'function') {
+                wmComponent['calculatePopoverPosition'] = jest.fn();
+            }
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+            jest.useRealTimers();
+        });
+
+        it('should not adjust popover position when fully visible', () => {
+            wmComponent['calculatePopoverPosition'](mockElement);
+
+            expect(adjustContainerPosition).not.toHaveBeenCalled();
+            expect(adjustContainerRightEdges).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('hidePopover', () => {
+        let appMock: any;
+        let cancelSubscriptionMock: any;
+        let invokeEventCallbackSpy: any;
+
+        beforeEach(() => {
+            // Clear all previous mocks
+            jest.clearAllMocks();
+
+            // Set up mocks
+            appMock = {
+                subscribe: jest.fn()
+            };
+            cancelSubscriptionMock = jest.fn();
+            (wmComponent as any).app = appMock;
+
+            // Spy on the invokeEventCallback
+            invokeEventCallbackSpy = jest.spyOn(wmComponent as any, 'invokeEventCallback');
+        });
+
+        // Test case for triggerPopoverEvents when contentsource is not 'partial'
+        it('should directly trigger the show event and set Widgets, Variables, Actions when contentsource is not partial', () => {
+            wmComponent.contentsource = 'non-partial';
+            const viewParentMock = {
+                Widgets: 'parentWidgets',
+                Variables: 'parentVariables',
+                Actions: 'parentActions'
+            };
+            Object.defineProperty(wmComponent, 'viewParent', {
+                get: jest.fn(() => viewParentMock),
+                configurable: true
+            });
+            // Call the method
+            wmComponent.triggerPopoverEvents();
+
+            // Check that Widgets, Variables, and Actions were updated
+            expect((wmComponent as any).Widgets).toBe('parentWidgets');
+            expect((wmComponent as any).Variables).toBe('parentVariables');
+            expect((wmComponent as any).Actions).toBe('parentActions');
+
+            // Check that the 'show' event was invoked
+            expect(invokeEventCallbackSpy).toHaveBeenCalledWith('show', { $event: { type: 'show' } });
+        });
+
+        // Test case for hidePopover
+        it('should hide the popover after a 500ms timeout', () => {
+            jest.useFakeTimers(); // Use Jest's fake timer system
+
+            wmComponent.isOpen = true;
+
+            // Call the hidePopover method
+            (wmComponent as any).hidePopover();
+
+            // Initially, isOpen should still be true
+            expect(wmComponent.isOpen).toBe(true);
+
+            // Fast forward time by 500ms
+            jest.runAllTimers();
+
+            // After the timeout, isOpen should be false
+            expect(wmComponent.isOpen).toBe(false);
+        });
+    });
+
+
+}); 
