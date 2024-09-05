@@ -55,13 +55,17 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
                 const selectedItem = this.datasetItems.find(item => item.selected);
                 if (!selectedItem) {
                     setTimeout(() => {
-                        this.selectEl.nativeElement.value = '';
+                        if(!this.placeholder) {
+                            this.selectEl.nativeElement.value = '';
+                        }
                         this.modelByKey = undefined;
                     }, 100);
                 }
             } else {
                 setTimeout(() => {
-                    this.selectEl.nativeElement.value = '';
+                    if(!this.placeholder) {
+                        this.selectEl.nativeElement.value = '';
+                    }
                 }, 100);
             }
         });
