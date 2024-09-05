@@ -1,6 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { PaginationService } from './pagination.service';
+import { debounce } from 'lodash-es';
 
+jest.mock('lodash-es', () => ({
+    ...jest.requireActual('lodash-es'),
+    debounce: jest.fn(),
+}));
 // data-navigator.mock.ts
 export class DataNavigator {
     dn = {
@@ -22,8 +27,6 @@ export class DataNavigator {
 
 // grid-options.mock.ts
 export class GridOptions {
-    private isNextPageData = false;
-    private isDataUpdatedByUser = true;
     public deletedRowIndex = -1;
     public ACTIONS = {
         SEARCH_OR_SORT: 'SEARCH_OR_SORT',
@@ -44,7 +47,7 @@ export class GridOptions {
         this.deletedRowIndex = index;
     }
 
-    setCurrentPage(page: number): void {
+    setCurrentPage(): void {
         // Implementation not needed for our tests
     }
 
@@ -53,11 +56,9 @@ export class GridOptions {
     }
 
     setIsNextPageData(value: boolean): void {
-        this.isNextPageData = value;
     }
 
     setIsDataUpdatedByUser(value: boolean): void {
-        this.isDataUpdatedByUser = value;
     }
 }
 
@@ -66,18 +67,156 @@ describe('PaginationService', () => {
     let service: PaginationService;
     let dataNavigatorMock: DataNavigator;
     let gridOptionsMock: GridOptions;
+    let parentMock: any;
+    let $elementMock: any;
+    let $rootElMock: any;
+    let $firstChildMock: any;
+    let $scrollParentMock: any;
+    let debounceNum: number;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [PaginationService]
         });
         service = TestBed.inject(PaginationService);
-        dataNavigatorMock = new DataNavigator();
-        gridOptionsMock = new GridOptions();
+        dataNavigatorMock = {
+            isFirstPage: jest.fn(),
+            pageCount: 2,
+            navigatePage: jest.fn(),
+            dn: { currentPage: 1 },
+            dataSize: 50
+        } as any;
+        $scrollParentMock = {
+            0: { scrollHeight: 1000, clientHeight: 500 },
+            each: jest.fn().mockReturnThis(),
+            off: jest.fn().mockReturnThis(),
+            on: jest.fn().mockReturnThis(),
+        };
+        $firstChildMock = {
+            length: 1,
+            scrollParent: jest.fn().mockReturnValue($scrollParentMock)
+        };
+
+        $rootElMock = {
+            children: jest.fn().mockReturnValue({
+                first: jest.fn().mockReturnValue($firstChildMock),  // Ensure .first() returns $firstChildMock
+            }),
+            off: jest.fn().mockReturnThis(),
+            on: jest.fn().mockReturnThis(),
+        };
+
+        $elementMock = {
+            find: jest.fn().mockReturnValue($rootElMock)
+        };
+        gridOptionsMock = {
+            isNavTypeScrollOrOndemand: jest.fn().mockReturnValue(true),
+            setDeletedRowIndex: jest.fn(),
+            setCurrentPage: jest.fn(),
+            deletedRowIndex: -1,
+            lastActionPerformed: '',
+            ACTIONS: {
+                SEARCH_OR_SORT: 'SEARCH_OR_SORT',
+                FILTER_CRITERIA: 'FILTER_CRITERIA',
+                DATASET_UPDATE: 'DATASET_UPDATE',
+                DELETE: 'DELETE',
+                EDIT: 'EDIT'
+            },
+            showviewlessbutton: false,
+            mode: '',
+            setIsNextPageData: jest.fn(),
+            setIsDataUpdatedByUser: jest.fn(),
+        } as any;
+
+        parentMock = {
+            $element: $elementMock,
+            widgetType: 'wm-table',
+            gridData: [],
+            fieldDefs: [],
+            gridOptions: gridOptionsMock,
+            currentPage: 1,
+            dataNavigator: dataNavigatorMock,
+            pagesize: 10,
+            variableInflight: false,
+        } as any;
+        debounceNum = 300;
+        (debounce as jest.Mock).mockImplementation((fn) => fn);
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
+    });
+
+    describe('updateFieldsOnPagination', () => {
+        it('should return fieldDefs and current page when no rows are deleted', () => {
+            (gridOptionsMock as any).isNavTypeScrollOrOndemand.mockReturnValue(true);
+            parentMock.currentPage = 1;  // Ensure the current page starts at 1
+            dataNavigatorMock.dn.currentPage = 1;  // Ensure dataNavigator is also on the first page
+            gridOptionsMock.deletedRowIndex = -1;
+
+            const newVal = [{ id: 1, name: 'NewRow' }];
+            const result = service.updateFieldsOnPagination(parentMock, newVal);
+
+            expect(result[0]).toEqual(newVal);
+            expect(result[1]).toBe(2);
+        });
+
+        it('should handle deleted row in wm-table', () => {
+            (gridOptionsMock as any).isNavTypeScrollOrOndemand.mockReturnValue(true);
+            gridOptionsMock.deletedRowIndex = 1;
+            parentMock.gridData = [{ id: 1 }, { id: 2 }, { id: 3 }];
+
+            service.updateFieldsOnPagination(parentMock, []);
+
+            expect(parentMock.gridData.length).toBe(2);
+            expect(gridOptionsMock.setDeletedRowIndex).toHaveBeenCalledWith(-1);
+        });
+
+        it('should reset fieldDefs if last action was SEARCH_OR_SORT', () => {
+            (gridOptionsMock as any).isNavTypeScrollOrOndemand.mockReturnValue(true);
+            gridOptionsMock.lastActionPerformed = gridOptionsMock.ACTIONS.SEARCH_OR_SORT;
+
+            const result = service.updateFieldsOnPagination(parentMock, []);
+
+            expect(result[0]).toEqual([]);
+            expect(gridOptionsMock.setCurrentPage).toHaveBeenCalledWith(1);
+        });
+
+        it('should handle pagination when fieldDefs are undefined', () => {
+            parentMock.widgetType = 'wm-list';
+            parentMock.fieldDefs = undefined;
+            (dataNavigatorMock as any).isFirstPage.mockReturnValue(true);  // Use dataNavigatorMock for isFirstPage
+
+            const newVal = [{ id: 1 }];
+            const result = service.updateFieldsOnPagination(parentMock, newVal);
+
+            expect(result[1]).toBe(1);
+        });
+
+        it('should push new values to fieldDefs when on next page', () => {
+            parentMock.widgetType = 'wm-table';
+            parentMock.gridData = [{ id: 1 }];
+            (gridOptionsMock as any).isNavTypeScrollOrOndemand.mockReturnValue(true);
+            dataNavigatorMock.dn.currentPage = 2;
+            parentMock.pagesize = 1;
+
+            const newVal = [{ id: 2 }];
+            const result = service.updateFieldsOnPagination(parentMock, newVal);
+
+            expect(result[0]).toEqual([{ id: 1 }, { id: 2 }]);
+            expect(result[1]).toBe(2);
+        });
+
+        it('should append unique records when action is DELETE', () => {
+            gridOptionsMock.lastActionPerformed = gridOptionsMock.ACTIONS.DELETE;
+            parentMock.gridData = [{ id: 1 }];
+            const newVal = [{ id: 1 }, { id: 2 }];
+            const getUniqueRecordsInFieldDefSpy = jest.spyOn(service, 'getUniqueRecordsInFieldDef').mockReturnValue([{ id: 1 }, { id: 2 }]);
+
+            const result = service.updateFieldsOnPagination(parentMock, newVal);
+
+            expect(getUniqueRecordsInFieldDefSpy).toHaveBeenCalledWith([{ id: 1 }], [{ id: 1 }, { id: 2 }]);
+            expect(result[0]).toEqual([{ id: 1 }, { id: 2 }]);
+        });
     });
 
     describe('getUniqueRecordsInFieldDef', () => {
@@ -100,45 +239,6 @@ describe('PaginationService', () => {
             const result = service.getUniqueRecordsInFieldDef(fieldDefs, newVal);
 
             expect(result).toEqual(newVal);
-        });
-    });
-
-    describe('debouncedFetchNextDatasetOnScroll', () => {
-        it('should return a debounced function', () => {
-            const result = service.debouncedFetchNextDatasetOnScroll(dataNavigatorMock, 300, {});
-            expect(typeof result).toBe('function');
-        });
-    });
-
-    describe('fetchNextDatasetOnScroll', () => {
-        it('should call navigatePage on dataNavigator when not in flight', () => {
-            const parent = {
-                variableInflight: false,
-                widgetType: 'wm-table',
-                gridOptions: gridOptionsMock
-            };
-            jest.spyOn(dataNavigatorMock, 'navigatePage');
-            jest.spyOn(gridOptionsMock, 'setIsNextPageData');
-            jest.spyOn(gridOptionsMock, 'setIsDataUpdatedByUser');
-
-            service.fetchNextDatasetOnScroll(dataNavigatorMock, parent);
-
-            expect(dataNavigatorMock.navigatePage).toHaveBeenCalledWith('next');
-            expect(gridOptionsMock.setIsNextPageData).toHaveBeenCalledWith(true);
-            expect(gridOptionsMock.setIsDataUpdatedByUser).toHaveBeenCalledWith(false);
-        });
-
-        it('should not call navigatePage when in flight', () => {
-            const parent = {
-                variableInflight: true,
-                widgetType: 'wm-table',
-                gridOptions: gridOptionsMock
-            };
-            jest.spyOn(dataNavigatorMock, 'navigatePage');
-
-            service.fetchNextDatasetOnScroll(dataNavigatorMock, parent);
-
-            expect(dataNavigatorMock.navigatePage).not.toHaveBeenCalled();
         });
     });
 
@@ -205,15 +305,27 @@ describe('PaginationService', () => {
             expect(typeof result).toBe('function');
         });
 
-        it('should call fetchNextDatasetOnScroll with correct parameters', (done) => {
-            const parent = {};
+        it('should return a debounced function and call fetchNextDatasetOnScroll', () => {
+            // Spy on fetchNextDatasetOnScroll to ensure it is called
             const fetchNextDatasetOnScrollSpy = jest.spyOn(service, 'fetchNextDatasetOnScroll');
-            const debouncedFn = service.debouncedFetchNextDatasetOnScroll(dataNavigatorMock, 50, parent);
-            debouncedFn();
-            setTimeout(() => {
-                expect(fetchNextDatasetOnScrollSpy).toHaveBeenCalledWith(dataNavigatorMock, parent);
-                done();
-            }, 100);
+
+            // Call debouncedFetchNextDatasetOnScroll
+            const debounceNum = 300;
+            const debouncedFunction = service.debouncedFetchNextDatasetOnScroll(dataNavigatorMock, debounceNum, parentMock);
+
+            // Call the returned debounced function
+            debouncedFunction();
+
+            // Verify that fetchNextDatasetOnScroll is called with the correct arguments
+            expect(fetchNextDatasetOnScrollSpy).toHaveBeenCalledWith(dataNavigatorMock, parentMock);
+        });
+
+        it('should return a function', () => {
+            const debounceNum = 300;
+
+            // Ensure the returned value is a function
+            const debouncedFunction = service.debouncedFetchNextDatasetOnScroll(dataNavigatorMock, debounceNum, parentMock);
+            expect(typeof debouncedFunction).toBe('function');
         });
     });
 
@@ -272,61 +384,80 @@ describe('PaginationService', () => {
     });
 
     describe('bindScrollEvt', () => {
-        let parentMock;
-        let $elementMock;
-        let $rootElMock;
-        let $firstChildMock;
-        let $scrollParentMock;
-
-        beforeEach(() => {
-            $scrollParentMock = {
-                0: document,
-                each: jest.fn().mockReturnThis(),
-                off: jest.fn().mockReturnThis(),
-                on: jest.fn().mockReturnThis()
-            };
-
-            $firstChildMock = {
-                length: 1,
-                scrollParent: jest.fn().mockReturnValue($scrollParentMock)
-            };
-
-            $rootElMock = {
-                children: jest.fn().mockReturnValue({
-                    first: jest.fn().mockReturnValue($firstChildMock)
-                }),
-                on: jest.fn().mockReturnThis(),
-                off: jest.fn().mockReturnThis()
-            };
-
-            $elementMock = {
-                find: jest.fn().mockReturnValue($rootElMock)
-            };
-
-            parentMock = {
-                dataNavigator: dataNavigatorMock,
-                $element: $elementMock,
-                widgetType: 'wm-table',
-                gridOptions: {
-                    isNavTypeScrollOrOndemand: jest.fn().mockReturnValue(true)
-                }
-            };
-
-            // Mock jQuery
-            (global as any).$ = jest.fn().mockReturnValue({
-                scrollTop: jest.fn()
-            });
-        });
-
-        it('should not bind events if there is no first child', () => {
+        it('should not bind scroll events if there is no first child', () => {
+            // Simulate no first child element by setting the length to 0
             $firstChildMock.length = 0;
-            service.bindScrollEvt(parentMock, 'tbody', 300);
+
+            service.bindScrollEvt(parentMock, 'tbody', debounceNum);
+
+            // Ensure scrollParent is not called because there is no first child
             expect($firstChildMock.scrollParent).not.toHaveBeenCalled();
         });
+
+        it('should bind scroll event to scrollable parent', () => {
+            $scrollParentMock[0].scrollHeight = 1000;
+            $scrollParentMock[0].clientHeight = 500;  // Simulate a scrollable condition
+
+            service.bindScrollEvt(parentMock, 'tbody', debounceNum);
+
+            expect($scrollParentMock.on).toHaveBeenCalledWith('scroll.scroll_evt', expect.any(Function));
+        });
+
         it('should bind wheel event if there is no scrollable element', () => {
-            $scrollParentMock[0] = { scrollHeight: 100, clientHeight: 100 };
-            service.bindScrollEvt(parentMock, 'tbody', 300);
+            // Simulate no scrollable element
+            $scrollParentMock[0].scrollHeight = 500;
+            $scrollParentMock[0].clientHeight = 500;  // No scrolling
+
+            service.bindScrollEvt(parentMock, 'tbody', debounceNum);
+
             expect($rootElMock.on).toHaveBeenCalledWith('wheel.scroll_evt', expect.any(Function));
         });
+
+        it('should stop event propagation for wm-table when scrolling', () => {
+            service.bindScrollEvt(parentMock, 'tbody', debounceNum);
+
+            // Simulate scroll event for wm-table
+            const scrollCallback = $scrollParentMock.on.mock.calls[0][1];
+            const eventMock = {
+                target: $scrollParentMock[0],
+                stopPropagation: jest.fn(), // Mock stopPropagation function
+            };
+            scrollCallback(eventMock);
+
+            expect(eventMock.stopPropagation).toHaveBeenCalled();
+        });
     });
+
+    describe('fetchNextDatasetOnScroll', () => {
+        it('should call navigatePage on dataNavigator when variableInflight is false', () => {
+            service.fetchNextDatasetOnScroll(dataNavigatorMock, parentMock);
+
+            expect(dataNavigatorMock.navigatePage).toHaveBeenCalledWith('next');
+        });
+
+        it('should not call navigatePage on dataNavigator when variableInflight is true', () => {
+            parentMock.variableInflight = true;  // Set inflight to true
+
+            service.fetchNextDatasetOnScroll(dataNavigatorMock, parentMock);
+
+            expect(dataNavigatorMock.navigatePage).not.toHaveBeenCalled();
+        });
+
+        it('should set isNextPageData and isDataUpdatedByUser when widgetType is wm-table', () => {
+            service.fetchNextDatasetOnScroll(dataNavigatorMock, parentMock);
+
+            expect(parentMock.gridOptions.setIsNextPageData).toHaveBeenCalledWith(true);
+            expect(parentMock.gridOptions.setIsDataUpdatedByUser).toHaveBeenCalledWith(false);
+        });
+
+        it('should not call gridOptions setters when widgetType is not wm-table', () => {
+            parentMock.widgetType = 'wm-list';  // Set to a non-table widget
+
+            service.fetchNextDatasetOnScroll(dataNavigatorMock, parentMock);
+
+            expect(parentMock.gridOptions.setIsNextPageData).not.toHaveBeenCalled();
+            expect(parentMock.gridOptions.setIsDataUpdatedByUser).not.toHaveBeenCalled();
+        });
+    });
+
 });

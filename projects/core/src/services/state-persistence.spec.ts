@@ -10,7 +10,6 @@ jest.mock('lodash-es', () => ({
     includes: jest.fn(),
 }));
 
-
 describe('StatePersistence', () => {
     let service: StatePersistence;
 
@@ -649,6 +648,26 @@ describe('StatePersistence', () => {
             };
             service.removeWidgetState(mockWidget);
             expect(service.removeStateParam).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('getStateInformation', () => {
+        it('should return undefined if no state is found in URL mode', () => {
+            window.location.href = 'http://example.com/test-path'; // no wm_state in URL
+            const stateInfo = service.getStateInformation('url');
+            expect(stateInfo).toBeUndefined();
+        });
+
+        it('should return undefined if no state is found in localStorage', () => {
+            (window as any).localStorage.getItem.mockReturnValue(null);
+            const stateInfo = service.getStateInformation('localstorage');
+            expect(stateInfo).toBeUndefined();
+        });
+
+        it('should return undefined if no state is found in sessionStorage', () => {
+            (window as any).sessionStorage.getItem.mockReturnValue(null);
+            const stateInfo = service.getStateInformation('sessionstorage');
+            expect(stateInfo).toBeUndefined();
         });
     });
 });

@@ -65,8 +65,8 @@ unit_tests:
   script:
     - node --version
     - npm --version
-    - rm -rf /home/gitlab-runner/builds/wm-eng/wavemaker-ui-variables ; git clone --depth 1 https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/wavemaker-ui-variables.git /home/gitlab-runner/builds/wm-eng/wavemaker-ui-variables
-    - cd /home/gitlab-runner/builds/wm-eng/wavemaker-ui-variables ; npm install ; npm install --save-dev @types/babel__core @types/babel__generator @types/babel__template @types/babel__traverse @types/graceful-fs @types/istanbul-lib-coverage @types/istanbul-lib-report @types/istanbul-reports @types/stack-utils @types/yargs @types/yargs-parser
+    - rm -rf ../wavemaker-ui-variables ; git clone --depth 1 https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/wavemaker-ui-variables.git ../wavemaker-ui-variables
+    - cd ../wavemaker-ui-variables ; npm install ; npm install --save-dev @types/babel__core @types/babel__generator @types/babel__template @types/babel__traverse @types/graceful-fs @types/istanbul-lib-coverage @types/istanbul-lib-report @types/istanbul-reports @types/stack-utils @types/yargs @types/yargs-parser
     - npm run build 
     - cd ../wavemaker-ng-runtime
     - npm install 
@@ -90,20 +90,15 @@ notify_job:
   script:
     - |
       MR_URL="https://gitlab.wavemaker.com/${CI_PROJECT_PATH}/merge_requests/${CI_MERGE_REQUEST_IID}"
-      if [ "$CI_JOB_STATUS" == "failed" ]; then
-        MESSAGE="Unit Test Cases  failed: on branch: $CI_COMMIT_REF_NAME. Merge Request: $MR_URL"
-        echo "User Email is $GITLAB_USER_EMAIL"
-      else
-        MESSAGE="Unit Test Cases Success: on branch: $CI_COMMIT_REF_NAME. Merge Request: $MR_URL"
-        echo "User Email is $GITLAB_USER_EMAIL"
-      fi
+      MESSAGE="Unit Test Cases  failed: on branch: $CI_COMMIT_REF_NAME. Merge Request: $MR_URL"
+      echo "User Email is $GITLAB_USER_EMAIL"
       aws ses send-email \
           --from devops-notifications@wavemaker.com \
           --destination "ToAddresses=$GITLAB_USER_EMAIL" \
           --message "Subject={Data=Unit Test Cases Pipeline Status},Body={Text={Data=$MESSAGE}}"
 
 
-  when: always
+  when: on_failure
   dependencies:
     - unit_tests
 

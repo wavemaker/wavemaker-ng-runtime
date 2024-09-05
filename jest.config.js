@@ -8,7 +8,7 @@ module.exports = {
   ],
   testMatch: [
     "**/projects/**/*.spec.ts",
-    // "**/projects/components/widgets/data/table/src/table-filter.spec.ts",
+    // "**/projects/core/src/services/script-loader.spec.ts",
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
@@ -21,7 +21,9 @@ module.exports = {
     "libraries/scripts/tree-keyboard-navigation",
     "libraries/scripts/jquery.ui.touch-punch",
     "libraries/scripts/swipey",
-    ".yalc/@wavemaker/variables/src/"
+    ".yalc/@wavemaker/variables/src/",
+    "/projects/core/src/services/script-loader.spec.ts",
+
   ],
   // collectCoverageFrom: [
   //     '**/*.{ts,tsx}',

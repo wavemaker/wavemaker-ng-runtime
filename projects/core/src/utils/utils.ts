@@ -20,8 +20,9 @@ import {
     split,
     startsWith, toLower, toUpper, trim
 } from "lodash-es";
-import X2JS from "x2js";
+import "x2js"
 
+declare const X2JS;
 declare const $;
 declare const moment;
 declare const document;
