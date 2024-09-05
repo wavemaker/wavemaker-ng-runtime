@@ -95,7 +95,7 @@ notify_job:
       aws ses send-email \
           --from devops-notifications@wavemaker.com \
           --destination "ToAddresses=$GITLAB_USER_EMAIL" \
-          --message "Subject={Data=App Runtime Unit Test cases Status for PR [${CI_MERGE_REQUEST_IID}]},Body={Text={Data=$MESSAGE}}"
+          --message "Subject={Data=App Runtime Unit Test cases Status for PR ${CI_MERGE_REQUEST_IID}},Body={Text={Data=$MESSAGE}}"
 
 
   when: always
