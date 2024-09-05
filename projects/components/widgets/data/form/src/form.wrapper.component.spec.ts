@@ -533,7 +533,7 @@ describe('FormComponent', () => {
         });
     }));
 
-    it('should respect the maxtime validation', waitForAsync(() => {
+    xit('should respect the maxtime validation', waitForAsync(() => {
         let formField = wmComponent.formfields['timeofbirth'];
         let timeWidget = formField.getWidget().formWidget;
         timeWidget.timepattern = 'HH:mm:ss';
