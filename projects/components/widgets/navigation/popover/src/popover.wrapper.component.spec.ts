@@ -121,6 +121,42 @@ describe('PopoverComponent', () => {
         expect(popoverWrapperComponent).toBeTruthy();
     });
 
+    // Test case for ngOnDetach
+    it('should hide the popover when ngOnDetach is called', () => {
+        // Spy on the hide method of bsPopoverDirective
+        const bsPopoverDirectiveSpy = jest.spyOn((wmComponent as any).bsPopoverDirective, 'hide');
+
+        // Call ngOnDetach method
+        wmComponent.ngOnDetach();
+
+        // Verify that the hide method was called
+        expect(bsPopoverDirectiveSpy).toHaveBeenCalled();
+    });
+
+    it('should set focus to the anchor element when setFocusToPopoverLink is called', () => {
+        // Mock the nativeElement and focus method
+        wmComponent.anchorRef = {
+            nativeElement: {
+                focus: jest.fn() // Mock the focus method
+            }
+        };
+
+        // Use Jest's fake timers to simulate the setTimeout delay
+        jest.useFakeTimers();
+
+        // Call the setFocusToPopoverLink method
+        wmComponent['setFocusToPopoverLink']();
+
+        // Fast-forward the timers by 10ms to trigger the setTimeout
+        jest.advanceTimersByTime(10);
+
+        // Verify that the focus method was called after the timeout
+        expect(wmComponent.anchorRef.nativeElement.focus).toHaveBeenCalled();
+
+        // Clean up timers
+        jest.useRealTimers();
+    });
+
 
     /************************* Properties starts ****************************************** **/
 
@@ -353,9 +389,17 @@ describe('PopoverComponent', () => {
     describe('triggerPopoverEvents', () => {
         let mockApp: Partial<App>;
         let cancelSubscriptionMock: jest.Mock;
-
+        const mockViewParent = {
+            Widgets: {},
+            Variables: {},
+            Actions: {}
+        };
         beforeEach(() => {
             wmComponent.invokeEventCallback = jest.fn();
+            Object.defineProperty(wmComponent, 'viewParent', {
+                get: jest.fn(() => mockViewParent),
+                configurable: true
+            });
             mockApp = {
                 subscribe: jest.fn().mockImplementation((event, callback) => {
                     callback();
@@ -371,15 +415,6 @@ describe('PopoverComponent', () => {
 
         it('should handle non-partial content source', () => {
             wmComponent.contentsource = 'inline';
-            const mockViewParent = {
-                Widgets: {},
-                Variables: {},
-                Actions: {}
-            };
-            Object.defineProperty(wmComponent, 'viewParent', {
-                get: jest.fn(() => mockViewParent),
-                configurable: true
-            });
             wmComponent.triggerPopoverEvents();
             expect((wmComponent as any).Widgets).toEqual(mockViewParent.Widgets);
             expect((wmComponent as any).Variables).toEqual(mockViewParent.Variables);
@@ -389,17 +424,50 @@ describe('PopoverComponent', () => {
 
         it('should not invoke load callback for non-partial content', () => {
             wmComponent.contentsource = 'inline';
-            const mockViewParent = {
-                Widgets: {},
-                Variables: {},
-                Actions: {}
-            };
-            Object.defineProperty(wmComponent, 'viewParent', {
-                get: jest.fn(() => mockViewParent),
-                configurable: true
-            });
             wmComponent.triggerPopoverEvents();
             expect(wmComponent.invokeEventCallback).not.toHaveBeenCalledWith('load');
+        });
+        it('should handle partial content source', (done) => {
+            wmComponent.contentsource = 'partial';
+            let cancelSubscription: () => void;
+            (wmComponent as any).app = {
+                subscribe: jest.fn().mockImplementation((event, callback) => {
+                    cancelSubscription = jest.fn(() => {
+                        expect(cancelSubscription).toHaveBeenCalled();
+                        done();
+                    });
+                    setTimeout(() => {
+                        callback({});
+                    }, 0);
+                    return cancelSubscription;
+                })
+            };
+            wmComponent.partialRef = {
+                nativeElement: {
+                    widget: {
+                        Widgets: {},
+                        Variables: {},
+                        Actions: {}
+                    }
+                }
+            };
+            wmComponent.invokeEventCallback = jest.fn();
+
+            wmComponent.triggerPopoverEvents();
+
+            expect((wmComponent as any).app.subscribe).toHaveBeenCalledWith('partialLoaded', expect.any(Function));
+        });
+
+        it('should handle non-partial content source', () => {
+            wmComponent.contentsource = 'inline';
+            wmComponent.invokeEventCallback = jest.fn();
+
+            wmComponent.triggerPopoverEvents();
+
+            expect((wmComponent as any).Widgets).toBe((wmComponent as any).viewParent.Widgets);
+            expect((wmComponent as any).Variables).toBe((wmComponent as any).viewParent.Variables);
+            expect((wmComponent as any).Actions).toBe((wmComponent as any).viewParent.Actions);
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('show', { $event: { type: 'show' } });
         });
     });
 

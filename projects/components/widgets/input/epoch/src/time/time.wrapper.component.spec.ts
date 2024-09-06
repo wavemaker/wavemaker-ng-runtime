@@ -142,8 +142,6 @@ TestBase.verifyEvents([
     }
 ]);
 
-
-
 describe("TimeComponent", () => {
     let timeWrapperComponent: TimeWrapperComponent;
     let wmComponent: TimeComponent;
@@ -396,6 +394,38 @@ describe("TimeComponent", () => {
     }));
 
     /************************* Events end ****************************************** **/
+
+    describe('assignModel', () => {
+        it('should set displayInputElem if it is undefined', () => {
+            (wmComponent as any).displayInputElem = undefined;
+            const mockInput = document.createElement('input');
+            jest.spyOn(wmComponent, 'getMobileInput').mockReturnValue(mockInput);
+
+            wmComponent.assignModel();
+
+            expect((wmComponent as any).displayInputElem).toBe(mockInput);
+        });
+
+        it('should not change displayInputElem if it is already defined', () => {
+            const existingInput = document.createElement('input');
+            (wmComponent as any).displayInputElem = existingInput;
+
+            wmComponent.assignModel();
+
+            expect((wmComponent as any).displayInputElem).toBe(existingInput);
+        });
+
+        it('should set the value of displayInputElem to nativeDisplayValue', () => {
+            (wmComponent as any).displayInputElem = document.createElement('input');
+            Object.defineProperty(wmComponent, 'nativeDisplayValue', {
+                get: jest.fn(() => '12:30'),
+            })
+
+            wmComponent.assignModel();
+
+            expect(((wmComponent as any).displayInputElem as HTMLInputElement).value).toBe('12:30');
+        });
+    });
 });
 
 

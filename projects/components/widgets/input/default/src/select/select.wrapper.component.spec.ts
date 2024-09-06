@@ -2,12 +2,13 @@ import { Component, ViewChild } from "@angular/core";
 import { SelectComponent } from "./select.component";
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
 import { FormsModule } from "@angular/forms";
-import { AbstractI18nService, App, AppDefaults, DataSource, removeAttr, setAttr } from '@wm/core';
+import { AbstractI18nService, App, AppDefaults, DataSource, setAttr } from '@wm/core';
 import { ToDatePipe } from "@wm/components/base";
 import { DatePipe } from "@angular/common";
 import { MockAbstractI18nService } from '../../../../../base/src/test/util/date-test-util';
 import { ComponentFixture } from "@angular/core/testing";
 import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { Subject } from "rxjs";
 
 const markup = `<wm-select name="select1" hint="select field">`;
 
@@ -51,7 +52,11 @@ describe("SelectComponent", () => {
         fixture = compileTestComponent(testModuleDef, SelectWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        wmComponent.datasetItems = [{ key: '1', value: '1', label: '1' }, { key: '2', value: '2', label: '2' }, { key: '3', value: '3', label: '3' }, { key: '4', value: '4', label: '4' }]
+        wmComponent.datasetItems = [
+            { key: '1', value: '1', label: '1' },
+            { key: '2', value: '2', label: '2' },
+            { key: '3', value: '3', label: '3' },
+            { key: '4', value: '4', label: '4' }]
         fixture.detectChanges();
     });
 
@@ -244,61 +249,83 @@ describe("SelectComponent", () => {
             captionEl.appendChild(selectEl);
             wmComponent.selectEl = { nativeElement: selectEl };
             jest.spyOn($.fn, 'closest').mockReturnValue($(captionEl));
+            (wmComponent as any).removePlaceholderOption = jest.fn();
         });
 
-        it('should remove placeholder option when no datavalue and no placeholder on focus', () => {
-            const removePlaceholderSpy = jest.spyOn(wmComponent as any, 'removePlaceholderOption');
-            wmComponent.datavalue = null;
+        it('should remove placeholder option when no placeholder', () => {
             wmComponent.placeholder = null;
 
             wmComponent.checkForFloatingLabel({ type: 'focus' });
 
-            expect(removePlaceholderSpy).toHaveBeenCalled();
+            expect((wmComponent as any).removePlaceholderOption).toHaveBeenCalled();
         });
 
-        xit('should set placeholder text to first option on focus when placeholder exists', () => {
-            wmComponent.placeholder = 'Select an option';
-            const firstOption = document.createElement('option');
-            selectEl.appendChild(firstOption);
-
-            wmComponent.checkForFloatingLabel({ type: 'focus' });
-
-            expect(firstOption.textContent).toBe('Select an option');
-        });
-
-        xit('should clear selected option text and remove float-active class on blur when no datavalue', () => {
+        it('should set placeholder text to placeholderOption on mousedown when no datavalue', () => {
             wmComponent.datavalue = null;
+            wmComponent.placeholder = 'Select an option';
+            const placeholderOption = document.createElement('option');
+            placeholderOption.id = 'placeholderOption';
+            selectEl.appendChild(placeholderOption);
+
+            wmComponent.checkForFloatingLabel({ type: 'mousedown' });
+
+            expect(placeholderOption.textContent).toBe('Select an option');
+        });
+
+        it('should set placeholder text to placeholderOption on mousedown when datavalue exists but selected option is empty', () => {
+            wmComponent.datavalue = 'some value';
+            wmComponent.placeholder = 'Select an option';
+            const placeholderOption = document.createElement('option');
+            placeholderOption.id = 'placeholderOption';
+            selectEl.appendChild(placeholderOption);
             const selectedOption = document.createElement('option');
             selectedOption.selected = true;
-            selectedOption.textContent = 'Some text';
             selectEl.appendChild(selectedOption);
+            jest.spyOn($.fn, 'find').mockReturnValue({ text: () => '' } as any);
+
+            wmComponent.checkForFloatingLabel({ type: 'mousedown' });
+
+            expect(placeholderOption.textContent).toBe('Select an option');
+        });
+
+        it('should clear placeholderOption text and remove float-active class on blur when no datavalue', () => {
+            wmComponent.datavalue = null;
+            wmComponent.placeholder = 'Select an option';
+            const placeholderOption = document.createElement('option');
+            placeholderOption.id = 'placeholderOption';
+            placeholderOption.textContent = 'Select an option';
+            selectEl.appendChild(placeholderOption);
             captionEl.classList.add('float-active');
 
             wmComponent.checkForFloatingLabel({ type: 'blur' });
 
-            expect(selectedOption.textContent).toBe('');
+            expect(placeholderOption.textContent).toBe('');
             expect(captionEl.classList.contains('float-active')).toBe(false);
+        });
+
+        it('should not modify placeholderOption or caption element when datavalue exists', () => {
+            wmComponent.datavalue = 'some value';
+            wmComponent.placeholder = 'Select an option';
+            const placeholderOption = document.createElement('option');
+            placeholderOption.id = 'placeholderOption';
+            placeholderOption.textContent = 'Select an option';
+            selectEl.appendChild(placeholderOption);
+            captionEl.classList.add('float-active');
+
+            wmComponent.checkForFloatingLabel({ type: 'blur' });
+
+            expect(placeholderOption.textContent).toBe('Select an option');
+            expect(captionEl.classList.contains('float-active')).toBe(true);
         });
 
         it('should remove placeholder option when no caption element, no datavalue, and no placeholder', () => {
             jest.spyOn($.fn, 'closest').mockReturnValue($());
-            const removePlaceholderSpy = jest.spyOn(wmComponent as any, 'removePlaceholderOption');
             wmComponent.datavalue = null;
             wmComponent.placeholder = null;
 
             wmComponent.checkForFloatingLabel({ type: 'focus' });
 
-            expect(removePlaceholderSpy).toHaveBeenCalled();
-        });
-
-        it('should not remove placeholder option when caption element exists but conditions are not met', () => {
-            const removePlaceholderSpy = jest.spyOn(wmComponent as any, 'removePlaceholderOption');
-            wmComponent.datavalue = 'some value';
-            wmComponent.placeholder = 'Select an option';
-
-            wmComponent.checkForFloatingLabel({ type: 'focus' });
-
-            expect(removePlaceholderSpy).not.toHaveBeenCalled();
+            expect((wmComponent as any).removePlaceholderOption).toHaveBeenCalled();
         });
     });
 
@@ -341,7 +368,7 @@ describe("SelectComponent", () => {
             expect(wmComponent.onPropertyChange).not.toHaveBeenCalledWith('tabindex', 2, undefined);
         });
 
-        xit('should set readonly attribute when readonly is true', (done) => {
+        it('should set readonly attribute when readonly is true', (done) => {
             wmComponent.onPropertyChange('readonly', true);
 
             setTimeout(() => {
@@ -366,6 +393,7 @@ describe("SelectComponent", () => {
             expect(superSpy).toHaveBeenCalledWith('someOtherKey', 'value', undefined);
         });
     });
+
     describe('handleEvent', () => {
         let node: HTMLElement;
         let callback: jest.Mock;
@@ -400,5 +428,51 @@ describe("SelectComponent", () => {
             expect(locals.$event).toBeUndefined();
         });
     });
+    describe('SelectComponent Constructor and dataset$ Subscription', () => {
+        beforeEach(() => {
+            jest.useFakeTimers();
+        });
 
+        afterEach(() => {
+            jest.useRealTimers();
+        });
+
+        it('should initialize with acceptsArray as true', () => {
+            expect(wmComponent.acceptsArray).toBe(true);
+        });
+
+        it('should update select element when datavalue exists but no item is selected', () => {
+            wmComponent.datavalue = '5'; // A value not in the dataset
+            wmComponent.selectEl = { nativeElement: { value: '5' } };
+            wmComponent['dataset$'].next(wmComponent.datasetItems);
+
+            jest.advanceTimersByTime(100);
+
+            expect(wmComponent.selectEl.nativeElement.value).toBe('');
+            expect(wmComponent['modelByKey']).toBeUndefined();
+        });
+
+        it('should update select element when datavalue is falsy', () => {
+            wmComponent.datavalue = null;
+            wmComponent.selectEl = { nativeElement: { value: '1' } };
+            wmComponent['dataset$'].next(wmComponent.datasetItems);
+
+            jest.advanceTimersByTime(100);
+
+            expect(wmComponent.selectEl.nativeElement.value).toBe('');
+        });
+
+        it('should not update select element when datavalue exists and item is selected', () => {
+            wmComponent.datavalue = '2';
+            wmComponent.selectEl = { nativeElement: { value: '2' } };
+            wmComponent.datasetItems[1].selected = true;
+            wmComponent['dataset$'].next(wmComponent.datasetItems);
+
+            jest.advanceTimersByTime(100);
+
+            expect(wmComponent.selectEl.nativeElement.value).toBe('2');
+            expect(wmComponent['modelByKey']).not.toBeUndefined();
+        });
+
+    });
 });
