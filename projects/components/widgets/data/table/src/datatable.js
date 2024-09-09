@@ -722,7 +722,7 @@ $.widget('wm.datatable', {
             }
         }
         row.$index = rowIndex + 1;
-        this.options.registerColNgClassWatcher(row, colDef, rowIndex, colId);
+        this.options.registerColNgClassWatcher(row, colDef, rowIndex, colId, summaryRow);
         return $htm;
     },
     //Get event related template for editable widget

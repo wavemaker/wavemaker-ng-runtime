@@ -588,12 +588,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.callDataGridMethod('applyRowNgClass', getConditionalClasses(nv, ov), index);
             }, watchName));
         },
-        registerColNgClassWatcher: (rowData, colDef, rowIndex, colIndex) => {
+        registerColNgClassWatcher: (rowData, colDef, rowIndex, colIndex, summaryRow) => {
             if (!colDef['col-ng-class']) {
                 return;
             }
             const row = this.getClonedRowObject(rowData);
-            const watchName = `${this.widgetId}_colNgClass_${rowIndex}_${colIndex}`;
+            const watchName = summaryRow ? `${this.widgetId}_summaryRow_colNgClass_${rowIndex}_${colIndex}`: `${this.widgetId}_colNgClass_${rowIndex}_${colIndex}`;
             $unwatch(watchName);
             //[Todo-CSP]: generate watcher expr in page if col-ng-class attr is present for table
             this.registerDestroyListener($watch(colDef['col-ng-class'], this.viewParent, {row}, (nv, ov) => {
