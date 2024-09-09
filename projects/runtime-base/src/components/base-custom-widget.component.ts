@@ -31,7 +31,7 @@ import { VariablesService } from '@wm/variables';
 import { FragmentMonitor } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
 import {commonPartialWidgets} from "./base-partial.component";
-import {capitalize} from "lodash-es";
+import {capitalize, forEach} from "lodash-es";
 import {CheckboxsetComponent, RadiosetComponent} from "@wm/components/input";
 
 declare const _;
@@ -139,25 +139,40 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
             if(!child.hasAttribute('wmcustomwidget'))
                 this.initializeComponentData(child.children);
             else {
-                let baseWidget, data = {}, splitArr = child.getAttribute('as').split('-'), modifiedArr = [];
+                let baseWidget, splitArr = child.getAttribute('as').split('-'), modifiedArr = [];
                 modifiedArr = splitArr.map((item: any) => {
                     item = item !== 'wm' ? capitalize(item) : item;
                     return item;
                 });
                 baseWidget = modifiedArr.join('');
+                switch (baseWidget) {
+                    case 'wmCheckboxset':
+                        this[baseWidget] = new CheckboxsetComponent(this.injector, undefined);
+                        this[baseWidget]["_select"] = (item: any, $event: any) => {
+                            const keys = [];
+                            forEach(this[baseWidget].datasetItems, (datasetItem: any) => {
+                                if(datasetItem.key === item.key)
+                                    datasetItem.selected = !datasetItem.selected;
+
+                                if(datasetItem.selected)
+                                    keys.push(datasetItem.key);
+                            });
+                            this[baseWidget].triggerInvokeOnChange(keys, $event);
+                        }
+                        break;
+                    case 'wmRadioset':
+                        this[baseWidget] = new RadiosetComponent(this.injector, undefined);
+                        this[baseWidget]["_select"] = (item: any, $event: any) => {
+                        this[baseWidget].triggerInvokeOnChange(item.key, $event);
+                    }
+                        break;
+                }
+
                 for (let [key, value] of this.containerWidget.$attrs) {
                     if(key.startsWith('base-')) {
                         let modifiedKey = key.replace('base-', '');
-                        data[modifiedKey] = value;
+                        this[baseWidget][modifiedKey] = value;
                     }
-                }
-                switch (baseWidget) {
-                    case 'wmCheckboxset':
-                        this[baseWidget] = new CheckboxsetComponent(this.injector, undefined, data);
-                        break;
-                    case 'wmRadioset':
-                        this[baseWidget] = new RadiosetComponent(this.injector, undefined, data);
-                        break;
                 }
                 this[baseWidget].initDatasetItems();
                 this.containerWidget[baseWidget] = this[baseWidget];

@@ -31,20 +31,17 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, @Inject(Object) @Optional() data : any) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         this.multiple = false;
-        if(data) {
-            for (let [key, value] of Object.entries(data)) {
-                this[key] = value;
-            }
-        }
     }
 
-    _select(item: any, $event: any) {
-        this.modelByKey = item.key;
+    triggerInvokeOnChange(key, $event) {
+        this.modelByKey = key;
+
         this.invokeOnTouched();
+        // invoke on datavalue change.
         this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 
@@ -56,11 +53,7 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
             return;
         }
 
-        this.modelByKey = key;
-
-        this.invokeOnTouched();
-        // invoke on datavalue change.
-        this.invokeOnChange(this.datavalue, $event || {}, true);
+        this.triggerInvokeOnChange(key, $event);
     }
 
     // change and blur events are added from the template

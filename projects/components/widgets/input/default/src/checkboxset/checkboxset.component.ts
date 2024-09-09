@@ -7,6 +7,7 @@ import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from '../checkboxset/checkboxset.props';
 import {forEach, includes} from "lodash-es";
+import {$e} from "codelyzer/angular/styles/chars";
 
 declare const $;
 
@@ -37,15 +38,18 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, @Inject(Object) @Optional() data : any) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         this.multiple = true;
-        if(data) {
-            for (let [key, value] of Object.entries(data)) {
-                this[key] = value;
-            }
-        }
+    }
+
+    triggerInvokeOnChange(keys, $event) {
+        this.modelByKey = keys;
+
+        this.invokeOnTouched();
+        // invoke on datavalue change.
+        this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 
     _select(item: any, $event: any) {
@@ -75,11 +79,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
             keys.push($el.value);
         });
 
-        this.modelByKey = keys;
-
-        this.invokeOnTouched();
-        // invoke on datavalue change.
-        this.invokeOnChange(this.datavalue, $event || {}, true);
+        this.triggerInvokeOnChange(keys, $event);
     }
 
     // change and blur events are added from the template
