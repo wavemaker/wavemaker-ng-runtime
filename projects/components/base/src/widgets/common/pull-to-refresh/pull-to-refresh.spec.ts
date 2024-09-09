@@ -3,7 +3,10 @@ import { isIos, setCSS } from '@wm/core';
 
 // Mock dependencies
 jest.mock('@swipey');
-jest.mock('@wm/core');
+jest.mock('@wm/core', () => ({
+  isIos: jest.fn(),
+  setCSS: jest.fn()
+}));
 
 describe('PullToRefresh', () => {
   let pullToRefresh: PullToRefresh;
