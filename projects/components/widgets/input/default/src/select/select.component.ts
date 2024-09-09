@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import {DataSource, removeAttr, setAttr, App, isIos} from '@wm/core';
+import { DataSource, removeAttr, setAttr } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
@@ -33,7 +33,6 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     public name: string;
     public autofocus: boolean;
     public hint: string;
-    private app: App;
 
     @ViewChild('select', { static: true, read: ElementRef }) selectEl: ElementRef;
 
@@ -43,19 +42,14 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         }
     }
 
-    constructor(inj: Injector,  app: App) {
+    constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
-        this.app = app;
         this.acceptsArray = true;
     }
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
         styler(this.selectEl.nativeElement as HTMLElement, this);
-        setTimeout(() => {
-            this.checkForFloatingLabel(null);
-        }, 10)
-
     }
 
     // Change event is registered from the template, Prevent the framework from registering one more event
@@ -93,17 +87,6 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         super.onPropertyChange(key, nv, ov);
     }
 
-    isSafariBrowser()  {
-        var reg = {
-            MAC: /Mac/i,
-            MACINTEL: /MacIntel/i
-        }
-        return reg.MAC.test(window.navigator.platform) || reg.MACINTEL.test(window.navigator.platform);
-    }
-
-    isIosPlatform() {
-        return isIos() || this.isSafariBrowser();
-    }
     /**
      * When caption floating is enabled and placeholder is given, do not show placeholder until user focuses on the field
      * When focused add the placeholder to the option which is selected
@@ -112,23 +95,36 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
      */
     checkForFloatingLabel($event) {
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
+        if(!this.placeholder) {
+            this.removePlaceholderOption();
+        }
         if (captionEl.length > 0) {
-            if ((!$event || $event.type === 'focus') && (($(this.selectEl).find('select option:selected').text() === '' && (this.placeholder || (this.datavalue || this.binddatavalue) || this.isIosPlatform())))) {
-                if(!$event && (this.placeholder || this.datavalue || this.binddatavalue || this.isIosPlatform())){
-                    this.app.notify('captionPositionAnimate', {isSelect: true, nativeEl: captionEl});
-                }
+            const placeholderOption = this.selectEl.nativeElement.querySelector('#placeholderOption');
+            if ($event.type === 'mousedown' && (!this.datavalue || (this.datavalue && $(this.selectEl).find('select option:selected').text() === '' && this.placeholder))) {
                 if(this.placeholder) {
-                    $(this.selectEl.nativeElement).find('option:first').text(this.placeholder);
+                    placeholderOption.textContent = this.placeholder;
                 }
+            } else if (!this.datavalue) {
+                if(this.placeholder) {
+                    placeholderOption.textContent = '';
+                }
+                captionEl.removeClass('float-active');
             }
-            else if (!this.datavalue) {
-                if(!this.placeholder) {
-                  //  $(this.selectEl.nativeElement).find('option:first').text('');
-                    if(!this.isIosPlatform()) {
-                        captionEl.removeClass('float-active');
-                    }
-                }
+        }
+    }
 
+    /*
+    * Removing the placeholder option if no placeholder is provided.
+    * In html we are hiding the placeholder option using css but in Apple devices and safari option is showing.
+    * Styles are not allowed on option tag in ios safari
+    * After removing the option, if no datavalue is present and native select element sets value to the first option by default, so we are setting it to empty
+    * */
+    private removePlaceholderOption() {
+        const hiddenEle = $(this.selectEl.nativeElement).find('#placeholderOption');
+        if (hiddenEle.length) {
+            hiddenEle.remove();
+            if(!this.datavalue) {
+                this.selectEl.nativeElement.value = '';
             }
         }
     }
