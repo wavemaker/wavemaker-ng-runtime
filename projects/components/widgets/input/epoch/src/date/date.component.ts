@@ -8,8 +8,6 @@ import { adjustContainerPosition, addEventListenerOnElement, AppDefaults, EVENT_
 import {IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler} from '@wm/components/base';
 import { BaseDateTimeComponent } from './../base-date-time.component';
 import { registerProps } from './date.props';
-import { validateTheMaskedDate } from './imaskUtil';
-
 
 declare const _, $, moment;
 
@@ -64,15 +62,6 @@ export class DateComponent extends BaseDateTimeComponent {
     get datavalue() {
         return getFormattedDate(this.datePipe, this.bsDataValue, this.outputformat) || '';
     }
-    get mask() {
-        if (this.datepattern) {
-           return validateTheMaskedDate(this.datepattern);
-        }
-        else {
-            return false;
-        }
-    }
-
 
     // Todo[Shubham]: needs to be redefined
     // sets the dataValue and computes the display model values
