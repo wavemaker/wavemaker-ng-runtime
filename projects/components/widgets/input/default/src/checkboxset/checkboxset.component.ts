@@ -7,7 +7,6 @@ import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from '../checkboxset/checkboxset.props';
 import {forEach, includes} from "lodash-es";
-import {$e} from "codelyzer/angular/styles/chars";
 
 declare const $;
 
@@ -49,20 +48,6 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
 
         this.invokeOnTouched();
         // invoke on datavalue change.
-        this.invokeOnChange(this.datavalue, $event || {}, true);
-    }
-
-    _select(item: any, $event: any) {
-        const keys = [];
-        forEach(this.datasetItems, (datasetItem: any) => {
-            if(datasetItem.key === item.key)
-                datasetItem.selected = !datasetItem.selected;
-
-            if(datasetItem.selected)
-                keys.push(datasetItem.key);
-        });
-        this.modelByKey = keys;
-        this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 

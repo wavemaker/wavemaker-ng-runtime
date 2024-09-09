@@ -6,7 +6,7 @@ import {setListClass} from '@wm/core';
 import { provideAsWidgetRef, styler, provideAs } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 import { registerProps } from './radioset.props';
-import {forEach, includes} from "lodash-es";
+import { includes} from "lodash-es";
 
 declare const $;
 
