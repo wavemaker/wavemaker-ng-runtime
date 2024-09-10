@@ -623,7 +623,7 @@ describe('FormComponent', () => {
         });
     }));
 
-    xit('should respect the maxtime validation', waitForAsync(() => {
+    it('should respect the maxtime validation', waitForAsync(() => {
         let formField = wmComponent.formfields['timeofbirth'];
         let timeWidget = formField.getWidget().formWidget;
         timeWidget.timepattern = 'HH:mm:ss';
@@ -769,7 +769,7 @@ describe('FormComponent', () => {
         });
     });
 
-    xdescribe('setValidationOnInnerForms', () => {
+    describe('setValidationOnInnerForms', () => {
         beforeEach(() => {
             wmComponent['setValidationOnFields'] = jest.fn();
             wmComponent['getNativeElement'] = jest.fn().mockReturnValue({
@@ -809,7 +809,6 @@ describe('FormComponent', () => {
             expect(wmComponent['setValidationOnFields']).toHaveBeenCalledWith(mockFormElement.widget, 'form1[0]', false);
         });
     });
-
 
     describe('ngAfterViewInit', () => {
         it('should set FormArray control and push ngform when parentForm and isParentList are true', () => {
