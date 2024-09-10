@@ -1,4 +1,4 @@
-<div role="group" class="btn-group btn-group-justified">
+<div role="group" class="btn-group btn-group-justified" [ngClass]="{'multi-select': multiple}">
     <a *ngFor="let opt of datasetItems; let $index = index;"
        focus-target
        href="javascript:void(0);"
@@ -12,7 +12,7 @@
     </a>
 </div>
 <span [title]="selectedItem ? selectedItem.label : modelByKey"
-      class="btn btn-primary app-switch-overlay switch-handle">
+      class="btn btn-primary app-switch-overlay switch-handle" *ngIf="!multiple">
     <i *ngIf="iconclass"
        class="app-icon {{(selectedItem && selectedItem.dataObject) && selectedItem.dataObject[iconclass]}}"></i>
     {{selectedItem ? selectedItem.label : modelByKey}}
