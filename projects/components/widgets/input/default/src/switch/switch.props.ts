@@ -14,6 +14,7 @@ export const switchProps = new Map(
         ['displayfield', PROP_STRING],
         ['hint', PROP_STRING],
         ['iconclass', PROP_STRING],
+        ['checkediconclass', {value: 'wm-sl-l sl-check', ...PROP_STRING}],
         ['name', PROP_STRING],
         ['orderby', PROP_STRING],
         ['required', PROP_BOOLEAN],

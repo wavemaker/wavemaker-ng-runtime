@@ -28,6 +28,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     options = [];
     selectedItem: DataSetItem;
     iconclass;
+    checkediconclass;
     multiple: boolean;
     private btnwidth;
     public disabled: boolean;
@@ -37,7 +38,8 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
 
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
-        this.multiple = this.nativeElement.getAttribute('multiple') === "true";
+        this.multiple = this.getAttr("multiple") === "true";
+        this.checkediconclass = this.getAttr("checkediconclass") || 'wm-sl-l sl-check';
 
         this._debounceSetSelectedValue = debounce((val) => {
             this.setSelectedValue();

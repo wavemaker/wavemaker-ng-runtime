@@ -7,14 +7,14 @@
        [ngClass]="{'selected': opt.selected, 'disabled': disabled}"
        (click)="selectOpt($event, $index, opt)"
     >
-        <i *ngIf="opt.dataObject && opt.dataObject[iconclass]" aria-hidden="true" [ngClass]="['app-icon', opt.dataObject[iconclass] || opt['icon']]"></i>
+        <i *ngIf="opt.dataObject && opt.dataObject[iconclass] && !opt.selected" aria-hidden="true" [ngClass]="['app-icon', opt.dataObject[iconclass] || opt['icon']]"></i>
+        <i *ngIf="opt.selected" aria-hidden="true" [ngClass]="[checkediconclass]"></i>
         <span class="caption" [textContent]="opt[displayfield] || opt.label"></span>
     </a>
 </div>
 <span [title]="selectedItem ? selectedItem.label : modelByKey"
       class="btn btn-primary app-switch-overlay switch-handle" *ngIf="!multiple">
-    <i *ngIf="iconclass"
-       class="app-icon {{(selectedItem && selectedItem.dataObject) && selectedItem.dataObject[iconclass]}}"></i>
-    {{selectedItem ? selectedItem.label : modelByKey}}
+    <i [ngClass]="[checkediconclass]"></i>
+    <span class="caption">{{selectedItem ? selectedItem.label : modelByKey}}</span>
 </span>
 <input [name]="name" class="model-holder ng-hide" [disabled]="disabled" [value]="modelByKey" [required]="required" aria-hidden="true">
