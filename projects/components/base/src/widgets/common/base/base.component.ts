@@ -574,7 +574,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 viewParent,
                 context,
                 nv => {
-                    if(propName.startsWith('base-'))
+                    if(propName.startsWith('base-') && !widget.widgetSubType.startsWith('wm-form-field-'))
                         widget.updateData(propName, nv);
                     widget[propName] = nv
                 },

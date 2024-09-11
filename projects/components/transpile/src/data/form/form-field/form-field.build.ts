@@ -9,6 +9,7 @@ import {
 } from '@wm/core';
 
 import {ALLFIELDS, isDataSetWidget} from '../../../utils/utils';
+import {forEach} from "lodash-es";
 
 const tagName = 'div';
 const idGen = new IDGenerator('formfield_');
@@ -64,6 +65,13 @@ const setDefaultPlaceholder = (attrs, widgetType, index) => {
 };
 
 const getWidgetTemplate = (attrs, options) => {
+    let customAttrs = ``;
+    if(options.widgetType === "custom-widget") {
+        for (let [key, value] of attrs) {
+            if(key.startsWith('base-'))
+                customAttrs += key + '="' + value + '" ';
+        }
+    }
     const name = attrs.get('name');
     const customWidgetName = attrs.get('widgetname');
     const fieldName = (attrs.get('key') || name || '').trim();
@@ -71,7 +79,7 @@ const getWidgetTemplate = (attrs, options) => {
     const tmplRef = options.isMaxWidget ? `#formWidgetMax` : `#formWidget`;
     const widgetName = name ? (options.isMaxWidget ? `name="${name}_formWidgetMax"` : `name="${name}_formWidget"`) : '';
     const conditionalClass = `[ngClass]="${attrs.get('ngclass')}"`;
-    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${conditionalClass} ${tmplRef} ${widgetName} ${customWidgetName ? `widgetname=${customWidgetName}`:''}` ;
+    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${conditionalClass} ${tmplRef} ${widgetName} ${customWidgetName ? `widgetname=${customWidgetName} ${customAttrs}`:''}` ;
     return getFormWidgetTemplate(options.widgetType, defaultTmpl, attrs, {counter: options.counter, pCounter: options.pCounter});
 };
 

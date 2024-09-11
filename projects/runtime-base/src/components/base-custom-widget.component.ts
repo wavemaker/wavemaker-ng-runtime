@@ -32,7 +32,7 @@ import { FragmentMonitor } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
 import {commonPartialWidgets} from "./base-partial.component";
 import {capitalize, forEach} from "lodash-es";
-import {CheckboxsetComponent, RadiosetComponent} from "@wm/components/input";
+import {CheckboxsetComponent, InputTextComponent, RadiosetComponent} from "@wm/components/input";
 
 declare const _;
 
@@ -47,6 +47,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     App: App;
     injector: Injector;
     customWidgetName: string;
+    baseWidgetType: string;
     activePageName: string;
     route: ActivatedRoute;
     appManager: AppManagerService;
@@ -139,7 +140,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
             if(!child.hasAttribute('wmcustomwidget'))
                 this.initializeComponentData(child.children);
             else {
-                let baseWidget, splitArr = child.getAttribute('as').split('-'), modifiedArr = [];
+                let baseWidget, splitArr = (child.getAttribute('as') || this.baseWidgetType).split('-'), modifiedArr = [];
                 modifiedArr = splitArr.map((item: any) => {
                     item = item !== 'wm' ? capitalize(item) : item;
                     return item;
@@ -163,8 +164,11 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
                     case 'wmRadioset':
                         this[baseWidget] = new RadiosetComponent(this.injector, undefined);
                         this[baseWidget]["_select"] = (item: any, $event: any) => {
-                        this[baseWidget].triggerInvokeOnChange(item.key, $event);
-                    }
+                            this[baseWidget].triggerInvokeOnChange(item.key, $event);
+                        }
+                        break;
+                    case "wmInputText":
+                        this[baseWidget] = new InputTextComponent(this.injector, undefined);
                         break;
                 }
 
@@ -174,7 +178,8 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
                         this[baseWidget][modifiedKey] = value;
                     }
                 }
-                this[baseWidget].initDatasetItems();
+                if(['wmRadioset', 'wmCheckboxset'].includes(baseWidget))
+                    this[baseWidget].initDatasetItems();
                 this.containerWidget[baseWidget] = this[baseWidget];
             }
         });
@@ -295,6 +300,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     registerPropsInContainerWidget(resolveFn: Function) {
         window['resourceCache'].get(`./custom-widgets/${this.customWidgetName}/page.min.json`).then(({ config }) => {
             if (config) {
+                this.baseWidgetType = config.widgetType;
                 Object.entries((config.properties || {})).forEach(([key, prop]: [string, any]) => {
                     let expr;
                     const value = _.trim(prop.value);

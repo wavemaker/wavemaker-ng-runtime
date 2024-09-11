@@ -87,8 +87,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     }
 
     protected constructor(inj: Injector,  @Inject(WidgetConfig) config: IWidgetConfig,
-                          @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, @Attribute('groupby') public groupby?: string) {
-        super(inj, config, explicitContext);
+                          @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any,
+                          @Attribute('groupby') public groupby?: string, initPromise?: Promise<any>) {
+        super(inj, config, explicitContext, initPromise);
         this.datePipe = this.inj.get(ToDatePipe);
         this.appDefaults = this.inj.get(AppDefaults);
         this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');

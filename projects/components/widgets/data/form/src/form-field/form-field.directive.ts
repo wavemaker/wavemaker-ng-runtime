@@ -604,7 +604,8 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
     ngAfterContentInit() {
         super.ngAfterContentInit();
-
+        if(this.widgetSubType === "wm-form-field-custom-widget")
+            this.formWidget = this.formWidget.nativeElement.widget;
         if (this.formWidget) {
             this._initPropsRes();
 

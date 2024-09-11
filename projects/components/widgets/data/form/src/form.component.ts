@@ -753,8 +753,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
         // Get all form fields and prepare form data as key value pairs
         formFields.forEach(field => {
             let fieldName,
-                fieldValue;
-            fieldValue = field.datavalue || field._control.value;
+                fieldValue,
+                formWidget = field.formWidget;
+            fieldValue = (formWidget.widgetType.startsWith('wm-custom') ? formWidget[formWidget.baseWidgetName].datavalue : field.datavalue) || field._control.value;
             fieldValue = (fieldValue === null || fieldValue === '') ? undefined : fieldValue;
 
             if (field.type === 'file') {

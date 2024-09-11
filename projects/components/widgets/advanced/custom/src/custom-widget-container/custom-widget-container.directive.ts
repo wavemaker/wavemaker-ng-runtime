@@ -1,11 +1,13 @@
-import { Attribute, Directive, ElementRef, Injector, OnInit } from '@angular/core';
+import {Attribute, Directive, ElementRef, Inject, Injector, OnInit, Optional} from '@angular/core';
 
 import { noop } from '@wm/core';
-import { PROP_TYPE, provideAsWidgetRef, register, StylableComponent, styler } from '@wm/components/base';
+import {PROP_TYPE, provideAs, provideAsWidgetRef, register, StylableComponent, styler} from '@wm/components/base';
 
 import { customWidgetProps } from './custom-widget.props';
 import { registerProps } from "../custom-widget-container/custom-widget.props";
 import {capitalize, cloneDeep} from 'lodash-es';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from "@angular/forms";
+import {DatasetAwareFormComponent} from "@wm/components/input";
 
 const registeredPropsSet = new Set<string>();
 
@@ -18,11 +20,13 @@ declare const _;
 @Directive({
     selector: '[wmWidgetContainer]',
     providers: [
+        provideAs(CustomWidgetContainerDirective, NG_VALUE_ACCESSOR, true),
+        provideAs(CustomWidgetContainerDirective, NG_VALIDATORS, true),
         provideAsWidgetRef(CustomWidgetContainerDirective)
     ],
     exportAs: 'wmWidgetContainer'
 })
-export class CustomWidgetContainerDirective extends StylableComponent implements OnInit {
+export class CustomWidgetContainerDirective extends DatasetAwareFormComponent implements OnInit {
     static initializeProps = registerProps();
 
     widgetType: string;
@@ -35,12 +39,13 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
     constructor(
         inj: Injector, elRef: ElementRef,
         @Attribute('widgetname') widgetname: string,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         const widgetType = `wm-custom-${widgetname}`;
         const WIDGET_CONFIG = { widgetType, hostClass: DEFAULT_CLS };
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, undefined, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, explicitContext, undefined, new Promise(res => resolveFn = res));
         this.propsReady = resolveFn;
         this.widgetType = widgetType;
         this.name = elRef.nativeElement.getAttribute('name');
@@ -50,7 +55,7 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         // Call on property change on name to set name attribute on element.
         this.registerReadyStateListener(() => {
             super.onPropertyChange('name', this.name);
-        });
+        })
 
         this.registerPropertyChangeListener(((key: string, nv: any, ov?: any) => {
             if (!key.startsWith('prop-')) return;
@@ -112,6 +117,7 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         let modifiedKey = key.replace('base-', '');
         this[this.baseWidgetName][modifiedKey] = value;
         this.nativeElement.childNodes[0]['widget'].viewParent[this.baseWidgetName][modifiedKey] = value;
-        this[this.baseWidgetName].initDatasetItems();
+        if(['wmRadioset', 'wmCheckboxset'].includes(this.baseWidgetName))
+            this[this.baseWidgetName].initDatasetItems();
     }
 }
