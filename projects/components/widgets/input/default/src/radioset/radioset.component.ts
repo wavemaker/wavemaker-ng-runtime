@@ -6,7 +6,7 @@ import {setListClass} from '@wm/core';
 import { provideAsWidgetRef, styler, provideAs } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 import { registerProps } from './radioset.props';
-import {includes} from "lodash-es";
+import { includes} from "lodash-es";
 
 declare const $;
 
@@ -37,6 +37,14 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
         this.multiple = false;
     }
 
+    triggerInvokeOnChange(key, $event) {
+        this.modelByKey = key;
+
+        this.invokeOnTouched();
+        // invoke on datavalue change.
+        this.invokeOnChange(this.datavalue, $event || {}, true);
+    }
+
     /**
      * On click of the option, update the datavalue
      */
@@ -45,11 +53,7 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
             return;
         }
 
-        this.modelByKey = key;
-
-        this.invokeOnTouched();
-        // invoke on datavalue change.
-        this.invokeOnChange(this.datavalue, $event || {}, true);
+        this.triggerInvokeOnChange(key, $event);
     }
 
     // change and blur events are added from the template

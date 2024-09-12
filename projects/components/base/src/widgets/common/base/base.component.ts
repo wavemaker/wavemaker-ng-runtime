@@ -573,7 +573,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 expr,
                 viewParent,
                 context,
-                nv => widget[propName] = nv,
+                nv => {
+                    if(propName.startsWith('base-'))
+                        widget.updateData(propName, nv);
+                    widget[propName] = nv
+                },
                 getWatchIdentifier(widgetId, propName),
                 propName === 'datasource',
                 widgetProps.get(propName),
