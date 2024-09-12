@@ -1,11 +1,12 @@
 import { forEach } from 'lodash-es';
 import { ToDatePipe } from '../public_api';
 import { setItemByCompare, transformDataWithKeys, filterDate, DataSetItem, convertDataToObject, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, groupData, transformFormData, handleHeaderClick, toggleAllHeaders, configureDnD } from './form-utils';
-import { getFormattedDate } from '@wm/core';
+import { $parseEvent, getFormattedDate } from '@wm/core';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
     getFormattedDate: jest.fn(),
+    $parseEvent: jest.fn()
 }));
 jest.mock('./widget-utils', () => ({
     ...jest.requireActual('./widget-utils'),
@@ -25,7 +26,7 @@ jest.mock('lodash-es', () => ({
             Object.keys(collection).forEach(key => iteratee(collection[key], key));
         }
     }),
-    
+
 }));
 
 describe('setItemByCompare', () => {
@@ -299,6 +300,9 @@ describe('getUniqObjsByDataField', () => {
 });
 
 describe('groupData', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
     it('should group data by label and add _groupIndex', () => {
         const data: DataSetItem[] = [
             { key: 1, label: 'A', value: 'Item 1' },
@@ -351,6 +355,92 @@ describe('groupData', () => {
                 ]
             }
         ]);
+    });
+
+    it('should handle groupby property with parentheses', () => {
+        const data = [
+            { key: 1, label: 'A', value: 'Item 1', complexProperty: 'Group1' },
+            { key: 2, label: 'B', value: 'Item 2', complexProperty: 'Group2' },
+            { key: 3, label: 'C', value: 'Item 3', complexProperty: 'Group1' }
+        ];
+
+        const mockParsedFunction = jest.fn().mockImplementation(() => {
+            let index = 0;
+            return () => data[index++].complexProperty;
+        })();
+
+        ($parseEvent as jest.Mock).mockReturnValue(mockParsedFunction);
+
+        const result = groupData({}, data, 'complex(property)', '', '', '', null);
+        expect(result).toEqual([
+            {
+                key: 'Group1',
+                data: [
+                    { key: 1, label: 'A', value: 'Item 1', complexProperty: 'Group1', _groupIndex: 1 },
+                    { key: 3, label: 'C', value: 'Item 3', complexProperty: 'Group1', _groupIndex: 1 }
+                ]
+            },
+            {
+                key: 'Group2',
+                data: [
+                    { key: 2, label: 'B', value: 'Item 2', complexProperty: 'Group2', _groupIndex: 2 }
+                ]
+            }
+        ]);
+        expect($parseEvent).toHaveBeenCalledWith('complex(property)');
+    });
+
+    it('should use parsed function for groupby with parentheses', () => {
+        const mockParsedFunction = jest.fn().mockReturnValue('TestValue');
+        ($parseEvent as jest.Mock).mockReturnValue(mockParsedFunction);
+
+        const mockCompRef = {
+            viewParent: {
+                row: { dataObject: { complexProperty: 'TestValue' } }
+            }
+        };
+        const data = [
+            { key: 1, label: 'A', value: 'Item 1' },
+            { key: 2, label: 'B', value: 'Item 2' },
+        ];
+        const result = groupData(mockCompRef, data, 'complex(property)', '', '', '', null);
+        expect(result).toEqual([
+            {
+                key: 'TestValue',
+                data: [
+                    { key: 1, label: 'A', value: 'Item 1', _groupIndex: 1 },
+                    { key: 2, label: 'B', value: 'Item 2', _groupIndex: 1 }
+                ]
+            }
+        ]);
+        expect($parseEvent).toHaveBeenCalledWith('complex(property)');
+        expect(mockParsedFunction).toHaveBeenCalledTimes(2);
+    });
+
+    it('should group data when groupby does not include parentheses', () => {
+        const data = [
+            { key: 1, value: 'Item 1', simpleProperty: 'Group1' },
+            { key: 2, value: 'Item 2', simpleProperty: 'Group2' },
+            { key: 3, value: 'Item 3', simpleProperty: 'Group1' }
+        ];
+        const result = groupData({}, data, 'simpleProperty', '', '', '', null);
+
+        expect(result).toEqual([
+            {
+                key: 'Group1',
+                data: [
+                    { key: 1, value: 'Item 1', simpleProperty: 'Group1', _groupIndex: 1 },
+                    { key: 3, value: 'Item 3', simpleProperty: 'Group1', _groupIndex: 1 }
+                ]
+            },
+            {
+                key: 'Group2',
+                data: [
+                    { key: 2, value: 'Item 2', simpleProperty: 'Group2', _groupIndex: 2 }
+                ]
+            }
+        ]);
+        expect($parseEvent).not.toHaveBeenCalled();
     });
 });
 
@@ -494,6 +584,8 @@ describe('transformFormData', () => {
             { key: 'E#F', value: 'E#F', label: 'E#F', index: 3 }
         ]);
     });
+
+    
 });
 
 describe('handleHeaderClick', () => {

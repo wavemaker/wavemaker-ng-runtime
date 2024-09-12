@@ -1,31 +1,38 @@
-import {Component, ViewChild} from "@angular/core";
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
-import {LabelDirective} from "./label.directive";
-import {App} from "@wm/core";
-import {SanitizePipe} from "@wm/components/base";
-import { mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, ViewChild, SecurityContext } from "@angular/core";
+import { LabelDirective } from "./label.directive";
+import { App, setProperty, toggleClass } from "@wm/core";
+import { SanitizePipe } from "@wm/components/base";
+import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { By } from '@angular/platform-browser';
+import { ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 
-const markup = `<label wmLabel #wm_label1="wmLabel" [attr.aria-label]="wm_label1.hint || 'Label text'" hint="Label text"  name="label1" paddingright="0.5em" paddingleft="0.5em"></label>
-`;
+jest.mock('@wm/core', () => ({
+    ...jest.requireActual('@wm/core'),
+    setProperty: jest.fn(),
+    toggleClass: jest.fn()
+}));
+
+
+const markup = `<label wmLabel #wm_label1="wmLabel" [attr.aria-label]="wm_label1.hint || 'Label text'" hint="Label text"  name="label1" paddingright="0.5em" paddingleft="0.5em"></label>`;
 
 @Component({
     template: markup
 })
-
 class LabelWrapperDirective {
-    @ViewChild(LabelDirective, /* TODO: add static flag */ {static: true}) wmComponent: LabelDirective
+    @ViewChild(LabelDirective, { static: true }) wmComponent: LabelDirective;
 }
-
-const testModuleDef: ITestModuleDef = {
+const testModuleDef = {
     imports: [],
     declarations: [LabelWrapperDirective, LabelDirective],
     providers: [
-        {provide: App, useValue: mockApp},
-        {provide: SanitizePipe, useClass: SanitizePipe},
+        { provide: App, useValue: mockApp },
+        { provide: SanitizePipe, useClass: SanitizePipe },
     ]
 };
 
-const componentDef: ITestComponentDef = {
+// Keep the existing TestBase calls
+const componentDef = {
     $unCompiled: $(markup),
     type: 'wm-label',
     widgetSelector: '[wmLabel]',
@@ -38,3 +45,55 @@ TestBase.verifyPropsInitialization();
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
 TestBase.verifyAccessibility();
+
+describe('LabelDirective', () => {
+    let component: LabelWrapperDirective;
+    let fixture: ComponentFixture<LabelWrapperDirective>;
+    let directive: LabelDirective;
+    let directiveElement: HTMLElement;
+
+    beforeEach(async () => {
+        fixture = compileTestComponent(testModuleDef, LabelWrapperDirective);
+        component = fixture.componentInstance;
+        directive = component.wmComponent;
+        directiveElement = fixture.debugElement.query(By.directive(LabelDirective)).nativeElement;
+        fixture.detectChanges();
+    });
+
+    describe('onPropertyChange', () => {
+        it('should set textContent for object caption without trustAs', () => {
+            const objCaption = { key: 'value' };
+            directive.onPropertyChange('caption', objCaption);
+            expect(setProperty).toHaveBeenCalledWith(directiveElement, 'textContent', JSON.stringify(objCaption));
+        });
+
+        it('should set innerHTML for object caption with trustAs', () => {
+            const objCaption = { __html: '<span>Trusted HTML</span>' };
+            directiveElement.setAttribute('caption.bind', 'trustAs:html:someBinding');
+            directive.onPropertyChange('caption', objCaption);
+            expect(setProperty).toHaveBeenCalledWith(directiveElement, 'innerHTML', '<span>Trusted HTML</span>');
+        });
+
+        it('should sanitize and set innerHTML for string caption', () => {
+            const stringCaption = '<script>alert("XSS")</script>Safe text';
+            const sanitizeSpy = jest.spyOn(directive['sanitizePipe'], 'transform').mockReturnValue('Safe text');
+            directive.onPropertyChange('caption', stringCaption);
+            expect(sanitizeSpy).toHaveBeenCalledWith(stringCaption, SecurityContext.HTML);
+            expect(setProperty).toHaveBeenCalledWith(directiveElement, 'innerHTML', 'Safe text');
+        });
+
+        it('should toggle required class when required property changes', () => {
+            directive.onPropertyChange('required', true);
+            expect(toggleClass).toHaveBeenCalledWith(directiveElement, 'required', true);
+
+            directive.onPropertyChange('required', false);
+            expect(toggleClass).toHaveBeenCalledWith(directiveElement, 'required', false);
+        });
+
+        it('should call super.onPropertyChange for other properties', () => {
+            const superSpy = jest.spyOn(Object.getPrototypeOf(LabelDirective.prototype), 'onPropertyChange');
+            directive.onPropertyChange('someOtherProp', 'value');
+            expect(superSpy).toHaveBeenCalledWith('someOtherProp', 'value', undefined);
+        });
+    });
+});

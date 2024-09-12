@@ -10,6 +10,7 @@ import { WmComponentsModule } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import 'libraries/scripts/swipey/swipey.jquery.plugin.js';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
+import { Subject } from 'rxjs';
 
 const markup = `
     <div class="app-carousel carousel">
@@ -36,9 +37,8 @@ class CarouselSpec {
     @ViewChild('wm_carousel_ref', { static: true }) carousel: CarouselDirective;
     public testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }];
 
-    onChangeCB(widget, newIndex, oldIndex) {
-        // console.log('testing carousel slide: index changed from', oldIndex, 'to', newIndex);
-    }
+    onChangeCB(widget, newIndex, oldIndex) { }
+
     constructor(_pipeProvider: PipeProvider) {
         setPipeProvider(_pipeProvider);
     }
@@ -103,5 +103,64 @@ describe('wm-carousel: Widget specific test cases', () => {
             expect((component.carousel as any).animator.interval).toEqual(interval * 1000);
             done();
         }, 50);
+    });
+
+    it('should call setupHandlers and subscribe to slides changes', () => {
+        const setupHandlersSpy = jest.spyOn(component.carousel as any, 'setupHandlers');
+        const subscribespy = jest.spyOn(component.carousel.slides.changes, 'subscribe');
+
+        component.carousel.ngAfterContentInit();
+
+        expect(setupHandlersSpy).toHaveBeenCalled();
+        expect(subscribespy).toHaveBeenCalled();
+    });
+
+    it('should trigger animation when slides change', () => {
+        const triggerAnimationSpy = jest.spyOn(component.carousel as any, 'triggerAnimation');
+        const changesSubject = new Subject<any>();
+
+        jest.spyOn(component.carousel.slides, 'changes', 'get').mockReturnValue(changesSubject);
+
+        component.carousel.ngAfterContentInit();
+
+        // Simulate slides change
+        changesSubject.next(component.carousel.slides);
+
+        expect(triggerAnimationSpy).toHaveBeenCalledWith(component.carousel.slides);
+    });
+    
+    it('should call onChangeCB with correct parameters', () => {
+        const onChangeSpy = jest.spyOn(component.carousel as any, 'invokeEventCallback');
+        const newIndex = 1;
+        const oldIndex = 0;
+
+        component.carousel.onChangeCB(newIndex, oldIndex);
+
+        expect(onChangeSpy).toHaveBeenCalledWith('change', { newIndex, oldIndex });
+    });
+
+    it('should update currentslide and previousslide on change', () => {
+        const newIndex = 1;
+        const oldIndex = 0;
+
+        component.carousel.onChangeCB(newIndex, oldIndex);
+
+        expect(component.carousel.currentslide).toEqual(component.testdata[newIndex]);
+        expect(component.carousel.previousslide).toEqual(component.testdata[oldIndex]);
+    });
+
+    it('should call triggerAnimation with slides in the subscription callback', () => {
+        const triggerAnimationSpy = jest.spyOn(component.carousel as any, 'triggerAnimation');
+        const mockSlides = ['slide1', 'slide2'];
+        const changesSubject = new Subject<any>();
+
+        jest.spyOn(component.carousel.slides, 'changes', 'get').mockReturnValue(changesSubject);
+
+        component.carousel.ngAfterContentInit();
+
+        // Simulate slides change with mock slides
+        changesSubject.next(mockSlides);
+
+        expect(triggerAnimationSpy).toHaveBeenCalledWith(mockSlides);
     });
 });

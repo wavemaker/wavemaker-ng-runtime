@@ -56,7 +56,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
 TestBase.verifyCommonProperties();
 TestBase.verifyStyles();
 
-describe("wm-video: Component Specific tests", () => {
+describe("Video Component", () => {
     let wmComponent: VideoComponent;
     let fixture: ComponentFixture<TestComponent>;
 
@@ -80,24 +80,6 @@ describe("wm-video: Component Specific tests", () => {
         expect(videoElement.nativeElement.src).toContain(newFormat);
     });
 
-    //  expect(received).toBeTruthy()
-    xit("should add and remove track element on subtitlesource change", () => {
-        const newSource = 'subtitles.vtt';
-        wmComponent.onPropertyChange('subtitlesource', newSource);
-        fixture.detectChanges();
-        const track = fixture.nativeElement.querySelector('track');
-        expect(track).toBeTruthy();
-        expect(track.getAttribute('src')).toBe(newSource);
-        expect(track.getAttribute('label')).toBe(wmComponent.subtitlelang);
-
-        const newSource2 = 'new-subtitles.vtt';
-        wmComponent.onPropertyChange('subtitlesource', newSource2);
-        fixture.detectChanges();
-        const updatedTrack = fixture.nativeElement.querySelector('track');
-        expect(updatedTrack).toBeTruthy();
-        expect(updatedTrack.getAttribute('src')).toBe(newSource2);
-    });
-
     it("should reflect component properties in the template", () => {
         wmComponent.controls = true;
         wmComponent.autoplay = true;
@@ -114,5 +96,152 @@ describe("wm-video: Component Specific tests", () => {
 
         const videoElement = fixture.nativeElement.querySelector('video');
         expect(videoElement.textContent).toContain('Your browser does not support the video tag.');
+    });
+
+    describe('onPropertyChange function', () => {
+        it('should update mp4format and transform file URI', () => {
+            const newMp4Format = 'new-video.mp4';
+            wmComponent.onPropertyChange('mp4format', newMp4Format);
+            expect(wmComponent.mp4format).toBe(newMp4Format);
+        });
+
+        it('should update webmformat and transform file URI', () => {
+            const newWebmFormat = 'video.webm';
+            wmComponent.onPropertyChange('webmformat', newWebmFormat);
+            expect(wmComponent.webmformat).toBe(newWebmFormat);
+        });
+
+        it('should update oggformat and transform file URI', () => {
+            const newOggFormat = 'video.ogg';
+            wmComponent.onPropertyChange('oggformat', newOggFormat);
+            expect(wmComponent.oggformat).toBe(newOggFormat);
+        });
+
+        it('should attempt to add track element when subtitlesource is set', () => {
+            const subtitleSource = 'subtitle.vtt';
+            const appendNodeSpy = jest.spyOn(require('@wm/core'), 'appendNode');
+            const createElementSpy = jest.spyOn(require('@wm/core'), 'createElement');
+            const trustAsPipeSpy = jest.spyOn(wmComponent['trustAsPipe'], 'transform').mockReturnValue(subtitleSource);
+
+            wmComponent.onPropertyChange('subtitlesource', subtitleSource);
+            fixture.detectChanges();
+
+            expect(createElementSpy).toHaveBeenCalledWith('track', {
+                kind: 'subtitles',
+                label: wmComponent.subtitlelang,
+                srclang: wmComponent.subtitlelang,
+                src: subtitleSource,
+                default: ''
+            }, true);
+
+            expect(appendNodeSpy).toHaveBeenCalled();
+            const track = fixture.nativeElement.querySelector('track');
+            if (track) {
+                expect(track.getAttribute('src')).toBe(subtitleSource);
+                expect(track.getAttribute('kind')).toBe('subtitles');
+                expect(track.getAttribute('label')).toBe(wmComponent.subtitlelang);
+                expect(track.getAttribute('srclang')).toBe(wmComponent.subtitlelang);
+            }
+
+            appendNodeSpy.mockRestore();
+            createElementSpy.mockRestore();
+            trustAsPipeSpy.mockRestore();
+        });
+
+        it('should attempt to update track element when subtitlesource changes', () => {
+            const initialSubtitleSource = 'initial-subtitle.vtt';
+            const updatedSubtitleSource = 'updated-subtitle.vtt';
+            const removeNodeSpy = jest.spyOn(require('@wm/core'), 'removeNode');
+            const appendNodeSpy = jest.spyOn(require('@wm/core'), 'appendNode');
+            const createElementSpy = jest.spyOn(require('@wm/core'), 'createElement');
+            const trustAsPipeSpy = jest.spyOn(wmComponent['trustAsPipe'], 'transform')
+                .mockReturnValueOnce(initialSubtitleSource)
+                .mockReturnValueOnce(updatedSubtitleSource);
+
+            wmComponent.onPropertyChange('subtitlesource', initialSubtitleSource);
+            fixture.detectChanges();
+
+            wmComponent.onPropertyChange('subtitlesource', updatedSubtitleSource);
+            fixture.detectChanges();
+
+            expect(createElementSpy).toHaveBeenCalledTimes(2);
+            expect(appendNodeSpy).toHaveBeenCalledTimes(2);
+
+            const track = fixture.nativeElement.querySelector('track');
+            if (track) {
+                expect(track.getAttribute('src')).toBe(updatedSubtitleSource);
+            }
+            removeNodeSpy.mockRestore();
+            appendNodeSpy.mockRestore();
+            createElementSpy.mockRestore();
+            trustAsPipeSpy.mockRestore();
+        });
+
+        it('should remove existing track and create new one when subtitlesource changes and track exists', () => {
+            const subtitleSource = 'subtitle.vtt';
+            const mockTrackElement = document.createElement('track');
+            const querySelectorSpy = jest.spyOn(wmComponent.nativeElement, 'querySelector')
+                .mockReturnValueOnce(mockTrackElement)  // First call returns existing track
+                .mockReturnValue(document.createElement('video'));  // Subsequent calls return video element
+            const removeNodeSpy = jest.spyOn(require('@wm/core'), 'removeNode');
+            const appendNodeSpy = jest.spyOn(require('@wm/core'), 'appendNode');
+            const createElementSpy = jest.spyOn(require('@wm/core'), 'createElement');
+            const trustAsPipeSpy = jest.spyOn(wmComponent['trustAsPipe'], 'transform')
+                .mockReturnValue(subtitleSource);
+
+            wmComponent.onPropertyChange('subtitlesource', subtitleSource);
+
+            expect(querySelectorSpy).toHaveBeenCalledWith('track');
+            expect(removeNodeSpy).toHaveBeenCalledWith(mockTrackElement, true);
+            expect(createElementSpy).toHaveBeenCalledTimes(1);
+            expect(createElementSpy).toHaveBeenCalledWith('track', {
+                kind: 'subtitles',
+                label: wmComponent.subtitlelang,
+                srclang: wmComponent.subtitlelang,
+                src: subtitleSource,
+                default: ''
+            }, true);
+            expect(appendNodeSpy).toHaveBeenCalledTimes(1);
+            expect(appendNodeSpy.mock.calls[0][1]).toBe(wmComponent.nativeElement.querySelector('video'));
+
+            querySelectorSpy.mockRestore();
+            removeNodeSpy.mockRestore();
+            appendNodeSpy.mockRestore();
+            createElementSpy.mockRestore();
+            trustAsPipeSpy.mockRestore();
+        });
+
+        it('should create new track when subtitlesource changes and no track exists', () => {
+            const subtitleSource = 'subtitle.vtt';
+            const querySelectorSpy = jest.spyOn(wmComponent.nativeElement, 'querySelector')
+                .mockReturnValueOnce(null)  // First call returns null (no existing track)
+                .mockReturnValue(document.createElement('video'));  // Subsequent calls return video element
+            const removeNodeSpy = jest.spyOn(require('@wm/core'), 'removeNode');
+            const appendNodeSpy = jest.spyOn(require('@wm/core'), 'appendNode');
+            const createElementSpy = jest.spyOn(require('@wm/core'), 'createElement');
+            const trustAsPipeSpy = jest.spyOn(wmComponent['trustAsPipe'], 'transform')
+                .mockReturnValue(subtitleSource);
+
+            wmComponent.onPropertyChange('subtitlesource', subtitleSource);
+
+            expect(querySelectorSpy).toHaveBeenCalledWith('track');
+            expect(removeNodeSpy).not.toHaveBeenCalled();
+            expect(createElementSpy).toHaveBeenCalledTimes(1);
+            expect(createElementSpy).toHaveBeenCalledWith('track', {
+                kind: 'subtitles',
+                label: wmComponent.subtitlelang,
+                srclang: wmComponent.subtitlelang,
+                src: subtitleSource,
+                default: ''
+            }, true);
+            expect(appendNodeSpy).toHaveBeenCalledTimes(1);
+            expect(appendNodeSpy.mock.calls[0][1]).toBe(wmComponent.nativeElement.querySelector('video'));
+
+            querySelectorSpy.mockRestore();
+            removeNodeSpy.mockRestore();
+            appendNodeSpy.mockRestore();
+            createElementSpy.mockRestore();
+            trustAsPipeSpy.mockRestore();
+        });
     });
 });
