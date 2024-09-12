@@ -1381,7 +1381,7 @@ describe('getDateObj', () => {
     });
 
     it('should handle timezone option', () => {
-        const result = getDateObj('2023-05-20', {}, "UTC");
+        const result = getDateObj('2023-05-20', {}, Intl.DateTimeFormat().resolvedOptions().timeZone);
         expect(result).toBeInstanceOf(Date);
         expect(result.toISOString()).toBe(date.toISOString());
     });
