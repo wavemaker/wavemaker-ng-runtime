@@ -1739,4 +1739,34 @@ describe('SearchComponent', () => {
             expect(result).toBe(false);
         });
     });
+
+    describe('notifySubscriber', () => {
+        let mockJQuery;
+        let mockClosest;
+
+        beforeEach(() => {
+            mockClosest = {
+                length: 0
+            };
+            mockJQuery = jest.fn().mockReturnValue({
+                closest: jest.fn().mockReturnValue(mockClosest)
+            });
+            (global as any).$ = mockJQuery;
+
+            (wmComponent as any).nativeElement = document.createElement('div');
+        });
+
+        it('should call app.notify when a matching parent element is found', () => {
+            mockClosest.length = 1;
+            
+            wmComponent.notifySubscriber();
+
+            expect(mockJQuery).toHaveBeenCalledWith(wmComponent.nativeElement);
+            expect(mockJQuery().closest).toHaveBeenCalledWith('.app-composite-widget.caption-floating');
+            expect(mockApp.notify).toHaveBeenCalledWith('captionPositionAnimate', {
+                displayVal: true,
+                nativeEl: mockClosest
+            });
+        });
+    });
 });

@@ -1,7 +1,8 @@
 import { RemoteDataProvider } from './remote-data-provider';
-import { DataSource, AppConstants } from '@wm/core';
+import { DataSource, AppConstants, findValueOf } from '@wm/core';
 import * as baseComponentsModule from '@wm/components/base';
 import { IDataProviderConfig } from './data-provider';
+import * as lodash from 'lodash-es';
 
 jest.mock('@wm/core');
 jest.mock('@wm/components/base');
@@ -229,6 +230,101 @@ describe('RemoteDataProvider', () => {
 
             expect(result).toEqual({
                 data: [],
+                isLastPage: undefined,
+                hasMoreData: false,
+                isPaginatedData: undefined,
+                page: undefined,
+            });
+        });
+
+        it('should handle array data with complex dataExpression', async () => {
+            const mockConfig = {
+                datasource: {
+                    execute: jest.fn().mockReturnValue(false),
+                },
+                binddataset: 'testData.dataSet.result[$i].value',
+            };
+            const mockResponse = {
+                data: [
+                    { result: { value: 1 } },
+                    { result: { value: 2 } },
+                    { result: { value: 3 } }
+                ],
+            };
+
+            // Mock findValueOf to simulate its behavior
+            (findValueOf as jest.Mock).mockImplementation((datum, expr) => {
+                const parts = expr.split('.');
+                return parts.reduce((obj, key) => obj && obj[key], datum);
+            });
+
+            await (remoteDataProvider as any).onFilterSuccess(mockConfig, mockResponse);
+
+            expect(findValueOf).toHaveBeenCalledTimes(3);
+        });
+
+        it('should handle object data with dataExpression', async () => {
+            const mockConfig = {
+                datasource: {
+                    execute: jest.fn().mockReturnValue(false),
+                },
+                binddataset: 'testData.dataSet.result',
+            };
+            const mockResponse = {
+                data: { result: [1, 2, 3] },
+            };
+
+            const result = await (remoteDataProvider as any).onFilterSuccess(mockConfig, mockResponse);
+
+            expect(result).toEqual({
+                data: [1, 2, 3],
+                isLastPage: undefined,
+                hasMoreData: false,
+                isPaginatedData: undefined,
+                page: undefined,
+            });
+        });
+
+        it('should handle non-array data', async () => {
+            const mockConfig = {
+                datasource: {
+                    execute: jest.fn().mockReturnValue(false),
+                },
+                binddataset: 'testData.dataSet.result',
+            };
+            const mockResponse = {
+                data: 'string data',
+            };
+
+            jest.spyOn(remoteDataProvider as any, 'getTransformedData').mockReturnValue(['transformed data']);
+
+            const result = await (remoteDataProvider as any).onFilterSuccess(mockConfig, mockResponse);
+
+            expect(result).toEqual({
+                data: ['transformed data'],
+                isLastPage: undefined,
+                hasMoreData: false,
+                isPaginatedData: undefined,
+                page: undefined,
+            });
+            expect((remoteDataProvider as any).getTransformedData).toHaveBeenCalledWith(mockConfig.datasource, 'string data');
+        });
+
+        it('should use original data if formattedData is falsy', async () => {
+            const mockConfig = {
+                datasource: {
+                    execute: jest.fn().mockReturnValue(false),
+                },
+                binddataset: 'testData.dataSet.result',
+            };
+            const mockResponse = {
+                data: [{ id: 1 }, { id: 2 }],
+            };
+
+            const result = await (remoteDataProvider as any).onFilterSuccess(mockConfig, mockResponse);
+
+            expect(result).toEqual({
+                data: [{ id: 1 }, { id: 2 }],
                 isLastPage: undefined,
                 hasMoreData: false,
                 isPaginatedData: undefined,

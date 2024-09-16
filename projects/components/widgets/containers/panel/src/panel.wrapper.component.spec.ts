@@ -1,4 +1,4 @@
-import { waitForAsync, ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture } from '@angular/core/testing';
 import { PanelComponent } from './panel.component';
 import { Component, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -9,8 +9,8 @@ import { MenuComponent } from "../../../navigation/menu/src//menu.component";
 import { Router } from '@angular/router';
 import { App, UserDefinedExecutionContext } from '@wm/core';
 import { SecurityService } from '@wm/security';
-import { DatasetAwareNavComponent, NavNode } from '../../../../base/src/widgets/common/base/dataset-aware-nav.component';
-import { BsDropdownModule, BsDropdownDirective } from 'ngx-bootstrap/dropdown';
+import { DatasetAwareNavComponent } from '../../../../base/src/widgets/common/base/dataset-aware-nav.component';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
 import { ComponentsTestModule } from "../../../../base/src/test/components.test.module";
 import { compileTestComponent, mockApp } from "../../../../base/src/test/util/component-test-util";
@@ -27,9 +27,7 @@ class PanelWrapperComponent {
     public testData = "Option1, Option2, Option3";
     public outsideClick = true;
 
-    panel1Actionsclick = function ($item) {
-        console.log("Panel action item click triggered", $item);
-    }
+    panel1Actionsclick = function ($item) { }
 }
 
 const panelComponentModuleDef: ITestModuleDef = {
@@ -101,8 +99,7 @@ describe("PanelComponent", () => {
         expect(panelWrapperComponent).toBeTruthy();
     });
 
-    // TypeError: Cannot read properties of null (reading 'nativeElement')
-    xit("should trigger the panel action item click callback", async () => {
+    it("should trigger the panel action item click callback", async () => {
         // Get the necessary elements
         dropdownToggleEle = getdropdownToggleEle();
         let wmMenuEle = getwmMenuEle();
@@ -316,7 +313,6 @@ describe("PanelComponent", () => {
         });
     });
 
-
     describe('hideFooter', () => {
         it('should return true when hasFooter is false', () => {
             (wmComponent as any).hasFooter = false;
@@ -425,6 +421,77 @@ describe("PanelComponent", () => {
             wmComponent.height = '';
             wmComponent['computeDimensions']();
             expect(mockPanelContent.nativeElement.style.height).toBe('');
+        });
+    });
+
+    describe('menuActionItemClick', () => {
+        it('should set selectedAction without children and value properties', () => {
+            const mockItem = {
+                id: '1',
+                label: 'Test Action',
+                children: ['child1', 'child2'],
+                value: 'test-value',
+                icon: 'test-icon'
+            };
+            const mockEvent = new MouseEvent('click');
+
+            (wmComponent as any).menuActionItemClick(mockEvent, mockItem);
+
+            expect(wmComponent.selectedAction).toEqual({
+                id: '1',
+                label: 'Test Action',
+                icon: 'test-icon'
+            });
+        });
+
+        it('should invoke actionsclick event callback with correct parameters', () => {
+            const mockItem = {
+                id: '1',
+                label: 'Test Action',
+                children: ['child1', 'child2'],
+                value: 'test-value',
+                icon: 'test-icon'
+            };
+            const mockEvent = new MouseEvent('click');
+
+            const invokeEventCallbackSpy = jest.spyOn(wmComponent, 'invokeEventCallback');
+
+            (wmComponent as any).menuActionItemClick(mockEvent, mockItem);
+
+            expect(invokeEventCallbackSpy).toHaveBeenCalledWith('actionsclick', {
+                $event: mockEvent,
+                $item: {
+                    id: '1',
+                    label: 'Test Action',
+                    icon: 'test-icon'
+                }
+            });
+        });
+    })
+
+    describe('reDrawChildren', () => {
+        it('should call redraw on all reDrawableComponents after timeout', (done) => {
+            const mockComponent1 = { redraw: jest.fn() };
+            const mockComponent2 = { redraw: jest.fn() };
+            wmComponent['reDrawableComponents'] = [mockComponent1, mockComponent2];
+
+            wmComponent['reDrawChildren']();
+
+            setTimeout(() => {
+                expect(mockComponent1.redraw).toHaveBeenCalled();
+                expect(mockComponent2.redraw).toHaveBeenCalled();
+                done();
+            }, 110);
+        });
+
+        it('should not throw error if reDrawableComponents is undefined', (done) => {
+            wmComponent['reDrawableComponents'] = undefined;
+
+            expect(() => {
+                wmComponent['reDrawChildren']();
+            }).not.toThrow();
+
+            setTimeout(done, 110);
         });
     });
 });

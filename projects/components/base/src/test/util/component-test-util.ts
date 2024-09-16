@@ -90,7 +90,7 @@ export const mockApp = {
         return 'en';
     },
     notifyApp: () => jest.fn(),
-    notify: () => jest.fn()
+    notify: jest.fn()
 };
 
 export const mockViewport = {};

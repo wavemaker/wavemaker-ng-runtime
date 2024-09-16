@@ -1,12 +1,34 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, Injector, LOCALE_ID } from '@angular/core';
-import { AbstractI18nService, App, AppDefaults, hasCordova } from '@wm/core';
+import { AbstractI18nService, App, AppDefaults, hasCordova, isIos } from '@wm/core';
 import { BaseDateTimeComponent, getTimepickerConfig } from './base-date-time.component';
 import { ToDatePipe } from '@wm/components/base';
 import { DatePipe, FormStyle, getLocaleDayPeriods, TranslationWidth } from '@angular/common';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { AbstractControl, FormControl } from '@angular/forms';
+
+const createMockJQueryElement = () => ({
+    attr: jest.fn(),
+    find: jest.fn().mockReturnThis(),
+    first: jest.fn().mockReturnThis(),
+    on: jest.fn(),
+    off: jest.fn(),
+    parent: jest.fn().mockReturnThis(),
+    is: jest.fn(),
+    next: jest.fn().mockReturnThis(),
+    hasClass: jest.fn(),
+    val: jest.fn(),
+    addClass: jest.fn(),
+    removeClass: jest.fn(),
+    css: jest.fn(),
+    length: 0,
+    closest: jest.fn().mockReturnThis(), 
+    focus: jest.fn()
+});
+
+const mockJQuery = jest.fn().mockImplementation(() => createMockJQueryElement());
+(global as any).$ = mockJQuery;
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -80,6 +102,7 @@ describe('getTimepickerConfig', () => {
 class TestBaseDateTimeComponent extends BaseDateTimeComponent {
     constructor(inj: Injector) {
         super(inj, { widgetType: 'wm-form-field-datetime' }, null);
+        Object.defineProperty(this, 'nativeElement', { writable: true, value: createMockJQueryElement() });
     }
 }
 
@@ -99,17 +122,11 @@ describe('BaseDateTimeComponent', () => {
                 { provide: LOCALE_ID, useValue: 'en-US' },
                 {
                     provide: Injector,
-                    useFactory: () => {
-                        return Injector.create({
-                            providers: [
-                                { provide: AbstractI18nService, useClass: MockAbstractI18nService },
-                                { provide: App, useValue: mockApp },
-                                { provide: AppDefaults, useValue: {} },
-                                ToDatePipe,
-                                DatePipe,
-                                { provide: LOCALE_ID, useValue: 'en-US' }
-                            ]
-                        });
+                    useValue: {
+                        get: jest.fn().mockReturnValue({
+                            getTimezone: jest.fn(),
+                            getSelectedLocale: jest.fn().mockReturnValue('en-US')
+                        })
                     }
                 }
             ]
@@ -123,6 +140,7 @@ describe('BaseDateTimeComponent', () => {
         component.excludedDatesToDisable = [];
         component.excludedDaysToDisable = [];
         (component as any).i18nService = { getLocalizedMessage: jest.fn(msg => msg) } as any;
+        mockJQuery.mockClear();
         jest.clearAllMocks();
     });
 
@@ -775,6 +793,109 @@ describe('BaseDateTimeComponent', () => {
             expect(mockEl.find).toHaveBeenCalledWith('input[aria-label="seconds"]');
             expect(mockEl.find().value).toBe('00');
             expect((component as any).bsTimePicker.updateSeconds).toHaveBeenCalled();
+        });
+    });
+
+    describe('getCordovaPluginDatePickerApi', () => {
+        beforeEach(() => {
+            (isIos as jest.Mock).mockReset();
+        });
+
+        it('should return undefined when not on iOS', () => {
+            (isIos as jest.Mock).mockReturnValue(false);
+            const result = component.getCordovaPluginDatePickerApi();
+            expect(result).toBeUndefined();
+        });
+
+        it('should return the selectDate function when on iOS', () => {
+            (isIos as jest.Mock).mockReturnValue(true);
+            const mockSelectDate = jest.fn();
+            Object.defineProperty(window, 'cordova', {
+                value: {
+                    wavemaker: {
+                        datePicker: {
+                            selectDate: mockSelectDate
+                        }
+                    }
+                },
+                writable: true
+            });
+
+            const result = component.getCordovaPluginDatePickerApi();
+            expect(result).toBe(mockSelectDate);
+        });
+
+        it('should return undefined when on iOS but cordova.wavemaker.datePicker.selectDate is not available', () => {
+            (isIos as jest.Mock).mockReturnValue(true);
+            Object.defineProperty(window, 'cordova', {
+                value: {},
+                writable: true
+            });
+
+            const result = component.getCordovaPluginDatePickerApi();
+            expect(result).toBeUndefined();
+        });
+
+        afterEach(() => {
+            if ('cordova' in window) {
+                delete (window as any).cordova;
+            }
+        });
+    });
+
+    describe('addEventsOnTimePicker', () => {
+
+        beforeEach(() => {
+            (component as any).updateTimeValue = jest.fn();
+            (component as any).timeFormatValidation = jest.fn();
+            (component as any).focus = jest.fn();
+            component.invokeOnChange = jest.fn();
+            (component as any).elementScope = {
+                hideTimepickerDropdown: jest.fn(),
+                setIsTimeOpen: jest.fn(),
+                mintime: '00:00',
+                maxtime: '23:59',
+                bsTimeValue: new Date(),
+                displayValue: '12:00'
+            };
+            (component as any).isValidDate = jest.fn().mockReturnValue(true);
+        })
+        it('should add keyup event listener to the first input field', () => {
+            const mockElement = createMockJQueryElement();
+            (component as any).addEventsOnTimePicker(mockElement);
+            expect(mockElement.find).toHaveBeenCalledWith('.bs-timepicker-field');
+            expect(mockElement.first().on).toHaveBeenCalledWith('keyup', expect.any(Function));
+        });
+
+        it('should update minutes and seconds when hour is entered', () => {
+            const mockElement = createMockJQueryElement();
+            mockElement.find.mockReturnValue({
+                first: jest.fn().mockReturnThis(),
+                on: jest.fn(),
+                0: { value: '12' },
+                1: { value: '' },
+                2: { value: '' },
+                length: 3
+            });
+            (component as any).addEventsOnTimePicker(mockElement);
+            const keyupHandler = mockElement.find().first().on.mock.calls[0][1];
+            keyupHandler({ target: { value: '12' } });
+            expect((component as any).updateTimeValue).toHaveBeenCalledTimes(2);
+            expect((component as any).updateTimeValue).toHaveBeenCalledWith(mockElement, '12', 'minutes');
+            expect((component as any).updateTimeValue).toHaveBeenCalledWith(mockElement, '12', 'seconds');
+        });
+
+        it('should add keydown event listener', () => {
+            const mockElement = createMockJQueryElement();
+            (component as any).addEventsOnTimePicker(mockElement);
+            expect(mockElement.on).toHaveBeenCalledWith('keydown', expect.any(Function));
+        });
+
+        it('should add click event listener to chevron buttons', () => {
+            const mockElement = createMockJQueryElement();
+            (component as any).addEventsOnTimePicker(mockElement);
+            expect(mockElement.find).toHaveBeenCalledWith('a');
+            expect(mockElement.find().on).toHaveBeenCalledWith('click', expect.any(Function));
         });
     });
 });
