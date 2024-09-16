@@ -23,7 +23,7 @@ const createMockJQueryElement = () => ({
     removeClass: jest.fn(),
     css: jest.fn(),
     length: 0,
-    closest: jest.fn().mockReturnThis(), 
+    closest: jest.fn().mockReturnThis(),
     focus: jest.fn()
 });
 
@@ -135,6 +135,7 @@ describe('BaseDateTimeComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(TestBaseDateTimeComponent);
+        Object.defineProperty(this, '$element ', { writable: true, value: { attr: jest.fn().mockReturnValue('') } })
         component = fixture.componentInstance;
         (component as any)._dateOptions = {};
         component.excludedDatesToDisable = [];
@@ -898,4 +899,177 @@ describe('BaseDateTimeComponent', () => {
             expect(mockElement.find().on).toHaveBeenCalledWith('click', expect.any(Function));
         });
     });
+
+    describe('goToOtherMonthOryear', () => {
+        let jQueryMock: any;
+
+        beforeEach(() => {
+            jQueryMock = {
+                attr: jest.fn(),
+                trigger: jest.fn()
+            };
+            (global as any).$ = jest.fn().mockReturnValue(jQueryMock);
+
+            (component as any).loadDays = jest.fn();
+            (component as any).loadMonths = jest.fn();
+            (component as any).loadYears = jest.fn();
+        });
+
+        it('should not trigger click if button is disabled', () => {
+            jQueryMock.attr.mockReturnValue(true);
+
+            (component as any).goToOtherMonthOryear('previous', 'days');
+
+            expect(jQueryMock.attr).toHaveBeenCalledWith('disabled');
+            expect(jQueryMock.trigger).not.toHaveBeenCalled();
+            expect((component as any).loadDays).not.toHaveBeenCalled();
+        });
+
+        it('should trigger click and load days when timePeriod is "days"', () => {
+            jQueryMock.attr.mockReturnValue(false);
+
+            (component as any).goToOtherMonthOryear('next', 'days');
+
+            expect(jQueryMock.attr).toHaveBeenCalledWith('disabled');
+            expect(jQueryMock.trigger).toHaveBeenCalledWith('click');
+            expect((component as any).loadDays).toHaveBeenCalled();
+            expect((component as any).loadMonths).not.toHaveBeenCalled();
+            expect((component as any).loadYears).not.toHaveBeenCalled();
+        });
+
+        it('should trigger click and load months when timePeriod is "month"', () => {
+            jQueryMock.attr.mockReturnValue(false);
+
+            (component as any).goToOtherMonthOryear('previous', 'month');
+
+            expect(jQueryMock.attr).toHaveBeenCalledWith('disabled');
+            expect(jQueryMock.trigger).toHaveBeenCalledWith('click');
+            expect((component as any).loadDays).not.toHaveBeenCalled();
+            expect((component as any).loadMonths).toHaveBeenCalled();
+            expect((component as any).loadYears).not.toHaveBeenCalled();
+        });
+
+        it('should trigger click and load years when timePeriod is "year"', () => {
+            jQueryMock.attr.mockReturnValue(false);
+
+            (component as any).goToOtherMonthOryear('next', 'year');
+
+            expect(jQueryMock.attr).toHaveBeenCalledWith('disabled');
+            expect(jQueryMock.trigger).toHaveBeenCalledWith('click');
+            expect((component as any).loadDays).not.toHaveBeenCalled();
+            expect((component as any).loadMonths).not.toHaveBeenCalled();
+            expect((component as any).loadYears).toHaveBeenCalled();
+        });
+
+        it('should use correct selector for previous button', () => {
+            jQueryMock.attr.mockReturnValue(false);
+
+            (component as any).goToOtherMonthOryear('previous', 'days');
+
+            expect((global as any).$).toHaveBeenCalledWith('.bs-datepicker-head .previous');
+        });
+
+        it('should use correct selector for next button', () => {
+            jQueryMock.attr.mockReturnValue(false);
+
+            (component as any).goToOtherMonthOryear('next', 'days');
+
+            expect((global as any).$).toHaveBeenCalledWith('.bs-datepicker-head .next');
+        });
+    });
+
+    describe('getMonth', () => {
+        beforeEach(() => {
+            // Mock the toLocaleString method
+            const mockToLocaleString = jest.fn();
+            mockToLocaleString.mockReturnValue('January');
+            Date.prototype.toLocaleString = mockToLocaleString;
+        });
+
+        afterEach(() => {
+            // Restore the original toLocaleString method
+            jest.restoreAllMocks();
+        });
+
+        it('should return the correct month when increment is 0', () => {
+            const date = new Date(2023, 0, 1); // January 1, 2023
+            const result = (component as any).getMonth(date, 0);
+
+            expect(result.date.getFullYear()).toBe(2023);
+            expect(result.date.getMonth()).toBe(0);
+            expect(result.fullMonth).toBe('January');
+        });
+
+        it('should return the next month when increment is 1', () => {
+            const date = new Date(2023, 0, 1); // January 1, 2023
+            const result = (component as any).getMonth(date, 1);
+
+            expect(result.date.getFullYear()).toBe(2023);
+            expect(result.date.getMonth()).toBe(1);
+            expect(result.fullMonth).toBe('January'); // This will be 'January' due to our mock
+        });
+
+        it('should return the previous month when increment is -1', () => {
+            const date = new Date(2023, 1, 1); // February 1, 2023
+            const result = (component as any).getMonth(date, -1);
+
+            expect(result.date.getFullYear()).toBe(2023);
+            expect(result.date.getMonth()).toBe(0);
+            expect(result.fullMonth).toBe('January');
+        });
+
+        it('should handle year change when moving to next year', () => {
+            const date = new Date(2023, 11, 1); // December 1, 2023
+            const result = (component as any).getMonth(date, 1);
+
+            expect(result.date.getFullYear()).toBe(2024);
+            expect(result.date.getMonth()).toBe(0);
+            expect(result.fullMonth).toBe('January');
+        });
+
+        it('should handle year change when moving to previous year', () => {
+            const date = new Date(2023, 0, 1); // January 1, 2023
+            const result = (component as any).getMonth(date, -1);
+
+            expect(result.date.getFullYear()).toBe(2022);
+            expect(result.date.getMonth()).toBe(11);
+            expect(result.fullMonth).toBe('January'); // This will be 'January' due to our mock
+        });
+
+        it('should handle large increments', () => {
+            const date = new Date(2023, 0, 1); // January 1, 2023
+            const result = (component as any).getMonth(date, 14); // 14 months later
+
+            expect(result.date.getFullYear()).toBe(2024);
+            expect(result.date.getMonth()).toBe(2);
+            expect(result.fullMonth).toBe('January'); // This will be 'January' due to our mock
+        });
+    });
+
+    describe('setFocusForMonthOrDay', () => {
+        beforeEach(() => {
+            (component as any).loadMonths = jest.fn();
+            (component as any).loadDays = jest.fn();
+            (component as any).setActiveMonthFocus = jest.fn();
+            (component as any).setActiveDateFocus = jest.fn();
+            (component as any).activeDate = new Date(2023, 5, 15); // June 15, 2023
+        });
+
+        it('should set focus for months when months table is present', () => {
+            const jQueryMock = {
+                first: jest.fn().mockReturnThis(),
+                text: jest.fn().mockReturnValue('2024'),
+                find: jest.fn().mockReturnValue({ length: 1 })
+            };
+            (global as any).$ = jest.fn().mockReturnValue(jQueryMock);
+
+            (component as any).setFocusForMonthOrDay();
+
+            expect(jQueryMock.find).toHaveBeenCalledWith('table.months');
+            expect((component as any).loadMonths).toHaveBeenCalled();
+            expect((component as any).setActiveMonthFocus).toHaveBeenCalledWith(expect.any(Date), true);
+        });
+
+    });
+ 
 });
