@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { DataSource, removeAttr, setAttr } from '@wm/core';
+import { DataSource, removeAttr, setAttr, isIos } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
@@ -45,6 +45,35 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     constructor(inj: Injector) {
         super(inj, WIDGET_CONFIG);
         this.acceptsArray = true;
+
+        /*
+        * When the dataset for a select element is updated and no longer includes the previously selected value:
+        * The select element becomes empty, and the ngModel value is updated to reflect this change.
+        * However, the change event is not triggered, preventing the form control from recognizing the update and applying necessary validations.
+        * As this widget implements ControlValueAccessor, manually updating the ngModel (or modelByKey) is necessary to ensure correct form behavior.
+        * */
+        const datasetSubscription = this.dataset$.subscribe(() => {
+            if(isIos()) {
+                if (this.datavalue) {
+                    const selectedItem = this.datasetItems.find(item => item.selected);
+                    if (!selectedItem) {
+                        setTimeout(() => {
+                            if(!this.placeholder) {
+                                this.selectEl.nativeElement.value = '';
+                            }
+                            this.modelByKey = undefined;
+                        }, 100);
+                    }
+                } else {
+                    setTimeout(() => {
+                        if(!this.placeholder) {
+                            this.selectEl.nativeElement.value = '';
+                        }
+                    }, 100);
+                }
+            }
+        });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
     }
 
     ngAfterViewInit() {
@@ -95,7 +124,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
      */
     checkForFloatingLabel($event) {
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
-        if(!this.placeholder) {
+        if(!this.placeholder && isIos()) {
             this.removePlaceholderOption();
         }
         if (captionEl.length > 0) {
