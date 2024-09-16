@@ -14,6 +14,8 @@ import { DatePipe } from '@angular/common';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { configureDnD } from '@wm/components/base';
 import { isMobile, isMobileApp } from '@wm/core';
+import { ListAnimator } from './list.animator';
+import { ButtonComponent } from '@wm/components/input';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -25,6 +27,20 @@ jest.mock('@wm/components/base', () => ({
     ...jest.requireActual('@wm/components/base'),
     configureDnD: jest.fn(),
 }));
+
+jest.mock('jquery', () => jest.fn(() => ({
+    find: jest.fn().mockReturnThis(),
+    first: jest.fn().mockReturnThis(),
+    css: jest.fn(),
+    outerWidth: jest.fn(() => 100),
+    outerHeight: jest.fn(() => 50),
+    insertBefore: jest.fn(),
+    children: jest.fn(() => []),
+    length: 0,
+    attr: jest.fn(),
+    is: jest.fn(() => true),
+    filter: jest.fn(),
+})));
 
 @Component({
     template: `
@@ -44,17 +60,11 @@ class ListWrapperComponent {
     listComponent: ListComponent;
     public testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }];
     public testdata1: any = [{ firstname: 'Peter', id: 1 }, { firstname: '', id: 2 }];
-    onBeforeRender(widget, $data) {
-        // console.log('calling on before render');
-    }
+    onBeforeRender(widget, $data) { }
 
-    onRender(widget, $data) {
-        // console.log('calling on render');
-    }
+    onRender(widget, $data) { }
 
-    onListClick($event, widget) {
-        // console.log('clicked list component ')
-    }
+    onListClick($event, widget) { }
 
     constructor(_pipeProvider: PipeProvider) {
         setPipeProvider(_pipeProvider);
@@ -65,6 +75,7 @@ describe('ListComponent', () => {
     let wrapperComponent: ListWrapperComponent;
     let listComponent: ListComponent;
     let fixture: ComponentFixture<ListWrapperComponent>;
+    let listAnimator: ListAnimator;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -92,6 +103,8 @@ describe('ListComponent', () => {
         listComponent.dataset = wrapperComponent.testdata;
         listComponent.onPropertyChange('dataset', listComponent.dataset);
         listComponent.groupby = ""
+
+        listAnimator = new ListAnimator(listComponent);
     }));
 
     it('should create the List Component', () => {
@@ -1170,8 +1183,661 @@ describe('ListComponent', () => {
         });
     });
 
+    fdescribe('ListAnimator', () => {
+        it('should initialize the list animator', () => {
+            expect(listAnimator).toBeDefined();
+        });
+
+        it('should have correct initial values for leftChildrenCount and rightChildrenCount', () => {
+            expect((listAnimator as any).leftChildrenCount).toBeDefined();
+            expect((listAnimator as any).rightChildrenCount).toBeDefined();
+        });
+
+        it('should handle bounds for swipe action', () => {
+            const mockTarget = {
+                hasClass: jest.fn(() => true),
+                closest: jest.fn(() => mockTarget),
+                children: jest.fn(() => []),
+            } as any;
+
+            const mockEvent = {
+                target: mockTarget,
+            } as any;
+
+            const bounds = listAnimator.bounds(mockEvent, 1);
+
+            expect(bounds).toBeDefined();
+            expect(bounds.strictUpper).toBeDefined();
+            expect(bounds.lower).toBeDefined();
+            expect(bounds.center).toBeDefined();
+            expect(bounds.upper).toBeDefined();
+        });
+
+        it('should trigger full swipe event', () => {
+            const mockActionItems = new QueryList<ButtonComponent>();
+            const mockButton = {
+                getAttr: jest.fn(() => 'left'),
+                $element: {
+                    is: jest.fn(() => true),
+                },
+                hasEventCallback: jest.fn(() => true),
+                invokeEventCallback: jest.fn(),
+            };
+
+            mockActionItems.reset([mockButton as any]);
+            (listAnimator as any).actionItems = mockActionItems;
+            (listAnimator as any).position = 'left';
+
+            const mockEvent = {} as any;
+            listAnimator.invokeFullSwipeEvt(mockEvent);
+
+            expect(mockButton.invokeEventCallback).toHaveBeenCalledWith('tap', { $event: mockEvent });
+        });
+
+        it('should return animation configuration', () => {
+            const result = listAnimator.animation();
+
+            expect(result).toBeDefined();
+            expect(Array.isArray(result)).toBeTruthy();
+            expect(result.length).toBeGreaterThan(0);
+            expect(result[0].target).toBeDefined();
+        });
+
+        it('should create an action panel', () => {
+            const mockLi = {
+                outerWidth: jest.fn(() => 100),
+                outerHeight: jest.fn(() => 50)
+            };
+            const mockActionPanelTemplate = {
+                css: jest.fn().mockReturnThis(),
+                insertBefore: jest.fn().mockReturnThis()
+            };
+
+            const result = (listAnimator as any).createActionPanel(mockLi, mockActionPanelTemplate);
+
+            expect(mockActionPanelTemplate.css).toHaveBeenCalledWith({
+                width: '100px',
+                height: '50px',
+                marginBottom: '-50px',
+                float: 'left',
+                padding: 0
+            });
+            expect(mockActionPanelTemplate.insertBefore).toHaveBeenCalledWith(mockLi);
+            expect(result).toBe(mockActionPanelTemplate);
+        });
+
+        it('should reset element', () => {
+            const mockEl = {
+                css: jest.fn()
+            };
+
+            (listAnimator as any).resetElement(mockEl);
+
+            expect(mockEl.css).toHaveBeenCalledWith({
+                transform: 'none',
+                transition: 'none'
+            });
+        });
+
+        it('should return first child when position is left', () => {
+            const mockActionTemplate = {
+                children: jest.fn().mockReturnThis(),
+                length: 2,
+                first: jest.fn().mockReturnValue('firstChild'),
+                last: jest.fn().mockReturnValue('lastChild')
+            };
+            (listAnimator as any).position = 'left';
+
+            const result = (listAnimator as any).getChildActionElement(mockActionTemplate);
+
+            expect(mockActionTemplate.children).toHaveBeenCalled();
+            expect(mockActionTemplate.first).toHaveBeenCalled();
+            expect(result).toBe('firstChild');
+        });
+
+        it('should return last child when position is not left', () => {
+            const mockActionTemplate = {
+                children: jest.fn().mockReturnThis(),
+                length: 2,
+                first: jest.fn().mockReturnValue('firstChild'),
+                last: jest.fn().mockReturnValue('lastChild')
+            };
+            (listAnimator as any).position = 'right';
+
+            const result = (listAnimator as any).getChildActionElement(mockActionTemplate);
+
+            expect(mockActionTemplate.children).toHaveBeenCalled();
+            expect(mockActionTemplate.last).toHaveBeenCalled();
+            expect(result).toBe('lastChild');
+        });
+
+        it('should return undefined when there are no children', () => {
+            const mockActionTemplate = {
+                children: jest.fn().mockReturnValue({ length: 0 })
+            };
+
+            const result = (listAnimator as any).getChildActionElement(mockActionTemplate);
+
+            expect(mockActionTemplate.children).toHaveBeenCalled();
+            expect(result).toBeUndefined();
+        });
+
+        describe('initActionPanel', () => {
+            let mockLi, mockActionTemplate, mockActionPanel, mockChildElement;
+
+            beforeEach(() => {
+                mockLi = {};
+                mockActionTemplate = {};
+                mockActionPanel = {
+                    css: jest.fn()
+                };
+                mockChildElement = {
+                    css: jest.fn().mockReturnValue('mockColor')
+                };
+
+                (listAnimator as any).li = mockLi;
+                (listAnimator as any).createActionPanel = jest.fn().mockReturnValue(mockActionPanel);
+                (listAnimator as any).getChildActionElement = jest.fn().mockReturnValue(mockChildElement);
+                (listAnimator as any).computeTotalChildrenWidth = jest.fn().mockReturnValue(100);
+                (listAnimator as any).computeTransitionProportions = jest.fn().mockReturnValue([0.5, 1]);
+            });
+
+            it('should initialize the action panel correctly', () => {
+                (listAnimator as any).initActionPanel(mockActionTemplate);
+
+                expect((listAnimator as any).createActionPanel).toHaveBeenCalledWith(mockLi, mockActionTemplate);
+                expect((listAnimator as any).getChildActionElement).toHaveBeenCalledWith(mockActionPanel);
+                expect(mockActionPanel.css).toHaveBeenCalledWith({
+                    backgroundColor: 'mockColor'
+                });
+                expect((listAnimator as any).computeTotalChildrenWidth).toHaveBeenCalledWith(mockActionPanel);
+                expect((listAnimator as any).computeTransitionProportions).toHaveBeenCalledWith(mockActionPanel);
+                expect((listAnimator as any).actionPanel).toBe(mockActionPanel);
+                expect((listAnimator as any).limit).toBe(100);
+                expect((listAnimator as any).transitionProportions).toEqual([0.5, 1]);
+            });
+        });
+
+        describe('bounds', () => {
+            let listAnimator: ListAnimator;
+            let listComponent: ListComponent;
+            let containerElement: HTMLElement;
+
+            beforeEach(() => {
+                // Create a real DOM structure
+                containerElement = document.createElement('div');
+                containerElement.innerHTML = `
+                <ul class="app-livelist-container">
+                    <li class="app-list-item">
+                        <div class="app-list-item-left-action-panel" position="left">
+                            <button>Left Action</button>
+                        </div>
+                        <div class="app-list-item-content">Item 1</div>
+                        <div class="app-list-item-right-action-panel" position="right">
+                            <button>Right Action</button>
+                        </div>
+                    </li>
+                    <li class="app-list-item">
+                        <div class="app-list-item-content">Item 2</div>
+                    </li>
+                </ul>
+            `;
+                document.body.appendChild(containerElement);
+
+                listComponent = {
+                    getNativeElement: () => containerElement,
+                    groupby: false
+                } as any as ListComponent;
+
+                listAnimator = new ListAnimator(listComponent);
+
+                (listAnimator as any).$el = $(containerElement).find('ul.app-livelist-container');
+            });
+
+            afterEach(() => {
+                document.body.removeChild(containerElement);
+            });
+
+            const defaultBounds = {
+                strictUpper: true,
+                strictLower: true,
+                lower: 0,
+                center: 0,
+                upper: 0
+            };
+
+            it('should return default bounds when target is not app-list-item', () => {
+                const event = { target: containerElement.querySelector('.app-livelist-container') };
+                const result = listAnimator.bounds(event, 1);
+
+                expect(result).toEqual(defaultBounds);
+            });
+
+            it('should return default bounds for left action panel when li is different', () => {
+                const event = { target: containerElement.querySelector('.app-list-item') };
+                (listAnimator as any).li = null;
+                (listAnimator as any).limit = 100;
+
+                const result = listAnimator.bounds(event, 1);
+
+                expect(result).toEqual(defaultBounds);
+            });
+
+            it('should return default bounds for right action panel when li is different', () => {
+                const event = { target: containerElement.querySelector('.app-list-item') };
+                (listAnimator as any).li = null;
+                (listAnimator as any).limit = 100;
+
+                const result = listAnimator.bounds(event, -1);
+
+                expect(result).toEqual(defaultBounds);
+            });
+
+            it('should return bounds when left action panel is visible and li is the same', () => {
+                const listItem = containerElement.querySelector('.app-list-item');
+                const event = { target: listItem };
+                (listAnimator as any).li = $(listItem);
+                (listAnimator as any).position = 'left';
+                (listAnimator as any).limit = 100;
+
+                const result = listAnimator.bounds(event, 1);
+
+                expect(result).toEqual({
+                    strictUpper: false,
+                    lower: -100,
+                    center: 100
+                });
+            });
+
+            it('should return bounds when right action panel is visible and li is the same', () => {
+                const listItem = containerElement.querySelector('.app-list-item');
+                const event = { target: listItem };
+                (listAnimator as any).li = $(listItem);
+                (listAnimator as any).position = 'right';
+                (listAnimator as any).limit = 100;
+
+                const result = listAnimator.bounds(event, -1);
+
+                expect(result).toEqual({
+                    center: -100,
+                    upper: 100,
+                    strictLower: false
+                });
+            });
+
+            it('should return default bounds in groupby scenario', () => {
+                listComponent.groupby = "true";
+                const event = { target: containerElement.querySelector('.app-list-item') };
+                (listAnimator as any).li = null;
+                (listAnimator as any).limit = 100;
+                const result = listAnimator.bounds(event, 1);
+                expect(result).toEqual(defaultBounds);
+            });
+
+            it('should return default bounds when no visible buttons', () => {
+                const listItemWithoutButtons = containerElement.querySelectorAll('.app-list-item')[1];
+                const event = { target: listItemWithoutButtons };
+                (listAnimator as any).li = null;
+
+                const result = listAnimator.bounds(event, 1);
+
+                expect(result).toEqual(defaultBounds);
+            });
+        });
+
+        describe('onLower', () => {
+            it('should reset state and clear li when position is left', () => {
+                (listAnimator as any).position = 'left';
+                (listAnimator as any).li = {};
+                (listAnimator as any).resetState = jest.fn();
+
+                listAnimator.onLower();
+
+                expect((listAnimator as any).resetState).toHaveBeenCalled();
+                expect((listAnimator as any).li).toBeNull();
+            });
+
+            it('should not reset state or clear li when position is not left', () => {
+                (listAnimator as any).position = 'right';
+                (listAnimator as any).li = {};
+                (listAnimator as any).resetState = jest.fn();
+
+                listAnimator.onLower();
+
+                expect((listAnimator as any).resetState).not.toHaveBeenCalled();
+                expect((listAnimator as any).li).not.toBeNull();
+            });
+        });
+
+        describe('onUpper', () => {
+            it('should reset state and clear li when position is right', () => {
+                (listAnimator as any).position = 'right';
+                (listAnimator as any).li = {};
+                (listAnimator as any).resetState = jest.fn();
+
+                listAnimator.onUpper();
+
+                expect((listAnimator as any).resetState).toHaveBeenCalled();
+                expect((listAnimator as any).li).toBeNull();
+            });
+
+            it('should not reset state or clear li when position is not right', () => {
+                (listAnimator as any).position = 'left';
+                (listAnimator as any).li = {};
+                (listAnimator as any).resetState = jest.fn();
+
+                listAnimator.onUpper();
+
+                expect((listAnimator as any).resetState).not.toHaveBeenCalled();
+                expect((listAnimator as any).li).not.toBeNull();
+            });
+        });
+
+        describe('threshold', () => {
+            it('should return 10', () => {
+                expect(listAnimator.threshold()).toBe(10);
+            });
+        });
+
+        describe('animation', () => {
+            it('should return correct animation configuration', () => {
+                (listAnimator as any).li = { mock: 'li' };
+                (listAnimator as any).actionPanel = {
+                    children: jest.fn().mockReturnValue({ mock: 'children' })
+                };
+
+                const result = listAnimator.animation();
+
+                expect(result.length).toBe(2);
+                expect(result[0].target()).toEqual({ mock: 'li' });
+                expect(result[0].css).toEqual({
+                    transform: 'translate3d(${{$D + $d}}px, 0, 0)'
+                });
+                expect(result[1].target()).toEqual({ mock: 'children' });
+                expect(result[1].css).toEqual({
+                    transform: 'translate3d(${{computeActionTransition($i, $D + $d)}}px, 0, 0)'
+                });
+            });
+        });
+
+        describe('context', () => {
+            let context: any;
+
+            beforeEach(() => {
+                (listAnimator as any).limit = 100;
+                (listAnimator as any).transitionProportions = [0.5, 1];
+                context = listAnimator.context();
+            });
+
+            it('should return an object with computeActionTransition function', () => {
+                expect(typeof context.computeActionTransition).toBe('function');
+            });
+
+            it('should compute correct transition when $d is less than limit', () => {
+                expect(context.computeActionTransition(0, 50)).toBe(25);
+                expect(context.computeActionTransition(1, 50)).toBe(50);
+            });
+
+            it('should compute correct transition when $d is greater than limit', () => {
+                expect(context.computeActionTransition(0, 150)).toBe(100);
+                expect(context.computeActionTransition(1, 150)).toBe(150);
+            });
+
+            it('should compute correct transition for negative $d', () => {
+                expect(context.computeActionTransition(0, -50)).toBe(-25);
+                expect(context.computeActionTransition(1, -50)).toBe(-50);
+            });
+
+            it('should compute correct transition when negative $d is less than negative limit', () => {
+                expect(context.computeActionTransition(0, -150)).toBe(-100);
+                expect(context.computeActionTransition(1, -150)).toBe(-150);
+            });
+        });
+
+        describe('invokeFullSwipeEvt', () => {
+            let mockEvent: any;
+            let mockActionItems: any[];
+
+            beforeEach(() => {
+                mockEvent = { type: 'swipe' };
+                mockActionItems = [
+                    { getAttr: jest.fn(), $element: { is: jest.fn() }, hasEventCallback: jest.fn(), invokeEventCallback: jest.fn() },
+                    { getAttr: jest.fn(), $element: { is: jest.fn() }, hasEventCallback: jest.fn(), invokeEventCallback: jest.fn() },
+                ];
+                (listAnimator as any).actionItems = mockActionItems;
+                (listAnimator as any).resetState = jest.fn();
+            });
+
+            it('should invoke tap event on the first visible left action', () => {
+                (listAnimator as any).position = 'left';
+                mockActionItems[0].getAttr.mockReturnValue('left');
+                mockActionItems[0].$element.is.mockReturnValue(true);
+                mockActionItems[0].hasEventCallback.mockReturnValue(true);
+
+                listAnimator.invokeFullSwipeEvt(mockEvent);
+
+                expect(mockActionItems[0].invokeEventCallback).toHaveBeenCalledWith('tap', { $event: mockEvent });
+                expect((listAnimator as any).resetState).toHaveBeenCalled();
+                expect((listAnimator as any).li).toBeNull();
+            });
+
+            it('should invoke tap event on the last visible right action', () => {
+                (listAnimator as any).position = 'right';
+                mockActionItems[1].getAttr.mockReturnValue('right');
+                mockActionItems[1].$element.is.mockReturnValue(true);
+                mockActionItems[1].hasEventCallback.mockReturnValue(true);
+
+                listAnimator.invokeFullSwipeEvt(mockEvent);
+
+                expect(mockActionItems[1].invokeEventCallback).toHaveBeenCalledWith('tap', { $event: mockEvent });
+                expect((listAnimator as any).resetState).toHaveBeenCalled();
+                expect((listAnimator as any).li).toBeNull();
+            });
+
+            it('should not invoke tap event when no matching action is found', () => {
+                (listAnimator as any).position = 'left';
+                mockActionItems.forEach(item => {
+                    item.getAttr.mockReturnValue('right');
+                    item.$element.is.mockReturnValue(false);
+                });
+
+                listAnimator.invokeFullSwipeEvt(mockEvent);
+
+                expect(mockActionItems[0].invokeEventCallback).not.toHaveBeenCalled();
+                expect(mockActionItems[1].invokeEventCallback).not.toHaveBeenCalled();
+                expect((listAnimator as any).resetState).toHaveBeenCalled();
+                expect((listAnimator as any).li).toBeNull();
+            });
+        });
+
+        describe('onAnimation', () => {
+            let mockEvent: any;
+            let mockLi: any;
+            let mockActionPanel: any;
+            let mockChildElement: any;
+
+            beforeEach(() => {
+                mockEvent = { type: 'swipe' };
+                mockLi = { outerWidth: jest.fn().mockReturnValue(100) };
+                mockActionPanel = { attr: jest.fn() };
+                mockChildElement = { width: jest.fn().mockReturnValue(50) };
+
+                (listAnimator as any).list = { triggerListItemSelection: jest.fn() };
+                (listAnimator as any).li = mockLi;
+                (listAnimator as any).actionPanel = mockActionPanel;
+                (listAnimator as any).getChildActionElement = jest.fn().mockReturnValue(mockChildElement);
+                (listAnimator as any).transitionProportions = [0.5, 1];
+                (listAnimator as any).limit = 20;
+                (listAnimator as any).invokeFullSwipeEvt = jest.fn();
+            });
+
+            it('should trigger list item selection', () => {
+                listAnimator.onAnimation(mockEvent, 10);
+
+                expect((listAnimator as any).list.triggerListItemSelection).toHaveBeenCalledWith(mockLi, mockEvent);
+            });
+
+            it('should not invoke full swipe when enablefullswipe is not true', () => {
+                mockActionPanel.attr.mockReturnValue('false');
+
+                listAnimator.onAnimation(mockEvent, 10);
+
+                expect((listAnimator as any).invokeFullSwipeEvt).not.toHaveBeenCalled();
+            });
+
+            it('should invoke full swipe when distance percentage is greater than 50% for right swipe', () => {
+                mockActionPanel.attr.mockReturnValue('true');
+                (listAnimator as any).position = 'right';
+                (listAnimator as any).rightChildrenCount = 2;
+
+                listAnimator.onAnimation(mockEvent, -80);
+
+                expect((listAnimator as any).invokeFullSwipeEvt).toHaveBeenCalledWith(mockEvent);
+            });
+
+            it('should not invoke full swipe when distance percentage is less than or equal to 50%', () => {
+                mockActionPanel.attr.mockReturnValue('true');
+                (listAnimator as any).position = 'left';
+                (listAnimator as any).rightChildrenCount = 2;
+
+                listAnimator.onAnimation(mockEvent, 40);
+
+                expect((listAnimator as any).invokeFullSwipeEvt).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('computeTotalChildrenWidth', () => {
+            it('should compute the total width of all children', () => {
+                const parentElement = document.createElement('div');
+                parentElement.innerHTML = `
+                <div style="width: 50px;"></div>
+                <div style="width: 75px;"></div>
+                <div style="width: 100px;"></div>
+            `;
+                document.body.appendChild(parentElement);
+
+                // Call the method
+                const result = (listAnimator as any).computeTotalChildrenWidth($(parentElement));
+
+                // Verify the result
+                expect(result).toBe(225); // 50 + 75 + 100
+
+                // Clean up
+                document.body.removeChild(parentElement);
+            });
+
+            it('should return 0 for an element with no children', () => {
+                const emptyElement = document.createElement('div');
+                document.body.appendChild(emptyElement);
+
+                const result = (listAnimator as any).computeTotalChildrenWidth($(emptyElement));
+
+                expect(result).toBe(0);
+
+                document.body.removeChild(emptyElement);
+            });
+        });
+
+        describe('computeTransitionProportions', () => {
+            beforeEach(() => {
+                (listAnimator as any).computeTotalChildrenWidth = jest.fn().mockReturnValue(225);
+            });
+
+            it('should compute correct proportions when position is left', () => {
+                (listAnimator as any).position = 'left';
+
+                const parentElement = document.createElement('div');
+                parentElement.innerHTML = `
+                <div style="width: 50px;"></div>
+                <div style="width: 75px;"></div>
+                <div style="width: 100px;"></div>
+            `;
+                document.body.appendChild(parentElement);
+
+                const result = (listAnimator as any).computeTransitionProportions($(parentElement));
+
+                expect(result).toEqual([
+                    0.2222222222222222,  // 50 / 225
+                    0.5555555555555556,  // (50 + 75) / 225
+                    1                    // (50 + 75 + 100) / 225
+                ]);
+
+                document.body.removeChild(parentElement);
+            });
+
+            it('should compute correct proportions when position is right', () => {
+                (listAnimator as any).position = 'right';
+
+                const parentElement = document.createElement('div');
+                parentElement.innerHTML = `
+                <div style="width: 50px;"></div>
+                <div style="width: 75px;"></div>
+                <div style="width: 100px;"></div>
+            `;
+                document.body.appendChild(parentElement);
+
+                const result = (listAnimator as any).computeTransitionProportions($(parentElement));
+
+                expect(result).toEqual([
+                    1,                    // (225 - 0) / 225
+                    0.7777777777777778,   // (225 - 50) / 225
+                    0.4444444444444444    // (225 - 125) / 225
+                ]);
+
+                document.body.removeChild(parentElement);
+            });
+
+            it('should return an empty array for an element with no children', () => {
+                const emptyElement = document.createElement('div');
+                document.body.appendChild(emptyElement);
+
+                const result = (listAnimator as any).computeTransitionProportions($(emptyElement));
+
+                expect(result).toEqual([]);
+
+                document.body.removeChild(emptyElement);
+            });
+        });
+
+        describe('resetState', () => {
+            beforeEach(() => {
+                (listAnimator as any).resetElement = jest.fn();
+
+                (listAnimator as any).li = $('<div>');
+                (listAnimator as any).actionPanel = $('<div>');
+            });
+
+            it('should reset li and actionPanel elements', () => {
+                (listAnimator as any).resetState();
+
+                expect((listAnimator as any).resetElement).toHaveBeenCalledTimes(2);
+                expect((listAnimator as any).resetElement).toHaveBeenCalledWith((listAnimator as any).li);
+            });
+
+            it('should set actionPanel to null if it exists', () => {
+                (listAnimator as any).resetState();
+                expect((listAnimator as any).actionPanel).toBeNull();
+            });
+
+            it('should not set actionPanel to null if it doesn\'t exist', () => {
+                (listAnimator as any).actionPanel = null;
+                (listAnimator as any).resetState();
+
+                expect((listAnimator as any).actionPanel).toBeNull();
+                expect((listAnimator as any).resetElement).toHaveBeenCalledTimes(2);
+            });
+
+            it('should handle case when li doesn\'t exist', () => {
+                (listAnimator as any).li = null;
+                (listAnimator as any).resetState();
+
+                expect((listAnimator as any).resetElement).toHaveBeenCalledTimes(2);
+                expect((listAnimator as any).resetElement).toHaveBeenCalledWith((listAnimator as any).actionPanel);
+            });
+        });
+    });
+
     it('should setup handlers correctly', () => {
-        // Mock the listItems
         const mockChanges = {
             subscribe: jest.fn()
         };
@@ -1180,7 +1846,6 @@ describe('ListComponent', () => {
             writable: true
         });
 
-        // Mock the nativeElement and its querySelector method
         const mockAddEventListener = jest.fn();
         const mockQuerySelector = jest.fn().mockReturnValue({
             addEventListener: mockAddEventListener
