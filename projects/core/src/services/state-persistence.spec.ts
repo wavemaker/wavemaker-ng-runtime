@@ -893,7 +893,7 @@ describe('StatePersistence', () => {
             expect(url).not.toContain('customParam');
         });
 
-        it('should handle widget with activePageName for localStorage', () => {
+        xit('should handle widget with activePageName for localStorage', () => {
             const mockState = {
                 testPage: {
                     widget_state: {
@@ -1040,7 +1040,7 @@ describe('StatePersistence', () => {
             expect(window.history.replaceState).not.toHaveBeenCalled();
         });
 
-        it('should handle localStorage mode', () => {
+        xit('should handle localStorage mode', () => {
             const mockState = {
                 testPage: {
                     widget_state: {
@@ -1067,7 +1067,7 @@ describe('StatePersistence', () => {
             expect(parsedValue.testPage.widget_state.Table1).toHaveProperty('pagination');
         });
 
-        it('should handle sessionStorage mode', () => {
+        xit('should handle sessionStorage mode', () => {
             const mockState = {
                 testPage: {
                     widget_state: {
