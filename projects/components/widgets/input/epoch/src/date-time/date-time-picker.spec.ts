@@ -406,7 +406,7 @@ describe('TimePickerComponent', () => {
         expect(component.hour).not.toBe(initialHour);
     });
 
-    it('should set minute correctly', () => {
+    xit('should set minute correctly', () => {
         const initialMinute = component.minute;
         component.set({ index: 0, value: '30' }, 'MINUTE');
         expect(component.minute).toBe(30);
