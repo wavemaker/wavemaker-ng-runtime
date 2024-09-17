@@ -8,7 +8,7 @@ jest.mock('../utils/utils', () => ({
     _WM_APP_PROJECT: { cdnUrl: 'https://cdn.example.com/', ngDest: '' }
 }));
 
-xdescribe('ScriptLoaderService', () => {
+describe('ScriptLoaderService', () => {
     let service: ScriptLoaderService;
     let httpMock: HttpTestingController;
 

@@ -1183,7 +1183,7 @@ describe('ListComponent', () => {
         });
     });
 
-    fdescribe('ListAnimator', () => {
+    describe('ListAnimator', () => {
         it('should initialize the list animator', () => {
             expect(listAnimator).toBeDefined();
         });

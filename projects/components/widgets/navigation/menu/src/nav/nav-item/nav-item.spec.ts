@@ -21,7 +21,6 @@ const markup = `<ul>
 class TestComponent { }
 
 describe('NavItemDirective', () => {
-    let component: TestComponent;
     let fixture: ComponentFixture<TestComponent>;
     let navItemElements: DebugElement[];
 
@@ -35,7 +34,6 @@ describe('NavItemDirective', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(TestComponent);
-        component = fixture.componentInstance;
         fixture.detectChanges();
         navItemElements = fixture.debugElement.queryAll(By.directive(NavItemDirective));
     });
@@ -80,6 +78,7 @@ describe('NavItemDirective', () => {
             expect(addClassSpy).not.toHaveBeenCalled();
         });
     });
+
     describe('ngOnDetach', () => {
         let directive: NavItemDirective;
 
@@ -108,4 +107,35 @@ describe('NavItemDirective', () => {
             expect(superSpy).toHaveBeenCalled();
         });
     });
+
+    describe('ngAfterViewInit', () => {
+        it('should call innerLink.onActive in ngAfterViewInit when innerLink is defined', () => {
+            const directive = navItemElements[0].injector.get(NavItemDirective);
+            const mockInnerLink = { onActive: jest.fn() };
+            directive['innerLink'] = mockInnerLink as any;
+
+            // Spy on the makeActive function
+            const makeActiveSpy = jest.spyOn(directive, 'makeActive');
+
+            // Call ngAfterViewInit and trigger the onActive callback
+            directive.ngAfterViewInit();
+
+            // Simulate the onActive callback being triggered
+            expect(mockInnerLink.onActive).toHaveBeenCalledWith(expect.any(Function));
+
+            // Call the function that was passed to onActive
+            const callback = mockInnerLink.onActive.mock.calls[0][0];
+            callback(); // Manually invoke the callback
+
+            // Ensure that makeActive is called when the callback is triggered
+            expect(makeActiveSpy).toHaveBeenCalled();
+        });
+
+        it('should not throw when innerLink is undefined', () => {
+            const directive = navItemElements[0].injector.get(NavItemDirective);
+            directive['innerLink'] = undefined;
+            expect(() => directive.ngAfterViewInit()).not.toThrow();
+        });
+    });
+
 });

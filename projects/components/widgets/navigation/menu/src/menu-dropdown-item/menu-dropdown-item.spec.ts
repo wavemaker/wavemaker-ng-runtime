@@ -2,16 +2,23 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ElementRef } from '@angular/core';
 import { MenuDropdownItemComponent } from './menu-dropdown-item.component';
 import { KEYBOARD_MOVEMENTS, MENU_POSITION, MenuComponent } from '../menu.component';
-import { App, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
+import { addClass, App, triggerItemAction, UserDefinedExecutionContext } from '@wm/core';
 import { NavComponent } from '../nav/nav.component';
 import { Router } from '@angular/router';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { clone } from 'lodash-es';
+import { hasLinkToCurrentPage } from '@wm/components/base';
 
 // Mock the triggerItemAction function
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
-    triggerItemAction: jest.fn()
+    triggerItemAction: jest.fn(),
+    addClass: jest.fn(),
+    toggleClass: jest.fn()
+}));
+jest.mock('@wm/components/base', () => ({
+    ...jest.requireActual('@wm/components/base'),
+    hasLinkToCurrentPage: jest.fn()
 }));
 jest.mock('lodash-es', () => ({
     ...jest.requireActual('lodash-es'),
@@ -171,7 +178,6 @@ describe('MenuDropdownItemComponent', () => {
         });
     });
 
-
     describe('getInitialKeyMovements', () => {
         it('should return modified key movements for HORIZONTAL layout', () => {
             component.menuRef.menulayout = MENU_LAYOUT_TYPE.HORIZONTAL;
@@ -232,5 +238,13 @@ describe('MenuDropdownItemComponent', () => {
         });
     });
 
+    describe('ngOnInit', () => {
+        it('should add active class if parentNav is present and hasLinkToCurrentPage is true', () => {
+            component['parentNav'] = mockNavComponent as NavComponent;
+            (hasLinkToCurrentPage as jest.Mock).mockReturnValue(true);
+            component.ngOnInit();
+            expect(addClass).toHaveBeenCalledWith(mockElementRef.nativeElement, 'active');
+        });
+    });
 
 });

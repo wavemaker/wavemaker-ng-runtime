@@ -7,13 +7,17 @@ import { mockApp } from 'projects/components/base/src/test/util/component-test-u
 import { PROP_TYPE } from '@wm/components/base';
 import { setCSS } from '@wm/core';
 
+jest.mock('@wm/core', () => ({
+    ...jest.requireActual('@wm/core'),
+    setCSS: jest.fn()
+}));
+
 @Component({
     template: '<section wmPrefab prefabname="test" name="testPrefab"></section>'
 })
 class TestComponent { }
 
 describe('PrefabDirective', () => {
-    let component: TestComponent;
     let fixture: ComponentFixture<TestComponent>;
     let directiveElement: DebugElement;
     let directive: PrefabDirective;
@@ -28,7 +32,6 @@ describe('PrefabDirective', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(TestComponent);
-        component = fixture.componentInstance;
         directiveElement = fixture.debugElement.query(By.directive(PrefabDirective));
         directive = directiveElement.injector.get(PrefabDirective);
         fixture.detectChanges();
@@ -94,5 +97,22 @@ describe('PrefabDirective', () => {
         const setPropsMethod = jest.spyOn(directive, 'setProps');
         directive.setProps({ properties: mockProps });
         expect(setPropsMethod).toHaveBeenCalled();
+    });
+
+    describe('onStyleChange', () => {
+        it('should set overflow to auto when key is height', () => {
+            directive.onStyleChange('height', '100px', '50px');
+            expect(setCSS).toHaveBeenCalledWith(directive.nativeElement, 'overflow', 'auto');
+        });
+
+        it('should handle null or undefined values', () => {
+            directive.onStyleChange('height', null, undefined);
+            expect(setCSS).toHaveBeenCalledWith(directive.nativeElement, 'overflow', 'auto');
+        });
+
+        it('should handle different types of values', () => {
+            directive.onStyleChange('height', 100, '50%');
+            expect(setCSS).toHaveBeenCalledWith(directive.nativeElement, 'overflow', 'auto');
+        });
     });
 });

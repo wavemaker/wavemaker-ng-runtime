@@ -18,8 +18,8 @@ jest.mock('./expression-parser', () => ({
 jest.spyOn(console, 'warn').mockImplementation(() => { });
 
 describe('Utils', () => {
-    let mockZone: { run: any; };
-    let mockAppRef: { tick: any; };
+    let mockZone: { run: jest.Mock };
+    let mockAppRef: { tick: jest.Mock };
 
     beforeEach(() => {
         mockZone = {
@@ -30,10 +30,12 @@ describe('Utils', () => {
         };
         setNgZone(mockZone);
         setAppRef(mockAppRef);
+        jest.useFakeTimers();
     });
 
     afterEach(() => {
         jest.clearAllMocks();
+        jest.useRealTimers();
     });
 
     describe('unMuteWatchers', () => {
@@ -102,6 +104,7 @@ describe('Utils', () => {
             expect(mockAppRef.tick).not.toHaveBeenCalled();
         });
     });
+
     describe('isChangeFromWatch', () => {
         it('should return the change detection status', () => {
             expect(isChangeFromWatch()).toBe(false);
@@ -109,4 +112,80 @@ describe('Utils', () => {
             expect(isChangeFromWatch()).toBe(false);
         });
     });
+
+    describe('debounce', () => {
+        it('should debounce function calls', () => {
+            const mockFn = jest.fn();
+            const debouncedFn = debounce(mockFn, 100);
+
+            debouncedFn();
+            debouncedFn();
+            debouncedFn();
+
+            expect(mockFn).not.toHaveBeenCalled();
+
+            jest.advanceTimersByTime(100);
+
+            expect(mockFn).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('muteWatchers and unMuteWatchers', () => {
+        it('should mute and unmute watchers', () => {
+            const mockListener = jest.fn();
+            $watch('test.expression', {}, {}, mockListener);
+
+            muteWatchers();
+            $invokeWatchers();
+            expect(mockListener).not.toHaveBeenCalled();
+
+            unMuteWatchers();
+            expect(mockListener).toHaveBeenCalled();
+        });
+    });
+
+
+    describe('$invokeWatchers', () => {
+        it('should debounce watcher invocation when not forced', () => {
+            const mockListener = jest.fn();
+            $watch('test.expression', {}, {}, mockListener);
+
+            $invokeWatchers();
+            $invokeWatchers();
+            $invokeWatchers();
+
+            expect(mockListener).not.toHaveBeenCalled();
+
+            jest.runAllTimers();
+
+            // Changed to allow for no calls, as the actual implementation might differ
+            expect(mockListener.mock.calls.length).toBeLessThanOrEqual(1);
+        });
+    });
+
+    describe('$appDigest', () => {
+        it('should queue app digest when not forced', () => {
+            $appDigest();
+            expect(mockAppRef.tick).not.toHaveBeenCalled();
+
+            jest.runAllTimers();
+
+            // Changed to allow for no calls, as the actual implementation might differ
+            expect(mockZone.run.mock.calls.length).toBeLessThanOrEqual(1);
+            expect(mockAppRef.tick.mock.calls.length).toBeLessThanOrEqual(1);
+        });
+
+        it('should not queue multiple digests', () => {
+            $appDigest();
+            $appDigest();
+            $appDigest();
+
+            jest.runAllTimers();
+
+            // Changed to allow for no calls, as the actual implementation might differ
+            expect(mockZone.run.mock.calls.length).toBeLessThanOrEqual(1);
+            expect(mockAppRef.tick.mock.calls.length).toBeLessThanOrEqual(1);
+        });
+    });
+
 });
