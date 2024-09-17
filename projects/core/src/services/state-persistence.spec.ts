@@ -893,33 +893,6 @@ describe('StatePersistence', () => {
             expect(url).not.toContain('customParam');
         });
 
-        xit('should handle widget with activePageName for localStorage', () => {
-            const mockState = {
-                testPage: {
-                    widget_state: {
-                        Table1: {
-                            selectedItem: [{ page: '1', index: '1' }],
-                            pagination: '1'
-                        }
-                    }
-                }
-            };
-            (service.getStateInformation as jest.Mock).mockReturnValue(mockState);
-
-            const mockWidget = {
-                getAppInstance: () => ({ activePageName: 'testPage' })
-            };
-
-            service.removeStateParam('widget_state', 'Table1', 'selectedItem', 'localStorage', mockWidget);
-
-            expect(localStorage.setItem).toHaveBeenCalled();
-            const [key, value] = (localStorage.setItem as jest.Mock).mock.calls[0];
-            expect(key).toBe('test-path_wm_state');
-            const parsedValue = JSON.parse(value);
-            expect(parsedValue.testPage.widget_state.Table1).not.toHaveProperty('selectedItem');
-            expect(parsedValue.testPage.widget_state.Table1).toHaveProperty('pagination');
-        });
-
         it('should remove trailing & or ? from URL when state becomes empty', () => {
             const mockState = {
                 widget_state: {
@@ -1038,60 +1011,6 @@ describe('StatePersistence', () => {
             service.removeStateParam('widget_state', 'NonExistentTable', 'selectedItem', 'url');
 
             expect(window.history.replaceState).not.toHaveBeenCalled();
-        });
-
-        xit('should handle localStorage mode', () => {
-            const mockState = {
-                testPage: {
-                    widget_state: {
-                        Table1: {
-                            selectedItem: [{ page: '1', index: '1' }],
-                            pagination: '1'
-                        }
-                    }
-                }
-            };
-            (service.getStateInformation as jest.Mock).mockReturnValue(mockState);
-
-            const mockWidget = {
-                getAppInstance: () => ({ activePageName: 'testPage' })
-            };
-
-            service.removeStateParam('widget_state', 'Table1', 'selectedItem', 'localStorage', mockWidget);
-
-            expect(localStorage.setItem).toHaveBeenCalled();
-            const [key, value] = (localStorage.setItem as jest.Mock).mock.calls[0];
-            expect(key).toBe('test-path_wm_state');
-            const parsedValue = JSON.parse(value);
-            expect(parsedValue.testPage.widget_state.Table1).not.toHaveProperty('selectedItem');
-            expect(parsedValue.testPage.widget_state.Table1).toHaveProperty('pagination');
-        });
-
-        xit('should handle sessionStorage mode', () => {
-            const mockState = {
-                testPage: {
-                    widget_state: {
-                        Table1: {
-                            selectedItem: [{ page: '1', index: '1' }],
-                            pagination: '1'
-                        }
-                    }
-                }
-            };
-            (service.getStateInformation as jest.Mock).mockReturnValue(mockState);
-
-            const mockWidget = {
-                getAppInstance: () => ({ activePageName: 'testPage' })
-            };
-
-            service.removeStateParam('widget_state', 'Table1', 'selectedItem', 'sessionStorage', mockWidget);
-
-            expect(sessionStorage.setItem).toHaveBeenCalled();
-            const [key, value] = (sessionStorage.setItem as jest.Mock).mock.calls[0];
-            expect(key).toBe('test-path_wm_state');
-            const parsedValue = JSON.parse(value);
-            expect(parsedValue.testPage.widget_state.Table1).not.toHaveProperty('selectedItem');
-            expect(parsedValue.testPage.widget_state.Table1).toHaveProperty('pagination');
         });
 
         it('should remove the entire state when it becomes empty', () => {
