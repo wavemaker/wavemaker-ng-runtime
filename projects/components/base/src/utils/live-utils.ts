@@ -18,7 +18,12 @@ export const setHeaderConfig = (headerConfig, config, field, index?: number): vo
     forEach(headerConfig, cols => {
         if (get(cols, 'isGroup')) {
             if (cols.field === field) {
-                cols.columns[index] = config;
+                const id = cols.columns?.findIndex((col) => col?.field === config.field);
+                if (id == -1) {
+                    cols.columns[index] = config;
+                } else {
+                    cols.columns[id] = config;
+                }
             } else {
                 setHeaderConfig(cols.columns, config, field, index);
             }
