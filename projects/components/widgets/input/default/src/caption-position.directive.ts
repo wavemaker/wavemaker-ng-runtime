@@ -30,7 +30,7 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         let mobileInputVal;
         // In case of mobile date / time picker check for input element's value which has 'mobile-input' class
         if (this.inputEl.length > 1 && this.inputEl.hasClass('mobile-input')) {
-            _.forEach(this.inputEl, (el) => {
+            forEach(this.inputEl, (el) => {
                 if ($(el).hasClass('mobile-input') && el.value) {
                     mobileInputVal = el.value;
                 }
