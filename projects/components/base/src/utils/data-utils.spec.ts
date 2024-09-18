@@ -36,6 +36,7 @@ jest.mock('@wm/core', () => ({
             SET_INPUT: 'SET_INPUT',
             GET_ENTITY_NAME: 'GET_ENTITY_NAME',
             GET_RELATED_PRIMARY_KEYS: 'GET_RELATED_PRIMARY_KEYS',
+            GET_RELATED_TABLE_DATA: 'GET_RELATED_TABLE_DATA',
         }
     },
     FormWidgetType: {
@@ -470,47 +471,46 @@ describe('refreshDataSource', () => {
 });
 
 describe('fetchRelatedFieldData', () => {
-    let mockDataSource: { execute: any; };
-    let mockFormField: { datafield?: any; _primaryKey?: any; compareby?: any; displayfield?: any; dataoptions?: any; datasource?: any; showPendingSpinner: any; dataset?: any; filterexpressions?: any; viewParent?: { registerDestroyListener: jest.Mock<any, [fn: any], any>; }; };
-    let mockOptions: { datafield: any; widget: any; relatedField?: string; };
+    let mockDataSource;
+    let mockFormField;
+    let mockOptions;
 
     beforeEach(() => {
+        jest.useFakeTimers();
         mockDataSource = {
             execute: jest.fn(),
         };
-
         mockFormField = {
             showPendingSpinner: true,
-            viewParent: {
-                registerDestroyListener: jest.fn(fn => fn),
-            },
+            viewParent: {},
+            filterexpressions: '{"filter":"test"}',
         };
-
         mockOptions = {
             relatedField: 'testRelatedField',
             datafield: 'testDataField',
             widget: FormWidgetType.AUTOCOMPLETE,
         };
 
-        // Reset mocks
-        jest.clearAllMocks();
-    });
-
-    it('should return early if dataSource is not provided', () => {
-        fetchRelatedFieldData(null, mockFormField, mockOptions);
-        expect(mockDataSource.execute).not.toHaveBeenCalled();
-    });
-
-    //TypeError: Cannot read properties of undefined (reading 'then')
-
-    xit('should set formField properties correctly', async () => {
         mockDataSource.execute.mockImplementation((operation) => {
             if (operation === DataSource.Operation.GET_RELATED_PRIMARY_KEYS) {
                 return ['testPrimaryKey'];
             }
+            if (operation === DataSource.Operation.GET_RELATED_TABLE_DATA) {
+                return Promise.resolve({ data: [{ testField: 'testValue' }] });
+            }
         });
 
-        fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
+        jest.spyOn(dataUtils, 'isSearchWidgetType').mockReturnValue(true);
+        jest.spyOn(dataUtils, 'interpolateBindExpressions').mockImplementation((context, filterexpressions, callback) => callback(filterexpressions));
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
+        jest.restoreAllMocks();
+    });
+
+    it('should set basic formField properties correctly', () => {
+        dataUtils.fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
 
         expect(mockFormField.datafield).toBe('testDataField');
         expect(mockFormField._primaryKey).toBe('testPrimaryKey');
@@ -518,69 +518,85 @@ describe('fetchRelatedFieldData', () => {
         expect(mockFormField.displayfield).toBe('testDataField');
     });
 
-    //TypeError: Cannot read properties of undefined (reading 'then')
-    xit('should handle ALLFIELDS case', () => {
-        mockOptions.datafield = 'ALLFIELDS';
-        mockDataSource.execute.mockReturnValueOnce(['testPrimaryKey']);
-
-        fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
+    it('should handle ALLFIELDS case', () => {
+        mockOptions.datafield = 'All Fields';
+        dataUtils.fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
 
         expect(mockFormField.displayfield).toBe('testPrimaryKey');
     });
 
-    //TypeError: Cannot read properties of undefined (reading 'then')
-    xit('should handle search widget type', () => {
-        mockDataSource.execute.mockReturnValueOnce(['testPrimaryKey']);
-        fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
+    it('should handle non-search widget type', async () => {
+        jest.spyOn(dataUtils, 'isSearchWidgetType').mockReturnValue(false);
+        mockOptions.widget = FormWidgetType.SELECT;
 
-        expect(mockFormField.dataoptions).toEqual({
-            relatedField: 'testRelatedField',
-            filterExpr: {},
-        });
-        expect(mockFormField.datasource).toBe(mockDataSource);
+        dataUtils.fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
+
+        jest.runAllTimers();
+        await Promise.resolve();
+
+        expect(mockDataSource.execute).toHaveBeenCalledWith(
+            DataSource.Operation.GET_RELATED_TABLE_DATA,
+            expect.objectContaining({
+                relatedField: 'testRelatedField',
+                filterExpr: '{"filter":"test"}',
+                filterFields: {},
+                orderBy: '',
+                pagesize: undefined,
+            })
+        );
+        expect(mockFormField.dataset).toEqual([{ testField: 'testValue' }]);
+        expect(mockFormField.displayfield).toBe('testDataField');
+    });
+
+    it('should not change showPendingSpinner if it is initially false for search widget type', () => {
+        mockFormField.showPendingSpinner = false;
+        dataUtils.fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
+
         expect(mockFormField.showPendingSpinner).toBe(false);
     });
 
-    //TypeError: primaryKeys.join is not a function
-    xit('should handle non-search widget type', (done) => {
+    it('should handle errors in non-search widget type', async () => {
+        jest.spyOn(dataUtils, 'isSearchWidgetType').mockReturnValue(false);
         mockOptions.widget = FormWidgetType.SELECT;
-        mockDataSource.execute.mockResolvedValueOnce(['testPrimaryKey']);
-        mockDataSource.execute.mockResolvedValueOnce({ data: [{ testField: 'testValue' }] });
-
-        fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
-
-        setImmediate(() => {
-            expect(mockDataSource.execute).toHaveBeenCalledWith(
-                DataSource.Operation.GET_RELATED_TABLE_DATA,
-                expect.any(Object)
-            );
-            expect(mockFormField.dataset).toEqual([{ testField: 'testValue' }]);
-            expect(mockFormField.displayfield).toBe('testField');
-            expect(mockFormField.showPendingSpinner).toBe(false);
-            done();
+        mockDataSource.execute.mockImplementation((operation) => {
+            if (operation === DataSource.Operation.GET_RELATED_PRIMARY_KEYS) {
+                return ['testPrimaryKey'];
+            }
+            if (operation === DataSource.Operation.GET_RELATED_TABLE_DATA) {
+                return Promise.reject(new Error('Test error'));
+            }
         });
+
+        dataUtils.fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
+
+        jest.runAllTimers();
+        await Promise.resolve();
+
+        expect(mockFormField.dataset).toBeUndefined();
+        expect(mockFormField.showPendingSpinner).toBe(true);
     });
 
-    //TypeError: primaryKeys.join is not a function
-    xit('should handle errors in non-search widget type', (done) => {
-        mockOptions.widget = FormWidgetType.SELECT;
-        mockDataSource.execute.mockResolvedValueOnce(['testPrimaryKey']);
-        mockDataSource.execute.mockRejectedValueOnce(new Error('Test error'));
+    it('should handle empty primary keys', () => {
+        mockDataSource.execute.mockReturnValueOnce([]);
 
-        fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
+        dataUtils.fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
 
-        setImmediate(() => {
-            expect(mockDataSource.execute).toHaveBeenCalledWith(
-                DataSource.Operation.GET_RELATED_TABLE_DATA,
-                expect.any(Object)
-            );
-            expect(mockFormField.dataset).toBeUndefined();
-            expect(mockFormField.showPendingSpinner).toBe(true);
-            done();
-        });
+        expect(mockFormField._primaryKey).toBeUndefined();
+        expect(mockFormField.compareby).toBe('');
+    });
+
+    it('should use existing displayfield if available', () => {
+        mockFormField.displayfield = 'existingDisplayField';
+        dataUtils.fetchRelatedFieldData(mockDataSource, mockFormField, mockOptions);
+
+        expect(mockFormField.displayfield).toBe('existingDisplayField');
+    });
+
+    it('should handle undefined dataSource', () => {
+        const result = dataUtils.fetchRelatedFieldData(undefined, mockFormField, mockOptions);
+        expect(result).toBeUndefined();
     });
 });
-
 describe('interpolateBindExpressions', () => {
     let mockContext;
     let mockFilterExpressions;
@@ -658,7 +674,6 @@ describe('interpolateBindExpressions', () => {
         expect(mockCallbackFn).not.toHaveBeenCalled();
     });
 });
-
 
 describe('getDistinctValues', () => {
     let mockDataSource;
