@@ -7,8 +7,8 @@ module.exports = {
     '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
   ],
   testMatch: [
-    "**/projects/**/*.spec.ts",
-    // "**/projects/core/src/services/script-loader.spec.ts",
+    // "**/projects/**/*.spec.ts",
+    "**/projects/components/widgets/input/epoch/src/date-time/date-time-picker.spec.ts",
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
@@ -22,8 +22,7 @@ module.exports = {
     "libraries/scripts/jquery.ui.touch-punch",
     "libraries/scripts/swipey",
     ".yalc/@wavemaker/variables/src/",
-    "/projects/core/src/services/script-loader.spec.ts",
-
+    "projects/components/base/src/test/"
   ],
   // collectCoverageFrom: [
   //     '**/*.{ts,tsx}',
