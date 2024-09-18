@@ -112,7 +112,7 @@ describe('ListComponent', () => {
         expect(wrapperComponent).toBeTruthy();
     });
 
-    xit('should apply list class to ul element', () => {
+    it('should apply list class to ul element', () => {
         const listclass = 'my-list-class';
         listComponent.listclass = listclass;
         fixture.detectChanges();

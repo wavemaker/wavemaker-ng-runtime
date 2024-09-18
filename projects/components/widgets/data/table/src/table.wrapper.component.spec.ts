@@ -2504,22 +2504,6 @@ describe("DataTable", () => {
                     ).toBeTruthy();
                 });
 
-                xit('should trigger default maxvalue validator', waitForAsync(() => {
-                    const invalidTestValue = 20;
-                    const validTestValue = 18;
-                    defaultValidators(
-                        true,
-                        VALIDATOR.MAXVALUE,
-                        'max',
-                        validTestValue,
-                        'Over age.',
-                        (wmComponent as any).fullFieldDefs[2],
-                        quick_edit_fixture,
-                        invalidTestValue,
-                        validTestValue
-                    );
-                }));
-
                 it('should respect the mindate validation', waitForAsync(() => {
                     const invalidTestValue = '2019-11-02';
                     const validTestValue = '2019-12-05';
