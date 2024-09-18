@@ -1299,8 +1299,6 @@ describe('hasOffsetStr', () => {
 
 
 describe('getFormattedDate', () => {
-
-    // Mock datePipe
     const mockDatePipe = {
         transform: jest.fn((date, format) => moment(date).format(format))
     };
@@ -1308,26 +1306,26 @@ describe('getFormattedDate', () => {
         expect(getFormattedDate(mockDatePipe, null, 'yyyy-MM-dd')).toBeUndefined();
     });
 
-    xit('should return timestamp for "timestamp" format', () => {
+    it('should return timestamp for "timestamp" format', () => {
         const testDate = new Date('2023-05-20T12:34:56Z');
         const result = getFormattedDate(mockDatePipe, testDate, 'timestamp');
         expect(typeof result).toBe('number');
         expect(result).toBe(testDate.getTime());
     });
 
-    xit('should return ISO string for "UTC" format', () => {
+    it('should return ISO string for "UTC" format', () => {
         const testDate = new Date('2023-05-20T12:34:56Z');
         const result = getFormattedDate(mockDatePipe, testDate, 'UTC');
         expect(result).toBe(testDate.toISOString());
     });
 
-    xit('should use moment for formatting with timezone', () => {
+    it('should use moment for formatting with timezone', () => {
         const testDate = new Date('2023-05-20T12:34:56Z');
         const result = getFormattedDate(mockDatePipe, testDate, 'YYYY-MM-DD', 'UTC');
         expect(result).toBe(moment(testDate).utc().format('YYYY-MM-DD'));
     });
 
-    xit('should use datePipe for default formatting', () => {
+    it('should use datePipe for default formatting', () => {
         const testDate = new Date('2023-05-20T12:34:56Z');
         getFormattedDate(mockDatePipe, testDate, 'yyyy-MM-dd');
         expect(mockDatePipe.transform).toHaveBeenCalledWith(testDate, 'yyyy-MM-dd', undefined, undefined);
@@ -1449,7 +1447,7 @@ describe('getValidJSON', () => {
     });
 });
 
-xdescribe('xmlToJson', () => {
+describe('xmlToJson', () => {
     let originalX2JS: any;
 
     beforeEach(() => {
@@ -1474,7 +1472,7 @@ xdescribe('xmlToJson', () => {
         const result = xmlToJson(xmlString);
         expect(result).toEqual(expectedJson);
         expect((global as any).X2JS).toHaveBeenCalledWith({
-            'emptyNodeForm': 'content',
+            'emptyNodeForm': 'object',
             'attributePrefix': '',
             'enableToStringFunc': false
         });

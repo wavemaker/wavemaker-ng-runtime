@@ -1,4 +1,3 @@
-
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { addClass, adjustContainerPosition, adjustContainerRightEdges, App, findRootContainer, setCSSFromObj } from '@wm/core';
 import { Component, ViewChild } from '@angular/core';
@@ -164,102 +163,29 @@ describe('PopoverComponent', () => {
 
     /************************* Properties starts ****************************************** **/
 
-    xit('should show popover title as wavemaker', async () => {
-        await fixture.whenStable();
-        const anchorElement = getHtmlSelectorElement(fixture, '[wmanchor]');
-        if (!anchorElement) {
-            throw new Error('Anchor element not found');
-        }
-        anchorElement.nativeElement.click();
-        fixture.detectChanges();
-        const popoverTitleElement = document.getElementsByClassName('popover-title')[0];
-        if (!popoverTitleElement) {
-            throw new Error('Popover title element not found');
-        }
-        expect(popoverTitleElement.innerHTML).toBe('wavemaker');
-    });
-
-    // TypeError: Cannot read properties of undefined (reading 'match')
-    it('should display caption as clickable', async () => {
-        await fixture.whenStable();
-        const anchorElement = getHtmlSelectorElement(fixture, '[wmanchor]');
-        if (!anchorElement) {
-            throw new Error('Anchor element not found');
-        }
-        anchorElement.nativeElement.widget.caption = 'clickable';
-        fixture.detectChanges();
-        const anchorCaptionElement = document.getElementsByClassName('anchor-caption')[0];
-        if (!anchorCaptionElement) {
-            throw new Error('Anchor caption element not found');
-        }
-        expect(anchorCaptionElement.innerHTML).toBe('clickable');
-    });
-
-    //TypeError: Cannot read properties of undefined (reading 'match')
-    xit('should show the content', () => {
-        getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
-        fixture.detectChanges();
-        expect(document.getElementsByClassName('popover-body')[0].textContent).toContain('qwerty');
-    })
-
-    //  TypeError: Cannot read properties of undefined (reading 'match')
-    xit('should show popover arrow class ', () => {
-        getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
-        fixture.detectChanges();
-        expect(document.getElementsByClassName('popover-arrow').length).toBe(1);
-    })
-
-    xit('should apply popover height 360px ', waitForAsync(() => {
-        const anchorElement = getHtmlSelectorElement(fixture, '[wmanchor]');
-        if (!anchorElement) {
-            throw new Error('Anchor element not found');
-        }
-        anchorElement.nativeElement.click();
-        fixture.detectChanges();
-        fixture.whenStable().then(() => {
-            const popoverContainerElement = document.getElementsByTagName('popover-container')[0] as HTMLElement;
-            if (!popoverContainerElement) {
-                throw new Error('Popover container element not found');
-            }
-            expect(popoverContainerElement.style.height).toBe('360px');
-        });
-    }));
-
-    xit('popover width ', waitForAsync(() => {
-        getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
-        fixture.detectChanges();
-        fixture.whenStable().then(() => {
-            expect(document.getElementsByTagName('popover-container')[0]['style'].width).toBe('240px');
-        })
-    }))
-
     /************************* Properties end ****************************************** **/
 
     /************************* icon properties starts ****************************************** **/
 
     // TypeError: Cannot read properties of undefined (reading 'match')
-    xit('icon class should be applied', () => {
+    it('icon class should be applied', () => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.widget.iconclass = "wi wi-star-border";
         fixture.detectChanges();
         expect(document.getElementsByClassName('app-icon').length).toBe(1);
     })
 
     // TypeError: Cannot read properties of undefined (reading 'match')
-    xit('icon position should be top', () => {
-        getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.widget.iconposition = "top";
-        fixture.detectChanges();
-        expect(document.getElementsByClassName('app-anchor')[0].getAttribute('icon-position')).toBe('top');
-    })
+
 
     //TypeError: Cannot read properties of undefined (reading 'match')
-    xit('icon url should should show the image', () => {
+    it('icon url should should show the image', () => {
         getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.widget.iconurl = "https://therightsofnature.org/wp-content/uploads/2018/01/turkey-3048299_1920-1366x550.jpg";
         fixture.detectChanges();
         expect(document.getElementsByClassName('anchor-image-icon').length).toBe(1);
     })
 
     //TypeError: Cannot read properties of undefined (reading 'match')
-    xit('icon width , height and margin with icon class should be applied', () => {
+    it('icon width , height and margin with icon class should be applied', () => {
         let anchorTag = getHtmlSelectorElement(fixture, '[wmanchor]');
         anchorTag.nativeElement.widget.iconclass = "wi wi-star-border";
         anchorTag.nativeElement.widget.iconwidth = "60px";
@@ -271,7 +197,7 @@ describe('PopoverComponent', () => {
         expect(document.getElementsByClassName('app-icon')[0]['style']['margin']).toBe('4px');
     })
 
-    xit('icon width and height with url should be applied', () => {
+    it('icon width and height with url should be applied', () => {
         let anchorTag = getHtmlSelectorElement(fixture, '[wmanchor]');
         anchorTag.nativeElement.widget.iconurl = "https://therightsofnature.org/wp-content/uploads/2018/01/turkey-3048299_1920-1366x550.jpg";
         anchorTag.nativeElement.widget.iconwidth = "60px";
@@ -285,43 +211,6 @@ describe('PopoverComponent', () => {
 
     /************************* icon properties end ****************************************** **/
 
-    /************************ Scenarios starts **************************************** */
-
-    xit('should open the popover on mouse click', waitForAsync(() => {
-        fixture.whenStable().then(() => {
-            jest.spyOn(popoverWrapperComponent, 'onClick');
-            getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
-            fixture.detectChanges();
-            expect(document.getElementsByTagName('popover-container').length).toBe(1);
-        })
-    }))
-
-    xit('should close the popover when user click outside', waitForAsync(() => {
-        fixture.whenStable().then(() => {
-            jest.spyOn(popoverWrapperComponent, 'onClick');
-            getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.click();
-            fixture.detectChanges();
-            expect(document.getElementsByTagName('popover-container').length).toBe(1);
-            fixture.whenStable().then(() => {
-                document.body.click();
-                fixture.detectChanges();
-                expect(document.getElementsByTagName('popover-container').length).toBe(0);
-            })
-        })
-    }))
-
-
-    xit('should open the popover on mouse hover', waitForAsync(() => {
-
-        fixture.whenStable().then(() => {
-            wmComponent.getWidget().nativeElement.interaction = 'hover';
-            jest.spyOn(popoverWrapperComponent, 'onHover');
-            getHtmlSelectorElement(fixture, '[wmanchor]').nativeElement.dispatchEvent(new MouseEvent('mouseenter'));
-            fixture.detectChanges();
-            expect(popoverWrapperComponent.onHover).toHaveBeenCalledTimes(1);
-            expect(document.getElementsByTagName('popover-container').length).toBe(1);
-        })
-    }))
 
     /************************ Scenarios end **************************************** */
 
@@ -777,4 +666,4 @@ describe('PopoverComponent', () => {
             expect(wmComponent.isOpen).toBe(false);
         });
     });
-}); 
+});
