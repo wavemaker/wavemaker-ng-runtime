@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
-
-import {DataSource, removeAttr, setAttr} from '@wm/core';
+import {DataSource, removeAttr, setAttr, isIos} from '@wm/core';
 import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
 import {DatasetAwareFormComponent} from '../dataset-aware-form.component';
 
@@ -51,22 +50,25 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         * As this widget implements ControlValueAccessor, manually updating the ngModel (or modelByKey) is necessary to ensure correct form behavior.
         * */
         const datasetSubscription = this.dataset$.subscribe(() => {
-            if (this.datavalue) {
-                const selectedItem = this.datasetItems.find(item => item.selected);
-                if (!selectedItem) {
+            if(isIos()) {
+                if (this.datavalue) {
+                    const selectedItem = this.datasetItems.find(item => item.selected);
+                    if (!selectedItem) {
+                        setTimeout(() => {
+                            if(!this.placeholder) {
+                                this.selectEl.nativeElement.value = '';
+                            }
+                            this.modelByKey = undefined;
+                        }, 100);
+                    }
+                } else {
                     setTimeout(() => {
                         if(!this.placeholder) {
                             this.selectEl.nativeElement.value = '';
                         }
-                        this.modelByKey = undefined;
+
                     }, 100);
                 }
-            } else {
-                setTimeout(() => {
-                    if(!this.placeholder) {
-                        this.selectEl.nativeElement.value = '';
-                    }
-                }, 100);
             }
         });
         this.registerDestroyListener(() => datasetSubscription.unsubscribe());
@@ -131,7 +133,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
      */
     checkForFloatingLabel($event) {
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
-        if(!this.placeholder) {
+        if(!this.placeholder && isIos()) {
             this.removePlaceholderOption();
         }
         if (captionEl.length > 0) {
