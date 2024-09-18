@@ -264,11 +264,6 @@ describe("TimeComponent", () => {
         onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'timepicker', 0);
     }));
 
-
-    xit('should show the time patten as hh:mm:ss format ', waitForAsync(() => {
-        datepatternTest(fixture, '.app-timeinput', '.app-textbox', 'timepattern', true);
-    }));
-
     it('should get the time outputformat as hh:mm:ss ', (() => {
         wmComponent.outputformat = 'hh:mm:ss';
         outputpatternTest(fixture, '.app-timeinput', wmComponent.datavalue, true);
@@ -476,15 +471,6 @@ describe('TimeComponent with localization', () => {
 
     it('should display localized meriains in time picker', (() => {
         localizedTimePickerTest(fixture, (wmComponent as any).meridians, '.btn-date');
-    }));
-
-    xit('should display the defult value in de format', waitForAsync(() => {
-        const time = '02:00 PM', timepattern = 'hh:mm a';
-        wmComponent.getWidget().timepattern = timepattern;
-        wmComponent.datavalue = '02:00:00';
-        fixture.detectChanges();
-        const dateObj = getNativeDateObject(time, { pattern: wmComponent.outputformat });
-        expect(getFormattedDate((wmComponent as any).datePipe, dateObj, timepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
     }));
 
     it('should update the datavalue without error when we type "de" format time in inputbox with "12H" format', fakeAsync(() => {
