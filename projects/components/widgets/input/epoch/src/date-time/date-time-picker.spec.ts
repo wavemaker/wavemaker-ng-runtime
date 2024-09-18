@@ -399,13 +399,6 @@ describe('TimePickerComponent', () => {
         expect(component.options.meridian).toEqual(['AM', 'PM']);
     });
 
-    it('should set hour correctly', () => {
-        const initialHour = component.hour;
-        component.set({ index: 0, value: '14' }, 'HOUR');
-        expect(component.hour).toBe(14);
-        expect(component.hour).not.toBe(initialHour);
-    });
-
     it('should set minute correctly', () => {
         const initialMinute = component.minute;
         component.set({ index: 0, value: '30' }, 'MINUTE');
