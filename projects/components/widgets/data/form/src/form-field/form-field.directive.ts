@@ -545,6 +545,11 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         }
     }
 
+    reset() {
+      if(this._control) 
+        this._control.reset();
+    }
+
     triggerUploadEvent($event, eventName) {
         const params: any = { $event };
         if (eventName === 'change') {
