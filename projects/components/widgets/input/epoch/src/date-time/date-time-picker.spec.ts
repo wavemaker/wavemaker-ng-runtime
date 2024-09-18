@@ -411,16 +411,13 @@ describe('TimePickerComponent', () => {
         (component as any).value = initialDate;
         fixture.detectChanges();
 
-        const initialSecond = initialDate.getUTCSeconds();
-        console.log('Initial UTC second:', initialSecond);
+        const initialSecond = initialDate.getUTCSeconds(); 
 
         const newSecond = (initialSecond + 1) % 60; // Ensure we're setting a different second
         component.set({ index: 0, value: newSecond.toString() }, 'SECOND');
         fixture.detectChanges();
 
-        const updatedSecond = new Date((component as any).value).getUTCSeconds();
-        console.log('Updated UTC second:', updatedSecond);
-
+        const updatedSecond = new Date((component as any).value).getUTCSeconds(); 
         expect(updatedSecond).toBe(newSecond);
         expect(updatedSecond).not.toBe(initialSecond);
     });
