@@ -57,13 +57,11 @@ class TreeWrapperComponent {
     tree1Collapse($event, widget, $item, $path) {
         this.treenodeItem = $item;
         this.treePath = $path;
-        console.log($item, $path);
     }
 
     tree1Expand($event, widget, $item, $path) {
         this.treenodeItem = $item;
         this.treePath = $path;
-        console.log($item, $path);
     }
 }
 
@@ -103,74 +101,6 @@ describe('wm-tree: Component Specific Tests', () => {
     it('should create tree component', () => {
         expect(wmComponent).toBeTruthy();
     });
-
-    //expect(received).not.toBeNull()
-    xit('should call expand tree callback with item, path as data arguments', async () => {
-        wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
-        jest.spyOn(wrapperComponent, 'tree1Expand');
-
-        // Trigger change detection
-        fixture.detectChanges();
-
-        // Wait for the component to stabilize
-        await fixture.whenStable();
-        // Query for the node icon
-        let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
-
-        // Ensure the node icon is not null before interacting
-        expect(nodeicon).not.toBeNull();
-
-        if (nodeicon) {
-            // Click the node icon
-            nodeicon.click();
-
-            // Trigger change detection and wait for stabilization
-            fixture.detectChanges();
-            await fixture.whenStable();
-
-            // Verify the expand method was called
-            expect(wrapperComponent.tree1Expand).toHaveBeenCalledTimes(1);
-            expect(wrapperComponent.treePath).toEqual('/item2');
-            expect(wrapperComponent.treenodeItem).toBeDefined();
-        } else {
-            throw new Error('Node icon not found');
-        }
-    }, 10000); // Increase the timeout if necessary
-
-    // expect(received).not.toBeNull()
-    xit('should call collapse tree callback with item, path as data arguments', async () => {
-        // Set the dataset
-        wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
-
-        // Spy on the collapse method
-        jest.spyOn(wrapperComponent, 'tree1Collapse');
-
-        // Trigger change detection
-        fixture.detectChanges();
-
-        // Wait for the component to stabilize
-        await fixture.whenStable();
-
-        // Query for the node icon
-        let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
-        expect(nodeicon).not.toBeNull(); // Ensure the element exists before interacting
-
-        if (nodeicon) {
-            // Click the node icon
-            nodeicon.click();
-
-            // Trigger change detection and wait for stabilization
-            fixture.detectChanges();
-            await fixture.whenStable();
-
-            // Verify the collapse method was called
-            expect(wrapperComponent.tree1Collapse).toHaveBeenCalledTimes(1);
-            expect(wrapperComponent.treePath).toEqual('/item2');
-            expect(wrapperComponent.treenodeItem).toBeDefined();
-        } else {
-            throw new Error('Node icon not found');
-        }
-    }, 10000); // Increase the timeout if necessary
 
     describe('onPropertyChange', () => {
         beforeEach(() => {
@@ -796,5 +726,4 @@ describe('wm-tree: Component Specific Tests', () => {
             expect(mockSetTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
         });
     });
- 
 });

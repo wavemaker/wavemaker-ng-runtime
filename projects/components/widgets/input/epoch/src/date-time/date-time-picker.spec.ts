@@ -414,11 +414,24 @@ describe('TimePickerComponent', () => {
     });
 
     it('should set second correctly', () => {
-        const initialSecond = component.second;
-        component.set({ index: 0, value: '45' }, 'SECOND');
-        expect(component.second).toBe(45);
-        expect(component.second).not.toBe(initialSecond);
+        const initialDate = new Date();
+        (component as any).value = initialDate;
+        fixture.detectChanges();
+
+        const initialSecond = initialDate.getUTCSeconds();
+        console.log('Initial UTC second:', initialSecond);
+
+        const newSecond = (initialSecond + 1) % 60; // Ensure we're setting a different second
+        component.set({ index: 0, value: newSecond.toString() }, 'SECOND');
+        fixture.detectChanges();
+
+        const updatedSecond = new Date((component as any).value).getUTCSeconds();
+        console.log('Updated UTC second:', updatedSecond);
+
+        expect(updatedSecond).toBe(newSecond);
+        expect(updatedSecond).not.toBe(initialSecond);
     });
+
 
     it('should emit change event when time is set', () => {
         jest.spyOn(component.change, 'emit');

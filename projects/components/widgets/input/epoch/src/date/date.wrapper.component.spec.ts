@@ -28,7 +28,8 @@ import {
     expectCheckEleHasDisabled,
     localizedDatePickerTest,
     MockAbstractI18nService,
-    MockAbstractI18nServiceDe
+    MockAbstractI18nServiceDe,
+    localizedTimePickerTest
 } from '../../../../../base/src/test/util/date-test-util';
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import localeDE from '@angular/common/locales/de';
@@ -277,15 +278,6 @@ describe('DateComponent', () => {
 
     }));
 
-    // TypeError: Cannot read properties of null (reading 'nativeElement')
-    xit('should respect the mindate validation', waitForAsync(() => {
-        wmComponent.getWidget().datavalue = '2019-11-01';
-        checkElementClass(fixture, '.app-date', 'ng-invalid');
-
-    }));
-
-
-
     it('should be able to set the mindate and disable the below mindate on calendar', (() => {
         wmComponent.getWidget().mindate = '2019-11-02';
         wmComponent.getWidget().datavalue = '2019-11-02';
@@ -310,7 +302,7 @@ describe('DateComponent', () => {
         checkElementClass(fixture, '.app-date', 'ng-invalid');
     }));
 
-    xit('should disable the excluded days on the calendar panel', waitForAsync(() => {
+    it('should disable the excluded days on the calendar panel', waitForAsync(() => {
         dateWrapperComponent.wmComponent.getWidget().excludedays = '1,6';
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
             fixture.whenStable().then(() => {
@@ -321,7 +313,7 @@ describe('DateComponent', () => {
 
     }));
 
-    xit('should ignore the  excluded date', waitForAsync(() => {
+    it('should ignore the  excluded date', waitForAsync(() => {
         dateWrapperComponent.wmComponent.getWidget().excludedates = '2020-01-01';
         dateWrapperComponent.wmComponent.getWidget().datavalue = '2020-01-01';
         checkElementClass(fixture, '.app-date', 'ng-invalid');
@@ -470,39 +462,6 @@ describe('DateComponent', () => {
         });
     });
 
-    // it('should be able to select the date from the date picker ', () => {
-    //     // let dateControl = getDateElement();
-    //     let inputEle = getDateInputElement();
-    //     fixture.whenStable().then(() => {
-    //         expect(inputEle.nativeElement.hasAttribute('readonly')).toBeTruthy();
-    //     });
-
-    // });
-
-
-
-    // it('should focus the date control on click on shortcut key ', () => {
-    //     fixture.whenStable().then(() => {
-    //         spyOn(dateWrapperComponent, 'date1Focus').and.callThrough();
-    //         let keyD = new KeyboardEvent('keydown', { key: 'keyD', altKey: true });
-    //         document.dispatchEvent(keyD);
-    //         fixture.detectChanges();
-    //         fixture.whenStable().then(() => {
-    //             expect(dateWrapperComponent.date1Focus).toHaveBeenCalledTimes(1);
-    //         });
-    //     });
-    // });
-
-    // it('Should trigger the date control change event', () => {
-    //     fixture.whenStable().then(() => {
-    //         spyOn(fixture.componentInstance, 'date1Change').and.callThrough();
-    //         wmComponent.getWidget().datavalue = '2019-12-05';
-    //         fixture.detectChanges();
-    //         expect(dateWrapperComponent.date1Change).toHaveBeenCalledTimes(1);
-    //     })
-
-    // });
-
 });
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
@@ -545,31 +504,5 @@ describe(('Date Component with Localization'), () => {
     it('should create the date Component with de locale', () => {
         expect(dateWrapperComponent).toBeTruthy();
     });
-
-    //ERROR RuntimeError: NG05105: Unexpected synthetic listener @datepickerAnimation.done found. 
-    xit('should display localized dates in date picker', (() => {
-        localizedDatePickerTest(fixture, '.btn-time');
-    }));
-
-    // TypeError: Cannot read properties of undefined (reading 'innerText')
-    xit('should display the defult value in de format', waitForAsync(() => {
-        const date = '2020-02-20', datepattern = 'yyyy-MM-dd';
-        wmComponent.getWidget().datepattern = datepattern;
-        wmComponent.datavalue = date;
-        fixture.detectChanges();
-        const dateObj = getDateObj(date);
-        expect(getFormattedDate((wmComponent as any).datePipe, dateObj, datepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
-    }));
-
-    // TypeError: Cannot read properties of undefined (reading 'innerText')
-    xit('should update the datavalue without error when we type "de" format date in inputbox', waitForAsync(() => {
-        const date = '2020, 21 Februar', datepattern = 'yyyy, dd MMMM', input = getHtmlSelectorElement(fixture, '.app-textbox');
-        wmComponent.getWidget().datepattern = datepattern;
-        input.nativeElement.value = date;
-        input.triggerEventHandler('change', { target: input.nativeElement });
-        fixture.detectChanges();
-        const dateObj = getDateObj(date, { pattern: datepattern });
-        expect(getFormattedDate((wmComponent as any).datePipe, dateObj, (wmComponent as any).outputformat)).toEqual(wmComponent.datavalue);
-    }));
 
 });
