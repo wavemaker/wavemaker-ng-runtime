@@ -30,6 +30,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
     public trailingzero: boolean;
     private validateType: string;
     public inputmode: string;
+    public decimalplaces: number;
     private lastValIsDecimal: boolean;
 
     constructor(
@@ -69,8 +70,24 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (this.isDefaultQuery) {
             const isLocalizedNumber = isString(value) && includes(value, this.DECIMAL);
             const parts = isLocalizedNumber ? (value as any).split(this.DECIMAL) : isString(value) && (value as any).split('.');
-            this.decimalValue = parts[1] || '';
-            (value as any) = isLocalizedNumber ? value : this.transformNumber(value);
+
+            if(this.inputmode === INPUTMODE.NATURAL && !isNaN(this.decimalplaces)) {
+                if(this.decimalplaces === 0) {
+                    this.decimalValue = '';
+                    (value as any) = isLocalizedNumber ? parts[0] : this.transformNumber(value);
+                }
+                if(this.decimalplaces > 0) {
+                    this.decimalValue = parts[1] && parts[1].substring(0, this.decimalplaces) || '';
+                    if(isLocalizedNumber) {
+                        (value as any) = this.decimalValue.length ? `${parts[0]}${this.DECIMAL}${this.decimalValue}` : parts[0];
+                    } else {
+                        (value as any) = Number.parseFloat(String(value)).toFixed(this.decimalplaces);
+                    }
+                }
+            } else {
+                this.decimalValue = parts[1] || '';
+                (value as any) = isLocalizedNumber ? value : this.transformNumber(value);
+            }
         }
 
         const numberReg = /\d/;
@@ -122,8 +139,13 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     private isValid(val: number): boolean {
         // id number is infinite then consider it as invalid value
-        if (isNaN(val) || !isFinite(val) || (!Number.isInteger(this.step) &&
-            this.countDecimals(val) > this.countDecimals(this.step))) {
+        let invalidDecimalPlaces = false;
+        if(this.inputmode === INPUTMODE.NATURAL && !isNaN(this.decimalplaces) && this.decimalplaces >= 0) {
+            invalidDecimalPlaces = this.countDecimals(val) > this.decimalplaces;
+        } else if(!Number.isInteger(this.step) && this.countDecimals(val) > this.countDecimals(this.step)) {
+            invalidDecimalPlaces = true;
+        }
+        if (isNaN(val) || !isFinite(val) || invalidDecimalPlaces) {
             this.isInvalidNumber = true;
             return false;
         }
@@ -238,6 +260,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
     // This function returns the step length set in the studio
     private stepLength() {
+        if(this.inputmode === 'INPUTMODE.NATURAL' && !isNaN(this.decimalplaces) && this.decimalplaces >= 0) {
+            return this.decimalplaces;
+        }
         const stepLen = this.step.toString().split('.');
         if (stepLen.length === 1 ) {
             return;
@@ -440,13 +465,25 @@ export abstract class NumberLocale extends BaseInput implements Validator {
 
         // validates entering of decimal values only when user provides decimal limit(i.e step contains decimal values).
         // Restrict user from entering only if the decimal limit is reached and the new digit is entered in decimal place
-        if (!skipStepValidation && inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step)) && $event.target.selectionStart >= inputValue.length - 1) {
-            return false;
-        }
+        // if (!skipStepValidation && inputValue && this.countDecimals(this.step) && (this.countDecimals(inputValue) >= this.countDecimals(this.step)) && $event.target.selectionStart >= inputValue.length - 1) {
+        //     return false;
+        // }
         // validates if user entered an invalid character.
         if (!validity.test($event.key)) {
             return false;
         }
+
+        if(this.inputmode === INPUTMODE.NATURAL && !isNaN(this.decimalplaces)) {
+            if(this.decimalplaces === 0 && this.DECIMAL === $event.key) {
+                return false;
+            }
+            const parts = includes(inputValue, this.DECIMAL) ? (inputValue as any).split(this.DECIMAL) : inputValue.split('.');
+            const isCursorPositionAtDecimalPlace = $event.target.selectionStart > parts[0].length;
+            if(this.decimalplaces > 0 && this.countDecimals(inputValue) >= this.decimalplaces && isCursorPositionAtDecimalPlace) {
+                return false;
+            }
+        }
+
         // comma cannot be entered consecutively
         if (includes(inputValue, ',') && inputValue[inputValue.length - 1] === ',' && $event.key === ',') {
             return false;

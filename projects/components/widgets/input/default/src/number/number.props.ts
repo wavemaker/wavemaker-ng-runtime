@@ -25,6 +25,7 @@ export const numberProps = new Map(
         ['trailingzero', {value: false, ...PROP_BOOLEAN}],
         ['updateon', PROP_STRING],
         ['inputmode', {value: 'natural', ...PROP_STRING}],
+        ['decimalplaces', PROP_NUMBER],
         ['conditionalclass', PROP_ANY],
         ['conditionalstyle', PROP_ANY]
     ]
