@@ -72,6 +72,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         status: ''
     };
     highlightDropArea;
+    showprogressbar;
+    showprogressbarpercentage;
     /*_hasOnSuccessEvt = WM.isDefined(attrs.onSuccess);
      _hasOnErrorEvt = WM.isDefined(attrs.onError);*/
 
