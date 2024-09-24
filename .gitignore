@@ -49,6 +49,7 @@ Thumbs.db
 
 # Karma test report: UI unit tests
 karma-test-report.txt
+jest-code-coverage-report.html
 
 .nx/cache
 .nx/workspace-data
