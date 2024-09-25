@@ -14,6 +14,10 @@ export abstract class PrefabConfigProvider {
     abstract getConfig(prefabName: string): Promise<any>;
 }
 
+export abstract class CustomwidgetConfigProvider {
+    abstract getConfig(widgetname: string): Promise<any>;
+}
+
 export abstract class AppJSProvider {
     abstract getAppScriptFn(): Promise<Function>;
 }

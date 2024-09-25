@@ -8,6 +8,7 @@ const componentRefCache = new Map<ComponentType, Map<string, any>>();
 componentRefCache.set(ComponentType.PAGE, new Map<string, any>());
 componentRefCache.set(ComponentType.PARTIAL, new Map<string, any>());
 componentRefCache.set(ComponentType.PREFAB, new Map<string, any>());
+componentRefCache.set(ComponentType.WIDGET, new Map<string, any>());
 
 @Injectable()
 export class ComponentRefProviderService extends ComponentRefProvider {
@@ -22,7 +23,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
 
     public async getComponentFactoryRef(componentName: string, componentType: ComponentType, options?: {}): Promise<any> {
         const value = componentRefCache.get(componentType).get(componentName);
-        if (!value && (componentType === ComponentType.PARTIAL || componentType === ComponentType.PREFAB)) {
+        if (!value && (componentType === ComponentType.PARTIAL || componentType === ComponentType.PREFAB || componentType === ComponentType.WIDGET)) {
             const partialRef = await this.lazyComponentRef.getComponentFactoryRef(
                 componentName,
                 componentType,

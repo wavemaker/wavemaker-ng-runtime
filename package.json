@@ -86,6 +86,7 @@
         "@rollup/plugin-commonjs": "24.0.0",
         "@rollup/plugin-multi-entry": "6.0.0",
         "@rollup/plugin-node-resolve": "15.0.1",
+        "@rollup/plugin-typescript": "^8.3.3",
         "@types/jest": "^29.5.12",
         "@types/jquery": "3.3.22",
         "@types/lodash-es": "4.17.12",

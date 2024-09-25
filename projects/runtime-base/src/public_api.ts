@@ -50,7 +50,7 @@ export * from './services/http-interceptor.services';
 export * from './services/i18n.service';
 export * from './services/navigation.service';
 export * from './services/pipe-provider.service';
-export * from './services/pipe.service'
+export * from './services/pipe.service';
 export {
     PrefabManagerService
 } from './services/prefab-manager.service';
