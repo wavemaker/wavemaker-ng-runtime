@@ -139,7 +139,11 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
             if(!child.hasAttribute('wmcustomwidget'))
                 this.initializeComponentData(child.children);
             else {
-                let baseWidget, splitArr = child.getAttribute('as').split('-'), modifiedArr = [];
+                const asAttr = child.getAttribute('as') || '';
+                if (!asAttr) {
+                    return;
+                }
+                let baseWidget, splitArr = asAttr.split('-'), modifiedArr = [];
                 modifiedArr = splitArr.map((item: any) => {
                     item = item !== 'wm' ? capitalize(item) : item;
                     return item;
