@@ -71,6 +71,7 @@ const REGEX = {
 const NUMBER_TYPES = ['int', DataType.INTEGER, DataType.FLOAT, DataType.DOUBLE, DataType.LONG, DataType.SHORT, DataType.BYTE, DataType.BIG_INTEGER, DataType.BIG_DECIMAL];
 const now: Date = new Date();
 const CURRENT_DATE = 'CURRENT_DATE';
+export const APP_NAV = 'app-nav';
 
 export const enum EVENT_LIFE { ONCE, WINDOW }
 
