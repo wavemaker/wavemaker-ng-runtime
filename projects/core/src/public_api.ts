@@ -138,7 +138,8 @@ export {
     appendScriptToHead,
     getAppSetting,
     setListClass,
-    findParent
+    findParent,
+    APP_NAV
 } from './utils/utils';
 export {
     FIRST_TIME_WATCH,
