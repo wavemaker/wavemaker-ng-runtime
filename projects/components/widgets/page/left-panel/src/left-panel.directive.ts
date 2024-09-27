@@ -60,7 +60,7 @@ export class LeftPanelDirective extends StylableComponent {
             }
         });
         this.registerDestroyListener(() => onRouteChange.unsubscribe());
-        navtype && $(this.nativeElement).addClass('app-nav-'+navtype);
+        navtype && this.$element.addClass('app-nav-'+navtype);
     }
 
     public collapse(): void {

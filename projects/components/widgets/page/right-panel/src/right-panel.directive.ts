@@ -24,7 +24,7 @@ export class RightPanelDirective extends StylableComponent {
         super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
-        navtype && $(this.nativeElement).addClass('app-nav-'+navtype);
+        navtype && this.$element.addClass('app-nav-'+navtype);
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
