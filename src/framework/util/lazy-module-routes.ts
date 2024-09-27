@@ -2,4 +2,3 @@
 export const prefabLazyModules = {};
 export const partialLazyModules = {};
 export const prefabPartialLazyModules = {};
-export const customWidgetLazyModules = {};

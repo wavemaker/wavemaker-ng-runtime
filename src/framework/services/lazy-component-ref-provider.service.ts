@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { PartialRefProvider } from '@wm/core';
 import { ComponentType } from '@wm/runtime/base';
-import { customWidgetLazyModules, partialLazyModules, prefabLazyModules, prefabPartialLazyModules } from '../util/lazy-module-routes';
+import { partialLazyModules, prefabLazyModules, prefabPartialLazyModules } from '../util/lazy-module-routes';
 
 type ModuleWithRoot = Type<any> & { rootComponent: Type<any> };
 type Options = {
@@ -35,9 +35,6 @@ export class LazyComponentRefProviderService extends PartialRefProvider {
         if (componentType === ComponentType.PREFAB) {
             return prefabLazyModules[componentName];
         }
-        if (componentType === ComponentType.WIDGET) {
-            return customWidgetLazyModules[componentName];
-        } 
     }
 
     private async getModuleFactory(moduleOrFactory: NgModuleFactory<any> | Type<any>): Promise<NgModuleFactory<any>> {
