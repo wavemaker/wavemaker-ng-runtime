@@ -27,7 +27,7 @@ import {getWidgetPropsByType, WidgetRef} from '@wm/components/base';
 import { PageDirective, SpaPageDirective } from '@wm/components/page';
 import {PrefabDirective} from '@wm/components/prefab';
 import { VariablesService } from '@wm/variables';
-
+import { CustomwidgetConfigProvider } from '../types/types';
 import { FragmentMonitor } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
 import {commonPartialWidgets} from "./base-partial.component";
@@ -60,6 +60,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     pageDirective: PageDirective | SpaPageDirective;
     Prefab: PrefabDirective;
     scriptLoaderService: ScriptLoaderService;
+    customwidgetConfigProvider: CustomwidgetConfigProvider;
     Viewport: Viewport;
     compileContent = false;
     spa: boolean;
@@ -72,7 +73,6 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     abstract evalUserScript(prefabContext: any, appContext: any, utils: any);
 
     abstract getVariables();
-    abstract getExpressions();
 
     getContainerWidgetInjector() {
         return this.containerWidget.inj || this.containerWidget.injector;
@@ -87,6 +87,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         this.i18nService = this.injector ? this.injector.get(AbstractI18nService) : inject(AbstractI18nService);
         this.scriptLoaderService = this.injector ? this.injector.get(ScriptLoaderService) : inject(ScriptLoaderService);
         this.Viewport = this.injector ? this.injector.get(Viewport) : inject(Viewport);
+        this.customwidgetConfigProvider = this.injector ? this.injector.get(CustomwidgetConfigProvider) : inject(CustomwidgetConfigProvider);
         // this.viewContainerRef = this.getContainerWidgetInjector().get(ViewContainerRef);
         // Replacing this.getContainerWidgetInjector().view.component as viewParent
         // this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
@@ -259,10 +260,10 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
      * @param expressions, map of bind expression vs generated function
      */
     registerExpressions() {
-        const expressions = this.getExpressions();
-        _.each(expressions, (fn, expr)=>{
-            registerFnByExpr(expr, fn[0], fn[1]);
-        });
+        // const expressions = this.getExpressions();
+        // _.each(expressions, (fn, expr)=>{
+        //     registerFnByExpr(expr, fn[0], fn[1]);
+        // });
     }
 
     registerProps() {
@@ -297,7 +298,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         // });
     }
     registerPropsInContainerWidget(resolveFn: Function) {
-        window['resourceCache'].get(`./custom-widgets/${this.customWidgetName}/page.min.json`).then(({ config }) => {
+        this.customwidgetConfigProvider.getConfig(this.customWidgetName).then((config) => {
             if (config) {
                 Object.entries((config.properties || {})).forEach(([key, prop]: [string, any]) => {
                     let expr;

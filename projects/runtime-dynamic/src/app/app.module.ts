@@ -96,6 +96,7 @@ import {
     PrefabConfigProvider,
     WmRouteReuseStrategy,
     WM_MODULES_FOR_ROOT,
+    CustomwidgetConfigProvider,
     REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS,
     AppExtensionProvider
 } from '@wm/runtime/base';
@@ -106,6 +107,7 @@ import { AppJSProviderService } from './services/app-js-provider.service';
 import { AppVariablesProviderService } from './services/app-variables-provider.service';
 import { AppExtensionProviderService } from './services/app-extension.service';
 import { ComponentRefProviderService } from './services/component-ref-provider.service';
+import { CustomwidgetConfigProviderService } from './services/customwidget-config-provider.service';
 import { PrefabConfigProviderService } from './services/prefab-config-provider.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -257,6 +259,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
         { provide: CustomWidgetRefProvider, useClass: ComponentRefProviderService },
+        { provide: CustomwidgetConfigProvider, useClass: CustomwidgetConfigProviderService },
         { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService },
         { provide: RouteReuseStrategy, useClass: WmRouteReuseStrategy }
     ],
