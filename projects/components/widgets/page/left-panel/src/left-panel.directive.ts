@@ -1,7 +1,7 @@
 import {Attribute, Directive, Inject, Injector, Optional} from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 
-import {App, addClass, removeClass, switchClass, toggleClass, isMobile, APP_NAV } from '@wm/core';
+import {App, addClass, removeClass, switchClass, toggleClass, isMobile, getNavClass } from '@wm/core';
 import { APPLY_STYLES_TYPE, getKeyboardFocusableElements,  IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { LayoutDirective, PageDirective } from '@wm/components/page';
 
@@ -60,7 +60,7 @@ export class LeftPanelDirective extends StylableComponent {
             }
         });
         this.registerDestroyListener(() => onRouteChange.unsubscribe());
-        navtype && this.$element.addClass(APP_NAV+'-'+navtype);
+        navtype && this.$element.addClass(getNavClass(navtype));
     }
 
     public collapse(): void {

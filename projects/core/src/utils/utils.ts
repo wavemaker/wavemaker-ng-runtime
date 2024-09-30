@@ -71,7 +71,17 @@ const REGEX = {
 const NUMBER_TYPES = ['int', DataType.INTEGER, DataType.FLOAT, DataType.DOUBLE, DataType.LONG, DataType.SHORT, DataType.BYTE, DataType.BIG_INTEGER, DataType.BIG_DECIMAL];
 const now: Date = new Date();
 const CURRENT_DATE = 'CURRENT_DATE';
-export const APP_NAV = 'app-nav';
+
+export const getNavClass = (suffix: string) : string => {
+    const APP_NAV_CLASS_PREFIX = 'app-nav-';
+    return APP_NAV_CLASS_PREFIX + suffix;
+}
+  
+export const getSheetPositionClass = (suffix: string): string => {
+    const SHEET_POSITION_CLASS_PREFIX = 'sheet-position-';
+    return SHEET_POSITION_CLASS_PREFIX + suffix;
+}
+
 export const enum EVENT_LIFE { ONCE, WINDOW }
 
 export const isDefined = v => 'undefined' !== typeof v;

@@ -139,7 +139,8 @@ export {
     getAppSetting,
     setListClass,
     findParent,
-    APP_NAV
+    getNavClass,
+    getSheetPositionClass
 } from './utils/utils';
 export {
     FIRST_TIME_WATCH,

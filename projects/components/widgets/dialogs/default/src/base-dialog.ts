@@ -1,13 +1,13 @@
-import {Inject, Injectable, Injector, OnDestroy, Optional, TemplateRef} from '@angular/core';
-import {NavigationEnd, Router} from '@angular/router';
-import {BsModalRef, BsModalService, ModalOptions} from 'ngx-bootstrap/modal';
+import { Inject, Injectable, Injector, OnDestroy, Optional, TemplateRef } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import {AbstractDialogService, findRootContainer, generateGUId, isMobile, isMobileApp} from '@wm/core';
+import { AbstractDialogService, findRootContainer, generateGUId, isMobile, isMobileApp, getSheetPositionClass } from '@wm/core';
 
-import {BaseComponent, IDialog, IWidgetConfig, WidgetConfig} from '@wm/components/base';
-import {createFocusTrap} from '@wavemaker/focus-trap';
+import { BaseComponent, IDialog, IWidgetConfig, WidgetConfig } from '@wm/components/base';
+import { createFocusTrap } from '@wavemaker/focus-trap';
 
 const eventsRegistered = false;
 
@@ -23,16 +23,16 @@ const invokeOpenedCallback = (ref) => {
             if (root) {
                 $('body > modal-container > div').wrap('<' + root + '/>');
             }
-            ref.invokeEventCallback('opened', {$event: {type: 'opened'}});
+            ref.invokeEventCallback('opened', { $event: { type: 'opened' } });
             // focusTrapObj will create focus trap for the respective dialog according to the titleId assigned to them which is unique.
             const container = $('[aria-labelledby= ' + ref.titleId + ']')[0];
 
             const keyboardFocusableElements = [container.querySelectorAll(
                 'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
-              )].filter(el => {
+            )].filter(el => {
                 return (
-                  !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'));
-              })[0];
+                    !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'));
+            })[0];
 
             $(keyboardFocusableElements[0]).focus();
 
@@ -65,6 +65,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
     private dialogRef: BsModalRef;
     private dialogId: number;
     public titleId: string = 'wmdialog-' + generateGUId();
+    public sheet: string | boolean;
+    public sheetPosition: string;
+
 
     protected constructor(
         inj: Injector,
@@ -78,7 +81,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         const router = inj.get(Router);
 
         const subscriptions: Subscription[] = [
-            this.bsModal.onShown.subscribe(({id}) => {
+            this.bsModal.onShown.subscribe(({ id }) => {
                 const ref = this.dialogService.getLastOpenedDialog();
                 if (ref === this && !this.dialogId) {
                     // Always get the reference of last pushed dialog in the array for calling onOpen callback
@@ -88,6 +91,9 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
             }),
             this.bsModal.onShow.subscribe(() => {
                 focusTrapObj.activeElement = document.activeElement;
+                // adding sheet and sheetdirection class for modal-container if sheet attr is present
+                this.$element.toggleClass('modal-sheet', this.sheet === "true");
+                this.$element.toggleClass(getSheetPositionClass(this.sheetPosition), this.sheet === "true");
             }),
             this.bsModal.onHidden.subscribe((closeReason) => {
                 let ref = this.dialogService.getDialogRefFromClosedDialogs();
@@ -138,7 +144,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
 
         // do not open the dialog again if it is already opened
         const duplicateDialogCheck = (openedDialog) => {
-           return openedDialog === this;
+            return openedDialog === this;
         };
 
         if (this.dialogService.getOpenedDialogs().some(duplicateDialogCheck)) {
@@ -146,7 +152,6 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         }
 
         this.dialogService.addToOpenedDialogs(this);
-
         // extend the context with the initState
         Object.assign(this.context, initState);
         this.modalOptions.ariaLabelledBy = this.titleId;

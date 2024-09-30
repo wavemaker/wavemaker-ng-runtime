@@ -1,6 +1,6 @@
 import {Attribute, Directive, Inject, Injector, Optional} from '@angular/core';
 
-import {APP_NAV, switchClass} from '@wm/core';
+import {getNavClass, switchClass} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './right-panel.props';
@@ -24,7 +24,7 @@ export class RightPanelDirective extends StylableComponent {
         super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
-        navtype && this.$element.addClass(APP_NAV+'-'+navtype);
+        navtype && this.$element.addClass(getNavClass(navtype));
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
