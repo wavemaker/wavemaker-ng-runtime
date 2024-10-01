@@ -53,7 +53,6 @@ mkdir -p dist/runtime-cli/dependencies
 mkdir -p dist/runtime-cli/dependencies/custom-widgets-m3
 
 
-
 cp -r src dist/runtime-cli/angular-app
 cp -r build-scripts dist/runtime-cli/angular-app
 cp -r dist/bundles/wmapp/locales libraries
