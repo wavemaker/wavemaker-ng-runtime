@@ -41,8 +41,6 @@ mkdir -p libraries/scripts/jquery.ui.touch-punch
 cp ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js libraries/scripts/jquery.ui.touch-punch/
 mkdir -p libraries/scripts/tree-keyboard-navigation/
 cp projects/components/widgets/basic/tree/src/keyboard-navigation.js libraries/scripts/tree-keyboard-navigation/
-mkdir -p libraries/scripts/custom-widgets-m3/
-cp -R ./node_modules/@wavemaker/custom-widgets-m3/src libraries/scripts/custom-widgets-m3/
 
 node --trace-warnings node_modules/.bin/rollup -c ./config/rollup.build-task.mjs
 
@@ -52,6 +50,8 @@ mkdir -p dist/runtime-cli
 
 mkdir -p dist/runtime-cli/angular-app
 mkdir -p dist/runtime-cli/dependencies
+mkdir -p dist/runtime-cli/dependencies/custom-widgets-m3
+
 
 cp -r src dist/runtime-cli/angular-app
 cp -r build-scripts dist/runtime-cli/angular-app
@@ -70,6 +70,6 @@ mkdir -p dist/npm-packages/app-ng-runtime
 cp -r libraries/. dist/npm-packages/app-ng-runtime
 tar -zcf dist/npm-packages/app-ng-runtime.tar.gz -C dist/npm-packages app-ng-runtime
 rm -r dist/npm-packages/app-ng-runtime
-
+cp -R ./node_modules/@wavemaker/custom-widgets-m3/src dist/runtime-cli/dependencies/custom-widgets-m3/
 cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/transpilation/expression-parser.cjs.js dist/transpilation/pipe-provider.cjs.js projects/runtime-base/src/components/app-component/app.component.html dist/runtime-cli/dependencies
 cd -
