@@ -50,6 +50,8 @@ mkdir -p dist/runtime-cli
 
 mkdir -p dist/runtime-cli/angular-app
 mkdir -p dist/runtime-cli/dependencies
+mkdir -p dist/runtime-cli/dependencies/custom-widgets-m3
+
 
 
 cp -r src dist/runtime-cli/angular-app
