@@ -86,7 +86,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
     protected invalidDateTimeFormat: boolean;
-
+    protected isMonthYearOnly: boolean = false;
     private dateOnShowSubscription: Subscription;
     private cancelLocaleChangeSubscription;
     public get timeZone() { return this.inj.get(AbstractI18nService).getTimezone(this); }
@@ -856,6 +856,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this._dateOptions.dateInputFormat = this.datepattern;
             this.showseconds = includes(this.datepattern, 's');
             this.ismeridian = includes(this.datepattern, 'h');
+            this.isMonthYearOnly = this.datepattern === 'MM/YYYY' || this.datepattern === 'YYYY/MM';
+            this.isMonthYearOnly ? this._dateOptions.minMode = 'month' : this._dateOptions.minMode = 'day';
         } else if (pattern === 'timepattern') {
             this.showseconds = includes(this.timepattern, 's');
             this.ismeridian = includes(this.timepattern, 'h');
