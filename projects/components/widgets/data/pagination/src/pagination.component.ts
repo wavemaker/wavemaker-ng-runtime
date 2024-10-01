@@ -325,6 +325,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             } else {
                 if (unsupportedStatePersistenceTypes.indexOf(this.parent.navigation) < 0) {
                     this.parent.statePersistence.setWidgetState(this.parent, {pagination: this.dn.currentPage});
+                    this.parent.currentpage = this.dn.currentPage;
+                    this.parent.nativeElement.setAttribute('currentpage', this.dn.currentPage);
                 } else if (this.parent.widgetType === 'wm-list' ||this.parent.widgetType === 'wm-table' ) {
                     console.warn('Retain State handling on Widget ' + this.parent.name + ' is not supported for current pagination type.');
                 }

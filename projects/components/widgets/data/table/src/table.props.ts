@@ -8,6 +8,7 @@ export const registerProps = () => {
                 ['boundarylinks', {value: false, ...PROP_BOOLEAN}],
                 ['class', PROP_STRING],
                 ['confirmdelete', {value: 'Are you sure you want to delete this?', ...PROP_STRING}],
+                ['currentpage', {value: 1, ...PROP_NUMBER}],
                 ['datasource', PROP_STRING],
                 ['dataset', PROP_ANY],
                 ['deletecanceltext', PROP_STRING],
