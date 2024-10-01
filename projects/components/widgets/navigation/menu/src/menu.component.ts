@@ -24,7 +24,6 @@ import {
     UserDefinedExecutionContext
 } from '@wm/core';
 import {
-    APPLY_STYLES_TYPE,
     AUTOCLOSE_TYPE,
     DatasetAwareNavComponent,
     hasLinkToCurrentPage,
@@ -102,6 +101,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public autoclose: string;
     public autoopen: string;
     public hint: string;
+    public arialabel: string;
 
     private itemActionFn: Function;
     private menuCaret = 'fa-caret-down';

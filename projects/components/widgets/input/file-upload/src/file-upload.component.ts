@@ -32,6 +32,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     progressObservable;
     name;
     hint;
+    arialabel;
     multiple;
     fileTransfers = {};
     caption = 'Upload';

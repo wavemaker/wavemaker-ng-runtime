@@ -1,6 +1,6 @@
-import { isMobileApp } from '@wm/core';
+import {isMobileApp} from '@wm/core';
 
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     const props = new Map(
@@ -11,6 +11,7 @@ export const registerProps = () => {
             ['conditionalstyle', PROP_ANY],
             ['encodeurl', PROP_STRING],
             ['hint', PROP_STRING],
+            ['arialabel', PROP_STRING],
             ['name', PROP_STRING],
             ['pictureaspect', {value: 'None', ...PROP_STRING}],
             ['pictureplaceholder', PROP_STRING],

@@ -2,9 +2,11 @@ import {
     AfterViewInit,
     Component,
     ContentChild,
-    ElementRef, Inject,
+    ElementRef,
+    Inject,
     Injector,
-    OnInit, Optional,
+    OnInit,
+    Optional,
     TemplateRef,
     ViewChild
 } from '@angular/core';
@@ -84,6 +86,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public adaptiveposition:boolean;
     public containerTarget: string;
     public hint: string;
+    public arialabel: string;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;

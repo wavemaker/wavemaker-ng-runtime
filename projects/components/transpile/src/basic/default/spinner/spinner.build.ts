@@ -1,4 +1,4 @@
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import {getAttrMarkup, IBuildTaskDef, register} from '@wm/transpiler';
 import {IDGenerator} from "@wm/core";
 
 const tagName = 'div';
@@ -8,7 +8,7 @@ register('wm-spinner', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmSpinner #${counter}="wmSpinner" role="alert" [attr.aria-label]="${counter}.hint || 'Loading...'" aria-live="assertive" aria-busy="true" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmSpinner #${counter}="wmSpinner" role="alert" [attr.aria-label]="${counter}.arialabel || 'Loading...'" aria-live="assertive" aria-busy="true" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

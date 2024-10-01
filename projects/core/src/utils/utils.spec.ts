@@ -1,47 +1,87 @@
-import { LRUCache } from './lru-cache';
-import { jest } from '@jest/globals'
-import { DataType, FormWidgetType } from '../enums/enums'; // Update this import path
-import { checkIsCustomPipeExpression, getFormWidgetTemplate, getNgModelAttr, getRequiredFormWidget, getRowActionAttrs, updateTemplateAttrs } from './build-utils';
-import { EventNotifier } from './event-notifier';
-import { Subject, Subscription } from 'rxjs';
+import {LRUCache} from './lru-cache';
+import {jest} from '@jest/globals'
+import {DataType, FormWidgetType} from '../enums/enums'; // Update this import path
 import {
-    encodeUrl, encodeUrlParams, initCaps, spaceSeparate, replaceAt, periodSeparate, prettifyLabel,
-    deHyphenate, prettifyLabels, isInsecureContentRequest, stringStartsWith, getEvaluatedExprValue,
-    isImageFile, isAudioFile, isVideoFile, isValidWebURL, getResourceURL, triggerFn, noop, getFormattedDate, hasOffsetStr, getDateObj,
-    xmlToJson, getValidJSON, validateAccessRoles, generateGUId, getClonedObject, addEventListenerOnElement,
-    EVENT_LIFE,
-    findValueOf, isNumberType,
-    extractType,
-    isEmptyObject,
-    isDateTimeType,
-    replace,
-    getBlob,
-    getNativeDateObject,
-    getValidDateObject,
-    isEqualWithFields,
-    getRouteNameFromLink,
-    getUrlParams,
+    checkIsCustomPipeExpression,
+    getFormWidgetTemplate,
+    getNgModelAttr,
+    getRequiredFormWidget,
+    getRowActionAttrs,
+    updateTemplateAttrs
+} from './build-utils';
+import {EventNotifier} from './event-notifier';
+import {Subject, Subscription} from 'rxjs';
+import {
     _WM_APP_PROJECT,
-    setSessionStorageItem,
-    getSessionStorageItem,
+    addEventListenerOnElement,
     convertToBlob,
-    toPromise,
-    openLink,
-    hasCordova,
-    removeExtraSlashes,
-    triggerItemAction,
-    getDatasourceFromExpr,
+    deHyphenate,
+    encodeUrl,
+    encodeUrlParams,
+    EVENT_LIFE,
     extractCurrentItemExpr,
-    isLargeTabletPortrait,
-    isTablet,
-    isLargeTabletLandscape,
-    isMobileApp,
-    getAndroidVersion,
+    extractType,
     findParent,
-    findViewParent
+    findValueOf,
+    findViewParent,
+    generateGUId,
+    getAndroidVersion,
+    getBlob,
+    getClonedObject,
+    getDatasourceFromExpr,
+    getDateObj,
+    getEvaluatedExprValue,
+    getFormattedDate,
+    getNativeDateObject,
+    getResourceURL,
+    getRouteNameFromLink,
+    getSessionStorageItem,
+    getUrlParams,
+    getValidDateObject,
+    getValidJSON,
+    hasCordova,
+    hasOffsetStr,
+    initCaps,
+    isAudioFile,
+    isDateTimeType,
+    isEmptyObject,
+    isEqualWithFields,
+    isImageFile,
+    isInsecureContentRequest,
+    isLargeTabletLandscape,
+    isLargeTabletPortrait,
+    isMobileApp,
+    isNumberType,
+    isTablet,
+    isValidWebURL,
+    isVideoFile,
+    noop,
+    openLink,
+    periodSeparate,
+    prettifyLabel,
+    prettifyLabels,
+    removeExtraSlashes,
+    replace,
+    replaceAt,
+    setSessionStorageItem,
+    spaceSeparate,
+    stringStartsWith,
+    toPromise,
+    triggerFn,
+    triggerItemAction,
+    validateAccessRoles,
+    xmlToJson
 } from './utils';
-import { $parseEvent, $parseExpr, getFnByExpr, getFnForBindExpr, getFnForEventExpr, registerFnByExpr, setPipeProvider } from './expression-parser';
-import { getWmProjectProperties, setWmProjectProperties } from './wm-project-properties';
+import {
+    $parseEvent,
+    $parseExpr,
+    getFnByExpr,
+    getFnForBindExpr,
+    getFnForEventExpr,
+    registerFnByExpr,
+    setPipeProvider
+} from './expression-parser';
+import {getWmProjectProperties, setWmProjectProperties} from './wm-project-properties';
 
 declare const moment: any;
 jest.mock('rxjs');
@@ -348,7 +388,7 @@ describe('getFormWidgetTemplate', () => {
     it('should generate textarea template', () => {
         const attrs = createAttrs({ required: 'true', updateon: 'change' });
         const result = getFormWidgetTemplate(FormWidgetType.TEXTAREA, 'innerTmpl', attrs);
-        expect(result).toBe('<wm-textarea innerTmpl required=true role="textbox" updateon="change" show.bind="true"></wm-textarea>');
+        expect(result).toBe('<wm-textarea innerTmpl required=true updateon="change" show.bind="true"></wm-textarea>');
     });
 
     it('should generate time template', () => {

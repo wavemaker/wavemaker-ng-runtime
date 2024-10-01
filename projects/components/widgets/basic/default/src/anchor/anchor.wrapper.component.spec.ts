@@ -1,12 +1,12 @@
-import { Component, ViewChild } from "@angular/core";
-import { AnchorComponent, disableContextMenu } from "./anchor.component";
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
-import { ComponentsTestModule } from "../../../../../base/src/test/components.test.module";
-import { ComponentFixture } from "@angular/core/testing";
-import { compileTestComponent, getHtmlSelectorElement } from "projects/components/base/src/test/util/component-test-util";
-import { App, EventNotifier, addClass } from '@wm/core';
+import {Component, ViewChild} from "@angular/core";
+import {AnchorComponent, disableContextMenu} from "./anchor.component";
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
+import {ComponentsTestModule} from "../../../../../base/src/test/components.test.module";
+import {ComponentFixture} from "@angular/core/testing";
+import {compileTestComponent, getHtmlSelectorElement} from "projects/components/base/src/test/util/component-test-util";
+import {App, EventNotifier} from '@wm/core';
 
-const markup = `<a wmAnchor data-identifier="anchor" #wm_anchor1="wmAnchor" [attr.aria-label]="wm_anchor1.hint || wm_anchor1.caption || 'Link'" hint="Link" hyperlink="http://www.google.com/doodle4google/images/splashes/featured.png" tabindex="0" badgevalue="1" name="anchor1"></a>`;
+const markup = `<a wmAnchor data-identifier="anchor" #wm_anchor1="wmAnchor" [attr.aria-label]="wm_anchor1.arialabel || wm_anchor1.caption || 'Link'" hint="Link" hyperlink="http://www.google.com/doodle4google/images/splashes/featured.png" tabindex="0" badgevalue="1" name="anchor1"></a>`;
 
 @Component({
     template: markup

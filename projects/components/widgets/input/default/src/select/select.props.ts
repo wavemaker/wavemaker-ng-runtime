@@ -1,5 +1,5 @@
-import { FormWidgetType } from '@wm/core';
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
+import {FormWidgetType} from '@wm/core';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
 
 export const selectProps = new Map(
     [
@@ -17,6 +17,7 @@ export const selectProps = new Map(
         ['displayValue', PROP_STRING],
         ['groupby', PROP_STRING],
         ['hint', PROP_STRING],
+        ['arialabel', PROP_STRING],
         ['match', PROP_STRING],
         ['multiple', {value: false, ...PROP_BOOLEAN}],
         ['name', PROP_STRING],

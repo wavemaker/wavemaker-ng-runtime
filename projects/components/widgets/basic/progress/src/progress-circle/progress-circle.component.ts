@@ -1,10 +1,10 @@
 import {AfterViewInit, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
-import { CircleProgressComponent, CircleProgressOptionsInterface } from 'ng-circle-progress';
+import {CircleProgressComponent, CircleProgressOptionsInterface} from 'ng-circle-progress';
 
 
-import { IWidgetConfig, provideAsWidgetRef, IRedrawableComponent, StylableComponent, styler } from '@wm/components/base';
-import { registerProps } from './progress-circle.props';
-import { calculatePercent, getDecimalCount, isPercentageValue } from '../utils';
+import {IRedrawableComponent, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {registerProps} from './progress-circle.props';
+import {calculatePercent, getDecimalCount, isPercentageValue} from '../utils';
 import {clone, debounce, extend} from "lodash-es";
 
 const DEFAULT_CLS = 'progress app-progress circle';
@@ -58,6 +58,7 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     public redraw: Function;
     public options: CircleProgressOptionsInterface;
     public hint: string;
+    public arialabel: string;
 
     @ViewChild(CircleProgressComponent, { static: true }) circleRef: CircleProgressComponent;
 

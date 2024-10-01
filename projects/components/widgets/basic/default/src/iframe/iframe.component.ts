@@ -1,10 +1,10 @@
 import {Component, Inject, Injector, Optional, SecurityContext} from '@angular/core';
-import { SafeResourceUrl } from '@angular/platform-browser';
+import {SafeResourceUrl} from '@angular/platform-browser';
 
 import {encodeUrl, isInsecureContentRequest} from '@wm/core';
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
+import {IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe} from '@wm/components/base';
 
-import { registerProps } from './iframe.props';
+import {registerProps} from './iframe.props';
 
 const DEFAULT_CLS = 'embed-responsive app-iframe';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -32,6 +32,7 @@ export class IframeComponent extends StylableComponent {
     public caption: any;
     public name: string;
     public hint: string;
+    public arialabel: string;
     /**
      * this property member is set to true when the content request url doesn't match windows protocol
      */

@@ -1,6 +1,6 @@
-import {Component, Inject, Injector, NgZone, OnDestroy, Optional, ViewChild} from '@angular/core';
-import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
+import {Component, Inject, Injector, NgZone, OnDestroy, Optional} from '@angular/core';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {TimepickerConfig} from 'ngx-bootstrap/timepicker';
 import {
     $appDigest,
     AbstractI18nService,
@@ -13,13 +13,13 @@ import {
     FormWidgetType,
     getDisplayDateTimeFormat,
     getFormattedDate,
-    getNativeDateObject,
-    getMomentLocaleObject
+    getMomentLocaleObject,
+    getNativeDateObject
 } from '@wm/core';
-import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
+import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
-import { registerProps } from './time.props';
+import {registerProps} from './time.props';
 import {forEach, get, includes} from "lodash-es";
 
 declare const $;
@@ -55,6 +55,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     public mintime;
     public maxtime;
     public hint: string;
+    public arialabel: string;
 
     private deregisterEventListener;
     private app: App;

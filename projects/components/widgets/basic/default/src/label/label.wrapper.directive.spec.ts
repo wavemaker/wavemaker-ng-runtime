@@ -1,11 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, ViewChild, SecurityContext } from "@angular/core";
-import { LabelDirective } from "./label.directive";
-import { App, setProperty, toggleClass } from "@wm/core";
-import { SanitizePipe } from "@wm/components/base";
-import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
-import { By } from '@angular/platform-browser';
-import { ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
+import {ComponentFixture} from '@angular/core/testing';
+import {Component, SecurityContext, ViewChild} from "@angular/core";
+import {LabelDirective} from "./label.directive";
+import {App, setProperty, toggleClass} from "@wm/core";
+import {SanitizePipe} from "@wm/components/base";
+import {compileTestComponent, mockApp} from "projects/components/base/src/test/util/component-test-util";
+import {By} from '@angular/platform-browser';
+import {ComponentTestBase} from 'projects/components/base/src/test/common-widget.specs';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -14,7 +14,7 @@ jest.mock('@wm/core', () => ({
 }));
 
 
-const markup = `<label wmLabel #wm_label1="wmLabel" [attr.aria-label]="wm_label1.hint || 'Label text'" hint="Label text"  name="label1" paddingright="0.5em" paddingleft="0.5em"></label>`;
+const markup = `<label wmLabel #wm_label1="wmLabel" [attr.aria-label]="wm_label1.arialabel || 'Label text'" hint="Label text"  name="label1" paddingright="0.5em" paddingleft="0.5em"></label>`;
 
 @Component({
     template: markup

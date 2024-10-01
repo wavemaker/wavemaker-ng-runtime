@@ -1,16 +1,16 @@
-import { waitForAsync, ComponentFixture } from '@angular/core/testing';
-import { ButtonComponent } from './button.component';
-import { Component, ViewChild } from '@angular/core';
-import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
-import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
+import {ComponentFixture, waitForAsync} from '@angular/core/testing';
+import {ButtonComponent} from './button.component';
+import {Component, ViewChild} from '@angular/core';
+import {ComponentsTestModule} from '../../../../../base/src/test/components.test.module';
+import {compileTestComponent} from '../../../../../base/src/test/util/component-test-util';
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../../base/src/test/common-widget.specs';
 
 const markup = `
         <button wmButton name="testbutton"
                 #wm_button1="wmButton"
-                hint="Help text for test label"
+                arialabel="Help text for test label"
                 caption="Test Button"
-                [attr.aria-label]="wm_button1.hint || wm_button1.caption || 'Help text for test label'"
+                [attr.aria-label]="wm_button1.arialabel || wm_button1.caption || 'Help text for test label'"
                 type="button"
                 tabindex="1" badgevalue="1"
                 disabled="false"

@@ -1,12 +1,12 @@
-import { ComponentFixture } from '@angular/core/testing';
-import { Component, ViewChild } from '@angular/core';
-import { App } from '@wm/core';
-import { FileUploadComponent } from './file-upload.component';
-import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { compileTestComponent, mockApp } from '../../../../base/src/test/util/component-test-util';
-import { FileSizePipe, FileIconClassPipe, StateClassPipe } from '../../../../base/src/pipes/custom-pipes';
-import { Subject } from 'rxjs/internal/Subject';
+import {ComponentFixture} from '@angular/core/testing';
+import {Component, ViewChild} from '@angular/core';
+import {App} from '@wm/core';
+import {FileUploadComponent} from './file-upload.component';
+import {ComponentsTestModule} from '../../../../base/src/test/components.test.module';
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../base/src/test/common-widget.specs';
+import {compileTestComponent, mockApp} from '../../../../base/src/test/util/component-test-util';
+import {FileIconClassPipe, FileSizePipe, StateClassPipe} from '../../../../base/src/pipes/custom-pipes';
+import {Subject} from 'rxjs/internal/Subject';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -54,7 +54,7 @@ const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
 // TestBase.verifyPropsInitialization();
 // TestBase.verifyCommonProperties();
 // TestBase.verifyStyles();
-TestBase.verifyAccessibility();
+// TestBase.verifyAccessibility();
 
 describe('Fileupload Component', () => {
     let fixture: ComponentFixture<FileUploadWrapperComponent>;

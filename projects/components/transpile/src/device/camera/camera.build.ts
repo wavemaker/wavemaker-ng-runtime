@@ -1,4 +1,4 @@
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import {getAttrMarkup, IBuildTaskDef, register} from '@wm/transpiler';
 import {IDGenerator} from "@wm/core";
 
 const tagName = 'button';
@@ -8,7 +8,7 @@ register('wm-camera', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} type='button' wmCamera #${counter}="wmCamera" [attr.aria-label]="${counter}.hint || 'Camera'"  ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} type='button' wmCamera #${counter}="wmCamera" [attr.aria-label]="${counter}.arialabel || 'Camera'"  ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

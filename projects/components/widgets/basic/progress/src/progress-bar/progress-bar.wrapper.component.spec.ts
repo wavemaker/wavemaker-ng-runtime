@@ -1,14 +1,14 @@
-import { Component, ViewChild } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { App } from "@wm/core";
-import { ProgressBarComponent } from "./progress-bar.component";
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
-import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
-import { ComponentFixture, waitForAsync, fakeAsync, tick } from "@angular/core/testing";
-import { By } from "@angular/platform-browser";
-import { provideAsWidgetRef } from "@wm/components/base";
+import {Component, ViewChild} from "@angular/core";
+import {FormsModule} from "@angular/forms";
+import {App} from "@wm/core";
+import {ProgressBarComponent} from "./progress-bar.component";
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
+import {compileTestComponent, mockApp} from "projects/components/base/src/test/util/component-test-util";
+import {ComponentFixture, fakeAsync, tick, waitForAsync} from "@angular/core/testing";
+import {By} from "@angular/platform-browser";
+import {provideAsWidgetRef} from "@wm/components/base";
 
-const markup = `<div wmProgressBar name="progress_bar1" hint="Progress bar" tabindex="1"></div>`;
+const markup = `<div wmProgressBar name="progress_bar1" hint="Progress bar" arialabel="Progress bar" tabindex="1"></div>`;
 
 @Component({
     template: markup
@@ -78,8 +78,8 @@ describe('ProgressBar component', () => {
         expect(progressBarComponent.data[0].cls).toBe('progress-bar-success');
     });
 
-    it('should handle hint attribute correctly', () => {
-        progressBarComponent.hint = 'Custom progress bar';
+    it('should handle arialabel attribute correctly', () => {
+        progressBarComponent.arialabel = 'Custom progress bar';
         fixture.detectChanges();
         const progressBarElement = fixture.debugElement.query(By.css('div.progress-bar')).nativeElement;
         expect(progressBarElement.getAttribute('aria-label')).toBe('Custom progress bar');

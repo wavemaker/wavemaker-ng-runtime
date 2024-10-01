@@ -1,26 +1,26 @@
 import {ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
-import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
 
-import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
+import {BsDatepickerDirective} from 'ngx-bootstrap/datepicker';
 
 
 import {
-    adjustContainerPosition,
     addEventListenerOnElement,
+    adjustContainerPosition,
+    adjustContainerRightEdges,
     AppDefaults,
     EVENT_LIFE,
     FormWidgetType,
     getDateObj,
     getDisplayDateTimeFormat,
     getFormattedDate,
-    adjustContainerRightEdges,
     getMomentLocaleObject
 } from '@wm/core';
-import { IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler } from '@wm/components/base';
-import { BaseDateTimeComponent } from './../base-date-time.component';
-import { registerProps } from './date.props';
-import { validateTheMaskedDate } from './imaskUtil';
-import { IMaskDirective } from 'angular-imask';
+import {IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler} from '@wm/components/base';
+import {BaseDateTimeComponent} from './../base-date-time.component';
+import {registerProps} from './date.props';
+import {validateTheMaskedDate} from './imaskUtil';
+import {IMaskDirective} from 'angular-imask';
 import {includes, isNaN, parseInt} from "lodash-es";
 
 declare const _, $;
@@ -51,6 +51,7 @@ export class DateComponent extends BaseDateTimeComponent {
     private isEnterPressedOnDateInput = false;
     private _bsDefaultLoadCheck: boolean;
     public hint: string;
+    public arialabel: string;
 
     private deregisterEventListener;
     private isCurrentDate;

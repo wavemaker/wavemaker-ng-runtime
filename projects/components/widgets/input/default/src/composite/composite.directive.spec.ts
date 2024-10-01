@@ -1,12 +1,12 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { Component, ViewChild } from "@angular/core";
-import { CompositeDirective } from "./composite.directive";
-import { App } from "@wm/core";
-import { WidgetRef } from '@wm/components/base';
-import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
-import { ComponentTestBase, ITestComponentDef } from 'projects/components/base/src/test/common-widget.specs';
+import {ComponentFixture, waitForAsync} from '@angular/core/testing';
+import {Component, ViewChild} from "@angular/core";
+import {CompositeDirective} from "./composite.directive";
+import {App} from "@wm/core";
+import {WidgetRef} from '@wm/components/base';
+import {compileTestComponent, mockApp} from 'projects/components/base/src/test/util/component-test-util';
+import {ComponentTestBase, ITestComponentDef} from 'projects/components/base/src/test/common-widget.specs';
 
-const markup = `<div wmComposite #wm_composite [attr.aria-label]="wm_composite.hint || 'Composite content'"
+const markup = `<div wmComposite #wm_composite
      hint="Composite content" name="composite1" captionposition="left" [attr.required]="true">
 </div>`;
 

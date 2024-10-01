@@ -10,13 +10,13 @@ import {
     Optional,
     ViewChild
 } from '@angular/core';
-import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
 import {isDefined, toggleClass} from '@wm/core';
-import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
-import { BaseFormCustomComponent } from '../base-form-custom.component';
+import {IWidgetConfig, provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
+import {BaseFormCustomComponent} from '../base-form-custom.component';
 
-import { registerProps } from './checkbox.props';
+import {registerProps} from './checkbox.props';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -65,6 +65,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     public required: boolean;
     public name: string;
     public hint: string;
+    public arialabel: string;
     public shortcutkey: string;
     public tabindex: any;
     public _caption = '&nbsp';

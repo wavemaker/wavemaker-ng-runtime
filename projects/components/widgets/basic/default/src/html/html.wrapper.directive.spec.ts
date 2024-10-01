@@ -1,11 +1,11 @@
-import { Component, ElementRef, SecurityContext, ViewChild } from "@angular/core";
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
-import { HtmlDirective } from "./html.directive";
-import { App, setCSS } from "@wm/core";
-import { SanitizePipe } from "@wm/components/base";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
-import { By } from "@angular/platform-browser";
+import {Component, ElementRef, SecurityContext, ViewChild} from "@angular/core";
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
+import {HtmlDirective} from "./html.directive";
+import {App, setCSS} from "@wm/core";
+import {SanitizePipe} from "@wm/components/base";
+import {ComponentFixture, TestBed} from "@angular/core/testing";
+import {compileTestComponent, mockApp} from "projects/components/base/src/test/util/component-test-util";
+import {By} from "@angular/platform-browser";
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -13,7 +13,7 @@ jest.mock('@wm/core', () => ({
     setProperty: jest.fn(),
 }));
 
-const markup = `<div wmHtml #wm_html2="wmHtml" [attr.aria-label]="wm_html2.hint || 'HTML content'" hint="HTML content"  name="html1">`;
+const markup = `<div wmHtml #wm_html2="wmHtml" [attr.aria-label]="wm_html2.arialabel || 'HTML content'" hint="HTML content"  name="html1">`;
 
 @Component({
     template: markup

@@ -8,6 +8,8 @@ export const registerProps = () => {
             [
                 ['caption', PROP_STRING],
                 ['name', PROP_STRING],
+                ['hint', PROP_STRING],
+                ['arialabel', PROP_STRING],
                 ['tabindex', PROP_NUMBER],
                 ['multiple', PROP_BOOLEAN],
                 ['fileuploadmessage' , PROP_STRING],

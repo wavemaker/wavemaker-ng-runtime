@@ -1,10 +1,10 @@
 import {Attribute, Component, Inject, Injector, Optional} from '@angular/core';
 
 import {findValueOf, isDefined} from '@wm/core';
-import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
 
-import { registerProps } from './progress-bar.props';
-import { getDecimalCount, isPercentageValue } from '../utils';
+import {registerProps} from './progress-bar.props';
+import {getDecimalCount, isPercentageValue} from '../utils';
 import {debounce, isArray} from "lodash-es";
 
 const DEFAULT_CLS = 'progress app-progress';
@@ -49,6 +49,7 @@ export class ProgressBarComponent extends StylableComponent {
     public type: string;
     public dataset: Array<any>;
     public hint: string;
+    public arialabel: string;
 
     private _prepareData: Function;
     private readonly hasDataset: boolean;

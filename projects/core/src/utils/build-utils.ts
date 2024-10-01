@@ -1,5 +1,5 @@
-import { Attribute, Element } from '@angular/compiler';
-import { FormWidgetType } from '../enums/enums';
+import {Attribute, Element} from '@angular/compiler';
+import {FormWidgetType} from '../enums/enums';
 import {includes, isArray, startsWith} from "lodash-es";
 
 // For html upload widget, add events on input tag
@@ -80,7 +80,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<wm-input ${innerTmpl}  ${attrs.get('required')==='true' ? 'required=true' : ''} type="${attrs.get(inputType) || 'text'}" ${updateOnTmpl} ${showTmpl}></wm-input>`;
             break;
         case FormWidgetType.TEXTAREA:
-            tmpl = `<wm-textarea ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} role="textbox" ${updateOnTmpl} ${showTmpl}></wm-textarea>`;
+            tmpl = `<wm-textarea ${innerTmpl} ${attrs.get('required') === 'true' ? 'required=true' : ''} ${updateOnTmpl} ${showTmpl}></wm-textarea>`;
             break;
         case FormWidgetType.TIME:
             tmpl = `<div wmTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} ${showTmpl}></div>`;

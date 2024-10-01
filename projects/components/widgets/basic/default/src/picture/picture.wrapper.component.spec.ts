@@ -1,17 +1,17 @@
-import { Component, ViewChild } from "@angular/core";
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
-import { PictureDirective } from "./picture.directive";
-import { App, switchClass } from "@wm/core";
-import { ImagePipe } from "@wm/components/base";
-import { ComponentFixture } from "@angular/core/testing";
-import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
+import {Component, ViewChild} from "@angular/core";
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
+import {PictureDirective} from "./picture.directive";
+import {App, switchClass} from "@wm/core";
+import {ImagePipe} from "@wm/components/base";
+import {ComponentFixture} from "@angular/core/testing";
+import {compileTestComponent, mockApp} from "projects/components/base/src/test/util/component-test-util";
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
-    switchClass: jest.fn(), 
+    switchClass: jest.fn(),
 }));
 
-const markup = `<img wmPicture #wm_picture="wmPicture" [attr.aria-label]="wm_picture.hint || 'Picture content'" hint="Picture content" name="picture1" tabindex="0" picturesource="source.jpg" encodeurl="true" pictureplaceholder="placeholder.jpg">`;
+const markup = `<img wmPicture #wm_picture="wmPicture" [attr.aria-label]="wm_picture.arialabel || 'Picture content'" hint="Picture content" name="picture1" tabindex="0" picturesource="source.jpg" encodeurl="true" pictureplaceholder="placeholder.jpg">`;
 
 @Component({
     template: markup
@@ -85,7 +85,7 @@ describe('PictureDirective', () => {
         expect(nativeElement.style.width).toBe('100%');
         expect(nativeElement.style.height).toBe('100%');
     });
-    
+
     it('should call switchClass when shape property changes', () => {
         pictureDirective.onPropertyChange('shape', 'round', 'square');
         expect(switchClass).toHaveBeenCalledWith(pictureDirective.nativeElement, 'img-round', 'img-square');

@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {DataSource, removeAttr, setAttr, isIos} from '@wm/core';
+import {DataSource, isIos, removeAttr, setAttr} from '@wm/core';
 import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
 import {DatasetAwareFormComponent} from '../dataset-aware-form.component';
 
@@ -30,6 +30,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     public name: string;
     public autofocus: boolean;
     public hint: string;
+    public arialabel: string;
 
     @ViewChild('select', { static: true, read: ElementRef }) selectEl: ElementRef;
 

@@ -1,15 +1,15 @@
-import { Component, ViewChild } from '@angular/core';
-import { SwitchComponent } from './switch.component';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
-import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
-import { waitForAsync, ComponentFixture } from '@angular/core/testing';
-import { compileTestComponent, mockApp } from '../../../../../base/src/test/util/component-test-util';
-import { AbstractI18nService, App, AppDefaults } from '@wm/core';
-import { MockAbstractI18nService } from '../../../../../base/src/test/util/date-test-util';
-import { ToDatePipe } from '@wm/components/base';
+import {Component, ViewChild} from '@angular/core';
+import {SwitchComponent} from './switch.component';
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../../base/src/test/common-widget.specs';
+import {FormsModule} from '@angular/forms';
+import {DatePipe} from '@angular/common';
+import {ComponentFixture, waitForAsync} from '@angular/core/testing';
+import {compileTestComponent, mockApp} from '../../../../../base/src/test/util/component-test-util';
+import {AbstractI18nService, App, AppDefaults} from '@wm/core';
+import {MockAbstractI18nService} from '../../../../../base/src/test/util/date-test-util';
+import {ToDatePipe} from '@wm/components/base';
 
-const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switch1.hint || 'Switch button'" datavalue="yes" show="true" width="800" height="200" hint="Switch button" tabindex="0" disabled="false" name="switch1"></div>`;
+const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switch1.arialabel || 'Switch button'" datavalue="yes" show="true" width="800" height="200" hint="Switch button" tabindex="0" disabled="false" name="switch1"></div>`;
 
 @Component({
     template: markup
