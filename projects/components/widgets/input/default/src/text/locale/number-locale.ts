@@ -351,11 +351,10 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {number}
      */
     private countDecimals(value) {
-        if ((value % 1) !== 0) {
-            const decimalValue = value.toString().split('.')[1];
-            return decimalValue && decimalValue.length;
-        }
-        return 0;
+        const valueStr = value.toString();
+        const isLocalizedNumber = includes(valueStr, this.DECIMAL);
+        const parts = isLocalizedNumber ? valueStr.split(this.DECIMAL) : valueStr.split('.');
+        return parts[1] ? parts[1].length : 0
     }
 
     /**
