@@ -71,17 +71,19 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             const isLocalizedNumber = isString(value) && includes(value, this.DECIMAL);
             const parts = isLocalizedNumber ? (value as any).split(this.DECIMAL) : isString(value) && (value as any).split('.');
 
-            if(this.inputmode === INPUTMODE.NATURAL && !isNaN(this.decimalplaces)) {
-                if(this.decimalplaces === 0) {
+            let decimalPlacesAttrVal = this.getAttr('decimalplaces');
+            const decimalplaces = decimalPlacesAttrVal !== '' && decimalPlacesAttrVal !== undefined ? Number(decimalPlacesAttrVal) : NaN;
+            if(this.inputmode === INPUTMODE.NATURAL && !isNaN(decimalplaces)) {
+                if(decimalplaces === 0) {
                     this.decimalValue = '';
-                    (value as any) = isLocalizedNumber ? parts[0] : this.transformNumber(value);
+                    (value as any) = isLocalizedNumber ? parts[0] : this.transformNumber(parts[0]);
                 }
-                if(this.decimalplaces > 0) {
-                    this.decimalValue = parts[1] && parts[1].substring(0, this.decimalplaces) || '';
+                if(decimalplaces > 0) {
+                    this.decimalValue = parts[1] && parts[1].substring(0, decimalplaces) || '';
                     if(isLocalizedNumber) {
                         (value as any) = this.decimalValue.length ? `${parts[0]}${this.DECIMAL}${this.decimalValue}` : parts[0];
                     } else {
-                        (value as any) = Number.parseFloat(String(value)).toFixed(this.decimalplaces);
+                        (value as any) = Number.parseFloat(String(value)).toFixed(decimalplaces);
                     }
                 }
             } else {
