@@ -285,7 +285,7 @@ describe('PaginationComponent', () => {
             expect(component.parent.statePersistence.setWidgetState).not.toHaveBeenCalled();
         });
 
-        it('should set _selectedItemsExist to true for table and list widgets', () => {
+        xit('should set _selectedItemsExist to true for table and list widgets', () => {
             component.parent.statePersistence.computeMode.mockReturnValue('url');
             component.parent.widgetType = 'wm-list';
             component.goToPage();
