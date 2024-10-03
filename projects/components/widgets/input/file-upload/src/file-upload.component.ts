@@ -27,7 +27,7 @@ const WIDGET_CONFIG = {
 export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
     selectedFiles: any = [];
-    multipleSelectedFiles: any = [];
+    uploadedFiles: any = [];
     selectedFolders: any = [];
     progressObservable;
     name;
@@ -65,12 +65,6 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     chooseFilter = this.defaultAllowedExtensions.includes('*/*') ? '' : this.defaultAllowedExtensions;
     datasource;
     fileUploadMessage = 'Drop your files here or click here to browse';
-    uploadedFiles = {
-        fileName: '',
-        path: '',
-        length: '',
-        status: ''
-    };
     highlightDropArea;
     showprogressbar;
     showprogressbarpercentage;
@@ -188,8 +182,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
      * @param $files
      */
     onSelectEventCall($event, $files) {
-        this.multipleSelectedFiles = this.multiple ? [...this.multipleSelectedFiles, ...$files] : $files;
         this.selectedFiles = $files;
+        this.uploadedFiles = this.multiple ? [...this.uploadedFiles, ...$files] : $files;
         setTimeout(() => {
             this.invokeEventCallback('select', {
                 $event: $.extend($event.$files || {}, $files),
@@ -216,11 +210,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
 
     /*this function to clear the specified file. if argument is not provided, it clears the complete list  */
     clear(fileObj) {
-        if (this.multiple) {
-            this.multipleSelectedFiles = (fileObj) ? this.multipleSelectedFiles.filter((file) => file !== fileObj) : [];
-        } else {
-            this.selectedFiles = (fileObj) ? this.selectedFiles.filter((file) => file !== fileObj) : [];
-        }
+        this.selectedFiles = (fileObj) ? this.selectedFiles.filter((file) => file !== fileObj) : [];
+        this.uploadedFiles = (fileObj) ? this.uploadedFiles.filter((file) => file !== fileObj) : [];
     }
 
     /*this function to set the class names for clear icon */

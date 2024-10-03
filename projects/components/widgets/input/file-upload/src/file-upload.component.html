@@ -36,8 +36,8 @@
         <span class="caption" [innerHTML]="caption"></span>
     </button>
     <!-- list of selectedfiles UI -->
-    <ul class="list-group file-upload" [ngStyle]="{height: filelistheight, overflow: overflow}" *ngIf="selectedFiles.length > 0" >
-        <div *ngFor="let ft of (multiple ? multipleSelectedFiles : selectedFiles)">
+    <ul class="list-group file-upload" [ngStyle]="{height: filelistheight, overflow: overflow}" *ngIf="uploadedFiles.length > 0" >
+        <div *ngFor="let ft of uploadedFiles">
             <li class="list-group-item file-upload-status" *ngIf="ft.status !== 'abort'">
                 <div class="media upload-file-list">
                     <div class="media-left media-middle file-icon {{getFileExtension(ft.name) | fileIconClass}}" title="{{getFileExtension(ft.name)}}"></div>
