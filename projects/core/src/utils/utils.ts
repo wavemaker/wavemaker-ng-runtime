@@ -86,6 +86,8 @@ export const isIpad = () => {
 
 export const isIos = () => isIphone() || isIpod() || isIpad();
 
+export const isSafari = () => navigator.userAgent.indexOf('Safari') !== -1 && navigator.userAgent.indexOf('Chrome') === -1;
+
 export const isLargeTabletLandscape = () => window.matchMedia("only screen and (min-device-width : 1366px) and (max-device-width : 1366px) and (min-device-height : 1024px) and (max-device-height : 1024px) and (min-width: 1366px) and (max-width: 1366px)").matches;
 
 export const isLargeTabletPortrait = () => window.matchMedia("only screen and (min-device-width : 1024px) and (max-device-width : 1024px) and (min-device-height : 1366px) and (max-device-height : 1366px) and (min-width: 1024px) and (max-width: 1024px)").matches;
