@@ -50,7 +50,6 @@ mkdir -p dist/runtime-cli
 
 mkdir -p dist/runtime-cli/angular-app
 mkdir -p dist/runtime-cli/dependencies
-mkdir -p dist/runtime-cli/dependencies/custom-widgets-m3
 
 
 cp -r src dist/runtime-cli/angular-app
@@ -70,6 +69,5 @@ mkdir -p dist/npm-packages/app-ng-runtime
 cp -r libraries/. dist/npm-packages/app-ng-runtime
 tar -zcf dist/npm-packages/app-ng-runtime.tar.gz -C dist/npm-packages app-ng-runtime
 rm -r dist/npm-packages/app-ng-runtime
-cp -R ./node_modules/@wavemaker/custom-widgets-m3/src dist/runtime-cli/dependencies/custom-widgets-m3/
-cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/transpilation/expression-parser.cjs.js dist/transpilation/pipe-provider.cjs.js projects/runtime-base/src/components/app-component/app.component.html dist/runtime-cli/dependencies
+cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/transpilation/expression-parser.cjs.js dist/transpilation/pipe-provider.cjs.js projects/runtime-base/src/components/app-component/app.component.html ./node_modules/@wavemaker/custom-widgets-m3/custom-widgets-bundle.cjs.js dist/runtime-cli/dependencies
 cd -
