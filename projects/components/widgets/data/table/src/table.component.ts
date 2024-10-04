@@ -1969,7 +1969,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.dataNavigator.maxResults = nv;
                 break;
             case 'currentpage':
-                this.nativeElement.setAttribute('currentpage', nv);
+                this.nativeElement?.setAttribute('currentpage', nv);
                 break;
             case 'ondemandmessage':
                 if (nv) {
