@@ -8,7 +8,7 @@ register('wm-html', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmHtml #${counter}="wmHtml" [attr.aria-label]="${counter}.arialabel || 'HTML content'" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmHtml #${counter}="wmHtml" role="application" [attr.aria-label]="${counter}.arialabel || 'HTML content'" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

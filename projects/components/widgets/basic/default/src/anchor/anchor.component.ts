@@ -1,9 +1,18 @@
-import { AfterViewInit, Component, HostBinding, Injector, OnDestroy, Optional, Inject } from '@angular/core';
+import {AfterViewInit, Component, HostBinding, Inject, Injector, OnDestroy, Optional} from '@angular/core';
 
-import { addClass, App, encodeUrl, EventNotifier, getRouteNameFromLink, setAttr, removeAttr, removeClass } from '@wm/core';
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {
+    addClass,
+    App,
+    encodeUrl,
+    EventNotifier,
+    getRouteNameFromLink,
+    removeAttr,
+    removeClass,
+    setAttr
+} from '@wm/core';
+import {DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
 
-import { registerProps } from './anchor.props';
+import {registerProps} from './anchor.props';
 
 const DEFAULT_CLS = 'app-anchor';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -41,6 +50,8 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     public iconclass: string;
     public caption: any;
     public badgevalue: string;
+    public arialabel: string;
+
     @HostBinding('target') target: string;
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;

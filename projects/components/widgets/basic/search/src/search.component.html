@@ -37,6 +37,7 @@
            focus-target
            container="body"
            [disabled]="disabled"
+           [attr.accesskey]="shortcutkey"
            autocomplete="off"
            [(ngModel)]="query"
            [ngModelOptions]="{standalone: true}"
@@ -78,6 +79,7 @@
            focus-target
            [container]="containerTarget || '.wm-app'"
            [disabled]="disabled"
+           [attr.accesskey]="shortcutkey"
            autocomplete="off"
            [(ngModel)]="query"
            [ngModelOptions]="{standalone: true}"
