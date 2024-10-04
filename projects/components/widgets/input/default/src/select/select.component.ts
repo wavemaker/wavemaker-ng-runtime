@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { DataSource, removeAttr, setAttr, isIos } from '@wm/core';
+import { DataSource, removeAttr, setAttr, isIos, isSafari } from '@wm/core';
 import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
@@ -53,7 +53,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         * As this widget implements ControlValueAccessor, manually updating the ngModel (or modelByKey) is necessary to ensure correct form behavior.
         * */
         const datasetSubscription = this.dataset$.subscribe(() => {
-            if(isIos()) {
+            if(isIos() || isSafari()) {
                 if (this.datavalue) {
                     const selectedItem = this.datasetItems.find(item => item.selected);
                     if (!selectedItem) {
@@ -124,7 +124,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
      */
     checkForFloatingLabel($event) {
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
-        if(!this.placeholder && isIos()) {
+        if(!this.placeholder && (isIos() || isSafari)) {
             this.removePlaceholderOption();
         }
         if (captionEl.length > 0) {
