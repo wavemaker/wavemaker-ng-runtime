@@ -1,7 +1,8 @@
 import {Component, HostBinding, Inject, Injector, Optional} from '@angular/core';
 
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { registerProps } from './icon.props';
+import {IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {registerProps} from './icon.props';
+
 const DEFAULT_CLS = 'app-icon-wrapper';
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-icon',
@@ -21,6 +22,7 @@ export class IconComponent extends StylableComponent {
     public iconclass: any;
     public caption: string;
     public hint: string;
+    public arialabel: string;
     @HostBinding('attr.icon-position') iconposition: string;
     @HostBinding('style.fontSize') iconsize: string;
 

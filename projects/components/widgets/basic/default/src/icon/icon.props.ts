@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(
@@ -11,6 +11,7 @@ export const registerProps = () => {
                 ['conditionalclass', PROP_ANY],
                 ['conditionalstyle', PROP_ANY],
                 ['hint', PROP_STRING],
+                ['arialabel', PROP_STRING],
                 ['iconclass', {value: 'wm-sl-l sl-user', ...PROP_STRING}],
                 ['iconposition', {value: 'left', ...PROP_STRING}],
                 ['iconsize', PROP_STRING],

@@ -1,10 +1,8 @@
 <label [ngClass]="{'unchecked': !proxyModel, 'disabled': (disabled || readonly), 'required': (required && _caption)}">
     <input type="checkbox"
-           role="checkbox"
            #checkbox
            [attr.name]="name"
            [attr.aria-label]="arialabel"
-           [attr.aria-checked]="!!proxyModel"
            focus-target
            [(ngModel)]="proxyModel"
            [ngModelOptions]="{standalone: true}"
