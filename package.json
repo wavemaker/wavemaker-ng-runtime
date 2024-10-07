@@ -10,7 +10,7 @@
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage  && node jest-code-coverage-report.js",
         "test-prod": "jest --no-cache --no-color --ci --silent 2>&1 | sed 's/\\x1b\\[[0-9;]*m//g' > karma-test-report.txt",
-        "lint": "eslint --ext .ts,.html src/ \"projects/**/*.{ts,html}\"",
+        "lint": "eslint --ext .ts,.html src/",
         "e2e": "./node_modules/.bin/ng e2e",
         "optimizecss": "gulp --gulpfile build-scripts/optimize-css.gulpfile.js",
         "owasp": "owasp-dependency-check --project \"wavemaker-ng-runtime\" -f \"ALL\""
