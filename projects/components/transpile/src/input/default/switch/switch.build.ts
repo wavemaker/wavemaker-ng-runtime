@@ -8,7 +8,7 @@ register('wm-switch', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmSwitch #${counter}="wmSwitch" [attr.aria-label]="${counter}.arialabel || 'Switch button'" ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`;
+            return `<${tagName} wmSwitch #${counter}="wmSwitch" role="group" [attr.aria-label]="${counter}.arialabel || 'Switch choose options'" ${getFormMarkupAttr(attrs)} ${getNgModelAttr(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

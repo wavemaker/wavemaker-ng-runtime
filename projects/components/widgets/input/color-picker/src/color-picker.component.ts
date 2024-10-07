@@ -58,6 +58,7 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     }
 
     colorPickerOpen(value: string) {
+        $('.hex-text input').attr('placeholder', 'Enter hex color code')
         // Whenever autoclose property is set to 'always', adding the onclick listener to the colorPicker container to close the picker.
         if (this.autoclose === AUTOCLOSE_TYPE.ALWAYS) {
             const colorPickerContainer = this.nativeElement.querySelector(`.color-picker`) as HTMLElement;
