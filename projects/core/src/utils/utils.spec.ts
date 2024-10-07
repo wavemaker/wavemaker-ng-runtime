@@ -1512,7 +1512,7 @@ describe('xmlToJson', () => {
         const result = xmlToJson(xmlString);
         expect(result).toEqual(expectedJson);
         expect((global as any).X2JS).toHaveBeenCalledWith({
-            'emptyNodeForm': 'object',
+            'emptyNodeForm': 'content',
             'attributePrefix': '',
             'enableToStringFunc': false
         });

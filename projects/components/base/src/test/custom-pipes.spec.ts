@@ -532,12 +532,12 @@ describe('StateClass pipe', () => {
 
     it('should get the success state class name(Lowercase)', () => {
         const result = pipe.transform('success');
-        expect(result).toBe('wi wi-done text-success');
+        expect(result).toBe('wi wi-check-circle text-success');
     });
 
     it('should get the success state class name(Uppercase)', () => {
         const result = pipe.transform('SUCCESS');
-        expect(result).toBe('wi wi-done text-success');
+        expect(result).toBe('wi wi-check-circle text-success');
     });
 
     it('should get the error state class name(Lowercase)', () => {

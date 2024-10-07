@@ -1,7 +1,7 @@
-import { Inject, Pipe, PipeTransform } from '@angular/core';
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { CURRENCY_INFO, isDefined, App, CustomPipeManager, AbstractI18nService, hasOffsetStr } from '@wm/core';
-import { WmPipe } from "./wm-pipe";
+import {Inject, Pipe, PipeTransform} from '@angular/core';
+import {DatePipe, DecimalPipe} from '@angular/common';
+import {AbstractI18nService, CURRENCY_INFO, CustomPipeManager, hasOffsetStr, isDefined} from '@wm/core';
+import {WmPipe} from "./wm-pipe";
 import {filter, includes, isDate, isFunction, isObject, isUndefined, startsWith} from "lodash-es";
 
 declare const moment;
@@ -283,7 +283,7 @@ export class FileIconClassPipe implements PipeTransform {
 export class StateClassPipe implements PipeTransform {
     transform(state) {
         const stateClassMap = {
-            'success'   : 'wi wi-done text-success',
+            'success': 'wi wi-check-circle text-success',
             'error'     : 'wi wi-error text-danger'
         };
         return stateClassMap[state.toLowerCase()];
