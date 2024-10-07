@@ -1,4 +1,4 @@
-import { getAttrMarkup, getDataSource, IBuildTaskDef, register } from '@wm/transpiler';
+import {getAttrMarkup, getDataSource, IBuildTaskDef, register} from '@wm/transpiler';
 
 const tagName = 'div';
 
@@ -9,7 +9,7 @@ register('wm-fileupload', (): IBuildTaskDef => {
                 const onSelectBinding = getDataSource(attrs.get('select.event'));
                 attrs.set('datasource.bind', onSelectBinding);
             }
-            return `<${tagName} wmFileUpload ${getAttrMarkup(attrs)} role="input">`;
+            return `<${tagName} wmFileUpload ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };
