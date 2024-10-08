@@ -91,9 +91,6 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
             }),
             this.bsModal.onShow.subscribe(() => {
                 focusTrapObj.activeElement = document.activeElement;
-                // adding sheet and sheetdirection class for modal-container if sheet attr is present
-                this.$element.toggleClass('modal-sheet', this.sheet === "true");
-                this.$element.toggleClass(getSheetPositionClass(this.sheetPosition), this.sheet === "true");
             }),
             this.bsModal.onHidden.subscribe((closeReason) => {
                 let ref = this.dialogService.getDialogRefFromClosedDialogs();

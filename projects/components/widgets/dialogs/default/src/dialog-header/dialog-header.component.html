@@ -1,5 +1,5 @@
-<button *ngIf="isClosable" aria-label="Close" class="app-dialog-close close" (click)="closeDialog();" title="Close">
-    <span aria-hidden="true">&times;</span>
+<button *ngIf="isClosable" aria-label="Close" title="Close" class="app-dialog-close close btn btn-icon" (click)="closeDialog();">
+    <i class="app-icon wi wi-clear" aria-hidden="true"></i>
 </button>
 
 <ng-container [ngSwitch]="headinglevel">
