@@ -167,6 +167,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
             const parentSelector = $('body > app-root')[0];
             parentSelector.setAttribute('aria-hidden', 'true');
         }
+        $('.cdk-focus-trap-anchor').removeAttr('aria-hidden');
     }
 
     /**

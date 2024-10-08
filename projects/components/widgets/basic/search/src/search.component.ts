@@ -811,6 +811,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         styler(this.nativeElement as HTMLElement, this);
         this.containerTarget = getContainerTargetClass(this.nativeElement);
+        $('.app-search-input').removeAttr('aria-expanded');
     }
 
     private eventData($event, item) {

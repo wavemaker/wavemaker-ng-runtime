@@ -42,7 +42,6 @@
            [(ngModel)]="query"
            [ngModelOptions]="{standalone: true}"
            [readonly]="readonly"
-           [disabled]="disabled"
            [typeahead]="typeaheadDataSource"
            [typeaheadWaitMs]="debouncetime"
            [typeaheadItemTemplate]="customItemTemplate"
@@ -113,7 +112,7 @@
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
     <span class="wi wi-close form-control-feedback clear-btn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"></span>
     <span class="sr-only">Clear button</span>
-    <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
+    <span *ngIf="showsearchicon" [ngClass]="{'disabled': disabled}" class="input-group-addon">
         <form>
             <button title="Search" [disabled]="disabled" class="app-search-button wm-sl-l sl-search" type="submit"
                     (click)="onSearchSelect($event)"></button>
