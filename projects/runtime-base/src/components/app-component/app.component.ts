@@ -1,13 +1,36 @@
-import { ApplicationRef, Component, DoCheck, ElementRef, NgZone, ViewEncapsulation, ViewChild, ViewContainerRef, AfterViewInit } from '@angular/core';
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterOutlet } from '@angular/router';
+import {
+    AfterViewInit,
+    ApplicationRef,
+    Component,
+    DoCheck,
+    ElementRef,
+    NgZone,
+    ViewChild,
+    ViewContainerRef,
+    ViewEncapsulation
+} from '@angular/core';
+import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterOutlet} from '@angular/router';
 
-import { setTheme } from 'ngx-bootstrap/utils';
+import {setTheme} from 'ngx-bootstrap/utils';
 
-import { CustomIconsLoaderService, noop } from '@wm/core';
-import { $invokeWatchers, AbstractDialogService, AbstractSpinnerService, getWmProjectProperties, hasCordova, setAppRef, setNgZone, setPipeProvider, App, addClass, removeClass } from '@wm/core';
-import { OAuthService } from '@wm/oAuth';
-import { AppManagerService } from '../../services/app.manager.service';
-import { PipeProvider } from '../../services/pipe-provider.service';
+import {
+    $invokeWatchers,
+    AbstractDialogService,
+    AbstractSpinnerService,
+    addClass,
+    App,
+    CustomIconsLoaderService,
+    getWmProjectProperties,
+    hasCordova,
+    noop,
+    removeClass,
+    setAppRef,
+    setNgZone,
+    setPipeProvider
+} from '@wm/core';
+import {OAuthService} from '@wm/oAuth';
+import {AppManagerService} from '../../services/app.manager.service';
+import {PipeProvider} from '../../services/pipe-provider.service';
 
 interface SPINNER {
     show: boolean;
@@ -170,6 +193,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
     }
 
     ngAfterViewInit() {
+        document.documentElement.setAttribute('lang', getWmProjectProperties().defaultLanguage);
         if (hasCordova() && !window['wmDeviceReady']) {
             document.addEventListener('wmDeviceReady' , () => this.start());
         } else {
