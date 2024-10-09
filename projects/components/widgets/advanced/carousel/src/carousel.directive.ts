@@ -1,4 +1,14 @@
-import { AfterContentInit, ContentChildren, Directive, Injector, NgZone, OnDestroy, OnInit, QueryList } from '@angular/core';
+import {
+    AfterContentInit,
+    ContentChildren,
+    Directive, Inject,
+    Injector,
+    NgZone,
+    OnDestroy,
+    OnInit,
+    Optional,
+    QueryList
+} from '@angular/core';
 
 import { CarouselComponent, SlideComponent } from 'ngx-bootstrap/carousel';
 
@@ -6,8 +16,6 @@ import { createArrayFrom, IWidgetConfig, StylableComponent, styler } from '@wm/c
 
 import { registerProps } from './carousel.props';
 import { CarouselAnimator } from './carousel.animator';
-
-declare const _;
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-carousel'
@@ -39,8 +47,8 @@ export class CarouselDirective extends StylableComponent implements AfterContent
 
     @ContentChildren(SlideComponent) slides: QueryList<SlideComponent>;
 
-    constructor(public component: CarouselComponent, inj: Injector, private ngZone: NgZone) {
-        super(inj, WIDGET_CONFIG);
+    constructor(public component: CarouselComponent, inj: Injector, private ngZone: NgZone, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }
 

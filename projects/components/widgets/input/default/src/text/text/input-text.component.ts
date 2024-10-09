@@ -1,12 +1,10 @@
-import {Component, ElementRef, Injector, OnInit, ViewChild} from '@angular/core';
-import {NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS} from '@angular/forms';
+import {Component, ElementRef, Inject, Injector, OnInit, Optional, ViewChild} from '@angular/core';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
 import {IWidgetConfig, provideAs, provideAsWidgetRef} from '@wm/components/base';
 import {registerProps} from './input-text.props';
 import {BaseInput} from '../base/base-input';
-import { IMaskDirective } from 'angular-imask';
-
-declare const _;
+import {IMaskDirective} from 'angular-imask';
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-input-text',
@@ -33,6 +31,8 @@ export class InputTextComponent extends BaseInput implements OnInit{
     public type: any;
     public name: string;
     public readonly: boolean;
+    public conditionalclass: any;
+    public conditionalstyle: any;
     public tabindex: any;
     public placeholder: any;
     public shortcutkey: string;
@@ -42,13 +42,14 @@ export class InputTextComponent extends BaseInput implements OnInit{
     public isFocused: boolean;
     private lazy: boolean = false;
     public hint: string;
+    public arialabel: string;
 
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('input', {read: IMaskDirective}) imask: IMaskDirective<any>;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 
     /* Define the property change handler. This function will be triggered when there is a change in the widget property */

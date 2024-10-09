@@ -1,7 +1,7 @@
 import {
     Compiler,
     Component,
-    CUSTOM_ELEMENTS_SCHEMA,
+    CUSTOM_ELEMENTS_SCHEMA, forwardRef, Inject,
     Injectable,
     Injector,
     NgModule,
@@ -24,6 +24,7 @@ import {
 } from '@wm/runtime/base';
 
 import { AppResourceManagerService } from './app-resource-manager.service';
+import {isString, isUndefined} from "lodash-es";
 
 interface IPageMinJSON {
     markup: string;
@@ -33,7 +34,7 @@ interface IPageMinJSON {
     config?: string;
 }
 
-declare const window: any, _;
+declare const window: any;
 
 const fragmentCache = new Map<string, any>();
 
@@ -66,7 +67,7 @@ const execScript = (
 ) => {
     let fn = scriptCache.get(identifier);
     // Fix for [WMS-21196]: Incorrect script is being assigned,  when 2 prefabs have same partial name (i.e. same identifier).
-    if ((ctx === 'Partial' && !_.isUndefined(instance.Prefab)) || !fn) {
+    if ((ctx === 'Partial' && !isUndefined(instance.Prefab)) || !fn) {
         fn = new Function(ctx, 'App', 'Utils', script);
         scriptCache.set(identifier, fn);
     }
@@ -78,16 +79,13 @@ class BaseDynamicComponent {
 }
 
 const getDynamicModule = (componentRef: any) => {
-    @NgModule({
-        declarations: [componentRef],
-        imports: [
-            RuntimeBaseModule
-        ],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-    })
-    class DynamicModule {}
-
-    return DynamicModule;
+        return NgModule({
+            declarations: [componentRef],
+            imports: [
+                RuntimeBaseModule,
+            ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+    })(class DynamicModule {});
 };
 
 const getDynamicComponent = (
@@ -127,24 +125,14 @@ const getDynamicComponent = (
             break;
     }
 
-    @Component({
-        ...componentDef,
-        selector,
-        providers: [
-            {
-                provide: UserDefinedExecutionContext,
-                useExisting: DynamicComponent
-            }
-        ]
-    })
     class DynamicComponent extends BaseClass {
+        isDynamicComponent: boolean = true;
         pageName;
         partialName;
         prefabName;
-
-        constructor(public injector: Injector) {
+        constructor(@Inject(Injector) public injector: Injector) {
             super();
-
+            this.injector = injector;
             switch (type) {
                 case ComponentType.PAGE:
                     this.pageName = componentName;
@@ -170,11 +158,21 @@ const getDynamicComponent = (
 
         // in preview mode, there will be no function registered. functions will be generated dynamically through $parseEvent and $parseExpr
         getExpressions() {
-            return {}
+            return {};
         }
     }
 
-    return DynamicComponent;
+    const component = Component({
+        ...componentDef,
+        selector,
+        providers: [
+            {
+                provide: UserDefinedExecutionContext,
+                useExisting: DynamicComponent
+            }
+        ]
+    })(DynamicComponent)
+    return component;
 };
 
 @Injectable()
@@ -241,7 +239,8 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                 componentFactoryRef = this.compiler
                     .compileModuleAndAllComponentsSync(moduleDef)
                     .componentFactories
-                    .filter(factory => factory.componentType === componentDef)[0];
+                    .filter(factory => // @ts-ignore
+                        factory.componentType === componentDef)[0];
                 const updatedComponentName = (options && options['prefab']) ? options['prefab'] +  componentName : componentName;
                 componentFactoryRefCache.get(componentType).set(updatedComponentName, componentFactoryRef);
 
@@ -252,7 +251,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                     // console the error for easy debugging
                     console.log(msg, err);
                     this.appManager.notifyApp(
-                        _.isString(err) ? err : msg + ', check browser console for error details',
+                        isString(err) ? err : msg + ', check browser console for error details',
                         'error'
                     );
                 }

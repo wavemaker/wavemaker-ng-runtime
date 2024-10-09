@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { IDeviceStartUpService } from '@wm/mobile/core';
 import { isIos } from '@wm/core';
-
-declare const _;
+import {forEach} from "lodash-es";
 
 const STORAGE_KEY = 'wavemaker.persistedcookies';
 
@@ -95,10 +94,13 @@ export class CookieService implements IDeviceStartUpService {
             promises = [];
         if (cookieInfoStr) {
             const cookieInfo = JSON.parse(cookieInfoStr) as Map<string, CookieInfo>;
-            _.forEach(cookieInfo, c => {
+            forEach(cookieInfo, c => {
+                // @ts-ignore
                 if (c.name && c.value) {
+                    // @ts-ignore
                     promises.push(this.getCookie(c.hostname, c.name).catch(() => {
                         return new Promise((resolve, reject) => {
+                            // @ts-ignore
                             window['cookieEmperor'].setCookie(c.hostname, c.name, this.rotateRTL(c.value), resolve, reject);
                         });
                     }));

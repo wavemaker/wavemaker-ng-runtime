@@ -1,6 +1,6 @@
-import { AfterViewInit, ContentChildren, Directive, Injector } from '@angular/core';
+import {AfterViewInit, ContentChildren, Directive, Inject, Injector, Optional} from '@angular/core';
 
-import { addForIdAttributes, switchClass } from '@wm/core';
+import {addForIdAttributes, switchClass} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, WidgetRef } from '@wm/components/base';
 
@@ -35,8 +35,8 @@ export class CompositeDirective extends StylableComponent implements AfterViewIn
 
     public required: boolean;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 

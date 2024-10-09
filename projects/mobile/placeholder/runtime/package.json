@@ -1,21 +1,11 @@
 {
-    "name": "@wm/mobile/runtime",
-    "ngPackage": {
-        "dest": "../../../../libraries/mobile/placeholder/runtime",
-        "lib": {
-            "flatModuleFile": "index",
-            "entryFile": "./src/public_api.ts",
-            "umdId": "wm.mobile.runtime",
-            "umdModuleIds": {
-                "@angular/core": "ng.core"
-            }
-        }
-    },
+    "name": "@wm/mobile/placeholder/runtime",
+    "sideEffects": false,
     "dependencies": {
       "tslib": "^2.0.0"
     },
     "peerDependencies": {
-        "@angular/common": "^12.2.16",
-        "@angular/core": "^12.2.16"
+        "@angular/common": "^15.2.9",
+        "@angular/core": "^15.2.9"
     }
 }

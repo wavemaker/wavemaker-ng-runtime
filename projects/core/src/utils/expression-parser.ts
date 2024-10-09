@@ -1,25 +1,23 @@
 import {
-    Lexer,
-    Parser,
-    BindingPipe,
-    ReadPropExpr,
-    PropertyRead,
-    ImplicitReceiver,
-    LiteralPrimitive,
-    MethodCall,
-    Conditional,
     Binary,
-    PrefixNot,
-    KeyedRead,
-    LiteralMap,
-    LiteralArray,
+    BindingPipe,
+    Call,
     Chain,
-    PropertyWrite
+    Conditional,
+    ImplicitReceiver,
+    KeyedRead,
+    Lexer,
+    LiteralArray,
+    LiteralMap,
+    LiteralPrimitive,
+    Parser,
+    PrefixNot,
+    PropertyRead,
+    PropertyWrite,
+    Unary
 } from '@angular/compiler';
+import {get} from "lodash-es";
 
-declare const _;
-
-const isString = v => typeof v === 'string';
 const isDef = v => v !== void 0;
 const ifDef = (v, d) => v === void 0 ? d : v;
 const plus = (a, b) => void 0 === a ? b : void 0 === b ? a : a + b;
@@ -154,7 +152,7 @@ class ASTCompiler {
 
     processLiteralPrimitive() {
         const ast = this.cAst;
-        return isString(ast.value) ? `"${ast.value.replace(/"/g, '\"').replace(STR_ESCAPE_REGEX, stringEscapeFn)}"` : ast.value;
+        return typeof (ast.value) === 'string' ? `"${ast.value.replace(/"/g, '\"').replace(STR_ESCAPE_REGEX, stringEscapeFn)}"` : ast.value;
     }
 
     processLiteralArray() {
@@ -276,6 +274,15 @@ class ASTCompiler {
         return this.handleBinaryDefault();
     }
 
+    processUnary() {
+        const ast = this.cAst;
+        const stmts = this.cStmts;
+        const e = this.build(ast.expr, stmts);
+        const v = this.createVar();
+        stmts.push(`${v}=${ast.operator}${e}`);
+        return v;
+    }
+
     processConditional() {
         const ast = this.cAst;
         const stmts = this.cStmts;
@@ -310,8 +317,9 @@ class ASTCompiler {
         }
         const fn = this.build(ast.receiver, stmts);
         const v = this.createVar();
-        const isImplicitReceiver = ast.receiver instanceof ImplicitReceiver;
-        stmts.push(`${v}= ${fn}&&${fn}.${ast.name}&&${fn}.${ast.name}${isImplicitReceiver ? '.bind(_ctx)' : ''}(${_args.join(',')})`);
+        const isImplicitReceiver = ast.receiver instanceof ImplicitReceiver || (ast.receiver instanceof PropertyRead && ast.receiver?.receiver instanceof ImplicitReceiver);
+        const context = stmts[stmts.length - 1].split('&&')[0].split('=')[1];
+        stmts.push(`${v}= ${fn}&&${fn}${isImplicitReceiver ? '.bind(_ctx)' : `.bind(${context})`}(${_args.join(',')})`);
         return v;
     }
 
@@ -381,11 +389,13 @@ class ASTCompiler {
             return this.processKeyedRead();
         } else if (ast instanceof PrefixNot) {
             return this.processPrefixNot();
+        } else if (ast instanceof Unary) {
+            return this.processUnary();
         } else if (ast instanceof Binary) {
             return this.processBinary();
         } else if (ast instanceof Conditional) {
             return this.processConditional();
-        } else if (ast instanceof MethodCall) {
+        } else if (ast instanceof Call) {
             return this.processMethodCall();
         } else if (ast instanceof Chain) {
             return this.processChain();
@@ -487,11 +497,10 @@ enum ExpressionType {
 export function $parseExpr(expr: string, defOnly?: boolean): ParseExprResult {
 
     if (!pipeProvider) {
-        console.log('set pipe provider');
         return noop;
     }
 
-    if (!isString(expr)) {
+    if (typeof (expr) !== 'string') {
         return noop;
     }
 
@@ -525,7 +534,7 @@ export function $parseExpr(expr: string, defOnly?: boolean): ParseExprResult {
                 // handle internal bindings for wm widgets used inside a component
                 let _ctx = Object.assign({}, locals);
                 Object.setPrototypeOf(_ctx, ctx);
-                return _.get(_ctx, expr);
+                return get(_ctx, expr);
             };
         } else {
             const parser = new Parser(new Lexer);
@@ -587,7 +596,7 @@ function simpleFunctionEvaluator(expr, ctx, locals) {
 
     let parts = expr.split('(');
     let fnName = parts[0];
-    let computedFn = _.get(ctx, fnName);
+    let computedFn = get(ctx, fnName);
 
     if (computedFn) {
         let args = parts[1].replace(')', '');
@@ -595,14 +604,14 @@ function simpleFunctionEvaluator(expr, ctx, locals) {
         let computedArgs = [];
         args.forEach((arg)=> {
             arg = arg && arg.trim();
-            computedArgs.push(_.get(_ctx, arg));
+            computedArgs.push(get(_ctx, arg));
         });
         return computedFn.bind(_ctx)(...computedArgs);
     }
 }
 
 export function $parseEvent(expr, defOnly?): ParseExprResult {
-    if (!isString(expr)) {
+    if (typeof (expr) !== 'string') {
         return noop;
     }
 
@@ -628,7 +637,7 @@ export function $parseEvent(expr, defOnly?): ParseExprResult {
             fn = simpleFunctionEvaluator.bind(undefined, expr);
         } else {
             const parser = new Parser(new Lexer);
-            const ast = parser.parseAction(expr, '',0);
+            const ast = parser.parseAction(expr, '', 0);
 
             if (ast.errors.length) {
                 return noop;

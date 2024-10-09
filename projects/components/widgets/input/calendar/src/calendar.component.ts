@@ -1,14 +1,34 @@
-import { DatePickerInnerComponent } from 'ngx-bootstrap/datepicker/datepicker-inner.component';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Inject,
+    Injector,
+    OnDestroy,
+    OnInit,
+    Optional,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 
-import { Attribute, AfterViewInit, AfterContentInit, Component, ElementRef, Injector, OnInit, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
+import {AbstractI18nService, getClonedObject, getSessionStorageItem, isMobile} from '@wm/core';
 
-import {getClonedObject, getSessionStorageItem, AbstractI18nService, isMobileApp, isMobile} from '@wm/core';
+import {
+    APPLY_STYLES_TYPE,
+    createArrayFrom,
+    getEvaluatedData,
+    IRedrawableComponent,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler
+} from '@wm/components/base';
 
-import { APPLY_STYLES_TYPE, createArrayFrom, getEvaluatedData, IWidgetConfig, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {registerProps} from './calendar.props';
+import {capitalize, clone, each, extend, get, includes, isDate, isEmpty, isObject, mapKeys} from "lodash-es";
 
-import { registerProps } from './calendar.props';
-
-declare const _, $, moment;
+declare const $;
+declare const moment;
 
 const DEFAULT_CLS = 'app-calendar';
 const dateFormats = ['yyyy-MM-dd', 'yyyy-M-dd', 'M-dd-yyyy', 'MM-dd-yy', 'yyyy, dd MMMM', 'yyyy, MMM dd', 'MM/dd/yyyy', 'M/d/yyyy', 'EEE, dd MMM yyyy', 'EEE MMM dd yyyy', 'EEEE, MMMM dd, yyyy', 'timestamp'];
@@ -85,8 +105,6 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     @ViewChild('calendar') _calendar: ElementRef;
     @ViewChild('datepicker') _datepicker: ElementRef;
 
-    public _datepickerInnerComponent: DatePickerInnerComponent;
-
     public selecteddates: any;
     public selecteddata: any;
     public currentview: object;
@@ -151,8 +169,10 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     selectDate() {
         let start, end;
         // checks if datavalue is an object and not a Date object
-        if (_.isObject(this.datavalue) && !_.isDate(this.datavalue)) {
+        if (isObject(this.datavalue) && !isDate(this.datavalue)) {
+            // @ts-ignore
             start = moment(this.datavalue.start);
+            // @ts-ignore
             end   = moment(this.datavalue.end);
         } else {
             start = moment(this.datavalue);
@@ -296,7 +316,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
      */
     private convertEventObjForOldAndNewData(eventObj) {
         const _eventMetadata = eventObj.extendedProps;
-        _.extend(eventObj, _eventMetadata);
+        extend(eventObj, _eventMetadata);
         return eventObj;
     }
 
@@ -349,23 +369,23 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             regEx = new RegExp('\\bday\\b', 'g');
         let left = '', right = '';
         if (ctrls && viewType) {
-            if (_.includes(ctrls, 'navigation')) {
+            if (includes(ctrls, 'navigation')) {
                 left += ' prev next';
             }
 
-            if (_.includes(ctrls, 'today')) {
+            if (includes(ctrls, 'today')) {
                 left += ' today';
             }
 
-            if (_.includes(ctrls, 'year')) {
+            if (includes(ctrls, 'year')) {
                 right += (viewType === VIEW_TYPES.LIST) ? 'listYear' : '';
             }
 
-            if (_.includes(ctrls, 'month')) {
+            if (includes(ctrls, 'month')) {
                 right += (viewType === VIEW_TYPES.LIST) ? ' listMonth' : ' dayGridMonth';
             }
 
-            if (_.includes(ctrls, 'week')) {
+            if (includes(ctrls, 'week')) {
                 right += (viewType === VIEW_TYPES.BASIC) ?  ' dayGridWeek' : (viewType === VIEW_TYPES.LIST) ? ' listWeek' : ' timeGridWeek';
             }
 
@@ -378,12 +398,12 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             if (right.charAt(0) === ' ') {
                 right = right.substring(1);
             }
-            _.extend(this.calendarOptions.calendar.headerToolbar, {'start': left, 'end': right});
+            extend(this.calendarOptions.calendar.headerToolbar, {'start': left, 'end': right});
         }
     }
 
-    constructor(inj: Injector, i18nService: AbstractI18nService) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, i18nService: AbstractI18nService, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         this.eventSources.push(this.dataSetEvents);
         const FullCalendar = window['FullCalendar'];
@@ -436,7 +456,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
                 break;
             case 'view':
                 if (nv !== 'month' || this.calendartype === VIEW_TYPES.LIST) {
-                    this.calendarOptions.calendar.defaultView = this.calendartype + _.capitalize(nv);
+                    this.calendarOptions.calendar.defaultView = this.calendartype + capitalize(nv);
                 } else {
                     this.calendarOptions.calendar.defaultView = nv;
                 }
@@ -472,11 +492,11 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         const $parent = $(this.nativeElement).parent(),
             elHeight = height || '650px';
 
-        let parentHeight = $parent.css('height'),
+        let parentHeight: any = $parent.css('height'),
             computedHeight: number;
 
-        if (_.includes(elHeight, '%')) {
-            if (_.includes(parentHeight, '%')) {
+        if (includes(elHeight, '%')) {
+            if (includes(parentHeight, '%')) {
                 parentHeight = $parent.height();
             }
             computedHeight = (parseInt(parentHeight, 10) * Number(elHeight.replace(/\%/g, ''))) / 100;
@@ -521,15 +541,22 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         };
 
         eventSource.forEach((obj) => {
-            obj._eventMetadata = _.clone(obj);
-            _.mapKeys(properties,  (value, key) => {
+            obj._eventMetadata = clone(obj);
+            if (isEmpty(obj._eventMetadata.url)) {
+                delete obj._eventMetadata.url;
+            }
+            if (isEmpty(obj.url)) {
+                delete obj.url;
+            }
+
+            mapKeys(properties, (value, key) => {
                 let objVal;
                 if (key === 'title') {
                     objVal = getEvaluatedData(obj, {expression: value}, this.viewParent);
                 } else if (key === 'allDay') {
-                    objVal = !!_.get(obj, value);
+                    objVal = !!get(obj, value);
                 } else {
-                    objVal = _.get(obj, value);
+                    objVal = get(obj, value);
                 }
                 if (!objVal) {
                     return;
@@ -541,11 +568,11 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     private setLocale() {
-        const year = _.get(this.appLocale, 'LABEL_CALENDAR_YEAR') || BUTTON_TEXT.YEAR;
-        const month = _.get(this.appLocale, 'LABEL_CALENDAR_MONTH') || BUTTON_TEXT.MONTH;
-        const week = _.get(this.appLocale, 'LABEL_CALENDAR_WEEK') || BUTTON_TEXT.WEEK;
-        const day = _.get(this.appLocale, 'LABEL_CALENDAR_DAY') || BUTTON_TEXT.DAY;
-        const today = _.get(this.appLocale, 'LABEL_CALENDAR_TODAY') || BUTTON_TEXT.TODAY;
+        const year = get(this.appLocale, 'LABEL_CALENDAR_YEAR') || BUTTON_TEXT.YEAR;
+        const month = get(this.appLocale, 'LABEL_CALENDAR_MONTH') || BUTTON_TEXT.MONTH;
+        const week = get(this.appLocale, 'LABEL_CALENDAR_WEEK') || BUTTON_TEXT.WEEK;
+        const day = get(this.appLocale, 'LABEL_CALENDAR_DAY') || BUTTON_TEXT.DAY;
+        const today = get(this.appLocale, 'LABEL_CALENDAR_TODAY') || BUTTON_TEXT.TODAY;
         this.calendarOptions.calendar.buttonText    = { year, month, week, day, today,
             'listYear': year,
             'listMonth': month,
@@ -559,7 +586,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
      * @param options
      */
     overrideDefaults(options) {
-        if (_.isObject(options)) {
+        if (isObject(options)) {
             Object.entries(options).map(option => this.$fullCalendar.setOption(option[0], option[1]));
         }
     }
@@ -611,7 +638,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
      * @param eventObject
      */
     public addEventSource(eventObject) {
-        if (_.isEmpty(eventObject)) {
+        if (isEmpty(eventObject)) {
             console.warn('addEventSource method requires an object as a parameter.');
             return;
         }
@@ -678,11 +705,11 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         const self = this;
         this.$fullCalendar.batchRendering(function() {
             const events = self.$fullCalendar.getEvents();
-            _.each( events, function( event) {
+            each(events, function (event) {
                 const eventData = self.$fullCalendar.getEventById(event.id);
                 eventData.remove();
             });
-            _.each( self.dataSetEvents.events, function( event) {
+            each(self.dataSetEvents.events, function (event) {
                 self.$fullCalendar.addEvent(event);
             });
         });

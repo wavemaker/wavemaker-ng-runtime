@@ -79,6 +79,9 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const role = parentLoginWidget && parentLoginWidget.get('isLogin') ? 'app-login' : '';
             const counter = idGen.nextUid();
             const dependsOn = attrs.get('dependson') ? `dependson="${attrs.get('dependson')}"` : '';
+            if(dependsOn) {
+                attrs.set('dependsontable', attrs.get('dependson'));
+            }
             const classProp = attrs.get('formlayout') === 'page' ? 'app-device-liveform panel liveform-inline' : '';
             const dialogAttributes = ['title', 'title.bind', 'iconclass', 'iconclass.bind', 'width'];
             attrs.delete('dependson');
@@ -117,14 +120,18 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                                                      tabindex.bind="btn.tabindex" [class.hidden]="btn.updateMode ? !${counter}.isUpdateMode : ${counter}.isUpdateMode"></button>
                                         </ng-template>`;
                 mobileFormContentTmpl = `<header wmMobileNavbar name="${name}" ${getAttrMarkup(navbarAttrsMap)}>
-                                            <ng-container *ngFor="let btn of ${counter}.buttonArray" [ngTemplateOutlet]="buttonRef" [ngTemplateOutletContext]="{btn:btn}">
+                                            <ng-container *ngFor="let btn of ${counter}.buttonArray; let i = index"
+                                                [ngTemplateOutlet]="buttonRef"
+                                                [ngTemplateOutletContext]="{btn:btn}"
+                                                [ngTemplateOutletInjector]="${counter}.createCustomInjector('mobile_' + i, {item:item, index:i})">
                                             </ng-container>
                                         </header>
                                         <div class="form-elements panel-body" >`;
             }
 
             tmpl = getAttrMarkup(attrs);
-            return `${liveFormTmpl} ${tmpl} ${dependsOn}>
+            const dependsOnTmpl = dependsOn ? `<div ${dependsOn}>` : '';
+            return `${dependsOnTmpl}${liveFormTmpl} ${tmpl}>
                        ${buttonTemplate} ${mobileFormContentTmpl}`;
         },
         post: (attrs) => {
@@ -133,6 +140,9 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             }
             if (attrs.get('formlayout') === 'page') {
                 return `</div></${tagName}>`;
+            }
+            if(attrs.get('dependsontable')) {
+                return `</${tagName}></div>`;
             }
             return `</${tagName}>`;
         },

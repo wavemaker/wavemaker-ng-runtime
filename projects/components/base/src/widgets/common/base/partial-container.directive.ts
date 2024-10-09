@@ -5,8 +5,7 @@ import { debounceTime, filter } from 'rxjs/operators';
 import { App, $invokeWatchers, noop, ComponentType, PartialRefProvider } from '@wm/core';
 
 import { WidgetRef } from "../../framework/types";
-
-declare const _;
+import {debounce} from "lodash-es";
 
 @Directive({
     selector: '[partialContainer]'
@@ -33,11 +32,13 @@ export class PartialContainerDirective {
         } else if (this.componentInstance.viewParent) {
             prefabName = this.componentInstance.viewParent.prefabName;
         }
+
         const componentFactory = await this.partialRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL, {prefab: prefabName});
         if (componentFactory) {
             const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);
-            if (instanceRef && instanceRef['_component'] && prefabName) {
-                instanceRef['_component'].prefabName = prefabName;
+            if (instanceRef && instanceRef['instance'] && prefabName) {
+                // @ts-ignore
+                instanceRef['instance'].prefabName = prefabName;
             }
             if (!this.$target) {
                 this.$target = this.elRef.nativeElement.querySelector('[partial-container-target]') || this.elRef.nativeElement;
@@ -50,7 +51,7 @@ export class PartialContainerDirective {
         }
     }
 
-    renderPartial = _.debounce(this._renderPartial, 200);
+    renderPartial = debounce(this._renderPartial, 200);
 
     onLoadSuccess() {
         this.componentInstance.invokeEventCallback('load');

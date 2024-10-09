@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(
@@ -13,6 +13,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['dataset', {value: 'Menu Item 1, Menu Item 2, Menu Item 3', ...PROP_ANY}],
                 ['hint', {value: '', ...PROP_STRING}],
+                ['arialabel', PROP_STRING],
                 ['isactive', PROP_STRING],
                 ['iconclass', PROP_STRING],
                 ['iconposition', {value: 'left', ...PROP_STRING}],

@@ -8,8 +8,8 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { App, hasCordova, transformFileURI } from '@wm/core';
 import { DeviceService, NetworkService } from '@wm/mobile/core';
 
+declare const $;
 declare const window, location, cordova;
-declare const $, _;
 
 interface Settings {
     enabled: boolean,
@@ -100,7 +100,7 @@ export class LiveSyncInterceptor implements HttpInterceptor {
 
     private defineAPI() {
         (window as any).liveSync = (flag) => {
-            if (this.settings.enabled === !!flag 
+            if (this.settings.enabled === !!flag
                 || !this.networkService.isConnected()) {
                 return;
             }
@@ -154,15 +154,16 @@ export class LiveSyncInterceptor implements HttpInterceptor {
                 error: reject
             });
         }).then((fileContent: string) => {
-            let path = this.localAppUrl || 
-                (`${location.protocol}//${location.hostname}${location.pathname}`);
+            const port = location.port ? ':' + location.port : '';
+            let path = this.localAppUrl ||
+                (`${location.protocol}//${location.hostname}${port}${location.pathname}`);
             let cordovaPath = path;
             if (cordovaPath.endsWith('.html')) {
                 const splits = cordovaPath.split('/').slice(0, );
                 cordovaPath = splits.slice(0, splits.length - 1).join('/');
             }
             cordovaPath += '/cordova.js';
-            const mAppUrl = `${location.protocol}//${location.hostname}${transformFileURI(localDir + 'live-index.html')}`;
+            const mAppUrl = `${location.protocol}//${location.hostname}${port}${transformFileURI(localDir + 'live-index.html')}`;
             fileContent = fileContent.replace('cordova.js', cordovaPath);
             fileContent = fileContent.replace('<head>', `
             <head>
@@ -180,7 +181,7 @@ export class LiveSyncInterceptor implements HttpInterceptor {
         return new Promise((resolve, reject) => {
             $.get(this.deployedUrl + 'config.xml').done(function (res) {
                 const plugins = {};
-                $(res).find('plugin').each(function(p) { 
+                $(res).find('plugin').each(function (p) {
                     plugins[$(this).attr('name')] = $(this).attr('spec');
                 });
                 resolve(plugins);
@@ -204,7 +205,7 @@ export class LiveSyncInterceptor implements HttpInterceptor {
             localStorage.setItem('WM.NetworkService.isConnected', 'true');
             localStorage.setItem('WM.NetworkService._autoConnect', 'true');
             sessionStorage.setItem('debugMode', 'true');
-            
+
             setTimeout(() => {
                 window.navigator.splashscreen.show();
                 window.location.href = filePath;
@@ -264,7 +265,7 @@ export class LiveSyncInterceptor implements HttpInterceptor {
                 if (changed) {
                     new DialogComponent({
                         title: 'Require new build',
-                        info: 'Cordova Plugins in this app do not match with configuration of project in Studio.' + 
+                        info: 'Cordova Plugins in this app do not match with configuration of project in Studio.' +
                         ' So, new Cordova Build is required for Live Sync to work properly.',
                         iconClass: 'fa fa-warning fa-4x live-sync-warning-icon',
                         actions: [{
@@ -295,7 +296,7 @@ class DialogComponent {
             primary?: boolean
         }[]
     }) {
-        
+
     }
 
     dismiss() {
@@ -311,13 +312,13 @@ class DialogComponent {
                         <label class="live-sync-title">
                             ${this.options.title}
                         </label>
-                        <label class="live-sync-description">    
+                        <label class="live-sync-description">
                             ${this.options.info}
                         </label>
                         <div class="live-sync-action-panel">
                             ${this.options.actions.map((a) => {
                                 return a ? `
-                                <button 
+                                <button
                                     type="button"
                                     class="live-sync-action ${a.primary ? ' live-sync-primary-action' : ''}">
                                         ${a.title}

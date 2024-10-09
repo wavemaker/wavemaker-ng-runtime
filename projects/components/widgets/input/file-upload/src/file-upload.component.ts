@@ -1,13 +1,14 @@
-import { AfterViewInit, Attribute, Component, Injector, OnInit, OnDestroy } from '@angular/core';
+import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, OnInit, Optional} from '@angular/core';
 
-import { Subject } from 'rxjs';
+import {Subject} from 'rxjs';
 
-import { App, DataSource, isAudioFile, isImageFile, isVideoFile } from '@wm/core';
-import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {App, DataSource, getWmProjectProperties, isAudioFile, isImageFile, isVideoFile} from '@wm/core';
+import {provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
 
-import { registerProps } from './file-upload.props';
+import {registerProps} from './file-upload.props';
+import {forEach, includes, isEmpty, toLower} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 const DEFAULT_CLS = 'app-fileupload';
 const WIDGET_CONFIG = {
@@ -26,10 +27,12 @@ const WIDGET_CONFIG = {
 export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
     selectedFiles: any = [];
+    uploadedFiles: any = [];
     selectedFolders: any = [];
     progressObservable;
     name;
     hint;
+    arialabel;
     multiple;
     fileTransfers = {};
     caption = 'Upload';
@@ -58,16 +61,14 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         file: undefined,
         uploadPath: undefined
     };
-    chooseFilter = '';
+    allowedFileUploadExtensions = getWmProjectProperties().allowedFileUploadExtensions;
+    defaultAllowedExtensions = this.allowedFileUploadExtensions.split(',').map(item => item.trim()).map(item => item.endsWith('/*') ? item : `.${item}`);
+    chooseFilter = this.defaultAllowedExtensions.includes('*/*') ? '' : this.defaultAllowedExtensions;
     datasource;
     fileUploadMessage = 'Drop your files here or click here to browse';
-    uploadedFiles = {
-        fileName: '',
-        path: '',
-        length: '',
-        status: ''
-    };
     highlightDropArea;
+    showprogressbar;
+    showprogressbarpercentage;
     /*_hasOnSuccessEvt = WM.isDefined(attrs.onSuccess);
      _hasOnErrorEvt = WM.isDefined(attrs.onError);*/
 
@@ -78,23 +79,23 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         if (!contenttype) {
             return true;
         }
-        contentTypes = _.toLower(contenttype).split(',');
+        contentTypes = toLower(contenttype).split(',');
 
-        if (_.includes(contentTypes, 'image/*') || (_.includes(contentTypes, 'image') && isMobileType)) {
+        if (includes(contentTypes, 'image/*') || (includes(contentTypes, 'image') && isMobileType)) {
             isValid = isImageFile(filename);
             // If one of the content type chosen is image and user uploads image it is valid file
             if (isValid) {
                 return isValid;
             }
         }
-        if (_.includes(contentTypes, 'audio/*') || (_.includes(contentTypes, 'audio') && isMobileType)) {
+        if (includes(contentTypes, 'audio/*') || (includes(contentTypes, 'audio') && isMobileType)) {
             isValid = isAudioFile(filename);
             // If one of the content type chosen is audio/* and user uploads audio it is valid file
             if (isValid) {
                 return isValid;
             }
         }
-        if (_.includes(contentTypes, 'video/*') || (_.includes(contentTypes, 'video') && isMobileType)) {
+        if (includes(contentTypes, 'video/*') || (includes(contentTypes, 'video') && isMobileType)) {
             isValid = isVideoFile(filename);
             // If one of the content type chosen is video/* and user uploads video it is valid file
             if (isValid) {
@@ -102,7 +103,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
             }
         }
         /*content type and the uploaded file extension should be same*/
-        if (_.includes(contentTypes, '.' + _.toLower(extensionName))) {
+        if (includes(contentTypes, '.' + toLower(extensionName))) {
             isValid = true;
         }
         return isValid;
@@ -120,7 +121,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
             this.chooseFilter = '';
         }
 
-        _.forEach($files, (file) => {
+        forEach($files, (file) => {
             /* check for the file content type before uploading */
             if (!this.isValidFile(file.name, this.chooseFilter, this.getFileExtension(file.name), this._isMobileType)) {
                 const msg = `${this.appLocale.LABEL_FILE_EXTENTION_VALIDATION_MESSAGE} ${this.chooseFilter}`;
@@ -155,7 +156,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
 
     /*Overwrite the caption only if they are default*/
     getCaption(caption, isMultiple, isMobileType) {
-        if (_.includes(this.DEFAULT_CAPTIONS, caption)) {
+        if (includes(this.DEFAULT_CAPTIONS, caption)) {
             return isMultiple && !isMobileType ? this.DEFAULT_CAPTIONS.MULTIPLE_SELECT : this.DEFAULT_CAPTIONS.SELECT;
         }
         return caption;
@@ -170,7 +171,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
 
     /* this function returns the fileextension */
     getFileExtension(fileName) {
-        if (fileName && _.includes(fileName, '.')) {
+        if (fileName && includes(fileName, '.')) {
             return fileName.substring(fileName.lastIndexOf('.') + 1);
         }
         return 'file';
@@ -183,6 +184,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
      */
     onSelectEventCall($event, $files) {
         this.selectedFiles = $files;
+        this.uploadedFiles = this.multiple ? [...this.uploadedFiles, ...$files] : $files;
         setTimeout(() => {
             this.invokeEventCallback('select', {
                 $event: $.extend($event.$files || {}, $files),
@@ -210,6 +212,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     /*this function to clear the specified file. if argument is not provided, it clears the complete list  */
     clear(fileObj) {
         this.selectedFiles = (fileObj) ? this.selectedFiles.filter((file) => file !== fileObj) : [];
+        this.uploadedFiles = (fileObj) ? this.uploadedFiles.filter((file) => file !== fileObj) : [];
     }
 
     /*this function to set the class names for clear icon */
@@ -234,7 +237,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         }
 
         // Trigger error callback event if any invalid file found.
-        if (!_.isEmpty(files.errorFiles)) {
+        if (!isEmpty(files.errorFiles)) {
             this.invokeEventCallback('error', {
                 $event,
                 files: files.errorFiles
@@ -252,7 +255,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
             if (this.datasource) {
                 this.datasource._progressObservable = this.progressObservable;
                 this.datasource._progressObservable.asObservable().subscribe((progressObj) => {
-                    _.forEach(this.selectedFiles, (file) => {
+                    forEach(this.selectedFiles, (file) => {
                         if (file.name === progressObj.fileName) {
                             file.progress = progressObj.progress;
                             if (file.progress === 100) {
@@ -261,6 +264,10 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                                 file.status = progressObj.status;
                                 if (progressObj.errMsg) {
                                     file.errMsg = progressObj.errMsg;
+                                    this.invokeEventCallback('error', {
+                                        $event,
+                                        files: file
+                                    });
                                 }
                             }
                         }
@@ -326,6 +333,12 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         this.datasource.execute(DataSource.Operation.CANCEL, $file);
     }
 
+    isMimeType(file: string) {
+        return (this.defaultAllowedExtensions.includes('image/*') && isImageFile(file))
+            || (this.defaultAllowedExtensions.includes('audio/*') && isAudioFile(file))
+            || (this.defaultAllowedExtensions.includes('video/*') && isVideoFile(file));
+    }
+
     /* Define the property change handler. This function will be triggered when there is a change in the widget property */
     onPropertyChange(key, nv, ov) {
         /*Monitoring changes for styles or properties and accordingly handling respective changes.*/
@@ -335,7 +348,15 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                 this.changeServerUploadPath(nv);
                 break;
             case 'contenttype':
-                this.chooseFilter = nv.split(' ').join(',');
+                if (this.defaultAllowedExtensions.includes('*/*')) {
+                    this.chooseFilter = nv.split(' ').join(',')
+                } else {
+                    this.chooseFilter = nv.split(' ').filter(item => this.defaultAllowedExtensions.includes(item) || this.isMimeType(item)).join(',');
+                    if (isEmpty(this.chooseFilter)) {
+                        this.chooseFilter = this.defaultAllowedExtensions;
+                    }
+                }
+
                 break;
             case 'multiple':
                 this.formName = this.name + (this.multiple ? '-multiple-fileupload' : '-single-fileupload');
@@ -348,8 +369,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         super.onPropertyChange(key, nv, ov);
     }
 
-    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         // styler(this.nativeElement, this);
     }
 

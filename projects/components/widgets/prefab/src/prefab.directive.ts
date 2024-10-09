@@ -1,15 +1,23 @@
-import { Attribute, ChangeDetectorRef, Directive, ElementRef, Injector, OnDestroy } from '@angular/core';
+import {
+    Attribute,
+    ChangeDetectorRef,
+    Directive,
+    ElementRef,
+    Inject,
+    Injector,
+    OnDestroy,
+    Optional
+} from '@angular/core';
 
-import { setCSS, noop } from '@wm/core';
+import {setCSS, noop} from '@wm/core';
 
 import { PROP_TYPE, register, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { prefabProps } from './prefab.props';
+import {startsWith} from "lodash-es";
 
 const DEFAULT_CLS = 'app-prefab';
 
 const registeredPropsSet = new Set<string>();
-
-declare const _;
 
 @Directive({
     selector: 'section[wmPrefab]',
@@ -24,12 +32,12 @@ export class PrefabDirective extends StylableComponent implements OnDestroy {
     name: string;
     propsReady: Function;
 
-    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('prefabname') prefabName) {
+    constructor(inj: Injector, elRef: ElementRef, cdr: ChangeDetectorRef, @Attribute('prefabname') prefabName, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         const widgetType = `wm-prefab-${prefabName}`;
         const WIDGET_CONFIG = {widgetType, hostClass: DEFAULT_CLS};
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
         this.propsReady = resolveFn;
         this.prefabName = prefabName;
         this.widgetType = widgetType;
@@ -80,7 +88,7 @@ export class PrefabDirective extends StylableComponent implements OnDestroy {
             }
 
             // Do not set the 'bind:*' values
-            propsMap.set(k, {type, value: _.startsWith(v.value, 'bind:') ? undefined : v.value});
+            propsMap.set(k, {type, value: startsWith(v.value, 'bind:') ? undefined : v.value});
         });
 
         registeredPropsSet.add(this.widgetType);

@@ -7,17 +7,17 @@
         <!-- Default item template -->
         <label *ngIf="!content" class="app-radioset-label"
                [ngClass]="{'disabled':disabled || readonly}">
-            <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
-                   [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"
-                   [attr.aria-label]="item.key"/>
+            <input [attr.data-attr-index]="i" [checked]="item.selected" [disabled]="disabled || readonly"
+                   [name]="'radioset_' + widgetId" [tabindex]="tabindex" [value]="item.key"
+                   type="radio"/>
             <span class="caption" [textContent]="item.label"></span>
         </label>
         <!-- Custom partial template -->
         <label *ngIf="content" class="app-radioset-label"
                [ngClass]="{'disabled':disabled || readonly}">
-            <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
-                   [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"
-                   [attr.aria-label]="item.key"/>
+            <input [attr.data-attr-index]="i" [checked]="item.selected" [disabled]="disabled || readonly"
+                   [name]="'radioset_' + widgetId" [tabindex]="tabindex" [value]="item.key"
+                   type="radio"/>
             <span class="caption customTemplate" partial-container-target></span>
         </label>
     </li>
@@ -46,14 +46,14 @@
                 <!-- Default item template -->
                 <label *ngIf="!content" class="app-radioset-label"
                        [ngClass]="{'disabled':disabled || readonly}">
-                    <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
+                    <input [attr.data-attr-index]="i" [name]="'radioset_' + widgetId" type="radio"
                            [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
                     <span class="caption" [textContent]="item.label"></span>
                 </label>
                 <!-- Custom partial template -->
                 <label *ngIf="content" class="app-radioset-label"
                        [ngClass]="{'disabled':disabled || readonly}">
-                    <input [name]="'radioset_' + widgetId" type="radio" [attr.aria-checked]="item.selected" [attr.data-attr-index]="i"
+                    <input [attr.data-attr-index]="i" [name]="'radioset_' + widgetId" type="radio"
                            [value]="item.key" [disabled]="disabled || readonly" [tabindex]="tabindex" [checked]="item.selected"/>
                     <span class="caption customTemplate" partial-container-target></span>
                 </label>

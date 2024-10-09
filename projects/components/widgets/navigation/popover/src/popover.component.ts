@@ -1,14 +1,38 @@
-import { AfterViewInit, Component, ContentChild, ElementRef, Inject, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
+import {
+    AfterViewInit,
+    Component,
+    ContentChild,
+    ElementRef,
+    Inject,
+    Injector,
+    OnInit,
+    Optional,
+    TemplateRef,
+    ViewChild
+} from '@angular/core';
 
-import { PopoverDirective } from 'ngx-bootstrap/popover';
+import {PopoverDirective} from 'ngx-bootstrap/popover';
 
-import { addClass, App, setAttr, setCSSFromObj, findRootContainer, adjustContainerPosition, adjustContainerRightEdges} from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, styler, StylableComponent, provideAsWidgetRef, AUTOCLOSE_TYPE, getContainerTargetClass } from '@wm/components/base';
+import {
+    addClass,
+    adjustContainerPosition,
+    adjustContainerRightEdges,
+    App,
+    findRootContainer,
+    setCSSFromObj
+} from '@wm/core';
+import {
+    AUTOCLOSE_TYPE,
+    getContainerTargetClass,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler
+} from '@wm/components/base';
 
-import { registerProps } from './popover.props';
+import {registerProps} from './popover.props';
 
-declare const _, $;
+declare const $;
 
 const DEFAULT_CLS = 'app-popover-wrapper';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -39,7 +63,6 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public isOpen = false;
     private closePopoverTimeout;
     public readonly popoverContainerCls;
-    private keyEventPlugin;
     public canPopoverOpen = true;
     private Widgets;
     private Variables;
@@ -63,17 +86,15 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public adaptiveposition:boolean;
     public containerTarget: string;
     public hint: string;
+    public arialabel: string;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
     @ContentChild(TemplateRef) popoverTemplate;
     @ContentChild('partial') partialRef;
 
-    constructor(inj: Injector, private app: App, @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins) {
-        super(inj, WIDGET_CONFIG);
-
-        // KeyEventsPlugin
-        this.keyEventPlugin = evtMngrPlugins[1];
+    constructor(inj: Injector, private app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         this.popoverContainerCls = `app-popover-${this.widgetId}`;
     }
 
@@ -145,8 +166,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (root) {
             $('body > popover-container').wrap('<' + root + '/>');
         }
-
-        if (activePopover && activePopover.isOpen) {
+        // Fix for [WMS-25125]: Not closing the existing opened popovers when the autoclose property is DISABLED
+        if (activePopover && activePopover.isOpen && activePopover.autoclose !== AUTOCLOSE_TYPE.DISABLED) {
             activePopover.isOpen = false;
         }
 
@@ -182,24 +203,20 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         const popoverStartBtn: HTMLElement = popoverContainer.querySelector('.popover-start');
         const popoverEndBtn: HTMLElement = popoverContainer.querySelector('.popover-end');
         popoverStartBtn.onkeydown = (event) => {
-            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             // Check for Shift+Tab key
-            if (action === 'shift.tab') {
+            if (event.shiftKey && event.key === 'Tab') {
                 this.bsPopoverDirective.hide();
                 event.preventDefault();
                 this.setFocusToPopoverLink();
-                this.isOpen = false;
-            }
+                this.isOpen = false;            }
         };
         popoverEndBtn.onkeydown = (event) => {
-            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
             // Check for Tab key
-            if (action === 'tab') {
+            if (!event.shiftKey && event.key === 'Tab') {
                 this.bsPopoverDirective.hide();
                 event.preventDefault();
                 this.setFocusToPopoverLink();
-                this.isOpen = false;
-            }
+                this.isOpen = false;            }
         };
 
         //Whenever autoclose property is set to 'always', adding the onclick listener to the popover container to close the popover.
@@ -255,9 +272,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (!this.canPopoverOpen) {
            return;
         }
-        const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-        if (action === 'enter') {
+        if ($event.key === 'Enter') {
             $event.stopPropagation();
+            $event.preventDefault();
             this.showPopover();
         }
     }
@@ -290,12 +307,12 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         super.ngAfterViewInit();
         styler(this.anchorRef.nativeElement, this);
         this.containerTarget = getContainerTargetClass(this.nativeElement);
-        let parentElemPopover = $(this.nativeElement).parents();
-        if (parentElemPopover.closest('[wmTable]').length ||
-            parentElemPopover.closest('[wmtabs]').length ||
-            parentElemPopover.closest('modal-container').length) {
-            this.adaptiveposition = false;
-        }
+        // let parentElemPopover = $(this.nativeElement).parents();
+        // if (parentElemPopover.closest('[wmTable]').length ||
+        //     parentElemPopover.closest('[wmtabs]').length ||
+        //     parentElemPopover.closest('modal-container').length) {
+        //     this.adaptiveposition = false;
+        // }
     }
 
     ngOnDetach() {

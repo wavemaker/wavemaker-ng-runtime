@@ -7,12 +7,15 @@
          [iconmargin]="iconmargin"
          [heading]="title"
          [headinglevel]="headinglevel"
+         [title]="title"
          [titleid]="titleId"></div>
     <div wmDialogBody>
-        <p class="app-dialog-message {{messageclass}}" [attr.aria-describedby]="message">{{message}}</p>
+        <p class="app-dialog-message {{messageclass}}">{{ message }}</p>
     </div>
     <div wmDialogFooter>
-        <button wmButton class="btn-default cancel-action" caption.bind="canceltext" aria-label="Cancel button" (click)="onCancel($event)"></button>
-        <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>
+        <button (click)="onCancel($event)" [attr.aria-label]="canceltext" caption.bind="canceltext" class="btn-default cancel-action"
+                wmButton></button>
+        <button (click)="onOk($event)" [attr.aria-label]="oktext" caption.bind="oktext" class="btn-primary ok-action"
+                wmButton></button>
     </div>
 </ng-template>

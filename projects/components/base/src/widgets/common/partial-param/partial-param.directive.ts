@@ -4,9 +4,8 @@ import { Subject } from 'rxjs';
 
 import { $watch } from '@wm/core';
 
-import { WidgetRef } from '../../../widgets/framework/types';
-
-declare const _;
+import { WidgetRef } from '../../framework/types';
+import {get} from "lodash-es";
 
 @Directive({
     selector: '[partialContainer]',
@@ -23,7 +22,7 @@ export class PartialParamHandlerDirective {
         if (!value && bindExpr) {
             this.widgetRef.registerDestroyListener(
                 //[Todo-CSP]: expr fn should be generated be default
-                $watch(bindExpr, this.widgetRef.getViewParent(), _.get(this.widgetRef, 'context'), nv => {
+                $watch(bindExpr, this.widgetRef.getViewParent(), get(this.widgetRef, 'context'), nv => {
                     this.widgetRef.partialParams[name] = nv;
 
                     // notify the partial container of the param changes

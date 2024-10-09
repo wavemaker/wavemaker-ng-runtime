@@ -1,4 +1,4 @@
-import { ContentChildren, Directive, HostBinding, Injector, Self } from '@angular/core';
+import {ContentChildren, Directive, HostBinding, Inject, Injector, Optional, Self} from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { BaseComponent, IWidgetConfig, provideAsWidgetRef, RedrawableDirective } from '@wm/components/base';
@@ -21,7 +21,8 @@ const enum STEP_STATUS {
 @Directive({
     selector: 'form[wmWizardStep]',
     providers: [
-        provideAsWidgetRef(WizardStepDirective)
+        provideAsWidgetRef(WizardStepDirective),
+        NgForm
     ],
     exportAs: 'wmWizardStep'
 })
@@ -119,8 +120,8 @@ export class WizardStepDirective extends BaseComponent {
         return this.status === STEP_STATUS.DISABLED;
     }
 
-    constructor(inj: Injector, @Self() private ngForm: NgForm) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Self() private ngForm: NgForm, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         // If we inject directly as a param in the constructor, getting circular dependency error in unit testcases
         this.wizardComponent = this.inj.get(WizardComponent);
     }

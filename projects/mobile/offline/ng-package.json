@@ -3,34 +3,6 @@
     "dest": "../../../libraries/mobile/offline",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.mobile.offline",
-        "umdModuleIds": {
-            "@angular/compiler": "ng.compiler",
-            "@angular/core": "ng.core",
-            "@angular/common": "ng.common",
-            "@angular/common/http": "ng.common.http",
-            "@angular/platform-browser": "ng.platformBrowser",
-
-            "rxjs": "rxjs",
-
-            "@awesome-cordova-plugins/app-version/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/file/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/sqlite/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/camera/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/media-capture/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/app-version/ngx/index": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/file/ngx/index": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/sqlite/ngx/index": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/camera/ngx/index": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/media-capture/ngx/index": "awesomeCordova.plugins",
-
-            "@wm/core": "wm.core",
-            "@wm/mobile/core": "wm.mobile.core",
-            "@wm/components/base": "wm.components.base",
-            "@wm/transpiler": "wm.transpiler",
-            "@wm/security": "wm.security",
-            "@wm/variables": "wm.variables"
-        }
+        "entryFile": "src/public_api.ts"
     }
 }

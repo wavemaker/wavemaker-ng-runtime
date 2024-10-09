@@ -4,7 +4,7 @@ const tagName = 'section';
 
 register('wm-prefab', () => {
     return {
-        pre: attrs => `<${tagName} wmPrefab redrawable data-role="perfab" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmPrefab redrawable data-role="prefab" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

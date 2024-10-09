@@ -1,6 +1,5 @@
 import { isNumberType, FormWidgetType, DataType, isMobileApp, isAndroid } from '@wm/core';
-
-declare const _;
+import {forEach, get, includes, split} from "lodash-es";
 
 const  VIEW_MODE_OPTIONS = {
     DEFAULT : 'default',
@@ -16,10 +15,15 @@ export const EDIT_MODE = {
 
 // Method to set the header config of the data table
 export const setHeaderConfig = (headerConfig, config, field, index?: number): void => {
-    _.forEach(headerConfig, cols => {
-        if (_.get(cols, 'isGroup')) {
+    forEach(headerConfig, cols => {
+        if (get(cols, 'isGroup')) {
             if (cols.field === field) {
-                cols.columns[index] = config;
+                const id = cols.columns?.findIndex((col) => col?.field === config.field);
+                if (id == -1) {
+                    cols.columns[index] = config;
+                } else {
+                    cols.columns[id] = config;
+                }
             } else {
                 setHeaderConfig(cols.columns, config, field, index);
             }
@@ -75,8 +79,8 @@ export const getFieldLayoutConfig = (captionWidth, captionPosition, os): any => 
         }
     } else if (captionWidth) {
         // handling itemsperrow containing string of classes
-        _.forEach(_.split(captionWidth, ' '), function (cls) {
-            const keys = _.split(cls, '-'),
+        forEach(split(captionWidth, ' '), function (cls) {
+            const keys = split(cls, '-'),
                 tier = keys[0];
             let _captionWidth,
                 widgetWidth;
@@ -94,7 +98,7 @@ export const getFieldLayoutConfig = (captionWidth, captionPosition, os): any => 
 };
 
 export const getDefaultViewModeWidget = widget => {
-    if (_.includes(['checkbox', 'toggle', 'rating'], widget)) {
+    if (includes(['checkbox', 'toggle', 'rating'], widget)) {
         return VIEW_MODE_OPTIONS.DEFAULT;
     }
     return VIEW_MODE_OPTIONS.LABEL;
@@ -169,7 +173,7 @@ export const getDataTableFilterWidget = type => {
     if (type === DataType.BOOLEAN) {
         widget = FormWidgetType.SELECT;
     }
-    if (_.includes([FormWidgetType.TEXT, FormWidgetType.NUMBER, FormWidgetType.SELECT, FormWidgetType.AUTOCOMPLETE,
+    if (includes([FormWidgetType.TEXT, FormWidgetType.NUMBER, FormWidgetType.SELECT, FormWidgetType.AUTOCOMPLETE,
             FormWidgetType.DATE, FormWidgetType.TIME, FormWidgetType.DATETIME], widget)) {
         return widget;
     }

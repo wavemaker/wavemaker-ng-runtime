@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_STRING, register } from '@wm/components/base';
+import {PROP_BOOLEAN, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(
@@ -17,7 +17,8 @@ export const registerProps = () => {
                 ['show', {value: true, ...PROP_BOOLEAN}],
                 ['type', {value: 'icon', ...PROP_STRING}],
                 ['servicevariabletotrack', PROP_STRING],
-                ['hint', PROP_STRING]
+                ['hint', PROP_STRING],
+                ['arialabel', PROP_STRING]
             ]
         )
     );

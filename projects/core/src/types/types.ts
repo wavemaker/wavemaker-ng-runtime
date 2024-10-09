@@ -126,8 +126,6 @@ export abstract class AbstractHttpService {
     public abstract send(options: any);
     public abstract setLocale(locale);
     public abstract getLocale();
-    public abstract parseErrors(errors);
-    public abstract parseError(errorObj);
     public abstract getHeader(error, headerKey);
     public abstract isPlatformSessionTimeout(error);
     public abstract get(url: string, options?: any);

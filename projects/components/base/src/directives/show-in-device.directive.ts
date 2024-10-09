@@ -1,40 +1,25 @@
-import {
-    Attribute,
-    Directive,
-    ElementRef,
-    ViewContainerRef,
-    Inject,
-    Input,
-    Injector,
-    TemplateRef,
-    OnDestroy
-} from '@angular/core';
-import { isLargeTabletLandscape, isLargeTabletPortrait } from '@wm/core';
-
-import { WidgetRef } from '../widgets/framework/types';
-import { BaseComponent } from '../widgets/common/base/base.component';
-declare const _, $;
+import {Directive, Inject, Injector, Input, OnDestroy, Optional, TemplateRef, ViewContainerRef} from '@angular/core';
+import {isLargeTabletLandscape, isLargeTabletPortrait} from '@wm/core';
+import {extend} from "lodash-es";
 
 @Directive({
-    selector: '[showInDevice]'
+    selector: '[wmShowInDevice]'
 })
 export class ShowInDeviceDirective implements OnDestroy {
-    private readonly context;
+    private readonly context = {};
     private devices;
     private embeddedView;
     constructor(
-        private elRef: ElementRef,
-        @Inject(WidgetRef) private widget: BaseComponent,
         private viewContainerRef: ViewContainerRef,
         inj: Injector,
-        private templateRef: TemplateRef<any>
+        private templateRef: TemplateRef<any>,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-
-        this.context = (inj as any).view.context;
+        extend(this.context, (inj as any)._lView[8], explicitContext);
 
         window.addEventListener('resize', this.onResize.bind(this));
     }
-    @Input() set showInDevice(devices) {
+    @Input() set wmShowInDevice(devices) {
         this.devices = devices.split(',');
         this.onResize();
     }
@@ -48,12 +33,24 @@ export class ShowInDeviceDirective implements OnDestroy {
     5. For all, always render the view.
      */
     private onResize($event?) {
+
+        const lgWidth = getComputedStyle(document.documentElement).getPropertyValue('--screen-lg') || '1200px';
+        const mdWidth = getComputedStyle(document.documentElement).getPropertyValue('--screen-md') || '992px';
+        const smWidth = getComputedStyle(document.documentElement).getPropertyValue('--screen-sm') || '768px';
+        const lgTabLandScapeWidth = getComputedStyle(document.documentElement).getPropertyValue('--screen-lg-tab-landscape') || '1366px';
+        const lgTabPortraitWidth = getComputedStyle(document.documentElement).getPropertyValue('--screen-lg-tab-portrait') || '1024px';
+        const lgWidthMin = parseFloat(lgWidth)-1;
+        const lgUnit =  lgWidthMin + "px";
+        const mdWidthMin = parseFloat(mdWidth)-1;
+        const mdUnit = mdWidthMin + "px";
+        const smWidthMin = parseFloat(smWidth)-1;
+        const smUnit = smWidthMin + "px";
         if (
-            (this.devices.indexOf('lg') > -1 && window.matchMedia("(min-width: 1200px)").matches && !isLargeTabletLandscape())
-        ||  (this.devices.indexOf('md') > -1 && (isLargeTabletLandscape() || (window.matchMedia("(min-width: 992px) and (max-width: 1199px)").matches && !isLargeTabletPortrait())))
-        ||  (this.devices.indexOf('sm') > -1 && (window.matchMedia("(min-width: 768px) and (max-width: 991px)").matches || isLargeTabletPortrait()))
-        ||  (this.devices.indexOf('xs') > -1 && window.matchMedia("(max-width: 767px)").matches)
-        ||  (this.devices.indexOf('all') > -1)) {
+            (this.devices.indexOf('lg') > -1 && window.matchMedia("(min-width: "+lgWidth+")").matches && !isLargeTabletLandscape(lgTabLandScapeWidth, lgTabPortraitWidth))
+            ||  (this.devices.indexOf('md') > -1 && (isLargeTabletLandscape(lgTabLandScapeWidth, lgTabPortraitWidth) || (window.matchMedia("(min-width: "+mdWidth+") and (max-width: "+lgUnit +")").matches && !isLargeTabletPortrait(lgTabLandScapeWidth, lgTabPortraitWidth))))
+            ||  (this.devices.indexOf('sm') > -1 && (window.matchMedia("(min-width: "+smWidth+") and (max-width: "+mdUnit+")").matches || isLargeTabletPortrait(lgTabLandScapeWidth, lgTabPortraitWidth)))
+            ||  (this.devices.indexOf('xs') > -1 && window.matchMedia("(max-width: "+smUnit+")").matches)
+            ||  (this.devices.indexOf('all') > -1)) {
             if (!this.embeddedView) {
                 this.embeddedView = this.viewContainerRef.createEmbeddedView(this.templateRef, this.context);
             }

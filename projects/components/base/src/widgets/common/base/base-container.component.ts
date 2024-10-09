@@ -1,7 +1,8 @@
-import { ContentChildren, Directive } from '@angular/core';
+import {ContentChildren, Directive, Inject, Injector, Optional} from '@angular/core';
 import { StylableComponent } from "./stylable.component";
 import { RedrawableDirective } from "../redraw/redrawable.directive";
-declare const _;
+import { IWidgetConfig } from '../../framework/types';
+import {includes, pickBy} from "lodash-es";
 
 @Directive()
 export abstract class BaseContainerComponent extends StylableComponent {
@@ -10,10 +11,14 @@ export abstract class BaseContainerComponent extends StylableComponent {
     public content;
     public Widgets;
 
+    constructor(inj: Injector, WIDGET_CONFIG: IWidgetConfig, explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
+    }
+
     private updateRedrawableComponents(widgets) {
-        _.pickBy(widgets, widget => {
+        pickBy(widgets, widget => {
             // check for redrawable widget and whether it is already exist in reDrawableComponents query list or not
-            if (widget && widget.nativeElement && widget.nativeElement.hasAttribute('redrawable') && !_.includes(this.reDrawableComponents._results, widget)) {
+            if (widget && widget.nativeElement && widget.nativeElement.hasAttribute('redrawable') && !includes(this.reDrawableComponents._results, widget)) {
                 this.reDrawableComponents._results.push(widget);
             }
             if (widget && widget.Widgets) {

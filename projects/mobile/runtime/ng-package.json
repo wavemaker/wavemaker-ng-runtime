@@ -3,43 +3,6 @@
     "dest": "../../../libraries/mobile/runtime",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.mobile.runtime",
-        "umdModuleIds": {
-            "@angular/compiler": "ng.compiler",
-            "@angular/core": "ng.core",
-            "@angular/common": "ng.common",
-            "@angular/common/http": "ng.common.http",
-            "@angular/platform-browser": "ng.platformBrowser",
-
-
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
-
-            "@awesome-cordova-plugins/app-version/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/barcode-scanner/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/calendar/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/camera/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/contacts/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/device/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/file/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/file-opener/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/geolocation/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/media-capture/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/network/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/sqlite/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/vibration/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/location-accuracy/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/diagnostic/ngx": "awesomeCordova.plugins",  
-
-            "@wm/core": "wm.core",
-            "@wm/mobile/core": "wm.mobile.core",
-            "@wm/mobile/variables": "wm.mobile.variables",
-            "@wm/mobile/components/basic": "wm.mobile.components.basic",
-            "@wm/mobile/offline": "wm.mobile.offline",
-            "@wm/components/base": "wm.components.base",
-            "@wm/variables": "wm.variables",
-            "@wm/security": "wm.security"
-        }
+        "entryFile": "src/public_api.ts"
     }
 }

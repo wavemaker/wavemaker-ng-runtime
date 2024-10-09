@@ -1,6 +1,6 @@
-import { ContentChild, Directive, HostListener, Injector, AfterViewInit } from '@angular/core';
+import {ContentChild, Directive, HostListener, Injector, AfterViewInit, Optional, Inject} from '@angular/core';
 
-import { addClass, removeClass } from '@wm/core';
+import {addClass, removeClass} from '@wm/core';
 import { APPLY_STYLES_TYPE, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { AnchorComponent } from '@wm/components/basic';
 
@@ -13,6 +13,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-nav-item', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmNavItem]',
+    exportAs: 'navItemRef',
     providers: [
         provideAsWidgetRef(NavItemDirective)
     ]
@@ -31,8 +32,8 @@ export class NavItemDirective extends StylableComponent implements AfterViewInit
         }
     }
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }
 

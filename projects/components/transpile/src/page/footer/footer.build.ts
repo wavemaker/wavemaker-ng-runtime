@@ -8,7 +8,7 @@ register('wm-footer', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid()
-            return `<${tagName} wmFooter #${counter}="wmFooter" partialContainer data-role="page-footer" role="contentinfo" [attr.aria-label]="${counter}.hint || 'Page footer'" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmFooter #${counter}="wmFooter" partialContainer data-role="page-footer" role="contentinfo" [attr.aria-label]="${counter}.arialabel || 'Page footer'" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

@@ -127,7 +127,9 @@ export class CurrentGeoPositionOperation implements IDeviceVariableOperation {
                 return this.geoLocationService(variable, options, dataBindings)                        
             })
             .catch((e) => {    
-                if (e && e.code && e.code !== this.locationAccuracyService.ERROR_USER_DISAGREED) {
+                if (e && e.code 
+                    && e.code !== this.locationAccuracyService.ERROR_USER_DISAGREED
+                    && e.code !== this.locationAccuracyService.ERROR_CANNOT_CHANGE_ACCURACY) {
                     if(confirm(this.app.appLocale.MESSAGE_REQUEST_LOCATION_PERMISSION)){
                         this.diagnosticService.switchToSettings();
                     }

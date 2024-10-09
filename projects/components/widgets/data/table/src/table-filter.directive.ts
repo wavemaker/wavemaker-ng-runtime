@@ -4,8 +4,20 @@ import { $appDigest, DataSource, DataType, FormWidgetType, getClonedObject, isDe
 import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget, refreshDataSource, unsupportedStatePersistenceTypes } from '@wm/components/base';
 
 import { TableComponent } from './table.component';
+import {
+    endsWith,
+    filter,
+    find,
+    forEach,
+    get, head,
+    includes, isArray, isEmpty,
+    isEqual, isNull, isObject, orderBy, range, split,
+    startsWith, toLower,
+    toNumber,
+    toString
+} from "lodash-es";
 
-declare const _, $;
+declare const $;
 declare const moment;
 
 const emptyMatchModes = ['null', 'empty', 'nullorempty', 'isnotnull', 'isnotempty'];
@@ -16,12 +28,12 @@ const getSearchValue = (value, type) => {
         return undefined;
     }
     if (isNumberType(type)) {
-        return _.toNumber(value);
+        return toNumber(value);
     }
     if (type === DataType.DATETIME) {
         return moment(value).valueOf();
     }
-    return _.toString(value).toLowerCase();
+    return toString(value).toLowerCase();
 };
 
 // Filter the data based on the search value and conditions
@@ -31,24 +43,25 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
     // Return whole data if
     // - search value is undefined and matchmode is not an empty matchmode type
     // - search value is null and datatype is number. Null can not be compared with numeric values[WMS-19275].
-    if ((!isDefined(searchVal) && !_.includes(emptyMatchModes, searchObj.matchMode)) || (isNumberType(searchObj.type) && _.isNull(searchObj.value))) {
+    if ((!isDefined(searchVal) && !includes(emptyMatchModes, searchObj.matchMode)) || (isNumberType(searchObj.type) && isNull(searchObj.value))) {
         return data;
     }
     data = data.filter((obj) => {
         let isExists;
         if (searchObj.field) {
-            currentVal = getSearchValue(_.get(obj, searchObj.field), searchObj.type);
+            currentVal = getSearchValue(get(obj, searchObj.field), searchObj.type);
         } else {
             currentVal = [];
-            _.forEach(obj, (val, key) => {
-                if ((_.includes(visibleCols, key))) {
+            forEach(obj, (val, key) => {
+                if ((includes(visibleCols, key))) {
                     currentVal.push(val);
                 } else {
                     // WMS-22271 If the key is in nested key format (dot format)
                     // Find all the indexes of the key in visiblecols and extract their values from obj
-                    const colIndex = _.filter(_.range(visibleCols.length), (i) => visibleCols[i].includes(key));
-                    _.forEach(colIndex, (index) => {
-                        const value = _.get(obj, visibleCols[index]);
+                    const colIndex = filter(range(visibleCols.length), (i) => visibleCols[i].includes(key));
+                    forEach(colIndex, (index) => {
+                        // @ts-ignore
+                        const value = get(obj, visibleCols[index]);
                         if (currentVal.indexOf(value) < 0) {
                             currentVal.push(value);
                         }
@@ -59,31 +72,31 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
         }
         switch (searchObj.matchMode) {
             case 'start':
-                isExists = _.startsWith(currentVal, searchVal as string);
+                isExists = startsWith(currentVal, searchVal as string);
                 break;
             case 'end':
-                isExists = _.endsWith(currentVal, searchVal as string);
+                isExists = endsWith(currentVal, searchVal as string);
                 break;
             case 'exact':
-                isExists = _.isEqual(currentVal, searchVal);
+                isExists = isEqual(currentVal, searchVal);
                 break;
             case 'notequals':
-                isExists = !_.isEqual(currentVal, searchVal);
+                isExists = !isEqual(currentVal, searchVal);
                 break;
             case 'null':
-                isExists = _.isNull(currentVal);
+                isExists = isNull(currentVal);
                 break;
             case 'isnotnull':
-                isExists = !_.isNull(currentVal);
+                isExists = !isNull(currentVal);
                 break;
             case 'empty':
-                isExists = _.isEmpty(currentVal);
+                isExists = isEmpty(currentVal);
                 break;
             case 'isnotempty':
-                isExists = !_.isEmpty(currentVal);
+                isExists = !isEmpty(currentVal);
                 break;
             case 'nullorempty':
-                isExists = _.isNull(currentVal) || _.isEmpty(currentVal);
+                isExists = isNull(currentVal) || isEmpty(currentVal);
                 break;
             case 'lessthan':
                 isExists = currentVal < searchVal;
@@ -98,7 +111,7 @@ const getFilteredData = (data, searchObj, visibleCols = []) => {
                 isExists = currentVal >= searchVal;
                 break;
             default:
-                isExists = isNumberType(searchObj.type) ? _.isEqual(currentVal, searchVal) : _.includes(currentVal, searchVal);
+                isExists = isNumberType(searchObj.type) ? isEqual(currentVal, searchVal) : includes(currentVal, searchVal);
                 break;
         }
         return isExists;
@@ -192,14 +205,14 @@ export class TableFilterSortDirective {
     // Get first or last page based on sort info of primary key
     getNavigationTargetBySortInfo() {
         return this.table.sortInfo && this.table.sortInfo.direction === 'desc' &&
-                    _.includes(this.table.primaryKey, this.table.sortInfo.field) ? 'first' : 'last';
+        includes(this.table.primaryKey, this.table.sortInfo.field) ? 'first' : 'last';
     }
 
     // Returns all the columns of the table wherein, showinfilter is set to true
     getTableVisibleCols() {
         const visibleCols = [];
-        _.forEach(this.table.columns, (val, col) => {
-            if (_.toLower(_.toString(val.showinfilter)) === 'true' && col !== 'rowOperations' && val.searchable) {
+        forEach(this.table.columns, (val, col) => {
+            if (toLower(toString(val.showinfilter)) === 'true' && col !== 'rowOperations' && val.searchable) {
                 visibleCols.push(col);
             }
         });
@@ -210,7 +223,7 @@ export class TableFilterSortDirective {
     invokeSetFilterfieldBasedOnFieldval(searchObj, filterFields) {
         if (searchObj.field) {
             setFilterFields(filterFields, searchObj);
-        } else if (!_.isEmpty(searchObj)) {
+        } else if (!isEmpty(searchObj)) {
            const visibleCols = this.getTableVisibleCols();
             setFilterFields(filterFields, searchObj, visibleCols);
         }
@@ -220,8 +233,8 @@ export class TableFilterSortDirective {
     getFilterFields(searchObj) {
         searchObj = searchObj || {};
         const filterFields = {};
-        if (_.isArray(searchObj)) {
-            _.forEach(searchObj,  obj => {
+        if (isArray(searchObj)) {
+            forEach(searchObj, obj => {
                this.invokeSetFilterfieldBasedOnFieldval(obj, filterFields);
             });
         } else {
@@ -243,11 +256,11 @@ export class TableFilterSortDirective {
     // Reset the sort based on sort returned by the call
     resetSortStatus(variableSort) {
         let gridSortString;
-        if (!_.isEmpty(this.table.sortInfo) && this.table.datasource) {
+        if (!isEmpty(this.table.sortInfo) && this.table.datasource) {
             gridSortString = this.table.sortInfo.field + ' ' + this.table.sortInfo.direction;
             variableSort = this.table.datasource.execute(DataSource.Operation.GET_OPTIONS).orderBy || variableSort;
             if (variableSort) { // If multiple order by fields are present, compare with the first one
-                variableSort = _.head(_.split(variableSort, ','));
+                variableSort = head(split(variableSort, ','));
             }
             if (gridSortString !== variableSort) {
                 this.table.callDataGridMethod('resetSortIcons');
@@ -286,7 +299,7 @@ export class TableFilterSortDirective {
             return;
         }
         if (this.table.datasource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
-            if (_.isEmpty(this.table.datasource.execute(DataSource.Operation.GET_OPTIONS).filterFields)) {
+            if (isEmpty(this.table.datasource.execute(DataSource.Operation.GET_OPTIONS).filterFields)) {
                 this.clearFilter(true);
             }
             this.resetSortStatus(variableSort);
@@ -303,7 +316,7 @@ export class TableFilterSortDirective {
         if (!searchObj) {
             return data;
         }
-        if (_.isArray(searchObj)) {
+        if (isArray(searchObj)) {
             searchObj.forEach((obj) => {
                 data = getFilteredData(data, obj, visibleCols);
             });
@@ -316,7 +329,7 @@ export class TableFilterSortDirective {
     // Returns data sorted using sortObj
     getSortResult(data, sortObj) {
         if (sortObj && sortObj.direction) {
-            data = _.orderBy(data, sortObj.field, sortObj.direction);
+            data = orderBy(data, sortObj.field, sortObj.direction);
         }
         return data;
     }
@@ -332,7 +345,7 @@ export class TableFilterSortDirective {
         } else {
             this.table.sortInfo = searchSortObj;
         }
-        if (_.isObject(data) && !_.isArray(data)) {
+        if (isObject(data) && !isArray(data)) {
             data = [data];
         }
         /*Both the functions return same 'data' if arguments are undefined*/
@@ -367,9 +380,9 @@ export class TableFilterSortDirective {
         this.table.filterInfo = searchObj;
         data = this.getSearchResult(data, searchObj);
         // Compared the filtered data and original data, to show or hide the rows
-        _.forEach(this.table.gridData, (value, index) => {
+        forEach(this.table.gridData, (value, index) => {
             const $row = $($rows[index]);
-            if (_.find(data, obj => _.isEqual(obj, value))) {
+            if (find(data, obj => isEqual(obj, value))) {
                 $row.show();
             } else {
                 $row.hide();
@@ -438,13 +451,15 @@ export class TableFilterSortDirective {
                     data,
                     sortDirection: sortObj.direction,
                     colDef: this.table.columns[sortObj.field]
-                }});
+
+                    }
+            });
         });
     }
 
     private searchHandler(searchSortObj, e, type, statePersistenceTriggered?) {
         let obj;
-        if (_.isArray(searchSortObj)) {
+        if (isArray(searchSortObj)) {
             obj = searchSortObj.filter(function(searchObject) {
                 return (searchObject.matchMode !== undefined && searchObject.value !== undefined) || (searchObject.value !== undefined && searchObject.field === '');
             });
@@ -452,7 +467,7 @@ export class TableFilterSortDirective {
             obj = {field: searchSortObj.field, value: searchSortObj.value, type: searchSortObj.type};
         }
         if (this.table.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.table.navigation) < 0) {
-            if ((_.isArray(searchSortObj) && obj.length) || (searchSortObj.value)) {
+            if ((isArray(searchSortObj) && obj.length) || (searchSortObj.value)) {
                 this.table.statePersistence.removeWidgetState(this.table, 'search');
                 this.table.statePersistence.setWidgetState(this.table, {search: obj});
             } else {
@@ -473,7 +488,7 @@ export class TableFilterSortDirective {
         let output;
         const userFilters = {};
         // Transform filter fields from array to object having field names as keys
-        if (_.isArray(filterFields)) {
+        if (isArray(filterFields)) {
             filterFields.forEach(filterField => {
                 transformFilterField(userFilters, filterField);
             });
@@ -487,9 +502,9 @@ export class TableFilterSortDirective {
         }
         filterFields = [];
         // if the field is not selected in search filter dropdown, building the filter fields object
-        if (_.isEmpty(userFilters) && !_.isEmpty(obj)) {
-            if (_.isArray(obj)) {
-                _.forEach(obj,  searchObj => {
+        if (isEmpty(userFilters) && !isEmpty(obj)) {
+            if (isArray(obj)) {
+                forEach(obj, searchObj => {
                     addToFilterFields(filterFields, searchObj);
                 });
             } else {
@@ -497,13 +512,9 @@ export class TableFilterSortDirective {
             }
         } else {
             // Transform back the filter fields from object to array
-            _.forEach(userFilters, (val, key) => {
-                filterFields.push({
-                    field: key,
-                    matchMode: val.matchMode,
-                    type: val.type,
-                    value: val.value
-                });
+            forEach(userFilters, (val, key) => {
+                // @ts-ignore
+                filterFields.push({field: key, matchMode: val.matchMode, type: val.type, value: val.value});
             });
         }
         if (dataSource && dataSource.execute(DataSource.Operation.SUPPORTS_SERVER_FILTER)) {
@@ -581,7 +592,7 @@ export class TableFilterSortDirective {
         this.table.rowFilter[fieldName] = this.table.rowFilter[fieldName] || {};
         this.table.rowFilter[fieldName].matchMode = condition;
         // For empty match modes, clear off the value and call filter
-        if (_.includes(this.table.emptyMatchModes, condition)) {
+        if (includes(this.table.emptyMatchModes, condition)) {
             this.table.columns[fieldName].resetFilter();
             this.table.onRowFilterChange();
         } else {
@@ -604,11 +615,11 @@ export class TableFilterSortDirective {
 
         const fieldName = filterDef.field;
         const formFields = this.table.fullFieldDefs;
-        const filterOnFields = _.filter(formFields, {'filteronfilter': fieldName});
-        const newVal = _.get(this.table.rowFilter, [fieldName, 'value']);
+        const filterOnFields = filter(formFields, {'filteronfilter': fieldName});
+        const newVal = get(this.table.rowFilter, [fieldName, 'value']);
 
         // Loop over the fields for which the current field is filter on field
-        _.forEach(filterOnFields, filterField => {
+        forEach(filterOnFields, filterField => {
             const filterOn = filterField.filteronfilter;
             const filterKey = filterField.field;
             const filterFields = {};
@@ -636,13 +647,13 @@ export class TableFilterSortDirective {
     // This method is triggered on value change in multi column filter
     onRowFilterChange(fieldName) {
         const searchObj = [];
-        const field = _.find(this.table.fullFieldDefs, {'field': fieldName});
+        const field = find(this.table.fullFieldDefs, {'field': fieldName});
         // Convert row filters to a search object and call search handler
-        _.forEach(this.table.rowFilter, (value, key) => {
-            if ((isDefined(value.value) && value.value !== '') || _.includes(this.table.emptyMatchModes, value.matchMode)) {
+        forEach(this.table.rowFilter, (value, key) => {
+            if ((isDefined(value.value) && value.value !== '') || includes(this.table.emptyMatchModes, value.matchMode)) {
                 if (field && key === field.field) {
                     value.type      = value.type || field.type;
-                    value.matchMode = value.matchMode || _.get(this.table.matchModeTypesMap[value.type], 0);
+                    value.matchMode = value.matchMode || get(this.table.matchModeTypesMap[value.type], 0);
                 }
                 searchObj.push({
                     field: key,

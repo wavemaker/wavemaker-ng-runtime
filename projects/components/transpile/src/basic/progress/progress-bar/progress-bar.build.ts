@@ -2,8 +2,6 @@ import { Element } from '@angular/compiler';
 
 import { getAttrMarkup, getBoundToExpr, IBuildTaskDef, register } from '@wm/transpiler';
 
-declare const _;
-
 const tagName = 'div';
 
 const getAttr = (node: Element, attrName: string) => node.attrs.find(attr => attr.name === attrName);

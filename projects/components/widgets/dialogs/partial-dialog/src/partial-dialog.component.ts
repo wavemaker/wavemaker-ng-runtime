@@ -1,6 +1,17 @@
-import { Attribute, Component, ContentChild, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+    Attribute,
+    Component,
+    ContentChild,
+    Inject,
+    Injector,
+    OnInit,
+    Optional,
+    SkipSelf,
+    TemplateRef,
+    ViewChild
+} from '@angular/core';
 
-import { App, toBoolean } from '@wm/core';
+import {App, toBoolean} from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 
@@ -33,7 +44,8 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
         app: App,
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
-        @Attribute('closable') closable: string | boolean
+        @Attribute('closable') closable: string | boolean,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         if (modal === null || modal === undefined) {
             modal = false;
@@ -53,7 +65,8 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,
                 keyboard: !toBoolean(modal)
-            }
+            },
+            explicitContext
         );
         this.app = app;
     }

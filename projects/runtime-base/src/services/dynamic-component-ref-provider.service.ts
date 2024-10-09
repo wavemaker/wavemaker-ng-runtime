@@ -8,52 +8,41 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 
-import { App, extendProto, isDefined } from '@wm/core';
-import { transpile } from '@wm/transpiler';
-import { initComponentsBuildTask } from '@wm/build-task';
+import {App, extendProto, isDefined} from '@wm/core';
+import {transpile} from '@wm/transpiler';
+import {initComponentsBuildTask} from '@wm/build-task';
 
-import { AppManagerService } from './app.manager.service';
-import { RuntimeBaseModule } from '../runtime-base.module';
+import {AppManagerService} from './app.manager.service';
+import {RuntimeBaseModule} from '../runtime-base.module';
+import {get} from "lodash-es";
 
 initComponentsBuildTask();
-declare const _;
 
 const componentFactoryRefCache = new Map<string, any>();
 
 const getDynamicModule = (componentRef: any) => {
-    @NgModule({
-        declarations: [
-            componentRef
-        ],
+    return NgModule({
+        declarations: [componentRef],
         imports: [
-            RuntimeBaseModule
+            RuntimeBaseModule,
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-    })
-    class DynamicModule {}
-
-    return DynamicModule;
+    })(class DynamicModule {});
 };
 
 const getDynamicComponent = (
-    selector,
+    selector: any,
     template: string,
     css: string = '') => {
-
-    const componentDef = {
+    // @ts-ignore
+    return Component({
         template,
         styles: [css],
-        encapsulation: ViewEncapsulation.None
-    };
-
-    @Component({
-        ...componentDef,
+        encapsulation: ViewEncapsulation.None,
         selector
-    })
-    class DynamicComponent {
-    }
-
-    return DynamicComponent;
+    })(class DynamicComponent {
+        isDynamicComponent: boolean = true;
+    });
 };
 
 @Injectable()
@@ -100,7 +89,7 @@ export class DynamicComponentRefProviderService {
         options.noCache = isDefined(options.noCache) ? options.noCache : true;
         options.selector = isDefined(options.selector) ? options.selector : 'wm-dynamic-component-' + this.counter++;
         const componentFactoryRef = await this.getComponentFactoryRef(options.selector, markup, options);
-        const component = this.app.dynamicComponentContainerRef.createComponent(componentFactoryRef, 0, _.get(options, 'inj'));
+        const component = this.app.dynamicComponentContainerRef.createComponent(componentFactoryRef, 0, get(options, 'inj'));
         extendProto(component.instance, context);
         target.appendChild(component.location.nativeElement);
     }

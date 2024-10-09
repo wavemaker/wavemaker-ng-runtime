@@ -1,8 +1,8 @@
-<input class="form-control app-textbox" aria-haspopup="true" aria-expanded="false"
+<input aria-haspopup="true" class="form-control app-textbox"
        #input
        focus-target
        [attr.name]="name"
-       [attr.aria-label]="hint"
+       [attr.aria-label]="arialabel"
        [(colorPicker)]="datavalue"
        (colorPickerChange)="handleChange($event);"
        (cpToggleChange)="colorPickerToggleChange($event)"
@@ -15,7 +15,7 @@
        [tabindex]="tabindex"
        [(ngModel)]="datavalue"
        (ngModelChange)="handleChange($event);"
-       [ngModelOptions]="{updateOn: 'change'}"
+       [ngModelOptions]="{updateOn: 'change', standalone: true}"
        (blur)="invokeOnTouched($event)"
        [attr.accesskey]="shortcutkey">
 <span class="input-group-addon colorpicker-container">

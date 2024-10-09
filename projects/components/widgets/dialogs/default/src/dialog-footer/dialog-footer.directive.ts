@@ -1,4 +1,4 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Inject, Injector, Optional} from '@angular/core';
 
 import { BaseComponent, IWidgetConfig, provideAsWidgetRef } from '@wm/components/base';
 import { registerProps } from './dialog-footer.props';
@@ -17,7 +17,7 @@ const WIDGET_INFO: IWidgetConfig = {
 export class DialogFooterDirective extends BaseComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_INFO);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_INFO, explicitContext);
     }
 }

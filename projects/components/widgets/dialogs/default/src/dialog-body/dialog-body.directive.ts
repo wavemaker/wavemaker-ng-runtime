@@ -36,7 +36,7 @@ export class DialogBodyDirective {
                         this.renderer.appendChild(dialogRootContainer, dialogBackrop);
                     }
                     this.renderer.appendChild(dialogRootContainer, parentContainer);
-             
+
                }
             }
             const width = this.dialogRef.width;
@@ -45,7 +45,7 @@ export class DialogBodyDirective {
                setTimeout(e=>{
                     setCSS($(elRef.nativeElement)[0], 'height', height);
                 });
-            }      
+            }
             if (dialogRoot) {
                 if (width) {
                     setCSS(dialogRoot, 'width', width);

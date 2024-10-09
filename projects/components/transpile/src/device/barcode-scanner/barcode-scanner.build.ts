@@ -1,4 +1,4 @@
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import {getAttrMarkup, IBuildTaskDef, register} from '@wm/transpiler';
 import {IDGenerator} from "@wm/core";
 
 const tagName = 'button';
@@ -8,7 +8,7 @@ register('wm-barcodescanner', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmBarcodescanner #${counter}="wmBarcodescanner" [attr.aria-label]="${counter}.hint || 'Barcode scanner'"  ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmBarcodescanner #${counter}="wmBarcodescanner" [attr.aria-label]="${counter}.arialabel || 'Barcode scanner'"  ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

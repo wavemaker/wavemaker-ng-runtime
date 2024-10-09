@@ -1,0 +1,22 @@
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot } from '@angular/router';
+
+import { App } from '@wm/core';
+import { AppManagerService } from '../services/app.manager.service';
+
+@Injectable()
+export class PageNotFoundGuard {
+
+    constructor(
+        private app: App,
+        private appManager: AppManagerService
+    ) {}
+
+    canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
+        this.appManager.notifyApp(
+            this.app.appLocale.MESSAGE_PAGE_NOT_FOUND || 'The page you are trying to reach is not available',
+            'error'
+        );
+        return Promise.resolve(false);
+    }
+}

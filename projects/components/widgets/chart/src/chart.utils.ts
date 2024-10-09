@@ -1,6 +1,10 @@
-import { isEmptyObject, prettifyLabels } from '@wm/core';
+import {isEmptyObject, prettifyLabels} from '@wm/core';
+import {forEach, includes, invert, isArray, isFinite, isString, isUndefined, split} from "lodash-es";
 
-declare const _, $, d3, nv, moment;
+declare const $;
+
+declare const moment;
+declare const d3, nv;
 
 export const chartTypes = ['Column', 'Line', 'Area', 'Cumulative Line', 'Bar', 'Pie', 'Donut', 'Bubble'],
     allShapes = ['circle', 'square', 'diamond', 'cross', 'triangle-up', 'triangle-down'];
@@ -85,8 +89,8 @@ const dateList = ['01/01/2001', '01/01/2002', '01/01/2003'],
         'medium' : 0.6,
         'large' : 0.7
     },
-    barSpacingMapInvert = _.invert(barSpacingMap),
-    donutRatioMapInvert = _.invert(donutRatioMap),
+    barSpacingMapInvert = invert(barSpacingMap),
+    donutRatioMapInvert = invert(donutRatioMap),
     tickformats = {
         'Thousand': {
             'prefix': 'K',
@@ -137,13 +141,13 @@ export const isAreaChart = type => type === 'Area';
 export const isPieType = type => isPieChart(type) || isDonutChart(type);
 
 // The format of chart data is array of json objects in case of the following types of chart
-export const isChartDataJSON = type => _.includes(dataTypeJSON, type) || !_.includes(chartTypes, type);
+export const isChartDataJSON = type => includes(dataTypeJSON, type) || !includes(chartTypes, type);
 
 // The format of chart data is array of objects in case of the following types of chart
-export const isChartDataArray = type => _.includes(dataTypeArray, type);
+export const isChartDataArray = type => includes(dataTypeArray, type);
 
 // returns true is the chart type is 'line', 'area' or 'cumulative line' else false
-export const isLineTypeChart = type => _.includes(lineTypeCharts, type);
+export const isLineTypeChart = type => includes(lineTypeCharts, type);
 
 // X/Y Domain properties are supported only for Column and Area charts
 export const isAxisDomainSupported = type => isColumnChart(type) || isAreaChart(type);
@@ -360,7 +364,7 @@ export const getDataType = widgetContext => {
 };
 
 // Sample data to populate when no data is bound
-export const getSampleData = widgetContext => constructSampleData(getDataType(widgetContext), _.split(widgetContext.yaxisdatakey, ',').length, widgetContext.shape);
+export const getSampleData = widgetContext => constructSampleData(getDataType(widgetContext), split(widgetContext.yaxisdatakey, ',').length, widgetContext.shape);
 
 // Check whether X/Y Domain was set to Min and is supported for the present chart
 export const isAxisDomainValid = (widgetContext, axis) => {
@@ -372,7 +376,7 @@ export const isAxisDomainValid = (widgetContext, axis) => {
 
 // Check whether min and max values are finite or not
 export const areMinMaxValuesValid = values => {
-    if (_.isFinite(values.min) && _.isFinite(values.max)) {
+    if (isFinite(values.min) && isFinite(values.max)) {
         return true;
     }
     return false;
@@ -389,9 +393,14 @@ export const getYScaleMinValue = value => {
 export const highlightPoints = (id, highlightpoints) => {
     const chartSvg = id ? d3.select('#wmChart' + id + ' svg') : d3.select(chartId + ' svg');
     if (highlightpoints) {
-        chartSvg.selectAll('.nv-point').style({'stroke-width': '6px', 'fill-opacity': '.95', 'stroke-opacity': '.95'});
+        chartSvg.selectAll('.nv-point')
+            .style('stroke-width', '6px')
+            .style('fill-opacity', '0.95')
+            .style('stroke-opacity', '0.95');
     } else {
-        chartSvg.selectAll('.nv-point').style({'stroke-width': '0px', 'fill-opacity': '0'});
+        chartSvg.selectAll('.nv-point')
+            .style('stroke-width', '0px')
+            .style('fill-opacity', '0');
     }
 };
 
@@ -399,7 +408,12 @@ export const highlightPoints = (id, highlightpoints) => {
 export const setLineThickness = (id, thickness) => {
     const chartSvg = id ? d3.select('#wmChart' + id + ' svg') : d3.select(chartId + ' svg');
     thickness = thickness || 1.5;
-    chartSvg.selectAll('.nv-line').style({'stroke-width': thickness});
+
+    const lines = chartSvg.selectAll('.nv-line');
+
+    if (lines.size() !== 0) {
+        lines.style('stroke-width', thickness);
+    }
 };
 
 // Constructing a common key value map for preview and canvas mode
@@ -407,8 +421,8 @@ export const initProperties = (widgetContext, propertyValueMap) => {
     if (!propertyValueMap || isEmptyObject(propertyValueMap)) {
         propertyValueMap = {};
     }
-    _.forEach(basicProperties, prop => {
-        if (_.isUndefined(propertyValueMap[prop])) {
+    forEach(basicProperties, prop => {
+        if (isUndefined(propertyValueMap[prop])) {
             propertyValueMap[prop] = widgetContext[prop];
         }
     });
@@ -429,7 +443,20 @@ export const getDateFormatedData = (dateFormat, d) => {
      * This is because it returns UTC time i.e. Coordinated Universal Time (UTC).
      * To create date in local time use moment
      */
-    return d3.time.format(dateFormat)(new Date(moment(moment(d).format()).valueOf()));
+    if(dateFormat == '%c') {
+        dateFormat = '%a %b %e %X %Y';
+    }
+    return d3.timeFormat(dateFormat)(new Date(moment(moment(d).format()).valueOf()));
+};
+const removeTrailingZeros = value => {
+    if(!value) {
+        return value;
+    }
+    // Convert value to a string if it's a number
+    const stringValue = typeof value === 'number' ? value.toString() : value;
+
+    // Remove trailing zeros
+    return stringValue.replace(/\.0+([A-Za-z]*)$/, '$1').replace(/\.([1-9]+)0+([A-Za-z]*)$/, '.$1$2');
 };
 
 // Formats the given value according to number format
@@ -437,9 +464,21 @@ export const getNumberFormatedData = (numberFormat, d) => {
     let formattedData,
         divider,
         prefix;
-    formattedData = d3.format(numberFormat)(d);
     // formatting the data based on number format selected
     if (numberFormat) {
+        let numberFormatter;
+        if(numberFormat == 'Thousand' || numberFormat == 'Million' || numberFormat == 'Billion') {
+            numberFormatter = d3.format(',.2s');
+        } else if(numberFormat == '%') {
+            numberFormatter = d3.format('.2%');
+        }else if(numberFormat == '.f') {
+            numberFormatter = d3.format('.2f');
+        } else {
+            numberFormatter = d3.format(numberFormat);
+        }
+        formattedData = numberFormatter(d);
+
+
         // Getting the respective divider[1000,1000000,1000000000] based on the number format choosen
         divider = (tickformats[numberFormat] && tickformats[numberFormat].divider) || 0;
         prefix = tickformats[numberFormat] && tickformats[numberFormat].prefix;
@@ -450,6 +489,7 @@ export const getNumberFormatedData = (numberFormat, d) => {
         // Auto formatting the data when no formating option is chosen
         formattedData = d >= 1000 ? d3.format('.1s')(d) : d;
     }
+    formattedData = removeTrailingZeros(formattedData);
     return formattedData;
 };
 
@@ -470,11 +510,11 @@ export const modifyLegendPosition = (widgetContext, position, id) => {
         legendWrap = d3.select(chart_Id + ' .nv-legendWrap'),
         legendPadding = 5;
     // Return when showlegend is false
-    if (!showLegend || !legendWrap[0][0]) {
+    if (!showLegend || !legendWrap['_groups'][0][0]) {
         return;
     }
     if (position === 'bottom') {
-        const legendWrapHeight = legendWrap[0][0].getBoundingClientRect().height,
+        const legendWrapHeight = legendWrap['_groups'][0][0].getBoundingClientRect().height,
             wrap = d3.select(chart_Id + ' .nv-wrap'),
             wrapTransform = (wrap && wrap.attr('transform')) ? wrap.attr('transform').replace(/, /g, ',') : '',
             coordinates = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(wrapTransform),
@@ -565,8 +605,8 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
             break;
         case 'Area':
             chart = nv.models.stackedAreaChart()
-                .x(d => d[0])
-                .y(d => d[1])
+                .x(d => d.x)
+                .y(d => d.y)
                 .clipEdge(true)
                 .showControls(false)
                 .style(propertyValueMap.areaviewtype)
@@ -639,7 +679,7 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
     // Setting the legend type choosen by user or default it will be furious
     chart.legend.vers((propertyValueMap.legendtype && propertyValueMap.legendtype.toLowerCase()) || 'furious');
 
-    if (!_.includes(chartTypes, widgetContext.type)) {
+    if (!includes(chartTypes, widgetContext.type)) {
         chart = nv.models.multiBarChart()
             .x(d => d.x)
             .y(d => d.y);
@@ -655,9 +695,11 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
         }
         // Customizing the tooltips in case of the pie and donut when labelType is value
         customiseTooltip(chart, propertyValueMap, widgetContext);
-    } else {
+    }
+    else {
         chart.showXAxis(propertyValueMap.showxaxis)
             .showYAxis(propertyValueMap.showyaxis);
+        chart.legendPosition(propertyValueMap.showlegend);
 
         // Setting the labels if they are specified explicitly or taking the axiskeys chosen
         xaxislabel = propertyValueMap.xaxislabel || prettifyLabels(widgetContext.xaxisdatakey) || 'x caption';
@@ -711,10 +753,10 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
     }
 
     // Support for custom colors if user gives direct string of colors in text box
-    if (_.isString(propertyValueMap.customcolors) && propertyValueMap.customcolors) {
-        colors = _.split(propertyValueMap.customcolors, ',');
+    if (isString(propertyValueMap.customcolors) && propertyValueMap.customcolors) {
+        colors = split(propertyValueMap.customcolors, ',');
     }
-    if (_.isArray(propertyValueMap.customcolors)) {
+    if (isArray(propertyValueMap.customcolors)) {
         colors = propertyValueMap.customcolors;
     }
 
@@ -742,17 +784,20 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
     return chart;
 };
 
+// @ts-ignore
 export const postPlotChartProcess = (widgetContext, isPreview?) => {
     const id = isPreview ? null : widgetContext.$id;
     // If user sets to highlight the data points and increase the thickness of the line
     if (isLineTypeChart(widgetContext.type)) {
-        setLineThickness(id, widgetContext.linethickness);
-        highlightPoints(id, widgetContext.highlightpoints);
+       setLineThickness(id, widgetContext.linethickness);
+       highlightPoints(id, widgetContext.highlightpoints);
     }
     // Modifying the legend position only when legend is shown
-    if (widgetContext.showlegend) {
-        modifyLegendPosition(widgetContext, widgetContext.showlegend, id);
-    }
+    // if (widgetContext.showlegend) {
+    //     modifyLegendPosition(widgetContext, widgetContext.showlegend, id);
+    // }
 };
 
+// @ts-ignore
 export const getDateList = () => dateList;
+

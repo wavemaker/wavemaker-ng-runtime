@@ -1,17 +1,42 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    Inject,
+    Injector,
+    NgZone,
+    OnDestroy,
+    Optional,
+    ViewChild
+} from '@angular/core';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {BsDatepickerDirective} from 'ngx-bootstrap/datepicker';
+import {TimepickerConfig} from 'ngx-bootstrap/timepicker';
 
-import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
-import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
-
-import { AbstractI18nService, addClass, addEventListenerOnElement, adjustContainerPosition, AppDefaults, EVENT_LIFE, FormWidgetType, getDateObj, getDisplayDateTimeFormat, getFormattedDate, getNativeDateObject, adjustContainerRightEdges, App, getMomentLocaleObject } from '@wm/core';
-import {provideAsWidgetRef, provideAs, styler, setFocusTrap} from '@wm/components/base';
+import {
+    AbstractI18nService,
+    addClass,
+    addEventListenerOnElement,
+    adjustContainerPosition,
+    adjustContainerRightEdges,
+    App,
+    AppDefaults,
+    EVENT_LIFE,
+    FormWidgetType,
+    getDateObj,
+    getDisplayDateTimeFormat,
+    getFormattedDate,
+    getMomentLocaleObject,
+    getNativeDateObject
+} from '@wm/core';
+import {provideAs, provideAsWidgetRef, setFocusTrap, styler} from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
-import { registerProps } from './date-time.props';
+import {registerProps} from './date-time.props';
+import {debounce, forEach, includes, isNaN, parseInt} from "lodash-es";
 
-declare const moment, $, _;
+declare const $;
+declare const moment;
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = { widgetType: 'wm-datetime', hostClass: DEFAULT_CLS };
@@ -40,8 +65,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private proxyModel;
     private app: App;
     public hint: string;
+    public arialabel: string;
     public showdropdownon: string;
-    private keyEventPlugin;
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
     private isEnterPressedOnDateInput = false;
@@ -89,7 +114,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
      */
     public isCurrentDate = false;
 
-    private _debouncedOnChange: Function = _.debounce(this.invokeOnChange, 10);
+    private _debouncedOnChange: Function = debounce(this.invokeOnChange, 10);
 
     private dateContainerCls: string;
 
@@ -124,14 +149,12 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         private cdRef: ChangeDetectorRef,
         private appDefaults: AppDefaults,
         app: App,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         this.registerDestroyListener(() => this.clearTimeInterval());
         styler(this.nativeElement, this);
         this.app = app;
-        // KeyEventsPlugin
-        this.keyEventPlugin = evtMngrPlugins[1];
         this.dateContainerCls = `app-date-${this.widgetId}`;
         this._dateOptions.containerClass = `app-date ${this.dateContainerCls}`;
         this._dateOptions.showWeekNumbers = false;
@@ -216,7 +239,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     public onTimepickerOpen() {
         // adding class for time widget dropdown menu
         const tpElements = document.querySelectorAll('timepicker');
-        _.forEach(tpElements, (element) => {
+        forEach(tpElements, (element) => {
             addClass(element.parentElement as HTMLElement, 'app-datetime', true);
         });
 
@@ -259,6 +282,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate, this) === this.displayValue) {
                 $(this.nativeElement).find('.display-input').val(this.displayValue);
             }
+        }
+
+        if(newVal && !this.bsDateValue && this.timeZone) {
+            newVal = getMomentLocaleObject(this.timeZone, newVal);
         }
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
@@ -422,14 +449,13 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             let newVal = event.target.value.trim();
-            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-            if (action === 'enter' || action === 'arrowdown') {
+            if (event.key === 'Enter' || event.key === 'ArrowDown') {
                 newVal = newVal ? getNativeDateObject(newVal, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate, this);
                 const inputVal = event.target.value.trim();
                 if (inputVal && this.datepattern === 'timestamp') {
-                    if (!_.isNaN(inputVal) && _.parseInt(inputVal) !== formattedDate) {
+                    if (!isNaN(inputVal) && parseInt(inputVal) !== formattedDate) {
                         this.invalidDateTimeFormat = true;
                         this.invokeOnChange(this.datavalue, event, false);
                     }
@@ -464,7 +490,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
 
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
-        if (!_.includes(['blur', 'focus', 'change', 'click'], eventName)) {
+        if (!includes(['blur', 'focus', 'change', 'click'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
     }

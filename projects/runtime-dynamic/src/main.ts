@@ -2,8 +2,8 @@ import { ApplicationRef, enableProdMode, NgModuleRef } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
+import {isEmpty} from "lodash-es";
 
-declare const _;
 const DEBUG_MODE = 'debugMode';
 
 if (sessionStorage.getItem(DEBUG_MODE) !== 'true') {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 (window as any).debugMode = function(on) {
-    if (_.isEmpty(on)) {
+    if (isEmpty(on)) {
         on = true;
     }
     const value = on ? 'true' : 'false';

@@ -1,4 +1,14 @@
-import { Attribute, Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+    Attribute,
+    Component,
+    Inject,
+    Injector,
+    OnInit,
+    Optional,
+    SkipSelf,
+    TemplateRef,
+    ViewChild
+} from '@angular/core';
 
 import { toBoolean } from '@wm/core';
 import { IWidgetConfig, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
@@ -28,6 +38,7 @@ export class AlertDialogComponent extends BaseDialog implements OnInit {
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
         @Attribute('closable') closable: string | boolean,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         if (modal === null || modal === undefined) {
             modal = false;
@@ -47,7 +58,8 @@ export class AlertDialogComponent extends BaseDialog implements OnInit {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,
                 keyboard: !toBoolean(modal)
-            }
+            },
+            explicitContext
         );
     }
 

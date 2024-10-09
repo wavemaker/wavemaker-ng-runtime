@@ -1,5 +1,5 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
-import { FormWidgetType } from '@wm/core';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
+import {FormWidgetType} from '@wm/core';
 
 export const numberProps = new Map(
     [
@@ -9,6 +9,7 @@ export const numberProps = new Map(
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
+        ['arialabel', PROP_STRING],
         ['localefilter', PROP_STRING],
         ['minvalue', PROP_NUMBER],
         ['maxvalue', PROP_NUMBER],
@@ -24,7 +25,10 @@ export const numberProps = new Map(
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['trailingzero', {value: false, ...PROP_BOOLEAN}],
         ['updateon', PROP_STRING],
-        ['inputmode', {value: 'natural', ...PROP_STRING}]
+        ['inputmode', {value: 'natural', ...PROP_STRING}],
+        ['decimalplaces', PROP_NUMBER],
+        ['conditionalclass', PROP_ANY],
+        ['conditionalstyle', PROP_ANY]
     ]
 );
 

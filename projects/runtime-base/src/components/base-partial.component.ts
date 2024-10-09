@@ -1,4 +1,11 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
+import {
+    AfterViewInit,
+    Injector,
+    OnDestroy,
+    ViewChild,
+    Directive,
+    inject
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
@@ -21,8 +28,7 @@ import { VariablesService } from '@wm/variables';
 
 import { FragmentMonitor } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
-
-declare const _;
+import {each} from "lodash-es";
 
 export const commonPartialWidgets = {};
 
@@ -53,6 +59,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
+    private viewParent: any;
 
     abstract evalUserScript(prefabContext: any, appContext: any, utils: any);
 
@@ -65,13 +72,19 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     init() {
 
-        this.App = this.injector.get(App);
-        this.containerWidget = this.injector.get(WidgetRef);
-        this.i18nService = this.injector.get(AbstractI18nService);
-        this.scriptLoaderService = this.injector.get(ScriptLoaderService);
-        this.Viewport = this.injector.get(Viewport);
-        if (this.getContainerWidgetInjector().view.component.registerFragment) {
-            this.getContainerWidgetInjector().view.component.registerFragment();
+        this.App = this.injector ? this.injector.get(App) : inject(App);
+        //making the code compatible in both the JIT and AOT modes
+        this.containerWidget = this.injector ? this.injector.get(WidgetRef) : inject(WidgetRef);
+        this.i18nService = this.injector ? this.injector.get(AbstractI18nService) : inject(AbstractI18nService);
+        this.scriptLoaderService = this.injector ? this.injector.get(ScriptLoaderService) : inject(ScriptLoaderService);
+        this.Viewport = this.injector ? this.injector.get(Viewport) : inject(Viewport);
+        // this.viewContainerRef = this.getContainerWidgetInjector().get(ViewContainerRef);
+        // Replacing this.getContainerWidgetInjector().view.component as viewParent
+        // this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
+        this.viewParent = this.containerWidget.viewParent;
+
+        if (this.viewParent.registerFragment) {
+            this.viewParent.registerFragment();
         }
 
         // register functions for binding evaluation
@@ -91,9 +104,9 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         });
 
         if(this.spa) {
-            this.pageDirective = this.injector.get(SpaPageDirective, null);
+            this.pageDirective = this.injector ? this.injector.get(SpaPageDirective) : inject(SpaPageDirective);
         } else {
-            this.pageDirective = this.injector.get(PageDirective, null);
+            this.pageDirective = this.injector ? this.injector.get(PageDirective) : inject(PageDirective);
         }
         if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
@@ -120,22 +133,22 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     initUserScript() {
         try {
             // partials inside prefab should have access to Prefab properties and events
-            if (this.getContainerWidgetInjector().view.component.prefabName) {
+            if (this.viewParent.prefabName) {
                 // for partial within partial within prefabs, just assign the parent partial's prefab object
-                if (this.getContainerWidgetInjector().view.component.Prefab) {
-                    this.Prefab = this.getContainerWidgetInjector().view.component.Prefab;
+                if (this.viewParent.Prefab) {
+                    this.Prefab = this.viewParent.Prefab;
                 } else {
-                    this.Prefab = this.getContainerWidgetInjector().view.component;
+                    this.Prefab = this.viewParent;
                 }
             }
-            this.evalUserScript(this, this.App, this.injector.get(UtilsService));
+            this.evalUserScript(this, this.App, this.injector ? this.injector.get(UtilsService) : inject(UtilsService));
         } catch (e) {
             console.error(`Error in evaluating partial (${this.partialName}) script\n`, e);
         }
     }
 
     initVariables() {
-        const variablesService = this.injector.get(VariablesService);
+        const variablesService = this.injector ? this.injector.get(VariablesService) : inject(VariablesService);
 
         // get variables and actions instances for the page
         const variableCollection = variablesService.register(this.partialName, this.getVariables(), this);
@@ -167,7 +180,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
      */
     registerExpressions() {
         const expressions = this.getExpressions();
-        _.each(expressions, (fn, expr)=>{
+        each(expressions, (fn, expr) => {
             registerFnByExpr(expr, fn[0], fn[1]);
         });
     }
@@ -186,8 +199,8 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             params = this.containerWidget.userComponentParams;
         }
         this.onReady(params);
-        if (this.getContainerWidgetInjector().view.component.resolveFragment) {
-            this.getContainerWidgetInjector().view.component.resolveFragment();
+        if (this.viewParent.resolveFragment) {
+            this.viewParent.resolveFragment();
         }
     }
 
@@ -206,17 +219,21 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     mute() {
         const m = o => { o && o.mute && o.mute(); };
-        _.each(this.Widgets, m);
-        _.each(this.Variables, m);
-        _.each(this.Actions, m);
+        each(this.Widgets, m);
+        each(this.Variables, m);
+        each(this.Actions, m);
     }
 
     unmute() {
         const um = o => { o && o.unmute && o.unmute(); };
-        _.each(this.Widgets, um);
-        _.each(this.Variables, um);
-        _.each(this.Actions, um);
+        each(this.Widgets, um);
+        each(this.Variables, um);
+        each(this.Actions, um);
     }
+
+    // ngOnInit() {
+    //     this.init();
+    // }
 
     ngAfterViewInit(): void {
         this.loadScripts().then(() => {
@@ -238,15 +255,15 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         this.unmute();
         if (refreshData) {
             const refresh = v => { v && v.startUpdate && v.invoke && v.invoke(); };
-            _.each(this.Variables, refresh);
-            _.each(this.Actions, refresh);
+            each(this.Variables, refresh);
+            each(this.Actions, refresh);
         }
-        _.each(this.Widgets, w => w && w.ngOnAttach && w.ngOnAttach());
+        each(this.Widgets, w => w && w.ngOnAttach && w.ngOnAttach());
     }
 
     ngOnDetach() {
         this.mute();
-        _.each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
+        each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
     }
 
     onReady(params?) {

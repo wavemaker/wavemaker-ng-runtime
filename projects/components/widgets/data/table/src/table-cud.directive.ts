@@ -4,8 +4,9 @@ import { $invokeWatchers, $appDigest, AbstractDialogService, App, DataSource, ex
 import { refreshDataSource } from '@wm/components/base';
 
 import { TableComponent } from './table.component';
+import {last, map, parseInt, startsWith} from "lodash-es";
 
-declare const $, _;
+declare const $;
 
 const OPERATION = {
     'NEW': 'new',
@@ -139,22 +140,22 @@ export class TableCUDDirective {
     generatePath(binddataset) {
         let path, index;
         let dataBoundExpr = this.table.widget.$attrs.get('datasetboundexpr');
-        if (_.startsWith(binddataset, 'item') && dataBoundExpr) {
-            if (_.startsWith(dataBoundExpr, 'Widgets.')) {
+        if (startsWith(binddataset, 'item') && dataBoundExpr) {
+            if (startsWith(dataBoundExpr, 'Widgets.')) {
                 dataBoundExpr = extractCurrentItemExpr(dataBoundExpr, this.table);
             }
             const parentListItems = this.table.$element.parents('.app-list-item');
-            const indexArr = _.map(parentListItems, (item) => _.parseInt($(item).attr('listitemindex')));
+            const indexArr = map(parentListItems, (item) => parseInt($(item).attr('listitemindex')));
             for (let i = indexArr.length - 1; i >= 0; i--) {
                 dataBoundExpr = dataBoundExpr.replace('$i', indexArr[i]);
             }
-            index = _.last(indexArr);
+            index = last(indexArr);
             path = dataBoundExpr.replace(/^Variables\..*\.dataSet([^.])*(\.|$)/g, '');
         } else {
             // if we have dataset as "Variables.staticVar1.dataSet[1].details" then pass index as 1.
             const regEx = /^Variables\..*\.dataSet([\[][0-9]])/g;
             if (regEx.test(binddataset)) {
-                index = _.parseInt(binddataset.replace(/^Variables\..*\.dataSet([\[])/g, ''));
+                index = parseInt(binddataset.replace(/^Variables\..*\.dataSet([\[])/g, ''));
             }
             path = binddataset.replace(/^Variables\..*\.dataSet([^.])*(\.|$)/g, '');
         }

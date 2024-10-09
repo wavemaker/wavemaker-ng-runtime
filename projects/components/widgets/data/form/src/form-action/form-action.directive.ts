@@ -1,11 +1,10 @@
-import { Directive, Injector, OnInit, Optional } from '@angular/core';
+import {Directive, Inject, Injector, OnInit, Optional} from '@angular/core';
 
 import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
 
 import { registerProps } from './form-action.props';
 import { FormComponent } from '../form.component';
-
-declare const _;
+import {isUndefined} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
 
@@ -40,8 +39,8 @@ export class FormActionDirective extends BaseComponent implements OnInit {
 
     private _propsInitialized: boolean;
 
-    constructor(inj: Injector, @Optional() public form: FormComponent) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Optional() public form: FormComponent, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 
     populateAction() {
@@ -51,7 +50,7 @@ export class FormActionDirective extends BaseComponent implements OnInit {
             show: this.show,
             class: this.class ? this.class : (this['widget-type'] === 'button' ? 'btn-secondary' : ''),
             iconclass: this.iconclass || '',
-            title: _.isUndefined(this.title) ? (this['display-name'] || '') : this.title,
+            title: isUndefined(this.title) ? (this['display-name'] || '') : this.title,
             action: this.action,
             accessroles: this.accessroles,
             shortcutkey: this.shortcutkey,

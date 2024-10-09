@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 
 import { AbstractToasterService, App } from '@wm/core';
 import { SecurityService } from '@wm/security';
 
 import { AuthGuard } from './auth.guard';
 import { AppManagerService } from '../services/app.manager.service';
-
-declare const _: any;
+import {intersection} from "lodash-es";
 
 @Injectable()
-export class RoleGuard implements CanActivate {
+export class RoleGuard {
 
     constructor(
         private securityService: SecurityService,
@@ -27,7 +26,7 @@ export class RoleGuard implements CanActivate {
             .then((isLoggedIn: boolean) => {
                 if (isLoggedIn) {
                     const userRoles = this.securityService.get().userInfo.userRoles;
-                    const hasAccess = _.intersection(allowedRoles, userRoles).length > 0;
+                    const hasAccess = intersection(allowedRoles, userRoles).length > 0;
 
                     if (hasAccess) {
                         return Promise.resolve(true);

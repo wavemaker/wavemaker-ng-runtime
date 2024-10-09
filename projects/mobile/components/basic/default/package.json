@@ -1,26 +1,6 @@
 {
     "name": "@wm/mobile/components/basic",
-    "ngPackage": {
-        "dest": "../../../../../libraries/mobile/components/basic/default",
-        "lib": {
-            "flatModuleFile": "index",
-            "entryFile": "./src/public_api.ts",
-            "umdId": "wm.mobile.components.basic",
-            "umdModuleIds": {
-                "@angular/core": "ng.core",
-
-                "rxjs": "rxjs",
-                "@awesome-cordova-plugins/file/ngx": "awesomeCordova.plugins",
-                "@awesome-cordova-plugins/file-opener/ngx": "awesomeCordova.plugins",
-                "@awesome-cordova-plugins/camera/ngx": "awesomeCordova.plugins",
-
-                "@wm/core": "wm.core",
-                "@wm/mobile/core": "wm.mobile.core",
-                "@wm/components/base": "wm.components.base",
-                "@wm/components/basic/progress": "wm.components.basic.progress"
-            }
-        }
-    },
+    "sideEffects": false,
     "dependencies": {
       "tslib": "^2.0.0"
     }

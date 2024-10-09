@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, Injector } from '@angular/core';
+import {AfterViewInit, Component, Inject, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { isNumber, setCSS, setCSSFromObj } from '@wm/core';
+import {setCSS, setCSSFromObj} from '@wm/core';
 
 import { registerProps } from './segmented-control.props';
 import { SegmentContentComponent } from './segment-content/segment-content.component';
+import {isNumber} from "lodash-es";
 
 const DEFAULT_CLS = 'app-segmented-control';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segmented-control', hostClass: DEFAULT_CLS};
@@ -24,8 +25,8 @@ export class SegmentedControlComponent extends StylableComponent implements Afte
     public contents: SegmentContentComponent[] = [];
     public currentSelectedIndex = 0;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
 

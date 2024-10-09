@@ -1,11 +1,22 @@
-import { AfterViewInit, Attribute, Component, ElementRef, HostListener, Injector, OnInit, ViewChild } from '@angular/core';
-import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
+import {
+    AfterViewInit,
+    Attribute,
+    Component,
+    ElementRef,
+    HostListener,
+    Inject,
+    Injector,
+    OnInit,
+    Optional,
+    ViewChild
+} from '@angular/core';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
-import { isDefined, toggleClass } from '@wm/core';
-import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
-import { BaseFormCustomComponent } from '../base-form-custom.component';
+import {isDefined, toggleClass} from '@wm/core';
+import {IWidgetConfig, provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
+import {BaseFormCustomComponent} from '../base-form-custom.component';
 
-import { registerProps } from './checkbox.props';
+import {registerProps} from './checkbox.props';
 
 const DEFAULT_CLS = 'app-checkbox checkbox';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -16,7 +27,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 /*
  * try to convert the chekedvalue and unchecked values to boolean/number
  */
-const unStringify = (val, defaultVal?) => {
+export const unStringify = (val, defaultVal?) => {
     if (val === null) {
         return defaultVal;
     }
@@ -54,6 +65,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     public required: boolean;
     public name: string;
     public hint: string;
+    public arialabel: string;
     public shortcutkey: string;
     public tabindex: any;
     public _caption = '&nbsp';
@@ -79,9 +91,10 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         inj: Injector,
         @Attribute('checkedvalue') checkedVal,
         @Attribute('uncheckedvalue') uncheckedVal,
-        @Attribute('type') public type
+        @Attribute('type') public type,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         this._checkedvalue = unStringify(checkedVal, true);
         this._uncheckedvalue = unStringify(uncheckedVal, false);

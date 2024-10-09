@@ -19,8 +19,7 @@ const components = [
         WmComponentsModule
     ],
     declarations: [...components],
-    exports: [...components],
-    entryComponents: []
+    exports: [...components]
 })
 export class CurrencyModule {
 }

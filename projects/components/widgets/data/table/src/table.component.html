@@ -8,8 +8,10 @@
             <div class="description" [innerHTML]="subheading"></div>
         </div>
         <div class="panel-actions app-datagrid-actions" *ngIf="exportOptions.length || _actions.header.length">
-            <ng-container *ngFor="let btn of _actions.header"
-                          [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef" [ngTemplateOutletContext]="{btn:btn}">
+            <ng-container *ngFor="let btn of _actions.header; let index = index;"
+                          [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef"
+                          [ngTemplateOutletContext]="{btn:btn}"
+                          [ngTemplateOutletInjector]="createCustomInjector('actions_header_' + index, {btn:btn})">
             </ng-container>
             <div wmMenu dropdown caption.bind="appLocale.LABEL_EXPORT" *ngIf="exportOptions.length"  autoclose="always" attr.name="{{name}}-export"
                 dataset.bind="exportOptions" select.event="export($item)" menuposition="down,left"></div>
@@ -27,8 +29,10 @@
              forceellipses.bind="forceellipses" directionlinks.bind="directionlinks"></nav>
     </div>
     <div class="app-datagrid-actions" *ngIf="_actions.footer.length">
-        <ng-container *ngFor="let btn of _actions.footer"
-                      [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef" [ngTemplateOutletContext]="{btn:btn}">
+        <ng-container *ngFor="let btn of _actions.footer; let index = index;"
+                      [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef"
+                      [ngTemplateOutletContext]="{btn:btn}"
+                      [ngTemplateOutletInjector]="createCustomInjector('actions_footer_' + index, {btn:btn})">
         </ng-container>
     </div>
 </div>

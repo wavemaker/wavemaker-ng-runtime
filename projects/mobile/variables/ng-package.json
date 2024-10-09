@@ -3,30 +3,6 @@
     "dest": "../../../libraries/mobile/variables",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.mobile.variables",
-        "umdModuleIds": {
-            "@angular/compiler": "ng.compiler",
-            "@angular/core": "ng.core",
-
-            "rxjs": "rxjs",
-
-            "@awesome-cordova-plugins/app-version/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/barcode-scanner/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/calendar/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/camera/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/device/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/media-capture/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/geolocation/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/vibration/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/location-accuracy/ngx": "awesomeCordova.plugins",
-            "@awesome-cordova-plugins/diagnostic/ngx": "awesomeCordova.plugins",  
-            "@wm/mobile/core": "wm.mobile.core",
-            "@wm/mobile/offline": "wm.mobile.offline",
-            "@wm/security":  "wm.security",
-            "@wm/core":  "wm.core",
-            "@wm/variables":  "wm.variables",
-            "@wm/mobile/components/basic": "wm.mobile.components.basic"
-        }
+        "entryFile": "src/public_api.ts"
     }
 }

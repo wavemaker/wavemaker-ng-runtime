@@ -2,8 +2,19 @@ import { DataSource, debounce, processFilterExpBindNode } from '@wm/core';
 import { FormWidgetType, isDefined, MatchMode } from '@wm/core';
 
 import { isDataSetWidget } from './widget-utils';
-
-declare const _;
+import {
+    each,
+    filter,
+    forEach, get, head,
+    includes,
+    intersection,
+    isArray, isEmpty, isFunction,
+    isNull,
+    isObject,
+    isString,
+    isUndefined, keys, replace,
+    split
+} from "lodash-es";
 
 const noop = () => { };
 
@@ -27,8 +38,8 @@ export const LIVE_CONSTANTS = {
 };
 
 // Returns true if widget is autocomplete or chips
-function isSearchWidgetType(widget) {
-    return _.includes([FormWidgetType.AUTOCOMPLETE, FormWidgetType.TYPEAHEAD, FormWidgetType.CHIPS], widget);
+export function isSearchWidgetType(widget) {
+    return includes([FormWidgetType.AUTOCOMPLETE, FormWidgetType.TYPEAHEAD, FormWidgetType.CHIPS], widget);
 }
 
 function onSuccess(response, res, rej) {
@@ -118,7 +129,7 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
     }
     primaryKeys = dataSource.execute(DataSource.Operation.GET_RELATED_PRIMARY_KEYS, relatedField);
     formField.datafield = datafield;
-    formField._primaryKey = _.isEmpty(primaryKeys) ? undefined : primaryKeys[0];
+    formField._primaryKey = isEmpty(primaryKeys) ? undefined : primaryKeys[0];
     formField.compareby = primaryKeys && primaryKeys.join(',');
 
     displayField = datafield === ALLFIELDS ? undefined : datafield;
@@ -138,12 +149,12 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
             dataSource.execute(DataSource.Operation.GET_RELATED_TABLE_DATA, {
                 relatedField,
                 pagesize: formField.limit,
-                orderBy: formField.orderby ? _.replace(formField.orderby, /:/g, ' ') : '',
+                orderBy: formField.orderby ? replace(formField.orderby, /:/g, ' ') : '',
                 filterFields: {},
                 filterExpr: formField.filterexpressions ? formField.filterexpressions : {}
             }).then(response => {
                 formField.dataset = response.data;
-                formField.displayfield = formField.displayfield || _.head(_.keys(_.get(response, '[0]')));
+                formField.displayfield = formField.displayfield || head(keys(get(response, '[0]')));
                 if (formField.showPendingSpinner) {
                     formField.showPendingSpinner = false;
                 }
@@ -160,7 +171,7 @@ export function fetchRelatedFieldData(dataSource, formField, options) {
  */
 export const interpolateBindExpressions = (context, filterexpressions, callbackFn) => {
     const debouncedFn = debounce(() => {
-        if (_.isFunction(callbackFn)) {
+        if (isFunction(callbackFn)) {
             callbackFn(filterexpressions);
         }
     }, 300);
@@ -170,8 +181,8 @@ export const interpolateBindExpressions = (context, filterexpressions, callbackF
      * without this it will never be called. processFilterExpBindNode will be called only for the binded variable expressions.
      */
     debouncedFn();
-    const filterExpressions = filterexpressions ? (_.isObject(filterexpressions) ? filterexpressions : JSON.parse(filterexpressions)) : {};
-    const destroyFn = context.registerDestroyListener ? context.registerDestroyListener.bind(context) : _.noop;
+    const filterExpressions = filterexpressions ? (isObject(filterexpressions) ? filterexpressions : JSON.parse(filterexpressions)) : {};
+    const destroyFn = context.registerDestroyListener ? context.registerDestroyListener.bind(context) : noop;
     const filterSubscription = processFilterExpBindNode(context, filterExpressions).subscribe((response: any) => {
         filterexpressions = JSON.stringify(response.filterExpressions);
         debouncedFn();
@@ -199,7 +210,7 @@ export const getDistinctFieldProperties = (dataSource, formField) => {
         fieldColumn = formField['lookup-field'];
         props.distinctField = fieldColumn;
         props.aliasColumn = fieldColumn.replace('.', '$'); // For related fields, In response . is replaced by $
-        props.filterExpr = formField.filterexpressions ? (_.isObject(formField.filterexpressions) ? formField.filterexpressions : JSON.parse(formField.filterexpressions)) : {};
+        props.filterExpr = formField.filterexpressions ? (isObject(formField.filterexpressions) ? formField.filterexpressions : JSON.parse(formField.filterexpressions)) : {};
     } else {
         props.tableName = dataSource.execute(DataSource.Operation.GET_ENTITY_NAME);
         fieldColumn = formField.field || formField.key;
@@ -275,14 +286,14 @@ function setFieldDataSet(formField, data, options?) {
     const emptySupportWidgets = [FormWidgetType.SELECT, FormWidgetType.RADIOSET];
     const emptyOption = {};
     const dataSet = [];
-    if (options.isEnableEmptyFilter && _.includes(emptySupportWidgets, formField[options.widget]) &&
+    if (options.isEnableEmptyFilter && includes(emptySupportWidgets, formField[options.widget]) &&
         !formField['is-range'] && !formField.multiple) {
         // If empty option is selected, push an empty object in to dataSet
         emptyOption[LIVE_CONSTANTS.LABEL_KEY] = LIVE_CONSTANTS.EMPTY_KEY;
         emptyOption[LIVE_CONSTANTS.LABEL_VALUE] = options.EMPTY_VALUE || LIVE_CONSTANTS.EMPTY_VALUE;
         dataSet.push(emptyOption);
     }
-    _.each(data, key => {
+    each(data, key => {
         const value = key[options.aliasColumn];
         const option = {};
         if (value !== null && value !== '') {
@@ -311,7 +322,7 @@ function setFieldDataSet(formField, data, options?) {
  *
  */
 export function fetchDistinctValues(dataSource, formFields, options) {
-    if (_.isEmpty(formFields)) {
+    if (isEmpty(formFields)) {
         return;
     }
     formFields.forEach(formField => {
@@ -421,7 +432,7 @@ export function getRangeMatchMode(minValue, maxValue) {
  * @param {object} enableemptyfilter empty filter options
  */
 export function getEnableEmptyFilter(enableemptyfilter) {
-    return enableemptyfilter && _.intersection(enableemptyfilter.split(','), LIVE_CONSTANTS.NULL_EMPTY).length > 0;
+    return enableemptyfilter && intersection(enableemptyfilter.split(','), LIVE_CONSTANTS.NULL_EMPTY).length > 0;
 }
 /**
  * @ngdoc function
@@ -436,12 +447,12 @@ export function getEnableEmptyFilter(enableemptyfilter) {
  */
 export function getEmptyMatchMode(enableemptyfilter) {
     let matchMode;
-    const emptyFilterOptions = _.split(enableemptyfilter, ',');
-    if (_.intersection(emptyFilterOptions, LIVE_CONSTANTS.NULL_EMPTY).length === 2) {
+    const emptyFilterOptions = split(enableemptyfilter, ',');
+    if (intersection(emptyFilterOptions, LIVE_CONSTANTS.NULL_EMPTY).length === 2) {
         matchMode = MatchMode.NULLOREMPTY;
-    } else if (_.includes(emptyFilterOptions, LIVE_CONSTANTS.NULL)) {
+    } else if (includes(emptyFilterOptions, LIVE_CONSTANTS.NULL)) {
         matchMode = MatchMode.NULL;
-    } else if (_.includes(emptyFilterOptions, LIVE_CONSTANTS.EMPTY)) {
+    } else if (includes(emptyFilterOptions, LIVE_CONSTANTS.EMPTY)) {
         matchMode = MatchMode.EMPTY;
     }
     return matchMode;
@@ -459,15 +470,15 @@ export function getEmptyMatchMode(enableemptyfilter) {
  */
 export const createArrayFrom = (data): Array<any> => {
 
-    if (_.isUndefined(data) || _.isNull(data)) {
+    if (isUndefined(data) || isNull(data)) {
         return [];
     }
 
-    if (_.isString(data)) {
+    if (isString(data)) {
         data = data.split(',').map(Function.prototype.call, String.prototype.trim);
     }
 
-    if (!_.isArray(data)) {
+    if (!isArray(data)) {
         data = [data];
     }
 
@@ -489,14 +500,14 @@ export const createArrayFrom = (data): Array<any> => {
  */
 export function applyFilterOnField(dataSource, filterDef, formFields, newVal, options: any = {}) {
     const fieldName = filterDef.field || filterDef.key;
-    const filterOnFields = _.filter(formFields, { 'filter-on': fieldName });
+    const filterOnFields = filter(formFields, {'filter-on': fieldName});
 
     newVal = filterDef['is-range'] ? getRangeFieldValue(filterDef.minValue, filterDef.maxValue) : (isDefined(newVal) ? newVal : filterDef.value);
-    if (!dataSource || (options.isFirst && (_.isUndefined(newVal) || newVal === ''))) {
+    if (!dataSource || (options.isFirst && (isUndefined(newVal) || newVal === ''))) {
         return;
     }
     // Loop over the fields for which the current field is filter on field
-    _.forEach(filterOnFields, filterField => {
+    forEach(filterOnFields, filterField => {
         const filterKey = filterField.field || filterField.key;
         const lookUpField = filterDef['lookup-field'] || filterDef._primaryKey;
         const filterWidget = filterField['edit-widget-type'] || filterField.widgettype;
@@ -520,7 +531,7 @@ export function applyFilterOnField(dataSource, filterDef, formFields, newVal, op
             } else {
                 matchMode = MatchMode.EQUALS;
             }
-            filterVal = (_.isObject(newVal) && !_.isArray(newVal)) ? newVal[lookUpField] : newVal;
+            filterVal = (isObject(newVal) && !isArray(newVal)) ? newVal[lookUpField] : newVal;
             filterFields[filterOn] = {
                 'value': filterVal,
                 'matchMode': matchMode
@@ -562,9 +573,9 @@ export function transformData(dataObject, variableName) {
     // data sanity testing
     dataObject = dataObject || [];
     // if the dataObject is not an array make it an array
-    if (!_.isArray(dataObject)) {
+    if (!isArray(dataObject)) {
         // if the data returned is of type string, make it an object inside an array
-        if (_.isString(dataObject)) {
+        if (isString(dataObject)) {
             keys = variableName.substring(variableName.indexOf('.') + 1, variableName.length).split('.');
             oldKeys = [];
             numKeys = keys.length;
@@ -589,9 +600,9 @@ export function transformData(dataObject, variableName) {
         /*if the dataObject is an array and each value is a string, then lite-transform the string to an object
          * lite-transform: just checking if the first value is string and then transforming the object, instead of traversing through the whole array
          * */
-        if (_.isString(dataObject[0])) {
+        if (isString(dataObject[0])) {
             tempArr = [];
-            _.forEach(dataObject, str => {
+            forEach(dataObject, str => {
                 newObj = {};
                 newObj[variableName.split('.').join('-')] = str;
                 tempArr.push(newObj);

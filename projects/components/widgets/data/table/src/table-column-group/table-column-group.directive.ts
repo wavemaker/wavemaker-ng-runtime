@@ -1,4 +1,4 @@
-import { Directive, Injector, OnInit, Optional, SkipSelf } from '@angular/core';
+import {Directive, Inject, Injector, OnInit, Optional, SkipSelf} from '@angular/core';
 
 import { BaseComponent,  provideAsWidgetRef, setHeaderConfigForTable} from '@wm/components/base';
 import { registerProps } from './table-column-group.props';
@@ -26,9 +26,10 @@ export class TableColumnGroupDirective extends BaseComponent implements OnInit {
     constructor(
         inj: Injector,
         @SkipSelf() @Optional() public group: TableColumnGroupDirective,
-        @Optional() public table: TableComponent
+        @Optional() public table: TableComponent,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 
     populateConfig() {

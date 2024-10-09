@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 import { App, UserDefinedExecutionContext } from '@wm/core';
 import { NavComponent } from './nav.component';
 import { NavigationControlDirective } from './navigation-control.directive';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
+import { ITestComponentDef, ITestModuleDef, ComponentTestBase } from '../../../../../base/src/test/common-widget.specs';
 import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
-import { compileTestComponent } from '../../../../../base/src/test/util/component-test-util';
+import { compileTestComponent, mockApp } from '../../../../../base/src/test/util/component-test-util';
 import { SecurityService } from '@wm/security';
+import { NavNode } from '@wm/components/base';
+import { omit } from 'lodash-es';
 
-const mockApp = {};
 class MockSecurityService { }
 const markup = ` <ul wmNav data-element-type="wmNav" data-role="page-header"  type="pills" autoclose="outsideClick" name="testNav"
                    itemlabel="label" itemlink="link" itemicon="icon" itemaction="task" isactive="active" select.event="onSelect($event, widget, $item)"></ul>`;
@@ -20,7 +21,7 @@ const markup = ` <ul wmNav data-element-type="wmNav" data-role="page-header"  ty
 })
 
 class NavWrapperComponent {
-    @ViewChild(NavComponent, /* TODO: add static flag */ {static: true}) wmComponent: NavComponent;
+    @ViewChild(NavComponent, /* TODO: add static flag */ { static: true }) wmComponent: NavComponent;
     public testdata = [
         {
             label: 'Home',
@@ -50,10 +51,10 @@ class NavWrapperComponent {
         }
     ];
     onSelect = function ($event, widget, $item) {
-        console.log('select event triggered');
+        // console.log('select event triggered');
     };
     setContent = function () {
-        console.log('set content triggered');
+        // console.log('set content triggered');
     };
 }
 
@@ -75,10 +76,10 @@ const componentDef: ITestComponentDef = {
     testComponent: NavWrapperComponent
 };
 
-// const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
-// TestBase.verifyPropsInitialization();
+const TestBase: ComponentTestBase = new ComponentTestBase(componentDef);
+TestBase.verifyPropsInitialization();
 // TestBase.verifyCommonProperties();
-// TestBase.verifyStyles();
+TestBase.verifyStyles();
 
 describe('Nav Component', () => {
     let fixture: ComponentFixture<NavWrapperComponent>;
@@ -96,7 +97,7 @@ describe('Nav Component', () => {
         expect(wrapperComponent).toBeTruthy();
     });
     it('should trigger select event callback and should contain selecteditem as item having isactive true', (done) => {
-        spyOn(wrapperComponent, 'onSelect');
+        jest.spyOn(wrapperComponent, 'onSelect');
         // navwidget dataset propertychangehandler is having debouncetime so using setimeout
         setTimeout(() => {
             expect(wrapperComponent.onSelect).toHaveBeenCalledTimes(1);
@@ -105,4 +106,84 @@ describe('Nav Component', () => {
         }, 100);
     });
 
+    // Updated test cases for onNavSelect function
+    describe('onNavSelect function', () => {
+        it('should update selecteditem and invoke select event callback', () => {
+            const mockEvent = new Event('click');
+            const mockItem = { value: wrapperComponent.testdata[1] };
+            jest.spyOn(mockEvent, 'preventDefault');
+            jest.spyOn(wmComponent, 'invokeEventCallback');
+            wmComponent.onNavSelect(mockEvent, mockItem);
+            expect(mockEvent.preventDefault).toHaveBeenCalled();
+            expect(wmComponent.selecteditem).toEqual(mockItem.value);
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('select', {
+                $event: mockEvent,
+                $item: mockItem.value
+            });
+        });
+
+        it('should remove _selected property from previously selected item', () => {
+            const previouslySelectedItem: any = { ...wrapperComponent.testdata[0], _selected: true };
+            wmComponent.nodes = [previouslySelectedItem, ...wrapperComponent.testdata.slice(1)];
+            const mockEvent = new Event('click');
+            const mockItem = { value: wrapperComponent.testdata[1] };
+            wmComponent.onNavSelect(mockEvent, mockItem);
+            expect(previouslySelectedItem._selected).toBeUndefined();
+        });
+    });
+
+    // New test cases for onMenuItemSelect function
+    describe('onMenuItemSelect function', () => {
+        it('should update selecteditem and invoke select event callback', () => {
+            const mockEvent = new Event('click');
+            const mockWidget = {};
+            const mockMenuItem: NavNode = {
+                label: 'Test Item',
+                icon: 'test-icon',
+                link: 'test-link',
+                children: [],
+                value: 'test-value'
+            };
+            jest.spyOn(wmComponent, 'invokeEventCallback');
+            wmComponent.onMenuItemSelect(mockEvent, mockWidget, mockMenuItem);
+            expect(wmComponent.selecteditem).toEqual(omit(mockMenuItem, ['children', 'value']));
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('select', {
+                $event: mockEvent,
+                $item: wmComponent.selecteditem
+            });
+        });
+
+        it('should remove children and value properties from selecteditem', () => {
+            const mockEvent = new Event('click');
+            const mockWidget = {};
+            const mockMenuItem: NavNode = {
+                label: 'Test Item',
+                icon: 'test-icon',
+                link: 'test-link',
+                children: [{ label: 'Child Item' }],
+                value: 'test-value'
+            };
+
+            wmComponent.onMenuItemSelect(mockEvent, mockWidget, mockMenuItem);
+
+            expect(wmComponent.selecteditem).not.toHaveProperty('children');
+            expect(wmComponent.selecteditem).not.toHaveProperty('value');
+            expect(wmComponent.selecteditem).toHaveProperty('label', 'Test Item');
+            expect(wmComponent.selecteditem).toHaveProperty('icon', 'test-icon');
+            expect(wmComponent.selecteditem).toHaveProperty('link', 'test-link');
+        });
+
+        it('should work correctly with menu items that don\'t have children or value properties', () => {
+            const mockEvent = new Event('click');
+            const mockWidget = {};
+            const mockMenuItem: NavNode = {
+                label: 'Simple Item',
+                link: 'simple-link'
+            };
+
+            wmComponent.onMenuItemSelect(mockEvent, mockWidget, mockMenuItem);
+
+            expect(wmComponent.selecteditem).toEqual(mockMenuItem);
+        });
+    });
 });

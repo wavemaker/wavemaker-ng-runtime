@@ -1,6 +1,16 @@
-import { AfterContentInit, AfterViewInit, Component, ContentChildren, Injector, OnInit, QueryList } from '@angular/core';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Component,
+    ContentChildren,
+    Inject,
+    Injector,
+    OnInit,
+    Optional,
+    QueryList
+} from '@angular/core';
 
-import { noop } from '@wm/core';
+import {noop} from '@wm/core';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './wizard.props';
@@ -32,6 +42,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     private readonly promiseResolverFn: Function;
     public actionsalignment: any;
     public cancelable: any;
+    public enablenext: any;
 
     get hasPrevStep(): boolean {
         return !this.isFirstStep(this.currentStep);
@@ -59,7 +70,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         if (!this.currentStep) {
             return;
         }
-        return this.currentStep.enableNext && this.currentStep.isValid;
+        return this.enablenext ? true : (this.currentStep.enableNext && this.currentStep.isValid);
     }
 
     get enableDone(): boolean {
@@ -69,10 +80,10 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         return this.currentStep.enableDone && this.currentStep.isValid;
     }
 
-    constructor(inj: Injector) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
 
         this.promiseResolverFn = resolveFn;
@@ -173,6 +184,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
                 this.setDefaultStep(step);
             }
         }
+        this.addMoreText();
     }
 
     /**
@@ -196,6 +208,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             // set the selected step as current step and make it active
             this.currentStep = currentStep;
             this.currentStep.active = true;
+            this.addMoreText();
         }
     }
 
@@ -204,18 +217,26 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
 
-        let nextStep: WizardStepDirective;
-
         // abort if onSkip method returns false
         if (eventName === 'skip') {
             if (currentStep.invokeSkipCB(currentStepIndex) === false) {
                 return;
             }
-        } else if (eventName === 'next') {
+            this.extendNextFn(currentStep, currentStepIndex);
+        } else if (this.currentStep.isValid && eventName === 'next') {
             if (currentStep.invokeNextCB(currentStepIndex) === false) {
                 return;
             }
+            this.extendNextFn(currentStep, currentStepIndex);
+        } else if (this.enablenext && !this.currentStep.isValid){
+            Array.from((<any>this).currentStep.getAllEmbeddedForms())?.forEach((form:any) => {
+                form.widget.highlightInvalidFields();
+            });
         }
+    }
+
+    extendNextFn(currentStep, currentStepIndex){
+        let nextStep: WizardStepDirective;
         nextStep = this.getNextValidStepFormIndex(currentStepIndex + 1);
         nextStep.isInitialized = true;
 
@@ -226,6 +247,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             nextStep.active = true;
             this.currentStep = nextStep;
         }
+        this.addMoreText();
     }
     // Method to navigate to previous step
     public prev() {
@@ -248,10 +270,27 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             prevStep.active = true;
             this.currentStep = prevStep;
         }
+        this.addMoreText();
     }
 
     public skip() {
         this.next('skip');
+    }
+
+    public gotoStep(stepName: string) {
+        if(stepName) {
+            const gotoStepIndex = this.steps.toArray().map(step => step.name).indexOf(stepName);
+            if(gotoStepIndex !== -1) {
+                const gotoStep: WizardStepDirective = this.getStepRefByIndex(gotoStepIndex);
+                if(gotoStep?.show) {
+                    this.onWizardHeaderClick(event, gotoStep);
+                } else {
+                    console.error("The gotoStep function cannot navigate to hidden steps");
+                }
+            } else {
+                console.error(`Could not find step '${stepName}'`);
+            }
+        }
     }
 
     // Method to invoke on-Done event on wizard
@@ -262,6 +301,43 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     // Method to invoke on-Cancel event on wizard
     public cancel () {
         this.invokeEventCallback('cancel', {steps: this.steps.toArray()});
+    }
+    public addMoreText(){
+        setTimeout(() => {
+
+
+        var newWindowWidth = $(window).width();
+        if(newWindowWidth < 768){
+        $(".app-wizard-step.current .subtitle-wrapper .step-title").css({"height":"auto","display":"block"});
+        var subtitleTextLength = $(".app-wizard-step.current .subtitle-wrapper .step-title").height();
+        $(".read_more").css("display","none");
+        $(".current .subtitle-wrapper").removeClass("readmore_subtitle");
+
+        if(subtitleTextLength>44){
+            $(".app-wizard-step.current .subtitle-wrapper .step-title").css({"height":"44px","display":"-webkit-box"});
+            $(".current .read_more").css("display","block");
+            $(".active .read_more").css("display","none");
+            $(".disable .read_more").css("display","none");
+            $(".app-wizard-step>a").css("height","100px")
+            }
+        }
+    });
+
+    }
+    public readMoreSubtitle(){
+        $(".current .subtitle-wrapper").addClass("readmore_subtitle");
+        $(".current .read_more").css("display","none");
+        $(document).on("mouseup",function(e:any)
+        {
+            var container = $(".subtitle-wrapper");
+            // if the target of the click isn't the container nor a descendant of the container
+            if (!container.is(e.target) && container.has(e.target).length === 0)
+            {
+                $(".current .subtitle-wrapper").removeClass("readmore_subtitle");
+                $(".current .read_more").css("display","block");
+                $(document).off("mouseup");
+            }
+        });
     }
 
     private isFirstStep(stepRef: WizardStepDirective) {
@@ -297,5 +373,9 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             this,
             APPLY_STYLES_TYPE.INNER_SHELL
         );
+        setTimeout(() => { if($(window).width()<768){
+            $(".app-wizard").removeClass("vertical");
+      }
+    });
     }
 }

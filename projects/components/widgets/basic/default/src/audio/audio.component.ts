@@ -1,8 +1,7 @@
-import { Component, Injector } from '@angular/core';
+import {Component, Inject, Injector, Optional} from '@angular/core';
 
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { registerProps } from './audio.props';
-
+import {DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {registerProps} from './audio.props';
 
 const DEFAULT_CLS = 'app-audio';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -28,8 +27,10 @@ export class AudioComponent extends StylableComponent {
     public audiopreload: any;
     public audiosupportmessage: any;
     public autoplay: boolean;
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    public hint: string;
+    public arialabel: string;
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this);
     }

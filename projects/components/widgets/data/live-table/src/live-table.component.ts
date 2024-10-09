@@ -1,14 +1,23 @@
-import { AfterContentInit, Attribute, ChangeDetectorRef, Component, ContentChild, ElementRef, Injector } from '@angular/core';
+import {
+    AfterContentInit,
+    Attribute,
+    ChangeDetectorRef,
+    Component,
+    ContentChild,
+    ElementRef,
+    Inject,
+    Injector,
+    Optional
+} from '@angular/core';
 
-import { debounceTime } from 'rxjs/operators';
+import {debounceTime} from 'rxjs/operators';
 
-import { $appDigest, AbstractDialogService, App, getClonedObject, isDefined, triggerFn } from '@wm/core';
-import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { TableComponent } from '@wm/components/data/table';
+import {$appDigest, AbstractDialogService, App, getClonedObject, isDefined, triggerFn} from '@wm/core';
+import {provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {TableComponent} from '@wm/components/data/table';
 
-import { registerProps } from './live-table.props';
+import {registerProps} from './live-table.props';
 
-declare const _;
 declare var $: any;
 
 const DEFAULT_CLS = 'app-livegrid';
@@ -43,9 +52,10 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         private dialogService: AbstractDialogService,
         private app: App,
         @Attribute('formlayout') layoutType: string,
-        @Attribute('dialogid') dialogId: string
+        @Attribute('dialogid') dialogId: string,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         if (layoutType === 'dialog') {
             this.isLayoutDialog = true;
@@ -89,7 +99,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     focusFirstInput() {
-       const $firstInput = $(this.form.$element).find('[role="textbox"]').first();
+        const $firstInput = $(this.form.$element).find('input').first();
         $firstInput.focus();
         $firstInput.select();
     }

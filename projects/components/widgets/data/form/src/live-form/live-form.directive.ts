@@ -6,8 +6,7 @@ import { LiveTableComponent } from '@wm/components/data/live-table';
 
 import { registerLiveFormProps } from '../form.props';
 import { FormComponent } from '../form.component';
-
-declare const _;
+import {forEach, fromPairs, get, isEmpty, isEqual, isString, map, some, split} from "lodash-es";
 
 const isTimeType = field => field.widgettype === DataType.TIME || (field.type === DataType.TIME && !field.widgettype);
 const getValidTime = val => {
@@ -40,8 +39,10 @@ export class LiveFormDirective {
         @Attribute('formlayout') formlayout: string
     ) {
         // If parent live table is present and this form is first child of live table, set this form instance on livetable
-        if (liveTable && !this.form.parentForm) {
-            this.form._liveTableParent = liveTable;
+        if (liveTable) {
+            if (!this.form.parentForm) {
+                this.form._liveTableParent = liveTable;
+            }
             this.form.isLayoutDialog = liveTable.isLayoutDialog;
             liveTable.onFormReady(this.form);
         } else {
@@ -101,7 +102,7 @@ export class LiveFormDirective {
         }
     }
     onDataSourceChange() {
-        if (_.get(this.form.formFields, 'length')) {
+        if (get(this.form.formFields, 'length')) {
             this.form.isDataSourceUpdated = true;
         }
         const formFields = this.form.getFormFields();
@@ -160,13 +161,13 @@ export class LiveFormDirective {
         }
         formFields = formFields || this.form.formFields;
         formFields.forEach(field => {
-            const value = _.get(dataObj, field.key || field.name);
+            const value = get(dataObj, field.key || field.name);
             if (isTimeType(field)) {
                 field.value = getValidTime(value);
             } else if (field.type === DataType.BLOB) {
                 this.form.resetFileUploadWidget(field, true);
                 field.href  = this.getBlobURL(dataObj, field.key, value);
-                field.value = _.isString(value) ? '' : value;
+                field.value = isString(value) ? '' : value;
             } else {
                 this.form.setFieldValue(field, dataObj);
             }
@@ -222,7 +223,7 @@ export class LiveFormDirective {
         formFields.forEach(field => {
             let dateTime,
                 fieldValue;
-            const fieldTarget = _.split(field.key, '.');
+            const fieldTarget = split(field.key, '.');
             const fieldName = fieldTarget[0] || field.key;
 
             /*collect the values from the fields and construct the object*/
@@ -280,7 +281,7 @@ export class LiveFormDirective {
         /*If OperationType is not set then based on the formdata object return the operation type,
             this case occurs only if the form is outside a livegrid*/
         /*If the formdata object has primary key value then return update else insert*/
-        if (this.form.primaryKey && !_.isEmpty(this.form.formdata)) {
+        if (this.form.primaryKey && !isEmpty(this.form.formdata)) {
             /*If only one column is primary key*/
             if (this.form.primaryKey.length === 1) {
                 if (this.form.formdata[this.form.primaryKey[0]]) {
@@ -288,7 +289,7 @@ export class LiveFormDirective {
                 }
                 /*If only no column is primary key*/
             } else if (this.form.primaryKey.length === 0) {
-                _.forEach(this.form.formdata, (value) => {
+                forEach(this.form.formdata, (value) => {
                     if (value) {
                         isPrimary = true;
                     }
@@ -298,7 +299,7 @@ export class LiveFormDirective {
                 }
                 /*If multiple columns are primary key*/
             } else {
-                isPrimary = _.some(this.form.primaryKey, (primaryKey) => {
+                isPrimary = some(this.form.primaryKey, (primaryKey) => {
                     if (this.form.formdata[primaryKey]) {
                         return true;
                     }
@@ -312,7 +313,7 @@ export class LiveFormDirective {
     }
 
     getPrevDataValues() {
-        const prevDataValues = _.fromPairs(_.map(this.form.prevDataValues, (item) => {
+        const prevDataValues = fromPairs(map(this.form.prevDataValues, (item) => {
             return [item.key, item.value];
         })); // Convert of array of values to an object
         this.form.formFields.forEach(field => {
@@ -438,7 +439,7 @@ export class LiveFormDirective {
 
         // If operation is update, form is not touched and current data and previous data is same, Show no changes detected message
         if (this.form.operationType === Live_Operations.UPDATE && this.form.ngform && this.form.ngform.pristine &&
-                (this.form.isSelected && _.isEqual(data, prevData))) {
+            (this.form.isSelected && isEqual(data, prevData))) {
             this.form.toggleMessage(true, this.form.appLocale.MESSAGE_NO_CHANGES, 'info', '');
             $appDigest();
             return;

@@ -1,5 +1,5 @@
     <div dropdown [isOpen]="status.isopen" (onShown)="onShown()" (onHidden)="hideTimepickerDropdown()" [container]="'body'" style="display: inherit">
-        <input class="form-control app-textbox display-input" [attr.aria-label]="hint"
+        <input [attr.aria-label]="arialabel" class="form-control app-textbox display-input"
                focus-target
                [tabindex]="tabindex"
                [name]="name"
@@ -26,6 +26,7 @@
                         [showMeridian]="ismeridian"
                         [readonlyInput]="isDisabled"
                         [(ngModel)]="bsTimeValue"
+                        [ngModelOptions]="{standalone: true}"
                         [disabled]="disabled || readonly || isCurrentTime"
                         [min]="minTime"
                         [max]="maxTime"
@@ -51,10 +52,10 @@
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
         tabindex="1000000"
-         role="button"
-         [attr.aria-label]="displayValue ? 'Change time  ' + displayValue : hint || 'Select time'"
+         (click)="!(disabled || readonly) && showDatePickerModal(bsTimeValue)"
+         [attr.aria-label]="displayValue ? 'Change time  ' + displayValue : arialabel || 'Select time'"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event); assignModel()"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
-        (click)="!(disabled || readonly || isCurrentTime) && showDatePickerModal(bsTimeValue)">
+         role="button">
     </div>
 </ng-template>

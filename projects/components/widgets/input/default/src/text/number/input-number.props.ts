@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const inputNumberTypeProps = new Map(
     [
@@ -10,6 +10,7 @@ export const inputNumberTypeProps = new Map(
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
+        ['arialabel', PROP_STRING],
         ['maxchars', PROP_NUMBER],
         ['maxvalue', PROP_NUMBER],
         ['minvalue', PROP_NUMBER],
@@ -23,7 +24,9 @@ export const inputNumberTypeProps = new Map(
         ['step', PROP_NUMBER],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', {value: 'number', ...PROP_STRING}],
-        ['updateon', PROP_STRING]
+        ['updateon', PROP_STRING],
+        ['conditionalclass', PROP_ANY],
+        ['conditionalstyle', PROP_ANY]
 
     ]
 );

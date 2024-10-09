@@ -1,10 +1,10 @@
-import { Component, Injector, ViewChild } from '@angular/core';
-import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import {NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
-import { IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
-import { BaseFormCustomComponent } from '@wm/components/input';
+import {IWidgetConfig, provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
+import {BaseFormCustomComponent} from '@wm/components/input';
 
-import { registerProps } from './slider.props';
+import {registerProps} from './slider.props';
 
 
 const DEFAULT_CLS = 'app-slider slider';
@@ -33,11 +33,12 @@ export class SliderComponent extends BaseFormCustomComponent {
     public name: string;
     public readonly: boolean;
     public hint: string;
+    public arialabel: string;
 
     @ViewChild(NgModel) ngModel: NgModel;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }
 

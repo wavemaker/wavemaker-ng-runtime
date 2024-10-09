@@ -3,35 +3,6 @@
     "dest": "../../libraries/runtime/base",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.runtime.base",
-        "umdModuleIds": {
-            "@angular/compiler": "ng.compiler",
-            "@angular/core": "ng.core",
-            "@angular/common/http": "ng.common.http",
-            "@angular/common": "ng.common",
-            "@angular/router": "ng.router",
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators",
-            "ngx-toastr": "ngxToastr",
-            "ngx-bootstrap/chronos": "ngx-bootstrap.chronos",
-            "ngx-bootstrap/datepicker": "ngx-bootstrap.datepicker",
-            "ngx-bootstrap/modal": "ngx-bootstrap.modal",
-            "ngx-bootstrap/utils": "ngx-bootstrap.utils",
-            "@wm/core": "wm.core",
-            "@wm/variables": "wm.variables",
-            "@wm/transpiler": "wm.transpiler",
-            "@wm/components/base": "wm.components.base",
-            "@wm/components/dialogs": "wm.components.dialogs",
-            "@wm/components/dialogs/confirm-dialog": "wm.components.dialogs.confirmdialog",
-            "@wm/components/dialogs/design-dialog": "wm.components.dialogs.designdialog",
-            "@wm/components/prefab": "wm.components.prefab",
-            "@wm/components/page": "wm.components.page",
-            "@wm/security": "wm.security",
-            "@wm/oAuth": "wm.oAuth",
-            "@wm/http": "wm.http",
-            "@wm/mobile/runtime": "wm.mobile.runtime",
-            "@wm/build-task": "wm.buildTask"
-        }
+        "entryFile": "src/public_api.ts"
     }
 }

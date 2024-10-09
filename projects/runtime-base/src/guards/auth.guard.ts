@@ -1,4 +1,4 @@
-import { ActivatedRouteSnapshot, CanActivate } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
 
 import { SecurityService } from '@wm/security';
@@ -8,7 +8,7 @@ import { AppManagerService } from '../services/app.manager.service';
 let securityConfigLoaded = false;
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuard {
 
     constructor(private securityService: SecurityService, private appManager: AppManagerService) {}
 

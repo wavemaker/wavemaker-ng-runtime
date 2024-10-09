@@ -1,25 +1,38 @@
-import { Directive, Injector, Input, OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
+import {
+    Directive,
+    Inject,
+    inject,
+    Injector,
+    Input,
+    OnDestroy,
+    Optional,
+    TemplateRef,
+    ViewContainerRef
+} from '@angular/core';
 
-import { $watch } from '@wm/core';
-
-declare const _;
+import {$watch, App, findParent} from '@wm/core';
+import {extend} from "lodash-es";
 
 @Directive({
     selector: '[lazyLoad]'
 })
 export class LazyLoadDirective implements OnDestroy {
     private readonly viewParent: any;
-    private readonly context;
+    private readonly context = {};
     private embeddedView;
     private unSubscribeFn: Function;
 
     constructor(
         inj: Injector,
         private templateRef: TemplateRef<any>,
-        private viewContainer: ViewContainerRef
+        private viewContainer: ViewContainerRef,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any = {}
     ) {
-        this.viewParent = (inj as any).view.component;
-        this.context = (inj as any).view.context;
+        let viewParentApp = inj ? inj.get(App) : inject(App);
+        let lView = (inj as any)._lView;
+        this.viewParent = findParent(lView, viewParentApp)
+        //this.context = (inj as any).view.context;
+        extend(this.context, (inj as any)._lView[8], explicitContext);
     }
 
     @Input()

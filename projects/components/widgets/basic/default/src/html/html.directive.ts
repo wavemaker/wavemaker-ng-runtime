@@ -1,6 +1,6 @@
-import { Attribute, Directive, Injector, OnInit, SecurityContext } from '@angular/core';
+import {Attribute, Directive, Inject, Injector, OnInit, Optional, SecurityContext} from '@angular/core';
 
-import { setCSS, setProperty } from '@wm/core';
+import {setCSS, setProperty} from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, SanitizePipe, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './html.props';
@@ -26,9 +26,10 @@ export class HtmlDirective extends StylableComponent implements OnInit {
         inj: Injector,
         @Attribute('height') height: string,
         @Attribute('content.bind') private boundContent: string,
-        private sanitizePipe:SanitizePipe
+        private sanitizePipe:SanitizePipe,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         // if the height is provided set the overflow to auto
         if (height) {

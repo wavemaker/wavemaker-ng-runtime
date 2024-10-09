@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const inputColorTypeProps = new Map([
     ['autocomplete', {value: true, ...PROP_BOOLEAN}],
@@ -9,6 +9,7 @@ export const inputColorTypeProps = new Map([
     ['datavalue', PROP_STRING],
     ['disabled', PROP_BOOLEAN],
     ['hint', PROP_STRING],
+    ['arialabel', PROP_STRING],
     ['name', PROP_STRING],
     ['placeholder', {value: 'Enter text', ...PROP_STRING}],
     ['readonly', PROP_BOOLEAN],
@@ -17,7 +18,9 @@ export const inputColorTypeProps = new Map([
     ['show', {value: true, ...PROP_BOOLEAN}],
     ['tabindex', {value: 0, ...PROP_NUMBER}],
     ['type', {value: 'color', ...PROP_STRING}],
-    ['updateon', PROP_STRING]
+    ['updateon', PROP_STRING],
+    ['conditionalclass', PROP_ANY],
+    ['conditionalstyle', PROP_ANY]
 ]);
 
 export const registerProps = () => {

@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { AbstractSpinnerService } from '@wm/core';
+import {findKey, includes, keys, values} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 const spinnerTemplate = `<div class="app-spinner">
                             <div class="spinner-message" aria-label="loading gif">
@@ -69,7 +70,7 @@ export class SpinnerServiceImpl extends AbstractSpinnerService {
         this.messageSource.next({
             show: true,
             message: msg,
-            messages: _.values(this.messagesByContext[ctx])
+            messages: values(this.messagesByContext[ctx])
         });
     }
 
@@ -114,8 +115,8 @@ export class SpinnerServiceImpl extends AbstractSpinnerService {
      */
     hide(id) {
         // find the spinner context of the id from the messagesByContext
-        const ctx = _.findKey(this.messagesByContext, function (obj) {
-            return _.includes(_.keys(obj), id);
+        const ctx = findKey(this.messagesByContext, function (obj) {
+            return includes(keys(obj), id);
         }) || 'page';
 
         // if spinnerContext exists just remove the spinner from the reference and destroy the scope associated.
@@ -126,10 +127,10 @@ export class SpinnerServiceImpl extends AbstractSpinnerService {
 
         if (id) {
             delete this.messagesByContext[ctx][id];
-            const messages = _.values(this.messagesByContext[ctx]);
+            const messages = values(this.messagesByContext[ctx]);
             this.messageSource.next({
                 show: messages.length ? true : false,
-                messages: _.values(this.messagesByContext[ctx])
+                messages: values(this.messagesByContext[ctx])
             });
         } else {
             this.messagesByContext[ctx] = {};

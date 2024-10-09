@@ -1,12 +1,50 @@
-import { AfterViewInit, OnDestroy, Component, HostBinding, Injector, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    OnDestroy,
+    Component,
+    HostBinding,
+    Injector,
+    ViewEncapsulation,
+    Optional,
+    Inject
+} from '@angular/core';
 
-import { App, DataSource, getClonedObject, isDataSourceEqual, isEmptyObject, isNumberType, prettifyLabels, removeAttr, triggerFn, isMobileApp, noop } from '@wm/core';
+import {
+    App,
+    DataSource,
+    getClonedObject,
+    isDataSourceEqual,
+    isEmptyObject,
+    isNumberType,
+    prettifyLabels,
+    removeAttr,
+    triggerFn,
+    isMobileApp,
+    noop
+} from '@wm/core';
 import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler,  } from '@wm/components/base';
 
 import { registerProps } from './chart.props';
 import { allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType, postPlotChartProcess } from './chart.utils';
+import {
+    concat, debounce, fill,
+    first,
+    forEach, forEachRight,
+    get, groupBy, includes,
+    intersection,
+    isArray, isEmpty, isObject, keys,
+    map, max,
+    maxBy,
+    minBy,
+    orderBy,
+    replace,
+    split,
+    uniq
+} from "lodash-es";
 
-declare const $, _, d3, nv;
+declare const $;
+
+declare const d3, nv;
 
 const WIDGET_CONFIG = {widgetType: 'wm-chart', hostClass: 'app-chart'};
 
@@ -62,8 +100,8 @@ const getLodashOrderByFormat = orderby => {
     const orderByColumns = [],
         orders = [];
 
-    _.forEach(_.split(orderby, ','), function (col) {
-        columns = _.split(col, ':');
+    forEach(split(orderby, ','), function (col) {
+        columns = split(col, ':');
         orderByColumns.push(columns[0]);
         orders.push(columns[1]);
     });
@@ -79,7 +117,9 @@ const getValidAliasName = aliasName => aliasName ? aliasName.replace(/\./g, '$')
 // Applying the font related styles for the chart
 const setTextStyle = (properties, id) => {
     const charttext = d3.select('#wmChart' + id + ' svg').selectAll('text');
-    charttext.style(properties);
+    if (!charttext.empty()) {
+        charttext.style(properties);
+    }
 };
 
 const angle = d => {
@@ -90,7 +130,7 @@ const angle = d => {
 @Component({
     selector: 'div[wmChart]',
     templateUrl: './chart.component.html',
-    styleUrls: ['../../../../../node_modules/@wavemaker.com/nvd3/build/nv.d3.min.css'],
+    styleUrls: ['../../../../../node_modules/@wavemaker/nvd3/build/nv.d3.min.css'],
     providers: [
         provideAsWidgetRef(ChartComponent)
     ],
@@ -178,7 +218,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         other than integer unlike the column and bar.It is a nvd3 issue. Inorder to
         support that this is a fix*/
     getxAxisVal(dataObj, xKey, index) {
-        const value = _.get(dataObj, xKey);
+        const value = get(dataObj, xKey);
         // If x axis is other than number type then add indexes
         if (isLineTypeChart(this.type) && !isNumberType(this.xAxisDataType)) {
             // Verification to get the unique data keys
@@ -208,7 +248,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             input: [[10, 20], [20, 30], [30, 40]];
             min x: 10
         */
-        xValues.min = _.minBy(datum.values, dataObject => dataObject.x || dataObject[0]);
+        xValues.min = minBy(datum.values, dataObject => dataObject.x || dataObject[0]);
         /*
          compute the max x value
          eg: When data has objects
@@ -218,7 +258,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             input: [[10, 20], [20, 30], [30, 40]];
             max x: 30
          */
-        xValues.max = _.maxBy(datum.values, dataObject => dataObject.x || dataObject[0]);
+        xValues.max = maxBy(datum.values, dataObject => dataObject.x || dataObject[0]);
         return xValues;
     }
 
@@ -245,13 +285,17 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             max y values : '40'(among first set) & '50'(among second set)
          */
 
-        _.forEach(datum, data => {
-            minValues.push(_.minBy(data.values, function (dataObject) { return dataObject.y || dataObject[1]; }));
-            maxValues.push(_.maxBy(data.values, function (dataObject) { return dataObject.y || dataObject[1]; }));
+        forEach(datum, data => {
+            minValues.push(minBy(data.values, function (dataObject) {
+                return dataObject.y || dataObject[1];
+            }));
+            maxValues.push(maxBy(data.values, function (dataObject) {
+                return dataObject.y || dataObject[1];
+            }));
         });
         // Gets the least and highest values among all the min and max values of respective series of data
-        yValues.min = _.minBy(minValues, dataObject => dataObject.y || dataObject[1]);
-        yValues.max = _.maxBy(maxValues, dataObject => dataObject.y || dataObject[1]);
+        yValues.min = minBy(minValues, dataObject => dataObject.y || dataObject[1]);
+        yValues.max = maxBy(maxValues, dataObject => dataObject.y || dataObject[1]);
         return yValues;
     }
 
@@ -263,7 +307,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     // Returns the single data point based on the type of the data chart accepts
     valueFinder(dataObj, xKey, yKey, index?, shape?) {
         const xVal = this.getxAxisVal(dataObj, xKey, index),
-            value = _.get(dataObj, yKey),
+            value = get(dataObj, yKey),
             yVal = parseFloat(value) || value,
             size = parseFloat(dataObj[this.bubblesize]) || 2;
         let dataPoint: any = {};
@@ -316,10 +360,10 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             yAxisKeys = this.yaxisdatakey ? this.yaxisdatakey.split(',') : [],
             dataSet = this.chartData;
 
-        if (_.isArray(dataSet)) {
+        if (isArray(dataSet)) {
             if (isPieType(this.type)) {
                 yAxisKey = yAxisKeys[0];
-                datum = _.map(dataSet, (dataObj, index) => {
+                datum = map(dataSet, (dataObj, index) => {
                     if (!isEmptyObject(dataSet[index])) {
                         return this.valueFinder(dataSet[index], xAxisKey, yAxisKey);
                     }
@@ -330,9 +374,9 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                     shapes = this.shape === 'random' ? allShapes : this.shape;
                 }
                 yAxisKeys.forEach((yAxisKey, series) => {
-                    values =  _.map(dataSet, (dataObj, index) => {
+                    values = map(dataSet, (dataObj, index) => {
                         if (!isEmptyObject(dataSet[index])) {
-                            return this.valueFinder(dataSet[index], xAxisKey, yAxisKey, index, (_.isArray(shapes) && shapes[series]) || this.shape);
+                            return this.valueFinder(dataSet[index], xAxisKey, yAxisKey, index, (isArray(shapes) && shapes[series]) || this.shape);
                         }
                     });
                     values = this.getValidData(values);
@@ -364,21 +408,21 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             maxLength;
         const chartData: any = [],
             _isAreaChart = isAreaChart(this.type),
-            yAxisKey = _.first(_.split(this.yaxisdatakey, ','));
+            yAxisKey = first(split(this.yaxisdatakey, ','));
         this.xDataKeyArr = [];
-        queryResponse = _.orderBy(queryResponse, _.split(this.groupby, ','));
+        queryResponse = orderBy(queryResponse, split(this.groupby, ','));
         if (this.orderby) {
             orderByDetails = getLodashOrderByFormat(this.orderby);
-            queryResponse = _.orderBy(queryResponse, orderByDetails.columns, orderByDetails.orders);
+            queryResponse = orderBy(queryResponse, orderByDetails.columns, orderByDetails.orders);
         }
-        queryResponse = _.groupBy(queryResponse, groupingColumn);
+        queryResponse = groupBy(queryResponse, groupingColumn);
         // In case of area chart all the series data should be of same length
         if (_isAreaChart) {
-            maxLength = _.max(_.map(queryResponse, obj => obj.length));
+            maxLength = max(map(queryResponse, obj => obj.length));
         }
-        _.forEach(queryResponse, (values, groupKey) => {
-            groupValues = isAreaChart ? _.fill(new Array(maxLength), [0, 0]) : [];
-            _.forEachRight(values, (value, index) => {
+        forEach(queryResponse, (values, groupKey) => {
+            groupValues = isAreaChart ? fill(new Array(maxLength), [0, 0]) : [];
+            forEachRight(values, (value, index) => {
                 groupValues[index] = this.valueFinder(value, this.xaxisdatakey, yAxisKey, index);
             });
             groupData = {
@@ -420,14 +464,14 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 }
 
                 if (groupbyColumns.length) {
-                    columns = _.concat(columns, groupbyColumns);
+                    columns = concat(columns, groupbyColumns);
                 }
             }
             // If x and y axis are not included in aggregation need to be included in groupby
             if (this.xaxisdatakey !== this.aggregationcolumn) {
                 columns.push(this.xaxisdatakey);
             }
-            _.forEach(yAxisKeys, key => {
+            forEach(yAxisKeys, key => {
                 if (key !== this.aggregationcolumn) {
                     columns.push(key);
                 }
@@ -464,16 +508,17 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             return;
         }
         if (this.isGroupByEnabled()) {
-            groupByFields = _.split(this.groupby, ',');
+            groupByFields = split(this.groupby, ',');
         }
         if (this.orderby) {
-            sortExpr = _.replace(this.orderby, /:/g, ' ');
-            columns = _.uniq(_.concat(columns, groupByFields, [this.aggregationcolumn]));
+            sortExpr = replace(this.orderby, /:/g, ' ');
+            columns = uniq(concat(columns, groupByFields, [this.aggregationcolumn]));
             orderByColumns = getLodashOrderByFormat(this.orderby).columns;
             // If the orderby column is chosen either in groupby or orderby then replace . with $ for that column
-            _.forEach(_.intersection(columns, orderByColumns), col => {
+            forEach(intersection(columns, orderByColumns), col => {
                 colAlias = getValidAliasName(col);
-                sortExpr = _.replace(sortExpr, col, colAlias);
+                // @ts-ignore
+                sortExpr = replace(sortExpr, col, colAlias);
             });
         }
         if (this.isAggregationEnabled()) {
@@ -500,19 +545,19 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
             yAxisKeys.forEach(yAxisKey => yAxisAliasKeys.push(getValidAliasName(yAxisKey)));
 
-            _.forEach(response.body.content, (responseContent) => {
+            forEach(response.body.content, (responseContent) => {
                 const obj = {};
                 // Set the response in the chartData based on 'aggregationColumn', 'xAxisDataKey' & 'yAxisDataKey'.
                 if (this.isAggregationEnabled()) {
                     obj[this.aggregationcolumn] = responseContent[aggregationAlias];
-                    obj[this.aggregationcolumn] = _.get(responseContent, aggregationAlias) || _.get(responseContent, this.aggregationcolumn);
+                    obj[this.aggregationcolumn] = get(responseContent, aggregationAlias) || get(responseContent, this.aggregationcolumn);
                 }
 
-                obj[this.xaxisdatakey] = _.get(responseContent, xAxisAliasKey) || _.get(responseContent, this.xaxisdatakey);
+                obj[this.xaxisdatakey] = get(responseContent, xAxisAliasKey) || get(responseContent, this.xaxisdatakey);
 
                 yAxisKeys.forEach((yAxisKey, index) => {
                     obj[yAxisKey] = responseContent[yAxisAliasKeys[index]];
-                    obj[yAxisKey] = _.get(responseContent, yAxisAliasKeys[index]) || _.get(responseContent, yAxisKey);
+                    obj[yAxisKey] = get(responseContent, yAxisAliasKeys[index]) || get(responseContent, yAxisKey);
                 });
 
                 chartData.push(obj);
@@ -643,7 +688,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     attachClickEvent() {
         let dataObj;
         d3.select('#wmChart' + this.$id + ' svg').selectAll(chartDataPointXpath[this.type]).style('pointer-events', 'all')
-            .on('click', (data, index) => {
+            .on('click', (event, data, index) => {
                 switch (this.type) {
                     case 'Column':
                     case 'Bar':
@@ -659,11 +704,15 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                         dataObj = data[0]._dataObj;
                         break;
                     case 'Bubble':
-                        dataObj = data.data.point[4]._dataObj;
+                        dataObj = data;
                         break;
                 }
                 this.selecteditem = dataObj;
-                this.invokeEventCallback('select', {$event: d3.event, selectedChartItem: data, selectedItem: this.selecteditem});
+                this.invokeEventCallback('select', {
+                    $event: event,
+                    selectedChartItem: data,
+                    selectedItem: this.selecteditem
+                });
             });
 
     }
@@ -710,7 +759,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
 
         // prepare text style props object and set
-        _.forEach(styleProps, (value, key) => {
+        forEach(styleProps, (value, key) => {
             if (key === 'fontsize' || key === 'fontunit') {
                 styleObj[value] = this.fontsize + this.fontunit;
             } else {
@@ -767,7 +816,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         // get the chart object
         chart = initChart(this, xDomainValues, yDomainValues, null, !this.binddataset);
 
-        if (_.isArray(this._processedData)) {
+        if (isArray(this._processedData)) {
             // WMS-19499:  To remove chart X-axis old ticks when chart data loaded dynamically.
             const oldgTicks =  $('#wmChart' + this.$id + ' svg').find('g.nv-x').find('g.tick');
             if (oldgTicks && oldgTicks.length) {
@@ -863,8 +912,8 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     }
 
     getCutomizedOptions(prop, fields) {
-        const groupByColumns = _.split(this.groupby, ','),
-            aggColumns = _.split(this.aggregationcolumn, ',');
+        const groupByColumns = split(this.groupby, ','),
+            aggColumns = split(this.aggregationcolumn, ',');
         if (!this.binddataset) {
             return fields;
         }
@@ -903,7 +952,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             case 'orderby':
                 // Set the 'aggregationColumn' to show all keys in case of aggregation function is count or to numeric keys in all other cases.
                 if (this.isLiveVariable && this.isAggregationEnabled()) {
-                    newOptions = _.uniq(_.concat(groupByColumns, aggColumns));
+                    newOptions = uniq(concat(groupByColumns, aggColumns));
                 }
                 break;
             case 'bubblesize':
@@ -924,13 +973,13 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         this.numericColumns = [];
         this.nonPrimaryColumns = [];
         // Fetching all the columns
-        if (this.dataset && !_.isEmpty(propertiesMap)) {
+        if (this.dataset && !isEmpty(propertiesMap)) {
             columns = []; // TODO: fetchPropertiesMapColumns(propertiesMap);
         }
 
         if (columns) {
             // Iterating through all the columns and fetching the numeric and non primary key columns
-            _.forEach(Object.keys(columns), (key) => {
+            forEach(Object.keys(columns), (key) => {
                 type = columns[key].type;
                 if (isNumberType(type)) {
                     this.numericColumns.push(key);
@@ -955,10 +1004,10 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
 
         // liveVariables contain data in 'data' property' of the variable
-        this.chartData = this.isLiveVariable ? newVal || '' : (newVal && newVal.dataValue === '' && _.keys(newVal).length === 1) ? '' : newVal;
+        this.chartData = this.isLiveVariable ? newVal || '' : (newVal && newVal.dataValue === '' && keys(newVal).length === 1) ? '' : newVal;
 
         // if the data returned is an object make it an array of object
-        if (!_.isArray(this.chartData) && _.isObject(this.chartData)) {
+        if (!isArray(this.chartData) && isObject(this.chartData)) {
             this.chartData = [this.chartData];
         }
 
@@ -972,7 +1021,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
     }
 
-    _plotChartProxy = _.debounce(this.plotChartProxy.bind(this), 100);
+    _plotChartProxy = debounce(this.plotChartProxy.bind(this), 100);
 
     // sets the center label for donut chart type
     setDonutCenterLabel(labelValue) {
@@ -1038,7 +1087,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 this._plotChartProxy();
                 break;
         }
-        if (_.includes(advanceDataProps, key)) {
+        if (includes(advanceDataProps, key)) {
             this._plotChartProxy();
         }
     }
@@ -1072,8 +1121,8 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
     }
 
-    constructor(inj: Injector, private app: App) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['fontsize', 'fontunit', 'color', 'fontfamily', 'fontweight', 'fontstyle', 'textdecoration']);
 
         // generate unique id for the component
@@ -1091,7 +1140,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     ngAfterViewInit() {
         super.ngAfterViewInit();
         // For old projects
-        if (!_.includes(['outside', 'inside', 'hide'], this.showlabels)) {
+        if (!includes(['outside', 'inside', 'hide'], this.showlabels)) {
             this.showlabels        = getBooleanValue(this.showlabels);
             this.showlabelsoutside = getBooleanValue(this.showlabelsoutside);
             this.showlabels        = this.showlabels ? (this.showlabelsoutside ? 'outside' : 'inside') : 'hide';

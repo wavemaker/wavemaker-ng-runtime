@@ -1,7 +1,7 @@
-import { Component, HostBinding, Injector } from '@angular/core';
+import {Component, HostBinding, Inject, Injector, Optional} from '@angular/core';
 
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { registerProps } from './icon.props';
+import {IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {registerProps} from './icon.props';
 
 const DEFAULT_CLS = 'app-icon-wrapper';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -22,11 +22,12 @@ export class IconComponent extends StylableComponent {
     public iconclass: any;
     public caption: string;
     public hint: string;
+    public arialabel: string;
     @HostBinding('attr.icon-position') iconposition: string;
     @HostBinding('style.fontSize') iconsize: string;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this);
     }

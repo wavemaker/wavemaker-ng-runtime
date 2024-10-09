@@ -1,11 +1,10 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import {Component, Inject, Injector, OnInit, Optional} from '@angular/core';
 
-import { DataSource, validateDataSourceCtx } from '@wm/core';
+import {DataSource, validateDataSourceCtx} from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe } from '@wm/components/base';
 
 import { registerProps } from './spinner.props';
-
-declare const _;
+import {includes, isEmpty, split} from "lodash-es";
 
 const DEFAULT_CLS = 'app-spinner';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAULT_CLS};
@@ -37,22 +36,22 @@ export class SpinnerComponent extends StylableComponent implements OnInit {
     }
 
     public set spinnerMessages(newVal) {
-        this.showCaption = _.isEmpty(newVal);
+        this.showCaption = isEmpty(newVal);
         this._spinnerMessages = newVal;
     }
 
     private listenOnDataSource() {
-        const variables = _.split(this.servicevariabletotrack, ',');
+        const variables = split(this.servicevariabletotrack, ',');
         this.getAppInstance().subscribe('toggle-variable-state', data => {
             const name = data.variable.execute(DataSource.Operation.GET_NAME);
-            if (_.includes(variables, name) && validateDataSourceCtx(data.variable, this.getViewParent())) {
+            if (includes(variables, name) && validateDataSourceCtx(data.variable, this.getViewParent())) {
                 this.widget.show = data.active;
             }
         });
     }
 
-    constructor(inj: Injector, private imagePipe: ImagePipe) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, private imagePipe: ImagePipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }
 

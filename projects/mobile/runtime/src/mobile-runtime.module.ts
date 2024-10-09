@@ -35,7 +35,7 @@ import {
 } from '@wm/core';
 import { FileExtensionFromMimePipe } from '@wm/components/base';
 import { DeviceFileOpenerService, DeviceService, ExtAppMessageService, MobileCoreModule, NetworkService } from '@wm/mobile/core';
-import { PushService, PushServiceImpl } from '@wm/mobile/offline';
+import {OfflineModule, PushService, PushServiceImpl} from '@wm/mobile/offline';
 import { SecurityService } from '@wm/security';
 import { VariablesModule } from '@wm/mobile/variables';
 import { $rootScope, CONSTANTS } from '@wm/variables';
@@ -44,8 +44,20 @@ import { BasicModule } from '@wm/mobile/components/basic';
 import { AppExtComponent } from './components/app-ext.component';
 import { MobileHttpInterceptor } from './services/http-interceptor.service';
 import { WebProcessService } from './services/webprocess.service';
+import {SearchModule} from "@wm/mobile/components/basic/search";
+import {SegmentedControlModule} from "@wm/mobile/components/containers/segmented-control";
+import {MediaListModule} from "@wm/mobile/components/data/media-list";
+import {BarcodeScannerModule} from "@wm/mobile/components/device/barcode-scanner";
+import {CameraModule} from "@wm/mobile/components/device/camera";
+import {FileUploadModule} from "@wm/mobile/components/input/file-upload";
+import {PageModule} from "@wm/mobile/components/page";
+import {LeftPanelModule} from "@wm/mobile/components/page/left-panel";
+import {MobileNavbarModule} from "@wm/mobile/components/page/mobile-navbar";
+import {TabBarModule} from "@wm/mobile/components/page/tab-bar";
+import {keys} from "lodash-es";
 
-declare const $, navigator, _, cordova;
+declare const $;
+declare const navigator, cordova;
 
 export const MAX_WAIT_TIME_4_OAUTH_MESSAGE = 60000;
 
@@ -69,17 +81,36 @@ const cordovaServices = [
     Diagnostic
 ];
 
+export const MOBILE_COMPONENT_MODULES = [
+    BasicModule,
+    MobileCoreModule,
+    OfflineModule,
+    VariablesModule,
+    SearchModule,
+    SegmentedControlModule,
+    MediaListModule,
+    BarcodeScannerModule,
+    CameraModule,
+    FileUploadModule,
+    PageModule,
+    LeftPanelModule,
+    MobileNavbarModule,
+    TabBarModule
+];
+
 @NgModule({
     declarations: [
         AppExtComponent
     ],
     exports: [
-        AppExtComponent
+        AppExtComponent,
+        ...MOBILE_COMPONENT_MODULES
     ],
     imports: [
         MobileCoreModule,
         VariablesModule,
-        BasicModule
+        BasicModule,
+        ...MOBILE_COMPONENT_MODULES
     ],
     bootstrap: []
 })
@@ -195,7 +226,7 @@ export class MobileRuntimeModule {
     }
 
     public applyOSTheme(os) {
-        let oldStyleSheet = $('link[theme="wmtheme"][href ^="themes"][href $="/style.css"]').first();
+        let oldStyleSheet: any = $('link[theme="wmtheme"][href ^="themes"][href $="/style.css"]').first();
         if (oldStyleSheet.length) {
             const themeUrl = oldStyleSheet.attr('href').replace(new RegExp('/[a-z]*/style.css$'), `/${os.toLowerCase()}/style.css`),
                 newStyleSheet = loadStyleSheet(themeUrl, {name: 'theme', value: 'wmtheme'});
@@ -211,7 +242,7 @@ export class MobileRuntimeModule {
         const removeTheme = os.toLowerCase() === 'android' ? 'wm-ios-styles' : 'wm-android-styles';
         let isDevBuild;
         const useTheme = 'wm-' + os.toLowerCase() + '-styles';
-        let unusedStyleSheet = $('link[href *=' + removeTheme + ']').first();
+        let unusedStyleSheet: any = $('link[href *=' + removeTheme + ']').first();
         if (!unusedStyleSheet.length) {
             isDevBuild = true;
             unusedStyleSheet = $('script[src *=' + removeTheme + ']').first();
@@ -285,7 +316,7 @@ export class MobileRuntimeModule {
                     isAuthenticating = false;
                     return this.cookieService.clearAll()
                         .then(() => {
-                            const  promises = _.keys(output).map(k => {
+                            const promises = keys(output).map(k => {
                                 return this.cookieService.setCookie(this.app.deployedUrl, k, output[k]);
                             });
                             return Promise.all(promises);

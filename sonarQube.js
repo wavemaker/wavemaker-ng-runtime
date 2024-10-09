@@ -1,6 +1,4 @@
-const scanner = require("sonarqube-scanner");
-
-scanner(
+require('sonarqube-scanner').default(
     {
         serverUrl: process.argv[2],
         options: {

@@ -1,6 +1,6 @@
-import { FormWidgetType, isMobileApp } from '@wm/core';
+import {FormWidgetType} from '@wm/core';
 
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
 
 export const timeProps = new Map(
     [
@@ -11,6 +11,7 @@ export const timeProps = new Map(
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
+        ['arialabel', PROP_STRING],
         ['hourstep', {value: 1, ...PROP_NUMBER}],
         ['maxtime', PROP_STRING],
         ['mintime', PROP_STRING],

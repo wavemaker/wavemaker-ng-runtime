@@ -1,5 +1,5 @@
-import { ModelVariable} from './model-variable';
-declare const _;
+import { ModelVariable} from '@wavemaker/variables';
+import {findIndex} from "lodash-es";
 describe('Model Variable dataset as list', () => {
     let modelVariable: ModelVariable;
     beforeEach(() => {
@@ -20,14 +20,14 @@ describe('Model Variable dataset as list', () => {
         const newItem = {name: 'a', age: 12};
         modelVariable.addItem(newItem);
         expect(modelVariable.dataSet.length).toEqual(2);
-        expect(_.findIndex(modelVariable.dataSet, newItem)).toEqual(modelVariable.dataSet.length - 1);
+        expect(findIndex(modelVariable.dataSet, newItem)).toEqual(modelVariable.dataSet.length - 1);
     });
     it('should add item to the dataset at particular index', () => {
         const newItem = {name: 'b', age: 13};
         const index = 1;
         modelVariable.addItem(newItem, index);
         expect(modelVariable.dataSet.length).toEqual(2);
-        expect(_.findIndex(modelVariable.dataSet, newItem)).toEqual(index);
+        expect(findIndex(modelVariable.dataSet, newItem)).toEqual(index);
     });
 });
 
@@ -65,7 +65,7 @@ describe('Model Variable dataset as object having inner list', () => {
        };
        modelVariable.addItem(newItem, options);
        expect(innerList.length).toEqual(2);
-       expect(_.findIndex(innerList, newItem)).toEqual(innerList.length - 1);
+       expect(findIndex(innerList, newItem)).toEqual(innerList.length - 1);
    });
    it('should add item to the innerlist at particular index', () => {
        const newItem = {addressLine1: 'test2', addressLine2: 'test2', addressType: 'temp'};
@@ -75,7 +75,7 @@ describe('Model Variable dataset as object having inner list', () => {
        };
        modelVariable.addItem(newItem, options);
        expect(innerList.length).toEqual(2);
-       expect(_.findIndex(innerList, newItem)).toEqual(options.index);
+       expect(findIndex(innerList, newItem)).toEqual(options.index);
    });
 });
 describe('Model Variable dataset as object having second level inner list', () => {
@@ -121,7 +121,7 @@ describe('Model Variable dataset as object having second level inner list', () =
         };
         modelVariable.addItem(newItem, opttions);
         expect(innerList[0].landMarks.length).toEqual(2);
-        expect(_.findIndex(innerList[0].landMarks, newItem)).toEqual(innerList[0].landMarks.length - 1);
+        expect(findIndex(innerList[0].landMarks, newItem)).toEqual(innerList[0].landMarks.length - 1);
     });
     it('should add item to the second level inner list at particular index', () => {
         const newItem = {landMark1: 'test2L1', landMark2: 'test2L2'};
@@ -131,7 +131,7 @@ describe('Model Variable dataset as object having second level inner list', () =
         };
         modelVariable.addItem(newItem, options);
         expect(innerList[0].landMarks.length).toEqual(2);
-        expect(_.findIndex(innerList[0].landMarks, newItem)).toEqual(options.index);
+        expect(findIndex(innerList[0].landMarks, newItem)).toEqual(options.index);
     });
     it('should add item to the innerList which is not present', () => {
         const newItem = {landMark1: 'test1L1', landMark2: 'test1L2'};
@@ -140,7 +140,7 @@ describe('Model Variable dataset as object having second level inner list', () =
         };
         modelVariable.addItem(newItem, options);
         expect(innerList[1].landMarks.length).toEqual(1);
-        expect(_.findIndex(innerList[1].landMarks, newItem)).toEqual(innerList[1].landMarks.length - 1);
+        expect(findIndex(innerList[1].landMarks, newItem)).toEqual(innerList[1].landMarks.length - 1);
         console.log(modelVariable.dataSet);
     });
 });
@@ -183,7 +183,7 @@ describe('Model Variable dataset as list having innerList', () => {
         modelVariable.addItem(newItem, options);
         const innerList = modelVariable.dataSet[options.parentIndex].addresses;
         expect(innerList.length).toEqual(2);
-        expect(_.findIndex(innerList, newItem)).toEqual(innerList.length - 1);
+        expect(findIndex(innerList, newItem)).toEqual(innerList.length - 1);
     });
     it('should add item to the innerList of dataset[0] at particular index', () => {
         const newItem = {addressLine1: 'test2', addressLine2: 'test2', addressType: 'temp'};
@@ -195,7 +195,7 @@ describe('Model Variable dataset as list having innerList', () => {
         modelVariable.addItem(newItem, options);
         const innerList = modelVariable.dataSet[options.parentIndex].addresses;
         expect(innerList.length).toEqual(2);
-        expect(_.findIndex(innerList, newItem)).toEqual(options.index);
+        expect(findIndex(innerList, newItem)).toEqual(options.index);
     });
     it('should add innerList to the dataset[1]', () => {
         const newItem = {addressLine1: 'test3', addressLine2: 'test3', addressType: 'temp'};
@@ -206,7 +206,7 @@ describe('Model Variable dataset as list having innerList', () => {
         modelVariable.addItem(newItem, options);
         const innerList = modelVariable.dataSet[options.parentIndex].addresses;
         expect(innerList.length).toEqual(1);
-        expect(_.findIndex(innerList, newItem)).toEqual(innerList.length - 1);
+        expect(findIndex(innerList, newItem)).toEqual(innerList.length - 1);
     });
 });
 describe('Model Variable dataset as object having second level inner list', () => {
@@ -256,7 +256,7 @@ describe('Model Variable dataset as object having second level inner list', () =
         modelVariable.addItem(newItem, options);
         const innerList = modelVariable.dataSet[options.parentIndex].addresses;
         expect(innerList[0].landMarks.length).toEqual(2);
-        expect(_.findIndex(innerList[0].landMarks, newItem)).toEqual(innerList[0].landMarks.length - 1);
+        expect(findIndex(innerList[0].landMarks, newItem)).toEqual(innerList[0].landMarks.length - 1);
     });
     it('should add item to the second level inner list at particular index', () => {
         const newItem = {landMark1: 'test2L1', landMark2: 'test2L2'};
@@ -268,7 +268,7 @@ describe('Model Variable dataset as object having second level inner list', () =
         modelVariable.addItem(newItem, options);
         const innerList = modelVariable.dataSet[options.parentIndex].addresses;
         expect(innerList[0].landMarks.length).toEqual(2);
-        expect(_.findIndex(innerList[0].landMarks, newItem)).toEqual(options.index);
+        expect(findIndex(innerList[0].landMarks, newItem)).toEqual(options.index);
     });
     it('should add item to the innerList which is not present', () => {
         const newItem = {landMark1: 'test1L1', landMark2: 'test1L2'};
@@ -279,7 +279,7 @@ describe('Model Variable dataset as object having second level inner list', () =
         modelVariable.addItem(newItem, options);
         const innerList = modelVariable.dataSet[options.parentIndex].addresses;
         expect(innerList[1].landMarks.length).toEqual(1);
-        expect(_.findIndex(innerList[1].landMarks, newItem)).toEqual(innerList[1].landMarks.length - 1);
+        expect(findIndex(innerList[1].landMarks, newItem)).toEqual(innerList[1].landMarks.length - 1);
         console.log(modelVariable.dataSet);
     });
     it('should add innerList to the dataset[1]', () => {
@@ -291,7 +291,7 @@ describe('Model Variable dataset as object having second level inner list', () =
         modelVariable.addItem(newItem, options);
         const innerList = modelVariable.dataSet[options.parentIndex].addresses;
         expect(innerList[0].landMarks.length).toEqual(1);
-        expect(_.findIndex(innerList[0].landMarks, newItem)).toEqual(innerList[0].landMarks.length - 1);
+        expect(findIndex(innerList[0].landMarks, newItem)).toEqual(innerList[0].landMarks.length - 1);
         console.log(modelVariable.dataSet);
     });
 });

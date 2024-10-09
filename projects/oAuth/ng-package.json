@@ -3,14 +3,6 @@
     "dest": "../../libraries/oAuth",
     "lib": {
         "flatModuleFile": "index",
-        "entryFile": "src/public_api.ts",
-        "umdId": "wm.oAuth",
-        "umdModuleIds": {
-            "@angular/core": "ng.core",
-
-            "rxjs": "rxjs",
-
-            "@wm/core": "wm.core"
-        }
+        "entryFile": "src/public_api.ts"
     }
 }

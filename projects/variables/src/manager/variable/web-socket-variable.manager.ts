@@ -7,8 +7,7 @@ import { WebSocketVariable } from '../../model/variable/web-socket-variable';
 import { initiateCallback, metadataService } from '../../util/variable/variables.utils';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
-
-declare const _;
+import {forEach, get} from "lodash-es";
 
 export class WebSocketVariableManager extends BaseVariableManager {
 
@@ -60,12 +59,12 @@ export class WebSocketVariableManager extends BaseVariableManager {
      */
     private getURL(variable) {
         const prefabName = variable.getPrefabName();
-        const opInfo = prefabName ? _.get(metadataService.getByOperationId(variable.operationId, prefabName), 'wmServiceOperationInfo') : _.get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
+        const opInfo = prefabName ? get(metadataService.getByOperationId(variable.operationId, prefabName), 'wmServiceOperationInfo') : get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
         const inputFields = variable.dataBinding;
         let config;
 
         // add sample values to the params (url and path)
-        _.forEach(opInfo.parameters, function (param) {
+        forEach(opInfo.parameters, function (param) {
             param.sampleValue = inputFields[param.name];
         });
         // although, no header params will be present, keeping 'skipCloakHeaders' flag if support provided later
@@ -93,7 +92,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @private
      */
     private _onSocketMessage(variable, evt) {
-        let data = _.get(evt, 'data'), value, dataLength, dataLimit, shouldAddToLast, insertIdx;
+        let data = get(evt, 'data'), value, dataLength, dataLimit, shouldAddToLast, insertIdx;
         data = getValidJSON(data) || xmlToJson(data) || data;
         // EVENT: ON_MESSAGE
         value = initiateCallback(VARIABLE_CONSTANTS.EVENT.MESSAGE_RECEIVE, variable, data, evt);
@@ -138,7 +137,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      */
     private _onBeforeSocketClose(variable, evt?) {
         // EVENT: ON_BEFORE_CLOSE
-        return initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_CLOSE, variable, _.get(evt, 'data'), evt);
+        return initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_CLOSE, variable, get(evt, 'data'), evt);
     }
 
     /**
@@ -151,7 +150,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
      */
     private _onBeforeSocketOpen(variable, evt?) {
         // EVENT: ON_BEFORE_OPEN
-        return initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_OPEN, variable, _.get(evt, 'data'), evt);
+        return initiateCallback(VARIABLE_CONSTANTS.EVENT.BEFORE_OPEN, variable, get(evt, 'data'), evt);
     }
 
     /**
@@ -164,7 +163,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
     private _onSocketOpen(variable, evt) {
         variable._socketConnected = true;
         // EVENT: ON_OPEN
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.OPEN, variable, _.get(evt, 'data'), evt);
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.OPEN, variable, get(evt, 'data'), evt);
     }
 
     /**
@@ -186,7 +185,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
         variable._socketConnected = false;
         this.freeSocket(variable);
         // EVENT: ON_CLOSE
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.CLOSE, variable, _.get(evt, 'data'), evt);
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.CLOSE, variable, get(evt, 'data'), evt);
     }
 
     /**
@@ -200,7 +199,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
         variable._socketConnected = false;
         this.freeSocket(variable);
         // EVENT: ON_ERROR
-        initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, _.get(evt, 'data') || 'Error while connecting with ' + variable.service, evt);
+        initiateCallback(VARIABLE_CONSTANTS.EVENT.ERROR, variable, get(evt, 'data') || 'Error while connecting with ' + variable.service, evt);
     }
 
     /**
@@ -271,7 +270,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
         const socket      = this.getSocket(variable);
         let response;
 
-        message = message || _.get(variable, 'dataBinding.RequestBody');
+        message = message || get(variable, 'dataBinding.RequestBody');
         response = this._onBeforeSend(variable, message);
         if (response === false) {
             return;

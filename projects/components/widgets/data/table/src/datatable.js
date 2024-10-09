@@ -19,6 +19,7 @@ $.widget('wm.datatable', {
         isMobile: false,
         enableSort: true,
         filtermode: '',
+        filteronkeypress: false,
         activeRow: undefined,
         height: '100%',
         showHeader: true,
@@ -535,15 +536,20 @@ $.widget('wm.datatable', {
     /* Returns the tbody markup. */
     _getGridTemplate: function () {
 
-        var self = this, preparedData,$tbody, tbodyExists,pageStartIndex = self.getPageStartIndex(),
+        var self = this, preparedData,$tbody,pageStartIndex = self.getPageStartIndex(),
             startRowIndex = self.options.startRowIndex,
             isScrollorOnDemand = self.options.isNavTypeScrollOrOndemand();
-        if(isScrollorOnDemand) {
-            $tbody = this.gridElement;
-        } else {
-            tbodyExists = this.gridElement.find('tbody').length;
-            $tbody = tbodyExists > 0 ? this.gridElement.find('tbody:first') : this.gridElement.empty();
-        }
+            if(isScrollorOnDemand) {
+                $tbody = this.gridElement;
+                if(this.renderTableOnViewLess) {
+                    $tbody = this.gridElement.empty();
+                    this.hideLoadingIndicator();
+                   // this.addNavigationControls();
+                    this.renderTableOnViewLess = false;
+                }
+            } else {
+                $tbody = this.gridElement.empty();
+            }
 
         if(isScrollorOnDemand) {
             this._handleCRUDForInfiniteScroll($tbody);
@@ -568,10 +574,16 @@ $.widget('wm.datatable', {
             $tbody.append(rowTemplate);
             if (self.options.rowExpansionEnabled) {
                 var rowHeight = self.options.rowDef.height;
+                var rowPosition = self.options.rowDef.position;
                 var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
                 var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
                     '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
                     '</td></tr>');
+                if(rowPosition === "-1"){
+                    $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                    '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
+                    '</td><td></td></tr>');
+                }
                 if (rowHeight) {
                     $tr.find('div.row-overlay').css('min-height', rowHeight);
                 }
@@ -710,7 +722,7 @@ $.widget('wm.datatable', {
             }
         }
         row.$index = rowIndex + 1;
-        this.options.registerColNgClassWatcher(row, colDef, rowIndex, colId);
+        this.options.registerColNgClassWatcher(row, colDef, rowIndex, colId, summaryRow);
         return $htm;
     },
     //Get event related template for editable widget
@@ -953,6 +965,7 @@ $.widget('wm.datatable', {
             gridElement: null,
             gridHeader: null,
             gridBody: null,
+            columnClickInfo: {},
             gridFooter: null,
             gridSearch: null,
             tableId: null,
@@ -978,7 +991,7 @@ $.widget('wm.datatable', {
         this._render(true);
     },
     _setGridEditMode: function (val) {
-        if ($.isFunction(this.options.setGridEditMode)) {
+        if (_.isFunction(this.options.setGridEditMode)) {
             this.options.setGridEditMode(val);
         }
     },
@@ -1036,7 +1049,7 @@ $.widget('wm.datatable', {
             $gridBody,
             $alwaysNewRow;
 
-        if (!alwaysNewRow && $.isFunction(this.options.beforeRowInsert)) {
+        if (!alwaysNewRow && _.isFunction(this.options.beforeRowInsert)) {
             this.options.beforeRowInsert();
         }
 
@@ -1103,25 +1116,52 @@ $.widget('wm.datatable', {
     },
 
     /* Inserts a load more button at the end of the table when the pagination selected is on demand */
-    addLoadMoreBtn : function (onDemandMsg, loadingdatamsg, cb) {
-        // Show Load more button only if it not that last page
-        if (!this.options.isLastPage) {
+    addLoadMoreBtn : function (onDemandMsg, loadingdatamsg, cb, infScroll) {
+        // Show Load more button only if it not the last page
+        var $btnEl;
+        if (!this.options.isLastPage || infScroll) {
             var self = this;
             var $parenEl = $('<div class="on-demand-datagrid"><a class="app-button btn btn-block on-demand-load-btn"></a></div>');
-            var $btnEl = $parenEl.find('a');
+            $btnEl = $parenEl.find('a');
             $btnEl.append(onDemandMsg);
             // Adding load more button in case of on demand pagination
             this.element.find('.app-grid-header-inner').append($parenEl);
+            if(infScroll) {
+                if(this.element.find('.on-demand-load-btn').length) {
+                    this.element.find('.on-demand-load-btn').text(this.options.viewlessmessage);
+                }
+            }
+
             // Adding click event to the button
             $btnEl.on('click', function (e) {
-                if (cb && typeof cb === 'function') {
-                    // when the button is clicked, hide the button and show loading indicator
-                    $btnEl.hide();
+                // when the button is clicked, hide the button and show loading indicator
+                var lastPage = (self.options.getCurrentPage() == self.options.getPageCount());
+                if(!lastPage) {
                     self.showLoadingIndicator(loadingdatamsg, false);
+                }
+                if(!self.options.showviewlessbutton){
+                    $btnEl.hide();
+                }
+                if(infScroll) {
+                    if(lastPage) {
+                        self.element.find('.on-demand-datagrid').remove();
+                    }
+                }
+                // Fix for [WMS-23839] refresh data when clicked on View less button
+                if (lastPage && self.options.showviewlessbutton) {
+                         $btnEl.hide();
+                         self.renderTableOnViewLess = true;
+                         self.renderPaginationOnViewLess = true;
+                         self.options.enableNavigation();
+                         self._renderGrid();
+                }
+                if (cb && typeof cb === 'function') {
                     cb(e);
                 }
+
             });
         }
+
     },
 
     /* Shows loading indicator when clicked on load more button or in case of infinite scroll event is triggered */
@@ -1154,10 +1194,19 @@ $.widget('wm.datatable', {
         if (!showLoadBtn && !infScroll) {
             // In case of on demand pagination, when the next page is not disabled hide the individual elements
             this.element.find('.loading-data-msg').hide();
+            this.element.find('.on-demand-load-btn').text(this.options.ondemandmessage);
             this.element.find('.on-demand-load-btn').show();
+        } else if((this.options.getCurrentPage() == this.options.getPageCount()) && this.options.showviewlessbutton) {
+                this.element.find('.on-demand-load-btn').show().text(this.options.viewlessmessage);
+                this.element.find('.loading-data-msg').hide();
+                if(infScroll) {
+                    if(!this.element.find('.on-demand-load-btn').length) {
+                        this.options.addLoadMoreBtn();
+                    }
+                    this.element.find('.loading-data-msg').hide();
+                }
         } else {
-            // In case of infinite scroll or when next page is disable hide the grid element which is the parent. If we don't the parent ele border will be shown
-            this.element.find('.on-demand-datagrid').hide();
+                this.element.find('.on-demand-datagrid').hide();
         }
     },
 
@@ -1235,6 +1284,7 @@ $.widget('wm.datatable', {
                 colDef = self.preparedHeaderData[id],
                 $headerCell = self.gridContainer.find('th[data-col-id="' + id + '"]'),
                 $tdCell = self.gridElement.find('td.app-datagrid-cell[data-col-id="' + id + '"]'),
+                $footCell=self.tableContainer.find('tfoot tr.app-datagrid-row td.app-datagrid-cell[data-col-id="' + id + '"]'),
                 $headerCol = $(headerCols[id]),
                 $bodyCol = $(bodyCols[id]),
                 definedWidth,
@@ -1249,11 +1299,13 @@ $.widget('wm.datatable', {
                 $tdCell.hide();
                 $headerCol.hide();
                 $bodyCol.hide();
+                $footCell.hide();
             } else {
                 $headerCell.show();
                 $tdCell.show();
                 $headerCol.show();
                 $bodyCol.show();
+                $footCell.show();
             }
             //If default width is set, reset the width so that correct width is set on reload
             if ($headerCol.length && $headerCol[0].style.width === '90px') {
@@ -1300,7 +1352,7 @@ $.widget('wm.datatable', {
                                         currentNode = currentNode.parent();
                                         elemWidth = currentNode.width();
                                         // Find padding of all the elements which are on top of table
-                                        if (currentNode.find('table').length) {
+                                        if (currentNode.find('table').length && currentNode.prop('style')) {
                                             padding = padding + parseFloat(currentNode.css('padding-left')) + parseFloat(currentNode.css('padding-right'));
                                         }
                                     }
@@ -1420,6 +1472,9 @@ $.widget('wm.datatable', {
                 this.selectFirstRow(value);
                 break;
             case 'data':
+                if(!this.isResetSortIconsDone) {
+                    this.setSortIconDefault();
+                }
                 this.refreshGridData();
                 break;
             case 'dataStates':
@@ -1609,6 +1664,9 @@ $.widget('wm.datatable', {
     // triggered on capture phase of click listener.
     // sets the selected rowdata on click.
     rowClickHandlerOnCapture: function (e, $row, options) {
+        if(this.getColInfo(e) && (e.target.type != 'checkbox' && e.target.type != 'radio')) {
+            return;
+        }
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
         var gridRow = this.gridElement.find($row);
         // WMS-21139 trigger selectedItems change when the captured click is on the current table but not on child table
@@ -1616,12 +1674,15 @@ $.widget('wm.datatable', {
             var rowId = $row.attr('data-row-id');
             var rowData = this.preparedData[rowId];
             var data = this.options.data[rowId];
-            this.options.assignSelectedItems(data, e);
+            this.options.assignSelectedItems(data, e, {'rowId': rowId, '_selected': rowData?._selected});
         }
     },
 
     /* Handles row selection. */
     rowSelectionHandler: function (e, $row, options) {
+        if(this.getColInfo(e) && (e.target.type != 'checkbox' && e.target.type != 'radio')) {
+            return;
+        }
         options = options || {};
         var rowId,
             rowData,
@@ -1633,10 +1694,10 @@ $.widget('wm.datatable', {
             isQuickEdit = this.options.editmode === this.CONSTANTS.QUICK_EDIT;
 
         function callRowSelectionEvents() {
-            if (selected && $.isFunction(self.options.onRowSelect)) {
+            if (selected && _.isFunction(self.options.onRowSelect)) {
                 self.options.onRowSelect(data, e);
             }
-            if (!selected && $.isFunction(self.options.onRowDeselect)) {
+            if (!selected && _.isFunction(self.options.onRowDeselect)) {
                 self.options.onRowDeselect(data, e);
             }
         }
@@ -1669,6 +1730,7 @@ $.widget('wm.datatable', {
         }
         this.options.callOnRowClickEvent(data, e);
         selected = !selected;
+        this.options.assignSelectedItems(data, e, {'rowId': rowId, '_selected': selected});
         this.toggleRowSelection($row, selected, e);
         callRowSelectionEvents();
     },
@@ -1681,7 +1743,7 @@ $.widget('wm.datatable', {
         if (!rowData) {
             return;
         }
-        if ($.isFunction(this.options.onRowDblClick)) {
+        if (_.isFunction(this.options.onRowDblClick)) {
             this.options.onRowDblClick(rowData, e);
         }
     },
@@ -1723,13 +1785,13 @@ $.widget('wm.datatable', {
         if (selected) {
             $column.addClass(selectedClass);
             $th.addClass(selectedClass);
-            if ($.isFunction(this.options.onColumnSelect) && e) {
+            if (_.isFunction(this.options.onColumnSelect) && e) {
                 this.options.onColumnSelect(colInfo, e);
             }
         } else {
             $column.removeClass(selectedClass);
             $th.removeClass(selectedClass);
-            if ($.isFunction(this.options.onColumnDeselect) && e) {
+            if (_.isFunction(this.options.onColumnDeselect) && e) {
                 this.options.onColumnDeselect(colInfo, e);
             }
         }
@@ -1982,7 +2044,7 @@ $.widget('wm.datatable', {
 
         //On success of update or delete
         function onSaveSuccess(skipFocus, error) {
-            if ($.isFunction(options.success)) {
+            if (_.isFunction(options.success)) {
                 options.success(skipFocus, error);
             }
             if (!advancedEdit || self.options.actionsEnabled.edit) {
@@ -2013,7 +2075,7 @@ $.widget('wm.datatable', {
                 return;
             }
             $row.addClass('row-editing');
-            if ($.isFunction(this.options.beforeRowUpdate)) {
+            if (_.isFunction(this.options.beforeRowUpdate)) {
                 this.options.beforeRowUpdate(rowData, e);
             }
 
@@ -2026,7 +2088,7 @@ $.widget('wm.datatable', {
                 self.toggleNewRowActions(true);
             }
             //Event for on before form render. User can update row data here.
-            if ($.isFunction(this.options.onBeforeFormRender)) {
+            if (_.isFunction(this.options.onBeforeFormRender)) {
                 isValid = this.options.onBeforeFormRender(rowData, e, options.operation || action);
                 if (isValid === false) {
                     return;
@@ -2049,7 +2111,7 @@ $.widget('wm.datatable', {
                 });
             }
             //Event for on before form render. User can access form widgets here.
-            if ($.isFunction(this.options.onFormRender)) {
+            if (_.isFunction(this.options.onFormRender)) {
                 this.options.onFormRender($row, e, options.operation || action, $row.hasClass('always-new-row'));
             }
         } else {
@@ -2113,7 +2175,7 @@ $.widget('wm.datatable', {
                             }
                             self.options.setTouched($invalidTd.find('[formcontrolname]').attr('formcontrolname'));
                         });
-                        if ($.isFunction(options.success)) {
+                        if (_.isFunction(options.success)) {
                             options.success(false, true);
                         }
                         return;
@@ -2121,14 +2183,14 @@ $.widget('wm.datatable', {
 
                     if (isNewRow && advancedEdit && _.isEmpty(rowData)) {
                         self.removeNewRow($row);
-                        if ($.isFunction(options.success)) {
+                        if (_.isFunction(options.success)) {
                             options.success(false, undefined, true);
                         }
                         return;
                     }
 
                     if (isNewRow) {
-                        if ($.isFunction(this.options.onBeforeRowInsert)) {
+                        if (_.isFunction(this.options.onBeforeRowInsert)) {
                             isValid = this.options.onBeforeRowInsert(rowData, e, editOptions);
                             if (isValid === false) {
                                 return;
@@ -2145,7 +2207,7 @@ $.widget('wm.datatable', {
                             self.removeNewRow($row);
                         }
                     } else {
-                        if ($.isFunction(this.options.onBeforeRowUpdate)) {
+                        if (_.isFunction(this.options.onBeforeRowUpdate)) {
                             isValid = this.options.onBeforeRowUpdate(rowData, e, editOptions);
                             if (isValid === false) {
                                 return;
@@ -2158,7 +2220,7 @@ $.widget('wm.datatable', {
                     if (!options.noMsg) {
                         this.options.noChangesDetected();
                     }
-                    if ($.isFunction(options.success)) {
+                    if (_.isFunction(options.success)) {
                         options.success(false);
                     }
                 }
@@ -2268,7 +2330,7 @@ $.widget('wm.datatable', {
         this.options.setActionRowIndex(rowId);
         this.options.setLastActionPerformed(this.options.ACTIONS.DELETE);
 
-        if ($.isFunction(this.options.beforeRowDelete)) {
+        if (_.isFunction(this.options.beforeRowDelete)) {
             this.options.beforeRowDelete(rowData, e);
         }
         if (isNewRow) {
@@ -2284,13 +2346,13 @@ $.widget('wm.datatable', {
             return;
         }
         /* calling onbeforerowDelete callback function.*/
-        if($.isFunction(this.options.onBeforeRowDelete)) {
+        if(_.isFunction(this.options.onBeforeRowDelete)) {
             isValid = this.options.onBeforeRowDelete(rowData, e, options);
             if (isValid === false) {
                 return;
             }
         }
-        if ($.isFunction(this.options.onRowDelete)) {
+        if (_.isFunction(this.options.onRowDelete)) {
             className = this.options.cssClassNames.deleteRow;
             isActiveRow = $row.attr('class').indexOf('active') !== -1;
             if (isActiveRow) {
@@ -2373,6 +2435,7 @@ $.widget('wm.datatable', {
     },
     //Method to remove sort icons from the column header cells
     resetSortIcons: function ($el) {
+        this.isResetSortIconsDone = true;
         var $sortContainer;
         //If sort icon is not passed, find out the sort icon from the active class
         if (!$el && this.gridHeaderElement) {
@@ -2382,9 +2445,25 @@ $.widget('wm.datatable', {
         }
         $el.removeClass('desc asc').removeClass(this.options.cssClassNames.descIcon).removeClass(this.options.cssClassNames.ascIcon);
     },
+    setSortIconDefault: function() {
+        const sortInfo = this.options.sortInfo,
+            $e = this.tableContainer,
+            $th = $e.find("[data-col-field='" + sortInfo.field + "']"),
+            $sortContainer = $th.find('.sort-buttons-container'),
+            $sortIcon = $sortContainer.find('i.sort-icon'),
+            direction = sortInfo.direction;
+        if (direction === 'asc') {
+            $sortIcon.addClass(direction + ' ' + this.options.cssClassNames.ascIcon);
+            $sortContainer.addClass('active');
+        } else if (direction === 'desc'){
+            $sortIcon.addClass(direction + ' ' + this.options.cssClassNames.descIcon);
+            $sortContainer.addClass('active');
+        }
+
+    },
     /* Handles table sorting. */
     sortHandler: function (e) {
-        e.stopImmediatePropagation();
+          e.stopImmediatePropagation();
         // If header span is clicked and column selection is enabled, call header click
         if ($(e.target).hasClass('header-data') && this.options.enableColumnSelection) {
             this.headerClickHandler(e);
@@ -2394,7 +2473,7 @@ $.widget('wm.datatable', {
             id = $th.attr('data-col-id'),
             $sortContainer = $th.find('.sort-buttons-container'),
             $sortIcon = $sortContainer.find('i.sort-icon'),
-            direction = $sortIcon.hasClass('asc') ? 'desc' : $sortIcon.hasClass('desc') ? '' : 'asc',
+            direction = $sortIcon.hasClass('asc') ? 'desc' : 'asc',
             sortInfo = this.options.sortInfo,
             $previousSortMarker = this.gridHeaderElement.find('.sort-buttons-container.active'),
             field = $th.attr('data-col-field'),
@@ -2614,18 +2693,44 @@ $.widget('wm.datatable', {
         }
         return false;
     },
+    getColInfo: function(event) {
+        var row =  $(event.target).closest('tr.app-datagrid-row');
+        var rowId = row.attr('data-row-id');
+        var column = $(event.target).closest('td.app-datagrid-cell');
+        var colId = column.attr('data-col-id');
+        if(this.columnClickInfo && this.columnClickInfo[rowId] && this.columnClickInfo[rowId][colId]) {
+            return this.columnClickInfo[rowId][colId];
+        }
+        return false;
+    },
     /* Attaches all event handlers for the table. */
     attachEventHandlers: function ($htm) {
         var $header = this.gridHeaderElement,
             self = this;
 
         if (this.options.enableRowSelection) {
-            $htm[0].removeEventListener('click', this.rowClickHandlerOnCapture.bind(this), true);
+            $htm[0].removeEventListener('click', this.rowClickHandlerOnCapture.bind(this));
             $htm.off();
+            $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this));
             // add js click handler for capture phase in order to first listen on grid and
             // assign selectedItems so that any child actions can have access to the selectedItems.
-            $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this), true);
             $htm.on('click', this.rowSelectionHandler.bind(this));
+            $htm.on("click", "td *", function(event) {
+
+                // Prevent propagation to parent elements
+                if(event.target.type != 'checkbox'){
+                    var row =  $(event.target).closest('tr.app-datagrid-row');
+                    var rowId = row.attr('data-row-id');
+                    var column = $(event.target).closest('td.app-datagrid-cell');
+                    var colId = column.attr('data-col-id');
+                    var id = Number(colId);
+                    var colDefination = self.preparedHeaderData[id];
+                    if (colDefination && colDefination.readonly && colDefination.field !== 'rowOperations') {
+                        self.columnClickInfo[rowId] = {};
+                        self.columnClickInfo[rowId][colId] = true;
+                    }
+                }
+            });
             $htm.on('dblclick', this.rowDblClickHandler.bind(this));
             $htm.on('keydown', this.onKeyDown.bind(this));
         }
@@ -2730,6 +2835,9 @@ $.widget('wm.datatable', {
     collapseRow: function(rowId) {
         this.toggleExpandRow(rowId, false)
     },
+    hasAllClasses: function (element, classNames) { // function to check if all the class names are present in the element
+        return classNames && classNames.every(cls => element.hasClass(cls));
+    },
     _collapseRow: function(e, rowData, rowId, $nextDetailRow, $icon) {
         var self = this,
             $tbody = self.gridElement,
@@ -2739,7 +2847,7 @@ $.widget('wm.datatable', {
         if (this.options.onBeforeRowCollapse(e, rowData, rowId) === false) {
             return;
         }
-        if ($icon.length && $icon.hasClass(this.options.cssClassNames.rowExpandIcon)) {
+        if ($icon.length && this.hasAllClasses($icon, this.options.cssClassNames.rowExpandIcon?.split(' '))) {
             $icon.removeClass(this.options.cssClassNames.rowExpandIcon).addClass(this.options.cssClassNames.rowCollapseIcon);
         }
         $nextDetailRow.hide();
@@ -2779,7 +2887,7 @@ $.widget('wm.datatable', {
             }
             self.options.generateRowDetailView(e, rowData, rowId, $nextDetailRow.find('td.app-datagrid-row-details-cell .details-section'),
                 $nextDetailRow.find('td.app-datagrid-row-details-cell .row-overlay'), function () {
-                    if ($icon.length && $icon.hasClass(self.options.cssClassNames.rowCollapseIcon)) {
+                    if ($icon.length && self.hasAllClasses($icon, self.options.cssClassNames.rowCollapseIcon?.split(' '))) {
                         $icon.removeClass(self.options.cssClassNames.rowCollapseIcon).addClass(self.options.cssClassNames.rowExpandIcon);
                     }
                     $nextDetailRow.show();
@@ -2854,7 +2962,7 @@ $.widget('wm.datatable', {
             }
 
             /* Search only when enter key is pressed. */
-            if (e.which === 13) {
+            if (e.which === 13 || self.options.filteronkeypress) {
                 search(e);
             }
         });
@@ -2908,20 +3016,23 @@ $.widget('wm.datatable', {
         $header = headerTemplate.header;
 
         function toggleSelectAll(e) {
-            var $checkboxes = $('tr.app-datagrid-row:visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
+            var $checkboxes = $('tr.app-datagrid-row:not(.always-new-row):visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
                 checked = this.checked;
             $checkboxes.prop('checked', checked);
             $checkboxes.each(function () {
                 var $row = $(this).closest('tr.app-datagrid-row'),
                     rowId = $row.attr('data-row-id'),
                     rowData = self.options.data[rowId];
-                // If we enable multiselect and check header checkbox then updating selecteditem in datatable.
-                self.options.assignSelectedItems(rowData, e);
                 self.toggleRowSelection($row, checked, e, true);
-                if (checked && $.isFunction(self.options.onRowSelect)) {
+                // If we enable multiselect and check header checkbox then updating selecteditem in datatable.
+                self.options.assignSelectedItems(rowData, e, {
+                    'rowId': rowId,
+                    '_selected': self.preparedData[rowId]?._selected
+                });
+                if (checked && _.isFunction(self.options.onRowSelect)) {
                     self.options.onRowSelect(rowData, e);
                 }
-                if (!checked && $.isFunction(self.options.onRowDeselect)) {
+                if (!checked && _.isFunction(self.options.onRowDeselect)) {
                     self.options.onRowDeselect(rowData, e);
                 }
             });
@@ -2956,7 +3067,7 @@ $.widget('wm.datatable', {
         /**Add event handler, to the select all checkbox on the header**/
         $header.on('click', '.app-datagrid-header-cell input:checkbox', toggleSelectAll);
 
-        if ($.isFunction(this.options.onHeaderClick)) {
+        if (_.isFunction(this.options.onHeaderClick)) {
             this.gridHeaderElement.find('th.app-datagrid-header-cell').on('click', this.headerClickHandler.bind(this));
         }
 
@@ -2996,6 +3107,9 @@ $.widget('wm.datatable', {
                     self.options.redrawWidgets();
                 }
             });
+        }
+        if(!this.isResetSortIconsDone) {
+            this.setSortIconDefault();
         }
     },
     addOrRemoveScroll: function () {
@@ -3051,9 +3165,9 @@ $.widget('wm.datatable', {
     /* Renders the table body. */
     _renderGrid: function (isCreated) {
         var $htm, isScrollorOnDemand = this.options.isNavTypeScrollOrOndemand(), pageStartIndex = this.getPageStartIndex();
+        $('table.table-bordered').parents('.app-grid-header-inner').addClass('table_border');
         if(isScrollorOnDemand) {
             var $tbody = this.gridElement;
-
             // get markup for new rows and append it to tbod
             var template = this._getGridTemplate();
             $htm = $(template);
@@ -3061,6 +3175,7 @@ $.widget('wm.datatable', {
                 // initally append tbody to gridElement
                 this.gridElement.append($htm);
             }
+
         } else {
             var templates = this._getGridTemplate();
             $htm = $(templates);
@@ -3071,7 +3186,10 @@ $.widget('wm.datatable', {
 
         if (this.options.summaryRow) {
             var $summaryRowHtm = $(this._getSummaryRowTemplate());
-            this.gridElement.append($summaryRowHtm);
+            this.tableContainer.find('tfoot').remove();
+            if (this.options.data.length){
+                this.tableContainer.append($summaryRowHtm);
+            }
         }
         // Set proper data status messages after the grid is rendered.
         if (!this.options.data.length && this.dataStatus.state === 'nodata') {
@@ -3082,7 +3200,7 @@ $.widget('wm.datatable', {
             this.setStatus(this.dataStatus.state, this.dataStatus.message, isCreated);
         }
         this.gridBody = this.gridElement.find('tbody');
-        this.gridFooter = this.gridElement.find('tfoot');
+        this.gridFooter = this.tableContainer.find('tfoot');
         this._findAndReplaceCompiledTemplates();
         this.options.clearRowActions();
         // attach event handlers
@@ -3097,7 +3215,7 @@ $.widget('wm.datatable', {
         if (isCreated) {
             this._setColSpan(this.options.headerConfig);
         }
-        if ($.isFunction(this.options.onDataRender)) {
+        if (_.isFunction(this.options.onDataRender)) {
             this.options.onDataRender();
         }
         if (!isCreated && this.options.selectFirstRow) {
@@ -3126,7 +3244,7 @@ $.widget('wm.datatable', {
                 '<div class="app-grid-header">' +
                 '<div class="app-grid-header-inner">' +
                 '<table tabindex="0" class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '">' +
-                '<thead tabindex="0" class="table-header" id="table_header_' + this.tableId + '">' +
+                '<thead tabindex="0" class="table-header thead-sticky" id="table_header_' + this.tableId + '">' +
                 '</thead><tbody class="app-grid-content app-datagrid-body"  id="table_' + this.tableId + '">' +
                 '</tbody></table>' +
                 '</div></div></div>',
@@ -3136,7 +3254,6 @@ $.widget('wm.datatable', {
         this.gridHeaderElement = this.gridContainer.find('.table-header');
         this._setStyles($statusContainer.find('div.overlay'), "display:none");
         this._setStyles(this.gridContainer.find('div.app-grid-header-inner'), 'height:' + this.options.height + '; overflow: auto;');
-
         this.tableContainer = this.gridContainer.find('table');
         this.gridElement = this.gridContainer.find('.app-grid-content');
 
@@ -3162,9 +3279,6 @@ $.widget('wm.datatable', {
             this.gridElement.find('colgroup').remove();
         }
         this._renderHeader();
-        // if(!(this.options.isNavTypeScrollOrOndemand() && this.options.isNextPageData)) {
-        //     this._renderHeader();
-        // }
         if (this.options.filtermode === this.CONSTANTS.SEARCH && (_.isEmpty(this.searchObj) || (this.searchObj && !this.searchObj.field && !this.searchObj.value))) {
             this._renderSearch();
         } else if (this.options.filtermode === this.CONSTANTS.MULTI_COLUMN) {
@@ -3174,13 +3288,16 @@ $.widget('wm.datatable', {
             this._toggleSpacingClasses('condensed');
         }
         this._renderGrid(isCreated);
+        this.addNavigationControls();
+    },
+    addNavigationControls: function() {
         /**
          * bind on demand / scroll events to the table in case of dynamictable in render fn
          * Render is called everytime when there is a change in dataset and the previously binded events are lost
          */
         if (this.options.isdynamictable) {
             this.element.find('.on-demand-datagrid').remove();
-            if (this.options.navigation === 'On-Demand' && !this.element.find('.on-demand-datagrid').length) {
+            if (this.options.navigation === 'On-Demand' && (!this.element.find('.on-demand-datagrid').length)) {
                 this.options.addLoadMoreBtn();
             } else if (this.options.navigation === 'Scroll') {
                 this.options.bindScrollEvt();
@@ -3189,7 +3306,8 @@ $.widget('wm.datatable', {
     },
     __setStatus: function (isCreated) {
         var loadingIndicator = this.dataStatusContainer.find('i'),
-            state = this.dataStatus.state;
+            state = this.dataStatus.state,
+            isScrollOrOndemand = this.options.isNavTypeScrollOrOndemand();
         this.dataStatusContainer.find('.message').text(this.dataStatus.message);
         if (state === 'loading') {
             loadingIndicator.removeClass('hidden');
@@ -3199,6 +3317,10 @@ $.widget('wm.datatable', {
         if (state === 'ready') {
             this.dataStatusContainer.hide();
         } else {
+            // [WMS-23839] always show load more btn if show view less btn is true
+            if (this.options.isNavTypeScrollOrOndemand() && (state === 'nodata' || ((this.options.getCurrentPage() == this.options.getPageCount())  && !this.options.showviewlessbutton))) {
+                this.element.find('.on-demand-datagrid a').hide();
+            }
             this.dataStatusContainer.show();
         }
         if (state === 'nodata' || state === 'loading' || state === 'error') {
@@ -3206,7 +3328,9 @@ $.widget('wm.datatable', {
                 if (state === 'nodata') {
                     this.dataStatusContainer.css('height', 'auto');
                     this.dataStatus.contentHeight = 0;
-                }  else if (this.options.isNavTypeScrollOrOndemand()){
+                }  else if (this.options.isNavTypeScrollOrOndemand() && this.options.getCurrentPage() > 1){
+                    // showing the loading icon only for the first page
+                    // from second page there is another loader which is being shown instead of LoadMore btn
                     this.dataStatusContainer.hide();
                 } else {
                     this.dataStatus.height = this.dataStatus.height || this.dataStatusContainer.outerHeight();
@@ -3214,7 +3338,7 @@ $.widget('wm.datatable', {
                     this.dataStatusContainer.css('height', this.dataStatus.height > this.dataStatus.contentHeight ? 'auto' : this.dataStatus.contentHeight);
                 }
             }
-            if (!this.options.isNavTypeScrollOrOndemand()) {
+            if (!isScrollOrOndemand || (isScrollOrOndemand && this.options.getCurrentPage() === 1)) {
                 this.gridContainer.addClass("show-msg");
             }
         } else {
@@ -3281,19 +3405,16 @@ $.widget('wm.datatable', {
         }
         this.options[key] = value;
         if (key === 'height') {
-            if(this.options.showHeader) {
-                this._setStyles(this.gridHeaderElement, 'z-index: 1; position: sticky; top:0px; border: 1px solid #eee, box-shadow: 0px 1px 0px 0px rgb(118, 118, 118, 15%)');
-            }
-
             //  if(this.dataStatus.state != 'loading') {
             var elements = this.gridHeaderElement.find('th');
-            this._setStyles(this.tableContainer, 'border-collapse: separate;');
-            for (var i = 0; i < elements.length; i += 1) {
-                this._setStyles($(elements[i]), 'border: 1px solid #eee');
-            }
+            // this._setStyles(this.tableContainer, 'border-collapse: separate;');
+
+            // for (var i = 0; i < elements.length; i += 1) {
+            //     this._setStyles($(elements[i]), 'border: 1px solid #eee');
+            // }
             //}
             this.gridContainer.find('.app-grid-header-inner').css(key, value);
-            this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
+            // this.gridContainer.find('.app-grid-header-inner').css('border', '1px solid #eee');
             if (this.options.isNavTypeScrollOrOndemand() && (this.options.height != '100%' && this.options.height != 'auto')) {
                 this.gridContainer.find('.app-grid-header-inner').css('overflow', 'auto');
             }

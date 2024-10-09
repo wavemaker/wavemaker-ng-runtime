@@ -6,16 +6,16 @@
         (click)="onCheckboxLabelClick($event, item.key)" role="presentation">
         <!-- Default item template -->
         <label *ngIf="!content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" [title]="item.label">
-            <input [name]="'checkboxset_' + widgetId" type="checkbox" [attr.aria-label]="item.key"
-                   [tabindex]="tabindex" [attr.aria-checked]="item.selected"
+            <input [name]="'checkboxset_' + widgetId" [tabindex]="tabindex"
+                   type="checkbox"
                    [disabled]="disabled || readonly" [attr.data-attr-index]="i"
                    [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
             <span class="caption" [textContent]="item.label"></span>
         </label>
         <!-- Custom partial template -->
         <label *ngIf="content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" >
-            <input [name]="'checkboxset_' + widgetId" type="checkbox" [attr.aria-label]="item.key"
-                   [tabindex]="tabindex" [attr.aria-checked]="item.selected"
+            <input [name]="'checkboxset_' + widgetId" [tabindex]="tabindex"
+                   type="checkbox"
                    [disabled]="disabled || readonly" [attr.data-attr-index]="i"
                    [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
             <span class="caption customTemplate" partial-container-target></span>
@@ -44,7 +44,7 @@
                 (click)="onCheckboxLabelClick($event, item)">
                 <!-- Default item template -->
                 <label *ngIf="!content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" [title]="item.label">
-                    <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
+                    <input [name]="'checkboxset_' + widgetId" type="checkbox"
                            [tabindex]="tabindex"
                            [disabled]="disabled || readonly" [attr.data-attr-index]="i"
                            [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
@@ -52,7 +52,7 @@
                 </label>
                 <!-- Custom partial template -->
                 <label *ngIf="content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" >
-                    <input [name]="'checkboxset_' + widgetId" type="checkbox" aria-label="checkbox group"
+                    <input [name]="'checkboxset_' + widgetId" type="checkbox"
                            [tabindex]="tabindex"
                            [disabled]="disabled || readonly" [attr.data-attr-index]="i"
                            [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>

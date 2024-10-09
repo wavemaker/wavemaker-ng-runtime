@@ -1,6 +1,15 @@
-import { AfterViewInit, Attribute, Component, ContentChildren, HostBinding, Injector, OnInit } from '@angular/core';
+import {
+    AfterViewInit,
+    Attribute,
+    Component,
+    ContentChildren,
+    HostBinding, Inject,
+    Injector,
+    OnInit,
+    Optional
+} from '@angular/core';
 
-import { noop, removeAttr } from '@wm/core';
+import {noop, removeAttr} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, styler, StylableComponent } from '@wm/components/base';
 import { registerProps } from './tab-pane.props';
@@ -23,12 +32,13 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
     static initializeProps = registerProps();
 
     private _isFirstLoad: boolean = true;
-
+    private _isOnLoadTriggered: boolean = false;
     public $lazyLoad = noop;
     public name: string;
     public show: boolean;
     public smoothscroll: any;
     private isdynamic: boolean;
+    public content: string;
 
     @HostBinding('class.active') isActive = false;
     @HostBinding('class.disabled') disabled = false;
@@ -40,9 +50,10 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         inj: Injector,
         private tabsRef: TabsComponent,
         @Attribute('heading') public heading,
-        @Attribute('title') public title
+        @Attribute('title') public title,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         // title property here serves the purpose of heading.
         // TODO: make it common for all the widget.
@@ -55,7 +66,7 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         this.invokeEventCallback('select', {$event});
     }
 
-    public select($event?: Event) {
+    public select($event?: Event, isKeyBoardEvent?: boolean) {
         // When called programatically $event won't be available
         if (this.isActive || this.disabled) {
             return;
@@ -64,7 +75,7 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
         this.isActive = true;
         this.$lazyLoad();
         this.redrawChildren();
-        this.notifyParent($event);
+        this.notifyParent($event, isKeyBoardEvent);
     }
 
     tabpaneHeaderClick($event, paneIndex) {
@@ -94,11 +105,16 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
             if (this.reDrawableComponents) {
                 this.reDrawableComponents.forEach(c => c.redraw());
             }
+            // Fix for [WMS-24564]: trigger  Onload event when it is inline content
+            if (!this._isOnLoadTriggered && !this.content) {
+                this.invokeEventCallback('load');
+                this._isOnLoadTriggered = true;
+            }
         }, 100);
     }
 
-    private notifyParent(evt?: Event) {
-        this.tabsRef.notifyChange(this, evt);
+    private notifyParent(evt?: Event, isKeyBoardEvent?: boolean) {
+        this.tabsRef.notifyChange(this, evt, isKeyBoardEvent);
     }
 
     // select next valid tab

@@ -5,14 +5,30 @@ import { Observer } from 'rxjs';
 import { $parseExpr, App, defer, getAbortableDefer, noop } from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 
-import { LiveVariableUtils, LVService } from '@wm/variables';
+import { LiveVariableUtils, LVService } from '@wavemaker/variables';
 
 import { LocalDBManagementService } from './local-db-management.service';
 import { PullInfo } from './change-log.service';
 import { LocalKeyValueService } from './local-key-value.service';
 import { DBInfo, EntityInfo, PullType } from '../models/config';
+import {
+    chain,
+    cloneDeep,
+    find,
+    findIndex,
+    forEach,
+    isEmpty,
+    isNaN,
+    isNil, isString,
+    map,
+    now,
+    reduce,
+    remove,
+    slice, sortBy,
+    startsWith
+} from "lodash-es";
 
-declare const _, moment;
+declare const moment;
 const  LAST_PULL_INFO_KEY = 'localDBManager.lastPullInfo';
 
 /**
@@ -24,7 +40,7 @@ const pullProcessManager = (() => {
     const promises = {};
     return {
         start: promise => {
-            promise.$$pullProcessId = 'PULL_' + _.now();
+            promise.$$pullProcessId = 'PULL_' + now();
         },
         add: (pullPromise: Promise<PullInfo>, promise: Promise<any>) => {
             const pullProcessId = (pullPromise as any).$$pullProcessId;
@@ -35,15 +51,15 @@ const pullProcessManager = (() => {
         },
         remove: (pullPromise: Promise<PullInfo>, promise: Promise<any>) => {
             const pullProcessId = (pullPromise as any).$$pullProcessId;
-            _.remove(promises[pullProcessId], promise);
-            if (_.isEmpty(promises[pullProcessId])) {
+            remove(promises[pullProcessId], promise);
+            if (isEmpty(promises[pullProcessId])) {
                 delete promises[pullProcessId];
             }
         },
         abort: (pullPromise: Promise<PullInfo>) => {
             const pullProcessId = (pullPromise as any).$$pullProcessId;
             if (promises[pullProcessId]) {
-                _.forEach(promises[pullProcessId], function (p) {
+                forEach(promises[pullProcessId], function (p) {
                     if (p && p.abort) {
                         p.abort();
                     }
@@ -96,18 +112,18 @@ export class LocalDBDataPullService {
     private addDeltaCriteria(db: DBInfo, entityName: string, query: string): Promise<string> {
         const entitySchema = db.schema.entities[entityName],
             deltaFieldName = entitySchema.pullConfig.deltaFieldName,
-            deltaField = _.find(entitySchema.columns, {'fieldName' : deltaFieldName}) || {};
+            deltaField = find(entitySchema.columns, {'fieldName': deltaFieldName}) || {};
 
         let isBundledEntity;
 
-        if (!_.isEmpty(deltaFieldName)) {
+        if (!isEmpty(deltaFieldName)) {
             return this.localDBManagementService.isBundled(db.schema.name, entityName)
                 .then(flag => isBundledEntity = flag)
                 .then(() => this.getLastPullInfo())
                 .then(lastPullInfo => {
                     let lastPullTime = (lastPullInfo && lastPullInfo.startTime && lastPullInfo.startTime.getTime());
-                    const lastPullDBInfo = _.find(lastPullInfo && lastPullInfo.databases, {'name' : db.schema.name}),
-                        lastPullEntityInfo = _.find(lastPullDBInfo && lastPullDBInfo.entities, {'entityName' : entityName}) || {};
+                    const lastPullDBInfo = find(lastPullInfo && lastPullInfo.databases, {'name': db.schema.name}),
+                        lastPullEntityInfo = find(lastPullDBInfo && lastPullDBInfo.entities, {'entityName': entityName}) || {};
 
                     if (!lastPullTime && isBundledEntity) {
                         // For bundled entity when there is no last pull, fetch records that got modified after db creation.
@@ -115,7 +131,7 @@ export class LocalDBDataPullService {
                         lastPullEntityInfo.query = query;
                     }
                     if (lastPullEntityInfo.query === query && lastPullTime > 0) {
-                        if (_.isEmpty(query)) {
+                        if (isEmpty(query)) {
                             query = '';
                         } else {
                             query += ' AND ';
@@ -169,7 +185,7 @@ export class LocalDBDataPullService {
                     }
                     return query;
                 }).then(query => {
-                    filter = _.isEmpty(query) ? '' : 'q=' + query;
+                filter = isEmpty(query) ? '' : 'q=' + query;
                     return this.getTotalRecordsToPull(db, entitySchema, filter, pullPromise);
                 }).then(maxNoOfRecords => {
                     const pageSize = entitySchema.pullConfig.size || 100,
@@ -178,13 +194,13 @@ export class LocalDBDataPullService {
                     result.totalRecordsToPull = maxNoOfRecords;
 
                     let sort = entitySchema.pullConfig.orderBy;
-                    sort = (_.isEmpty(sort) ? '' : sort + ',') + store.primaryKeyName;
+                sort = (isEmpty(sort) ? '' : sort + ',') + store.primaryKeyName;
 
                     progressObserver.next(result);
 
                     const _progressObserver = { next: data => {
                             inProgress++;
-                            data = _.slice(data, 0, result.totalRecordsToPull - result.pulledRecordCount);
+                            data = slice(data, 0, result.totalRecordsToPull - result.pulledRecordCount);
                             store.saveAll(data).then(() => {
                                 result.pulledRecordCount += data ? data.length : 0;
                                 progressObserver.next(result);
@@ -212,7 +228,7 @@ export class LocalDBDataPullService {
 
     // If expression starts with 'bind:', then expression is evaluated and result is returned.
     private evalIfBind(expression: string) {
-        if (_.startsWith(expression, 'bind:')) {
+        if (startsWith(expression, 'bind:')) {
             expression = expression.replace(/\[\$\i\]/g, '[0]');
             return $parseExpr(expression.replace('bind:', ''))(this.app);
         }
@@ -259,8 +275,8 @@ export class LocalDBDataPullService {
         return this.retryIfNetworkFails(() => {
             return this.executeDatabaseCountQuery(params).then(function (response) {
                 const totalRecordCount = response,
-                    maxRecordsToPull = _.parseInt((entitySchema.pullConfig as any).maxNumberOfRecords);
-                if (_.isNaN(maxRecordsToPull) || maxRecordsToPull <= 0 || totalRecordCount < maxRecordsToPull) {
+                    maxRecordsToPull = parseInt((entitySchema.pullConfig as any).maxNumberOfRecords);
+                if (isNaN(maxRecordsToPull) || maxRecordsToPull <= 0 || totalRecordCount < maxRecordsToPull) {
                     return totalRecordCount;
                 }
                 return maxRecordsToPull;
@@ -275,22 +291,22 @@ export class LocalDBDataPullService {
         return this.localDBManagementService.isBundled(db.schema.name, entityName)
             .then(isBundledEntity => {
                 let hasNullAttributeValue = false;
-                if (isBundledEntity || _.isEmpty(entitySchema.pullConfig.query)) {
-                    query = _.cloneDeep(entitySchema.pullConfig.filter);
-                    query = _.map(query, v => {
+                if (isBundledEntity || isEmpty(entitySchema.pullConfig.query)) {
+                    query = cloneDeep(entitySchema.pullConfig.filter);
+                    query = map(query, v => {
                         v.attributeValue = this.evalIfBind(v.attributeValue);
-                        hasNullAttributeValue = hasNullAttributeValue || _.isNil(v.attributeValue);
+                        hasNullAttributeValue = hasNullAttributeValue || isNil(v.attributeValue);
                         return v;
                     });
                     if (hasNullAttributeValue) {
                         return Promise.reject('Null criteria values are present');
                     }
-                    query = _.sortBy(query, 'attributeName');
+                    query = sortBy(query, 'attributeName');
                     query = LiveVariableUtils.getSearchQuery(query, ' AND ', true);
                 } else {
                     query = this.evalIfBind(entitySchema.pullConfig.query);
                 }
-                if (_.isNil(query)) {
+                if (isNil(query)) {
                     return Promise.resolve(null);
                 }
 
@@ -319,7 +335,8 @@ export class LocalDBDataPullService {
 
         const storePromises = [];
 
-        _.forEach(db.schema.entities, entity => {
+        forEach(db.schema.entities, entity => {
+            // @ts-ignore
             storePromises.push(this.localDBManagementService.getStore(datamodelName, entity.entityName));
         });
 
@@ -334,20 +351,20 @@ export class LocalDBDataPullService {
                             entities.push(store.entitySchema);
                         }
                     });
-                    const pullPromises = _.chain(entities)
+                    const pullPromises = chain(entities)
                         .map(entity => {
                         const _progressObserver = {
                             next: info => {
-                                const i = _.findIndex(result.entities, {'entityName': info.entityName});
+                                const i = findIndex(result.entities, {'entityName': info.entityName});
                                 if (i >= 0) {
                                     result.entities[i] = info;
                                 } else {
                                     result.entities.push(info);
                                 }
-                                result.pulledRecordCount = _.reduce(result.entities, function (sum, entityPullInfo) {
+                                result.pulledRecordCount = reduce(result.entities, function (sum, entityPullInfo) {
                                     return sum + entityPullInfo.pulledRecordCount;
                                 }, 0);
-                                result.totalRecordsToPull = _.reduce(result.entities, function (sum, entityPullInfo) {
+                                result.totalRecordsToPull = reduce(result.entities, function (sum, entityPullInfo) {
                                     return sum + entityPullInfo.totalRecordsToPull;
                                 }, 0);
                                 progressObserver.next(result);
@@ -449,7 +466,7 @@ export class LocalDBDataPullService {
     public getDb(dbName: string) {
         return this.localDBManagementService.loadDatabases()
             .then(databases => {
-                const db = _.find(databases, {'name' : dbName});
+                const db = find(databases, {'name': dbName});
                 return db || Promise.reject('Local database (' + dbName + ') not found');
             });
     }
@@ -460,10 +477,10 @@ export class LocalDBDataPullService {
      */
     public getLastPullInfo(): Promise<PullInfo> {
         return this.localKeyValueService.get(LAST_PULL_INFO_KEY).then(info => {
-            if (_.isString(info.startTime)) {
+            if (isString(info.startTime)) {
                 info.startTime = new Date(info.startTime);
             }
-            if (_.isString(info.endTime)) {
+            if (isString(info.endTime)) {
                 info.endTime = new Date(info.endTime);
             }
             return info;
@@ -493,28 +510,28 @@ export class LocalDBDataPullService {
 
         this.localDBManagementService.loadDatabases()
             .then(databases => {
-                const dataPullPromises = _.chain(databases).filter(function (db) {
+                const dataPullPromises = chain(databases).filter(function (db) {
                     return !db.schema.isInternal;
                 }).map(db => {
                     pullProcessManager.start(deferred.promise);
 
                     const _progressObserver: Observer<any> = {next: data => {
-                                const i = _.findIndex(pullInfo.databases, {'name' : data.name});
+                            const i = findIndex(pullInfo.databases, {'name': data.name});
                                 if (i >= 0) {
                                     pullInfo.databases[i] = data;
                                 } else {
                                     pullInfo.databases.push(data);
                                 }
-                                pullInfo.totalTaskCount = _.reduce(pullInfo.databases, function (sum, dbPullInfo) {
+                            pullInfo.totalTaskCount = reduce(pullInfo.databases, function (sum, dbPullInfo) {
                                     return sum + dbPullInfo.totalTaskCount;
                                 }, 0);
-                                pullInfo.completedTaskCount = _.reduce(pullInfo.databases, function (sum, dbPullInfo) {
+                            pullInfo.completedTaskCount = reduce(pullInfo.databases, function (sum, dbPullInfo) {
                                     return sum + dbPullInfo.completedTaskCount;
                                 }, 0);
-                                pullInfo.totalPulledRecordCount = _.reduce(pullInfo.databases, function (sum, dbPullInfo) {
+                            pullInfo.totalPulledRecordCount = reduce(pullInfo.databases, function (sum, dbPullInfo) {
                                     return sum + dbPullInfo.pulledRecordCount;
                                 }, 0);
-                                pullInfo.totalRecordsToPull = _.reduce(pullInfo.databases, function (sum, dbPullInfo) {
+                            pullInfo.totalRecordsToPull = reduce(pullInfo.databases, function (sum, dbPullInfo) {
                                     return sum + dbPullInfo.totalRecordsToPull;
                                 }, 0);
                                 progressObserver.next(pullInfo);

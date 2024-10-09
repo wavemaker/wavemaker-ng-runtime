@@ -1,12 +1,11 @@
-import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import {  DecimalPipe } from '@angular/common';
+import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
-import { CURRENCY_INFO, AbstractI18nService, AppDefaults } from '@wm/core';
-import { IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe } from '@wm/components/base';
-import { NumberLocale } from '@wm/components/input';
+import {AbstractI18nService, AppDefaults, CURRENCY_INFO} from '@wm/core';
+import {IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe} from '@wm/components/base';
+import {NumberLocale} from '@wm/components/input';
 
-import { registerProps } from './currency.props';
+import {registerProps} from './currency.props';
 
 const DEFAULT_CLS = 'input-group app-currency';
 
@@ -37,12 +36,13 @@ export class CurrencyComponent extends NumberLocale {
     public tabindex: any;
     public shortcutkey: string;
     public hint: string;
+    public arialabel: string;
 
     @ViewChild(NgModel, {static: true}) ngModel: NgModel;
     @ViewChild('input', { static: true, read: ElementRef }) inputEl: ElementRef;
 
-    constructor(inj: Injector,  private appDefaults: AppDefaults, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe) {
-        super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe);
+    constructor(inj: Injector,  private appDefaults: AppDefaults, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe, explicitContext);
         this.currencyCode = this.appDefaults.currencyCode || 'USD';
         this.currencySymbol = CURRENCY_INFO[this.appDefaults.currencyCode || "USD"].symbol;
     }

@@ -9,9 +9,9 @@ import { DeviceFileCacheService } from './device-file-cache.service';
 import { DeviceFileDownloadService } from './device-file-download.service';
 import { DeviceFileService } from './device-file.service';
 import { IDeviceStartUpService } from './device-start-up-service';
+import {now} from "lodash-es";
 
 declare const cordova;
-declare const _;
 declare const resolveLocalFileSystemURL;
 
 @Injectable({ providedIn: 'root' })
@@ -72,7 +72,7 @@ export class DeviceFileOpenerService implements IDeviceStartUpService {
     private generateFileName(url: string, extension: string): string {
         let fileName = url.split('?')[0];
         fileName = fileName.split('/').pop();
-        fileName = this.fileService.appendToFileName(fileName, '' + _.now());
+        fileName = this.fileService.appendToFileName(fileName, '' + now());
         if (extension) {
             return fileName.split('.')[0] + '.' + extension;
         }

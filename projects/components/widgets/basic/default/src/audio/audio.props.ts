@@ -1,4 +1,4 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(
@@ -11,6 +11,7 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['controls', PROP_BOOLEAN],
                 ['hint', PROP_STRING],
+                ['arialabel', PROP_STRING],
                 ['loop', PROP_BOOLEAN],
                 ['mp3format', PROP_STRING],
                 ['muted', PROP_BOOLEAN],

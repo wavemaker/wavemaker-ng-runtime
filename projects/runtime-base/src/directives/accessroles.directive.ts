@@ -1,8 +1,7 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, Injector } from '@angular/core';
+import {Directive, Inject, Injector, Input, Optional, TemplateRef, ViewContainerRef} from '@angular/core';
 
-import { SecurityService } from '@wm/security';
-
-declare const _;
+import {SecurityService} from '@wm/security';
+import {extend, get, includes, split, trim} from "lodash-es";
 
 enum USER_ROLE {
     EVERYONE = 'Everyone',
@@ -18,18 +17,21 @@ export class AccessrolesDirective {
     private processed = false;
     private readonly isUserAuthenticated;
     private readonly userRoles;
+    private readonly context = {};
     private securityEnabled: boolean;
 
     constructor(
         private templateRef: TemplateRef<any>,
         private viewContainerRef: ViewContainerRef,
         private securityService: SecurityService,
-        private inj: Injector
+        private inj: Injector,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         const securityConfig = this.securityService.get();
-        this.securityEnabled = _.get(securityConfig, 'securityEnabled');
-        this.isUserAuthenticated = _.get(securityConfig, 'authenticated');
-        this.userRoles = _.get(securityConfig, 'userInfo.userRoles');
+        this.securityEnabled = get(securityConfig, 'securityEnabled');
+        this.isUserAuthenticated = get(securityConfig, 'authenticated');
+        this.userRoles = get(securityConfig, 'userInfo.userRoles');
+        extend(this.context, (inj as any)._lView[8], explicitContext);
     }
 
     /**
@@ -46,8 +48,8 @@ export class AccessrolesDirective {
             return [];
         }
         // replace the unicode equivalent of comma with comma
-        return _.split(val, ',').map(function (v) {
-            return _.trim(v).replace(UNICODE_COMMA_REGEX, ',');
+        return split(val, ',').map(function (v) {
+            return trim(v).replace(UNICODE_COMMA_REGEX, ',');
         });
     }
 
@@ -59,7 +61,7 @@ export class AccessrolesDirective {
      */
     private matchRoles(widgetRoles, userRoles) {
         return widgetRoles.some(function (item) {
-            return _.includes(userRoles, item);
+            return includes(userRoles, item);
         });
     }
 
@@ -71,17 +73,17 @@ export class AccessrolesDirective {
      */
     private hasAccessToWidget(widgetRoles, userRoles) {
         // access the widget when 'Everyone' is chosen
-        if (_.includes(widgetRoles, USER_ROLE.EVERYONE)) {
+        if (includes(widgetRoles, USER_ROLE.EVERYONE)) {
             return true;
         }
 
         // access the widget when 'Anonymous' is chosen and user is not authenticated
-        if (_.includes(widgetRoles, USER_ROLE.ANONYMOUS) && !this.isUserAuthenticated) {
+        if (includes(widgetRoles, USER_ROLE.ANONYMOUS) && !this.isUserAuthenticated) {
             return true;
         }
 
         // access the widget when 'Only Authenticated Users' is chosen and user is authenticated
-        if (_.includes(widgetRoles, USER_ROLE.AUTHENTICATED) && this.isUserAuthenticated) {
+        if (includes(widgetRoles, USER_ROLE.AUTHENTICATED) && this.isUserAuthenticated) {
             return true;
         }
 
@@ -100,7 +102,7 @@ export class AccessrolesDirective {
         const isAccessible = !this.securityEnabled || this.hasAccessToWidget(widgetRoles, this.userRoles);
         if (isAccessible) {
             // [WMS-19294] pass on the previous context as second param.
-            this.viewContainerRef.createEmbeddedView(this.templateRef, (this.inj as any).view.context);
+            this.viewContainerRef.createEmbeddedView(this.templateRef, this.context);
         } else {
             this.viewContainerRef.clear();
         }

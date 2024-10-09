@@ -7,8 +7,7 @@ import {
 } from '@angular/compiler';
 import { WIDGET_IMPORTS } from './imports';
 import { isMobileApp } from '@wm/core';
-
-declare const _;
+import {find, isEqual, isFunction, remove, sortBy, uniqWith} from "lodash-es";
 
 const CSS_REGEX = {
     COMMENTS_FORMAT : /\/\*((?!\*\/).|\n)+\*\//g,
@@ -26,7 +25,7 @@ interface IProviderInfo {
 const OVERRIDES = {
     'accessroles': '*accessroles',
     'ng-if': '*ngIf',
-    'showindevice': '*showInDevice',
+    'showindevice': '*wmShowInDevice',
     'ng-class': '[ngClass]',
     'data-ng-class': '[ngClass]',
     'data-ng-src': 'src',
@@ -351,12 +350,12 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
             if (nodeDef.provide) {
                 provideInfo = {
                     nodeName: node.name,
-                    provide: _.isFunction(nodeDef.provide) ? nodeDef.provide(attrMap, shared, ...requiredProviders) : nodeDef.provide
+                    provide: isFunction(nodeDef.provide) ? nodeDef.provide(attrMap, shared, ...requiredProviders) : nodeDef.provide
                 };
                 // For table node, assigning parent provide map to the child, as child requires some parent provide attrs.
                 if (node.name === 'wm-table') {
                     const tableColNodeDefn = registry.get('wm-table-column');
-                    tableColNodeDefn[_.find(node.attrs, (el) => el.name === 'name').value + provideInfo.provide.get('table_reference')] = provideInfo.provide;
+                    tableColNodeDefn[find(node.attrs, (el) => el.name === 'name').value + provideInfo.provide.get('table_reference')] = provideInfo.provide;
                     registry.set('wm-table-column', tableColNodeDefn);
                 }
                 providers.push(provideInfo);
@@ -365,7 +364,7 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
             markup = `<${nodeName} ${getAttrMarkup(attrMap)}>`;
         }
 
-        node.children.forEach((child) => {
+        node.children.forEach((child: Node | any) => {
             if(child.attrs) {
                 let showInDeviceAttr, accessRolesAttr, deferLoadAttr, showAttr;
                 child.attrs.forEach(function(attr){
@@ -399,7 +398,8 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
                             deferLoadContainer.attrs.push(showAttr);
                         }
                     }
-                    _.remove(child.attrs, function(attr) {
+                    remove(child.attrs, function (attr) {
+                        // @ts-ignore
                         return attr.name === 'showindevice' || attr.name === 'accessroles' || attr.name === 'deferload'
                     });
                     let childContainer, parentContainer;
@@ -481,8 +481,8 @@ export const transpile = (markup: string = '') => {
             }
         });
     }
-    requiredWMComponents = _.uniqWith(requiredWMComponents, _.isEqual);
-    requiredWMComponents = _.sortBy(requiredWMComponents, ['from', 'name']);
+    requiredWMComponents = uniqWith(requiredWMComponents, isEqual);
+    requiredWMComponents = sortBy(requiredWMComponents, ['from', 'name']);
     return {
         markup: output,
         requiredWMComponents: requiredWMComponents

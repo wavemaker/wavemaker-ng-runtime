@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { App, getValidJSON } from '@wm/core';
-
-declare const _;
+import {forEach, remove, split, startsWith} from "lodash-es";
 
 interface Message {
     address: string;
@@ -45,7 +44,7 @@ export class ExtAppMessageService {
             callBack : listener
         };
         this.handlers.push(handler);
-        return () => _.remove(this.handlers, handler);
+        return () => remove(this.handlers, handler);
     }
 
 }
@@ -88,7 +87,7 @@ export class ExtAppMessageService {
         } else if (flow === 'pkce') {
             str = url.match(/code=([^&#]*)/)[0];
         }
-        _.forEach(_.split(str, '&'), entry => {
+        forEach(split(str, '&'), entry => {
             const esplits = entry.split('=');
             data[esplits[0]] = esplits[1];
         });
@@ -107,7 +106,7 @@ export class ExtAppMessageService {
     }
     window['handleOpenURL'] = function (url) {
         const handleOpenURL = window['handleOpenURL'];
-        if (handleOpenURL.isReady && !_.startsWith(url, 'http')) {
+        if (handleOpenURL.isReady && !startsWith(url, 'http')) {
             const message = createMessage(url);
             const e = new window['CustomEvent']('externalAppMessageReceived', {
                 'detail': {

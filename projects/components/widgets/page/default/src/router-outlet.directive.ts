@@ -1,6 +1,6 @@
-import { Directive, Injector } from '@angular/core';
+import {Directive, Inject, Injector, Optional} from '@angular/core';
 
-import { switchClass } from '@wm/core';
+import {switchClass} from '@wm/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 import { registerProps } from './router-outlet.props';
@@ -19,8 +19,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class RouterOutletDirective extends StylableComponent {
     static initializeProps = registerProps();
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {

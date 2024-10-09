@@ -5,8 +5,7 @@ import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
 import { isStyle } from './styler';
 import { getConditionalClasses, getWatchIdentifier } from '../../utils/widget-utils';
 import { isBooleanAttr, isDimensionProp } from './constants';
-
-declare const _;
+import {startsWith} from "lodash-es";
 
 /**
  * Returns the parsed value based on the provided type
@@ -63,7 +62,7 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
 
         if (isDimensionProp(key)) {
             nv = toDimension(nv);
-        } else if (_.startsWith(nv, 'resources/')) {
+        } else if (startsWith(nv, 'resources/')) {
             const ref: any = component;
             if (ref._parentPrefab_ === undefined) {
                 ref._parentPrefab_ = component.$element.parent().closest('[prefabname][prefabname!="__self__"]').attr('prefabname') || '';

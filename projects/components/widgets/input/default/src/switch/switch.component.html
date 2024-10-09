@@ -1,17 +1,19 @@
-<div role="group" class="btn-group btn-group-justified">
+<div class="btn-group btn-group-justified">
     <a *ngFor="let opt of datasetItems; let $index = index;"
        focus-target
        href="javascript:void(0);"
        class="btn btn-default"
        [name]="'wm-switch-' + opt.key"
+       role="button"
        [ngClass]="{'selected': opt.selected, 'disabled': disabled}"
+       [attr.aria-pressed]="opt.selected ? true : false"
        (click)="selectOpt($event, $index, opt)"
     >
         <i *ngIf="opt.dataObject && opt.dataObject[iconclass]" aria-hidden="true" [ngClass]="['app-icon', opt.dataObject[iconclass] || opt['icon']]"></i>
         <span class="caption" [textContent]="opt[displayfield] || opt.label"></span>
     </a>
 </div>
-<span [title]="selectedItem ? selectedItem.label : modelByKey"
+<span aria-hidden="true" [title]="selectedItem ? selectedItem.label : modelByKey"
       class="btn btn-primary app-switch-overlay switch-handle">
     <i *ngIf="iconclass"
        class="app-icon {{(selectedItem && selectedItem.dataObject) && selectedItem.dataObject[iconclass]}}"></i>

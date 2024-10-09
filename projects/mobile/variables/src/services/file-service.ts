@@ -1,8 +1,7 @@
 import { isValidWebURL } from '@wm/core';
 import { DeviceFileOpenerService, DeviceFileUploadService } from '@wm/mobile/core';
 import { $rootScope, DeviceVariableService, IDeviceVariableOperation } from '@wm/variables';
-
-declare const _;
+import {assignIn, mapValues} from "lodash-es";
 
 export class FileService extends DeviceVariableService {
     name = 'file';
@@ -28,7 +27,14 @@ class OpenFileOperation implements IDeviceVariableOperation {
     public readonly model = {};
     public readonly properties = [
         {target: 'filePath', type: 'string', value: '', dataBinding: true},
-        {target: 'fileType', type: 'list', options: _.mapValues(this._defaultFileTypesToOpen, 'label'),  value: 'pdf', dataBinding: true, hide: true},
+        {
+            target: 'fileType',
+            type: 'list',
+            options: mapValues(this._defaultFileTypesToOpen, 'label'),
+            value: 'pdf',
+            dataBinding: true,
+            hide: true
+        },
         {target: 'spinnerContext', hide: false},
         {target: 'spinnerMessage', hide: false}
     ];
@@ -84,7 +90,7 @@ class UploadFileOperation implements IDeviceVariableOperation {
             };
         return this.fileUploader.upload(serverUrl, 'files', filePath, fileName)
             .then(uploadResponse => {
-                _.assignIn(data, JSON.parse(uploadResponse.text)[0]);
+                assignIn(data, JSON.parse(uploadResponse.text)[0]);
                 data.loaded = data.length;
                 return data;
             });

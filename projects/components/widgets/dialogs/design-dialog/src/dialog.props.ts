@@ -7,7 +7,7 @@ export const registerProps = () => {
             [
                 ['animation', PROP_STRING],
                 ['class', PROP_STRING],
-                ['closable', {value: true, PROP_BOOLEAN}],
+                ['closable', {value: true, ...PROP_BOOLEAN}],
                 ['iconclass', {value: 'wi wi-file-text', PROP_STRING}],
                 ['iconheight', PROP_STRING],
                 ['iconmargin', PROP_STRING],

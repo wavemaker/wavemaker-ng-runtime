@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import {Component, Inject, Injector, Optional} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './header.props';
@@ -19,8 +19,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class HeaderComponent extends StylableComponent {
     static initializeProps = registerProps();
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
     }

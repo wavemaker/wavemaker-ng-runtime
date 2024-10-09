@@ -3,7 +3,7 @@
             dropdownToggle
             aria-haspopup="true"
             aria-expanded="false"
-            [attr.aria-label]="hint || 'Menu'"
+            [attr.aria-label]="arialabel || 'Menu'"
             class="btn app-button dropdown-toggle {{menuclass}}"
             hint.bind="hint"
             shortcutkey.bind="shortcutkey"
@@ -11,7 +11,7 @@
             caption.bind="caption"
             iconclass.bind="iconclass"
             iconposition.bind="iconposition">
-        <span class="pull-right caret fa {{menuCaret}}"></span>
+        <span class="pull-right caret fa" [ngClass]="[menuCaret]"></span>
     </button>
 </ng-template>
 
@@ -39,7 +39,7 @@
        iconposition.bind="iconposition"
        badgevalue.bind="badgevalue"
     >
-        <span class="pull-right caret fa {{menuCaret}}"></span>
+        <span class="pull-right caret fa" [ngClass]="[menuCaret]"></span>
     </a>
 </ng-container>
 

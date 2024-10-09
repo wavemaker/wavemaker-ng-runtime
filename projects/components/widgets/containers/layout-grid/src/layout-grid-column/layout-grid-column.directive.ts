@@ -1,6 +1,6 @@
-import { Attribute, Directive, Injector } from '@angular/core';
+import {Attribute, Directive, Inject, Injector, Optional} from '@angular/core';
 
-import { isMobileApp, setCSS, switchClass, Viewport } from '@wm/core';
+import {isMobileApp, setCSS, switchClass, Viewport} from '@wm/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
 
@@ -20,8 +20,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 })
 export class LayoutGridColumnDirective extends StylableComponent {
     static initializeProps = registerProps();
-    constructor(inj: Injector, @Attribute('height') height, private viewport: Viewport) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Attribute('height') height, private viewport: Viewport, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         // if the height is provided set the overflow to auto
         if (height) {

@@ -112,6 +112,16 @@ export class Text {
      */
     @Input() step: number;
     /**
+     * This property allows user to bind expression to class property.
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() conditionalclass: string;
+    /**
+     * This property allows user to bind expression to style property
+     * <p><em>Bindable: </em><code>true</code></p>
+     */
+    @Input() conditionalstyle: string;
+    /**
      * Callback function which will be triggered when the widget is clicked or when datavalue has changed.
      * @param $event  DOM event on which call back is triggered
      * @param widget  Instance of the text widget

@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 
 import * as Utils from '../utils/utils';
-
-declare const _;
+import {assign} from "lodash-es";
 
 @Injectable({providedIn: 'root'})
 export class UtilsService {
     constructor() {
-        _.assign(this, Utils);
+        assign(this, Utils);
     }
 }

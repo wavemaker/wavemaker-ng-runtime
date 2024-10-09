@@ -1,10 +1,11 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Injector, Input, NgZone, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-
 import { App } from '@wm/core';
+import {filter} from "lodash-es";
 
-declare const moment, $, _;
+declare const $;
+declare const moment;
 
 @Component({
     selector: 'wm-datetimepicker',
@@ -131,10 +132,20 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
             return true;
         }
         const cd = moment(this.changedValue);
-        if (this._bsDatepickerConfig?.minDate && this._bsDatepickerConfig?.minDate > this.changedValue) {
+        const minDate = this._bsDatepickerConfig?.minDate;
+        const maxDate = this._bsDatepickerConfig?.maxDate;
+        if (minDate
+            && ((this.mode === 'DATE'
+                    && moment(minDate).startOf('day').toDate() > this.changedValue)
+                || (this.mode !== 'DATE'
+                    && minDate > this.changedValue))) {
             return false;
         }
-        if (this._bsDatepickerConfig?.maxDate && this._bsDatepickerConfig?.maxDate < this.changedValue) {
+        if (maxDate
+            && ((this.mode === 'DATE'
+                    && moment(maxDate).endOf('day').toDate() < this.changedValue)
+                || (this.mode !== 'DATE'
+                    && maxDate < this.changedValue))) {
             return false;
         }
         if (this._bsDatepickerConfig?.daysDisabled?.indexOf(cd.day()) >= 0) {
@@ -157,7 +168,7 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
      */
     private hightlightToday() {
         const toDay = new Date().getDate().toString();
-        _.filter($(`body>modal-container .date-picker-modal span:contains(${toDay})`)
+        filter($(`body > modal-container .date-picker-modal span:contains(${toDay})`)
             .not('.is-other-month,.current-date'), (obj) => {
             if ($(obj).text() === toDay) {
                 $(obj).addClass('current-date text-info');

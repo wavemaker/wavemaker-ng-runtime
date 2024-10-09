@@ -1,12 +1,17 @@
 import IMask from "imask";
 declare const moment;
 
-
-export function validateTheMaskedDate (format)  {
+export function validateTheMaskedDate (format, locale)  {
     if(format == 'timestamp') {
-        return {};
+        return false;
     }
-    const modifiedFormat = format.toUpperCase().replace(/E/g, 'd');
+    let modifiedFormat = format.toUpperCase().replace(/E/g, 'd');
+    if((modifiedFormat.split('D').length - 1) === 1) {
+        modifiedFormat = modifiedFormat.replace('D', 'DD');
+    }
+    if((modifiedFormat.split('M').length - 1) === 1 ) {
+        modifiedFormat = modifiedFormat.replace('M', 'MM');
+    }
     const parseFn=  str => {
         return moment(str, modifiedFormat).toDate();
     };
@@ -33,7 +38,6 @@ export function validateTheMaskedDate (format)  {
                 to: 999,
                 placeholderChar:'Y',
                 maxLength: 3,
-                overwrite: false,
             },
             YY: {
                 mask: IMask.MaskedRange,
@@ -44,86 +48,75 @@ export function validateTheMaskedDate (format)  {
             },
             Y: {
                 mask: IMask.MaskedRange,
-                from: 0,
-                to: 9,
+                from: 1900,
+                to: 9999,
                 placeholderChar:'Y',
-                maxLength: 1,
+                maxLength: 4,
             },
-        M: {
-            mask: IMask.MaskedRange,
-            from: 1,
-            to: 12,
-            placeholderChar:'M',
-            maxLength: 2,
+            M: {
+                mask: IMask.MaskedRange,
+                from: 1,
+                to: 12,
+                placeholderChar:'M',
+                maxLength: 2,
+            },
+            MM: {
+                mask: IMask.MaskedRange,
+                from: 1,
+                to: 12,
+                placeholderChar:'M',
+                maxLength: 2,
+            },
+            MMM: {
+                mask: IMask.MaskedEnum,
+                enum: Array.from({ length: 12 }, (_, i) =>
+                    new Date(0, i).toLocaleString(locale, { month: 'short' })
+                ),
+                placeholderChar:'M',
+                maxLength: 3,
+            },
+            MMMM: {
+                mask: IMask.MaskedEnum,
+               enum: Array.from({ length: 12 }, (_, i) =>
+                    new Date(0, i).toLocaleString(locale, { month: 'long' })
+                ),
+                placeholderChar: "M",
+                maxLength: 4
+            },
+            DD: {
+                mask: IMask.MaskedRange,
+                from: 1,
+                to: 31,
+                placeholderChar:'D',
+                maxLength: 2,
+            },
+            D: {
+                mask: IMask.MaskedRange,
+                from: 1,
+                to: 31,
+                placeholderChar:'D',
+                maxLength: 2,
+            },
+            ddd: {
+                mask: IMask.MaskedEnum,
+                enum: Array.from({ length: 7 }, (_, i) =>
+                    new Date(0, 0, i + 1).toLocaleString(locale, { weekday: 'short' })
+                ),
+                placeholderChar:'E',
+                maxLength: 3,
+            },
+            dddd: {
+                mask: IMask.MaskedEnum,
+                enum: Array.from({ length: 7 }, (_, i) =>
+                    new Date(0, 0, i + 1).toLocaleString(locale, { weekday: 'long' })
+                ),
+                placeholderChar:'E',
+                minLength: 6,
+            },
         },
-        MM: {
-            mask: IMask.MaskedRange,
-            from: 1,
-            to: 12,
-            placeholderChar:'M',
-            maxLength: 2,
-        },
-        MMM: {
-            mask: IMask.MaskedEnum,
-            enum: Array.from({ length: 12 }, (_, i) =>
-                new Date(0, i).toLocaleString(window.navigator.language, { month: 'short' })
-            ),
-            placeholderChar:'M',
-            maxLength: 3,
-        },
-        MMMM: {
-            mask: IMask.MaskedEnum,
-            enum: Array.from({ length: 12 }, (_, i) =>
-                new Date(0, i).toLocaleString(window.navigator.language, { month: 'long' })
-            ),
-            placeholderChar:'M',
-        },
-        DD: {
-            mask: IMask.MaskedRange,
-            from: 1,
-            to: 31,
-            placeholderChar:'D',
-            maxLength: 2,
-        },
-        D: {
-            mask: IMask.MaskedRange,
-            from: 1,
-            to: 31,
-            placeholderChar:'D',
-            maxLength: 1,
-        },
-        ddd: {
-            mask: IMask.MaskedEnum,
-            enum: Array.from({ length: 7 }, (_, i) =>
-                new Date(0, 0, i + 1).toLocaleString(window.navigator.language, { weekday: 'short' })
-            ),
-            placeholderChar:'E',
-            maxLength: 3,
-        },
-        dddd: {
-            mask: IMask.MaskedEnum,
-            enum: Array.from({ length: 7 }, (_, i) =>
-                new Date(0, 0, i + 1).toLocaleString(window.navigator.language, { weekday: 'long' })
-            ),
-            placeholderChar:'E',
-            minLength: 6,
-        },
-    },
         autofix: true,
         lazy: false,
         overwrite: true,
         skipInvalid: true
-
     }
 }
-
-
-
-
-
-
-
-
-
-
-

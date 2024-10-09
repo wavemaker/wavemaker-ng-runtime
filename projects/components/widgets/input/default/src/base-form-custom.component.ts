@@ -67,9 +67,11 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
     public invokeOnChange(value, $event?: Event | any, valid?: boolean) {
         // let the angular know about the change
         this._onChange(value);
-
-        if (valid) {
+        if ($event) {
             super.invokeOnChange(value, $event);
+        } else if (valid) {
+            // Fix for [WMS-24869]: updating PrevDatavalue when there is a default value for the widget.
+            this.updatePrevDatavalue(value);
         }
     }
 

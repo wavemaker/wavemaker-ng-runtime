@@ -1,15 +1,15 @@
     <input class="form-control app-textbox app-dateinput display-input"
         focus-target
         type="text"
-           #dateInput
         [name]="name"
-       [imask]="mask"
-       [unmask]="true"
+        #dateInput
+        [imask]="mask"
+        [unmask]="true"
         [tabindex]="loadNativeDateInput ? '-1' : tabindex"
         [attr.aria-hidden]="!!loadNativeDateInput"
         [value]="displayValue"
         (click)="toggleDpDropdown($event, true)"
-        (focus)="onDateTimeInputFocus(); invokeOnFocus($event);"
+        (focus)="onDateTimeInputFocus(); invokeOnFocus($event); updateIMask()"
         (blur)="onInputBlur($event)"
         [disabled]="disabled || readonly"
         [autofocus]="autofocus"
@@ -17,7 +17,7 @@
         [readOnly]="isReadOnly"
         [attr.placeholder]="placeholder"
         [attr.accesskey]="shortcutkey"
-        [attr.aria-label]="hint"
+           [attr.aria-label]="arialabel"
         (change)="onDisplayDateChange($event)"
         (keydown)="this._triggeredByUser = true; onDisplayKeydown($event);">
 
@@ -41,7 +41,7 @@
         aria-controls="date"
         [tabindex]="-1"
         [attr.aria-hidden]="!!loadNativeDateInput"
-        [container]="containerTarget || 'body'"
+        [container]="containerTarget || '.wm-app'"
         [bsConfig]="_dateOptions"
         [isOpen]="isOpen"
         #datepicker="bsDatepicker"
@@ -70,10 +70,10 @@
     </wm-datetimepicker>
     <div class="mobile-input mobile-datepicker-container"
         [tabindex]="tabindex || 0"
-         role="button"
+         (click)="!(disabled || readonly) && showDatePickerModal(bsDataValue)"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
-        [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : hint || 'Choose Date'"
-        (click)="!(disabled || readonly || isCurrentDate) && showDatePickerModal(bsDataValue)">
+         [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : arialabel || 'Choose Date'"
+         role="button">
     </div>
 </ng-template>

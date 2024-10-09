@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
 
-import { File } from '@awesome-cordova-plugins/file/ngx'; 
+import {File} from '@awesome-cordova-plugins/file/ngx';
 
 import { $appDigest, hasCordova, noop, fetchContent, isIos } from '@wm/core';
 
 import { IDeviceStartUpService } from './device-start-up-service';
+import {forEach} from "lodash-es";
 
-declare const cordova, _;
+declare const cordova;
 
 const REGISTRY_FILE_NAME = 'registry.info';
 
 export interface Config {
     baseUrl: string;
     customUrlScheme: string;
+    customUrl: string;
     buildTime: number;
     enableSSLPinning: boolean;
     offlineStorage: boolean;
@@ -40,7 +42,8 @@ export class DeviceService {
         }, maxWaitTime * 1000);
         document.addEventListener('backbutton', this.executeBackTapListeners.bind(this));
         if (hasCordova()) {
-            const configUrl = `${location.protocol}//${location.hostname}${isIos() ? '' : '/_www'}/config.json`; 
+            const port = location.port ? ':' + location.port : '';
+            const configUrl = `${location.protocol}//${location.hostname}${port}${isIos() ? '' : '/_www'}/config.json`;
             fetchContent('json', configUrl, true, (response => {
                 if (!response.error && response.baseUrl) {
                     this._config = response;
@@ -50,7 +53,7 @@ export class DeviceService {
     }
 
     public executeBackTapListeners($event) {
-        _.forEach(this._backBtnTapListeners, fn => {
+        forEach(this._backBtnTapListeners, fn => {
             return fn($event) !== false;
         });
         // explicitly applying the digest cycle as the backbutton listener is not rendering the page content.
@@ -125,7 +128,7 @@ export class DeviceService {
     }
 
     public isAppConnectedToPreview() {
-        return this._config.customUrlScheme !== this._config.baseUrl && this.getBaseUrl() !== 'NONE';
+        return this._config.customUrl !== this._config.baseUrl && this.getBaseUrl() !== 'NONE';
     }
 
     public getConfig(): Config {

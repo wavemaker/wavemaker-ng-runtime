@@ -4,8 +4,7 @@ import { BaseComponent, Context, provideAsWidgetRef } from '@wm/components/base'
 
 import { registerProps } from './table-row-action.props';
 import { TableComponent } from '../table.component';
-
-declare const _;
+import {isUndefined} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
 
@@ -13,7 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
     selector: '[wmTableRowAction]',
     providers: [
         provideAsWidgetRef(TableRowActionDirective),
-        {provide: Context, useValue: {}, multi: true}
+        {provide: Context, useFactory: () => { return {} }, multi: true}
     ]
 })
 export class TableRowActionDirective extends BaseComponent implements OnInit {
@@ -39,9 +38,10 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
     constructor(
         inj: Injector,
         @Optional() public table: TableComponent,
-        @Self() @Inject(Context) contexts: Array<any>
+        @Self() @Inject(Context) contexts: Array<any>,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         contexts[0].editRow = (evt) => this.table.editRow(evt);
         contexts[0].deleteRow = (evt) => this.table.deleteRow(evt);
@@ -49,7 +49,7 @@ export class TableRowActionDirective extends BaseComponent implements OnInit {
     }
 
     getTitle() {
-        return _.isUndefined(this.title) ? (this['display-name'] || '') : this.title;
+        return isUndefined(this.title) ? (this['display-name'] || '') : this.title;
     }
 
     populateAction() {

@@ -20,9 +20,9 @@ done
 mkdir -p libraries/scripts/datatable/
 cp projects/components/widgets/data/table/src/datatable.js libraries/scripts/datatable/
 mkdir -p libraries/scripts/d3/
-cp ./node_modules/d3/d3.min.js libraries/scripts/d3/
-mkdir -p libraries/scripts/@wavemaker.com/nvd3/build/
-cp ./node_modules/@wavemaker.com/nvd3/build/nv.d3.min.js libraries/scripts/@wavemaker.com/nvd3/build/
+cp ./node_modules/d3/dist/d3.min.js libraries/scripts/d3/
+mkdir -p libraries/scripts/@wavemaker/nvd3/build/
+cp ./node_modules/@wavemaker/nvd3/build/nv.d3.min.js libraries/scripts/@wavemaker/nvd3/build/
 mkdir -p libraries/scripts/fullcalendar/
 cp ./node_modules/fullcalendar/main.min.js libraries/scripts/fullcalendar
 mkdir -p libraries/scripts/summernote/dist/
@@ -39,9 +39,11 @@ mkdir -p libraries/scripts/swipey
 cp ./projects/swipey/src/swipey.jquery.plugin.js libraries/scripts/swipey/
 mkdir -p libraries/scripts/jquery.ui.touch-punch
 cp ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js libraries/scripts/jquery.ui.touch-punch/
+mkdir -p libraries/scripts/tree-keyboard-navigation/
+cp projects/components/widgets/basic/tree/src/keyboard-navigation.js libraries/scripts/tree-keyboard-navigation/
 
 
-node --trace-warnings node_modules/.bin/rollup -c rollup.build-task.js
+node --trace-warnings node_modules/.bin/rollup -c ./config/rollup.build-task.mjs
 
 node_modules/.bin/rimraf dist/runtime-cli
 
@@ -57,7 +59,7 @@ cp -r pwa-assets dist/runtime-cli
 if [[ "${dev}" == true ]]; then
     cp -r libraries dist/runtime-cli/angular-app
 fi
-cp angular.json package.json package-lock.json tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
+cp angular.json package.json package-lock.json .npmrc tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
 cp ./wm.package.json libraries/package.json
 
 if [[ "${publish}" == true ]]; then

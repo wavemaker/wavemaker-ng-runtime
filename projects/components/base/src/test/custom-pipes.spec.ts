@@ -3,10 +3,13 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
-import { compileTestComponent } from './util/component-test-util';
+import { compileTestComponent, mockApp } from './util/component-test-util';
 import { ITestModuleDef } from './common-widget.specs';
 import { CustomPipe, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe, SanitizePipe } from '@wm/components/base';
-import { CustomPipeManager } from '@wm/core';
+import { AbstractI18nService, App, CustomPipeManager } from '@wm/core';
+import { MockAbstractI18nService } from './util/date-test-util';
+
+declare const moment;
 
 @Component({
     template: '<div></div>'
@@ -22,17 +25,18 @@ const testModuleDef: ITestModuleDef = {
         BrowserModule,
     ],
     declarations: [PipeWrapperComponent],
-    providers: [DecimalPipe, DatePipe, TrustAsPipe, SanitizePipe, CustomPipeManager]
+    providers: [{ provide: App, useValue: mockApp },
+    { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+        DecimalPipe, DatePipe, TrustAsPipe, SanitizePipe, CustomPipeManager
+    ]
 };
-
-declare const moment;
 
 describe('ToNumber pipe', () => {
     let fixture: ComponentFixture<PipeWrapperComponent>;
     let pipe: ToNumberPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new ToNumberPipe(TestBed.inject(DecimalPipe));
+        pipe = new ToNumberPipe(TestBed.inject(DecimalPipe), TestBed.inject(AbstractI18nService));
     });
 
     it('create an instance', () => {
@@ -42,7 +46,6 @@ describe('ToNumber pipe', () => {
     it('should display a number with two fractions', () => {
         const result = pipe.transform('678.989898', 2);
         expect(result).toBe('678.99');
-
     });
 });
 
@@ -50,7 +53,7 @@ describe('ToNumber pipe', () => {
 
 describe('Trailingzero pipe', () => {
     let fixture: ComponentFixture<PipeWrapperComponent>;
-    let pipe:TrailingZeroDecimalPipe;
+    let pipe: TrailingZeroDecimalPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
         pipe = new TrailingZeroDecimalPipe(TestBed.inject(DecimalPipe));
@@ -63,24 +66,27 @@ describe('Trailingzero pipe', () => {
     it('should get the decimal number without trailingzero', () => {
         const result = pipe.transform("3454.20", 'en', "1.0-16", null, false, '20');
         expect(result).toBe('3,454.2');
-
     });
 
     it('should get the decimal number with trailingzero', () => {
         const result = pipe.transform("3454.200", 'en', "1.0-16", null, true, '20');
         expect(result).toBe('3,454.20');
-
     });
-
 });
-
 
 describe('ToDate pipe', () => {
     let fixture: ComponentFixture<PipeWrapperComponent>;
     let pipe: ToDatePipe;
+    let customPipeManager: CustomPipeManager;
+    let i18nService: AbstractI18nService;
+    let datePipe: DatePipe;
+
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new ToDatePipe(TestBed.inject(DatePipe));
+        customPipeManager = TestBed.inject(CustomPipeManager);
+        i18nService = TestBed.inject(AbstractI18nService);
+        datePipe = TestBed.inject(DatePipe);
+        pipe = new ToDatePipe(datePipe, i18nService, customPipeManager);
     });
 
     it('create an instance', () => {
@@ -99,7 +105,7 @@ describe('ToDate pipe', () => {
         expect(result).toBe('2020-04-03');
     });
 
-     it('should transform the date to the format yyyy-M-dd', () => {
+    it('should transform the date to the format yyyy-M-dd', () => {
         const date = new Date('04/03/2020 09:07:05:055');
         const result = pipe.transform(date, 'yyyy-M-dd');
         expect(result).toBe('2020-4-03');
@@ -108,7 +114,7 @@ describe('ToDate pipe', () => {
     it('should transform the date to the format yyyy-MM-dd hh:mm:ss:sss Z', () => {
         const date = new Date('04/03/2020 09:07:05:055');
         const result = pipe.transform(date, 'yyyy-MM-dd hh:mm:ss:sss Z');
-        expect(result).toBe('2020-04-03 09:07:05:055 '+ date.toString().match(/([-\+][0-9]+)\s/)[1]);
+        expect(result).toBe('2020-04-03 09:07:05:055 ' + date.toString().match(/([-\+][0-9]+)\s/)[1]);
 
     });
 
@@ -137,9 +143,56 @@ describe('ToDate pipe', () => {
         expect(result).toBe('')
     });
 
+    it('should return empty string for undefined input', () => {
+        const result = pipe.transform(undefined, 'yyyy-MM-dd');
+        expect(result).toBe('');
+    });
 
+    it('should use custom formatter if isCustomPipe is true', () => {
+        const customPipe = {
+            formatter: jest.fn().mockReturnValue('Custom formatted date')
+        };
+        jest.spyOn(customPipeManager, 'getCustomPipe').mockReturnValue(customPipe);
+
+        // Re-instantiate the pipe to trigger the constructor logic
+        pipe = new ToDatePipe(datePipe, i18nService, customPipeManager);
+
+        const result = pipe.transform('2021-09-20', 'yyyy-MM-dd');
+        expect(result).toBe('Custom formatted date');
+        expect(customPipe.formatter).toHaveBeenCalled();
+    });
+
+    it('should return ISO string for UTC format', () => {
+        const timestamp = 1632154800000; // 2021-09-20T12:00:00.000Z
+        const result = pipe.transform(timestamp, 'UTC');
+        expect(result).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+    });
+
+    it('should format date with timezone offset', () => {
+        const timestamp = 1632154800000; // 2021-09-20T12:00:00.000Z
+        jest.spyOn(i18nService, 'getTimezone').mockReturnValue('America/New_York');
+
+        const result = pipe.transform(timestamp, 'yyyy-MM-dd HH:mm:ss');
+        expect(result).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
+    });
+
+    it('should handle hasOffsetStr case', () => {
+        const dateWithOffset = '2021-09-20T12:00:00+05:30';
+
+        const result = pipe.transform(dateWithOffset, 'yyyy-MM-dd HH:mm:ss');
+        expect(result).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
+    });
+
+    it('should handle null data', () => {
+        const result = pipe.transform(null, 'yyyy-MM-dd');
+        expect(result).toBe('');
+    });
+
+    it('should handle empty string data', () => {
+        const result = pipe.transform('', 'yyyy-MM-dd');
+        expect(result).toBe('');
+    });
 });
-
 
 describe('StringToNumber pipe', () => {
 
@@ -159,7 +212,10 @@ describe('StringToNumber pipe', () => {
         expect(result).toBe(345);
     });
 
-
+    it("should handle data undefined", () => {
+        const result = pipe.transform(undefined);
+        expect(result).toBe(undefined);
+    })
 });
 
 describe('NumberToString pipe', () => {
@@ -168,7 +224,7 @@ describe('NumberToString pipe', () => {
     let pipe: NumberToStringPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new NumberToStringPipe(TestBed.inject(DecimalPipe));
+        pipe = new NumberToStringPipe(TestBed.inject(DecimalPipe), TestBed.inject(AbstractI18nService));
     });
 
     it('create an instance', () => {
@@ -238,7 +294,7 @@ describe('ToCurrency pipe', () => {
     let pipe: ToCurrencyPipe;
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
-        pipe = new ToCurrencyPipe(TestBed.inject(DecimalPipe));
+        pipe = new ToCurrencyPipe(TestBed.inject(DecimalPipe), TestBed.inject(AbstractI18nService));
     });
 
     it('create an instance', () => {
@@ -255,9 +311,12 @@ describe('ToCurrency pipe', () => {
         expect(result).toBe('$2,345.452');
     });
 
+    it("should handle negative number", () => {
+        const result = pipe.transform(-2345.452, '$', '');
+        expect(result).toBe('-$2,345.452');
+    })
 
 });
-
 
 describe('TimeFromNow pipe', () => {
 
@@ -294,6 +353,10 @@ describe('TimeFromNow pipe', () => {
         expect(result).toBe('in 2 days');
     });
 
+    it("should handle data undefined", () => {
+        const result = pipe.transform(undefined);
+        expect(result).toBe(undefined);
+    });
 
 });
 
@@ -356,6 +419,10 @@ describe('Filter pipe', () => {
         expect(JSON.stringify(result)).toBe(JSON.stringify(find));
     });
 
+    it("should handle data undefined", () => {
+        const result = pipe.transform(undefined, 'name', 'Ben');
+        expect(result).toEqual([]);
+    })
 
 });
 
@@ -465,12 +532,12 @@ describe('StateClass pipe', () => {
 
     it('should get the success state class name(Lowercase)', () => {
         const result = pipe.transform('success');
-        expect(result).toBe('wi wi-done text-success');
+        expect(result).toBe('wi wi-check-circle text-success');
     });
 
     it('should get the success state class name(Uppercase)', () => {
         const result = pipe.transform('SUCCESS');
-        expect(result).toBe('wi wi-done text-success');
+        expect(result).toBe('wi wi-check-circle text-success');
     });
 
     it('should get the error state class name(Lowercase)', () => {
@@ -644,10 +711,13 @@ describe('Custom pipe', () => {
     let fixture: ComponentFixture<PipeWrapperComponent>;
     let pipe: CustomPipe;
     let wrapperComponent: PipeWrapperComponent;
+    let customPipeManager: CustomPipeManager;
+
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
         wrapperComponent = fixture.componentInstance;
-        pipe = new CustomPipe(TestBed.inject(CustomPipeManager));
+        customPipeManager = TestBed.inject(CustomPipeManager);
+        pipe = new CustomPipe(customPipeManager);
     });
 
     it('create an instance', () => {
@@ -670,6 +740,43 @@ describe('Custom pipe', () => {
         expect(result).toBe('+91 7878497872');
     });
 
+    it('should handle no additional arguments', () => {
+        const mockFormatter = jest.fn(data => `formatted-${data}`);
+        jest.spyOn(customPipeManager, 'getCustomPipe').mockReturnValue({ formatter: mockFormatter });
 
+        const result = pipe.transform('testData', 'testPipe');
+        expect(result).toBe('formatted-testData');
+        expect(mockFormatter).toHaveBeenCalledWith('testData');
+    });
+
+    it('should catch and log errors from formatter', () => {
+        const mockFormatter = jest.fn(() => { throw new Error('Test error'); });
+        jest.spyOn(customPipeManager, 'getCustomPipe').mockReturnValue({ formatter: mockFormatter });
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+
+        const result = pipe.transform('testData', 'testPipe');
+
+        expect(result).toBe('testData');
+        expect(consoleSpy).toHaveBeenCalledWith('Pipe name: testPipe', expect.any(Error));
+    });
+
+    it('should return original data when formatter throws an error', () => {
+        const mockFormatter = jest.fn(() => { throw new Error('Test error'); });
+        jest.spyOn(customPipeManager, 'getCustomPipe').mockReturnValue({ formatter: mockFormatter });
+
+        const result = pipe.transform('testData', 'testPipe');
+        expect(result).toBe('testData');
+    });
+
+    it('should handle multiple arguments passed directly to transform', () => {
+        const mockFormatter = jest.fn((data, ...args) => `formatted-${data}-${args.join('-')}`);
+        jest.spyOn(customPipeManager, 'getCustomPipe').mockReturnValue({ formatter: mockFormatter });
+
+        // Call transform with multiple arguments
+        const result = (pipe as any).transform('testData', 'testPipe', 'arg1', 'arg2', 'arg3');
+
+        expect(result).toBe('formatted-testData-arg1-arg2-arg3');
+        expect(mockFormatter).toHaveBeenCalledWith('testData', 'arg1', 'arg2', 'arg3');
+    });
 });
 

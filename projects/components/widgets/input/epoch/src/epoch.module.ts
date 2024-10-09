@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
-import { IMaskModule } from 'angular-imask';
 import { WmComponentsModule } from '@wm/components/base';
 
 import { DateComponent } from './date/date.component';
@@ -13,6 +12,7 @@ import { DateTimePickerComponent, TimePickerComponent } from './date-time/date-t
 import { DatetimeComponent } from './date-time/date-time.component';
 import { TimeComponent } from './time/time.component';
 import { PickerComponent, PickerGroupComponent } from './picker/picker.component';
+import { IMaskModule } from 'angular-imask';
 
 
 const components = [
@@ -36,8 +36,7 @@ const components = [
         IMaskModule
     ],
     declarations: [...components],
-    exports: [...components],
-    entryComponents: []
+    exports: [...components]
 })
 export class EpochModule {
 }

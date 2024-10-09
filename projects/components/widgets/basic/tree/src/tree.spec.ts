@@ -1,29 +1,29 @@
 import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
-import { By } from '@angular/platform-browser';
 
-import {TreeDirective} from "./tree.directive";
-import {PipeProvider} from "../../../../../runtime-base/src/services/pipe-provider.service";
-import {App, setPipeProvider} from "@wm/core";
-import {TrustAsPipe} from "../../../../base/src/pipes/trust-as.pipe";
+import { TreeComponent } from "./tree.component";
+import { PipeProvider } from "../../../../../runtime-base/src/services/pipe-provider.service";
+import { App, setPipeProvider, AbstractI18nService } from "@wm/core";
+import { TrustAsPipe } from '../../../../base';
+import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
+import '@ztree/ztree_v3/js/jquery.ztree.all.js';
+import "libraries/scripts/tree-keyboard-navigation/keyboard-navigation.js";
+import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
-const mockApp = {
-    subscribe: ()=>{}
-};
 
 const markup = `
-    <div wmTree 
+    <ul wmTree
         name="tree1"
         dataset.bind="Variables.staticVariable1.dataSet"
         nodelabel="key"
-        select.event="onNodeSelect($event, widget, $item, $path)"></div>
+        select.event="onNodeSelect($event, widget, $item, $path)"></ul>
 `;
 
 @Component({
     template: markup
 })
 class TreeSpec {
-    @ViewChild(TreeDirective, /* TODO: add static flag */ {static: true}) tree: TreeDirective;
+    @ViewChild(TreeComponent, /* TODO: add static flag */ { static: true }) tree: TreeComponent;
     public testdata: any = [
         {
             "key": "a val",
@@ -61,12 +61,13 @@ class TreeSpec {
 describe('wm-tree: Widget specific test cases', () => {
     let fixture: ComponentFixture<TreeSpec>;
 
-    beforeEach(waitForAsync(()=>{
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [TreeSpec, TreeDirective],
+            declarations: [TreeSpec, TreeComponent],
             providers: [
-                {provide: App, useValue: mockApp},
-                {provide: TrustAsPipe, useClass: TrustAsPipe},
+                { provide: App, useValue: mockApp },
+                { provide: TrustAsPipe, useClass: TrustAsPipe },
+                { provide: AbstractI18nService, useClass: MockAbstractI18nService }
             ]
         })
             .compileComponents();
@@ -83,7 +84,7 @@ describe('wm-tree: Widget specific test cases', () => {
     });
 
     it('should pass proper parameters in onSelect event', waitForAsync(() => {
-        spyOn(fixture.componentInstance, 'onNodeSelect').and.callFake(function () {
+        jest.spyOn(fixture.componentInstance, 'onNodeSelect').mockImplementation(function () {
             const path = arguments[3];
             const firstLeafNodePath = "/a val/a child1";
             expect(path).toEqual(firstLeafNodePath);
@@ -95,7 +96,7 @@ describe('wm-tree: Widget specific test cases', () => {
 
         fixture.whenStable().then(() => {
             // trigger click on first leaf node
-            fixture.debugElement.nativeElement.querySelector('li.leaf-node > .title').click();
+            fixture.debugElement.nativeElement.querySelector('li > .button').click();
         });
     }));
 

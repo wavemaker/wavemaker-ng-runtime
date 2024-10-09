@@ -12,7 +12,6 @@ import {
     FieldWidgetService,
     getWmProjectProperties,
     isDefined,
-    isString,
     ConstantService,
     UtilsService,
     DynamicComponentRefProvider,
@@ -23,12 +22,13 @@ import {
 import { SecurityService } from '@wm/security';
 
 import { WmDefaultRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
-
-declare const _;
+import { PipeService } from "./pipe.service";
+import {each, get, isEmpty, isString} from "lodash-es";
 
 const injectorMap = {
     DialogService: AbstractDialogService,
     i18nService: AbstractI18nService,
+    PipeService: PipeService,
     statePersistence: StatePersistence,
     SpinnerService: AbstractSpinnerService,
     StatePersistenceService: StatePersistence,
@@ -83,6 +83,8 @@ export class AppRef {
     isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
 
+    targetPlatform: string;
+
     appLocale: any;
 
     changeLocale = this.i18nService.setSelectedLocale.bind(this.i18nService);
@@ -113,6 +115,7 @@ export class AppRef {
         this.isPrefabType = wmProjectProperties.type === PROJECT_TYPE.PREFAB;
         this.isApplicationType = wmProjectProperties.type === PROJECT_TYPE.APPLICATION;
         this.isTemplateBundleType = wmProjectProperties.type === PROJECT_TYPE.TEMPLATE_BUNDLE;
+        this.targetPlatform = wmProjectProperties.platformType;
 
         this.httpService.registerOnSessionTimeout(this.on401.bind(this));
 
@@ -136,15 +139,15 @@ export class AppRef {
                 return getHttpDependency.call(this);
             }
             let providerInstance = injectorMap[injToken] && this.inj.get(injectorMap[injToken]);
-            if (!providerInstance && this.inj['_providers']) {
-                _.forEach(this.inj['_providers'], val => {
-                    if (_.isObject(val)) {
-                        if (val.__proto__.constructor.SERVICE_NAME === injToken) {
-                            providerInstance = val;
-                            return false;
-                        }
+            if (!providerInstance && this.inj['records']?.values) {
+                const values = this.inj['records'].values();
+                let next = values?.next();
+                while (next && !next.done) {
+                    if (next?.value?.value?.constructor?.SERVICE_NAME === injToken) {
+                        return next.value.value;
                     }
-                });
+                    next = values.next();
+                }
             }
             return providerInstance;
         }
@@ -155,9 +158,9 @@ export class AppRef {
      * triggers the onSessionTimeout callback in app.js
      */
     on401() {
-        const userInfo = _.get(this.securityService.get(), 'userInfo');
+        const userInfo = get(this.securityService.get(), 'userInfo');
         // if a previous user exists, a session time out triggered
-        if (!_.isEmpty(userInfo)) {
+        if (!isEmpty(userInfo)) {
             this.onSessionTimeout();
         }
     }
@@ -167,7 +170,7 @@ export class AppRef {
     }
 
     public notifyApp(template, type, title) {
-        const notificationAction = _.get(this, 'Actions.appNotification');
+        const notificationAction = get(this, 'Actions.appNotification');
         const EXCLUDE_NOTIFICATION_MESSAGES = ['PROCESS_REJECTED_IN_QUEUE'];
         const skipDefaultNotification = EXCLUDE_NOTIFICATION_MESSAGES.indexOf(template) !== -1;
         if (notificationAction) {
@@ -196,7 +199,7 @@ export class AppRef {
      * @param expressions, map of bind expression vs generated function
      */
     public registerExpressions(expressions) {
-        _.each(expressions, (fn, expr)=>{
+        each(expressions, (fn, expr) => {
             registerFnByExpr(expr, fn[0], fn[1]);
         });
     }

@@ -52,6 +52,11 @@ export const addClass = (node: HTMLElement, nv: string, sync?: boolean) => {
 };
 
 export const switchClass = (node: HTMLElement, toAdd: string = '', toRemove: string = '', sync?: boolean) => {
+    // After NG15 upgrade ng-invalid class is added even the field is valid, so we are removing the ng-invalid manually
+    const isNgUntouchedValid = node.classList.contains('ng-untouched') && node.classList.contains('ng-valid');
+    if(isNgUntouchedValid && toAdd.includes('ng-untouched') && toAdd.includes('ng-invalid')) {
+        toAdd = toAdd.replace('ng-invalid', '');
+    }
     removeClass(node, toRemove, sync);
     addClass(node, toAdd, sync);
 };

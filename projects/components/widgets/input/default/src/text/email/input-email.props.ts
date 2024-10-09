@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const inputEmailTypeProps = new Map(
     [
@@ -10,6 +10,7 @@ export const inputEmailTypeProps = new Map(
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
+        ['arialabel', PROP_STRING],
         ['maxchars', PROP_NUMBER],
         ['name', PROP_STRING],
         ['placeholder', {value: 'Enter text', ...PROP_STRING}],
@@ -20,7 +21,9 @@ export const inputEmailTypeProps = new Map(
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', {value: 'email', ...PROP_STRING}],
-        ['updateon', PROP_STRING]
+        ['updateon', PROP_STRING],
+        ['conditionalclass', PROP_ANY],
+        ['conditionalstyle', PROP_ANY]
     ]
 );
 

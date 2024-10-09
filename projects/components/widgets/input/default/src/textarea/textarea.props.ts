@@ -1,5 +1,5 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
-import { FormWidgetType } from '@wm/core';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
+import {FormWidgetType} from '@wm/core';
 
 export const textareaProps = new Map(
     [
@@ -10,6 +10,7 @@ export const textareaProps = new Map(
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
+        ['arialabel', PROP_STRING],
         ['maxchars', PROP_NUMBER],
         ['name', PROP_STRING],
         ['placeholder', {value: 'Place your text', ...PROP_STRING}],
@@ -21,6 +22,8 @@ export const textareaProps = new Map(
         ['updateon', PROP_STRING],
         ['limitdisplaytext', PROP_STRING],
         ['charlength', PROP_NUMBER],
+        ['conditionalclass', PROP_ANY],
+        ['conditionalstyle', PROP_ANY]
     ]
 );
 

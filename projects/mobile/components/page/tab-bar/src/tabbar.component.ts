@@ -1,12 +1,12 @@
-import { AfterViewInit, Attribute, Component, Injector, OnDestroy } from '@angular/core';
+import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, Optional} from '@angular/core';
 
 import { getEvaluatedData, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { PageDirective } from '@wm/components/page';
 
 import { registerProps } from './tabbar.props';
+import {debounce, includes, isArray, isObject, isString} from "lodash-es";
 
 declare const $;
-declare const _;
 const DEFAULT_CLS = 'app-tabbar app-top-nav';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-tabbar', hostClass: DEFAULT_CLS};
 
@@ -52,9 +52,10 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
         inj: Injector,
         @Attribute('itemlabel.bind') public binditemlabel,
         @Attribute('itemicon.bind') public binditemicon,
-        @Attribute('itemlink.bind') public binditemlink
+        @Attribute('itemlink.bind') public binditemlink,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         page.notify('wmMobileTabbar:ready', this);
         this.tabItems = this.getDefaultItems();
@@ -91,7 +92,7 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
     public ngAfterViewInit() {
         setTimeout(() => {
             this.layout = this.getSuitableLayout();
-            $(window).on('resize.tabbar', _.debounce(() => this.layout = this.getSuitableLayout(), 20));
+            $(window).on('resize.tabbar', debounce(() => this.layout = this.getSuitableLayout(), 20));
         });
         super.ngAfterViewInit();
     }
@@ -119,8 +120,8 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
     }
 
     private getTabItems(value: any): TabItem[] {
-        if (_.isArray(value)) {
-            if (_.isObject(value[0])) {
+        if (isArray(value)) {
+            if (isObject(value[0])) {
                 return (value as any[]).map(item => {
                     const link = getEvaluatedData(item, {field: this.itemlink, 'bindExpression': this.binditemlink}, this.viewParent) || item.link;
                     const activePageName = window.location.hash.substr(2);
@@ -128,13 +129,13 @@ export class MobileTabbarComponent extends StylableComponent implements AfterVie
                         label: getEvaluatedData(item, {field: this.itemlabel, bindExpression: this.binditemlabel}, this.viewParent) || item.label,
                         icon: getEvaluatedData(item, {field: this.itemicon, bindExpression: this.binditemicon}, this.viewParent) || item.icon,
                         link: link,
-                        active: _.includes([activePageName, '#' + activePageName, '#/' + activePageName], link)
+                        active: includes([activePageName, '#' + activePageName, '#/' + activePageName], link)
                     };
                 });
             } else {
                 return this.getItems(value as any[]);
             }
-        } else if (_.isString(value)) {
+        } else if (isString(value)) {
             return this.getItems((value as string).split(','));
         }
     }

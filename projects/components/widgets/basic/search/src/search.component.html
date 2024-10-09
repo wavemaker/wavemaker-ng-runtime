@@ -12,7 +12,7 @@
 
 <ng-template #customListTemplate let-matches="matches" let-itemTemplate="itemTemplate" let-query="query">
     <ul #ulElement class="app-search dropdown-menu" scrollable>
-        <li #liElements *ngFor="let match of matches" [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match), 'list-group-header': match && match.isHeader()}"
+        <li #liElements *ngFor="let match of matches; let i = index;" [ngClass]="{active: typeaheadContainer && typeaheadContainer.isActive(match), 'list-group-header': match && match.isHeader()}"
             (mouseenter)="typeaheadContainer.selectActive(match);"
             (click)="match && !match.isHeader() && typeaheadContainer.selectMatch(match, $event); $typeaheadEvent = $event; notifySubscriber();">
             <!-- itemTemplate comes from the <input> -->
@@ -37,10 +37,11 @@
            focus-target
            container="body"
            [disabled]="disabled"
+           [attr.accesskey]="shortcutkey"
            autocomplete="off"
            [(ngModel)]="query"
+           [ngModelOptions]="{standalone: true}"
            [readonly]="readonly"
-           [disabled]="disabled"
            [typeahead]="typeaheadDataSource"
            [typeaheadWaitMs]="debouncetime"
            [typeaheadItemTemplate]="customItemTemplate"
@@ -61,11 +62,12 @@
            [typeaheadGroupField]="groupby ? 'groupby' : null"
            [typeaheadAsync]="true"
            [typeaheadScrollable]="true"
+           [adaptivePosition]="true"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [dropup]="dropup"
            [tabindex]="tabindex"
            [attr.name]="name"
-           [attr.aria-label]="hint || 'Search field'"/>
+           [attr.aria-label]="arialabel || 'Search field'"/>
     <i class="btn-close wi wi-cancel" [hidden]="!showClosebtn" (click)="clearSearch($event);"></i>
 </ng-container>
 <!--This template is for both web and fullscreen mode in mobile.-->
@@ -74,10 +76,12 @@
     <span class="sr-only">Back button</span>
     <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs app-search-input" [placeholder]="placeholder || ''"
            focus-target
-           [container]="containerTarget || 'body'"
+           [container]="containerTarget || '.wm-app'"
            [disabled]="disabled"
+           [attr.accesskey]="shortcutkey"
            autocomplete="off"
            [(ngModel)]="query"
+           [ngModelOptions]="{standalone: true}"
            [readonly]="readonly"
            [typeahead]="typeaheadDataSource"
            [typeaheadWaitMs]="debouncetime"
@@ -98,16 +102,17 @@
            [typeaheadGroupField]="groupby ? 'groupby' : null"
            [typeaheadAsync]="true"
            [typeaheadScrollable]="true"
+           [adaptivePosition]="true"
            [typeaheadOptionsInScrollableView]="optionslimitinscrollableview"
            [tabindex]="tabindex"
            [dropup]="dropup"
            [attr.name]="name"
-           [attr.aria-label]="hint || 'Search field'">
+           [attr.aria-label]="arialabel || 'Search field'">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1" aria-hidden="true">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
     <span class="wi wi-close form-control-feedback clear-btn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"></span>
     <span class="sr-only">Clear button</span>
-    <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
+    <span *ngIf="showsearchicon" [ngClass]="{'disabled': disabled}" class="input-group-addon">
         <form>
             <button title="Search" [disabled]="disabled" class="app-search-button wm-sl-l sl-search" type="submit"
                     (click)="onSearchSelect($event)"></button>

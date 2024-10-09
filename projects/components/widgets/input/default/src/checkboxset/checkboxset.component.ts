@@ -1,13 +1,14 @@
-import { Attribute, Component, HostListener, Injector } from '@angular/core';
+import {Attribute, Component, HostListener, Inject, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import { AppDefaults, noop, setListClass, switchClass} from '@wm/core';
+import {AppDefaults, noop, setListClass, switchClass} from '@wm/core';
 import { convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAs, provideAsWidgetRef, styler, toggleAllHeaders } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from '../checkboxset/checkboxset.props';
+import {forEach, includes} from "lodash-es";
 
-declare const _, $;
+declare const $;
 
 const DEFAULT_CLS = 'app-checkboxset list-group inline';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: DEFAULT_CLS};
@@ -36,8 +37,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(inj: Injector) {
-        super(inj, WIDGET_CONFIG);
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
         this.multiple = true;
     }
@@ -50,7 +51,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
         // construct the _model from the checked elements.
         const inputElements = this.nativeElement.querySelectorAll('input:checked');
         const keys = [];
-        _.forEach(inputElements, ($el) => {
+        forEach(inputElements, ($el) => {
+            // @ts-ignore
             keys.push($el.value);
         });
 
@@ -75,7 +77,7 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
                     return callback();
                 }
             );
-        } else if (!_.includes(['change'], eventName)) {
+        } else if (!includes(['change'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }
     }

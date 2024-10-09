@@ -2,14 +2,13 @@ import { Injectable } from '@angular/core';
 
 import { Observer } from 'rxjs';
 
-import { executePromiseChain, getAbortableDefer, isString, noop } from '@wm/core';
+import {executePromiseChain, getAbortableDefer, noop} from '@wm/core';
 import { NetworkService } from '@wm/mobile/core';
 
 import { LocalDBManagementService } from './local-db-management.service';
 import { LocalKeyValueService } from './local-key-value.service';
 import { LocalDBStore } from '../models/local-db-store';
-
-declare const _;
+import {isNull, isString, isUndefined, map, reverse} from "lodash-es";
 
 export interface Change {
     id?: number;
@@ -220,7 +219,7 @@ export class ChangeLogService {
      * @returns {boolean} returns true, if a flush process is in progress. Otherwise, returns false.
      */
     public isFlushInProgress(): boolean {
-        return !(_.isUndefined(this.deferredFlush) || _.isNull(this.deferredFlush));
+        return !(isUndefined(this.deferredFlush) || isNull(this.deferredFlush));
     }
 
     /**
@@ -313,11 +312,11 @@ export class ChangeLogService {
             .then(() => executePromiseChain(this.getWorkers('transformParamsFromMap'), [change]))
             .then(() => this.pushService.push(change))
             .then(function() {
-                return executePromiseChain(_.reverse(self.getWorkers('postCallSuccess')), [change, arguments])
+                return executePromiseChain(reverse(self.getWorkers('postCallSuccess')), [change, arguments])
                     .then(() => change);
             }).catch(function() {
                 if (self.networkService.isConnected()) {
-                    return executePromiseChain(_.reverse(self.getWorkers('postCallError')), [change, arguments])
+                    return executePromiseChain(reverse(self.getWorkers('postCallError')), [change, arguments])
                         .catch(noop).then(() => Promise.reject(change));
                 }
                 return Promise.reject(change);
@@ -343,7 +342,7 @@ export class ChangeLogService {
     }
 
     private getWorkers(type) {
-        return _.map(this.workers, w => w[type] && w[type].bind(w));
+        return map(this.workers, w => w[type] && w[type].bind(w));
     }
 }
 

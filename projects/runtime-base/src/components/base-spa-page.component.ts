@@ -1,4 +1,4 @@
-import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive, AfterContentInit } from '@angular/core';
+import { AfterViewInit, HostListener, Injector, OnDestroy, ViewChild, Directive, AfterContentInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { isAndroid, isIos, Viewport, ScriptLoaderService, registerFnByExpr } from '@wm/core';
@@ -25,8 +25,9 @@ import { VariablesService } from '@wm/variables';
 import { AppManagerService } from '../services/app.manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
 import { CACHE_PAGE } from '../util/wm-route-reuse-strategy';
+import {each, extend} from "lodash-es";
 
-declare const $, _;
+declare const $;
 
 @Directive()
 export abstract class BaseSpaPageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy, AfterContentInit {
@@ -66,15 +67,15 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
 
         muteWatchers();
 
-        this.App = this.injector.get(App);
-        this.route = this.injector.get(ActivatedRoute);
-        this.appManager = this.injector.get(AppManagerService);
-        this.navigationService = this.injector.get(AbstractNavigationService);
-        this.scriptLoaderService = this.injector.get(ScriptLoaderService);
-        this.i18nService = this.injector.get(AbstractI18nService);
-        this.router = this.injector.get(Router);
-        this.Viewport = this.injector.get(Viewport);
-        this.layoutDirective = this.injector.get(LayoutDirective);
+        this.App = this.injector ? this.injector.get(App) : inject(App);
+        this.route = this.injector ? this.injector.get(ActivatedRoute) : inject(ActivatedRoute);
+        this.appManager = this.injector ? this.injector.get(AppManagerService) : inject(AppManagerService);
+        this.navigationService = this.injector ? this.injector.get(AbstractNavigationService) : inject(AbstractNavigationService);
+        this.scriptLoaderService = this.injector ? this.injector.get(ScriptLoaderService) : inject(ScriptLoaderService);
+        this.i18nService = this.injector ? this.injector.get(AbstractI18nService) : inject(AbstractI18nService);
+        this.router = this.injector ? this.injector.get(Router) : inject(Router);
+        this.Viewport = this.injector ? this.injector.get(Viewport) : inject(Viewport);
+        this.layoutDirective = this.injector ? this.injector.get(LayoutDirective) : inject(LayoutDirective);
 
         // register functions for binding evaluation
         this.registerExpressions();
@@ -103,14 +104,14 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
 
     initUserScript() {
         try {
-            this.evalUserScript(this, this.App, this.injector.get(UtilsService));
+            this.evalUserScript(this, this.App, this.injector ? this.injector.get(UtilsService) : inject(UtilsService));
         } catch (e) {
             console.error(`Error in evaluating page (${this.pageName}) script\n`, e);
         }
     }
 
     registerPageParams() {
-        const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = _.extend({}, params));
+        const subscription = this.route.queryParams.subscribe(params => this.pageParams = (this.App as any).pageParams = extend({}, params));
         this.registerDestroyListener(() => subscription.unsubscribe());
     }
 
@@ -123,7 +124,7 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
     }
 
     initVariables() {
-        const variablesService = this.injector.get(VariablesService);
+        const variablesService = this.injector ? this.injector.get(VariablesService) : inject(VariablesService);
 
         // get variables and actions instances for the page
         const variableCollection = variablesService.register(this.pageName, this.getVariables(), this);
@@ -176,7 +177,7 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
      */
     registerExpressions() {
         const expressions = this.getExpressions();
-        _.each(expressions, (fn, expr)=>{
+        each(expressions, (fn, expr) => {
             registerFnByExpr(expr, fn[0], fn[1]);
         });
     }
@@ -356,16 +357,16 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
 
     mute() {
         const m = o => { o && o.mute && o.mute(); };
-        _.each(this.Widgets, m);
-        _.each(this.Variables, m);
-        _.each(this.Actions, m);
+        each(this.Widgets, m);
+        each(this.Variables, m);
+        each(this.Actions, m);
     }
 
     unmute(c = this) {
         const um = o => { o && o.unmute && o.unmute(); };
-        _.each(this.Widgets, um);
-        _.each(this.Variables, um);
-        _.each(this.Actions, um);
+        each(this.Widgets, um);
+        each(this.Variables, um);
+        each(this.Actions, um);
     }
 
     ngOnAttach() {
@@ -381,12 +382,12 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
         (this.App as any).Widgets = Object.create(this.Widgets);
         if(this.spaPageDirective && this.spaPageDirective.refreshdataonattach) {
             const refresh = v => { v && v.startUpdate && v.invoke && v.invoke(); };
-            _.each(this.Variables, refresh);
-            _.each(this.Actions, refresh);
+            each(this.Variables, refresh);
+            each(this.Actions, refresh);
         }
         this.runPageTransition().then(() => {
             setTimeout(() => this.restoreScrollPosition(), 100);
-            _.each(this.Widgets, w => w && w.ngOnAttach && w.ngOnAttach());
+            each(this.Widgets, w => w && w.ngOnAttach && w.ngOnAttach());
             this.appManager.notify('pageAttach', {'name' : this.pageName, instance: this});
         });
         this.appManager.notify('highlightActiveLink', {'pageName': this.pageName});
@@ -396,7 +397,7 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
         this.saveScrollPosition();
         this.savePageSnapShot();
         this.mute();
-        _.each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
+        each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
         this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
     }
 

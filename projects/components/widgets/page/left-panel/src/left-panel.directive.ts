@@ -1,15 +1,8 @@
-import { Directive, Injector, Optional } from '@angular/core';
+import {Directive, Inject, Injector, Optional} from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 
-import { App, addClass, removeClass, switchClass, toggleClass } from '@wm/core';
-import {
-    APPLY_STYLES_TYPE,
-    getKeyboardFocusableElements,
-    IWidgetConfig,
-    provideAsWidgetRef,
-    StylableComponent,
-    styler
-} from '@wm/components/base';
+import {App, addClass, removeClass, switchClass, toggleClass, isMobile } from '@wm/core';
+import { APPLY_STYLES_TYPE, getKeyboardFocusableElements,  IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { LayoutDirective, PageDirective } from '@wm/components/page';
 
 import { registerProps } from './left-panel.props';
@@ -49,8 +42,8 @@ export class LeftPanelDirective extends StylableComponent {
     private _leftPanelAnimator;
 
     //If "spa" attribute is set LayoutDirective will present and PageDirective is undefined else PageDirective will present and LayoutDirective is undefined
-    constructor(public app: App, @Optional() private page: PageDirective, @Optional() private layout: LayoutDirective, inj: Injector, router: Router) {
-        super(inj, WIDGET_CONFIG);
+    constructor(public app: App, @Optional() private page: PageDirective, @Optional() private layout: LayoutDirective, inj: Injector, router: Router, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.$ele = this.$element;
         this.$page = this.getAttr('spa') && layout && layout.$element || page && page.$element;
@@ -79,7 +72,9 @@ export class LeftPanelDirective extends StylableComponent {
                 leftNavButton.focus();
             }, 50);
         }
-        addClass(this.nativeElement, 'hidden');
+        if (isMobile()) {
+            addClass(this.nativeElement, 'hidden');
+        }
         this.expanded = false;
         switchClass(this.$page[0], 'left-panel-collapsed-container', 'left-panel-expanded-container');
         if (this.animation === AnimationType.SLIDE_IN) {

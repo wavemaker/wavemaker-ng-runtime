@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
+
 
 import { getWmProjectProperties, isMobileApp } from '@wm/core';
 
@@ -8,7 +8,7 @@ import { AppManagerService } from '../services/app.manager.service';
 @Injectable({
     providedIn: 'root'
 })
-export class SecurityConfigResolve implements Resolve<any> {
+export class SecurityConfigResolve {
     loaded: boolean;
 
     constructor(private appManager: AppManagerService) {

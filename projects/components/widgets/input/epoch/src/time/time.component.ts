@@ -1,7 +1,6 @@
-import { Component, Inject, Injector, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
-import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
+import {Component, Inject, Injector, NgZone, OnDestroy, Optional} from '@angular/core';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {TimepickerConfig} from 'ngx-bootstrap/timepicker';
 import {
     $appDigest,
     AbstractI18nService,
@@ -14,19 +13,21 @@ import {
     FormWidgetType,
     getDisplayDateTimeFormat,
     getFormattedDate,
-    getNativeDateObject,
-    getMomentLocaleObject
+    getMomentLocaleObject,
+    getNativeDateObject
 } from '@wm/core';
-import { provideAsWidgetRef, provideAs, styler } from '@wm/components/base';
+import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
-import { registerProps } from './time.props';
+import {registerProps} from './time.props';
+import {forEach, get, includes} from "lodash-es";
+
+declare const $;
+declare const moment;
 
 const CURRENT_TIME = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
 const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
-
-declare const _, moment, $;
 
 @Component({
     selector: '[wmTime]',
@@ -54,6 +55,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     public mintime;
     public maxtime;
     public hint: string;
+    public arialabel: string;
 
     private deregisterEventListener;
     private app: App;
@@ -128,19 +130,14 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     private bsTimeValue: Date;
 
-    private keyEventPlugin;
-
     constructor(
         inj: Injector,
         private ngZone: NgZone,
         private appDefaults: AppDefaults,
         app: App,
-        @Inject(EVENT_MANAGER_PLUGINS) evtMngrPlugins
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, WIDGET_CONFIG);
-
-        // KeyEventsPlugin
-        this.keyEventPlugin = evtMngrPlugins[1];
+        super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this);
         /**
@@ -244,8 +241,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     public onDisplayKeydown(event) {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
-            const action = this.keyEventPlugin.constructor.getEventFullKey(event);
-            if (action === 'enter' || action === 'arrowdown') {
+            if (event.key === 'Enter' || event.key === 'ArrowDown') {
                 event.preventDefault();
                 this.toggleDropdown(event);
             } else {
@@ -346,7 +342,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (!_.includes(['blur', 'focus', 'change', 'click'], eventName)) {
+        if (!includes(['blur', 'focus', 'change', 'click'], eventName)) {
             super.handleEvent(node, eventName, eventCallback, locals);
         }
     }
@@ -379,7 +375,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      */
     public onShown() {
         const tpElements  = document.querySelectorAll('timepicker');
-        _.forEach(tpElements, element => {
+        forEach(tpElements, element => {
             addClass(element.parentElement as HTMLElement, 'app-datetime', true);
         });
         this.focusTimePickerPopover(this);
@@ -391,6 +387,6 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if (!this.displayInputElem) {
             this.displayInputElem = this.getMobileInput();
         }
-        (this.displayInputElem as any).value = _.get(this, 'nativeDisplayValue');
+        (this.displayInputElem as any).value = get(this, 'nativeDisplayValue');
     }
 }

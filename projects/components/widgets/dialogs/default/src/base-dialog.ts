@@ -1,18 +1,17 @@
-import { Injector, OnDestroy, TemplateRef, Injectable } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import {Inject, Injectable, Injector, OnDestroy, Optional, TemplateRef} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
+import {BsModalRef, BsModalService, ModalOptions} from 'ngx-bootstrap/modal';
 
-import { Subscription } from 'rxjs';
+import {Subscription} from 'rxjs';
 
-import {AbstractDialogService, closePopover, findRootContainer, generateGUId, isMobile, isMobileApp} from '@wm/core';
+import {AbstractDialogService, findRootContainer, generateGUId, isMobile, isMobileApp} from '@wm/core';
 
-import { BaseComponent, IDialog, IWidgetConfig } from '@wm/components/base';
-import { createFocusTrap } from '@wavemaker/focus-trap/dist/focus-trap';
-declare const _;
+import {BaseComponent, IDialog, IWidgetConfig, WidgetConfig} from '@wm/components/base';
+import {createFocusTrap} from '@wavemaker/focus-trap';
 
-let eventsRegistered = false;
+const eventsRegistered = false;
 
-let focusTrapObj = {
+const focusTrapObj = {
     activeElement: null
 };
 
@@ -32,7 +31,7 @@ const invokeOpenedCallback = (ref) => {
                 'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
               )].filter(el => {
                 return (
-                  !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'))
+                  !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'));
               })[0];
 
             $(keyboardFocusableElements[0]).focus();
@@ -44,6 +43,12 @@ const invokeOpenedCallback = (ref) => {
                 setReturnFocus: focusTrapObj.activeElement,
             });
             focusTrapObj[ref.titleId].activate();
+            const openedDialogs = ref.dialogService.getOpenedDialogs();
+            if (openedDialogs.length > 1) {
+                let zIndex = Number($("[aria-labelledby= " + openedDialogs[openedDialogs.length - 2].titleId + "]").css('z-index'));
+                $('[aria-labelledby= ' + ref.dialogService.getLastOpenedDialog().titleId + ']').css('z-index', zIndex + 2);
+                $('bs-modal-backdrop').css('z-index', zIndex + 1);
+            }
         });
     }
 };
@@ -52,6 +57,11 @@ const invokeClosedCallback = (ref) => {
     if (ref) {
         ref.invokeEventCallback('close');
         ref.dialogRef = undefined;
+        const openedDialogs = ref.dialogService.getOpenedDialogs();
+        if (openedDialogs.length >= 1) {
+            let zIndex: any = Number($("[aria-labelledby= " + openedDialogs[openedDialogs.length - 1].titleId + "]").css('z-index'));
+            $('bs-modal-backdrop').css('z-index', zIndex - 1);
+        }
     }
 };
 
@@ -65,14 +75,15 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
 
     private dialogRef: BsModalRef;
     private dialogId: number;
-    public titleId:string = 'wmdialog-' + generateGUId();
+    public titleId: string = 'wmdialog-' + generateGUId();
 
     protected constructor(
         inj: Injector,
-        widgetConfig: IWidgetConfig,
-        protected modalOptions: ModalOptions
+        @Inject(WidgetConfig) config: IWidgetConfig,
+        protected modalOptions: ModalOptions,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        super(inj, widgetConfig);
+        super(inj, config, explicitContext);
         this.dialogService = inj.get(AbstractDialogService);
         this.bsModal = inj.get(BsModalService);
         const router = inj.get(Router);
@@ -156,6 +167,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
             const parentSelector = $('body > app-root')[0];
             parentSelector.setAttribute('aria-hidden', 'true');
         }
+        $('.cdk-focus-trap-anchor').removeAttr('aria-hidden');
     }
 
     /**

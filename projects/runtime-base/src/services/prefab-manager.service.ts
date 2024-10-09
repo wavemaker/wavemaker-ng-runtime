@@ -5,8 +5,7 @@ import { MetadataService } from '@wm/variables';
 
 import { PrefabConfigProvider } from '../types/types';
 import { getPrefabBaseUrl, isPrefabInPreview } from '../util/utils';
-
-declare const _;
+import {endsWith} from "lodash-es";
 
 const prefabsWithError = new Set<string>();
 const inProgress = new Map<string, Promise<any>>();
@@ -39,7 +38,7 @@ export class PrefabManagerService {
     protected loadStyles(prefabName, {resources: {styles}} = {resources: {styles: []}}): Promise<void> {
         const baseUrl = getPrefabBaseUrl(prefabName);
         const _styles = styles.map(url => {
-            if (!_.endsWith(url, '/pages/Main/Main.css')) {
+            if (!endsWith(url, '/pages/Main/Main.css')) {
                 return getPrefabResourceUrl(url, baseUrl);
             }
             return undefined;
@@ -53,6 +52,7 @@ export class PrefabManagerService {
     // TODO [Vinay] - implement onPrefabResourceLoad
     protected loadScripts(prefabName, {resources: {scripts}} = {resources: {scripts: []}}): Promise<any> {
         const baseUrl = getPrefabBaseUrl(prefabName);
+        scripts = scripts.filter(script => !script.startsWith('npm://'));
         const _scripts = scripts.map(url => getPrefabResourceUrl(url, baseUrl));
 
         return loadScripts(_scripts, true);

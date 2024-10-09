@@ -1,9 +1,9 @@
 <input class="form-control app-textbox"
        focus-target
-       role="textbox"
        [type]="type"
        [attr.name]="name"
        [(ngModel)]="datavalue"
+       [ngModelOptions]="{standalone: true}"
        [readonly]="readonly"
        [required]="required"
        [disabled]="disabled"
@@ -13,9 +13,11 @@
        [attr.tabindex]="tabindex"
        [attr.placeholder]="placeholder"
        [attr.accesskey]="shortcutkey"
-       [attr.aria-label]="hint || type + ' field'"
+       [attr.aria-label]="arialabel || type + ' field'"
        [autofocus]="autofocus"
        (blur)="handleBlur($event)"
        (ngModelChange)="handleChange($event)"
        [autocomplete]="autocomplete ? 'on' : 'off'"
+       [ngClass]="conditionalclass"
+       [ngStyle]="conditionalstyle"
        #input>
