@@ -707,6 +707,24 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             case 'caption':
                 this.displayName = nv || '';
                 this.setProperty('displayName', this.displayName);
+                // Fix for [WMS-25934]: update the headerConfig list when there is change in display name
+                // when column is inside a group then consider the col index and not header index.
+                const fieldName = this.group && this.group.name;
+                const index: number = fieldName ? parseInt(this.getAttr('index'), 10) : parseInt(this.getAttr('headerIndex'), 10);
+                // Register column with header config to create group structure
+                if (!this.table.headerConfig.some(value => this.field == value.field)) {
+                    setHeaderConfigForTable(this.table.headerConfig, {
+                        field: this.field,
+                        displayName: this.displayName
+                    }, fieldName, index);
+                }
+                else {
+                    this.table.headerConfig.map(value => {
+                        if (this.field == value.field) {
+                            value.displayName = this.displayName;
+                        }
+                    });
+                }
                 break;
             case 'defaultvalue':
                 this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);
