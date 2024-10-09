@@ -41,7 +41,8 @@ export const TYPE_CLASS_MAP_PC = {
     templateUrl: './progress-circle.component.html',
     providers: [
         provideAsWidgetRef(ProgressCircleComponent)
-    ]
+    ],
+    exportAs: 'wmProgressCircle'
 })
 export class ProgressCircleComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
     static initializeProps = registerProps();
@@ -59,6 +60,7 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     public options: CircleProgressOptionsInterface;
     public hint: string;
     public arialabel: string;
+    public displayValue: string;
 
     @ViewChild(CircleProgressComponent, { static: true }) circleRef: CircleProgressComponent;
 
@@ -72,6 +74,9 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
 
     private _redraw () {
         this.circleRef.render();
+        // Select the <tspan> element that contains the percentage value
+        let tspanElement = $(this.nativeElement).find('svg text tspan:first');
+        this.displayValue = this.options.showUnits ? tspanElement?.text() + '%' : tspanElement?.text();
     }
 
     ngAfterViewInit() {
