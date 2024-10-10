@@ -46,6 +46,9 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
     triggerInvokeOnChange(keys, $event) {
         this.modelByKey = keys;
 
+        if(this.viewParent.containerWidget)
+            this.viewParent.containerWidget.updateDataValue(this.datavalue);
+
         this.invokeOnTouched();
         // invoke on datavalue change.
         this.invokeOnChange(this.datavalue, $event || {}, true);

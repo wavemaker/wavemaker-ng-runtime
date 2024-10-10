@@ -41,7 +41,7 @@ import {widgetIdGenerator} from '../../framework/widget-id-generator';
 import {DISPLAY_TYPE, EVENTS_MAP} from '../../framework/constants';
 import {WidgetProxyProvider} from '../../framework/widget-proxy-provider';
 import {getWatchIdentifier} from '../../../utils/widget-utils';
-import {camelCase, extend, forEach, isArray, isObject, join, map} from "lodash-es";
+import {camelCase, extend, forEach, isArray, isObject, join, last, map} from "lodash-es";
 
 declare const $;
 
@@ -201,6 +201,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      */
     public trackId: string;
 
+    customWidgetSubType: string;
+
     protected constructor(
         protected inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
@@ -279,6 +281,12 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         } else {
             this.delayedInit = true;
             initPromise.then((resolveFn) => {
+                let formFieldCW = this.widgetSubType === 'wm-form-field-custom-widget',
+                    cw          = this.widgetSubType.startsWith('wm-custom-');
+                if( formFieldCW || cw ) {
+                    this.customWidgetSubType = formFieldCW ? 'wm-form-field-' + last(this["formWidget"].config.widgetType.split('-')) : this["config"].widgetType;
+                }
+
                 this.initWidget();
                 this.setInitProps();
                 resolveFn && resolveFn()
@@ -574,7 +582,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 viewParent,
                 context,
                 nv => {
-                    if(propName.startsWith('base-'))
+                    if(propName.startsWith('base-') && widget.updateData)
                         widget.updateData(propName, nv);
                     widget[propName] = nv
                 },
@@ -620,7 +628,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         const {0: propName, 1: type, 2: meta, length} = attrName.split('.');
         if (type === 'bind') {
             // if the show property is bound, set the initial value to false
-            if (propName === 'show') {
+            if (propName === 'show' && !this.widgetSubType.startsWith('wm-custom-')) {
                 this.nativeElement.hidden = true;
             }
             this.processBindAttr(propName, attrValue, child);
@@ -696,6 +704,12 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
         // get the widget properties
         const widgetProps: Map<string, any> = getWidgetPropsByType(this.widgetSubType);
+        if(this.customWidgetSubType) {
+            const customWidgetProps: Map<string, any> = getWidgetPropsByType(this.customWidgetSubType);
+            customWidgetProps.forEach((v, k) => {
+                widgetProps.set(k, v);
+            });
+        }
         widgetProps.forEach((v, k) => {
             if (isDefined(v.value)) {
                 this.initState.set(k, v.value);

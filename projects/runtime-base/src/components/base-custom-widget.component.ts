@@ -168,8 +168,8 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
                     case 'wmRadioset':
                         this[baseWidget] = new RadiosetComponent(this.injector, undefined);
                         this[baseWidget]["_select"] = (item: any, $event: any) => {
-                        this[baseWidget].triggerInvokeOnChange(item.key, $event);
-                    }
+                            this[baseWidget].triggerInvokeOnChange(item.key, $event);
+                        }
                         break;
                 }
 
@@ -177,6 +177,9 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
                     if(key.startsWith('base-')) {
                         let modifiedKey = key.replace('base-', '');
                         this[baseWidget][modifiedKey] = value;
+
+                        if(modifiedKey === 'datavalue' && this.containerWidget.formControl)
+                            this.containerWidget.updateDataValue(value);
                     }
                 }
                 this[baseWidget].initDatasetItems();
@@ -209,6 +212,15 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     registerChangeListeners() {
         this.containerWidget.registerPropertyChangeListener(this.onPropertyChange);
         this.containerWidget.registerStyleChangeListener(this.onPropertyChange);
+    }
+
+    get datavalue() {
+        if(this['getDatavalue'])
+            return this['getDatavalue']();
+    }
+
+    set datavalue(value) {
+        this.datavalue = value;
     }
 
     initUserScript() {

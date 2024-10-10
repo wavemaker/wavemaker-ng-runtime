@@ -602,19 +602,15 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         super.ngOnInit();
     }
 
-    ngAfterContentInit() {
-        super.ngAfterContentInit();
+    prepareFormWidget() {
+        this._initPropsRes();
 
-        if (this.formWidget) {
-            this._initPropsRes();
-
-            // setting displayExpressions on the formwidget explicitly as expr was evaluated to "".
-            this.setFormWidget('binddisplaylabel', this.binddisplaylabel);
-            this.setFormWidget('binddisplayexpression', this.binddisplayexpression);
-            this.setFormWidget('binddisplayimagesrc', this.binddisplayimagesrc);
-            this.setFormWidget('bindChipclass', this.bindChipclass);
-            this.setFormWidget('binddataset', this.binddataset);
-        }
+        // setting displayExpressions on the formwidget explicitly as expr was evaluated to "".
+        this.setFormWidget('binddisplaylabel', this.binddisplaylabel);
+        this.setFormWidget('binddisplayexpression', this.binddisplayexpression);
+        this.setFormWidget('binddisplayimagesrc', this.binddisplayimagesrc);
+        this.setFormWidget('bindChipclass', this.bindChipclass);
+        this.setFormWidget('binddataset', this.binddataset);
 
         this.registerReadyStateListener(() => {
             this.key = this._fieldName || this.target || this.binding;
@@ -668,5 +664,20 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
 
             this.setReadOnlyState();
         });
+    }
+
+    ngAfterContentInit() {
+        super.ngAfterContentInit();
+        if(this.widgetSubType === "wm-form-field-custom-widget" && this.formWidget.nativeElement)
+            this.formWidget = this.formWidget.nativeElement.widget;
+        if (this.formWidget) {
+            if(this.widgetSubType === "wm-form-field-custom-widget") {
+                this.formWidget.configSubject.asObservable().subscribe(() => {
+                    this.prepareFormWidget();
+                });
+            } else {
+                this.prepareFormWidget();
+            }
+        }
     }
 }

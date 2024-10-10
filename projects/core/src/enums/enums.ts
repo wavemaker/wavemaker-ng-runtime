@@ -5,6 +5,7 @@ export enum FormWidgetType {
     CHIPS = 'chips',
     COLORPICKER = 'colorpicker',
     CURRENCY = 'currency',
+    CUSTOMWIDGET = 'custom-widget',
     DATE = 'date',
     DATETIME = 'datetime',
     NUMBER = 'number',
@@ -21,8 +22,7 @@ export enum FormWidgetType {
     TIME = 'time',
     TIMESTAMP = 'timestamp',
     TYPEAHEAD = 'typeahead',
-    UPLOAD = 'upload',
-    CUSTOM = 'custom'
+    UPLOAD = 'upload'
 }
 
 export enum DataType {

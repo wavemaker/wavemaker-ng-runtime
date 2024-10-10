@@ -1,11 +1,14 @@
-import { Attribute, Directive, ElementRef, Injector, OnInit } from '@angular/core';
+import {Attribute, Directive, ElementRef, Inject, Injector, OnInit, Optional} from '@angular/core';
 
 import { noop } from '@wm/core';
-import { PROP_TYPE, provideAsWidgetRef, register, StylableComponent, styler } from '@wm/components/base';
+import {PROP_TYPE, provideAs, provideAsWidgetRef, register, StylableComponent, styler} from '@wm/components/base';
 
 import { customWidgetProps } from './custom-widget.props';
 import { registerProps } from "../custom-widget-container/custom-widget.props";
 import {capitalize, cloneDeep} from 'lodash-es';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from "@angular/forms";
+import {DatasetAwareFormComponent} from "@wm/components/input";
+import {Subject} from "rxjs";
 
 const registeredPropsSet = new Set<string>();
 
@@ -18,30 +21,37 @@ declare const _;
 @Directive({
     selector: '[wmWidgetContainer]',
     providers: [
+        provideAs(CustomWidgetContainerDirective, NG_VALUE_ACCESSOR, true),
+        provideAs(CustomWidgetContainerDirective, NG_VALIDATORS, true),
         provideAsWidgetRef(CustomWidgetContainerDirective)
     ],
     exportAs: 'wmWidgetContainer'
 })
-export class CustomWidgetContainerDirective extends StylableComponent implements OnInit {
+export class CustomWidgetContainerDirective extends DatasetAwareFormComponent implements OnInit {
     static initializeProps = registerProps();
 
     widgetType: string;
     name: string;
     propsReady: Function;
     widgetName: string;
+    config: any;
     private props: any = {};
     private baseWidgetName: string;
+    asAttr: boolean;
+    configSubject: Subject<any>;
 
     constructor(
         inj: Injector, elRef: ElementRef,
         @Attribute('widgetname') widgetname: string,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         const widgetType = `wm-custom-${widgetname}`;
         const WIDGET_CONFIG = { widgetType, hostClass: DEFAULT_CLS };
         let resolveFn: Function = noop;
 
-        super(inj, WIDGET_CONFIG, undefined, new Promise(res => resolveFn = res));
+        super(inj, WIDGET_CONFIG, explicitContext, undefined, new Promise(res => resolveFn = res));
         this.propsReady = resolveFn;
+        this.configSubject = new Subject();
         this.widgetType = widgetType;
         this.name = elRef.nativeElement.getAttribute('name');
 
@@ -61,6 +71,19 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         }))
     }
 
+    get datavalue() {
+        if(this.nativeElement.children.length) {
+            let value = this.nativeElement.children[0].children[0]['widget'].viewParent.datavalue;
+            this.updateDataValue(value);
+            return value;
+        }
+    }
+
+    set datavalue(value) {
+        if(this.nativeElement.children.length)
+            this.nativeElement.children[0].children[0]['widget'].viewParent.datavalue = value;
+    }
+
     setBaseWidgetName(baseWidgetType: string) {
         let splitArr = baseWidgetType.split('-'), modifiedArr = [];
         modifiedArr = splitArr.map((item: any) => {
@@ -71,7 +94,11 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
     }
 
     public setProps(config, resolveFn: Function) {
-        this.setBaseWidgetName(config.widgetType);
+        this.config = config;
+        this.configSubject.next();
+        this.asAttr = this.nativeElement.children[0].children[0].hasAttribute('as');
+        if(this.asAttr)
+            this.setBaseWidgetName(config.widgetType);
         if (!config || !config.properties) {
             return;
         }
@@ -108,10 +135,22 @@ export class CustomWidgetContainerDirective extends StylableComponent implements
         return propsMap;
     }
 
+    updateDataValue(value) {
+        if(this.formControl && this.formControl.control && value !== this.formControl.control.value)
+            this.formControl.control.setValue(value);
+    }
+
     updateData(key: string, value: any) {
         let modifiedKey = key.replace('base-', '');
-        this[this.baseWidgetName][modifiedKey] = value;
-        this.nativeElement.childNodes[0]['widget'].viewParent[this.baseWidgetName][modifiedKey] = value;
-        this[this.baseWidgetName].initDatasetItems();
+        if(this.asAttr) {
+            this[this.baseWidgetName][modifiedKey] = value;
+            this.nativeElement.children[0].children[0]['widget'].viewParent[this.baseWidgetName][modifiedKey] = value;
+            this[this.baseWidgetName].initDatasetItems();
+        } else {
+            this[modifiedKey] = value;
+            this.nativeElement.children[0].children[0]['widget'].viewParent[modifiedKey] = value;
+        }
+        if(this.formControl && modifiedKey === 'datavalue')
+            this.updateDataValue(value);
     }
 }
