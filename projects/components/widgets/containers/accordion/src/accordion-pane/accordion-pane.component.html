@@ -1,6 +1,8 @@
 <div class="panel-heading clearfix" (click)="toggle($event)" [ngClass]="{active: isActive}">
     <h3 class="panel-title">
-        <a href="javascript:void(0);" role="button" class="accordion-toggle" [attr.aria-label]="title" [attr.aria-expanded]="isActive">
+        <a [attr.aria-expanded]="isActive" [attr.aria-label]="badgevalue ? title + ' ' + badgevalue : title"
+           class="accordion-toggle"
+           href="javascript:void(0);" role="button">
             <div class="pull-left">
                 <i class="app-icon panel-icon {{iconclass}}" [hidden]="!iconclass"></i>
             </div>
@@ -19,7 +21,7 @@
         </button>
     </div>
 </div>
-<div class="panel-collapse collapse" role="tabpanel" aria-labelledby="panel description" [ngClass]="isActive ? 'collapse in' : 'collapse'">
+<div [ngClass]="isActive ? 'collapse in' : 'collapse'" class="panel-collapse collapse">
     <div class="panel-body" [wmSmoothscroll]="smoothscroll" partial-container-target>
         <ng-content></ng-content>
     </div>

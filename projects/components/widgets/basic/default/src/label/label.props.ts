@@ -13,7 +13,6 @@ export const registerProps = () => {
                 ['type', PROP_STRING],
                 ['notag', PROP_BOOLEAN],
                 ['hint', PROP_STRING],
-                ['arialabel', PROP_STRING],
                 ['name', PROP_STRING],
                 ['required', PROP_BOOLEAN],
                 ['show', {value: true, ...PROP_BOOLEAN}]

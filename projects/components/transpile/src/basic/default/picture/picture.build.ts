@@ -8,7 +8,7 @@ register('wm-picture', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmPicture #${counter}="wmPicture" alt="image" wmImageCache="${attrs.get('offline') || 'true'}" [attr.aria-label]="${counter}.arialabel || 'Image'" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmPicture #${counter}="wmPicture" [alt]="${counter}.alttext" wmImageCache="${attrs.get('offline') || 'true'}" [attr.aria-label]="${counter}.arialabel || 'Image'" ${getAttrMarkup(attrs)}>`;
         }
     };
 });
