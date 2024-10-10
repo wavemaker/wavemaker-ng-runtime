@@ -72,7 +72,7 @@
 </ng-container>
 <!--This template is for both web and fullscreen mode in mobile.-->
 <ng-template #searchTemplate>
-    <span class="wi wi-arrow-left form-control-feedback back-btn" aria-hidden="true" (click)="closeSearch()"></span>
+    <button class="btn btn-icon form-control-feedback back-btn" aria-hidden="true" (click)="closeSearch()"><i class="app-icon {{backsearchiconclass}}"></i></button>
     <span class="sr-only">Back button</span>
     <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs app-search-input" [placeholder]="placeholder || ''"
            focus-target
@@ -109,12 +109,13 @@
            [attr.aria-label]="hint || 'Search field'">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1" aria-hidden="true">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
-    <span class="wi wi-close form-control-feedback clear-btn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"></span>
+    <button class="btn btn-icon form-control-feedback clear-btn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"><i class="app-icon {{clearsearchiconclass}}"></i></button>
     <span class="sr-only">Clear button</span>
     <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
         <form>
-            <button title="Search" [disabled]="disabled" class="app-search-button wm-sl-l sl-search" type="submit"
-                    (click)="onSearchSelect($event)"></button>
+            <button title="Search" [disabled]="disabled" class="app-search-button btn btn-icon" type="submit"
+                    (click)="onSearchSelect($event)">
+                    <i class="app-icon {{searchiconclass}}"></i></button>
         </form>
     </span>
 </ng-template>
