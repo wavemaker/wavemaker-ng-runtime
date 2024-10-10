@@ -87,6 +87,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public containerTarget: string;
     public hint: string;
     public arialabel: string;
+    public caption: string;
+    public badgevalue: string;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;

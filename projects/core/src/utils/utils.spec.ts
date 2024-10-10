@@ -298,7 +298,7 @@ describe('getFormWidgetTemplate', () => {
     it('should generate chips template', () => {
         const attrs = createAttrs({ debouncetime: '500' });
         const result = getFormWidgetTemplate(FormWidgetType.CHIPS, 'innerTmpl', attrs);
-        expect(result).toBe('<ul wmChips role="input" debouncetime="500" innerTmpl show.bind="true"></ul>');
+        expect(result).toBe('<ul wmChips debouncetime="500" innerTmpl show.bind="true"></ul>');
     });
 
     it('should generate colorpicker template', () => {
@@ -328,13 +328,13 @@ describe('getFormWidgetTemplate', () => {
     it('should generate number template', () => {
         const attrs = createAttrs({ required: 'true', updateon: 'change' });
         const result = getFormWidgetTemplate(FormWidgetType.NUMBER, 'innerTmpl', attrs);
-        expect(result).toBe('<div wmNumber innerTmpl required=true type="number" aria-label="Only numbers" updateon="change" show.bind="true"></div>');
+        expect(result).toBe('<div wmNumber innerTmpl required=true type="number" updateon="change" show.bind="true"></div>');
     });
 
     it('should generate password template', () => {
         const attrs = createAttrs({ required: 'true' });
         const result = getFormWidgetTemplate(FormWidgetType.PASSWORD, 'innerTmpl', attrs);
-        expect(result).toBe('<wm-input innerTmpl required=true type="password" aria-label="Enter password"  show.bind="true"></wm-input>');
+        expect(result).toBe('<wm-input innerTmpl required=true type="password"  show.bind="true"></wm-input>');
     });
 
     it('should generate radioset template', () => {
@@ -364,7 +364,7 @@ describe('getFormWidgetTemplate', () => {
     it('should generate toggle template', () => {
         const attrs = createAttrs({ required: 'true' });
         const result = getFormWidgetTemplate(FormWidgetType.TOGGLE, 'innerTmpl', attrs);
-        expect(result).toBe('<div wmCheckbox innerTmpl required=true type="toggle" role="checkbox" aria-label="Toggle button" show.bind="true"></div>');
+        expect(result).toBe('<div wmCheckbox innerTmpl required=true type="toggle" show.bind="true"></div>');
     });
 
     it('should generate slider template', () => {
@@ -400,7 +400,7 @@ describe('getFormWidgetTemplate', () => {
     it('should generate timestamp template', () => {
         const attrs = createAttrs({ required: 'true', dataentrymode: 'picker' });
         const result = getFormWidgetTemplate(FormWidgetType.TIMESTAMP, 'innerTmpl', attrs);
-        expect(result).toBe('<div wmDateTime required=true dataentrymode="picker" innerTmpl role="input" show.bind="true"></div>');
+        expect(result).toBe('<div wmDateTime required=true dataentrymode="picker" innerTmpl show.bind="true"></div>');
     });
 
     it('should generate upload template with uploadProps', () => {

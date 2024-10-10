@@ -1,6 +1,6 @@
-import { NgZone } from '@angular/core';
-import { CarouselAnimator } from './carousel.animator';
-import { CarouselDirective } from './carousel.directive';
+import {NgZone} from '@angular/core';
+import {CarouselAnimator} from './carousel.animator';
+import {CarouselDirective} from './carousel.directive';
 
 // Mock SwipeAnimation
 jest.mock('@swipey', () => ({
@@ -67,7 +67,8 @@ describe('CarouselAnimator', () => {
             filter: jest.fn().mockReturnThis(),
             css: jest.fn().mockReturnThis(),
             add: jest.fn().mockReturnThis(),
-            attr: jest.fn().mockReturnThis()
+            attr: jest.fn().mockReturnThis(),
+            removeAttr: jest.fn().mockReturnThis()
         };
         Object.setPrototypeOf(mockJQueryInstance, Array.prototype);
 
@@ -440,7 +441,7 @@ describe('CarouselAnimator', () => {
             carouselAnimator['setActiveItem']();
 
             expect(mockJQueryInstance.eq).toHaveBeenCalledWith(0);
-            expect(mockJQueryInstance.removeClass).toHaveBeenCalledWith('left-item right-item'); 
+            expect(mockJQueryInstance.removeClass).toHaveBeenCalledWith('left-item right-item');
         });
 
         it('should set classes correctly for multiple items', () => {
@@ -491,4 +492,4 @@ describe('CarouselAnimator', () => {
             expect(mockJQueryInstance.eq).toHaveBeenCalledWith(1);  // right item
         });
     });
-}); 
+});

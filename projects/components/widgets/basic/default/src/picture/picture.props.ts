@@ -14,6 +14,7 @@ export const registerProps = () => {
             ['arialabel', PROP_STRING],
             ['name', PROP_STRING],
             ['pictureaspect', {value: 'None', ...PROP_STRING}],
+            ['alttext', {value: 'Image alt text not provided', ...PROP_STRING}],
             ['pictureplaceholder', PROP_STRING],
             ['picturesource', PROP_STRING],
             ['resizemode', {value: 'fill', ...PROP_STRING}],
