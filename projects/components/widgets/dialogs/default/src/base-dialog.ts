@@ -26,6 +26,7 @@ const invokeOpenedCallback = (ref) => {
             ref.invokeEventCallback('opened', { $event: { type: 'opened' } });
             // focusTrapObj will create focus trap for the respective dialog according to the titleId assigned to them which is unique.
             const container = $('[aria-labelledby= ' + ref.titleId + ']')[0];
+            container.style.display = "flex";
 
             const keyboardFocusableElements = [container.querySelectorAll(
                 'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
