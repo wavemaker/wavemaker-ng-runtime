@@ -2,11 +2,13 @@ import {
     AfterViewInit,
     Component,
     ContentChild,
-    ElementRef, Inject,
+    ElementRef,
+    Inject,
     Injector,
-    OnInit, Optional,
+    OnInit,
+    Optional,
     TemplateRef,
-    ViewChild
+    ViewChild,
 } from '@angular/core';
 
 import {PopoverDirective} from 'ngx-bootstrap/popover';
@@ -84,6 +86,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public adaptiveposition:boolean;
     public containerTarget: string;
     public hint: string;
+    public arialabel: string;
+    private documentClickHandler: (e: MouseEvent) => void;
+    private isClosingProgrammatically = false;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
@@ -95,6 +100,33 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         this.popoverContainerCls = `app-popover-${this.widgetId}`;
     }
 
+    private setupDocumentClickHandler() {
+        if (this.documentClickHandler) {
+            document.removeEventListener('click', this.documentClickHandler, true);
+        }
+
+        this.documentClickHandler = (event: MouseEvent) => {
+            if (!this.outsideclick || !this.isOpen) return;
+
+            const target = event.target as HTMLElement;
+            const popoverContainer = document.querySelector(`.${this.popoverContainerCls}`);
+            
+            const isClickInsideCurrentPopover = popoverContainer?.contains(target);
+            const isClickOnTrigger = this.anchorRef.nativeElement.contains(target);
+            const isClickInParentPopover = $(target).closest('.popover').length > 0 && !isClickInsideCurrentPopover;
+            
+            if (!isClickInsideCurrentPopover && !isClickOnTrigger && !isClickInParentPopover) {
+                this.isClosingProgrammatically = true;
+                this.close();
+            }
+        };
+
+        document.addEventListener('click', this.documentClickHandler, true);
+    }
+
+    private isChildPopover(): boolean {
+        return !!$(this.nativeElement).closest('.popover').length;
+    }
     // This mehtod is used to show/open the popover. This refers to the same method showPopover.
     public open() {
         this.showPopover();
@@ -102,13 +134,23 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
 
     // This mehtod is used to hide/close the popover.
     public close() {
-        this.isOpen = false;
+        if (this.isOpen) {
+            this.isClosingProgrammatically = true;
+            this.isOpen = false;
+            this.bsPopoverDirective.hide();
+        }
     }
 
     // Trigger on hiding popover
     public onHidden() {
-        this.invokeEventCallback('hide', {$event: {type: 'hide'}});
-        this.isOpen = false;
+        if (!this.isChildPopover() || this.isClosingProgrammatically) {
+            this.invokeEventCallback('hide', {$event: {type: 'hide'}});
+            this.isOpen = false;
+            if (activePopover === this) {
+                activePopover = null;
+            }
+        }
+        this.isClosingProgrammatically = false;
     }
 
     private setFocusToPopoverLink() {
@@ -164,13 +206,16 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             $('body > popover-container').wrap('<' + root + '/>');
         }
         // Fix for [WMS-25125]: Not closing the existing opened popovers when the autoclose property is DISABLED
-        if (activePopover && activePopover.isOpen && activePopover.autoclose !== AUTOCLOSE_TYPE.DISABLED) {
-            activePopover.isOpen = false;
+        if (!this.isChildPopover()) {
+            if (activePopover && activePopover !== this && 
+                activePopover.autoclose !== AUTOCLOSE_TYPE.DISABLED) {
+                activePopover.isClosingProgrammatically = true;
+                activePopover.close();
+            }
+            activePopover = this;
         }
 
-        activePopover = this;
-        activePopover.isOpen = true;
-
+        this.isOpen = true;
         const popoverContainer  = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
         setCSSFromObj(popoverContainer, {
             height: this.popoverheight,
@@ -188,6 +233,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             popoverContainer.onmouseleave = () => this.hidePopover();
             this.anchorRef.nativeElement.onmouseenter = () => clearTimeout(this.closePopoverTimeout);
             this.anchorRef.nativeElement.onmouseleave = () => this.hidePopover();
+        }
+        if (this.outsideclick) {
+            this.setupDocumentClickHandler();
         }
         setTimeout(() => {
             this.anchorRef.nativeElement.removeAttribute('aria-describedby');
@@ -257,6 +305,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     }
 
     private hidePopover() {
+        this.isClosingProgrammatically = true;
         this.closePopoverTimeout = setTimeout(() => this.isOpen = false, 500);
     }
 
@@ -315,5 +364,11 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     ngOnDetach() {
         // Hide the popover container while attaching the next component as part of page reuse strategy.
         this.bsPopoverDirective.hide();
+    }
+
+    ngOnDestroy() {
+        if (this.documentClickHandler) {
+            document.removeEventListener('click', this.documentClickHandler, true);
+        }
     }
 }
