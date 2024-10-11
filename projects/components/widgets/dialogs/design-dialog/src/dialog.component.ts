@@ -48,13 +48,6 @@ export class DialogComponent extends BaseDialog implements OnInit {
         @Self() @Inject(Context) contexts: Array<any>,
         @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
-        if (modal === null || modal === undefined) {
-            modal = true;
-        }
-
-        if (closable === null || closable === undefined) {
-            closable = true;
-        }
 
         // contexts[0] will refer to the self context provided by this component
         contexts[0].closeDialog = () => this.close();
@@ -67,9 +60,6 @@ export class DialogComponent extends BaseDialog implements OnInit {
             WIDGET_INFO,
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
-                backdrop,
-                keyboard: toBoolean(closable) ? true : !toBoolean(modal),
-                ignoreBackdropClick: toBoolean(modal)
             },
             explicitContext
         );
@@ -77,6 +67,9 @@ export class DialogComponent extends BaseDialog implements OnInit {
         // adding props to render dialog as sheet
         this.sheet = sheet;
         this.sheetPosition = sheetPosition;
+        this.modalOptions.keyboard = toBoolean(closable) ? true : !toBoolean(modal);
+        this.modalOptions.backdrop = toBoolean(modal) ? 'static' : true;
+        this.modalOptions.ignoreBackdropClick = toBoolean(modal);
     }
 
     protected getTemplateRef(): TemplateRef<any> {
