@@ -91,6 +91,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public badgevalue: string;
     private documentClickHandler: (e: MouseEvent) => void;
     private isClosingProgrammatically = false;
+    private static activePopovers: PopoverComponent[] = [];
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
@@ -108,22 +109,45 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         }
 
         this.documentClickHandler = (event: MouseEvent) => {
-            if (!this.outsideclick || !this.isOpen) return;
+            if (!this.isOpen) return;
 
             const target = event.target as HTMLElement;
-            const popoverContainer = document.querySelector(`.${this.popoverContainerCls}`);
-            
-            const isClickInsideCurrentPopover = popoverContainer?.contains(target);
-            const isClickOnTrigger = this.anchorRef.nativeElement.contains(target);
-            const isClickInParentPopover = $(target).closest('.popover').length > 0 && !isClickInsideCurrentPopover;
-            
-            if (!isClickInsideCurrentPopover && !isClickOnTrigger && !isClickInParentPopover) {
-                this.isClosingProgrammatically = true;
-                this.close();
+            const clickedPopoverIndex = PopoverComponent.activePopovers.findIndex(popover => {
+                const popoverContainer = document.querySelector(`.${popover.popoverContainerCls}`);
+                return popoverContainer?.contains(target);
+            });
+
+            if (clickedPopoverIndex === -1) {
+                // Click is outside all popovers
+                if (this.outsideclick) {
+                    this.closeAllPopovers();
+                }
+            } else {
+                // Click is inside a popover
+                this.closeInnerPopovers(clickedPopoverIndex);
             }
         };
 
         document.addEventListener('click', this.documentClickHandler, true);
+    }
+
+    private closeAllPopovers() {
+        PopoverComponent.activePopovers.forEach(popover => {
+            if (popover.outsideclick) {
+                popover.isClosingProgrammatically = true;
+                popover.close();
+            }
+        });
+    }
+
+    private closeInnerPopovers(clickedIndex: number) {
+        for (let i = clickedIndex + 1; i < PopoverComponent.activePopovers.length; i++) {
+            const popover = PopoverComponent.activePopovers[i];
+            if (popover.outsideclick) {
+                popover.isClosingProgrammatically = true;
+                popover.close();
+            }
+        }
     }
 
     private isChildPopover(): boolean {
@@ -132,6 +156,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     // This mehtod is used to show/open the popover. This refers to the same method showPopover.
     public open() {
         this.showPopover();
+        if (!PopoverComponent.activePopovers.includes(this)) {
+            PopoverComponent.activePopovers.push(this);
+        }
     }
 
     // This mehtod is used to hide/close the popover.
@@ -140,6 +167,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             this.isClosingProgrammatically = true;
             this.isOpen = false;
             this.bsPopoverDirective.hide();
+            const index = PopoverComponent.activePopovers.indexOf(this);
+            if (index > -1) {
+                PopoverComponent.activePopovers.splice(index, 1);
+            }
         }
     }
 
@@ -218,7 +249,18 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         }
 
         this.isOpen = true;
+        if (!PopoverComponent.activePopovers.includes(this)) {
+            PopoverComponent.activePopovers.push(this);
+        }
         const popoverContainer  = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
+        if (popoverContainer) {
+            popoverContainer.setAttribute('data-popover-id', this.widgetId);
+            
+            // Add click event listener to stop propagation
+            popoverContainer.addEventListener('click', (event: Event) => {
+                event.stopPropagation();
+            });
+        }
         setCSSFromObj(popoverContainer, {
             height: this.popoverheight,
             minWidth: this.popoverwidth,
@@ -371,6 +413,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     OnDestroy() {
         if (this.documentClickHandler) {
             document.removeEventListener('click', this.documentClickHandler, true);
+        }
+        const index = PopoverComponent.activePopovers.indexOf(this);
+        if (index > -1) {
+            PopoverComponent.activePopovers.splice(index, 1);
         }
     }
 }
