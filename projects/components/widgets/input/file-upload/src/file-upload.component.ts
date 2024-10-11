@@ -2,7 +2,7 @@ import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, OnInit
 
 import {Subject} from 'rxjs';
 
-import {App, DataSource, getWmProjectProperties, isAudioFile, isImageFile, isVideoFile} from '@wm/core';
+import {App, DataSource, getWmProjectProperties, isAudioFile, isImageFile, isVideoFile, AbstractDialogService} from '@wm/core';
 import {provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
 
 import {registerProps} from './file-upload.props';
@@ -30,6 +30,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     uploadedFiles: any = [];
     selectedFolders: any = [];
     progressObservable;
+    deleteFileObservable;
     name;
     hint;
     arialabel;
@@ -65,6 +66,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     defaultAllowedExtensions = this.allowedFileUploadExtensions.split(',').map(item => item.trim()).map(item => item.endsWith('/*') ? item : `.${item}`);
     chooseFilter = this.defaultAllowedExtensions.includes('*/*') ? '' : this.defaultAllowedExtensions;
     datasource;
+    deletedatasource;
     fileUploadMessage = 'Drop your files here or click here to browse';
     highlightDropArea;
     showprogressbar;
@@ -211,8 +213,12 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
 
     /*this function to clear the specified file. if argument is not provided, it clears the complete list  */
     clear(fileObj) {
-        this.selectedFiles = (fileObj) ? this.selectedFiles.filter((file) => file !== fileObj) : [];
-        this.uploadedFiles = (fileObj) ? this.uploadedFiles.filter((file) => file !== fileObj) : [];
+        this.selectedFiles = (fileObj) ? this.clearFile(this.selectedFiles, fileObj) : [];
+        this.uploadedFiles = (fileObj) ? this.clearFile(this.uploadedFiles, fileObj) : [];
+    }
+
+    private clearFile(files, fileObj) {
+        return files.filter((file) => file?._response?.fileName !== fileObj?._response?.fileName || file?.name !== fileObj?.name || file !== fileObj);
     }
 
     /*this function to set the class names for clear icon */
@@ -280,6 +286,47 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                 // EVENT: ON_SELECT
                 this.onSelectEventCall($event, $files);
             }
+        }
+    }
+
+    onFileDelete($event, file) {
+        if(!file) {
+            return;
+        }
+
+        const beforeDeleteVal = this.invokeEventCallback('beforedelete', { $event: file });
+
+        if (beforeDeleteVal !== false) {
+            this.dialogService.showAppConfirmDialog({
+                title: "Delete file",
+                message: "Are you sure you want to delete this file?",
+                oktext: "Ok",
+                canceltext: "Cancel",
+                onOk: () => {
+                    if (this.deletedatasource) {
+                        this.deletedatasource.setInput('file', file._response.fileName || file.name);
+                        this.deleteFileObservable = new Subject();
+                        this.deletedatasource._deleteFileObservable = this.deleteFileObservable;
+                        this.deletedatasource._deleteFileObservable.asObservable().subscribe((response) => {
+                            if(response.status === "success") {
+                                this.selectedFiles = this.selectedFiles.filter((fileObj) => file !== fileObj) || [];
+                                this.uploadedFiles = this.uploadedFiles.filter((fileObj) => file !== fileObj) || [];
+                                this.deletedatasource._deleteFileObservable.unsubscribe();
+                            }
+                        }, (error) => {
+                            this.deletedatasource._deleteFileObservable.unsubscribe();
+                        });
+                    }
+                    this.invokeEventCallback('delete', { $event: file });
+                    this.dialogService.closeAppConfirmDialog();
+                },
+                onCancel: () => {
+                    this.dialogService.closeAppConfirmDialog();
+                },
+                onOpen: () => {
+                    $('.cancel-action').focus();
+                }
+            });
         }
     }
 
@@ -369,7 +416,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         super.onPropertyChange(key, nv, ov);
     }
 
-    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, private app: App, @Attribute('select.event') public onSelectEvt, private dialogService: AbstractDialogService, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
         // styler(this.nativeElement, this);
     }

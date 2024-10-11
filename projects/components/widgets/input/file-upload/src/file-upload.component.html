@@ -78,6 +78,11 @@
                             <i class="{{cleariconclass}}"></i>
                         </a>
                     </div>
+                    <div class="media-right media-middle" *ngIf="ft.status === 'success'">
+                        <a (click)="onFileDelete($event, ft)" class="btn btn-transparent btn-default status-icon" title="delete" type="button">
+                            <i class="wi wi-delete"></i>
+                        </a>
+                    </div>
                 </div>
             </li>
         </div>
