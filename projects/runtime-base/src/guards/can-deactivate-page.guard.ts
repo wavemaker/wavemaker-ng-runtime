@@ -26,7 +26,7 @@ export class CanDeactivatePageGuard {
           let retVal;
           const nextRoute = nextState ? nextState.url : undefined;
           // Calling onBeforePageLeave method present at page level
-          retVal = this.app.activePage && this.app.activePage.onBeforePageLeave();
+          retVal = this.app.activePage && this.app.activePage.onBeforePageLeave(nextRoute);
           // Calling onBeforePageLeave method present at app level only if page level method return true
           // or if there is no page level method
           if (retVal !== false ) {
