@@ -1,6 +1,6 @@
 import {ComponentFixture} from '@angular/core/testing';
 import {Component, ViewChild} from '@angular/core';
-import {App} from '@wm/core';
+import {AbstractDialogService, App} from '@wm/core';
 import {FileUploadComponent} from './file-upload.component';
 import {ComponentsTestModule} from '../../../../base/src/test/components.test.module';
 import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../base/src/test/common-widget.specs';
@@ -39,7 +39,7 @@ class FileUploadWrapperComponent {
 const testModuleDef: ITestModuleDef = {
     declarations: [FileUploadWrapperComponent, FileUploadComponent, FileSizePipe, FileIconClassPipe, StateClassPipe],
     imports: [ComponentsTestModule],
-    providers: [{ provide: App, useValue: mockApp }]
+    providers: [{ provide: App, useValue: mockApp }, AbstractDialogService]
 };
 
 const componentDef: ITestComponentDef = {
