@@ -46,6 +46,7 @@ export {
     isIpod,
     isIpad,
     isIos,
+    isSafari,
     isLargeTabletLandscape,
     isLargeTabletPortrait,
     isMobile,
