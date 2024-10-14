@@ -2709,12 +2709,13 @@ $.widget('wm.datatable', {
             self = this;
 
         if (this.options.enableRowSelection) {
-            $htm[0].removeEventListener('click', this.rowClickHandlerOnCapture.bind(this));
-            $htm.off();
-            $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this));
             // add js click handler for capture phase in order to first listen on grid and
             // assign selectedItems so that any child actions can have access to the selectedItems.
             $htm.on('click', this.rowSelectionHandler.bind(this));
+
+            $htm[0].removeEventListener('click', this.rowClickHandlerOnCapture.bind(this));
+            $htm.off();
+            $htm[0].addEventListener('click', this.rowClickHandlerOnCapture.bind(this));
             $htm.on("click", "td *", function(event) {
 
                 // Prevent propagation to parent elements
