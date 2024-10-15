@@ -166,6 +166,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     enablesort = true;
     filtermode;
     filteronkeypress;
+    isrowselectable;
     searchlabel;
     formposition;
     gridclass;
@@ -311,6 +312,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         filtermode: '',
         filteronkeypress: false,
+        isrowselectable: false,
         searchLabel: '',
         rowActions: [],
         headerConfig: [],
@@ -1116,7 +1118,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             showheader: 'showHeader',
             enablecolumnselection: 'enableColumnSelection',
             shownewrow: 'showNewRow',
-            gridfirstrowselect: 'selectFirstRow'
+            gridfirstrowselect: 'selectFirstRow',
+            isrowselectable: 'isrowselectable'
         };
 
         if (this._liveTableParent) {
@@ -1143,6 +1146,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.formPosition = this.formposition;
         this.gridOptions.filtermode = this.filtermode;
         this.gridOptions.filteronkeypress = this.filteronkeypress;
+        this.gridOptions.isrowselectable = this.isrowselectable;
         this.gridOptions.searchLabel = this.searchlabel;
         this.gridOptions.isMobile = isMobile();
         this.gridOptions.name = this.name;

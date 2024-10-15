@@ -21,6 +21,7 @@ $.widget('wm.datatable', {
         filtermode: '',
         filteronkeypress: false,
         activeRow: undefined,
+        isrowselectable: false,
         height: '100%',
         showHeader: true,
         selectFirstRow: false,
@@ -1501,6 +1502,7 @@ $.widget('wm.datatable', {
                 }
             case 'multiselect': // Fallthrough
             case 'showRadioColumn':
+            case 'isrowselectable' :
             case 'rowActions':
             case 'filterNullRecords':
             case 'showRowIndex':
@@ -1664,8 +1666,16 @@ $.widget('wm.datatable', {
     // triggered on capture phase of click listener.
     // sets the selected rowdata on click.
     rowClickHandlerOnCapture: function (e, $row, options) {
-        if(this.getColInfo(e) && (e.target.type != 'checkbox' && e.target.type != 'radio')) {
-            return;
+        // If 'isrowselectable' property is enabled, clicking anywhere on the row will trigger its selection. Otherwise, the row will not be selected on click.
+        // Also this flag works if mutliselect or radioselect is enabled.
+        // In quick edit mode, clicking any part of the row switches it to edit mode, regardless of the flag setting.
+        if (this.options.editmode !== this.CONSTANTS.QUICK_EDIT) {
+            if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable) {
+                if (Number(this.getColInfo(e))) {
+                    e.stopPropagation();
+                    return;
+                }
+            }
         }
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
         var gridRow = this.gridElement.find($row);
@@ -1680,8 +1690,16 @@ $.widget('wm.datatable', {
 
     /* Handles row selection. */
     rowSelectionHandler: function (e, $row, options) {
-        if(this.getColInfo(e) && (e.target.type != 'checkbox' && e.target.type != 'radio')) {
-            return;
+        // If 'isrowselectable' property is enabled, clicking anywhere on the row will trigger its selection. Otherwise, the row will not be selected on click.
+        // Also this flag works if mutliselect or radioselect is enabled.
+        // In quick edit mode, clicking any part of the row switches it to edit mode, regardless of the flag setting.
+        if (this.options.editmode !== this.CONSTANTS.QUICK_EDIT) {
+            if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable) {
+                if (Number(this.getColInfo(e))) {
+                    e.stopPropagation();
+                    return;
+                }
+            }
         }
         options = options || {};
         var rowId,
@@ -2694,14 +2712,9 @@ $.widget('wm.datatable', {
         return false;
     },
     getColInfo: function(event) {
-        var row =  $(event.target).closest('tr.app-datagrid-row');
-        var rowId = row.attr('data-row-id');
         var column = $(event.target).closest('td.app-datagrid-cell');
         var colId = column.attr('data-col-id');
-        if(this.columnClickInfo && this.columnClickInfo[rowId] && this.columnClickInfo[rowId][colId]) {
-            return this.columnClickInfo[rowId][colId];
-        }
-        return false;
+        return colId;
     },
     /* Attaches all event handlers for the table. */
     attachEventHandlers: function ($htm) {
@@ -2715,22 +2728,6 @@ $.widget('wm.datatable', {
             // add js click handler for capture phase in order to first listen on grid and
             // assign selectedItems so that any child actions can have access to the selectedItems.
             $htm.on('click', this.rowSelectionHandler.bind(this));
-            $htm.on("click", "td *", function(event) {
-
-                // Prevent propagation to parent elements
-                if(event.target.type != 'checkbox'){
-                    var row =  $(event.target).closest('tr.app-datagrid-row');
-                    var rowId = row.attr('data-row-id');
-                    var column = $(event.target).closest('td.app-datagrid-cell');
-                    var colId = column.attr('data-col-id');
-                    var id = Number(colId);
-                    var colDefination = self.preparedHeaderData[id];
-                    if (colDefination && colDefination.readonly && colDefination.field !== 'rowOperations') {
-                        self.columnClickInfo[rowId] = {};
-                        self.columnClickInfo[rowId][colId] = true;
-                    }
-                }
-            });
             $htm.on('dblclick', this.rowDblClickHandler.bind(this));
             $htm.on('keydown', this.onKeyDown.bind(this));
         }

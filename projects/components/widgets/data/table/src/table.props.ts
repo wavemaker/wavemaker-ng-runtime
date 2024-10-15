@@ -33,6 +33,7 @@ export const registerProps = () => {
                 ['insertmessage', {value: 'Record added successfully', ...PROP_STRING}],
                 ['isdynamictable', PROP_BOOLEAN], // internal property to determine dynamic table
                 ['isrowexpansionenabled', PROP_BOOLEAN],
+                ['isrowselectable', {value: false, ...PROP_BOOLEAN}],
                 ['loadingdatamsg', {value: 'Loading...', ...PROP_STRING}],
                 ['loadingicon', {value: 'fa fa-circle-o-notch fa-spin', ...PROP_STRING}],
                 ['maxsize', {value: 5, ...PROP_NUMBER}],
