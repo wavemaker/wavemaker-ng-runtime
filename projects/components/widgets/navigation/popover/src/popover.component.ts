@@ -1,5 +1,6 @@
 import {
     AfterViewInit,
+    ChangeDetectorRef,
     Component,
     ContentChild,
     ElementRef,
@@ -98,7 +99,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     @ContentChild(TemplateRef) popoverTemplate;
     @ContentChild('partial') partialRef;
 
-    constructor(inj: Injector, private app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, private app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, private cdr: ChangeDetectorRef) {
         super(inj, WIDGET_CONFIG, explicitContext);
         this.popoverContainerCls = `app-popover-${this.widgetId}`;
     }
@@ -128,6 +129,13 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                 const popoverContainer = document.querySelector(`.${popover.popoverContainerCls}`);
                 return popoverContainer?.contains(target);
             });
+
+            if (this.anchorRef.nativeElement.contains(target)) {
+                event.preventDefault();
+                event.stopPropagation();
+                this.isOpen ? this.close() : this.open()
+                return;
+            }
     
             if (clickedPopoverIndex === -1) {
                 // Click is outside all popovers
@@ -172,6 +180,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (!PopoverComponent.activePopovers.includes(this)) {
             PopoverComponent.activePopovers.push(this);
         }
+        this.cdr.detectChanges();
     }
 
     // This mehtod is used to hide/close the popover.
@@ -184,6 +193,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             if (index > -1) {
                 PopoverComponent.activePopovers.splice(index, 1);
             }
+            this.cdr.detectChanges();
         }
     }
 
