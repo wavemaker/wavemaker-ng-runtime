@@ -107,16 +107,28 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (this.documentClickHandler) {
             document.removeEventListener('click', this.documentClickHandler, true);
         }
-
+    
         this.documentClickHandler = (event: MouseEvent) => {
             if (!this.isOpen) return;
-
+    
             const target = event.target as HTMLElement;
+    
+            // Check if the clicked element or any of its parents is part of the datepicker, dropdown, or typeahead containers
+            const isInsideSpecialContainer = !!(
+                target.closest('.bs-datepicker-container') || 
+                target.closest(".dropdown-menu")
+            );
+    
+            if (isInsideSpecialContainer) {
+                // If the click was inside one of these containers, we do not close the popover
+                return;
+            }
+    
             const clickedPopoverIndex = PopoverComponent.activePopovers.findIndex(popover => {
                 const popoverContainer = document.querySelector(`.${popover.popoverContainerCls}`);
                 return popoverContainer?.contains(target);
             });
-
+    
             if (clickedPopoverIndex === -1) {
                 // Click is outside all popovers
                 if (this.outsideclick) {
@@ -127,9 +139,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                 this.closeInnerPopovers(clickedPopoverIndex);
             }
         };
-
+    
         document.addEventListener('click', this.documentClickHandler, true);
     }
+    
 
     private closeAllPopovers() {
         PopoverComponent.activePopovers.forEach(popover => {
