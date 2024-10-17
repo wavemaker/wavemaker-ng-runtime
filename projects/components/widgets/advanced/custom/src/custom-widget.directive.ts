@@ -23,7 +23,7 @@ export class CustomWidgetDirective extends StylableComponent implements OnDestro
         this.registerDestroyListener(this.viewport.subscribe(ViewportEvent.ORIENTATION_CHANGE, data => this.callback('orientationchange', data)));
     }
     ngAfterContentInit() {
-        let customWidget        = this.nativeElement.closest('[customwidgetcontainer]'),
+        let customWidget        = this.nativeElement.closest('[customwidgetcontainer]') || this.nativeElement.closest('[wmwidgetcontainer]'),
             inheritedProps      = {},
             customWidgetProps   = Array.from(getWidgetPropsByType("wm-custom-widget-container").keys());
         for(let i = 0; i < customWidget.attributes.length; i++) {

@@ -632,7 +632,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 this.nativeElement.hidden = true;
             }
             this.processBindAttr(propName, attrValue, child);
-        } else if (type === 'event' && !this.nativeElement.hasAttribute('customwidgetcontainer')) {
+        } else if (type === 'event' && !this.nativeElement.hasAttribute('wmwidgetcontainer')) {
             this.processEventAttr(propName, attrValue, meta, child);
         } else if (length === 1) {
             // remove class and name attributes. Component will set them on the proper node
