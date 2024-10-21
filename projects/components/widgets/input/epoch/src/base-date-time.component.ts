@@ -309,8 +309,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         return (newDate.getMonth() === 0 && this.activeDate.getMonth() === 11) || (newDate.getMonth() === 11 && this.activeDate.getMonth() === 0);
     }
 
-    public showDatePickerModal(bsDataval) {
-        bsDataval ? this.activeDate = bsDataval : this.activeDate = new Date();
+    public showDatePickerModal(bsDataValue) {
+        this.activeDate = bsDataValue || new Date();
         this.setNextData(this.activeDate);
         this.datetimepickerComponent.show();
         setTimeout(() => {
@@ -341,44 +341,24 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     /**
-     * This method is used to set focus for active day
-     * @param newDate - newly selected date value
-     * @param isMouseEvent - boolean value represents the event is mouse event/ keyboard event
+     * This method is used to add keyboard events while opening the date picker
+     * @param scope - scope of the date/datetime widget
+     * @param isDateTime - boolean value represents the loaded widget is date or datetime
      */
-    private setActiveDateFocus(newDate, isMouseEvent?: boolean) {
-        this.setNextData(newDate);
-        this.clicked = false;
-        const activeMonth = this.activeDate.getMonth();
-        // check for keyboard event
-        if (!isMouseEvent) {
-            if (newDate.getMonth() < activeMonth) {
-                this.isOtheryear(newDate) ? this.goToOtherMonthOryear('next', 'days') : this.goToOtherMonthOryear('previous', 'days');
-            } else if (newDate.getMonth() > activeMonth) {
-                this.isOtheryear(newDate) ? this.goToOtherMonthOryear('previous', 'days') : this.goToOtherMonthOryear('next', 'days');
+    protected addDatepickerKeyboardEvents(scope, isDateTime) {
+        this.elementScope = scope;
+        const dateContainer = document.querySelector(`.${scope.dateContainerCls}`) as HTMLElement;
+        setAttr(dateContainer, 'tabindex', '0');
+        dateContainer.onkeydown = (event) => {
+            // Check for Shift+Tab key or Tab key or escape
+            if (event.key === 'Escape') {
+                this.elementScope.hideDatepickerDropdown();
+                const displayInputElem = this.elementScope.nativeElement.querySelector('.display-input') as HTMLElement;
+                setTimeout(() => displayInputElem.focus());
             }
-        }
-        setTimeout(() => {
-            const newDay = newDate.getDate().toString();
-            filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
-                const activeMonth = $(`.bs-datepicker-head .current`).first().text();
-                const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
-                const monthName = new Date().toLocaleString('default', { month: 'long' });
-                if ($(obj).text() === newDay && activeMonth == monthName && activeYear == new Date().getFullYear()) {
-                    if ($(obj).hasClass('selected')) {
-                        $(obj).parent().attr('aria-selected', 'true');
-                    }
-                    $(obj).attr('aria-label', moment(newDate).format('dddd, MMMM Do YYYY'));
-                    $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '-1');
-                    $(obj).attr('tabindex', '0');
-                    $(obj).focus();
-                    this.activeDate = newDate;
-                }
-            });
-            if (newDate.getDate() === new Date().getDate() && newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
-                this.hightlightToday(newDate);
-            }
-        });
-
+        };
+        this.loadDays();
+        this.setActiveDateFocus(this.activeDate, undefined, true);
     }
 
     private getMonth(date, inc) {
@@ -457,24 +437,48 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     }
 
     /**
-     * This method is used to add keyboard events while opening the date picker
-     * @param scope - scope of the date/datetime widget
-     * @param isDateTime - boolean value represents the loaded widget is date or datetime
+     * This method is used to set focus for active day
+     * @param newDate - newly selected date value
+     * @param isMouseEvent - boolean value represents the event is mouse event/ keyboard event
+     * @param fromKeyboardEvents
      */
-    protected addDatepickerKeyboardEvents(scope, isDateTime) {
-        this.elementScope = scope;
-        const dateContainer = document.querySelector(`.${scope.dateContainerCls}`) as HTMLElement;
-        setAttr(dateContainer, 'tabindex', '0');
-        dateContainer.onkeydown = (event) => {
-            // Check for Shift+Tab key or Tab key or escape
-            if (event.key === 'Escape') {
-                this.elementScope.hideDatepickerDropdown();
-                const displayInputElem = this.elementScope.nativeElement.querySelector('.display-input') as HTMLElement;
-                setTimeout(() => displayInputElem.focus());
+    private setActiveDateFocus(newDate, isMouseEvent?: boolean, fromKeyboardEvents?: boolean) {
+        if (this.mindate && !this.datavalue && fromKeyboardEvents) {
+            this.activeDate = newDate = new Date(this.mindate);
+        }
+        this.setNextData(newDate);
+        this.clicked = false;
+        const activeMonth = this.activeDate.getMonth();
+        // check for keyboard event
+        if (!isMouseEvent) {
+            if (newDate.getMonth() < activeMonth) {
+                this.isOtheryear(newDate) ? this.goToOtherMonthOryear('next', 'days') : this.goToOtherMonthOryear('previous', 'days');
+            } else if (newDate.getMonth() > activeMonth) {
+                this.isOtheryear(newDate) ? this.goToOtherMonthOryear('previous', 'days') : this.goToOtherMonthOryear('next', 'days');
             }
-        };
-        this.loadDays();
-        this.setActiveDateFocus(this.activeDate);
+        }
+        setTimeout(() => {
+            const newDay = newDate.getDate().toString();
+            filter($(`span:contains(${newDay})`).not('.is-other-month'), (obj) => {
+                const activeMonth = $(`.bs-datepicker-head .current`).first().text();
+                const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
+                const monthName = new Date().toLocaleString('default', { month: 'long' });
+                if ($(obj).text() === newDay) {
+                    if ($(obj).hasClass('selected')) {
+                        $(obj).parent().attr('aria-selected', 'true');
+                    }
+                    $(obj).attr('aria-label', moment(newDate).format('dddd, MMMM Do YYYY'));
+                    $('[bsdatepickerdaydecorator]').not('.is-other-month').attr('tabindex', '-1');
+                    $(obj).attr('tabindex', '0');
+                    $(obj).focus();
+                    this.activeDate = newDate;
+                }
+            });
+            if (newDate.getDate() === new Date().getDate() && newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
+                this.hightlightToday(newDate);
+            }
+        });
+
     }
     private setNextData(nextDate) {
         this.next = this.getMonth(nextDate, 1);
