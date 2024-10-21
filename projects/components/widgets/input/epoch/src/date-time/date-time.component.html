@@ -32,7 +32,7 @@
                 [disabled]="disabled || readonly || isCurrentDate"
                 [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : 'Choose date by pressing enter'"
                 aria-haspopup="true"
-                aria-expanded="false"
+                    [attr.aria-expanded]="isDateOpen"
                 (click)="toggleDpDropdown($event, false)">
                 <i aria-hidden="true"
                     class="app-icon wm-sl-l sl-calendar"></i>

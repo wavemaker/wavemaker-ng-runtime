@@ -13,7 +13,7 @@ register('wm-fileupload', (): IBuildTaskDef => {
                 const onDeleteBinding = getDataSource(attrs.get('delete.event'));
                 attrs.set('deletedatasource.bind', onDeleteBinding);
             }
-            return `<${tagName} wmFileUpload ${getAttrMarkup(attrs)} role="input">`;
+            return `<${tagName} wmFileUpload ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };
