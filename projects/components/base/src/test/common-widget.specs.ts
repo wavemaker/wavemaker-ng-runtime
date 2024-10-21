@@ -424,7 +424,7 @@ export class ComponentTestBase {
                 expect($inputEl.getAttribute('aria-label')).toBeDefined();
             });
 
-            it.only(this.widgetDef.type + ': aria-label property change should be reflected based on arialabel', () => {
+            it(this.widgetDef.type + ': aria-label property change should be reflected based on arialabel', () => {
                 if (!widgetProps.get('arialabel')) {
                     return;
                 }
