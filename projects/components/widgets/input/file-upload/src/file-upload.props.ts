@@ -28,7 +28,8 @@ export const registerProps = () => {
                 ['filelistheight', PROP_NUMBER],
                 ['width', {value: 'auto', ...PROP_STRING}],
                 ['showprogressbar', PROP_BOOLEAN],
-                ['showprogressbarpercentage', PROP_BOOLEAN]
+                ['showprogressbarpercentage', PROP_BOOLEAN],
+                ['deleteiconhint', {value: 'Delete', ...PROP_STRING}]
             ]
         )
     );

@@ -2,7 +2,15 @@ import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, OnInit
 
 import {Subject} from 'rxjs';
 
-import {App, DataSource, getWmProjectProperties, isAudioFile, isImageFile, isVideoFile, AbstractDialogService} from '@wm/core';
+import {
+    AbstractDialogService,
+    App,
+    DataSource,
+    getWmProjectProperties,
+    isAudioFile,
+    isImageFile,
+    isVideoFile
+} from '@wm/core';
 import {provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
 
 import {registerProps} from './file-upload.props';
@@ -71,6 +79,7 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     highlightDropArea;
     showprogressbar;
     showprogressbarpercentage;
+    deleteiconhint;
     /*_hasOnSuccessEvt = WM.isDefined(attrs.onSuccess);
      _hasOnErrorEvt = WM.isDefined(attrs.onError);*/
 
