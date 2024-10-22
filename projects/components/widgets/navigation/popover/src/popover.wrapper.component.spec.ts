@@ -371,6 +371,13 @@ describe('PopoverComponent', () => {
         let mockPopoverEndBtn: HTMLElement;
         let mockArrowElement: HTMLElement;
 
+        const createJQueryMock = (closestLength: number = 0) => {
+            return {
+                wrap: jest.fn().mockReturnThis(),
+                closest: jest.fn().mockReturnValue({ length: closestLength })
+            };
+        };
+
         beforeEach(() => {
             // Create mock elements
             mockPopoverContainer = document.createElement('div');
@@ -390,6 +397,8 @@ describe('PopoverComponent', () => {
 
             document.body.appendChild(mockPopoverContainer);
 
+            (global as any).$ = jest.fn(() => createJQueryMock());
+
             // Mock document.querySelector
             jest.spyOn(document, 'querySelector').mockImplementation((selector: string) => {
                 if (selector.includes('app-popover-wrapper')) return mockPopoverContainer;
@@ -399,6 +408,10 @@ describe('PopoverComponent', () => {
 
             // Set up component properties
             wmComponent.anchorRef = { nativeElement: mockAnchorElement };
+            Object.defineProperty(wmComponent, "nativeElement", {
+                get: jest.fn(() => mockAnchorElement),
+                configurable: true
+            });
             wmComponent.popoverheight = '100px';
             wmComponent.popoverwidth = '200px';
             wmComponent.popoverarrow = true;
@@ -419,35 +432,34 @@ describe('PopoverComponent', () => {
                 value: { addEventListener: jest.fn().mockReturnValue(() => { }) }
             });
 
-            // Mock bsPopoverDirective
             (wmComponent as any).bsPopoverDirective = {
                 hide: jest.fn()
             };
 
             (findRootContainer as jest.Mock).mockReturnValue('app-root');
 
-            // Mock jQuery
-            (global as any).$ = jest.fn().mockReturnValue({
-                wrap: jest.fn()
-            });
-
-            // Mock global activePopover
-            (global as any).activePopover = undefined;
-
             jest.useFakeTimers();
         });
-
         afterEach(() => {
             document.body.removeChild(mockPopoverContainer);
             jest.useRealTimers();
             jest.restoreAllMocks();
         });
 
+        it('should not close existing active popover when it is a child popover', () => {
+            const mockActivePopover = {
+                autoclose: AUTOCLOSE_TYPE.ALWAYS,
+                isClosingProgrammatically: false,
+                close: jest.fn()
+            };
+            (global as any).activePopover = mockActivePopover;
 
-        it('should wrap popover container when root is found', () => {
+            (global as any).$ = jest.fn().mockReturnValue(createJQueryMock(1));
+
             wmComponent.onShown();
-            expect($).toHaveBeenCalledWith('body > popover-container');
-            expect($().wrap).toHaveBeenCalledWith('<app-root/>');
+
+            expect(mockActivePopover.close).not.toHaveBeenCalled();
+            expect(mockActivePopover.isClosingProgrammatically).toBeFalsy();
         });
 
         it('should set CSS properties on popover container', () => {
