@@ -1,6 +1,6 @@
 import {Attribute, Directive, ElementRef, Inject, Injector, OnInit, Optional} from '@angular/core';
 
-import { noop } from '@wm/core';
+import { addClass, noop } from '@wm/core';
 import {PROP_TYPE, provideAs, provideAsWidgetRef, register, StylableComponent, styler} from '@wm/components/base';
 
 import { customWidgetProps } from './custom-widget.props';
@@ -96,6 +96,9 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
     public setProps(config, resolveFn: Function) {
         this.config = config;
         this.configSubject.next();
+        if(config.defaultClasses){
+            addClass(this.nativeElement, config.defaultClasses);
+        }
         this.asAttr = this.nativeElement.children[0].children[0].hasAttribute('as');
         if(this.asAttr)
             this.setBaseWidgetName(config.widgetType);
