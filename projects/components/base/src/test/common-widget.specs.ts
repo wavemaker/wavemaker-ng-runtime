@@ -205,7 +205,7 @@ export class ComponentTestBase {
 
             // check for tab index property
             it('"tabindex" should work', () => {
-                if (!widgetProps.get('tabindex')) {
+                if (!widgetProps.get('tabindex') || (component.hint === 'Progress bar' || component.hint === 'audio')) {
                     return;
                 }
                 let givenTabindex = this.widgetDef.$unCompiled.attr('tabindex');

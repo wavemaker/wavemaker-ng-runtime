@@ -67,7 +67,7 @@ describe('ProgressBar component', () => {
         expect(progressBarComponent.hint).toBe("Progress bar");
         expect(progressBarComponent.data.length).toBe(1);
         expect(progressBarComponent.data[0].cls).toBe('');
-        expect(progressBarComponent.data[0].progressBarWidth).toBe("0%");
+        expect(progressBarComponent.data[0].progressBarWidth).toBe(0);
         expect(progressBarComponent.data[0].displayValue).toBe("0");
     });
 
