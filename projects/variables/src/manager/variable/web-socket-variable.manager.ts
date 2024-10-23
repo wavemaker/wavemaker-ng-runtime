@@ -1,16 +1,13 @@
 import { $WebSocket } from 'angular2-websocket/angular2-websocket';
-
 import { getValidJSON, isDefined, isInsecureContentRequest, isObject, triggerFn, xmlToJson } from '@wm/core';
-
 import { BaseVariableManager } from './base-variable.manager';
 import { WebSocketVariable } from '../../model/variable/web-socket-variable';
 import { initiateCallback, metadataService } from '../../util/variable/variables.utils';
 import { CONSTANTS, VARIABLE_CONSTANTS } from '../../constants/variables.constants';
 import { ServiceVariableUtils } from '../../util/variable/service-variable.utils';
-import {forEach, get} from "lodash-es";
+import { forEach, get } from "lodash-es";
 
 export class WebSocketVariableManager extends BaseVariableManager {
-
     scope_var_socket_map = new Map();
     PROPERTY = {
         'SERVICE': 'service',
@@ -59,10 +56,11 @@ export class WebSocketVariableManager extends BaseVariableManager {
      */
     private getURL(variable) {
         const prefabName = variable.getPrefabName();
-        const opInfo = prefabName ? get(metadataService.getByOperationId(variable.operationId, prefabName), 'wmServiceOperationInfo') : get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
+        const opInfo = prefabName ? 
+            get(metadataService.getByOperationId(variable.operationId, prefabName), 'wmServiceOperationInfo') : 
+            get(metadataService.getByOperationId(variable.operationId), 'wmServiceOperationInfo');
         const inputFields = variable.dataBinding;
-        let config;
-
+        
         // add sample values to the params (url and path)
         forEach(opInfo.parameters, function (param) {
             param.sampleValue = inputFields[param.name];
@@ -73,7 +71,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
         });
 
         // call common method to prepare config for the service operation info.
-        config = ServiceVariableUtils.constructRequestParams(variable, opInfo, inputFields);
+        const config = ServiceVariableUtils.constructRequestParams(variable, opInfo, inputFields);
         /* if error found, return */
         if (config.error && config.error.message) {
             this._onSocketError(variable, {data: config.error.message});
@@ -92,10 +90,10 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @private
      */
     private _onSocketMessage(variable, evt) {
-        let data = get(evt, 'data'), value, dataLength, dataLimit, shouldAddToLast, insertIdx;
+        let data = get(evt, 'data'), dataLength, dataLimit, shouldAddToLast, insertIdx;
         data = getValidJSON(data) || xmlToJson(data) || data;
         // EVENT: ON_MESSAGE
-        value = initiateCallback(VARIABLE_CONSTANTS.EVENT.MESSAGE_RECEIVE, variable, data, evt);
+        const value = initiateCallback(VARIABLE_CONSTANTS.EVENT.MESSAGE_RECEIVE, variable, data, evt);
         data = isDefined(value) ? value : data;
         if (this.shouldAppendData(variable)) {
             variable.dataSet = variable.dataSet || [];
@@ -164,12 +162,18 @@ export class WebSocketVariableManager extends BaseVariableManager {
         variable._socketConnected = true;
         // EVENT: ON_OPEN
         initiateCallback(VARIABLE_CONSTANTS.EVENT.OPEN, variable, get(evt, 'data'), evt);
+        
+        // Send initial request body if it exists and connectOnPageLoad is true
+        if (variable.startUpdate) {
+            const requestBody = get(variable, 'dataBinding.RequestBody');
+            if (requestBody) {
+                setTimeout(() => {
+                    this.send(variable, requestBody);
+                }, 0);  // Using setTimeout to ensure connection is fully established
+            }
+        }
     }
 
-    /**
-     * clears the socket variable against the variable in a scope
-     * @param variable
-     */
     private freeSocket(variable) {
         this.scope_var_socket_map.set(variable, undefined);
     }
@@ -209,13 +213,12 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @returns {*}
      */
     private getSocket(variable) {
-        const url     = this.getURL(variable);
+        const url = this.getURL(variable);
         let _socket = this.scope_var_socket_map.get(variable);
         if (_socket) {
             return _socket;
         }
 
-        // Trigger error if unsecured webSocket is used in secured domain, ignore in mobile device
         if (!CONSTANTS.hasCordova && isInsecureContentRequest(url)) {
             triggerFn(this._onSocketError.bind(this, variable));
             return;
@@ -238,12 +241,11 @@ export class WebSocketVariableManager extends BaseVariableManager {
      */
     public open(variable: WebSocketVariable, success?, error?) {
         const shouldOpen = this._onBeforeSocketOpen(variable);
-        let socket;
         if (shouldOpen === false) {
             triggerFn(error);
             return;
         }
-        socket = this.getSocket(variable);
+        const socket = this.getSocket(variable);
         triggerFn(success);
         return socket;
     }
@@ -252,8 +254,8 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * closes an existing socket connection on variable
      */
     public close(variable: WebSocketVariable) {
-        const shouldClose = this._onBeforeSocketClose(variable),
-            socket      = this.getSocket(variable);
+        const shouldClose = this._onBeforeSocketClose(variable);
+        const socket = this.getSocket(variable);
         if (shouldClose === false) {
             return;
         }
@@ -267,16 +269,31 @@ export class WebSocketVariableManager extends BaseVariableManager {
      * @param message
      */
     public send(variable: WebSocketVariable, message?: string) {
-        const socket      = this.getSocket(variable);
-        let response;
+        const socket = this.getSocket(variable);
+
+        if (!socket) {
+            console.error('WebSocket connection not established');
+            return;
+        }
 
         message = message || get(variable, 'dataBinding.RequestBody');
-        response = this._onBeforeSend(variable, message);
+        if (!message) {
+            console.warn('No message to send');
+            return;
+        }
+
+        const response = this._onBeforeSend(variable, message);
         if (response === false) {
             return;
         }
         message = isDefined(response) ? response : message;
         message = isObject(message) ? JSON.stringify(message) : message;
-        socket.send(message, 0);
+        
+        try {
+            socket.send(message, 0);
+        } catch (error) {
+            console.error('Error sending message:', error);
+            this._onSocketError(variable, { data: error.message });
+        }
     }
 }
