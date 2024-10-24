@@ -9,8 +9,8 @@ import {
     styler
 } from '@wm/components/base';
 
-import { registerProps } from './accordion.props';
-import { AccordionPaneComponent } from './accordion-pane/accordion-pane.component';
+import {registerProps} from './accordion.props';
+import {AccordionPaneComponent} from './accordion-pane/accordion-pane.component';
 import {find, forEach, get, indexOf, isArray, isNumber} from "lodash-es";
 
 const DEFAULT_CLS = 'app-accordion panel-group';
@@ -239,6 +239,8 @@ export class AccordionDirective extends StylableComponent implements AfterConten
                     this.expandPane(this.defaultpaneindex);
                 }
             }
+        } else if (key === 'tabindex') {
+            return;
         } else {
             super.onPropertyChange(key, nv, ov);
         }

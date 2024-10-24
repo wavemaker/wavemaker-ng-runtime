@@ -1,10 +1,17 @@
 import {AfterViewInit, Component, ContentChildren, Inject, Injector, Optional} from '@angular/core';
 
 import {noop, removeAttr} from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, StylableComponent, styler,  } from '@wm/components/base';
+import {
+    APPLY_STYLES_TYPE,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    RedrawableDirective,
+    StylableComponent,
+    styler,
+} from '@wm/components/base';
 
-import { registerProps } from './accordion-pane.props';
-import { AccordionDirective } from '../accordion.directive';
+import {registerProps} from './accordion-pane.props';
+import {AccordionDirective} from '../accordion.directive';
 
 const DEFAULT_CLS = 'app-accordion-panel panel';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};
@@ -29,6 +36,7 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
     public smoothscroll: any;
     private $lazyLoad = noop;
     private isdynamic: boolean;
+    public tabindex;
 
     public name: string;
 
@@ -116,6 +124,8 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
             if (this.isActive) {
                 setTimeout(() => this.$lazyLoad(), 100);
             }
+        } else if (key === 'tabindex') {
+            return;
         } else {
             super.onPropertyChange(key, nv, ov);
         }
