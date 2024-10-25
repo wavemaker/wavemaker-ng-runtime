@@ -1,16 +1,8 @@
 import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, OnInit, Optional} from '@angular/core';
 
-import {Subject} from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
-import {
-    AbstractDialogService,
-    App,
-    DataSource,
-    getWmProjectProperties,
-    isAudioFile,
-    isImageFile,
-    isVideoFile
-} from '@wm/core';
+import { App, DataSource, getWmProjectProperties, isAudioFile, isImageFile, isVideoFile, AbstractDialogService, IDGenerator } from '@wm/core';
 import {provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
 
 import {registerProps} from './file-upload.props';
@@ -37,8 +29,8 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     selectedFiles: any = [];
     uploadedFiles: any = [];
     selectedFolders: any = [];
-    progressObservable;
-    deleteFileObservable;
+    progressObservable: Subject<any>;
+    deleteFileObservable: Subject<any>;
     name;
     hint;
     arialabel;
@@ -80,6 +72,9 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     showprogressbar;
     showprogressbarpercentage;
     deleteiconhint;
+    private uploadProgressSubscription: Subscription;
+    private deleteProgressSubscription: Subscription;
+    private idGenerator = new IDGenerator('file-');
     /*_hasOnSuccessEvt = WM.isDefined(attrs.onSuccess);
      _hasOnErrorEvt = WM.isDefined(attrs.onError);*/
 
@@ -194,6 +189,9 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
      * @param $files
      */
     onSelectEventCall($event, $files) {
+        $files.forEach(file => {
+            file.uniqueId = this.idGenerator.nextUid();
+        })
         this.selectedFiles = $files;
         this.uploadedFiles = this.multiple ? [...this.uploadedFiles, ...$files] : $files;
         setTimeout(() => {
@@ -261,33 +259,35 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
 
         // Make call if there are valid files else no call is made
         if ($files.length) {
-            this.progressObservable = new Subject();
             // EVENT: ON_BEFORE_SELECT
             beforeSelectVal = this.invokeEventCallback('beforeselect', {
                 $event: $.extend($event.$files || {}, $files),
                 files: $files
             });
             if (this.datasource) {
-                this.datasource._progressObservable = this.progressObservable;
-                this.datasource._progressObservable.asObservable().subscribe((progressObj) => {
-                    forEach(this.selectedFiles, (file) => {
-                        if (file.name === progressObj.fileName) {
-                            file.progress = progressObj.progress;
-                            if (file.progress === 100) {
-                                file.status = 'success';
-                            } else {
-                                file.status = progressObj.status;
-                                if (progressObj.errMsg) {
-                                    file.errMsg = progressObj.errMsg;
-                                    this.invokeEventCallback('error', {
-                                        $event,
-                                        files: file
-                                    });
+                if(!this.uploadProgressSubscription) {
+                    this.progressObservable = new Subject();
+                    this.datasource._progressObservable = this.progressObservable;
+                    this.uploadProgressSubscription = this.datasource._progressObservable.asObservable().subscribe((progressObj) => {
+                        forEach(this.uploadedFiles, (file) => {
+                            if (file.name === progressObj.fileName && file.uniqueId === progressObj.uniqueId) {
+                                file.progress = progressObj.progress;
+                                if (file.progress === 100) {
+                                    file.status = 'success';
+                                } else {
+                                    file.status = progressObj.status;
+                                    if (progressObj.errMsg) {
+                                        file.errMsg = progressObj.errMsg;
+                                        this.invokeEventCallback('error', {
+                                            $event,
+                                            files: file
+                                        });
+                                    }
                                 }
                             }
-                        }
+                        });
                     });
-                });
+                }
             } else {
                 this.selectedFiles = $files;
             }
@@ -314,17 +314,17 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
                 onOk: () => {
                     if (this.deletedatasource) {
                         this.deletedatasource.setInput('file', file._response.fileName || file.name);
-                        this.deleteFileObservable = new Subject();
-                        this.deletedatasource._deleteFileObservable = this.deleteFileObservable;
-                        this.deletedatasource._deleteFileObservable.asObservable().subscribe((response) => {
-                            if(response.status === "success") {
-                                this.selectedFiles = this.selectedFiles.filter((fileObj) => file !== fileObj) || [];
-                                this.uploadedFiles = this.uploadedFiles.filter((fileObj) => file !== fileObj) || [];
-                                this.deletedatasource._deleteFileObservable.unsubscribe();
-                            }
-                        }, (error) => {
-                            this.deletedatasource._deleteFileObservable.unsubscribe();
-                        });
+
+                        if(!this.deleteProgressSubscription) {
+                            this.deleteFileObservable = new Subject();
+                            this.deletedatasource._deleteFileObservable = this.deleteFileObservable;
+                            this.deletedatasource._deleteFileObservable.asObservable().subscribe((response) => {
+                                if(response.status === "success") {
+                                    this.selectedFiles = this.selectedFiles.filter((fileObj) => file !== fileObj) || [];
+                                    this.uploadedFiles = this.uploadedFiles.filter((fileObj) => file !== fileObj) || [];
+                                }
+                            });
+                        }
                     }
                     this.invokeEventCallback('delete', { $event: file });
                     this.dialogService.closeAppConfirmDialog();
@@ -449,5 +449,12 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         document.removeEventListener('drop', this.dropCb);
         document.removeEventListener('mouseleave', this.dropCb);
         super.ngOnDestroy();
+
+        const subscriptions = [this.uploadProgressSubscription, this.deleteProgressSubscription];
+        subscriptions.forEach(subscription => {
+            if (subscription) {
+                subscription.unsubscribe();
+            }
+        });
     }
 }

@@ -49,7 +49,7 @@
                     <div class="media-body media-middle file-details">
                         <p class="uploaddetails col-md-3">
                             <span class="upload-title">{{ ft.storageName || ft.name }}</span>
-                            <span *ngIf="ft.status === 'success'"
+                            <span *ngIf="ft.status === 'success' && (!datasource || (datasource && ft._response?.success))"
                                   class="status-icon {{ft.status | stateClass }}"></span>
                             <br/>
                             <span class="filesize" *ngIf="ft.fileLength  !== 0">{{ft.size | filesize:0}}</span>
@@ -81,7 +81,7 @@
                             <i class="{{cleariconclass}}"></i>
                         </a>
                     </div>
-                    <div class="media-right media-middle" *ngIf="ft.status === 'success'">
+                    <div class="media-right media-middle" *ngIf="ft.status === 'success' && (!datasource || (datasource && ft._response?.success))">
                         <a href="javascript:void(0)" (click)="onFileDelete($event, ft)"
                            class="btn btn-transparent btn-default status-icon" title="{{deleteiconhint}}" type="button">
                             <i class="wi wi-delete"></i>
