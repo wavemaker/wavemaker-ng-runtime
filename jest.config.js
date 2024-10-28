@@ -4,7 +4,7 @@ module.exports = {
   roots: ["<rootDir>/projects"],
   testEnvironment: "jsdom",
   transformIgnorePatterns: [
-    '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
+    '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|@wavemaker/foundation-css|@wavemaker/custom-widgets-m3|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
   ],
   testMatch: [
     "**/projects/**/*.spec.ts",
@@ -22,6 +22,8 @@ module.exports = {
     "libraries/scripts/jquery.ui.touch-punch",
     "libraries/scripts/swipey",
     ".yalc/@wavemaker/variables/src/",
+    ".yalc/@wavemaker/foundation-css",
+    ".yalc/@wavemaker/custom-widgets-m3",
     "projects/components/base/src/test/"
   ],
   // collectCoverageFrom: [
