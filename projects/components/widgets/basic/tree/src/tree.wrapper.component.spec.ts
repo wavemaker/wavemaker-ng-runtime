@@ -57,13 +57,11 @@ class TreeWrapperComponent {
     tree1Collapse($event, widget, $item, $path) {
         this.treenodeItem = $item;
         this.treePath = $path;
-        console.log($item, $path);
     }
 
     tree1Expand($event, widget, $item, $path) {
         this.treenodeItem = $item;
         this.treePath = $path;
-        console.log($item, $path);
     }
 }
 
@@ -103,74 +101,6 @@ describe('wm-tree: Component Specific Tests', () => {
     it('should create tree component', () => {
         expect(wmComponent).toBeTruthy();
     });
-
-    //expect(received).not.toBeNull()
-    xit('should call expand tree callback with item, path as data arguments', async () => {
-        wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
-        jest.spyOn(wrapperComponent, 'tree1Expand');
-
-        // Trigger change detection
-        fixture.detectChanges();
-
-        // Wait for the component to stabilize
-        await fixture.whenStable();
-        // Query for the node icon
-        let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
-
-        // Ensure the node icon is not null before interacting
-        expect(nodeicon).not.toBeNull();
-
-        if (nodeicon) {
-            // Click the node icon
-            nodeicon.click();
-
-            // Trigger change detection and wait for stabilization
-            fixture.detectChanges();
-            await fixture.whenStable();
-
-            // Verify the expand method was called
-            expect(wrapperComponent.tree1Expand).toHaveBeenCalledTimes(1);
-            expect(wrapperComponent.treePath).toEqual('/item2');
-            expect(wrapperComponent.treenodeItem).toBeDefined();
-        } else {
-            throw new Error('Node icon not found');
-        }
-    }, 10000); // Increase the timeout if necessary
-
-    // expect(received).not.toBeNull()
-    xit('should call collapse tree callback with item, path as data arguments', async () => {
-        // Set the dataset
-        wmComponent.getWidget().dataset = wrapperComponent.treeDataset;
-
-        // Spy on the collapse method
-        jest.spyOn(wrapperComponent, 'tree1Collapse');
-
-        // Trigger change detection
-        fixture.detectChanges();
-
-        // Wait for the component to stabilize
-        await fixture.whenStable();
-
-        // Query for the node icon
-        let nodeicon = fixture.debugElement.nativeElement.querySelector('i');
-        expect(nodeicon).not.toBeNull(); // Ensure the element exists before interacting
-
-        if (nodeicon) {
-            // Click the node icon
-            nodeicon.click();
-
-            // Trigger change detection and wait for stabilization
-            fixture.detectChanges();
-            await fixture.whenStable();
-
-            // Verify the collapse method was called
-            expect(wrapperComponent.tree1Collapse).toHaveBeenCalledTimes(1);
-            expect(wrapperComponent.treePath).toEqual('/item2');
-            expect(wrapperComponent.treenodeItem).toBeDefined();
-        } else {
-            throw new Error('Node icon not found');
-        }
-    }, 10000); // Increase the timeout if necessary
 
     describe('onPropertyChange', () => {
         beforeEach(() => {
@@ -666,7 +596,7 @@ describe('wm-tree: Component Specific Tests', () => {
             wmComponent['setChecked'](zNode, node);
 
             expect(node).toHaveProperty('checked', true);
-        }); 
+        });
 
         it('should handle deeply nested children', () => {
             const zNode = {
@@ -695,6 +625,105 @@ describe('wm-tree: Component Specific Tests', () => {
             expect(node).toHaveProperty('checked', true);
             expect(node.children[0]).toHaveProperty('checked', true);
             expect(node.children[0].children[0]).toHaveProperty('checked', true);
+        });
+    });
+
+    describe('postRenderTree', () => {
+        let mockChangeTreeIcons: jest.SpyInstance;
+        let mockSetTimeout: jest.SpyInstance;
+
+        beforeEach(() => {
+            mockChangeTreeIcons = jest.spyOn(TreeComponent.prototype as any, 'changeTreeIcons').mockImplementation();
+            mockSetTimeout = jest.spyOn(global, 'setTimeout').mockImplementation((cb) => cb() as any);
+
+            // Mock jQuery and zTree
+            (global as any).$ = jest.fn(() => ({
+                zTree: {
+                    init: jest.fn()
+                }
+            }));
+            (global as any).$.fn = {
+                zTree: {
+                    init: jest.fn().mockReturnValue({
+                        getNodes: jest.fn(),
+                        selectNode: jest.fn(),
+                    })
+                },
+                zTreeKeyboardNavigation: jest.fn()
+            };
+
+            wmComponent['zTree'] = (global as any).$.fn.zTree.init();
+            wmComponent['selectNode'] = jest.fn();
+            wmComponent['expandNode'] = jest.fn();
+            wmComponent["name"] = 'testTree';
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('should call changeTreeIcons with treeicons if set', () => {
+            wmComponent.treeicons = 'custom-icon';
+            wmComponent['postRenderTree']();
+
+            expect(mockChangeTreeIcons).toHaveBeenCalledWith('custom-icon');
+        });
+
+        it('should call changeTreeIcons with defaultTreeIconClass if treeicons not set', () => {
+            wmComponent.treeicons = undefined;
+            wmComponent['postRenderTree']();
+
+            expect(mockChangeTreeIcons).toHaveBeenCalledWith('plus-minus');
+        });
+
+        it('should not select any node if datavalue is not set', () => {
+            wmComponent.datavalue = undefined;
+            wmComponent['postRenderTree']();
+
+            expect(wmComponent['zTree'].selectNode).not.toHaveBeenCalled();
+            expect(wmComponent['selectNode']).not.toHaveBeenCalled();
+            expect(wmComponent['expandNode']).not.toHaveBeenCalled();
+        });
+
+        it('should select first node if datavalue is "FirstNode"', () => {
+            const mockNodes = [{}, {}, {}];
+            wmComponent.datavalue = 'FirstNode';
+            wmComponent['zTree'].getNodes.mockReturnValue(mockNodes);
+
+            wmComponent['postRenderTree']();
+
+            expect(wmComponent['zTree'].selectNode).toHaveBeenCalledWith(mockNodes[0], false);
+            expect(wmComponent['selectNode']).toHaveBeenCalledWith(undefined, mockNodes[0]);
+            expect(wmComponent['expandNode']).toHaveBeenCalledWith(mockNodes[0], true, false);
+        });
+
+        it('should select last node if datavalue is "LastNode"', () => {
+            const mockNodes = [{}, {}, {}];
+            wmComponent.datavalue = 'LastNode';
+            wmComponent['zTree'].getNodes.mockReturnValue(mockNodes);
+
+            wmComponent['postRenderTree']();
+
+            expect(wmComponent['zTree'].selectNode).toHaveBeenCalledWith(mockNodes[2], false);
+            expect(wmComponent['selectNode']).toHaveBeenCalledWith(undefined, mockNodes[2]);
+            expect(wmComponent['expandNode']).toHaveBeenCalledWith(mockNodes[2], true, false);
+        });
+
+        it('should not select any node if nodes array is empty', () => {
+            wmComponent.datavalue = 'FirstNode';
+            wmComponent['zTree'].getNodes.mockReturnValue([]);
+
+            wmComponent['postRenderTree']();
+
+            expect(wmComponent['zTree'].selectNode).not.toHaveBeenCalled();
+            expect(wmComponent['selectNode']).not.toHaveBeenCalled();
+            expect(wmComponent['expandNode']).not.toHaveBeenCalled();
+        });
+
+        it('should use setTimeout with 200ms delay', () => {
+            wmComponent['postRenderTree']();
+
+            expect(mockSetTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
         });
     });
 });

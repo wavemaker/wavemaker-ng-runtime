@@ -42,6 +42,7 @@ export const chipsProps = new Map(
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['type', {value: 'search', ...PROP_STRING}],
         ['debouncetime', {value: 250, ...PROP_NUMBER}],
+        ['datacompletemsg', { value: 'No more data to load', ...PROP_STRING }],
     ]
 );
 

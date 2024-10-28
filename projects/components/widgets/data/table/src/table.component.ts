@@ -166,6 +166,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     enablesort = true;
     filtermode;
     filteronkeypress;
+    isrowselectable;
     searchlabel;
     formposition;
     gridclass;
@@ -185,6 +186,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     navigationalign;
     nodatamessage;
     pagesize;
+    currentpage;
     prevData;
     primaryKey = [];
     radioselect;
@@ -310,6 +312,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         filtermode: '',
         filteronkeypress: false,
+        isrowselectable: false,
         searchLabel: '',
         rowActions: [],
         headerConfig: [],
@@ -422,6 +425,15 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
             });
         },
+        getParentTableData: ()=> {
+            // Function to get the row index and current page of parent table in row expansion (nested table) scenario
+            const parentTrElement =  $(this.nativeElement).closest('tr');
+            const parentObj = {
+                'parentId': parentTrElement.prev('tr.app-datagrid-row')?.attr('data-row-id'),
+                'parentPage': parentTrElement.closest('div.app-grid.app-panel.panel')?.attr('currentpage') || 1
+            }
+            return parentObj;
+        },
         onRowSelect: (row, e) => {
             this.ngZone.run(() => {
                 this.selectedItems = this.callDataGridMethod('getSelectedRows');
@@ -430,7 +442,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
                 const rowData = this.addRowIndex(row);
                 if (this.selectedItems.length && rowData.$index && this.getConfiguredState() !== 'none' && this.dataNavigator && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
-                    const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
+                    // check if table has a parent table
+                    const parentObj = this.gridOptions.getParentTableData();
+                    const obj = parentObj.parentId ? {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1, parentRowIndex: parentObj.parentId, parentCurrentPage: parentObj.parentPage}: {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                     const widgetState = this.statePersistence.getWidgetState(this);
                     if (get(widgetState, 'selectedItem') && this.multiselect) {
                         if (!some(widgetState.selectedItem, obj)) {
@@ -479,7 +493,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.invokeEventCallback('rowdeselect', {$data: row, $event: e, row});
                     const rowData = this.addRowIndex(row);
                     if (this.getConfiguredState() !== 'none' && unsupportedStatePersistenceTypes.indexOf(this.navigation) < 0) {
-                        const obj = {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
+                        const parentObj = this.gridOptions.getParentTableData();
+                        const obj = parentObj.parentId ? {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1, parentRowIndex: parentObj.parentId, parentCurrentPage: parentObj.parentPage}: {page: this.dataNavigator.dn.currentPage, index: rowData.$index - 1};
                         const widgetState = this.statePersistence.getWidgetState(this);
                         if (get(widgetState, 'selectedItem')) {
                             remove(widgetState.selectedItem, function (selectedItem) {
@@ -588,12 +603,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.callDataGridMethod('applyRowNgClass', getConditionalClasses(nv, ov), index);
             }, watchName));
         },
-        registerColNgClassWatcher: (rowData, colDef, rowIndex, colIndex) => {
+        registerColNgClassWatcher: (rowData, colDef, rowIndex, colIndex, summaryRow) => {
             if (!colDef['col-ng-class']) {
                 return;
             }
             const row = this.getClonedRowObject(rowData);
-            const watchName = `${this.widgetId}_colNgClass_${rowIndex}_${colIndex}`;
+            const watchName = summaryRow ? `${this.widgetId}_summaryRow_colNgClass_${rowIndex}_${colIndex}`: `${this.widgetId}_colNgClass_${rowIndex}_${colIndex}`;
             $unwatch(watchName);
             //[Todo-CSP]: generate watcher expr in page if col-ng-class attr is present for table
             this.registerDestroyListener($watch(colDef['col-ng-class'], this.viewParent, {row}, (nv, ov) => {
@@ -1103,7 +1118,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             showheader: 'showHeader',
             enablecolumnselection: 'enableColumnSelection',
             shownewrow: 'showNewRow',
-            gridfirstrowselect: 'selectFirstRow'
+            gridfirstrowselect: 'selectFirstRow',
+            isrowselectable: 'isrowselectable'
         };
 
         if (this._liveTableParent) {
@@ -1130,6 +1146,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.formPosition = this.formposition;
         this.gridOptions.filtermode = this.filtermode;
         this.gridOptions.filteronkeypress = this.filteronkeypress;
+        this.gridOptions.isrowselectable = this.isrowselectable;
         this.gridOptions.searchLabel = this.searchlabel;
         this.gridOptions.isMobile = isMobile();
         this.gridOptions.name = this.name;
@@ -1698,6 +1715,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const widgetState = this.statePersistence.getWidgetState(this);
             let currentPageItems;
             if (get(widgetState, 'selectedItem')) {
+                // check if table has a parent table
+                const parentObj = this.gridOptions.getParentTableData();
                 currentPageItems = widgetState.selectedItem.filter(val => {
                     return val.page === this.dataNavigator.dn.currentPage;
                 });
@@ -1707,7 +1726,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     // don't reassign this.selecteditem if selected items already exist.
                     if (isArray(this.selecteditem)) {
                         currentPageItems.forEach((item) => {
-                            this.selectItem(item.index, undefined);
+                            // select a row only if it's respective parent row index and parent's current page matches with statepersistence url
+                            if (!parentObj.parentId || (parentObj.parentId && item.parentRowIndex === parentObj.parentId && item.parentCurrentPage === parentObj.parentPage)) {
+                                this.selectItem(item.index, undefined);
+                            }
                         });
                     } else {
                         this.selecteditem = currentPageItems.map(function(val) {return val.index; });
@@ -1949,6 +1971,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 };
                 this.dataNavigator.widget.maxResults = nv;
                 this.dataNavigator.maxResults = nv;
+                break;
+            case 'currentpage':
+                this.nativeElement?.setAttribute('currentpage', nv);
                 break;
             case 'ondemandmessage':
                 if (nv) {

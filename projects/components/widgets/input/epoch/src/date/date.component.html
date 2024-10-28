@@ -17,7 +17,7 @@
         [readOnly]="isReadOnly"
         [attr.placeholder]="placeholder"
         [attr.accesskey]="shortcutkey"
-        [attr.aria-label]="hint"
+           [attr.aria-label]="arialabel"
         (change)="onDisplayDateChange($event)"
         (keydown)="this._triggeredByUser = true; onDisplayKeydown($event);">
 
@@ -73,7 +73,7 @@
          (click)="!(disabled || readonly) && showDatePickerModal(bsDataValue)"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
-         [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : hint || 'Choose Date'"
+         [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : arialabel || 'Choose Date'"
          role="button">
     </div>
 </ng-template>

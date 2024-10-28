@@ -1,5 +1,5 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
-import { FormWidgetType } from '@wm/core';
+import {PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
+import {FormWidgetType} from '@wm/core';
 
 export const registerProps = () => {
     register(
@@ -8,6 +8,8 @@ export const registerProps = () => {
             [
                 ['caption', PROP_STRING],
                 ['name', PROP_STRING],
+                ['hint', PROP_STRING],
+                ['arialabel', PROP_STRING],
                 ['tabindex', PROP_NUMBER],
                 ['multiple', PROP_BOOLEAN],
                 ['fileuploadmessage' , PROP_STRING],
@@ -24,6 +26,9 @@ export const registerProps = () => {
                 ['selectedFiles', PROP_STRING],
                 ['destination', PROP_STRING],
                 ['filelistheight', PROP_NUMBER],
+                ['width', {value: 'auto', ...PROP_STRING}],
+                ['showprogressbar', PROP_BOOLEAN],
+                ['showprogressbarpercentage', PROP_BOOLEAN]
             ]
         )
     );

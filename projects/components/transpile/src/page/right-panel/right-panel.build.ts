@@ -1,4 +1,4 @@
-import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
+import {getAttrMarkup, IBuildTaskDef, register} from '@wm/transpiler';
 import {IDGenerator} from "@wm/core";
 
 const tagName = 'aside';
@@ -8,7 +8,7 @@ register('wm-right-panel', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid()
-            return `<${tagName} wmRightPanel #${counter}="wmRightPanel" partialContainer data-role="page-right-panel" role="complementary" [attr.aria-label]="${counter}.hint || 'Right navigation panel'" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmRightPanel #${counter}="wmRightPanel" partialContainer data-role="page-right-panel" role="complementary" [attr.aria-label]="${counter}.arialabel || 'Right navigation panel'" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

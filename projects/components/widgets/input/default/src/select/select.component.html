@@ -1,18 +1,19 @@
-<select role="listbox" aria-haspopup="true" aria-expanded="false" #select
+<!--Updated focus with mousedown event. IOS devices not allow update of option value after opening dropdown-->
+<select #select
         focus-target
         [ngClass]="['app-select form-control', class]"
         [disabled]="disabled"
         [required]="required"
         [tabindex]="tabindex"
+        [attr.accesskey]="shortcutkey"
         [(ngModel)]="modelByKey"
         [ngModelOptions]="{standalone: true}"
         [multiple]="multiple"
         (change)="onSelectValueChange($event)"
-        (focus)="checkForFloatingLabel($event)"
+        (mousedown)="checkForFloatingLabel($event)"
         (blur)="invokeOnTouched($event); checkForFloatingLabel($event)"
         [attr.name]="name"
-        [attr.aria-label]="hint"
-        [attr.aria-multiselectable]="multiple"
+        [attr.aria-label]="arialabel"
         [autofocus]="autofocus">
 
         <option selected
@@ -28,7 +29,7 @@
                 [value]="item.key"
                 [selected]="item.selected"
                 [textContent]="item.label"
-                role="option"></option>
+            ></option>
         </optgroup>
     </ng-container>
 
@@ -37,6 +38,6 @@
             [value]="item.key"
             [selected]="item.selected"
             [textContent]="item.label"
-            role="option"></option>
+        ></option>
     </ng-container>
 </select>

@@ -1,12 +1,17 @@
-import { Component, ViewChild } from "@angular/core";
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
-import { PictureDirective } from "./picture.directive";
-import { App } from "@wm/core";
-import { ImagePipe } from "@wm/components/base";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
+import {Component, ViewChild} from "@angular/core";
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
+import {PictureDirective} from "./picture.directive";
+import {App, switchClass} from "@wm/core";
+import {ImagePipe} from "@wm/components/base";
+import {ComponentFixture} from "@angular/core/testing";
+import {compileTestComponent, mockApp} from "projects/components/base/src/test/util/component-test-util";
 
-const markup = `<img wmPicture #wm_picture="wmPicture" [attr.aria-label]="wm_picture.hint || 'Picture content'" hint="Picture content" name="picture1" tabindex="0" picturesource="source.jpg" encodeurl="true" pictureplaceholder="placeholder.jpg">`;
+jest.mock('@wm/core', () => ({
+    ...jest.requireActual('@wm/core'),
+    switchClass: jest.fn(),
+}));
+
+const markup = `<img wmPicture #wm_picture="wmPicture" [attr.aria-label]="wm_picture.arialabel || 'Picture content'" hint="Picture content" name="picture1" tabindex="0" picturesource="source.jpg" encodeurl="true" pictureplaceholder="placeholder.jpg">`;
 
 @Component({
     template: markup
@@ -50,6 +55,7 @@ describe('PictureDirective', () => {
         component = fixture.componentInstance;
         pictureDirective = component.wmComponent;
         fixture.detectChanges();
+        jest.clearAllMocks();
     });
 
     it('should create', () => {
@@ -80,13 +86,9 @@ describe('PictureDirective', () => {
         expect(nativeElement.style.height).toBe('100%');
     });
 
-    // expect(received).toBeTruthy()
-    xit('should update shape class', () => {
-        const nativeElement = pictureDirective.nativeElement;
-        pictureDirective.onPropertyChange('shape', 'circle', 'square');
-        fixture.detectChanges();
-        expect(nativeElement.classList.contains('img-circle')).toBeTruthy();
-        expect(nativeElement.classList.contains('img-square')).toBeFalsy();
+    it('should call switchClass when shape property changes', () => {
+        pictureDirective.onPropertyChange('shape', 'round', 'square');
+        expect(switchClass).toHaveBeenCalledWith(pictureDirective.nativeElement, 'img-round', 'img-square');
     });
 
     it('should update image source on style change', () => {
@@ -95,6 +97,7 @@ describe('PictureDirective', () => {
         fixture.detectChanges();
         expect(pictureDirective.setImgSource).toHaveBeenCalled();
     });
+
     it('should call super.onStyleChange for non-picturesource keys', () => {
         // We need to spy on the super.onStyleChange method
         // Since we can't directly spy on the super method, we'll need to use a workaround

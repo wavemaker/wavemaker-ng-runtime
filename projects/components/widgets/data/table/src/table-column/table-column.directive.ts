@@ -712,10 +712,19 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 const fieldName = this.group && this.group.name;
                 const index: number = fieldName ? parseInt(this.getAttr('index'), 10) : parseInt(this.getAttr('headerIndex'), 10);
                 // Register column with header config to create group structure
-                setHeaderConfigForTable(this.table.headerConfig, {
-                    field: this.field,
-                    displayName: this.displayName
-                }, fieldName, index);
+                if (!this.table.headerConfig.some(value => this.field == value.field)) {
+                    setHeaderConfigForTable(this.table.headerConfig, {
+                        field: this.field,
+                        displayName: this.displayName
+                    }, fieldName, index);
+                }
+                else {
+                    this.table.headerConfig.map(value => {
+                        if (this.field == value.field) {
+                            value.displayName = this.displayName;
+                        }
+                    });
+                }
                 break;
             case 'defaultvalue':
                 this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);

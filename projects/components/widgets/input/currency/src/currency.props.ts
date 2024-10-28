@@ -1,5 +1,5 @@
-import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
-import { FormWidgetType } from '@wm/core';
+import {PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
+import {FormWidgetType} from '@wm/core';
 
 export const currencyProps = new Map(
     [
@@ -8,6 +8,7 @@ export const currencyProps = new Map(
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
+        ['arialabel', PROP_STRING],
         ['maxvalue', PROP_NUMBER],
         ['minvalue', PROP_NUMBER],
         ['name', PROP_STRING],

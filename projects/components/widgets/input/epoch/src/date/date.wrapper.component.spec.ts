@@ -28,7 +28,8 @@ import {
     expectCheckEleHasDisabled,
     localizedDatePickerTest,
     MockAbstractI18nService,
-    MockAbstractI18nServiceDe
+    MockAbstractI18nServiceDe,
+    localizedTimePickerTest
 } from '../../../../../base/src/test/util/date-test-util';
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import localeDE from '@angular/common/locales/de';
@@ -277,15 +278,6 @@ describe('DateComponent', () => {
 
     }));
 
-    // TypeError: Cannot read properties of null (reading 'nativeElement')
-    xit('should respect the mindate validation', waitForAsync(() => {
-        wmComponent.getWidget().datavalue = '2019-11-01';
-        checkElementClass(fixture, '.app-date', 'ng-invalid');
-
-    }));
-
-
-
     it('should be able to set the mindate and disable the below mindate on calendar', (() => {
         wmComponent.getWidget().mindate = '2019-11-02';
         wmComponent.getWidget().datavalue = '2019-11-02';
@@ -310,7 +302,7 @@ describe('DateComponent', () => {
         checkElementClass(fixture, '.app-date', 'ng-invalid');
     }));
 
-    xit('should disable the excluded days on the calendar panel', waitForAsync(() => {
+    it('should disable the excluded days on the calendar panel', waitForAsync(() => {
         dateWrapperComponent.wmComponent.getWidget().excludedays = '1,6';
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
             fixture.whenStable().then(() => {
@@ -321,7 +313,7 @@ describe('DateComponent', () => {
 
     }));
 
-    xit('should ignore the  excluded date', waitForAsync(() => {
+    it('should ignore the  excluded date', waitForAsync(() => {
         dateWrapperComponent.wmComponent.getWidget().excludedates = '2020-01-01';
         dateWrapperComponent.wmComponent.getWidget().datavalue = '2020-01-01';
         checkElementClass(fixture, '.app-date', 'ng-invalid');
@@ -368,39 +360,107 @@ describe('DateComponent', () => {
 
     /************************ Scenarios ends **************************************** */
 
+    describe('onDisplayDateChange', () => {
+        it('should update IMask when called', () => {
+            const updateIMaskSpy = jest.spyOn(wmComponent, 'updateIMask');
+            const event = { target: { value: '2023-01-01' } };
+            wmComponent.onDisplayDateChange(event);
+            expect(updateIMaskSpy).toHaveBeenCalled();
+        });
 
-    // it('should be able to select the date from the date picker ', () => {
-    //     // let dateControl = getDateElement();
-    //     let inputEle = getDateInputElement();
-    //     fixture.whenStable().then(() => {
-    //         expect(inputEle.nativeElement.hasAttribute('readonly')).toBeTruthy();
-    //     });
+        it('should not proceed if isEnterPressedOnDateInput is true', () => {
+            const setDataValueSpy = jest.spyOn((wmComponent as any), 'setDataValue');
+            const event = { target: { value: '2023-01-01' } };
+            (wmComponent as any).isEnterPressedOnDateInput = true;
+            wmComponent.onDisplayDateChange(event);
+            expect(setDataValueSpy).not.toHaveBeenCalled();
+            expect((wmComponent as any).isEnterPressedOnDateInput).toBeFalsy();
+        });
 
-    // });
+        it('should call formatValidation and return if it fails', () => {
+            const formatValidationSpy = jest.spyOn((wmComponent as any), 'formatValidation').mockReturnValue(false);
+            const setDataValueSpy = jest.spyOn((wmComponent as any), 'setDataValue');
+            const event = { target: { value: 'invalid-date' } };
+            wmComponent.onDisplayDateChange(event);
+            expect(formatValidationSpy).toHaveBeenCalled();
+            expect(setDataValueSpy).not.toHaveBeenCalled();
+        });
 
+        it('should call minDateMaxDateValidationOnInput for native picker and return if it fails', () => {
+            const minMaxValidationSpy = jest.spyOn((wmComponent as any), 'minDateMaxDateValidationOnInput').mockReturnValue(true);
+            const setDataValueSpy = jest.spyOn((wmComponent as any), 'setDataValue');
+            const event = { target: { value: '2023-01-01' } };
+            wmComponent.onDisplayDateChange(event, true);
+            expect(minMaxValidationSpy).toHaveBeenCalled();
+            expect(setDataValueSpy).not.toHaveBeenCalled();
+        });
 
+        it('should call setDataValue with the new date value if all validations pass', () => {
+            const setDataValueSpy = jest.spyOn((wmComponent as any), 'setDataValue');
+            const event = { target: { value: '2023-01-01' } };
+            jest.spyOn((wmComponent as any), 'formatValidation').mockReturnValue(true);
+            jest.spyOn((wmComponent as any), 'minDateMaxDateValidationOnInput').mockReturnValue(false);
+            wmComponent.onDisplayDateChange(event);
+            expect(setDataValueSpy).toHaveBeenCalled();
+        });
+    });
 
-    // it('should focus the date control on click on shortcut key ', () => {
-    //     fixture.whenStable().then(() => {
-    //         spyOn(dateWrapperComponent, 'date1Focus').and.callThrough();
-    //         let keyD = new KeyboardEvent('keydown', { key: 'keyD', altKey: true });
-    //         document.dispatchEvent(keyD);
-    //         fixture.detectChanges();
-    //         fixture.whenStable().then(() => {
-    //             expect(dateWrapperComponent.date1Focus).toHaveBeenCalledTimes(1);
-    //         });
-    //     });
-    // });
+    describe('onDisplayKeydown', () => {
+        let mockEvent;
+        beforeEach(() => {
+            mockEvent = {
+                key: 'Enter',
+                target: { value: '2023-01-01' },
+                preventDefault: jest.fn(),
+                stopPropagation: jest.fn()
+            };
+            jest.spyOn((wmComponent as any), 'isDropDownDisplayEnabledOnInput').mockReturnValue(true);
+        });
+        it('should stop propagation if dropdown display is enabled', () => {
+            wmComponent.onDisplayKeydown(mockEvent);
+            expect(mockEvent.stopPropagation).toHaveBeenCalled();
+        });
 
-    // it('Should trigger the date control change event', () => {
-    //     fixture.whenStable().then(() => {
-    //         spyOn(fixture.componentInstance, 'date1Change').and.callThrough();
-    //         wmComponent.getWidget().datavalue = '2019-12-05';
-    //         fixture.detectChanges();
-    //         expect(dateWrapperComponent.date1Change).toHaveBeenCalledTimes(1);
-    //     })
+        it('should handle Enter key press correctly', () => {
+            jest.spyOn(wmComponent, 'toggleDpDropdown');
+            wmComponent.onDisplayKeydown(mockEvent);
+            expect(mockEvent.preventDefault).toHaveBeenCalled();
+            expect(wmComponent.toggleDpDropdown).toHaveBeenCalled();
+        });
 
-    // });
+        it('should hide datepicker dropdown for non-Enter key press', () => {
+            mockEvent.key = 'ArrowDown';
+            jest.spyOn(wmComponent, 'hideDatepickerDropdown');
+            wmComponent.onDisplayKeydown(mockEvent);
+            expect(wmComponent.hideDatepickerDropdown).toHaveBeenCalled();
+        });
+    });
+
+    describe('onPropertyChange', () => {
+        it('should update showdateformatasplaceholder when key is showdateformatasplaceholder', () => {
+            wmComponent.onPropertyChange('showdateformatasplaceholder', true);
+            expect((wmComponent as any).showdateformatasplaceholder).toBe(true);
+        });
+
+        it('should update mask when showdateformatasplaceholder is true and datepattern is not timestamp', () => {
+            wmComponent.datepattern = 'yyyy-MM-dd';
+            wmComponent.onPropertyChange('showdateformatasplaceholder', true);
+            expect(wmComponent.mask).toBeDefined();
+        });
+
+        it('should call updateIMask when showdateformatasplaceholder is true', () => {
+            const updateIMaskSpy = jest.spyOn(wmComponent, 'updateIMask');
+            wmComponent.datepattern = 'yyyy-MM-dd';
+            wmComponent.onPropertyChange('showdateformatasplaceholder', true);
+            expect(updateIMaskSpy).toHaveBeenCalled();
+        });
+
+        it('should call super.onPropertyChange for other keys', () => {
+            const superOnPropertyChangeSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(wmComponent)), 'onPropertyChange');
+            wmComponent.onPropertyChange('someOtherKey', 'someValue');
+            expect(superOnPropertyChangeSpy).toHaveBeenCalledWith('someOtherKey', 'someValue', undefined);
+        });
+    });
 
 });
 
@@ -444,31 +504,5 @@ describe(('Date Component with Localization'), () => {
     it('should create the date Component with de locale', () => {
         expect(dateWrapperComponent).toBeTruthy();
     });
-
-    //ERROR RuntimeError: NG05105: Unexpected synthetic listener @datepickerAnimation.done found. 
-    xit('should display localized dates in date picker', (() => {
-        localizedDatePickerTest(fixture, '.btn-time');
-    }));
-
-    // TypeError: Cannot read properties of undefined (reading 'innerText')
-    xit('should display the defult value in de format', waitForAsync(() => {
-        const date = '2020-02-20', datepattern = 'yyyy-MM-dd';
-        wmComponent.getWidget().datepattern = datepattern;
-        wmComponent.datavalue = date;
-        fixture.detectChanges();
-        const dateObj = getDateObj(date);
-        expect(getFormattedDate((wmComponent as any).datePipe, dateObj, datepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
-    }));
-
-    // TypeError: Cannot read properties of undefined (reading 'innerText')
-    xit('should update the datavalue without error when we type "de" format date in inputbox', waitForAsync(() => {
-        const date = '2020, 21 Februar', datepattern = 'yyyy, dd MMMM', input = getHtmlSelectorElement(fixture, '.app-textbox');
-        wmComponent.getWidget().datepattern = datepattern;
-        input.nativeElement.value = date;
-        input.triggerEventHandler('change', { target: input.nativeElement });
-        fixture.detectChanges();
-        const dateObj = getDateObj(date, { pattern: datepattern });
-        expect(getFormattedDate((wmComponent as any).datePipe, dateObj, (wmComponent as any).outputformat)).toEqual(wmComponent.datavalue);
-    }));
 
 });

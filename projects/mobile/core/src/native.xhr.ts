@@ -88,12 +88,16 @@ class Internals {
         this.nXhr.responseXML = req.responseXML;
         this.nXhr.responseText = req.responseText;
         this.responseHeaderText = req.getAllResponseHeaders();
+        this.nXhr.readyState = req.readyState;
         this.nXhr.getResponseHeader = header => req.getResponseHeader(header);
     }
 
     public sendViaXhr(body) {
         const self = this;
-        this.xhr.onreadystatechange = this.nXhr.onreadystatechange;
+        this.xhr.onreadystatechange = () => {
+           self.copyXMLHttpResponse(self.xhr);
+           this.nXhr.onreadystatechange && this.nXhr.onreadystatechange();
+        }
         this.xhr.onload = function() {
             self.copyXMLHttpResponse(self.xhr);
             if (self.nXhr.onload) {
@@ -296,6 +300,8 @@ export class NativeXMLHttpRequest {
             this.onload && this.onload();
             this.onloadend && this.onloadend();
             clearTimeout(timerId);
+            this.readyState = 4;
+            this.onreadystatechange && this.onreadystatechange();
         };
         const onError = (response) => {
             console.error('network call with request %O failed with response : %O', this, response);
@@ -304,11 +310,16 @@ export class NativeXMLHttpRequest {
             this.onerror && this.onerror();
             this.onloadend && this.onloadend();
             clearTimeout(timerId);
+            this.readyState = 4;
+            this.onreadystatechange && this.onreadystatechange();
         };
         cordova.plugin.http.downloadFile(new URL(this._internal.url).href, {}, options.headers, tempfile,
             (entry, response)  => {
                 entry.file(f => onSuccess(f, response), onError);
             }, onError);
+        
+        this.readyState = 1;
+        this.onreadystatechange && this.onreadystatechange();
     }
 
     private sendViaNativePlugin(body: any) {
@@ -324,6 +335,8 @@ export class NativeXMLHttpRequest {
         }, this.timeout > 0 ? this.timeout : 1);
         new Promise((resolve, reject) => {
             cordova.plugin.http.sendRequest(new URL(this._internal.url).href, options, resolve, reject);
+            this.readyState = 1;
+            this.onreadystatechange && this.onreadystatechange();
         }).then(response => {
             console.log('network call with request %O successed with response : %O', this, response);
             this.progress.close(true);
@@ -339,7 +352,11 @@ export class NativeXMLHttpRequest {
             this._internal.triggerListeners(EVENT.ERROR, [response]);
             this.onerror && this.onerror();
             this.onloadend && this.onloadend();
-        }).finally(() => clearTimeout(timerId));
+        }).finally(() => {
+            this.readyState = 4;
+            this.onreadystatechange && this.onreadystatechange();
+            clearTimeout(timerId);
+        });
     }
 
     private close() {

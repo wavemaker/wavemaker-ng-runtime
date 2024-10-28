@@ -1,4 +1,4 @@
-import { PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(
@@ -12,7 +12,8 @@ export const registerProps = () => {
                 ['gestures', {value: 'on', ... PROP_STRING}],
                 ['name', PROP_STRING],
                 ['xscolumnwidth', { value: 10, ...PROP_NUMBER}],
-                ['hint', PROP_STRING]
+                ['hint', PROP_STRING],
+                ['arialabel', PROP_STRING]
             ]
         )
     );

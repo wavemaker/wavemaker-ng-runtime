@@ -2,7 +2,8 @@ import {
     AfterViewInit,
     Attribute,
     Component,
-    ElementRef, Inject,
+    ElementRef,
+    Inject,
     Injector,
     OnInit,
     Optional,
@@ -10,27 +11,30 @@ import {
     ViewChild,
     ViewChildren
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
 
-import { Observable, from, of } from 'rxjs';
-import { filter, mergeMap } from 'rxjs/operators';
+import {from, Observable, of} from 'rxjs';
+import {filter, mergeMap} from 'rxjs/operators';
 
-import { TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+import {TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch} from 'ngx-bootstrap/typeahead';
 
+import {addClass, adjustContainerPosition, App, DataSource, isDefined, isMobile, toBoolean} from '@wm/core';
 import {
-    addClass,
-    adjustContainerPosition,
-    App,
-    DataSource,
-    isDefined,
-    isMobile,
-    toBoolean
-} from '@wm/core';
-import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getUniqObjsByDataField, provideAs, provideAsWidgetRef, styler, transformFormData, getContainerTargetClass } from '@wm/components/base';
-import { DatasetAwareFormComponent } from '@wm/components/input';
+    ALLFIELDS,
+    convertDataToObject,
+    DataSetItem,
+    extractDataAsArray,
+    getContainerTargetClass,
+    getUniqObjsByDataField,
+    provideAs,
+    provideAsWidgetRef,
+    styler,
+    transformFormData
+} from '@wm/components/base';
+import {DatasetAwareFormComponent} from '@wm/components/input';
 
-import { registerProps } from './search.props';
-import { DataProvider, IDataProvider, IDataProviderConfig } from './data-provider/data-provider';
+import {registerProps} from './search.props';
+import {DataProvider, IDataProvider, IDataProviderConfig} from './data-provider/data-provider';
 import {
     debounce,
     find,
@@ -71,6 +75,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public navsearchbar: any;
     public debouncetime: number;
     public hint: string;
+    public arialabel: string;
 
     private app: App;
     private typeaheadDataSource: Observable<any>;
@@ -809,6 +814,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         styler(this.nativeElement as HTMLElement, this);
         this.containerTarget = getContainerTargetClass(this.nativeElement);
+        $('.app-search-input').removeAttr('aria-expanded');
     }
 
     private eventData($event, item) {

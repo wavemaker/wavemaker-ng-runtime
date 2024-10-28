@@ -1,11 +1,11 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
-import { FormWidgetType } from '@wm/core';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
+import {FormWidgetType} from '@wm/core';
 
 
-import { inputNumberTypeProps } from '../number/input-number.props';
-import { inputCalendarTypeProps } from '../calendar/input-calendar.props';
-import { inputColorTypeProps } from '../color/input-color.props';
-import { inputEmailTypeProps } from '../email/input-email.props';
+import {inputNumberTypeProps} from '../number/input-number.props';
+import {inputCalendarTypeProps} from '../calendar/input-calendar.props';
+import {inputColorTypeProps} from '../color/input-color.props';
+import {inputEmailTypeProps} from '../email/input-email.props';
 
 export const inputTextTypeProps = new Map(
     [
@@ -18,6 +18,7 @@ export const inputTextTypeProps = new Map(
         ['disabled', PROP_BOOLEAN],
         ['displayformat', PROP_STRING],
         ['hint', PROP_STRING],
+        ['arialabel', PROP_STRING],
         ['maxchars', PROP_NUMBER],
         ['name', PROP_STRING],
         ['placeholder', {value: 'Enter text', ...PROP_STRING}],

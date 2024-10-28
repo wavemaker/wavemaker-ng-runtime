@@ -1,8 +1,8 @@
-import { Component, HostBinding, Inject, Injector, Optional } from '@angular/core';
+import {Component, HostBinding, Inject, Injector, Optional} from '@angular/core';
 
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import {DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
 
-import { registerProps } from './button.props';
+import {registerProps} from './button.props';
 
 const DEFAULT_CLS = 'btn app-button';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -26,6 +26,7 @@ export class ButtonComponent extends StylableComponent {
     public iconclass: string;
     public caption: string;
     public badgevalue: string;
+    public arialabel: string;
     @HostBinding('type') type: string;
     @HostBinding('tabIndex') tabindex: number;
     @HostBinding('disabled') disabled: boolean;

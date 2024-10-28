@@ -1,4 +1,4 @@
-<video [preload]="videopreload" role="application"
+<video [attr.aria-label]="arialabel || 'video'" [preload]="videopreload"
        [src]="mp4format | trustAs: 'resource'"
        [muted]="muted"
        [poster]="videoposter | image"

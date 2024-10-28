@@ -1,5 +1,5 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
-import { FormWidgetType, isMobileApp } from '@wm/core';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
+import {FormWidgetType} from '@wm/core';
 
 export const dateProps = new Map(
     [
@@ -13,6 +13,7 @@ export const dateProps = new Map(
         ['excludedays', PROP_STRING],
         ['excludedates', PROP_STRING],
         ['hint', PROP_STRING],
+        ['arialabel', PROP_STRING],
         ['maxdate', PROP_STRING],
         ['mindate', PROP_STRING],
         ['name', PROP_STRING],

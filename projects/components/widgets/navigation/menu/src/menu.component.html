@@ -3,7 +3,7 @@
             dropdownToggle
             aria-haspopup="true"
             aria-expanded="false"
-            [attr.aria-label]="hint || 'Menu'"
+            [attr.aria-label]="arialabel || 'Menu'"
             class="btn app-button dropdown-toggle {{menuclass}}"
             hint.bind="hint"
             shortcutkey.bind="shortcutkey"
@@ -24,7 +24,7 @@
 <ng-container *ngIf="type === 'anchor'; else menuTemplate">
     <a wmAnchor
        dropdownToggle
-
+       [attr.aria-label]="arialabel || 'Menu'"
        href="javascript:void(0);"
        role="button"
        aria-haspopup="true"
@@ -43,4 +43,5 @@
     </a>
 </ng-container>
 
-<ul wmMenuDropdown [items]="nodes" [ngClass]="menulayout" class="icon-position-{{iconposition}}" *dropdownMenu aria-labelledby="dropdownmenu" role="menubar"></ul>
+<ul *dropdownMenu [items]="nodes" [ngClass]="menulayout" class="icon-position-{{iconposition}}" role="menubar"
+    wmMenuDropdown></ul>

@@ -1,9 +1,9 @@
 import {Component, Inject, Injector, Optional, SecurityContext} from '@angular/core';
 
 import {appendNode, createElement, removeNode, transformFileURI} from '@wm/core';
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe } from '@wm/components/base';
+import {DISPLAY_TYPE, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe} from '@wm/components/base';
 
-import { registerProps } from './video.props';
+import {registerProps} from './video.props';
 
 const DEFAULT_CLS = 'app-video';
 const WIDGET_CONFIG = {
@@ -35,6 +35,7 @@ export class VideoComponent extends StylableComponent {
     public webmformat: string;
     public oggformat: string;
     public videosupportmessage: any;
+    public arialabel: string;
 
     constructor(inj: Injector, private trustAsPipe: TrustAsPipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);

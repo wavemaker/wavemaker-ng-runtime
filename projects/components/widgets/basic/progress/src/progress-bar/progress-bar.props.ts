@@ -11,6 +11,7 @@ export const registerProps = () => {
                 ['datavalue', PROP_STRING],
                 ['displayformat', PROP_STRING],
                 ['hint', PROP_STRING],
+                ['arialabel', PROP_STRING],
                 ['maxvalue', {value: 100, ...PROP_NUMBER}],
                 ['minvalue', {value: 0, ...PROP_NUMBER}],
                 ['name', PROP_STRING],

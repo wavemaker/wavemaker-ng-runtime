@@ -1,5 +1,5 @@
-import { Attribute, Element } from '@angular/compiler';
-import { FormWidgetType } from '../enums/enums';
+import {Attribute, Element} from '@angular/compiler';
+import {FormWidgetType} from '../enums/enums';
 import {includes, isArray, startsWith} from "lodash-es";
 
 // For html upload widget, add events on input tag
@@ -34,7 +34,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<ul role="group" wmCheckboxset ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} ${showTmpl}></ul>`;
             break;
         case FormWidgetType.CHIPS:
-            tmpl = `<ul wmChips role="input" debouncetime="${attrs.get('debouncetime')}" ${innerTmpl} ${showTmpl}></ul>`;
+            tmpl = `<ul wmChips debouncetime="${attrs.get('debouncetime')}" ${innerTmpl} ${showTmpl}></ul>`;
             break;
         case FormWidgetType.COLORPICKER:
             tmpl = `<div wmColorPicker ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl} ${showTmpl}></div>`;
@@ -52,10 +52,10 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<div wmDateTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} ${showTmpl}></div>`;
             break;
         case FormWidgetType.NUMBER:
-            tmpl = `<div wmNumber ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} type="number" aria-label="Only numbers" ${updateOnTmpl} ${showTmpl}></div>`;
+            tmpl = `<div wmNumber ${innerTmpl} ${attrs.get('required') === 'true' ? 'required=true' : ''} type="number" ${updateOnTmpl} ${showTmpl}></div>`;
             break;
         case FormWidgetType.PASSWORD:
-            tmpl = `<wm-input ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} type="password" aria-label="Enter password" ${updateOnTmpl} ${showTmpl}></wm-input>`;
+            tmpl = `<wm-input ${innerTmpl} ${attrs.get('required') === 'true' ? 'required=true' : ''} type="password" ${updateOnTmpl} ${showTmpl}></wm-input>`;
             break;
         case FormWidgetType.RADIOSET:
             tmpl = `<ul role="radiogroup" wmRadioset ${innerTmpl} ${showTmpl}></ul>`;
@@ -70,7 +70,7 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<wm-select ${attrs.get('required')==='true' ? 'required=true' : ''} ${innerTmpl} ${showTmpl}></wm-select>`;
             break;
         case FormWidgetType.TOGGLE:
-            tmpl = `<div wmCheckbox ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} type="toggle" role="checkbox" aria-label="Toggle button" ${showTmpl}></div>`;
+            tmpl = `<div wmCheckbox ${innerTmpl} ${attrs.get('required') === 'true' ? 'required=true' : ''} type="toggle" ${showTmpl}></div>`;
             break;
         case FormWidgetType.SLIDER:
             tmpl = `<div wmSlider ${innerTmpl} ${showTmpl}></div>`;
@@ -83,13 +83,13 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
             tmpl = `<wm-input ${innerTmpl}  ${attrs.get('required')==='true' ? 'required=true' : ''} type="${attrs.get(inputType) || 'text'}" ${updateOnTmpl} ${showTmpl}></wm-input>`;
             break;
         case FormWidgetType.TEXTAREA:
-            tmpl = `<wm-textarea ${innerTmpl} ${attrs.get('required')==='true' ? 'required=true' : ''} role="textbox" ${updateOnTmpl} ${showTmpl}></wm-textarea>`;
+            tmpl = `<wm-textarea ${innerTmpl} ${attrs.get('required') === 'true' ? 'required=true' : ''} ${updateOnTmpl} ${showTmpl}></wm-textarea>`;
             break;
         case FormWidgetType.TIME:
             tmpl = `<div wmTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} ${showTmpl}></div>`;
             break;
         case FormWidgetType.TIMESTAMP:
-            tmpl = `<div wmDateTime ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} role="input" ${showTmpl}></div>`;
+            tmpl = `<div wmDateTime ${attrs.get('required') === 'true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} ${showTmpl}></div>`;
             break;
         case FormWidgetType.UPLOAD:
             const counter = options.counter;

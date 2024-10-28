@@ -1,5 +1,5 @@
-import { FormWidgetType } from '@wm/core';
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget } from '@wm/components/base';
+import {FormWidgetType} from '@wm/core';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
 
 export const checkboxProps = new Map(
     [
@@ -12,6 +12,7 @@ export const checkboxProps = new Map(
         ['datavalue', PROP_STRING],
         ['disabled', PROP_BOOLEAN],
         ['hint', PROP_STRING],
+        ['arialabel', PROP_STRING],
         ['name', PROP_STRING],
         ['readonly', PROP_BOOLEAN],
         ['required', PROP_BOOLEAN],

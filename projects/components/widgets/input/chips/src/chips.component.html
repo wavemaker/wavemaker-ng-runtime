@@ -1,6 +1,6 @@
 <li class="chip-item {{chipclass && !bindChipclass ? chipclass : ''}}" role="option" *ngFor="let item of chipsList; let $index = index;"
     [ngClass]="{'active': item.active, 'disabled': disabled}">
-    <a class="app-chip" href="javascript:void(0);" tabindex="-1"
+    <a class="app-chip" tabindex="-1"
        (click)="handleChipClick($event, item)"
        (keydown.delete)="onDelete($event, item, $index)"
        (keydown.backspace)="onBackspace($event, item, $index)"
@@ -32,6 +32,7 @@
          minchars.bind="minchars"
          debouncetime.bind="debouncetime"
          matchmode.bind="matchmode"
+         datacompletemsg.bind = "datacompletemsg"
          groupby.bind="groupby"
          match.bind="match"
          dateformat.bind="dateformat"

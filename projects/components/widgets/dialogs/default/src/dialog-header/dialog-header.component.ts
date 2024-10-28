@@ -1,9 +1,9 @@
-import { Component, ElementRef, Inject, Input } from '@angular/core';
+import {Component, ElementRef, Inject, Input} from '@angular/core';
 
-import { addClass, toBoolean } from '@wm/core';
+import {addClass, toBoolean} from '@wm/core';
 
-import { DialogRef } from '@wm/components/base';
-import { BaseDialog } from '../base-dialog';
+import {DialogRef} from '@wm/components/base';
+import {BaseDialog} from '../base-dialog';
 
 const DEFAULT_CLS = 'app-dialog-header modal-header';
 const DEFAULT_ICON_DIMENSIONS = '21px';
@@ -24,6 +24,7 @@ export class DialogHeaderComponent {
     @Input() public headinglevel?: string = 'h4';
     @Input() public subheading: string;
     @Input() public titleid:string;
+    @Input() public title: string;
 
     public get isClosable() {
         return toBoolean(this.closable);

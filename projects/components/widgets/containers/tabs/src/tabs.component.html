@@ -1,7 +1,11 @@
 <ul class="nav nav-tabs" [ngClass]="{'nav-stacked': vertical, 'nav-justified': justified}" role="tablist">
     <li class="tab-header" *ngFor="let pane of panes; let i=index;" [attr.data-paneid]="pane.widgetId" [ngClass]="{'active': pane.isActive, 'disabled': pane.disabled}"
         [hidden]="!pane.show" role="presentation">
-        <a class="tab-heading" href="javascript:void(0);" [attr.icon-position]="iconposition" [attr.aria-label]="pane.title" [attr.title]="pane.title" [tabindex]="pane.isActive ? '0' : '-1'"
+        <a [attr.aria-label]="pane.badgevalue ? pane.title + ' ' + pane.badgevalue : pane.title"
+           [attr.icon-position]="iconposition" 
+           [attr.title]="pane.title"
+           [tabindex]="pane.isActive ? '0' : '-1'"
+           class="tab-heading" href="javascript:void(0);"
            [attr.aria-selected]="pane.isActive" role="tab" (click)="pane.select($event); pane.tabpaneHeaderClick($event, i);" (keydown)="onkeydown($event)">
                 <i [ngClass]="['app-icon', pane.paneicon]" *ngIf="pane.paneicon"></i>
                 <span [textContent]="pane.title"></span>

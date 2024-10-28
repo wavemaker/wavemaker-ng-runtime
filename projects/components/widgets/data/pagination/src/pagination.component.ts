@@ -329,6 +329,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                     console.warn('Retain State handling on Widget ' + this.parent.name + ' is not supported for current pagination type.');
                 }
             }
+            this.parent.currentpage = this.dn.currentPage;
+            this.parent.nativeElement?.setAttribute('currentpage', this.dn.currentPage);
         }
         // call getPageData after checking state config so that Static Variables can use it
         this.getPageData(event, callback);

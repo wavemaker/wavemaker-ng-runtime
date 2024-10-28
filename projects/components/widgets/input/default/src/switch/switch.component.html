@@ -4,7 +4,9 @@
        href="javascript:void(0);"
        class="btn btn-default"
        [name]="'wm-switch-' + opt.key"
+       role="button"
        [ngClass]="{'selected': opt.selected, 'disabled': disabled}"
+       [attr.aria-pressed]="opt.selected ? true : false"
        (click)="selectOpt($event, $index, opt)"
     >
         <i *ngIf="opt.dataObject && opt.dataObject[iconclass] && !opt.selected" aria-hidden="true" [ngClass]="['app-icon', opt.dataObject[iconclass] || opt['icon']]"></i>
@@ -12,7 +14,7 @@
         <span class="caption" [textContent]="opt[displayfield] || opt.label"></span>
     </a>
 </div>
-<span [title]="selectedItem ? selectedItem.label : modelByKey"
+<span [title]="selectedItem ? selectedItem.label : modelByKey" aria-hidden="true"
       class="btn btn-primary app-switch-overlay switch-handle" *ngIf="!multiple">
     <i [ngClass]="[checkediconclass]"></i>
     <span class="caption">{{selectedItem ? selectedItem.label : modelByKey}}</span>

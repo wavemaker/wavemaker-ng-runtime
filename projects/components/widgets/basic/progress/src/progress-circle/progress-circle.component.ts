@@ -1,10 +1,10 @@
 import {AfterViewInit, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
-import { CircleProgressComponent, CircleProgressOptionsInterface } from 'ng-circle-progress';
+import {CircleProgressComponent, CircleProgressOptionsInterface} from 'ng-circle-progress';
 
 
-import { IWidgetConfig, provideAsWidgetRef, IRedrawableComponent, StylableComponent, styler } from '@wm/components/base';
-import { registerProps } from './progress-circle.props';
-import { calculatePercent, getDecimalCount, isPercentageValue } from '../utils';
+import {IRedrawableComponent, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {registerProps} from './progress-circle.props';
+import {calculatePercent, getDecimalCount, isPercentageValue} from '../utils';
 import {clone, debounce, extend} from "lodash-es";
 
 const DEFAULT_CLS = 'progress app-progress circle';
@@ -41,7 +41,8 @@ export const TYPE_CLASS_MAP_PC = {
     templateUrl: './progress-circle.component.html',
     providers: [
         provideAsWidgetRef(ProgressCircleComponent)
-    ]
+    ],
+    exportAs: 'wmProgressCircle'
 })
 export class ProgressCircleComponent extends StylableComponent implements AfterViewInit, IRedrawableComponent {
     static initializeProps = registerProps();
@@ -58,6 +59,8 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
     public redraw: Function;
     public options: CircleProgressOptionsInterface;
     public hint: string;
+    public arialabel: string;
+    public displayValue: string;
 
     @ViewChild(CircleProgressComponent, { static: true }) circleRef: CircleProgressComponent;
 
@@ -71,6 +74,9 @@ export class ProgressCircleComponent extends StylableComponent implements AfterV
 
     private _redraw () {
         this.circleRef.render();
+        // Select the <tspan> element that contains the percentage value
+        let tspanElement = $(this.nativeElement).find('svg text tspan:first');
+        this.displayValue = this.options.showUnits ? tspanElement?.text() + '%' : tspanElement?.text();
     }
 
     ngAfterViewInit() {

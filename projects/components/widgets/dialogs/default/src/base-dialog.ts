@@ -43,6 +43,12 @@ const invokeOpenedCallback = (ref) => {
                 setReturnFocus: focusTrapObj.activeElement,
             });
             focusTrapObj[ref.titleId].activate();
+            const openedDialogs = ref.dialogService.getOpenedDialogs();
+            if (openedDialogs.length > 1) {
+                let zIndex = Number($("[aria-labelledby= " + openedDialogs[openedDialogs.length - 2].titleId + "]").css('z-index'));
+                $('[aria-labelledby= ' + ref.dialogService.getLastOpenedDialog().titleId + ']').css('z-index', zIndex + 2);
+                $('bs-modal-backdrop').css('z-index', zIndex + 1);
+            }
         });
     }
 };
@@ -51,6 +57,11 @@ const invokeClosedCallback = (ref) => {
     if (ref) {
         ref.invokeEventCallback('close');
         ref.dialogRef = undefined;
+        const openedDialogs = ref.dialogService.getOpenedDialogs();
+        if (openedDialogs.length >= 1) {
+            let zIndex: any = Number($("[aria-labelledby= " + openedDialogs[openedDialogs.length - 1].titleId + "]").css('z-index'));
+            $('bs-modal-backdrop').css('z-index', zIndex - 1);
+        }
     }
 };
 
@@ -158,6 +169,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
             const parentSelector = $('body > app-root')[0];
             parentSelector.setAttribute('aria-hidden', 'true');
         }
+        $('.cdk-focus-trap-anchor').removeAttr('aria-hidden');
     }
 
     /**

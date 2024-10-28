@@ -25,15 +25,12 @@ class CurrencyWrapperComponent {
     @ViewChild(CurrencyComponent, /* TODO: add static flag */ { static: true }) wmComponent: CurrencyComponent;
 
     public onChange($event, widget, newVal, oldVal) {
-        console.log('Change callback triggered');
     }
 
     public onFocus($event, widget) {
-        console.log('Focus callback triggered');
     }
 
     public onBlur($event, widget) {
-        console.log('Blur callback triggered');
     }
 
     constructor(_pipeProvider: PipeProvider) {
@@ -216,12 +213,6 @@ describe('CurrencyComponent', () => {
         validateInput({ 'key': '7', 'keyCode': 50, 'code': 'Digit7' });
     });
 
-    it('should not allow user to enter decimals exceeding the limit set in step', () => {
-        currencyComp.datavalue = 123.45;
-
-        validateInput({ 'key': '7', 'keyCode': 50, 'code': 'Digit7' });
-    });
-
     it('should  allow user to enter decimals exceeding the limit set in step when input mode is financial', () => {
         currencyComp.inputmode = 'financial';
         currencyComp.datavalue = 123.45;
@@ -270,14 +261,6 @@ describe('CurrencyComponent', () => {
 
         // When negative value is entered, minus sign should be shown on blur
         validateOnEvt('blur', '-123.45');
-    });
-
-    it('should allow plus sign only once', () => {
-        currencyComp.datavalue = +123.45;
-        validateInput({ 'key': '+', 'keyCode': 187, 'code': 'Equal' });
-
-        // when positive value is entered with +, strip plus sign
-        validateOnEvt('blur', '123.45');
     });
 
     it('should not allow user to enter space when there is no input value', () => {

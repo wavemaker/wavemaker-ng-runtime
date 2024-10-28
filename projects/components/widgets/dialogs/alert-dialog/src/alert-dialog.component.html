@@ -7,11 +7,13 @@
          [iconmargin]="iconmargin"
          [heading]="title"
          [headinglevel]="headinglevel"
+         [title]="title"
          [titleid]="titleId"></div>
     <div wmDialogBody>
         <p class="app-dialog-message text-{{alerttype}}" [textContent]="message"></p>
     </div>
     <div wmDialogFooter>
-        <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>
+        <button (click)="onOk($event)" [attr.aria-label]="oktext" caption.bind="oktext" class="btn-primary ok-action"
+                wmButton></button>
     </div>
 </ng-template>

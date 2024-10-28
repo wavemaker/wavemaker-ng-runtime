@@ -1,6 +1,7 @@
-import {Injectable, Injector} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {noop} from '@wm/core';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 
 export interface CanComponentDeactivate  {
@@ -15,15 +16,21 @@ export interface CanComponentDeactivate  {
  */
 @Injectable()
 export class CanDeactivatePageGuard {
-  canDeactivate(component: CanComponentDeactivate) {
+  canDeactivate(
+    component: CanComponentDeactivate,
+    currentRoute: ActivatedRouteSnapshot,
+    currentState: RouterStateSnapshot,
+    nextState?: RouterStateSnapshot
+  ) {
       function invokeCompDeactivate() {
           let retVal;
+          const nextRoute = nextState ? nextState.url : undefined;
           // Calling onBeforePageLeave method present at page level
-          retVal = this.app.activePage && this.app.activePage.onBeforePageLeave();
+          retVal = this.app.activePage && this.app.activePage.onBeforePageLeave(nextRoute);
           // Calling onBeforePageLeave method present at app level only if page level method return true
           // or if there is no page level method
           if (retVal !== false ) {
-              retVal =  (this.app.onBeforePageLeave || noop)(this.app.activePageName, this.app.activePage);
+              retVal =  (this.app.onBeforePageLeave || noop)(this.app.activePageName, this.app.activePage, nextRoute);
           }
           return retVal === undefined ? true : retVal;
       }

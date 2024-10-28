@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(
@@ -15,6 +15,7 @@ export const registerProps = () => {
                 ['contentsource', {value: 'partial', ...PROP_STRING}],
                 ['encodeurl', PROP_BOOLEAN],
                 ['hint', PROP_STRING],
+                ['arialabel', PROP_STRING],
                 ['hyperlink', {value: 'javascript:void(0)', PROP_STRING}],
                 ['iconclass', PROP_STRING],
                 ['iconheight', PROP_STRING],

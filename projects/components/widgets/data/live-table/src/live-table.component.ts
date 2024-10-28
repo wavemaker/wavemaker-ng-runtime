@@ -10,20 +10,13 @@ import {
     Optional
 } from '@angular/core';
 
-import { debounceTime } from 'rxjs/operators';
+import {debounceTime} from 'rxjs/operators';
 
-import {
-    $appDigest,
-    AbstractDialogService,
-    App,
-    getClonedObject,
-    isDefined,
-    triggerFn
-} from '@wm/core';
-import { provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { TableComponent } from '@wm/components/data/table';
+import {$appDigest, AbstractDialogService, App, getClonedObject, isDefined, triggerFn} from '@wm/core';
+import {provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {TableComponent} from '@wm/components/data/table';
 
-import { registerProps } from './live-table.props';
+import {registerProps} from './live-table.props';
 
 declare var $: any;
 
@@ -106,7 +99,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     focusFirstInput() {
-       const $firstInput = $(this.form.$element).find('[role="textbox"]').first();
+        const $firstInput = $(this.form.$element).find('input').first();
         $firstInput.focus();
         $firstInput.select();
     }

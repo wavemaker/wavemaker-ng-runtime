@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { DatePipe } from '@angular/common';
-import { AbstractI18nService, App, AppDefaults, isAppleProduct } from '@wm/core';
+import { $unwatch, $watch, AbstractI18nService, App, AppDefaults, isAppleProduct } from '@wm/core';
 import { ChipsComponent } from './chips.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, mockApp, setInputValue } from '../../../../base/src/test/util/component-test-util';
@@ -15,7 +15,9 @@ import { MockAbstractI18nService } from '../../../../base/src/test/util/date-tes
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
-    isAppleProduct: jest.fn()
+    isAppleProduct: jest.fn(),
+    $unwatch: jest.fn(),
+    $watch: jest.fn()
 }));
 
 const markup = `<ul wmChips name="chips1" readonly="false" class= "text-success" show="true" width="800" height="200" backgroundcolor="#00ff29"
@@ -495,11 +497,425 @@ describe('wm-chips: Component Specific Tests', () => {
         });
     });
 
+    describe('updateQueryModel', () => {
+        it('should clear chipsList when data is null', async () => {
+            wmComponent.chipsList = [{ label: 'Test', value: 'test' }];
+            await wmComponent['updateQueryModel'](null);
+            expect(wmComponent.chipsList).toEqual([]);
+        });
+
+        it('should update chipsList based on datasetItems', async () => {
+            wmComponent.datasetItems = [
+                {
+                    label: 'Item 1', value: 'item1',
+                    key: 'Item 1'
+                },
+                {
+                    label: 'Item 2', value: 'item2',
+                    key: 'Item 2'
+                }
+            ];
+            await wmComponent['updateQueryModel'](['item1', 'item2']);
+            expect(wmComponent.chipsList).toEqual(wmComponent.datasetItems);
+        });
+
+        it('should limit chipsList to maxsize', async () => {
+            wmComponent.maxsize = 2;
+            wmComponent.datasetItems = [
+                {
+                    label: 'Item 1', value: 'item1',
+                    key: 'Item 1'
+                },
+                {
+                    label: 'Item 2', value: 'item2',
+                    key: 'Item 2'
+                },
+                {
+                    label: 'Item 3', value: 'item3',
+                    key: 'Item 3'
+                }
+            ];
+            await wmComponent['updateQueryModel'](['item1', 'item2', 'item3']);
+            expect(wmComponent.chipsList.length).toBe(2);
+        });
+
+        it('should make default query for non-existing values', async () => {
+            wmComponent.datafield = 'someField';
+            wmComponent['getDefaultModel'] = jest.fn().mockResolvedValue([{ label: 'New Item', value: 'newItem' }]);
+            await wmComponent['updateQueryModel'](['newItem']);
+            expect(wmComponent['getDefaultModel']).toHaveBeenCalledWith(['newItem'], expect.any(Number));
+            expect(wmComponent.chipsList[0]).toEqual({ label: 'New Item', value: 'newItem' });
+        });
+    });
+
+    describe('getDefaultModel', () => {
+        beforeEach(() => {
+            (wmComponent as any).searchComponent = {
+                getDataSource: jest.fn()
+            };
+        });
+
+        it('should increment nextItemIndex', async () => {
+            const initialIndex = wmComponent['nextItemIndex'];
+            (wmComponent as any)['searchComponent'].getDataSource.mockResolvedValue([]);
+            await wmComponent['getDefaultModel'](['test']);
+            expect(wmComponent['nextItemIndex']).toBe(initialIndex + 1);
+        });
+
+        it('should call searchComponent.getDataSource with correct parameters', async () => {
+            const query = ['test'];
+            const index = 1;
+            (wmComponent as any)['searchComponent'].getDataSource.mockResolvedValue([]);
+            await wmComponent['getDefaultModel'](query, index);
+            expect(wmComponent['searchComponent'].getDataSource).toHaveBeenCalledWith(query, true, index);
+        });
+
+        it('should filter the response based on the query', async () => {
+            const query = ['item1', 'item2'];
+            const mockResponse = [{ value: 'item1' }, { value: 'item3' }];
+            (wmComponent as any)['searchComponent'].getDataSource.mockResolvedValue(mockResponse);
+            const result = await wmComponent['getDefaultModel'](query);
+            expect(result).toEqual([]);
+        });
+    });
+
+    describe('createCustomDataModel', () => {
+        it('should create a custom object with displayfield as key', () => {
+            wmComponent.displayfield = 'name';
+            const result = wmComponent['createCustomDataModel']('John');
+            expect(result).toEqual({ name: 'John' });
+        });
+
+        it('should create a custom object with datafield as key when displayfield is not set', () => {
+            wmComponent.displayfield = '';
+            wmComponent.datafield = 'username';
+            const result = wmComponent['createCustomDataModel']('john_doe');
+            expect(result).toEqual({ username: 'john_doe' });
+        });
+    });
+
+
+    describe('swapElementsInArray', () => {
+        it('should swap elements in the array', () => {
+            const data = ['a', 'b', 'c', 'd'];
+            wmComponent['swapElementsInArray'](data, 2, 0);
+            expect(data).toEqual(['b', 'c', 'a', 'd']);
+        });
+
+        it('should handle swapping to the end of the array', () => {
+            const data = ['a', 'b', 'c', 'd'];
+            wmComponent['swapElementsInArray'](data, 3, 1);
+            expect(data).toEqual(['a', 'c', 'd', 'b']);
+        });
+    });
+
+    describe('invokeOnBeforeServiceCall', () => {
+        it('should invoke beforeservicecall event with inputData', () => {
+            wmComponent.invokeEventCallback = jest.fn();
+            const inputData = { test: 'data' };
+            wmComponent['invokeOnBeforeServiceCall'](inputData);
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('beforeservicecall', { inputData });
+        });
+    });
+
+    describe('handleEvent', () => {
+        it('should not call super.handleEvent for specific events', () => {
+            const superHandleEvent = jest.spyOn(Object.getPrototypeOf(ChipsComponent.prototype), 'handleEvent');
+            const node = document.createElement('div');
+            const eventCallback = jest.fn();
+            const locals = {};
+
+            ['remove', 'beforeremove', 'chipselect', 'chipclick', 'add', 'reorder', 'change'].forEach(eventName => {
+                (wmComponent as any).handleEvent(node, eventName, eventCallback, locals);
+                expect(superHandleEvent).not.toHaveBeenCalled();
+            });
+        });
+
+        it('should call super.handleEvent for other events', () => {
+            const superHandleEvent = jest.spyOn(Object.getPrototypeOf(ChipsComponent.prototype), 'handleEvent');
+            const node = document.createElement('div');
+            const eventCallback = jest.fn();
+            const locals = {};
+            (wmComponent as any).handleEvent(node, 'click', eventCallback, locals);
+            expect(superHandleEvent).toHaveBeenCalledWith(node, 'click', eventCallback, locals);
+        });
+    });
+
+    describe('resetReorder', () => {
+        it('should remove oldIndex data from $element', () => {
+            const removeDataMock = jest.fn();
+            Object.defineProperty(wmComponent, '$element', {
+                get: () => ({ removeData: removeDataMock })
+            });
+            wmComponent['resetReorder']();
+            expect(removeDataMock).toHaveBeenCalledWith('oldIndex');
+        });
+    });
+
+    describe('onReorderStart', () => {
+        it('should set oldIndex data and adjust helper width', () => {
+            const dataMock = jest.fn();
+            Object.defineProperty(wmComponent, '$element', {
+                get: () => ({ data: dataMock })
+            });
+            (wmComponent as any).inputposition = 'first';
+            const evt = {} as Event;
+            const ui = {
+                helper: {
+                    width: jest.fn().mockReturnValue(100)
+                },
+                item: {
+                    index: jest.fn().mockReturnValue(2)
+                }
+            };
+            wmComponent['onReorderStart'](evt, ui);
+            expect(ui.helper.width).toHaveBeenCalledWith(101);
+            expect(dataMock).toHaveBeenCalledWith('oldIndex', 1);
+        });
+
+        it('should handle inputposition not being first', () => {
+            const dataMock = jest.fn();
+            Object.defineProperty(wmComponent, '$element', {
+                get: () => ({ data: dataMock })
+            });
+            (wmComponent as any).inputposition = 'last';
+            const evt = {} as Event;
+            const ui = {
+                helper: {
+                    width: jest.fn().mockReturnValue(100)
+                },
+                item: {
+                    index: jest.fn().mockReturnValue(2)
+                }
+            };
+            wmComponent['onReorderStart'](evt, ui);
+            expect(dataMock).toHaveBeenCalledWith('oldIndex', 2);
+        });
+    });
+
+
+    describe('update', () => {
+        let mockEvent: Event;
+        let mockUi: { item: { index: jest.Mock } };
+
+        beforeEach(() => {
+            mockEvent = {} as Event;
+            mockUi = { item: { index: jest.fn() } };
+            wmComponent.chipsList = ['item1', 'item2', 'item3'];
+            wmComponent._modelByValue = ['value1', 'value2', 'value3'];
+            (wmComponent as any).inputposition = 'first';
+            wmComponent['resetReorder'] = jest.fn();
+            wmComponent['swapElementsInArray'] = jest.fn();
+            wmComponent.invokeEventCallback = jest.fn();
+
+            Object.defineProperty(wmComponent, '$element', {
+                get: () => ({ data: jest.fn().mockReturnValue(1) }) // oldIndex
+            });
+        });
+
+        it('should do nothing if newIndex equals oldIndex', () => {
+            mockUi.item.index.mockReturnValue(2); // newIndex will be 1 after adjustment
+            wmComponent['update'](mockEvent, mockUi);
+            expect(wmComponent['resetReorder']).toHaveBeenCalled();
+            expect(wmComponent['swapElementsInArray']).not.toHaveBeenCalled();
+        });
+
+        it('should update chipsList and _modelByValue when reordering', () => {
+            mockUi.item.index.mockReturnValue(3); // newIndex will be 2 after adjustment
+            wmComponent['update'](mockEvent, mockUi);
+            expect(wmComponent['swapElementsInArray']).toHaveBeenCalledTimes(2);
+            expect(wmComponent['swapElementsInArray']).toHaveBeenCalledWith(wmComponent.chipsList, 2, 1);
+            expect(wmComponent['swapElementsInArray']).toHaveBeenCalledWith(wmComponent._modelByValue, 2, 1);
+        });
+
+        it('should handle reordering to the end of the list', () => {
+            mockUi.item.index.mockReturnValue(4); // equal to chipsList.length + 1
+            wmComponent['update'](mockEvent, mockUi);
+            expect(wmComponent['swapElementsInArray']).toHaveBeenCalledWith(wmComponent.chipsList, 2, 1);
+        });
+
+        it('should invoke beforereorder and reorder callbacks', () => {
+            mockUi.item.index.mockReturnValue(3);
+            wmComponent['update'](mockEvent, mockUi);
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('beforereorder', expect.any(Object));
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('reorder', expect.any(Object));
+        });
+
+        it('should not reorder if beforereorder returns false', () => {
+            mockUi.item.index.mockReturnValue(3);
+            (wmComponent.invokeEventCallback as jest.Mock).mockReturnValueOnce(false);
+            wmComponent['update'](mockEvent, mockUi);
+            expect(wmComponent['resetReorder']).toHaveBeenCalled();
+            expect(wmComponent['swapElementsInArray']).not.toHaveBeenCalled();
+        });
+
+        it('should handle inputposition being "last"', () => {
+            (wmComponent as any).inputposition = 'last';
+            mockUi.item.index.mockReturnValue(2); // newIndex will be 2 (no adjustment)
+            wmComponent['update'](mockEvent, mockUi);
+            expect(wmComponent['swapElementsInArray']).toHaveBeenCalledWith(wmComponent.chipsList, 2, 1);
+        });
+    });
+
+    describe('onPropertyChange', () => {
+        beforeEach(() => {
+            // Mock the $element property
+            Object.defineProperty(wmComponent, '$element', {
+                get: jest.fn().mockReturnValue({
+                    hasClass: jest.fn(),
+                    addClass: jest.fn(),
+                    removeClass: jest.fn(),
+                    find: jest.fn(),
+                    prepend: jest.fn(),
+                    append: jest.fn(),
+                    sortable: jest.fn()
+                })
+            });
+        });
+
+        it('should enable/disable sortable when enablereorder changes', () => {
+            wmComponent.$element.hasClass.mockReturnValue(true);
+            wmComponent.onPropertyChange('enablereorder', true, false);
+            expect(wmComponent.$element.sortable).toHaveBeenCalledWith('option', 'disabled', false);
+            wmComponent.onPropertyChange('enablereorder', false, true);
+            expect(wmComponent.$element.sortable).toHaveBeenCalledWith('option', 'disabled', true);
+        });
+
+        it('should call configureDnD when enablereorder is true and element is not sortable', () => {
+            wmComponent.$element.hasClass.mockReturnValue(false);
+            const configureDnDSpy = jest.spyOn((wmComponent as any), 'configureDnD').mockImplementation();
+            wmComponent.onPropertyChange('enablereorder', true, false);
+            expect(configureDnDSpy).toHaveBeenCalled();
+            configureDnDSpy.mockRestore();
+        });
+
+        it('should add/remove readonly class when readonly changes', () => {
+            wmComponent.onPropertyChange('readonly', true, false);
+            expect(wmComponent.$element.addClass).toHaveBeenCalledWith('readonly');
+            wmComponent.onPropertyChange('readonly', false, true);
+            expect(wmComponent.$element.removeClass).toHaveBeenCalledWith('readonly');
+        });
+
+        it('should change input position when inputposition changes', () => {
+            const mockInputEl = { length: 1 };
+            wmComponent.$element.find.mockReturnValue(mockInputEl);
+            wmComponent.onPropertyChange('inputposition', 'first', 'last');
+            expect(wmComponent.$element.prepend).toHaveBeenCalledWith(mockInputEl);
+            wmComponent.onPropertyChange('inputposition', 'last', 'first');
+            expect(wmComponent.$element.append).toHaveBeenCalledWith(mockInputEl);
+        });
+
+        it('should focus search box when autofocus is true', (done) => {
+            const mockChipsList = { length: 1 };
+            wmComponent.$element.find.mockReturnValue(mockChipsList);
+            const focusSearchBoxSpy = jest.spyOn((wmComponent as any), 'focusSearchBox').mockImplementation();
+            wmComponent.onPropertyChange('autofocus', true, false);
+            setTimeout(() => {
+                expect(focusSearchBoxSpy).toHaveBeenCalled();
+                focusSearchBoxSpy.mockRestore();
+                done();
+            }, 0);
+        });
+
+        it('should call super.onPropertyChange', () => {
+            const superSpy = jest.spyOn(Object.getPrototypeOf(ChipsComponent.prototype), 'onPropertyChange');
+            wmComponent.onPropertyChange('someKey', 'newValue', 'oldValue');
+            expect(superSpy).toHaveBeenCalledWith('someKey', 'newValue', 'oldValue');
+            superSpy.mockRestore();
+        });
+    });
+
+    describe('registerChipItemClass', () => {
+        it('should register a watch when bindChipclass is defined', () => {
+            const mockItem = { key: 'key1', value: 'value1', label: 'label1' };
+            const mockIndex = 0;
+
+            // Mock necessary properties
+            Object.defineProperty(wmComponent, 'bindChipclass', {
+                get: jest.fn(() => 'someExpression')
+            });
+            Object.defineProperty(wmComponent, 'widgetId', {
+                get: jest.fn(() => 'testWidget')
+            });
+
+            // Reset mocks
+            ($unwatch as jest.Mock).mockClear();
+            ($watch as jest.Mock).mockClear();
+
+            // Access private method
+            const registerChipItemClass = (wmComponent as any).registerChipItemClass.bind(wmComponent);
+
+            registerChipItemClass(mockItem, mockIndex);
+
+            expect($unwatch).toHaveBeenCalledWith('testWidget_chipItemClass_0');
+            expect($watch).toHaveBeenCalledWith(
+                'someExpression',
+                (wmComponent as any).viewParent,
+                { item: mockItem, $index: mockIndex },
+                expect.any(Function),
+                'testWidget_chipItemClass_0'
+            );
+        });
+
+        it('should not register a watch when bindChipclass is undefined', () => {
+            const mockItem = { key: 'key1', value: 'value1', label: 'label1' };
+            const mockIndex = 0;
+
+            // Ensure bindChipclass is undefined
+            Object.defineProperty(wmComponent, 'bindChipclass', {
+                get: jest.fn(() => undefined)
+            });
+
+            // Reset mocks
+            ($unwatch as jest.Mock).mockClear();
+            ($watch as jest.Mock).mockClear();
+
+            // Access private method
+            const registerChipItemClass = (wmComponent as any).registerChipItemClass.bind(wmComponent);
+
+            registerChipItemClass(mockItem, mockIndex);
+
+            expect($unwatch).not.toHaveBeenCalled();
+            expect($watch).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('applyItemClass', () => {
+        it('should apply classes correctly', () => {
+            const mockIndex = 0;
+            const mockVal = { toRemove: 'class1 class2', toAdd: 'class3 class4' };
+            const mockChipItem = {
+                classList: {
+                    remove: jest.fn(),
+                    add: jest.fn()
+                }
+            };
+            const mockNativeElement = {
+                querySelectorAll: jest.fn().mockReturnValue({
+                    item: jest.fn().mockReturnValue(mockChipItem)
+                })
+            };
+            Object.defineProperty(wmComponent, 'nativeElement', {
+                get: jest.fn(() => mockNativeElement)
+            });
+            (global as any).$ = jest.fn().mockReturnValue({
+                removeClass: jest.fn().mockReturnThis(),
+                addClass: jest.fn().mockReturnThis()
+            });
+            const applyItemClass = (wmComponent as any).applyItemClass.bind(wmComponent);
+            applyItemClass(mockVal, mockIndex);
+            expect(mockNativeElement.querySelectorAll).toHaveBeenCalledWith('.chip-item');
+            expect((global as any).$).toHaveBeenCalledWith(mockChipItem);
+            expect((global as any).$().removeClass).toHaveBeenCalledWith('class1 class2');
+            expect((global as any).$().addClass).toHaveBeenCalledWith('class3 class4');
+        });
+    });
+
     function applyIgnoreCaseMatchMode(matchMode, value1, value2, done) {
         wmComponent.setProperty('matchmode', matchMode);
         fixture.detectChanges();
         addItem(value1, 'keyup').then(async () => {
-            await fixture.detectChanges();
+            fixture.detectChanges();
             expect(wmComponent.chipsList.length).toEqual(1);
             addItem(value2, 'keyup').then(() => {
                 expect(wmComponent.chipsList.length).toEqual(1);
@@ -511,7 +927,7 @@ describe('wm-chips: Component Specific Tests', () => {
         wmComponent.setProperty('matchmode', matchMode);
         fixture.detectChanges();
         addItem(value1, 'keyup').then(async () => {
-            await fixture.detectChanges();
+            fixture.detectChanges();
             expect(wmComponent.chipsList.length).toEqual(1);
             addItem(value2, 'keydown').then(() => {
                 expect(wmComponent.chipsList.length).toEqual(2);

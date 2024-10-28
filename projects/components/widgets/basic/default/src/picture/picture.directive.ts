@@ -1,9 +1,16 @@
 import {Directive, HostBinding, Inject, Injector, OnInit, Optional} from '@angular/core';
 
 import {setAttr, setCSS, switchClass} from '@wm/core';
-import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe } from '@wm/components/base';
+import {
+    DISPLAY_TYPE,
+    ImagePipe,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler
+} from '@wm/components/base';
 
-import { registerProps } from './picture.props';
+import {registerProps} from './picture.props';
 
 const DEFAULT_CLS = 'app-picture';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -25,6 +32,7 @@ export class PictureDirective extends StylableComponent implements OnInit {
     encodeurl;
     picturesource;
     pictureplaceholder;
+    alttext;
 
     @HostBinding('src') imgSource: string;
 

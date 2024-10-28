@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(
@@ -11,6 +11,7 @@ export const registerProps = () => {
                 ['datavalue', {value: '30', ...PROP_STRING}],
                 ['displayformat', {value: '9%', ...PROP_STRING}],
                 ['hint', PROP_STRING],
+                ['arialabel', PROP_STRING],
                 ['maxvalue', {value: 100, ...PROP_NUMBER}],
                 ['minvalue', {value: 0, ...PROP_NUMBER}],
                 ['name', PROP_STRING],

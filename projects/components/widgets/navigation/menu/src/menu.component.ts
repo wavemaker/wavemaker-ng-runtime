@@ -24,7 +24,6 @@ import {
     UserDefinedExecutionContext
 } from '@wm/core';
 import {
-    APPLY_STYLES_TYPE,
     AUTOCLOSE_TYPE,
     DatasetAwareNavComponent,
     hasLinkToCurrentPage,
@@ -102,6 +101,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
     public autoclose: string;
     public autoopen: string;
     public hint: string;
+    public arialabel: string;
 
     private itemActionFn: Function;
     private menuCaret = 'fa-caret-down';
@@ -158,7 +158,7 @@ export class MenuComponent extends DatasetAwareNavComponent implements OnInit, O
             }
         } else if (eventAction === KEY_MOVEMENTS.ON_ENTER || (eventAction === KEY_MOVEMENTS.ON_MOUSE_ENTER && this.showonhover)) {
             this.bsDropdown.toggle(true);
-        } else if (includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT], eventAction) || (eventAction == KEY_MOVEMENTS.ON_MOUSE_LEAVE && this.autoclose == AUTOCLOSE_TYPE.ALWAYS)) {
+        } else if (includes([KEY_MOVEMENTS.MOVE_UP, KEY_MOVEMENTS.MOVE_LEFT], eventAction) || (eventAction == KEY_MOVEMENTS.ON_MOUSE_LEAVE && this.autoclose == AUTOCLOSE_TYPE.ALWAYS && this.showonhover)) {
             this.bsDropdown.hide();
         }
         $event.preventDefault();

@@ -1,9 +1,10 @@
-import { NgZone } from '@angular/core';
+import {NgZone} from '@angular/core';
 
-import { SwipeAnimation } from '@swipey';
+import {SwipeAnimation} from '@swipey';
 
-import { CarouselDirective } from './carousel.directive';
+import {CarouselDirective} from './carousel.directive';
 import {findIndex} from "lodash-es";
+
 declare const $;
 
 export class CarouselAnimator extends SwipeAnimation {
@@ -55,7 +56,7 @@ export class CarouselAnimator extends SwipeAnimation {
         if (this.interval) {
             this.start();
         }
-        this._$el.find('>.left.carousel-control').append('<span class="sr-only">Previous</span>');
+        $('carousel slide').removeAttr('aria-hidden');
     }
 
     public bounds() {

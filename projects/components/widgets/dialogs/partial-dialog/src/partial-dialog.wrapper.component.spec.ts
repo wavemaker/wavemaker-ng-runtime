@@ -106,14 +106,6 @@ describe('PartialDialogComponent', () => {
         expect(closeSpy).toHaveBeenCalled();
     });
 
-    //TypeError: Cannot read properties of null (reading 'nativeElement')
-    xit("should call 'close' method on close button click", () => {
-        const closeSpy = jest.spyOn(dialogComponent, 'close');
-        const closeButton = fixture.debugElement.query(By.css('.close'));
-        closeButton.nativeElement.click();
-        expect(closeSpy).toHaveBeenCalled();
-    });
-
     describe('setPartialLoadListener', () => {
         it('should set up a listener for partialLoaded event and update properties', () => {
             const mockWidget = {

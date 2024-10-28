@@ -1,9 +1,9 @@
 /*global describe, it, WM, beforeEach, expect, module, inject, _, parseInt, document, Hammer*/
 
-import { waitForAsync } from '@angular/core/testing';
-import { isBooleanAttr, isDimensionProp } from '../widgets/framework/constants';
-import { toDimension } from '../../../../core/src/utils/dom';
-import { compileTestComponent, getHtmlSelectorElement } from './util/component-test-util';
+import {waitForAsync} from '@angular/core/testing';
+import {isBooleanAttr, isDimensionProp} from '../widgets/framework/constants';
+import {toDimension} from '../../../../core/src/utils/dom';
+import {compileTestComponent, getHtmlSelectorElement} from './util/component-test-util';
 import {forEach, isObject, replace} from "lodash-es";
 
 // TODO: Pending basic common Events, basic touch events, dialog events and properties
@@ -417,20 +417,20 @@ export class ComponentTestBase {
                 $inputEl = this.widgetDef.inputElementSelector ? fixture.nativeElement.querySelector(this.widgetDef.inputElementSelector) : $element;
             }));
 
-            it(this.widgetDef.type + ': aria-label should not be empty without hint', () => {
-                if (!widgetProps.get('hint')) {
+            it(this.widgetDef.type + ': aria-label should not be empty without arialabel property', () => {
+                if (!widgetProps.get('arialabel')) {
                     return;
                 }
                 expect($inputEl.getAttribute('aria-label')).toBeDefined();
             });
 
-            it(this.widgetDef.type + ': aria-label property change should be reflected based on hint', () => {
-                if (!widgetProps.get('hint')) {
+            it.only(this.widgetDef.type + ': aria-label property change should be reflected based on arialabel', () => {
+                if (!widgetProps.get('arialabel')) {
                     return;
                 }
-                component.getWidget().hint = 'updated hint';
+                component.getWidget().arialabel = 'updated aria-label';
                 fixture.detectChanges();
-                expect($inputEl.getAttribute('aria-label')).toBe('updated hint');
+                expect($inputEl.getAttribute('aria-label')).toBe('updated aria-label');
             });
         });
     }

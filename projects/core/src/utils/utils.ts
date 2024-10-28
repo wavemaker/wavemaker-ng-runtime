@@ -21,8 +21,8 @@ import {
     startsWith, toLower, toUpper, trim
 } from "lodash-es";
 
-declare const $;
 declare const X2JS;
+declare const $;
 declare const moment;
 declare const document;
 declare const resolveLocalFileSystemURL;
@@ -39,7 +39,6 @@ const REGEX = {
     IPOD: /iPod/i,
     IPAD: /iPad/i,
     MAC: /Mac/i,
-        MACINTEL: /MacIntel/i,
     ANDROID_TABLET: /android|android 3.0|xoom|sch-i800|playbook|tablet|kindle/i,
     MOBILE: /Mobile/i,
     WINDOWS: /Windows Phone/i,
@@ -106,10 +105,13 @@ export const isAndroidTablet = () => REGEX.ANDROID_TABLET.test(userAgent) && !((
 export const isIphone = () => REGEX.IPHONE.test(userAgent);
 export const isIpod = () => REGEX.IPOD.test(userAgent);
 export const isIpad = () => {
-    return REGEX.IPAD.test(userAgent) || (window.navigator.maxTouchPoints && window.navigator.maxTouchPoints > 2 && (REGEX.MAC.test(window.navigator.platform) || REGEX.MACINTEL.test(window.navigator.platform)));
+    return REGEX.IPAD.test(userAgent) || (window.navigator.maxTouchPoints && window.navigator.maxTouchPoints > 2 && REGEX.MAC.test(window.navigator.platform));
 };
 
 export const isIos = () => isIphone() || isIpod() || isIpad();
+
+export const isSafari = () => navigator.userAgent.indexOf('Safari') !== -1 && navigator.userAgent.indexOf('Chrome') === -1;
+
 
 export const isLargeTabletLandscape = (landScapeWidth, landScapeHeight) => {
     const width = landScapeWidth || '1366px';
@@ -376,7 +378,7 @@ export const getFormattedDate = (datePipe, dateObj, format, timeZone?, isTimeSta
         return new Date(dateObj).toISOString();
     }
 
-    if (timeZone) {
+    if (timeZone && timeZone !== moment.defaultZone?.name) {
         const momentFormat = format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A');
         if (isIntervalDateTime ) { // dates which are of type time widget (value is hh:mm:ss) but returned as date string from time comp
             return moment(dateObj).format(momentFormat);

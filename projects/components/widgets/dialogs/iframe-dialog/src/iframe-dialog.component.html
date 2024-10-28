@@ -8,12 +8,14 @@
          [heading]="title"
          [headinglevel]="headinglevel"
          *ngIf="showheader"
+         [title]="title"
          [titleid]="titleId"
     ></div>
     <div wmDialogBody>
         <div wmIframe encodeurl.bind="encodeurl" iframesrc.bind="url" height.bind="height" width.bind="width" hint.bind="hint"></div>
     </div>
     <div wmDialogFooter *ngIf="showactions">
-        <button wmButton class="btn-primary ok-action" caption.bind="oktext" aria-label="Submit button" (click)="onOk($event)"></button>
+        <button (click)="onOk($event)" [attr.aria-label]="oktext" caption.bind="oktext" class="btn-primary ok-action"
+                wmButton></button>
     </div>
 </ng-template>

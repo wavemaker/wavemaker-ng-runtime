@@ -5,7 +5,7 @@ import { WmComponentsModule } from '@wm/components/base';
 import { FormsModule } from '@angular/forms';
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent, mockApp } from '../../../../base/src/test/util/component-test-util';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
+import { ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { App } from '@wm/core';
 
 const markup = `
@@ -33,16 +33,16 @@ const markup = `
     template: markup
 })
 class WizardWrapperComponent {
-    @ViewChild(WizardComponent, /* TODO: add static flag */ {static: true}) wmComponent: WizardComponent;
+    @ViewChild(WizardComponent, /* TODO: add static flag */ { static: true }) wmComponent: WizardComponent;
     public wizardstep1Next(widget, currentStep, stepIndex) {
-        console.log('calling on next');
+        // console.log('calling on next');
     }
 
     public wizardstep2Load(widget, stepIndex) {
-        console.log('calling on load for step2');
+        // console.log('calling on load for step2');
     }
     public wizard1Cancel(widget, steps) {
-        console.log('cancelled step');
+        // console.log('cancelled step');
     }
 }
 const testModuleDef: ITestModuleDef = {
@@ -114,7 +114,7 @@ describe('wm-wizard: Component Specific Tests', () => {
     });
 
 
-    it('should have correct param values in onPrev callback event',  async () => {
+    it('should have correct param values in onPrev callback event', async () => {
         const secondStepRef = wmComponent.getWidget().getStepRefByIndex(1);
         fixture.whenStable().then(() => {
             jest.spyOn(secondStepRef, 'invokeEventCallback');
@@ -122,19 +122,107 @@ describe('wm-wizard: Component Specific Tests', () => {
             fixture.detectChanges();
             wmComponent.prev();
             fixture.detectChanges();
-            expect(secondStepRef.invokeEventCallback).toHaveBeenCalledWith('prev', {currentStep: secondStepRef, stepIndex: 1});
+            expect(secondStepRef.invokeEventCallback).toHaveBeenCalledWith('prev', { currentStep: secondStepRef, stepIndex: 1 });
         });
     });
 
-    it('should have correct param values in onSkip callback event',  async () => {
+    it('should have correct param values in onSkip callback event', async () => {
         const frstStepRef = wmComponent.getWidget().getStepRefByIndex(0);
         fixture.whenStable().then(() => {
             frstStepRef.setProperty('enableskip', true);
             jest.spyOn(frstStepRef, 'invokeEventCallback');
             wmComponent.skip();
             fixture.detectChanges();
-            expect(frstStepRef.invokeEventCallback).toHaveBeenCalledWith('skip', {currentStep: frstStepRef, stepIndex: 0});
+            expect(frstStepRef.invokeEventCallback).toHaveBeenCalledWith('skip', { currentStep: frstStepRef, stepIndex: 0 });
         });
     });
 
+    it('should call next() with "skip" when skip() is called', () => {
+        jest.spyOn(wmComponent, 'next');
+        wmComponent.skip();
+        expect(wmComponent.next).toHaveBeenCalledWith('skip');
+    });
+
+    it('should set isDone to true and invoke "done" event when done() is called', () => {
+        const mockSteps = [{ isDone: false }, { isDone: false }];
+        wmComponent['steps'] = { toArray: () => mockSteps } as any;
+        wmComponent.currentStep = mockSteps[0] as any;
+        jest.spyOn(wmComponent, 'invokeEventCallback');
+
+        wmComponent.done();
+
+        expect(wmComponent.currentStep.isDone).toBe(true);
+        expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('done', { steps: mockSteps });
+    });
+
+    it('should invoke "cancel" event with steps when cancel() is called', () => {
+        const mockSteps = [{ isDone: false }, { isDone: false }];
+        wmComponent['steps'] = { toArray: () => mockSteps } as any;
+        jest.spyOn(wmComponent, 'invokeEventCallback');
+
+        wmComponent.cancel();
+
+        expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('cancel', { steps: mockSteps });
+    });
+
+
+
+    describe('readMoreSubtitle', () => {
+
+        beforeEach(waitForAsync(() => {
+
+            // Mock jQuery
+            (global as any).$ = jest.fn().mockImplementation((selector) => ({
+                addClass: jest.fn(),
+                removeClass: jest.fn(),
+                css: jest.fn(),
+                is: jest.fn(),
+                has: jest.fn().mockReturnValue({ length: 0 }),
+            }));
+            ((global as any).$ as any).fn = {};
+            ((global as any).$ as any).fn.on = jest.fn();
+            ((global as any).$ as any).fn.off = jest.fn();
+        }));
+
+        // ... (previous tests remain the same)
+
+        it('should handle readMoreSubtitle correctly', () => {
+            const mockCurrentSubtitle = {
+                addClass: jest.fn(),
+                removeClass: jest.fn(),
+            };
+            const mockReadMore = {
+                css: jest.fn(),
+            };
+            const mockDocument = {
+                on: jest.fn(),
+                off: jest.fn(),
+            };
+
+            // Mock jQuery selections
+            ((global as any).$ as jest.Mock).mockImplementation((selector) => {
+                if (selector === '.current .subtitle-wrapper') return mockCurrentSubtitle;
+                if (selector === '.current .read_more') return mockReadMore;
+                if (selector === document) return mockDocument;
+                return { is: jest.fn(), has: jest.fn().mockReturnValue({ length: 0 }) };
+            });
+
+            wmComponent.readMoreSubtitle();
+
+            // Check if classes and styles are applied correctly
+            expect(mockCurrentSubtitle.addClass).toHaveBeenCalledWith('readmore_subtitle');
+            expect(mockReadMore.css).toHaveBeenCalledWith('display', 'none');
+
+            // Simulate a mouseup event outside the container
+            const mouseupHandler = mockDocument.on.mock.calls[0][1];
+            mouseupHandler({ target: document.body });
+
+            // Check if classes and styles are removed correctly
+            expect(mockCurrentSubtitle.removeClass).toHaveBeenCalledWith('readmore_subtitle');
+            expect(mockReadMore.css).toHaveBeenCalledWith('display', 'block');
+            expect(mockDocument.off).toHaveBeenCalledWith('mouseup');
+        });
+    });
+
+   
 });

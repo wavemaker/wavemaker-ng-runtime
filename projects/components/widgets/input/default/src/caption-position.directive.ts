@@ -49,9 +49,10 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
 
     // For select widget, display placeholder only on focus else remove the text of the option selected.
     private checkForSelectPlaceholder() {
-        if ($(this.nativeEl).find('select option:selected').text() && !$(this.nativeEl).find('select').is(':focus') &&
+        const selectElPlaceholderOption = this.nativeEl.querySelector('#placeholderOption');
+        if (selectElPlaceholderOption && selectElPlaceholderOption.textContent && !$(this.nativeEl).find('select').is(':focus') &&
             !$(this.inputEl.closest('[widget-id]')).attr('datavalue')) {
-            $(this.nativeEl).find('select option:selected').text('');
+            selectElPlaceholderOption.textContent = '';
         }
     }
 
@@ -161,10 +162,10 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
                 // before placeholder is removed assign it to the placeholder variable
                 // check for placeholder in inputel and selectel
                 if (this.inputEl) {
-                    const selectEl = this.inputEl.find('option:first');
-                    if (this.inputEl.attr('placeholder') || selectEl.text()) {
-                        if (selectEl.length) {
-                            selectEl.text('');
+                    const selectElPlaceholderOption = this.nativeEl.querySelector('#placeholderOption');
+                    if (this.inputEl.attr('placeholder') || selectElPlaceholderOption) {
+                        if (selectElPlaceholderOption) {
+                            selectElPlaceholderOption.textContent = '';
                         } else {
                             this.placeholder = this.inputEl.attr('placeholder');
                             this.inputEl.removeAttr('placeholder');

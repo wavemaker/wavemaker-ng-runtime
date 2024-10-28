@@ -9,30 +9,30 @@ import {
     Optional,
     ViewChild
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
-import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {BsDatepickerDirective} from 'ngx-bootstrap/datepicker';
+import {TimepickerConfig} from 'ngx-bootstrap/timepicker';
 
 import {
     AbstractI18nService,
     addClass,
     addEventListenerOnElement,
     adjustContainerPosition,
+    adjustContainerRightEdges,
+    App,
     AppDefaults,
     EVENT_LIFE,
     FormWidgetType,
     getDateObj,
     getDisplayDateTimeFormat,
     getFormattedDate,
-    getNativeDateObject,
-    adjustContainerRightEdges,
-    App,
-    getMomentLocaleObject
+    getMomentLocaleObject,
+    getNativeDateObject
 } from '@wm/core';
-import { provideAsWidgetRef, provideAs, styler, setFocusTrap } from '@wm/components/base';
+import {provideAs, provideAsWidgetRef, setFocusTrap, styler} from '@wm/components/base';
 
 import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
-import { registerProps } from './date-time.props';
+import {registerProps} from './date-time.props';
 import {debounce, forEach, includes, isNaN, parseInt} from "lodash-es";
 
 declare const $;
@@ -65,6 +65,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private proxyModel;
     private app: App;
     public hint: string;
+    public arialabel: string;
     public showdropdownon: string;
     private deregisterDatepickerEventListener;
     private deregisterTimepickeEventListener;
@@ -281,6 +282,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate, this) === this.displayValue) {
                 $(this.nativeElement).find('.display-input').val(this.displayValue);
             }
+        }
+
+        if(newVal && !this.bsDateValue && this.timeZone) {
+            newVal = getMomentLocaleObject(this.timeZone, newVal);
         }
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.

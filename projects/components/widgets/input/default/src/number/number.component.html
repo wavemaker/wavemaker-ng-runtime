@@ -2,7 +2,6 @@
        inputmode="decimal"
        focus-target
        [attr.name]="name"
-       role="textbox"
        type="text"
        [ngModel]="displayValue"
        [readonly]="readonly"
@@ -11,7 +10,7 @@
        [attr.tabindex]="tabindex"
        [attr.placeholder]="placeholder"
        [attr.accesskey]="shortcutkey"
-       [attr.aria-label]="hint"
+       [attr.aria-label]="arialabel"
        [autofocus]="autofocus"
        [ngClass]="conditionalclass"
        [ngStyle]="conditionalstyle"

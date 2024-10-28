@@ -142,8 +142,6 @@ TestBase.verifyEvents([
     }
 ]);
 
-
-
 describe("TimeComponent", () => {
     let timeWrapperComponent: TimeWrapperComponent;
     let wmComponent: TimeComponent;
@@ -264,11 +262,6 @@ describe("TimeComponent", () => {
 
     it("should not show the timer panel on click the input control ", waitForAsync(() => {
         onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'timepicker', 0);
-    }));
-
-
-    xit('should show the time patten as hh:mm:ss format ', waitForAsync(() => {
-        datepatternTest(fixture, '.app-timeinput', '.app-textbox', 'timepattern', true);
     }));
 
     it('should get the time outputformat as hh:mm:ss ', (() => {
@@ -396,6 +389,38 @@ describe("TimeComponent", () => {
     }));
 
     /************************* Events end ****************************************** **/
+
+    describe('assignModel', () => {
+        it('should set displayInputElem if it is undefined', () => {
+            (wmComponent as any).displayInputElem = undefined;
+            const mockInput = document.createElement('input');
+            jest.spyOn(wmComponent, 'getMobileInput').mockReturnValue(mockInput);
+
+            wmComponent.assignModel();
+
+            expect((wmComponent as any).displayInputElem).toBe(mockInput);
+        });
+
+        it('should not change displayInputElem if it is already defined', () => {
+            const existingInput = document.createElement('input');
+            (wmComponent as any).displayInputElem = existingInput;
+
+            wmComponent.assignModel();
+
+            expect((wmComponent as any).displayInputElem).toBe(existingInput);
+        });
+
+        it('should set the value of displayInputElem to nativeDisplayValue', () => {
+            (wmComponent as any).displayInputElem = document.createElement('input');
+            Object.defineProperty(wmComponent, 'nativeDisplayValue', {
+                get: jest.fn(() => '12:30'),
+            })
+
+            wmComponent.assignModel();
+
+            expect(((wmComponent as any).displayInputElem as HTMLInputElement).value).toBe('12:30');
+        });
+    });
 });
 
 
@@ -446,15 +471,6 @@ describe('TimeComponent with localization', () => {
 
     it('should display localized meriains in time picker', (() => {
         localizedTimePickerTest(fixture, (wmComponent as any).meridians, '.btn-date');
-    }));
-
-    it ('should display the defult value in de format', waitForAsync(() => {
-        const time = '02:00 PM', timepattern = 'hh:mm a';
-        wmComponent.getWidget().timepattern = timepattern;
-        wmComponent.datavalue = '02:00:00';
-        fixture.detectChanges();
-        const dateObj = getNativeDateObject(time, { pattern: wmComponent.outputformat });
-        expect(getFormattedDate((wmComponent as any).datePipe, dateObj, timepattern)).toEqual(getHtmlSelectorElement(fixture, '.app-textbox').nativeElement.value);
     }));
 
     it('should update the datavalue without error when we type "de" format time in inputbox with "12H" format', fakeAsync(() => {

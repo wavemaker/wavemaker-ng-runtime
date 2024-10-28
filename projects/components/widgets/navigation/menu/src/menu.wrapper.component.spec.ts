@@ -1,8 +1,8 @@
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { By } from '@angular/platform-browser';
-import { waitForAsync, ComponentFixture, ComponentFixtureAutoDetect, tick, fakeAsync } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, ComponentFixtureAutoDetect } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
-import { MenuComponent } from './menu.component';
+import { MENU_POSITION, MenuComponent } from './menu.component';
 import { MenuDropdownComponent } from './menu-dropdown/menu-dropdown.component';
 import { MenuDropdownItemComponent } from './menu-dropdown-item/menu-dropdown-item.component';
 import { NavigationControlDirective } from './nav/navigation-control.directive';
@@ -14,6 +14,7 @@ import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../.
 import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
+import { AUTOCLOSE_TYPE } from '@wm/components/base';
 
 const markup = `<div
                 wmMenu
@@ -74,7 +75,7 @@ const menuComponentModuleDef: ITestModuleDef = {
         { provide: ComponentFixtureAutoDetect, useValue: true },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }
     ],
-    teardown: {destroyAfterEach: false}   
+    teardown: { destroyAfterEach: false }
 };
 
 const menuComponentDef: ITestComponentDef = {
@@ -320,7 +321,7 @@ describe('MenuComponent', () => {
     }));
     /***************************** actions end ************************************* */
 
-   it('should dropdown position be down,right', waitForAsync(() => {
+    it('should dropdown position be down,right', waitForAsync(() => {
         wmComponent.menuposition = 'down,right';
         jest.spyOn(wmComponent, 'setMenuPosition');
         wmComponent.setMenuPosition();
@@ -332,7 +333,7 @@ describe('MenuComponent', () => {
             expect(menudropdownEle.nativeElement.classList).toContain('pull-right');
         });
     }));
-    
+
     it('should dropdown position be down,left', waitForAsync(() => {
         wmComponent.menuposition = 'down,left';
         jest.spyOn(wmComponent, 'setMenuPosition');
@@ -372,5 +373,168 @@ describe('MenuComponent', () => {
         });
     }));
 
+    describe('onMenuItemSelect', () => {
+        it('should invoke event callback with correct arguments', () => {
+            const mockEvent = { type: 'click' };
+            const mockItem = { value: 'test-item' };
+            const mockArgs = { $event: mockEvent, $item: mockItem };
+            jest.spyOn(wmComponent, 'invokeEventCallback');
+            wmComponent.onMenuItemSelect(mockArgs);
+            expect(wmComponent.invokeEventCallback).toHaveBeenCalledWith('select', {
+                $event: mockEvent,
+                $item: 'test-item'
+            });
+        });
+    });
 
+    describe('Host Listeners', () => {
+        describe('onShow', () => {
+            it('should set _menuposition and focus on first menu item if _selectFirstItem is true', () => {
+                wmComponent.menuposition = 'test-position';
+                wmComponent['_selectFirstItem'] = true;
+
+                const mockElement = {
+                    find: jest.fn().mockReturnValue({
+                        first: jest.fn().mockReturnValue({
+                            find: jest.fn().mockReturnValue({
+                                focus: jest.fn()
+                            })
+                        })
+                    })
+                };
+
+                Object.defineProperty(wmComponent, '$element', {
+                    get: () => mockElement
+                });
+
+                jest.useFakeTimers();
+                wmComponent.onShow();
+                jest.advanceTimersByTime(0);
+
+                expect(wmComponent['_menuposition']).toBe('test-position');
+                expect(mockElement.find).toHaveBeenCalledWith('> ul[wmmenudropdown] li.app-menu-item');
+                expect(mockElement.find().first().find).toHaveBeenCalledWith('> a');
+                expect(mockElement.find().first().find().focus).toHaveBeenCalled();
+
+                jest.useRealTimers();
+            });
+        });
+
+        describe('onHide', () => {
+            it('should reset menu state and position', () => {
+                const mockElement = {
+                    find: jest.fn().mockReturnValue({
+                        removeClass: jest.fn()
+                    })
+                };
+
+                Object.defineProperty(wmComponent, '$element', {
+                    get: () => mockElement
+                });
+
+                wmComponent['_menuposition'] = 'old-position';
+                jest.spyOn(wmComponent, 'setMenuPosition');
+
+                wmComponent.onHide();
+
+                expect(mockElement.find).toHaveBeenCalledWith('li');
+                expect(mockElement.find().removeClass).toHaveBeenCalledWith('open');
+                expect(wmComponent['_selectFirstItem']).toBe(false);
+                expect(wmComponent.menuposition).toBe('old-position');
+                expect(wmComponent.setMenuPosition).toHaveBeenCalled();
+            });
+
+            it('should set menuposition to DOWN_RIGHT if _menuposition is falsy', () => {
+                const mockElement = {
+                    find: jest.fn().mockReturnValue({
+                        removeClass: jest.fn()
+                    })
+                };
+
+                Object.defineProperty(wmComponent, '$element', {
+                    get: () => mockElement
+                });
+
+                wmComponent['_menuposition'] = null;
+                jest.spyOn(wmComponent, 'setMenuPosition');
+
+                wmComponent.onHide();
+
+                expect(wmComponent.menuposition).toBe(MENU_POSITION.DOWN_RIGHT);
+            });
+        });
+    });
+
+    describe('onKeyDown', () => {
+        let mockEvent: any;
+
+        beforeEach(() => {
+            mockEvent = { preventDefault: jest.fn() };
+            (wmComponent as any).bsDropdown = {
+                isOpen: false,
+                show: jest.fn(),
+                hide: jest.fn(),
+                toggle: jest.fn()
+            };
+            Object.defineProperty(wmComponent, '$element', {
+                get: () => ({
+                    find: jest.fn().mockReturnThis(),
+                    first: jest.fn().mockReturnThis(),
+                    focus: jest.fn()
+                })
+            });
+        });
+
+        it('should open dropdown on DOWN-ARROW when closed', () => {
+            wmComponent.onKeyDown(mockEvent, 'DOWN-ARROW');
+            expect(wmComponent.bsDropdown.show).toHaveBeenCalled();
+            expect((wmComponent as any)._selectFirstItem).toBe(true);
+        });
+
+        it('should toggle dropdown on ENTER', () => {
+            wmComponent.onKeyDown(mockEvent, 'ENTER');
+            expect(wmComponent.bsDropdown.toggle).toHaveBeenCalledWith(true);
+        });
+
+        it('should open dropdown on MOUSE-ENTER when showonhover is true', () => {
+            wmComponent.showonhover = true;
+            wmComponent.onKeyDown(mockEvent, 'MOUSE-ENTER');
+            expect(wmComponent.bsDropdown.toggle).toHaveBeenCalledWith(true);
+        });
+
+        it('should hide dropdown on UP-ARROW', () => {
+            wmComponent.onKeyDown(mockEvent, 'UP-ARROW');
+            expect(wmComponent.bsDropdown.hide).toHaveBeenCalled();
+        });
+
+        it('should hide dropdown on MOUSE-LEAVE when autoclose is ALWAYS and showonhover is true', () => {
+            wmComponent.autoclose = AUTOCLOSE_TYPE.ALWAYS;
+            wmComponent.showonhover = true;
+            wmComponent.onKeyDown(mockEvent, 'MOUSE-LEAVE');
+            expect(wmComponent.bsDropdown.hide).toHaveBeenCalled();
+        });
+
+        it('should adjust key mappings for UP_RIGHT menu position', () => {
+            wmComponent.menuposition = MENU_POSITION.UP_RIGHT;
+            wmComponent.onKeyDown(mockEvent, 'UP-ARROW');
+            expect(wmComponent.bsDropdown.show).toHaveBeenCalled();
+        });
+
+        it('should adjust key mappings for UP_LEFT menu position', () => {
+            wmComponent.menuposition = MENU_POSITION.UP_LEFT;
+            wmComponent.onKeyDown(mockEvent, 'LEFT-ARROW');
+            expect(wmComponent.bsDropdown.show).toHaveBeenCalled();
+        });
+
+        it('should adjust key mappings for DOWN_LEFT menu position', () => {
+            wmComponent.menuposition = MENU_POSITION.DOWN_LEFT;
+            wmComponent.onKeyDown(mockEvent, 'LEFT-ARROW');
+            expect(wmComponent.bsDropdown.show).toHaveBeenCalled();
+        });
+
+        it('should prevent default event behavior', () => {
+            wmComponent.onKeyDown(mockEvent, 'UP-ARROW');
+            expect(mockEvent.preventDefault).toHaveBeenCalled();
+        });
+    });
 });

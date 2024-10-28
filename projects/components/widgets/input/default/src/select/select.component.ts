@@ -1,12 +1,10 @@
 import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
-
-import {App, DataSource, removeAttr, setAttr} from '@wm/core';
+import {DataSource, isIos, removeAttr, setAttr, isSafari} from '@wm/core';
 import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
 import {DatasetAwareFormComponent} from '../dataset-aware-form.component';
 
 import {registerProps} from './select.props';
-import {includes} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'};
 
@@ -32,7 +30,8 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     public name: string;
     public autofocus: boolean;
     public hint: string;
-    private app: App;
+    public arialabel: string;
+    public shortcutkey: string;
 
     @ViewChild('select', { static: true, read: ElementRef }) selectEl: ElementRef;
 
@@ -42,10 +41,39 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
         }
     }
 
-    constructor(inj: Injector, app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
-        this.app = app;
         this.acceptsArray = true;
+
+        /*
+        * When the dataset for a select element is updated and no longer includes the previously selected value:
+        * The select element becomes empty, and the ngModel value is updated to reflect this change.
+        * However, the change event is not triggered, preventing the form control from recognizing the update and applying necessary validations.
+        * As this widget implements ControlValueAccessor, manually updating the ngModel (or modelByKey) is necessary to ensure correct form behavior.
+        * */
+        const datasetSubscription = this.dataset$.subscribe(() => {
+            if(isIos() || isSafari()) {
+                if (this.datavalue) {
+                    const selectedItem = this.datasetItems.find(item => item.selected);
+                    if (!selectedItem) {
+                        setTimeout(() => {
+                            if(!this.placeholder) {
+                                this.selectEl.nativeElement.value = '';
+                            }
+                            this.modelByKey = undefined;
+                        }, 100);
+                    }
+                } else {
+                    setTimeout(() => {
+                        if(!this.placeholder) {
+                            this.selectEl.nativeElement.value = '';
+                        }
+
+                    }, 100);
+                }
+            }
+        });
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
     }
 
     ngAfterViewInit() {
@@ -55,7 +83,7 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
 
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
-        if (!includes(['blur', 'change'], eventName)) {
+        if (!['blur', 'change'].includes(eventName)) {
             super.handleEvent(this.selectEl.nativeElement, eventName, eventCallback, locals);
         }
     }
@@ -107,31 +135,37 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
      */
     checkForFloatingLabel($event) {
         const captionEl = $(this.selectEl.nativeElement).closest('.app-composite-widget.caption-floating');
+        if(!this.placeholder && (isIos() || isSafari())) {
+            this.removePlaceholderOption();
+        }
         if (captionEl.length > 0) {
-            if ($event.type === 'focus' && (!this.datavalue || (this.datavalue && $(this.selectEl).find('select option:selected').text() === '' && this.placeholder))) {
-                if(!(this.datavalue || this.placeholder)) {
-                    this.removePlaceholderOption();
-                } else {
-                    $(this.selectEl.nativeElement).find('option:first').text(this.placeholder);
+            const placeholderOption = this.selectEl.nativeElement.querySelector('#placeholderOption');
+            if ($event.type === 'mousedown' && (!this.datavalue || (this.datavalue && $(this.selectEl).find('select option:selected').text() === '' && this.placeholder))) {
+                if(this.placeholder) {
+                    placeholderOption.textContent = this.placeholder;
                 }
             } else if (!this.datavalue) {
-                $(this.selectEl.nativeElement).find('option:selected').text('');
+                if(this.placeholder) {
+                    placeholderOption.textContent = '';
+                }
                 captionEl.removeClass('float-active');
             }
-        } else if(!(this.datavalue || this.placeholder)) {
-            this.removePlaceholderOption();
         }
     }
 
     /*
     * Removing the placeholder option if no placeholder is provided.
-    * In html we are hiding the placeholder option using css but in apple devices and safari option is showing.
+    * In html we are hiding the placeholder option using css but in Apple devices and safari option is showing.
+    * Styles are not allowed on option tag in ios safari
+    * After removing the option, if no datavalue is present and native select element sets value to the first option by default, so we are setting it to empty
     * */
     private removePlaceholderOption() {
         const hiddenEle = $(this.selectEl.nativeElement).find('#placeholderOption');
         if (hiddenEle.length) {
             hiddenEle.remove();
-            this.selectEl.nativeElement.value = '';
+            if(!this.datavalue) {
+                this.selectEl.nativeElement.value = '';
+            }
         }
     }
 }

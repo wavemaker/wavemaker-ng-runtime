@@ -1,11 +1,11 @@
-import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 
 import {AbstractI18nService} from '@wm/core';
-import { IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe } from '@wm/components/base';
+import {IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe} from '@wm/components/base';
 
-import { registerProps } from './number.props';
-import { NumberLocale } from '../text/locale/number-locale';
+import {registerProps} from './number.props';
+import {NumberLocale} from '../text/locale/number-locale';
 
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-number',
@@ -29,6 +29,7 @@ export class NumberComponent extends NumberLocale {
     public disabled: boolean;
     public name: string;
     public hint: string;
+    public arialabel: string;
     public tabindex: any;
     public conditionalclass: any;
     public conditionalstyle: any;

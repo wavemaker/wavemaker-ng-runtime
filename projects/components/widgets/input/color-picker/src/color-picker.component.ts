@@ -1,11 +1,11 @@
 import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
-import { NgModel, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { ColorPickerDirective} from 'ngx-color-picker';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
+import {ColorPickerDirective} from 'ngx-color-picker';
 
 import {addClass, removeClass} from '@wm/core';
-import { AUTOCLOSE_TYPE, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
-import { BaseFormCustomComponent } from '@wm/components/input';
-import { registerProps } from './color-picker.props';
+import {AUTOCLOSE_TYPE, IWidgetConfig, provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
+import {BaseFormCustomComponent} from '@wm/components/input';
+import {registerProps} from './color-picker.props';
 
 
 const DEFAULT_CLS = 'input-group app-colorpicker';
@@ -37,6 +37,7 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     public outsideclick: boolean;
     public autoclose: string;
     public hint: string;
+    public arialabel: string;
 
 
     @ViewChild(NgModel) ngModel: NgModel;
@@ -57,6 +58,7 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     }
 
     colorPickerOpen(value: string) {
+        $('.hex-text input').attr('placeholder', 'Enter hex color code')
         // Whenever autoclose property is set to 'always', adding the onclick listener to the colorPicker container to close the picker.
         if (this.autoclose === AUTOCLOSE_TYPE.ALWAYS) {
             const colorPickerContainer = this.nativeElement.querySelector(`.color-picker`) as HTMLElement;

@@ -1,4 +1,4 @@
-<button *ngIf="isClosable" aria-label="Close" title="Close" class="app-dialog-close close btn btn-icon" (click)="closeDialog();">
+<button *ngIf="isClosable" [attr.aria-label]="'Close ' + (title ? title : '') + ' dialog'" title="Close" class="app-dialog-close close btn btn-icon" (click)="closeDialog();">
     <i class="app-icon wi wi-clear" aria-hidden="true"></i>
 </button>
 

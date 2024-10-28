@@ -21,6 +21,7 @@ $.widget('wm.datatable', {
         filtermode: '',
         filteronkeypress: false,
         activeRow: undefined,
+        isrowselectable: false,
         height: '100%',
         showHeader: true,
         selectFirstRow: false,
@@ -733,7 +734,7 @@ $.widget('wm.datatable', {
             }
         }
         row.$index = rowIndex + 1;
-        this.options.registerColNgClassWatcher(row, colDef, rowIndex, colId);
+        this.options.registerColNgClassWatcher(row, colDef, rowIndex, colId, summaryRow);
         return $htm;
     },
     //Get event related template for editable widget
@@ -1512,6 +1513,7 @@ $.widget('wm.datatable', {
                 }
             case 'multiselect': // Fallthrough
             case 'showRadioColumn':
+            case 'isrowselectable' :
             case 'rowActions':
             case 'filterNullRecords':
             case 'showRowIndex':
@@ -1675,8 +1677,16 @@ $.widget('wm.datatable', {
     // triggered on capture phase of click listener.
     // sets the selected rowdata on click.
     rowClickHandlerOnCapture: function (e, $row, options) {
-        if(this.getColInfo(e) && (e.target.type != 'checkbox' && e.target.type != 'radio')) {
-            return;
+        // If 'isrowselectable' property is enabled, clicking anywhere on the row will trigger its selection. Otherwise, the row will not be selected on click.
+        // Also this flag works if mutliselect or radioselect is enabled.
+        // In quick edit mode, clicking any part of the row switches it to edit mode, regardless of the flag setting.
+        if (this.options.editmode !== this.CONSTANTS.QUICK_EDIT) {
+            if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable) {
+                if (Number(this.getColInfo(e))) {
+                    e.stopPropagation();
+                    return;
+                }
+            }
         }
         $row = $row || $(e.target).closest('tr.app-datagrid-row');
         var gridRow = this.gridElement.find($row);
@@ -1691,8 +1701,16 @@ $.widget('wm.datatable', {
 
     /* Handles row selection. */
     rowSelectionHandler: function (e, $row, options) {
-        if(this.getColInfo(e) && (e.target.type != 'checkbox' && e.target.type != 'radio')) {
-            return;
+        // If 'isrowselectable' property is enabled, clicking anywhere on the row will trigger its selection. Otherwise, the row will not be selected on click.
+        // Also this flag works if mutliselect or radioselect is enabled.
+        // In quick edit mode, clicking any part of the row switches it to edit mode, regardless of the flag setting.
+        if (this.options.editmode !== this.CONSTANTS.QUICK_EDIT) {
+            if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable) {
+                if (Number(this.getColInfo(e))) {
+                    e.stopPropagation();
+                    return;
+                }
+            }
         }
         options = options || {};
         var rowId,
@@ -2705,14 +2723,9 @@ $.widget('wm.datatable', {
         return false;
     },
     getColInfo: function(event) {
-        var row =  $(event.target).closest('tr.app-datagrid-row');
-        var rowId = row.attr('data-row-id');
         var column = $(event.target).closest('td.app-datagrid-cell');
         var colId = column.attr('data-col-id');
-        if(this.columnClickInfo && this.columnClickInfo[rowId] && this.columnClickInfo[rowId][colId]) {
-            return this.columnClickInfo[rowId][colId];
-        }
-        return false;
+        return colId;
     },
     /* Attaches all event handlers for the table. */
     attachEventHandlers: function ($htm) {
@@ -2726,22 +2739,6 @@ $.widget('wm.datatable', {
             // add js click handler for capture phase in order to first listen on grid and
             // assign selectedItems so that any child actions can have access to the selectedItems.
             $htm.on('click', this.rowSelectionHandler.bind(this));
-            $htm.on("click", "td *", function(event) {
-
-                // Prevent propagation to parent elements
-                if(event.target.type != 'checkbox'){
-                    var row =  $(event.target).closest('tr.app-datagrid-row');
-                    var rowId = row.attr('data-row-id');
-                    var column = $(event.target).closest('td.app-datagrid-cell');
-                    var colId = column.attr('data-col-id');
-                    var id = Number(colId);
-                    var colDefination = self.preparedHeaderData[id];
-                    if (colDefination.readonly && colDefination.field !== 'rowOperations') {
-                        self.columnClickInfo[rowId] = {};
-                        self.columnClickInfo[rowId][colId] = true;
-                    }
-                }
-            });
             $htm.on('dblclick', this.rowDblClickHandler.bind(this));
             $htm.on('keydown', this.onKeyDown.bind(this));
         }
@@ -2846,6 +2843,9 @@ $.widget('wm.datatable', {
     collapseRow: function(rowId) {
         this.toggleExpandRow(rowId, false)
     },
+    hasAllClasses: function (element, classNames) { // function to check if all the class names are present in the element
+        return classNames && classNames.every(cls => element.hasClass(cls));
+    },
     _collapseRow: function(e, rowData, rowId, $nextDetailRow, $icon) {
         var self = this,
             $tbody = self.gridElement,
@@ -2855,7 +2855,7 @@ $.widget('wm.datatable', {
         if (this.options.onBeforeRowCollapse(e, rowData, rowId) === false) {
             return;
         }
-        if ($icon.length && $icon.hasClass(this.options.cssClassNames.rowExpandIcon)) {
+        if ($icon.length && this.hasAllClasses($icon, this.options.cssClassNames.rowExpandIcon?.split(' '))) {
             $icon.removeClass(this.options.cssClassNames.rowExpandIcon).addClass(this.options.cssClassNames.rowCollapseIcon);
         }
         $nextDetailRow.hide();
@@ -2895,7 +2895,7 @@ $.widget('wm.datatable', {
             }
             self.options.generateRowDetailView(e, rowData, rowId, $nextDetailRow.find('td.app-datagrid-row-details-cell .details-section'),
                 $nextDetailRow.find('td.app-datagrid-row-details-cell .row-overlay'), function () {
-                    if ($icon.length && $icon.hasClass(self.options.cssClassNames.rowCollapseIcon)) {
+                    if ($icon.length && self.hasAllClasses($icon, self.options.cssClassNames.rowCollapseIcon?.split(' '))) {
                         $icon.removeClass(self.options.cssClassNames.rowCollapseIcon).addClass(self.options.cssClassNames.rowExpandIcon);
                     }
                     $nextDetailRow.show();

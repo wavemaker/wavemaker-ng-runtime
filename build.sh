@@ -499,7 +499,7 @@ copyLocale() {
 }
 
 buildCoreJs() {
-    execCommand "build" "core-js" "node ./config/core-js-builder.js"
+    execCommand "rollup" "core-js" "${ROLLUP} -c ./config/rollup.core-js.config.mjs"
 }
 
 buildTsLib() {

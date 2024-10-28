@@ -5,7 +5,7 @@
         (onShown)="onTimepickerOpen()"
         style="display: inherit;">
         <input class="form-control app-textbox display-input"
-            [attr.aria-label]="hint"
+               [attr.aria-label]="arialabel"
             focus-target
             [name]="name"
             [tabindex]="loadNativeDateInput ? '-1' : tabindex"
@@ -107,7 +107,7 @@
     <div class="mobile-input mobile-datepicker-container"
         [tabindex]="tabindex || 0"
          (click)="!(disabled || readonly) && showDatePickerModal(bsDateValue)"
-         [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : hint || 'Choose Date'"
+         [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : arialabel || 'Choose Date'"
         (focus)="onDateTimeInputFocus(true); invokeOnFocus($event)"
         (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
          role="button">

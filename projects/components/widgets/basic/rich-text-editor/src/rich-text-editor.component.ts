@@ -137,6 +137,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
         this.$hiddenInputEle = $(this.nativeElement.querySelector('input.model-holder'));
         super.ngOnInit();
         this.initEditor();
+        $('.note-editable').attr('aria-label', 'textbox');
     }
 
     initEditor() {

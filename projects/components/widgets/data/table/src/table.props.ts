@@ -8,6 +8,7 @@ export const registerProps = () => {
                 ['boundarylinks', {value: false, ...PROP_BOOLEAN}],
                 ['class', PROP_STRING],
                 ['confirmdelete', {value: 'Are you sure you want to delete this?', ...PROP_STRING}],
+                ['currentpage', {value: 1, ...PROP_NUMBER}],
                 ['datasource', PROP_STRING],
                 ['dataset', PROP_ANY],
                 ['deletecanceltext', PROP_STRING],
@@ -32,6 +33,7 @@ export const registerProps = () => {
                 ['insertmessage', {value: 'Record added successfully', ...PROP_STRING}],
                 ['isdynamictable', PROP_BOOLEAN], // internal property to determine dynamic table
                 ['isrowexpansionenabled', PROP_BOOLEAN],
+                ['isrowselectable', {value: false, ...PROP_BOOLEAN}],
                 ['loadingdatamsg', {value: 'Loading...', ...PROP_STRING}],
                 ['loadingicon', {value: 'fa fa-circle-o-notch fa-spin', ...PROP_STRING}],
                 ['maxsize', {value: 5, ...PROP_NUMBER}],

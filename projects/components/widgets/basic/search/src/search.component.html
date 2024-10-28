@@ -37,11 +37,11 @@
            focus-target
            container="body"
            [disabled]="disabled"
+           [attr.accesskey]="shortcutkey"
            autocomplete="off"
            [(ngModel)]="query"
            [ngModelOptions]="{standalone: true}"
            [readonly]="readonly"
-           [disabled]="disabled"
            [typeahead]="typeaheadDataSource"
            [typeaheadWaitMs]="debouncetime"
            [typeaheadItemTemplate]="customItemTemplate"
@@ -67,7 +67,7 @@
            [dropup]="dropup"
            [tabindex]="tabindex"
            [attr.name]="name"
-           [attr.aria-label]="hint || 'Search field'"/>
+           [attr.aria-label]="arialabel || 'Search field'"/>
     <i class="btn-close wi wi-cancel" [hidden]="!showClosebtn" (click)="clearSearch($event);"></i>
 </ng-container>
 <!--This template is for both web and fullscreen mode in mobile.-->
@@ -78,6 +78,7 @@
            focus-target
            [container]="containerTarget || '.wm-app'"
            [disabled]="disabled"
+           [attr.accesskey]="shortcutkey"
            autocomplete="off"
            [(ngModel)]="query"
            [ngModelOptions]="{standalone: true}"
@@ -106,12 +107,12 @@
            [tabindex]="tabindex"
            [dropup]="dropup"
            [attr.name]="name"
-           [attr.aria-label]="hint || 'Search field'">
+           [attr.aria-label]="arialabel || 'Search field'">
     <input class="model-holder" ng-model="proxyModel" ng-required="required" tabindex="-1" aria-hidden="true">
     <span *ngIf="_loadingItems" aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
     <button class="btn btn-icon form-control-feedback clear-btn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"><i class="app-icon {{clearsearchiconclass}}"></i></button>
     <span class="sr-only">Clear button</span>
-    <span *ngIf="showsearchicon" class="input-group-addon" aria-label="search icon" [ngClass]="{'disabled': disabled}">
+    <span *ngIf="showsearchicon" [ngClass]="{'disabled': disabled}" class="input-group-addon">
         <form>
             <button title="Search" [disabled]="disabled" class="app-search-button btn btn-icon" type="submit"
                     (click)="onSearchSelect($event)">
