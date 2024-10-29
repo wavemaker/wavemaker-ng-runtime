@@ -68,6 +68,12 @@ unit_tests:
     - rm -rf ../wavemaker-ui-variables ; git clone --depth 1 https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/wavemaker-ui-variables.git ../wavemaker-ui-variables
     - cd ../wavemaker-ui-variables ; npm install ; npm install --save-dev @types/babel__core @types/babel__generator @types/babel__template @types/babel__traverse @types/graceful-fs @types/istanbul-lib-coverage @types/istanbul-lib-report @types/istanbul-reports @types/stack-utils @types/yargs @types/yargs-parser
     - npm run build 
+    - rm -rf ../custom-widgets-m3 ; git clone --depth 1 https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/custom-widgets-m3s.git ../custom-widgets-m3
+    - cd ../custom-widgets-m3 ; npm install ;
+    - npm run build 
+    - rm -rf ../wavemaker-foundation-css ; git clone --depth 1 https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/wavemaker-foundation-css.git ../wavemaker-foundation-css
+    - cd ../wavemaker-foundation-css ; npm install ;
+    - npm run build
     - cd ../wavemaker-ng-runtime
     - npm install 
     - npm i yalc -g
