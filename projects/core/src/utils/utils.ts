@@ -9,16 +9,36 @@ import {setAttr} from './dom';
 import {$parseEvent} from './expression-parser';
 import {
     attempt,
-    camelCase, cloneDeep, every,
-    filter, forEach, get, identity,
-    includes, indexOf, intersection, isArray, isDate,
-    isEqual, isEqualWith, isError,
+    camelCase,
+    cloneDeep,
+    every,
+    filter,
+    forEach,
+    get,
+    identity,
+    includes,
+    indexOf,
+    intersection,
+    isArray,
+    isDate,
+    isEqual,
+    isEqualWith,
+    isError,
     isFunction,
     isNull,
-    isNumber, isString,
-    isUndefined, keys, map, noop as _noop, omit, replace as _replace,
+    isNumber,
+    isString,
+    isUndefined,
+    keys,
+    map,
+    noop as _noop,
+    omit,
+    replace as _replace,
     split,
-    startsWith, toLower, toUpper, trim
+    startsWith,
+    toLower,
+    toUpper,
+    trim
 } from "lodash-es";
 
 declare const X2JS;
@@ -806,6 +826,7 @@ export const isEqualWithFields = (obj1, obj2, compareBy) => {
     // Split the compareby comma separated values
     let _compareBy = isArray(compareBy) ? compareBy : split(compareBy, ',');
 
+    // @ts-ignore
     _compareBy = map(_compareBy, trim);
 
     return isEqualWith(obj1, obj2, function (o1, o2) {
