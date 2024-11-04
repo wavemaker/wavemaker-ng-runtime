@@ -815,7 +815,8 @@ export const isEqualWithFields = (obj1, obj2, compareBy) => {
     // compareBy can be 'id' or 'id1, id2' or 'id1, id2:id3'
     // Split the compareby comma separated values
     let _compareBy = isArray(compareBy) ? compareBy : split(compareBy, ',');
-
+    
+    //@ts-ignore
     _compareBy = map(_compareBy, trim);
 
     return isEqualWith(obj1, obj2, function (o1, o2) {
