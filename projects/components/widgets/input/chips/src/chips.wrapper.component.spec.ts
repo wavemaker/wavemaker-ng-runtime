@@ -758,14 +758,22 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
     describe('onPropertyChange', () => {
+        const mockJQueryObject = {
+            addClass: jest.fn(),
+            removeClass: jest.fn(),
+            on: jest.fn(),
+            off: jest.fn()
+        };
         beforeEach(() => {
+            jest.clearAllMocks();
+            
             // Mock the $element property
             Object.defineProperty(wmComponent, '$element', {
                 get: jest.fn().mockReturnValue({
                     hasClass: jest.fn(),
                     addClass: jest.fn(),
                     removeClass: jest.fn(),
-                    find: jest.fn(),
+                    find: jest.fn().mockReturnValue(mockJQueryObject),
                     prepend: jest.fn(),
                     append: jest.fn(),
                     sortable: jest.fn()
@@ -775,18 +783,44 @@ describe('wm-chips: Component Specific Tests', () => {
 
         it('should enable/disable sortable when enablereorder changes', () => {
             wmComponent.$element.hasClass.mockReturnValue(true);
+            
             wmComponent.onPropertyChange('enablereorder', true, false);
             expect(wmComponent.$element.sortable).toHaveBeenCalledWith('option', 'disabled', false);
+            expect(mockJQueryObject.removeClass).toHaveBeenCalledWith('no-drag');
+            expect(mockJQueryObject.off).toHaveBeenCalledWith('dragstart');
+
             wmComponent.onPropertyChange('enablereorder', false, true);
             expect(wmComponent.$element.sortable).toHaveBeenCalledWith('option', 'disabled', true);
+            expect(mockJQueryObject.addClass).toHaveBeenCalledWith('no-drag');
+            expect(mockJQueryObject.on).toHaveBeenCalledWith('dragstart', expect.any(Function));
         });
 
         it('should call configureDnD when enablereorder is true and element is not sortable', () => {
             wmComponent.$element.hasClass.mockReturnValue(false);
             const configureDnDSpy = jest.spyOn((wmComponent as any), 'configureDnD').mockImplementation();
+            
             wmComponent.onPropertyChange('enablereorder', true, false);
+            
             expect(configureDnDSpy).toHaveBeenCalled();
+            expect(mockJQueryObject.removeClass).toHaveBeenCalledWith('no-drag');
+            expect(mockJQueryObject.off).toHaveBeenCalledWith('dragstart');
+            
             configureDnDSpy.mockRestore();
+        });
+
+        it('should prevent drag when enablereorder is false', () => {
+            wmComponent.$element.hasClass.mockReturnValue(true);
+            const mockEvent = { preventDefault: jest.fn() };
+            
+            wmComponent.onPropertyChange('enablereorder', false, true);
+            
+            // Get the dragstart handler that was registered
+            const dragStartHandler = mockJQueryObject.on.mock.calls[0][1];
+            
+            // Call the handler and verify it prevents default
+            const result = dragStartHandler(mockEvent);
+            expect(mockEvent.preventDefault).toHaveBeenCalled();
+            expect(result).toBe(false);
         });
 
         it('should add/remove readonly class when readonly changes', () => {
