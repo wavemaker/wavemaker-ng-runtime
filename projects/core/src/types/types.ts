@@ -161,6 +161,7 @@ export abstract class AbstractI18nService {
     public abstract getTimezone(compInstance?);
     public abstract getPrefabLocaleBundle(prefabName: string): any;
     public abstract setwidgetLocale(locale);
+    public abstract setAppMode(mode);
     public abstract getwidgetLocale();
 }
 
