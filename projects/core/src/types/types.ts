@@ -73,6 +73,7 @@ export abstract class App {
     isPrefabType: boolean;
     isApplicationType: boolean;
     setwidgetLocale: Function;
+    setAppMode: Function;
     isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
     changeLocale: Function;
