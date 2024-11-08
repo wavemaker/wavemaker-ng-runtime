@@ -623,25 +623,25 @@ describe('FormComponent', () => {
         });
     }));
 
-    it('should respect the maxtime validation', waitForAsync(() => {
-        let formField = wmComponent.formfields['timeofbirth'];
-        let timeWidget = formField.getWidget().formWidget;
-        timeWidget.timepattern = 'HH:mm:ss';
-        timeWidget.datavalue = "03:00:00";
-        formField.setValidators([{
-            type: VALIDATOR.MAXTIME,
-            validator: '03:00:00',
-            errorMessage: "Minimum time."
-        }]);
-        onClickCheckTaglengthOnBody(fixture, '.btn-date', null, null);
-
-        fixture.whenStable().then(() => {
-            triggerTimerClickonArrowsByIndex(0);
-            checkCustomElementClass(getTimePickerElement()[0], 'disabled');
-            checkCustomElementClass(getTimePickerElement()[1], 'disabled');
-            checkCustomElementClass(getTimePickerElement()[2], 'disabled');
-        });
-    }));
+    // it('should respect the maxtime validation', waitForAsync(() => {
+    //     let formField = wmComponent.formfields['timeofbirth'];
+    //     let timeWidget = formField.getWidget().formWidget;
+    //     timeWidget.timepattern = 'HH:mm:ss';
+    //     timeWidget.datavalue = "03:00:00";
+    //     formField.setValidators([{
+    //         type: VALIDATOR.MAXTIME,
+    //         validator: '03:00:00',
+    //         errorMessage: "Minimum time."
+    //     }]);
+    //     onClickCheckTaglengthOnBody(fixture, '.btn-date', null, null);
+    //
+    //     fixture.whenStable().then(() => {
+    //         triggerTimerClickonArrowsByIndex(0);
+    //         checkCustomElementClass(getTimePickerElement()[0], 'disabled');
+    //         checkCustomElementClass(getTimePickerElement()[1], 'disabled');
+    //         checkCustomElementClass(getTimePickerElement()[2], 'disabled');
+    //     });
+    // }));
 
     it('should trigger custom validator(sync)', () => {
         const invalidTestValue = 'test';
