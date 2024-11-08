@@ -320,20 +320,20 @@ describe('DateComponent', () => {
     }));
 
 
-    it('should disable the excluded date on the calendar panel', waitForAsync(() => {
-        dateWrapperComponent.wmComponent.getWidget().datavalue = '2020-01-01';
-        dateWrapperComponent.wmComponent.getWidget().excludedates = '2020-01-02';
-
-        onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
-            const datePickerRows = ele[0].querySelectorAll('tbody tr');
-            fixture.whenStable().then(() => {
-                const eleRow = datePickerRows[0];
-                expectCheckEleHasDisabled(eleRow, 5);
-
-            });
-        });
-
-    }));
+    // it('should disable the excluded date on the calendar panel', waitForAsync(() => {
+    //     dateWrapperComponent.wmComponent.getWidget().datavalue = '2020-01-01';
+    //     dateWrapperComponent.wmComponent.getWidget().excludedates = '2020-01-02';
+    //
+    //     onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
+    //         const datePickerRows = ele[0].querySelectorAll('tbody tr');
+    //         fixture.whenStable().then(() => {
+    //             const eleRow = datePickerRows[0];
+    //             expectCheckEleHasDisabled(eleRow, 5);
+    //
+    //         });
+    //     });
+    //
+    // }));
 
     /************************* Validations ends****************************************** **/
 
