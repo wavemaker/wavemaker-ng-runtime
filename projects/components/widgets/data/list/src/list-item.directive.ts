@@ -17,6 +17,7 @@ import {$watch, App} from '@wm/core';
 
 import {ListComponent} from './list.component';
 import {widgetIdGenerator} from "@wm/components/base";
+import {BaseFormComponent} from "@wm/components/input";
 
 declare const $;
 
@@ -152,5 +153,13 @@ export class ListItemDirective implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         this.setUpCUDHandlers();
+        const componentElements = Array.from(this.nativeElement.querySelectorAll('[widget-id]'));
+        componentElements.forEach((component: any) => {
+            if(component.widget instanceof BaseFormComponent) {
+                if(!component.widget.$attrs.get('datavaluesource.bind')) {
+                    component.widget.datavaluesource = this.listComponent['datasource'];
+                }
+            }
+        });
     }
 }
