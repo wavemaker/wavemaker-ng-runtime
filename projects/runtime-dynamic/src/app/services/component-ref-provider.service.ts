@@ -202,8 +202,30 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         }
         const promise = (((componentType === ComponentType.WIDGET && !customWidgets[componentName]) || componentType !== ComponentType.WIDGET)  ? this.resouceMngr.get(url, true) : Promise.resolve(customWidgets[componentName]))
             .then(({markup, script, styles, variables, config}: IPageMinJSON) => {
+                let decodedMarkup = _decodeURIComponent(markup);
+                if (options?.baseWidgetAttr) {
+                    const baseWidgetKey = decodedMarkup.match(/base="([^"]+)"/); 
+                    const baseWidgetValue = baseWidgetKey ? baseWidgetKey[1] : null  || 'checkboxset'; // remove or condition, just for testing 
+                
+                    // Find the tag with the name equal to the base value
+                    const baseWidgetTagName = decodedMarkup.match(new RegExp('<[^>]+ name="' + baseWidgetValue + '"[^>]*>'));
+                    const baseWidgetTag = baseWidgetTagName ? baseWidgetTagName[0] : null;
+              
+                    // Extract the tag name
+                    const tagNameMatch = baseWidgetTag?.match(/<([^ >]+)/);
+                    const tagName = tagNameMatch ? tagNameMatch[1] : null;
+                
+                    // Add the datafield and animation attributes to the tag
+                    if (baseWidgetTag) {
+                      let modifiedBaseWidgetTag = baseWidgetTag.replace(new RegExp('<' + tagName), '<' + tagName + ' ' + options.baseWidgetAttr.join(' '));
+                      modifiedBaseWidgetTag = modifiedBaseWidgetTag.replace('dataset="bind:props.data_set" datafield="All Fields"', ''); // remove, just for testing
+                      modifiedBaseWidgetTag = modifiedBaseWidgetTag.replace('datavalue="bind:props.default_value"', ''); // remove, just for testing
+                      modifiedBaseWidgetTag = modifiedBaseWidgetTag.replace('disabled.bind="props.state==&quot;Disabled&quot;"', '')
+                      decodedMarkup = decodedMarkup.replace(baseWidgetTag, modifiedBaseWidgetTag);
+                    }
+                }
                 const response = {
-                    markup: transpile(_decodeURIComponent(markup)).markup,
+                    markup: transpile(decodedMarkup).markup,
                     script: _decodeURIComponent(script),
                     styles: scopeComponentStyles(componentName, componentType, _decodeURIComponent(styles)),
                     variables: getValidJSON(_decodeURIComponent(variables)),
