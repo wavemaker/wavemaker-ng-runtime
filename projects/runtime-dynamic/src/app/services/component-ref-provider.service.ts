@@ -218,7 +218,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                     // Add the datafield and animation attributes to the tag
                     if (baseWidgetTag) {
                       let modifiedBaseWidgetTag = baseWidgetTag.replace(new RegExp('<' + tagName), '<' + tagName + ' ' + options.baseWidgetAttr.join(' '));
-                      modifiedBaseWidgetTag = modifiedBaseWidgetTag.replace('dataset="bind:props.data_set" datafield="All Fields"', ''); // remove, just for testing
+                    //   modifiedBaseWidgetTag = modifiedBaseWidgetTag.replace('dataset="bind:props.data_set" datafield="All Fields"', ''); // remove, just for testing
                       modifiedBaseWidgetTag = modifiedBaseWidgetTag.replace('datavalue="bind:props.default_value"', ''); // remove, just for testing
                       modifiedBaseWidgetTag = modifiedBaseWidgetTag.replace('disabled.bind="props.state==&quot;Disabled&quot;"', '')
                       decodedMarkup = decodedMarkup.replace(baseWidgetTag, modifiedBaseWidgetTag);

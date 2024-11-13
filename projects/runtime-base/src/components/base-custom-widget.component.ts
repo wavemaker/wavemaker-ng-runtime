@@ -128,11 +128,8 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     }
 
     registerWidgets() {
-        // common partial widgets should be accessible from page
-        this.Widgets = Object.create(commonPartialWidgets);
-
-        // expose current page widgets on app
-        (this.App as any).Widgets = Object.create(this.Widgets);
+        this.Widgets = {};
+        this.containerWidget.Widgets = this.Widgets;
     }
 
     initializeComponentData(children) {
