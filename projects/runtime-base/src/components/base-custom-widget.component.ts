@@ -128,8 +128,11 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
     }
 
     registerWidgets() {
-        this.Widgets = {};
-        this.containerWidget.Widgets = this.Widgets;
+        // common partial widgets should be accessible from page
+        this.Widgets = Object.create(commonPartialWidgets);
+
+        // expose current page widgets on app
+        (this.App as any).Widgets = Object.create(this.Widgets);
     }
 
     initializeComponentData(children) {
@@ -137,6 +140,7 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
             if(!child.hasAttribute('wmcustomwidget'))
                 this.initializeComponentData(child.children);
             else {
+                this.containerWidget.baseWidget = child.querySelector(`[name=${this.containerWidget.baseWidgetName}]`)?.widget;
                 const asAttr = child.getAttribute('as') || '';
                 if (!asAttr) {
                     return;
