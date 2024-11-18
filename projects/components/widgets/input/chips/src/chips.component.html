@@ -9,7 +9,7 @@
        (keydown.arrowright)="onArrowRight(item, $index)"
        (focus)="handleChipFocus($event, item)"
        (blur)="readonly ? 0 : item.active = false"
-       [ngClass]="{'chip-duplicate bg-danger': item.isDuplicate, 'chip-picture': item.imgSrc}">
+       [ngClass]="{'no-drag': !enablereorder,'chip-duplicate bg-danger': item.isDuplicate, 'chip-picture': item.imgSrc}">
         <img data-identifier="img" alt="Chip Image" class="button-image-icon" [src]="item.imgSrc" *ngIf="item.imgSrc"/>
         <span class="app-chip-title" [textContent]="item.label" [title]="item.label"></span>
         <button type="button" [attr.aria-label]="'Clear ' + item.label" class="btn btn-transparent"
