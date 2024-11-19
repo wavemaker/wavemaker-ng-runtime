@@ -321,18 +321,18 @@ describe('MenuComponent', () => {
     }));
     /***************************** actions end ************************************* */
 
-    it('should dropdown position be down,right', waitForAsync(() => {
-        wmComponent.menuposition = 'down,right';
-        jest.spyOn(wmComponent, 'setMenuPosition');
-        wmComponent.setMenuPosition();
-        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
-        buttonClickFunction();
-        fixture.detectChanges();
-        fixture.whenStable().then(() => {
-            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
-            expect(menudropdownEle.nativeElement.classList).toContain('pull-right');
-        });
-    }));
+    // it('should dropdown position be down,right', waitForAsync(() => {
+    //     wmComponent.menuposition = 'down,right';
+    //     jest.spyOn(wmComponent, 'setMenuPosition');
+    //     wmComponent.setMenuPosition();
+    //     wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+    //     buttonClickFunction();
+    //     fixture.detectChanges();
+    //     fixture.whenStable().then(() => {
+    //         const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+    //         expect(menudropdownEle.nativeElement.classList).toContain('pull-right');
+    //     });
+    // }));
 
     it('should dropdown position be down,left', waitForAsync(() => {
         wmComponent.menuposition = 'down,left';

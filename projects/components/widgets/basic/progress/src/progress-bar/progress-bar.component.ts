@@ -50,6 +50,7 @@ export class ProgressBarComponent extends StylableComponent {
     public dataset: Array<any>;
     public hint: string;
     public arialabel: string;
+    public tabindex: string;
 
     private _prepareData: Function;
     private readonly hasDataset: boolean;
@@ -137,6 +138,8 @@ export class ProgressBarComponent extends StylableComponent {
             this.onTypeChange();
         } else if (key === 'minvalue' || key === 'maxvalue' || key === 'datavalue' || key === 'dataset' || key === 'displayformat') {
             this._prepareData();
+        } else if (key === 'tabindex') {
+            return;
         } else {
             super.onPropertyChange(key, nv, ov);
         }

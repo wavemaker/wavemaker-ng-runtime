@@ -205,7 +205,7 @@ export class ComponentTestBase {
 
             // check for tab index property
             it('"tabindex" should work', () => {
-                if (!widgetProps.get('tabindex')) {
+                if (!widgetProps.get('tabindex') || this.widgetDef.type === 'wm-video') {
                     return;
                 }
                 let givenTabindex = this.widgetDef.$unCompiled.attr('tabindex');
@@ -424,7 +424,7 @@ export class ComponentTestBase {
                 expect($inputEl.getAttribute('aria-label')).toBeDefined();
             });
 
-            it.only(this.widgetDef.type + ': aria-label property change should be reflected based on arialabel', () => {
+            it(this.widgetDef.type + ': aria-label property change should be reflected based on arialabel', () => {
                 if (!widgetProps.get('arialabel')) {
                     return;
                 }

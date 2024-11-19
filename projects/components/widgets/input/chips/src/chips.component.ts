@@ -6,7 +6,6 @@ import {
     Injector,
     OnInit,
     Optional,
-    SkipSelf,
     ViewChild
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -687,9 +686,23 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
         }
         if (key === 'enablereorder') {
             if (this.$element.hasClass('ui-sortable')) {
-                this.$element.sortable('option', 'disabled', !nv );
+                this.$element.sortable('option', 'disabled', !nv);
             } else if (nv) {
                 this.configureDnD();
+            }
+            
+            // Add this block to handle drag prevention
+            const chipElements = this.$element.find('.chip-item a.app-chip');
+            if (!nv) {
+                chipElements.addClass('no-drag');
+                // Prevent default drag behavior
+                chipElements.on('dragstart', (e) => {
+                    e.preventDefault();
+                    return false;
+                });
+            } else {
+                chipElements.removeClass('no-drag');
+                chipElements.off('dragstart');
             }
         }
         if (key === 'readonly') {
