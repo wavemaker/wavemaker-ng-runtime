@@ -73,16 +73,7 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
     }
 
     get datavalue() {
-        if(this.nativeElement.children.length) {
-            let value = this.nativeElement.children[0].children[0]['widget'].viewParent.datavalue;
-            this.updateDataValue(value);
-            return value;
-        }
-    }
-
-    set datavalue(value) {
-        if(this.nativeElement.children.length)
-            this.nativeElement.children[0].children[0]['widget'].viewParent.datavalue = value;
+       return this.baseWidget.datavalue;
     }
 
     setBaseWidgetName(baseWidgetType: string) {
@@ -93,10 +84,9 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
         });
         this.baseWidgetName = modifiedArr.join('');
     }
-
     public setProps(config, resolveFn: Function) {
         this.config = config;
-        this.baseWidgetName = this.config.base;
+        this.baseWidgetName = this.config.base || 'checkboxset';
         this.configSubject.next();
         if(config.customClasses){
             addClass(this.nativeElement, config.customClasses);
