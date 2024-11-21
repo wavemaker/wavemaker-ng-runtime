@@ -37,6 +37,7 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
     config: any;
     private props: any = {};
     private baseWidgetName: string;
+    baseWidget: any = {};
     asAttr: boolean;
     configSubject: Subject<any>;
 
@@ -95,13 +96,16 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
 
     public setProps(config, resolveFn: Function) {
         this.config = config;
+        this.baseWidgetName = this.config.base;
         this.configSubject.next();
         if(config.customClasses){
             addClass(this.nativeElement, config.customClasses);
         }
         this.asAttr = this.nativeElement.children[0].children[0].hasAttribute('as');
-        if(this.asAttr)
-            this.setBaseWidgetName(config.widgetType);
+
+        this.baseWidget = (this.nativeElement.children[0].children[0].querySelector(`[name=${this.baseWidgetName}]`) as any)?.widget;
+        // if(this.asAttr)
+        //     this.setBaseWidgetName(config.widgetType);
         if (!config || !config.properties) {
             return;
         }
