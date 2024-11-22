@@ -295,6 +295,8 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         if (this.viewParent.resolveFragment) {
             this.viewParent.resolveFragment();
         }
+        if(this.containerWidget.inputtype)
+            this.containerWidget.baseWidget.type = this.containerWidget.inputtype; // field type not passing through if cw is used in form fields - so setting it manually
     }
 
     private loadScripts() {
