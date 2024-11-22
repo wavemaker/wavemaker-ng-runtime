@@ -140,8 +140,6 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
             if(!child.hasAttribute('wmcustomwidget'))
                 this.initializeComponentData(child.children);
             else {
-                let baseElWidget = child.querySelector(`[name=${this.containerWidget.baseWidgetName}]`)?.widget;
-                this.containerWidget.baseWidget = baseElWidget;
                 const asAttr = child.getAttribute('as') || '';
                 if (!asAttr) {
                     return;
