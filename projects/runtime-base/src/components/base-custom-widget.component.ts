@@ -124,6 +124,10 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
             this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
         }
+        this.containerWidget.onErroSubject.asObservable().subscribe(() => {
+            if(this['onValidStatusChange'])
+                return this['onValidStatusChange']();
+        });
         super.init();
     }
 
