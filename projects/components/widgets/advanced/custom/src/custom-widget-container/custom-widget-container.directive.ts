@@ -40,6 +40,7 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
     baseWidget: any = {};
     asAttr: boolean;
     configSubject: Subject<any>;
+    onErroSubject: Subject<any>;
 
     constructor(
         inj: Injector, elRef: ElementRef,
@@ -53,6 +54,7 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
         super(inj, WIDGET_CONFIG, explicitContext, undefined, new Promise(res => resolveFn = res));
         this.propsReady = resolveFn;
         this.configSubject = new Subject();
+        this.onErroSubject = new Subject();
         this.widgetType = widgetType;
         this.name = elRef.nativeElement.getAttribute('name');
 
@@ -143,8 +145,12 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
     }
 
     updateDataValue(value) {
-        if(this.formControl && this.formControl.control && value !== this.formControl.control.value)
+        if(this.formControl && this.formControl.control && value !== this.formControl.control.value) {
             this.formControl.control.setValue(value);
+            if (this.formControl.control.invalid) {
+                this.onErroSubject.next();
+            }
+        }
     }
 
     updateData(key: string, value: any) {
