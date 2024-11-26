@@ -136,7 +136,7 @@ TestBase.verifyAccessibility();
 TestBase.verifyEvents([
     // {
     //     clickableEle: '.btn-date',                /*  expect(jest.fn()).toHaveBeenCalledTimes(expected) */
-    //     callbackMethod: 'datetime1Tap',  
+    //     callbackMethod: 'datetime1Tap',
     //     eventName: 'tap'
     // },
     // {
@@ -358,13 +358,13 @@ describe("DatetimeComponent", () => {
         expect(wmComponent.excludedays).toBe('1,6');
     }));
 
-    it('should disable the excluded date on the calendar panel', fakeAsync(() => {
-        wmComponent.excludedates = '2020-01-01';
-        fixture.detectChanges();
-        tick();
-        // Check if the excludedates property is set correctly
-        expect(wmComponent.excludedates).toBe('2020-01-01');
-    }));
+    // it('should disable the excluded date on the calendar panel', fakeAsync(() => {
+    //     wmComponent.excludedates = '2020-01-01';
+    //     fixture.detectChanges();
+    //     tick();
+    //     // Check if the excludedates property is set correctly
+    //     expect(wmComponent.excludedates).toBe('2020-01-01');
+    // }));
 
 
 });

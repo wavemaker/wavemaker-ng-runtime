@@ -551,7 +551,8 @@ export const isShowLegend = value => {
  * @param label
  */
 export const customiseTooltip = (chart, propertyValueMap, widgetContext, label?) => {
-    chart.tooltip.contentGenerator(key => {
+    d3.selectAll('.nvtooltip').style('opacity', 0);
+    chart.tooltip.contentGenerator((key, propertyValueMap) => {
         let xValue = key.data.x, yValue;
         yValue = getNumberFormatedData(propertyValueMap.ynumberformat, key.data.y);
         if (isPieType(widgetContext.type)) {
