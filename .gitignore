@@ -53,3 +53,5 @@ jest-code-coverage-report.html
 
 .nx/cache
 .nx/workspace-data
+
+*storybook.log

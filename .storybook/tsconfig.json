@@ -1,0 +1,254 @@
+{
+  "extends": "../src/tsconfig.app.json",
+  "compilerOptions": {
+    "types": [
+      "node"
+    ],
+    "allowJs": true,
+    "paths": {
+      "@wm/core": [
+        "projects/core/index.ts"
+      ],
+      "@wm/security": [
+        "projects/security/src/public_api.ts"
+      ],
+      "@swipey": [
+        "projects/swipey/src/public_api.ts"
+      ],
+      "@wavemaker/custom-widgets-m3": [
+        "node_modules/@wavemaker/custom-widgets-m3/"
+      ],
+      "@wm/runtime/base": [
+        "libraries/runtime/base/index.d.ts"
+      ],
+      "@wm/variables": [
+        "projects/variables/src/public_api.ts"
+      ],
+      "@wm/http": [
+        "libraries/http/index.d.ts"
+      ], //  "@wm/http": ["libraries/http/index.d.ts"],  ["projects/http-service/src/public_api.ts"]
+      "@wm/oAuth": [
+        "projects/oAuth/src/public_api.ts"
+      ],
+      "@wm/build-task": [
+        "libraries/build-task/"
+      ],
+      "@wm/transpiler": [
+        "projects/transpiler/src/public_api.ts"
+      ],
+      "@wm/components/input": [
+        "projects/components/widgets/input/default/src/public_api.ts"
+      ],
+      "@wm/components/base": [
+        "projects/components/base/index.ts"
+      ],
+      "@wm/components/basic": [
+        "projects/components/widgets/basic/default/src/public_api.ts"
+      ],
+      "@wm/components/prefab": [
+        "libraries/components/prefab/index.d.ts"
+      ],
+      "@wm/components/page/top-nav": [
+        "libraries/components/page/top-nav/index.d.ts"
+      ],
+      "@wm/components/page/right-panel": [
+        "libraries/components/page/right-panel/index.d.ts"
+      ],
+      "@wm/components/page/left-panel": [
+        "libraries/components/page/left-panel/index.d.ts"
+      ],
+      "@wm/components/page/header": [
+        "libraries/components/page/header/index.d.ts"
+      ],
+      "@wm/components/page/footer": [
+        "libraries/components/page/footer/index.d.ts"
+      ],
+      "@wm/components/page": [
+        "projects/components/widgets/page/default/src/public_api.ts"
+      ],
+      "@wm/components/advanced/custom": [
+        "libraries/components/advanced/custom/index.d.ts"
+      ],
+      "@wm/components/advanced/marquee": [
+        "libraries/components/advanced/marquee/index.d.ts"
+      ],
+      "@wm/components/advanced/login": [
+        "libraries/components/advanced/login/index.d.ts"
+      ],
+      "@wm/components/advanced/carousel": [
+        "libraries/components/advanced/carousel/index.d.ts"
+      ],
+      "@wm/components/navigation/popover": [
+        "libraries/components/navigation/popover/index.d.ts"
+      ],
+      "@wm/components/navigation/navbar": [
+        "libraries/components/navigation/navbar/index.d.ts"
+      ],
+      "@wm/components/navigation/menu": [
+        "libraries/components/navigation/menu/index.d.ts"
+      ],
+      "@wm/components/navigation/breadcrumb": [
+        "libraries/components/navigation/breadcrumb/index.d.ts"
+      ],
+      "@wm/components/dialogs/partial-dialog": [
+        "libraries/components/dialogs/partial-dialog/index.d.ts"
+      ],
+      "@wm/components/dialogs/login-dialog": [
+        "libraries/components/dialogs/login-dialog/index.d.ts"
+      ],
+      "@wm/components/dialogs/iframe-dialog": [
+        "libraries/components/dialogs/iframe-dialog/index.d.ts"
+      ],
+      "@wm/components/dialogs/alert-dialog": [
+        "libraries/components/dialogs/alert-dialog/index.d.ts"
+      ],
+      "@wm/components/containers/wizard": [
+        "libraries/components/containers/wizard/index.d.ts"
+      ],
+      "@wm/components/containers/tile": [
+        "libraries/components/containers/tile/index.d.ts"
+      ],
+      "@wm/components/containers/tabs": [
+        "libraries/components/containers/tabs/index.d.ts"
+      ],
+      "@wm/components/containers/panel": [
+        "libraries/components/containers/panel/index.d.ts"
+      ],
+      "@wm/components/containers/layout-grid": [
+        "libraries/components/containers/layout-grid/index.d.ts"
+      ],
+      "@wm/components/containers/linear-layout": [
+        "libraries/components/containers/linear-layout/index.d.ts"
+      ],
+      "@wm/components/containers/accordion": [
+        "libraries/components/containers/accordion/index.d.ts"
+      ],
+      "@wm/components/chart": [
+        "libraries/components/chart/index.d.ts"
+      ],
+      "@wm/components/data/table": [
+        "libraries/components/data/table/index.d.ts"
+      ],
+      "@wm/components/data/pagination": [
+        "libraries/components/data/pagination/index.d.ts"
+      ],
+      "@wm/components/data/live-table": [
+        "libraries/components/data/live-table/index.d.ts"
+      ],
+      "@wm/components/data/list": [
+        "libraries/components/data/list/index.d.ts"
+      ],
+      "@wm/components/data/form": [
+        "libraries/components/data/form/index.d.ts"
+      ],
+      "@wm/components/data/card": [
+        "libraries/components/data/card/index.d.ts"
+      ],
+      "@wm/components/input/slider": [
+        "libraries/components/input/slider/index.d.ts"
+      ],
+      "@wm/components/input/rating": [
+        "libraries/components/input/rating/index.d.ts"
+      ],
+      "@wm/components/input/file-upload": [
+        "libraries/components/input/file-upload/index.d.ts"
+      ],
+      "@wm/components/input/epoch": [
+        "libraries/components/input/epoch/index.d.ts"
+      ],
+      "@wm/components/input/currency": [
+        "libraries/components/input/currency/index.d.ts"
+      ],
+      "@wm/components/input/color-picker": [
+        "libraries/components/input/color-picker/index.d.ts"
+      ],
+      "@wm/components/input/chips": [
+        "libraries/components/input/chips/index.d.ts"
+      ],
+      "@wm/components/input/calendar": [
+        "libraries/components/input/calendar/index.d.ts"
+      ],
+      "@wm/components/basic/tree": [
+        "libraries/components/basic/tree/index.d.ts"
+      ],
+      "@wm/components/basic/search": [
+        "projects/components/widgets/basic/search/src/public_api.ts"
+      ],
+      "@wm/components/basic/rich-text-editor": [
+        "libraries/components/basic/rich-text-editor/index.d.ts"
+      ],
+      "@wm/components/basic/progress": [
+        "libraries/components/basic/progress/index.d.ts"
+      ],
+      "@wm/components/dialogs": [
+        "projects/components/widgets/dialogs/default/src/public_api.ts"
+      ],
+      "@wm/components/dialogs/design-dialog": [
+        "libraries/components/dialogs/design-dialog/index.d.ts"
+      ],
+      "@wm/components/dialogs/confirm-dialog": [
+        "libraries/components/dialogs/confirm-dialog/index.d.ts"
+      ],
+      "@wm/mobile/runtime": [
+        "libraries/mobile/runtime/index.d.ts"
+      ],
+      "@wm/mobile/core": [
+        "libraries/mobile/core/index.d.ts"
+      ],
+      "@wm/mobile/components/page/tab-bar": [
+        "libraries/mobile/components/page/tab-bar/index.d.ts"
+      ],
+      "@wm/mobile/components/page/left-panel": [
+        "libraries/mobile/components/page/left-panel/index.d.ts"
+      ],
+      "@wm/mobile/components/page/mobile-navbar": [
+        "libraries/mobile/components/page/mobile-navbar/index.d.ts"
+      ],
+      "@wm/mobile/components/page": [
+        "libraries/mobile/components/page/default/index.d.ts"
+      ],
+      "@wm/mobile/components/input/file-upload": [
+        "libraries/mobile/components/input/file-upload/index.d.ts"
+      ],
+      "@wm/mobile/components/device/camera": [
+        "libraries/mobile/components/device/camera/index.d.ts"
+      ],
+      "@wm/mobile/components/device/barcode-scanner": [
+        "libraries/mobile/components/device/barcode-scanner/index.d.ts"
+      ],
+      "@wm/mobile/components/data/media-list": [
+        "libraries/mobile/components/data/media-list/index.d.ts"
+      ],
+      "@wm/mobile/components/containers/segmented-control": [
+        "libraries/mobile/components/containers/segmented-control/index.d.ts"
+      ],
+      "@wm/mobile/components/basic/search": [
+        "libraries/mobile/components/basic/search/index.d.ts"
+      ],
+      "@wm/mobile/components/basic": [
+        "libraries/mobile/components/basic/default/index.d.ts"
+      ],
+      "@wm/mobile/offline": [
+        "libraries/mobile/offline/index.d.ts"
+      ],
+      "@wm/mobile/variables": [
+        "libraries/mobile/variables/index.d.ts"
+      ],
+    }
+  },
+  "exclude": [
+    "../src/test.ts",
+    "../src/**/*.spec.ts",
+    // "test.ts",
+    // "**/*.spec.ts"
+  ],
+  "include": [
+    "../src/**/*.stories.*",
+    "./preview.ts",
+    "../projects/**/*.stories.*"
+  ],
+  "files": [
+    "./typings.d.ts",
+    "../src/polyfills.ts"
+  ]
+}

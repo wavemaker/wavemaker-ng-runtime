@@ -16,12 +16,12 @@
             "customWebpackConfig": {
               "path": "./wm-custom-webpack.config.js"
             },
-            "indexTransform":"./build-scripts/index-html-transform.js",
+            "indexTransform": "./build-scripts/index-html-transform.js",
             "deployUrl": "ng-bundle/",
             "outputPath": "dist/ng-bundle",
             "index": {
-                "input": "src/index.html",
-                "output": "../index.html"
+              "input": "src/index.html",
+              "output": "../index.html"
             },
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -30,9 +30,9 @@
               "src/favicon.ico",
               "src/assets",
               {
-                  "glob": "print.css",
-                  "input": "src/assets/",
-                  "output": "."
+                "glob": "print.css",
+                "input": "src/assets/",
+                "output": "."
               },
               {
                 "glob": "**/*",
@@ -100,12 +100,12 @@
                 }
               ],
               "optimization": {
-                  "scripts": true,
-                  "styles": {
-                      "minify": true,
-                      "inlineCritical": false
-                  },
-                  "fonts": true
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
               },
               "outputHashing": "all",
               "sourceMap": false,
@@ -134,7 +134,7 @@
               "namedChunks": true,
               "aot": true,
               "extractLicenses": false,
-                "vendorChunk": true,
+              "vendorChunk": true,
               "buildOptimizer": false,
               "budgets": [
                 {
@@ -151,12 +151,12 @@
                 }
               ],
               "optimization": {
-                  "scripts": false,
-                  "styles": {
-                      "minify": false,
-                      "inlineCritical": false
-                  },
-                  "fonts": true
+                "scripts": false,
+                "styles": {
+                  "minify": false,
+                  "inlineCritical": false
+                },
+                "fonts": true
               },
               "outputHashing": "none",
               "sourceMap": true,
@@ -180,8 +180,8 @@
           "options": {
             "outputPath": "dist",
             "index": {
-                "input": "src/index.html",
-                "output": "../index.html"
+              "input": "src/index.html",
+              "output": "../index.html"
             },
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -190,9 +190,9 @@
               "src/favicon.ico",
               "src/assets",
               {
-                  "glob": "print.css",
-                  "input": "src/assets/",
-                  "output": "."
+                "glob": "print.css",
+                "input": "src/assets/",
+                "output": "."
               }
             ],
             "styles": [
@@ -238,7 +238,7 @@
           },
           "configurations": {
             "production": {
-                "browserTarget": "angular-app:build:production"
+              "browserTarget": "angular-app:build:production"
             }
           },
           "defaultConfiguration": ""
@@ -246,18 +246,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-              "buildTarget": "angular-app:build"
+            "buildTarget": "angular-app:build"
           },
           "configurations": {
             "production": {
-                "buildTarget": "angular-app:build:production"
+              "buildTarget": "angular-app:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-              "buildTarget": "angular-app:build"
+            "buildTarget": "angular-app:build"
           }
         },
         "lint": {
@@ -267,6 +267,24 @@
               "src/**/*.ts",
               "src/**/*.html"
             ]
+          }
+        },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "angular-app:build",
+            "compodoc": false,
+            "port": 6006
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "angular-app:build",
+            "compodoc": false,
+            "outputDir": "storybook-static"
           }
         }
       }
