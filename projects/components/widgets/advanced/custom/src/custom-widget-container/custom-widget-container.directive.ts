@@ -73,7 +73,16 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
     }
 
     get datavalue() {
-       return this.baseWidget.datavalue;
+        if(this.nativeElement.children.length) {
+            let value = this.nativeElement.children[0].children[0]['widget'].viewParent.datavalue;
+            this.updateDataValue(value);
+            return value;
+        }
+    }
+
+    set datavalue(value) {
+        if(this.nativeElement.children.length)
+            this.nativeElement.children[0].children[0]['widget'].viewParent.datavalue = value;
     }
 
     setBaseWidgetName(baseWidgetType: string) {
@@ -146,7 +155,8 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
             this[modifiedKey] = value;
             this.nativeElement.children[0].children[0]['widget'].viewParent[modifiedKey] = value;
         }
-        if(this.formControl && modifiedKey === 'datavalue')
+        if(this.formControl && modifiedKey === 'datavalue'){
             this.updateDataValue(value);
+        }
     }
 }
