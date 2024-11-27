@@ -42,10 +42,15 @@ export class SecurityService {
 
     load(forceFlag?: boolean) {
         if(this.loadPromise) {return this.loadPromise;}
+         // Check securityEnabled flag in _WM_APP_PROPERTIES
+        if (!(window as any)._WM_APP_PROPERTIES?.securityEnabled) {
+            return Promise.resolve(null); 
+        }
         if (!forceFlag && this.config) {return Promise.resolve(this.config);}
         this.loadPromise = new Promise((resolve, reject) => {
                 this.$http.send({'url': './services/security/info', 'method': 'GET'}).then((response) => {
                     this.config = response.body;
+                    (window as any)._WM_APP_PROPERTIES['xsrf_header_name'] = this.config.csrfHeaderName;
                     this.lastLoggedInUser = getClonedObject(this.loggedInUser);
                     this.loggedInUser = this.config.userInfo;
                     resolve(response.body);
