@@ -5,7 +5,42 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 import initWmProjectProperties from './app/wm-project-properties';
+import { WMAppProperties } from './app/wmProperties';
 
+
+let formatAcceptHeader = (languages: any) => {
+  let result: string[] = [];
+  let addedLanguages = new Set<string>(); // To track already added languages
+  let qValue = 1.0;
+
+  languages.forEach((lang: any) => {
+    if (!addedLanguages.has(lang)) {
+      // Add the full language (e.g., en-US or en) if not already added
+      result.push(`${lang}${qValue === 1.0 ? '' : `;q=${qValue.toFixed(1)}`}`);
+      addedLanguages.add(lang);
+      // Decrease qValue for the next language
+      qValue = Math.max(0.1, qValue - 0.1); // Decrease qValue, minimum is 0.1
+    }
+
+    // If language has a region code (e.g., en-US), also add the base language (e.g., en)
+    if (lang.includes('-')) {
+      const baseLang = lang.split('-')[0];
+      if (!addedLanguages.has(baseLang)) {
+        result.push(`${baseLang};q=${qValue.toFixed(1)}`);
+        addedLanguages.add(baseLang);
+
+        // Decrease qValue for the next language
+        qValue = Math.max(0.1, qValue - 0.1);
+      }
+    }
+  });
+
+  return result.join(',');
+}
+
+WMAppProperties['preferredLanguage'] = formatAcceptHeader(navigator.languages);
+
+(window as any)._WM_APP_PROPERTIES  = WMAppProperties
 initWmProjectProperties();
 
 if (environment.production) {
