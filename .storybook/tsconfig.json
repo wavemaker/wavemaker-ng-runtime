@@ -245,6 +245,8 @@
   "include": [
     "../src/**/*.stories.*",
     "./preview.ts",
+    "../projects/components/widgets/**/**/src/*.stories.*",
+    "../projects/components/widgets/**/**/src/**/*.stories.*",
     "../projects/**/*.stories.*"
   ],
   "files": [
