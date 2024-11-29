@@ -3,8 +3,8 @@ import './initGlobalVariables';
 import moment from 'moment';
 import { AbstractI18nService, App, AppDefaults, CustomPipeManager } from '@wm/core';
 
-import { ToDatePipe } from "@wm/components/base";
-import { CommonModule, DatePipe } from "@angular/common";
+import { ToDatePipe, TrailingZeroDecimalPipe } from "@wm/components/base";
+import { CommonModule, DatePipe, DecimalPipe } from "@angular/common";
 
 window.moment = moment;
 
@@ -34,6 +34,9 @@ class MockAppDefault extends AppDefaults {
 // Mock or real implementations of the services
 class MockI18nService {
   // Add mocked methods as needed
+  getSelectedLocale(){
+    return "en-US"
+  }
 }
 
 class MockCustomPipeManager {
@@ -58,6 +61,8 @@ export const decorators = [
     ],
     providers: [
       ToDatePipe,
+      TrailingZeroDecimalPipe,
+      DecimalPipe,
       DatePipe, // Provide the Angular DatePipe
       { provide: AbstractI18nService, useClass: MockI18nService }, // Mocked or real implementation
       { provide: CustomPipeManager, useClass: MockCustomPipeManager }, // Mocked or real implementation
