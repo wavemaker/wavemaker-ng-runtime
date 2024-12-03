@@ -44,7 +44,7 @@ export class MobileHttpInterceptor implements HttpInterceptor {
     public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const subject = new Subject<HttpEvent<any>>();
         const token = localStorage.getItem(CONSTANTS.XSRF_COOKIE_NAME);
-        const xsrfHeaderName = getWmProjectProperties().xsrf_header_name;
+        const xsrfHeaderName = (window as any)._WM_APP_PROPERTIES['securityInfo'] ? (window as any)._WM_APP_PROPERTIES['securityInfo']?.csrfHeaderName : null
         if (token
             && xsrfHeaderName
             && this.app.deployedUrl

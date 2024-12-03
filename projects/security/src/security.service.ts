@@ -50,7 +50,7 @@ export class SecurityService {
         this.loadPromise = new Promise((resolve, reject) => {
                 this.$http.send({'url': './services/security/info', 'method': 'GET'}).then((response) => {
                     this.config = response.body;
-                    (window as any)._WM_APP_PROPERTIES['xsrf_header_name'] = this.config.csrfHeaderName;
+                    (window as any)._WM_APP_PROPERTIES['securityInfo'] = this.config
                     this.lastLoggedInUser = getClonedObject(this.loggedInUser);
                     this.loggedInUser = this.config.userInfo;
                     resolve(response.body);

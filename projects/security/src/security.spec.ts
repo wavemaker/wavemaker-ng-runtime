@@ -68,8 +68,8 @@ describe('SecurityService', () => {
     });
 
     it('should load security config if not already loaded', async () => {
-        const mockResponse = { body: { userInfo: { name: 'testUser' }, csrfCookieName: 'wm_xsrf_token',
-        csrfHeaderName: 'X-WM-XSRF-TOKEN' }  };
+        const mockResponse = { body: { userInfo: { name: 'testUser' 
+        }  }  };
         httpMock.send.mockResolvedValue(mockResponse);
 
         const config = await service.load();
@@ -107,8 +107,7 @@ describe('SecurityService', () => {
     });
 
     it('should perform app logout successfully', async () => {
-        service.config = { authenticated: true, userInfo: { name: 'testUser' }, csrfCookieName: 'wm_xsrf_token',
-        csrfHeaderName: 'X-WM-XSRF-TOKEN'  }; // initialize config
+        service.config = { authenticated: true, userInfo: { name: 'testUser' }  }; // initialize config
 
         const mockResponse = { body: 'success' };
         httpMock.send.mockResolvedValue(mockResponse);
@@ -140,8 +139,7 @@ describe('SecurityService', () => {
         await expect(promise).resolves.toBeUndefined();
     });
     it('should get logged-in user', async () => {
-        service.config = { userInfo: { name: 'testUser' }, csrfCookieName: 'wm_xsrf_token',
-        csrfHeaderName: 'X-WM-XSRF-TOKEN'  };
+        service.config = { userInfo: { name: 'testUser' } };
 
         const user = await service.getLoggedInUser();
         expect(user).toEqual(service.config.userInfo);
