@@ -1,6 +1,7 @@
 import { moduleMetadata, type Preview } from "@storybook/angular";
 import './initGlobalVariables';
 import moment from 'moment';
+import { FormsModule } from '@angular/forms';
 import { AbstractI18nService, App, AppDefaults, CustomPipeManager } from '@wm/core';
 
 import { ToDatePipe, TrailingZeroDecimalPipe } from "@wm/components/base";
@@ -37,6 +38,10 @@ class MockI18nService {
   getSelectedLocale(){
     return "en-US"
   }
+
+  getwidgetLocale(){
+    return "";  //can be {'timezone': '', 'number': ''};
+  }
 }
 
 class MockCustomPipeManager {
@@ -57,7 +62,8 @@ export const decorators = [
   moduleMetadata({
     declarations: [], // Add any declarations your components depend on
     imports: [
-      CommonModule
+      CommonModule, 
+      FormsModule
     ],
     providers: [
       ToDatePipe,
