@@ -7,7 +7,7 @@ export const selectProps = new Map(
         ['class', {value: '', ...PROP_STRING}],
         ['compareby', PROP_STRING],
         ['datafield', PROP_STRING],
-        ['dataset', PROP_ANY],
+        ['dataset', {value: 'Option 1, Option 2, Option 3', ...PROP_ANY}],
         ['datavaluesource', PROP_ANY],
         ['datavalue', PROP_STRING],
         ['dateformat', PROP_STRING],

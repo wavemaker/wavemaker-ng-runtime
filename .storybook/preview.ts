@@ -2,12 +2,15 @@ import { moduleMetadata, type Preview } from "@storybook/angular";
 import './initGlobalVariables';
 import moment from 'moment';
 import { FormsModule } from '@angular/forms';
+import { IMaskModule } from 'angular-imask';
 import { AbstractI18nService, App, AppDefaults, CustomPipeManager } from '@wm/core';
 
-import { ToDatePipe, TrailingZeroDecimalPipe } from "@wm/components/base";
+import { ToDatePipe, TrailingZeroDecimalPipe, ItemTemplateDirective, RepeatTemplateDirective } from "@wm/components/base";
 import { CommonModule, DatePipe, DecimalPipe } from "@angular/common";
+import X2JS from "x2js";
 
 window.moment = moment;
+(<any>window).X2JS = X2JS;
 
 // Provide a concrete implementation for the abstract class
 class MockApp extends App {
@@ -63,12 +66,14 @@ export const decorators = [
     declarations: [], // Add any declarations your components depend on
     imports: [
       CommonModule, 
-      FormsModule
+      FormsModule,
+      IMaskModule
     ],
     providers: [
       ToDatePipe,
       TrailingZeroDecimalPipe,
       DecimalPipe,
+      ItemTemplateDirective, RepeatTemplateDirective,
       DatePipe, // Provide the Angular DatePipe
       { provide: AbstractI18nService, useClass: MockI18nService }, // Mocked or real implementation
       { provide: CustomPipeManager, useClass: MockCustomPipeManager }, // Mocked or real implementation

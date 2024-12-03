@@ -13,6 +13,9 @@ type Story = StoryObj<SelectComponent>;
 
 export const Primary: Story = {
   args: {
-    dataset: [],
+    dataset: { value: "User 1" },
+    autofocus: true,
+    class: "primary",
+    disabled: false,
   },
 };
