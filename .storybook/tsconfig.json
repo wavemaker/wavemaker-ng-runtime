@@ -247,7 +247,8 @@
     "./preview.ts",
     "../projects/components/widgets/**/**/src/*.stories.*",
     "../projects/components/widgets/**/**/src/**/*.stories.*",
-    "../projects/**/*.stories.*"
+    "../projects/**/*.stories.*",
+    "./preview-head.html",
   ],
   "files": [
     "./typings.d.ts",

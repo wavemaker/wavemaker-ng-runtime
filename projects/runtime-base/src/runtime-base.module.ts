@@ -262,6 +262,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
 ];
 
 // setting parseExpr as exprEvaluator for swipeAnimation
+if(($.fn as any).swipeAnimation)
 ($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
 
 @NgModule({
