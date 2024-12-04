@@ -15,7 +15,7 @@ export const Primary: Story = {
   args: {
     minvalue: 0,
     maxvalue: 100,
-    datavalue: 5,
+    datavalue: 10,
     readonly: false
   },
 };
