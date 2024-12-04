@@ -14,7 +14,7 @@ type Story = StoryObj<InputTextComponent>;
 export const Primary: Story = {
   args: {
   
-    datavalue: "Sampele Text",
+    datavalue: "Sample Input",
     autofocus: true,
     class: "primary",
     disabled: false,

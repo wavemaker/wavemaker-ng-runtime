@@ -1,4 +1,6 @@
 import { moduleMetadata, type Preview } from "@storybook/angular";
+import { themes } from '@storybook/theming';
+
 import './initGlobalVariables';
 import moment from 'moment';
 import { FormsModule } from '@angular/forms';
@@ -97,6 +99,9 @@ const preview: Preview = {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
+      },
+      docs: {
+        theme: themes.normal,
       },
     },
     actions: { argTypesRegex: "^on[A-Z].*" }
