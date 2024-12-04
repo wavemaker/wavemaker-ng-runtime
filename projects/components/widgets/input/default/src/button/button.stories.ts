@@ -24,7 +24,7 @@ type Story = StoryObj<ButtonComponent>;
 export const Filled: Story = {
   args: {
     caption: 'Filled',
-    class: 'btn-filled',
+    class: 'btn-filled btn-default',
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
@@ -56,8 +56,8 @@ export const Filled: Story = {
 export const Outlined: Story = {
   args: {
     caption: 'Outlined',
-    class: 'btn-outlined',
-    type:'small',
+    class: 'btn-outlined btn-default',
+    type:'medium',
     iconposition: 'right',
     iconclass: 'wi wi-plus',
     badgevalue: '2'
@@ -89,8 +89,8 @@ export const Outlined: Story = {
 export const Text: Story = {
   args: {
     caption: 'Text',
-    class: 'btn-text',
-    type:'large',
+    class: 'btn-text btn-default',
+    type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
     badgevalue: '2'
@@ -121,7 +121,7 @@ export const Text: Story = {
 export const Elevated: Story = {
   args: {
     caption: 'Elevated',
-    class: 'btn-elevated',
+    class: 'btn-elevated btn-default',
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
