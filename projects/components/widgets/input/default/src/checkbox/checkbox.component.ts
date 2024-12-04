@@ -8,7 +8,8 @@ import {
     Injector,
     OnInit,
     Optional,
-    ViewChild
+    ViewChild,
+    HostBinding
 } from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
@@ -72,6 +73,7 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
     private _checkedvalue;
     private _uncheckedvalue;
 
+    @HostBinding('class') class: string;
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('checkbox', { static: true, read: ElementRef }) checkboxEl: ElementRef;
 

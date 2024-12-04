@@ -1,4 +1,7 @@
 import * as $ from 'jquery';
+import moment from 'moment';
+
+window['moment'] = moment;
 window['$'] = $;
 window['jQuery'] = $;
 
