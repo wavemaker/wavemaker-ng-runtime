@@ -118,8 +118,9 @@ export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoD
 export function initializeXsrfConfig(securityService: SecurityService): () => Promise<void> {
     return () => securityService.load().then(() =>{
         let xsrfHeaderName = (window as any)._WM_APP_PROPERTIES['securityInfo']?.csrfHeaderName || null;
+        let xsrfCookieName = (window as any)._WM_APP_PROPERTIES['securityInfo']?.csrfCookieName || 'wm_xsrf_token';
         let xsrfOptions = {
-            cookieName: 'wm_xsrf_token'
+            cookieName: xsrfCookieName
         }
         if(xsrfHeaderName) {
             xsrfOptions['headerName'] = xsrfHeaderName;
