@@ -2,7 +2,6 @@ import { moduleMetadata, type Preview } from "@storybook/angular";
 import { themes } from '@storybook/theming';
 
 import './initGlobalVariables';
-import moment from 'moment';
 import { FormsModule } from '@angular/forms';
 import { IMaskModule } from 'angular-imask';
 import { AbstractI18nService, App, AppDefaults, CustomPipeManager } from '@wm/core';
@@ -11,7 +10,6 @@ import { ToDatePipe, TrailingZeroDecimalPipe, ItemTemplateDirective, RepeatTempl
 import { CommonModule, DatePipe, DecimalPipe } from "@angular/common";
 import X2JS from "x2js";
 
-window.moment = moment;
 (<any>window).X2JS = X2JS;
 
 // Provide a concrete implementation for the abstract class

@@ -14,6 +14,6 @@ type Story = StoryObj<RadiosetComponent>;
 export const Primary: Story = {
   args: {
     disabled: false,
-    dataset: { value: "User 1, User 2, User 3" }
+    dataset: ["Value 1", "Value 2", "Value 3"]
   },
 };
