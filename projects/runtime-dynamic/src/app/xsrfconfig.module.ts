@@ -20,7 +20,6 @@ export function initializeXsrfConfig(securityService: SecurityService) {
                 if (xsrfHeaderName) {
                     xsrfOptions.headerName = xsrfHeaderName;
                 }
-
                 HttpClientXsrfModule.withOptions(xsrfOptions);
             });
     };
