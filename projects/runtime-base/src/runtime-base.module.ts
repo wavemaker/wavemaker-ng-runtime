@@ -122,6 +122,8 @@ import {CarouselModule as ngxCarouselModule} from "ngx-bootstrap/carousel";
 import {PopoverModule as ngxPopoverModule} from "ngx-bootstrap/popover";
 import {NgCircleProgressModule} from "ng-circle-progress";
 import {TooltipModule} from "ngx-bootstrap/tooltip";
+import { provideLottieOptions } from 'ngx-lottie';
+import player from 'lottie-web';
 
 declare const _WM_APP_PROPERTIES;
 
@@ -303,7 +305,10 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     ],
     providers: [
         {provide: ɵSharedStylesHost, useClass: WMDomSharedStylesHost},
-        {provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2}
+        {provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2},
+        provideLottieOptions({
+            player: () => player,
+          }),
     ]
 })
 export class RuntimeBaseModule {
@@ -366,7 +371,10 @@ export class RuntimeBaseModule {
                 AppExtensionJSResolve,
                 I18nResolve,
                 getSettingProvider(MAX_CACHE_SIZE, 10),
-                getSettingProvider(MAX_CACHE_AGE, 30 * 60)
+                getSettingProvider(MAX_CACHE_AGE, 30 * 60),
+                provideLottieOptions({
+                    player: () => player,
+                  }),
             ]
         };
     }
