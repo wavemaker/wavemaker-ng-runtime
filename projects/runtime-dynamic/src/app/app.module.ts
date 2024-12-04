@@ -1,8 +1,8 @@
-import { APP_INITIALIZER, Injector, ModuleWithProviders, NgModule } from '@angular/core';
+import { Injector, ModuleWithProviders, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy, RouterModule } from '@angular/router';
-import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
@@ -108,26 +108,11 @@ import { ComponentRefProviderService } from './services/component-ref-provider.s
 import { PrefabConfigProviderService } from './services/prefab-config-provider.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { SecurityService } from '@wm/security';
+import { XsrfConfigModule } from './xsrfconfig.module';
 
 export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
 
-// In angular 15, xsrf headerName should not be null. Angular 15 is not using default header value like it used to send in calls
-// for angular 12 if the headerName is null . The user has to take care of not sending null values. Then ng 15 uses default value for headerName
-export function initializeXsrfConfig(securityService: SecurityService): () => Promise<void> {
-    return () => securityService.load().then(() =>{
-        let xsrfHeaderName = (window as any)._WM_APP_PROPERTIES['securityInfo']?.csrfHeaderName || null;
-        let xsrfCookieName = (window as any)._WM_APP_PROPERTIES['securityInfo']?.csrfCookieName || 'wm_xsrf_token';
-        let xsrfOptions = {
-            cookieName: xsrfCookieName
-        }
-        if(xsrfHeaderName) {
-            xsrfOptions['headerName'] = xsrfHeaderName;
-        }
-        HttpClientXsrfModule.withOptions(xsrfOptions);
-    });
-}
 
 export const modalModule: ModuleWithProviders<ModalModule> = ModalModule.forRoot();
 export const bsDatePickerModule: ModuleWithProviders<BsDatepickerModule> = BsDatepickerModule.forRoot();
@@ -248,7 +233,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
 
         routerModule,
         toastrModule,
-        HttpClientXsrfModule,
+        XsrfConfigModule,
         MobileRuntimeDynamicModule,
         WM_MODULES_FOR_ROOT
     ],
@@ -261,12 +246,6 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
         { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService },
         { provide: RouteReuseStrategy, useClass: WmRouteReuseStrategy },
-        {
-            provide: APP_INITIALIZER,
-            useFactory: initializeXsrfConfig,
-            deps: [SecurityService],
-            multi: true,
-          },
     ],
     bootstrap: [AppComponent]
 })
