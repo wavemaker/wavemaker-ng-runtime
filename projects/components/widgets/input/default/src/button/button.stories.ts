@@ -14,25 +14,7 @@ const meta: Meta<ButtonComponent> = {
       options: ['btn-default', 'btn-primary', 'btn-secondary','btn-tertiary','btn-success','btn-info','btn-warning','btn-danger'],
     },
     type: { control: 'select', options: ['small', 'medium', 'large'] },
-    //badgevalue: { control: 'text' },
-    //caption: { control: 'text' },    
-    // disabled: { control: 'boolean' },
-    // arialabel: { control: 'text' },
-    // iconclass: { control: 'text' },
-    // iconurl: { control: 'text' },
-    // shortcutkey: { control: 'text' },
-    // tabindex: { control: { type: 'number', min: 0 } },
-    //iconposition: { control: { type: 'select', options: ['left', 'right', 'top', 'bottom'] } },
-    //animation: { control: 'text' },
-    //class: { control: 'text' },
-    //conditionalclass: { control: 'object' },
-    //conditionalstyle: { control: 'object' },
-    //iconheight: { control: 'text' },
-    //iconmargin: { control: 'text' },
-    //hint: { control: 'text' },
-    //iconwidth: { control: 'text' },
-    //name: { control: 'text' },
-    //show: { control: 'boolean' },
+    iconposition: { control: 'select', options: ['left', 'right', 'top'] },
   },
 };
 
@@ -41,13 +23,12 @@ type Story = StoryObj<ButtonComponent>;
 
 export const Filled: Story = {
   args: {
-    caption: 'Filled(btn-filled)',
+    caption: 'Filled',
     class: 'btn-filled',
     type:'medium',
-    disabled: false,
-    badgevalue: '2',
+    iconposition: 'left',
     iconclass: 'wi wi-plus',
-    iconposition: 'left'
+    badgevalue: '2'
   },
   render: (args) => {
 
@@ -74,13 +55,13 @@ export const Filled: Story = {
 
 export const Outlined: Story = {
   args: {
-    caption: 'Outlined(btn-outlined)',
+    caption: 'Outlined',
     class: 'btn-outlined',
     type:'small',
-    disabled: true,
-    badgevalue: '2',
+    iconposition: 'right',
     iconclass: 'wi wi-plus',
-    iconposition: 'right'
+    badgevalue: '2'
+
   },
   render: (args) => {
 
@@ -107,13 +88,12 @@ export const Outlined: Story = {
 
 export const Text: Story = {
   args: {
-    caption: 'Text(btn-text)',
+    caption: 'Text',
     class: 'btn-text',
     type:'large',
-    disabled: false,
-    badgevalue: '2',
+    iconposition: 'left',
     iconclass: 'wi wi-plus',
-    iconposition: 'left'
+    badgevalue: '2'
   },
   render: (args) => {
 
@@ -123,7 +103,7 @@ export const Text: Story = {
       large: 'btn-lg',
     };
 
-    const baseClass = 'btn-filled';
+    const baseClass = 'btn-text';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
 
@@ -140,13 +120,12 @@ export const Text: Story = {
 
 export const Elevated: Story = {
   args: {
-    caption: 'Elevated(btn-elevated)',
+    caption: 'Elevated',
     class: 'btn-elevated',
     type:'medium',
-    disabled: false,
-    badgevalue: '2',
+    iconposition: 'left',
     iconclass: 'wi wi-plus',
-    iconposition: 'left'
+    badgevalue: '2'
   },
   render: (args) => {
 
@@ -156,7 +135,7 @@ export const Elevated: Story = {
       large: 'btn-lg',
     };
 
-    const baseClass = 'btn-filled';
+    const baseClass = 'btn-elevated';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
 
