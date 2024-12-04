@@ -32,6 +32,7 @@ export class ButtonComponent extends StylableComponent {
     @HostBinding('disabled') disabled: boolean;
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;
+    @HostBinding('class') class: string;
 
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
