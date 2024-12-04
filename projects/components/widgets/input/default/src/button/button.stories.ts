@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { fn } from '@storybook/test';
 
 import { ButtonComponent } from './button.component';
+import { trim } from 'jquery';
 
 const meta: Meta<ButtonComponent> = {
   title: 'Input/Button',
@@ -10,8 +11,9 @@ const meta: Meta<ButtonComponent> = {
   argTypes: {
     class : {
       control: 'select',
-      options: ['btn-primary', 'btn-secondary', 'btn-success', 'btn-danger', 'btn-info'],
+      options: ['btn-default', 'btn-primary', 'btn-secondary','btn-tertiary','btn-success','btn-info','btn-warning','btn-danger'],
     },
+    type: { control: 'select', options: ['small', 'medium', 'large'] },
     //badgevalue: { control: 'text' },
     //caption: { control: 'text' },    
     // disabled: { control: 'boolean' },
@@ -21,7 +23,6 @@ const meta: Meta<ButtonComponent> = {
     // shortcutkey: { control: 'text' },
     // tabindex: { control: { type: 'number', min: 0 } },
     //iconposition: { control: { type: 'select', options: ['left', 'right', 'top', 'bottom'] } },
-    //type: { control: { type: 'select', options: ['button', 'submit', 'reset'] } },
     //animation: { control: 'text' },
     //class: { control: 'text' },
     //conditionalclass: { control: 'object' },
@@ -38,91 +39,134 @@ const meta: Meta<ButtonComponent> = {
 export default meta;
 type Story = StoryObj<ButtonComponent>;
 
-
-export const FilledButton: Story = {
+export const Filled: Story = {
   args: {
     caption: 'Filled(btn-filled)',
     class: 'btn-filled',
+    type:'medium',
     disabled: false,
-    // type: 'button',
-    // iconclass: 'wi wi-plus',
-    // iconposition: 'left',
+    badgevalue: '2',
+    iconclass: 'wi wi-plus',
+    iconposition: 'left'
   },
-  argTypes: {
-    class: {
-      table: {
-        category: 'Customization',
+  render: (args) => {
+
+    const buttonSizeMap: Record<string, string> = {
+      small: 'btn-xs',
+      medium: 'btn-sm',
+      large: 'btn-lg',
+    };
+
+    const baseClass = 'btn-filled';
+    const buttonSize = buttonSizeMap[args.type] || '';
+    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
+
+    return {
+      component: ButtonComponent,
+      props: {
+        ...args,
+        class: updatedClass,
       },
-    },
-  },
-  play: async ({ args, updateArgs }) => {
-    args.class = `btn-filled ${args.class}`;
-    updateArgs({ class: args.class });
+    };
   },
 };
 
-export const OutlinedButton: Story = {
+
+export const Outlined: Story = {
   args: {
     caption: 'Outlined(btn-outlined)',
     class: 'btn-outlined',
-    disabled: false,
-    // type: 'button',
-    // iconclass: 'wi wi-plus',
-    // iconposition: 'left',
+    type:'small',
+    disabled: true,
+    badgevalue: '2',
+    iconclass: 'wi wi-plus',
+    iconposition: 'right'
   },
-  argTypes: {
-    class: {
-      table: {
-        category: 'Customization',
+  render: (args) => {
+
+    const buttonSizeMap: Record<string, string> = {
+      small: 'btn-xs',
+      medium: 'btn-sm',
+      large: 'btn-lg',
+    };
+
+    const baseClass = 'btn-outlined';
+    const buttonSize = buttonSizeMap[args.type] || '';
+    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
+
+    return {
+      component: ButtonComponent,
+      props: {
+        ...args,
+        class: updatedClass,
       },
-    },
-  },
-  play: async ({ args, updateArgs }) => {
-    args.class = `btn-outlined ${args.class}`;
-    updateArgs({ class: args.class });
+    };
   },
 };
 
-export const TextButton: Story = {
+
+export const Text: Story = {
   args: {
     caption: 'Text(btn-text)',
     class: 'btn-text',
+    type:'large',
     disabled: false,
-    // type: 'button',
-    // iconclass: 'wi wi-plus',
-    // iconposition: 'left',
+    badgevalue: '2',
+    iconclass: 'wi wi-plus',
+    iconposition: 'left'
   },
-  argTypes: {
-    class: {
-      table: {
-        category: 'Customization',
+  render: (args) => {
+
+    const buttonSizeMap: Record<string, string> = {
+      small: 'btn-xs',
+      medium: 'btn-sm',
+      large: 'btn-lg',
+    };
+
+    const baseClass = 'btn-filled';
+    const buttonSize = buttonSizeMap[args.type] || '';
+    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
+
+    return {
+      component: ButtonComponent,
+      props: {
+        ...args,
+        class: updatedClass,
       },
-    },
-  },
-  play: async ({ args, updateArgs }) => {
-    args.class = `btn-text ${args.class}`;
-    updateArgs({ class: args.class });
+    };
   },
 };
 
-export const ElevatedButton: Story = {
+
+export const Elevated: Story = {
   args: {
     caption: 'Elevated(btn-elevated)',
     class: 'btn-elevated',
+    type:'medium',
     disabled: false,
-    // type: 'button',
-    // iconclass: 'wi wi-plus',
-    // iconposition: 'left',
+    badgevalue: '2',
+    iconclass: 'wi wi-plus',
+    iconposition: 'left'
   },
-  argTypes: {
-    class: {
-      table: {
-        category: 'Customization',
+  render: (args) => {
+
+    const buttonSizeMap: Record<string, string> = {
+      small: 'btn-xs',
+      medium: 'btn-sm',
+      large: 'btn-lg',
+    };
+
+    const baseClass = 'btn-filled';
+    const buttonSize = buttonSizeMap[args.type] || '';
+    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
+
+    return {
+      component: ButtonComponent,
+      props: {
+        ...args,
+        class: updatedClass,
       },
-    },
-  },
-  play: async ({ args, updateArgs }) => {
-    args.class = `btn-elevated ${args.class}`;
-    updateArgs({ class: args.class });
+    };
   },
 };
+
