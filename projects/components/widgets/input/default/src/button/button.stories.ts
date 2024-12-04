@@ -41,7 +41,7 @@ type Story = StoryObj<ButtonComponent>;
 
 export const FilledButton: Story = {
   args: {
-    caption: 'Filled Button (btn-filled)',
+    caption: 'Filled(btn-filled)',
     class: 'btn-filled',
     disabled: false,
     // type: 'button',
@@ -63,7 +63,7 @@ export const FilledButton: Story = {
 
 export const OutlinedButton: Story = {
   args: {
-    caption: 'Outlined Button (btn-outlined)',
+    caption: 'Outlined(btn-outlined)',
     class: 'btn-outlined',
     disabled: false,
     // type: 'button',
@@ -85,7 +85,7 @@ export const OutlinedButton: Story = {
 
 export const TextButton: Story = {
   args: {
-    caption: 'Text Button (btn-text)',
+    caption: 'Text(btn-text)',
     class: 'btn-text',
     disabled: false,
     // type: 'button',
@@ -107,7 +107,7 @@ export const TextButton: Story = {
 
 export const ElevatedButton: Story = {
   args: {
-    caption: 'Elevated Button (btn-elevated)',
+    caption: 'Elevated(btn-elevated)',
     class: 'btn-elevated',
     disabled: false,
     // type: 'button',
