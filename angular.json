@@ -28,6 +28,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
+              "src/favicon.png",
               "src/assets",
               {
                   "glob": "print.css",
@@ -193,6 +194,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
+              "src/favicon.png",
               "src/assets",
               {
                   "glob": "print.css",
