@@ -11,9 +11,41 @@ const meta: Meta<TextareaComponent> = {
 export default meta;
 type Story = StoryObj<TextareaComponent>;
 
-export const Primary: Story = {
+export const Placeholder: Story = {
   args: {
-    autofocus: true,
-    datavalue: "Sample Text"
+    datavalue: '',
+    placeholder: 'Enter your name here',
+  },
+};
+
+// export const Hint: Story = {
+//   args: {
+//     datavalue: '',
+//     placeholder: 'Enter your name here',
+//     hint: 'This is a hint for the user', //on hover need to check
+//   },
+// };
+
+export const Disabled: Story = {
+  args: {
+    datavalue: '',
+    disabled: true,
+    placeholder: 'Enter your text here',
+  },
+};
+
+export const Readonly: Story = {
+  args: {
+    datavalue: 'Read-only text',
+    readonly: true,
+    placeholder: 'This text area is read-only',
+  },
+};
+
+export const MaxCharacters: Story = {
+  args: {
+    datavalue: '',
+    maxchars: 100,
+    placeholder: 'Maximum 100 characters',
   },
 };

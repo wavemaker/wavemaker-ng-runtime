@@ -11,13 +11,50 @@ const meta: Meta<InputTextComponent> = {
 export default meta;
 type Story = StoryObj<InputTextComponent>;
 
-export const Primary: Story = {
+export const Placeholder: Story = {
   args: {
-  
-    datavalue: "Sample Input",
-    autofocus: true,
-    class: "primary",
-    disabled: false,
+    datavalue: '',
+    placeholder: 'Enter your name here',
+  },
+};
 
+export const Disabled: Story = {
+  args: {
+    datavalue: 'Cannot edit this',
+    disabled: true,
+  },
+};
+
+export const Readonly: Story = {
+  args: {
+    datavalue: 'Read-only text',
+    readonly: true,
+    hint: 'This is a hint for the user', 
+  },
+};
+
+export const Validation: Story = {
+  args: {
+    datavalue: '',
+    regexp: '^[a-zA-Z0-9]+$',
+    required: true,
+    placeholder: 'Enter alphanumeric',
+  },
+};
+
+export const MaxCharacters: Story = {
+  args: {
+    datavalue: '',
+    maxchars: 10,
+    placeholder: 'Up to 10 chars',
+  },
+};
+
+export const CustomFormat: Story = {
+  args: {
+    datavalue: "1234567890",
+    displayformat: '(999) 999-9999',
+    maskVal: '(000) 000-0000',
+    showdisplayformaton: 'always',
   },
 };
