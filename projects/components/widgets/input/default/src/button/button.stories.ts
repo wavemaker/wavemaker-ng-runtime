@@ -5,7 +5,7 @@ import { ButtonComponent } from './button.component';
 import { trim } from 'jquery';
 
 const meta: Meta<ButtonComponent> = {
-  title: 'Input/Button',
+  title: 'Form/Button',
   component: ButtonComponent,
   tags: ['autodocs'],
   argTypes: {

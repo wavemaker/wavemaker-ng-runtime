@@ -4,7 +4,7 @@ import { fn } from '@storybook/test';
 import { SliderComponent } from './slider.component';
 
 const meta: Meta<SliderComponent> = {
-  title: 'Input/Slider',
+  title: 'Form/Slider',
   component: SliderComponent,
   tags: ['autodocs'],
   argTypes: {}
@@ -18,8 +18,7 @@ export const Primary: Story = {
     minvalue: 0,
     maxvalue: 200,
     step: 10,
-    disabled: false
-  },
+    disabled: false },
 };
 
 export const Secondary: Story = {

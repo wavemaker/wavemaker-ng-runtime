@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { InputColorComponent } from './input-color.component';
 
 const meta: Meta<InputColorComponent> = {
-  title: 'Input/Color',
+  title: 'Form/Color',
   component: InputColorComponent,
   tags: ['autodocs'],
   argTypes: {}

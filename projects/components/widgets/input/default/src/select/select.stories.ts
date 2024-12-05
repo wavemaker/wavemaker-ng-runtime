@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { SelectComponent } from './select.component';
 
 const meta: Meta<SelectComponent> = {
-  title: 'Input/Select',
+  title: 'Form/Select',
   component: SelectComponent,
   tags: ['autodocs'],
   argTypes: {}

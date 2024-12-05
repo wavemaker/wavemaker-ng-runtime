@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { NumberComponent } from './number.component';
 
 const meta: Meta<NumberComponent> = {
-  title: 'Input/Number',
+  title: 'Form/Number',
   component: NumberComponent,
   tags: ['autodocs'],
   argTypes: {}

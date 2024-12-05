@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { InputCalendarComponent } from './input-calendar.component';
 
 const meta: Meta<InputCalendarComponent> = {
-  title: 'Input/Calendar',
+  title: 'Form/Calendar',
   component: InputCalendarComponent,
   tags: ['autodocs'],
   argTypes: {}
