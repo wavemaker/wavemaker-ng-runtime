@@ -1,7 +1,9 @@
 import * as $ from 'jquery';
 import moment from 'moment';
+import FullCalendar from 'fullcalendar'
 
 window['moment'] = moment;
+window['FullCalendar'] = FullCalendar
 window['$'] = $;
 window['jQuery'] = $;
 
