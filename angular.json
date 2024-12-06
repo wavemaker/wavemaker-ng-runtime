@@ -44,6 +44,16 @@
                 "glob": "**/*",
                 "input": "node_modules/@wavemaker/app-ng-runtime/locales/",
                 "output": "/locales/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/servicedefs",
+                "output": "/servicedefs/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/resources",
+                "output": "/resources/"
               }
             ],
             "styles": [
@@ -200,6 +210,16 @@
                   "glob": "print.css",
                   "input": "src/assets/",
                   "output": "."
+              },
+              {
+                "glob": "**/*",
+                "input": "src/servicedefs",
+                "output": "/servicedefs/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/resources",
+                "output": "/resources/"
               }
             ],
             "styles": [

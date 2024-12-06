@@ -19,7 +19,8 @@ export class MetadataService {
         if (hasCordova()) {
             url = 'metadata/' + (prefabName ? `prefabs/${prefabName}/` : 'app/') + 'service-definitions.json';
         } else {
-            url = './services/' + (prefabName ? `prefabs/${prefabName}/` : '') + 'servicedefs';
+            let serviceDefFileName = prefabName ? prefabName + '-prefab-servicedefs.json'  : 'app-servicedefs.json'
+            url = './ng-bundle/servicedefs/' + serviceDefFileName;
         }
         return new Promise((resolve, reject) => {
             this.$http.send({'url' : url, 'method': 'GET'}).then((response) => {

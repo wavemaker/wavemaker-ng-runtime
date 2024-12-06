@@ -92,6 +92,7 @@ export class SecurityService {
         }
 
         function onSuccess(config) {
+            config = config ? config : {}
             config.homePage = getWmProjectProperties().homePage;
             if (config.userInfo) {
                 // Backend returns landingPage instead of homePage, hence this statement(for consistency)
