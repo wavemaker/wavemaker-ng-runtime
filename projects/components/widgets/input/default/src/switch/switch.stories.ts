@@ -14,23 +14,11 @@ type Story = StoryObj<SwitchComponent>;
 export const Default: Story = {
   args: {
     disabled: false,
+    required: false,
     dataset : ['yes', 'no', 'maybe'],
   },
 };
 
-export const Required: Story = {
-  args: {
-    required: true,
-    dataset: ['yes', 'no', 'maybe'],
-  },
-};
-
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    dataset: ['Disabled 1', 'Disabled 2', 'Disabled 3'],
-  },
-};
 export const DisplayfieldChange: Story = {
   args: {
     disabled: false,

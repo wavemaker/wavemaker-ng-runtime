@@ -14,21 +14,8 @@ type Story = StoryObj<RadiosetComponent>;
 export const Default: Story = {
   args: {
     disabled: false,
+    readonly: false,
     dataset: ['Option 1', 'Option 2', 'Option 3'],
-  },
-};
-
-export const Readonly: Story = {
-  args: {
-    readonly: true,
-    dataset: ['Option A', 'Option B', 'Option C'],
-  },
-};
-
-export const Disabled: Story = {
-  args: {
-    dataset: ['Disabled 1', 'Disabled 2', 'Disabled 3'],
-    disabled: true,
   },
 };
 
