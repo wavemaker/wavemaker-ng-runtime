@@ -12,5 +12,21 @@ export default meta;
 type Story = StoryObj<AnchorComponent>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    caption:'sample',
+    hyperlink:'https://www.google.co.in/',
+    target:'_self',
+    badgevalue:'1'
+
+  },
+};
+export const AnchorWithIcon: Story = {
+  args: {
+    caption:'Sample',
+   iconheight:'10',
+   iconclass:'wi wi-plus',
+   iconwidth:'10',
+   iconposition:'left', 
+
+  },
 };
