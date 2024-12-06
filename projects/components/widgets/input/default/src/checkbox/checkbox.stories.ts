@@ -25,7 +25,7 @@ export const Default: Story = {
     required : false
 
   },
-  // Exclude `autoclose` from the Default story
+  // Exclude `class` from the Default story
   parameters: {
     controls: {
       exclude: ['class'],
