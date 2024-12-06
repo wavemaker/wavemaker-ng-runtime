@@ -4,7 +4,7 @@ import './initGlobalVariables';
 import { FormsModule } from '@angular/forms';
 import { IMaskModule } from 'angular-imask';
 import { AbstractI18nService, App, AppDefaults, CustomPipeManager } from '@wm/core';
-import { ToDatePipe, TrailingZeroDecimalPipe, ItemTemplateDirective, RepeatTemplateDirective } from "@wm/components/base";
+import { ToDatePipe, TrailingZeroDecimalPipe, ItemTemplateDirective, RepeatTemplateDirective, ImagePipe } from "@wm/components/base";
 import {ColorPickerDirective} from 'ngx-color-picker';
 import { WmComponentsModule } from '@wm/components/base';
 
@@ -246,7 +246,8 @@ export const decorators = [
       TrailingZeroDecimalPipe,
       DecimalPipe,
       ItemTemplateDirective, RepeatTemplateDirective, ColorPickerDirective,
-      DatePipe, // Provide the Angular DatePipe
+      DatePipe, // Provide the Angular DatePipe,
+      ImagePipe,
       { provide: AbstractI18nService, useClass: MockI18nService }, // Mocked or real implementation
       { provide: CustomPipeManager, useClass: MockCustomPipeManager }, // Mocked or real implementation
       { provide: App, useClass: MockApp },
