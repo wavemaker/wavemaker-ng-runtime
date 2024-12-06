@@ -96,14 +96,14 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
 
     public setProps(config, resolveFn: Function) {
         this.config = config;
-        this.baseWidgetName = this.config.base;
+        this.baseWidgetName = this.config.projectPropsOn || this.config.widgetType.split('wm-')[1];
         this.configSubject.next();
         if(config.customClasses){
             addClass(this.nativeElement, config.customClasses);
         }
         this.asAttr = this.nativeElement.children[0].children[0].hasAttribute('as');
 
-        this.baseWidget = (this.nativeElement.children[0].children[0].querySelector(`[name=${this.baseWidgetName}]`) as any)?.widget;
+        this.baseWidget = (this.nativeElement.children[0].children[0].querySelector(`[name=${this.baseWidgetName}]`) as any)?.widget; 
         // if(this.asAttr)
         //     this.setBaseWidgetName(config.widgetType);
         if (!config || !config.properties) {
@@ -157,7 +157,8 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
             this[modifiedKey] = value;
             this.nativeElement.children[0].children[0]['widget'].viewParent[modifiedKey] = value;
         }
-        if(this.formControl && modifiedKey === 'datavalue')
+        if(this.formControl && modifiedKey === 'datavalue'){
             this.updateDataValue(value);
+        }
     }
 }
