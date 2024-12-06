@@ -41,6 +41,9 @@ let formatAcceptHeader = (languages: any) => {
 WMAppProperties['preferredLanguage'] = formatAcceptHeader(navigator.languages);
 WMAppProperties['fontConfig'] = fontConfig;
 
+const formattedSupportedLanguages= WMAppProperties['supportedLanguages'].replace(/([a-zA-Z0-9_]+)\s*:/g, '"$1":').replace(/=/g, ':').replace(/([a-zA-Z0-9_]+)/g, '"$1"').replace(/"null"/g, 'null').replace(/"{/g, '{').replace(/}"/g, '}');
+
+  WMAppProperties['supportedLanguages'] = JSON.parse(formattedSupportedLanguages);
 
 (window as any)._WM_APP_PROPERTIES  = WMAppProperties
 initWmProjectProperties();

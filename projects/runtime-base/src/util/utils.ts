@@ -1,6 +1,6 @@
 export const isPrefabInPreview = (prefabName: string) => prefabName === '__self__';
 
-export const getPrefabBaseUrl = (prefabName: string) => isPrefabInPreview(prefabName) ? '.' : `app/prefabs/${prefabName}`;
+export const getPrefabBaseUrl = (prefabName: string) => isPrefabInPreview(prefabName) ? '.' : `ng-bundle/resources/${prefabName}`;
 
 export const getPrefabConfigUrl = (prefabName: string) => `${getPrefabBaseUrl(prefabName)}/config.json`;
 

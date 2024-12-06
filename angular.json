@@ -52,8 +52,11 @@
               },
               {
                 "glob": "**/*",
-                "input": "src/resources",
-                "output": "/resources/"
+                "input": "resources",
+                "output": "/resources/",
+                "ignore": [
+                  "**/*.txt"
+               ]
               }
             ],
             "styles": [
