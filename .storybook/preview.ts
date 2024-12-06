@@ -96,7 +96,7 @@ import X2JS from "x2js";
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
 
 const componentsModule = [
-  WmComponentsModule,
+  //WmComponentsModule,
 
   // NGX Bootstrap
   BsDatepickerModule,
@@ -126,7 +126,7 @@ const componentsModule = [
   CurrencyModule,
   EpochModule,
   FileUploadModule,
-  InputModule,
+  // InputModule,
   RatingModule,
   SliderModule,
 

@@ -31,14 +31,16 @@ export const Orderby: Story = {
   },
 };
 
-export const Groupby: Story = {
-  args: {
-    dataset: [
-      { category: 'Fruits', value: 'Apple' },
-      { category: 'Fruits', value: 'Banana' },
-      { category: 'Vegetables', value: 'Carrot' },
-    ],
-    displayfield: 'value',
-    groupby: 'category',
-  },
-};
+
+//Recursive Null Injector Dependency
+// export const Groupby: Story = {
+//   args: {
+//     dataset: [
+//       { category: 'Fruits', value: 'Apple' },
+//       { category: 'Fruits', value: 'Banana' },
+//       { category: 'Vegetables', value: 'Carrot' },
+//     ],
+//     displayfield: 'value',
+//     groupby: 'category',
+//   },
+// };
