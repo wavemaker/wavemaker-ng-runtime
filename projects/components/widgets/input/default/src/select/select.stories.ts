@@ -20,21 +20,13 @@ export const Default: Story = {
     name:"",
     readonly:false,
     required:true,
-    autofocus:true
+    autofocus:true,
+    disabled:false
 
   },
 
 };
 
-export const Disabled: Story = {
- 
-    args: {
-    
-      disabled: true,
-      placeholder:"This is disabled"
-    },
-  
-};
 
 export const DatasetOptions : Story = {
   args:{
@@ -54,8 +46,8 @@ export const DatasetOptions : Story = {
     ],
     datafield:"value",
     displayfield:"value",
-    groupby:'category',
-    orderby:'value'
+    // groupby:'category',
+    // orderby:'value'
     
     }
   };
