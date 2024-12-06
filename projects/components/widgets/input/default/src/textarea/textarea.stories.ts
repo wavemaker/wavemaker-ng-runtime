@@ -11,10 +11,20 @@ const meta: Meta<TextareaComponent> = {
 export default meta;
 type Story = StoryObj<TextareaComponent>;
 
-export const Placeholder: Story = {
+export const Default: Story = {
   args: {
     datavalue: '',
     placeholder: 'Enter your name here',
+    disabled: false,
+    readonly :false
+  },
+};
+
+export const MaxCharacters: Story = {
+  args: {
+    datavalue: '',
+    maxchars: 100,
+    placeholder: 'Maximum 100 characters',
   },
 };
 
@@ -26,26 +36,3 @@ export const Placeholder: Story = {
 //   },
 // };
 
-export const Disabled: Story = {
-  args: {
-    datavalue: '',
-    disabled: true,
-    placeholder: 'Enter your text here',
-  },
-};
-
-export const Readonly: Story = {
-  args: {
-    datavalue: 'Read-only text',
-    readonly: true,
-    placeholder: 'This text area is read-only',
-  },
-};
-
-export const MaxCharacters: Story = {
-  args: {
-    datavalue: '',
-    maxchars: 100,
-    placeholder: 'Maximum 100 characters',
-  },
-};

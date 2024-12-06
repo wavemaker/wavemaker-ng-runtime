@@ -60,19 +60,19 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     private debouncetime: number;
 
     public chipsList: Array<any> = [];
-    private readonly maxSizeReached = 'Max size reached';
+    public readonly maxSizeReached = 'Max size reached';
     private saturate: boolean;
     private nextItemIndex: number;
     private getTransformedData: (data, itemIndex?) => DataSetItem[];
-    private inputposition: string;
+    public inputposition: string;
     private showsearchicon: boolean;
 
     @ViewChild(SearchComponent, /* TODO: add static flag */ {static: true}) searchComponent: SearchComponent;
     private _datasource: any;
     private _unsubscribeDv = false;
-    private searchkey: string;
+    public searchkey: string;
     private _debounceUpdateQueryModel: any;
-    private limit: number;
+    public limit: number;
     private _classExpr: any;
     private minchars: number;
     private matchmode: string;

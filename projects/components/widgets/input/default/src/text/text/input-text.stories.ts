@@ -15,21 +15,8 @@ export const Placeholder: Story = {
   args: {
     datavalue: '',
     placeholder: 'Enter your name here',
-  },
-};
-
-export const Disabled: Story = {
-  args: {
-    datavalue: 'Cannot edit this',
-    disabled: true,
-  },
-};
-
-export const Readonly: Story = {
-  args: {
-    datavalue: 'Read-only text',
-    readonly: true,
-    hint: 'This is a hint for the user', 
+    disabled: false,
+    readonly: false,
   },
 };
 
