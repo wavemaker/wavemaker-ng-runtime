@@ -28,20 +28,35 @@ export const Required: Story = {
 export const Disabled: Story = {
   args: {
     disabled: true,
-    dataset: ['yes', 'no', 'maybe'],
+    dataset: ['Disabled 1', 'Disabled 2', 'Disabled 3'],
   },
 };
 export const DisplayfieldChange: Story = {
   args: {
     disabled: false,
     dataset: [
-      { "name": "John Doe", "location": "New York, USA" },
-      { "name": "Jane Smith", "location": "London, UK" },
-      { "name": "Michael Johnson", "location": "Sydney, Australia" },
-      { "name": "Emily Davis", "location": "Toronto, Canada" },
-      { "name": "David Williams", "location": "Berlin, Germany" }
+      { 'name': 'John Doe', 'location': 'New York, USA' },
+      { 'name': 'Jane Smith', 'location': 'London, UK' },
+      { 'name': 'Michael Johnson', 'location': 'Sydney, Australia' },
+      { 'name': 'Emily Davis', 'location': 'Toronto, Canada' },
+      { 'name': 'David Williams', 'location': 'Berlin, Germany' }
     ],
-    displayfield : "location"
+    displayfield : 'location'
+  },
+};
+
+export const Orderby: Story = {
+  args: {
+    disabled: false,
+    dataset: [
+      { 'name': 'John Doe', 'location': 'New York, USA' },
+      { 'name': 'Jane Smith', 'location': 'London, UK' },
+      { 'name': 'Michael Johnson', 'location': 'Sydney, Australia' },
+      { 'name': 'Emily Davis', 'location': 'Toronto, Canada' },
+      { 'name': 'David Williams', 'location': 'Berlin, Germany' }
+    ],
+    displayfield : 'location',
+    orderby : 'name:asc',
   },
 };
 
