@@ -539,6 +539,8 @@ buildUmdFiles() {
     execCommand "rollup" "angular-websocket" "${ROLLUP} -c ./config/rollup.angular-websocket.config.mjs"
     execCommand "rollup" "ng-circle-progress" "${ROLLUP} -c ./config/rollup.ng-circle-progress.config.mjs"
     execCommand "rollup" "ngx-libs" "${ROLLUP} -c ./config/rollup.ngx-libs.config.mjs"
+    execCommand "rollup" "ngx-lottie" "${ROLLUP} -c ./config/rollup.ngx-lottie.config.mjs"
+    execCommand "rollup" "lottie-web" "${ROLLUP} -c ./config/rollup.lottie-web.config.mjs"
 }
 
 buildAngularUmdLibs() {
@@ -609,6 +611,8 @@ bundleWebLibs() {
         ./node_modules/@wavemaker/focus-trap/dist/focus-trap.umd.js \
         ./node_modules/@ztree/ztree_v3/js/jquery.ztree.all.js \
         ./projects/components/widgets/basic/tree/src/keyboard-navigation.js \
+        ./dist/tmp/libs/ngx-lottie/ngx-lottie.umd.js \
+        ./dist/tmp/libs/lottie-web/lottie-web.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-libs.js -b
 
          ./node_modules/.bin/terser ./dist/bundles/wmapp/scripts/wm-libs.js \
@@ -684,6 +688,8 @@ bundleMobileLibs() {
         ./node_modules/@wavemaker/focus-trap/dist/focus-trap.umd.js \
         ./node_modules/@ztree/ztree_v3/js/jquery.ztree.all.js \
         ./projects/components/widgets/basic/tree/src/keyboard-navigation.js \
+        ./dist/tmp/libs/ngx-lottie/ngx-lottie.umd.js \
+        ./dist/tmp/libs/lottie-web/lottie-web.umd.js \
         -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
 
     ./node_modules/.bin/terser ./dist/bundles/wmmobile/scripts/wm-libs.js \

@@ -124,6 +124,7 @@ import {NgCircleProgressModule} from "ng-circle-progress";
 import {TooltipModule} from "ngx-bootstrap/tooltip";
 import { provideLottieOptions } from 'ngx-lottie';
 import player from 'lottie-web';
+import { LottieAnimationComponent } from './components/app-lottie.component';
 
 declare const _WM_APP_PROPERTIES;
 
@@ -272,7 +273,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
-
+        LottieAnimationComponent,
         ToastrModule,
         WmComponentsModule,
         MobileRuntimeModule,

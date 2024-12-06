@@ -143,7 +143,9 @@ const rollupGlobals = {
     'rxjs': 'rxjs',
     'rxjs/operators': 'rxjs.operators',
     'tslib': 'tslib',
-    'angular2-websocket/angular2-websocket': 'angularWebSocket'
+    'angular2-websocket/angular2-websocket': 'angularWebSocket',
+    'ngx-lottie': 'ngxLottie',
+    'lottie-web': 'lottie'
 };
 
 export const rollupExternals = [
@@ -287,7 +289,9 @@ export const rollupExternals = [
     'ngx-color-picker',
     'ngx-toastr',
     'ng-circle-progress',
-    'tslib'
+    'tslib',
+    'ngx-lottie',
+    'lottie-web'
 ]
 
 export default rollupGlobals;

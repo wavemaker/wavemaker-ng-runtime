@@ -63,7 +63,7 @@
         "ng-circle-progress": "1.7.1",
         "ngx-bootstrap": "9.0.0",
         "ngx-color-picker": "16.0.0",
-        "ngx-lottie": "^11.0.2",
+        "ngx-lottie": "^10.0.0",
         "ngx-toastr": "17.0.2",
         "rxjs": "6.6.0",
         "rxjs-compat": "6.4.0",

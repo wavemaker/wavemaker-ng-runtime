@@ -1,7 +1,8 @@
 <ng-container *ngIf="startApp">
     <router-outlet></router-outlet>
     <div wmContainer partialContainer content="Common" hidden class="ng-hide" *ngIf="isApplicationType"></div>
-    <app-spinner name="globalspinner" classname="global-spinner" role="alert" aria-live="assertive" [attr.aria-label]="spinner.arialabel || 'Loading'" [show]="spinner.show" [spinnermessages]="spinner.messages"></app-spinner>
+    <!-- <app-spinner name="globalspinner" classname="global-spinner" role="alert" aria-live="assertive" [attr.aria-label]="spinner.arialabel || 'Loading'" [show]="spinner.show" [spinnermessages]="spinner.messages"></app-spinner> -->
+    <app-lottie name="globalspinner"[show]="spinner.show" [spinnermessages]="spinner.messages" ></app-lottie>
     <div wmDialog name="oAuthLoginDialog" title="Application is requesting you to sign in with"
          close.event="closeOAuthDialog()">
         <ng-template #dialogBody>
