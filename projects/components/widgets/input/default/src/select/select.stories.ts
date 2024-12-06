@@ -11,11 +11,53 @@ const meta: Meta<SelectComponent> = {
 export default meta;
 type Story = StoryObj<SelectComponent>;
 
-export const Primary: Story = {
+export const Default: Story = {
+ 
   args: {
-    dataset: { value: "User 1" },
-    autofocus: true,
-    class: "primary",
-    disabled: false,
+  
+    datavalue: {value: 'Option 1, Option 2, Option 3'},
+    placeholder:"Select Value",
+    name:"",
+    readonly:false,
+    required:true,
+    autofocus:true
+
   },
+
 };
+
+export const Disabled: Story = {
+ 
+    args: {
+    
+      disabled: true,
+      placeholder:"This is disabled"
+    },
+  
+};
+
+export const DatasetOptions : Story = {
+  args:{
+    dataset:  [
+      {
+        "category": "Fruits",
+        "value": "Apple"
+      },
+      {
+        "category": "Fruits",
+        "value": "Banana"
+      },
+      {
+        "category": "Vegetables",
+        "value": "Carrot"
+      }
+    ],
+    datafield:"value",
+    displayfield:"value",
+    groupby:'category',
+    orderby:'value'
+    
+    }
+  };
+
+
