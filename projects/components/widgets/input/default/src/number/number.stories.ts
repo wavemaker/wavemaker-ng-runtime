@@ -13,32 +13,24 @@ const meta: Meta<NumberComponent> = {
 export default meta;
 type Story = StoryObj<NumberComponent>;
 
-export const Placeholder: Story = {
+export const Default: Story = {
   args: {
     placeholder: 'EnterNumber here',
       minvalue: 0,
       maxvalue: 100,
       datavalue: 10,
+      disabled: false,
+    readonly: false,
+    hint:"Enter number",
+    step:1,
       
     },
 
 };
 
-export const Disabled: Story = {
-  args: {
-  
-    disabled: true,
-    placeholder:"This is disabled"
-  },
-};
 
-export const Readonly: Story = {
-  args: {
-    
-    readonly: true,
-    hint: 'This is only readable', 
-  },
-};
+
+
 
 export const validation: Story = {
   args: {
