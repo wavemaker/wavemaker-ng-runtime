@@ -18,8 +18,26 @@ type Story = StoryObj<CheckboxComponent>;
 
 export const Default: Story = {
   args: {
-    _caption: "Label",
+    _caption: "checkbox",
     class: 'secondary',
     disabled: false,
+    readonly : false,
+    required : false
+
+  },
+  // Exclude `autoclose` from the Default story
+  parameters: {
+    controls: {
+      exclude: ['class'],
+    },
+  },
+};
+
+export const Class: Story = {
+  args: {
+    _caption: "checkbox",
+    datavalue : true,
+    disabled: true,
+    class: 'secondary',
   },
 };
