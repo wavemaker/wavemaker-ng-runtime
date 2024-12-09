@@ -8,6 +8,7 @@ const meta: Meta<SpinnerComponent> = {
  
     argTypes: {
       type: { control: 'select', options: ['icon', 'image'] },
+      animation:{control: 'select', options: ['bounce', 'fadeIn','fadeOut','flipInX','flipInY','pulse','shake','spin','swing','zoomIn','zoomOut'] }
     }
   
 };

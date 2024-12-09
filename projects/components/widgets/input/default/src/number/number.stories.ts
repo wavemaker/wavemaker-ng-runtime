@@ -25,6 +25,12 @@ export const Default: Story = {
     step:1,
       
     },
+    parameters: {
+      controls: {
+        exclude: ['inputmode'],
+      },
+    },
+
 
 };
 
@@ -40,6 +46,12 @@ export const validation: Story = {
     datavalue :5
 
   },
+  parameters: {
+    controls: {
+      exclude: ['inputmode'],
+    },
+  },
+
 };
 
 export const InputMode: Story = {

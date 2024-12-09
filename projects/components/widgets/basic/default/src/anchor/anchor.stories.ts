@@ -5,7 +5,10 @@ const meta: Meta<AnchorComponent> = {
   title: 'Form/Anchor',
   component: AnchorComponent,
   tags: ['autodocs'],
-  argTypes: {}
+  argTypes: {
+   target: {control: 'select', options: ['_blank', '_self','_parent','_top'] },
+   iconposition:{control:'select',options:['top','right','left']}
+  }
 };
 
 export default meta;
@@ -16,9 +19,15 @@ export const Default: Story = {
     caption:'sample',
     hyperlink:'https://www.google.co.in/',
     target:'_self',
-    badgevalue:'1'
-
+    badgevalue:'1',
+   
   },
+  parameters: {
+    controls: {
+      exclude: ['iconposition'],
+    },
+  },
+
 };
 export const AnchorWithIcon: Story = {
   args: {
