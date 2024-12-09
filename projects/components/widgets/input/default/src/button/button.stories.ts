@@ -28,7 +28,7 @@ export const Filled: Story = {
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
-    badgevalue: '2'
+    badgevalue: ''
   },
   render: (args) => {
 
@@ -60,7 +60,7 @@ export const Outlined: Story = {
     type:'medium',
     iconposition: 'right',
     iconclass: 'wi wi-plus',
-    badgevalue: '2'
+    badgevalue: ''
 
   },
   render: (args) => {
@@ -93,7 +93,7 @@ export const Text: Story = {
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
-    badgevalue: '2'
+    badgevalue: ''
   },
   render: (args) => {
 
@@ -125,7 +125,7 @@ export const Elevated: Story = {
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
-    badgevalue: '2'
+    badgevalue: ''
   },
   render: (args) => {
 

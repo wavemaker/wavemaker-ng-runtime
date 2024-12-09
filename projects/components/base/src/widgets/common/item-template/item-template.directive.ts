@@ -53,6 +53,7 @@ export class ItemTemplateDirective extends StylableComponent {
     }
     ngOnInit() {
         super.ngOnInit();
+        if(this?.partialParams?.item)
         this.partialParams.item = this.userComponentParams.dataObject;
     }
 }

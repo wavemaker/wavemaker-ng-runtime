@@ -7,6 +7,7 @@ import { AbstractI18nService, App, AppDefaults, CustomPipeManager } from '@wm/co
 import { ToDatePipe, TrailingZeroDecimalPipe, ItemTemplateDirective, RepeatTemplateDirective, ImagePipe } from "@wm/components/base";
 import {ColorPickerDirective} from 'ngx-color-picker';
 import { WmComponentsModule } from '@wm/components/base';
+import { PartialRefProvider } from '@wm/core';
 
 //ngx-modules
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
@@ -89,10 +90,6 @@ import { TopNavModule } from '@wm/components/page/top-nav';
 import { PrefabModule } from '@wm/components/prefab';
 
 import { CommonModule, DatePipe, DecimalPipe } from "@angular/common";
-import X2JS from "x2js";
-
-(<any>window).X2JS = X2JS;
-
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
 
 const componentsModule = [
@@ -201,6 +198,10 @@ class MockAppDefault extends AppDefaults {
   }
 }
 
+class MockPartialRefProvider {
+  // Define mock methods or properties to simulate the behavior of PartialRefProvider
+}
+
 // Mock or real implementations of the services
 class MockI18nService {
   // Add mocked methods as needed
@@ -237,7 +238,7 @@ export const decorators = [
     declarations: [], // Add any declarations your components depend on
     imports: [
       ...componentsModule,
-      CommonModule, 
+      WmComponentsModule,
       FormsModule,
       IMaskModule
     ],
@@ -245,9 +246,10 @@ export const decorators = [
       ToDatePipe,
       TrailingZeroDecimalPipe,
       DecimalPipe,
-      ItemTemplateDirective, RepeatTemplateDirective, ColorPickerDirective,
+      RepeatTemplateDirective, ColorPickerDirective,
       DatePipe, // Provide the Angular DatePipe,
       ImagePipe,
+      { provide: PartialRefProvider, useClass: MockPartialRefProvider },
       { provide: AbstractI18nService, useClass: MockI18nService }, // Mocked or real implementation
       { provide: CustomPipeManager, useClass: MockCustomPipeManager }, // Mocked or real implementation
       { provide: App, useClass: MockApp },
@@ -275,7 +277,16 @@ const preview: Preview = {
         theme: themes.normal,
       },
     },
-    actions: { argTypesRegex: "^on[A-Z].*" }
+    actions: { argTypesRegex: "^on[A-Z].*" },
+    options: {
+      storySort: {
+        method: 'custom', // You can use 'alphabetical' or specify your custom sorting method
+        order: [
+          'Form',
+          'Input'
+        ],
+      },
+    },
   },
 };
 export default preview;
