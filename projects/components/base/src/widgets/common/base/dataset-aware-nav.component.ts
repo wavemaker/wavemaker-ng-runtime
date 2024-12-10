@@ -31,6 +31,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
     public dataset: any;
     public itemicon: string;
     public itemlabel: string;
+    public itemhint: string;
     public itemlink: string;
     public itemtarget: string;
     public itembadge: string;
@@ -46,6 +47,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
 
     private _itemFieldMap;
     private binditemlabel: string | null;
+    private binditemhint: string | null;
     private binditemicon: string | null;
     private binditemaction: string | null;
     private binditembadge: string | null;
@@ -63,6 +65,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
         super(inj, WIDGET_CONFIG, explicitContext);
         this.securityService = this.inj.get(SecurityService);
         this.binditemlabel = this.nativeElement.getAttribute('itemlabel.bind');
+        this.binditemhint = this.nativeElement.getAttribute('itemhint.bind');
         this.binditemicon = this.nativeElement.getAttribute('itemicon.bind');
         this.binditemaction = this.nativeElement.getAttribute('itemaction.bind');
         this.binditembadge = this.nativeElement.getAttribute('itembadge.bind');
@@ -109,6 +112,10 @@ export class DatasetAwareNavComponent extends StylableComponent {
                 field: this.itemlabel,
                 bindExpression: this.binditemlabel
             }, context) || get(node, fields.labelField),
+            hint: getEvaluatedData(node, {
+                field: this.itemhint,
+                bindExpression: this.binditemhint
+            }, context) || get(node, fields.hintField),
             link: getValidLink(getEvaluatedData(node, {
                 field: this.itemlink,
                 bindExpression: this.binditemlink
@@ -136,6 +143,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
                 idField: this.itemid || 'itemid',
                 iconField: this.itemicon || 'icon',
                 labelField: this.itemlabel || 'label',
+                hintField: this.itemhint || 'hint',
                 linkField: this.itemlink || 'link',
                 targetField: this.itemtarget || 'target',
                 badgeField: this.itembadge || 'badge',
@@ -205,6 +213,7 @@ export class DatasetAwareNavComponent extends StylableComponent {
             case 'dataset':
             case 'itemicon':
             case 'itemlabel':
+            case 'itemhint':
             case 'itemlink':
             case 'itemtarget':
             case 'itemclass':
