@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { RadiosetComponent } from './radioset.component';
 
 const meta: Meta<RadiosetComponent> = {
-  title: 'Input/Radioset',
+  title: 'Form/Radioset',
   component: RadiosetComponent,
   tags: ['autodocs'],
   argTypes: {}
