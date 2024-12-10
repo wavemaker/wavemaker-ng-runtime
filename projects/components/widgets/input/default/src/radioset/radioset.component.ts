@@ -1,4 +1,4 @@
-import {Component, Inject, Injector, Optional} from '@angular/core';
+import {Component, Inject, Injector, Optional, ChangeDetectorRef} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import {setListClass} from '@wm/core';
@@ -31,10 +31,17 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
     public itemsperrow: string;
     private itemsPerRowClass: string;
 
-    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, private cdr: ChangeDetectorRef) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
+        const datasetSubscription = this.dataset$.subscribe(() => this.updateRadioOptions());
+
+        this.registerDestroyListener(() => datasetSubscription.unsubscribe());
         this.multiple = false;
+    }
+
+    private updateRadioOptions() {
+        this.cdr.detectChanges();
     }
 
     triggerInvokeOnChange(key, $event) {

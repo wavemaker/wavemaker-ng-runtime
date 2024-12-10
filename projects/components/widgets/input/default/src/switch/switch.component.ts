@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, Injector, Optional} from '@angular/core';
+import {AfterViewInit, Component, Inject, Injector, Optional, ChangeDetectorRef} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import {$appDigest, debounce, isDefined, setCSS, toBoolean} from '@wm/core';
@@ -36,7 +36,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     private _debounceSetSelectedValue: Function;
     public name: string;
 
-    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, private cdr: ChangeDetectorRef) {
         super(inj, WIDGET_CONFIG, explicitContext);
         this.multiple = this.getAttr("multiple") === "true";
         this.checkediconclass = this.getAttr("checkediconclass") || 'wm-sl-l sl-check';
@@ -93,6 +93,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         }
 
         this._debounceSetSelectedValue(true);
+        this.cdr.detectChanges();
     }
 
     // This function animates the highlighted span on to the selected value.
