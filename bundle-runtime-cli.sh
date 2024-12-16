@@ -59,12 +59,17 @@ cp -r pwa-assets dist/runtime-cli
 if [[ "${dev}" == true ]]; then
     cp -r libraries dist/runtime-cli/angular-app
 fi
-cp angular.json package.json package-lock.json .npmrc tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
+cp angular.json package.json package-lock.json .npmrc tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js generate-dependency-report.js dist/runtime-cli/angular-app
 cp ./wm.package.json libraries/package.json
 
-if [[ "${publish}" == true ]]; then
+if [[ "${publish}" ==  true ]]; then
+    cd dist/runtime-cli/angular-app
+    npm run generate-deps
+    cd ../../..
     node bundle-runtime-cli.js --publishVersion=${publishVersion}
 fi
+
+
 mkdir -p dist/npm-packages/app-ng-runtime
 cp -r libraries/. dist/npm-packages/app-ng-runtime
 tar -zcf dist/npm-packages/app-ng-runtime.tar.gz -C dist/npm-packages app-ng-runtime
