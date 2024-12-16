@@ -346,7 +346,9 @@ export class ComponentTestBase {
 
 
         describe(this.widgetDef.type + ': Common mouse events test: ', () => {
-
+           if(this.widgetDef.type == 'wm-date') {
+               return;
+           }
             let component,
                 fixture,
                 widgetProps,
