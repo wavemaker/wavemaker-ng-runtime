@@ -1,6 +1,6 @@
 {
-    "name": "wavemaker-ng-runtime-new",
-    "version": "0.0.0",
+    "name": "@wavemaker/angular-app",
+    "version": "1.0.0-dev",
     "scripts": {
         "ng": "ng",
         "start": "./node_modules/.bin/ng serve",
@@ -16,7 +16,10 @@
         "optimizecss": "gulp --gulpfile build-scripts/optimize-css.gulpfile.js",
         "owasp": "owasp-dependency-check --project \"wavemaker-ng-runtime\" -f \"ALL\""
     },
-    "private": true,
+    "files": [
+        "**/*",
+        ".npmrc"
+    ],
     "dependencies": {
         "@angular/animations": "17.3.11",
         "@angular/common": "17.3.11",
