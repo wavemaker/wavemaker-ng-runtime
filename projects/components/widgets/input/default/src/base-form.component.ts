@@ -79,6 +79,9 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
     protected updatePrevDatavalue(val: any) {
         this.prevDatavalue = val;
     }
+    protected getPrevDataValue() {
+        return this.prevDatavalue;
+    }
 
     ngAfterViewInit() {
         super.ngAfterViewInit();

@@ -331,6 +331,9 @@ $.widget('wm.datatable', {
             if (field === 'checkbox') {
                 $th.append('<input type="checkbox" />');
             }
+            if (field === 'radio') {
+                $th.attr('aria-label', "Select row");
+            }
             $th.append('<span class="header-data">' + headerLabel + '</span>');
             if (sortEnabled) { //If sort info is present, show the sort icon for that column on grid render
                 $sortSpan = $('<span class="sort-buttons-container"></span>');
