@@ -50,10 +50,7 @@ mkdir -p dist/npm-packages/package
 
 TARBALL_NAME="wavemaker-app-ng-runtime-${publishVersion}.tgz"
 
-if [[ "${publish}" ==  true ]]; then
-    cd dist/runtime-cli/angular-app
-    npm run generate-deps
-    cd ../../..
+if [[ "${publish}" == true ]]; then
     node bundle-runtime-cli.js --publishVersion=${publishVersion}
     cp -r libraries/. dist/npm-packages/package
     cd dist/npm-packages/package
