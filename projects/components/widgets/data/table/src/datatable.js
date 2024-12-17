@@ -320,7 +320,10 @@ $.widget('wm.datatable', {
             $th.attr({
                 'data-col-id': id,
                 'data-col-field': field,
-                'title': titleLabel
+                'title': titleLabel,
+                'tabindex': 0,
+                'scope': 'col',
+                'role':'columnheader'
             });
             self._setStyles($th, 'text-align: ' + value.textAlignment)
             $th.addClass(headerClasses);
@@ -359,7 +362,8 @@ $.widget('wm.datatable', {
                     $groupTl.attr({
                         'data-col-group': col.field,
                         'class': classes,
-                        'title': col.displayName
+                        'title': col.displayName,
+                        'tabindex': 0
                     });
                     self._setStyles($groupTl, styles);
                     $groupTl.append('<span class="header-data">' + col.displayName + '</span>');
@@ -673,7 +677,7 @@ $.widget('wm.datatable', {
             colExpression = colDef.customExpression,
             styles = "text-align: " + colDef.textAlignment + ";position: relative;"
 
-        $htm = $('<td class="' + classes + '" data-col-id="' + colId + '" role="cell"></td>');
+        $htm = $('<td class="' + classes + '" data-col-id="' + colId + '" role="cell" tabindex="0"></td>');
         this._setStyles($htm, styles);
 
         columnValue = _.get(row, colDef.field);
@@ -3252,8 +3256,8 @@ $.widget('wm.datatable', {
                 '<div class="app-grid-header">' +
                 '<div class="app-grid-header-inner">' +
                 '<table tabindex="0" class="' + this.options.cssClassNames.gridDefault + ' ' + this.options.cssClassNames.grid + '">' +
-                '<thead tabindex="0" class="table-header thead-sticky" id="table_header_' + this.tableId + '">' +
-                '</thead><tbody class="app-grid-content app-datagrid-body"  id="table_' + this.tableId + '">' +
+                '<thead class="table-header thead-sticky" id="table_header_' + this.tableId + '" role="rowgroup">' +
+                '</thead><tbody class="app-grid-content app-datagrid-body"  id="table_' + this.tableId + '" role="rowgroup">' +
                 '</tbody></table>' +
                 '</div></div></div>',
             $statusContainer = $(statusContainer),

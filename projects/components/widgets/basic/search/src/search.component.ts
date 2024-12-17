@@ -1,4 +1,5 @@
 import {
+    AfterViewChecked,
     AfterViewInit,
     Attribute,
     Component,
@@ -62,7 +63,7 @@ const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
         provideAsWidgetRef(SearchComponent)
     ]
 })
-export class SearchComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
+export class SearchComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit, AfterViewChecked {
     static initializeProps = registerProps();
     public casesensitive: boolean;
     public searchkey: string;
@@ -814,7 +815,13 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         styler(this.nativeElement as HTMLElement, this);
         this.containerTarget = getContainerTargetClass(this.nativeElement);
-        $('.app-search-input').removeAttr('aria-expanded');
+    }
+
+    public ngAfterViewChecked() {
+        const searchInputEl = $('.app-search-input');
+        if (searchInputEl) {
+            searchInputEl.removeAttr('aria-expanded');
+        }
     }
 
     private eventData($event, item) {

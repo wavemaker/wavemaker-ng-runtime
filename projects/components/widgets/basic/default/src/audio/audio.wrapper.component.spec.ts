@@ -1,13 +1,16 @@
-import { ComponentFixture, waitForAsync } from '@angular/core/testing';
-import { Component, ViewChild } from '@angular/core';
-import { AudioComponent } from './audio.component';
-import { FormsModule } from '@angular/forms';
-import { App } from '@wm/core';
-import { provideAsWidgetRef } from '@wm/components/base';
-import { By } from '@angular/platform-browser';
-import { Pipe, PipeTransform } from '@angular/core';
-import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
-import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
+import {ComponentFixture, waitForAsync} from '@angular/core/testing';
+import {Component, Pipe, PipeTransform, ViewChild} from '@angular/core';
+import {AudioComponent} from './audio.component';
+import {FormsModule} from '@angular/forms';
+import {App} from '@wm/core';
+import {provideAsWidgetRef} from '@wm/components/base';
+import {By} from '@angular/platform-browser';
+import {
+    ComponentTestBase,
+    ITestComponentDef,
+    ITestModuleDef
+} from 'projects/components/base/src/test/common-widget.specs';
+import {compileTestComponent, mockApp} from 'projects/components/base/src/test/util/component-test-util';
 
 @Pipe({ name: 'trustAs' })
 class MockTrustAsPipe implements PipeTransform {
@@ -16,7 +19,7 @@ class MockTrustAsPipe implements PipeTransform {
     }
 }
 
-const markup = `<div wmAudio name="audio" hint="audio" [attr.aria-label]="'audio'" tabindex="1"></div>`;
+const markup = `<div wmAudio name="audio" hint="audio" [attr.aria-label]="'audio'" tabindex="0"></div>`;
 
 @Component({
     template: markup

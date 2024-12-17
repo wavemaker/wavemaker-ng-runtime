@@ -8,7 +8,7 @@ import {ComponentFixture, fakeAsync, tick, waitForAsync} from "@angular/core/tes
 import {By} from "@angular/platform-browser";
 import {provideAsWidgetRef} from "@wm/components/base";
 
-const markup = `<div wmProgressBar name="progress_bar1" hint="Progress bar" arialabel="Progress bar" tabindex="1"></div>`;
+const markup = `<div wmProgressBar name="progress_bar1" hint="Progress bar" arialabel="Progress bar" tabindex="0"></div>`;
 
 @Component({
     template: markup
@@ -67,7 +67,7 @@ describe('ProgressBar component', () => {
         expect(progressBarComponent.hint).toBe("Progress bar");
         expect(progressBarComponent.data.length).toBe(1);
         expect(progressBarComponent.data[0].cls).toBe('');
-        expect(progressBarComponent.data[0].progressBarWidth).toBe("0%");
+        expect(progressBarComponent.data[0].progressBarWidth).toBe(0);
         expect(progressBarComponent.data[0].displayValue).toBe("0");
     });
 

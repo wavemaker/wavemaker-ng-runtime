@@ -2,18 +2,22 @@
     "compileOnSave": false,
     "compilerOptions": {
         "baseUrl": "./",
-        "outDir": "./dist/out-tsc",
         "downlevelIteration": true,
-        "declaration": false,
+        "outDir": "./dist/out-tsc",
         "sourceMap": true,
+        "declaration": false,
+        "target": "es2022",
+        "module": "es2020",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "esModuleInterop": true,
-        "moduleResolution": "node",
-        "target": "ES2022",
-        "module": "ES2022",
         "typeRoots": [
             "node_modules/@types"
+        ],
+        "lib": [
+            "es2018",
+            "dom"
         ],
         "paths": {
             "rxjs/observable/throw": [
@@ -22,66 +26,99 @@
             "rxjs/observable/*": [
                 "node_modules/rxjs-compat/_esm2015/observable/*"
             ],
-            "rxjs/Observable": ["node_modules/rxjs-compat/_esm2015/Observable"],
-            "@wm/build-task": ["libraries/build-task/"],
-            "@wm/mobile-build-task": ["libraries/mobile-build-task"],
-            "@wm/core": ["libraries/core/index.d.ts"],
-            "@wavemaker/variables": ["node_modules/@wavemaker/variables/"],
-            "@wavemaker/custom-widgets-m3": ["node_modules/@wavemaker/custom-widgets-m3/"],
-            "@wm/components/base": ["libraries/components/base/public_api.d.ts"],
+            "rxjs/Observable": [
+                "node_modules/rxjs-compat/_esm2015/Observable"
+            ],
+            "@wm/build-task": [
+                "libraries/build-task/"
+            ],
+            "@wm/mobile-build-task": [
+                "libraries/mobile-build-task"
+            ],
+            "@wm/core": [
+                "libraries/core"
+            ],
+            "@wavemaker/variables": [
+                "node_modules/@wavemaker/variables/"
+            ],
+            "@wavemaker/custom-widgets-m3": [
+                "node_modules/@wavemaker/custom-widgets-m3/"
+            ],
+            "@wm/components/base": [
+                "libraries/components/base"
+            ],
             "@wm/components/basic": [
-                "libraries/components/basic/default/index.d.ts"
+                "libraries/components/basic/default"
             ],
             "@wm/components/input": [
-                "libraries/components/input/default/index.d.ts"
+                "libraries/components/input/default"
             ],
             "@wm/components/page": [
-                "libraries/components/page/default/index.d.ts"
+                "libraries/components/page/default"
             ],
             "@wm/mobile/components/basic": [
-                "libraries/mobile/components/basic/default/index.d.ts"
+                "libraries/mobile/components/basic/default"
             ],
             "@wm/mobile/components/page": [
-                "libraries/mobile/components/page/default/index.d.ts"
+                "libraries/mobile/components/page/default"
             ],
             "@wm/components/dialogs": [
-                "libraries/components/dialogs/default/index.d.ts"
+                "libraries/components/dialogs/default"
             ],
-            "@wm/mobile/components/*": ["libraries/mobile/components/*"],
-            "@wm/components/*": ["libraries/components/*"],
-            "@wm/transpiler": ["libraries/transpiler/index.d.ts"],
-            "@wm/security": ["libraries/security/index.d.ts"],
-            "@swipey": ["libraries/swipey/index.d.ts"],
-            "@wm/http": ["libraries/http/index.d.ts"],
-            "@wm/oAuth": ["libraries/oAuth/index.d.ts"],
-            "@wm/variables": ["libraries/variables/index.d.ts"],
-            "@wm/mobile/core": ["libraries/mobile/core/index.d.ts"],
-            "@wm/mobile/components": ["libraries/mobile/components/index.d.ts"],
-            "@wm/mobile/offline": ["libraries/mobile/offline/index.d.ts"],
-            "@wm/mobile/variables": ["libraries/mobile/variables/index.d.ts"],
-            "@wm/runtime/base": ["libraries/runtime/base/index.d.ts"],
-            "@wm/runtime/dynamic": ["libraries/runtime/dynamic/index.d.ts"],
-            "@wm/mobile/runtime": ["libraries/mobile/runtime/index.d.ts"],
+            "@wm/mobile/components/*": [
+                "libraries/mobile/components/*"
+            ],
+            "@wm/components/*": [
+                "libraries/components/*"
+            ],
+            "@wm/transpiler": [
+                "libraries/transpiler"
+            ],
+            "@wm/security": [
+                "libraries/security"
+            ],
+            "@swipey": [
+                "libraries/swipey"
+            ],
+            "@wm/http": [
+                "libraries/http"
+            ],
+            "@wm/oAuth": [
+                "libraries/oAuth"
+            ],
+            "@wm/variables": [
+                "libraries/variables"
+            ],
+            "@wm/mobile/core": [
+                "libraries/mobile/core"
+            ],
+            "@wm/mobile/components": [
+                "libraries/mobile/components"
+            ],
+            "@wm/mobile/offline": [
+                "libraries/mobile/offline"
+            ],
+            "@wm/mobile/variables": [
+                "libraries/mobile/variables"
+            ],
+            "@wm/runtime/base": [
+                "libraries/runtime/base"
+            ],
+            "@wm/runtime/dynamic": [
+                "libraries/runtime/dynamic"
+            ],
+            "@wm/mobile/runtime": [
+                "libraries/mobile/runtime"
+            ],
             "@wm/mobile/runtime/dynamic": [
-                "libraries/mobile/runtime-dynamic/index.d.ts"
+                "libraries/mobile/runtime-dynamic"
             ]
         },
-        "lib": ["es2020", "dom"],
-        "useDefineForClassFields": false,
-        "resolveJsonModule": true
+        "useDefineForClassFields": false
     },
     "angularCompilerOptions": {
         "compilationMode": "full",
         "strictMetadataEmit": false,
-        "fullTemplateTypeCheck": false,
-        "extendedDiagnostics": {
-            "checks": {
-                "optionalChainNotNullable": "suppress"
-            }
-        },
-        "enableI18nLegacyMessageIdFormat": false,
-        "strictInjectionParameters": false,
-        "strictInputAccessModifiers": false,
-        "trace": true
+        "fullTemplateTypeCheck": false
     }
 }

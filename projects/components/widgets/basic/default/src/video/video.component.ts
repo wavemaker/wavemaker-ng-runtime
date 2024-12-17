@@ -36,6 +36,7 @@ export class VideoComponent extends StylableComponent {
     public oggformat: string;
     public videosupportmessage: any;
     public arialabel: string;
+    public tabindex: string;
 
     constructor(inj: Injector, private trustAsPipe: TrustAsPipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
@@ -65,6 +66,8 @@ export class VideoComponent extends StylableComponent {
             this.webmformat = transformFileURI(nv);
         } else if (key === 'oggformat') {
             this.oggformat = transformFileURI(nv);
+        } else if (key === 'tabindex') {
+            return;
         }
 
         super.onPropertyChange(key, nv, ov);

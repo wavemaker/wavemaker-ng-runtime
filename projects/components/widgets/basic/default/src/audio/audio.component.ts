@@ -29,9 +29,19 @@ export class AudioComponent extends StylableComponent {
     public autoplay: boolean;
     public hint: string;
     public arialabel: string;
+    public tabindex: string;
+
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this);
+    }
+
+    onPropertyChange(key, nv, ov) {
+        if (key === 'tabindex') {
+            return
+        } else {
+            super.onPropertyChange(key, nv, ov);
+        }
     }
 }

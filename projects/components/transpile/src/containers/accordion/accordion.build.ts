@@ -1,6 +1,6 @@
-import { Element } from '@angular/compiler';
-import { IBuildTaskDef, getAttrMarkup, register, getBoundToExpr } from '@wm/transpiler';
-import { IDGenerator, updateTemplateAttrs } from '@wm/core';
+import {Element} from '@angular/compiler';
+import {getAttrMarkup, getBoundToExpr, IBuildTaskDef, register} from '@wm/transpiler';
+import {IDGenerator, updateTemplateAttrs} from '@wm/core';
 
 const tagName = 'div';
 const dataSetKey = 'dataset';
@@ -14,7 +14,7 @@ register('wm-accordion', (): IBuildTaskDef => {
             // generating unique Id for the accordion
             const counter = idGen.nextUid();
             shared.set('accordion_ref', counter);
-            return `<${tagName} wmAccordion #${counter}="wmAccordion" role="tablist" aria-multiselectable="true" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmAccordion #${counter}="wmAccordion" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`,
         template: (node: Element, shared) => {

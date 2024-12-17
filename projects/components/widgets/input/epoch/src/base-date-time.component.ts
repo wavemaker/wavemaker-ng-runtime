@@ -64,6 +64,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public dataentrymode;
     protected activeDate;
     private elementScope;
+    public viewmode;
     public datepattern;
     public timepattern;
     protected showseconds: boolean;
@@ -309,8 +310,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         return (newDate.getMonth() === 0 && this.activeDate.getMonth() === 11) || (newDate.getMonth() === 11 && this.activeDate.getMonth() === 0);
     }
 
-    public showDatePickerModal(bsDataval) {
-        bsDataval ? this.activeDate = bsDataval : this.activeDate = new Date();
+    public showDatePickerModal(bsDataValue) {
+        this.activeDate = bsDataValue || new Date();
         this.setNextData(this.activeDate);
         this.datetimepickerComponent.show();
         setTimeout(() => {
@@ -344,8 +345,12 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * This method is used to set focus for active day
      * @param newDate - newly selected date value
      * @param isMouseEvent - boolean value represents the event is mouse event/ keyboard event
+     * @param fromKeyboardEvents
      */
-    private setActiveDateFocus(newDate, isMouseEvent?: boolean) {
+    private setActiveDateFocus(newDate, isMouseEvent?: boolean, fromKeyboardEvents?: boolean) {
+        if (this.mindate && !this.datavalue && fromKeyboardEvents) {
+            this.activeDate = newDate = new Date(this.mindate);
+        }
         this.setNextData(newDate);
         this.clicked = false;
         const activeMonth = this.activeDate.getMonth();
@@ -363,7 +368,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 const activeMonth = $(`.bs-datepicker-head .current`).first().text();
                 const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
                 const monthName = new Date().toLocaleString('default', { month: 'long' });
-                if ($(obj).text() === newDay && activeMonth == monthName && activeYear == new Date().getFullYear()) {
+                if ($(obj).text() === newDay) {
                     if ($(obj).hasClass('selected')) {
                         $(obj).parent().attr('aria-selected', 'true');
                     }
@@ -474,7 +479,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
         };
         this.loadDays();
-        this.setActiveDateFocus(this.activeDate);
+        this.setActiveDateFocus(this.activeDate, undefined, true);
     }
     private setNextData(nextDate) {
         this.next = this.getMonth(nextDate, 1);
@@ -995,6 +1000,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
         if (key === 'datepattern') {
             this.updateFormat(key);
+        } else if(key === 'viewmode') {
+            this._dateOptions.minMode = this.viewmode;
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;
         } else if (key === 'mindate') {

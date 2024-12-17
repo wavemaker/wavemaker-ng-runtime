@@ -1,4 +1,4 @@
-<div (focus)="onFocus($event)" [(ngModel)]="modelByKey" [ngModelOptions]="{standalone: true}" aria-multiselectable="true"
+<div (focus)="onFocus($event)" [(ngModel)]="modelByKey" [ngModelOptions]="{standalone: true}"
      class="ratings-wrapper" ngDefaultControl>
     <div [class.disabled]="readonly" class="rating-style">
         <label *ngFor="let rate of ratingItems;"

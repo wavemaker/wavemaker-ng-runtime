@@ -351,10 +351,29 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      * @returns {number}
      */
     private countDecimals(value) {
-        const valueStr = value.toString();
-        const isLocalizedNumber = includes(valueStr, this.DECIMAL);
-        const parts = isLocalizedNumber ? valueStr.split(this.DECIMAL) : valueStr.split('.');
-        return parts[1] ? parts[1].length : 0
+        const num = Number(value);
+        if (num === 0) {
+            return 0;
+        }
+    
+        // Convert to number and handle scientific notation
+        if (Number.isNaN(num)) return 0;
+        
+        // Get the exponential form to handle scientific notation properly
+        const exponentialStr = num.toExponential();
+        const match = exponentialStr.match(/^-?\d*\.?(\d+)?e([+-]\d+)$/);
+        
+        if (match) {
+            const decimals = match[1] ? match[1].length : 0;
+            const exponent = parseInt(match[2]);
+            return Math.max(0, decimals - exponent);
+        }
+        
+        // Fallback to regular decimal counting
+        const decimalStr = num.toString();
+        const isLocalizedNumber = includes(decimalStr, this.DECIMAL);
+        const parts = isLocalizedNumber ? decimalStr.split(this.DECIMAL) : decimalStr.split('.');
+        return parts[1] ? parts[1].length : 0;
     }
 
     /**
