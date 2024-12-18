@@ -127,6 +127,7 @@ declare const _WM_APP_PROPERTIES;
 
 const initializeProjectDetails = () => {
     let cdnUrl = document.querySelector('[name="deployUrl"]') && document.querySelector('[name="deployUrl"]').getAttribute('content');
+    (window as any).isPreview = cdnUrl ? false : true;
     //for preview
     if(!cdnUrl) {
         cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
@@ -137,7 +138,7 @@ const initializeProjectDetails = () => {
     _WM_APP_PROJECT.ngDest = 'ng-bundle/';
     try {
         //@ts-ignore
-        __webpack_require__.p = __webpack_public_path__ = cdnUrl;
+        __webpack_require__.p = __webpack_public_path__ = (window as any).isPreview  ? cdnUrl : ''; 
     } catch(e) {
         //for app preview there is no webpack. Don't do anything.
     }

@@ -279,23 +279,33 @@ const generateSha1 = (content) => {
             await addMobileSpecificStyles(deployUrl);
         } else {
             if (isDevBuild) {
-                wm_styles_path = `${deployUrl}wm-styles.js`;
+                wm_styles_path = `wm-styles.js`;
             } else {
                 const fileName = 'wm-styles';
                 const hash = await generateHash(`${opPath}/${fileName}.css`);
                 copyCssFiles(hash, updatedFilenames);
                 const updatedFileName = `${fileName}.${hash}.css`
-                wm_styles_path = `${deployUrl}${updatedFileName}`;
+                wm_styles_path = `${updatedFileName}`;
             }
         }
 
         addScriptForWMStylesPath(wm_styles_path);
-        addPrintStylesPath(`${deployUrl}print.css`);
+        addPrintStylesPath(`print.css`);
 
         //this is required to download all the assets
         $('head').append(`<meta name="deployUrl" content=${deployUrl} />`);
         $('script[src$="services/application/wmProperties.js"]').remove();
-        $('link[href$="favicon.png"]').attr('href', './ng-bundle/favicon.png');
+        
+        $('link[href$="favicon.png"]').attr('href', 'favicon.png');
+        $('link[href$="ng-bundle/styles.css"]').attr('href', 'styles.css');
+
+        $('script[src$="ng-bundle/runtime.js"]').attr('src', 'runtime.js');
+        $('script[src$="ng-bundle/polyfills.js"]').attr('src', 'polyfills.js');
+        $('script[src$="ng-bundle/scripts.js"]').attr('src', 'scripts.js');
+        $('script[src$="ng-bundle/vendor.js"]').attr('src', 'vendor.js');
+        $('script[src$="ng-bundle/main.js"]').attr('src', 'main.js');
+
+        $('base').attr('href', './'+ deployUrl);
 
         const htmlContent = $.html();
         await writeFile(`./dist/index.html`, htmlContent);
