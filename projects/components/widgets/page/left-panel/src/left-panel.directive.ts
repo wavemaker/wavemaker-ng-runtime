@@ -42,7 +42,7 @@ export class LeftPanelDirective extends StylableComponent {
     private _leftPanelAnimator;
 
     //If "spa" attribute is set LayoutDirective will present and PageDirective is undefined else PageDirective will present and LayoutDirective is undefined
-    constructor(public app: App, @Optional() private page: PageDirective, @Optional() private layout: LayoutDirective, inj: Injector, router: Router, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, @Attribute('nav-type') navtype: string) {
+    constructor(public app: App, @Optional() private page: PageDirective, @Optional() private layout: LayoutDirective, inj: Injector, router: Router, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, @Attribute('navtype') navtype: string, @Attribute('navheight') navHeight: string) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.$ele = this.$element;
@@ -62,6 +62,10 @@ export class LeftPanelDirective extends StylableComponent {
         this.registerDestroyListener(() => onRouteChange.unsubscribe());
         if(!navtype) navtype = 'drawer';
         this.$element.addClass(getNavClass(navtype));
+        if (navHeight) {
+            this.$element.addClass(getNavClass(navHeight));
+            addClass(this.$page[0], getNavClass(navHeight));
+        }
     }
 
     public collapse(): void {
