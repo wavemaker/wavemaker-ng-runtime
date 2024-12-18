@@ -50,7 +50,7 @@
     [hidden]="noDataFound && !variableInflight"
 >
     <ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
-        <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{direction === 'horizontal' ? '' : itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
+        <!-- <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{direction === 'horizontal' ? '' : itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
             [wmListItem]="item"
             #listItemRef="listItemRef"
             [attr.tabindex]="tabindex"
@@ -58,7 +58,17 @@
             <ng-container [ngTemplateOutlet]="listTemplate"
                           [ngTemplateOutletInjector]="createCustomInjector('falt_' + listItemRef.trackId, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
                           [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
-        </li>
+        </li> -->
+        <li class="app-list-item list-group-item col-xs-12 skeleton-loader">
+            <div class="skeleton" style="width: 32px;
+            height: 32px;
+            border-radius: 50%;">
+          </div>
+          <div class="skeleton" style="height: 20px"></div>
+          <div class="skeleton" style="width: 96px;
+          height: 48px;
+          border-radius: 32px;"></div>
+          </li>
     </ng-template>
     <ng-container [ngTemplateOutlet]="listLeftActionTemplate"></ng-container>
     <ng-container [ngTemplateOutlet]="listRightActionTemplate"></ng-container>
