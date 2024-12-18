@@ -68,7 +68,7 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
                 ref._parentPrefab_ = component.$element.parent().closest('[prefabname][prefabname!="__self__"]').attr('prefabname') || '';
             }
             if (ref._parentPrefab_) {
-                nv = (window as any).isPreview ? `./app/prefabs/` :  `resources/` + `${ref._parentPrefab_}/${nv}`;
+                nv = (window as any).isPreview ? `./app/prefabs/` :  `./ng-bundle/resources/` + `${ref._parentPrefab_}/${nv}`;
             } else if(propInfo && nv != propInfo.value) {
                 nv = './' + nv;
             }

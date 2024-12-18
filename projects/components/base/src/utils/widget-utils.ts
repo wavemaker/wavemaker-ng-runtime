@@ -205,7 +205,7 @@ export const getImageUrl = (urlString, shouldEncode?, defaultUrl?) => {
       }
       
       if(urlString.startsWith('./resources')){
-        urlString = urlString.replace('./', '');
+        urlString = ((window as any).isPreview ? '' : './ng-bundle/') + urlString.replace('./', '');
       }
     urlString = shouldEncode ? encodeUrl(urlString) : urlString;
 

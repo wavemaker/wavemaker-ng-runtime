@@ -1,8 +1,7 @@
 export const isPrefabInPreview = (prefabName: string) => prefabName === '__self__';
 
 export const getPrefabBaseUrl = (prefabName: string) => {
-    let cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
-    const prefabURL = cdnUrl.startsWith('ng-bundle') ? 'resources' : 'app/prefabs';
+    const prefabURL = (window as any).isPreview ? 'app/prefabs' : 'ng-bundle/resources';
   return  isPrefabInPreview(prefabName) ? '.' : `${prefabURL}/${prefabName}`;
 }
 

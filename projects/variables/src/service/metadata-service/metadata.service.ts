@@ -20,7 +20,7 @@ export class MetadataService {
             url = 'metadata/' + (prefabName ? `prefabs/${prefabName}/` : 'app/') + 'service-definitions.json';
         } else {
             let serviceDefFileName = prefabName ? prefabName + '-prefab-servicedefs.json'  : 'app-servicedefs.json'
-            const deployedUrl = 'servicedefs/' + serviceDefFileName;
+            const deployedUrl = './ng-bundle/servicedefs/' + serviceDefFileName;
             const previewUrl = './services/' + (prefabName ? `prefabs/${prefabName}/` : '') + 'servicedefs';
             url = (window as any).isPreview ? previewUrl : deployedUrl;
         }
