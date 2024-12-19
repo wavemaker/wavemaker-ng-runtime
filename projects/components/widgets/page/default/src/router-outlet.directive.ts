@@ -13,6 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmRouterOutlet]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(RouterOutletDirective)
     ]

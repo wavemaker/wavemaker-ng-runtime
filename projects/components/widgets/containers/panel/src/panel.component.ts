@@ -21,6 +21,7 @@ const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-panel', hostClass: DEFAUL
 
 @Component({
     selector: '[wmPanel]',
+    standalone: false,
     templateUrl: './panel.component.html',
     providers: [
         provideAsWidgetRef(PanelComponent)

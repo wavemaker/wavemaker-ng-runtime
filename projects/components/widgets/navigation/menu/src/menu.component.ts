@@ -81,6 +81,7 @@ const AUTO_OPEN = {
 const WIDGET_CONFIG = { widgetType: 'wm-menu', hostClass: 'dropdown app-menu' };
 @Component({
     selector: '[wmMenu]',
+    standalone: false,
     templateUrl: './menu.component.html',
     providers: [
         provideAsWidgetRef(MenuComponent)

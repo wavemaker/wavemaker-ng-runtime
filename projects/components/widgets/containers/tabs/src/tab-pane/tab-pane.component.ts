@@ -23,6 +23,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: 'div[wmTabPane]',
+    standalone: false,
     templateUrl: './tab-pane.component.html',
     providers: [
         provideAsWidgetRef(TabPaneComponent)

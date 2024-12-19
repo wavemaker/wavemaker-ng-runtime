@@ -11,6 +11,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmPage]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(PageDirective)
     ],

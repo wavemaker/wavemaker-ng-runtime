@@ -10,6 +10,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-layout', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmLayout]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(LayoutDirective)
     ],

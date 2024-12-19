@@ -12,6 +12,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: 'wm-input[type="number"]',
+    standalone:false,
     templateUrl: './input-number.component.html',
     providers: [
         provideAs(InputNumberComponent, NG_VALUE_ACCESSOR, true),

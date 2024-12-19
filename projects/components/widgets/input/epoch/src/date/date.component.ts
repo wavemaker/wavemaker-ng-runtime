@@ -34,6 +34,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmDate]',
+    standalone: false,
     templateUrl: './date.component.html',
     providers: [
         provideAs(DateComponent, NG_VALUE_ACCESSOR, true),

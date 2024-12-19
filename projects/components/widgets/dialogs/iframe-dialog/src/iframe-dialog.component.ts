@@ -21,6 +21,7 @@ const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
 
 @Component({
     selector: 'div[wmIframeDialog]',
+    standalone: false,
     templateUrl: './iframe-dialog.component.html',
     providers: [
         provideAsWidgetRef(IframeDialogComponent),

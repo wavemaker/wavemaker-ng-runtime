@@ -14,6 +14,7 @@ const WIDGET_CONFIG = {
 @Component({
     selector: 'wm-textarea',
     templateUrl: './textarea.component.html',
+    standalone:false,
     providers: [
         provideAs(TextareaComponent, NG_VALUE_ACCESSOR, true),
         provideAs(TextareaComponent, NG_VALIDATORS, true),

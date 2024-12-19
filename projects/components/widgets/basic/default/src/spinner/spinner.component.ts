@@ -11,6 +11,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAU
 
 @Component({
     selector: '[wmSpinner]',
+    standalone: false,
     templateUrl: './spinner.component.html',
     providers: [
         provideAsWidgetRef(SpinnerComponent)

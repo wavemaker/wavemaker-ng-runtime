@@ -44,6 +44,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: 'div[wmTabs]',
     templateUrl: './tabs.component.html',
     exportAs: 'wmTabs',
+    standalone: false,
     providers: [
         provideAsWidgetRef(TabsComponent)
     ]

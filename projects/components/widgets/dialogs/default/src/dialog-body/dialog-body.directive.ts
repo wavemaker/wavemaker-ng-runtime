@@ -12,6 +12,7 @@ const DEFAULT_CLS = 'app-dialog-body modal-body';
 
 @Directive({
     selector: 'div[wmDialogBody]',
+    standalone: false
 })
 export class DialogBodyDirective {
     @HostBinding('style.height') height;

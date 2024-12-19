@@ -5,7 +5,8 @@ import { SearchComponent } from './search.component';
 declare const $;
 
 @Directive({
-    selector: '[scrollable]'
+    selector: '[scrollable]',
+    standalone: false
 })
 export class ScrollableDirective implements AfterContentInit, AfterViewInit {
     private elementRef: ElementRef;

@@ -12,6 +12,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmAudio]',
+    standalone:false,
     templateUrl: './audio.component.html',
     providers: [
         provideAsWidgetRef(AudioComponent)

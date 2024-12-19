@@ -31,6 +31,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmTime]',
+    standalone: false,
     templateUrl: './time.component.html',
     providers: [
         provideAs(TimeComponent, NG_VALUE_ACCESSOR, true),

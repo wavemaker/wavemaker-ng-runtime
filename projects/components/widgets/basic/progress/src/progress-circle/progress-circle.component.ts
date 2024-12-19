@@ -38,6 +38,7 @@ export const TYPE_CLASS_MAP_PC = {
 
 @Component({
     selector: '[wmProgressCircle]',
+    standalone:false,
     templateUrl: './progress-circle.component.html',
     providers: [
         provideAsWidgetRef(ProgressCircleComponent)

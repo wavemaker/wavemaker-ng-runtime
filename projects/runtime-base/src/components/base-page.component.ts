@@ -41,7 +41,9 @@ import {each, extend} from "lodash-es";
 declare const $;
 declare const html2canvas;
 
-@Directive()
+@Directive({
+    standalone: false
+})
 export abstract class BasePageComponent extends FragmentMonitor implements AfterViewInit, OnDestroy, AfterContentInit {
     static lastPageSnapShot = null;
     Widgets: any;

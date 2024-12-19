@@ -44,6 +44,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmChips]',
+    standalone: false,
     templateUrl: './chips.component.html',
     providers: [
         provideAs(ChipsComponent, NG_VALUE_ACCESSOR, true),
@@ -690,7 +691,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             } else if (nv) {
                 this.configureDnD();
             }
-            
+
             // Add this block to handle drag prevention
             const chipElements = this.$element.find('.chip-item a.app-chip');
             if (!nv) {

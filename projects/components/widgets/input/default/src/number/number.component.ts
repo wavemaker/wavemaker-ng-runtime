@@ -14,6 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmNumber]',
+    standalone:false,
     templateUrl: './number.component.html',
     providers: [
         provideAs(NumberComponent, NG_VALUE_ACCESSOR, true),

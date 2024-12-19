@@ -12,6 +12,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmLayoutGrid]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(LayoutgridDirective)
     ]

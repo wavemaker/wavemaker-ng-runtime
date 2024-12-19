@@ -11,6 +11,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-partial', hostClass: DEFAULT_CLS};
 
 @Directive({
     selector: '[wmPartial]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(PartialDirective)
     ]

@@ -17,6 +17,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmColorPicker]',
+    standalone: false,
     templateUrl: './color-picker.component.html',
     providers: [
         provideAs(ColorPickerComponent, NG_VALUE_ACCESSOR, true),

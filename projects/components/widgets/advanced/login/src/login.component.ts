@@ -21,6 +21,7 @@ const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
 @Component({
     selector: 'div[wmLogin]',
+    standalone: false,
     templateUrl: './login.component.html',
     providers: [
         provideAsWidgetRef(LoginComponent)

@@ -24,6 +24,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: 'div[wmWizard]',
+    standalone: false,
     templateUrl: './wizard.component.html',
     providers: [
         provideAsWidgetRef(WizardComponent)

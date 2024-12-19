@@ -56,6 +56,7 @@ const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
 
 @Component({
     selector: '[wmSearch]',
+    standalone: false,
     templateUrl: './search.component.html',
     providers: [
         provideAs(SearchComponent, NG_VALUE_ACCESSOR, true),

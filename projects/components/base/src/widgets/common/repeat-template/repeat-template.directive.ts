@@ -12,7 +12,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmRepeatTemplate]',
-    exportAs: 'repeatItemRef'
+    exportAs: 'repeatItemRef',
+    standalone: false
 })
 export class RepeatTemplateDirective extends StylableComponent {
     static initializeProps = registerProps();

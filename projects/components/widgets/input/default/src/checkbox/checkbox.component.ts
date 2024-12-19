@@ -49,6 +49,7 @@ export const unStringify = (val, defaultVal?) => {
 
 @Component({
     selector: '[wmCheckbox]',
+    standalone:false,
     templateUrl: './checkbox.component.html',
     providers: [
         provideAs(CheckboxComponent, NG_VALUE_ACCESSOR, true),

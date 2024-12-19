@@ -4,6 +4,7 @@ declare const $;
 
 @Component({
     selector: 'wm-pickergroup',
+    standalone: false,
     template: `
         <div class="app-picker-group">
             <ng-content></ng-content>
@@ -16,6 +17,7 @@ export class PickerGroupComponent {
 
 @Component({
     selector: 'wm-picker',
+    standalone: false,
     template: `
         <div class="app-picker">
             <div class="app-picker-option-container">

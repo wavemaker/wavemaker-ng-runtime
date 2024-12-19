@@ -11,6 +11,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmButtonGroup]',
+    standalone:false,
     providers: [
         provideAsWidgetRef(ButtonGroupDirective)
     ]

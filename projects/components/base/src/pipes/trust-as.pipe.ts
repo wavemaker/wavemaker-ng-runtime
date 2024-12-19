@@ -2,7 +2,8 @@ import { Pipe, PipeTransform, SecurityContext } from '@angular/core';
 import {DomSanitizer, SafeHtml, SafeResourceUrl, SafeScript, SafeStyle, SafeUrl} from '@angular/platform-browser';
 
 @Pipe({
-    name: 'trustAs'
+    name: 'trustAs',
+    standalone: false
 })
 export class TrustAsPipe implements PipeTransform {
 

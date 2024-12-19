@@ -15,6 +15,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: D
 
 @Component({
     selector: '[wmCheckboxset]',
+    standalone:false,
     exportAs: 'wmCheckboxset',
     templateUrl: 'checkboxset.component.html',
     providers: [

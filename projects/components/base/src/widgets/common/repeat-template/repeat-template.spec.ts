@@ -5,7 +5,8 @@ import { mockApp } from '../../../test/util/component-test-util';
 import { App } from '@wm/core';
 
 @Component({
-    template: '<div wmRepeatTemplate></div>'
+    template: '<div wmRepeatTemplate></div>',
+    standalone: false
 })
 class TestComponent { }
 

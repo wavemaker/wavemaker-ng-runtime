@@ -4,7 +4,8 @@ import {forEach} from "lodash-es";
 
 declare const $;
 @Directive({
-    selector: '[wmCaptionPosition]'
+    selector: '[wmCaptionPosition]',
+    standalone:false
 })
 export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestroy {
     private elementRef: ElementRef;

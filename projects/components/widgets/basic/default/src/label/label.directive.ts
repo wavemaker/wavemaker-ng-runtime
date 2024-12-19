@@ -15,6 +15,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmLabel]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(LabelDirective)
     ],

@@ -21,6 +21,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: 'img[wmPicture]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(PictureDirective)
     ],

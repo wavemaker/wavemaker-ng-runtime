@@ -13,7 +13,8 @@ jest.mock('@wm/core', () => ({
 
 // Test component
 @Component({
-    template: '<div wmSmoothscroll="true"></div>'
+    template: '<div wmSmoothscroll="true"></div>',
+    standalone: false
 })
 class TestComponent { }
 

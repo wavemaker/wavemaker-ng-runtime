@@ -22,6 +22,7 @@ const MENU_LAYOUT_TYPE = {
 
 @Component({
     selector: 'li[wmMenuDropdownItem]',
+    standalone: false,
     templateUrl: './menu-dropdown-item.component.html',
 })
 export class MenuDropdownItemComponent implements OnInit, OnDestroy {

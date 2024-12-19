@@ -12,7 +12,8 @@ jest.mock('@wm/core', () => ({
 
 // Test component
 @Component({
-    template: '<ng-template [lazyLoad]="condition">Lazy loaded content</ng-template>'
+    template: '<ng-template [lazyLoad]="condition">Lazy loaded content</ng-template>',
+    standalone: false
 })
 class TestComponent {
     @ViewChild(LazyLoadDirective) lazyLoadDirective: LazyLoadDirective;

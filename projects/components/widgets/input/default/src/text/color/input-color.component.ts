@@ -14,6 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Component({
     selector: 'wm-input[type="color"]',
     templateUrl: './input-color.component.html',
+    standalone:false,
     providers: [
         provideAs(InputColorComponent, NG_VALUE_ACCESSOR, true),
         provideAs(InputColorComponent, NG_VALIDATORS, true),

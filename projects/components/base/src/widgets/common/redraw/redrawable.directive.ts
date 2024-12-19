@@ -3,7 +3,8 @@ import { Directive, Inject, Self } from '@angular/core';
 import { IRedrawableComponent, WidgetRef } from '../../framework/types';
 
 @Directive({
-    selector: '[redrawable]'
+    selector: '[redrawable]',
+    standalone: false
 })
 export class RedrawableDirective implements IRedrawableComponent {
     redraw: Function;

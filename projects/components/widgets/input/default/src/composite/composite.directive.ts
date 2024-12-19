@@ -23,6 +23,7 @@ const CAPTION_POSITION = {
 
 @Directive({
     selector: 'div[wmComposite]',
+    standalone:false,
     providers: [
         provideAsWidgetRef(CompositeDirective)
     ]

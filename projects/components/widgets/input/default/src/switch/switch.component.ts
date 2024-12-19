@@ -15,6 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-switch', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmSwitch]',
+    standalone:false,
     templateUrl: './switch.component.html',
     providers: [
         provideAs(SwitchComponent, NG_VALUE_ACCESSOR, true),

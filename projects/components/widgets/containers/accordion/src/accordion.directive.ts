@@ -21,6 +21,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: 'div[wmAccordion]',
+    standalone: false,
     exportAs: 'wmAccordion',
     providers: [
         provideAsWidgetRef(AccordionDirective)

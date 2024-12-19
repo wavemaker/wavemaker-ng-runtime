@@ -18,6 +18,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass:
 
 @Component({
     selector: 'div[wmAccordionPane]',
+    standalone: false,
     templateUrl: './accordion-pane.component.html',
     providers: [
         provideAsWidgetRef(AccordionPaneComponent)

@@ -18,6 +18,7 @@ const NavClassMap = {
 
 @Component({
     selector: '[wmNav]',
+    standalone: false,
     templateUrl: './nav.component.html',
     providers: [
         provideAsWidgetRef(NavComponent)

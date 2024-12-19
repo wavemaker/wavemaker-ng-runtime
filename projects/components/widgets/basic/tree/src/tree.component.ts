@@ -11,6 +11,7 @@ const defaultTreeIconClass = 'plus-minus';
 
 @Component({
     selector: 'ul[wmTree]',
+    standalone: false,
     templateUrl: './tree.component.html',
     providers: [
         provideAsWidgetRef(TreeComponent)

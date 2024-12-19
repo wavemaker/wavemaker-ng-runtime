@@ -24,6 +24,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-item-template'};
 @Directive({
     selector: '[wmItemTemplate]',
     exportAs: 'itemTemplateRef',
+    standalone: false,
     providers: [
         provideAsWidgetRef(ItemTemplateDirective)
     ]

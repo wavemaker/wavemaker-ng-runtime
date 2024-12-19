@@ -77,14 +77,16 @@ const PIPES = [
     CustomPipe,
     SanitizePipe
 ];
+const COMPONENTS = [...wmComponents];
+const ALL_PIPES = [...PIPES];
 
 @NgModule({
     imports: [
         CommonModule,
         SecurityModule
     ],
-    declarations: [...wmComponents, ...PIPES],
-    exports: [...wmComponents, ...PIPES]
+    declarations: [...COMPONENTS, ...ALL_PIPES],
+    exports: [...COMPONENTS, ...ALL_PIPES]
 })
 export class WmComponentsModule {
 

@@ -10,6 +10,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmPageContent]',
+    standalone: false,
     templateUrl: './page-content.component.html',
     providers: [
         provideAsWidgetRef(PageContentComponent)

@@ -18,7 +18,8 @@ const getValidTime = val => {
 };
 
 @Directive({
-    selector: '[wmLiveForm]'
+    selector: '[wmLiveForm]',
+    standalone: false
 })
 export class LiveFormDirective {
     static  initializeProps = registerLiveFormProps();

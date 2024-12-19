@@ -14,6 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Component({
     selector: 'wm-input[type="text"], wm-input:not([type]), wm-input[type="password"], wm-input[type="search"], wm-input[type="tel"], wm-input[type="url"]',
     templateUrl: './input-text.component.html',
+    standalone:false,
     providers: [
         provideAs(InputTextComponent, NG_VALUE_ACCESSOR, true),
         provideAs(InputTextComponent, NG_VALIDATORS, true),

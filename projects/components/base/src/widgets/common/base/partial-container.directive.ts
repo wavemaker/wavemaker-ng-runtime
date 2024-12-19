@@ -8,7 +8,8 @@ import { WidgetRef } from "../../framework/types";
 import {debounce} from "lodash-es";
 
 @Directive({
-    selector: '[partialContainer]'
+    selector: '[partialContainer]',
+    standalone: false
 })
 export class PartialContainerDirective {
 

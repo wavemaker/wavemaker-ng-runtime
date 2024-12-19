@@ -9,6 +9,7 @@ declare const moment;
 
 @Component({
     selector: 'wm-datetimepicker',
+    standalone: false,
     template: `
     <ng-template #datetimepickerTemplate>
         <div class="app-datetime-picker">
@@ -283,6 +284,7 @@ export class DateTimePickerComponent implements AfterViewInit, OnDestroy {
 
 @Component({
     selector: 'wm-timepicker',
+    standalone: false,
     template: `
         <wm-pickergroup>
             <wm-picker

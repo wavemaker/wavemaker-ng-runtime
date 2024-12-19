@@ -9,6 +9,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-tile', hostClass: DEFAULT_
 
 @Directive({
     selector: '[wmTile]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(TileDirective)
     ]

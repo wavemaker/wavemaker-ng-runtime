@@ -34,6 +34,7 @@ interface IProgressInfo {
 
 @Component({
     selector: '[wmProgressBar]',
+    standalone:false,
     templateUrl: './progress-bar.component.html',
     providers: [
         provideAsWidgetRef(ProgressBarComponent)

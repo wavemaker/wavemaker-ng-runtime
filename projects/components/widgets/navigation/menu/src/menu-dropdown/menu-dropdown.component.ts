@@ -32,6 +32,7 @@ const DEFAULT_CLS = 'dropdown-menu';
 
 @Component({
     selector: 'ul[wmMenuDropdown]',
+    standalone: false,
     templateUrl: './menu-dropdown.component.html'
 })
 export class MenuDropdownComponent implements AfterViewInit {

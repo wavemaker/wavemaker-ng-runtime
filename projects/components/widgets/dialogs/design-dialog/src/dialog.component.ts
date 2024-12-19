@@ -23,6 +23,7 @@ const WIDGET_INFO = {widgetType: 'wm-dialog'};
 
 @Component({
     selector: 'div[wmDialog]',
+    standalone: false,
     templateUrl: './dialog.component.html',
     providers: [
         provideAsWidgetRef(DialogComponent),

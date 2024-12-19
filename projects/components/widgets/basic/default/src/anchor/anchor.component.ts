@@ -28,6 +28,7 @@ export const disableContextMenu = ($event: Event) => {
 
 @Component({
     selector: 'a[wmAnchor]',
+    standalone:false,
     templateUrl: './anchor.component.html',
     providers: [
         provideAsWidgetRef(AnchorComponent)

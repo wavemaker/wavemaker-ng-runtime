@@ -14,7 +14,8 @@ import {$watch, App, findParent} from '@wm/core';
 import {extend} from "lodash-es";
 
 @Directive({
-    selector: '[lazyLoad]'
+    selector: '[lazyLoad]',
+    standalone: false
 })
 export class LazyLoadDirective implements OnDestroy {
     private readonly viewParent: any;

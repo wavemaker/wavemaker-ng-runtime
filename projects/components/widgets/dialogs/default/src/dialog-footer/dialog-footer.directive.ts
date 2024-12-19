@@ -10,6 +10,7 @@ const WIDGET_INFO: IWidgetConfig = {
 
 @Directive({
     selector: 'div[wmDialogFooter]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(DialogFooterDirective)
     ]

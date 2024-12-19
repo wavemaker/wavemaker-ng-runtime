@@ -22,7 +22,9 @@ import { PrefabManagerService } from '../services/prefab-manager.service';
 import { FragmentMonitor } from '../util/fragment-monitor';
 import {each, startsWith, trim} from "lodash-es";
 
-@Directive()
+@Directive({
+    standalone: false
+})
 export abstract class BasePrefabComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
     Widgets: any;
     Variables: any;

@@ -15,6 +15,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmRadioset]',
+    standalone:false,
     exportAs: 'wmRadioset',
     templateUrl: './radioset.component.html',
     providers: [

@@ -22,6 +22,7 @@ const WIDGET_INFO: IWidgetConfig = {widgetType: 'wm-alertdialog'};
 
 @Component({
     selector: 'div[wmAlertDialog]',
+    standalone: false,
     templateUrl: './alert-dialog.component.html',
     providers: [
         provideAsWidgetRef(AlertDialogComponent),

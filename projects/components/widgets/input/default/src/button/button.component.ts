@@ -13,6 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: 'button[wmButton]',
+    standalone:false,
     templateUrl: './button.component.html',
     providers: [
         provideAsWidgetRef(ButtonComponent)

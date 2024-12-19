@@ -18,7 +18,8 @@ const getEpochValue = data => {
 };
 
 @Pipe({
-    name: 'trailingZeroDecimalPipe'
+    name: 'trailingZeroDecimalPipe',
+    standalone: false
 })
 export class TrailingZeroDecimalPipe implements PipeTransform {
     transform(value: any, selectedLocale: string, numberfilter: string, localefilter: any, trailingzero: boolean, decimalValue: string, skipTrailingZeroCheck?: boolean, formattedLocale?): any {
@@ -32,7 +33,8 @@ export class TrailingZeroDecimalPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'toDate'
+    name: 'toDate',
+    standalone: false
 })
 export class ToDatePipe extends WmPipe implements PipeTransform {
     // This method calls the custom formatter fn after applying the exisitng date pattern
@@ -80,7 +82,8 @@ export class ToDatePipe extends WmPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'toNumber'
+    name: 'toNumber',
+    standalone: false
 })
 export class ToNumberPipe implements PipeTransform {
     transform(data, fracSize) {
@@ -98,7 +101,8 @@ export class ToNumberPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'toCurrency'
+    name: 'toCurrency',
+    standalone: false
 })
 export class ToCurrencyPipe implements PipeTransform {
     transform(data, currencySymbol, fracSize) {
@@ -116,7 +120,8 @@ export class ToCurrencyPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'prefix'
+    name: 'prefix',
+    standalone: false
 })
 export class PrefixPipe implements PipeTransform {
     transform(data, padding) {
@@ -125,7 +130,8 @@ export class PrefixPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'suffix'
+    name: 'suffix',
+    standalone: false
 })
 export class SuffixPipe implements PipeTransform {
     transform(data, padding) {
@@ -138,7 +144,8 @@ export class SuffixPipe implements PipeTransform {
  * Custom pipe: It is work as interceptor between the user custom pipe function and angular pipe
  */
 @Pipe({
-    name: 'custom'
+    name: 'custom',
+    standalone: false
 })
 export class CustomPipe implements PipeTransform {
     constructor(private custmeUserPipe: CustomPipeManager) {
@@ -166,7 +173,8 @@ export class CustomPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'timeFromNow'
+    name: 'timeFromNow',
+    standalone: false
 })
 export class TimeFromNowPipe implements PipeTransform {
     transform(data) {
@@ -180,12 +188,14 @@ export class TimeFromNowPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'numberToString'
+    name: 'numberToString',
+    standalone: false
 })
 export class NumberToStringPipe extends ToNumberPipe implements PipeTransform { }
 
 @Pipe({
-    name: 'stringToNumber'
+    name: 'stringToNumber',
+    standalone: false
 })
 export class StringToNumberPipe implements PipeTransform {
     transform(data) {
@@ -194,7 +204,8 @@ export class StringToNumberPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'filter'
+    name: 'filter',
+    standalone: false
 })
 export class FilterPipe implements PipeTransform {
     transform(data: any[], field: any, value: any) {
@@ -213,7 +224,8 @@ export class FilterPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'filesize'
+    name: 'filesize',
+    standalone: false
 })
 export class FileSizePipe implements PipeTransform {
     transform(bytes: number, precision: number) {
@@ -240,7 +252,8 @@ export class FileSizePipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'fileIconClass'
+    name: 'fileIconClass',
+    standalone: false
 })
 export class FileIconClassPipe implements PipeTransform {
     transform(fileExtension: any) {
@@ -278,7 +291,8 @@ export class FileIconClassPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'stateClass'
+    name: 'stateClass',
+    standalone: false
 })
 export class StateClassPipe implements PipeTransform {
     transform(state) {
@@ -291,7 +305,8 @@ export class StateClassPipe implements PipeTransform {
 }
 
 @Pipe({
-    name: 'fileExtensionFromMime'
+    name: 'fileExtensionFromMime',
+    standalone: false
 })
 export class FileExtensionFromMimePipe implements PipeTransform {
     transform(mimeType: any) {

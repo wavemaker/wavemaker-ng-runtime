@@ -11,6 +11,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmIcon]',
+    standalone: false,
     templateUrl: './icon.component.html',
     providers: [
         provideAsWidgetRef(IconComponent)

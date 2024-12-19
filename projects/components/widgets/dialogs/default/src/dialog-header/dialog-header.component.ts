@@ -10,6 +10,7 @@ const DEFAULT_ICON_DIMENSIONS = '21px';
 
 @Component({
     selector: 'div[wmDialogHeader]',
+    standalone: false,
     templateUrl: './dialog-header.component.html'
 })
 export class DialogHeaderComponent {

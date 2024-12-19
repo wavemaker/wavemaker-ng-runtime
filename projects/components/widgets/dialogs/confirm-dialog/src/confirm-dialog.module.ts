@@ -12,7 +12,7 @@ const components = [
 ];
 
 @NgModule({
-    imports: [
+    imports:    [
         CommonModule,
         DialogModule,
         InputModule,

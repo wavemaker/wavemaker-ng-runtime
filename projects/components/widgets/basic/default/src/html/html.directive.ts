@@ -13,6 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmHtml]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(HtmlDirective)
     ],

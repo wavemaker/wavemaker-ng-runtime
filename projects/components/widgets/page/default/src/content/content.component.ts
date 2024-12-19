@@ -9,6 +9,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-content', hostClass: DEFAU
 
 @Component({
     selector: '[wmContent]',
+    standalone: false,
     templateUrl: './content.component.html',
     providers: [
         provideAsWidgetRef(ContentComponent)

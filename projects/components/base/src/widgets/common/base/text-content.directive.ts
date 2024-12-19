@@ -1,7 +1,8 @@
 import { Directive, ElementRef, Input } from '@angular/core';
 
 @Directive({
-    selector: '[textContent]'
+    selector: '[textContent]',
+    standalone: false
 })
 export class TextContentDirective {
     @Input()

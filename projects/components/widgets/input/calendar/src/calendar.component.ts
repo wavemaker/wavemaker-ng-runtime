@@ -92,6 +92,7 @@ const dateFormat = 'YYYY/MM/DD';
 
 @Component({
     selector: '[wmCalendar]',
+    standalone: false,
     templateUrl: './calendar.component.html',
     styleUrls: ['../../../../../../node_modules/fullcalendar/main.css'],
     providers: [

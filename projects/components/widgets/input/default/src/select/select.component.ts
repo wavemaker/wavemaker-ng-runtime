@@ -10,6 +10,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
 
 @Component({
     selector: 'wm-select',
+    standalone:false,
     templateUrl: './select.component.html',
     providers: [
         provideAs(SelectComponent, NG_VALUE_ACCESSOR, true),

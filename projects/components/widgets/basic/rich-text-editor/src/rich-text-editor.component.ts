@@ -49,6 +49,7 @@ const overrideSummerNote = () => {
 
 @Component({
     selector: 'div[wmRichTextEditor]',
+    standalone: false,
     templateUrl: './rich-text-editor.component.html',
     providers: [
         provideAs(RichTextEditorComponent, NG_VALUE_ACCESSOR, true),

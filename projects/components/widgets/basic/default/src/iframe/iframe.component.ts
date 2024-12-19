@@ -14,6 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmIframe]',
+    standalone: false,
     templateUrl: './iframe.component.html',
     providers: [
         provideAsWidgetRef(IframeComponent)

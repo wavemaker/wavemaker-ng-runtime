@@ -14,6 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 @Component({
     selector: 'wm-input[type="email"]',
     templateUrl: './input-email.component.html',
+    standalone:false,
     providers: [
         provideAs(InputEmailComponent, NG_VALUE_ACCESSOR, true),
         provideAs(InputEmailComponent, NG_VALIDATORS, true),

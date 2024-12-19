@@ -45,6 +45,7 @@ const CURRENT_DATE = 'CURRENT_DATE';
 
 @Component({
     selector: '[wmDateTime]',
+    standalone: false,
     templateUrl: './date-time.component.html',
     providers: [
         provideAs(DatetimeComponent, NG_VALUE_ACCESSOR, true),

@@ -21,6 +21,7 @@ const DIALOG_CLS = 'app-dialog modal-dialog app-page-dialog';
 const WIDGET_INFO = {widgetType: 'wm-partialdialog'};
 
 @Component({
+    standalone: false,
     selector: 'div[wmPartialDialog]',
     templateUrl: './partial-dialog.component.html',
     providers: [

@@ -16,6 +16,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmCurrency]',
+    standalone: false,
     templateUrl: './currency.component.html',
     providers: [
         provideAs(CurrencyComponent, NG_VALUE_ACCESSOR, true),

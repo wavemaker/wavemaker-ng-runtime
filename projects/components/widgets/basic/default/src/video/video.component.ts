@@ -14,6 +14,7 @@ const WIDGET_CONFIG = {
 
 @Component({
     selector: '[wmVideo]',
+    standalone: false,
     templateUrl: './video.component.html',
     providers: [
         provideAsWidgetRef(VideoComponent)

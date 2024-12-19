@@ -2,7 +2,8 @@ import {Pipe, PipeTransform, SecurityContext} from "@angular/core";
 import {DomSanitizer, SafeValue} from "@angular/platform-browser";
 
 @Pipe({
-    name: 'sanitize'
+    name: 'sanitize',
+    standalone: false
 })
 export class SanitizePipe implements PipeTransform {
     constructor(private domSanitizer: DomSanitizer) {

@@ -12,7 +12,8 @@ import { MockAbstractI18nService } from './util/date-test-util';
 declare const moment;
 
 @Component({
-    template: '<div></div>'
+    template: '<div></div>',
+    standalone: false
 })
 class PipeWrapperComponent implements OnInit {
     ngOnInit() {
