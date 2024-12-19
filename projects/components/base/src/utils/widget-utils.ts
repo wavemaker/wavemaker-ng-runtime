@@ -2,6 +2,7 @@ import {forwardRef} from '@angular/core';
 
 import {
     $parseExpr,
+    _WM_APP_PROJECT,
     checkIsCustomPipeExpression,
     deHyphenate,
     encodeUrl,
@@ -201,12 +202,13 @@ export const getImageUrl = (urlString, shouldEncode?, defaultUrl?) => {
 
     // If no value is provided for picturesource assign pictureplaceholder or default-image
     if (!urlString) {
-        urlString = defaultUrl || './resources/images/imagelists/default-image.png';
-      }
-      
-      if(urlString.startsWith('./resources')){
-        urlString = './ng-bundle/'+urlString.replace('./', '');
-      }
+        if (isValidWebURL(defaultUrl)) {
+            urlString = defaultUrl;
+        } else {
+            urlString =  _WM_APP_PROJECT.cdnUrl + ( defaultUrl || 'resources/images/imagelists/default-image.png' );
+        }
+    }
+
     urlString = shouldEncode ? encodeUrl(urlString) : urlString;
 
     // if the resource to be loaded is inside a prefab

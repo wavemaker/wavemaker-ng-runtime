@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AbstractHttpService, hasCordova } from '@wm/core';
+import {_WM_APP_PROJECT, AbstractHttpService, hasCordova} from '@wm/core';
 
 @Injectable()
 export class MetadataService {
@@ -20,7 +20,7 @@ export class MetadataService {
             url = 'metadata/' + (prefabName ? `prefabs/${prefabName}/` : 'app/') + 'service-definitions.json';
         } else {
             let serviceDefFileName = prefabName ? prefabName + '-prefab-servicedefs.json'  : 'app-servicedefs.json'
-            url = './ng-bundle/servicedefs/' + serviceDefFileName;
+            url = _WM_APP_PROJECT.cdnUrl + 'servicedefs/' + serviceDefFileName;
         }
         return new Promise((resolve, reject) => {
             this.$http.send({'url' : url, 'method': 'GET'}).then((response) => {
