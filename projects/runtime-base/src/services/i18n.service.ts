@@ -115,7 +115,8 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadAppLocaleBundle() {
-        this.loadResource(_WM_APP_PROJECT.cdnUrl + `${APP_LOCALE_ROOT_PATH}/${this.selectedLocale}.json`)
+        const basePath = _WM_APP_PROJECT.isPreview ? '' :  _WM_APP_PROJECT.cdnUrl
+        this.loadResource( basePath + `${APP_LOCALE_ROOT_PATH}/${this.selectedLocale}.json`)
             .then(bundle => {
                 this.extendMessages(bundle.messages);
                 this.extendPrefabMessages(bundle);

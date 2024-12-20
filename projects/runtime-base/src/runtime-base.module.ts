@@ -127,6 +127,7 @@ declare const _WM_APP_PROPERTIES;
 
 const initializeProjectDetails = () => {
     let cdnUrl = document.querySelector('[name="deployUrl"]') && document.querySelector('[name="deployUrl"]').getAttribute('content');
+    _WM_APP_PROJECT.isPreview = cdnUrl ? false : true;
     //for preview
     if(!cdnUrl) {
         cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');

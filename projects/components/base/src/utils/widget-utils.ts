@@ -205,8 +205,9 @@ export const getImageUrl = (urlString, shouldEncode?, defaultUrl?) => {
         if (isValidWebURL(defaultUrl)) {
             urlString = defaultUrl;
         } else {
-            urlString =  _WM_APP_PROJECT.cdnUrl + ( defaultUrl || 'resources/images/imagelists/default-image.png' );
+            urlString =   ( defaultUrl || 'resources/images/imagelists/default-image.png' );
         }
+        urlString = _WM_APP_PROJECT.isPreview ? urlString : _WM_APP_PROJECT.cdnUrl + urlString;
     }
 
     urlString = shouldEncode ? encodeUrl(urlString) : urlString;
