@@ -189,10 +189,8 @@ class WMDefaultDomRenderer2 implements Renderer2 {
     }
   }
 
-  removeChild(parent: any, oldChild: any): void {
-    if (parent) {
-      parent.removeChild(oldChild);
-    }
+  removeChild(_parent: any, oldChild: any): void {
+    oldChild.remove();
   }
 
   selectRootElement(selectorOrNode: string|any, preserveContent?: boolean): any {
