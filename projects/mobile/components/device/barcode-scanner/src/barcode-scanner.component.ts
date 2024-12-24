@@ -13,6 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-barcodescanner', hostClass
 @Component({
     selector: 'button[wmBarcodescanner]',
     templateUrl: './barcode-scanner.component.html',
+    standalone: false,
     providers: [
         provideAsWidgetRef(BarcodeScannerComponent)
     ],

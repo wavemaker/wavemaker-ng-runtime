@@ -5,7 +5,8 @@ import { Context, DialogRef, MessageComponent } from '@wm/components/base';
 import { FormComponent } from '@wm/components/data/form';
 
 @Directive({
-    selector: '[wmDialog][wmLoginDialog]'
+    selector: '[wmDialog][wmLoginDialog]',
+    standalone: false
 })
 export class LoginDialogDirective implements AfterViewInit, OnDestroy {
     @ContentChildren(FormComponent) formCmp: QueryList<FormComponent>;

@@ -6,7 +6,8 @@ import { hasCordova } from '@wm/core';
 import { FileContent, FileSelectorService } from '@wm/mobile/components/basic';
 
 @Directive({
-    selector: '[wmFileUpload]'
+    selector: '[wmFileUpload]',
+    standalone:false
 })
 export class FileUploadDirective {
 

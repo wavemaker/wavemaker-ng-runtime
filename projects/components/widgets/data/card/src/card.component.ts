@@ -25,6 +25,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmCard]',
+    standalone: false,
     templateUrl: './card.component.html',
     providers: [
         provideAsWidgetRef(CardComponent)

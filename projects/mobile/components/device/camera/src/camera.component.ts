@@ -24,6 +24,7 @@ export enum ENCODING_TYPE {
 @Component({
     selector: 'button[wmCamera]',
     templateUrl: './camera.component.html',
+    standalone: false,
     providers: [
         provideAsWidgetRef(CameraComponent)
     ],

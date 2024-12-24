@@ -10,7 +10,8 @@ enum USER_ROLE {
 }
 
 @Directive({
-    selector: '[accessroles]'
+    selector: '[accessroles]',
+    standalone: false
 })
 export class AccessrolesDirective {
 

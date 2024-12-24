@@ -20,6 +20,7 @@ import { AppManagerService, BasePageComponent, ComponentRefProvider, ComponentTy
 
 @Component({
     selector: 'app-page-outlet',
+    standalone: false,
     template: '<div></div>'
 })
 export class PageWrapperComponent implements OnInit, OnDestroy {

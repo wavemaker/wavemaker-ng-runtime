@@ -151,6 +151,7 @@ const setTouchedState = (self, ngForm, fieldName) => {
 
 @Component({
     selector: 'form[wmForm]',
+    standalone: false,
     templateUrl: './form.component.html',
     providers: [
         provideAsWidgetRef(FormComponent)

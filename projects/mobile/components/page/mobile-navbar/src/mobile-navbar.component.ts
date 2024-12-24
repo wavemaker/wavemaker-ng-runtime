@@ -14,6 +14,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-mobile-navbar', hostClass:
 
 @Component({
     selector: 'header[wmMobileNavbar]',
+    standalone: false,
     templateUrl: './mobile-navbar.component.html',
     providers: [
         provideAsWidgetRef(MobileNavbarComponent)

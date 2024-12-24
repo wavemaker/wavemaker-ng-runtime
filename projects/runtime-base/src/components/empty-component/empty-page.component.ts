@@ -8,6 +8,7 @@ import { AppManagerService } from '../../services/app.manager.service';
 
 @Component({
     selector: 'app-empty-page',
+    standalone: false,
     template: '<div></div>'
 })
 export class EmptyPageComponent implements OnInit {

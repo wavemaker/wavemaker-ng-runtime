@@ -25,6 +25,7 @@ const MAX_PROCESS = 3;
 
 @Component({
     selector: '[wmProcessManager]',
+    standalone: false,
     templateUrl: './process-manager.component.html',
     providers: [
         provideAsWidgetRef(ProcessManagerComponent)

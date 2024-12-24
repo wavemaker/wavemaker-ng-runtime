@@ -12,6 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-breadcrumb', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmBreadcrumb]',
+    standalone: false,
     templateUrl: './breadcrumb.component.html',
     providers: [
         provideAsWidgetRef(BreadcrumbComponent)

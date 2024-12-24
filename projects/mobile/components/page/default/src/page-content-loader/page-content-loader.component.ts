@@ -5,6 +5,7 @@ import { provideAsWidgetRef } from '@wm/components/base';
 
 @Component({
     selector: '[wmPageContentLoader]',
+    standalone: false,
     templateUrl: './page-content-loader.component.html',
     providers: [
         provideAsWidgetRef(PageContentLoaderComponent)

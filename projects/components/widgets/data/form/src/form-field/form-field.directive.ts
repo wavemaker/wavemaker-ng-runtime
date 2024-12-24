@@ -56,6 +56,7 @@ const FILE_TYPES = {
 @Directive({
     selector: '[wmFormField]',
     exportAs: 'wmFormField',
+    standalone: false,
     providers: [
         provideAsWidgetRef(FormFieldDirective),
         provideAs(FormFieldDirective, NG_VALUE_ACCESSOR, true),
@@ -546,7 +547,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     reset() {
-      if(this._control) 
+      if(this._control)
         this._control.reset();
     }
 

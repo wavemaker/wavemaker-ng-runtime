@@ -6,7 +6,8 @@ import { addClass } from '@wm/core';
 import { DeviceService } from '@wm/mobile/core';
 
 @Directive({
-    selector: '[wmLeftPanel]'
+    selector: '[wmLeftPanel]',
+    standalone: false
 })
 export class MobileLeftPanelDirective implements OnDestroy {
 

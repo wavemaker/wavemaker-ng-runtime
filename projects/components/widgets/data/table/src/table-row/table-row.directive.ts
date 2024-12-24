@@ -9,6 +9,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-row', hostClass: ''};
 
 @Directive({
     selector: '[wmTableRow]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(TableRowDirective)
     ]

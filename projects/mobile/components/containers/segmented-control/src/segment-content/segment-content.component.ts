@@ -10,6 +10,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segment-content', hostClas
 
 @Component({
     selector: '[wmSegmentContent]',
+    standalone: false,
     templateUrl: './segment-content.component.html',
     providers: [
         provideAsWidgetRef(SegmentContentComponent)

@@ -5,7 +5,8 @@ import { Live_Operations } from '@wm/components/base';
 import { FormComponent } from '../form.component';
 
 @Directive({
-    selector: '[dependson]'
+    selector: '[dependson]',
+    standalone: false
 })
 export class DependsonDirective implements AfterContentInit, OnDestroy {
 

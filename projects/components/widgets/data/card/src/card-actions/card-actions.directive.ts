@@ -10,7 +10,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Directive({
-    selector: '[wmCardActions]'
+    selector: '[wmCardActions]',
+    standalone: false
 })
 export class CardActionsDirective extends StylableComponent {
     static initializeProps = registerProps();

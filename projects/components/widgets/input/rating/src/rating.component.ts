@@ -16,6 +16,7 @@ const DEFAULT_RATING = 5;
 
 @Component({
     selector: '[wmRating]',
+    standalone: false,
     templateUrl: './rating.component.html',
     providers: [
         provideAs(RatingComponent, NG_VALUE_ACCESSOR, true),

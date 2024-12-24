@@ -20,6 +20,7 @@ interface TabItem {
 @Component({
     selector: 'div[wmMobileTabbar]',
     templateUrl: './tabbar.component.html',
+    standalone: false,
     providers: [
         provideAsWidgetRef(MobileTabbarComponent)
     ]

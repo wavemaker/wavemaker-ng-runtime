@@ -23,6 +23,7 @@ declare const $;
 
 @Directive({
     selector: '[wmListItem]',
+    standalone: false,
     exportAs: 'listItemRef'
 })
 export class ListItemDirective implements OnInit, AfterViewInit {

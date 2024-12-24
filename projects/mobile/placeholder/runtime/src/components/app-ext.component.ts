@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: '[wmAppExt]',
+    standalone: false,
     template: `<ng-container></ng-container>`
 })
 export class AppExtComponent {

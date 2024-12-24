@@ -12,7 +12,8 @@ const FILTER_CONSTANTS = {
 const noop = () => {};
 
 @Directive({
-    selector: '[wmLiveFilter]'
+    selector: '[wmLiveFilter]',
+    standalone: false
 })
 export class LiveFilterDirective {
     static  initializeProps = registerLiveFilterProps();

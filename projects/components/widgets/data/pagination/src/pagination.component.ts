@@ -33,6 +33,7 @@ const sizeClasses = {
 };
 @Component({
     selector: '[wmPagination]',
+    standalone: false,
     templateUrl: './pagination.component.html',
     providers: [
         provideAsWidgetRef(PaginationComponent)

@@ -37,6 +37,7 @@ const getDynamicComponent = (
     // @ts-ignore
     return Component({
         template,
+        standalone: false,
         styles: [css],
         encapsulation: ViewEncapsulation.None,
         selector

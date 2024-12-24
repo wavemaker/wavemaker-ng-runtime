@@ -11,6 +11,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmFooter]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(FooterDirective)
     ],

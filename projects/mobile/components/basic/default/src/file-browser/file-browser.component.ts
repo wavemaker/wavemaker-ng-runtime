@@ -23,6 +23,7 @@ export interface Folder {
 
 @Component({
     selector: '[wmMobileFileBrowser]',
+    standalone: false,
     templateUrl: './file-browser.component.html'
 })
 export class FileBrowserComponent implements OnDestroy {

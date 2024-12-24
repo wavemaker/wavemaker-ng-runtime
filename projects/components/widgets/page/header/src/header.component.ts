@@ -11,6 +11,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmHeader]',
+    standalone: false,
     templateUrl: './header.component.html',
     providers: [
         provideAsWidgetRef(HeaderComponent)

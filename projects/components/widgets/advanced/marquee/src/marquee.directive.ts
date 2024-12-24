@@ -12,6 +12,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmMarquee]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(MarqueeDirective)
     ]

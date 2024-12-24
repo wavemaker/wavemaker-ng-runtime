@@ -10,7 +10,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Directive({
-    selector: '[wmCardFooter]'
+    selector: '[wmCardFooter]',
+    standalone: false
 })
 export class CardFooterDirective extends StylableComponent {
     static initializeProps = registerProps();

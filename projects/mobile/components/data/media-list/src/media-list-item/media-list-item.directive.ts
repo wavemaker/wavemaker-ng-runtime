@@ -4,6 +4,7 @@ import { provideAsWidgetRef } from '@wm/components/base';
 
 @Directive({
     selector: '[wmMediaListItem]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(MediaListItemDirective)
     ]

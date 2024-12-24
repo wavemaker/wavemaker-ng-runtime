@@ -9,6 +9,7 @@ declare const $;
 
 @Component({
     selector: '[custom-toaster-component]',
+    standalone: false,
     template: `
         <div class="parent-custom-toast"></div>
         <ng-container #customToast></ng-container>

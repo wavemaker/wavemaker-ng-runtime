@@ -84,6 +84,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
 @Component({
     selector: 'div[wmList]',
     templateUrl: './list.component.html',
+    standalone: false,
     providers: [
         provideAsWidgetRef(ListComponent)
     ]

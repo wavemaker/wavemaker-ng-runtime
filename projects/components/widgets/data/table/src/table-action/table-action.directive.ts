@@ -10,6 +10,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
 
 @Directive({
     selector: '[wmTableAction]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(TableActionDirective)
     ]

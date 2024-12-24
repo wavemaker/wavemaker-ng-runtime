@@ -63,6 +63,7 @@ class FieldDef {
 
 @Directive({
     selector: '[wmTableColumn]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(TableColumnDirective)
     ]

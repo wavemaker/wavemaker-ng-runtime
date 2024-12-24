@@ -10,6 +10,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
 
 @Directive({
     selector: '[wmFormAction]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(FormActionDirective)
     ]

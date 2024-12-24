@@ -21,6 +21,7 @@ const registeredPropsSet = new Set<string>();
 
 @Directive({
     selector: 'section[wmPrefab]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(PrefabDirective)
     ]

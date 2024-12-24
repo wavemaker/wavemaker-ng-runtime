@@ -12,6 +12,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-segmented-control', hostCl
 
 @Component({
     selector: '[wmSegmentedControl]',
+    standalone: false,
     templateUrl: './segmented-control.component.html',
     providers: [
         provideAsWidgetRef(SegmentedControlComponent)

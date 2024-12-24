@@ -23,6 +23,7 @@ enum Layout {
 
 @Component({
     selector: '[wmMediaList]',
+    standalone: false,
     templateUrl: './media-list.component.html',
     providers: [
         provideAsWidgetRef(MediaListComponent)

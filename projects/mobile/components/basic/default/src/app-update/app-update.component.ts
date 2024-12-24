@@ -15,6 +15,7 @@ const AUTO_UPDATE_FILENAME = 'app-auto-update.apk';
 
 @Component({
     selector: '[wmAppUpdate]',
+    standalone: false,
     templateUrl: './app-update.component.html'
 })
 export class AppUpdateComponent {

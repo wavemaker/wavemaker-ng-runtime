@@ -8,6 +8,7 @@ const PREFAB = 'PREFAB';
 
 @Component({
     selector: 'wm-prefab-preview',
+    standalone: false,
     template: `
         <div class="prefab-preview row">
             <section wmPrefab name="prefab-preview" prefabname="__self__"></section>

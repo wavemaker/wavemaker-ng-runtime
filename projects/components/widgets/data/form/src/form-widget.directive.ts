@@ -7,7 +7,8 @@ import { TableComponent } from '@wm/components/data/table';
 import { FormComponent } from './form.component';
 
 @Directive({
-    selector: '[wmFormWidget]'
+    selector: '[wmFormWidget]',
+    standalone: false
 })
 export class FormWidgetDirective implements OnInit {
 

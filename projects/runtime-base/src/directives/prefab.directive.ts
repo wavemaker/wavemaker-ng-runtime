@@ -14,7 +14,8 @@ import { PrefabManagerService } from '../services/prefab-manager.service';
 import { ComponentRefProvider, ComponentType } from '../types/types';
 
 @Directive({
-    selector: '[wmPrefab][prefabname]'
+    selector: '[wmPrefab][prefabname]',
+    standalone: false
 })
 export class PrefabDirective {
 

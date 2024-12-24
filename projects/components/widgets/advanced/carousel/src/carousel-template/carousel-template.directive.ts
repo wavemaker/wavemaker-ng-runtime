@@ -11,6 +11,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmCarouselTemplate]',
+    standalone: false,
     exportAs: 'carouselTemplateRef',
 })
 export class CarouselTemplateDirective extends StylableComponent {

@@ -29,7 +29,8 @@ const navigationClassMap = {
 
 @Directive({
     selector: '[wmCarousel]',
-    exportAs: 'wmCarousel'
+    exportAs: 'wmCarousel',
+    standalone: false
 })
 export class CarouselDirective extends StylableComponent implements AfterContentInit, OnDestroy, OnInit {
     static initializeProps = registerProps();

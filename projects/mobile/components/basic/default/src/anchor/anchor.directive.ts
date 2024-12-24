@@ -4,7 +4,8 @@ import { WidgetRef } from '@wm/components/base';
 import {startsWith} from "lodash-es";
 
 @Directive({
-    selector: '[wmAnchor]'
+    selector: '[wmAnchor]',
+    standalone: false
 })
 export class AnchorDirective {
 

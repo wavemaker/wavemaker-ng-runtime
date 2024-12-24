@@ -11,6 +11,7 @@ declare const $;
 
 @Component({
     selector: '[wmNavbar]',
+    standalone: false,
     templateUrl: './navbar.component.html',
     providers: [
         provideAsWidgetRef(NavbarComponent)

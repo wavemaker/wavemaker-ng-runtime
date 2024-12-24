@@ -10,6 +10,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-row-action', hostClass: ''};
 
 @Directive({
     selector: '[wmTableRowAction]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(TableRowActionDirective),
         {provide: Context, useFactory: () => { return {} }, multi: true}

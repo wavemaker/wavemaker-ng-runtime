@@ -25,6 +25,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
 
 @Component({
     selector: '[wmLiveTable]',
+    standalone: false,
     templateUrl: './live-table.component.html',
     providers: [
         provideAsWidgetRef(LiveTableComponent)

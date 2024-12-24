@@ -18,6 +18,7 @@ const WIDGET_CONFIG = {
 
 @Component({
     selector: '[wmFileUpload]',
+    standalone: false,
     templateUrl: './file-upload.component.html',
     providers: [
         provideAsWidgetRef(FileUploadComponent)

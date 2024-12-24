@@ -22,6 +22,7 @@ const WIDGET_INFO = {widgetType: 'wm-confirmdialog'};
 
 @Component({
     selector: 'div[wmConfirmDialog]',
+    standalone: false,
     templateUrl: './confirm-dialog.component.html',
     providers: [
         provideAsWidgetRef(ConfirmDialogComponent),

@@ -113,6 +113,7 @@ const isInputBodyWrapper = target => {
 
 @Component({
     selector: '[wmTable]',
+    standalone: false,
     templateUrl: './table.component.html',
     providers: [
         provideAs(TableComponent, NG_VALUE_ACCESSOR, true),

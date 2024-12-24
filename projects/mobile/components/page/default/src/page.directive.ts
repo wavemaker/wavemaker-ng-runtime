@@ -9,7 +9,8 @@ import {remove} from "lodash-es";
 
 declare const $;
 @Directive({
-    selector: '[wmPage]'
+    selector: '[wmPage]',
+    standalone: false
 })
 export class MobilePageDirective implements OnDestroy {
 

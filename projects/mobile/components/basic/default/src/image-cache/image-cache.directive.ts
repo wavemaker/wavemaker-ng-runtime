@@ -10,7 +10,8 @@ import {isString} from "lodash-es";
 const DEFAULT_IMAGE =  'resources/images/imagelists/default-image.png';
 
 @Directive({
-    selector: '[wmImageCache]'
+    selector: '[wmImageCache]',
+    standalone: false
 })
 export class ImageCacheDirective implements DoCheck {
 

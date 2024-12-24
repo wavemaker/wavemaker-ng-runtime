@@ -12,6 +12,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmLinearLayoutItem]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(LinearLayoutItemDirective)
     ]

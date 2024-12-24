@@ -20,6 +20,7 @@ export enum NetworkState {
 
 @Component({
     selector: '[wmNetworkInfoToaster]',
+    standalone: false,
     templateUrl: './network-info-toaster.component.html',
     providers: [
         provideAsWidgetRef(NetworkInfoToasterComponent)

@@ -8,6 +8,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
 
 @Directive({
     selector: '[wmTableColumnGroup]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(TableColumnGroupDirective)
     ]

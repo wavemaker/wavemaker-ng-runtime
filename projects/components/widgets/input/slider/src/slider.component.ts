@@ -15,6 +15,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     selector: '[wmSlider]',
+    standalone: false,
     templateUrl: './slider.component.html',
     providers: [
         provideAs(SliderComponent, NG_VALUE_ACCESSOR, true),

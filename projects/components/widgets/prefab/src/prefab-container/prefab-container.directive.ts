@@ -13,6 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Directive({
     selector: '[wmPrefabContainer]',
+    standalone: false,
     providers: [
         provideAsWidgetRef(PrefabContainerDirective)
     ]
