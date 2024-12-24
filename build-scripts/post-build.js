@@ -294,6 +294,8 @@ const generateSha1 = (content) => {
 
         //this is required to download all the assets
         $('head').append(`<meta name="deployUrl" content=${deployUrl} />`);
+        $('script[src$="services/application/wmProperties.js"]').remove();
+        $('link[href$="favicon.png"]').attr('href', './ng-bundle/favicon.png');
 
         const htmlContent = $.html();
         await writeFile(`./dist/index.html`, htmlContent);

@@ -1,6 +1,11 @@
+import {_WM_APP_PROJECT} from "@wm/core";
+
 export const isPrefabInPreview = (prefabName: string) => prefabName === '__self__';
 
-export const getPrefabBaseUrl = (prefabName: string) => isPrefabInPreview(prefabName) ? '.' : `app/prefabs/${prefabName}`;
+export const getPrefabBaseUrl = (prefabName: string) => {
+    const basePath = _WM_APP_PROJECT.isPreview ? 'app/prefabs' : _WM_APP_PROJECT.cdnUrl + 'resources';
+   return isPrefabInPreview(prefabName) ? '.' :  basePath + `/${prefabName}`
+};
 
 export const getPrefabConfigUrl = (prefabName: string) => `${getPrefabBaseUrl(prefabName)}/config.json`;
 

@@ -28,6 +28,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
+              "src/favicon.png",
               "src/assets",
               {
                   "glob": "print.css",
@@ -43,6 +44,19 @@
                 "glob": "**/*",
                 "input": "node_modules/@wavemaker/app-ng-runtime/locales/",
                 "output": "/locales/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/servicedefs",
+                "output": "/servicedefs/"
+              },
+              {
+                "glob": "**/*",
+                "input": "resources",
+                "output": "/resources/",
+                "ignore": [
+                  "**/*.txt"
+               ]
               }
             ],
             "styles": [
@@ -188,11 +202,22 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
+              "src/favicon.png",
               "src/assets",
               {
                   "glob": "print.css",
                   "input": "src/assets/",
                   "output": "."
+              },
+              {
+                "glob": "**/*",
+                "input": "src/servicedefs",
+                "output": "/servicedefs/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/resources",
+                "output": "/resources/"
               }
             ],
             "styles": [
