@@ -189,10 +189,8 @@ class WMDefaultDomRenderer2 implements Renderer2 {
     }
   }
 
-  removeChild(parent: any, oldChild: any): void {
-    if (parent) {
-      parent.removeChild(oldChild);
-    }
+  removeChild(_parent: any, oldChild: any): void {
+    oldChild.remove();
   }
 
   selectRootElement(selectorOrNode: string|any, preserveContent?: boolean): any {
@@ -391,8 +389,8 @@ class ShadowDomRenderer extends WMDefaultDomRenderer2 {
   insertBefore(parent: any, newChild: any, refChild: any): void {
     return super.insertBefore(this.nodeOrShadowRoot(parent), newChild, refChild);
   }
-  removeChild(parent: any, oldChild: any): void {
-    return super.removeChild(this.nodeOrShadowRoot(parent), oldChild);
+  removeChild(_parent: any, oldChild: any): void {
+    return super.removeChild(null, oldChild);
   }
   parentNode(node: any): any {
     return this.nodeOrShadowRoot(super.parentNode(this.nodeOrShadowRoot(node)));

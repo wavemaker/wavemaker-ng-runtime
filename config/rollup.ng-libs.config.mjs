@@ -8,11 +8,12 @@ export default [
             globals: {
                 "@angular/core": "ng.core",
                 "@angular/core/primitives/signals": "ng.signals",
+                "@angular/core/primitives/event-dispatch": "ng.event-dispatch",
                 "rxjs": "rxjs",
                 "rxjs/operators": "rxjs.operators",
             }
         },
-        external: ["rxjs", "rxjs/operators", "@angular/core/primitives/signals"],
+        external: ["rxjs", "rxjs/operators", "@angular/core/primitives/signals", "@angular/core/primitives/event-dispatch"],
     },
     {
         input: "node_modules/@angular/animations/fesm2022/animations.mjs",
@@ -105,6 +106,16 @@ export default [
             file: 'node_modules/@angular/core/bundles/core-signals.umd.js',
             format: 'umd',
             name: 'ng.signals',
+            globals: {}
+        },
+        external: [],
+    },
+    {
+        input: 'node_modules/@angular/core/fesm2022/primitives/event-dispatch.mjs',
+        output: {
+            file: 'node_modules/@angular/core/bundles/core-event-dispatch.umd.js',
+            format: 'umd',
+            name: 'ng.event-dispatch',
             globals: {}
         },
         external: [],
