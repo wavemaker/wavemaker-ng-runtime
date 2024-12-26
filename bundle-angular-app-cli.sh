@@ -16,6 +16,12 @@ while [ "$1" != "" ]; do
     shift
 done
 
+node_modules/.bin/rimraf dist/runtime-cli
+
+mkdir -p dist/runtime-cli
+mkdir -p dist/runtime-cli/angular-app
+mkdir -p dist/runtime-cli/dependencies
+
 cp -r src dist/runtime-cli/angular-app
 cp -r build-scripts dist/runtime-cli/angular-app
 cp -r pwa-assets dist/runtime-cli
@@ -24,13 +30,6 @@ if [[ "${dev}" == true ]]; then
 fi
 cp -rf angular.json package.json package-lock.json .npmrc tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
 cp ./wm.package.json libraries/package.json
-
-node_modules/.bin/rimraf dist/runtime-cli
-
-mkdir -p dist/runtime-cli
-
-mkdir -p dist/runtime-cli/angular-app
-mkdir -p dist/runtime-cli/dependencies
 
 cp -r src dist/runtime-cli/angular-app
 cp -r build-scripts dist/runtime-cli/angular-app

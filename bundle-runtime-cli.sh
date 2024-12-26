@@ -68,7 +68,10 @@ if [[ "${publish}" == true ]]; then
     node ../process-npm-package-stats.js --path=dist/npm-packages/${TARBALL_NAME} --packageName=@wavemaker/app-ng-runtime --publishVersion=${publishVersion}
 else
     cp -r libraries/. dist/npm-packages/package
+    cd dist/npm-packages/package
     # --node-dev-mode is required, otherwise while publishing yalc is deleting the devdependencies from the final package.json file`
     yalc publish --no-dev-mod --no-sig --push --content
+
+    cd -
 fi
 
