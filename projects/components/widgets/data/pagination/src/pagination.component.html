@@ -17,7 +17,7 @@
         </a>
     </li>
     <li class="pagecount disabled">
-        <a href="javascript:void(0);">
+        <a href="javascript:void(0);" aria-label="Change Page Number">
             <input [(ngModel)]="dn.currentPage" [attr.aria-label]="'Showing Page ' + dn.currentPage + ' of ' + pageCount" [disabled]="isDisableCurrent"
                    [ngModelOptions]="{standalone: true}"
                    type="number"

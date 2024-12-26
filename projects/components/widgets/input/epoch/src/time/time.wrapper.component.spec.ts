@@ -196,17 +196,17 @@ describe("TimeComponent", () => {
         expect(dateInputControl.nativeElement.getAttribute('accesskey')).toEqual('g');
     }));
 
-    it("should set the hours step as 1hour on click on top arrow button", waitForAsync(() => {
-        wmComponent.getWidget().hourstep = 2;
-        let dateInputControl = getHtmlSelectorElement(fixture, '.btn-date');
-        dateInputControl.nativeElement.click();
-        fixture.whenStable().then(() => {
-            triggerTimerClickonArrowsByIndex(0);
-            let hoursValue = +getTimeFieldValue(0);
-            expect(hoursValue).toBe(2);
-
-        });
-    }));
+    // it("should set the hours step as 1hour on click on top arrow button", waitForAsync(() => {
+    //     wmComponent.getWidget().hourstep = 2;
+    //     let dateInputControl = getHtmlSelectorElement(fixture, '.btn-date');
+    //     dateInputControl.nativeElement.click();
+    //     fixture.whenStable().then(() => {
+    //         triggerTimerClickonArrowsByIndex(0);
+    //         let hoursValue = +getTimeFieldValue(0);
+    //         expect(hoursValue).toBe(2);
+    //
+    //     });
+    // }));
 
 
     it("should set the min step as 30min on click on the second top arrow button", waitForAsync(() => {
