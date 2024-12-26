@@ -42,9 +42,9 @@ export class SecurityService {
 
     load(forceFlag?: boolean) {
         if(this.loadPromise) {return this.loadPromise;}
-         // Check securityEnabled flag in _WM_APP_PROPERTIES
-        if (!(window as any)._WM_APP_PROPERTIES?.securityEnabled || (window as any)._WM_APP_PROPERTIES['securityInfo']) {
-            return Promise.resolve(null); 
+       // Check securityEnabled flag in _WM_APP_PROPERTIES
+       if (!(window as any)._WM_APP_PROPERTIES?.securityEnabled) {
+        return Promise.resolve(null); 
         }
         if (!forceFlag && this.config) {return Promise.resolve(this.config);}
         this.loadPromise = new Promise((resolve, reject) => {
