@@ -17,7 +17,7 @@
 </div>
 <div class="tab-content" *ngIf="type === 'dynamic'" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
     <div *ngIf="variableInflight && this.app.Variables?.showSkeletonLoader?.dataSet.dataValue || false"> 
-        <wm-skeleton-loader widget-type="tabs" [config]="config"></wm-skeleton-loader>
+        <wm-skeleton-loader widget-type="tabs" config='{"itemCount": 4}'></wm-skeleton-loader>
     </div>
     <div *ngIf="fieldDefs && !fieldDefs.length && !this.app.Variables?.showSkeletonLoader.dataSet.dataValue">{{nodatamessage}}</div>
     <ng-content select="div[wmRepeatTemplate]"></ng-content>
