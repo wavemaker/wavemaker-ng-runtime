@@ -31,11 +31,6 @@
               "src/favicon.png",
               "src/assets",
               {
-                  "glob": "print.css",
-                  "input": "src/assets/",
-                  "output": "."
-              },
-              {
                 "glob": "**/*",
                 "input": "libraries/locales/",
                 "output": "/locales/"
@@ -72,6 +67,11 @@
                 "input": "src/assets/app.css",
                 "inject": false,
                 "bundleName": "wm-styles"
+              },
+              {
+                "input": "src/assets/print.css",
+                "inject": false,
+                "bundleName": "print"
               }
             ],
             "scripts": [
@@ -206,11 +206,6 @@
               "src/favicon.png",
               "src/assets",
               {
-                  "glob": "print.css",
-                  "input": "src/assets/",
-                  "output": "."
-              },
-              {
                 "glob": "**/*",
                 "input": "src/servicedefs",
                 "output": "/servicedefs/"
@@ -225,7 +220,12 @@
               "src/styles.css",
               "src/assets/styles/css/wm-style.css",
               "src/assets/themes/material/style.css",
-              "src/assets/app.css"
+              "src/assets/app.css",
+              {
+                "input": "src/assets/print.css",
+                "inject": false,
+                "bundleName": "print"
+              }
             ],
             "scripts": [
               "./node_modules/x2js/x2js.js",
