@@ -305,6 +305,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         data: [],
         colDefs: [],
         startRowIndex: 1,
+        showSkeletonLoader: this.app.Variables?.showSkeletonLoader?.dataSet.dataValue || false,
         mode: '',
         sortInfo: {
             field: '',

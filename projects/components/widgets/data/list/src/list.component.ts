@@ -155,7 +155,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private datasource: any;
     private showNavigation: boolean;
     private reorderProps: any;
-    private app: any;
+    public app: any;
     private appDefaults: any;
     private ngZone: NgZone;
     private statePersistence: StatePersistence;

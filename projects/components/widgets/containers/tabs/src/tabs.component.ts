@@ -5,6 +5,7 @@ import {
     Component,
     ContentChildren, Inject,
     Injector,
+    NgZone,
     OnInit,
     Optional,
     QueryList
@@ -12,8 +13,11 @@ import {
 
 import {
     addClass,
+    App,
     appendNode,
+    DataSource,
     DynamicComponentRefProvider,
+    isDataSourceEqual,
     noop,
     removeClass,
     StatePersistence
@@ -30,7 +34,7 @@ import {
 import { TabsAnimator } from './tabs.animator';
 import { registerProps } from './tabs.props';
 import { TabPaneComponent } from './tab-pane/tab-pane.component';
-import {find, findIndex, forEach, get, indexOf, isArray, isEmpty} from "lodash-es";
+import { find, findIndex, forEach, get, indexOf, isArray, isEmpty } from "lodash-es";
 
 declare const $;
 
@@ -56,7 +60,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public tabsposition: string;
     public statehandler: any;
     private statePersistence: StatePersistence;
-
+    public variableInflight: boolean = false;
     public vertical: boolean;
     public justified: boolean;
     private activeTab: TabPaneComponent;
@@ -71,7 +75,10 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public fieldDefs;
     public type;
     public nodatamessage;
-
+    public app: App;
+    private datasource;
+    private ngZone: NgZone;
+    config = { itemCount: 4 }
     @ContentChildren(TabPaneComponent) panes: QueryList<TabPaneComponent>;
 
     constructor(
@@ -80,26 +87,38 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         @Attribute('transition') _transition: string,
         @Attribute('tabsposition') _tabsPosition: string,
         statePersistence: StatePersistence,
-        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any,
+        app: App,
+        ngZone: NgZone,
     ) {
         // handle to the promise resolver
         let resolveFn: Function = noop;
         super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
-
+        this.ngZone = ngZone;
         this.transition = _transition;
         this.tabsposition = _tabsPosition;
         this.statePersistence = statePersistence;
         this.dynamicComponentProvider = dynamicComponentProvider;
         this.dynamicTabs = [];
         this.dynamicPaneIndex = 0;
-
+        this.app = app;
         this.promiseResolverFn = resolveFn;
-
+        this.variableInflight = false;
+        this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
 
     }
 
-    animateIn (element: HTMLElement) {
+    handleLoading(data) {
+        const dataSource = this.datasource;
+        if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
+            this.ngZone.run(() => {
+                this.variableInflight = data.active;
+            });
+        }
+    }
+
+    animateIn(element: HTMLElement) {
         const tabHeader = $(element);
         // when the animation is not present toggle the active class.
         tabHeader.siblings('.active').removeClass('active');
@@ -123,7 +142,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
      */
     public registerDynamicTab(paneRef) {
         this.dynamicTabs.push(paneRef);
-        const isLastPane =  this.dynamicTabs.length === this.dynamicPaneIndex;
+        const isLastPane = this.dynamicTabs.length === this.dynamicPaneIndex;
         if (isLastPane) {
             for (let i = 0; i < this.dynamicTabs.length; i++) {
                 const newPaneRef = find(this.dynamicTabs, pane => pane.dynamicPaneIndex === i);
@@ -150,7 +169,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         }
         const paneNamesList = [];
         forEach(tabpanes, (pane, index) => {
-            const isPaneAlreadyCreated = find(this.panes.toArray(), {name: pane.name});
+            const isPaneAlreadyCreated = find(this.panes.toArray(), { name: pane.name });
             const isPaneNameExist = indexOf(paneNamesList, pane.name);
             // If user tries to add tabpane with the same name which is already exists then do not create the pane
             if (isPaneAlreadyCreated || isPaneNameExist > 0) {
@@ -183,7 +202,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
                 this._dynamicContext[this.getAttr('wmTab')] = this;
             }
 
-            this.dynamicComponentProvider.addComponent(this.getNativeElement().querySelector('.tab-content'), markup, this._dynamicContext, {inj: this.inj});
+            this.dynamicComponentProvider.addComponent(this.getNativeElement().querySelector('.tab-content'), markup, this._dynamicContext, { inj: this.inj });
 
         });
         return paneNamesList;
@@ -275,7 +294,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
 
     // Returns the active tab index from tabs.
     public getActiveTabIndex(): number {
-        return findIndex(this.panes.toArray(), {isActive: true});
+        return findIndex(this.panes.toArray(), { isActive: true });
     }
 
     private isValidPaneIndex(index: number): boolean {
@@ -287,7 +306,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     }
 
     private getPaneRefByName(name: string): TabPaneComponent {
-        return find(this.panes.toArray(), {name: name});
+        return find(this.panes.toArray(), { name: name });
     }
 
     // returns false if the pane is hidden or disabled
@@ -308,9 +327,9 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         }
         if (index === this.panes.length - 1) {
             const pane = this.getPaneRefByIndex(0);
-             if (this.isSelectableTab(pane)) {
+            if (this.isSelectableTab(pane)) {
                 return pane;
-             }
+            }
         }
     }
 
@@ -391,7 +410,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             this.isPageLoadCall = true;
             const widgetState = this.statePersistence.getWidgetState(this);
             if (nv !== 'none' && widgetState) {
-                const paneToSelect: any = this.panes.filter(function(pane) {
+                const paneToSelect: any = this.panes.filter(function (pane) {
                     return widgetState === pane.name;
                 });
                 if (!paneToSelect.length) {
@@ -414,7 +433,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             const $ul = this.$element.find('> ul');
             let $liPosition;
 
-            const  $li = $ul.children();
+            const $li = $ul.children();
             $liPosition = $li.last().position();
             if ($liPosition && ($liPosition.left > $ul.width())) {
                 $ul.on('mousewheel', (e) => {
@@ -422,7 +441,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
                         _delta = -1 * e.originalEvent.wheelDelta;
                     e.stopPropagation();
                     e.preventDefault();
-                    $ul.animate({scrollLeft: left + _delta}, {'duration': 10});
+                    $ul.animate({ scrollLeft: left + _delta }, { 'duration': 10 });
                 });
             }
         });
@@ -449,7 +468,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.promiseResolverFn();
         super.ngAfterContentInit();
         this.setTabsPosition();
-        this.panes.changes.subscribe( slides => {
+        this.panes.changes.subscribe(slides => {
             if (this.panes.length) {
                 this.selectDefaultPaneByIndex(this.defaultpaneindex || 0);
             }

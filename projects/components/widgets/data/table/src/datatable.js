@@ -3239,11 +3239,9 @@ $.widget('wm.datatable', {
             this.tableId = this.Utils.generateGuid();
         }
         var overflow = (this.options.isNavTypeScrollOrOndemand() && (this.options.height === '100%' || this.options.height === 'auto')) ? 'hidden' : 'auto';
-        var statusContainer =
-                '<div class="overlay">' +
+    var statusContainer =  !this.options.showSkeletonLoader ?  '<div class="overlay">' +
                 '<div class="status"><i class="' + this.options.loadingicon + '"></i><span class="message"></span></div>' +
-                '</div>',
-
+                '</div>' : `<wm-skeleton-loader class="skeleton-loader" widget-type="table"></wm-skeleton-loader>`
             table = '<div class="table-container table-responsive">' +
                 '<div class="app-grid-header">' +
                 '<div class="app-grid-header-inner">' +
@@ -3309,7 +3307,7 @@ $.widget('wm.datatable', {
         }
     },
     __setStatus: function (isCreated) {
-        var loadingIndicator = this.dataStatusContainer.find('i'),
+        var loadingIndicator = this.dataStatusContainer.find(!this.options.showSkeletonLoader ? 'i' : '.skeleton-loader'),
             state = this.dataStatus.state,
             isScrollOrOndemand = this.options.isNavTypeScrollOrOndemand();
         this.dataStatusContainer.find('.message').text(this.dataStatus.message);

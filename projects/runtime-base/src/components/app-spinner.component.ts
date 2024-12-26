@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-
+import "./skeleton-loader"
 @Component({
     selector: 'app-spinner',
     template: `
@@ -18,5 +18,5 @@ export class AppSpinnerComponent {
     @Input() spinnermessages: Array<string>;
     @Input() classname: string;
     @Input() arialabel: string;
-    constructor() {}
+    constructor() { }
 }
