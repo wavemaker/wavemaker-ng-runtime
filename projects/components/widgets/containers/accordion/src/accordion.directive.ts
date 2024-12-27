@@ -1,5 +1,5 @@
-import {AfterContentInit, ContentChildren, Directive, Inject, Injector, Optional, QueryList} from '@angular/core';
-import {DynamicComponentRefProvider, noop, StatePersistence} from '@wm/core';
+import {AfterContentInit, ContentChildren, Directive, Inject, Injector, NgZone, Optional, QueryList} from '@angular/core';
+import {App, DataSource, DynamicComponentRefProvider, isDataSourceEqual, noop, StatePersistence} from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     createArrayFrom,
@@ -42,10 +42,15 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     private dynamicPaneIndex;
     private dynamicPanes;
     public fieldDefs;
+    public app: App;
+    private datasource;
+    private ngZone: NgZone;
 
     @ContentChildren(AccordionPaneComponent) panes: QueryList<AccordionPaneComponent>;
+    variableInflight: boolean = false;
 
-    constructor(inj: Injector, statePersistence: StatePersistence, dynamicComponentProvider: DynamicComponentRefProvider, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, statePersistence: StatePersistence, dynamicComponentProvider: DynamicComponentRefProvider, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, app: App,
+            ngZone: NgZone,) {
         let resolveFn: Function = noop;
         super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
         this.promiseResolverFn = resolveFn;
@@ -53,8 +58,20 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         this.dynamicComponentProvider = dynamicComponentProvider;
         this.dynamicPanes = [];
         this.dynamicPaneIndex = 0;
+        this.ngZone = ngZone;
+        this.app = app;
+        this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this));
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
     }
+
+    handleLoading(data) {
+            const dataSource = this.datasource;
+            if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
+                this.ngZone.run(() => {
+                    this.variableInflight = data.active;
+                });
+            }
+        }
 
     /**
      * AccordionPane children components invoke this method to communicate with the parent

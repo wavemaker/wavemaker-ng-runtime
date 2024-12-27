@@ -98,6 +98,7 @@ export class WMSkeletonLoader extends HTMLElement {
             form: this.getFormStyles(),
             card: this.getCardStyles(),
             tabs: this.getTabStyles(),
+            accordion: this.getAccordionStyles(),
             default: this.getDefaultStyles()
         };
 
@@ -432,6 +433,161 @@ export class WMSkeletonLoader extends HTMLElement {
         `;
     }
 
+    private getAccordionStyles(): string {
+        return `
+            .accordion-loader {
+                display: flex;
+                flex-direction: column;
+                background-color: ${this.config.backgroundColor};
+                border: 1px solid ${this.config.foregroundColor}20;
+                border-radius: ${this.config.borderRadius};
+            }
+    
+            .accordion-item {
+                border-bottom: 1px solid ${this.config.foregroundColor}20;
+            }
+    
+            .accordion-item:last-child {
+                border-bottom: none;
+            }
+    
+            .accordion-header {
+                display: flex;
+                align-items: center;
+                padding: 16px ${this.config.spacing};
+                position: relative;
+                cursor: wait;
+            }
+    
+            /* Chevron indicator for expand/collapse */
+            .accordion-chevron {
+                width: 20px;
+                height: 20px;
+                position: relative;
+                margin-right: 12px;
+                flex-shrink: 0;
+            }
+    
+            .accordion-chevron::before,
+            .accordion-chevron::after {
+                content: '';
+                position: absolute;
+                background-color: ${this.config.foregroundColor};
+                border-radius: 2px;
+                transform-origin: center;
+            }
+    
+            .accordion-chevron::before {
+                width: 2px;
+                height: 10px;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+    
+            .accordion-chevron::after {
+                width: 10px;
+                height: 2px;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+    
+            .accordion-item.expanded .accordion-chevron::before {
+                opacity: 0;
+            }
+    
+            .accordion-title-block {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+    
+            .accordion-title {
+                height: 20px;
+                width: 60%;
+                background-color: ${this.config.foregroundColor};
+                border-radius: ${this.config.borderRadius};
+            }
+    
+            .accordion-subtitle {
+                height: 14px;
+                width: 40%;
+                background-color: ${this.config.foregroundColor};
+                border-radius: ${this.config.borderRadius};
+                opacity: 0.7;
+            }
+    
+            /* Badge indicator */
+            .accordion-badge {
+                width: 32px;
+                height: 20px;
+                background-color: ${this.config.foregroundColor}30;
+                border-radius: 10px;
+                margin-left: 12px;
+                flex-shrink: 0;
+            }
+    
+            /* Content panel */
+            .accordion-content {
+                overflow: hidden;
+                padding: 0 ${this.config.spacing} 16px 48px;
+                border-top: 1px solid ${this.config.foregroundColor}10;
+                margin-top: -1px;
+            }
+    
+            /* Nested content structure */
+            .content-block {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                padding-top: 16px;
+            }
+    
+            .content-section {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+    
+            .content-heading {
+                height: 18px;
+                width: 30%;
+                background-color: ${this.config.foregroundColor};
+                border-radius: ${this.config.borderRadius};
+                opacity: 0.9;
+            }
+    
+            .content-line {
+                height: 14px;
+                background-color: ${this.config.foregroundColor};
+                border-radius: ${this.config.borderRadius};
+                opacity: 0.7;
+            }
+    
+            .content-line-full { width: 100%; }
+            .content-line-long { width: 90%; }
+            .content-line-medium { width: 75%; }
+            .content-line-short { width: 60%; }
+    
+            /* Interactive states */
+            .accordion-header:hover {
+                background-color: ${this.config.foregroundColor}05;
+            }
+    
+            .accordion-item.expanded .accordion-header {
+                background-color: ${this.config.foregroundColor}08;
+            }
+    
+            /* Shimmer animation applied selectively */
+            .skeleton-animated {
+                position: relative;
+                overflow: hidden;
+            }
+        `;
+    }    
+
     private getDefaultStyles(): string {
         return `
             .default-loader {
@@ -525,6 +681,7 @@ export class WMSkeletonLoader extends HTMLElement {
             form: () => this.createFormContent(loaderContent),
             card: () => this.createCardContent(loaderContent),
             tabs: () => this.createTabsContent(loaderContent),
+            accordion: () => this.createAccordionContent(loaderContent),
             default: () => this.createDefaultContent(loaderContent)
         };
 
@@ -801,6 +958,80 @@ export class WMSkeletonLoader extends HTMLElement {
 
             field.appendChild(label);
             container.appendChild(field);
+        }
+    }
+
+    private createAccordionContent(container: HTMLElement): void {
+        const itemCount = Math.min(this.config.itemCount || 4, 8);
+        
+        for (let i = 0; i < itemCount; i++) {
+            const accordionItem = document.createElement('div');
+            accordionItem.className = `accordion-item ${i === 0 ? 'expanded' : ''}`;
+    
+            // Create header
+            const header = document.createElement('div');
+            header.className = 'accordion-header';
+    
+            // Add chevron indicator
+            const chevron = document.createElement('div');
+            chevron.className = 'accordion-chevron';
+            
+            // Create title block with title and subtitle
+            const titleBlock = document.createElement('div');
+            titleBlock.className = 'accordion-title-block';
+            
+            const title = document.createElement('div');
+            title.className = 'accordion-title skeleton-animated';
+            
+            const subtitle = document.createElement('div');
+            subtitle.className = 'accordion-subtitle skeleton-animated';
+            
+            titleBlock.appendChild(title);
+            titleBlock.appendChild(subtitle);
+    
+            // Add badge indicator
+            const badge = document.createElement('div');
+            badge.className = 'accordion-badge skeleton-animated';
+    
+            // Assemble header
+            header.appendChild(chevron);
+            header.appendChild(titleBlock);
+            header.appendChild(badge);
+            accordionItem.appendChild(header);
+    
+            // Create expanded content for first item
+            if (i === 0) {
+                const content = document.createElement('div');
+                content.className = 'accordion-content';
+                
+                const contentBlock = document.createElement('div');
+                contentBlock.className = 'content-block';
+    
+                // Create two content sections
+                for (let j = 0; j < 1; j++) {
+                    const section = document.createElement('div');
+                    section.className = 'content-section';
+    
+                    const heading = document.createElement('div');
+                    heading.className = 'content-heading skeleton-animated';
+                    section.appendChild(heading);
+    
+                    // Add content lines with varying widths
+                    const lineClasses = ['full', 'long', 'medium', 'short'];
+                    lineClasses.forEach(width => {
+                        const line = document.createElement('div');
+                        line.className = `content-line content-line-${width} skeleton-animated`;
+                        section.appendChild(line);
+                    });
+    
+                    contentBlock.appendChild(section);
+                }
+    
+                content.appendChild(contentBlock);
+                accordionItem.appendChild(content);
+            }
+    
+            container.appendChild(accordionItem);
         }
     }
 

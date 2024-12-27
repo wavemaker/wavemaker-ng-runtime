@@ -11,7 +11,10 @@ register('wm-repeat-template', (): IBuildTaskDef => {
         pre: (attrs, shared, parentAccordion, parentTab) => {
             const widgetRef = (parentAccordion && parentAccordion.get('accordion_ref')) || (parentTab && parentTab.get('tabs_ref'));
             if (widgetRef) {
-                return `<div *ngIf="${widgetRef}.fieldDefs && !${widgetRef}.fieldDefs.length">{{${widgetRef}.nodatamessage}}</div>
+                return `<div *ngIf="${widgetRef}.variableInflight && ${widgetRef}.app.Variables?.showSkeletonLoader?.dataSet.dataValue || false"> 
+                        <wm-skeleton-loader widget-type="accordion"></wm-skeleton-loader>
+                        </div>
+                    <div *ngIf="${widgetRef}.fieldDefs && !${widgetRef}.fieldDefs.length && !${widgetRef}.app.Variables?.showSkeletonLoader.dataSet.dataValue">{{${widgetRef}.nodatamessage}}</div>
                     <${dynamicTemplateTagName} wmRepeatTemplate #repeatItemRef="repeatItemRef" ${getAttrMarkup(attrs)} *ngFor="let item of ${widgetRef}.fieldDefs; let i = index;">
                         <ng-container [ngTemplateOutlet]="widgetRef${counter}"
                             [ngTemplateOutletContext]="{item:item, index:i}"
@@ -19,7 +22,6 @@ register('wm-repeat-template', (): IBuildTaskDef => {
                     </${dynamicTemplateTagName}>
                     <ng-template #widgetRef${counter++} let-item="item" let-index="index">`;
             }
-
         },
         post: () => `</ng-template>`
     };
