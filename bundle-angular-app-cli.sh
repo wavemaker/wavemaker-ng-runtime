@@ -60,9 +60,9 @@ cd dist/npm-packages/package
 if [[ "${publish}" == true ]]; then
     # this will create package-lock.json file without actually installing the node modules
     npm install --package-lock-only
-    cp package-lock.json npm-shrinkwrap.json
     # remove the 'resolved' key from the file
     sed -i.bak '/"resolved":/d' package-lock.json
+    cp package-lock.json npm-shrinkwrap.json
     # clean up backup file created by sed (macOS creates .bak files, not in linux)
     rm -f package-lock.json.bak
 
