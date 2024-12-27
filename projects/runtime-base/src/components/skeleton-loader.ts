@@ -1,4 +1,3 @@
-// Define interface for loader configuration
 interface SkeletonConfig {
     backgroundColor?: string;
     foregroundColor?: string;
@@ -35,7 +34,6 @@ export class WMSkeletonLoader extends HTMLElement {
         };
     }
 
-    // Update configuration when attributes change
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
         if (name === 'config' && newValue) {
             this.config = { ...this.config, ...JSON.parse(newValue) };
@@ -54,7 +52,7 @@ export class WMSkeletonLoader extends HTMLElement {
         this.updateLoader(this.getAttribute('widget-type') || 'default');
     }
 
-    getStyles(widgetType: string): string {
+    private getStyles(widgetType: string): string {
         const { animationDuration, borderRadius, shimmerColor } = this.config;
 
         const baseStyles = `
@@ -248,27 +246,152 @@ export class WMSkeletonLoader extends HTMLElement {
         return `
             .chart-loader {
                 display: flex;
-                align-items: center;
-                height: 250px;
+                flex-direction: column;
+                height: 300px;
                 background-color: ${this.config.backgroundColor};
                 padding: ${this.config.spacing};
+                border-radius: ${this.config.borderRadius};
                 position: relative;
+            }
+    
+            /* Chart title and legend area */
+            .chart-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+    
+            .chart-title {
+                width: 150px;
+                height: 24px;
+                background-color: ${this.config.foregroundColor};
+                border-radius: ${this.config.borderRadius};
+            }
+    
+            .chart-legend {
+                display: flex;
+                gap: 12px;
+            }
+    
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+    
+            .legend-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background-color: ${this.config.foregroundColor};
+            }
+    
+            .legend-text {
+                width: 60px;
+                height: 16px;
+                background-color: ${this.config.foregroundColor};
+                border-radius: ${this.config.borderRadius};
+            }
+    
+            /* Chart visualization area */
+            .chart-visualization {
+                flex: 1;
+                display: grid;
+                grid-template-columns: 50px 1fr;
+                grid-template-rows: 1fr 30px;
+                gap: 10px;
+                padding-top: 20px;
+            }
+    
+            /* Y-axis ticks */
+            .y-axis {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                padding-right: 10px;
+            }
+    
+            .y-tick {
+                width: 30px;
+                height: 12px;
+                background-color: ${this.config.foregroundColor};
+                border-radius: ${this.config.borderRadius};
+                opacity: 0.6;
+            }
+    
+            /* X-axis ticks */
+            .x-axis {
+                grid-column: 2;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+    
+            .x-tick {
+                width: 40px;
+                height: 12px;
+                background-color: ${this.config.foregroundColor};
+                border-radius: ${this.config.borderRadius};
+                opacity: 0.6;
+            }
+    
+            /* Chart area with grid lines */
+            .chart-area {
+                position: relative;
+                grid-column: 2;
+                border-left: 1px dashed ${this.config.foregroundColor};
+                border-bottom: 1px dashed ${this.config.foregroundColor};
+            }
+    
+            .grid-line {
+                position: absolute;
+                left: 0;
+                width: 100%;
+                height: 1px;
+                background: ${this.config.foregroundColor};
+                opacity: 0.1;
+            }
+    
+            /* Animated chart line */
+            .chart-line-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
                 overflow: hidden;
             }
+    
             .chart-line {
                 position: absolute;
                 width: 100%;
-                height: 2px;
-                background-color: ${this.config.foregroundColor};
-                transform-origin: left center;
-                transition: all 0.3s ease;
+                height: 100%;
+                fill: none;
+                stroke: ${this.config.foregroundColor};
+                stroke-width: 2;
+                stroke-linecap: round;
+                stroke-linejoin: round;
             }
+    
+            .chart-gradient {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    to bottom,
+                    ${this.config.foregroundColor}20 0%,
+                    transparent 100%
+                );
+                clip-path: path('');  /* Will be set dynamically */
+            }
+    
             .chart-point {
-                width: 10px;
-                height: 10px;
+                position: absolute;
+                width: 8px;
+                height: 8px;
                 background-color: ${this.config.foregroundColor};
                 border-radius: 50%;
-                position: absolute;
                 transform: translate(-50%, -50%);
             }
         `;
@@ -337,7 +460,6 @@ export class WMSkeletonLoader extends HTMLElement {
         `;
     }
 
-    // First, let's extend the existing code by adding the tabs-specific styling method
     private getTabStyles(): string {
         return `
         .tabs-loader {
@@ -392,7 +514,24 @@ export class WMSkeletonLoader extends HTMLElement {
     `;
     }
 
-    // Now add the tab content creation method
+    private createLoaderContent(widgetType: string): HTMLElement {
+        const loaderContent = document.createElement('div');
+        loaderContent.className = `skeleton-loader skeleton-animated ${widgetType}-loader`;
+
+        const creators: { [key: string]: () => void } = {
+            list: () => this.createListContent(loaderContent),
+            table: () => this.createTableContent(loaderContent),
+            chart: () => this.createChartContent(loaderContent),
+            form: () => this.createFormContent(loaderContent),
+            card: () => this.createCardContent(loaderContent),
+            tabs: () => this.createTabsContent(loaderContent),
+            default: () => this.createDefaultContent(loaderContent)
+        };
+
+        (creators[widgetType] || creators.default)();
+        return loaderContent;
+    }
+
     private createTabsContent(container: HTMLElement): void {
         // Create tabs header
         const header = document.createElement('div');
@@ -424,24 +563,6 @@ export class WMSkeletonLoader extends HTMLElement {
         content.appendChild(panel);
         container.appendChild(header);
         container.appendChild(content);
-    }
-
-    createLoaderContent(widgetType: string): HTMLElement {
-        const loaderContent = document.createElement('div');
-        loaderContent.className = `skeleton-loader skeleton-animated ${widgetType}-loader`;
-
-        const creators: { [key: string]: () => void } = {
-            list: () => this.createListContent(loaderContent),
-            table: () => this.createTableContent(loaderContent),
-            chart: () => this.createChartContent(loaderContent),
-            form: () => this.createFormContent(loaderContent),
-            card: () => this.createCardContent(loaderContent),
-            tabs: () => this.createTabsContent(loaderContent),
-            default: () => this.createDefaultContent(loaderContent)
-        };
-
-        (creators[widgetType] || creators.default)();
-        return loaderContent;
     }
 
     private createCardContent(container: HTMLElement): void {
@@ -540,45 +661,134 @@ export class WMSkeletonLoader extends HTMLElement {
     }
 
     private createChartContent(container: HTMLElement): void {
-        const maxHeight = 200; // Maximum y-coordinate
-        const minHeight = 50;  // Minimum y-coordinate
-        const pointCount = this.config.itemCount || 5;
-        const chartWidth = container.offsetWidth || 250;
-        const spacing = chartWidth / (pointCount - 1);
+        // Create chart header with title and legend
+        const header = document.createElement('div');
+        header.className = 'chart-header';
 
-        let previousX = 0;
-        let previousY = Math.random() * (maxHeight - minHeight) + minHeight;
+        const title = document.createElement('div');
+        title.className = 'chart-title skeleton-animated';
 
-        for (let i = 0; i < pointCount; i++) {
-            const x = i * spacing;
-            const y = Math.random() * (maxHeight - minHeight) + minHeight;
+        const legend = document.createElement('div');
+        legend.className = 'chart-legend';
 
-            // Create a line connecting to the previous point
-            if (i > 0) {
-                const line = document.createElement('div');
-                line.className = 'chart-line skeleton-animated';
-                const deltaX = x - previousX;
-                const deltaY = y - previousY;
-                const length = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-                const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+        // Create two legend items
+        for (let i = 0; i < 2; i++) {
+            const legendItem = document.createElement('div');
+            legendItem.className = 'legend-item';
 
-                line.style.width = `${length}px`;
-                line.style.transform = `translate(${previousX}px, ${previousY}px) rotate(${angle}deg)`;
-                container.appendChild(line);
+            const dot = document.createElement('div');
+            dot.className = 'legend-dot skeleton-animated';
+
+            const text = document.createElement('div');
+            text.className = 'legend-text skeleton-animated';
+
+            legendItem.appendChild(dot);
+            legendItem.appendChild(text);
+            legend.appendChild(legendItem);
+        }
+
+        header.appendChild(title);
+        header.appendChild(legend);
+        container.appendChild(header);
+
+        // Create chart visualization area
+        const visualization = document.createElement('div');
+        visualization.className = 'chart-visualization';
+
+        // Create Y-axis
+        const yAxis = document.createElement('div');
+        yAxis.className = 'y-axis';
+        for (let i = 0; i < 5; i++) {
+            const tick = document.createElement('div');
+            tick.className = 'y-tick skeleton-animated';
+            yAxis.appendChild(tick);
+        }
+
+        // Create chart area with grid lines
+        const chartArea = document.createElement('div');
+        chartArea.className = 'chart-area';
+
+        // Add grid lines
+        for (let i = 1; i <= 4; i++) {
+            const gridLine = document.createElement('div');
+            gridLine.className = 'grid-line';
+            gridLine.style.top = `${(i * 20)}%`;
+            chartArea.appendChild(gridLine);
+        }
+
+        // Create animated chart line using SVG for smooth curves
+        const lineContainer = document.createElement('div');
+        lineContainer.className = 'chart-line-container';
+
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '100%');
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.setAttribute('preserveAspectRatio', 'none');
+
+        // Helper method to generate smooth curve points
+        function generateSmoothCurvePoints(): string {
+            const points: [number, number][] = [];
+            const pointCount = 6;
+
+            // Generate random points with some constraints to make the curve look natural
+            for (let i = 0; i < pointCount; i++) {
+                const x = (i / (pointCount - 1)) * 100;
+                const y = 30 + Math.random() * 40; // Keep points in middle range for better visual
+                points.push([x, y]);
             }
 
-            // Create a point
-            const point = document.createElement('div');
-            point.className = 'chart-point skeleton-animated';
-            point.style.left = `${x}px`;
-            point.style.bottom = `${y}px`;
+            // Create a smooth curve using cubic bezier
+            let path = `M ${points[0][0]} ${points[0][1]}`;
 
-            container.appendChild(point);
+            for (let i = 0; i < points.length - 1; i++) {
+                const current = points[i];
+                const next = points[i + 1];
 
-            // Update previous point
-            previousX = x;
-            previousY = y;
+                // Calculate control points for smooth curve
+                const cp1x = current[0] + (next[0] - current[0]) / 3;
+                const cp1y = current[1];
+                const cp2x = next[0] - (next[0] - current[0]) / 3;
+                const cp2y = next[1];
+
+                path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${next[0]} ${next[1]}`;
+            }
+
+            return path;
         }
+
+        // Generate smooth curve points
+        const points = generateSmoothCurvePoints();
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', points);
+        path.setAttribute('class', 'chart-line skeleton-animated');
+
+        svg.appendChild(path);
+        lineContainer.appendChild(svg);
+
+        // Add gradient area under the line
+        const gradient = document.createElement('div');
+        gradient.className = 'chart-gradient';
+        gradient.style.clipPath = `path('${points} V 100 H 0 Z')`;
+        lineContainer.appendChild(gradient);
+
+        chartArea.appendChild(lineContainer);
+
+        // Create X-axis
+        const xAxis = document.createElement('div');
+        xAxis.className = 'x-axis';
+        for (let i = 0; i < 6; i++) {
+            const tick = document.createElement('div');
+            tick.className = 'x-tick skeleton-animated';
+            xAxis.appendChild(tick);
+        }
+
+        // Assemble the visualization
+        visualization.appendChild(yAxis);
+        visualization.appendChild(chartArea);
+        visualization.appendChild(document.createElement('div')); // Empty cell for grid alignment
+        visualization.appendChild(xAxis);
+        container.appendChild(visualization);
     }
 
     private createFormContent(container: HTMLElement): void {
@@ -600,7 +810,7 @@ export class WMSkeletonLoader extends HTMLElement {
         container.appendChild(item);
     }
 
-    updateLoader(widgetType: string): void {
+    private updateLoader(widgetType: string): void {
         const style = document.createElement('style');
         style.textContent = this.getStyles(widgetType);
 
@@ -612,5 +822,4 @@ export class WMSkeletonLoader extends HTMLElement {
     }
 }
 
-// Register the custom element
 customElements.define('wm-skeleton-loader', WMSkeletonLoader);

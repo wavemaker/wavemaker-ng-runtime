@@ -176,7 +176,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     private axisoptions: any;
     private numericColumns: any;
     private nonPrimaryColumns: any = [];
-    private variableInflight: any;
+    public variableInflight: any;
     private chartReady: boolean;
     private xDataKeyArr: any = [];
     private xAxisDataType: string;
@@ -1121,7 +1121,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         }
     }
 
-    constructor(inj: Injector, private app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, public app: App, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER, ['fontsize', 'fontunit', 'color', 'fontfamily', 'fontweight', 'fontstyle', 'textdecoration']);
 
