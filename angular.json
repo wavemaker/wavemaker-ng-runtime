@@ -28,12 +28,8 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
+              "src/favicon.png",
               "src/assets",
-              {
-                  "glob": "print.css",
-                  "input": "src/assets/",
-                  "output": "."
-              },
               {
                 "glob": "**/*",
                 "input": "libraries/locales/",
@@ -43,6 +39,19 @@
                 "glob": "**/*",
                 "input": "node_modules/@wavemaker/app-ng-runtime/locales/",
                 "output": "/locales/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/servicedefs",
+                "output": "/servicedefs/"
+              },
+              {
+                "glob": "**/*",
+                "input": "resources",
+                "output": "/resources/",
+                "ignore": [
+                  "**/*.txt"
+               ]
               }
             ],
             "styles": [
@@ -58,6 +67,11 @@
                 "input": "src/assets/app.css",
                 "inject": false,
                 "bundleName": "wm-styles"
+              },
+              {
+                "input": "src/assets/print.css",
+                "inject": false,
+                "bundleName": "print"
               }
             ],
             "scripts": [
@@ -65,6 +79,7 @@
               "./node_modules/d3/dist/d3.min.js",
               "./node_modules/@wavemaker/nvd3/build/nv.d3.min.js",
               "./node_modules/jquery/dist/jquery.min.js",
+              "./node_modules/lodash/lodash.min.js",
               "./node_modules/jquery-ui/ui/disable-selection.js",
               "./node_modules/jquery-ui/ui/version.js",
               "./node_modules/jquery-ui/ui/widget.js",
@@ -188,18 +203,29 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
+              "src/favicon.png",
               "src/assets",
               {
-                  "glob": "print.css",
-                  "input": "src/assets/",
-                  "output": "."
+                "glob": "**/*",
+                "input": "src/servicedefs",
+                "output": "/servicedefs/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/resources",
+                "output": "/resources/"
               }
             ],
             "styles": [
               "src/styles.css",
               "src/assets/styles/css/wm-style.css",
               "src/assets/themes/material/style.css",
-              "src/assets/app.css"
+              "src/assets/app.css",
+              {
+                "input": "src/assets/print.css",
+                "inject": false,
+                "bundleName": "print"
+              }
             ],
             "scripts": [
               "./node_modules/x2js/x2js.js",

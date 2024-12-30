@@ -9,6 +9,9 @@ jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
     getWmProjectProperties: jest.fn().mockReturnValue({ homePage: 'home' })
 }));
+(window as any)._WM_APP_PROPERTIES  = {
+    securityEnabled : true
+}
 
 describe('SecurityService', () => {
     let service: SecurityService;
@@ -65,7 +68,8 @@ describe('SecurityService', () => {
     });
 
     it('should load security config if not already loaded', async () => {
-        const mockResponse = { body: { userInfo: { name: 'testUser' } } };
+        const mockResponse = { body: { userInfo: { name: 'testUser' 
+        }  }  };
         httpMock.send.mockResolvedValue(mockResponse);
 
         const config = await service.load();
@@ -103,7 +107,7 @@ describe('SecurityService', () => {
     });
 
     it('should perform app logout successfully', async () => {
-        service.config = { authenticated: true, userInfo: { name: 'testUser' } }; // initialize config
+        service.config = { authenticated: true, userInfo: { name: 'testUser' }  }; // initialize config
 
         const mockResponse = { body: 'success' };
         httpMock.send.mockResolvedValue(mockResponse);

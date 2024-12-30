@@ -12,6 +12,7 @@ export const registerProps = () => {
                 ['iconposition', {value: 'left', ...PROP_STRING}],
                 ['isactive', PROP_STRING],
                 ['itemlabel', PROP_STRING],
+                ['itemhint', PROP_STRING],
                 ['itemlink', PROP_STRING],
                 ['itemicon', PROP_STRING],
                 ['itemclass', PROP_STRING],

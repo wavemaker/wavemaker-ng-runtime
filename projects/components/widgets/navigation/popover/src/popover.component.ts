@@ -93,7 +93,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     private documentClickHandler: (e: MouseEvent) => void;
     private isClosingProgrammatically = false;
     private static activePopovers: PopoverComponent[] = [];
-
+    private isHandlingClick = false;
+    
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
     @ContentChild(TemplateRef) popoverTemplate;
@@ -113,44 +114,51 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             if (!this.isOpen) return;
     
             const target = event.target as HTMLElement;
-    
-            // Check if the clicked element or any of its parents is part of the datepicker, dropdown, or typeahead containers
-            const isInsideSpecialContainer = !!(
-                target.closest('.bs-datepicker-container') || 
-                target.closest(".dropdown-menu")
-            );
-    
-            if (isInsideSpecialContainer) {
-                // If the click was inside one of these containers, we do not close the popover
-                return;
-            }
-    
-            const clickedPopoverIndex = PopoverComponent.activePopovers.findIndex(popover => {
-                const popoverContainer = document.querySelector(`.${popover.popoverContainerCls}`);
-                return popoverContainer?.contains(target);
-            });
-
-            if (this.anchorRef.nativeElement.contains(target)) {
-                event.preventDefault();
-                event.stopPropagation();
-                this.isOpen ? this.close() : this.open()
-                return;
-            }
-    
-            if (clickedPopoverIndex === -1) {
-                // Click is outside all popovers
-                if (this.outsideclick) {
-                    this.closeAllPopovers();
+            
+            // Set flag to prevent open() from running during click handling
+            this.isHandlingClick = true;
+            
+            try {
+                // Check for special containers as before
+                const isInsideSpecialContainer = !!(
+                    target.closest('.bs-datepicker-container') || 
+                    target.closest(".dropdown-menu")
+                );
+        
+                if (isInsideSpecialContainer) {
+                    return;
                 }
-            } else {
-                // Click is inside a popover
-                this.closeInnerPopovers(clickedPopoverIndex);
+        
+                const clickedPopoverIndex = PopoverComponent.activePopovers.findIndex(popover => {
+                    const popoverContainer = document.querySelector(`.${popover.popoverContainerCls}`);
+                    return popoverContainer?.contains(target);
+                });
+
+                // For anchor clicks, just close and prevent further handling
+                if (this.anchorRef?.nativeElement?.contains(target)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.isOpen ? this.close() : this.open()
+                    return;
+                }
+        
+                if (clickedPopoverIndex === -1) {
+                    if (this.outsideclick) {
+                        this.closeAllPopovers();
+                    }
+                } else {
+                    this.closeInnerPopovers(clickedPopoverIndex);
+                }
+            } finally {
+                // Always reset the flag when click handling is done
+                setTimeout(() => {
+                    this.isHandlingClick = false;
+                }, 0);
             }
         };
     
         document.addEventListener('click', this.documentClickHandler, true);
-    }
-    
+    }    
 
     private closeAllPopovers() {
         PopoverComponent.activePopovers.forEach(popover => {
@@ -176,6 +184,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     }
     // This mehtod is used to show/open the popover. This refers to the same method showPopover.
     public open() {
+        if (this.isHandlingClick) return;
         this.showPopover();
         if (!PopoverComponent.activePopovers.includes(this)) {
             PopoverComponent.activePopovers.push(this);

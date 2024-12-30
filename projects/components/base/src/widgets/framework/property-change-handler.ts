@@ -1,4 +1,13 @@
-import { $appDigest, $unwatch, isChangeFromWatch, isObject, resetChangeFromWatch, toBoolean, toDimension } from '@wm/core';
+import {
+    $appDigest,
+    $unwatch,
+    _WM_APP_PROJECT,
+    isChangeFromWatch,
+    isObject,
+    resetChangeFromWatch,
+    toBoolean,
+    toDimension
+} from '@wm/core';
 
 import { BaseComponent } from '../common/base/base.component';
 import { getWidgetPropsByType, PROP_TYPE } from './widget-props';
@@ -68,7 +77,7 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
                 ref._parentPrefab_ = component.$element.parent().closest('[prefabname][prefabname!="__self__"]').attr('prefabname') || '';
             }
             if (ref._parentPrefab_) {
-                nv = `./app/prefabs/${ref._parentPrefab_}/${nv}`;
+                nv = (_WM_APP_PROJECT.isPreview ? `./app/prefabs` : `resources`) + `/${ref._parentPrefab_}/${nv}`;
             } else if(propInfo && nv != propInfo.value) {
                 nv = './' + nv;
             }

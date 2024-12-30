@@ -722,6 +722,7 @@ buildLibs() {
 
     if [[ "$?" -eq "0" ]]; then
         npm install
+        npm update
         buildWebLibs
         buildMobileLibs
 

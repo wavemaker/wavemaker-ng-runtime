@@ -2,6 +2,7 @@ import {forwardRef} from '@angular/core';
 
 import {
     $parseExpr,
+    _WM_APP_PROJECT,
     checkIsCustomPipeExpression,
     deHyphenate,
     encodeUrl,
@@ -201,7 +202,12 @@ export const getImageUrl = (urlString, shouldEncode?, defaultUrl?) => {
 
     // If no value is provided for picturesource assign pictureplaceholder or default-image
     if (!urlString) {
-        urlString = defaultUrl || 'resources/images/imagelists/default-image.png';
+        if (isValidWebURL(defaultUrl)) {
+            urlString = defaultUrl;
+        } else {
+            urlString =   ( defaultUrl || 'resources/images/imagelists/default-image.png' );
+        }
+        urlString = _WM_APP_PROJECT.isPreview ? urlString : (isValidWebURL(urlString) ? urlString : _WM_APP_PROJECT.cdnUrl + urlString );
     }
 
     urlString = shouldEncode ? encodeUrl(urlString) : urlString;

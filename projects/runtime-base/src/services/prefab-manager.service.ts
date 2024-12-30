@@ -14,7 +14,7 @@ const resolvedPrefabs = new Set<string>();
 const getPrefabResourceUrl = (resourcePath, resourceBasePath) => {
     let _url = resourcePath;
     if (!stringStartsWith(resourcePath, 'http://|https://|//')) {
-        _url = (resourceBasePath + _url).replace('//', '/');
+        _url = (resourceBasePath + _url);
     }
     return _url;
 };

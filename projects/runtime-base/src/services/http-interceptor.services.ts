@@ -7,6 +7,7 @@ import { tap } from 'rxjs/operators';
 import { httpService, appManager } from '@wm/variables';
 import { WmHttpRequest, WmHttpResponse } from '@wm/http';
 import {extend} from "lodash-es";
+import {_WM_APP_PROJECT} from "@wm/core";
 
 /**
  * This Interceptor intercepts all network calls and if a network call fails
@@ -29,6 +30,11 @@ export class HttpCallInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let modifiedReq;
         let modifiedResp;
+        let isServicesUrl = request.url.indexOf("services/") !== -1 || request.url.indexOf("j_spring_security_check") !== -1;
+        if(isServicesUrl) {
+            let apiUrl= _WM_APP_PROJECT.apiUrl + request.url;
+            request = request.clone({ url: apiUrl });
+        }
         if (appManager && appManager.appOnBeforeServiceCall) {
             // Convert the angular HttpRequest to wm HttpRequest
             const req = this.wmHttpRequest.angularToWmRequest(request);

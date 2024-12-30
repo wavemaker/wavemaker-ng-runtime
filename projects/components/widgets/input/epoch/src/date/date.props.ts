@@ -36,7 +36,7 @@ export const dateProps = new Map(
         ['todaybuttonlabel',  { value: 'LABEL_TODAY_DATE', ...PROP_STRING }],
         ['clearbuttonlabel',  { value: 'LABEL_CLEAR_DATE', ...PROP_STRING }],
         ['showdateformatasplaceholder', PROP_BOOLEAN],
-
+        ['viewmode', { value: 'day', ...PROP_STRING }]
     ]
 );
 

@@ -64,6 +64,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public dataentrymode;
     protected activeDate;
     private elementScope;
+    public viewmode;
     public datepattern;
     public timepattern;
     protected showseconds: boolean;
@@ -999,6 +1000,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
         if (key === 'datepattern') {
             this.updateFormat(key);
+        } else if(key === 'viewmode') {
+            this._dateOptions.minMode = this.viewmode;
         } else if (key === 'showweeks') {
             this._dateOptions.showWeekNumbers = nv;
         } else if (key === 'mindate') {

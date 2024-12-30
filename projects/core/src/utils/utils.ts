@@ -1639,6 +1639,10 @@ export const findViewParent = (lView: any) => {
     }*/
 }
 
+export const getFontConfig = () => {
+    return _WM_APP_PROPERTIES.fontConfig ? _WM_APP_PROPERTIES.fontConfig : {}
+}
+
 /*export const getParent = (parent: any) => {
     if(parent.hasOwnProperty("isDynamicComponent") || parent.hasOwnProperty("isPageComponent")) {
         return parent

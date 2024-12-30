@@ -285,8 +285,11 @@ export abstract class NumberLocale extends BaseInput implements Validator {
      */
     public onInputChange(value: any) {
         const stepVal = this.stepLength();
+        const prevDataValue =  this.getPrevDataValue();
         // WMS-22355, Trigger change cb if value exists or value is empty but datavalue exists (when value is selected and deleted).
-        if (isDefined(value) && (value !== '' || this.datavalue)) {
+           // Fix for [WMS-27041]: Ensure the change callback for the number widget triggers only on focus out (when updateon is set to blur),
+           // not during initial input when the previous value is undefined and the current value is null.
+        if ((isDefined(value) && (value !== '' || this.datavalue)) && !(this.widgetType === "wm-number" && ((prevDataValue == undefined && this.datavalue == null) || (prevDataValue == this.datavalue)))) {
             this.handleChange(value);
         } else {
             return;
@@ -525,11 +528,12 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             return false;
         }
     }
-
     onBackspace($event) {
         this.isDefaultQuery = false;
     }
-
+    onDelete($event) {
+        this.isDefaultQuery = false;
+    }
     onEnter($event) {
         this.datavalue = $event.target.value;
     }
