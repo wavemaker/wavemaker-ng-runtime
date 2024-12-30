@@ -2251,6 +2251,8 @@ $.widget('wm.datatable', {
                 }
             } else {
                 if (isNewRow) {
+                    // close the typeahead dropdown when cancel btn is clicked
+                    $("typeahead-container").removeClass("open");
                     self.removeNewRow($row);
                     return;
                 }
