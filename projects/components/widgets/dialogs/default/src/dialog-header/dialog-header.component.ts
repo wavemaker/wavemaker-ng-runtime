@@ -30,7 +30,7 @@ export class DialogHeaderComponent {
         return toBoolean(this.closable);
     }
 
-    constructor(elRef: ElementRef, @Inject(DialogRef) private dialogRef: BaseDialog) {
+    constructor(elRef: ElementRef, @Inject(DialogRef) public dialogRef: BaseDialog ) {
         addClass(elRef.nativeElement, DEFAULT_CLS);
     }
 

@@ -1,5 +1,5 @@
 <button (click)="closeDialog();" *ngIf="isClosable"
-        [attr.aria-label]="'Close ' + (title ? title : '') + ' dialog'" class="app-dialog-close close" title="Close">
+        [attr.aria-label]="'Close ' + (title ? title : '') + ' dialog'" class="app-dialog-close close" title="{{dialogRef.appLocale.LABEL_CLOSE}}" >
     <span aria-hidden="true">&times;</span>
 </button>
 
