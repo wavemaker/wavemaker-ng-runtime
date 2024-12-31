@@ -71,15 +71,25 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
 
         if (isDimensionProp(key)) {
             nv = toDimension(nv);
-        } else if (startsWith(nv, 'resources/')) {
+        } else if (startsWith(nv, 'resources/') || startsWith(nv, './resources/')) {
+            //picture placeholder from image picture returns "./resources/" where are source returns "resources/"
+            if(startsWith(nv, './resources/')) {
+                nv = nv.slice(2); //remove "./" at the beginning and return "resources/"
+            }
             const ref: any = component;
             if (ref._parentPrefab_ === undefined) {
-                ref._parentPrefab_ = component.$element.parent().closest('[prefabname][prefabname!="__self__"]').attr('prefabname') || '';
+                let prefabName = component.$element.parent().closest('[prefabname][prefabname!="__self__"]').attr('prefabname');
+                //if the component is inside a tabpane or anything, where the content is lazily loaded. in such scenario the prefabName is undefined
+                if(prefabName === undefined) {
+                    // @ts-ignore
+                    prefabName = component.viewParent.prefabName;
+                }
+                ref._parentPrefab_ = prefabName || '';
             }
             if (ref._parentPrefab_) {
-                nv = (_WM_APP_PROJECT.isPreview ? `./app/prefabs` : `resources`) + `/${ref._parentPrefab_}/${nv}`;
+                nv = (_WM_APP_PROJECT.isPreview ? `./app/prefabs` : `${_WM_APP_PROJECT.cdnUrl} + resources`) + `/${ref._parentPrefab_}/${nv}`;
             } else if(propInfo && nv != propInfo.value) {
-                nv = './' + nv;
+                nv = _WM_APP_PROJECT.cdnUrl + nv;
             }
         }
 
