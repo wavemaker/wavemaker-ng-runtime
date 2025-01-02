@@ -3241,7 +3241,7 @@ $.widget('wm.datatable', {
         var overflow = (this.options.isNavTypeScrollOrOndemand() && (this.options.height === '100%' || this.options.height === 'auto')) ? 'hidden' : 'auto';
     var statusContainer =  !this.options.showSkeletonLoader ?  '<div class="overlay">' +
                 '<div class="status"><i class="' + this.options.loadingicon + '"></i><span class="message"></span></div>' +
-                '</div>' : `<wm-skeleton-loader widget-type="table"></wm-skeleton-loader>`
+                '</div>' : `<wm-skeleton-loader widget-type="table"></wm-skeleton-loader>`,
             table = '<div class="table-container table-responsive">' +
                 '<div class="app-grid-header">' +
                 '<div class="app-grid-header-inner">' +
