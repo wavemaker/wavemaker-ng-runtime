@@ -89,7 +89,7 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
             if (ref._parentPrefab_) {
                 nv = (_WM_APP_PROJECT.isPreview ? `./app/prefabs` : `${_WM_APP_PROJECT.cdnUrl} + resources`) + `/${ref._parentPrefab_}/${nv}`;
             } else if(propInfo && nv != propInfo.value) {
-                nv = _WM_APP_PROJECT.cdnUrl + nv;
+                nv = (_WM_APP_PROJECT.isPreview ? '' : _WM_APP_PROJECT.cdnUrl) + nv;
             }
         }
 
