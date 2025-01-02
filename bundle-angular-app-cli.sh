@@ -37,7 +37,7 @@ cp -r dist/bundles/wmapp/locales libraries
 cp -r pwa-assets dist/runtime-cli
 
 cp angular.json package.json package-lock.json .npmrc tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js generate-dependency-report.js dist/runtime-cli/angular-app
-cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/transpilation/expression-parser.cjs.js dist/transpilation/pipe-provider.cjs.js projects/runtime-base/src/components/app-component/app.component.html dist/runtime-cli/dependencies
+cp dist/transpilation/transpilation-web.cjs.js dist/transpilation/transpilation-mobile.cjs.js dist/transpilation/expression-parser.cjs.js dist/transpilation/pipe-provider.cjs.js projects/runtime-base/src/components/app-component/app.component.html ./node_modules/@wavemaker/custom-widgets-m3/custom-widgets-bundle.cjs.js dist/runtime-cli/dependencies
 
 if [[ "${publish}" == true ]]; then
     cd dist/runtime-cli/angular-app

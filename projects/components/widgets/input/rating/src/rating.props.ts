@@ -12,6 +12,8 @@ export const ratingProps = new Map(
         ['displayexpression', PROP_STRING],
         ['displayfield', PROP_STRING],
         ['iconcolor', PROP_STRING],
+        ['activeiconclass', {value: 'wi wi-star', ...PROP_STRING}],
+        ['inactiveiconclass', {value: 'wi wi-star-border', ...PROP_STRING}],
         ['iconsize', PROP_STRING],
         ['maxvalue', {value: 5, ...PROP_NUMBER}],
         ['name', PROP_STRING],

@@ -1,4 +1,4 @@
-<div class="btn-group btn-group-justified">
+<div role="group" class="btn-group btn-group-justified" [ngClass]="{'multi-select': multiple}">
     <a *ngFor="let opt of datasetItems; let $index = index;"
        focus-target
        href="javascript:void(0);"
@@ -9,14 +9,14 @@
        [attr.aria-pressed]="opt.selected ? true : false"
        (click)="selectOpt($event, $index, opt)"
     >
-        <i *ngIf="opt.dataObject && opt.dataObject[iconclass]" aria-hidden="true" [ngClass]="['app-icon', opt.dataObject[iconclass] || opt['icon']]"></i>
+        <i *ngIf="opt.dataObject && opt.dataObject[iconclass] && !opt.selected" aria-hidden="true" [ngClass]="['app-icon', opt.dataObject[iconclass] || opt['icon']]"></i>
+        <i *ngIf="opt.selected" aria-hidden="true" [ngClass]="[checkediconclass]"></i>
         <span class="caption" [textContent]="opt[displayfield] || opt.label"></span>
     </a>
 </div>
-<span aria-hidden="true" [title]="selectedItem ? selectedItem.label : modelByKey"
-      class="btn btn-primary app-switch-overlay switch-handle">
-    <i *ngIf="iconclass"
-       class="app-icon {{(selectedItem && selectedItem.dataObject) && selectedItem.dataObject[iconclass]}}"></i>
-    {{selectedItem ? selectedItem.label : modelByKey}}
+<span [title]="selectedItem ? selectedItem.label : modelByKey" aria-hidden="true"
+      class="btn btn-primary app-switch-overlay switch-handle" *ngIf="!multiple">
+    <i [ngClass]="[checkediconclass]"></i>
+    <span class="caption">{{selectedItem ? selectedItem.label : modelByKey}}</span>
 </span>
 <input [name]="name" class="model-holder ng-hide" [disabled]="disabled" [value]="modelByKey" [required]="required" aria-hidden="true">

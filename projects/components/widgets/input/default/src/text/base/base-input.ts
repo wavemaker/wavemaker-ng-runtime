@@ -40,7 +40,9 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
             /* WMS-18269 | Update Angular about the required attr value change */
             this._onChange(this.datavalue);
         }
-
+        if (key === 'updateon') {
+            this.ngModelOptions.updateOn = nv === 'default' ? 'change' : ov;
+        }
         if (key === 'class') {
             if (this.inputEl.nativeElement) {
                 switchClass(this.inputEl.nativeElement, nv, ov);

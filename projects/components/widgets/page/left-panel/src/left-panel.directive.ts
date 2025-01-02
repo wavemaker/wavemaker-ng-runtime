@@ -1,7 +1,7 @@
-import {Directive, Inject, Injector, Optional} from '@angular/core';
+import {Attribute, Directive, Inject, Injector, Optional} from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 
-import {App, addClass, removeClass, switchClass, toggleClass, isMobile } from '@wm/core';
+import {App, addClass, removeClass, switchClass, toggleClass, isMobile, getNavClass } from '@wm/core';
 import { APPLY_STYLES_TYPE, getKeyboardFocusableElements,  IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { LayoutDirective, PageDirective } from '@wm/components/page';
 
@@ -42,7 +42,7 @@ export class LeftPanelDirective extends StylableComponent {
     private _leftPanelAnimator;
 
     //If "spa" attribute is set LayoutDirective will present and PageDirective is undefined else PageDirective will present and LayoutDirective is undefined
-    constructor(public app: App, @Optional() private page: PageDirective, @Optional() private layout: LayoutDirective, inj: Injector, router: Router, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(public app: App, @Optional() private page: PageDirective, @Optional() private layout: LayoutDirective, inj: Injector, router: Router, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, @Attribute('navtype') navtype: string, @Attribute('navheight') navHeight: string) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
         this.$ele = this.$element;
@@ -60,6 +60,12 @@ export class LeftPanelDirective extends StylableComponent {
             }
         });
         this.registerDestroyListener(() => onRouteChange.unsubscribe());
+        if(!navtype) navtype = 'drawer';
+        this.$element.addClass(getNavClass(navtype));
+        if (navHeight) {
+            this.$element.addClass(getNavClass(navHeight));
+            addClass(this.$page[0], getNavClass(navHeight));
+        }
     }
 
     public collapse(): void {

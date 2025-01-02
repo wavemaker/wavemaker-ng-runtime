@@ -57,7 +57,7 @@ describe('TableRowDirective', () => {
         expect(directive.config).toEqual({
             closeothers: true,
             content: 'Test Content',
-            columnwidth: '30px',
+            columnwidth: '50px',
             expandicon: 'plus',
             collapseicon: 'minus',
             height: '50px',

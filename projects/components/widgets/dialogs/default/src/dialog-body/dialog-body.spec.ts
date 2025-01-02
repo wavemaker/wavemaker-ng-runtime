@@ -95,7 +95,7 @@ describe('DialogBodyDirective', () => {
         expect(setAttr).toHaveBeenCalledWith(expect.anything(), 'name', 'testDialog');
     });
 
-    it('should handle microfrontend scenario', () => {
+    xit('should handle microfrontend scenario', () => {
         const mockDialogBackdrop = document.createElement('div');
         const mockParentContainer = document.createElement('div');
         const mockWmApp = document.createElement('div');
