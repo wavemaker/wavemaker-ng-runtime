@@ -1,28 +1,30 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClient } from '@angular/common/http';
 import { CustomIconsLoaderService } from './custom-icons-loader.service';
-import { loadStyleSheets } from '../utils/utils';
+import * as utils from '../utils/utils';
 
-jest.mock('../utils/utils', () => ({
-    loadStyleSheets: jest.fn(),
-}));
+jest.mock('../utils/utils');
 
 describe('CustomIconsLoaderService', () => {
     let service: CustomIconsLoaderService;
-    let httpMock: HttpTestingController;
+    let httpClientMock: jest.Mocked<HttpClient>;
 
     beforeEach(() => {
+        httpClientMock = {
+            get: jest.fn(),
+        } as any;
+
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule],
-            providers: [CustomIconsLoaderService],
+            providers: [
+                CustomIconsLoaderService,
+                { provide: HttpClient, useValue: httpClientMock }
+            ]
         });
 
         service = TestBed.inject(CustomIconsLoaderService);
-        httpMock = TestBed.inject(HttpTestingController);
     });
 
     afterEach(() => {
-        httpMock.verify(); // Ensure that there are no outstanding requests
         jest.clearAllMocks();
     });
 
@@ -30,33 +32,38 @@ describe('CustomIconsLoaderService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should load and parse font configuration and call loadStyleSheets', () => {
-        const mockFontConfig = `
-        [
-            {"csspath": "path/to/stylesheet1.css"},
-            {"csspath": "path/to/stylesheet2.css"}
-        ]`;
+    describe('load', () => {
+        it('should extract CSS paths and load stylesheets', () => {
+            // Arrange
+            const mockFontConfig = `{
+        "csspath": "/path1/style.css",
+        "other": "value",
+        "csspath": "/path2/style.css"
+      }`;
+            const expectedPaths = ['/path1/style.css', '/path2/style.css'];
 
-        service.load();
+            jest.spyOn(utils, 'getFontConfig').mockReturnValue(mockFontConfig);
+            const loadStyleSheetsSpy = jest.spyOn(utils, 'loadStyleSheets');
 
-        const req = httpMock.expectOne('./font.config.js');
-        expect(req.request.method).toBe('GET');
-        req.flush(mockFontConfig);
+            // Act
+            service.load();
 
-        expect(loadStyleSheets).toHaveBeenCalledWith([
-            'path/to/stylesheet1.css',
-            'path/to/stylesheet2.css'
-        ]);
-    });
+            // Assert
+            expect(utils.getFontConfig).toHaveBeenCalledTimes(1);
+            expect(loadStyleSheetsSpy).toHaveBeenCalledWith(expectedPaths);
+        });
 
-    it('should handle errors without throwing', () => {
-        service.load();
+        it('should handle empty font config', () => {
+            // Arrange
+            const mockFontConfig = '{}';
+            jest.spyOn(utils, 'getFontConfig').mockReturnValue(mockFontConfig);
+            const loadStyleSheetsSpy = jest.spyOn(utils, 'loadStyleSheets');
 
-        const req = httpMock.expectOne('./font.config.js');
-        expect(req.request.method).toBe('GET');
-        req.error(new ErrorEvent('Network error'));
+            // Act
+            service.load();
 
-        // Expect no errors to be thrown
-        expect(loadStyleSheets).not.toHaveBeenCalled();
+            // Assert
+            expect(loadStyleSheetsSpy).toHaveBeenCalledWith([]);
+        });
     });
 });
