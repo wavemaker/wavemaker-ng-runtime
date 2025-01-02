@@ -44,7 +44,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     static initializeProps = registerProps();
 
     @ContentChildren(WizardStepDirective) steps: QueryList<WizardStepDirective>;
-    @ContentChild('wizardAction', { read: TemplateRef }) wizardAction: TemplateRef<any>;
+    @ContentChild('wizardAction', { read: TemplateRef, descendants: false }) wizardAction: TemplateRef<any>;
 
     public message: {caption: string, type: string};
     public currentStep: WizardStepDirective;
@@ -367,22 +367,6 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         return this.steps.last === stepRef;
     }
 
-    private updateActionButtonNames() {
-        const wizardActionButtons = [
-            { selector: 'a.app-wizard-skip', name: 'skipStep' },
-            { selector: 'button.app-wizard-cancel', name: 'cancelBtn' },
-            { selector: 'button.app-wizard-previous', name: 'previousBtn' },
-            { selector: 'button.app-wizard-next', name: 'nextBtn' },
-            { selector: 'button.app-wizard-done', name: 'doneBtn' }
-        ];
-        wizardActionButtons.forEach(button => {
-            const element = this.nativeElement.querySelector(button.selector);
-            if (element) {
-                element.setAttribute('name', `${button.name}_${this.name}`);
-            }
-        });
-        this.nativeElement.querySelector('div.app-wizard-actions-right').classList.remove('app-container');
-    }
 
     // Define the property change handler. This Method will be triggered when there is a change in the widget property
     onPropertyChange(key: string, nv: any, ov?: any) {
@@ -392,6 +376,8 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             this.stepClass =  nv === 'justified' ? 'nav-justified' : '';
         } else if (key === 'defaultstep') {
             this.setDefaultStep(this.getStepRefByName(nv));
+        } else if (key === 'actionsalignment') {
+            this.nativeElement.querySelector('div.app-wizard-actions')?.classList.replace(ov, nv);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -430,7 +416,8 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         setTimeout(() => { if($(window).width()<768) {
             $(".app-wizard").removeClass("vertical");
         }
-        this.updateActionButtonNames();
+        this.nativeElement.querySelector('div.app-wizard-actions-right')?.classList.remove('app-container');
+        this.nativeElement.querySelector('div.app-wizard-actions')?.classList.add(this.actionsalignment);
         });
     }
 }
