@@ -30,35 +30,4 @@
     <p wmMessage *ngIf="message.caption" caption.bind="message.caption" type.bind="message.type"></p>
     <ng-content ngProjectAs="form[wmWizardStep]"></ng-content>
 </div>
-@if (wizardAction) {
-    <ng-container *ngTemplateOutlet="wizardAction"></ng-container>
-} @else {
-    <div class="app-wizard-actions panel-footer {{actionsalignment}}">
-        @if(currentStep?.enableskip) {
-            <a class="app-wizard-skip" name="skipStep_{{name}}" title="Skip step" (click)="skip()">Skip &raquo;</a>
-        }
-        <div class="app-wizard-actions-right">
-            @if(cancelable) {
-                <button type="button" name="cancelBtn_{{name}}" class="btn app-button btn-default" (click)="cancel()" [title]="cancelbtnlabel" [textContent]="cancelbtnlabel"></button>
-            }
-            @if(hasPrevStep) {
-                <button type="button" name="previousBtn_{{name}}" class="btn app-button btn-default" (click)="prev()" [disabled]="!enablePrev">
-                    <i class="app-icon wi wi-chevron-left"></i>
-                    <span class="btn-caption" [textContent]="previousbtnlabel"></span>
-                </button>
-            }
-            @if(hasNextStep) {
-                <button type="button" name="nextBtn_{{name}}" class="btn app-button btn-primary" (click)="next()" [disabled]="!enableNext">
-                    <span class="btn-caption" [textContent]="nextbtnlabel"></span>
-                    <i class="app-icon wi wi-chevron-right"></i>
-                </button>
-            }
-            @if(showDoneBtn) {
-                <button type="button" name="doneBtn_{{name}}" class="btn app-button btn-success" (click)="done()" [disabled]="!enableDone">
-                    <i class="app-icon wm-sl-l sl-check"></i>
-                    <span class="btn-caption" [textContent]="donebtnlabel"></span>
-                </button>
-            }
-        </div>
-    </div>
-}
+<ng-container *ngTemplateOutlet="wizardAction"></ng-container>
