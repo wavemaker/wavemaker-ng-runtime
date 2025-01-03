@@ -302,16 +302,14 @@ describe('DateComponent', () => {
         checkElementClass(fixture, '.app-date', 'ng-invalid');
     }));
 
-    it('should disable the excluded days on the calendar panel', waitForAsync(() => {
+    it('should disable the excluded days on the calendar panel', async () => {
         dateWrapperComponent.wmComponent.getWidget().excludedays = '1,6';
-        onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (ele) => {
-            fixture.whenStable().then(() => {
-                excludedDaysDisable(ele);
-            });
-
+        fixture.detectChanges();
+        
+        await onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, async (ele) => {
+            await excludedDaysDisable(ele);
         });
-
-    }));
+    });
 
     it('should ignore the  excluded date', waitForAsync(() => {
         dateWrapperComponent.wmComponent.getWidget().excludedates = '2020-01-01';
@@ -352,11 +350,12 @@ describe('DateComponent', () => {
         });
     }));
 
-    it('should show the calendar panel when we click on the input control ', waitForAsync(() => {
+    it('should show the calendar panel when we click on the input control', async () => {
         wmComponent.getWidget().showdropdownon = 'default';
-        onClickCheckTaglengthOnBody(fixture, '.app-dateinput', 'bs-datepicker-container', 1);
-    }));
-
+        fixture.detectChanges();
+        
+        await onClickCheckTaglengthOnBody(fixture, '.app-dateinput', 'bs-datepicker-container', 1);
+    });
 
     /************************ Scenarios ends **************************************** */
 
