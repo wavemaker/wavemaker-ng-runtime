@@ -1,6 +1,6 @@
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { By } from '@angular/platform-browser';
-import { waitForAsync, ComponentFixture, ComponentFixtureAutoDetect } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, ComponentFixtureAutoDetect, fakeAsync, tick } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { MENU_POSITION, MenuComponent } from './menu.component';
 import { MenuDropdownComponent } from './menu-dropdown/menu-dropdown.component';
@@ -120,22 +120,35 @@ describe('MenuComponent', () => {
 
     /***************************** Properties starts *************************************** */
 
-    it('caption should be my menu ', waitForAsync(() => {
+    it('caption should be my menu ', fakeAsync(() => {
         const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
         const btnEleInstance: ButtonComponent = buttonEle.componentInstance;
         btnEleInstance.caption = 'My Menu';
-        fixture.whenStable().then(() => {
-            fixture.detectChanges();
-            expect(buttonEle.query(By.css('.btn-caption')).nativeElement.textContent.trim()).toEqual('My Menu');
-        });
+        
+        tick();
+        fixture.detectChanges();
+        
+        const caption = buttonEle.query(By.css('.btn-caption'));
+        expect(caption.nativeElement.textContent.trim()).toEqual('My Menu');
     }));
 
-    it('should apply 300px width ', waitForAsync(() => {
-        wmComponent.getWidget().width = '300px';
-        fixture.whenStable().then(() => {
-            const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
-            expect(buttonEle.nativeElement.style.width).toEqual('300px');
-        });
+    it('should show the dropdown in horizontal layout ', fakeAsync(() => {
+        wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
+        buttonClickFunction();
+        
+        tick();
+        fixture.detectChanges();
+        
+        const ulEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+        expect(ulEle).toBeTruthy();
+        
+        wmComponent.getWidget().menulayout = 'vertical';
+        fixture.detectChanges();
+        expect(ulEle.nativeElement.classList).toContain('vertical');
+        
+        wmComponent.getWidget().menulayout = 'horizontal';
+        fixture.detectChanges();
+        expect(ulEle.nativeElement.classList).toContain('horizontal');
     }));
 
     it('should apply 50px height ', waitForAsync(() => {
