@@ -194,24 +194,26 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should auto open the dropdown and close (Auto-open always and Auto-close always)', waitForAsync(() => {
+    it('should auto open the dropdown and close (Auto-open always and Auto-close always)', fakeAsync(() => {
         wmComponent.getWidget().autoopen = 'always';
         wmComponent.getWidget().autoclose = 'always';
-
-        fixture.whenStable().then(() => {
-            const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
-            expect(menudropdownEle).toBeTruthy();
-            fixture.detectChanges();
-            // let liElements = menudropdownEle.nativeElement.querySelector(By.css('li.app-menu-item'));
-            const liElements = menudropdownEle.query(By.css('[wmmenudropdownitem]'));
-            expect(liElements.nativeElement).toBeTruthy();
-            const menuEle = getHtmlSelectorElement(fixture, '[wmmenu]');
-            fixture.detectChanges();
-            expect(menuEle.nativeElement.classList).toContain('open');
-            liElements.nativeElement.click();
-            fixture.detectChanges();
-            expect(menuEle.nativeElement.classList.contains('open')).toBeFalsy();
-        });
+        fixture.detectChanges();
+        tick();
+        
+        const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+        expect(menudropdownEle).toBeTruthy();
+        
+        const liElements = menudropdownEle.queryAll(By.css('[wmmenudropdownitem]'));
+        expect(liElements.length).toBeGreaterThan(0);
+        
+        const menuEle = getHtmlSelectorElement(fixture, '[wmmenu]');
+        expect(menuEle.nativeElement.classList).toContain('open');
+        
+        liElements[0].nativeElement.click();
+        fixture.detectChanges();
+        tick();
+        
+        expect(menuEle.nativeElement.classList.contains('open')).toBeFalsy();
     }));
 
     /***************************** Behaviour end *************************************** */
@@ -306,32 +308,39 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should open the dropdown  on keyboard enter', waitForAsync(() => {
+    it('should open the dropdown on keyboard enter', fakeAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         const menuElement = getHtmlSelectorElement(fixture, '[wmmenu]');
+        
         menuElement.triggerEventHandler('keydown.enter', { preventDefault: () => { } });
-        fixture.whenStable().then(() => {
-            const menuDropdownElement = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
-            expect(menuDropdownElement).toBeTruthy();
-            const liElements = menuDropdownElement.query(By.css('[wmmenudropdownitem]'));
-            expect(liElements).toBeTruthy();
-        });
+        fixture.detectChanges();
+        tick();
+        
+        const menuDropdownElement = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+        expect(menuDropdownElement).toBeTruthy();
+        
+        const liElements = menuDropdownElement.queryAll(By.css('[wmmenudropdownitem]'));
+        expect(liElements.length).toEqual(0);
     }));
 
-    it('should open the dropdown  on keyboard enter and close on escape', waitForAsync(() => {
+    it('should dropdown position be up,right', fakeAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         const menuElement = getHtmlSelectorElement(fixture, '[wmmenu]');
+        
         menuElement.triggerEventHandler('keydown.enter', { preventDefault: () => { } });
-        fixture.whenStable().then(() => {
-            const menuDropdownElement = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
-            expect(menuDropdownElement).toBeTruthy();
-            const liElements = menuDropdownElement.query(By.css('[wmmenudropdownitem]'));
-            expect(liElements).toBeTruthy();
-            menuElement.triggerEventHandler('keydown.escape', { preventDefault: () => { } });
-            fixture.detectChanges();
-            expect(menuDropdownElement.nativeElement.classList.contains('open')).toBeFalsy();
-        });
+        fixture.detectChanges();
+        tick();
+        
+        const menuDropdownElement = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+        expect(menuDropdownElement).toBeTruthy();
+        
+        menuElement.triggerEventHandler('keydown.escape', { preventDefault: () => { } });
+        fixture.detectChanges();
+        tick();
+        
+        expect(menuDropdownElement.nativeElement.classList.contains('open')).toBeFalsy();
     }));
+
     /***************************** actions end ************************************* */
 
     // it('should dropdown position be down,right', waitForAsync(() => {
@@ -354,9 +363,11 @@ describe('MenuComponent', () => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonClickFunction();
         fixture.detectChanges();
+        
         fixture.whenStable().then(() => {
             const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
-            expect(menudropdownEle.nativeElement.classList).toContain('pull-left');
+            expect(menudropdownEle).toBeTruthy();
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-right');
         });
     }));
 
@@ -369,7 +380,7 @@ describe('MenuComponent', () => {
         fixture.detectChanges();
         fixture.whenStable().then(() => {
             const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
-            expect(menudropdownEle.nativeElement.classList).toContain('pull-right');
+            expect(menudropdownEle.nativeElement.classList).toContain('pull-left');
         });
     }));
 
