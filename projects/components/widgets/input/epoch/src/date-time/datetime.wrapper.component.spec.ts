@@ -40,6 +40,7 @@ import {
 } from '../../../../../base/src/test/util/date-test-util';
 import localeDE from '@angular/common/locales/de';
 import localeRO from '@angular/common/locales/ro';
+import { By } from '@angular/platform-browser';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -228,10 +229,14 @@ describe("DatetimeComponent", () => {
         tick();  // Allow time for the whenStable promise to resolve
     }));
 
-    it('should be disabled mode ', waitForAsync(() => {
+    it('should be disabled mode', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
-        hasAttributeCheck(fixture, '.app-textbox', 'disabled');
+        
+        fixture.whenStable().then(() => {
+            const element = getHtmlSelectorElement(fixture, '.app-textbox');
+            expect(element.nativeElement.hasAttribute('disabled')).toBe(true);
+        });
     }));
 
     it('should be disabled mode (picker button)', waitForAsync(() => {
@@ -299,25 +304,28 @@ describe("DatetimeComponent", () => {
     // TypeError: Cannot read properties of undefined (reading 'querySelectorAll')
     it('should toggle the AM/PM', waitForAsync(() => {
         wmComponent.getWidget().datepattern = 'MMM d, yyyy h:mm:ss a';
+        
         fixture.whenStable().then(() => {
             onClickCheckTaglengthOnBody(fixture, '.btn-time', null, null);
+            fixture.detectChanges();
+            
             fixture.whenStable().then(() => {
-                let ele = document.getElementsByTagName('timepicker');
-                let tbodyRows = ele[0].querySelectorAll('tbody tr');
-                fixture.detectChanges();
-                let tdElement = tbodyRows[1].querySelectorAll('td')[6].querySelector('button');
-                let textContent = tdElement.textContent;
+                const timepicker = fixture.debugElement.query(By.css('timepicker'));
+                const tbodyRows = timepicker.queryAll(By.css('tbody tr'));
+                const tdElement = tbodyRows[1].queryAll(By.css('td'))[6]
+                    .query(By.css('button')).nativeElement;
+                
+                const initialText = tdElement.textContent.trim();
                 tdElement.click();
                 fixture.detectChanges();
-                if (textContent.trim() == 'AM') {
-                    expect(tdElement.textContent.trim()).toEqual("PM");
-                } else {
-                    expect(tdElement.textContent.trim()).toEqual("AM");
-                }
+                
+                expect(tdElement.textContent.trim()).toEqual(
+                    initialText === 'AM' ? 'PM' : 'AM'
+                );
             });
         });
-
     }));
+    
     it('should autofocus the date control', fakeAsync(() => {
         fixture.detectChanges();
         tick();
