@@ -330,17 +330,21 @@ describe('SearchComponent', () => {
 
     //TypeError: Cannot read properties of undefined (reading 'querySelectorAll')
 
-    it('should invoke getTransformedData method ', waitForAsync(() => {
+    it('should invoke getTransformedData method', fakeAsync(() => {
         const testValue = 'te';
-        wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
+        wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5, test6, test7, test8';
         jest.spyOn(wmComponent, 'getTransformedData');
-        setInputValue(fixture, '.app-search-input', testValue).then(() => {
-            let ulElement = getUlElement();
-            ulElement[0].dispatchEvent(new CustomEvent('scroll'));
-            fixture.whenStable().then(() => {
-                expect(wmComponent.getTransformedData).toHaveBeenCalled();
-            });
-        });
+        
+        setInputValue(fixture, '.app-search-input', testValue);
+        tick(); // Handle initial async
+        
+        const ulElement = getUlElement();
+        ulElement[0].dispatchEvent(new CustomEvent('scroll'));
+        
+        tick(); // Handle scroll event async
+        fixture.detectChanges();
+        
+        expect(wmComponent.getTransformedData).toHaveBeenCalled();
     }));
 
     /*********************************** Method invoking end ************************** */
