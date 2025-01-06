@@ -289,8 +289,22 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         // WMS-22355, Trigger change cb if value exists or value is empty but datavalue exists (when value is selected and deleted).
            // Fix for [WMS-27041]: Ensure the change callback for the number widget triggers only on focus out (when updateon is set to blur),
            // not during initial input when the previous value is undefined and the current value is null.
-        if ((isDefined(value) && (value !== '' || this.datavalue)) && !(this.widgetType === "wm-number" && ((prevDataValue == undefined && this.datavalue == null) || (prevDataValue == this.datavalue)))) {
-            this.handleChange(value);
+        if (isDefined(value) && (value !== '' || this.datavalue || this.datavalue == 0)) {
+            if (this.widgetType === "wm-number") {
+                if (this.inputmode == INPUTMODE.FINANCIAL) {
+                    // Case 1: when there is no default value, prevDataValue is undefined && this.datavalue is null
+                    // Case 2: when there default value, prevDataValue is equal to this.datavalue
+                    if (!((prevDataValue == undefined && this.datavalue == null) || (prevDataValue == this.datavalue))) {
+                        this.handleChange(value);
+                    }
+                } else {
+                    if (!(prevDataValue == undefined && this.datavalue == null)) {
+                        this.handleChange(value);
+                    }
+                }
+            } else { // currency widget
+                this.handleChange(value);
+            }
         } else {
             return;
         }
