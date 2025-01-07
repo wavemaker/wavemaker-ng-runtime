@@ -3466,8 +3466,11 @@ $.widget('wm.datatable', {
 
     applyColNgClass: function (val, rowIndex, colIndex) {
         var $cell = this.gridElement.find('tr.app-datagrid-row[data-row-id="' + rowIndex + '"] td.app-datagrid-cell[data-col-id="' + colIndex + '"]');
+        var $head = this.tableContainer.find('thead tr th.app-datagrid-header-cell[data-col-id="' + colIndex + '"]');
         $cell.removeClass(val.toRemove);
         $cell.addClass(val.toAdd);
+        $head.removeClass(val.toRemove);
+        $head.addClass(val.toAdd);
     },
 
     _destroy: function () {
