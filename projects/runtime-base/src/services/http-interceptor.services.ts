@@ -27,11 +27,19 @@ export class HttpCallInterceptor implements HttpInterceptor {
     createSubject() {
         return new Subject();
     }
+
+    isAbsoluteUrl(url: string) {
+        return /^[a-z][a-z0-9+.-]*:\/\//i.test(url);
+    }
+
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let modifiedReq;
         let modifiedResp;
-        let isServicesUrl = request.url.indexOf("services/") !== -1 || request.url.indexOf("j_spring_security_check") !== -1;
-        if(isServicesUrl) {
+        let isRelativeAPIUrl = false;
+        if(!this.isAbsoluteUrl(request.url)) {
+            isRelativeAPIUrl = request.url.indexOf("services/") !== -1 || request.url.indexOf("j_spring_security_check") !== -1;
+        }
+        if(isRelativeAPIUrl) {
             let apiUrl= _WM_APP_PROJECT.apiUrl + request.url;
             request = request.clone({ url: apiUrl });
         }
