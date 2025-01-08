@@ -205,7 +205,6 @@ bundleWeb() {
         ./libraries/components/advanced/carousel/bundles/index.umd.js \
         ./libraries/components/advanced/marquee/bundles/index.umd.js \
         ./libraries/components/advanced/login/bundles/index.umd.js \
-        ./libraries/components/advanced/custom/bundles/index.umd.js \
         ./libraries/variables/bundles/index.umd.js \
         ./libraries/mobile/placeholder/runtime/bundles/index.umd.js \
         ./libraries/mobile/placeholder/runtime-dynamic/bundles/index.umd.js \
@@ -283,7 +282,6 @@ bundleMobile() {
         ./libraries/components/advanced/carousel/bundles/index.umd.js \
         ./libraries/components/advanced/marquee/bundles/index.umd.js \
         ./libraries/components/advanced/login/bundles/index.umd.js \
-        ./libraries/components/advanced/custom/bundles/index.umd.js \
         ./libraries/mobile/core/bundles/index.umd.js \
         ./libraries/mobile/components/basic/default/bundles/index.umd.js \
         ./libraries/mobile/components/basic/search/bundles/index.umd.js \
@@ -384,7 +382,6 @@ buildApp() {
     ngPackagrBuild components-advanced-carousel projects/components/widgets/advanced/carousel '@wm/components/advanced/carousel'
     ngPackagrBuild components-advanced-marquee projects/components/widgets/advanced/marquee '@wm/components/advanced/marquee'
     ngPackagrBuild components-advanced-login projects/components/widgets/advanced/login '@wm/components/advanced/login'
-    ngPackagrBuild components-advanced-custom projects/components/widgets/advanced/custom '@wm/components/advanced/custom'
 
     ngPackagrBuild mobile-core projects/mobile/core '@wm/mobile/core'
     ngPackagrBuild mobile-offline projects/mobile/offline '@wm/mobile/offline'
@@ -553,11 +550,6 @@ buildWMComponentUmdLibs() {
 }
 
 bundleWebLibs() {
-    bundleJS
-    cpRuntimeFoundationCss
-}
-
-bundleJS() {
     echo "uglify: web-libs"
     ${TERSER} \
         ./dist/tmp/libs/tslib/tslib.umd.js \
@@ -609,7 +601,6 @@ bundleJS() {
         ./projects/swipey/src/swipey.jquery.plugin.js \
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ../wavemaker-ui-variables/dist/umd/index.js \
-        ../custom-widgets-m3/dist/umd/index.js \
         ./node_modules/imask/dist/imask.min.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         ./node_modules/@metrichor/jmespath/dist/jmespath.umd.js \
@@ -628,24 +619,6 @@ bundleJS() {
         echo "uglify: web-libs - success"
     else
         echo -e "uglify: web-libs - failure"
-    fi
-}
-
-cpRuntimeFoundationCss() {
-    echo "Copying foundation folder to bundle directory"
-
-    # Create destination directory if it doesn't exist
-    mkdir -p ./dist/bundles/wmapp/styles/foundation
-
-    # The foundation folder will be built through build-foundation-css target in studio front end build.xml
-    # Copy the entire foundation folder including CSS and fonts
-    cp -r ../wavemaker-foundation-css/dist/styles/foundation/* ./dist/bundles/wmapp/styles/foundation/
-
-    if [[ "$?" -eq "0" ]]; then
-        echo "Foundation folder copied successfully"
-    else
-        echo "Failed to copy foundation folder"
-        exit 1
     fi
 }
 
@@ -705,7 +678,6 @@ bundleMobileLibs() {
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
         ./node_modules/imask/dist/imask.min.js \
         ../wavemaker-ui-variables/dist/umd/index.js \
-        ../custom-widgets-m3/dist/umd/index.js \
         ./node_modules/@metrichor/jmespath/dist/jmespath.umd.js \
         ./node_modules/angular-imask/bundles/angular-imask.umd.js \
         ./node_modules/tabbable/dist/index.umd.js   \

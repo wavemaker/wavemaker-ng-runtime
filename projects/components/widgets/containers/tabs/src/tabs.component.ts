@@ -3,7 +3,7 @@ import {
     AfterViewInit,
     Attribute,
     Component,
-    ContentChildren, HostBinding, Inject,
+    ContentChildren, Inject,
     Injector,
     OnInit,
     Optional,
@@ -71,8 +71,6 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public fieldDefs;
     public type;
     public nodatamessage;
-
-    @HostBinding('attr.icon-position') iconposition: string = '';
 
     @ContentChildren(TabPaneComponent) panes: QueryList<TabPaneComponent>;
 

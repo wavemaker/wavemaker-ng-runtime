@@ -15,7 +15,6 @@ import {
     AppManagerService,
     BasePageComponent,
     BasePartialComponent,
-    BaseCustomWidgetComponent,
     BasePrefabComponent,
     ComponentRefProvider,
     ComponentType,
@@ -26,7 +25,6 @@ import {
 
 import { AppResourceManagerService } from './app-resource-manager.service';
 import {isString, isUndefined} from "lodash-es";
-import * as customWidgets from '@wavemaker/custom-widgets-m3';
 
 interface IPageMinJSON {
     markup: string;
@@ -47,7 +45,6 @@ const componentFactoryRefCache = new Map<ComponentType, Map<string, any>>();
 componentFactoryRefCache.set(ComponentType.PAGE, new Map<string, any>());
 componentFactoryRefCache.set(ComponentType.PARTIAL, new Map<string, any>());
 componentFactoryRefCache.set(ComponentType.PREFAB, new Map<string, any>());
-componentFactoryRefCache.set(ComponentType.WIDGET, new Map<string, any>());
 
 const _decodeURIComponent = (str: string) => decodeURIComponent(str.replace(/\+/g, ' '));
 
@@ -56,8 +53,6 @@ const getFragmentUrl = (fragmentName: string, type: ComponentType, options?) => 
         return options && options.prefab ? getPrefabPartialJsonUrl(options.prefab, fragmentName) : `./pages/${fragmentName}/page.min.json`;
     } else if (type === ComponentType.PREFAB) {
         return getPrefabMinJsonUrl(fragmentName);
-    } else if (type === ComponentType.WIDGET){
-        return `./custom-widgets/${fragmentName}/page.min.json`    
     }
 };
 
@@ -128,11 +123,6 @@ const getDynamicComponent = (
             selector = `app-prefab-${componentName}`;
             context = 'Prefab';
             break;
-        case ComponentType.WIDGET:
-            BaseClass = BaseCustomWidgetComponent;
-            selector = `app-custom-${componentName}`;
-            context = 'Widget';
-            break;
     }
 
     class DynamicComponent extends BaseClass {
@@ -140,7 +130,6 @@ const getDynamicComponent = (
         pageName;
         partialName;
         prefabName;
-        customWidgetName;
         constructor(@Inject(Injector) public injector: Injector) {
             super();
             this.injector = injector;
@@ -153,9 +142,6 @@ const getDynamicComponent = (
                     break;
                 case ComponentType.PREFAB:
                     this.prefabName = componentName;
-                    break;
-                case ComponentType.WIDGET:
-                    this.customWidgetName = componentName;
                     break;
             }
 
@@ -198,18 +184,18 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         const resource = fragmentCache.get(url);
 
         if (resource) {
-            return resource;
+            return Promise.resolve(resource);
         }
-        const promise = (((componentType === ComponentType.WIDGET && !customWidgets[componentName]) || componentType !== ComponentType.WIDGET)  ? this.resouceMngr.get(url, true) : Promise.resolve(customWidgets[componentName]))
-            .then(({markup, script, styles, variables, config}: IPageMinJSON) => {
+
+        return this.resouceMngr.get(url, true)
+            .then(({markup, script, styles, variables}: IPageMinJSON) => {
                 const response = {
                     markup: transpile(_decodeURIComponent(markup)).markup,
                     script: _decodeURIComponent(script),
                     styles: scopeComponentStyles(componentName, componentType, _decodeURIComponent(styles)),
-                    variables: getValidJSON(_decodeURIComponent(variables)),
-                    ...(config? {config : getValidJSON(_decodeURIComponent(config))} : {})
+                    variables: getValidJSON(_decodeURIComponent(variables))
                 };
-                fragmentCache.set(url, Promise.resolve(response));
+                fragmentCache.set(url, response);
 
                 return response;
             }, e => {
@@ -220,8 +206,6 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                 };
                 return Promise.reject(errorMsgMap[status]);
             });
-            fragmentCache.set(url, promise);
-            return promise;
     }
 
     constructor(
@@ -248,6 +232,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
 
         return this.loadResourcesOfFragment(componentName, componentType, options)
             .then(({markup, script, styles, variables})  => {
+
                 const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, JSON.stringify(variables));
                 const moduleDef = getDynamicModule(componentDef);
 

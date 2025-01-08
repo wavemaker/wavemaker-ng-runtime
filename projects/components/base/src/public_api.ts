@@ -84,7 +84,6 @@ export {
     NavNode
 } from './widgets/common/base/dataset-aware-nav.component';
 export * from './widgets/common/base/partial-container.directive';
-export * from './widgets/common/base/custom-widget-container.directive';
 export * from './widgets/common/base/base-field-validations';
 export * from './widgets/common/item-template/item-template.directive';
 export * from './widgets/common/repeat-template/repeat-template.directive';

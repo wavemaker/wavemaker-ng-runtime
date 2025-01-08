@@ -52,10 +52,6 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
             return;
         }
         if (this._formControl) {
-
-            if(this._formControl.valueAccessor["widgetSubType"].startsWith('wm-custom-'))
-                return;
-
             this.datavalue = value;
             this.onPropertyChange('datavalue', value);
             this.updatePrevDatavalue(value);
@@ -66,10 +62,6 @@ export abstract class BaseFormCustomComponent extends BaseFormComponent implemen
          * Do only When the Model Value is different from datavalue
          */
         (value!==this.datavalue) && this._onChange(this.datavalue);
-    }
-
-    public get formControl() {
-        return this._formControl;
     }
 
     public invokeOnChange(value, $event?: Event | any, valid?: boolean) {

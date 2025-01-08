@@ -6,7 +6,7 @@ import { DataSetItem, provideAs, provideAsWidgetRef, styler } from '@wm/componen
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from './switch.props';
-import {find, findIndex, forEach} from "lodash-es";
+import {find, findIndex} from "lodash-es";
 
 declare const $;
 
@@ -28,8 +28,6 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     options = [];
     selectedItem: DataSetItem;
     iconclass;
-    checkediconclass;
-    multiple: boolean;
     private btnwidth;
     public disabled: boolean;
     public required: boolean;
@@ -38,8 +36,6 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
 
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
-        this.multiple = this.getAttr("multiple") === "true";
-        this.checkediconclass = this.getAttr("checkediconclass") || 'wm-sl-l sl-check';
 
         this._debounceSetSelectedValue = debounce((val) => {
             this.setSelectedValue();
@@ -87,7 +83,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     // set the css for switch overlay element.
     // set the selected index from the datasetItems and highlight the datavalue on switch.
     private updateSwitchOptions() {
-        if (this.datasetItems.length && !this.multiple) {
+        if (this.datasetItems.length) {
             this.btnwidth = (100 / this.datasetItems.length);
             setCSS(this.nativeElement.querySelector('.app-switch-overlay') as HTMLElement, 'width', this.btnwidth + '%');
         }
@@ -134,30 +130,19 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
             return;
         }
 
-        if(this.multiple) {
-            const keys = [];
-            this.datasetItems[$index].selected = !this.datasetItems[$index].selected;
-            forEach(this.datasetItems, (item: any) => {
-                if(item.selected)
-                    keys.push(item.key);
-            });
-            this.modelByKey = keys;
-            this.selectedItem = find(this.datasetItems, {selected: true});
-        }
-        else {
-            this.modelByKey = option.key;
-            if (!this.multiple && this.selectedItem && $index === findIndex(this.datasetItems, {key: this.selectedItem.key})) {
-                if (this.datasetItems.length === 2) {
-                    $index = $index === 1 ? 0 : 1;
-                } else {
-                    return;
-                }
-            }
-            this.selectedItem = this.datasetItems[$index];
-            this.updateHighlighter();
-        }
-
+        this.modelByKey = option.key;
         this.invokeOnTouched();
+
+        if (this.selectedItem && $index === findIndex(this.datasetItems, {key: this.selectedItem.key})) {
+            if (this.datasetItems.length === 2) {
+                $index = $index === 1 ? 0 : 1;
+            } else {
+                return;
+            }
+        }
+        this.selectedItem = this.datasetItems[$index];
+        this.updateHighlighter();
+
         // invoke on datavalue change.
         this.invokeOnChange(this.datavalue, $event || {}, true);
         $appDigest();

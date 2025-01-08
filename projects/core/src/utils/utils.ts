@@ -71,16 +71,6 @@ const NUMBER_TYPES = ['int', DataType.INTEGER, DataType.FLOAT, DataType.DOUBLE, 
 const now: Date = new Date();
 const CURRENT_DATE = 'CURRENT_DATE';
 
-export const getNavClass = (suffix: string) : string => {
-    const APP_NAV_CLASS_PREFIX = 'app-nav-';
-    return APP_NAV_CLASS_PREFIX + suffix;
-}
-  
-export const getSheetPositionClass = (suffix: string): string => {
-    const SHEET_POSITION_CLASS_PREFIX = 'sheet-position-';
-    return SHEET_POSITION_CLASS_PREFIX + suffix;
-}
-
 export const enum EVENT_LIFE { ONCE, WINDOW }
 
 export const isDefined = v => 'undefined' !== typeof v;
@@ -815,8 +805,7 @@ export const isEqualWithFields = (obj1, obj2, compareBy) => {
     // compareBy can be 'id' or 'id1, id2' or 'id1, id2:id3'
     // Split the compareby comma separated values
     let _compareBy = isArray(compareBy) ? compareBy : split(compareBy, ',');
-    
-    //@ts-ignore
+
     _compareBy = map(_compareBy, trim);
 
     return isEqualWith(obj1, obj2, function (o1, o2) {

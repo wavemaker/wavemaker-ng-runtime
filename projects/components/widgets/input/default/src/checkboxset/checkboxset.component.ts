@@ -43,17 +43,6 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
         this.multiple = true;
     }
 
-    triggerInvokeOnChange(keys, $event) {
-        this.modelByKey = keys;
-
-        if(this.viewParent.containerWidget)
-            this.viewParent.containerWidget.updateDataValue(this.datavalue);
-
-        this.invokeOnTouched();
-        // invoke on datavalue change.
-        this.invokeOnChange(this.datavalue, $event || {}, true);
-    }
-
     onCheckboxLabelClick($event, key) {
         if (!$($event.target).is('input')) {
             return;
@@ -67,7 +56,11 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
             keys.push($el.value);
         });
 
-        this.triggerInvokeOnChange(keys, $event);
+        this.modelByKey = keys;
+
+        this.invokeOnTouched();
+        // invoke on datavalue change.
+        this.invokeOnChange(this.datavalue, $event || {}, true);
     }
 
     // change and blur events are added from the template

@@ -31,15 +31,13 @@ export class RatingComponent extends DatasetAwareFormComponent {
 
     private _selectedRatingValue;
     public ratingsWidth;
-    public ratingItems;
+    private ratingItems;
     private _id;
 
     public iconsize: string;
     public iconcolor: string;
     public onFocus: any;
     private touchEnabled:boolean;
-    public activeiconclass: string = '';
-    public inactiveiconclass: string = '';
     @ViewChild('ratingInput', /* TODO: add static flag */ { read: ElementRef }) ratingEl: ElementRef;
 
     get selectedRatingValue() {
@@ -178,6 +176,11 @@ export class RatingComponent extends DatasetAwareFormComponent {
             starWidth = 0.925,
             maxValue = parseInt(this.maxvalue || this.datasetItems.length, 10) || DEFAULT_RATING;
 
+        setCSS(
+            this.nativeElement.querySelector('.ratings-container') as HTMLElement,
+            'width',
+            (starWidth * maxValue) + 'em'
+        );
         dataVal = dataVal || this.datavalue;
         if (dataVal === undefined || dataVal === '' || dataVal === null) {
             this.caption = '';

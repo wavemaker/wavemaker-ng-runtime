@@ -71,7 +71,7 @@ $.widget('wm.datatable', {
         rowDef: {
             position: '0',
             closeothers: false,
-            columnwidth: '50px'
+            columnwidth: '30px'
         },
         summaryRow: false,
         summaryRowDefs: [],
@@ -121,7 +121,7 @@ $.widget('wm.datatable', {
             'style': 'text-align: center;',
             'textAlignment': 'center',
             'show': true,
-            'width': '50px'
+            'width': '30px'
         },
         'rowIndex': {
             'field': 'rowIndex',
@@ -329,7 +329,7 @@ $.widget('wm.datatable', {
             $th.addClass(headerClasses);
             /* For custom columns, show display name if provided, else don't show any label. */
             if (field === 'checkbox') {
-                $th.append(self._getCheckbox());
+                $th.append('<input type="checkbox" />');
             }
             if (field === 'radio') {
                 $th.attr('aria-label', "Select row");
@@ -582,10 +582,16 @@ $.widget('wm.datatable', {
             $tbody.append(rowTemplate);
             if (self.options.rowExpansionEnabled) {
                 var rowHeight = self.options.rowDef.height;
-                var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length;
-                var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                var rowPosition = self.options.rowDef.position;
+                var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
+                var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
                     '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
                     '</td></tr>');
+                if(rowPosition === "-1"){
+                    $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                    '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
+                    '</td><td></td></tr>');
+                }
                 if (rowHeight) {
                     $tr.find('div.row-overlay').css('min-height', rowHeight);
                 }
@@ -640,32 +646,15 @@ $.widget('wm.datatable', {
     _getCheckboxTemplate: function (row, isMultiSelectCol) {
         var checked = row._checked === true ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '',
-            chkBoxName = isMultiSelectCol ? 'gridMultiSelect' : '',
-            labelClass = row._checked === true ? '' : 'unchecked';
-
-        return this._getCheckbox(labelClass, chkBoxName, checked, disabled);
-    },
-
-    /* Return checkbox literal */
-    _getCheckbox: function (labelClass = '', chkBoxName = '', checked = '', disabled = '') {
-        return `<div class="app-checkbox checkbox">
-        <label class="${labelClass}">
-            <input type="checkbox" name="${chkBoxName}" ${checked} ${disabled} role="checkbox">
-            <span class="caption"></span>
-        </label>
-    </div>`
+            chkBoxName = isMultiSelectCol ? 'gridMultiSelect' : '';
+        return '<input name="' + chkBoxName + '" type="checkbox"' + checked + disabled + '/>';
     },
 
     /* Returns the radio template. */
     _getRadioTemplate: function (row) {
         var checked = row._checked === true ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '';
-        return `<div class="radio app-radio">
-            <label>
-                <input type="radio" rowSelectInput name="" value="" ${checked} ${disabled}>
-                <span class="caption"></span>
-            </label>
-        </div>`;
+        return '<input type="radio" rowSelectInput name="" value=""' + checked + disabled + '/>';
     },
 
     /* Returns the table cell template. */

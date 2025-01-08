@@ -43,8 +43,6 @@ export class DialogComponent extends BaseDialog implements OnInit {
         @Attribute('class') dialogClass: string,
         @Attribute('modal') modal: string | boolean,
         @Attribute('closable') closable: string | boolean,
-        @Attribute('sheet') sheet: string | boolean,
-        @Attribute('sheetposition') sheetPosition: string,
         @Self() @Inject(Context) contexts: Array<any>,
         @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
@@ -68,15 +66,11 @@ export class DialogComponent extends BaseDialog implements OnInit {
             {
                 class: `${DIALOG_CLS} ${dialogClass || ''}`,
                 backdrop,
-                keyboard: toBoolean(closable) ? true : !toBoolean(modal),
-                ignoreBackdropClick: toBoolean(modal)
+                keyboard: toBoolean(closable) ? true : !toBoolean(modal)
+
             },
             explicitContext
         );
-
-        // adding props to render dialog as sheet
-        this.sheet = sheet;
-        this.sheetPosition = sheetPosition;
     }
 
     protected getTemplateRef(): TemplateRef<any> {
@@ -86,14 +80,5 @@ export class DialogComponent extends BaseDialog implements OnInit {
     ngOnInit() {
         super.ngOnInit();
         this.register(this.viewParent);
-    }
-
-    protected onPropertyChange(key: string, nv: any, ov?: any): void {
-        if(key === 'sheet') {
-            this.sheet = nv;
-        }
-        if(key === 'sheetposition') {
-            this.sheetPosition = nv;
-        }
     }
 }
