@@ -87,9 +87,8 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     }
 
     protected constructor(inj: Injector,  @Inject(WidgetConfig) config: IWidgetConfig,
-                          @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any,
-                          @Attribute('groupby') public groupby?: string, initPromise?: Promise<any>) {
-        super(inj, config, explicitContext, initPromise);
+                          @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, @Attribute('groupby') public groupby?: string) {
+        super(inj, config, explicitContext);
         this.datePipe = this.inj.get(ToDatePipe);
         this.appDefaults = this.inj.get(AppDefaults);
         this.binddisplayexpression = this.nativeElement.getAttribute('displayexpression.bind');
@@ -248,8 +247,6 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         });
 
         this.displayValue = this.multiple ? displayValues : displayValues[0] || '';
-        if(this.viewParent.containerWidget)
-            this.viewParent.containerWidget.displayValue = this.displayValue.length ? this.displayValue : '';
     }
 
     // This function parses the dataset and extracts the displayOptions from parsed dataset.

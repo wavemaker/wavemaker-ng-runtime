@@ -50,10 +50,6 @@ export class Switch {
      */
     @Input() iconclass: string;
     /**
-     * CSS class of the checked item.
-     */
-    @Input() checkediconclass: string;
-    /**
      * Name of the switch widget.
      */
     @Input() name: string;

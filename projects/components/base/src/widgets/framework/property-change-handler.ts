@@ -58,7 +58,7 @@ export const globalPropertyChangeHandler = (component: BaseComponent, key: strin
     resetChangeFromWatch();
 
     const widgetProps = getWidgetPropsByType(component.getWidgetSubType());
-    const propInfo = widgetProps ? widgetProps.get(key) : undefined;
+    const propInfo = widgetProps.get(key);
     if (propInfo) {
         const type = propInfo.type;
         if (type) {

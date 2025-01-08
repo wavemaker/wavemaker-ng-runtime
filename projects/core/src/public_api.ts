@@ -139,9 +139,7 @@ export {
     appendScriptToHead,
     getAppSetting,
     setListClass,
-    findParent,
-    getNavClass,
-    getSheetPositionClass
+    findParent
 } from './utils/utils';
 export {
     FIRST_TIME_WATCH,

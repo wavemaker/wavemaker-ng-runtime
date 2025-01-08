@@ -549,8 +549,6 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
                         s = `${prefix} app-prefab-${componentName} ${s}`;
                     } else if (componentType === 2 || componentType === 'PARTIAL') {
                         s = `${prefix} app-partial-${componentName} ${s}`;
-                    } else if(componentType === 3 || componentType === 'WIDGET'){
-                        s = `${prefix} app-custom-${componentName} ${s}`;
                     }
                     return s;
                 }).join(',');

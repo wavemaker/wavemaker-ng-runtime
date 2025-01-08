@@ -42,9 +42,6 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
         case FormWidgetType.CURRENCY:
             tmpl = `<div wmCurrency ${attrs.get('required')==='true' ? 'required=true' : ''} ${updateOnTmpl} ${innerTmpl} ${showTmpl}></div>`;
             break;
-        case FormWidgetType.CUSTOMWIDGET:
-            tmpl = `<div wmWidgetContainer customWidgetContainer ${attrs.get('required')==='true' ? 'required=true' : ''} ${updateOnTmpl} ${innerTmpl} ${showTmpl}></div>`;
-            break;
         case FormWidgetType.DATE:
             tmpl = `<div wmDate ${attrs.get('required')==='true' ? 'required=true' : ''} dataentrymode="${attrs.get('dataentrymode')}" ${innerTmpl} ${showTmpl}></div>`;
             break;
@@ -128,8 +125,6 @@ export const getRequiredFormWidget = (widgetType): string => {
             return 'wm-colorpicker';
         case FormWidgetType.CURRENCY:
             return 'wm-currency';
-        case FormWidgetType.CUSTOMWIDGET:
-            return 'wm-custom-widget';
         case FormWidgetType.DATE:
             return 'wm-date';
         case FormWidgetType.DATETIME:

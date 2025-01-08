@@ -45,10 +45,7 @@ export const searchProps = new Map(
         ['tabindex', { value: 0, ...PROP_NUMBER }],
         ['type', { value: 'search', ...PROP_STRING }],
         ['debouncetime', { value: 250, ...PROP_NUMBER }],
-        ['width', PROP_STRING],
-        ['clearsearchiconclass', {value: 'wi wi-close', ...PROP_STRING}],
-        ['backsearchiconclass', {value: 'wi wi-arrow-left', ...PROP_STRING}],
-        ['searchiconclass', {value: 'wm-sl-l sl-search', ...PROP_STRING}],
+        ['width', PROP_STRING]
     ]
 );
 

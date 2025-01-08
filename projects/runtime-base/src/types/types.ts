@@ -1,8 +1,7 @@
 export enum ComponentType {
     PAGE,
     PREFAB,
-    PARTIAL,
-    WIDGET
+    PARTIAL
 }
 
 export abstract class ComponentRefProvider {
@@ -12,10 +11,6 @@ export abstract class ComponentRefProvider {
 
 export abstract class PrefabConfigProvider {
     abstract getConfig(prefabName: string): Promise<any>;
-}
-
-export abstract class CustomwidgetConfigProvider {
-    abstract getConfig(widgetname: string): Promise<any>;
 }
 
 export abstract class AppJSProvider {

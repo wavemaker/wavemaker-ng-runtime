@@ -41,9 +41,6 @@
             "@wavemaker/variables": [
                 "node_modules/@wavemaker/variables/"
             ],
-            "@wavemaker/custom-widgets-m3": [
-                "node_modules/@wavemaker/custom-widgets-m3/"
-            ],
             "@wm/components/base": [
                 "libraries/components/base"
             ],
