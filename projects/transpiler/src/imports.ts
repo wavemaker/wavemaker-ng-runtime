@@ -54,7 +54,6 @@ const LEFT_PANEL_MODULE: ImportDef[] = [{from: '@wm/components/page/left-panel',
     {from: '@wm/mobile/components/page/left-panel', name: 'LeftPanelModule', as: 'WM_MobileLeftPanelModule', platformType: 'MOBILE'}];
 const LIST_MODULE: ImportDef[] = [...PAGINATION_MODULE, ...INPUT_MODULE, {from: '@wm/components/data/list', name: 'ListModule'}];
 const LOGIN_MODULE: ImportDef[] = [{from: '@wm/components/advanced/login', name: 'LoginModule'}];
-const CUSTOM_MODULE: ImportDef[] = [{from: '@wm/components/advanced/custom', name: 'CustomModule'}];
 const MOBILE_NAV_BAR_MODULE: ImportDef[] = [...LEFT_PANEL_MODULE, ...SEARCH_MODULE, ...PAGE_MODULE, {from: '@wm/mobile/components/page/mobile-navbar', name: 'MobileNavbarModule'}];
 const MEDIA_LIST_MODULE: ImportDef[] = [...BASIC_MODULE, ...PAGE_MODULE, ...MOBILE_NAV_BAR_MODULE, {from: '@wm/mobile/components/data/media-list', name: 'MediaListModule'}];
 const MOBILE_TAB_BAR_MODULE: ImportDef[] = [{from: '@wm/mobile/components/page/tab-bar', name: 'TabBarModule'}];
@@ -130,7 +129,6 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-list', LIST_MODULE],
     ['wm-livetable', LIVE_TABLE_MODULE],
     ['wm-login', LOGIN_MODULE],
-    ['wm-custom', CUSTOM_MODULE],
     ['wm-logindialog', LOGIN_DIALOG_MODULE],
     ['wm-marquee', MARQUEE_MODULE],
     ['wm-menu', MENU_MODULE],

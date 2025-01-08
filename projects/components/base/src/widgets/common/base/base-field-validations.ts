@@ -184,9 +184,6 @@ export class BaseFieldValidations {
             // passing formfield and form as arguments to the default validator function
             this.watchDefaultValidatorExpr(value.bind(undefined, this.widgetControl, this.widgetContext), key);
         } else {
-            if (this.widgettype === 'custom-widget') {
-                this.instance.formWidget.baseWidget[key] = value;
-            } 
             this.instance.widget[key] = value;
             this.instance[key] = value;
         }

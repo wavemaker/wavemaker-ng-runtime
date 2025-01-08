@@ -1,6 +1,6 @@
 <button (click)="closeDialog();" *ngIf="isClosable"
         [attr.aria-label]="'Close ' + (title ? title : '') + ' dialog'" class="app-dialog-close close" title="{{dialogRef.appLocale.LABEL_CLOSE}}" >
-    <i class="app-icon wi wi-clear" aria-hidden="true"></i>
+    <span aria-hidden="true">&times;</span>
 </button>
 
 <ng-container [ngSwitch]="headinglevel">

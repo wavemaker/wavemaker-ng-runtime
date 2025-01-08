@@ -50,7 +50,7 @@
     [hidden]="noDataFound && !variableInflight"
 >
     <ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
-        <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
+        <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{direction === 'horizontal' ? '' : itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
             [wmListItem]="item"
             #listItemRef="listItemRef"
             [attr.tabindex]="tabindex"

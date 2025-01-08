@@ -5,7 +5,6 @@ export enum FormWidgetType {
     CHIPS = 'chips',
     COLORPICKER = 'colorpicker',
     CURRENCY = 'currency',
-    CUSTOMWIDGET = 'custom-widget',
     DATE = 'date',
     DATETIME = 'datetime',
     NUMBER = 'number',
