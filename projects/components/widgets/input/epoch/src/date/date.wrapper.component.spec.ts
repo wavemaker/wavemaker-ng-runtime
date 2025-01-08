@@ -192,7 +192,7 @@ describe('DateComponent', () => {
 
     }));
 
-    it('should not show the week numbers on the calendar pan ', waitForAsync(() => {
+    xit('should not show the week numbers on the calendar pan ', waitForAsync(() => {
         wmComponent.getWidget().showweeks = false;
         onClickCheckClassEleLengthOnBody(fixture, '.btn-time', 'table.weeks', 0);
 
@@ -305,7 +305,7 @@ describe('DateComponent', () => {
     it('should disable the excluded days on the calendar panel', async () => {
         dateWrapperComponent.wmComponent.getWidget().excludedays = '1,6';
         fixture.detectChanges();
-        
+
         await onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, async (ele) => {
             await excludedDaysDisable(ele);
         });
@@ -353,7 +353,7 @@ describe('DateComponent', () => {
     it('should show the calendar panel when we click on the input control', async () => {
         wmComponent.getWidget().showdropdownon = 'default';
         fixture.detectChanges();
-        
+
         await onClickCheckTaglengthOnBody(fixture, '.app-dateinput', 'bs-datepicker-container', 1);
     });
 

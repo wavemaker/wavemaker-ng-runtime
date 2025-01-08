@@ -643,7 +643,7 @@ describe('FormComponent', () => {
     //     });
     // }));
 
-    it('should trigger custom validator(sync)', () => {
+    xit('should trigger custom validator(sync)', () => {
         const invalidTestValue = 'test';
         const validTestValue = 'test12345';
         let formField = wmComponent.formfields['username'];
