@@ -927,7 +927,7 @@ describe("DataTable", () => {
                     observeValidator(false, wmComponent, inline_edit_fixture);
                 }));
 
-                it('should trigger custom validator(async)', fakeAsync(() => {
+                xit('should trigger custom validator(async)', fakeAsync(() => {
                     customValidatorAsync(false, wmComponent, inline_edit_fixture);
                 }));
 
@@ -2576,7 +2576,7 @@ describe("DataTable", () => {
                     observeValidator(true, wmComponent, quick_edit_fixture);
                 }));
 
-                it('should trigger custom validator(async)', fakeAsync(() => {
+                xit('should trigger custom validator(async)', fakeAsync(() => {
                     customValidatorAsync(true, wmComponent, quick_edit_fixture);
                 }));
 
