@@ -1,4 +1,4 @@
-interface SkeletonConfig {
+export interface SkeletonConfig {
     backgroundColor?: string;
     foregroundColor?: string;
     animationDuration?: number;
@@ -8,10 +8,22 @@ interface SkeletonConfig {
     height?: string;
     width?: string;
     shimmerColor?: string;
+    chartType?: string;
 }
-
 export class WMSkeletonLoader extends HTMLElement {
-    private config: SkeletonConfig;
+    private _config: SkeletonConfig;
+
+    private defaultConfig: SkeletonConfig = {
+        backgroundColor: '#f9f9f9',
+        foregroundColor: '#e0e0e0',
+        animationDuration: 1.5,
+        borderRadius: '8px',
+        spacing: '15px',
+        itemCount: 3,
+        height: 'auto',
+        width: '100%',
+        shimmerColor: 'rgba(255, 255, 255, 0.2)'
+    }; 
 
     static get observedAttributes() {
         return ['widget-type', 'config'];
@@ -20,23 +32,22 @@ export class WMSkeletonLoader extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        // Default configuration
-        this.config = {
-            backgroundColor: '#f9f9f9',
-            foregroundColor: '#e0e0e0',
-            animationDuration: 1.5,
-            borderRadius: '8px',
-            spacing: '15px',
-            itemCount: 3,
-            height: 'auto',
-            width: '100%',
-            shimmerColor: 'rgba(255, 255, 255, 0.2)'
-        };
+        this._config = { ...this.defaultConfig };
+
+        Object.defineProperty(this, 'config', {
+            get: () => this._config,
+            set: (value) => {
+                this._config = { ...this.defaultConfig, ...value };
+                this.updateLoader(this.getAttribute('widget-type') || 'default');
+            },
+            configurable: true,
+            enumerable: true
+        });
     }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
         if (name === 'config' && newValue) {
-            this.config = { ...this.config, ...JSON.parse(newValue) };
+            this._config = { ...this._config, ...JSON.parse(newValue) };
             this.updateLoader(this.getAttribute('widget-type') || 'default');
         } else if (name === 'widget-type') {
             this.updateLoader(newValue || 'default');
@@ -47,19 +58,19 @@ export class WMSkeletonLoader extends HTMLElement {
         // Parse configuration from attribute if present
         const configAttr = this.getAttribute('config');
         if (configAttr) {
-            this.config = { ...this.config, ...JSON.parse(configAttr) };
+            this._config = { ...this._config, ...JSON.parse(configAttr) };
         }
         this.updateLoader(this.getAttribute('widget-type') || 'default');
     }
 
     private getStyles(widgetType: string): string {
-        const { animationDuration, borderRadius, shimmerColor } = this.config;
+        const { animationDuration, borderRadius, shimmerColor } = this._config;
 
         const baseStyles = `
             :host {
                 display: block;
-                width: ${this.config.width};
-                height: ${this.config.height};
+                width: ${this._config.width};
+                height: ${this._config.height};
                 contain: content;
             }
             .skeleton-loader {
@@ -108,37 +119,37 @@ export class WMSkeletonLoader extends HTMLElement {
     private getCardStyles(): string {
         return `
             .card-loader {
-                background-color: ${this.config.backgroundColor};
-                border-radius: ${this.config.borderRadius};
-                padding: ${this.config.spacing};
+                background-color: ${this._config.backgroundColor};
+                border-radius: ${this._config.borderRadius};
+                padding: ${this._config.spacing};
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 display: grid;
-                grid-gap: ${this.config.spacing};
+                grid-gap: ${this._config.spacing};
             }
             .card-image {
                 width: 100%;
                 height: 200px;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
-                margin-bottom: ${this.config.spacing};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
+                margin-bottom: ${this._config.spacing};
             }
             .card-title {
                 height: 24px;
                 width: 80%;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
-                margin-bottom: ${this.config.spacing};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
+                margin-bottom: ${this._config.spacing};
             }
             .card-description {
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
-                margin-bottom: ${this.config.spacing};
+                margin-bottom: ${this._config.spacing};
             }
             .card-description-line {
                 height: 16px;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
             }
             .card-description-line:nth-child(2) {
                 width: 90%;
@@ -148,13 +159,13 @@ export class WMSkeletonLoader extends HTMLElement {
             }
             .card-footer {
                 display: flex;
-                gap: ${this.config.spacing};
+                gap: ${this._config.spacing};
                 margin-top: auto;
             }
             .card-button {
                 height: 36px;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
                 flex: 1;
             }
         `;
@@ -163,24 +174,24 @@ export class WMSkeletonLoader extends HTMLElement {
     private getListStyles(): string {
         return `
             .list-loader {
-                background-color: ${this.config.backgroundColor};
-                padding: ${this.config.spacing};
+                background-color: ${this._config.backgroundColor};
+                padding: ${this._config.spacing};
                 display: flex;
                 flex-direction: column;
-                gap: ${this.config.spacing};
+                gap: ${this._config.spacing};
             }
             .list-item {
                 display: flex;
                 align-items: center;
-                padding: ${this.config.spacing};
-                border-bottom: 1px solid ${this.config.foregroundColor};
+                padding: ${this._config.spacing};
+                border-bottom: 1px solid ${this._config.foregroundColor};
             }
             .list-item-avatar {
                 width: 50px;
                 height: 50px;
-                background-color: ${this.config.foregroundColor};
+                background-color: ${this._config.foregroundColor};
                 border-radius: 50%;
-                margin-right: ${this.config.spacing};
+                margin-right: ${this._config.spacing};
             }
             .list-item-content {
                 flex: 1;
@@ -188,15 +199,15 @@ export class WMSkeletonLoader extends HTMLElement {
             .list-item-title {
                 height: 20px;
                 width: 70%;
-                background-color: ${this.config.foregroundColor};
+                background-color: ${this._config.foregroundColor};
                 margin-bottom: 10px;
-                border-radius: ${this.config.borderRadius};
+                border-radius: ${this._config.borderRadius};
             }
             .list-item-subtitle {
                 height: 15px;
                 width: 50%;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
             }
         `;
     }
@@ -204,41 +215,41 @@ export class WMSkeletonLoader extends HTMLElement {
     private getTableStyles(): string {
         return `
             .table-loader {
-                background-color: ${this.config.backgroundColor};
-                padding: ${this.config.spacing};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.backgroundColor};
+                padding: ${this._config.spacing};
+                border-radius: ${this._config.borderRadius};
                 overflow: hidden;
             }
             .table-header {
                 display: flex;
-                margin-bottom: ${this.config.spacing};
-                gap: ${this.config.spacing};
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
-                padding: ${this.config.spacing};
+                margin-bottom: ${this._config.spacing};
+                gap: ${this._config.spacing};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
+                padding: ${this._config.spacing};
             }
             .table-header-cell {
                 flex: 1;
                 height: 20px;
-                background-color: ${this.config.backgroundColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.backgroundColor};
+                border-radius: ${this._config.borderRadius};
             }
             .table-row {
                 display: flex;
-                gap: ${this.config.spacing};
-                padding: ${this.config.spacing};
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
-                margin-bottom: ${this.config.spacing};
+                gap: ${this._config.spacing};
+                padding: ${this._config.spacing};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
+                margin-bottom: ${this._config.spacing};
             }
             .table-row:hover {
-                background-color: ${this.config.shimmerColor};
+                background-color: ${this._config.shimmerColor};
             }
             .table-cell {
                 flex: 1;
                 height: 15px;
-                background-color: ${this.config.backgroundColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.backgroundColor};
+                border-radius: ${this._config.borderRadius};
             }
         `;
     }
@@ -246,154 +257,170 @@ export class WMSkeletonLoader extends HTMLElement {
     private getChartStyles(): string {
         return `
             .chart-loader {
-                display: flex;
-                flex-direction: column;
+                background-color: ${this._config.backgroundColor};
+                padding: ${this._config.spacing};
+                border-radius: ${this._config.borderRadius};
                 height: 300px;
-                background-color: ${this.config.backgroundColor};
-                padding: ${this.config.spacing};
-                border-radius: ${this.config.borderRadius};
                 position: relative;
-            }
-    
-            /* Chart title and legend area */
-            .chart-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-    
-            .chart-title {
-                width: 150px;
-                height: 24px;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
-            }
-    
-            .chart-legend {
-                display: flex;
-                gap: 12px;
-            }
-    
-            .legend-item {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-    
-            .legend-dot {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                background-color: ${this.config.foregroundColor};
-            }
-    
-            .legend-text {
-                width: 60px;
-                height: 16px;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
-            }
-    
-            /* Chart visualization area */
-            .chart-visualization {
-                flex: 1;
-                display: grid;
-                grid-template-columns: 50px 1fr;
-                grid-template-rows: 1fr 30px;
-                gap: 10px;
-                padding-top: 20px;
-            }
-    
-            /* Y-axis ticks */
-            .y-axis {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                padding-right: 10px;
-            }
-    
-            .y-tick {
-                width: 30px;
-                height: 12px;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
-                opacity: 0.6;
-            }
-    
-            /* X-axis ticks */
-            .x-axis {
-                grid-column: 2;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-    
-            .x-tick {
-                width: 40px;
-                height: 12px;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
-                opacity: 0.6;
-            }
-    
-            /* Chart area with grid lines */
-            .chart-area {
-                position: relative;
-                grid-column: 2;
-                border-left: 1px dashed ${this.config.foregroundColor};
-                border-bottom: 1px dashed ${this.config.foregroundColor};
-            }
-    
-            .grid-line {
-                position: absolute;
-                left: 0;
-                width: 100%;
-                height: 1px;
-                background: ${this.config.foregroundColor};
-                opacity: 0.1;
-            }
-    
-            /* Animated chart line */
-            .chart-line-container {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
                 overflow: hidden;
             }
     
-            .chart-line {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                fill: none;
-                stroke: ${this.config.foregroundColor};
-                stroke-width: 2;
-                stroke-linecap: round;
-                stroke-linejoin: round;
+            .chart-area {
+                height: 200px; 
+                position: relative;
             }
     
-            .chart-gradient {
-                position: absolute;
-                width: 100%;
+            /* Column Chart */
+            .column-loader .chart-data {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
                 height: 100%;
-                background: linear-gradient(
-                    to bottom,
-                    ${this.config.foregroundColor}20 0%,
-                    transparent 100%
-                );
-                clip-path: path('');  /* Will be set dynamically */
             }
     
-            .chart-point {
+            .column-loader .column {
+                width: 40px;
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius} ${this._config.borderRadius} 0 0;
+                animation: columnGrow 1.5s infinite;
+            }
+    
+            /* Bar Chart */
+            .bar-loader .chart-data {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;
+            }
+    
+            .bar-loader .bar {
+                height: 30px;
+                background-color: ${this._config.foregroundColor};
+                border-radius: 0 ${this._config.borderRadius} ${this._config.borderRadius} 0;
+                animation: barGrow 1.5s infinite;
+            }
+    
+            /* Line/Area Charts */
+           .line-loader .chart-data,
+            .area-loader .chart-data {
+                position: relative;
+                height: 100%;
+            }
+
+            .line-loader .line {
                 position: absolute;
-                width: 8px;
-                height: 8px;
-                background-color: ${this.config.foregroundColor};
+                bottom: 20%;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background-color: ${this._config.foregroundColor};
+                clip-path: path('M0,50 Q50,100 100,50 T200,50 T300,50 T400,50');
+                animation: lineWave 2s infinite ease-in-out;
+                box-shadow: 0 0 5px ${this._config.foregroundColor};
+            }
+
+            .line-loader .point {
+                position: absolute;
+                width: 12px;
+                height: 12px;
+                background-color: ${this._config.foregroundColor};
                 border-radius: 50%;
-                transform: translate(-50%, -50%);
+                animation: pointMove 2s infinite ease-in-out;
+                box-shadow: 0 0 5px ${this._config.foregroundColor};
+            }
+
+            .area-loader .area {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 70%;
+                background: linear-gradient(to bottom, 
+                    ${this._config.foregroundColor}, 
+                    ${this._config.foregroundColor}10
+                );
+                clip-path: polygon(
+                    0 100%, 
+                    0 calc(30% + var(--wave-offset, 0%)), 
+                    20% calc(45% + var(--wave-offset, 0%)), 
+                    40% calc(20% + var(--wave-offset, 0%)), 
+                    60% calc(40% + var(--wave-offset, 0%)), 
+                    80% calc(25% + var(--wave-offset, 0%)), 
+                    100% calc(35% + var(--wave-offset, 0%)), 
+                    100% 100%
+                );
+                animation: areaWave 2s infinite ease-in-out;
+                opacity: 0.5;
+            }
+        
+            /* Pie/Donut Charts */
+            .pie-loader .chart-area,
+            .donut-loader .chart-area {
+                height: 100%;
+                display: flex; 
+                justify-content: center;
+            }
+
+            .pie-loader .pie-segment {
+                width: 150px;
+                height: 150px;
+                border: 20px solid ${this._config.foregroundColor};
+                border-radius: 50%;
+                border-right-color: transparent;
+                transform-origin: center;
+                animation: rotateLoader 1.5s linear infinite;
+            }
+
+            .donut-loader .donut-segment {
+                width: 150px;
+                height: 150px;
+                border: 20px solid ${this._config.foregroundColor}30;
+                border-radius: 50%;
+                position: relative;
+            }
+
+            .donut-loader .donut-segment::after {
+                content: '';
+                position: absolute;
+                inset: -20px;
+                border: 20px solid ${this._config.foregroundColor};
+                border-radius: 50%;
+                border-left-color: transparent;
+                animation: rotateLoader 1.5s linear infinite;
+            }
+    
+            /* Animations */
+            @keyframes columnGrow {
+                0%, 100% { height: 30%; }
+                50% { height: 70%; }
+            }
+    
+            @keyframes barGrow {
+                0%, 100% { width: 30%; }
+                50% { width: 70%; }
+            }
+
+            @keyframes rotateLoader {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+
+            @keyframes lineWave {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(20px); }
+            }
+
+            @keyframes pointMove {
+                0% { left: 0; bottom: 20%; }
+                25% { left: 25%; bottom: 40%; }
+                50% { left: 50%; bottom: 20%; }
+                75% { left: 75%; bottom: 40%; }
+                100% { left: 100%; bottom: 20%; }
+            }
+
+            @keyframes areaWave {
+                0%, 100% { --wave-offset: 0%; }
+                50% { --wave-offset: 15%; }
             }
         `;
     }
@@ -403,17 +430,17 @@ export class WMSkeletonLoader extends HTMLElement {
             .form-loader {
                 display: flex;
                 flex-direction: column;
-                gap: ${this.config.spacing};
-                padding: ${this.config.spacing};
-                background-color: ${this.config.backgroundColor};
-                border-radius: ${this.config.borderRadius};
+                gap: ${this._config.spacing};
+                padding: ${this._config.spacing};
+                background-color: ${this._config.backgroundColor};
+                border-radius: ${this._config.borderRadius};
             }
             .form-field {
                 height: 40px;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
                 position: relative;
-                margin-bottom: ${this.config.spacing};
+                margin-bottom: ${this._config.spacing};
             }
             .form-label {
                 position: absolute;
@@ -421,14 +448,14 @@ export class WMSkeletonLoader extends HTMLElement {
                 left: 0;
                 width: 30%;
                 height: 15px;
-                background-color: ${this.config.shimmerColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.shimmerColor};
+                border-radius: ${this._config.borderRadius};
             }
             .form-section {
                 margin-bottom: 20px;
                 font-size: 14px;
                 font-weight: bold;
-                color: ${this.config.foregroundColor};
+                color: ${this._config.foregroundColor};
             }
         `;
     }
@@ -438,13 +465,13 @@ export class WMSkeletonLoader extends HTMLElement {
             .accordion-loader {
                 display: flex;
                 flex-direction: column;
-                background-color: ${this.config.backgroundColor};
-                border: 1px solid ${this.config.foregroundColor}20;
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.backgroundColor};
+                border: 1px solid ${this._config.foregroundColor}20;
+                border-radius: ${this._config.borderRadius};
             }
     
             .accordion-item {
-                border-bottom: 1px solid ${this.config.foregroundColor}20;
+                border-bottom: 1px solid ${this._config.foregroundColor}20;
             }
     
             .accordion-item:last-child {
@@ -454,7 +481,7 @@ export class WMSkeletonLoader extends HTMLElement {
             .accordion-header {
                 display: flex;
                 align-items: center;
-                padding: 16px ${this.config.spacing};
+                padding: 16px ${this._config.spacing};
                 position: relative;
                 cursor: wait;
             }
@@ -472,7 +499,7 @@ export class WMSkeletonLoader extends HTMLElement {
             .accordion-chevron::after {
                 content: '';
                 position: absolute;
-                background-color: ${this.config.foregroundColor};
+                background-color: ${this._config.foregroundColor};
                 border-radius: 2px;
                 transform-origin: center;
             }
@@ -507,15 +534,15 @@ export class WMSkeletonLoader extends HTMLElement {
             .accordion-title {
                 height: 20px;
                 width: 60%;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
             }
     
             .accordion-subtitle {
                 height: 14px;
                 width: 40%;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
                 opacity: 0.7;
             }
     
@@ -523,7 +550,7 @@ export class WMSkeletonLoader extends HTMLElement {
             .accordion-badge {
                 width: 32px;
                 height: 20px;
-                background-color: ${this.config.foregroundColor}30;
+                background-color: ${this._config.foregroundColor}30;
                 border-radius: 10px;
                 margin-left: 12px;
                 flex-shrink: 0;
@@ -532,8 +559,8 @@ export class WMSkeletonLoader extends HTMLElement {
             /* Content panel */
             .accordion-content {
                 overflow: hidden;
-                padding: 0 ${this.config.spacing} 16px 48px;
-                border-top: 1px solid ${this.config.foregroundColor}10;
+                padding: 0 ${this._config.spacing} 16px 48px;
+                border-top: 1px solid ${this._config.foregroundColor}10;
                 margin-top: -1px;
             }
     
@@ -554,15 +581,15 @@ export class WMSkeletonLoader extends HTMLElement {
             .content-heading {
                 height: 18px;
                 width: 30%;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
                 opacity: 0.9;
             }
     
             .content-line {
                 height: 14px;
-                background-color: ${this.config.foregroundColor};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
                 opacity: 0.7;
             }
     
@@ -573,11 +600,11 @@ export class WMSkeletonLoader extends HTMLElement {
     
             /* Interactive states */
             .accordion-header:hover {
-                background-color: ${this.config.foregroundColor}05;
+                background-color: ${this._config.foregroundColor}05;
             }
     
             .accordion-item.expanded .accordion-header {
-                background-color: ${this.config.foregroundColor}08;
+                background-color: ${this._config.foregroundColor}08;
             }
     
             /* Shimmer animation applied selectively */
@@ -586,7 +613,7 @@ export class WMSkeletonLoader extends HTMLElement {
                 overflow: hidden;
             }
         `;
-    }    
+    }
 
     private getDefaultStyles(): string {
         return `
@@ -594,15 +621,15 @@ export class WMSkeletonLoader extends HTMLElement {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background-color: ${this.config.backgroundColor};
-                padding: ${this.config.spacing};
-                border-radius: ${this.config.borderRadius};
+                background-color: ${this._config.backgroundColor};
+                padding: ${this._config.spacing};
+                border-radius: ${this._config.borderRadius};
                 animation: pulse 1.5s infinite ease-in-out;
             }
             .default-loader-item {
                 height: 80px;
                 width: 80px;
-                background-color: ${this.config.foregroundColor};
+                background-color: ${this._config.foregroundColor};
                 border-radius: 50%;
             }
             @keyframes pulse {
@@ -621,22 +648,22 @@ export class WMSkeletonLoader extends HTMLElement {
         .tabs-loader {
             display: flex;
             flex-direction: column;
-            background-color: ${this.config.backgroundColor};
-            border-radius: ${this.config.borderRadius};
+            background-color: ${this._config.backgroundColor};
+            border-radius: ${this._config.borderRadius};
             overflow: hidden;
         }
         .tabs-header {
             display: flex;
-            gap: ${this.config.spacing};
-            padding: ${this.config.spacing};
-            border-bottom: 2px solid ${this.config.foregroundColor};
-            background-color: ${this.config.backgroundColor};
+            gap: ${this._config.spacing};
+            padding: ${this._config.spacing};
+            border-bottom: 2px solid ${this._config.foregroundColor};
+            background-color: ${this._config.backgroundColor};
         }
         .tab-item {
             height: 40px;
             padding: 0 20px;
-            background-color: ${this.config.foregroundColor};
-            border-radius: ${this.config.borderRadius};
+            background-color: ${this._config.foregroundColor};
+            border-radius: ${this._config.borderRadius};
             position: relative;
         }
         .tab-item.active::after {
@@ -646,20 +673,20 @@ export class WMSkeletonLoader extends HTMLElement {
             left: 0;
             width: 100%;
             height: 2px;
-            background-color: ${this.config.shimmerColor};
+            background-color: ${this._config.shimmerColor};
         }
         .tab-content {
-            padding: ${this.config.spacing};
+            padding: ${this._config.spacing};
         }
         .tab-panel {
             display: flex;
             flex-direction: column;
-            gap: ${this.config.spacing};
+            gap: ${this._config.spacing};
         }
         .content-line {
             height: 16px;
-            background-color: ${this.config.foregroundColor};
-            border-radius: ${this.config.borderRadius};
+            background-color: ${this._config.foregroundColor};
+            border-radius: ${this._config.borderRadius};
         }
         .content-line:nth-child(2) {
             width: 85%;
@@ -677,7 +704,7 @@ export class WMSkeletonLoader extends HTMLElement {
         const creators: { [key: string]: () => void } = {
             list: () => this.createListContent(loaderContent),
             table: () => this.createTableContent(loaderContent),
-            chart: () => this.createChartContent(loaderContent),
+            chart: () => this.createChartContent(loaderContent, this._config.chartType?.toLowerCase()),
             form: () => this.createFormContent(loaderContent),
             card: () => this.createCardContent(loaderContent),
             tabs: () => this.createTabsContent(loaderContent),
@@ -695,7 +722,7 @@ export class WMSkeletonLoader extends HTMLElement {
         header.className = 'tabs-header';
 
         // Create tab items (the number is determined by itemCount or defaults to 3)
-        const tabCount = Math.min(this.config.itemCount || 3, 5); // Limit to maximum 5 tabs
+        const tabCount = Math.min(this._config.itemCount || 3, 5); // Limit to maximum 5 tabs
         for (let i = 0; i < tabCount; i++) {
             const tab = document.createElement('div');
             tab.className = `tab-item skeleton-animated ${i === 0 ? 'active' : ''}`;
@@ -724,7 +751,7 @@ export class WMSkeletonLoader extends HTMLElement {
 
     private createCardContent(container: HTMLElement): void {
         // Create multiple cards if itemCount is specified
-        for (let i = 0; i < this.config.itemCount; i++) {
+        for (let i = 0; i < this._config.itemCount; i++) {
             const card = document.createElement('div');
             card.className = 'card-loader';
 
@@ -769,7 +796,7 @@ export class WMSkeletonLoader extends HTMLElement {
     }
 
     private createListContent(container: HTMLElement): void {
-        for (let i = 0; i < this.config.itemCount; i++) {
+        for (let i = 0; i < this._config.itemCount; i++) {
             const listItem = document.createElement('div');
             listItem.className = 'list-item';
 
@@ -804,7 +831,7 @@ export class WMSkeletonLoader extends HTMLElement {
         }
         container.appendChild(header);
 
-        for (let i = 0; i < this.config.itemCount; i++) {
+        for (let i = 0; i < this._config.itemCount; i++) {
             const row = document.createElement('div');
             row.className = 'table-row';
 
@@ -817,139 +844,79 @@ export class WMSkeletonLoader extends HTMLElement {
         }
     }
 
-    private createChartContent(container: HTMLElement): void {
-        // Create chart header with title and legend
-        const header = document.createElement('div');
-        header.className = 'chart-header';
+    private createChartContent(container: HTMLElement, type: string): void {
+        container.className = `chart-loader ${type}-loader`;
 
-        const title = document.createElement('div');
-        title.className = 'chart-title skeleton-animated';
-
-        const legend = document.createElement('div');
-        legend.className = 'chart-legend';
-
-        // Create two legend items
-        for (let i = 0; i < 2; i++) {
-            const legendItem = document.createElement('div');
-            legendItem.className = 'legend-item';
-
-            const dot = document.createElement('div');
-            dot.className = 'legend-dot skeleton-animated';
-
-            const text = document.createElement('div');
-            text.className = 'legend-text skeleton-animated';
-
-            legendItem.appendChild(dot);
-            legendItem.appendChild(text);
-            legend.appendChild(legendItem);
-        }
-
-        header.appendChild(title);
-        header.appendChild(legend);
-        container.appendChild(header);
-
-        // Create chart visualization area
-        const visualization = document.createElement('div');
-        visualization.className = 'chart-visualization';
-
-        // Create Y-axis
-        const yAxis = document.createElement('div');
-        yAxis.className = 'y-axis';
-        for (let i = 0; i < 5; i++) {
-            const tick = document.createElement('div');
-            tick.className = 'y-tick skeleton-animated';
-            yAxis.appendChild(tick);
-        }
-
-        // Create chart area with grid lines
+        // Create chart area
         const chartArea = document.createElement('div');
         chartArea.className = 'chart-area';
 
-        // Add grid lines
-        for (let i = 1; i <= 4; i++) {
-            const gridLine = document.createElement('div');
-            gridLine.className = 'grid-line';
-            gridLine.style.top = `${(i * 20)}%`;
-            chartArea.appendChild(gridLine);
-        }
+        // Create chart data container
+        const chartData = document.createElement('div');
+        chartData.className = 'chart-data';
 
-        // Create animated chart line using SVG for smooth curves
-        const lineContainer = document.createElement('div');
-        lineContainer.className = 'chart-line-container';
+        switch (type) {
+            case 'column':
+                for (let i = 0; i < 5; i++) {
+                    const column = document.createElement('div');
+                    column.className = 'column skeleton-animated';
+                    column.style.animationDelay = `${i * 0.2}s`;
+                    chartData.appendChild(column);
+                }
+                break;
 
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('width', '100%');
-        svg.setAttribute('height', '100%');
-        svg.setAttribute('viewBox', '0 0 100 100');
-        svg.setAttribute('preserveAspectRatio', 'none');
+            case 'bar':
+                for (let i = 0; i < 5; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'bar skeleton-animated';
+                    bar.style.animationDelay = `${i * 0.2}s`;
+                    chartData.appendChild(bar);
+                }
+                break;
 
-        // Helper method to generate smooth curve points
-        function generateSmoothCurvePoints(): string {
-            const points: [number, number][] = [];
-            const pointCount = 6;
-
-            // Generate random points with some constraints to make the curve look natural
-            for (let i = 0; i < pointCount; i++) {
-                const x = (i / (pointCount - 1)) * 100;
-                const y = 30 + Math.random() * 40; // Keep points in middle range for better visual
-                points.push([x, y]);
+            case 'line': {
+                const line = document.createElement('div');
+                line.className = 'line skeleton-animated';
+                for (let i = 0; i < 5; i++) {
+                    const point = document.createElement('div');
+                    point.className = 'point skeleton-animated';
+                    point.style.animationDelay = `${i * 0.4}s`;
+                    chartData.appendChild(point);
+                }
+                chartData.appendChild(line);
+                break;
             }
 
-            // Create a smooth curve using cubic bezier
-            let path = `M ${points[0][0]} ${points[0][1]}`;
-
-            for (let i = 0; i < points.length - 1; i++) {
-                const current = points[i];
-                const next = points[i + 1];
-
-                // Calculate control points for smooth curve
-                const cp1x = current[0] + (next[0] - current[0]) / 3;
-                const cp1y = current[1];
-                const cp2x = next[0] - (next[0] - current[0]) / 3;
-                const cp2y = next[1];
-
-                path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${next[0]} ${next[1]}`;
+            case 'area': {
+                const area = document.createElement('div');
+                area.className = 'area skeleton-animated';
+                chartData.appendChild(area);
+                break;
             }
 
-            return path;
+            case 'pie':
+                {
+                    const pieSegment = document.createElement('div');
+                    pieSegment.className = 'pie-segment skeleton-animated';
+                    chartData.appendChild(pieSegment);
+                }
+                break;
+
+            case 'donut':
+                {
+                    const donutSegment = document.createElement('div');
+                    donutSegment.className = 'donut-segment skeleton-animated';
+                    chartData.appendChild(donutSegment);
+                }
+                break;
         }
 
-        // Generate smooth curve points
-        const points = generateSmoothCurvePoints();
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', points);
-        path.setAttribute('class', 'chart-line skeleton-animated');
-
-        svg.appendChild(path);
-        lineContainer.appendChild(svg);
-
-        // Add gradient area under the line
-        const gradient = document.createElement('div');
-        gradient.className = 'chart-gradient';
-        gradient.style.clipPath = `path('${points} V 100 H 0 Z')`;
-        lineContainer.appendChild(gradient);
-
-        chartArea.appendChild(lineContainer);
-
-        // Create X-axis
-        const xAxis = document.createElement('div');
-        xAxis.className = 'x-axis';
-        for (let i = 0; i < 6; i++) {
-            const tick = document.createElement('div');
-            tick.className = 'x-tick skeleton-animated';
-            xAxis.appendChild(tick);
-        }
-
-        // Assemble the visualization
-        visualization.appendChild(yAxis);
-        visualization.appendChild(chartArea);
-        visualization.appendChild(document.createElement('div')); // Empty cell for grid alignment
-        visualization.appendChild(xAxis);
-        container.appendChild(visualization);
+        chartArea.appendChild(chartData);
+        container.appendChild(chartArea);
     }
 
     private createFormContent(container: HTMLElement): void {
-        for (let i = 0; i < this.config.itemCount; i++) {
+        for (let i = 0; i < this._config.itemCount; i++) {
             const field = document.createElement('div');
             field.className = 'form-field skeleton-animated';
 
@@ -962,60 +929,60 @@ export class WMSkeletonLoader extends HTMLElement {
     }
 
     private createAccordionContent(container: HTMLElement): void {
-        const itemCount = Math.min(this.config.itemCount || 4, 8);
-        
+        const itemCount = Math.min(this._config.itemCount || 4, 8);
+
         for (let i = 0; i < itemCount; i++) {
             const accordionItem = document.createElement('div');
             accordionItem.className = `accordion-item ${i === 0 ? 'expanded' : ''}`;
-    
+
             // Create header
             const header = document.createElement('div');
             header.className = 'accordion-header';
-    
+
             // Add chevron indicator
             const chevron = document.createElement('div');
             chevron.className = 'accordion-chevron';
-            
+
             // Create title block with title and subtitle
             const titleBlock = document.createElement('div');
             titleBlock.className = 'accordion-title-block';
-            
+
             const title = document.createElement('div');
             title.className = 'accordion-title skeleton-animated';
-            
+
             const subtitle = document.createElement('div');
             subtitle.className = 'accordion-subtitle skeleton-animated';
-            
+
             titleBlock.appendChild(title);
             titleBlock.appendChild(subtitle);
-    
+
             // Add badge indicator
             const badge = document.createElement('div');
             badge.className = 'accordion-badge skeleton-animated';
-    
+
             // Assemble header
             header.appendChild(chevron);
             header.appendChild(titleBlock);
             header.appendChild(badge);
             accordionItem.appendChild(header);
-    
+
             // Create expanded content for first item
             if (i === 0) {
                 const content = document.createElement('div');
                 content.className = 'accordion-content';
-                
+
                 const contentBlock = document.createElement('div');
                 contentBlock.className = 'content-block';
-    
+
                 // Create two content sections
                 for (let j = 0; j < 1; j++) {
                     const section = document.createElement('div');
                     section.className = 'content-section';
-    
+
                     const heading = document.createElement('div');
                     heading.className = 'content-heading skeleton-animated';
                     section.appendChild(heading);
-    
+
                     // Add content lines with varying widths
                     const lineClasses = ['full', 'long', 'medium', 'short'];
                     lineClasses.forEach(width => {
@@ -1023,14 +990,14 @@ export class WMSkeletonLoader extends HTMLElement {
                         line.className = `content-line content-line-${width} skeleton-animated`;
                         section.appendChild(line);
                     });
-    
+
                     contentBlock.appendChild(section);
                 }
-    
+
                 content.appendChild(contentBlock);
                 accordionItem.appendChild(content);
             }
-    
+
             container.appendChild(accordionItem);
         }
     }
