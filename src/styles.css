@@ -1,1 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
+.app-grid .app-datagrid .table-container .app-checkbox,
+.app-grid .app-datagrid .table-container .app-radio {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+.app-grid .app-datagrid .table-container td:first-child .app-checkbox,
+.app-grid .app-datagrid .table-container td:first-child .app-radio {
+    pointer-events: none;
+}
+
+.app-grid .app-datagrid .table-container .app-checkbox label,
+.app-grid .app-datagrid .table-container .app-radio label {
+    padding: 0;
+    display: inline-block;
+    margin-bottom: -8px;
+}
+
+.app-grid .app-datagrid .table-container .app-checkbox .caption,
+.app-grid .app-datagrid .table-container .app-radio .caption {
+    margin: 0;
+    vertical-align: inherit;
+    padding-left: 18px;
+}
+
+.wm-app .app-grid .table td:first-child input[type="checkbox"],
+.wm-app .app-grid .table th:first-child input[type="checkbox"],
+.wm-app .app-grid .table td:first-child input[type="radio"] {
+    display: none;
+}
