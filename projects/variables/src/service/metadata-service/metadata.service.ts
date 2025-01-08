@@ -23,8 +23,8 @@ export class MetadataService {
             const deployedUrl = _WM_APP_PROJECT.cdnUrl + 'servicedefs/' + serviceDefFileName;
 
             const previewUrl = './services/' + (prefabName ? `prefabs/${prefabName}/` : '') + 'servicedefs';
-            url = _WM_APP_PROJECT.isPreview ? previewUrl : deployedUrl;
-        }
+            url = _WM_APP_PROJECT.isPreview || (window as any)._WM_APP_PROPERTIES?.serviceDefSources === 'DYNAMIC' ? previewUrl : deployedUrl;
+            }
         return new Promise((resolve, reject) => {
             this.$http.send({'url' : url, 'method': 'GET'}).then((response) => {
                 this.metadataMap = this.metadataMap || new Map();
