@@ -183,7 +183,7 @@ export const AllVariants: Story = {
           { class: 'fa fa-cog label-danger', size: 'fa-4x', tooltip: 'Settings' },
           { class: 'fa fa-adjust label-neutral', size: 'fa-5x', tooltip: 'Adjust' },
         ],
-        showCaptions: true,
+        showCaptions: false,
         iconPosition: 'right',
       },
       {
@@ -195,7 +195,7 @@ export const AllVariants: Story = {
           { class: 'fa fa-cog label-danger', size: 'fa-4x', tooltip: 'Settings' },
           { class: 'fa fa-adjust label-neutral', size: 'fa-5x', tooltip: 'Adjust' },
         ],
-        showCaptions: false,
+        showCaptions: true,
         iconPosition: 'right',
       },
     ];
@@ -243,97 +243,3 @@ export const AllVariants: Story = {
     };
   },
 };
-
-
-
-// export const AllVariantsdsj: Story = {
-//   render: (args) => {
-//     const variants = [
-//       {
-//         heading: 'Filled Icons',
-//         icons: [
-//           { class: 'fa fa-home label-primary', size: 'fa-lg', tooltip: 'Home' },
-//           { class: 'fa fa-user  label-primary label-success', size: 'fa-2x', tooltip: 'User' },
-//           { class: 'fa fa-envelope label-warning', size: 'fa-3x', tooltip: 'Envelope' },
-//           { class: 'fa fa-cog label-danger', size: 'fa-4x', tooltip: 'Settings' },
-//           { class: 'fa fa-adjust label-neutral', size: 'fa-5x', tooltip: 'Adjust' },
-//         ],
-//         layout: 'grid',
-//       },
-//       {
-//         heading: 'Standard Icons',
-//         icons: [
-//           { class: 'fa fa-home label-outlined label-default label-primary', size: 'fa-lg', tooltip: 'Home' },
-//           { class: 'fa fa-user', size: 'fa-2x', tooltip: 'User' },
-//           { class: 'fa fa-envelope', size: 'fa-3x', tooltip: 'Envelope' },
-//           { class: 'fa fa-cog', size: 'fa-4x', tooltip: 'Settings' },
-//           { class: 'fa fa-adjust', size: 'fa-5x', tooltip: 'Adjust' },
-//         ],
-//         layout: 'grid',
-//       },
-//       {
-//         heading: 'Outline Icons',
-//         icons: [
-//           { class: 'fa fa-home label-outlined', size: 'fa-lg', tooltip: 'Home' },
-//           { class: 'fa fa-user', size: 'fa-2x', tooltip: 'User' },
-//           { class: 'fa fa-envelope', size: 'fa-3x', tooltip: 'Envelope' },
-//           { class: 'fa fa-cog', size: 'fa-4x', tooltip: 'Settings' },
-//           { class: 'fa fa-adjust', size: 'fa-5x', tooltip: 'Adjust' },
-//         ],
-//         layout: 'grid',
-//       },
-//       {
-//         heading: 'Tonal Icons',
-//         icons: [
-//           { class: 'fa fa-home', size: 'fa-lg', tooltip: 'Home' },
-//           { class: 'fa fa-user', size: 'fa-2x', tooltip: 'User' },
-//           { class: 'fa fa-envelope', size: 'fa-3x', tooltip: 'Envelope' },
-//           { class: 'fa fa-cog', size: 'fa-4x', tooltip: 'Settings' },
-//           { class: 'fa fa-adjust', size: 'fa-5x', tooltip: 'Adjust' },
-//         ],
-//         layout: 'grid',
-//       },
-//     ];
-
-//     const sizeStyles: Record<string, string> = {
-//       'fa-lg': 'font-size: 18px;',
-//       'fa-2x': 'font-size: 24px;',
-//       'fa-3x': 'font-size: 32px;',
-//       'fa-4x': 'font-size: 40px;',
-//       'fa-5x': 'font-size: 48px;',
-//     };
-
-//     return {
-//       template: `
-//         <div style="display: flex; flex-direction: column; gap: 24px;">
-//           ${variants
-//             .map((variant) => {
-//               const isGridLayout = variant.layout === 'grid';
-//               return `
-//                 <div>
-//                   <h6>${variant.heading}</h6>
-//                   <div style="
-//                     display: ${isGridLayout ? 'grid' : 'flex'};
-//                     ${isGridLayout ? 'grid-template-columns: repeat(5, 1fr); column-gap: 15px; row-gap: 15px;' : 'gap: 8px;'}">
-//                     ${variant.icons
-//                       .map((icon) => {
-//                         const iconSizeStyle = sizeStyles[icon.size] || '';
-
-//                         return `
-//                           <div style="text-align: center;">
-//                             <i class="${icon.class} ${icon.size}" style="${iconSizeStyle}" title="${icon.tooltip}"></i>
-//                             <p style="margin-top: 8px; font-size: 12px;">${icon.tooltip}</p>
-//                           </div>
-//                         `;
-//                       })
-//                       .join('')}
-//                   </div>
-//                 </div>
-//               `;
-//             })
-//             .join('')};
-//         </div>
-//       `,
-//     };
-//   },
-// };
