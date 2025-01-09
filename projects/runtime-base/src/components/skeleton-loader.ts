@@ -1,4 +1,4 @@
-export interface SkeletonConfig {
+interface SkeletonConfig {
     backgroundColor?: string;
     foregroundColor?: string;
     animationDuration?: number;
@@ -23,7 +23,7 @@ export class WMSkeletonLoader extends HTMLElement {
         height: 'auto',
         width: '100%',
         shimmerColor: 'rgba(255, 255, 255, 0.2)'
-    }; 
+    };
 
     static get observedAttributes() {
         return ['widget-type', 'config'];
@@ -69,9 +69,16 @@ export class WMSkeletonLoader extends HTMLElement {
         const baseStyles = `
             :host {
                 display: block;
-                width: ${this._config.width};
-                height: ${this._config.height};
+                width: ${widgetType === 'app' ? '100%' : this._config.width};
+                height: ${widgetType === 'app' ? '100%' : this._config.height};
                 contain: content;
+                ${widgetType === 'app' ? `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    z-index: 9999;
+                    background-color: rgba(255, 255, 255, 0.9);
+                ` : ''}
             }
             .skeleton-loader {
                 width: 100%;
@@ -80,6 +87,13 @@ export class WMSkeletonLoader extends HTMLElement {
                 position: relative;
                 box-sizing: border-box;
                 contain: content;
+                ${widgetType === 'app' ? `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                ` : ''}
             }
             .skeleton-animated::before {
                 content: '';
@@ -100,9 +114,10 @@ export class WMSkeletonLoader extends HTMLElement {
             @keyframes loading {
                 100% { left: 100%; }
             }
-        `;
+    `;
 
         const typeStyles: { [key: string]: string } = {
+            app: this.getAppStyles(),
             list: this.getListStyles(),
             table: this.getTableStyles(),
             chart: this.getChartStyles(),
@@ -120,54 +135,20 @@ export class WMSkeletonLoader extends HTMLElement {
         return `
             .card-loader {
                 background-color: ${this._config.backgroundColor};
-                border-radius: ${this._config.borderRadius};
                 padding: ${this._config.spacing};
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                display: grid;
-                grid-gap: ${this._config.spacing};
-            }
-            .card-image {
-                width: 100%;
-                height: 200px;
-                background-color: ${this._config.foregroundColor};
-                border-radius: ${this._config.borderRadius};
-                margin-bottom: ${this._config.spacing};
-            }
-            .card-title {
-                height: 24px;
-                width: 80%;
-                background-color: ${this._config.foregroundColor};
-                border-radius: ${this._config.borderRadius};
-                margin-bottom: ${this._config.spacing};
-            }
-            .card-description {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                margin-bottom: ${this._config.spacing};
-            }
-            .card-description-line {
-                height: 16px;
-                background-color: ${this._config.foregroundColor};
-                border-radius: ${this._config.borderRadius};
-            }
-            .card-description-line:nth-child(2) {
-                width: 90%;
-            }
-            .card-description-line:nth-child(3) {
-                width: 75%;
-            }
-            .card-footer {
                 display: flex;
                 gap: ${this._config.spacing};
-                margin-top: auto;
             }
-            .card-button {
-                height: 36px;
-                background-color: ${this._config.foregroundColor};
-                border-radius: ${this._config.borderRadius};
+            .card-column {
                 flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: ${this._config.spacing};
+                background-color: ${this._config.backgroundColor};
+                padding: ${this._config.spacing};
+                border-radius: ${this._config.borderRadius};
             }
+            ${this.getListStyles()}
         `;
     }
 
@@ -697,16 +678,81 @@ export class WMSkeletonLoader extends HTMLElement {
     `;
     }
 
+    private getAppStyles(): string {
+        return `
+            .app-loader {
+                display: grid;
+                grid-template-areas: 
+                    "header header"
+                    "nav main"
+                    "footer footer";
+                grid-template-columns: 250px 1fr;
+                grid-template-rows: 60px 1fr 50px;
+                gap: ${this._config.spacing};
+                padding: ${this._config.spacing};
+                background-color: transparent;
+            }
+            
+            .header {
+                grid-area: header;
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
+                display: flex;
+                align-items: center;
+                padding: ${this._config.spacing};
+            }
+            
+            .nav {
+                grid-area: nav;
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
+                padding: ${this._config.spacing};
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .nav-item {
+                height: 20px;
+                background-color: ${this._config.backgroundColor};
+                border-radius: ${this._config.borderRadius};
+            }
+            
+            .main {
+                grid-area: main;
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
+                padding: ${this._config.spacing};
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: ${this._config.spacing};
+            }
+            
+            .content-block {
+                height: 150px;
+                background-color: ${this._config.backgroundColor};
+                border-radius: ${this._config.borderRadius};
+            }
+            
+            .footer {
+                grid-area: footer;
+                background-color: ${this._config.foregroundColor};
+                border-radius: ${this._config.borderRadius};
+            }
+        `;
+    }
+
     private createLoaderContent(widgetType: string): HTMLElement {
         const loaderContent = document.createElement('div');
         loaderContent.className = `skeleton-loader skeleton-animated ${widgetType}-loader`;
 
         const creators: { [key: string]: () => void } = {
-            list: () => this.createListContent(loaderContent),
+            app: () => this.createAppContent(loaderContent),
+            list: () => this.createListContent(loaderContent, widgetType),
             table: () => this.createTableContent(loaderContent),
             chart: () => this.createChartContent(loaderContent, this._config.chartType?.toLowerCase()),
             form: () => this.createFormContent(loaderContent),
-            card: () => this.createCardContent(loaderContent),
+            card: () => this.createCardContent(loaderContent, widgetType),
             tabs: () => this.createTabsContent(loaderContent),
             accordion: () => this.createAccordionContent(loaderContent),
             default: () => this.createDefaultContent(loaderContent)
@@ -714,6 +760,39 @@ export class WMSkeletonLoader extends HTMLElement {
 
         (creators[widgetType] || creators.default)();
         return loaderContent;
+    }
+
+    private createAppContent(container: HTMLElement): void {
+        const header = document.createElement('div');
+        header.className = 'header skeleton-animated';
+
+        const nav = document.createElement('div');
+        nav.className = 'nav skeleton-animated';
+
+        // Create nav items
+        for (let i = 0; i < 6; i++) {
+            const navItem = document.createElement('div');
+            navItem.className = 'nav-item skeleton-animated';
+            nav.appendChild(navItem);
+        }
+
+        const main = document.createElement('div');
+        main.className = 'main skeleton-animated';
+
+        // Create content blocks
+        for (let i = 0; i < 6; i++) {
+            const contentBlock = document.createElement('div');
+            contentBlock.className = 'content-block skeleton-animated';
+            main.appendChild(contentBlock);
+        }
+
+        const footer = document.createElement('div');
+        footer.className = 'footer skeleton-animated';
+
+        container.appendChild(header);
+        container.appendChild(nav);
+        container.appendChild(main);
+        container.appendChild(footer);
     }
 
     private createTabsContent(container: HTMLElement): void {
@@ -749,54 +828,32 @@ export class WMSkeletonLoader extends HTMLElement {
         container.appendChild(content);
     }
 
-    private createCardContent(container: HTMLElement): void {
-        // Create multiple cards if itemCount is specified
-        for (let i = 0; i < this._config.itemCount; i++) {
-            const card = document.createElement('div');
-            card.className = 'card-loader';
+    private createCardContent(container: HTMLElement, widget: string): void {
+        container.className = 'card-loader';
 
-            // Image placeholder
-            const image = document.createElement('div');
-            image.className = 'card-image skeleton-animated';
+        const leftColumn = document.createElement('div');
+        leftColumn.className = 'card-column';
+        const rightColumn = document.createElement('div');
+        rightColumn.className = 'card-column';
 
-            // Title placeholder
-            const title = document.createElement('div');
-            title.className = 'card-title skeleton-animated';
+        const leftList = document.createElement('div');
+        leftList.className = 'list-loader';
+        const rightList = document.createElement('div');
+        rightList.className = 'list-loader';
 
-            // Description lines
-            const description = document.createElement('div');
-            description.className = 'card-description';
+        this.createListContent(leftList, widget);
+        this.createListContent(rightList, widget);
 
-            // Create three lines of varying width for the description
-            for (let j = 0; j < 3; j++) {
-                const line = document.createElement('div');
-                line.className = 'card-description-line skeleton-animated';
-                description.appendChild(line);
-            }
+        leftColumn.appendChild(leftList);
+        rightColumn.appendChild(rightList);
 
-            // Footer with action buttons
-            const footer = document.createElement('div');
-            footer.className = 'card-footer';
-
-            const primaryButton = document.createElement('div');
-            primaryButton.className = 'card-button skeleton-animated';
-
-            const secondaryButton = document.createElement('div');
-            secondaryButton.className = 'card-button skeleton-animated';
-
-            // Assemble the card
-            footer.appendChild(primaryButton);
-            footer.appendChild(secondaryButton);
-            card.appendChild(image);
-            card.appendChild(title);
-            card.appendChild(description);
-            card.appendChild(footer);
-            container.appendChild(card);
-        }
+        container.appendChild(leftColumn);
+        container.appendChild(rightColumn);
     }
 
-    private createListContent(container: HTMLElement): void {
-        for (let i = 0; i < this._config.itemCount; i++) {
+    private createListContent(container: HTMLElement, widget: string): void {
+        const count = widget === 'card' ? 2 : 3
+        for (let i = 0; i < count; i++) {
             const listItem = document.createElement('div');
             listItem.className = 'list-item';
 

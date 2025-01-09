@@ -61,7 +61,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
         private spinnerService: AbstractSpinnerService,
         ngZone: NgZone,
         private router: Router,
-        private app: App,
+        public app: App,
         private appManager: AppManagerService,
         private customIconsLoaderService: CustomIconsLoaderService
     ) {
