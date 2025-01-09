@@ -6,7 +6,28 @@ const copyFile = util.promisify(fs.copyFile);
 const exec = util.promisify(require('child_process').exec);
 const cheerio = require(`cheerio`);
 const crypto = require(`crypto`);
-const opPath = `${process.cwd()}/dist/ng-bundle`;
+
+/**
+ * Read the console arguments and prepare the key value pairs.
+ * @returns Object console arguments as key value pairs
+ */
+const getArgs = (customArgs) => {
+    const args = {};
+    let arguments = customArgs || process.argv;
+    arguments.slice(2, process.argv.length)
+        .forEach(arg => {
+            if (arg.slice(0, 2) === '--') {
+                const longArg = arg.split('=');
+                const longArgFlag = longArg[0].slice(2, longArg[0].length);
+                const longArgValue = longArg.length > 2 ? longArg.slice(1, longArg.length).join('=') : longArg[1];
+                args[longArgFlag] = longArgValue;
+            }
+        });
+    return args;
+}
+
+const args = getArgs();
+const opPath = `${process.cwd()}/${args['output-path']}`;
 const copyCssFiles = (hash, updatedFilenames) => {
     const filename = 'wm-styles.css';
     const updatedFilename = `wm-styles.${hash}.css`
@@ -115,26 +136,8 @@ const addPrintStylesPath = (print_styles_path) => {
     );
 }
 
-/**
- * Read the console arguments and prepare the key value pairs.
- * @returns Object console arguments as key value pairs
- */
-const getArgs = (customArgs) => {
-    const args = {};
-    let arguments = customArgs || process.argv;
-    arguments.slice(2, process.argv.length)
-        .forEach(arg => {
-            if (arg.slice(0, 2) === '--') {
-                const longArg = arg.split('=');
-                const longArgFlag = longArg[0].slice(2, longArg[0].length);
-                const longArgValue = longArg.length > 2 ? longArg.slice(1, longArg.length).join('=') : longArg[1];
-                args[longArgFlag] = longArgValue;
-            }
-        });
-    return args;
-}
 
-const args = getArgs();
+
 
 // Files that are moved out of ng-bundle and hence not to be updated.
 const SKIP_UPDATE = ['index.html', 'manifest.json'];
@@ -248,16 +251,16 @@ const generateSha1 = (content) => {
         const angularJson = require(`${process.cwd()}/angular.json`);
         const build = angularJson['projects']['angular-app']['architect']['build'];
         let deployUrl = args['deploy-url'] || build['options']['deployUrl'];
-
+        let outputPath = args['output-path'] || build['options']['outputPath']
         const contents = await readFile(`./dist/index.html`, `utf8`);
         $ = cheerio.load(contents);
         setMobileProjectType(angularJson);
         if (!isMobileProject) {
-            isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-styles.css`);
-            isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-styles.js`);
+            isProdBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-styles.css`);
+            isDevBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-styles.js`);
         } else {
-            isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.js`);
-            isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.css`);
+            isDevBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-android-styles.js`);
+            isProdBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-android-styles.css`);
         }
 
         if (isProdBuild) {
@@ -295,7 +298,7 @@ const generateSha1 = (content) => {
         //this is required to download all the assets
         $('head').append(`<meta name="deployUrl" content=${deployUrl} />`);
         $('script[src$="services/application/wmProperties.js"]').remove();
-        $('link[href$="favicon.png"]').attr('href', './ng-bundle/favicon.png');
+        $('link[href$="favicon.png"]').attr('href', `./ng-bundle/${args['random-number']}/favicon.png`);
 
         const htmlContent = $.html();
         await writeFile(`./dist/index.html`, htmlContent);
