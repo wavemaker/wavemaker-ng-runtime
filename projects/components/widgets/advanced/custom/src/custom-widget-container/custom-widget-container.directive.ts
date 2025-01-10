@@ -41,6 +41,7 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
     asAttr: boolean;
     configSubject: Subject<any>;
     onErroSubject: Subject<any>;
+    _isCustom: boolean = true;
 
     constructor(
         inj: Injector, elRef: ElementRef,
@@ -105,7 +106,7 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
         }
         this.asAttr = this.nativeElement.children[0].children[0].hasAttribute('as');
 
-        this.baseWidget = (this.nativeElement.children[0].children[0].querySelector(`[name=${this.baseWidgetName}]`) as any)?.widget; 
+        this.baseWidget = (this.nativeElement.children[0].children[0].querySelector(`[name=${this.baseWidgetName}]`) as any)?.widget;
         // if(this.asAttr)
         //     this.setBaseWidgetName(config.widgetType);
         if (!config || !config.properties) {

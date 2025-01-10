@@ -40,7 +40,7 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
     triggerInvokeOnChange(key, $event) {
         this.modelByKey = key;
 
-        if(this.viewParent.containerWidget)
+        if(this.viewParent.containerWidget && this.viewParent.containerWidget.updateDataValue)
             this.viewParent.containerWidget.updateDataValue(this.datavalue);
 
         this.invokeOnTouched();

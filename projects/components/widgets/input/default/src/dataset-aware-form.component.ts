@@ -248,7 +248,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         });
 
         this.displayValue = this.multiple ? displayValues : displayValues[0] || '';
-        if(this.viewParent.containerWidget)
+        if(this.viewParent.containerWidget && this.viewParent.containerWidget._isCustom)
             this.viewParent.containerWidget.displayValue = this.displayValue.length ? this.displayValue : '';
     }
 
