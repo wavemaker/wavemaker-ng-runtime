@@ -64,7 +64,7 @@ export class WizardStepDirective extends BaseComponent {
      */
     private areEmbeddedFormsValid() {
         for (const form of this.getAllEmbeddedForms()) {
-            if (form.widget.ngform && !form.widget.ngform.valid) {
+            if (form.widget && form.widget.ngform && !form.widget.ngform.valid) {
                 return false;
             }
         }
