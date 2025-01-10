@@ -248,7 +248,7 @@ export class AppManagerService {
         } else {
             page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
             pageParams = this.$security.getQueryString(this.$security.getRedirectedRouteQueryParams());
-            pageParams = pageParams ? '?' + pageParams : '';
+            pageParams = pageParams.indexOf('?') > -1 ? '?' + pageParams : (pageParams || '');
             // showing a redirecting message
             document.body.textContent = get(this.getAppLocale(), ['MESSAGE_LOGIN_REDIRECTION']) || 'Redirecting to sso login...';
             // appending redirect to page and page params
