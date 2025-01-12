@@ -8,6 +8,11 @@ module.exports = {
   ],
   testMatch: [
     "**/projects/**/*.spec.ts",
+      //   "**/projects/components/widgets/containers/panel/src/panel.wrapper.component.spec.ts",
+  //    "**/projects/components/widgets/basic/search/src/search.wrapper.component.spec.ts",
+    //  "**/projects/components/widgets/navigation/menu/src/menu.wrapper.component.spec.ts",
+    //  "**/projects/components/widgets/input/epoch/src/date/date.wrapper.component.spec.ts",
+   //   "**/projects/components/widgets/data/form/src/form.wrapper.component.spec.ts"
     // "**/projects/components/widgets/input/epoch/src/date-time/date-time-picker.spec.ts",
   ],
   testPathIgnorePatterns: [
