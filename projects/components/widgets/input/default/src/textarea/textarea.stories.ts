@@ -36,3 +36,60 @@ export const MaxCharacters: Story = {
 //   },
 // };
 
+export const AllVariants: Story ={
+  render : (args)=>{
+    const variants = [
+      {
+        heading:"Default",
+        textarea:{
+          datavalue: '',
+          placeholder: 'Enter your name here',
+          disabled: false,
+          readonly :false
+        }
+      },
+      {
+        heading:"Disabled",
+        textarea:{
+          datavalue: '',
+          placeholder: 'Enter your name here',
+          disabled: true,
+          readonly :true
+        }
+      },
+      {
+        heading:"Max Characters",
+        textarea:{
+          datavalue: '',
+    maxchars: 100,
+    placeholder: 'Maximum 100 characters',
+        }
+      },
+    ]
+    return {
+      template: `
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        ${variants
+          .map(
+            (variant) => `
+              <div>
+                <h6>${variant.heading}</h6>
+                <textarea 
+                  class="form-control app-textbox"
+                  placeholder="${variant.textarea.placeholder}"
+                  [disabled]="${variant.textarea.disabled}"
+                  [readonly]="${variant.textarea.readonly}"
+                  maxlength="${variant.textarea.maxchars || ''}"
+                >
+                ${variant.textarea.datavalue}
+                </textarea>
+              </div>
+            `
+          )
+          .join('')}
+      </div>
+    `,
+    }
+  }
+}
+
