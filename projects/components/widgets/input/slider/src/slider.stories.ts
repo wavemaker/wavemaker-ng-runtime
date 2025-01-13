@@ -40,5 +40,59 @@ export const datavalue : Story = {
   }
 }
 
+export const AllVariants : Story = {
+  render :(args)=>{
+    const variants = [
+      {
+        heading:"Default",
+        slider:{
+          minvalue: 0,
+          maxvalue: 50,
+          step: 5,
+          datavalue:10
+        }
+      },
+      {
+        heading:"Disabled",
+        slider:{
+          minvalue: 0,
+          maxvalue: 50,
+          step: 5,
+          readonly: true,
+          disabled:true
+        }
+      },
+     
+    ]
+    return {
+      template: `
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        ${variants
+          .map(
+            (variant) => `
+              <div>
+                <h6>${variant.heading}</h6>
+                 <span class="app-slider-value pull-left">{{ ${variant.slider.minvalue} }}</span>
+                <span class="app-slider-value pull-right">{{ ${variant.slider.maxvalue} }}</span>
+                <input 
+                  type="range" class="range-input"
+                  min="${variant.slider.minvalue}" 
+                  max="${variant.slider.maxvalue}" 
+                  step="${variant.slider.step || 1}" 
+                  value="${variant.slider.datavalue || 0}" 
+                  ${variant.slider.readonly ? 'readonly' : ''}
+                   ${variant.slider.disabled ? 'disabled' : ''}
+                />
+               
+              </div>
+            `
+          )
+          .join('')}
+      </div>
+    `,
+    }
+  }
+}
+
 
 
