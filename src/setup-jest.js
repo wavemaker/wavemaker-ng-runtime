@@ -1,8 +1,11 @@
-import "jest-preset-angular/setup-jest";
+// This file is automatically loaded when running `jest` commands
+import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
 import { ToastrModule } from 'ngx-toastr';
 import { TestBed } from '@angular/core/testing';
 import _ from 'lodash-es';
 import 'jest-canvas-mock';
+
+setupZoneTestEnv();
 
 // Mock global objects if necessary
 global.jQuery = require("jquery");

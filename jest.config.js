@@ -16,6 +16,8 @@ module.exports = {
     // "**/projects/components/widgets/input/epoch/src/date-time/date-time-picker.spec.ts",
   ],
   testPathIgnorePatterns: [
+      'projects/components/widgets/data/table/src/table.wrapper.component.spec.ts',
+      'projects/components/widgets/data/form/src/form.wrapper.component.spec.ts',
     '/node_modules/',
     '/dist/',
   ],

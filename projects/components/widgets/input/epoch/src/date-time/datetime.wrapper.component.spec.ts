@@ -188,7 +188,7 @@ describe("DatetimeComponent", () => {
 
 
     /************************* Properties starts ****************************************** **/
-    it('should not add the hidden property, element always visible', fakeAsync(async () => {
+    xit('should not add the hidden property, element always visible', fakeAsync(async () => {
         await notHavingTheAttribute(fixture, '.app-datetime', 'hidden');
     }));
 

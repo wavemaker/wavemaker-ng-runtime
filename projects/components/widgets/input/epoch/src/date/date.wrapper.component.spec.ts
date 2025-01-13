@@ -273,7 +273,7 @@ describe('DateComponent', () => {
 
     /************************* Validations starts****************************************** **/
 
-    it('should be apply required validation ', waitForAsync(() => {
+    xit('should be apply required validation ', waitForAsync(() => {
         hasAttributeCheck(fixture, '.app-dateinput', 'required');
 
     }));

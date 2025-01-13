@@ -643,7 +643,7 @@ describe('FormComponent', () => {
     //     });
     // }));
 
-    xit('should trigger custom validator(sync)', () => {
+    it('should trigger custom validator(sync)', () => {
         const invalidTestValue = 'test';
         const validTestValue = 'test12345';
         let formField = wmComponent.formfields['username'];
@@ -658,7 +658,7 @@ describe('FormComponent', () => {
         expect(formField._control.valid).toBeTruthy();
     });
 
-    xit('should trigger default and custom validator', () => {
+    it('should trigger default and custom validator', () => {
         const invalidTestValue = 'test';
         const validTestValue = 'test12345';
         let formField = wmComponent.formfields['username'];
@@ -680,7 +680,7 @@ describe('FormComponent', () => {
         expect(formField._control.valid).toBeTruthy();
     });
 
-    xit('should trigger observe validator', fakeAsync(() => {
+    it('should trigger observe validator', fakeAsync(() => {
         const invalidTestValue = 'test';
         const validTestValue = 'valid';
         let firstNameFormField = wmComponent.formfields['username'];
@@ -706,7 +706,7 @@ describe('FormComponent', () => {
         discardPeriodicTasks();
     }));
 
-    xit('should trigger custom validator(async)', fakeAsync(() => {
+    it('should trigger custom validator(async)', fakeAsync(() => {
         const invalidTestValue = 'test';
         const validTestValue = 'valid';
         let formField = wmComponent.formfields['username'];
@@ -727,7 +727,7 @@ describe('FormComponent', () => {
 
 
     describe('onDataSourceChange', () => {
-        xit('should update isDataSourceUpdated when formFields exist and bindformdata is false', () => {
+        it('should update isDataSourceUpdated when formFields exist and bindformdata is false', () => {
             wmComponent.formFields = [{}, {}];
             (wmComponent as any).bindformdata = false;
             wmComponent.getNearestParentFormData = jest.fn().mockReturnValue({ field1: 'value1' });
@@ -740,7 +740,7 @@ describe('FormComponent', () => {
             expect(wmComponent.setFormDataFromParentFormData).toHaveBeenCalledWith({ field1: 'value1' });
         });
 
-        xit('should not update isDataSourceUpdated when formFields do not exist', () => {
+        it('should not update isDataSourceUpdated when formFields do not exist', () => {
             wmComponent.formFields = [];
             (wmComponent as any).bindformdata = false;
 
@@ -749,7 +749,7 @@ describe('FormComponent', () => {
             expect(wmComponent.isDataSourceUpdated).toBeFalsy();
         });
 
-        xit('should not update isDataSourceUpdated when bindformdata is true', () => {
+        it('should not update isDataSourceUpdated when bindformdata is true', () => {
             wmComponent.formFields = [{}, {}];
             (wmComponent as any).bindformdata = true;
 
@@ -760,7 +760,7 @@ describe('FormComponent', () => {
     });
 
     describe('onFormDataSourceChange', () => {
-        xit('should call updateFieldSource', () => {
+        it('should call updateFieldSource', () => {
             (wmComponent as any).updateFieldSource = jest.fn();
 
             wmComponent.onFormDataSourceChange();
@@ -777,7 +777,7 @@ describe('FormComponent', () => {
             });
         });
 
-        xit('should call setValidationOnFields for each form element', () => {
+        it('should call setValidationOnFields for each form element', () => {
             const mockFormElements = [
                 { widget: { name: 'form1' } },
                 { widget: { name: 'form2' } }
@@ -793,7 +793,7 @@ describe('FormComponent', () => {
             expect(wmComponent['setValidationOnFields']).toHaveBeenCalledWith(mockFormElements[1].widget, 'form2', true);
         });
 
-        xit('should handle form array index in form name', () => {
+        it('should handle form array index in form name', () => {
             const mockFormElement = {
                 widget: {
                     name: 'form1',
@@ -811,7 +811,7 @@ describe('FormComponent', () => {
     });
 
     describe('ngAfterViewInit', () => {
-        xit('should set FormArray control and push ngform when parentForm and isParentList are true', () => {
+        it('should set FormArray control and push ngform when parentForm and isParentList are true', () => {
             (wmComponent as any).parentForm = { ngform: new FormGroup({}) };
             Object.defineProperty(wmComponent, 'isParentList', { value: true });
             (wmComponent as any).parentList = { name: 'testList' };
@@ -825,7 +825,7 @@ describe('FormComponent', () => {
             expect((wmComponent as any).formArrayIndex).toBe(0);
         });
 
-        xit('should not set FormArray control when it already exists', () => {
+        it('should not set FormArray control when it already exists', () => {
             const existingFormArray = new FormArray([]);
             (wmComponent as any).parentForm = {
                 ngform: new FormGroup({
@@ -843,7 +843,7 @@ describe('FormComponent', () => {
             expect(wmComponent.parentFormArray.length).toBe(1);
             expect((wmComponent as any).formArrayIndex).toBe(0);
         });
-        xit('should call addInnerNgFormToForm', () => {
+        it('should call addInnerNgFormToForm', () => {
             jest.spyOn(wmComponent as any, 'addInnerNgFormToForm');
             (wmComponent as any).bindingValue = 'testBinding';
 
@@ -865,7 +865,7 @@ describe('FormComponent', () => {
             Object.defineProperty(wmComponent, 'widgetId', { value: 'testWidgetId' });
         });
 
-        xit('should return early when isParentList is true', () => {
+        it('should return early when isParentList is true', () => {
             Object.defineProperty(wmComponent, 'isParentList', { value: true });
 
             (wmComponent as any).addInnerNgFormToForm('binding');
@@ -873,7 +873,7 @@ describe('FormComponent', () => {
             expect((wmComponent as any).formGroupName).toBeUndefined();
         });
 
-        xit('should set formGroupName and add control to parentForm when conditions are met', () => {
+        it('should set formGroupName and add control to parentForm when conditions are met', () => {
             Object.defineProperty(wmComponent, 'isParentList', { value: false });
 
             (wmComponent as any).addInnerNgFormToForm('binding');
@@ -882,7 +882,7 @@ describe('FormComponent', () => {
             expect(wmComponent.parentForm.ngform.get('binding')).toBe(wmComponent.ngform);
         });
 
-        xit('should handle name conflicts by appending a unique identifier', () => {
+        it('should handle name conflicts by appending a unique identifier', () => {
             (wmComponent as any).parentForm = {
                 ngform: new FormGroup({
                     binding: new FormGroup({}),
