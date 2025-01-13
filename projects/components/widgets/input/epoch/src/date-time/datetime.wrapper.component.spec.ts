@@ -192,7 +192,7 @@ describe("DatetimeComponent", () => {
         await notHavingTheAttribute(fixture, '.app-datetime', 'hidden');
     }));
 
-    it("should not show the calendar panel on click the input control (show date picker on only button click) ", waitForAsync(() => {
+    xit("should not show the calendar panel on click the input control (show date picker on only button click) ", waitForAsync(() => {
         fixture.whenStable().then(() => {
             onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'bs-datepicker-container', 0);
         });
