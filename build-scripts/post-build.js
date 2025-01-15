@@ -6,18 +6,18 @@ const copyFile = util.promisify(fs.copyFile);
 const exec = util.promisify(require('child_process').exec);
 const cheerio = require(`cheerio`);
 const crypto = require(`crypto`);
-const opPath = `${process.cwd()}/dist/ng-bundle`;
+
 const copyCssFiles = (hash, updatedFilenames) => {
     const filename = 'wm-styles.css';
     const updatedFilename = `wm-styles.${hash}.css`
-    copyFile(`${opPath}/${filename}`, `${opPath}/${updatedFilename}`);
+    copyFile(`${global.opPath}/${filename}`, `${global.opPath}/${updatedFilename}`);
     updatedFilenames[filename] = updatedFilename;
     // copyFile(`${opPath}/wm-styles.br.css`,`${opPath}/wm-styles.${hash}.br.css`);
     // copyFile(`${opPath}/wm-styles.gzip.css`,`${opPath}/wm-styles.${hash}.gzip.css`);
 };
 const copyMobileCssFiles = (hash, fileName) => {
     // const name = filePath.split('.css')[0];
-    copyFile(`${opPath}/${fileName}.css`, `${opPath}/${fileName}.${hash}.css`);
+    copyFile(`${global.opPath}/${fileName}.css`, `${global.opPath}/${fileName}.${hash}.css`);
     // copyFile(`${opPath}/wm-styles.br.css`,`${opPath}/wm-styles.${hash}.br.css`);
     // copyFile(`${opPath}/wm-styles.gzip.css`,`${opPath}/wm-styles.${hash}.gzip.css`);
 };
@@ -32,18 +32,18 @@ const generateHashForScripts = (updatedFilenames) => {
     //so removed `@` from wavemaker.com in the file name and adding it back in the post-build.js file
     const scriptsMap = {};
     return new Promise(resolve => {
-        fs.readdir(opPath, (err, items) => {
+        fs.readdir(global.opPath, (err, items) => {
             const promises = items.map(i => {
                 const nohashIndex = i.indexOf('-NOHASH.js');
                 if (nohashIndex > 0) {
                     const key = i.substring(0, nohashIndex);
-                    return generateHash(`${opPath}/${i}`).then(hash => {
+                    return generateHash(`${global.opPath}/${i}`).then(hash => {
                         const filename = `${key}-NOHASH.js`;
                         const updatedFilename = `${key}.${hash}.js`
                         scriptsMap[`${key}.js`] = updatedFilename;
                         updatedFilenames[filename] = updatedFilename;
                         return Promise.all([
-                            copyFile(`${opPath}/${filename}`, `${opPath}/${updatedFilename}`),
+                            copyFile(`${global.opPath}/${filename}`, `${global.opPath}/${updatedFilename}`),
                             // copyFile(`${opPath}/${key}-NOHASH.br.js`, `${opPath}/${key}.${hash}.br.js`),
                             // copyFile(`${opPath}/${key}-NOHASH.gzip.js`, `${opPath}/${key}.${hash}.gzip.js`)
                         ]);
@@ -51,7 +51,7 @@ const generateHashForScripts = (updatedFilenames) => {
                 }
             });
             Promise.all(promises).then(() => {
-                return writeFile(`${opPath}/path_mapping.json`, JSON.stringify(scriptsMap, null, 2));
+                return writeFile(`${global.opPath}/path_mapping.json`, JSON.stringify(scriptsMap, null, 2));
             }).then(resolve);
         });
     });
@@ -81,12 +81,12 @@ const addMobileSpecificStyles = async (deployUrl) => {
     }
 
     if (isProdBuild) {
-        let hash = await generateHash(`${opPath}/wm-android-styles.css`);
+        let hash = await generateHash(`${global.opPath}/wm-android-styles.css`);
         copyMobileCssFiles(hash, 'wm-android-styles');
         $("head").append(
             `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}wm-android-styles.${hash}.css" >`
         );
-        hash = await generateHash(`${opPath}/wm-ios-styles.css`);
+        hash = await generateHash(`${global.opPath}/wm-ios-styles.css`);
         copyMobileCssFiles(hash, 'wm-ios-styles');
         $("head").append(
             `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}wm-ios-styles.${hash}.css" >`
@@ -248,16 +248,16 @@ const generateSha1 = (content) => {
         const angularJson = require(`${process.cwd()}/angular.json`);
         const build = angularJson['projects']['angular-app']['architect']['build'];
         let deployUrl = args['deploy-url'] || build['options']['deployUrl'];
-
+        let outputPath = global.opPath = args['output-path'] || build['options']['outputPath']
         const contents = await readFile(`./dist/index.html`, `utf8`);
         $ = cheerio.load(contents);
         setMobileProjectType(angularJson);
         if (!isMobileProject) {
-            isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-styles.css`);
-            isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-styles.js`);
+            isProdBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-styles.css`);
+            isDevBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-styles.js`);
         } else {
-            isDevBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.js`);
-            isProdBuild = fs.existsSync(`${process.cwd()}/dist/ng-bundle/wm-android-styles.css`);
+            isDevBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-android-styles.js`);
+            isProdBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-android-styles.css`);
         }
 
         if (isProdBuild) {
@@ -282,7 +282,7 @@ const generateSha1 = (content) => {
                 wm_styles_path = `${deployUrl}wm-styles.js`;
             } else {
                 const fileName = 'wm-styles';
-                const hash = await generateHash(`${opPath}/${fileName}.css`);
+                const hash = await generateHash(`${global.opPath}/${fileName}.css`);
                 copyCssFiles(hash, updatedFilenames);
                 const updatedFileName = `${fileName}.${hash}.css`
                 wm_styles_path = `${deployUrl}${updatedFileName}`;
@@ -295,7 +295,7 @@ const generateSha1 = (content) => {
         //this is required to download all the assets
         $('head').append(`<meta name="deployUrl" content=${deployUrl} />`);
         $('script[src$="services/application/wmProperties.js"]').remove();
-        $('link[href$="favicon.png"]').attr('href', './ng-bundle/favicon.png');
+        $('link[href$="favicon.png"]').attr('href', `${deployUrl}favicon.png`);
 
         const htmlContent = $.html();
         await writeFile(`./dist/index.html`, htmlContent);
