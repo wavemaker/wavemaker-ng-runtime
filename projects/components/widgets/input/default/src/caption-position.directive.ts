@@ -95,6 +95,16 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         this._attrObserver.observe(this.inputEl[0], config);
     }
 
+    private observeForDataValueChange() {
+        this._attrObserver = new MutationObserver(mutations => {
+            debugger;
+            mutations.forEach((mutation) => {
+            });
+        });
+        const config = { attributeFilter: ['value', 'selected'], attributes: true, childList: true, subtree: true };
+        this._attrObserver.observe(this.inputEl[0], config);
+    }
+
     // when a form is right aligned and have input-group-btn's like date picker, time picker etc. adjust the css to not overlap the label on the icon
     private checkForRightAlignedForm() {
         const $compositeEle = $(this.compositeEle);
@@ -140,6 +150,12 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
             if (this._isPlaceholderBound) {
                 this.observeForPlaceholderAttrChange();
             }
+            this.observeForDataValueChange();
+            if (this.inputEl.is('select')) {
+                this.overrideOptionSelectedProperty();
+            } else {
+                this.overrideValueSetter();
+            }
         }
     }
 
@@ -171,6 +187,44 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
                             this.inputEl.removeAttr('placeholder');
                         }
                     }
+                }
+            }
+        });
+    }
+
+    private overrideOptionSelectedProperty() {
+        const selectElement = this.inputEl[0];
+        const options = selectElement.options;
+        for (const option of options) {
+            const originalSelectedDescriptor = Object.getOwnPropertyDescriptor(HTMLOptionElement.prototype, 'selected');
+            Object.defineProperty(option, 'selected', {
+                get: originalSelectedDescriptor?.get,
+                set: (isSelected) => {
+                    originalSelectedDescriptor?.set?.call(option, isSelected);
+                    if ((this.inputEl.val() && !this.inputEl.is('select')) || $(this.inputEl.closest('[widget-id]')).attr('datavalue') || $(this.inputEl.parent('[widget-id]')).attr('datavalue.bind') || this.nativeEl.getAttribute('defaultvalue')
+                        || this.nativeEl.getAttribute('displayformat') || $(this.nativeEl).find('select option:selected').text() || $(this.nativeEl).find('select').attr('multiple')) {
+                        this.compositeEle.classList.add('float-active');
+                    } else {
+                        this.compositeEle.classList.remove('float-active');
+                    }
+                }
+            });
+        }
+    }
+
+    private overrideValueSetter() {
+        const inputElement = this.inputEl[0];
+        const originalDescriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+
+        Object.defineProperty(inputElement, 'value', {
+            get: originalDescriptor?.get,
+            set: (newValue) => {
+                originalDescriptor?.set?.call(inputElement, newValue);
+                if ((this.inputEl.val() && !this.inputEl.is('select')) || $(this.inputEl.closest('[widget-id]')).attr('datavalue') || $(this.inputEl.parent('[widget-id]')).attr('datavalue.bind') || this.nativeEl.getAttribute('defaultvalue')
+                    || this.nativeEl.getAttribute('displayformat') || $(this.nativeEl).find('select option:selected').text() || $(this.nativeEl).find('select').attr('multiple')) {
+                    this.compositeEle.classList.add('float-active');
+                } else {
+                    this.compositeEle.classList.remove('float-active');
                 }
             }
         });

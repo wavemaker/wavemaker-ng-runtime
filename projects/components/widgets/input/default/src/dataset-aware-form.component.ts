@@ -1,4 +1,14 @@
-import {Attribute, Inject, Injectable, Injector, OnDestroy, OnInit, Optional} from '@angular/core';
+import {
+    Attribute,
+    ChangeDetectorRef,
+    inject,
+    Inject,
+    Injectable,
+    Injector,
+    OnDestroy,
+    OnInit,
+    Optional
+} from '@angular/core';
 import {Subject} from 'rxjs';
 import {$appDigest, AppDefaults, debounce, isDefined, isEqualWithFields, noop, toBoolean} from '@wm/core';
 import { ALLFIELDS, convertDataToObject, DataSetItem, extractDataAsArray, getOrderedDataset, getUniqObjsByDataField, handleHeaderClick, toggleAllHeaders, transformFormData, transformDataWithKeys, groupData, ToDatePipe, IWidgetConfig, WidgetConfig } from '@wm/components/base';
@@ -51,6 +61,8 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
     public compareby: any;
 
     private cancelLocaleChangeSubscription;
+
+    private cdRef = inject(ChangeDetectorRef);
 
     public get modelByKey() {
         return this._modelByKey;
@@ -140,7 +152,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
                 }
             });
         } else {
-            this._modelByValue = '';
+            this._modelByValue = undefined;
             const itemByKey = find(this.datasetItems, item => {
                 // not triple equal, as the instance type can be different.
                 // only value comparison should be done.
@@ -225,12 +237,13 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         // if no item is found in datasetItems, wait untill the dataset updates by preserving the datavalue in toBeProcessedDatavalue.
         if (!isDefined(this._modelByKey) || (isArray(this._modelByKey) && !this._modelByKey.length)) {
             this.toBeProcessedDatavalue = values;
-            this._modelByValue = '';
+            this._modelByValue = undefined;
         } else if (isDefined(this.toBeProcessedDatavalue)) {
             // obtain the first array value when multiple is set to false.
             // set the modelByValue only when undefined.
             if (!isDefined(this._modelByValue)) {
                 this._modelByValue = (!this.multiple && isArray(this.toBeProcessedDatavalue)) ? this.toBeProcessedDatavalue[0] : this.toBeProcessedDatavalue;
+                this.cdRef.detectChanges();
             }
             this.toBeProcessedDatavalue = undefined;
         }
@@ -254,6 +267,7 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
 
     // This function parses the dataset and extracts the displayOptions from parsed dataset.
     protected initDatasetItems() {
+        console.log("initDatasetItems", this.dataset, this.datasetItems);
         if (!this.dataset || isEmpty(this.dataset)) {
             this.datasetItems = [];
             // notify the dataset listeners
