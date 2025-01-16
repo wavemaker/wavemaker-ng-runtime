@@ -5,6 +5,7 @@ interface SkeletonConfig {
     borderRadius?: string;
     spacing?: string;
     itemCount?: number;
+    tableRowCount?: number;
     height?: string;
     width?: string;
     shimmerColor?: string;
@@ -17,12 +18,13 @@ export class WMSkeletonLoader extends HTMLElement {
         backgroundColor: '#f9f9f9',
         foregroundColor: '#e0e0e0',
         animationDuration: 1.5,
-        borderRadius: '8px',
+        borderRadius: '3px',
         spacing: '15px',
         itemCount: 3,
+        tableRowCount: 6,
         height: 'auto',
         width: '100%',
-        shimmerColor: 'rgba(255, 255, 255, 0.2)'
+        shimmerColor: 'rgba(255, 255, 255, 0.6)'
     };
 
     static get observedAttributes() {
@@ -95,11 +97,15 @@ export class WMSkeletonLoader extends HTMLElement {
                     bottom: 0;
                 ` : ''}
             }
+            .skeleton-animated{
+            position:relative;
+            overflow: hidden;
+            }
             .skeleton-animated::before {
                 content: '';
                 position: absolute;
                 top: 0;
-                left: -100%;
+                left: 0%;
                 width: 100%;
                 height: 100%;
                 background: linear-gradient(
@@ -108,11 +114,12 @@ export class WMSkeletonLoader extends HTMLElement {
                     ${shimmerColor} 50%, 
                     rgba(255, 255, 255, 0) 100%
                 );
+                transform: translateX(-100%);
                 animation: loading ${animationDuration}s infinite;
                 z-index: 1;
             }
             @keyframes loading {
-                100% { left: 100%; }
+                100% { transform: translateX(100%); }
             }
     `;
 
@@ -135,7 +142,7 @@ export class WMSkeletonLoader extends HTMLElement {
         return `
             .card-loader {
                 background-color: ${this._config.backgroundColor};
-                padding: ${this._config.spacing};
+                padding: 0;
                 display: flex;
                 gap: ${this._config.spacing};
             }
@@ -145,7 +152,7 @@ export class WMSkeletonLoader extends HTMLElement {
                 flex-direction: column;
                 gap: ${this._config.spacing};
                 background-color: ${this._config.backgroundColor};
-                padding: ${this._config.spacing};
+                padding: 0;
                 border-radius: ${this._config.borderRadius};
             }
             ${this.getListStyles()}
@@ -163,8 +170,7 @@ export class WMSkeletonLoader extends HTMLElement {
             }
             .list-item {
                 display: flex;
-                align-items: center;
-                padding: ${this._config.spacing};
+                padding: ${this._config.spacing} 0;
                 border-bottom: 1px solid ${this._config.foregroundColor};
             }
             .list-item-avatar {
@@ -178,7 +184,7 @@ export class WMSkeletonLoader extends HTMLElement {
                 flex: 1;
             }
             .list-item-title {
-                height: 20px;
+                height: 15px;
                 width: 70%;
                 background-color: ${this._config.foregroundColor};
                 margin-bottom: 10px;
@@ -189,6 +195,7 @@ export class WMSkeletonLoader extends HTMLElement {
                 width: 50%;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
+                margin-top:10px;
             }
         `;
     }
@@ -196,32 +203,28 @@ export class WMSkeletonLoader extends HTMLElement {
     private getTableStyles(): string {
         return `
             .table-loader {
-                background-color: ${this._config.backgroundColor};
-                padding: ${this._config.spacing};
                 border-radius: ${this._config.borderRadius};
                 overflow: hidden;
             }
             .table-header {
                 display: flex;
-                margin-bottom: ${this._config.spacing};
+                margin-bottom: 10px;
                 gap: ${this._config.spacing};
-                background-color: ${this._config.foregroundColor};
+                background-color: ${this._config.backgroundColor};
                 border-radius: ${this._config.borderRadius};
                 padding: ${this._config.spacing};
             }
             .table-header-cell {
                 flex: 1;
-                height: 20px;
-                background-color: ${this._config.backgroundColor};
+                height: 15px;
+                background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
             }
             .table-row {
                 display: flex;
                 gap: ${this._config.spacing};
-                padding: ${this._config.spacing};
-                background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
-                margin-bottom: ${this._config.spacing};
+                padding: ${this._config.spacing};
             }
             .table-row:hover {
                 background-color: ${this._config.shimmerColor};
@@ -229,7 +232,7 @@ export class WMSkeletonLoader extends HTMLElement {
             .table-cell {
                 flex: 1;
                 height: 15px;
-                background-color: ${this._config.backgroundColor};
+                background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
             }
         `;
@@ -238,23 +241,21 @@ export class WMSkeletonLoader extends HTMLElement {
     private getChartStyles(): string {
         return `
             .chart-loader {
-                background-color: ${this._config.backgroundColor};
                 padding: ${this._config.spacing};
                 border-radius: ${this._config.borderRadius};
-                height: 300px;
                 position: relative;
                 overflow: hidden;
             }
     
             .chart-area {
-                height: 200px; 
+                height: 150px; 
                 position: relative;
             }
     
             /* Column Chart */
             .column-loader .chart-data {
                 display: flex;
-                justify-content: space-between;
+                gap: 150px;
                 align-items: flex-end;
                 height: 100%;
             }
@@ -263,22 +264,22 @@ export class WMSkeletonLoader extends HTMLElement {
                 width: 40px;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius} ${this._config.borderRadius} 0 0;
-                animation: columnGrow 1.5s infinite;
+                height:150px;
             }
     
             /* Bar Chart */
             .bar-loader .chart-data {
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
                 height: 100%;
             }
     
             .bar-loader .bar {
-                height: 30px;
+                height: 18px;
                 background-color: ${this._config.foregroundColor};
-                border-radius: 0 ${this._config.borderRadius} ${this._config.borderRadius} 0;
-                animation: barGrow 1.5s infinite;
+                border-radius: 3px;
+                width: 80%;
+                margin-top: 10px;
             }
     
             /* Line/Area Charts */
@@ -289,17 +290,31 @@ export class WMSkeletonLoader extends HTMLElement {
             }
 
             .line-loader .line {
+                    width: 100%;
+                    height: 160px;
+                    position: relative;
+                    top: 0px;
+                    border: 1px solid ${this._config.foregroundColor};
+                    border-top: none;
+                    border-right: none;
+            }
+           .line-loader .line .line-segment{
+                  width: 100%;
+                  height: 3px;
+                  background-color: ${this._config.foregroundColor};
+                  position: absolute;
+                  top: 82px;
+                  left: -50px;
+                  transform: rotate(173deg);
+
+           }
+         .line-loader .bubble {
                 position: absolute;
                 bottom: 20%;
                 left: 0;
                 right: 0;
                 height: 4px;
-                background-color: ${this._config.foregroundColor};
-                clip-path: path('M0,50 Q50,100 100,50 T200,50 T300,50 T400,50');
-                animation: lineWave 2s infinite ease-in-out;
-                box-shadow: 0 0 5px ${this._config.foregroundColor};
             }
-
             .line-loader .point {
                 position: absolute;
                 width: 12px;
@@ -330,8 +345,6 @@ export class WMSkeletonLoader extends HTMLElement {
                     100% calc(35% + var(--wave-offset, 0%)), 
                     100% 100%
                 );
-                animation: areaWave 2s infinite ease-in-out;
-                opacity: 0.5;
             }
         
             /* Pie/Donut Charts */
@@ -345,29 +358,25 @@ export class WMSkeletonLoader extends HTMLElement {
             .pie-loader .pie-segment {
                 width: 150px;
                 height: 150px;
-                border: 20px solid ${this._config.foregroundColor};
+                background-color: ${this._config.foregroundColor};
                 border-radius: 50%;
-                border-right-color: transparent;
-                transform-origin: center;
-                animation: rotateLoader 1.5s linear infinite;
             }
 
             .donut-loader .donut-segment {
                 width: 150px;
                 height: 150px;
-                border: 20px solid ${this._config.foregroundColor}30;
+                background-color: ${this._config.foregroundColor};
                 border-radius: 50%;
                 position: relative;
             }
-
-            .donut-loader .donut-segment::after {
-                content: '';
-                position: absolute;
-                inset: -20px;
-                border: 20px solid ${this._config.foregroundColor};
+                .donut-loader .donut-segment .donut-inside{
+                width: 100px;
+                height: 100px;
+                background-color: #fff;
                 border-radius: 50%;
-                border-left-color: transparent;
-                animation: rotateLoader 1.5s linear infinite;
+                position: relative;
+                left: 25px;
+                top: 25px;
             }
     
             /* Animations */
@@ -513,7 +522,7 @@ export class WMSkeletonLoader extends HTMLElement {
             }
     
             .accordion-title {
-                height: 20px;
+                height: 18px;
                 width: 60%;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
@@ -531,7 +540,7 @@ export class WMSkeletonLoader extends HTMLElement {
             .accordion-badge {
                 width: 32px;
                 height: 20px;
-                background-color: ${this._config.foregroundColor}30;
+                background-color: ${this._config.foregroundColor};
                 border-radius: 10px;
                 margin-left: 12px;
                 flex-shrink: 0;
@@ -541,7 +550,7 @@ export class WMSkeletonLoader extends HTMLElement {
             .accordion-content {
                 overflow: hidden;
                 padding: 0 ${this._config.spacing} 16px 48px;
-                border-top: 1px solid ${this._config.foregroundColor}10;
+                border-top: 1px solid ${this._config.foregroundColor};
                 margin-top: -1px;
             }
     
@@ -556,22 +565,20 @@ export class WMSkeletonLoader extends HTMLElement {
             .content-section {
                 display: flex;
                 flex-direction: column;
-                gap: 8px;
+                gap: 10px;
             }
     
             .content-heading {
-                height: 18px;
+                height: 15px;
                 width: 30%;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
-                opacity: 0.9;
             }
     
             .content-line {
-                height: 14px;
+                height: 15px;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
-                opacity: 0.7;
             }
     
             .content-line-full { width: 100%; }
@@ -635,13 +642,13 @@ export class WMSkeletonLoader extends HTMLElement {
         }
         .tabs-header {
             display: flex;
-            gap: ${this._config.spacing};
+            gap: 50px;
             padding: ${this._config.spacing};
-            border-bottom: 2px solid ${this._config.foregroundColor};
+            border-bottom: 1px solid ${this._config.foregroundColor};
             background-color: ${this._config.backgroundColor};
         }
         .tab-item {
-            height: 40px;
+            height: 25px;
             padding: 0 20px;
             background-color: ${this._config.foregroundColor};
             border-radius: ${this._config.borderRadius};
@@ -665,7 +672,7 @@ export class WMSkeletonLoader extends HTMLElement {
             gap: ${this._config.spacing};
         }
         .content-line {
-            height: 16px;
+            height: 15px;
             background-color: ${this._config.foregroundColor};
             border-radius: ${this._config.borderRadius};
         }
@@ -704,7 +711,6 @@ export class WMSkeletonLoader extends HTMLElement {
             
             .nav {
                 grid-area: nav;
-                background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
                 padding: ${this._config.spacing};
                 display: flex;
@@ -714,13 +720,12 @@ export class WMSkeletonLoader extends HTMLElement {
             
             .nav-item {
                 height: 20px;
-                background-color: ${this._config.backgroundColor};
+                background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
             }
             
             .main {
                 grid-area: main;
-                background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
                 padding: ${this._config.spacing};
                 display: grid;
@@ -730,7 +735,7 @@ export class WMSkeletonLoader extends HTMLElement {
             
             .content-block {
                 height: 150px;
-                background-color: ${this._config.backgroundColor};
+                background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
             }
             
@@ -744,7 +749,7 @@ export class WMSkeletonLoader extends HTMLElement {
 
     private createLoaderContent(widgetType: string): HTMLElement {
         const loaderContent = document.createElement('div');
-        loaderContent.className = `skeleton-loader skeleton-animated ${widgetType}-loader`;
+        loaderContent.className = `skeleton-loader  ${widgetType}-loader`;
 
         const creators: { [key: string]: () => void } = {
             app: () => this.createAppContent(loaderContent),
@@ -852,7 +857,7 @@ export class WMSkeletonLoader extends HTMLElement {
     }
 
     private createListContent(container: HTMLElement, widget: string): void {
-        const count = widget === 'card' ? 2 : 3
+        const count = widget === 'card' ? 2 : 3;
         for (let i = 0; i < count; i++) {
             const listItem = document.createElement('div');
             listItem.className = 'list-item';
@@ -865,34 +870,41 @@ export class WMSkeletonLoader extends HTMLElement {
 
             const title = document.createElement('div');
             title.className = 'list-item-title skeleton-animated';
-
-            const subtitle = document.createElement('div');
-            subtitle.className = 'list-item-subtitle skeleton-animated';
-
             content.appendChild(title);
-            content.appendChild(subtitle);
+
+            if (widget === 'card') {
+                for (let j = 0; j < 3; j++) {
+                    const subtitle = document.createElement('div');
+                    subtitle.className = 'list-item-subtitle skeleton-animated';
+                    content.appendChild(subtitle);
+                }
+            } else {
+                const subtitle = document.createElement('div');
+                subtitle.className = 'list-item-subtitle skeleton-animated';
+                content.appendChild(subtitle);
+            }
+
             listItem.appendChild(avatar);
             listItem.appendChild(content);
             container.appendChild(listItem);
         }
     }
-
     private createTableContent(container: HTMLElement): void {
         const header = document.createElement('div');
         header.className = 'table-header';
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 6; i++) {
             const headerCell = document.createElement('div');
             headerCell.className = 'table-header-cell skeleton-animated';
             header.appendChild(headerCell);
         }
         container.appendChild(header);
 
-        for (let i = 0; i < this._config.itemCount; i++) {
+        for (let i = 0; i < this._config.tableRowCount; i++) {
             const row = document.createElement('div');
             row.className = 'table-row';
 
-            for (let j = 0; j < 3; j++) {
+            for (let j = 0; j < 6; j++) {
                 const cell = document.createElement('div');
                 cell.className = 'table-cell skeleton-animated';
                 row.appendChild(cell);
@@ -926,7 +938,7 @@ export class WMSkeletonLoader extends HTMLElement {
                 for (let i = 0; i < 5; i++) {
                     const bar = document.createElement('div');
                     bar.className = 'bar skeleton-animated';
-                    bar.style.animationDelay = `${i * 0.2}s`;
+                    // bar.style.animationDelay = `${i * 0.2}s`;
                     chartData.appendChild(bar);
                 }
                 break;
@@ -934,13 +946,27 @@ export class WMSkeletonLoader extends HTMLElement {
             case 'line': {
                 const line = document.createElement('div');
                 line.className = 'line skeleton-animated';
+                // for (let i = 0; i < 5; i++) {
+                //     const point = document.createElement('div');
+                //     point.className = 'point skeleton-animated';
+                //     point.style.animationDelay = `${i * 0.4}s`;
+                //     chartData.appendChild(point);
+                // }
+                chartData.appendChild(line);
+                const lineSegment = document.createElement('div');
+                lineSegment.className = 'line-segment';
+                line.appendChild(lineSegment);
+                break;
+            }
+            case 'bubble': {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble skeleton-animated';
                 for (let i = 0; i < 5; i++) {
                     const point = document.createElement('div');
                     point.className = 'point skeleton-animated';
-                    point.style.animationDelay = `${i * 0.4}s`;
                     chartData.appendChild(point);
                 }
-                chartData.appendChild(line);
+                chartData.appendChild(bubble);
                 break;
             }
 
@@ -964,6 +990,10 @@ export class WMSkeletonLoader extends HTMLElement {
                     const donutSegment = document.createElement('div');
                     donutSegment.className = 'donut-segment skeleton-animated';
                     chartData.appendChild(donutSegment);
+                    const donutInside =  document.createElement('div');
+                    donutInside.className = 'donut-inside';
+                    donutSegment.appendChild(donutInside);
+
                 }
                 break;
         }
@@ -997,8 +1027,8 @@ export class WMSkeletonLoader extends HTMLElement {
             header.className = 'accordion-header';
 
             // Add chevron indicator
-            const chevron = document.createElement('div');
-            chevron.className = 'accordion-chevron';
+            // const chevron = document.createElement('div');
+            // chevron.className = 'accordion-chevron';
 
             // Create title block with title and subtitle
             const titleBlock = document.createElement('div');
@@ -1007,18 +1037,18 @@ export class WMSkeletonLoader extends HTMLElement {
             const title = document.createElement('div');
             title.className = 'accordion-title skeleton-animated';
 
-            const subtitle = document.createElement('div');
-            subtitle.className = 'accordion-subtitle skeleton-animated';
+            // const subtitle = document.createElement('div');
+            // subtitle.className = 'accordion-subtitle skeleton-animated';
 
             titleBlock.appendChild(title);
-            titleBlock.appendChild(subtitle);
+            // titleBlock.appendChild(subtitle);
 
             // Add badge indicator
             const badge = document.createElement('div');
             badge.className = 'accordion-badge skeleton-animated';
 
             // Assemble header
-            header.appendChild(chevron);
+            // header.appendChild(chevron);
             header.appendChild(titleBlock);
             header.appendChild(badge);
             accordionItem.appendChild(header);
@@ -1037,11 +1067,11 @@ export class WMSkeletonLoader extends HTMLElement {
                     section.className = 'content-section';
 
                     const heading = document.createElement('div');
-                    heading.className = 'content-heading skeleton-animated';
-                    section.appendChild(heading);
+                    // heading.className = 'content-heading skeleton-animated';
+                    // section.appendChild(heading);
 
                     // Add content lines with varying widths
-                    const lineClasses = ['full', 'long', 'medium', 'short'];
+                    const lineClasses = ['full', 'long', 'medium'];
                     lineClasses.forEach(width => {
                         const line = document.createElement('div');
                         line.className = `content-line content-line-${width} skeleton-animated`;
