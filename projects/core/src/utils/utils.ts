@@ -21,9 +21,9 @@ import {
     startsWith, toLower, toUpper, trim
 } from "lodash-es";
 
-declare const X2JS;
 declare const $;
-declare const moment;
+import moment from 'moment';
+import * as X2JS from 'x2js';
 declare const document;
 declare const resolveLocalFileSystemURL;
 declare const WM_CUSTOM_FORMATTERS;
@@ -367,7 +367,7 @@ export const getFormattedDate = (datePipe, dateObj, format, timeZone?, isTimeSta
     if (format === 'UTC') {
         return new Date(dateObj).toISOString();
     }
-
+    //@ts-ignore
     if (timeZone && timeZone !== moment.defaultZone?.name) {
         const momentFormat = format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A');
         if (isIntervalDateTime ) { // dates which are of type time widget (value is hh:mm:ss) but returned as date string from time comp
@@ -521,6 +521,7 @@ export const getValidJSON = (content) => {
 };
 
 export const xmlToJson = (xmlString) => {
+    //@ts-ignore
     const x2jsObj = new X2JS({ 'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false });
     let json = x2jsObj.xml2js(xmlString);
     if (json) {
@@ -720,6 +721,7 @@ const momentPattern = (pattern) => {
 /*  This function returns date object. If val is undefined it returns invalid date */
 export const getValidDateObject = (val, options?) => {
    const defaultMeridian = ['AM', 'PM'];
+   //@ts-ignore
    const momentMeridian = moment()._locale.meridiem();
     // Updating localized meridians with default meridians when moment meridian is not defined
     if (options && options.meridians && includes(defaultMeridian, momentMeridian)) {
@@ -870,8 +872,10 @@ const isScriptLoaded = src => !!getNode(`script[src="${src}"], script[data-src="
 
 export const getMomentLocaleObject = (timeZone, dateObj?) => {
     if (dateObj) {
+        //@ts-ignore
         return new Date(new Date(moment(dateObj).tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
     } else {
+        //@ts-ignore
         return new Date(new Date(moment().tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
     }
 }
@@ -1003,6 +1007,7 @@ export const openLink = (link: string, target: string = '_self') => {
 
 /* util function to load the content from a url */
 export const fetchContent = (dataType, url: string, inSync: boolean = false, success?, error?): Promise<any> => {
+    //@ts-ignore
     return $.ajax({ type: 'get', dataType: dataType, url: url, async: !inSync })
         .done(response => success && success(response))
         .fail(reason => error && error(reason));

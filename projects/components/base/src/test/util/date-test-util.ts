@@ -3,7 +3,7 @@ import { tick } from '@angular/core/testing';
 import { deLocale } from "ngx-bootstrap/locale";
 import { getFormattedDate, getNativeDateObject } from "@wm/core";
 import { defineLocale } from "ngx-bootstrap/chronos";
-declare const moment;
+import moment from 'moment';
 
 export const datepatternTest = (fixture, selector: string, inputSelector: string, attr?: string, isLower?: boolean) => {
     fixture.whenStable().then(() => {
@@ -143,6 +143,7 @@ export class MockAbstractI18nServiceDe {
     constructor(bsLocaleService) {
         defineLocale('de', deLocale);
         bsLocaleService.use('de');
+        //@ts-ignore
         moment.updateLocale('de', deLocale);
     }
     public getSelectedLocale() {

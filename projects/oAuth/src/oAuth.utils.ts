@@ -1,7 +1,7 @@
 import { _WM_APP_PROJECT, hasCordova, isIE, getWmProjectProperties } from '@wm/core';
 import {get, isUndefined} from "lodash-es";
 
-declare const moment;
+import moment from 'moment';
 declare const jsSHA;
 
 const accessTokenSuffix = '.access_token', pkceIdentifier = 'pkce', implicitIdentifier = 'implicit';
@@ -172,6 +172,7 @@ function triggerAccessTokenSuccessCallback(providerId, successCallback, removePr
  */
 function checkAccessTokenInWindow(providerId, onSuccess, onError, startTime, loginObj, removeProviderConfigCallBack) {
     performFakeLocalStorageUpdate();
+    //@ts-ignore
     const currentTime = moment.duration(moment().format('HH:mm'), 'HH:mm'),
         timeDiff = currentTime.subtract(startTime),
         accessToken = getAccessToken(providerId, true);
@@ -228,6 +229,7 @@ function handleLoginForIE(url, providerId, onSuccess, onError, removeProviderCon
         url = constructURLForImplicitOrPKCE(providerId, securityObj, requestSourceType, null, customUriScheme, deployedURL);
     }
     window.open(url, '_blank', newWindowProps);
+    //@ts-ignore
     checkAccessTokenInWindow(providerId, onSuccess, onError, moment.duration(moment().format('HH:mm'), 'HH:mm'), loginObj, removeProviderConfigCallBack);
 }
 

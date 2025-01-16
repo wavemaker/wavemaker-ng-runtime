@@ -28,7 +28,7 @@ import {registerProps} from './calendar.props';
 import {capitalize, clone, each, extend, get, includes, isDate, isEmpty, isObject, mapKeys} from "lodash-es";
 
 declare const $;
-declare const moment;
+import moment from 'moment';
 
 const DEFAULT_CLS = 'app-calendar';
 const dateFormats = ['yyyy-MM-dd', 'yyyy-M-dd', 'M-dd-yyyy', 'MM-dd-yy', 'yyyy, dd MMMM', 'yyyy, MMM dd', 'MM/dd/yyyy', 'M/d/yyyy', 'EEE, dd MMM yyyy', 'EEE MMM dd yyyy', 'EEEE, MMMM dd, yyyy', 'timestamp'];
@@ -178,7 +178,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             start = moment(this.datavalue);
             end   = moment(this.datavalue).add(1, 'day').startOf('day');
         }
-
+        //@ts-ignore
         this.$fullCalendar.gotoDate( moment(start)._d); // after selecting the date go to the date.
 
         this.$fullCalendar.select(start.valueOf(), end.valueOf());
@@ -186,6 +186,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
 
     // changes the calendar view to the default date given for the calendar.
     public gotoDate() {
+        //@ts-ignore
         this.$fullCalendar.gotoDate( moment(this.datavalue)._d);
     }
 
