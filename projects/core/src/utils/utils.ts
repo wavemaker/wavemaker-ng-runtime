@@ -520,7 +520,7 @@ export const getValidJSON = (content) => {
 };
 
 export const xmlToJson = (xmlString) => {
-    const x2jsObj = new X2JS({ 'emptyNodeForm': 'object', 'attributePrefix': '', 'enableToStringFunc': false });
+    const x2jsObj = new X2JS({ 'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false });
     let json = x2jsObj.xml2js(xmlString);
     if (json) {
         json = get(json, Object.keys(json)[0]);
