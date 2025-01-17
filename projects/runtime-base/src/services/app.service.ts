@@ -95,11 +95,11 @@ export class AppRef {
     setAppMode = (mode) => {
         const htmlEl = document.getElementsByTagName('html')[0];
         if (mode === 'default') {
-          localStorage.removeItem('app-mode');
-          htmlEl.removeAttribute('app-mode');
+          localStorage.removeItem('color');
+          htmlEl.removeAttribute('color');
         } else {
-          localStorage.setItem('app-mode', mode);
-          htmlEl.setAttribute('app-mode', mode);
+          localStorage.setItem('color', mode);
+          htmlEl.setAttribute('color', mode);
         }
     };
 

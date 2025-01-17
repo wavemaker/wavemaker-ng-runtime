@@ -199,7 +199,17 @@ export class AppComponent implements DoCheck, AfterViewInit {
         } else {
             this.start();
         }
+        const appMode = localStorage.getItem('color');
+        if (appMode) {
+          const htmlEl = this.getIframeEl();
+          htmlEl?.setAttribute('color', appMode);
+        }
     }
+
+    getIframeEl() {
+        const IframeEl = document.querySelector('iframe#app-view') as HTMLIFrameElement;
+        return IframeEl ? IframeEl?.contentDocument?.querySelector('html') : document.getElementsByTagName('html')[0];
+      }
 
     ngDoCheck() {
         $invokeWatchers();
