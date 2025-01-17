@@ -114,7 +114,7 @@
     <span class="sr-only">Clear button</span>
     <span *ngIf="showsearchicon" [ngClass]="{'disabled': disabled}" class="input-group-addon">
         <form>
-            <button [title]="appLocale.LABEL_SEARCH" [disabled]="disabled" class="app-search-button btn btn-icon" type="submit"
+            <button title="Search" [disabled]="disabled" class="app-search-button btn btn-icon" type="submit"
                     (click)="onSearchSelect($event)">
                     <i class="app-icon {{searchiconclass}}"></i></button>
         </form>
