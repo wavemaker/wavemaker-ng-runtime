@@ -14,6 +14,9 @@ export class NotificationActionManager extends BaseActionManager {
     }
 
     private notifyViaToaster(variable, options) {
+        if(variable.dataBinding.toasterPosition === "parte inferior derecha"){
+            variable.dataBinding.toasterPosition = 'bottom right'
+        }
         const type = (options.class || variable.dataBinding.class || 'info').toLowerCase(),
             body = options.message || variable.dataBinding.text,
             title = options.title,
