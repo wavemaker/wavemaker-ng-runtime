@@ -291,7 +291,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
         const month = new Date(newDate).toLocaleString('default', { month: 'long' });
         const year = newDate.getFullYear().toString();
-        //@ts-ignore
         if(activeMonth == month && activeYear == new Date().getFullYear() && newDate.getDate() === new Date().getDate() && newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
             const toDay = new Date().getDate().toString();
             filter($(`span:contains(${toDay})`).not('.is-other-month'), (obj) => {

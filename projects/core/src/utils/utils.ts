@@ -22,8 +22,8 @@ import {
 } from "lodash-es";
 
 declare const $;
+declare const X2JS
 import moment from 'moment';
-import * as X2JS from 'x2js';
 declare const document;
 declare const resolveLocalFileSystemURL;
 declare const WM_CUSTOM_FORMATTERS;
@@ -367,8 +367,7 @@ export const getFormattedDate = (datePipe, dateObj, format, timeZone?, isTimeSta
     if (format === 'UTC') {
         return new Date(dateObj).toISOString();
     }
-    //@ts-ignore
-    if (timeZone && timeZone !== moment.defaultZone?.name) {
+    if (timeZone && timeZone !== (moment as any).defaultZone?.name) {
         const momentFormat = format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A');
         if (isIntervalDateTime ) { // dates which are of type time widget (value is hh:mm:ss) but returned as date string from time comp
             return moment(dateObj).format(momentFormat);
@@ -521,8 +520,7 @@ export const getValidJSON = (content) => {
 };
 
 export const xmlToJson = (xmlString) => {
-    //@ts-ignore
-    const x2jsObj = new X2JS({ 'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false });
+    const x2jsObj = new X2JS({ 'emptyNodeForm': 'object', 'attributePrefix': '', 'enableToStringFunc': false });
     let json = x2jsObj.xml2js(xmlString);
     if (json) {
         json = get(json, Object.keys(json)[0]);
@@ -721,8 +719,7 @@ const momentPattern = (pattern) => {
 /*  This function returns date object. If val is undefined it returns invalid date */
 export const getValidDateObject = (val, options?) => {
    const defaultMeridian = ['AM', 'PM'];
-   //@ts-ignore
-   const momentMeridian = moment()._locale.meridiem();
+   const momentMeridian = (moment() as any)._locale.meridiem();
     // Updating localized meridians with default meridians when moment meridian is not defined
     if (options && options.meridians && includes(defaultMeridian, momentMeridian)) {
         forEach(options.meridians, (meridian, index) => {
@@ -872,11 +869,9 @@ const isScriptLoaded = src => !!getNode(`script[src="${src}"], script[data-src="
 
 export const getMomentLocaleObject = (timeZone, dateObj?) => {
     if (dateObj) {
-        //@ts-ignore
-        return new Date(new Date(moment(dateObj).tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
+        return new Date(new Date((moment(dateObj) as any).tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
     } else {
-        //@ts-ignore
-        return new Date(new Date(moment().tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
+        return new Date(new Date((moment()as any).tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
     }
 }
 
@@ -1007,7 +1002,6 @@ export const openLink = (link: string, target: string = '_self') => {
 
 /* util function to load the content from a url */
 export const fetchContent = (dataType, url: string, inSync: boolean = false, success?, error?): Promise<any> => {
-    //@ts-ignore
     return $.ajax({ type: 'get', dataType: dataType, url: url, async: !inSync })
         .done(response => success && success(response))
         .fail(reason => error && error(reason));

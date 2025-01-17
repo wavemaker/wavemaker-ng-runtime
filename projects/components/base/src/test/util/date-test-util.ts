@@ -143,8 +143,7 @@ export class MockAbstractI18nServiceDe {
     constructor(bsLocaleService) {
         defineLocale('de', deLocale);
         bsLocaleService.use('de');
-        //@ts-ignore
-        moment.updateLocale('de', deLocale);
+        moment.updateLocale('de', deLocale as any);
     }
     public getSelectedLocale() {
         return 'de';

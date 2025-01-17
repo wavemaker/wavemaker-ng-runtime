@@ -138,10 +138,8 @@ export class I18nServiceImpl extends AbstractI18nService {
             // For ngx bootstrap locale, get the config from script and apply locale
             // moment.localeData(momentLocale) will return moment locale instance. _config inside will have actual config
             let _config = moment.localeData(momentLocale);
-            //@ts-ignore
-            _config = _config && _config._config;
-            //@ts-ignore
-            defineLocale(this.selectedLocale, _config);
+            _config = _config && (_config as any)._config;
+            defineLocale(this.selectedLocale, _config as any);
             this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
             this.bundleLoaded.moment = true;
             this.notifyLocaleChanged();
@@ -200,14 +198,11 @@ export class I18nServiceImpl extends AbstractI18nService {
                     if (localeIndex > 0) {
                         locale = locale.substr(localeIndex);
                     }
-                    //@ts-ignore
-                    localeObj['timezone'] = find(moment.tz.names(), (timezoneName) => {
-                        //@ts-ignore
-                        return locale === moment.tz(timezoneName).format('Z');
+                    localeObj['timezone'] = find((moment as any).tz.names(), (timezoneName) => {
+                        return locale === (moment as any).tz(timezoneName).format('Z');
                     });
                 }
-                //@ts-ignore
-                moment.tz.setDefault(locale);
+                (moment as any).tz.setDefault(locale);
                 const localeData =  compInstance && compInstance.formatsByLocale ? compInstance.formatsByLocale : this.formatsByLocale;
                 Object.assign(localeData, localeObj);
                 resolve();

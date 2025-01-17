@@ -65,8 +65,7 @@ export class ToDatePipe extends WmPipe implements PipeTransform {
             let formattedVal;
             const timeZone = this.i18nService ? this.i18nService.getTimezone(compInstance) : timezone;
             if (timeZone && (data === timestamp || hasOffsetStr(data))) {
-                //@ts-ignore
-                formattedVal = moment(timestamp).tz(timeZone).format(format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A'));
+                formattedVal = (moment(timestamp) as any).tz(timeZone).format(format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A'));
             } else {
                 formattedVal = this.datePipe.transform(timestamp, format);
             }

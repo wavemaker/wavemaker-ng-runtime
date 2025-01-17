@@ -172,8 +172,7 @@ function triggerAccessTokenSuccessCallback(providerId, successCallback, removePr
  */
 function checkAccessTokenInWindow(providerId, onSuccess, onError, startTime, loginObj, removeProviderConfigCallBack) {
     performFakeLocalStorageUpdate();
-    //@ts-ignore
-    const currentTime = moment.duration(moment().format('HH:mm'), 'HH:mm'),
+    const currentTime = moment.duration(moment().format('HH:mm'), 'HH:mm' as any),
         timeDiff = currentTime.subtract(startTime),
         accessToken = getAccessToken(providerId, true);
     if (accessToken) {
@@ -229,8 +228,7 @@ function handleLoginForIE(url, providerId, onSuccess, onError, removeProviderCon
         url = constructURLForImplicitOrPKCE(providerId, securityObj, requestSourceType, null, customUriScheme, deployedURL);
     }
     window.open(url, '_blank', newWindowProps);
-    //@ts-ignore
-    checkAccessTokenInWindow(providerId, onSuccess, onError, moment.duration(moment().format('HH:mm'), 'HH:mm'), loginObj, removeProviderConfigCallBack);
+    checkAccessTokenInWindow(providerId, onSuccess, onError, moment.duration(moment().format('HH:mm'), 'HH:mm' as any), loginObj, removeProviderConfigCallBack);
 }
 
 /**

@@ -22,10 +22,10 @@ declare const $;
 import moment from 'moment';
 
 const momentLocale = moment.localeData();
-//@ts-ignore
-const momentCalendarOptions = getClonedObject(momentLocale._calendar);
-//@ts-ignore
-const momentCalendarDayOptions = momentLocale._calendarDay || {
+
+const momentCalendarOptions = getClonedObject((momentLocale as any)._calendar);
+
+const momentCalendarDayOptions = (momentLocale as any)._calendarDay || {
         lastDay: '[Yesterday]',
         lastWeek: '[Last] dddd',
         nextDay: '[Tomorrow]',
@@ -329,8 +329,7 @@ export const groupData = (compRef: any, data: Array<Object | DataSetItem>, group
 const getGroupedData = (fieldDefs: Array<Object | DataSetItem>, groupby: string, match: string, orderby: string, dateFormat: string, datePipe: ToDatePipe, innerItem?: string, AppDefaults?: any) => {
     // For day, set the relevant moment calendar options
     if (match === TIME_ROLLUP_OPTIONS.DAY) {
-        //@ts-ignore
-        momentLocale._calendar = momentCalendarDayOptions;
+        (momentLocale as any)._calendar = momentCalendarDayOptions;
     }
 
     // handling case-in-sensitive scenario
@@ -344,8 +343,7 @@ const getGroupedData = (fieldDefs: Array<Object | DataSetItem>, groupby: string,
 
     // extract the grouped data based on the field obtained from 'groupDataByField'.
     const groupedLiData = groupBy(fieldDefs, groupDataByField.bind(undefined, groupby, match, innerItem, dateFormat, datePipe, AppDefaults));
-    //@ts-ignore
-    momentLocale._calendar = momentCalendarOptions; // Reset to default moment calendar options
+    (momentLocale as any)._calendar = momentCalendarOptions; // Reset to default moment calendar options
 
     return groupedLiData;
 };
@@ -387,16 +385,14 @@ const getTimeRolledUpString = (concatStr: string, rollUp: string, dateformat: st
 
                 if (strMoment.isValid()) {
                     // As only time is present, roll up at the hour level with given time format
-                    //@ts-ignore
-                    momentLocale._calendar.sameDay = function () {
+                    (momentLocale as any)._calendar.sameDay = function () {
                         return '[' + filterDate(this.valueOf(), dateFormat, ROLLUP_PATTERNS.HOUR, datePipe) + ']';
                     };
                 }
             }
             // round off to nearest last hour
             strMoment = strMoment.startOf('hour');
-            //@ts-ignore
-            momentLocale._calendar.sameElse = getSameElseFormat;
+            (momentLocale as any)._calendar.sameElse = getSameElseFormat;
             groupByKey = strMoment.calendar(currMoment);
             break;
         case TIME_ROLLUP_OPTIONS.WEEK:
@@ -411,8 +407,7 @@ const getTimeRolledUpString = (concatStr: string, rollUp: string, dateformat: st
         case TIME_ROLLUP_OPTIONS.DAY:
             dateFormat = dateFormat || AppDefaults.dateFormat;
             strMoment = strMoment.startOf('day'); // round off to current day
-            //@ts-ignore
-            momentLocale._calendar.sameElse = getSameElseFormat;
+            (momentLocale as any)._calendar.sameElse = getSameElseFormat;
             groupByKey = strMoment.calendar(currMoment);
             break;
     }
