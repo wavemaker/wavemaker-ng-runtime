@@ -10,7 +10,7 @@
        (click)="selectOpt($event, $index, opt)"
     >
         <i *ngIf="opt.dataObject && opt.dataObject[iconclass] && !opt.selected" aria-hidden="true" [ngClass]="['app-icon', opt.dataObject[iconclass] || opt['icon']]"></i>
-        <i *ngIf="opt.selected" aria-hidden="true" [ngClass]="[checkediconclass]"></i>
+        <i *ngIf="opt.selected && checkediconclass" aria-hidden="true" [ngClass]="[checkediconclass]"></i>
         <span class="caption" [textContent]="opt[displayfield] || opt.label"></span>
     </a>
 </div>

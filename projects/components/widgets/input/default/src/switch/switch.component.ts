@@ -39,7 +39,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
         this.multiple = this.getAttr("multiple") === "true";
-        this.checkediconclass = this.getAttr("checkediconclass") || 'wm-sl-l sl-check';
+        this.checkediconclass = this.getAttr("checkediconclass");
 
         this._debounceSetSelectedValue = debounce((val) => {
             this.setSelectedValue();
