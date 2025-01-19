@@ -1,0 +1,137 @@
+:root {
+  --color-primary: #296df6;
+  --icon-color: #878787;
+  --active-text-color: #101010;
+  --brand-white: rgb(255, 255, 255);
+
+  --wm-app-background: radial-gradient(257.12% 285.86% at 50% 50%, #f5f5f5 0%, #efefef 100%);
+}
+
+/* hide the add story button */
+
+.search-field + div:has(button) {
+  display: none;
+}
+div.search-field,
+div.css-1sx5ibh:has(input:focus),
+div.css-1sx5ibh:has(input:active) {
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(94, 104, 111, 0.1);
+  box-shadow: none;
+}
+
+div.search-field code {
+  height: 34px;
+  min-width: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-white);
+  border-radius: 6px;
+  font-size: 14px;
+  margin: 2px;
+  color: #555;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  gap: 5px;
+}
+
+div.search-field code span {
+  font-size: 18px;
+}
+div.search-field input {
+  color: #5e686f;
+}
+
+div.search-field button[title="Tag filters"] {
+  display: none;
+}
+div.sidebar-subheading {
+  font-size: 12px;
+}
+
+div.sidebar-item button,
+div.sidebar-item a {
+  height: 38px;
+}
+
+div.sidebar-item button {
+  align-items: center;
+  padding: 8px 12px;
+  gap: 8px;
+  border-radius: 8px;
+}
+div.sidebar-item button i {
+  font-size: 16px;
+  color: var(--icon-color);
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.sidebar-item button[aria-expanded="true"] {
+  background-color: var(--color-primary);
+  color: var(--brand-white);
+  font-weight: 700;
+}
+
+div.sidebar-item button[aria-expanded="true"] i {
+  color: var(--brand-white);
+}
+/* arrow to right aligned */
+div.css-1l40f7d {
+  position: absolute;
+  right: 12px;
+}
+div.sidebar-item .css-1h0aucu {
+  position: absolute;
+  right: 12px;
+}
+div.sidebar-item button[aria-expanded="true"] svg path {
+  stroke-width: 1.5px;
+  fill: var(--brand-white);
+}
+
+div.sidebar-item[data-selected="true"],
+div.css-13zuqpq[data-selected="true"].css-13zuqpq[data-selected="true"]:hover,
+div.css-13zuqpq[data-selected="true"].css-13zuqpq[data-selected="true"]:focus {
+  color: var(--active-text-color);
+  background: var(--brand-white);
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.06);
+}
+div.css-13zuqpq {
+  margin-top: 6px;
+}
+div.css-13zuqpq[data-selected="true"] svg {
+  color: var(--color-primary);
+}
+
+div.sidebar-item a {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  align-items: center;
+}
+div.css-99l9qv {
+  margin-top: 0;
+}
+
+div.sb-bar {
+  box-shadow: rgba(94, 104, 111, 0.1) 0px -1px 0px 0px inset;
+}
+
+.sb-bar button:focus,
+.sb-bar button:active,
+.sb-bar button:hover {
+  background-color: rgba(41, 109, 246, 0.14) !important;
+  box-shadow: none !important;
+  color: #5e686f !important ;
+}
+/* div.css-1c9pxkl.css-1c9pxkl tbody > tr > *{
+  border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+} */
+
