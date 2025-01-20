@@ -22,7 +22,7 @@ import {DateTimePickerComponent} from './date-time//date-time-picker.component';
 import {filter, forEach, get, includes, isNaN as _isNaN, isString, isUndefined, parseInt, split} from "lodash-es";
 
 declare const $;
-declare const moment;
+import moment from 'moment';
 
 const CURRENT_DATE = 'CURRENT_DATE';
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -291,7 +291,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
         const month = new Date(newDate).toLocaleString('default', { month: 'long' });
         const year = newDate.getFullYear().toString();
-
         if(activeMonth == month && activeYear == new Date().getFullYear() && newDate.getDate() === new Date().getDate() && newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
             const toDay = new Date().getDate().toString();
             filter($(`span:contains(${toDay})`).not('.is-other-month'), (obj) => {

@@ -23,7 +23,7 @@ import {registerProps} from './time.props';
 import {forEach, get, includes} from "lodash-es";
 
 declare const $;
-declare const moment;
+import moment from 'moment';
 
 const CURRENT_TIME = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';

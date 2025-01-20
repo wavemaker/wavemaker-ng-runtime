@@ -36,7 +36,7 @@ import {registerProps} from './date-time.props';
 import {debounce, forEach, includes, isNaN, parseInt} from "lodash-es";
 
 declare const $;
-declare const moment;
+import moment from 'moment';
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = { widgetType: 'wm-datetime', hostClass: DEFAULT_CLS };

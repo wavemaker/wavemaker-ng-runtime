@@ -20,7 +20,7 @@ import {
 import { CONSTANTS } from '@wm/variables';
 import {find, forEach, get, includes, intersection, isObject, map, toLower} from "lodash-es";
 
-declare const moment;
+import moment from 'moment';
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
 const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',
@@ -138,7 +138,7 @@ export class I18nServiceImpl extends AbstractI18nService {
 
             // For ngx bootstrap locale, get the config from script and apply locale
             // moment.localeData(momentLocale) will return moment locale instance. _config inside will have actual config
-            let _config = moment.localeData(momentLocale);
+            let _config: any = moment.localeData(momentLocale);
             _config = _config && _config._config;
             defineLocale(this.selectedLocale, _config);
             this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
@@ -199,11 +199,11 @@ export class I18nServiceImpl extends AbstractI18nService {
                     if (localeIndex > 0) {
                         locale = locale.substr(localeIndex);
                     }
-                    localeObj['timezone'] = find(moment.tz.names(), (timezoneName) => {
-                        return locale === moment.tz(timezoneName).format('Z');
+                    localeObj['timezone'] = find((moment as any).tz.names(), (timezoneName) => {
+                        return locale === (moment as any).tz(timezoneName).format('Z');
                     });
                 }
-                moment.tz.setDefault(locale);
+                (moment as any).tz.setDefault(locale);
                 const localeData =  compInstance && compInstance.formatsByLocale ? compInstance.formatsByLocale : this.formatsByLocale;
                 Object.assign(localeData, localeObj);
                 resolve();
