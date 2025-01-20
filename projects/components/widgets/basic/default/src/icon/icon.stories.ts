@@ -172,6 +172,16 @@ export const AllIcons: Story = {
 
 
 export const AllVariants: Story = {
+  parameters: {
+    controls: { disable: true },
+    actions: { disable: true },
+    backgrounds: { disable: true },
+    interactions: { disable: true },
+    // previewTabs: {
+    //   'storybook/visual': { hidden: true },
+    //   'storybook/interactions': { hidden: true },
+    // },
+  },
   render: (args) => {
     const variants = [
       {
