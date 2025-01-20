@@ -150,6 +150,12 @@ export const Elevated: Story = {
 };
 
 export const AllVariants: Story = {
+  parameters: {
+    controls: { disable: true },
+    actions: { disable: true },
+    backgrounds: { disable: true },
+    interactions: { disable: true },
+  },
   render: (args) => {
     const variants = [
      
