@@ -145,6 +145,20 @@ export class AppComponent implements DoCheck, AfterViewInit {
         this.appManager.subscribe('pageAttach', () => {
             onPageRendered();
         });
+
+        const currentUrl = new URL(document.referrer);
+        const urlSearchParams = currentUrl.searchParams;
+        const projectId = urlSearchParams.get('project-id');
+        const appColor = localStorage.getItem(`color_${projectId}`);
+        if (appColor) {
+            const htmlEl = this.getIframeEl();
+            htmlEl?.setAttribute('color', appColor);
+        }
+    }
+
+    getIframeEl() {
+        const IframeEl = document.querySelector('iframe#app-view') as HTMLIFrameElement;
+        return IframeEl ? IframeEl?.contentDocument?.querySelector('html') : document.getElementsByTagName('html')[0];
     }
 
     providersConfig;
