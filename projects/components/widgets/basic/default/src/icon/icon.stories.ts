@@ -173,14 +173,18 @@ export const AllIcons: Story = {
 
 export const AllVariants: Story = {
   parameters: {
-    controls: { disable: true },
+    controls: { disable: true }, 
     actions: { disable: true },
-    backgrounds: { disable: true },
-    interactions: { disable: true },
-    // previewTabs: {
-    //   'storybook/visual': { hidden: true },
-    //   'storybook/interactions': { hidden: true },
-    // },
+    interactions: { disable: true }, 
+    backgrounds: { disable: true }, 
+    viewport: { disable: true },
+    previewTabs: {
+      'storybook/docs/panel': { hidden: true },
+      'canvas': { hidden: false },
+    },
+    options: {
+      showPanel: false,
+    },
   },
   render: (args) => {
     const variants = [
