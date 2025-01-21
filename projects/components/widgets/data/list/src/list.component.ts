@@ -641,12 +641,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         listItem.nativeElement.focus();
     }
 
-    // to see if any col is not occupying full width
-    hasItemsPerRowClass() { 
-        const regex = /col-[a-z]+-(0?[0-9]|10|11)/;
-        return regex.test(this.itemsPerRowClass);
-    }
-
     ngOnInit() {
         super.ngOnInit();
         this.handleHeaderClick = noop;
