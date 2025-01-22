@@ -21,7 +21,7 @@ import {
     startsWith, toLower, toUpper, trim
 } from "lodash-es";
 
-declare const X2JS;
+import * as X2JS from 'x2js';
 declare const $;
 import moment from 'moment';
 declare const document;
@@ -530,7 +530,8 @@ export const getValidJSON = (content) => {
 };
 
 export const xmlToJson = (xmlString) => {
-    const x2jsObj = new X2JS({ 'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false });
+    //TODO: import x2js dynamically
+    const x2jsObj = new X2JS.default({ 'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false }as any);
     let json = x2jsObj.xml2js(xmlString);
     if (json) {
         json = get(json, Object.keys(json)[0]);
