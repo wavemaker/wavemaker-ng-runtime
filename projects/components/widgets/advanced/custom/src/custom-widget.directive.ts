@@ -5,7 +5,7 @@ import { registerProps } from './custom-widget-prop';
 import { StylableComponent, provideAsWidgetRef, getWidgetPropsByType } from '@wm/components/base';
 
 const DEFAULT_CLS = 'app-custom-widget-container clearfix';
-const WIDGET_CONFIG = {widgetType: 'wm-custom-widget-container', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG = {widgetType: 'wm-ds-widget-container', hostClass: DEFAULT_CLS};
 declare const _;
 
 @Directive({
@@ -25,7 +25,7 @@ export class CustomWidgetDirective extends StylableComponent implements OnDestro
     ngAfterContentInit() {
         let customWidget        = this.nativeElement.closest('[customwidgetcontainer]') || this.nativeElement.closest('[wmwidgetcontainer]'),
             inheritedProps      = {},
-            customWidgetProps   = Array.from(getWidgetPropsByType("wm-custom-widget-container").keys());
+            customWidgetProps   = Array.from(getWidgetPropsByType("wm-ds-widget-container").keys());
         for(let i = 0; i < customWidget.attributes.length; i++) {
             let attr = customWidget.attributes.item(i);
             if(attr.value && attr.value !== '' && !customWidgetProps.includes(attr.name))

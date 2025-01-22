@@ -13,7 +13,7 @@ export const customWidgetProps =
 
 export const registerProps = () => {
     register(
-        'wm-custom-widget',
+        'wm-ds-widget',
         customWidgetProps
     );
 };

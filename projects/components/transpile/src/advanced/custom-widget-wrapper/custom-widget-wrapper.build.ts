@@ -11,7 +11,7 @@ const addAtrribute = (node: Element, name: string, value: string) => {
     const attr = new Attribute(name, value, noSpan, noSpan, noSpan, undefined, undefined);
     node.attrs.push(attr);
 };
-register('wm-custom-widget-container', (): IBuildTaskDef => {
+register('wm-ds-widget-container', (): IBuildTaskDef => {
     return {
         template: (node: Element)  => {
             const conditionalNode = createElement('ng-container');

@@ -129,7 +129,7 @@ export const getRequiredFormWidget = (widgetType): string => {
         case FormWidgetType.CURRENCY:
             return 'wm-currency';
         case FormWidgetType.CUSTOMWIDGET:
-            return 'wm-custom-widget';
+            return 'wm-ds-widget';
         case FormWidgetType.DATE:
             return 'wm-date';
         case FormWidgetType.DATETIME:
