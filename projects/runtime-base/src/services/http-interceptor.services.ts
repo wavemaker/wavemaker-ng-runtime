@@ -37,7 +37,7 @@ export class HttpCallInterceptor implements HttpInterceptor {
         let modifiedResp;
         let isRelativeAPIUrl = false;
         if(!this.isAbsoluteUrl(request.url)) {
-            isRelativeAPIUrl = request.url.indexOf("services/") !== -1 || request.url.indexOf("j_spring_security_check") !== -1;
+            isRelativeAPIUrl = request.url.indexOf("services/") !== -1 || request.url.indexOf("j_spring_security_check") !== -1 || request.url.indexOf("j_spring_security_logout") !== -1 || request.url.indexOf("oAuthCallback.html") !== -1 || request.url.startsWith("resources/") || request.url.startsWith("prefabs/");
         }
         if(isRelativeAPIUrl) {
             let apiUrl= _WM_APP_PROJECT.apiUrl + request.url;
