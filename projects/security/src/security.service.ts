@@ -48,7 +48,7 @@ export class SecurityService {
         }
         if (!forceFlag && this.config) {return Promise.resolve(this.config);}
         this.loadPromise = new Promise((resolve, reject) => {
-                this.$http.send({'url': './services/security/info', 'method': 'GET'}).then((response) => {
+                this.$http.send({'url': 'services/security/info', 'method': 'GET'}).then((response) => {
                     this.config = response.body;
                     (window as any)._WM_APP_PROPERTIES['securityInfo'] = this.config
                     this.lastLoggedInUser = getClonedObject(this.loggedInUser);
