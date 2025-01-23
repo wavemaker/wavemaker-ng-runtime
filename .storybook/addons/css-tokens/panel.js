@@ -134,8 +134,6 @@ const TokensPanel = () => {
 
   return (
     <div style={{ padding: "10px" }}>
-      <h3>CSS Variables</h3>
-      <button onClick={reloadVariables}>Reload Variables</button>
       {Object.keys(tokens).length > 0 ? (
         Object.keys(tokens).map((token) => (
           <div key={token} style={{ marginBottom: "10px" }}>
