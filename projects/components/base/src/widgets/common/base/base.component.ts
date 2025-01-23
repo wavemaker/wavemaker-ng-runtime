@@ -20,11 +20,13 @@ import {
     $parseEvent,
     $unwatch,
     $watch,
+    _WM_APP_PROJECT,
     addClass,
     App,
     findParent,
     isDefined,
     isMobileApp,
+    isValidWebURL,
     removeAttr,
     removeClass,
     setAttr,
@@ -707,6 +709,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         }
         widgetProps.forEach((v, k) => {
             if (isDefined(v.value)) {
+                if(this.widgetSubType == 'wm-video' && k == 'videoposter'){
+                 v.value =  _WM_APP_PROJECT.isPreview || isValidWebURL(v.value) ? v.value : _WM_APP_PROJECT.cdnUrl + v.value;
+                }
                 this.initState.set(k, v.value);
             }
         });
