@@ -30,6 +30,14 @@ export const Filled: Story = {
     iconclass: 'wi wi-plus',
     badgevalue: ''
   },
+  parameters: {
+    cssVars: {
+      "--wm-btn-primary-color": "",
+      "--wm-btn-primary-background":"",
+      "--wm-btn-primary-border-color":"",
+      "--wm-btn-primary-state-layer-color":""
+    },
+  },
   render: (args) => {
 
     const buttonSizeMap: Record<string, string> = {
@@ -37,7 +45,7 @@ export const Filled: Story = {
       medium: 'btn-sm',
       large: 'btn-lg',
     };
-
+ 
     const baseClass = 'btn-filled';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();

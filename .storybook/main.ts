@@ -12,7 +12,7 @@ const config: StorybookConfig = {
     "@chromatic-com/storybook",
     "@storybook/addon-interactions",
     "@storybook/addon-variants",
-    './addons/css-tokens/register.js',
+    './addons/css-tokens/manager.js'
   ],
   framework: {
     name: "@storybook/angular",
