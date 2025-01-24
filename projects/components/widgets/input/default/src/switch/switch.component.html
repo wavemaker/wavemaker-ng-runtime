@@ -3,6 +3,7 @@
        focus-target
        href="javascript:void(0);"
        class="btn btn-default"
+       [title]="hint?hint:opt.key"
        [name]="'wm-switch-' + opt.key"
        role="button"
        [ngClass]="{'selected': opt.selected, 'disabled': disabled}"
