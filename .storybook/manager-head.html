@@ -51,12 +51,32 @@
         border-color: #007bff;
     }
 
-    .input-wrapper label {
-        margin-right: 12px;
-        font-size: 14px;
+
+    input[type="color"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        cursor: pointer;
+        overflow: hidden;
     }
+
+    input[type="color"]::-webkit-color-swatch {
+        border-radius: 50%;
+        border: none;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+        padding: 0;
+        border: none;
+    }
+
     div.css-s0f71y {
-      background-color: #fff;
+        background-color: #000;
     }
 </style>
 
