@@ -1,0 +1,28 @@
+{
+    "iconLight": [],
+    "iconRegular": [],
+    "iconWavicon": [
+        "add", "archive", "arrow-back", "arrow-drop-down", "arrow-drop-up",
+        "arrow-forward", "arrow-left", "arrow-right", "attach-file",
+        "bookmark-filled", "bookmark", "cancel", "chat-bubble-filled",
+        "chat-bubble", "check-box-checked", "check-box-outline-blank",
+        "check-box-unchecked", "check-indeterminate-small", "check-small",
+        "check", "close", "commute", "content-cut", "dark-mode", "delete",
+        "directions-bus", "directions-car", "directions-subway",
+        "directions-walk", "download", "edit", "error", "fast-forward",
+        "fast-rewind", "favorite", "folder-filled", "folder", "forward",
+        "g-translate", "gif", "gmail-groups", "inbox-filled", "inbox",
+        "indeterminate-check-box-checked", "indeterminate-check-box-unchecked",
+        "keyboard-return", "keyboard", "language", "light-mode", "local-taxi",
+        "location-on-filled", "location-on", "mail-filled", "mail", "menu",
+        "mic", "mobile-friendly", "mood", "more-horiz", "more-vert",
+        "music-note", "navigate-before", "navigate-next", "notifications",
+        "outbox", "person", "photo", "play-arrow", "radio-button-checked",
+        "radio-button-unchecked", "schedule", "search", "send",
+        "settings-filled", "settings", "share", "skip-next", "skip-previous",
+        "star-filled", "star", "stars-filled", "stars", "sticker",
+        "text-fields", "today", "upload", "videocam"
+      ],
+    "iconAwesome": []
+  }
+  

@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { fn } from '@storybook/test';
-
+import iconsData from './iconsList.json';
 import { IconComponent } from "./icon.component";
+
 
 const meta: Meta<IconComponent> = {
   title: 'Input/Icon',
@@ -17,30 +18,13 @@ export default meta;
 type Story = StoryObj<IconComponent>;
 
 
-const iconList = [
-  'add', 'archive', 'arrow-back', 'arrow-drop-down', 'arrow-drop-up', 'arrow-forward',
-  'arrow-left', 'arrow-right', 'attach-file', 'bookmark-filled', 'bookmark',
-  'cancel', 'chat-bubble-filled', 'chat-bubble', 'check-box-checked',
-  'check-box-outline-blank', 'check-box-unchecked', 'check-indeterminate-small',
-  'check-small', 'check', 'close', 'commute', 'content-cut', 'dark-mode', 'delete',
-  'directions-bus', 'directions-car', 'directions-subway', 'directions-walk',
-  'download', 'edit', 'error', 'fast-forward', 'fast-rewind', 'favorite',
-  'folder-filled', 'folder', 'forward', 'g-translate', 'gif', 'gmail-groups',
-  'inbox-filled', 'inbox', 'indeterminate-check-box-checked',
-  'indeterminate-check-box-unchecked', 'keyboard-return', 'keyboard', 'language',
-  'light-mode', 'local-taxi', 'location-on-filled', 'location-on', 'mail-filled',
-  'mail', 'menu', 'mic', 'mobile-friendly', 'mood', 'more-horiz', 'more-vert',
-  'music-note', 'navigate-before', 'navigate-next', 'notifications', 'outbox',
-  'person', 'photo', 'play-arrow', 'radio-button-checked',
-  'radio-button-unchecked', 'schedule', 'search', 'send', 'settings-filled',
-  'settings', 'share', 'skip-next', 'skip-previous', 'star-filled', 'star',
-  'stars-filled', 'stars', 'sticker', 'text-fields', 'today', 'upload', 'videocam'
-];
-
 export const Icon: Story = {
     args: {
       iconsize: 'Base',
       iconclass: 'wi wi-plus',
+    },
+    argTypes: {
+      iconposition: { table: { disable: true } },
     },
   
     render: (args) => {
@@ -69,7 +53,6 @@ export const Icon: Story = {
   };
     
 
-  
   export const IconWithCaption: Story = {
     args: {
       caption: 'Icon',
@@ -104,8 +87,11 @@ export const Icon: Story = {
 export const AllIcons: Story = {
   args: {
     iconsize: 'Base',
-    iconclass: '',
   },
+  argTypes: {
+    iconposition: { table: { disable: true } },
+  },
+
   render: (args) => {
     const iconSizeMap: Record<string, string> = {
       'Base': '',
@@ -115,6 +101,8 @@ export const AllIcons: Story = {
       'fa-4x': 'fa-4x',
       'fa-5x': 'fa-5x',
     };
+
+    const iconList = iconsData.iconWavicon; //from iconsJson
 
     const selectedIconSize = iconSizeMap[args.iconsize] || '';
     
@@ -178,13 +166,17 @@ export const AllVariants: Story = {
     interactions: { disable: true }, 
     backgrounds: { disable: true }, 
     viewport: { disable: true },
-    previewTabs: {
-      'storybook/docs/panel': { hidden: true },
-      'canvas': { hidden: false },
-    },
-    options: {
-      showPanel: false,
-    },
+    'storybook/css-tokens/panel': { 
+      disable: true,
+    }
+    //storybook/css-tokens/panel: {disable: true},
+    // previewTabs: {
+    //   'storybook/docs/panel': { hidden: true },
+    //   'canvas': { hidden: false },
+    // },
+    // options: {
+    //   showPanel: false,
+    // },
   },
   render: (args) => {
     const variants = [
