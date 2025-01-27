@@ -1979,6 +1979,12 @@ $.widget('wm.datatable', {
             if (!colDef.readonly) {
                 value = _.get(rowData, colDef.field);
                 editableTemplate = self.options.getInlineEditWidget(colDef.field, value, alwaysNewRow);
+                // Fix for [WMS-27289]: In Edit mode (inline and quick edit),
+                // pressing the Tab key initially focuses on the `<td>` element, and pressing Tab again moves the focus to the input widget.
+                // To address this, the `tabindex` and `title` attributes are removed from the `<td>` element during Edit mode
+                // and are re-applied when switching back to View mode.
+                $el.removeAttr('title');
+                $el.removeAttr('tabindex');
                 if (!(colDef.customExpression || (colDef.formatpattern && colDef.formatpattern !== 'None'))) {
                     $el.addClass('cell-editing').html(editableTemplate).data('originalText', cellText);
                 } else {
@@ -2289,9 +2295,12 @@ $.widget('wm.datatable', {
         $editableElements.each(function () {
             var $el = $(this),
                 value = $el.data('originalValue');
+            // Fix for [WMS-27289]: Reassigning `tabindex` and `title` attributes to the `<td>` element when the cancel button is clicked in Edit mode.
+            $el.attr('tabindex', 0);
             $el.removeClass('datetime-wrapper cell-editing required-field form-group');
             if (!value) {
                 $el.text($el.data('originalText') || '');
+                $el.attr('title', $el.text());
             } else {
                 $el.html(self.options.getCustomExpression(value.fieldName, value.rowIndex));
             }
@@ -2338,11 +2347,14 @@ $.widget('wm.datatable', {
                 value = $el.data('originalValue'),
                 text,
                 colDef;
+            //Fix for [WMS-27289]: Reassigning `tabindex` and `title` attributes to the `<td>` element when the save button is clicked in Edit mode.
+            $el.attr('tabindex', 0);
             $el.removeClass('datetime-wrapper cell-editing required-field form-group');
             if (!value) {
                 colDef = self.preparedHeaderData[$el.attr('data-col-id')];
                 text = self.getTextValue(colDef.field);
                 $el.text(self.Utils.isDefined(text) ? text : '');
+                $el.attr('title', $el.text());
             } else {
                 $el.html(self.options.getCustomExpression(value.fieldName, value.rowIndex));
             }
