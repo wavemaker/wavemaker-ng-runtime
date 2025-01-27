@@ -21,6 +21,31 @@ const meta: Meta<ButtonComponent> = {
 export default meta;
 type Story = StoryObj<ButtonComponent>;
 
+// const getUpdatedCssVars = (selectedClass: string) => {
+//   const baseClass = selectedClass.replace('btn-', ''); // Extracts 'default', 'primary', etc.
+//   return {
+//     [`--wm-btn-${baseClass}-color`]: "#fff",  // example value
+//     [`--wm-btn-${baseClass}-background`]: "#000", // example value
+//     [`--wm-btn-${baseClass}-border-color`]: "#f00", // example value
+//     [`--wm-btn-${baseClass}-state-layer-color`]: "#ccc", // example value
+//   };
+// };
+
+const getUpdatedCssVars = (selectedClass: string) => {
+  debugger
+  const selectedColor = getComputedStyle(document.documentElement).getPropertyValue(`--wm-${selectedClass}-color`).trim();
+  const selectedBgColor = getComputedStyle(document.documentElement).getPropertyValue(`--wm-${selectedClass}-background`).trim();  
+  const selectedBaorderColor = getComputedStyle(document.documentElement).getPropertyValue(`--wm-${selectedClass}-border-color`).trim();  
+  const selectedLayerColor = getComputedStyle(document.documentElement).getPropertyValue(`--wm-${selectedClass}-state-layer-color`).trim();  
+
+  return {
+    "--wm-btn-color": selectedColor || "",
+    "--wm-btn-background": selectedBgColor || "",
+    "--wm-btn-border-color": selectedBaorderColor || "",
+    "--wm-btn-state-layer-color": selectedLayerColor || "",
+  };
+};
+
 export const Filled: Story = {
   args: {
     caption: 'Filled',
@@ -31,13 +56,9 @@ export const Filled: Story = {
     badgevalue: ''
   },
   parameters: {
-    cssVars: {
-      "--wm-btn-primary-color": "",
-      "--wm-btn-primary-background":"",
-      "--wm-btn-primary-border-color":"",
-      "--wm-btn-primary-state-layer-color":""
-    },
+    cssVars: getUpdatedCssVars('btn-default')
   },
+  
   render: (args) => {
 
     const buttonSizeMap: Record<string, string> = {
@@ -49,12 +70,16 @@ export const Filled: Story = {
     const baseClass = 'btn-filled';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
+    const updatedCssVars = getUpdatedCssVars(args.class); 
 
     return {
       component: ButtonComponent,
       props: {
         ...args,
         class: updatedClass,
+      },
+      parameters: {
+        cssVars: updatedCssVars,
       },
     };
   },
@@ -68,9 +93,12 @@ export const Outlined: Story = {
     type:'medium',
     iconposition: 'right',
     iconclass: 'wi wi-plus',
-    badgevalue: ''
-
+    badgevalue: '',
   },
+  parameters: {
+    cssVars: getUpdatedCssVars('btn-default')
+  },
+  
   render: (args) => {
 
     const buttonSizeMap: Record<string, string> = {
@@ -82,12 +110,17 @@ export const Outlined: Story = {
     const baseClass = 'btn-outlined';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
+    const updatedCssVars = getUpdatedCssVars(args.class);
+
 
     return {
       component: ButtonComponent,
       props: {
         ...args,
         class: updatedClass,
+      },
+      parameters: {
+        cssVars: updatedCssVars,
       },
     };
   },
