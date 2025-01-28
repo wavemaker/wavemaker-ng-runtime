@@ -49,7 +49,7 @@ const getUpdatedCssVars = (selectedClass: string) => {
 export const Filled: Story = {
   args: {
     caption: 'Filled',
-    class: 'btn-filled btn-default',
+    class: 'btn-default',
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
@@ -89,7 +89,7 @@ export const Filled: Story = {
 export const Outlined: Story = {
   args: {
     caption: 'Outlined',
-    class: 'btn-outlined btn-default',
+    class: 'btn-default',
     type:'medium',
     iconposition: 'right',
     iconclass: 'wi wi-plus',
@@ -130,7 +130,7 @@ export const Outlined: Story = {
 export const Text: Story = {
   args: {
     caption: 'Text',
-    class: 'btn-text btn-default',
+    class: 'btn-default',
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
@@ -162,7 +162,7 @@ export const Text: Story = {
 export const Elevated: Story = {
   args: {
     caption: 'Elevated',
-    class: 'btn-elevated btn-default',
+    class: 'btn-default',
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
