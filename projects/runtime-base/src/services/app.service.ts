@@ -92,15 +92,10 @@ export class AppRef {
     setTimezone = this.i18nService.setTimezone.bind(this.i18nService);
     setwidgetLocale = this.i18nService.setwidgetLocale.bind(this.i18nService);
     
-    setAppMode = (mode) => {
-        const htmlEl = document.getElementsByTagName('html')[0];
-        if (mode === 'default') {
-          localStorage.removeItem('app-mode');
-          htmlEl.removeAttribute('app-mode');
-        } else {
-          localStorage.setItem('app-mode', mode);
-          htmlEl.setAttribute('app-mode', mode);
-        }
+    setAppMode = (mode, val) => {
+        const IframeEl = document.querySelector('iframe#app-view') as HTMLIFrameElement;
+        const htmlEl = IframeEl ? IframeEl?.contentDocument?.querySelector('html') : document.getElementsByTagName('html')[0];
+        htmlEl.setAttribute(mode, val);
     };
 
     private _eventNotifier = new EventNotifier();
