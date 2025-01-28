@@ -32,17 +32,16 @@ type Story = StoryObj<ButtonComponent>;
 // };
 
 const getUpdatedCssVars = (selectedClass: string) => {
-  debugger
-  const selectedColor = getComputedStyle(document.documentElement).getPropertyValue(`--wm-${selectedClass}-color`).trim();
-  const selectedBgColor = getComputedStyle(document.documentElement).getPropertyValue(`--wm-${selectedClass}-background`).trim();  
-  const selectedBaorderColor = getComputedStyle(document.documentElement).getPropertyValue(`--wm-${selectedClass}-border-color`).trim();  
-  const selectedLayerColor = getComputedStyle(document.documentElement).getPropertyValue(`--wm-${selectedClass}-state-layer-color`).trim();  
+  if (!selectedClass) return {};
+
+  const className = selectedClass.split(" ").pop(); // Get the last class name (btn-default, btn-primary, etc.)
+  const rootStyle = getComputedStyle(document.documentElement);
 
   return {
-    "--wm-btn-color": selectedColor || "",
-    "--wm-btn-background": selectedBgColor || "",
-    "--wm-btn-border-color": selectedBaorderColor || "",
-    "--wm-btn-state-layer-color": selectedLayerColor || "",
+    "--wm-btn-color": rootStyle.getPropertyValue(`--wm-${className}-color`).trim() || "",
+    "--wm-btn-background": rootStyle.getPropertyValue(`--wm-${className}-background`).trim() || "",
+    "--wm-btn-border-color": rootStyle.getPropertyValue(`--wm-${className}-border-color`).trim() || "",
+    "--wm-btn-state-layer-color": rootStyle.getPropertyValue(`--wm-${className}-state-layer-color`).trim() || "",
   };
 };
 
