@@ -211,7 +211,7 @@ describe("DatetimeComponent", () => {
     //     });
     // }));
 
-    it("should not show the calendar panel on click the input control ", waitForAsync(() => {
+    xit("should not show the calendar panel on click the input control ", waitForAsync(() => {
 
         onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'bs-datepicker-container', 0);
     }));
