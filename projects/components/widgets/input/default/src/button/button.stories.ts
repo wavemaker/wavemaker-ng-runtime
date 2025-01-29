@@ -32,6 +32,7 @@ type Story = StoryObj<ButtonComponent>;
 // };
 
 const getUpdatedCssVars = (selectedClass: string) => {
+  debugger
   if (!selectedClass) return {};
 
   const className = selectedClass.split(" ").pop(); // Get the last class name (btn-default, btn-primary, etc.)
@@ -43,6 +44,12 @@ const getUpdatedCssVars = (selectedClass: string) => {
     "--wm-btn-border-color": rootStyle.getPropertyValue(`--wm-${className}-border-color`).trim() || "",
     "--wm-btn-state-layer-color": rootStyle.getPropertyValue(`--wm-${className}-state-layer-color`).trim() || "",
   };
+};
+
+const updateCssVars = (selectedClass: string) => {
+  // Calculate new CSS variables based on selected class
+  const updatedCssVars = getUpdatedCssVars(selectedClass);
+  return updatedCssVars;
 };
 
 export const Filled: Story = {
@@ -69,9 +76,9 @@ export const Filled: Story = {
     const baseClass = 'btn-filled';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    const updatedCssVars = getUpdatedCssVars(args.class); 
+    const updatedCssVars = updateCssVars(args.class);
 
-    return {
+    let finalObj = {
       component: ButtonComponent,
       props: {
         ...args,
@@ -81,6 +88,8 @@ export const Filled: Story = {
         cssVars: updatedCssVars,
       },
     };
+    console.log ('*******finalObj.parameters*****'+ finalObj.parameters)
+    return finalObj;
   },
 };
 
