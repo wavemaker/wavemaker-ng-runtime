@@ -6,7 +6,7 @@ import { DataSetItem, provideAs, provideAsWidgetRef, styler } from '@wm/componen
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from './switch.props';
-import {find, findIndex, forEach} from "lodash-es";
+import {find, findIndex, forEach, isArray, isNull, isUndefined, trim} from "lodash-es";
 
 declare const $;
 
@@ -35,7 +35,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
     public required: boolean;
     private _debounceSetSelectedValue: Function;
     public name: string;
-    public hint: string;
+    public hint:any;
 
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
@@ -168,8 +168,14 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         if (key === 'disabled' && !toBoolean(nv)) {
             this.nativeElement.removeAttribute(key);
         } else {
-            if(key==='hint') {
-                this.hint = nv;
+            if(key==='hint')
+            {
+                if (isUndefined(nv) || isNull(nv) || trim(nv) === '') {
+                    this.hint=[];
+                }
+                else  if (!isArray(nv)) {
+                    this.hint= [nv];
+                }
             }
             super.onPropertyChange(key, nv, ov);
         }
