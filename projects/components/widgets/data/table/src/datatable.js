@@ -2748,6 +2748,11 @@ $.widget('wm.datatable', {
         var colId = column.attr('data-col-id');
         return colId;
     },
+    keydownHandler: function(event) {
+        if (event && event.key === 'Enter') {
+            this.sortHandler(event);
+        }
+    },
     /* Attaches all event handlers for the table. */
     attachEventHandlers: function ($htm) {
         var $header = this.gridHeaderElement,
@@ -2776,9 +2781,13 @@ $.widget('wm.datatable', {
                 if (this.options.enableColumnSelection) {
                     $header.find('th[data-col-sortable] .header-data').off('click', this.sortHandler.bind(this));
                     $header.find('th[data-col-sortable] .header-data').on('click', this.sortHandler.bind(this));
+                    $header.find('th[data-col-sortable]').off('keydown', this.keydownHandler.bind(this));
+                    $header.find('th[data-col-sortable]').on('keydown', this.keydownHandler.bind(this));
                 } else {
                     $header.find('th[data-col-sortable]').off('click', this.sortHandler.bind(this));
                     $header.find('th[data-col-sortable]').on('click', this.sortHandler.bind(this));
+                    $header.find('th[data-col-sortable]').off('keydown', this.keydownHandler.bind(this));
+                    $header.find('th[data-col-sortable]').on('keydown', this.keydownHandler.bind(this));
                 }
             } else {
                 if (this.options.enableColumnSelection) {
