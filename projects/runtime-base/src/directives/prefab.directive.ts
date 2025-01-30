@@ -14,9 +14,11 @@ import { PrefabManagerService } from '../services/prefab-manager.service';
 import { ComponentRefProvider, ComponentType } from '../types/types';
 
 @Directive({
-    selector: '[wmPrefab][prefabname]'
+    selector: '[wmPrefab][prefabname]',
+    exportAs: "wmPrefab"
 })
 export class PrefabDirective {
+    showLoader: boolean = true;
 
     constructor(
         @Self() @Inject(WidgetRef) public componentInstance,
@@ -36,6 +38,8 @@ export class PrefabDirective {
                     const instanceRef = this.vcRef.createComponent(componentFactory, 0, injector);
                     this.elRef.nativeElement.appendChild(instanceRef.location.nativeElement);
                 }
+            }).finally(() => {
+                this.showLoader = false;
             });
     }
 }
