@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { fn } from '@storybook/test';
-
 import { ButtonComponent } from './button.component';
 import { trim } from 'jquery';
 
@@ -21,15 +20,6 @@ const meta: Meta<ButtonComponent> = {
 export default meta;
 type Story = StoryObj<ButtonComponent>;
 
-// const getUpdatedCssVars = (selectedClass: string) => {
-//   const baseClass = selectedClass.replace('btn-', ''); // Extracts 'default', 'primary', etc.
-//   return {
-//     [`--wm-btn-${baseClass}-color`]: "#fff",  // example value
-//     [`--wm-btn-${baseClass}-background`]: "#000", // example value
-//     [`--wm-btn-${baseClass}-border-color`]: "#f00", // example value
-//     [`--wm-btn-${baseClass}-state-layer-color`]: "#ccc", // example value
-//   };
-// };
 
 const getUpdatedCssVars = (selectedClass: string) => {
   debugger
@@ -56,15 +46,38 @@ export const Filled: Story = {
   args: {
     caption: 'Filled',
     class: 'btn-default',
-    type:'medium',
-    iconposition: 'left',
-    iconclass: 'wi wi-plus',
-    badgevalue: ''
+    type: 'medium',
   },
   parameters: {
-    cssVars: getUpdatedCssVars('btn-default')
+    cssVars: {
+      'btn-default': {
+        '--wm-btn-default-color': '',
+        '--wm-btn-default-background': '',
+        '--wm-btn-default-border-color': '',
+        '--wm-btn-default-state-layer-color': '',
+      },
+      'btn-primary': {
+        '--wm-btn-primary-color': '',
+        '--wm-btn-primary-background': '',
+        '--wm-btn-primary-border-color': '',
+        '--wm-btn-primary-state-layer-color': '',
+      },
+      'btn-secondary': {
+        '--wm-btn-secondary-color': '',
+        '--wm-btn-secondary-background': '',
+        '--wm-btn-secondary-border-color': '',
+        '--wm-btn-secondary-state-layer-color': '',
+      },
+      'btn-tertiary': {
+        '--wm-btn-tertiary-color': '',
+        '--wm-btn-tertiary-background': '',
+        '--wm-btn-tertiary-border-color': '',
+        '--wm-btn-tertiary-state-layer-color': '',
+      },
+     
+    },
   },
-  
+
   render: (args) => {
 
     const buttonSizeMap: Record<string, string> = {
@@ -84,11 +97,7 @@ export const Filled: Story = {
         ...args,
         class: updatedClass,
       },
-      parameters: {
-        cssVars: updatedCssVars,
-      },
     };
-    console.log ('*******finalObj.parameters*****'+ finalObj.parameters)
     return finalObj;
   },
 };
@@ -97,16 +106,18 @@ export const Filled: Story = {
 export const Outlined: Story = {
   args: {
     caption: 'Outlined',
-    class: 'btn-default',
+    class: 'btn-outlined btn-default',
     type:'medium',
     iconposition: 'right',
     iconclass: 'wi wi-plus',
-    badgevalue: '',
+    badgevalue: ''
+
   },
   parameters: {
-    cssVars: getUpdatedCssVars('btn-default')
+    cssVars: {
+      
+    }
   },
-  
   render: (args) => {
 
     const buttonSizeMap: Record<string, string> = {
@@ -118,17 +129,12 @@ export const Outlined: Story = {
     const baseClass = 'btn-outlined';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    const updatedCssVars = getUpdatedCssVars(args.class);
-
 
     return {
       component: ButtonComponent,
       props: {
         ...args,
         class: updatedClass,
-      },
-      parameters: {
-        cssVars: updatedCssVars,
       },
     };
   },
@@ -138,7 +144,7 @@ export const Outlined: Story = {
 export const Text: Story = {
   args: {
     caption: 'Text',
-    class: 'btn-default',
+    class: 'btn-text btn-default',
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
@@ -170,7 +176,7 @@ export const Text: Story = {
 export const Elevated: Story = {
   args: {
     caption: 'Elevated',
-    class: 'btn-default',
+    class: 'btn-elevated btn-default',
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
@@ -578,59 +584,8 @@ export const AllVariants: Story = {
       large: 'padding: 8px 16px; font-size: 16px; width: 140px;',
     };
 
-    // return {
-    //   template: `
-    //     <div style="display: flex; flex-direction: column; gap: 24px;">
-    //       ${variants
-    //         .map((variant) => {
-    //           const isGridLayout = variant.layout === 'grid';
-    //           return `
-    //             <div>
-    //               <h6>${variant.heading}</h6>
-    //               <div style="
-    //               display: ${isGridLayout ? 'grid' : 'flex'};
-    //                 ${isGridLayout ? 'grid-template-columns: repeat(5, 1fr); column-gap: 15px; row-gap: 15px;' : 'gap: 8px;'}
-    //               ">
-    //                 ${variant.buttons
-    //                   .map((button) => {
-    //                     const buttonSizeStyle = sizeStyles[button.type] || '';
-    //                     const updatedClass = `${button.class}`.trim();
-
-    //                     return `
-    //                       <button  class="${updatedClass}" style="position: relative; ${buttonSizeStyle}">
-    //                         ${
-    //                           button.iconposition === 'left'
-    //                             ? `<i class="${button.iconclass}" style="margin-right: 4px;"></i>`
-    //                             : ''
-    //                         }
-    //                         ${button.caption}
-    //                         ${
-    //                           button.iconposition === 'right'
-    //                             ? `<i class="${button.iconclass}" style="margin-left: 4px;"></i>`
-    //                             : ''
-    //                         }
-    //                         ${
-    //                           button.badgevalue
-    //                             ? `<span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px;">
-    //                                 ${button.badgevalue}
-    //                               </span>`
-    //                             : ''
-    //                         }
-    //                       </button>
-    //                     `;
-    //                   })
-    //                   .join('')}
-    //               </div>
-    //             </div>
-    //           `;
-    //         })
-    //         .join('')}
-    //     </div>
-    //   `,
-    // };
-  
-  return {
-    template: `
+    return {
+      template: `
         <div style="display: flex; flex-direction: column; gap: 24px;">
           ${variants
             .map((variant) => {
@@ -638,18 +593,35 @@ export const AllVariants: Story = {
               return `
                 <div>
                   <h6>${variant.heading}</h6>
-                  <div style="display: ${isGridLayout ? 'grid' : 'flex'}; ${isGridLayout ? 'grid-template-columns: repeat(5, 1fr); column-gap: 15px; row-gap: 15px;' : 'gap: 8px;'}">
+                  <div style="
+                  display: ${isGridLayout ? 'grid' : 'flex'};
+                    ${isGridLayout ? 'grid-template-columns: repeat(5, 1fr); column-gap: 15px; row-gap: 15px;' : 'gap: 8px;'}
+                  ">
                     ${variant.buttons
                       .map((button) => {
                         const buttonSizeStyle = sizeStyles[button.type] || '';
                         const updatedClass = `${button.class}`.trim();
+
                         return `
-                          <button wmbutton="" widget-id="widget-id43" type="${button.type}" tabindex="0" icon-position="${button.iconposition}" class="${updatedClass}" style="position: relative; ${buttonSizeStyle}">
-                            ${button.iconposition === 'left' ? `<i aria-hidden="true" class="app-icon ${button.iconclass}"></i>` : ''}
-                            <span class="sr-only">${button.caption}</span>
-                            <span class="btn-caption">${button.caption}</span>
-                            ${button.iconposition === 'right' ? `<i aria-hidden="true" class="app-icon ${button.iconclass}"></i>` : ''}
-                            ${button.badgevalue ? `<span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px;">${button.badgevalue}</span>` : ''}
+                          <button class="${updatedClass}" style="position: relative; ${buttonSizeStyle}">
+                            ${
+                              button.iconposition === 'left'
+                                ? `<i class="${button.iconclass}" style="margin-right: 4px;"></i>`
+                                : ''
+                            }
+                            ${button.caption}
+                            ${
+                              button.iconposition === 'right'
+                                ? `<i class="${button.iconclass}" style="margin-left: 4px;"></i>`
+                                : ''
+                            }
+                            ${
+                              button.badgevalue
+                                ? `<span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px;">
+                                    ${button.badgevalue}
+                                  </span>`
+                                : ''
+                            }
                           </button>
                         `;
                       })
