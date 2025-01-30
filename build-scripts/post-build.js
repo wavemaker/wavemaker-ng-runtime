@@ -248,6 +248,7 @@ const generateSha1 = (content) => {
         const angularJson = require(`${process.cwd()}/angular.json`);
         const build = angularJson['projects']['angular-app']['architect']['build'];
         let deployUrl = args['deploy-url'] || build['options']['deployUrl'];
+        global.randomHash = deployUrl.split('/')[1];
         let outputPath = global.opPath = args['output-path'] || build['options']['outputPath']
         const contents = await readFile(`./dist/index.html`, `utf8`);
         $ = cheerio.load(contents);
