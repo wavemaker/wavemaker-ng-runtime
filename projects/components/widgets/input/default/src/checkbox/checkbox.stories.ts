@@ -42,64 +42,6 @@ export const Class: Story = {
   },
 };
 
-export const AllVariants1: Story = {
-  render: () => {
-    const variants = [
-      {
-        heading: 'Primary',
-        checkboxes: [
-          { _caption: 'Primary Checkbox', datavalue: true, disabled: false, class: 'primary',readonly:false },
-          { _caption: 'Secondary Checkbox', datavalue: true, disabled: false, class: 'secondary' ,readonly:false},
-          { _caption: 'Success Checkbox', datavalue: true, disabled: false, class: 'success',readonly:false },
-          { _caption: 'Error Checkbox', datavalue: true, disabled: false, class: 'error',readonly:true },
-        ],
-      },
-      {
-        heading: 'Disabled/Readonly',
-        checkboxes: [
-          { _caption: 'Disabled Primary', datavalue: false, disabled: true, class: 'primary',readonly:true },
-          { _caption: 'Readonly Secondary', datavalue: true, readonly: true, class: 'secondary' },
-        ],
-      },
-     
-    ];
-  
-    return {
-      template: `
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-          ${variants
-            .map(
-              (variant) => `
-              <div>
-                <h6>${variant.heading}</h6>
-                <div style="display: flex; gap: 16px; align-items: center;">
-                  ${variant.checkboxes
-                    .map(
-                      (checkbox) => 
-                       `
-                      <label style="display: flex; align-items: center; gap: 8px;">
-                        <input
-                          type="checkbox"
-                          ${checkbox.datavalue ? 'checked' : ''}
-                          ${checkbox.disabled ? 'disabled' : ''}
-                          ${checkbox.readonly ? 'readonly' : ''}
-                          ${checkbox.class ? 'error' : 'warning'}
-                        />
-                        <span class="${checkbox.class}">${checkbox._caption}</span>
-                      </label>
-                    `
-                    )
-                    .join('')}
-                </div>
-              </div>
-            `
-            )
-            .join('')}
-        </div>
-      `,
-    };
-  },
-};
 
 
 
