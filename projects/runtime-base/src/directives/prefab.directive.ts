@@ -12,6 +12,7 @@ import { WidgetRef } from '@wm/components/base';
 
 import { PrefabManagerService } from '../services/prefab-manager.service';
 import { ComponentRefProvider, ComponentType } from '../types/types';
+import { App } from '@wm/core';
 
 @Directive({
     selector: '[wmPrefab][prefabname]',
@@ -19,7 +20,7 @@ import { ComponentRefProvider, ComponentType } from '../types/types';
 })
 export class PrefabDirective {
     showLoader: boolean = true;
-
+    public app: any;
     constructor(
         @Self() @Inject(WidgetRef) public componentInstance,
         public vcRef: ViewContainerRef,
@@ -27,10 +28,11 @@ export class PrefabDirective {
         private prefabMngr: PrefabManagerService,
         private resolver: ComponentFactoryResolver,
         private injector: Injector,
-        private componentRefProvider: ComponentRefProvider
+        private componentRefProvider: ComponentRefProvider,
+        app: App
     ) {
         const prefabName = this.componentInstance.prefabName;
-
+        this.app = app;
         this.prefabMngr.loadDependencies(prefabName)
             .then(async () => {
                 const componentFactory = await this.componentRefProvider.getComponentFactoryRef(prefabName, ComponentType.PREFAB);
