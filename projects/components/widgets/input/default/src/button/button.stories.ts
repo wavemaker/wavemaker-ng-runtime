@@ -23,16 +23,37 @@ type Story = StoryObj<ButtonComponent>;
 
 const getUpdatedCssVars = (selectedClass: string) => {
   debugger
-  if (!selectedClass) return {};
+  //if (!selectedClass) return {};
 
-  const className = selectedClass.split(" ").pop(); // Get the last class name (btn-default, btn-primary, etc.)
-  const rootStyle = getComputedStyle(document.documentElement);
+  //const className = selectedClass.split(" ").pop(); // Get the last class name (btn-default, btn-primary, etc.)
+  //const rootStyle = getComputedStyle(document.documentElement);
 
   return {
-    "--wm-btn-color": rootStyle.getPropertyValue(`--wm-${className}-color`).trim() || "",
-    "--wm-btn-background": rootStyle.getPropertyValue(`--wm-${className}-background`).trim() || "",
-    "--wm-btn-border-color": rootStyle.getPropertyValue(`--wm-${className}-border-color`).trim() || "",
-    "--wm-btn-state-layer-color": rootStyle.getPropertyValue(`--wm-${className}-state-layer-color`).trim() || "",
+    // "--wm-btn-color": rootStyle.getPropertyValue(`--wm-${className}-color`).trim() || "",
+    // "--wm-btn-background": rootStyle.getPropertyValue(`--wm-${className}-background`).trim() || "",
+    // "--wm-btn-border-color": rootStyle.getPropertyValue(`--wm-${className}-border-color`).trim() || "",
+    // "--wm-btn-state-layer-color": rootStyle.getPropertyValue(`--wm-${className}-state-layer-color`).trim() || "",
+   
+        '--wm-btn-default-color': '',
+        '--wm-btn-default-background': '',
+        '--wm-btn-default-border-color': '',
+        '--wm-btn-default-state-layer-color': '',
+      
+        '--wm-btn-primary-color': '',
+        '--wm-btn-primary-background': '',
+        '--wm-btn-primary-border-color': '',
+        '--wm-btn-primary-state-layer-color': '',
+      
+        '--wm-btn-secondary-color': '',
+        '--wm-btn-secondary-background': '',
+        '--wm-btn-secondary-border-color': '',
+        '--wm-btn-secondary-state-layer-color': '',
+      
+        '--wm-btn-tertiary-color': '',
+        '--wm-btn-tertiary-background': '',
+        '--wm-btn-tertiary-border-color': '',
+        '--wm-btn-tertiary-state-layer-color': '',
+      
   };
 };
 
@@ -49,34 +70,8 @@ export const Filled: Story = {
     type: 'medium',
   },
   parameters: {
-    cssVars: {
-      'btn-default': {
-        '--wm-btn-default-color': '',
-        '--wm-btn-default-background': '',
-        '--wm-btn-default-border-color': '',
-        '--wm-btn-default-state-layer-color': '',
-      },
-      'btn-primary': {
-        '--wm-btn-primary-color': '',
-        '--wm-btn-primary-background': '',
-        '--wm-btn-primary-border-color': '',
-        '--wm-btn-primary-state-layer-color': '',
-      },
-      'btn-secondary': {
-        '--wm-btn-secondary-color': '',
-        '--wm-btn-secondary-background': '',
-        '--wm-btn-secondary-border-color': '',
-        '--wm-btn-secondary-state-layer-color': '',
-      },
-      'btn-tertiary': {
-        '--wm-btn-tertiary-color': '',
-        '--wm-btn-tertiary-background': '',
-        '--wm-btn-tertiary-border-color': '',
-        '--wm-btn-tertiary-state-layer-color': '',
-      },
-     
+    cssVars: getUpdatedCssVars(""),  
     },
-  },
 
   render: (args) => {
 
@@ -89,7 +84,7 @@ export const Filled: Story = {
     const baseClass = 'btn-filled';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    const updatedCssVars = updateCssVars(args.class);
+    //const updatedCssVars = updateCssVars(args.class);
 
     let finalObj = {
       component: ButtonComponent,
@@ -114,10 +109,8 @@ export const Outlined: Story = {
 
   },
   parameters: {
-    cssVars: {
-      
-    }
-  },
+    cssVars: getUpdatedCssVars(""),  
+    },
   render: (args) => {
 
     const buttonSizeMap: Record<string, string> = {
@@ -210,7 +203,10 @@ export const AllVariants: Story = {
     actions: { disable: true },
     backgrounds: { disable: true },
     interactions: { disable: true },
+    cssVars: getUpdatedCssVars('btn-default'),
+  
   },
+  
   render: (args) => {
     const variants = [
      

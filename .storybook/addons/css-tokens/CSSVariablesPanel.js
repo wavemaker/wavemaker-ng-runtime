@@ -4,85 +4,55 @@ import { useStorybookApi } from "@storybook/api";
 const CSSVariablesPanel = () => {
   const [currentValues, setCurrentValues] = useState({});
   const api = useStorybookApi();
+
   useEffect(() => {
+    // Update function triggered when a story is rendered
     const updateVariables = () => {
-      const currentStory = api.getCurrentStoryData();
-      const parameters = currentStory?.parameters;
-      const args = currentStory?.args;
-        
-     
-  
-      console.log("Current Story Data:", currentStory);
-      console.log("Parameters:", parameters); 
-      console.log("Args:", args);
-  
-      if (parameters?.cssVars) {
-        console.log("Found cssVars in parameters:", parameters.cssVars);
-        
-        const widgetClasses = args?.class ? args.class.split(" ") : [];
-        console.log("Widget Classes (split):", widgetClasses);
-  
-        let cssVars = null;
-  
-        for (let i = 0; i < widgetClasses.length; i++) {
-          const widgetClass = widgetClasses[i];
-          console.log(`Checking CSS Vars for class: ${widgetClass}`);
-          cssVars = parameters.cssVars[widgetClass];
-          if (cssVars) {
-            console.log(`Found CSS Vars for class "${widgetClass}":`, cssVars);
-            break;
+      const parameters = api.getCurrentStoryData().parameters;
+
+      // Log the parameters to check the data
+      console.log("Updated parameters:", parameters);
+
+      if (parameters && parameters.cssVars) {
+        const storyVariables = parameters.cssVars;
+
+        // Log the variables to see if they are being updated
+        console.log("CSS Variables:", storyVariables);
+
+        // Only update if the variables have changed
+        setCurrentValues((prevValues) => {
+          const updatedValues = { ...prevValues, ...storyVariables };
+
+          // Check if the previous values are different from the updated ones
+          if (JSON.stringify(prevValues) !== JSON.stringify(updatedValues)) {
+            console.log("Updated Variables:", updatedValues);
+            return updatedValues; // Only update state if values are different
           }
-        }
-  
-        if (cssVars) {
-          if (Object.keys(cssVars).length === 0) {
-            console.log("No valid CSS variables found for this class.");
-          } else {
-            const filteredCssVars = Object.fromEntries(
-              Object.entries(cssVars).filter(([key, value]) => {
-                console.log(`Checking variable "${key}":`, value);
-                const isValidValue = value !== "undefined" && value != null;
-                console.log(`Is "${key}" valid?`, isValidValue);
-                return isValidValue;
-              })
-            );
-            console.log("Filtered CSS Variables:", filteredCssVars);
-            setCurrentValues(filteredCssVars);
-            
-          }
-        } else {
-          console.log("No CSS variables found for the specified class(es).");
-          setCurrentValues({});
-        }
-      } else {
-        console.log("No cssVars defined in parameters.");
-        setCurrentValues({});
+
+          return prevValues; // No state change if the values are the same
+        });
       }
     };
-  
-    // Listen for changes to args
-    const currentStory = api.getCurrentStoryData();
-    const args = currentStory?.args;
-    if (args?.class) {
-      updateVariables();
-    }
-  
+
+    // Listen for the 'storyRendered' event
     api.on("storyRendered", updateVariables);
+
+    // Cleanup the listener on component unmount
     return () => {
       api.off("storyRendered", updateVariables);
     };
-  }, [api]); 
-
+  }, [api]);
 
   const handleChange = (event, variable) => {
     const updatedValue = event.target.value;
 
+    // Update local state for the variable being modified
     setCurrentValues((prevValues) => ({
       ...prevValues,
       [variable]: updatedValue,
     }));
-    
 
+    // Modify the CSS variables in the iframe dynamically
     const iframe = document.querySelector("#storybook-preview-iframe");
     const iframeDocument =
       iframe?.contentDocument || iframe?.contentWindow?.document;
@@ -102,12 +72,22 @@ const CSSVariablesPanel = () => {
 
       let rootStartIndex = newStyleContent.indexOf(":root {");
       let rootEndIndex = newStyleContent.indexOf("}", rootStartIndex);
+
       let rootVariables = newStyleContent.slice(
         rootStartIndex + ":root {".length,
         rootEndIndex
       ).trim();
 
-      rootVariables += `\n  ${variable}: ${updatedValue};`;
+      const variableRegex = new RegExp(`${variable}:.*?;`, "g");
+
+      if (variableRegex.test(rootVariables)) {
+        rootVariables = rootVariables.replace(
+          variableRegex,
+          `${variable}: ${updatedValue};`
+        );
+      } else {
+        rootVariables += `\n  ${variable}: ${updatedValue};`;
+      }
 
       newStyleContent = `:root {\n${rootVariables}\n}`;
       styleTag.innerHTML = newStyleContent;
@@ -117,29 +97,25 @@ const CSSVariablesPanel = () => {
   return (
     <div>
       <div className="wm-token-tab-content">
-        {Object.entries(currentValues).length > 0 ? (
-          Object.entries(currentValues).map(([key, value]) => (
-            <div className="content-wrapper" key={key}>
-              <label>{key}</label>
-              <div className="input-wrapper">
-                <input
-                  type="text"
-                  value={value}
-                  onChange={(e) => handleChange(e, key)}
-                  className="input-box"
-                />
-                <input
-                  type="color"
-                  value={value}
-                  onChange={(e) => handleChange(e, key)}
-                  className="color-picker"
-                />
-              </div>
+        {Object.entries(currentValues).map(([key, value]) => (
+          <div className="content-wrapper" key={key}>
+            <label>{key}</label>
+            <div className="input-wrapper">
+              <input
+                type="text"
+                value={value}
+                onChange={(e) => handleChange(e, key)}
+                className="input-box"
+              />
+              <input
+                type="color"
+                value={value}
+                onChange={(e) => handleChange(e, key)}
+                className="color-picker"
+              />
             </div>
-          ))
-        ) : (
-          <div className="text-center text-info">No CSS variables available for this class.</div>
-        )}
+          </div>
+        ))}
       </div>
     </div>
   );
