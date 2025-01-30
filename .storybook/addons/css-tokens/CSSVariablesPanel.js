@@ -15,13 +15,15 @@ const CSSVariablesPanel = () => {
 
       if (parameters && parameters.cssVars) {
         const storyVariables = parameters.cssVars;
+        const updatedVars = JSON.parse(localStorage.getItem('updatedCSSVraiables'));
 
         // Log the variables to see if they are being updated
         console.log("CSS Variables:", storyVariables);
 
         // Only update if the variables have changed
         setCurrentValues((prevValues) => {
-          const updatedValues = { ...prevValues, ...storyVariables };
+          //const updatedValues = { ...prevValues, ...storyVariables };
+          const updatedValues = {...updatedVars };
 
           // Check if the previous values are different from the updated ones
           if (JSON.stringify(prevValues) !== JSON.stringify(updatedValues)) {

@@ -23,42 +23,20 @@ type Story = StoryObj<ButtonComponent>;
 
 const getUpdatedCssVars = (selectedClass: string) => {
   debugger
-  //if (!selectedClass) return {};
+  if (!selectedClass) return {};
 
-  //const className = selectedClass.split(" ").pop(); // Get the last class name (btn-default, btn-primary, etc.)
-  //const rootStyle = getComputedStyle(document.documentElement);
-
+  const className = selectedClass.split(" ").pop(); // Get the last class name (btn-default, btn-primary, etc.)
+  const rootStyle = getComputedStyle(document.documentElement);
   return {
-    // "--wm-btn-color": rootStyle.getPropertyValue(`--wm-${className}-color`).trim() || "",
-    // "--wm-btn-background": rootStyle.getPropertyValue(`--wm-${className}-background`).trim() || "",
-    // "--wm-btn-border-color": rootStyle.getPropertyValue(`--wm-${className}-border-color`).trim() || "",
-    // "--wm-btn-state-layer-color": rootStyle.getPropertyValue(`--wm-${className}-state-layer-color`).trim() || "",
-   
-        '--wm-btn-default-color': '',
-        '--wm-btn-default-background': '',
-        '--wm-btn-default-border-color': '',
-        '--wm-btn-default-state-layer-color': '',
-      
-        '--wm-btn-primary-color': '',
-        '--wm-btn-primary-background': '',
-        '--wm-btn-primary-border-color': '',
-        '--wm-btn-primary-state-layer-color': '',
-      
-        '--wm-btn-secondary-color': '',
-        '--wm-btn-secondary-background': '',
-        '--wm-btn-secondary-border-color': '',
-        '--wm-btn-secondary-state-layer-color': '',
-      
-        '--wm-btn-tertiary-color': '',
-        '--wm-btn-tertiary-background': '',
-        '--wm-btn-tertiary-border-color': '',
-        '--wm-btn-tertiary-state-layer-color': '',
-      
+    [`--wm-${className}-color`]: rootStyle.getPropertyValue(`--wm-${className}-color`).trim() || "",
+    [`--wm-${className}-background`]: rootStyle.getPropertyValue(`--wm-${className}-background`).trim() || "",
+    [`--wm-${className}-border-color`]: rootStyle.getPropertyValue(`--wm-${className}-border-color`).trim() || "",
+    [`--wm-${className}-state-layer-color`]: rootStyle.getPropertyValue(`--wm-${className}-state-layer-color`).trim() || "",
   };
+
 };
 
 const updateCssVars = (selectedClass: string) => {
-  // Calculate new CSS variables based on selected class
   const updatedCssVars = getUpdatedCssVars(selectedClass);
   return updatedCssVars;
 };
@@ -70,7 +48,7 @@ export const Filled: Story = {
     type: 'medium',
   },
   parameters: {
-    cssVars: getUpdatedCssVars(""),  
+    cssVars: updateCssVars('btn-default'),  
     },
 
   render: (args) => {
@@ -84,13 +62,18 @@ export const Filled: Story = {
     const baseClass = 'btn-filled';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    //const updatedCssVars = updateCssVars(args.class);
+    const updatedCssVars = updateCssVars(args.class);
+    localStorage.setItem ("updatedCSSVraiables", JSON.stringify(updatedCssVars));
+
 
     let finalObj = {
       component: ButtonComponent,
       props: {
         ...args,
         class: updatedClass,
+      },
+      parameters: {
+        cssVars: updatedCssVars,
       },
     };
     return finalObj;
