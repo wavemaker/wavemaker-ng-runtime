@@ -578,8 +578,59 @@ export const AllVariants: Story = {
       large: 'padding: 8px 16px; font-size: 16px; width: 140px;',
     };
 
-    return {
-      template: `
+    // return {
+    //   template: `
+    //     <div style="display: flex; flex-direction: column; gap: 24px;">
+    //       ${variants
+    //         .map((variant) => {
+    //           const isGridLayout = variant.layout === 'grid';
+    //           return `
+    //             <div>
+    //               <h6>${variant.heading}</h6>
+    //               <div style="
+    //               display: ${isGridLayout ? 'grid' : 'flex'};
+    //                 ${isGridLayout ? 'grid-template-columns: repeat(5, 1fr); column-gap: 15px; row-gap: 15px;' : 'gap: 8px;'}
+    //               ">
+    //                 ${variant.buttons
+    //                   .map((button) => {
+    //                     const buttonSizeStyle = sizeStyles[button.type] || '';
+    //                     const updatedClass = `${button.class}`.trim();
+
+    //                     return `
+    //                       <button  class="${updatedClass}" style="position: relative; ${buttonSizeStyle}">
+    //                         ${
+    //                           button.iconposition === 'left'
+    //                             ? `<i class="${button.iconclass}" style="margin-right: 4px;"></i>`
+    //                             : ''
+    //                         }
+    //                         ${button.caption}
+    //                         ${
+    //                           button.iconposition === 'right'
+    //                             ? `<i class="${button.iconclass}" style="margin-left: 4px;"></i>`
+    //                             : ''
+    //                         }
+    //                         ${
+    //                           button.badgevalue
+    //                             ? `<span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px;">
+    //                                 ${button.badgevalue}
+    //                               </span>`
+    //                             : ''
+    //                         }
+    //                       </button>
+    //                     `;
+    //                   })
+    //                   .join('')}
+    //               </div>
+    //             </div>
+    //           `;
+    //         })
+    //         .join('')}
+    //     </div>
+    //   `,
+    // };
+  
+  return {
+    template: `
         <div style="display: flex; flex-direction: column; gap: 24px;">
           ${variants
             .map((variant) => {
@@ -587,35 +638,18 @@ export const AllVariants: Story = {
               return `
                 <div>
                   <h6>${variant.heading}</h6>
-                  <div style="
-                  display: ${isGridLayout ? 'grid' : 'flex'};
-                    ${isGridLayout ? 'grid-template-columns: repeat(5, 1fr); column-gap: 15px; row-gap: 15px;' : 'gap: 8px;'}
-                  ">
+                  <div style="display: ${isGridLayout ? 'grid' : 'flex'}; ${isGridLayout ? 'grid-template-columns: repeat(5, 1fr); column-gap: 15px; row-gap: 15px;' : 'gap: 8px;'}">
                     ${variant.buttons
                       .map((button) => {
                         const buttonSizeStyle = sizeStyles[button.type] || '';
                         const updatedClass = `${button.class}`.trim();
-
                         return `
-                          <button class="${updatedClass}" style="position: relative; ${buttonSizeStyle}">
-                            ${
-                              button.iconposition === 'left'
-                                ? `<i class="${button.iconclass}" style="margin-right: 4px;"></i>`
-                                : ''
-                            }
-                            ${button.caption}
-                            ${
-                              button.iconposition === 'right'
-                                ? `<i class="${button.iconclass}" style="margin-left: 4px;"></i>`
-                                : ''
-                            }
-                            ${
-                              button.badgevalue
-                                ? `<span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px;">
-                                    ${button.badgevalue}
-                                  </span>`
-                                : ''
-                            }
+                          <button wmbutton="" widget-id="widget-id43" type="${button.type}" tabindex="0" icon-position="${button.iconposition}" class="${updatedClass}" style="position: relative; ${buttonSizeStyle}">
+                            ${button.iconposition === 'left' ? `<i aria-hidden="true" class="app-icon ${button.iconclass}"></i>` : ''}
+                            <span class="sr-only">${button.caption}</span>
+                            <span class="btn-caption">${button.caption}</span>
+                            ${button.iconposition === 'right' ? `<i aria-hidden="true" class="app-icon ${button.iconclass}"></i>` : ''}
+                            ${button.badgevalue ? `<span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px;">${button.badgevalue}</span>` : ''}
                           </button>
                         `;
                       })
