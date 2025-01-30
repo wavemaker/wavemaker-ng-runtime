@@ -279,7 +279,10 @@ export class DateComponent extends BaseDateTimeComponent {
                 const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this);
-                const inputVal = event.target.value.trim();
+                let inputVal = event.target.value.trim();
+                if (this.showdateformatasplaceholder && inputVal === this.maskDateInputFormatPlaceholder) {
+                    inputVal = "";
+                }
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!isNaN(inputVal) && parseInt(inputVal) !== formattedDate) {
                         this.invalidDateTimeFormat = true;
@@ -291,7 +294,7 @@ export class DateComponent extends BaseDateTimeComponent {
                 } else {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
-                    this.bsDatePickerDirective.bsValue =  event.target.value ? newVal : '';
+                    this.bsDatePickerDirective.bsValue =  inputVal ? newVal : '';
                     this.updateIMask();
                 }
                 this.toggleDpDropdown(event);
