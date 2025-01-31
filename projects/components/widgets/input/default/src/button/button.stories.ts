@@ -22,7 +22,7 @@ type Story = StoryObj<ButtonComponent>;
 
 
 const getUpdatedCssVars = (selectedClass: string) => {
-  debugger
+  //debugger
   if (!selectedClass) return {};
 
   const className = selectedClass.split(" ").pop(); // Get the last class name (btn-default, btn-primary, etc.)

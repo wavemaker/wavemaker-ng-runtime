@@ -6,19 +6,18 @@ const CSSVariablesPanel = () => {
   const api = useStorybookApi();
 
   useEffect(() => {
+    //debugger
     // Update function triggered when a story is rendered
     const updateVariables = () => {
       const parameters = api.getCurrentStoryData().parameters;
-
-      // Log the parameters to check the data
-      console.log("Updated parameters:", parameters);
+      //console.log("Updated parameters:", parameters);
 
       if (parameters?.cssVars) {
         const storyVariables = parameters.cssVars;
         const updatedVars = JSON.parse(localStorage.getItem('updatedCSSVraiables'));
 
         // Log the variables to see if they are being updated
-        console.log("CSS Variables:", storyVariables);
+        //console.log("CSS Variables:", storyVariables);
 
         // Only update if the variables have changed
         setCurrentValues((prevValues) => {
@@ -27,11 +26,11 @@ const CSSVariablesPanel = () => {
 
           // Check if the previous values are different from the updated ones
           if (JSON.stringify(prevValues) !== JSON.stringify(updatedValues)) {
-            console.log("Updated Variables:", updatedValues);
-            return updatedValues; // Only update state if values are different
+            //console.log("Updated Variables:", updatedValues);
+            return updatedValues;
           }
 
-          return prevValues; // No state change if the values are the same
+          return prevValues;
         });
       } else {
         setCurrentValues(null); // No CSS variables found
@@ -48,8 +47,8 @@ const CSSVariablesPanel = () => {
   }, [api]);
 
   const handleChange = (event, variable) => {
+    //debugger
     const updatedValue = event.target.value;
-
     // Update local state for the variable being modified
     setCurrentValues((prevValues) => ({
       ...prevValues,
