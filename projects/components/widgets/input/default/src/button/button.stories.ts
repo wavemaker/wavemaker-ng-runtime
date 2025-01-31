@@ -24,8 +24,7 @@ type Story = StoryObj<ButtonComponent>;
 const getUpdatedCssVars = (selectedClass: string) => {
   //debugger
   if (!selectedClass) return {};
-
-  const className = selectedClass.split(" ").pop(); // Get the last class name (btn-default, btn-primary, etc.)
+  const className = selectedClass.split(" ").pop(); 
   const rootStyle = getComputedStyle(document.documentElement);
   return {
     [`--wm-${className}-color`]: rootStyle.getPropertyValue(`--wm-${className}-color`).trim() || "",
@@ -41,6 +40,16 @@ const updateCssVars = (selectedClass: string) => {
   return updatedCssVars;
 };
 
+const updateCssVarsObject = (optionsArray: Array<any>) => {
+  let defaultOptions = ['btn-default', 'btn-primary', 'btn-secondary','btn-tertiary','btn-success','btn-info','btn-warning','btn-danger']
+  let finalCssVariable = {};
+  optionsArray.forEach((element, index) => {
+      let cssVariableKey = defaultOptions[index];
+      finalCssVariable[cssVariableKey] = getUpdatedCssVars(element);
+  });
+  return finalCssVariable;
+};
+
 export const Filled: Story = {
   args: {
     caption: 'Filled',
@@ -48,7 +57,7 @@ export const Filled: Story = {
     type: 'medium',
   },
   parameters: {
-    cssVars: updateCssVars('btn-default'),  
+    cssVars: updateCssVarsObject(['btn-default', 'btn-primary', 'btn-secondary','btn-tertiary','btn-success','btn-info','btn-warning','btn-danger']),  
   },
 
   render: (args) => {
@@ -63,7 +72,7 @@ export const Filled: Story = {
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
     const updatedCssVars = updateCssVars(args.class);
-    localStorage.setItem ("updatedCSSVraiables", JSON.stringify(updatedCssVars));
+  
 
 
     let finalObj = {
@@ -92,7 +101,7 @@ export const Outlined: Story = {
 
   },
   parameters: {
-    cssVars: getUpdatedCssVars('btn-default'),  
+    cssVars: updateCssVarsObject(['btn-default-outlined', 'btn-primary-outlined', 'btn-secondary-outlined','btn-tertiary-outlined','btn-success-outlined','btn-info-outlined','btn-warning-outlined','btn-danger-outlined']),  
   },
   render: (args) => {
 
@@ -106,7 +115,7 @@ export const Outlined: Story = {
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
     const updatedCssVars = updateCssVars(args.class);
-    localStorage.setItem ("updatedCSSVraiables", JSON.stringify(updatedCssVars));
+  
 
     return {
       component: ButtonComponent,
@@ -128,9 +137,7 @@ export const Text: Story = {
     iconclass: 'wi wi-plus',
     badgevalue: ''
   },
-  parameters: {
-    cssVars: getUpdatedCssVars('btn-default'),  
-  },
+ 
   render: (args) => {
 
     const buttonSizeMap: Record<string, string> = {
@@ -143,7 +150,7 @@ export const Text: Story = {
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
     const updatedCssVars = updateCssVars(args.class);
-    localStorage.setItem ("updatedCSSVraiables", JSON.stringify(updatedCssVars));
+  
 
     return {
       component: ButtonComponent,
@@ -166,7 +173,7 @@ export const Elevated: Story = {
     badgevalue: ''
   },
   parameters: {
-    cssVars: getUpdatedCssVars('btn-default'),  
+    cssVars: updateCssVarsObject(['btn-default', 'btn-primary', 'btn-secondary','btn-tertiary','btn-success','btn-info','btn-warning','btn-danger']),  
   },
   render: (args) => {
 
@@ -180,7 +187,7 @@ export const Elevated: Story = {
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
     const updatedCssVars = updateCssVars(args.class);
-    localStorage.setItem ("updatedCSSVraiables", JSON.stringify(updatedCssVars));
+  
 
     return {
       component: ButtonComponent,
@@ -196,7 +203,6 @@ export const AllVariants: Story = {
   args: {
     class: 'btn-default',
   },
-  //disable\ig iconposition and type from control 
   argTypes: {
     iconposition: { table: { disable: true } },
     type: { table: { disable: true } },
@@ -210,9 +216,7 @@ export const AllVariants: Story = {
   },
   
   render: (args) => {
-    //Updating CSS varaibles based on class that seleted in contorl args
     const updatedCssVars = updateCssVars(args.class);
-    localStorage.setItem ("updatedCSSVraiables", JSON.stringify(updatedCssVars));
     const variants = [   
       {
         heading: 'Filled Buttons',

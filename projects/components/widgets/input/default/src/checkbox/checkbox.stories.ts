@@ -10,7 +10,8 @@ const meta: Meta<CheckboxComponent> = {
       control: 'select',
       options: ['primary','secondary', 'success', 'error'],
     }
-  }
+  },
+ 
 };
 
 export default meta;
@@ -30,6 +31,12 @@ export const Default: Story = {
     controls: {
       exclude: ['class'],
     },
+    cssVars:{
+      '--wm-checkbox-background-selected': '#000',
+      '--wm-checkbox-border-color-selected': '#eee',
+      '--wm-checkbox-icon-color-selected': '#ddd',
+
+    }
   },
 };
 

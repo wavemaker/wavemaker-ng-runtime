@@ -1,78 +1,61 @@
 import React, { useEffect, useState } from "react";
 import { useStorybookApi } from "@storybook/api";
 
-const CSSVariablesPanel = () => {
+const CssPanel = () => {
   const [currentValues, setCurrentValues] = useState({});
   const api = useStorybookApi();
   useEffect(() => {
     const updateVariables = () => {
+      debugger;
       const currentStory = api.getCurrentStoryData();
       const parameters = currentStory?.parameters;
       const args = currentStory?.args;
-        
-     
-  
-      console.log("Current Story Data:", currentStory);
-      console.log("Parameters:", parameters); 
-      console.log("Args:", args);
+      console.log(args);
   
       if (parameters?.cssVars) {
-        console.log("Found cssVars in parameters:", parameters.cssVars);
-        
-        const widgetClasses = args?.class ? args.class.split(" ") : [];
-        console.log("Widget Classes (split):", widgetClasses);
-  
+        const widgetClasses = localStorage.getItem("activeValue") ? localStorage.getItem("activeValue").split(" ") : [];
         let cssVars = null;
   
         for (let i = 0; i < widgetClasses.length; i++) {
           const widgetClass = widgetClasses[i];
-          console.log(`Checking CSS Vars for class: ${widgetClass}`);
           cssVars = parameters.cssVars[widgetClass];
           if (cssVars) {
-            console.log(`Found CSS Vars for class "${widgetClass}":`, cssVars);
             break;
           }
         }
   
         if (cssVars) {
-          if (Object.keys(cssVars).length === 0) {
-            console.log("No valid CSS variables found for this class.");
-          } else {
-            const filteredCssVars = Object.fromEntries(
-              Object.entries(cssVars).filter(([key, value]) => {
-                console.log(`Checking variable "${key}":`, value);
-                const isValidValue = value !== "undefined" && value != null;
-                console.log(`Is "${key}" valid?`, isValidValue);
-                return isValidValue;
-              })
-            );
-            console.log("Filtered CSS Variables:", filteredCssVars);
-            setCurrentValues(filteredCssVars);
-            
-          }
+          const filteredCssVars = Object.fromEntries(
+            Object.entries(cssVars).filter(([key, value]) => {
+              return value !== "undefined" && value != null;
+            })
+          );
+          setCurrentValues(filteredCssVars);
         } else {
-          console.log("No CSS variables found for the specified class(es).");
           setCurrentValues({});
         }
       } else {
-        console.log("No cssVars defined in parameters.");
         setCurrentValues({});
       }
     };
   
-    // Listen for changes to args
+    // Get the current story and args
     const currentStory = api.getCurrentStoryData();
     const args = currentStory?.args;
+  
+    // Update variables if args.class exists
     if (args?.class) {
       updateVariables();
     }
   
+    // Listen for story changes
     api.on("storyRendered", updateVariables);
+  
+    // Cleanup listener
     return () => {
       api.off("storyRendered", updateVariables);
     };
-  }, [api]); 
-
+  }, [api]); // Only `api` is needed in the dependency array
 
   const handleChange = (event, variable) => {
     const updatedValue = event.target.value;
@@ -81,7 +64,6 @@ const CSSVariablesPanel = () => {
       ...prevValues,
       [variable]: updatedValue,
     }));
-    
 
     const iframe = document.querySelector("#storybook-preview-iframe");
     const iframeDocument =
@@ -138,11 +120,13 @@ const CSSVariablesPanel = () => {
             </div>
           ))
         ) : (
-          <div className="text-center text-info">No CSS variables available for this class.</div>
+          <div className="text-center text-info">
+            No CSS variables available for this class.
+          </div>
         )}
       </div>
     </div>
   );
 };
 
-export default CSSVariablesPanel;
+export default CssPanel;
