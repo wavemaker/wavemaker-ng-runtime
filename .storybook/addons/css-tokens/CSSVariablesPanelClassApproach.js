@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useStorybookApi } from "@storybook/api";
 
+const Spinner = () => (
+  <div className="spinner text-center text-info">Loading...</div> 
+);
+
 const CSSVariablesPanel = () => {
   const [currentValues, setCurrentValues] = useState({});
+  const [loading, setLoading] = useState(true);
   const api = useStorybookApi();
   useEffect(() => {
     
@@ -52,6 +57,7 @@ const CSSVariablesPanel = () => {
         console.log("No cssVars defined in parameters.");
         setCurrentValues({});
       }
+      setLoading(false);
     };
     
     const currentStory = api.getCurrentStoryData();
@@ -129,7 +135,9 @@ const CSSVariablesPanel = () => {
   return (
     <div>
       <div className="wm-token-tab-content">
-        {Object.entries(currentValues).length > 0 ? (
+        {loading ? (
+          <Spinner /> // Show spinner while loading
+        ) : Object.entries(currentValues).length > 0 ? (
           Object.entries(currentValues).map(([key, value]) => (
             <div className="content-wrapper" key={key}>
               <label>{key}</label>
@@ -142,7 +150,7 @@ const CSSVariablesPanel = () => {
                 />
                 <input
                   type="color"
-                  value={value.startsWith("#") ? value : "#000000"} 
+                  value={value.startsWith("#") ? value : ""}
                   onChange={(e) => handleChange(e, key)}
                   className="color-picker"
                 />
