@@ -161,20 +161,12 @@ export const AllIcons: Story = {
 
 export const AllVariants: Story = {
   parameters: {
-    controls: { disable: true }, 
     actions: { disable: true },
-    interactions: { disable: true }, 
-    backgrounds: { disable: true }, 
-    viewport: { disable: true },
-    'storybook/css-tokens/panel': { disable: true}
-    //storybook/css-tokens/panel: {disable: true},
-    // previewTabs: {
-    //   'storybook/docs/panel': { hidden: true },
-    //   'canvas': { hidden: false },
-    // },
-    // options: {
-    //   showPanel: false,
-    // },
+    controls: { disable: true },
+    backgrounds: { disable: true },
+    interactions: { disable: true },
+    'storybook/visual-tests': { disable: true },
+    'storybook/css-tokens/panel': { disable: true },  // Disable CSS Variables panel for this story
   },
   render: (args) => {
     const variants = [

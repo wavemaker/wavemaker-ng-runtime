@@ -208,11 +208,12 @@ export const AllVariants: Story = {
     type: { table: { disable: true } },
   },
   parameters: {
-    controls: { disable: true },
     actions: { disable: true },
+    controls: { disable: true },
     backgrounds: { disable: true },
     interactions: { disable: true },
-    'storybook/css-tokens/panel': {disable: true}
+    'storybook/visual-tests': { disable: true },
+    'storybook/css-tokens/panel': { disable: true },
   },
   
   render: (args) => {

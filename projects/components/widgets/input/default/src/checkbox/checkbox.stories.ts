@@ -8,7 +8,7 @@ const meta: Meta<CheckboxComponent> = {
   argTypes: {
     class : {
       control: 'select',
-      options: ['primary','secondary', 'success', 'error'],
+      options: ['primary','secondary','tertiary','success','info','warning','error'],
     }
   },
  
@@ -16,6 +16,32 @@ const meta: Meta<CheckboxComponent> = {
 
 export default meta;
 type Story = StoryObj<CheckboxComponent>;
+
+const getUpdatedCssVars = (selectedClass: string) => {
+  //debugger
+  if (!selectedClass) return {};
+  const className = selectedClass.split(" ").pop(); 
+  const rootStyle = getComputedStyle(document.documentElement);
+  return {
+    '--wm-checkbox-background-selected' : rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "",
+    '--wm-checkbox-border-color-selected': rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "",
+    '--wm-checkbox-icon-color-selected': rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "",
+    '--wm-checkbox-selected-state-hover': rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "",
+    '--wm-checkbox-selected-state-focus': rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "",
+  };
+
+};
+
+const updateCssVarsObject = (optionsArray: Array<any>) => {
+  let defaultOptions = ['primary','secondary','tertiary','success','info','warning','error'];
+  let finalCssVariable = {};
+  optionsArray.forEach((element, index) => {
+      let cssVariableKey = defaultOptions[index];
+      finalCssVariable[cssVariableKey] = getUpdatedCssVars(element);
+  });
+  return finalCssVariable;
+};
+
 
 export const Default: Story = {
   args: {
@@ -31,28 +57,30 @@ export const Default: Story = {
     controls: {
       exclude: ['class'],
     },
-    cssVars:{
-      '--wm-checkbox-background-selected': '#000',
-      '--wm-checkbox-border-color-selected': '#eee',
-      '--wm-checkbox-icon-color-selected': '#ddd',
-
-    }
   },
 };
 
 export const Class: Story = {
   args: {
     _caption: "checkbox",
-    datavalue : true,
-    disabled: true,
     class: 'success',
+    datavalue : true,
+    disabled: false,
+  },
+  parameters: {
+    cssVars: updateCssVarsObject(['primary','secondary','tertiary','success','info','warning','error']), 
   },
 };
 
-
-
-
 export const AllVariants: Story = {
+  parameters: {
+    actions: { disable: true },
+    controls: { disable: true },
+    backgrounds: { disable: true },
+    interactions: { disable: true },
+    'storybook/visual-tests': { disable: true },
+    'storybook/css-tokens/panel': { disable: true },
+  },
   render: () => {
     const variants = [
       {
