@@ -76,8 +76,8 @@ export const AllVariants: Story = {
         ${variants
           .map(
             (variant) => `
-            <div>
-              <h6>${variant.heading}</h6>
+            <div  style="margin:0 16px;">
+              <h6 style="margin:24px 0;">${variant.heading}</h6>
               <div style="display: flex; gap: 16px; align-items: center;">
                 ${variant.checkboxes
                   .map(

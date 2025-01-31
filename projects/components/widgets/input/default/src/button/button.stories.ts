@@ -590,13 +590,13 @@ export const AllVariants: Story = {
 
     return {
       template: `
-        <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div style="display: flex; flex-direction: column; gap: 24px; margin: 0 12px;">
           ${variants
             .map((variant) => {
               const isGridLayout = variant.layout === 'grid';
               return `
                 <div>
-                  <h6>${variant.heading}</h6>
+                  <h6 style="margin:16px 0;">${variant.heading}</h6>
                   <div style="
                   display: ${isGridLayout ? 'grid' : 'flex'};
                     ${isGridLayout ? 'grid-template-columns: repeat(5, 1fr); column-gap: 15px; row-gap: 15px;' : 'gap: 8px;'}
