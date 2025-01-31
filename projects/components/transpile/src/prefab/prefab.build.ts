@@ -10,7 +10,7 @@ register('wm-prefab', () => {
             const counter = idGen.nextUid();
             return `<${tagName} wmPrefab #${counter}="wmPrefab" redrawable data-role="prefab" ${getAttrMarkup(attrs)}>
             <ng-container *ngIf="${counter}.showLoader && ${counter}.app.Variables?.showSkeletonLoader?.dataSet.dataValue || false">
-                <wm-skeleton-loader widget-type="default"></wm-skeleton-loader>
+                <wm-skeleton-loader widget-type="prefab"></wm-skeleton-loader>
             </ng-container>`
         },
         post: () => `</${tagName}>`
