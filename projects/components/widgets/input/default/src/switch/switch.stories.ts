@@ -11,11 +11,27 @@ const meta: Meta<SwitchComponent> = {
 export default meta;
 type Story = StoryObj<SwitchComponent>;
 
+
+const getUpdatedCssVars = () => {
+  const rootStyle = getComputedStyle(document.documentElement);
+  return {
+    '--wm-switch-btn-background': rootStyle.getPropertyValue('--wm-switch-btn-background-active'),
+    '--wm-switch-btn-color': rootStyle.getPropertyValue('--wm-switch-btn-color-active'),
+    '--wm-switch-btn-border-color': rootStyle.getPropertyValue('--wm-switch-btn-border-color-active'),
+    '--wm-switch-btn-state-layer-color-active': rootStyle.getPropertyValue('--wm-switch-btn-state-layer-color-active'),
+  };
+};
+
+
+
 export const Default: Story = {
   args: {
     disabled: false,
     required: false,
     dataset : ['yes', 'no', 'maybe'],
+  },
+  parameters: {
+    cssVars: getUpdatedCssVars(),  
   },
 };
 
@@ -31,6 +47,9 @@ export const DisplayfieldChange: Story = {
     ],
     displayfield : 'location'
   },
+  parameters: {
+    cssVars: getUpdatedCssVars(),  
+  },
 };
 
 export const Orderby: Story = {
@@ -45,6 +64,9 @@ export const Orderby: Story = {
     ],
     displayfield : 'location',
     orderby : 'location:asc',
+  },
+  parameters: {
+    cssVars: getUpdatedCssVars(),  
   },
 };
 

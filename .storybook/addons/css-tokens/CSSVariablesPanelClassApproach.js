@@ -30,7 +30,7 @@ const CSSVariablesPanel = () => {
             api.getChannel().data?.updateStoryArgs[0].updatedArgs?.class) ??
           (args.class ? args.class : "");
     
-        let cssVars = parameters.cssVars[widgetClass];
+          let cssVars = parameters.cssVars[widgetClass] ?? parameters.cssVars;
     
         if (cssVars) {
           if (Object.keys(cssVars).length === 0) {
