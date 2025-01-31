@@ -49,7 +49,7 @@ export const Filled: Story = {
   },
   parameters: {
     cssVars: updateCssVars('btn-default'),  
-    },
+  },
 
   render: (args) => {
 
@@ -92,8 +92,8 @@ export const Outlined: Story = {
 
   },
   parameters: {
-    cssVars: getUpdatedCssVars(""),  
-    },
+    cssVars: getUpdatedCssVars('btn-default'),  
+  },
   render: (args) => {
 
     const buttonSizeMap: Record<string, string> = {
@@ -105,6 +105,8 @@ export const Outlined: Story = {
     const baseClass = 'btn-outlined';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
+    const updatedCssVars = updateCssVars(args.class);
+    localStorage.setItem ("updatedCSSVraiables", JSON.stringify(updatedCssVars));
 
     return {
       component: ButtonComponent,
@@ -126,6 +128,9 @@ export const Text: Story = {
     iconclass: 'wi wi-plus',
     badgevalue: ''
   },
+  parameters: {
+    cssVars: getUpdatedCssVars('btn-default'),  
+  },
   render: (args) => {
 
     const buttonSizeMap: Record<string, string> = {
@@ -137,6 +142,8 @@ export const Text: Story = {
     const baseClass = 'btn-text';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
+    const updatedCssVars = updateCssVars(args.class);
+    localStorage.setItem ("updatedCSSVraiables", JSON.stringify(updatedCssVars));
 
     return {
       component: ButtonComponent,
@@ -158,6 +165,9 @@ export const Elevated: Story = {
     iconclass: 'wi wi-plus',
     badgevalue: ''
   },
+  parameters: {
+    cssVars: getUpdatedCssVars('btn-default'),  
+  },
   render: (args) => {
 
     const buttonSizeMap: Record<string, string> = {
@@ -169,6 +179,8 @@ export const Elevated: Story = {
     const baseClass = 'btn-elevated';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
+    const updatedCssVars = updateCssVars(args.class);
+    localStorage.setItem ("updatedCSSVraiables", JSON.stringify(updatedCssVars));
 
     return {
       component: ButtonComponent,
