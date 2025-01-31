@@ -35,10 +35,10 @@ const getUpdatedCssVars = (selectedClass: string) => {
 
 };
 
-const updateCssVars = (selectedClass: string) => {
-  const updatedCssVars = getUpdatedCssVars(selectedClass);
-  return updatedCssVars;
-};
+// const updateCssVars = (selectedClass: string) => {
+//   const updatedCssVars = getUpdatedCssVars(selectedClass);
+//   return updatedCssVars;
+// };
 
 const updateCssVarsObject = (optionsArray: Array<any>) => {
   let defaultOptions = ['btn-default', 'btn-primary', 'btn-secondary','btn-tertiary','btn-success','btn-info','btn-warning','btn-danger']
@@ -71,7 +71,7 @@ export const Filled: Story = {
     const baseClass = 'btn-filled';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    const updatedCssVars = updateCssVars(args.class);
+    //const updatedCssVars = updateCssVars(args.class);
   
 
 
@@ -81,9 +81,9 @@ export const Filled: Story = {
         ...args,
         class: updatedClass,
       },
-      parameters: {
-        cssVars: updatedCssVars,
-      },
+      // parameters: {
+      //   cssVars: updatedCssVars,
+      // },
     };
     return finalObj;
   },
@@ -114,7 +114,7 @@ export const Outlined: Story = {
     const baseClass = 'btn-outlined';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    const updatedCssVars = updateCssVars(args.class);
+    //const updatedCssVars = updateCssVars(args.class);
   
 
     return {
@@ -149,7 +149,7 @@ export const Text: Story = {
     const baseClass = 'btn-text';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    const updatedCssVars = updateCssVars(args.class);
+    //const updatedCssVars = updateCssVars(args.class);
   
 
     return {
@@ -186,7 +186,7 @@ export const Elevated: Story = {
     const baseClass = 'btn-elevated';
     const buttonSize = buttonSizeMap[args.type] || '';
     const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    const updatedCssVars = updateCssVars(args.class);
+    //const updatedCssVars = updateCssVars(args.class);
   
 
     return {
@@ -208,15 +208,15 @@ export const AllVariants: Story = {
     type: { table: { disable: true } },
   },
   parameters: {
-    controls: { disable: false },
+    controls: { disable: true },
     actions: { disable: true },
     backgrounds: { disable: true },
     interactions: { disable: true },
-    cssVars: getUpdatedCssVars('btn-default'), 
+    'storybook/css-tokens/panel': {disable: true}
   },
   
   render: (args) => {
-    const updatedCssVars = updateCssVars(args.class);
+    //const updatedCssVars = updateCssVars(args.class);
     const variants = [   
       {
         heading: 'Filled Buttons',

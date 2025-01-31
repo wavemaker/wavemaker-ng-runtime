@@ -166,9 +166,7 @@ export const AllVariants: Story = {
     interactions: { disable: true }, 
     backgrounds: { disable: true }, 
     viewport: { disable: true },
-    'storybook/css-tokens/panel': { 
-      disable: true,
-    }
+    'storybook/css-tokens/panel': { disable: true}
     //storybook/css-tokens/panel: {disable: true},
     // previewTabs: {
     //   'storybook/docs/panel': { hidden: true },
