@@ -84,7 +84,7 @@ export const Filled: Story = {
 export const Outlined: Story = {
   args: {
     caption: 'Outlined',
-    class: 'btn-outlined btn-default',
+    class: 'btn-default',
     type:'medium',
     iconposition: 'right',
     iconclass: 'wi wi-plus',
@@ -120,7 +120,7 @@ export const Outlined: Story = {
 export const Text: Story = {
   args: {
     caption: 'Text',
-    class: 'btn-text btn-default',
+    class: 'btn-default',
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
@@ -152,7 +152,7 @@ export const Text: Story = {
 export const Elevated: Story = {
   args: {
     caption: 'Elevated',
-    class: 'btn-elevated btn-default',
+    class: 'btn-default',
     type:'medium',
     iconposition: 'left',
     iconclass: 'wi wi-plus',
@@ -181,18 +181,27 @@ export const Elevated: Story = {
 };
 
 export const AllVariants: Story = {
+  args: {
+    class: 'btn-default',
+  },
+  //disable\ig iconposition and type from control 
+  argTypes: {
+    iconposition: { table: { disable: true } },
+    type: { table: { disable: true } },
+  },
   parameters: {
-    controls: { disable: true },
+    controls: { disable: false },
     actions: { disable: true },
     backgrounds: { disable: true },
     interactions: { disable: true },
-    cssVars: getUpdatedCssVars('btn-default'),
-  
+    cssVars: getUpdatedCssVars('btn-default'), 
   },
   
   render: (args) => {
-    const variants = [
-     
+    //Updating CSS varaibles based on class that seleted in contorl args
+    const updatedCssVars = updateCssVars(args.class);
+    localStorage.setItem ("updatedCSSVraiables", JSON.stringify(updatedCssVars));
+    const variants = [   
       {
         heading: 'Filled Buttons',
         buttons: [

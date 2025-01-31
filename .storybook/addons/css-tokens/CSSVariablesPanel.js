@@ -13,7 +13,7 @@ const CSSVariablesPanel = () => {
       // Log the parameters to check the data
       console.log("Updated parameters:", parameters);
 
-      if (parameters && parameters.cssVars) {
+      if (parameters?.cssVars) {
         const storyVariables = parameters.cssVars;
         const updatedVars = JSON.parse(localStorage.getItem('updatedCSSVraiables'));
 
@@ -33,6 +33,8 @@ const CSSVariablesPanel = () => {
 
           return prevValues; // No state change if the values are the same
         });
+      } else {
+        setCurrentValues(null); // No CSS variables found
       }
     };
 
@@ -99,25 +101,19 @@ const CSSVariablesPanel = () => {
   return (
     <div>
       <div className="wm-token-tab-content">
-        {Object.entries(currentValues).map(([key, value]) => (
-          <div className="content-wrapper" key={key}>
-            <label>{key}</label>
-            <div className="input-wrapper">
-              <input
-                type="text"
-                value={value}
-                onChange={(e) => handleChange(e, key)}
-                className="input-box"
-              />
-              <input
-                type="color"
-                value={value}
-                onChange={(e) => handleChange(e, key)}
-                className="color-picker"
-              />
+        {currentValues ? (
+          Object.entries(currentValues).map(([key, value]) => (
+            <div className="content-wrapper" key={key}>
+              <label>{key}</label>
+              <div className="input-wrapper">
+                <input type="text" value={value} onChange={(e) => handleChange(e, key)} className="input-box" />
+                <input type="color" value={value} onChange={(e) => handleChange(e, key)} className="color-picker" />
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No CSS Variables Found</p>
+        )}
       </div>
     </div>
   );
