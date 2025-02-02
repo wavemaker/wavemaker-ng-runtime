@@ -22,7 +22,7 @@ const CSSVariablesPanel = () => {
     
       if (parameters?.cssVars) {
         console.log("Found cssVars in parameters:", parameters.cssVars);
-        debugger;
+        //debugger;
         
         // Get current selected class
         const widgetClass =
@@ -74,7 +74,7 @@ const CSSVariablesPanel = () => {
 
 
   const handleChange = (event, variable) => {
-    debugger;
+    //debugger;
     let updatedValue = event.target.value.trim(); 
   
     // Validate hex color format if needed
