@@ -35,11 +35,6 @@ const getUpdatedCssVars = (selectedClass: string) => {
 
 };
 
-// const updateCssVars = (selectedClass: string) => {
-//   const updatedCssVars = getUpdatedCssVars(selectedClass);
-//   return updatedCssVars;
-// };
-
 const updateCssVarsObject = (optionsArray: Array<any>) => {
   let defaultOptions = ['btn-default', 'btn-primary', 'btn-secondary','btn-tertiary','btn-success','btn-info','btn-warning','btn-danger']
   let finalCssVariable = {};
@@ -70,22 +65,15 @@ export const Filled: Story = {
  
     const baseClass = 'btn-filled';
     const buttonSize = buttonSizeMap[args.type] || '';
-    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    //const updatedCssVars = updateCssVars(args.class);
-  
+    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim(); 
 
-
-    let finalObj = {
+    return {
       component: ButtonComponent,
       props: {
         ...args,
         class: updatedClass,
       },
-      // parameters: {
-      //   cssVars: updatedCssVars,
-      // },
     };
-    return finalObj;
   },
 };
 
@@ -113,9 +101,7 @@ export const Outlined: Story = {
 
     const baseClass = 'btn-outlined';
     const buttonSize = buttonSizeMap[args.type] || '';
-    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    //const updatedCssVars = updateCssVars(args.class);
-  
+    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim(); 
 
     return {
       component: ButtonComponent,
@@ -148,9 +134,7 @@ export const Text: Story = {
 
     const baseClass = 'btn-text';
     const buttonSize = buttonSizeMap[args.type] || '';
-    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    //const updatedCssVars = updateCssVars(args.class);
-  
+    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();  
 
     return {
       component: ButtonComponent,
@@ -185,9 +169,7 @@ export const Elevated: Story = {
 
     const baseClass = 'btn-elevated';
     const buttonSize = buttonSizeMap[args.type] || '';
-    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim();
-    //const updatedCssVars = updateCssVars(args.class);
-  
+    const updatedClass = `${baseClass} ${args.class || ''} ${buttonSize}`.trim(); 
 
     return {
       component: ButtonComponent,
@@ -217,7 +199,6 @@ export const AllVariants: Story = {
   },
   
   render: (args) => {
-    //const updatedCssVars = updateCssVars(args.class);
     const variants = [   
       {
         heading: 'Filled Buttons',
@@ -309,14 +290,6 @@ export const AllVariants: Story = {
       {
         heading: 'Outline Buttons',
         buttons: [
-          // {
-          //   caption: 'Outlined',
-          //   class: 'btn-outlined btn-default',
-          //   type: 'medium',
-          //   iconposition: 'right',
-          //   iconclass: 'wi wi-plus',
-          //   badgevalue: '',
-          // },
           {
             caption: 'Primary',
             class: 'btn-outlined btn-default btn-primary',
