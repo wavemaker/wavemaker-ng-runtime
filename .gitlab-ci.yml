@@ -83,7 +83,7 @@ unit_tests:
     - bash build.sh
     - bash bundle-runtime-cli.sh
     - echo "npm_test starting"
-    - npm run test 
+    - npm run test --silent 
     - echo "npm_test finished $(date +%Y-%m-%d\ %H:%M:%S)"
     - date
   retry:
