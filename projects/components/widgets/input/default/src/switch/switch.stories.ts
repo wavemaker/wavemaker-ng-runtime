@@ -19,10 +19,10 @@ const getUpdatedCssVars = () => {
     '--wm-switch-btn-color': rootStyle.getPropertyValue('--wm-switch-btn-color-active'),
     '--wm-switch-btn-border-color': rootStyle.getPropertyValue('--wm-switch-btn-border-color-active'),
     '--wm-switch-btn-state-layer-color': rootStyle.getPropertyValue('--wm-switch-btn-state-layer-color-active'),
-    '--wm-switch-btn-background-active': rootStyle.getPropertyValue('--wm-switch-btn-background-active'),
-    '--wm-switch-btn-color-active': rootStyle.getPropertyValue('--wm-switch-btn-color-active'),
-    '--wm-switch-btn-border-color-active': rootStyle.getPropertyValue('--wm-switch-btn-border-color-active'),
-    '--wm-switch-btn-state-layer-color-active': rootStyle.getPropertyValue('--wm-switch-btn-state-layer-color-active'),
+    // '--wm-switch-btn-background-active': rootStyle.getPropertyValue('--wm-switch-btn-background-active'),
+    // '--wm-switch-btn-color-active': rootStyle.getPropertyValue('--wm-switch-btn-color-active'),
+    // '--wm-switch-btn-border-color-active': rootStyle.getPropertyValue('--wm-switch-btn-border-color-active'),
+    // '--wm-switch-btn-state-layer-color-active': rootStyle.getPropertyValue('--wm-switch-btn-state-layer-color-active'),
   };
 };
 

@@ -18,18 +18,29 @@ export default meta;
 type Story = StoryObj<CheckboxComponent>;
 
 const getUpdatedCssVars = (selectedClass: string) => {
-  //debugger
   if (!selectedClass) return {};
-  const className = selectedClass.split(" ").pop(); 
-  const rootStyle = getComputedStyle(document.documentElement);
-  return {
-    '--wm-checkbox-background-selected' : rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "",
-    '--wm-checkbox-border-color-selected': rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "",
-    '--wm-checkbox-icon-color-selected': rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "",
-    '--wm-checkbox-selected-state-hover': rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "",
-    '--wm-checkbox-selected-state-focus': rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "",
-  };
 
+  const className = selectedClass.split(" ").pop();
+  const rootStyle = getComputedStyle(document.documentElement);
+
+  if (className === 'primary') {
+    const primaryColor = rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "";
+
+    return {
+      '--wm-checkbox-background-selected': primaryColor,
+      '--wm-checkbox-border-color-selected': primaryColor,
+      '--wm-checkbox-icon-color-selected': primaryColor,
+      // '--wm-checkbox-selected-state-hover': primaryColor,
+      // '--wm-checkbox-selected-state-focus': primaryColor,
+    };
+  } else {
+    const colorValue = rootStyle.getPropertyValue(`--wm-color-${className}`).trim() || "";
+
+    return {
+      [`--wm-color-${className}`]: colorValue,
+      [`--wm-color-on-${className}`]: colorValue,
+    };
+  }
 };
 
 const updateCssVarsObject = (optionsArray: Array<any>) => {
