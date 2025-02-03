@@ -28,7 +28,6 @@ export const Icon: Story = {
     },
   
     render: (args) => {
-
       const iconSizeMap: Record<string, string> = {
         'Base': '',
         'fa-lg': 'fa-lg',
@@ -37,27 +36,28 @@ export const Icon: Story = {
         'fa-4x': 'fa-4x',
         'fa-5x': 'fa-5x',
       };
-  
-      const baseIconClass = 'wi wi-plus';
+    
       const selectedIconSize = iconSizeMap[args.iconsize] || '';
-      const updatedIconClass = `${baseIconClass} ${selectedIconSize}`.trim();
-  
+      const updatedIconClass = `${args.iconclass} ${selectedIconSize}`.trim();
+    
       return {
         component: IconComponent,
         props: {
           ...args,
-          iconclass: `${updatedIconClass}`,
+          iconclass: updatedIconClass,
         },
       };
-    },
+    }, 
   };
     
 
-  export const IconWithCaption: Story = {
+export const IconWithCaption: Story = {
     args: {
       caption: 'Icon',
       iconsize:'Base',
       iconclass: 'wi wi-plus',
+      iconposition : 'left'
+
     },
     render: (args) => {
 
@@ -70,9 +70,8 @@ export const Icon: Story = {
           'fa-5x': 'fa-5x',
         };
     
-        const baseIconClass = 'wi wi-plus';
         const selectedIconSize = iconSizeMap[args.iconsize] || '';
-        const updatedIconClass = `${baseIconClass} ${selectedIconSize}`.trim();
+        const updatedIconClass = `${args.iconclass} ${selectedIconSize}`.trim();
     
         return {
           component: IconComponent,
@@ -102,31 +101,69 @@ export const AllIcons: Story = {
       'fa-5x': 'fa-5x',
     };
 
-    const iconList = iconsData.iconWavicon; //from iconsJson
-
     const selectedIconSize = iconSizeMap[args.iconsize] || '';
-    
-    const iconElements = iconList.map(icon => {
-      const iconClass = `mi mi-${icon} ${selectedIconSize}`.trim();
-      return `
-        <div class="icon-item">
-          <i class="${iconClass}"></i>
-          <div class="icon-caption">${icon}</div>
-        </div>
-      `;
-    }).join('');
+   
+    const createIconElements = (iconList, type) => {
+      return iconList
+        .map((icon) => {
+          let iconClass = '';
+          
+          // check icon type
+          if (type === 'regular') {
+            iconClass = `wm-sl-r sl-${icon} ${selectedIconSize}`;
+          } else if (type === 'waveicon') {
+            iconClass = `mi mi-${icon} ${selectedIconSize}`;
+          } else if (type === 'light') {
+            iconClass = `wm-sl-l sl-${icon} ${selectedIconSize}`;
+          } else if (type === 'awesome') {
+            iconClass = `fa fa-${icon} ${selectedIconSize}`;
+          }
+
+          return `
+            <div class="icon-item">
+              <i class="${iconClass}"></i>
+              <div class="icon-caption">${icon}</div>
+            </div>
+          `;
+        })
+        .join('');
+    };
 
     return {
       template: `
-        <div class="icon-grid">
-          ${iconElements}
+        <div class="icon-section">
+          <h3 class="section-title">Light</h3>
+          <div class="icon-grid">
+            ${createIconElements(iconsData.iconLight, 'light')}
+          </div>
+          <h3 class="section-title">Regular</h3>
+          <div class="icon-grid">
+            ${createIconElements(iconsData.iconRegular, 'regular')}
+          </div>
+          <h3 class="section-title">Waveicon</h3>
+          <div class="icon-grid">
+            ${createIconElements(iconsData.iconWavicon, 'waveicon')}
+          </div>
+          <h3 class="section-title">Awesome</h3>
+          <div class="icon-grid">
+            ${createIconElements(iconsData.iconAwesome, 'awesome')}
+          </div>
         </div>
       `,
       styles: [`
+        .icon-section {
+          margin-bottom: 20px;
+        }
+        .section-title {
+          text-align: left;
+          font-size: 18px;
+          margin: 20px 0 10px;
+          color: #333;
+        }
         .icon-grid {
           display: flex;
           flex-wrap: wrap;
-          justify-content: center;
+          justify-content: flex-start;
           gap: 20px;
           padding: 20px;
         }
@@ -135,7 +172,7 @@ export const AllIcons: Story = {
           flex-direction: column;
           align-items: center;
           width: 10%;
-          max-width: 80px; /* Ensure icons don't get too large */
+          max-width: 80px;
           text-align: center;
         }
         .icon-caption {
@@ -157,6 +194,7 @@ export const AllIcons: Story = {
     };
   },
 };
+
 
 
 export const AllVariants: Story = {
