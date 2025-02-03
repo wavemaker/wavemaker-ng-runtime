@@ -36,7 +36,7 @@ const CSSVariablesPanel = () => {
           if (Object.keys(cssVars).length === 0) {
             console.log("No valid CSS variables found for this class.");
           } else {
-            // ✅ Fetch computed CSS variable values from :root
+            // Fetch computed CSS variable values from :root
             const computedStyles = getComputedStyle(document.documentElement);
             const updatedCssVars = Object.fromEntries(
               Object.entries(cssVars).map(([key, value]) => {

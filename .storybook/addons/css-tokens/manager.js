@@ -1,7 +1,7 @@
 import { addons, types } from "@storybook/addons";
 import { AddonPanel } from "@storybook/components";
 import React from "react";
-import CSSVariablesPanel from "./CSSVariablesPanelClassApproach";
+import CSSVariablesPanel from "./CSSVariablesPanel";
 
 const ADDON_ID = "storybook/css-tokens";
 const PANEL_ID = `${ADDON_ID}/panel`;
