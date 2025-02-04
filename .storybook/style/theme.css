@@ -210,7 +210,9 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 div.css-s0f71y {
   background-color: #000;
 }
-
+img.css-32o4gv {
+  max-width: 100% !important;
+}
 .text-center.text-info {
   display: flex;
   align-items: center;
