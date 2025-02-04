@@ -1,10 +1,20 @@
 <div class="spinner-message">
+  @if (type === 'image') {
     <span class="spinner-image animated infinite" [ngClass]="animation" aria-hidden="true"
-        [ngStyle]="{width: imagewidth, height: imageheight, backgroundImage: 'url(' + picture + ')', backgroundSize: imagewidth}"
-        *ngIf="type === 'image'"></span>
-    <i class="spinner-image animated infinite" aria-hidden="true" [ngClass]="[iconclass, animation]" [style.fonSize]="iconsize" *ngIf="type === 'icon'"></i>
-    <span class="spinner-text" [innerHTML]="caption" *ngIf="showCaption"></span>
-    <div class="spinner-messages" *ngIf="!showCaption && spinnerMessages">
-        <p *ngFor="let value of spinnerMessages" [textContent]="value"></p>
+      [ngStyle]="{width: imagewidth, height: imageheight, backgroundImage: 'url(' + picture + ')', backgroundSize: imagewidth}"
+    ></span>
+  }
+  @if (type === 'icon') {
+    <i class="spinner-image animated infinite" aria-hidden="true" [ngClass]="[iconclass, animation]" [style.fonSize]="iconsize"></i>
+  }
+  @if (showCaption) {
+    <span class="spinner-text" [innerHTML]="caption"></span>
+  }
+  @if (!showCaption && spinnerMessages) {
+    <div class="spinner-messages">
+      @for (value of spinnerMessages; track value) {
+        <p [textContent]="value"></p>
+      }
     </div>
+  }
 </div>

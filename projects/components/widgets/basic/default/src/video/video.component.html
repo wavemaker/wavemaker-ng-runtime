@@ -1,12 +1,18 @@
 <video [attr.aria-label]="arialabel || 'video'" [preload]="videopreload"
-       [src]="mp4format | trustAs: 'resource'"
-       [muted]="muted"
-       [poster]="videoposter | image"
-       [controls]="controls"
-       [loop]="loop"
-       [autoplay]="autoplay" [tabindex]="tabindex">
-    <source type="video/mp4" [src]="mp4format | trustAs: 'resource'" *ngIf="mp4format">
-    <source type="video/webm" [src]="webmformat | trustAs: 'resource'" *ngIf="webmformat">
-    <source type="video/ogg" [src]="oggformat | trustAs: 'resource'" *ngIf="oggformat">
-    {{videosupportmessage}}
+  [src]="mp4format | trustAs: 'resource'"
+  [muted]="muted"
+  [poster]="videoposter | image"
+  [controls]="controls"
+  [loop]="loop"
+  [autoplay]="autoplay" [tabindex]="tabindex">
+  @if (mp4format) {
+    <source type="video/mp4" [src]="mp4format | trustAs: 'resource'">
+  }
+  @if (webmformat) {
+    <source type="video/webm" [src]="webmformat | trustAs: 'resource'">
+  }
+  @if (oggformat) {
+    <source type="video/ogg" [src]="oggformat | trustAs: 'resource'">
+  }
+  {{videosupportmessage}}
 </video>

@@ -1,24 +1,26 @@
 <textarea class="form-control app-textarea"
-          focus-target
-          [attr.name]="name"
-          [(ngModel)]="datavalue"
-          [ngModelOptions]="ngModelOptions"
-          [readonly]="readonly"
-          [required]="required"
-          [disabled]="disabled"
-          [maxlength]="maxchars"
-          [attr.tabindex]="tabindex"
-          [attr.placeholder]="placeholder"
-          [attr.accesskey]="shortcutkey"
-          [attr.aria-label]="arialabel"
-          aria-multiline="true"
-          [autofocus]="autofocus"
-          [ngClass]="conditionalclass"
-          [ngStyle]="conditionalstyle"
-          (blur)="handleBlur($event)"
-          (input)="onInputChange()"
-          (ngModelChange)="handleChange($event); onInputChange();"
-          #textarea
+  focus-target
+  [attr.name]="name"
+  [(ngModel)]="datavalue"
+  [ngModelOptions]="ngModelOptions"
+  [readonly]="readonly"
+  [required]="required"
+  [disabled]="disabled"
+  [maxlength]="maxchars"
+  [attr.tabindex]="tabindex"
+  [attr.placeholder]="placeholder"
+  [attr.accesskey]="shortcutkey"
+  [attr.aria-label]="arialabel"
+  aria-multiline="true"
+  [autofocus]="autofocus"
+  [ngClass]="conditionalclass"
+  [ngStyle]="conditionalstyle"
+  (blur)="handleBlur($event)"
+  (input)="onInputChange()"
+  (ngModelChange)="handleChange($event); onInputChange();"
+  #textarea
 ></textarea>
 
-<div *ngIf="maxchars" class="textarea-count"  >{{limitdisplaytext}}</div>
+@if (maxchars) {
+  <div class="textarea-count"  >{{limitdisplaytext}}</div>
+}

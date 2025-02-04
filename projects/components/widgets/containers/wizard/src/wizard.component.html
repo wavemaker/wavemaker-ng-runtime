@@ -1,33 +1,53 @@
 <div class="app-wizard-heading">
-    <ul class="app-wizard-steps nav nav-pills {{stepClass}}">
-        <li class="app-wizard-step" *ngFor="let step of steps; let i = index" [hidden]="!step.show"
-            [ngClass]="{active: step.done, current: step.active, disabled: step.disabled}"
-            (click)="onWizardHeaderClick($event, step)">
-            <a href="javascript:void(0)" [attr.aria-current]="step.active ? 'step' : null"
-               [attr.aria-disabled]="step.disabled" [attr.title]="step.title"
-               [ngClass]="{'title-center-align':class && class.includes('classic') && !step.subtitle}">
-                <span class="arrow" *ngIf="class && class.includes('classic')"></span>
-                <span class="wizard-step-number">
-                    <span class="count" *ngIf="class && class.includes('number') && !step.isDone">{{i+1}}</span>
-                    <i class="dottedstepper" *ngIf="class && (class.includes('dottedstepper') || class.includes('text-inline') && !class.includes('iconstepper')) && !step.isDone"></i>
-                    <i class="app-icon wi wi-done" *ngIf="class && (class.includes('dottedstepper') || class.includes('number')) && step.isDone"></i>
-                    <i class="app-icon {{step.iconclass}}" *ngIf="(class && class.includes('iconstepper')) && ((step.iconclass && !step.isDone) || (step.iconclass && step.isDone && step.doneiconclass ===''))"></i>
-                    <i class="app-icon {{step.doneiconclass}}" *ngIf="step.doneiconclass && step.isDone && (class && class.includes('iconstepper'))"></i>
-                </span>
-                <span class="title-wrapper">
-                    <span *ngIf="class && class.includes('text-inline')">{{'0' + (i+1)}}</span>
-                    <span class="step-title" [textContent]="step.title"></span>
-                </span>
-                <span class="subtitle-wrapper" [attr.title]="step.subtitle" *ngIf="step.subtitle">
-                    <span class="step-title" [textContent]="step.subtitle"></span>
-                    <a class="read_more" (click)="readMoreSubtitle()" style="display:none">more</a>
-                </span>
-            </a>
-        </li>
-    </ul>
+  <ul class="app-wizard-steps nav nav-pills {{stepClass}}">
+    @for (step of steps; track step; let i = $index) {
+      <li class="app-wizard-step" [hidden]="!step.show"
+        [ngClass]="{active: step.done, current: step.active, disabled: step.disabled}"
+        (click)="onWizardHeaderClick($event, step)">
+        <a href="javascript:void(0)" [attr.aria-current]="step.active ? 'step' : null"
+          [attr.aria-disabled]="step.disabled" [attr.title]="step.title"
+          [ngClass]="{'title-center-align':class && class.includes('classic') && !step.subtitle}">
+          @if (class && class.includes('classic')) {
+            <span class="arrow"></span>
+          }
+          <span class="wizard-step-number">
+            @if (class && class.includes('number') && !step.isDone) {
+              <span class="count">{{i+1}}</span>
+            }
+            @if (class && (class.includes('dottedstepper') || class.includes('text-inline') && !class.includes('iconstepper')) && !step.isDone) {
+              <i class="dottedstepper"></i>
+            }
+            @if (class && (class.includes('dottedstepper') || class.includes('number')) && step.isDone) {
+              <i class="app-icon wi wi-done"></i>
+            }
+            @if ((class && class.includes('iconstepper')) && ((step.iconclass && !step.isDone) || (step.iconclass && step.isDone && step.doneiconclass ===''))) {
+              <i class="app-icon {{step.iconclass}}"></i>
+            }
+            @if (step.doneiconclass && step.isDone && (class && class.includes('iconstepper'))) {
+              <i class="app-icon {{step.doneiconclass}}"></i>
+            }
+          </span>
+          <span class="title-wrapper">
+            @if (class && class.includes('text-inline')) {
+              <span>{{'0' + (i+1)}}</span>
+            }
+            <span class="step-title" [textContent]="step.title"></span>
+          </span>
+          @if (step.subtitle) {
+            <span class="subtitle-wrapper" [attr.title]="step.subtitle">
+              <span class="step-title" [textContent]="step.subtitle"></span>
+              <a class="read_more" (click)="readMoreSubtitle()" style="display:none">more</a>
+            </span>
+          }
+        </a>
+      </li>
+    }
+  </ul>
 </div>
 <div class="app-wizard-body panel-body">
-    <p wmMessage *ngIf="message.caption" caption.bind="message.caption" type.bind="message.type"></p>
-    <ng-content ngProjectAs="form[wmWizardStep]"></ng-content>
+  @if (message.caption) {
+    <p wmMessage caption.bind="message.caption" type.bind="message.type"></p>
+  }
+  <ng-content ngProjectAs="form[wmWizardStep]"></ng-content>
 </div>
 <ng-container *ngTemplateOutlet="wizardAction"></ng-container>
