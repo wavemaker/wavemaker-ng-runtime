@@ -72,8 +72,8 @@ export const AllVariants : Story = {
             (variant) => `
               <div>
                 <h6>${variant.heading}</h6>
-                 <span class="app-slider-value pull-left">{{ ${variant.slider.minvalue} }}</span>
-                <span class="app-slider-value pull-right">{{ ${variant.slider.maxvalue} }}</span>
+                 <span class="app-slider-value fa-pull-left">{{ ${variant.slider.minvalue} }}</span>
+                <span class="app-slider-value fa-pull-right">{{ ${variant.slider.maxvalue} }}</span>
                 <input 
                   type="range" class="range-input"
                   min="${variant.slider.minvalue}" 
@@ -82,6 +82,7 @@ export const AllVariants : Story = {
                   value="${variant.slider.datavalue || 0}" 
                   ${variant.slider.readonly ? 'readonly' : ''}
                    ${variant.slider.disabled ? 'disabled' : ''}
+                   style="width:100%:"
                 />
                
               </div>
