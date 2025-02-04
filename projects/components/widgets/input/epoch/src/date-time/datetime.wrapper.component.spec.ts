@@ -188,11 +188,11 @@ describe("DatetimeComponent", () => {
 
 
     /************************* Properties starts ****************************************** **/
-    xit('should not add the hidden property, element always visible', fakeAsync(async () => {
+    it('should not add the hidden property, element always visible', fakeAsync(async () => {
         await notHavingTheAttribute(fixture, '.app-datetime', 'hidden');
     }));
 
-    xit("should not show the calendar panel on click the input control (show date picker on only button click) ", waitForAsync(() => {
+    it("should not show the calendar panel on click the input control (show date picker on only button click) ", waitForAsync(() => {
         fixture.whenStable().then(() => {
             onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'bs-datepicker-container', 0);
         });
@@ -200,16 +200,16 @@ describe("DatetimeComponent", () => {
     }));
 
     // TypeError: Cannot read properties of undefined (reading 'getElementsByClassName')
-    // it("should set the hours step as 1hour on click on top arrow button", waitForAsync(() => {
-    //     let dateInputControl = getHtmlSelectorElement(fixture, '.btn-time');
-    //     dateInputControl.nativeElement.click();
-    //     fixture.whenStable().then(() => {
-    //         triggerTimerClickonArrowsByIndex(0);
-    //         let hoursValue = +getTimeFieldValue(0);
-    //         expect(hoursValue).toBe(1);
-    //
-    //     });
-    // }));
+    it("should set the hours step as 1hour on click on top arrow button", waitForAsync(() => {
+        let dateInputControl = getHtmlSelectorElement(fixture, '.btn-time');
+        dateInputControl.nativeElement.click();
+        fixture.whenStable().then(() => {
+            triggerTimerClickonArrowsByIndex(0);
+            let hoursValue = +getTimeFieldValue(0);
+            expect(hoursValue).toBe(1);
+
+        });
+    }));
 
     it("should not show the calendar panel on click the input control ", waitForAsync(() => {
 
@@ -229,17 +229,13 @@ describe("DatetimeComponent", () => {
         tick();  // Allow time for the whenStable promise to resolve
     }));
 
-    xit('should be disabled mode', waitForAsync(() => {
+    it('should be disabled mode ', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
-
-        fixture.whenStable().then(() => {
-            const element = getHtmlSelectorElement(fixture, '.app-textbox');
-            expect(element.nativeElement.hasAttribute('disabled')).toBe(true);
-        });
+        hasAttributeCheck(fixture, '.app-textbox', 'disabled');
     }));
 
-    xit('should be disabled mode (picker button)', waitForAsync(() => {
+    it('should be disabled mode (picker button)', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
         hasAttributeCheck(fixture, '.btn-time', 'disabled');
@@ -269,14 +265,14 @@ describe("DatetimeComponent", () => {
 
     /************************* Validation starts ****************************************** **/
 
-    xit('should be required validation ', waitForAsync(() => {
+    it('should be required validation ', waitForAsync(() => {
         fixture.whenStable().then(() => {
             let dateInputControl = getHtmlSelectorElement(fixture, '.app-textbox');
             expect(dateInputControl.nativeElement.hasAttribute('required')).toBe(true);
         });
     }));
 
-    xit('should respect the mindate validation', waitForAsync(() => {
+    it('should respect the mindate validation', waitForAsync(() => {
         wmComponent.getWidget().datavalue = getFormatedDate('2019-11-01');
 
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
@@ -284,7 +280,7 @@ describe("DatetimeComponent", () => {
     }));
 
 
-    xit('should ignore the  excluded days', waitForAsync(() => {
+    it('should ignore the  excluded days', waitForAsync(() => {
         wmComponent.getWidget().excludedays = '1,6';
         wmComponent.getWidget().datavalue = getFormatedDate('2019-12-30');
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
@@ -302,7 +298,7 @@ describe("DatetimeComponent", () => {
 
 
     // TypeError: Cannot read properties of undefined (reading 'querySelectorAll')
-    xit('should toggle the AM/PM', waitForAsync(() => {
+    it('should toggle the AM/PM', waitForAsync(() => {
         wmComponent.getWidget().datepattern = 'MMM d, yyyy h:mm:ss a';
 
         fixture.whenStable().then(() => {
@@ -418,9 +414,9 @@ describe(('Datetime Component with Localization'), () => {
         expect(dateWrapperComponent).toBeTruthy();
     }));
 
-    // it('should display localized meriains in time picker', (() => {
-    //     localizedTimePickerTest(fixture, (wmComponent as any).meridians, '.btn-time');
-    // }));
+    it('should display localized meriains in time picker', (() => {
+        localizedTimePickerTest(fixture, (wmComponent as any).meridians, '.btn-time');
+    }));
 
     it('should update the datavalue without error when we type "de" format datetime in inputbox with "12H" format ', fakeAsync(() => {
         const datepattern = 'yyyy, dd MMMM hh:mm:ss a';

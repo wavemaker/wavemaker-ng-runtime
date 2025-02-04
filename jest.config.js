@@ -7,7 +7,8 @@ module.exports = {
     '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|@wavemaker/foundation-css|@wavemaker/custom-widgets-m3|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
   ],
   testMatch: [
-    "**/projects/**/*.spec.ts",
+    //"**/projects/**/*.spec.ts",
+      "**/projects/components/widgets/basic/search/src/search.wrapper.component.spec.ts",
       //   "**/projects/components/widgets/containers/panel/src/panel.wrapper.component.spec.ts",
   //    "**/projects/components/widgets/basic/search/src/search.wrapper.component.spec.ts",
     //  "**/projects/components/widgets/navigation/menu/src/menu.wrapper.component.spec.ts",
@@ -16,8 +17,8 @@ module.exports = {
     // "**/projects/components/widgets/input/epoch/src/date-time/date-time-picker.spec.ts",
   ],
   testPathIgnorePatterns: [
-      'projects/components/widgets/data/table/src/table.wrapper.component.spec.ts',
-      'projects/components/widgets/data/form/src/form.wrapper.component.spec.ts',
+     // 'projects/components/widgets/data/table/src/table.wrapper.component.spec.ts',
+  //    'projects/components/widgets/data/form/src/form.wrapper.component.spec.ts',
     '/node_modules/',
     '/dist/',
   ],

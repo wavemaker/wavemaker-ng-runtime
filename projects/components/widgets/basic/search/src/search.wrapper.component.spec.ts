@@ -179,17 +179,50 @@ describe('SearchComponent', () => {
 
     // TypeError: The provided value is not of type 'Element'.
 
-    xit('should show clear icon and on click should call clearsearch function when search type is autocomplete', waitForAsync(async () => {
+    xit('should show clear icon and on click should call clearsearch function when search type is autocomplete', fakeAsync(() => {
+        // Enable auto change detection
+        fixture.autoDetectChanges(true);
+
+        // Set initial component properties
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         wmComponent.getWidget().type = 'autocomplete';
         wmComponent.getWidget().showclear = true;
+
+        // Initial change detection
+        tick();
+
         const testValue = 'te';
         jest.spyOn(wmComponent as any, 'clearSearch' as any);
-        await setInputValue(fixture, '.app-search-input', testValue);
-        let searchBtnEle = fixture.debugElement.query(By.css('.clear-btn'));
-        searchBtnEle.nativeElement.click();
-        await fixture.whenStable();
+
+        // Simulate input value change
+        const inputEl = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
+        inputEl.value = testValue;
+        inputEl.dispatchEvent(new Event('input'));
+
+        // Handle typeahead debounce and async operations
+        tick(300);
+
+        // Ensure typeahead dropdown is fully initialized
+        fixture.detectChanges();
+        tick();
+
+        // Verify clear button exists before clicking
+        const searchBtnEle = fixture.debugElement.query(By.css('.clear-btn'));
+        expect(searchBtnEle).toBeTruthy();
+
+        // Click the clear button
+        searchBtnEle.triggerEventHandler('click', null);
+
+        // Handle clear button click async operations
+        tick();
+        fixture.detectChanges();
+
+        // Verify the clearSearch method was called
         expect((wmComponent as any).clearSearch).toHaveBeenCalled();
+
+        // Cleanup
+        fixture.autoDetectChanges(false);
+
     }));
 
     /******************************** EVents end ***************************************** */
@@ -203,7 +236,7 @@ describe('SearchComponent', () => {
 
     //TypeError: The provided value is not of type 'Element'.
 
-    xit('should be able show the typehead values in descending order', waitForAsync(async () => {
+    it('should be able show the typehead values in descending order', waitForAsync(async () => {
         wmComponent.getWidget().dataset = [{ name: 'Aman', age: 21 }, { name: 'Tony', age: 42 }, { name: 'John', age: 25 }, { name: 'Berf', age: 28 }];
         wmComponent.getWidget().searchkey = 'name';
         wmComponent.getWidget().displaylabel = 'name';
@@ -215,7 +248,7 @@ describe('SearchComponent', () => {
 
     //TypeError: The provided value is not of type 'Element'.
 
-    xit('should set the limit for typehead list', waitForAsync(async () => {
+    it('should set the limit for typehead list', waitForAsync(async () => {
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         wmComponent.getWidget().limit = 2;
         const testValue = 'test';
@@ -229,29 +262,62 @@ describe('SearchComponent', () => {
 
     //TypeError: Cannot read properties of undefined (reading 'querySelectorAll')
 
-    xit('should search when user click on the search icon', fakeAsync(() => {
+
+
+// Now let's fix the test case
+    it('should search when user click on the search icon', fakeAsync(() => {
+        // Set initial properties
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         wmComponent.getWidget().showsearchicon = true;
         wmComponent.getWidget().searchon = 'onsearchiconclick';
+        fixture.detectChanges();
+
+        // Set input value
         const testValue = 'tes';
         setInputValue(fixture, '.app-search-input', testValue);
-        tick(300); // Wait for debounce
         fixture.detectChanges();
-        let searchBtnEle = fixture.debugElement.query(By.css('.app-search-button'));
+
+        // Wait for debounce
+        tick(300);
+        fixture.detectChanges();
+
+        // Verify and click search button
+        const searchBtnEle = fixture.debugElement.query(By.css('.app-search-button'));
+        expect(searchBtnEle).toBeTruthy();
         searchBtnEle.nativeElement.click();
-        tick();
+
+        // Wait for click handler and dropdown to appear
+        tick(100);
         fixture.detectChanges();
-        let liElement = getLIElement();
-        expect(liElement.length).toBeGreaterThan(0);
+
+        // Additional wait for typeahead to populate
+        tick(100);
+        fixture.detectChanges();
+
+        // Verify results
+        const liElements = getLIElement();
+        expect(liElements.length).toBeGreaterThan(0);
+
+        // Clean up any remaining async tasks
+
     }));
 
     //  TypeError: The provided value is not of type 'Element'.
 
-    xit('should be disabled mode ', waitForAsync(() => {
+    it('should be disabled mode', fakeAsync(() => {
+        // Set disabled state
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
+
+        // Wait for any async operations
+        tick();
+        fixture.detectChanges();
+
+        // Check for disabled attribute
         hasAttributeCheck(fixture, '.app-search-input', 'disabled');
+
     }));
+
 
     it('should be readonly mode ', () => {
         wmComponent.getWidget().readonly = true;
@@ -330,21 +396,17 @@ describe('SearchComponent', () => {
 
     //TypeError: Cannot read properties of undefined (reading 'querySelectorAll')
 
-    xit('should invoke getTransformedData method', fakeAsync(() => {
+    it('should invoke getTransformedData method ', waitForAsync(() => {
         const testValue = 'te';
-        wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5, test6, test7, test8';
+        wmComponent.getWidget().dataset = 'test1, test2, test3, test4, test5. test6, test7, test8';
         jest.spyOn(wmComponent, 'getTransformedData');
-
-        setInputValue(fixture, '.app-search-input', testValue);
-        tick(); // Handle initial async
-
-        const ulElement = getUlElement();
+        setInputValue(fixture, '.app-search-input', testValue).then(() => {
+            let ulElement = getUlElement();
         ulElement[0].dispatchEvent(new CustomEvent('scroll'));
-
-        tick(); // Handle scroll event async
-        fixture.detectChanges();
-
+            fixture.whenStable().then(() => {
         expect(wmComponent.getTransformedData).toHaveBeenCalled();
+            });
+        });
     }));
 
     /*********************************** Method invoking end ************************** */

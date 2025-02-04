@@ -192,7 +192,7 @@ describe('DateComponent', () => {
 
     }));
 
-    xit('should not show the week numbers on the calendar pan ', waitForAsync(() => {
+    it('should not show the week numbers on the calendar pan ', waitForAsync(() => {
         wmComponent.getWidget().showweeks = false;
         onClickCheckClassEleLengthOnBody(fixture, '.btn-time', 'table.weeks', 0);
 
@@ -233,7 +233,7 @@ describe('DateComponent', () => {
 
     }));
 
-    xit('should be autofocus the element ', waitForAsync(() => {
+    it('should be autofocus the element ', waitForAsync(() => {
         hasAttributeCheck(fixture, '.app-dateinput', 'autofocus');
 
     }));
@@ -246,13 +246,13 @@ describe('DateComponent', () => {
 
     // });
 
-    xit('should be disabled mode ', waitForAsync(() => {
+    it('should be disabled mode ', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
         hasAttributeCheck(fixture, '.app-dateinput', 'disabled');
 
     }));
-    xit('should be disabled mode (picker button)', waitForAsync(() => {
+    it('should be disabled mode (picker button)', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
         hasAttributeCheck(fixture, '.btn-time', 'disabled');
@@ -273,7 +273,7 @@ describe('DateComponent', () => {
 
     /************************* Validations starts****************************************** **/
 
-    xit('should be apply required validation ', waitForAsync(() => {
+    it('should be apply required validation ', waitForAsync(() => {
         hasAttributeCheck(fixture, '.app-dateinput', 'required');
 
     }));
@@ -311,7 +311,7 @@ describe('DateComponent', () => {
         });
     });
 
-    xit('should ignore the  excluded date', waitForAsync(() => {
+    it('should ignore the  excluded date', waitForAsync(() => {
         dateWrapperComponent.wmComponent.getWidget().excludedates = '2020-01-01';
         dateWrapperComponent.wmComponent.getWidget().datavalue = '2020-01-01';
         checkElementClass(fixture, '.app-date', 'ng-invalid');
@@ -339,7 +339,7 @@ describe('DateComponent', () => {
 
     /************************ Scenarios starts **************************************** */
 
-    xit('should close the caledar as soon as select the date and should select the date', waitForAsync(() => {
+    it('should close the caledar as soon as select the date and should select the date', waitForAsync(() => {
         onClickCheckTaglengthOnBody(fixture, '.btn-time', 'bs-datepicker-container', 1, (el) => {
             const datePickerRows = el[0].querySelectorAll('tbody tr');
             const eleRow = datePickerRows[1];

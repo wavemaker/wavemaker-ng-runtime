@@ -201,7 +201,7 @@ describe("SelectComponent", () => {
         expect(options[0].textContent.trim()).toBe("Select an option");
     });
 
-    xit("should remove placeholder option when no placeholder and no value", () => {
+    it("should remove placeholder option when no placeholder and no value", () => {
         wmComponent.placeholder = "";
         wmComponent.datavalue = null;
         wmComponent.checkForFloatingLabel({ type: 'blur' });
@@ -252,7 +252,7 @@ describe("SelectComponent", () => {
             (wmComponent as any).removePlaceholderOption = jest.fn();
         });
 
-        xit('should remove placeholder option when no placeholder', () => {
+        it('should remove placeholder option when no placeholder', () => {
             wmComponent.placeholder = null;
 
             wmComponent.checkForFloatingLabel({ type: 'focus' });
@@ -318,7 +318,7 @@ describe("SelectComponent", () => {
             expect(captionEl.classList.contains('float-active')).toBe(true);
         });
 
-        xit('should remove placeholder option when no caption element, no datavalue, and no placeholder', () => {
+        it('should remove placeholder option when no caption element, no datavalue, and no placeholder', () => {
             jest.spyOn($.fn, 'closest').mockReturnValue($());
             wmComponent.datavalue = null;
             wmComponent.placeholder = null;
@@ -368,7 +368,7 @@ describe("SelectComponent", () => {
             expect(wmComponent.onPropertyChange).not.toHaveBeenCalledWith('tabindex', 2, undefined);
         });
 
-        xit('should set readonly attribute when readonly is true', (done) => {
+        it('should set readonly attribute when readonly is true', (done) => {
             wmComponent.onPropertyChange('readonly', true);
 
             setTimeout(() => {
@@ -441,7 +441,7 @@ describe("SelectComponent", () => {
             expect(wmComponent.acceptsArray).toBe(true);
         });
 
-        xit('should update select element when datavalue exists but no item is selected', () => {
+        it('should update select element when datavalue exists but no item is selected', () => {
             wmComponent.datavalue = '5'; // A value not in the dataset
             wmComponent.selectEl = { nativeElement: { value: '5' } };
             wmComponent['dataset$'].next(wmComponent.datasetItems);
