@@ -8,12 +8,17 @@ const config: StorybookConfig = {
   ],
   addons: [
     "@storybook/addon-onboarding",
-    "@storybook/addon-essentials",
-    "@chromatic-com/storybook",
-    //"@storybook/addon-interactions", //Disbaled panel interactions as we are not using.
     "@storybook/addon-variants",
-     './addons/css-tokens/manager.js',
-    // './addons/addon-panel/manager.js',
+    //"@storybook/addon-essentials",
+    {
+      name: "@storybook/addon-essentials",
+      options: {
+        actions: false,
+      },
+    },
+    // "@chromatic-com/storybook",
+    //"@storybook/addon-interactions", //Disbaled panel interactions as we are not using.
+    './addons/css-tokens/manager.js',
   ],
   framework: {
     name: "@storybook/angular",
