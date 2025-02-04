@@ -7,55 +7,6 @@ const exec = util.promisify(require('child_process').exec);
 const cheerio = require(`cheerio`);
 const crypto = require(`crypto`);
 
-const copyCssFiles = (hash, updatedFilenames) => {
-    const filename = 'wm-styles.css';
-    const updatedFilename = `wm-styles.${hash}.css`
-    copyFile(`${global.opPath}/${filename}`, `${global.opPath}/${updatedFilename}`);
-    updatedFilenames[filename] = updatedFilename;
-    // copyFile(`${opPath}/wm-styles.br.css`,`${opPath}/wm-styles.${hash}.br.css`);
-    // copyFile(`${opPath}/wm-styles.gzip.css`,`${opPath}/wm-styles.${hash}.gzip.css`);
-};
-const copyMobileCssFiles = (hash, fileName) => {
-    // const name = filePath.split('.css')[0];
-    copyFile(`${global.opPath}/${fileName}.css`, `${global.opPath}/${fileName}.${hash}.css`);
-    // copyFile(`${opPath}/wm-styles.br.css`,`${opPath}/wm-styles.${hash}.br.css`);
-    // copyFile(`${opPath}/wm-styles.gzip.css`,`${opPath}/wm-styles.${hash}.gzip.css`);
-};
-const generateHash = async (filepath) => {
-    const cssContent = await readFile(filepath);
-    let hash = crypto.createHash('md5');
-    hash.update(cssContent);
-    return hash.digest('hex');
-};
-const generateHashForScripts = (updatedFilenames) => {
-    //from angular 12(IVY), scripts array in angular json, doesn't allow `@` symbol in the name/value
-    //so removed `@` from wavemaker.com in the file name and adding it back in the post-build.js file
-    const scriptsMap = {};
-    return new Promise(resolve => {
-        fs.readdir(global.opPath, (err, items) => {
-            const promises = items.map(i => {
-                const nohashIndex = i.indexOf('-NOHASH.js');
-                if (nohashIndex > 0) {
-                    const key = i.substring(0, nohashIndex);
-                    return generateHash(`${global.opPath}/${i}`).then(hash => {
-                        const filename = `${key}-NOHASH.js`;
-                        const updatedFilename = `${key}.${hash}.js`
-                        scriptsMap[`${key}.js`] = updatedFilename;
-                        updatedFilenames[filename] = updatedFilename;
-                        return Promise.all([
-                            copyFile(`${global.opPath}/${filename}`, `${global.opPath}/${updatedFilename}`),
-                            // copyFile(`${opPath}/${key}-NOHASH.br.js`, `${opPath}/${key}.${hash}.br.js`),
-                            // copyFile(`${opPath}/${key}-NOHASH.gzip.js`, `${opPath}/${key}.${hash}.gzip.js`)
-                        ]);
-                    });
-                }
-            });
-            Promise.all(promises).then(() => {
-                return writeFile(`${global.opPath}/path_mapping.json`, JSON.stringify(scriptsMap, null, 2));
-            }).then(resolve);
-        });
-    });
-};
 let isMobileProject = false;
 let isProdBuild;
 let isDevBuild;
@@ -283,9 +234,7 @@ const generateSha1 = (content) => {
                 wm_styles_path = `${deployUrl}wm-styles.js`;
             } else {
                 const fileName = 'wm-styles';
-                const hash = await generateHash(`${global.opPath}/${fileName}.css`);
-                copyCssFiles(hash, updatedFilenames);
-                const updatedFileName = `${fileName}.${hash}.css`
+                const updatedFileName = `${fileName}.css`
                 wm_styles_path = `${deployUrl}${updatedFileName}`;
             }
         }
