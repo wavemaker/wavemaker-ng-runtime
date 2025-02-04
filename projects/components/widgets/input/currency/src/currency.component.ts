@@ -1,11 +1,12 @@
 import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
-import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
+import {FormsModule, NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
 import {AbstractI18nService, AppDefaults, CURRENCY_INFO} from '@wm/core';
 import {IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe} from '@wm/components/base';
 import {NumberLocale} from '@wm/components/input';
 
 import {registerProps} from './currency.props';
+import { CommonModule } from '@angular/common';
 
 const DEFAULT_CLS = 'input-group app-currency';
 
@@ -21,7 +22,9 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAs(CurrencyComponent, NG_VALUE_ACCESSOR, true),
         provideAs(CurrencyComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(CurrencyComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [FormsModule, CommonModule]
 })
 export class CurrencyComponent extends NumberLocale {
     static initializeProps = registerProps();

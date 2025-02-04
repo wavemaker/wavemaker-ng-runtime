@@ -19,7 +19,7 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
 import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 
-import {App, getWmProjectProperties, PartialRefProvider, CustomWidgetRefProvider} from '@wm/core';
+import { App, getWmProjectProperties, PartialRefProvider, CustomWidgetRefProvider } from '@wm/core';
 // Basic widgets
 
 import { BasicModule } from '@wm/components/basic';
@@ -32,8 +32,7 @@ import { TreeModule } from '@wm/components/basic/tree';
 import { InputModule } from '@wm/components/input';
 import { CalendarModule } from '@wm/components/input/calendar';
 import { ChipsModule } from '@wm/components/input/chips';
-import { ColorPickerModule } from '@wm/components/input/color-picker';
-import { CurrencyModule } from '@wm/components/input/currency';
+import { ColorPickerComponent } from '@wm/components/input/color-picker';
 import { EpochModule } from '@wm/components/input/epoch';
 import { FileUploadModule } from '@wm/components/input/file-upload';
 import { RatingModule } from '@wm/components/input/rating';
@@ -111,6 +110,8 @@ import { CustomwidgetConfigProviderService } from './services/customwidget-confi
 import { PrefabConfigProviderService } from './services/prefab-config-provider.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CurrencyComponent } from '@wm/components/input/currency';
+
 
 export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
@@ -121,7 +122,7 @@ let xsrfHeaderName = getWmProjectProperties().xsrf_header_name;
 let xsrfOptions = {
     cookieName: 'wm_xsrf_token'
 }
-if(xsrfHeaderName) {
+if (xsrfHeaderName) {
     xsrfOptions['headerName'] = xsrfHeaderName;
 }
 export const httpClientXsrfModule = HttpClientXsrfModule.withOptions(xsrfOptions);
@@ -161,8 +162,6 @@ const componentsModule = [
     // Input
     CalendarModule,
     ChipsModule,
-    ColorPickerModule,
-    CurrencyModule,
     EpochModule,
     FileUploadModule,
     InputModule,
@@ -231,7 +230,6 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         CommonModule,
         RouterModule,
         HttpClientModule,
-
         modalModule,
         bsDatePickerModule,
         timepickerModule,
@@ -243,7 +241,8 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         carouselModule,
         popoverModule,
         ngCircleProgressModule,
-
+        ColorPickerComponent,
+        CurrencyComponent,    
         routerModule,
         toastrModule,
         httpClientXsrfModule,
@@ -254,7 +253,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         AppResourceManagerService,
         { provide: AppJSProvider, useClass: AppJSProviderService },
         { provide: AppVariablesProvider, useClass: AppVariablesProviderService },
-        { provide: AppExtensionProvider,useClass:AppExtensionProviderService},
+        { provide: AppExtensionProvider, useClass: AppExtensionProviderService },
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
         { provide: CustomWidgetRefProvider, useClass: ComponentRefProviderService },

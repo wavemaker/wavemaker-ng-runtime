@@ -80,8 +80,7 @@ import {SearchModule} from "@wm/components/basic/search";
 import {TreeModule} from "@wm/components/basic/tree";
 import {CalendarModule} from "@wm/components/input/calendar";
 import {ChipsModule} from "@wm/components/input/chips";
-import {ColorPickerModule} from "@wm/components/input/color-picker";
-import {CurrencyModule} from "@wm/components/input/currency";
+import {ColorPickerComponent} from "@wm/components/input/color-picker";
 import {EpochModule} from "@wm/components/input/epoch";
 import {FileUploadModule} from "@wm/components/input/file-upload";
 import {InputModule} from "@wm/components/input";
@@ -123,6 +122,7 @@ import {CarouselModule as ngxCarouselModule} from "ngx-bootstrap/carousel";
 import {PopoverModule as ngxPopoverModule} from "ngx-bootstrap/popover";
 import {NgCircleProgressModule} from "ng-circle-progress";
 import {TooltipModule} from "ngx-bootstrap/tooltip";
+import { CurrencyComponent } from '@wm/components/input/currency';
 
 declare const _WM_APP_PROPERTIES;
 
@@ -209,14 +209,13 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     // Input
     CalendarModule,
     ChipsModule,
-    ColorPickerModule,
-    CurrencyModule,
+    ColorPickerComponent,
     EpochModule,
     FileUploadModule,
     InputModule,
     RatingModule,
     SliderModule,
-
+    CurrencyComponent,
     // Data
     CardModule,
     FormModule,

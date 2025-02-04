@@ -6,7 +6,9 @@ import {addClass, removeClass} from '@wm/core';
 import {AUTOCLOSE_TYPE, IWidgetConfig, provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
 import {BaseFormCustomComponent} from '@wm/components/input';
 import {registerProps} from './color-picker.props';
-
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ColorPickerModule as ngxColorPickerModule } from 'ngx-color-picker';
 
 const DEFAULT_CLS = 'input-group app-colorpicker';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -22,7 +24,9 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAs(ColorPickerComponent, NG_VALUE_ACCESSOR, true),
         provideAs(ColorPickerComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(ColorPickerComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [FormsModule, CommonModule, ngxColorPickerModule]
 })
 export class ColorPickerComponent extends BaseFormCustomComponent {
     static initializeProps = registerProps();
