@@ -84,7 +84,7 @@ import {ColorPickerComponent} from "@wm/components/input/color-picker";
 import {EpochModule} from "@wm/components/input/epoch";
 import {FileUploadComponent} from "@wm/components/input/file-upload";
 import {InputModule} from "@wm/components/input";
-import {RatingModule} from "@wm/components/input/rating";
+import {RatingComponent} from "@wm/components/input/rating";
 import {SliderModule} from "@wm/components/input/slider";
 import {CardModule} from "@wm/components/data/card";
 import {FormModule} from "@wm/components/data/form";
@@ -213,7 +213,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     EpochModule,
     FileUploadComponent,
     InputModule,
-    RatingModule,
+    RatingComponent,
     SliderModule,
     CurrencyComponent,
     // Data

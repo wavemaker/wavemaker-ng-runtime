@@ -24,8 +24,8 @@ class TestComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [RatingComponent, TestComponent],
-    imports: [FormsModule, ComponentsTestModule],
+    declarations: [TestComponent],
+    imports: [RatingComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },

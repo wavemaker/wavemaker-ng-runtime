@@ -1,15 +1,16 @@
-import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, ElementRef, Inject, Injector, Optional, ViewChild } from '@angular/core';
+import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import {generateGUId, setCSS, noop} from '@wm/core';
-import { getOrderedDataset, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { generateGUId, setCSS, noop } from '@wm/core';
+import { getOrderedDataset, provideAs, provideAsWidgetRef, styler, WmComponentsModule } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 
 import { registerProps } from './rating.props';
-import {find, isEmpty, isUndefined, slice, toString} from "lodash-es";
+import { find, isEmpty, isUndefined, slice, toString } from "lodash-es";
+import { CommonModule } from '@angular/common';
 
 const DEFAULT_CLS = 'app-ratings';
-const WIDGET_CONFIG = {widgetType: 'wm-rating', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG = { widgetType: 'wm-rating', hostClass: DEFAULT_CLS };
 
 const MAX_RATING = 10;
 const DEFAULT_RATING = 5;
@@ -20,7 +21,9 @@ const DEFAULT_RATING = 5;
     providers: [
         provideAs(RatingComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(RatingComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, FormsModule, WmComponentsModule]
 })
 export class RatingComponent extends DatasetAwareFormComponent {
     static initializeProps = registerProps();
@@ -37,7 +40,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
     public iconsize: string;
     public iconcolor: string;
     public onFocus: any;
-    private touchEnabled:boolean;
+    private touchEnabled: boolean;
     public activeiconclass: string = '';
     public inactiveiconclass: string = '';
     @ViewChild('ratingInput', /* TODO: add static flag */ { read: ElementRef }) ratingEl: ElementRef;
@@ -97,10 +100,10 @@ export class RatingComponent extends DatasetAwareFormComponent {
 
         for (let i = maxValue; i > 0; i--) {
             if (!data.length) {
-                ratingItems.push({key: i, value: i, index: i, label: i});
+                ratingItems.push({ key: i, value: i, index: i, label: i });
             } else {
                 if (i > data.length) {
-                    ratingItems.push({key: i, value: i, index: i, label: i});
+                    ratingItems.push({ key: i, value: i, index: i, label: i });
                 } else {
                     data = getOrderedDataset(data, 'index:desc');
                     ratingItems = ratingItems.concat(data);
@@ -140,7 +143,7 @@ export class RatingComponent extends DatasetAwareFormComponent {
      */
     onDatavalueChange(dataVal) {
         if (!isEmpty(this.datasetItems)) {
-            let selectedItem = find(this.datasetItems, {'selected': true});
+            let selectedItem = find(this.datasetItems, { 'selected': true });
 
             if (!selectedItem && !isUndefined(dataVal)) {
                 selectedItem = find(this.datasetItems, function (item) {
