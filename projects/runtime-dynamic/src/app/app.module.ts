@@ -44,7 +44,7 @@ import { MobileRuntimeDynamicModule, MOBILE_COMPONENT_MODULES_FOR_ROOT } from '@
 import { CardModule } from '@wm/components/data/card';
 import { FormModule } from '@wm/components/data/form';
 import { ListModule } from '@wm/components/data/list';
-import { LiveTableModule } from '@wm/components/data/live-table';
+import { LiveTableComponent } from '@wm/components/data/live-table';
 import { PaginationModule } from '@wm/components/data/pagination';
 import { TableModule } from '@wm/components/data/table';
 
@@ -172,7 +172,7 @@ const componentsModule = [
     CardModule,
     FormModule,
     ListModule,
-    LiveTableModule,
+    LiveTableComponent,
     PaginationModule,
     TableModule,
 

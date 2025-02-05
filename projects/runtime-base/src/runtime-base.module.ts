@@ -89,7 +89,7 @@ import {SliderComponent} from "@wm/components/input/slider";
 import {CardModule} from "@wm/components/data/card";
 import {FormModule} from "@wm/components/data/form";
 import {ListModule} from "@wm/components/data/list";
-import {LiveTableModule} from "@wm/components/data/live-table";
+import {LiveTableComponent} from "@wm/components/data/live-table";
 import {PaginationModule} from "@wm/components/data/pagination";
 import {TableModule} from "@wm/components/data/table";
 import {ChartComponent} from "@wm/components/chart";
@@ -220,7 +220,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     CardModule,
     FormModule,
     ListModule,
-    LiveTableModule,
+    LiveTableComponent,
     PaginationModule,
     TableModule,
 

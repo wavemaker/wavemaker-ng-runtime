@@ -10,25 +10,28 @@ import {
     Optional
 } from '@angular/core';
 
-import {debounceTime} from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
-import {$appDigest, AbstractDialogService, App, getClonedObject, isDefined, triggerFn} from '@wm/core';
-import {provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
-import {TableComponent} from '@wm/components/data/table';
+import { $appDigest, AbstractDialogService, App, getClonedObject, isDefined, triggerFn } from '@wm/core';
+import { provideAsWidgetRef, StylableComponent, styler, WmComponentsModule } from '@wm/components/base';
+import { TableComponent } from '@wm/components/data/table';
 
-import {registerProps} from './live-table.props';
+import { registerProps } from './live-table.props';
+import { CommonModule } from '@angular/common';
 
 declare var $: any;
 
 const DEFAULT_CLS = 'app-livegrid';
-const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG = { widgetType: 'wm-livetable', hostClass: DEFAULT_CLS };
 
 @Component({
     selector: '[wmLiveTable]',
     templateUrl: './live-table.component.html',
     providers: [
         provideAsWidgetRef(LiveTableComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule],
 })
 export class LiveTableComponent extends StylableComponent implements AfterContentInit {
     static initializeProps = registerProps();
@@ -75,13 +78,13 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
 
             if (!this.isLayoutDialog && !this.form) {
                 this.table.datagridElement.datatable('option', {
-                    'beforeRowUpdate' : () => {
+                    'beforeRowUpdate': () => {
                         this.showErrorMessage();
                     },
-                    'beforeRowDelete' : () => {
+                    'beforeRowDelete': () => {
                         this.showErrorMessage();
                     },
-                    'beforeRowInsert' : () => {
+                    'beforeRowInsert': () => {
                         this.showErrorMessage();
                     }
                 });
@@ -139,7 +142,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
             return;
         }
 
-       this._addNewRow();
+        this._addNewRow();
     }
 
     private _updateRow(row, eventName) {

@@ -76,7 +76,7 @@ const TREE_MODULE: ImportDef[] = [{from: '@wm/components/basic/tree', name: 'Tre
 const WIZARD_MODULE: ImportDef[] = [...NG_FORM_MODULE, {from: '@wm/components/containers/wizard', name: 'WizardModule'}];
 
 
-const LIVE_TABLE_MODULE: ImportDef[] = [...TABLE_MODULE, {from: '@wm/components/data/live-table', name: 'LiveTableModule'}];
+const LIVE_TABLE_MODULE: ImportDef[] = [...TABLE_MODULE, {from: '@wm/components/data/live-table', name: 'LiveTableComponent'}];
 const FORM_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NG_REACTIVE_FORM_MODULE, ...BASIC_MODULE, ...INPUT_MODULE, ...PAGE_MODULE, ...DESIGN_DIALOG_MODULE, {from: '@wm/components/data/form', name: 'FormModule'}];
 
 export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
