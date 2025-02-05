@@ -63,12 +63,13 @@ describe('wm-tree: Widget specific test cases', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [TreeSpec, TreeComponent],
+            declarations: [TreeSpec],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: TrustAsPipe, useClass: TrustAsPipe },
                 { provide: AbstractI18nService, useClass: MockAbstractI18nService }
-            ]
+            ],
+            imports: [TreeComponent]
         })
             .compileComponents();
 

@@ -26,7 +26,7 @@ import { BasicModule } from '@wm/components/basic';
 import { ProgressModule } from '@wm/components/basic/progress';
 import { RichTextEditorComponent } from '@wm/components/basic/rich-text-editor';
 import { SearchModule } from '@wm/components/basic/search';
-import { TreeModule } from '@wm/components/basic/tree';
+import { TreeComponent } from '@wm/components/basic/tree';
 
 // input
 import { InputModule } from '@wm/components/input';
@@ -157,7 +157,7 @@ const componentsModule = [
     ProgressModule,
     RichTextEditorComponent,
     SearchModule,
-    TreeModule,
+    TreeComponent,
 
     // Input
     CalendarModule,

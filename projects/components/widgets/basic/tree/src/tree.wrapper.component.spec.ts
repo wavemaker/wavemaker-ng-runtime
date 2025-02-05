@@ -66,8 +66,8 @@ class TreeWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [TreeWrapperComponent, TreeComponent],
-    imports: [],
+    declarations: [TreeWrapperComponent],
+    imports: [TreeComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }

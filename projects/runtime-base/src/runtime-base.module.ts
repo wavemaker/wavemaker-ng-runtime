@@ -77,7 +77,7 @@ import {BasicModule} from "@wm/components/basic";
 import {ProgressModule} from "@wm/components/basic/progress";
 import {RichTextEditorComponent} from "@wm/components/basic/rich-text-editor";
 import {SearchModule} from "@wm/components/basic/search";
-import {TreeModule} from "@wm/components/basic/tree";
+import {TreeComponent} from "@wm/components/basic/tree";
 import {CalendarModule} from "@wm/components/input/calendar";
 import {ChipsModule} from "@wm/components/input/chips";
 import {ColorPickerComponent} from "@wm/components/input/color-picker";
@@ -204,7 +204,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     ProgressModule,
     RichTextEditorComponent,
     SearchModule,
-    TreeModule,
+    TreeComponent,
 
     // Input
     CalendarModule,

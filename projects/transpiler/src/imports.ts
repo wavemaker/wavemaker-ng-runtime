@@ -72,7 +72,7 @@ const TABS_MODULE: ImportDef[] = [{from: '@wm/components/containers/tabs', name:
 const TABLE_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NG_REACTIVE_FORM_MODULE, ...PAGINATION_MODULE, ...MENU_MODULE, ...BASIC_MODULE, ...INPUT_MODULE, ...NGX_TOOL_TIP_MODULE, ...LIST_MODULE, {from: '@wm/components/data/table', name: 'TableModule'}];
 const TILE_MODULE: ImportDef[] = [{from: '@wm/components/containers/tile', name: 'TileModule'}];
 const TOP_NAV_MODULE: ImportDef[] = [{from: '@wm/components/page/top-nav', name: 'TopNavModule'}];
-const TREE_MODULE: ImportDef[] = [{from: '@wm/components/basic/tree', name: 'TreeModule'}];
+const TREE_MODULE: ImportDef[] = [{from: '@wm/components/basic/tree', name: 'TreeComponent'}];
 const WIZARD_MODULE: ImportDef[] = [...NG_FORM_MODULE, {from: '@wm/components/containers/wizard', name: 'WizardModule'}];
 
 
