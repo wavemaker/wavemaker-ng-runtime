@@ -1,11 +1,12 @@
-import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, styler, StylableComponent, provideAsWidgetRef } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, styler, StylableComponent, provideAsWidgetRef, WmComponentsModule } from '@wm/components/base';
 
 import { registerProps } from './navbar.props';
+import { CommonModule } from '@angular/common';
 
 const DEFAULT_CLS = 'navbar navbar-default app-navbar';
-const WIDGET_CONFIG = {widgetType: 'wm-navbar', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG = { widgetType: 'wm-navbar', hostClass: DEFAULT_CLS };
 
 declare const $;
 
@@ -14,7 +15,9 @@ declare const $;
     templateUrl: './navbar.component.html',
     providers: [
         provideAsWidgetRef(NavbarComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule]
 })
 export class NavbarComponent extends StylableComponent implements AfterViewInit {
     static initializeProps = registerProps();
@@ -22,7 +25,7 @@ export class NavbarComponent extends StylableComponent implements AfterViewInit 
     public menuiconclass: any;
     public title: string;
     public imgsrc: string;
-    @ViewChild('navContent', {static: true}) private navContent: ElementRef;
+    @ViewChild('navContent', { static: true }) private navContent: ElementRef;
 
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
@@ -31,7 +34,7 @@ export class NavbarComponent extends StylableComponent implements AfterViewInit 
 
     public toggleCollapse() {
         const $navContent = $(this.navContent.nativeElement);
-        $navContent.animate({ 'height': 'toggle'});
+        $navContent.animate({ 'height': 'toggle' });
         if ($navContent.hasClass('in')) {
             setTimeout(() => this.toggleNavCollapse(), 500);
         } else {

@@ -16,8 +16,8 @@ class NavbarWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [NavbarWrapperComponent, NavbarComponent],
+    imports: [NavbarComponent],
+    declarations: [NavbarWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
     ]

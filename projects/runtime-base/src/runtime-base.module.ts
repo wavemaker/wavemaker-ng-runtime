@@ -106,7 +106,7 @@ import {LoginDialogModule} from "@wm/components/dialogs/login-dialog";
 import {PartialDialogModule} from "@wm/components/dialogs/partial-dialog";
 import {BreadcrumbComponent} from "@wm/components/navigation/breadcrumb";
 import {MenuModule} from "@wm/components/navigation/menu";
-import {NavbarModule} from "@wm/components/navigation/navbar";
+import {NavbarComponent} from "@wm/components/navigation/navbar";
 import {PopoverModule} from "@wm/components/navigation/popover";
 import {CarouselModule} from "@wm/components/advanced/carousel";
 import {LoginModule} from "@wm/components/advanced/login";
@@ -245,7 +245,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     // navigation
     BreadcrumbComponent,
     MenuModule,
-    NavbarModule,
+    NavbarComponent,
     PopoverModule,
 
     // Advanced
