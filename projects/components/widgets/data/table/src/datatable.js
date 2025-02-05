@@ -650,12 +650,20 @@ $.widget('wm.datatable', {
     _getCheckbox: function (labelClass = '', chkBoxName = '', checked = '', disabled = '') {
         return `<div class="app-checkbox checkbox">
         <label class="${labelClass}">
+            <span class="sr-only" aria-live="assertive">${this._getCheckboxLabel(chkBoxName)}</span>
             <input type="checkbox" name="${chkBoxName}" ${checked} ${disabled} role="checkbox">
             <span class="caption"></span>
         </label>
     </div>`
     },
 
+    _getCheckboxLabel: function (chkBoxName) {
+        if (chkBoxName) { // it is a row
+            return 'Select row';
+        } else {
+            return 'Select all rows';
+        }
+    },
     /* Returns the radio template. */
     _getRadioTemplate: function (row) {
         var checked = row._checked === true ? ' checked' : '',
@@ -1649,6 +1657,7 @@ $.widget('wm.datatable', {
         if (this.options.multiselect) {
             $checkbox = $row.find('td input[name="gridMultiSelect"]:checkbox:not(:disabled)');
             $checkbox.prop('checked', selected);
+            $checkbox.siblings('span.sr-only').text(selected ? 'Row Selected' : 'Row Deselected');
             this.preparedData[rowId]._checked = selected;
             // if we check header checkbox(select/unselect all the records) then updating selectAll checkbox state is not required.
             if (!isSelectAll) {
@@ -3055,7 +3064,9 @@ $.widget('wm.datatable', {
 
         function toggleSelectAll(e) {
             var $checkboxes = $('tr.app-datagrid-row:not(.always-new-row):visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
-                checked = this.checked;
+                checked = this.checked,
+                $headerCheckbox = self.gridHeaderElement.find("th.app-datagrid-header-cell input:checkbox");
+            $headerCheckbox.siblings('span.sr-only').text(checked ? 'All Rows Selected' : 'All Rows Deselected');
             $checkboxes.prop('checked', checked);
             $checkboxes.each(function () {
                 var $row = $(this).closest('tr.app-datagrid-row'),
