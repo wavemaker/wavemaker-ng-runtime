@@ -49,7 +49,7 @@ import { PaginationModule } from '@wm/components/data/pagination';
 import { TableModule } from '@wm/components/data/table';
 
 // Chart
-import { ChartModule } from '@wm/components/chart';
+import { ChartComponent } from '@wm/components/chart';
 
 // Containers
 import { AccordionModule } from '@wm/components/containers/accordion';
@@ -177,7 +177,7 @@ const componentsModule = [
     TableModule,
 
     // chart
-    ChartModule,
+    ChartComponent,
 
     // container modules
     AccordionModule,

@@ -18,11 +18,9 @@ import {
     isNumberType,
     prettifyLabels,
     removeAttr,
-    triggerFn,
-    isMobileApp,
-    noop
+    triggerFn
 } from '@wm/core';
-import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler,  } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler, WmComponentsModule, } from '@wm/components/base';
 
 import { registerProps } from './chart.props';
 import { allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType, postPlotChartProcess } from './chart.utils';
@@ -41,47 +39,49 @@ import {
     split,
     uniq
 } from "lodash-es";
+import { BasicModule } from '@wm/components/basic';
+import { CommonModule } from '@angular/common';
 
 declare const $;
 
 declare const d3, nv;
 
-const WIDGET_CONFIG = {widgetType: 'wm-chart', hostClass: 'app-chart'};
+const WIDGET_CONFIG = { widgetType: 'wm-chart', hostClass: 'app-chart' };
 
 const options = {
-        'Bubble' : ['bubblesize', 'shape']
-    },
+    'Bubble': ['bubblesize', 'shape']
+},
     NONE = 'none',
     advanceDataProps = ['aggregation', 'aggregationcolumn', 'groupby', 'orderby'],
     // XPaths to get actual data of data points in charts
     chartDataPointXpath = {
-        'Column'         : 'rect.nv-bar',
-        'Bar'            : 'g.nv-bar',
-        'Area'           : '.nv-stackedarea .nv-point',
+        'Column': 'rect.nv-bar',
+        'Bar': 'g.nv-bar',
+        'Area': '.nv-stackedarea .nv-point',
         'Cumulative Line': '.nv-cumulativeLine .nv-scatterWrap path.nv-point',
-        'Line'           : '.nv-lineChart .nv-scatterWrap path.nv-point',
-        'Pie'            : '.nv-pieChart .nv-slice path',
-        'Donut'          : '.nv-pieChart .nv-slice path',
-        'Bubble'         : '.nv-scatterChart .nv-point-paths path'
+        'Line': '.nv-lineChart .nv-scatterWrap path.nv-point',
+        'Pie': '.nv-pieChart .nv-slice path',
+        'Donut': '.nv-pieChart .nv-slice path',
+        'Bubble': '.nv-scatterChart .nv-point-paths path'
     },
     // all properties of the chart
     allOptions = ['bubblesize', 'shape'],
     styleProps = {
-        'fontunit'      : 'font-size',
-        'fontsize'      : 'font-size',
-        'color'         : 'fill',
-        'fontfamily'    : 'font-family',
-        'fontweight'    : 'font-weight',
-        'fontstyle'     : 'font-style',
+        'fontunit': 'font-size',
+        'fontsize': 'font-size',
+        'color': 'fill',
+        'fontfamily': 'font-family',
+        'fontweight': 'font-weight',
+        'fontstyle': 'font-style',
         'textdecoration': 'text-decoration'
     },
     // Getting the relevant aggregation function based on the selected option
     aggregationFnMap = {
-        'average' : 'AVG',
-        'count'   : 'COUNT',
-        'maximum' : 'MAX',
-        'minimum' : 'MIN',
-        'sum'     : 'SUM'
+        'average': 'AVG',
+        'count': 'COUNT',
+        'maximum': 'MAX',
+        'minimum': 'MIN',
+        'sum': 'SUM'
     };
 
 const getBooleanValue = val => {
@@ -106,8 +106,8 @@ const getLodashOrderByFormat = orderby => {
         orders.push(columns[1]);
     });
     return {
-        'columns' : orderByColumns,
-        'orders'  : orders
+        'columns': orderByColumns,
+        'orders': orders
     };
 };
 
@@ -134,7 +134,9 @@ const angle = d => {
     providers: [
         provideAsWidgetRef(ChartComponent)
     ],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: true,
+    imports: [BasicModule, CommonModule, WmComponentsModule]
 })
 export class ChartComponent extends StylableComponent implements AfterViewInit, OnDestroy, IRedrawableComponent {
     static initializeProps = registerProps();
@@ -426,8 +428,8 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                 groupValues[index] = this.valueFinder(value, this.xaxisdatakey, yAxisKey, index);
             });
             groupData = {
-                key : groupKey,
-                values : groupValues
+                key: groupKey,
+                values: groupValues
             };
             chartData.push(groupData);
         });
@@ -476,7 +478,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
                     columns.push(key);
                 }
             });
-            groupingExpression =  columns.join(',');
+            groupingExpression = columns.join(',');
             // set isVisuallyGrouped flag in scope for later use
             this.isVisuallyGrouped = isVisuallyGrouped;
 
@@ -524,18 +526,18 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         if (this.isAggregationEnabled()) {
             // Send the group by in the aggregations api only if aggregation is also chosen
             data.groupByFields = groupByFields;
-            data.aggregations =  [
+            data.aggregations = [
                 {
                     'field': this.aggregationcolumn,
-                    'type':  aggregationFnMap[this.aggregation],
+                    'type': aggregationFnMap[this.aggregation],
                     'alias': getValidAliasName(this.aggregationcolumn)
                 }
             ];
         }
         // Execute the query.
         variable.execute('getAggregatedData', {
-            'aggregations' : data,
-            'sort'         : sortExpr
+            'aggregations': data,
+            'sort': sortExpr
         }).then(response => {
             // Transform the result into a format supported by the chart.
             const chartData: any = [],
@@ -802,10 +804,10 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
         if (this._processedData.length > 0) {
             if (isAxisDomainValid(this, 'x')) {
-                xDomainValues = this.binddataset ? this.getXMinMaxValues(this._processedData[0]) : { 'min' : {'x': 1},  'max' : {'x' : 5}};
+                xDomainValues = this.binddataset ? this.getXMinMaxValues(this._processedData[0]) : { 'min': { 'x': 1 }, 'max': { 'x': 5 } };
             }
             if (isAxisDomainValid(this, 'y')) {
-                yDomainValues = this.binddataset ? this.getYMinMaxValues(this._processedData) : { 'min' : {'y' : 1}, 'max' : {'y' : 5}};
+                yDomainValues = this.binddataset ? this.getYMinMaxValues(this._processedData) : { 'min': { 'y': 1 }, 'max': { 'y': 5 } };
             }
         }
 
@@ -818,11 +820,11 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
 
         if (isArray(this._processedData)) {
             // WMS-19499:  To remove chart X-axis old ticks when chart data loaded dynamically.
-            const oldgTicks =  $('#wmChart' + this.$id + ' svg').find('g.nv-x').find('g.tick');
+            const oldgTicks = $('#wmChart' + this.$id + ' svg').find('g.nv-x').find('g.tick');
             if (oldgTicks && oldgTicks.length) {
                 oldgTicks.remove();
             }
-            beforeRenderVal = this.invokeEventCallback('beforerender', { 'chartInstance' : chart});
+            beforeRenderVal = this.invokeEventCallback('beforerender', { 'chartInstance': chart });
             if (beforeRenderVal) {
                 chart = beforeRenderVal;
             }
@@ -862,11 +864,11 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         if (!this.isValidAxis()) {
             this._processedData = [];
         }
-        nv.addGraph(() => this.configureChart(),  () => {
+        nv.addGraph(() => this.configureChart(), () => {
             /*Bubble chart has an time out delay of 300ms in their implementation due to which we
             * won't be getting required data points on attaching events
             * hence delaying it 600ms*/
-            setTimeout( () => {
+            setTimeout(() => {
                 this.attachClickEvent();
             }, 600);
         });
@@ -1036,18 +1038,18 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
             .attr('class', 'nv-pie-title')
             .text(labelValue)
             .each(function (d) {
-                var d3text = d3.select(this),
-                circ = d3.select(this.parentElement),
-                totalWidth = Number(circ.node().getBoundingClientRect().width),
-                // minus the ring width from total width
-                availWidth = totalWidth - 30,
-                textWidth = this.getComputedTextLength();
+                const d3text = d3.select(this),
+                    circ = d3.select(this.parentElement),
+                    totalWidth = Number(circ.node().getBoundingClientRect().width),
+                    // minus the ring width from total width
+                    availWidth = totalWidth - 30,
+                    textWidth = this.getComputedTextLength();
                 d3text.attr("data-scale", availWidth / textWidth);
-              }).style("font-size", function() {
+            }).style("font-size", function () {
                 // 16 is the default font size to multiply with the scaled value and 24 is the maximum font size that can be applied
-                var fontSize = 16 * d3.select(this).attr("data-scale");
+                const fontSize = 16 * d3.select(this).attr("data-scale");
                 return fontSize > 24 ? 24 : fontSize + "px";
-              });
+            });
     }
 
     onPropertyChange(key, newVal, oldVal?) {
@@ -1134,16 +1136,16 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
         // Show loading status based on the variable life cycle
         this._subsciptions.push(this.app.subscribe('toggle-variable-state', this.handleLoading.bind(this)));
         // Will hide tolltip of a chart in mobile when the user scrolls.
-        this._subsciptions.push(this.app.subscribe('iscroll-start', () => {this.hideTooltip();}));
+        this._subsciptions.push(this.app.subscribe('iscroll-start', () => { this.hideTooltip(); }));
     }
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
         // For old projects
         if (!includes(['outside', 'inside', 'hide'], this.showlabels)) {
-            this.showlabels        = getBooleanValue(this.showlabels);
+            this.showlabels = getBooleanValue(this.showlabels);
             this.showlabelsoutside = getBooleanValue(this.showlabelsoutside);
-            this.showlabels        = this.showlabels ? (this.showlabelsoutside ? 'outside' : 'inside') : 'hide';
+            this.showlabels = this.showlabels ? (this.showlabelsoutside ? 'outside' : 'inside') : 'hide';
         }
 
         if (!this.theme) {
@@ -1161,7 +1163,7 @@ export class ChartComponent extends StylableComponent implements AfterViewInit, 
     ngOnDestroy() {
         // destroy all subscriptions to prevent memory leak.
         this.hideTooltip();
-        this._subsciptions.forEach((subscription)=>{
+        this._subsciptions.forEach((subscription) => {
             subscription();
         });
         super.ngOnDestroy();

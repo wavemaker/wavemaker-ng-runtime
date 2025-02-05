@@ -92,7 +92,7 @@ import {ListModule} from "@wm/components/data/list";
 import {LiveTableModule} from "@wm/components/data/live-table";
 import {PaginationModule} from "@wm/components/data/pagination";
 import {TableModule} from "@wm/components/data/table";
-import {ChartModule} from "@wm/components/chart";
+import {ChartComponent} from "@wm/components/chart";
 import {AccordionModule} from "@wm/components/containers/accordion";
 import {LinearLayoutModule} from "@wm/components/containers/linear-layout";
 import {LayoutGridModule} from "@wm/components/containers/layout-grid";
@@ -225,7 +225,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     TableModule,
 
     // chart
-    ChartModule,
+    ChartComponent,
 
     // container modules
     AccordionModule,
