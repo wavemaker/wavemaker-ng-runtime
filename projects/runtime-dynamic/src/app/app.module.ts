@@ -74,7 +74,7 @@ import { PopoverComponent } from '@wm/components/navigation/popover';
 
 // Advanced
 import { CarouselModule } from '@wm/components/advanced/carousel';
-import { LoginModule } from '@wm/components/advanced/login';
+import { LoginComponent } from '@wm/components/advanced/login';
 import { MarqueeModule } from '@wm/components/advanced/marquee';
 import { CustomModule } from '@wm/components/advanced/custom';
 
@@ -202,7 +202,7 @@ const componentsModule = [
 
     // Advanced
     CarouselModule,
-    LoginModule,
+    LoginComponent,
     MarqueeModule,
     CustomModule,
 

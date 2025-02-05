@@ -109,7 +109,7 @@ import {MenuModule} from "@wm/components/navigation/menu";
 import {NavbarComponent} from "@wm/components/navigation/navbar";
 import {PopoverComponent} from "@wm/components/navigation/popover";
 import {CarouselModule} from "@wm/components/advanced/carousel";
-import {LoginModule} from "@wm/components/advanced/login";
+import {LoginComponent} from "@wm/components/advanced/login";
 import {MarqueeModule} from "@wm/components/advanced/marquee";
 import {CustomModule} from "@wm/components/advanced/custom";
 import {BsDatepickerModule} from "ngx-bootstrap/datepicker";
@@ -250,7 +250,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
 
     // Advanced
     CarouselModule,
-    LoginModule,
+    LoginComponent,
     MarqueeModule,
     CustomModule,
 

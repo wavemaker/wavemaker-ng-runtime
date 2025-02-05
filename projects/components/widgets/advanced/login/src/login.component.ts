@@ -10,28 +10,31 @@ import {
     ViewChild
 } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, MessageComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, MessageComponent, provideAsWidgetRef, StylableComponent, styler, WmComponentsModule } from '@wm/components/base';
 import { FormComponent } from '@wm/components/data/form';
 import { ButtonComponent } from '@wm/components/input';
 
 import { registerProps } from './login.props';
-import {includes} from "lodash-es";
+import { includes } from "lodash-es";
+import { CommonModule } from '@angular/common';
 
-const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
+const WIDGET_INFO = { widgetType: 'wm-login', hostClass: 'app-login' };
 
 @Component({
     selector: 'div[wmLogin]',
     templateUrl: './login.component.html',
     providers: [
         provideAsWidgetRef(LoginComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule]
 })
 export class LoginComponent extends StylableComponent implements AfterViewInit {
     static initializeProps = registerProps();
     loginBtnCmp: ButtonComponent;
 
     @ContentChild(FormComponent) formCmp: FormComponent;
-    @ContentChildren(ButtonComponent, {descendants: true}) buttonComponents: QueryList<ButtonComponent>;
+    @ContentChildren(ButtonComponent, { descendants: true }) buttonComponents: QueryList<ButtonComponent>;
     @ViewChild(MessageComponent, { static: true }) messageCmp: MessageComponent;
 
     loginMessage: { type?: string; caption?: any; show?: boolean; };
@@ -63,7 +66,7 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
 
     doLogin() {
         if (this.eventsource) {
-            this.formCmp.ngform.valid && this.eventsource.invoke({loginInfo: this.getLoginDetails()}, this.onSuccessCB.bind(this), this.onErrorCB.bind(this));
+            this.formCmp.ngform.valid && this.eventsource.invoke({ loginInfo: this.getLoginDetails() }, this.onSuccessCB.bind(this), this.onErrorCB.bind(this));
         } else {
             console.warn('Default action "loginAction" does not exist. Either create the Action or assign an event to onSubmit of the login widget');
         }

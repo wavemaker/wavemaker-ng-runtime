@@ -53,7 +53,7 @@ const MARQUEE_MODULE: ImportDef[] = [{from: '@wm/components/advanced/marquee', n
 const LEFT_PANEL_MODULE: ImportDef[] = [{from: '@wm/components/page/left-panel', name: 'LeftPanelModule'},
     {from: '@wm/mobile/components/page/left-panel', name: 'LeftPanelModule', as: 'WM_MobileLeftPanelModule', platformType: 'MOBILE'}];
 const LIST_MODULE: ImportDef[] = [...PAGINATION_MODULE, ...INPUT_MODULE, {from: '@wm/components/data/list', name: 'ListModule'}];
-const LOGIN_MODULE: ImportDef[] = [{from: '@wm/components/advanced/login', name: 'LoginModule'}];
+const LOGIN_MODULE: ImportDef[] = [{from: '@wm/components/advanced/login', name: 'LoginComponent'}];
 const CUSTOM_MODULE: ImportDef[] = [{from: '@wm/components/advanced/custom', name: 'CustomModule'}];
 const MOBILE_NAV_BAR_MODULE: ImportDef[] = [...LEFT_PANEL_MODULE, ...SEARCH_MODULE, ...PAGE_MODULE, {from: '@wm/mobile/components/page/mobile-navbar', name: 'MobileNavbarModule'}];
 const MEDIA_LIST_MODULE: ImportDef[] = [...BASIC_MODULE, ...PAGE_MODULE, ...MOBILE_NAV_BAR_MODULE, {from: '@wm/mobile/components/data/media-list', name: 'MediaListModule'}];
