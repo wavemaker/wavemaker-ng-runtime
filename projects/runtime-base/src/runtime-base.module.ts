@@ -28,7 +28,7 @@ import {
 } from '@wm/core';
 import { WmComponentsModule } from '@wm/components/base';
 import { DialogModule } from '@wm/components/dialogs';
-import { ConfirmDialogModule } from '@wm/components/dialogs/confirm-dialog';
+import { ConfirmDialogComponent } from '@wm/components/dialogs/confirm-dialog';
 import { DesignDialogModule } from '@wm/components/dialogs/design-dialog';
 import { PrefabModule } from '@wm/components/prefab';
 import { MobileRuntimeModule } from '@wm/mobile/runtime';
@@ -183,7 +183,7 @@ const definitions = [
 ];
 
 export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
-    ConfirmDialogModule,
+    ConfirmDialogComponent,
     DesignDialogModule,
     DialogModule,
 

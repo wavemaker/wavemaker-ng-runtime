@@ -11,14 +11,15 @@ import {
     Inject
 } from '@angular/core';
 
-import {toBoolean} from '@wm/core';
-import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog } from '@wm/components/dialogs';
-
+import { toBoolean } from '@wm/core';
+import { provideAsDialogRef, provideAsWidgetRef, WmComponentsModule } from '@wm/components/base';
+import { BaseDialog, DialogModule } from '@wm/components/dialogs';
+import { CommonModule } from '@angular/common';
+import { InputModule } from '@wm/components/input';
 import { registerProps } from './confirm-dialog.props';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-confirm-dialog';
-const WIDGET_INFO = {widgetType: 'wm-confirmdialog'};
+const WIDGET_INFO = { widgetType: 'wm-confirmdialog' };
 
 @Component({
     selector: 'div[wmConfirmDialog]',
@@ -26,7 +27,9 @@ const WIDGET_INFO = {widgetType: 'wm-confirmdialog'};
     providers: [
         provideAsWidgetRef(ConfirmDialogComponent),
         provideAsDialogRef(ConfirmDialogComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, DialogModule, InputModule, WmComponentsModule],
 })
 export class ConfirmDialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
@@ -63,7 +66,7 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
     }
 
     @HostListener('window:keydown.esc', ['$event'])
-    onEscape($event: KeyboardEvent){};
+    onEscape($event: KeyboardEvent) { };
 
     protected getTemplateRef(): TemplateRef<any> {
         return this.dialogTemplate;
@@ -75,7 +78,7 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onOk($event: Event) {
-        this.invokeEventCallback('ok', {$event});
+        this.invokeEventCallback('ok', { $event });
     }
 
     /**
@@ -84,7 +87,7 @@ export class ConfirmDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onCancel($event: Event) {
-        this.invokeEventCallback('cancel', {$event});
+        this.invokeEventCallback('cancel', { $event });
     }
 
     ngOnInit() {

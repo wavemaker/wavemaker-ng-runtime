@@ -42,11 +42,8 @@ class ConfirmDialogWrapperComponent {
 }
 
 const testModuleDef = {
-    imports: [FormsModule],
-    declarations: [
-        ConfirmDialogWrapperComponent,
-        ConfirmDialogComponent
-    ],
+    imports: [ConfirmDialogComponent],
+    declarations: [ConfirmDialogWrapperComponent],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(ConfirmDialogComponent),
