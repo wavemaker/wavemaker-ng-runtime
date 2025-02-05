@@ -67,7 +67,7 @@ import { LoginDialogModule } from '@wm/components/dialogs/login-dialog';
 import { PartialDialogModule } from '@wm/components/dialogs/partial-dialog';
 
 // Navigation
-import { BreadcrumbModule } from '@wm/components/navigation/breadcrumb';
+import { BreadcrumbComponent } from '@wm/components/navigation/breadcrumb';
 import { MenuModule } from '@wm/components/navigation/menu';
 import { NavbarModule } from '@wm/components/navigation/navbar';
 import { PopoverModule } from '@wm/components/navigation/popover';
@@ -195,7 +195,7 @@ const componentsModule = [
     PartialDialogModule,
 
     // navigation
-    BreadcrumbModule,
+    BreadcrumbComponent,
     MenuModule,
     NavbarModule,
     PopoverModule,

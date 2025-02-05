@@ -1,21 +1,24 @@
-import {Attribute, Component, Inject, Injector, Optional} from '@angular/core';
+import { Attribute, Component, Inject, Injector, Optional } from '@angular/core';
 import { Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 
 import { getRouteNameFromLink, getUrlParams, openLink } from '@wm/core';
-import { APPLY_STYLES_TYPE, provideAsWidgetRef, DatasetAwareNavComponent, NavNode, styler  } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, provideAsWidgetRef, DatasetAwareNavComponent, NavNode, styler, WmComponentsModule } from '@wm/components/base';
 
 import { registerProps } from './breadcrumb.props';
+import { MenuModule } from '@wm/components/navigation/menu';
 
 const DEFAULT_CLS = 'breadcrumb app-breadcrumb';
-const WIDGET_CONFIG = {widgetType: 'wm-breadcrumb', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG = { widgetType: 'wm-breadcrumb', hostClass: DEFAULT_CLS };
 
 @Component({
     selector: '[wmBreadcrumb]',
     templateUrl: './breadcrumb.component.html',
     providers: [
         provideAsWidgetRef(BreadcrumbComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, MenuModule, WmComponentsModule]
 })
 export class BreadcrumbComponent extends DatasetAwareNavComponent {
     static initializeProps = registerProps();
@@ -40,7 +43,7 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent {
      * @param path - final path.
      * @returns {*|Array}: returns array of objects which represents the final path.
      */
-    private getPath(info: {key: string, isPathFound: boolean}, children: Array<NavNode>, path = []): Array<NavNode> {
+    private getPath(info: { key: string, isPathFound: boolean }, children: Array<NavNode>, path = []): Array<NavNode> {
         children.forEach((child: NavNode) => {
             // return if path already found.
             if (info.isPathFound) {
@@ -76,14 +79,14 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent {
         super.resetNodes();
         // get path only if the widget have id property.
         if (this.itemid || this.binditemid) {
-            this.nodes = this.getPath({key: this.getCurrentRoute(), isPathFound: false}, this.nodes);
+            this.nodes = this.getPath({ key: this.getCurrentRoute(), isPathFound: false }, this.nodes);
         }
 
     }
 
-    onItemClick ($event: Event, $item: any) {
+    onItemClick($event: Event, $item: any) {
         $event.preventDefault();
-        const locals = {$item: $item.value, $event};
+        const locals = { $item: $item.value, $event };
         const canNavigate = !(this.invokeEventCallback('beforenavigate', locals) === false);
         const linkTarget = $item.target;
         let itemLink = $item.link;
@@ -92,7 +95,7 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent {
             if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
                 const queryParams = getUrlParams(itemLink);
                 itemLink = getRouteNameFromLink(itemLink);
-                this.route.navigate([itemLink], { queryParams});
+                this.route.navigate([itemLink], { queryParams });
             } else {
                 openLink(itemLink, linkTarget);
             }

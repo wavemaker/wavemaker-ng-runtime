@@ -20,8 +20,8 @@ class BreadcrumbWrapperComponent {
 }
 
 const testModuleDef = {
-    imports: [FormsModule],
-    declarations: [BreadcrumbWrapperComponent, BreadcrumbComponent],
+    imports: [BreadcrumbComponent],
+    declarations: [BreadcrumbWrapperComponent],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         { provide: App, useValue: mockApp },
