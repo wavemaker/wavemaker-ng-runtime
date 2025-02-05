@@ -36,7 +36,7 @@ import { ColorPickerComponent } from '@wm/components/input/color-picker';
 import { EpochModule } from '@wm/components/input/epoch';
 import { FileUploadComponent } from '@wm/components/input/file-upload';
 import { RatingComponent } from '@wm/components/input/rating';
-import { SliderModule } from '@wm/components/input/slider';
+import { SliderComponent } from '@wm/components/input/slider';
 
 import { MobileRuntimeDynamicModule, MOBILE_COMPONENT_MODULES_FOR_ROOT } from '@wm/mobile/runtime/dynamic';
 
@@ -166,7 +166,7 @@ const componentsModule = [
     FileUploadComponent,
     InputModule,
     RatingComponent,
-    SliderModule,
+    SliderComponent,
 
     // Data
     CardModule,

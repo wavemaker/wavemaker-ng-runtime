@@ -1,10 +1,11 @@
-import {Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
-import {NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
+import { Component, Inject, Injector, Optional, ViewChild } from '@angular/core';
+import { FormsModule, NG_VALUE_ACCESSOR, NgModel } from '@angular/forms';
 
-import {IWidgetConfig, provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
-import {BaseFormCustomComponent} from '@wm/components/input';
+import { IWidgetConfig, provideAs, provideAsWidgetRef, styler, WmComponentsModule } from '@wm/components/base';
+import { BaseFormCustomComponent } from '@wm/components/input';
 
-import {registerProps} from './slider.props';
+import { registerProps } from './slider.props';
+import { CommonModule } from '@angular/common';
 
 
 const DEFAULT_CLS = 'app-slider slider';
@@ -19,7 +20,9 @@ const WIDGET_CONFIG: IWidgetConfig = {
     providers: [
         provideAs(SliderComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(SliderComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, FormsModule, WmComponentsModule]
 })
 export class SliderComponent extends BaseFormCustomComponent {
     static initializeProps = registerProps();
@@ -50,7 +53,7 @@ export class SliderComponent extends BaseFormCustomComponent {
     }
 
     public handleChange(newVal: boolean) {
-        this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
+        this.invokeOnChange(this.datavalue, { type: 'change' }, this.ngModel.valid);
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
