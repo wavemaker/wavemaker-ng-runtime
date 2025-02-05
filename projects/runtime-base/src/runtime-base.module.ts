@@ -100,7 +100,7 @@ import {PanelModule} from "@wm/components/containers/panel";
 import {TabsModule} from "@wm/components/containers/tabs";
 import {TileModule} from "@wm/components/containers/tile";
 import {WizardModule} from "@wm/components/containers/wizard";
-import {AlertDialogModule} from "@wm/components/dialogs/alert-dialog";
+import {AlertDialogComponent} from "@wm/components/dialogs/alert-dialog";
 import {IframeDialogModule} from "@wm/components/dialogs/iframe-dialog";
 import {LoginDialogModule} from "@wm/components/dialogs/login-dialog";
 import {PartialDialogModule} from "@wm/components/dialogs/partial-dialog";
@@ -237,7 +237,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     WizardModule,
 
     // dialogs
-    AlertDialogModule,
+    AlertDialogComponent,
     IframeDialogModule,
     LoginDialogModule,
     PartialDialogModule,

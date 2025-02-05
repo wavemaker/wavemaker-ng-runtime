@@ -27,7 +27,7 @@ const SEARCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_TYPE_HEAD_MODULE, 
 
 const ACCORDION_MODULE: ImportDef[] = [{from: '@wm/components/containers/accordion', name: 'AccordionModule'}];
 const LINEAR_LAYOUT_MODULE: ImportDef[] = [{from: '@wm/components/containers/linear-layout', name: 'LinearLayoutModule'}];
-const ALERT_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/alert-dialog', name: 'AlertDialogModule'}];
+const ALERT_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/alert-dialog', name: 'AlertDialogComponent'}];
 const BARCODE_SCANNER_MODULE: ImportDef[] = [{from: '@wm/mobile/components/device/barcode-scanner', name: 'BarcodeScannerModule'}];
 const MENU_MODULE: ImportDef[] = [...BASIC_MODULE, ...NGX_DROP_DOWN_MODULE, ...INPUT_MODULE, {from: '@wm/components/navigation/menu', name: 'MenuModule'}];
 const BREAD_CRUMB_MODULE: ImportDef[] = [...MENU_MODULE, {from: '@wm/components/navigation/breadcrumb', name: 'BreadcrumbComponent'}];

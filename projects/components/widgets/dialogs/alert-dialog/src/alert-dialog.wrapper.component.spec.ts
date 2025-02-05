@@ -40,11 +40,8 @@ class AlertDialogWrapperComponent {
 }
 
 const testModuleDef = {
-    imports: [FormsModule],
-    declarations: [
-        AlertDialogWrapperComponent,
-        AlertDialogComponent
-    ],
+    imports: [AlertDialogComponent],
+    declarations: [AlertDialogWrapperComponent,],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(AlertDialogComponent),

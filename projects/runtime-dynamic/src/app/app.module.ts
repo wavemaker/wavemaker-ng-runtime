@@ -61,7 +61,7 @@ import { TileModule } from '@wm/components/containers/tile';
 import { WizardModule } from '@wm/components/containers/wizard';
 
 // Dialogs
-import { AlertDialogModule } from '@wm/components/dialogs/alert-dialog';
+import { AlertDialogComponent } from '@wm/components/dialogs/alert-dialog';
 import { IframeDialogModule } from '@wm/components/dialogs/iframe-dialog';
 import { LoginDialogModule } from '@wm/components/dialogs/login-dialog';
 import { PartialDialogModule } from '@wm/components/dialogs/partial-dialog';
@@ -189,7 +189,7 @@ const componentsModule = [
     WizardModule,
 
     // dialogs
-    AlertDialogModule,
+    AlertDialogComponent,
     IframeDialogModule,
     LoginDialogModule,
     PartialDialogModule,

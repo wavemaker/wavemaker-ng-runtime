@@ -5,20 +5,21 @@ import {
     Injector,
     OnInit,
     Optional,
-    SkipSelf,
     TemplateRef,
     ViewChild
 } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
-import { IWidgetConfig, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog } from '@wm/components/dialogs';
+import { IWidgetConfig, provideAsDialogRef, provideAsWidgetRef, WmComponentsModule } from '@wm/components/base';
+import { BaseDialog, DialogModule } from '@wm/components/dialogs';
 
 import { registerProps } from './alert-dialog.props';
+import { CommonModule } from '@angular/common';
+import { InputModule } from '@wm/components/input';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-alert-dialog';
 
-const WIDGET_INFO: IWidgetConfig = {widgetType: 'wm-alertdialog'};
+const WIDGET_INFO: IWidgetConfig = { widgetType: 'wm-alertdialog' };
 
 @Component({
     selector: 'div[wmAlertDialog]',
@@ -26,12 +27,14 @@ const WIDGET_INFO: IWidgetConfig = {widgetType: 'wm-alertdialog'};
     providers: [
         provideAsWidgetRef(AlertDialogComponent),
         provideAsDialogRef(AlertDialogComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, DialogModule, InputModule, WmComponentsModule],
 })
 export class AlertDialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
 
-    @ViewChild('dialogTemplate',{ static: true }) dialogTemplate: TemplateRef<any>;
+    @ViewChild('dialogTemplate', { static: true }) dialogTemplate: TemplateRef<any>;
 
     constructor(
         inj: Injector,
@@ -73,7 +76,7 @@ export class AlertDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onOk($event: Event) {
-        this.invokeEventCallback('ok', {$event});
+        this.invokeEventCallback('ok', { $event });
     }
 
     ngOnInit() {
