@@ -82,7 +82,7 @@ import {CalendarModule} from "@wm/components/input/calendar";
 import {ChipsModule} from "@wm/components/input/chips";
 import {ColorPickerComponent} from "@wm/components/input/color-picker";
 import {EpochModule} from "@wm/components/input/epoch";
-import {FileUploadModule} from "@wm/components/input/file-upload";
+import {FileUploadComponent} from "@wm/components/input/file-upload";
 import {InputModule} from "@wm/components/input";
 import {RatingModule} from "@wm/components/input/rating";
 import {SliderModule} from "@wm/components/input/slider";
@@ -211,7 +211,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     ChipsModule,
     ColorPickerComponent,
     EpochModule,
-    FileUploadModule,
+    FileUploadComponent,
     InputModule,
     RatingModule,
     SliderModule,

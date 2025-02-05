@@ -34,7 +34,7 @@ import { CalendarModule } from '@wm/components/input/calendar';
 import { ChipsModule } from '@wm/components/input/chips';
 import { ColorPickerComponent } from '@wm/components/input/color-picker';
 import { EpochModule } from '@wm/components/input/epoch';
-import { FileUploadModule } from '@wm/components/input/file-upload';
+import { FileUploadComponent } from '@wm/components/input/file-upload';
 import { RatingModule } from '@wm/components/input/rating';
 import { SliderModule } from '@wm/components/input/slider';
 
@@ -163,7 +163,7 @@ const componentsModule = [
     CalendarModule,
     ChipsModule,
     EpochModule,
-    FileUploadModule,
+    FileUploadComponent,
     InputModule,
     RatingModule,
     SliderModule,

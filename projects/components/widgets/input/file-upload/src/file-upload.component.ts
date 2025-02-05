@@ -3,10 +3,11 @@ import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, OnInit
 import { Subject, Subscription } from 'rxjs';
 
 import { App, DataSource, getWmProjectProperties, isAudioFile, isImageFile, isVideoFile, AbstractDialogService, IDGenerator } from '@wm/core';
-import {provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {provideAsWidgetRef, StylableComponent, styler, WmComponentsModule} from '@wm/components/base';
 
 import {registerProps} from './file-upload.props';
 import {forEach, includes, isEmpty, toLower} from "lodash-es";
+import { CommonModule } from '@angular/common';
 
 declare const $;
 
@@ -21,7 +22,9 @@ const WIDGET_CONFIG = {
     templateUrl: './file-upload.component.html',
     providers: [
         provideAsWidgetRef(FileUploadComponent)
-    ]
+    ],
+    standalone: true,
+    imports : [CommonModule, WmComponentsModule]
 })
 
 export class FileUploadComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
