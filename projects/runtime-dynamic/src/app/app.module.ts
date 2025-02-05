@@ -24,7 +24,7 @@ import { App, getWmProjectProperties, PartialRefProvider, CustomWidgetRefProvide
 
 import { BasicModule } from '@wm/components/basic';
 import { ProgressModule } from '@wm/components/basic/progress';
-import { RichTextEditorModule } from '@wm/components/basic/rich-text-editor';
+import { RichTextEditorComponent } from '@wm/components/basic/rich-text-editor';
 import { SearchModule } from '@wm/components/basic/search';
 import { TreeModule } from '@wm/components/basic/tree';
 
@@ -155,7 +155,7 @@ const componentsModule = [
     // Basic widgets
     BasicModule,
     ProgressModule,
-    RichTextEditorModule,
+    RichTextEditorComponent,
     SearchModule,
     TreeModule,
 

@@ -1,20 +1,21 @@
-import {Component, Inject, Injector, NgZone, OnDestroy, OnInit, Optional, SecurityContext} from '@angular/core';
-import {NG_VALUE_ACCESSOR} from '@angular/forms';
+import { Component, Inject, Injector, NgZone, OnDestroy, OnInit, Optional, SecurityContext } from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import {setAttr, setCSS, setHtml} from '@wm/core';
-import {APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, SanitizePipe, styler} from '@wm/components/base';
-import {BaseFormCustomComponent} from '@wm/components/input';
+import { setAttr, setCSS, setHtml } from '@wm/core';
+import { APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, SanitizePipe, styler, WmComponentsModule } from '@wm/components/base';
+import { BaseFormCustomComponent } from '@wm/components/input';
 
-import {registerProps} from './rich-text-editor.props';
-import {extend} from "lodash-es";
+import { registerProps } from './rich-text-editor.props';
+import { extend } from "lodash-es";
+import { CommonModule } from '@angular/common';
 
 
-const WIDGET_INFO = {widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix'};
+const WIDGET_INFO = { widgetType: 'wm-richtexteditor', hostClass: 'app-richtexteditor clearfix' };
 
 const getChangeEvt = () => {
     let changeEvt;
     // for IE the event constructor doesn't work so use the createEvent proto
-    if (typeof(Event) === 'function') {
+    if (typeof (Event) === 'function') {
         changeEvt = new Event('change');
     } else {
         changeEvt = document.createEvent('Event');
@@ -54,7 +55,9 @@ const overrideSummerNote = () => {
         provideAs(RichTextEditorComponent, NG_VALUE_ACCESSOR, true),
         provideAsWidgetRef(RichTextEditorComponent)
     ],
-    exportAs: 'wmRichTextEditor'
+    exportAs: 'wmRichTextEditor',
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule],
 })
 export class RichTextEditorComponent extends BaseFormCustomComponent implements OnInit, OnDestroy {
     static initializeProps = registerProps();
@@ -142,7 +145,7 @@ export class RichTextEditorComponent extends BaseFormCustomComponent implements 
 
     initEditor() {
         this.ngZone.runOutsideAngular(() => {
-            this.invokeEventCallback('beforerender', {'$event' : {}});
+            this.invokeEventCallback('beforerender', { '$event': {} });
             this.$richTextEditor.summernote(this.EDITOR_DEFAULT_OPTIONS);
         });
 

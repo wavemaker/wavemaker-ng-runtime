@@ -75,7 +75,7 @@ import {RightPanelModule} from "@wm/components/page/right-panel";
 import {TopNavModule} from "@wm/components/page/top-nav";
 import {BasicModule} from "@wm/components/basic";
 import {ProgressModule} from "@wm/components/basic/progress";
-import {RichTextEditorModule} from "@wm/components/basic/rich-text-editor";
+import {RichTextEditorComponent} from "@wm/components/basic/rich-text-editor";
 import {SearchModule} from "@wm/components/basic/search";
 import {TreeModule} from "@wm/components/basic/tree";
 import {CalendarModule} from "@wm/components/input/calendar";
@@ -202,7 +202,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     // Basic widgets
     BasicModule,
     ProgressModule,
-    RichTextEditorModule,
+    RichTextEditorComponent,
     SearchModule,
     TreeModule,
 
