@@ -12,7 +12,7 @@ import {
     ViewChild
 } from '@angular/core';
 
-import {PopoverDirective} from 'ngx-bootstrap/popover';
+import { PopoverDirective } from 'ngx-bootstrap/popover';
 
 import {
     addClass,
@@ -28,10 +28,13 @@ import {
     IWidgetConfig,
     provideAsWidgetRef,
     StylableComponent,
-    styler
+    styler,
+    WmComponentsModule
 } from '@wm/components/base';
-
-import {registerProps} from './popover.props';
+import { CommonModule } from '@angular/common';
+import { PopoverModule as NgxPopoverModule } from 'ngx-bootstrap/popover'; 
+import { BasicModule } from '@wm/components/basic';
+import { registerProps } from './popover.props';
 
 declare const $;
 
@@ -54,7 +57,9 @@ let activePopover: PopoverComponent;
     templateUrl: './popover.component.html',
     providers: [
         provideAsWidgetRef(PopoverComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, BasicModule, NgxPopoverModule, WmComponentsModule]
 })
 
 export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit {
@@ -84,7 +89,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     public title: string;
     public tabindex: any;
     public name: string;
-    public adaptiveposition:boolean;
+    public adaptiveposition: boolean;
     public containerTarget: string;
     public hint: string;
     public arialabel: string;
@@ -94,7 +99,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     private isClosingProgrammatically = false;
     private static activePopovers: PopoverComponent[] = [];
     private isHandlingClick = false;
-    
+
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
     @ContentChild(TemplateRef) popoverTemplate;
@@ -109,26 +114,26 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (this.documentClickHandler) {
             document.removeEventListener('click', this.documentClickHandler, true);
         }
-    
+
         this.documentClickHandler = (event: MouseEvent) => {
             if (!this.isOpen) return;
-    
+
             const target = event.target as HTMLElement;
-            
+
             // Set flag to prevent open() from running during click handling
             this.isHandlingClick = true;
-            
+
             try {
                 // Check for special containers as before
                 const isInsideSpecialContainer = !!(
-                    target.closest('.bs-datepicker-container') || 
+                    target.closest('.bs-datepicker-container') ||
                     target.closest(".dropdown-menu")
                 );
-        
+
                 if (isInsideSpecialContainer) {
                     return;
                 }
-        
+
                 const clickedPopoverIndex = PopoverComponent.activePopovers.findIndex(popover => {
                     const popoverContainer = document.querySelector(`.${popover.popoverContainerCls}`);
                     return popoverContainer?.contains(target);
@@ -141,7 +146,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                     this.isOpen ? this.close() : this.open()
                     return;
                 }
-        
+
                 if (clickedPopoverIndex === -1) {
                     if (this.outsideclick) {
                         this.closeAllPopovers();
@@ -156,9 +161,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                 }, 0);
             }
         };
-    
+
         document.addEventListener('click', this.documentClickHandler, true);
-    }    
+    }
 
     private closeAllPopovers() {
         PopoverComponent.activePopovers.forEach(popover => {
@@ -209,7 +214,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     // Trigger on hiding popover
     public onHidden() {
         if (!this.isChildPopover() || this.isClosingProgrammatically) {
-            this.invokeEventCallback('hide', {$event: {type: 'hide'}});
+            this.invokeEventCallback('hide', { $event: { type: 'hide' } });
             this.isOpen = false;
             if (activePopover === this) {
                 activePopover = null;
@@ -231,7 +236,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     private calculatePopoverPostion(element) {
 
         const popoverElem = $(element);
-        let popoverLeft =  popoverElem.offset().left;
+        let popoverLeft = popoverElem.offset().left;
         const popoverWidth = popoverElem[0].offsetWidth;
         const viewPortWidth = $(window).width();
         const parentDimesion = this.anchorRef.nativeElement.getBoundingClientRect();
@@ -248,17 +253,17 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             setTimeout(() => {
                 popoverLeft = popoverElem.offset().left;
                 const popoverLeftAdjust = (popoverLeft + popoverWidth) - viewPortWidth;
-                const popoverLeftShift =  popoverLeft - popoverLeftAdjust;
-                let arrowLeftShift ;
-                if(popoverLeft<=100){
-                    arrowLeftShift =  (parentDimesion.left + (parentDimesion.width / 2)) - popoverLeft;
-                }else{
+                const popoverLeftShift = popoverLeft - popoverLeftAdjust;
+                let arrowLeftShift;
+                if (popoverLeft <= 100) {
+                    arrowLeftShift = (parentDimesion.left + (parentDimesion.width / 2)) - popoverLeft;
+                } else {
                     arrowLeftShift = (parentDimesion.left + (parentDimesion.width / 2)) - popoverLeftShift;
                 }
-                if(viewPortWidth > 500){
+                if (viewPortWidth > 500) {
                     arrowLeftShift += 30;
                 }
-               this.adjustPopoverArrowPosition(popoverElem, arrowLeftShift);
+                this.adjustPopoverArrowPosition(popoverElem, arrowLeftShift);
             });
         }
     }
@@ -272,7 +277,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         }
         // Fix for [WMS-25125]: Not closing the existing opened popovers when the autoclose property is DISABLED
         if (!this.isChildPopover()) {
-            if (activePopover && activePopover !== this && 
+            if (activePopover && activePopover !== this &&
                 activePopover.autoclose !== AUTOCLOSE_TYPE.DISABLED) {
                 activePopover.isClosingProgrammatically = true;
                 activePopover.close();
@@ -284,10 +289,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (!PopoverComponent.activePopovers.includes(this)) {
             PopoverComponent.activePopovers.push(this);
         }
-        const popoverContainer  = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
+        const popoverContainer = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
         if (popoverContainer) {
             popoverContainer.setAttribute('data-popover-id', this.widgetId);
-            
+
             // Add click event listener to stop propagation
             popoverContainer.addEventListener('click', (event: Event) => {
                 event.stopPropagation();
@@ -329,7 +334,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                 this.bsPopoverDirective.hide();
                 event.preventDefault();
                 this.setFocusToPopoverLink();
-                this.isOpen = false;            }
+                this.isOpen = false;
+            }
         };
         popoverEndBtn.onkeydown = (event) => {
             // Check for Tab key
@@ -337,7 +343,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                 this.bsPopoverDirective.hide();
                 event.preventDefault();
                 this.setFocusToPopoverLink();
-                this.isOpen = false;            }
+                this.isOpen = false;
+            }
         };
 
         //Whenever autoclose property is set to 'always', adding the onclick listener to the popover container to close the popover.
@@ -347,8 +354,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
 
         setTimeout(() => popoverStartBtn.focus(), 50);
         // Adjusting popover position if the popover placement is top or bottom
-        setTimeout( () => {
-            if (!this.adaptiveposition ) {
+        setTimeout(() => {
+            if (!this.adaptiveposition) {
                 this.calculatePopoverPostion(popoverContainer);
             }
             // triggering onload and onshow events after popover content has rendered
@@ -363,20 +370,20 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                 let partialScope;
 
                 if (parEle) {
-                    partialScope  = parEle.widget;
-                    this.Widgets   = partialScope.Widgets;
+                    partialScope = parEle.widget;
+                    this.Widgets = partialScope.Widgets;
                     this.Variables = partialScope.Variables;
-                    this.Actions   = partialScope.Actions;
+                    this.Actions = partialScope.Actions;
                     this.invokeEventCallback('load');
-                    this.invokeEventCallback('show', {$event: {type: 'show'}});
+                    this.invokeEventCallback('show', { $event: { type: 'show' } });
                 }
                 cancelSubscription();
             });
         } else {
-            this.Widgets   = this.viewParent.Widgets;
+            this.Widgets = this.viewParent.Widgets;
             this.Variables = this.viewParent.Variables;
-            this.Actions   = this.viewParent.Actions;
-            this.invokeEventCallback('show', {$event: {type: 'show'}});
+            this.Actions = this.viewParent.Actions;
+            this.invokeEventCallback('show', { $event: { type: 'show' } });
         }
     }
 
@@ -392,7 +399,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     onPopoverAnchorKeydown($event) {
         // if there is no content available, the popover should not open through enter key. So checking whether the canPopoverOpen flag is true or not.
         if (!this.canPopoverOpen) {
-           return;
+            return;
         }
         if ($event.key === 'Enter') {
             $event.stopPropagation();
