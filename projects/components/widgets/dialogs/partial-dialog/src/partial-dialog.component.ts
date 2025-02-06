@@ -11,14 +11,16 @@ import {
     ViewChild
 } from '@angular/core';
 
-import {App, toBoolean} from '@wm/core';
-import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog } from '@wm/components/dialogs';
+import { App, toBoolean } from '@wm/core';
+import { provideAsDialogRef, provideAsWidgetRef, WmComponentsModule } from '@wm/components/base';
+import { BaseDialog, DialogModule } from '@wm/components/dialogs';
 
 import { registerProps } from './partial-dialog.props';
+import { CommonModule } from '@angular/common';
+import { InputModule } from '@wm/components/input';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-page-dialog';
-const WIDGET_INFO = {widgetType: 'wm-partialdialog'};
+const WIDGET_INFO = { widgetType: 'wm-partialdialog' };
 
 @Component({
     selector: 'div[wmPartialDialog]',
@@ -26,7 +28,9 @@ const WIDGET_INFO = {widgetType: 'wm-partialdialog'};
     providers: [
         provideAsWidgetRef(PartialDialogComponent),
         provideAsDialogRef(PartialDialogComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, DialogModule, InputModule, WmComponentsModule]
 })
 export class PartialDialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
@@ -81,7 +85,7 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onOk($event: Event) {
-        this.invokeEventCallback('ok', {$event});
+        this.invokeEventCallback('ok', { $event });
     }
 
     ngOnInit() {
@@ -94,10 +98,10 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
             const parEle = this.partialRef.nativeElement;
             let partialScope;
             if (parEle) {
-                partialScope  = parEle.widget;
-                this.Widgets   = partialScope.Widgets;
+                partialScope = parEle.widget;
+                this.Widgets = partialScope.Widgets;
                 this.Variables = partialScope.Variables;
-                this.Actions   = partialScope.Actions;
+                this.Actions = partialScope.Actions;
             }
             cancelSubscription();
         });

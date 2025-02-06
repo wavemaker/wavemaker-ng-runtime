@@ -7,7 +7,6 @@ import {
     ViewChild,
     HostListener,
     Optional,
-    SkipSelf,
     Inject
 } from '@angular/core';
 

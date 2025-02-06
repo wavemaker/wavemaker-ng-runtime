@@ -64,7 +64,7 @@ import { WizardModule } from '@wm/components/containers/wizard';
 import { AlertDialogComponent } from '@wm/components/dialogs/alert-dialog';
 import { IframeDialogComponent } from '@wm/components/dialogs/iframe-dialog';
 import { LoginDialogModule } from '@wm/components/dialogs/login-dialog';
-import { PartialDialogModule } from '@wm/components/dialogs/partial-dialog';
+import { PartialDialogComponent } from '@wm/components/dialogs/partial-dialog';
 
 // Navigation
 import { BreadcrumbComponent } from '@wm/components/navigation/breadcrumb';
@@ -118,8 +118,8 @@ export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoD
 
 // In angular 15, xsrf headerName should not be null. Angular 15 is not using default header value like it used to send in calls
 // for angular 12 if the headerName is null . The user has to take care of not sending null values. Then ng 15 uses default value for headerName
-let xsrfHeaderName = getWmProjectProperties().xsrf_header_name;
-let xsrfOptions = {
+const xsrfHeaderName = getWmProjectProperties().xsrf_header_name;
+const xsrfOptions = {
     cookieName: 'wm_xsrf_token'
 }
 if (xsrfHeaderName) {
@@ -192,7 +192,7 @@ const componentsModule = [
     AlertDialogComponent,
     IframeDialogComponent,
     LoginDialogModule,
-    PartialDialogModule,
+    PartialDialogComponent,
 
     // navigation
     BreadcrumbComponent,
