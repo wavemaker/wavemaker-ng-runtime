@@ -5,19 +5,21 @@ import {
     Injector,
     OnInit,
     Optional,
-    SkipSelf,
     TemplateRef,
     ViewChild
 } from '@angular/core';
 
-import {toBoolean} from '@wm/core';
-import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog } from '@wm/components/dialogs';
+import { toBoolean } from '@wm/core';
+import { provideAsDialogRef, provideAsWidgetRef, WmComponentsModule } from '@wm/components/base';
+import { BaseDialog, DialogModule } from '@wm/components/dialogs';
 
 import { registerProps } from './iframe-dialog.props';
+import { CommonModule } from '@angular/common';
+import { BasicModule } from '@wm/components/basic';
+import { InputModule } from '@wm/components/input';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-iframe-dialog';
-const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
+const WIDGET_INFO = { widgetType: 'wm-iframedialog' };
 
 @Component({
     selector: 'div[wmIframeDialog]',
@@ -25,12 +27,15 @@ const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
     providers: [
         provideAsWidgetRef(IframeDialogComponent),
         provideAsDialogRef(IframeDialogComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [BasicModule, CommonModule, DialogModule, InputModule, WmComponentsModule],
+
 })
 export class IframeDialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
 
-    @ViewChild('dialogTemplate' , { static: true }) dialogTemplate: TemplateRef<any>;
+    @ViewChild('dialogTemplate', { static: true }) dialogTemplate: TemplateRef<any>;
 
     constructor(
         inj: Injector,
@@ -72,7 +77,7 @@ export class IframeDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onOk($event: Event) {
-        this.invokeEventCallback('ok', {$event});
+        this.invokeEventCallback('ok', { $event });
     }
 
     ngOnInit() {
