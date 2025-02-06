@@ -80,7 +80,7 @@ import { CustomModule } from '@wm/components/advanced/custom';
 
 import { PageModule } from '@wm/components/page';
 import { FooterModule } from '@wm/components/page/footer';
-import { HeaderModule } from '@wm/components/page/header';
+import { HeaderComponent } from '@wm/components/page/header';
 import { LeftPanelModule } from '@wm/components/page/left-panel';
 import { RightPanelModule } from '@wm/components/page/right-panel';
 import { TopNavModule } from '@wm/components/page/top-nav';
@@ -208,7 +208,7 @@ const componentsModule = [
 
     PageModule,
     FooterModule,
-    HeaderModule,
+    HeaderComponent,
     LeftPanelModule,
     RightPanelModule,
     TopNavModule,
