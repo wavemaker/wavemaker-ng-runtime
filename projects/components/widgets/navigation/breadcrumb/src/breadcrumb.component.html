@@ -1,6 +1,12 @@
-<li *ngFor="let item of nodes; let last = last; let index = index" [ngClass]="{active: last}" class="{{item.class}}">
+@for (item of nodes; track item; let last = $last; let index = $index) {
+  <li [ngClass]="{active: last}" class="{{item.class}}">
     <i class="{{item.icon}}"></i>
-    <a [title]="item.label" href="javascript:void(0)" [wmNavigationControl]="item.link" [disableMenuContext]="disableMenuContext || !!item.action" (click)="onItemClick($event, item)" *ngIf="!last" [textContent]="item.label"></a>
-    <a *ngIf="last" [title]="item.label" [textContent]="item.label" href="javascript:void(0)" class="text-muted"
-       tabindex="0" aria-current="page"></a>
-</li>
+    @if (!last) {
+      <a [title]="item.label" href="javascript:void(0)" [wmNavigationControl]="item.link" [disableMenuContext]="disableMenuContext || !!item.action" (click)="onItemClick($event, item)" [textContent]="item.label"></a>
+    }
+    @if (last) {
+      <a [title]="item.label" [textContent]="item.label" href="javascript:void(0)" class="text-muted"
+      tabindex="0" aria-current="page"></a>
+    }
+  </li>
+}

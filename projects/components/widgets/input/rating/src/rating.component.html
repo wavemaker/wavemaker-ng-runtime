@@ -1,18 +1,22 @@
 <div (focus)="onFocus($event)" [(ngModel)]="modelByKey" [ngModelOptions]="{standalone: true}"
-     class="ratings-wrapper" ngDefaultControl>
-    <div [class.disabled]="readonly" class="rating-style">
-        <label *ngFor="let rate of ratingItems;"
-               [ngClass]="{active : rate.index <= selectedRatingValue}"
-               [ngStyle]="{'font-size' :iconsize, color: rate.index <= selectedRatingValue && iconcolor}"
-               [title]="rate.label || rate.index"
-               (touchstart)="onTouchStart($event)"
-               (mouseleave)="onMouseleave($event, rate)"
-               (mouseover)="onMouseOver($event, rate)"
-               [for]="_id + '-' + rate.index">
-            <i class="app-icon {{rate.index <= selectedRatingValue ? activeiconclass : inactiveiconclass}}" aria-hidden="true"></i>
-            <input #ratingInput type="radio" role="radio" [attr.aria-label]="(rate.label || rate.index) + ' out of ' + ratingItems.length + ' ratings'" [attr.aria-checked]="rate.label === datavalue ? 'true' : 'false'"
-                   [id]="_id + '-' + rate.index" (click)="onRatingClick($event, rate)" name="ratings-id" [value]="rate.key || rate.index"/>
-        </label>
-    </div>
-    <label *ngIf="showcaptions" class="caption" [textContent]="caption"></label>
+  class="ratings-wrapper" ngDefaultControl>
+  <div [class.disabled]="readonly" class="rating-style">
+    @for (rate of ratingItems; track rate) {
+      <label
+        [ngClass]="{active : rate.index <= selectedRatingValue}"
+        [ngStyle]="{'font-size' :iconsize, color: rate.index <= selectedRatingValue && iconcolor}"
+        [title]="rate.label || rate.index"
+        (touchstart)="onTouchStart($event)"
+        (mouseleave)="onMouseleave($event, rate)"
+        (mouseover)="onMouseOver($event, rate)"
+        [for]="_id + '-' + rate.index">
+        <i class="app-icon {{rate.index <= selectedRatingValue ? activeiconclass : inactiveiconclass}}" aria-hidden="true"></i>
+        <input #ratingInput type="radio" role="radio" [attr.aria-label]="(rate.label || rate.index) + ' out of ' + ratingItems.length + ' ratings'" [attr.aria-checked]="rate.label === datavalue ? 'true' : 'false'"
+          [id]="_id + '-' + rate.index" (click)="onRatingClick($event, rate)" name="ratings-id" [value]="rate.key || rate.index"/>
+      </label>
+    }
+  </div>
+  @if (showcaptions) {
+    <label class="caption" [textContent]="caption"></label>
+  }
 </div>

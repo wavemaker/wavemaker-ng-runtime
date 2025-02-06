@@ -1,28 +1,36 @@
-<ng-container *ngIf="startApp">
-    <router-outlet></router-outlet>
-    <div wmContainer partialContainer content="Common" hidden class="ng-hide" *ngIf="isApplicationType"></div>
-    <app-spinner name="globalspinner" classname="global-spinner" role="alert" aria-live="assertive" [attr.aria-label]="spinner.arialabel || 'Loading'" [show]="spinner.show" [spinnermessages]="spinner.messages"></app-spinner>
-    <div wmDialog name="oAuthLoginDialog" title="Application is requesting you to sign in with"
-         close.event="closeOAuthDialog()">
-        <ng-template #dialogBody>
-            <ul class="list-items">
-                <li class="list-item" *ngFor="let provider of providersConfig">
-                    <button class="btn" (click)="provider.invoke()">{{provider.name}}</button>
-                </li>
-            </ul>
-        </ng-template>
-    </div>
-    <div wmConfirmDialog name="_app-confirm-dialog" title.bind="title" message.bind="message" oktext.bind="oktext"
-         canceltext.bind="canceltext" closable="false" iconclass.bind="iconclass"
-         escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
-    <div  *ngIf="!isApplicationType" wmConfirmDialog name="PrefabConfirmDialog" title.bind="title" message.bind="text" oktext.bind="okButtonText"
-         canceltext.bind="cancelButtonText" closable="false" iconclass.bind="iconclass"
-         escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
-    <div  *ngIf="!isApplicationType" wmAlertDialog name="PrefabAlertDialog" title.bind="title" message.bind="text" oktext.bind="okButtonText"
-         canceltext.bind="cancelButtonText" closable="false" iconclass.bind="iconclass"
-         escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
-    <div wmAppExt></div>
-    <i id="wm-mobile-display"></i>
-</ng-container>
+@if (startApp) {
+  <router-outlet></router-outlet>
+  @if (isApplicationType) {
+    <div wmContainer partialContainer content="Common" hidden class="ng-hide"></div>
+  }
+  <app-spinner name="globalspinner" classname="global-spinner" role="alert" aria-live="assertive" [attr.aria-label]="spinner.arialabel || 'Loading'" [show]="spinner.show" [spinnermessages]="spinner.messages"></app-spinner>
+  <div wmDialog name="oAuthLoginDialog" title="Application is requesting you to sign in with"
+    close.event="closeOAuthDialog()">
+    <ng-template #dialogBody>
+      <ul class="list-items">
+        @for (provider of providersConfig; track provider) {
+          <li class="list-item">
+            <button class="btn" (click)="provider.invoke()">{{provider.name}}</button>
+          </li>
+        }
+      </ul>
+    </ng-template>
+  </div>
+  <div wmConfirmDialog name="_app-confirm-dialog" title.bind="title" message.bind="message" oktext.bind="oktext"
+    canceltext.bind="canceltext" closable="false" iconclass.bind="iconclass"
+  escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
+  @if (!isApplicationType) {
+    <div  wmConfirmDialog name="PrefabConfirmDialog" title.bind="title" message.bind="text" oktext.bind="okButtonText"
+      canceltext.bind="cancelButtonText" closable="false" iconclass.bind="iconclass"
+    escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
+  }
+  @if (!isApplicationType) {
+    <div  wmAlertDialog name="PrefabAlertDialog" title.bind="title" message.bind="text" oktext.bind="okButtonText"
+      canceltext.bind="cancelButtonText" closable="false" iconclass.bind="iconclass"
+    escape.event="onEscape()" ok.event="onOk()" cancel.event="onCancel()" close.event="onClose()" opened.event="onOpen()"></div>
+  }
+  <div wmAppExt></div>
+  <i id="wm-mobile-display"></i>
+}
 <!--Dummy container to create the component dynamically-->
 <ng-container #dynamicComponent></ng-container>

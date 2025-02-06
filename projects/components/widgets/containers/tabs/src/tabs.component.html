@@ -1,22 +1,34 @@
 <ul class="nav nav-tabs" [ngClass]="{'nav-stacked': vertical, 'nav-justified': justified}" role="tablist">
-    <li class="tab-header" *ngFor="let pane of panes; let i=index;" [attr.data-paneid]="pane.widgetId" [ngClass]="{'active': pane.isActive, 'disabled': pane.disabled}"
-        [hidden]="!pane.show" role="presentation">
-        <a [attr.aria-label]="pane.badgevalue ? pane.title + ' ' + pane.badgevalue : pane.title"
-           [attr.icon-position]="iconposition" 
-           [attr.title]="pane.title"
-           [tabindex]="pane.isActive ? '0' : '-1'"
-           class="tab-heading" href="javascript:void(0);"
-           [attr.aria-selected]="pane.isActive" role="tab" (click)="pane.select($event); pane.tabpaneHeaderClick($event, i);" (keydown)="onkeydown($event)">
-                <i [ngClass]="['app-icon', pane.paneicon]" *ngIf="pane.paneicon"></i>
-                <span [textContent]="pane.title"></span>
-                <span *ngIf="pane.badgevalue" class="label label-{{pane.badgetype}}" [textContent]="pane.badgevalue"></span>
-        </a>
+  @for (pane of panes; track pane; let i = $index) {
+    <li class="tab-header" [attr.data-paneid]="pane.widgetId" [ngClass]="{'active': pane.isActive, 'disabled': pane.disabled}"
+      [hidden]="!pane.show" role="presentation">
+      <a [attr.aria-label]="pane.badgevalue ? pane.title + ' ' + pane.badgevalue : pane.title"
+        [attr.icon-position]="iconposition"
+        [attr.title]="pane.title"
+        [tabindex]="pane.isActive ? '0' : '-1'"
+        class="tab-heading" href="javascript:void(0);"
+        [attr.aria-selected]="pane.isActive" role="tab" (click)="pane.select($event); pane.tabpaneHeaderClick($event, i);" (keydown)="onkeydown($event)">
+        @if (pane.paneicon) {
+          <i [ngClass]="['app-icon', pane.paneicon]"></i>
+        }
+        <span [textContent]="pane.title"></span>
+        @if (pane.badgevalue) {
+          <span class="label label-{{pane.badgetype}}" [textContent]="pane.badgevalue"></span>
+        }
+      </a>
     </li>
+  }
 </ul>
-<div class="tab-content" *ngIf="type !== 'dynamic'" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
+@if (type !== 'dynamic') {
+  <div class="tab-content" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
     <ng-content ngProjectAs="div[wmTabPane]"></ng-content>
-</div>
-<div class="tab-content" *ngIf="type === 'dynamic'" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
-    <div *ngIf="fieldDefs && !fieldDefs.length">{{nodatamessage}}</div>
+  </div>
+}
+@if (type === 'dynamic') {
+  <div class="tab-content" [ngClass]="{'tab-stacked': vertical, 'tab-justified': justified}">
+    @if (fieldDefs && !fieldDefs.length) {
+      <div>{{nodatamessage}}</div>
+    }
     <ng-content select="div[wmRepeatTemplate]"></ng-content>
-</div>
+  </div>
+}

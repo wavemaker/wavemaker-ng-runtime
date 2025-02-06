@@ -11,43 +11,49 @@ declare const moment;
     selector: 'wm-datetimepicker',
     template: `
     <ng-template #datetimepickerTemplate>
-        <div class="app-datetime-picker">
-            <div class="modal-body">
-                <div class="mobile-datetime-picker-options">
-
-                </div>
-                <bs-datepicker-inline
-                    [bsConfig]="bsDatepickerConfig"
-                    [datesDisabled]="excludedDatesToDisable"
-                    bsDatepicker
-                    [bsValue]="changedValue"
-                    (bsValueChange)="onDateUpdate($event)"
-                    *ngIf="mode === 'DATE_TIME' || mode === 'DATE'">
-                </bs-datepicker-inline>
-                <wm-timepicker
-                    [value]="changedValue"
-                    [min]="minTime"
-                    [max]="maxTime"
-                    (change)="onTimeUpdate($event)"
-                    *ngIf="mode === 'DATE_TIME' || mode === 'TIME'"></wm-timepicker>
-                <span class="text-primary date-picker-value">
-                    {{getDateLabel()}}
-                </span>
-            </div>
-            <div class="modal-footer">
-                <button
-                    *ngIf="mode === 'DATE_TIME' || mode === 'DATE'"
-                    class="btn btn-secondary today-btn"
-                    (click)="setToday()">{{appLocale.LABEL_TODAY_DATE || "Today" }}</button>
-                <button
-                    class="btn btn-primary pull-right ok-btn"
-                    *ngIf="mode === 'DATE_TIME' || mode === 'TIME'"
-                    (click)="onOkClick()">{{appLocale.LABEL_OK || "Ok" }}</button>
-                <button
-                    class="btn btn-secondary pull-right clear-btn"
-                    (click)="clear()">{{appLocale.LABEL_CLEAR_DATE || "Clear" }}</button>
-            </div>
+      <div class="app-datetime-picker">
+        <div class="modal-body">
+          <div class="mobile-datetime-picker-options">
+    
+          </div>
+          @if (mode === 'DATE_TIME' || mode === 'DATE') {
+            <bs-datepicker-inline
+              [bsConfig]="bsDatepickerConfig"
+              [datesDisabled]="excludedDatesToDisable"
+              bsDatepicker
+              [bsValue]="changedValue"
+              (bsValueChange)="onDateUpdate($event)"
+              >
+            </bs-datepicker-inline>
+          }
+          @if (mode === 'DATE_TIME' || mode === 'TIME') {
+            <wm-timepicker
+              [value]="changedValue"
+              [min]="minTime"
+              [max]="maxTime"
+              (change)="onTimeUpdate($event)"
+            ></wm-timepicker>
+          }
+          <span class="text-primary date-picker-value">
+            {{getDateLabel()}}
+          </span>
         </div>
+        <div class="modal-footer">
+          @if (mode === 'DATE_TIME' || mode === 'DATE') {
+            <button
+              class="btn btn-secondary today-btn"
+            (click)="setToday()">{{appLocale.LABEL_TODAY_DATE || "Today" }}</button>
+          }
+          @if (mode === 'DATE_TIME' || mode === 'TIME') {
+            <button
+              class="btn btn-primary pull-right ok-btn"
+            (click)="onOkClick()">{{appLocale.LABEL_OK || "Ok" }}</button>
+          }
+          <button
+            class="btn btn-secondary pull-right clear-btn"
+          (click)="clear()">{{appLocale.LABEL_CLEAR_DATE || "Clear" }}</button>
+        </div>
+      </div>
     </ng-template>
     `
 })

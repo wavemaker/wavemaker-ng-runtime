@@ -1,6 +1,8 @@
-<li wmMenuDropdownItem *ngFor="let item of items"
+@for (item of items; track item) {
+  <li wmMenuDropdownItem
     [item]="item"
     [ngClass]="{disabled: item.disabled, 'dropdown-submenu': item.children.length > 0}"
     class="{{item.class}}"
     role="menuitem">
-</li>
+  </li>
+}
