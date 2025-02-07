@@ -70,18 +70,21 @@ const getFilterTemplate = (attrs, pCounter)  => {
     return `<ng-template #filterTmpl let-changeFn="changeFn" let-isDisabled="isDisabled">
     <div class="input-group ${widget}" data-col-identifier="${fieldName}">
         ${widgetTmpl}
-        <span class="input-group-addon filter-clear-icon" *ngIf="${pCounter}.showClearIcon('${fieldName}')">
+        @if(${pCounter}.showClearIcon('${fieldName}')){
+        <span class="input-group-addon filter-clear-icon" >
             <button class="btn-transparent btn app-button" aria-label="Clear button" type="button" (click)="${pCounter}.clearRowFilter('${fieldName}')">
                 <i class="app-icon wi wi-clear" aria-hidden="true"></i>
             </button>
          </span>
+         }
         <span class="input-group-addon" dropdown container="body" (onShown)="${pCounter}.adjustContainer('${fieldName}');">
             <button class="btn-transparent btn app-button" type="button" dropdownToggle><i class="app-icon wi wi-filter-list"></i></button>
             <ul class="matchmode-dropdown dropdown-menu" *dropdownMenu>
-                   <li *ngFor="let matchMode of ${pCounter}.matchModeTypesMap['${type}']"
-                        [ngClass]="{active: matchMode === (${pCounter}.rowFilter['${fieldName}'].matchMode || ${pCounter}.matchModeTypesMap['${type}'][0])}">
-                        <a href="javascript:void(0);" (click)="${pCounter}.onFilterConditionSelect('${fieldName}', matchMode)" [innerText]="${pCounter}.matchModeMsgs[matchMode]"></a>
+                    @for (matchMode of ${pCounter}.matchModeTypesMap['${type}']; track matchMode) {
+                    <li [ngClass]="{active: matchMode === (${pCounter}.rowFilter['${fieldName}'].matchMode || ${pCounter}.matchModeTypesMap['${type}'][0])}">
+                    <a href="javascript:void(0);" (click)="${pCounter}.onFilterConditionSelect('${fieldName}', matchMode)" [innerText]="${pCounter}.matchModeMsgs[matchMode]"></a>
                     </li>
+                    }
              </ul>
         </span>
     </div></ng-template>`;
@@ -142,13 +145,15 @@ const getInlineEditWidgetTmpl = (attrs, isNewRow, errorstyle, pCounter?) => {
     const pendingSpinnerStatus = isNewRow ? 'getPendingSpinnerStatusNew' : 'getPendingSpinnerStatus';
     const validationErrorTmpl = getValiationErrorTemplate(errorstyle);
     /* This element with error message is used to run Automation checks if any error message is present */
-    const errorMsgElementForAutomation = '<span class="sr-only" *ngIf="getValidationMessage()">{{getValidationMessage()}}</span>';
+    const errorMsgElementForAutomation = '@if(getValidationMessage()){<span class="sr-only" >{{getValidationMessage()}}</span>}';
 
     return `<ng-template ${tmplRef} let-row="row" let-getControl="getControl" let-getValidationMessage="getValidationMessage" let-${pendingSpinnerStatus}="${pendingSpinnerStatus}">
                 <div data-col-identifier="${fieldName}" >
                      ${widgetTmpl}
                      ${validationErrorTmpl}
-                     <div class="overlay" *ngIf="${pendingSpinnerStatus}()"><span aria-hidden="true" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span></div>
+                     @if(${pendingSpinnerStatus}()){
+                        <div class="overlay"><span aria-hidden="true" class="form-field-spinner fa fa-circle-o-notch fa-spin form-control-feedback"></span></div>
+                     }
                      ${errorMsgElementForAutomation}
                  </div>
             </ng-template>`;
@@ -158,13 +163,12 @@ const getValiationErrorTemplate = (errorTmplType) => {
     let validationErrorTmpl = '';
     switch (errorTmplType) {
         case 'bottom':
-            validationErrorTmpl = `<span class="help-block text-danger" *ngIf="getValidationMessage() && getControl() && getControl().invalid && getControl().touched">{{getValidationMessage()}}</span>`;
+            validationErrorTmpl = `@if(getValidationMessage() && getControl() && getControl().invalid && getControl().touched){<span class="help-block text-danger" >{{getValidationMessage()}}</span>}`;
             break;
         case 'hover':
         default:
-            validationErrorTmpl = `<span placement="top" container="body" tooltip="{{getValidationMessage()}}" class="text-danger wi wi-error"
-                                        *ngIf="getValidationMessage() && getControl() && getControl().invalid && getControl().touched">
-                                    </span>`;
+            validationErrorTmpl = `@if(getValidationMessage() && getControl() && getControl().invalid && getControl().touched){<span placement="top" container="body" tooltip="{{getValidationMessage()}}" class="text-danger wi wi-error">
+                                    </span>}`;
     }
     return validationErrorTmpl;
 }

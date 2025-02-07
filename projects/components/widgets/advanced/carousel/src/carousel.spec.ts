@@ -19,10 +19,12 @@ const markup = `
             type="dynamic" name="carousel1"
             change.event="onChangeCB(widget, newIndex, oldIndex)"
             interval="0" [ngClass]="wm_carousel_ref.navigationClass">
-            <div *ngIf="!wm_carousel_ref.fieldDefs">{{wm_carousel_ref.nodatamessage}}</div>
-            <slide wmCarouselTemplate horizontalalign="center" name="carousel_template1" *ngFor="let item of wm_carousel_ref.fieldDefs; let i = index;">
+            @if(!wm_carousel_ref.fieldDefs){<div>{{wm_carousel_ref.nodatamessage}}</div>}
+            @for (item of wm_carousel_ref.fieldDefs; track item; let i = $index) {
+                <slide wmCarouselTemplate horizontalalign="center" name="carousel_template1">
                 <ng-container [ngTemplateOutlet]="tempRef" [ngTemplateOutletContext]="{item:item, index:i}"></ng-container>
-            </slide>
+                </slide>
+            }
             <ng-template #tempRef let-item="item" let-index="index">
                 <label wmLabel name="label1" class="h1" caption="'Label' + index" paddingright="0.5em" paddingleft="0.5em"></label>
             </ng-template>
@@ -128,7 +130,7 @@ describe('wm-carousel: Widget specific test cases', () => {
 
         expect(triggerAnimationSpy).toHaveBeenCalledWith(component.carousel.slides);
     });
-    
+
     it('should call onChangeCB with correct parameters', () => {
         const onChangeSpy = jest.spyOn(component.carousel as any, 'invokeEventCallback');
         const newIndex = 1;
