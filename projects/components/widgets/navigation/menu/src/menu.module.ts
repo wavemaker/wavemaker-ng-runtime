@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
-import { WmComponentsModule } from '@wm/components/base';
-import { BasicModule } from '@wm/components/basic';
+import { WmComponentsModule } from '@wm/components/base'; 
 import { InputModule } from '@wm/components/input';
 
 import { MenuComponent } from './menu.component';
@@ -13,6 +12,7 @@ import { MenuDropdownItemComponent } from './menu-dropdown-item/menu-dropdown-it
 import { NavComponent } from './nav/nav.component';
 import { NavItemDirective } from './nav/nav-item/nav-item.directive';
 import { NavigationControlDirective } from './nav/navigation-control.directive';
+import { AnchorComponent } from '@wm/components/basic';
 
 const components = [
     MenuComponent,
@@ -25,7 +25,7 @@ const components = [
 
 @NgModule({
     imports: [
-        BasicModule,
+        AnchorComponent,
         BsDropdownModule,
         CommonModule,
         InputModule,

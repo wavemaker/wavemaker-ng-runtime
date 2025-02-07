@@ -1,9 +1,10 @@
-import {Component, Inject, Injector, Optional, SecurityContext} from '@angular/core';
+import { Component, Inject, Injector, Optional, SecurityContext } from '@angular/core';
 
-import {appendNode, createElement, removeNode, transformFileURI} from '@wm/core';
-import {DISPLAY_TYPE, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe} from '@wm/components/base';
+import { appendNode, createElement, removeNode, transformFileURI } from '@wm/core';
+import { DISPLAY_TYPE, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe, WmComponentsModule } from '@wm/components/base';
 
-import {registerProps} from './video.props';
+import { registerProps } from './video.props';
+import { CommonModule } from '@angular/common';
 
 const DEFAULT_CLS = 'app-video';
 const WIDGET_CONFIG = {
@@ -17,7 +18,9 @@ const WIDGET_CONFIG = {
     templateUrl: './video.component.html',
     providers: [
         provideAsWidgetRef(VideoComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule]
 })
 export class VideoComponent extends StylableComponent {
     static initializeProps = registerProps();

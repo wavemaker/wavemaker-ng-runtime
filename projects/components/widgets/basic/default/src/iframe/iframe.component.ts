@@ -1,10 +1,11 @@
-import {Component, Inject, Injector, Optional, SecurityContext} from '@angular/core';
-import {SafeResourceUrl} from '@angular/platform-browser';
+import { Component, Inject, Injector, Optional, SecurityContext } from '@angular/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
 
-import {encodeUrl, isInsecureContentRequest} from '@wm/core';
-import {IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe} from '@wm/components/base';
+import { encodeUrl, isInsecureContentRequest } from '@wm/core';
+import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe, WmComponentsModule } from '@wm/components/base';
 
-import {registerProps} from './iframe.props';
+import { registerProps } from './iframe.props';
+import { CommonModule } from '@angular/common';
 
 const DEFAULT_CLS = 'embed-responsive app-iframe';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -17,7 +18,9 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './iframe.component.html',
     providers: [
         provideAsWidgetRef(IframeComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule]
 })
 export class IframeComponent extends StylableComponent {
     static initializeProps = registerProps();
@@ -29,7 +32,7 @@ export class IframeComponent extends StylableComponent {
     private errorMsg: string;
     private hintMsg: string;
 
-    public caption: any;
+    public caption;
     public name: string;
     public hint: string;
     public arialabel: string;
@@ -38,7 +41,7 @@ export class IframeComponent extends StylableComponent {
      */
     public showContentLoadError = false;
 
-    constructor(inj: Injector, private trustAsPipe: TrustAsPipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, private trustAsPipe: TrustAsPipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }

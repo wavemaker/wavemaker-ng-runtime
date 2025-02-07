@@ -32,9 +32,9 @@ import {
     WmComponentsModule
 } from '@wm/components/base';
 import { CommonModule } from '@angular/common';
-import { PopoverModule as NgxPopoverModule } from 'ngx-bootstrap/popover'; 
-import { BasicModule } from '@wm/components/basic';
+import { PopoverModule as NgxPopoverModule } from 'ngx-bootstrap/popover';  
 import { registerProps } from './popover.props';
+import { AnchorComponent } from '@wm/components/basic';
 
 declare const $;
 
@@ -59,7 +59,7 @@ let activePopover: PopoverComponent;
         provideAsWidgetRef(PopoverComponent)
     ],
     standalone: true,
-    imports: [CommonModule, BasicModule, NgxPopoverModule, WmComponentsModule]
+    imports: [CommonModule, AnchorComponent, NgxPopoverModule, WmComponentsModule]
 })
 
 export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit {

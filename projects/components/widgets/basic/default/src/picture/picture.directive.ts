@@ -1,16 +1,7 @@
-import {Directive, HostBinding, Inject, Injector, OnInit, Optional} from '@angular/core';
-
-import {setAttr, setCSS, switchClass} from '@wm/core';
-import {
-    DISPLAY_TYPE,
-    ImagePipe,
-    IWidgetConfig,
-    provideAsWidgetRef,
-    StylableComponent,
-    styler
-} from '@wm/components/base';
-
-import {registerProps} from './picture.props';
+import { Directive, HostBinding, Inject, Injector, OnInit, Optional } from '@angular/core';
+import { setAttr, setCSS, switchClass } from '@wm/core';
+import { DISPLAY_TYPE, ImagePipe, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
+import { registerProps } from './picture.props';
 
 const DEFAULT_CLS = 'app-picture';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -24,7 +15,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     providers: [
         provideAsWidgetRef(PictureDirective)
     ],
-    exportAs: 'wmPicture'
+    exportAs: 'wmPicture',
+    standalone: true
 })
 export class PictureDirective extends StylableComponent implements OnInit {
     static initializeProps = registerProps();
@@ -36,7 +28,7 @@ export class PictureDirective extends StylableComponent implements OnInit {
 
     @HostBinding('src') imgSource: string;
 
-    constructor(inj: Injector, private imagePipe: ImagePipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, private imagePipe: ImagePipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext) {
         super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this);
@@ -46,7 +38,7 @@ export class PictureDirective extends StylableComponent implements OnInit {
         this.imgSource = this.imagePipe.transform(this.picturesource, this.encodeurl, this.pictureplaceholder);
     }
 
-    onPropertyChange(key: string, nv: any, ov: any) {
+    onPropertyChange(key: string, nv, ov) {
         if (key === 'pictureaspect') {
             let width = '';
             let height = '';
@@ -80,7 +72,7 @@ export class PictureDirective extends StylableComponent implements OnInit {
         super.onPropertyChange(key, nv, ov);
     }
 
-    onStyleChange(key: string, nv: any, ov?: any) {
+    onStyleChange(key: string, nv, ov?) {
         if (key === 'picturesource') {
             this.setImgSource();
         } else {

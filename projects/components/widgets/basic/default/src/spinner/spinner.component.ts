@@ -1,13 +1,14 @@
-import {Component, Inject, Injector, OnInit, Optional} from '@angular/core';
+import { Component, Inject, Injector, OnInit, Optional } from '@angular/core';
 
-import {DataSource, validateDataSourceCtx} from '@wm/core';
-import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe } from '@wm/components/base';
+import { DataSource, validateDataSourceCtx } from '@wm/core';
+import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe, WmComponentsModule } from '@wm/components/base';
 
 import { registerProps } from './spinner.props';
-import {includes, isEmpty, split} from "lodash-es";
+import { includes, isEmpty, split } from "lodash-es";
+import { CommonModule } from '@angular/common';
 
 const DEFAULT_CLS = 'app-spinner';
-const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-spinner', hostClass: DEFAULT_CLS };
 
 @Component({
     selector: '[wmSpinner]',
@@ -15,7 +16,9 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAU
     providers: [
         provideAsWidgetRef(SpinnerComponent)
     ],
-    exportAs: 'wmSpinner'
+    exportAs: 'wmSpinner',
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule]
 })
 export class SpinnerComponent extends StylableComponent implements OnInit {
     static initializeProps = registerProps();
@@ -29,7 +32,7 @@ export class SpinnerComponent extends StylableComponent implements OnInit {
     private picture: string;
     private _spinnerMessages;
     public showCaption = true;
-    public type: any;
+    public type;
 
     public get spinnerMessages() {
         return this._spinnerMessages;
@@ -50,12 +53,12 @@ export class SpinnerComponent extends StylableComponent implements OnInit {
         });
     }
 
-    constructor(inj: Injector, private imagePipe: ImagePipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, private imagePipe: ImagePipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }
 
-    onPropertyChange(key: string, nv: any, ov?: any) {
+    onPropertyChange(key: string, nv, ov?) {
         if (key === 'image') {
             this.picture = this.imagePipe.transform(nv);
         } else if (key === 'animation') {

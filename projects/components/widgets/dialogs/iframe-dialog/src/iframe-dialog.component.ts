@@ -15,8 +15,8 @@ import { BaseDialog, DialogModule } from '@wm/components/dialogs';
 
 import { registerProps } from './iframe-dialog.props';
 import { CommonModule } from '@angular/common';
-import { BasicModule } from '@wm/components/basic';
 import { InputModule } from '@wm/components/input';
+import { IframeComponent } from '@wm/components/basic';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-iframe-dialog';
 const WIDGET_INFO = { widgetType: 'wm-iframedialog' };
@@ -29,7 +29,7 @@ const WIDGET_INFO = { widgetType: 'wm-iframedialog' };
         provideAsDialogRef(IframeDialogComponent)
     ],
     standalone: true,
-    imports: [BasicModule, CommonModule, DialogModule, InputModule, WmComponentsModule],
+    imports: [IframeComponent, CommonModule, DialogModule, InputModule, WmComponentsModule],
 
 })
 export class IframeDialogComponent extends BaseDialog implements OnInit {

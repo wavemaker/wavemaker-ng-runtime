@@ -1,90 +1,96 @@
 import { ImportDef } from './build';
 
-const NG_FORM_MODULE: ImportDef[] = [{from: '@angular/forms', name: 'FormsModule', as: 'ngFormsModule'}];
-const NG_REACTIVE_FORM_MODULE: ImportDef[] = [{from: '@angular/forms', name: 'ReactiveFormsModule', as: 'ngReactiveFormsModule'}];
-const NGX_BS_DATE_PICKER: ImportDef[] = [{from: 'ngx-bootstrap/datepicker', name: 'BsDatepickerModule', as: 'ngx_BsDatepickerModule'}];
-const NGX_CAROUSEL_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/carousel', name: 'CarouselModule', as: 'ngxCarouselModule', forRoot: true}];
-const NGX_COLOR_PICKER_MODULE: ImportDef[] = [{from: 'ngx-color-picker', name: 'ColorPickerModule', as: 'ngx_ColorPickerModule'}];
-const NGX_DROP_DOWN_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/dropdown', name: 'BsDropdownModule', as: 'ngxBsDropdownModule', forRoot: true}];
-const NGX_MODAL_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/modal', name: 'ModalModule', as: 'ngx_ModalModule'}];
-const NGX_PAGINATION_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/pagination', name: 'PaginationModule', as: 'ngxPaginationModule', forRoot: true}];
-const NGX_POPOVER_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/popover', name: 'PopoverModule', as: 'ngxPopoverModule', forRoot: true}];
-const NGX_TIME_PICKER: ImportDef[] = [{from: 'ngx-bootstrap/timepicker', name: 'TimepickerModule', as: 'ngx_TimepickerModule', forRoot: true}];
-const NGX_TOOL_TIP_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/tooltip', name: 'TooltipModule', as: 'ngxTooltipModule', forRoot: true}];
-const NGX_TYPE_HEAD_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/typeahead', name: 'TypeaheadModule', as: 'ngxTypeaheadModule', forRoot: true}];
-const PROGRESS_MODULE: ImportDef[] = [{from: '@wm/components/basic/progress', name: 'ProgressModule'}];
+const NG_FORM_MODULE: ImportDef[] = [{ from: '@angular/forms', name: 'FormsModule', as: 'ngFormsModule' }];
+const NG_REACTIVE_FORM_MODULE: ImportDef[] = [{ from: '@angular/forms', name: 'ReactiveFormsModule', as: 'ngReactiveFormsModule' }];
+const NGX_BS_DATE_PICKER: ImportDef[] = [{ from: 'ngx-bootstrap/datepicker', name: 'BsDatepickerModule', as: 'ngx_BsDatepickerModule' }];
+const NGX_CAROUSEL_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/carousel', name: 'CarouselModule', as: 'ngxCarouselModule', forRoot: true }];
+const NGX_COLOR_PICKER_MODULE: ImportDef[] = [{ from: 'ngx-color-picker', name: 'ColorPickerModule', as: 'ngx_ColorPickerModule' }];
+const NGX_DROP_DOWN_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/dropdown', name: 'BsDropdownModule', as: 'ngxBsDropdownModule', forRoot: true }];
+const NGX_MODAL_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/modal', name: 'ModalModule', as: 'ngx_ModalModule' }];
+const NGX_PAGINATION_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/pagination', name: 'PaginationModule', as: 'ngxPaginationModule', forRoot: true }];
+const NGX_POPOVER_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/popover', name: 'PopoverModule', as: 'ngxPopoverModule', forRoot: true }];
+const NGX_TIME_PICKER: ImportDef[] = [{ from: 'ngx-bootstrap/timepicker', name: 'TimepickerModule', as: 'ngx_TimepickerModule', forRoot: true }];
+const NGX_TOOL_TIP_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/tooltip', name: 'TooltipModule', as: 'ngxTooltipModule', forRoot: true }];
+const NGX_TYPE_HEAD_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/typeahead', name: 'TypeaheadModule', as: 'ngxTypeaheadModule', forRoot: true }];
+const PROGRESS_MODULE: ImportDef[] = [{ from: '@wm/components/basic/progress', name: 'ProgressModule' }];
+const MOBILE_BASIC_MODULE: ImportDef[] = [...PROGRESS_MODULE, { from: '@wm/mobile/components/basic', name: 'BasicModule', as: 'WM_MobileBasicModule', platformType: 'MOBILE' }];
+const MOBILE_FILE_UPLOAD_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/input/file-upload', name: 'FileUploadModule', as: 'WM_MobileFileUploadModule', platformType: 'MOBILE' }];
+const PAGE_MODULE: ImportDef[] = [{ from: '@wm/components/page', name: 'PageModule' },
+{ from: '@wm/mobile/components/page', name: 'PageModule', as: 'WM_MobilePageModule', platformType: 'MOBILE' }];
+const BASIC_MODULE: ImportDef[] = [{ from: '@wm/components/basic', name: 'BasicModule' }, ...MOBILE_BASIC_MODULE];
+const INPUT_MODULE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputModule' }];
+const DIALOG_MODULE: ImportDef[] = [...NGX_MODAL_MODULE, ...INPUT_MODULE, { from: '@wm/components/dialogs', name: 'DialogModule' }];
+const PAGINATION_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_PAGINATION_MODULE, { from: '@wm/components/data/pagination', name: 'PaginationModule' }];
+const SEARCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_TYPE_HEAD_MODULE, { from: '@wm/components/basic/search', name: 'SearchModule' }];
+const ANCHOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'AnchorComponent' }];
+const AUDIO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'AudioComponent' }];
+const HTML_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'HtmlDirective' }];
+const ICON_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'IconComponent' }];
+const IFRAME_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'IframeComponent' }];
+const LABEL_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'LabelDirective' }];
+const PICTURE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'PictureDirective' }];
+const SPINNER_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'SpinnerComponent' }];
+const VIDEO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'VideoComponent' }];
+const ACCORDION_MODULE: ImportDef[] = [{ from: '@wm/components/containers/accordion', name: 'AccordionModule' }];
+const LINEAR_LAYOUT_MODULE: ImportDef[] = [{ from: '@wm/components/containers/linear-layout', name: 'LinearLayoutModule' }];
+const ALERT_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, { from: '@wm/components/dialogs/alert-dialog', name: 'AlertDialogComponent' }];
+const BARCODE_SCANNER_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/device/barcode-scanner', name: 'BarcodeScannerModule' }];
+const MENU_MODULE: ImportDef[] = [...BASIC_MODULE, ...NGX_DROP_DOWN_MODULE, ...INPUT_MODULE, { from: '@wm/components/navigation/menu', name: 'MenuModule' }];
+const BREAD_CRUMB_MODULE: ImportDef[] = [...MENU_MODULE, { from: '@wm/components/navigation/breadcrumb', name: 'BreadcrumbComponent' }];
+const CAMERA_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/device/camera', name: 'CameraModule' }];
+const CALENDAR_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, { from: '@wm/components/input/calendar', name: 'CalendarModule' }];
+const CAROUSEL_MODULE: ImportDef[] = [...NGX_CAROUSEL_MODULE, { from: '@wm/components/advanced/carousel', name: 'CarouselModule' }];
+const CHART_MODULE: ImportDef[] = [...BASIC_MODULE, { from: '@wm/components/chart', name: 'ChartComponent' }];
+const CHIPS_MODULE: ImportDef[] = [...SEARCH_MODULE, { from: '@wm/components/input/chips', name: 'ChipsModule' }];
+const COLOR_PICKER_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_COLOR_PICKER_MODULE, { from: '@wm/components/input/color-picker', name: 'ColorPickerComponent' }];
+const CONFIRM_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, { from: '@wm/components/dialogs/confirm-dialog', name: 'ConfirmDialogComponent' }];
+const CONTENT_MODULE: ImportDef[] = [{ from: '@wm/components/page', name: 'PageModule' }];
+const CURRENCY_MODULE: ImportDef[] = [...INPUT_MODULE, { from: '@wm/components/input/currency', name: 'CurrencyComponent' }];
+const DESIGN_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, { from: '@wm/components/dialogs/design-dialog', name: 'DesignDialogModule' }];
+const EPOCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE, { from: '@wm/components/input/epoch', name: 'EpochModule' }];
+const FILE_UPLOAD_MODULE: ImportDef[] = [...MOBILE_FILE_UPLOAD_MODULE, { from: '@wm/components/input/file-upload', name: 'FileUploadComponent' }];
+const FOOTER_MODULE: ImportDef[] = [{ from: '@wm/components/page/footer', name: 'FooterModule' }];
+const HEADER_MODULE: ImportDef[] = [{ from: '@wm/components/page/header', name: 'HeaderComponent' }];
+const IFRAME_DIALOG_MODULE: ImportDef[] = [...BASIC_MODULE, ...DIALOG_MODULE, { from: '@wm/components/dialogs/iframe-dialog', name: 'IframeDialogComponent' }];
+const LAYOUT_GRID_MODULE: ImportDef[] = [{ from: '@wm/components/containers/layout-grid', name: 'LayoutGridModule' }];
+const LOGIN_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, { from: '@wm/components/dialogs/login-dialog', name: 'LoginDialogModule' }];
+const CARD_MODULE: ImportDef[] = [...NGX_DROP_DOWN_MODULE, ...MENU_MODULE, ...BASIC_MODULE, { from: '@wm/components/data/card', name: 'CardModule' }];
+const MARQUEE_MODULE: ImportDef[] = [{ from: '@wm/components/advanced/marquee', name: 'MarqueeModule' }];
+const LEFT_PANEL_MODULE: ImportDef[] = [{ from: '@wm/components/page/left-panel', name: 'LeftPanelModule' },
+{ from: '@wm/mobile/components/page/left-panel', name: 'LeftPanelModule', as: 'WM_MobileLeftPanelModule', platformType: 'MOBILE' }];
+const LIST_MODULE: ImportDef[] = [...PAGINATION_MODULE, ...INPUT_MODULE, { from: '@wm/components/data/list', name: 'ListModule' }];
+const LOGIN_MODULE: ImportDef[] = [{ from: '@wm/components/advanced/login', name: 'LoginComponent' }];
+const CUSTOM_MODULE: ImportDef[] = [{ from: '@wm/components/advanced/custom', name: 'CustomModule' }];
+const MOBILE_NAV_BAR_MODULE: ImportDef[] = [...LEFT_PANEL_MODULE, ...SEARCH_MODULE, ...PAGE_MODULE, { from: '@wm/mobile/components/page/mobile-navbar', name: 'MobileNavbarModule' }];
+const MEDIA_LIST_MODULE: ImportDef[] = [...BASIC_MODULE, ...PAGE_MODULE, ...MOBILE_NAV_BAR_MODULE, { from: '@wm/mobile/components/data/media-list', name: 'MediaListModule' }];
+const MOBILE_TAB_BAR_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/page/tab-bar', name: 'TabBarModule' }];
+const NAVBAR_MODULE: ImportDef[] = [{ from: '@wm/components/navigation/navbar', name: 'NavbarComponent' }];
+const POPOVER_MODULE: ImportDef[] = [...NGX_POPOVER_MODULE, ...BASIC_MODULE, { from: '@wm/components/navigation/popover', name: 'PopoverComponent' }];
+const PANEL_MODULE: ImportDef[] = [...MENU_MODULE, { from: '@wm/components/containers/panel', name: 'PanelModule' }];
+const PARTIAL_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, { from: '@wm/components/dialogs/partial-dialog', name: 'PartialDialogComponent' }];
+const PREFAB_MODULE: ImportDef[] = [{ from: '@wm/components/prefab', name: 'PrefabModule' }];
+const RATING_MODULE: ImportDef[] = [{ from: '@wm/components/input/rating', name: 'RatingComponent' }];
+const RICH_TEXT_EDITOR_MODULE: ImportDef[] = [{ from: '@wm/components/basic/rich-text-editor', name: 'RichTextEditorComponent' }];
+const RIGHT_PANEL_MODULE: ImportDef[] = [{ from: '@wm/components/page/right-panel', name: 'RightPanelModule' }];
+const SEGMENTED_CONTROL_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/containers/segmented-control', name: 'SegmentedControlModule' }];
+const SLIDER_MODULE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/slider', name: 'SliderComponent' }];
+const TABS_MODULE: ImportDef[] = [{ from: '@wm/components/containers/tabs', name: 'TabsModule' }];
+const TABLE_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NG_REACTIVE_FORM_MODULE, ...PAGINATION_MODULE, ...MENU_MODULE, ...BASIC_MODULE, ...INPUT_MODULE, ...NGX_TOOL_TIP_MODULE, ...LIST_MODULE, { from: '@wm/components/data/table', name: 'TableModule' }];
+const TILE_MODULE: ImportDef[] = [{ from: '@wm/components/containers/tile', name: 'TileModule' }];
+const TOP_NAV_MODULE: ImportDef[] = [{ from: '@wm/components/page/top-nav', name: 'TopNavModule' }];
+const TREE_MODULE: ImportDef[] = [{ from: '@wm/components/basic/tree', name: 'TreeComponent' }];
+const WIZARD_MODULE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/containers/wizard', name: 'WizardModule' }];
 
-
-const MOBILE_BASIC_MODULE: ImportDef[] = [...PROGRESS_MODULE, {from: '@wm/mobile/components/basic', name: 'BasicModule', as: 'WM_MobileBasicModule', platformType: 'MOBILE'}];
-const MOBILE_FILE_UPLOAD_MODULE: ImportDef[] = [{from: '@wm/mobile/components/input/file-upload', name: 'FileUploadModule', as: 'WM_MobileFileUploadModule', platformType: 'MOBILE'}];
-const PAGE_MODULE: ImportDef[] = [{from: '@wm/components/page', name: 'PageModule'},
-    {from: '@wm/mobile/components/page', name: 'PageModule', as: 'WM_MobilePageModule', platformType: 'MOBILE'}];
-const BASIC_MODULE: ImportDef[] = [{from: '@wm/components/basic', name: 'BasicModule'}, ...MOBILE_BASIC_MODULE];
-const INPUT_MODULE: ImportDef[] = [...NG_FORM_MODULE, {from: '@wm/components/input', name: 'InputModule'}];
-const DIALOG_MODULE: ImportDef[] = [...NGX_MODAL_MODULE, ...INPUT_MODULE, {from: '@wm/components/dialogs', name: 'DialogModule'}];
-const PAGINATION_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_PAGINATION_MODULE, {from: '@wm/components/data/pagination', name: 'PaginationModule'}];
-const SEARCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_TYPE_HEAD_MODULE, {from: '@wm/components/basic/search', name: 'SearchModule'}];
-
-const ACCORDION_MODULE: ImportDef[] = [{from: '@wm/components/containers/accordion', name: 'AccordionModule'}];
-const LINEAR_LAYOUT_MODULE: ImportDef[] = [{from: '@wm/components/containers/linear-layout', name: 'LinearLayoutModule'}];
-const ALERT_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/alert-dialog', name: 'AlertDialogComponent'}];
-const BARCODE_SCANNER_MODULE: ImportDef[] = [{from: '@wm/mobile/components/device/barcode-scanner', name: 'BarcodeScannerModule'}];
-const MENU_MODULE: ImportDef[] = [...BASIC_MODULE, ...NGX_DROP_DOWN_MODULE, ...INPUT_MODULE, {from: '@wm/components/navigation/menu', name: 'MenuModule'}];
-const BREAD_CRUMB_MODULE: ImportDef[] = [...MENU_MODULE, {from: '@wm/components/navigation/breadcrumb', name: 'BreadcrumbComponent'}];
-const CAMERA_MODULE: ImportDef[] = [{from: '@wm/mobile/components/device/camera', name: 'CameraModule'}];
-const CALENDAR_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, {from: '@wm/components/input/calendar', name: 'CalendarModule'}];
-const CAROUSEL_MODULE: ImportDef[] = [...NGX_CAROUSEL_MODULE, {from: '@wm/components/advanced/carousel', name: 'CarouselModule'}];
-const CHART_MODULE: ImportDef[] = [...BASIC_MODULE, {from: '@wm/components/chart', name: 'ChartComponent'}];
-const CHIPS_MODULE: ImportDef[] = [...SEARCH_MODULE, {from: '@wm/components/input/chips', name: 'ChipsModule'}];
-const COLOR_PICKER_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_COLOR_PICKER_MODULE, {from: '@wm/components/input/color-picker', name: 'ColorPickerComponent'}];
-const CONFIRM_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/confirm-dialog', name: 'ConfirmDialogComponent'}];
-const CONTENT_MODULE: ImportDef[] = [{from: '@wm/components/page', name: 'PageModule'}];
-const CURRENCY_MODULE: ImportDef[] = [...INPUT_MODULE, {from: '@wm/components/input/currency', name: 'CurrencyComponent'}];
-const DESIGN_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/design-dialog', name: 'DesignDialogModule'}];
-const EPOCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE, {from: '@wm/components/input/epoch', name: 'EpochModule'}];
-const FILE_UPLOAD_MODULE: ImportDef[] = [...MOBILE_FILE_UPLOAD_MODULE, {from: '@wm/components/input/file-upload', name: 'FileUploadComponent'}];
-const FOOTER_MODULE: ImportDef[] = [{from: '@wm/components/page/footer', name: 'FooterModule'}];
-const HEADER_MODULE: ImportDef[] = [{from: '@wm/components/page/header', name: 'HeaderComponent'}];
-const IFRAME_DIALOG_MODULE: ImportDef[] = [...BASIC_MODULE, ...DIALOG_MODULE, {from: '@wm/components/dialogs/iframe-dialog', name: 'IframeDialogComponent'}];
-const LAYOUT_GRID_MODULE: ImportDef[] = [{from: '@wm/components/containers/layout-grid', name: 'LayoutGridModule'}];
-const LOGIN_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/login-dialog', name: 'LoginDialogModule'}];
-const CARD_MODULE: ImportDef[] = [...NGX_DROP_DOWN_MODULE, ...MENU_MODULE, ...BASIC_MODULE, {from: '@wm/components/data/card', name: 'CardModule'}];
-const MARQUEE_MODULE: ImportDef[] = [{from: '@wm/components/advanced/marquee', name: 'MarqueeModule'}];
-const LEFT_PANEL_MODULE: ImportDef[] = [{from: '@wm/components/page/left-panel', name: 'LeftPanelModule'},
-    {from: '@wm/mobile/components/page/left-panel', name: 'LeftPanelModule', as: 'WM_MobileLeftPanelModule', platformType: 'MOBILE'}];
-const LIST_MODULE: ImportDef[] = [...PAGINATION_MODULE, ...INPUT_MODULE, {from: '@wm/components/data/list', name: 'ListModule'}];
-const LOGIN_MODULE: ImportDef[] = [{from: '@wm/components/advanced/login', name: 'LoginComponent'}];
-const CUSTOM_MODULE: ImportDef[] = [{from: '@wm/components/advanced/custom', name: 'CustomModule'}];
-const MOBILE_NAV_BAR_MODULE: ImportDef[] = [...LEFT_PANEL_MODULE, ...SEARCH_MODULE, ...PAGE_MODULE, {from: '@wm/mobile/components/page/mobile-navbar', name: 'MobileNavbarModule'}];
-const MEDIA_LIST_MODULE: ImportDef[] = [...BASIC_MODULE, ...PAGE_MODULE, ...MOBILE_NAV_BAR_MODULE, {from: '@wm/mobile/components/data/media-list', name: 'MediaListModule'}];
-const MOBILE_TAB_BAR_MODULE: ImportDef[] = [{from: '@wm/mobile/components/page/tab-bar', name: 'TabBarModule'}];
-const NAVBAR_MODULE: ImportDef[] = [{from: '@wm/components/navigation/navbar', name: 'NavbarComponent'}];
-const POPOVER_MODULE: ImportDef[] = [...NGX_POPOVER_MODULE, ...BASIC_MODULE, {from: '@wm/components/navigation/popover', name: 'PopoverComponent'}];
-const PANEL_MODULE: ImportDef[] = [...MENU_MODULE, {from: '@wm/components/containers/panel', name: 'PanelModule'}];
-const PARTIAL_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/partial-dialog', name: 'PartialDialogComponent'}];
-const PREFAB_MODULE: ImportDef[] = [{from: '@wm/components/prefab', name: 'PrefabModule'}];
-const RATING_MODULE: ImportDef[] = [{from: '@wm/components/input/rating', name: 'RatingComponent'}];
-const RICH_TEXT_EDITOR_MODULE: ImportDef[] = [{from: '@wm/components/basic/rich-text-editor', name: 'RichTextEditorComponent'}];
-const RIGHT_PANEL_MODULE: ImportDef[] = [{from: '@wm/components/page/right-panel', name: 'RightPanelModule'}];
-const SEGMENTED_CONTROL_MODULE: ImportDef[] = [{from: '@wm/mobile/components/containers/segmented-control', name: 'SegmentedControlModule'}];
-const SLIDER_MODULE: ImportDef[] = [...NG_FORM_MODULE, {from: '@wm/components/input/slider', name: 'SliderComponent'}];
-const TABS_MODULE: ImportDef[] = [{from: '@wm/components/containers/tabs', name: 'TabsModule'}];
-const TABLE_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NG_REACTIVE_FORM_MODULE, ...PAGINATION_MODULE, ...MENU_MODULE, ...BASIC_MODULE, ...INPUT_MODULE, ...NGX_TOOL_TIP_MODULE, ...LIST_MODULE, {from: '@wm/components/data/table', name: 'TableModule'}];
-const TILE_MODULE: ImportDef[] = [{from: '@wm/components/containers/tile', name: 'TileModule'}];
-const TOP_NAV_MODULE: ImportDef[] = [{from: '@wm/components/page/top-nav', name: 'TopNavModule'}];
-const TREE_MODULE: ImportDef[] = [{from: '@wm/components/basic/tree', name: 'TreeComponent'}];
-const WIZARD_MODULE: ImportDef[] = [...NG_FORM_MODULE, {from: '@wm/components/containers/wizard', name: 'WizardModule'}];
-
-
-const LIVE_TABLE_MODULE: ImportDef[] = [...TABLE_MODULE, {from: '@wm/components/data/live-table', name: 'LiveTableComponent'}];
-const FORM_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NG_REACTIVE_FORM_MODULE, ...BASIC_MODULE, ...INPUT_MODULE, ...PAGE_MODULE, ...DESIGN_DIALOG_MODULE, {from: '@wm/components/data/form', name: 'FormModule'}];
+``
+const LIVE_TABLE_MODULE: ImportDef[] = [...TABLE_MODULE, { from: '@wm/components/data/live-table', name: 'LiveTableComponent' }];
+const FORM_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NG_REACTIVE_FORM_MODULE, ...BASIC_MODULE, ...INPUT_MODULE, ...PAGE_MODULE, ...DESIGN_DIALOG_MODULE, { from: '@wm/components/data/form', name: 'FormModule' }];
 
 export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-accordion', ACCORDION_MODULE],
     ['wm-accordionpane', ACCORDION_MODULE],
-    ['wm-anchor', BASIC_MODULE],
+    ['wm-anchor', ANCHOR_COMPONENT],
     ['wm-alertdialog', ALERT_DIALOG_MODULE],
-    ['wm-audio', BASIC_MODULE],
+    ['wm-audio', AUDIO_COMPONENT],
     ['wm-barcodescanner', BARCODE_SCANNER_MODULE],
     ['wm-button', INPUT_MODULE],
     ['wm-buttongroup', INPUT_MODULE],
@@ -118,11 +124,11 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-gridrow', LAYOUT_GRID_MODULE],
     ['wm-gridcolumn', LAYOUT_GRID_MODULE],
     ['wm-header', HEADER_MODULE],
-    ['wm-html', BASIC_MODULE],
-    ['wm-icon', BASIC_MODULE],
-    ['wm-iframe', BASIC_MODULE],
+    ['wm-html', HTML_COMPONENT],
+    ['wm-icon', ICON_COMPONENT],
+    ['wm-iframe', IFRAME_COMPONENT],
     ['wm-iframedialog', IFRAME_DIALOG_MODULE],
-    ['wm-label', BASIC_MODULE],
+    ['wm-label', LABEL_COMPONENT],
     ['wm-layoutgrid', LAYOUT_GRID_MODULE],
     ['wm-left-panel', LEFT_PANEL_MODULE],
     ['wm-linearlayout', LINEAR_LAYOUT_MODULE],
@@ -134,7 +140,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-logindialog', LOGIN_DIALOG_MODULE],
     ['wm-marquee', MARQUEE_MODULE],
     ['wm-menu', MENU_MODULE],
-    ['wm-media-list',  MEDIA_LIST_MODULE],
+    ['wm-media-list', MEDIA_LIST_MODULE],
     ['wm-mobile-navbar', MOBILE_NAV_BAR_MODULE],
     ['wm-mobile-tabbar', MOBILE_TAB_BAR_MODULE],
     ['wm-nav', MENU_MODULE],
@@ -149,7 +155,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-pagination', PAGINATION_MODULE],
     ['wm-panel', PANEL_MODULE],
     ['wm-panel-footer', PANEL_MODULE],
-    ['wm-picture', BASIC_MODULE],
+    ['wm-picture', PICTURE_COMPONENT],
     ['wm-popover', POPOVER_MODULE],
     ['wm-progress-bar', PROGRESS_MODULE],
     ['wm-prefab', PREFAB_MODULE],
@@ -164,7 +170,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-segmented-content', SEGMENTED_CONTROL_MODULE],
     ['wm-segmented-control', SEGMENTED_CONTROL_MODULE],
     ['wm-slider', SLIDER_MODULE],
-    ['wm-spinner', BASIC_MODULE],
+    ['wm-spinner', SPINNER_COMPONENT],
     ['wm-switch', INPUT_MODULE],
     ['wm-table', TABLE_MODULE],
     ['wm-tabs', TABS_MODULE],
@@ -175,9 +181,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-tile', TILE_MODULE],
     ['wm-top-nav', TOP_NAV_MODULE],
     ['wm-tree', TREE_MODULE],
-    ['wm-video', BASIC_MODULE],
+    ['wm-video', VIDEO_COMPONENT],
     ['wm-wizard', WIZARD_MODULE],
     ['wm-wizardstep', WIZARD_MODULE],
 ]);
-
-

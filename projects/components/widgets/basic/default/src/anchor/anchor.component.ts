@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, HostBinding, Inject, Injector, OnDestroy, Optional} from '@angular/core';
+import { AfterViewInit, Component, HostBinding, Inject, Injector, OnDestroy, Optional } from '@angular/core';
 
 import {
     addClass,
@@ -10,9 +10,10 @@ import {
     removeClass,
     setAttr
 } from '@wm/core';
-import {DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, WmComponentsModule } from '@wm/components/base';
 
-import {registerProps} from './anchor.props';
+import { registerProps } from './anchor.props';
+import { CommonModule } from '@angular/common';
 
 const DEFAULT_CLS = 'app-anchor';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -32,7 +33,9 @@ export const disableContextMenu = ($event: Event) => {
     providers: [
         provideAsWidgetRef(AnchorComponent)
     ],
-    exportAs: 'wmAnchor'
+    exportAs: 'wmAnchor',
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule]
 })
 export class AnchorComponent extends StylableComponent implements AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
@@ -40,7 +43,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     private hasNavigationToCurrentPageExpr: boolean;
     private hasGoToPageExpr: boolean;
     private goToPageName: string;
-    private cancelSubscription: any;
+    private cancelSubscription;
 
     public encodeurl;
     public hyperlink;
@@ -48,7 +51,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     public iconwidth: string;
     public iconurl: string;
     public iconclass: string;
-    public caption: any;
+    public caption;
     public badgevalue: string;
     public arialabel: string;
 
@@ -60,7 +63,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     constructor(
         inj: Injector,
         private app: App,
-        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext
     ) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
@@ -78,7 +81,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
                 const matches = regex.exec(fn);
 
                 const hasGoToPageExpr = matches && (matches.length > 0);
-                if(hasGoToPageExpr && !this.hasGoToPageExpr) {
+                if (hasGoToPageExpr && !this.hasGoToPageExpr) {
                     this.hasGoToPageExpr = true;
                     this.goToPageName = matches[1];
                 }
@@ -90,15 +93,15 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
         }
     }
 
-    public onActive(callback: (data: any) =>void) {
+    public onActive(callback: (data) => void) {
         this._eventNotifier.subscribe('on-active', callback);
     }
 
-    protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any, meta?: string) {
+    protected handleEvent(node: HTMLElement, eventName: string, eventCallback, locals, meta?: string) {
         super.handleEvent(
             node,
             eventName,
-            e => {
+            () => {
                 if (this.hasGoToPageExpr && locals.$event) {
                     locals.$event.preventDefault();
                 }
@@ -109,7 +112,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
         );
     }
 
-    onPropertyChange(key: string, nv: any, ov?: any) {
+    onPropertyChange(key: string, nv, ov?) {
         if (key === 'hyperlink') {
             if (!nv) {
                 setAttr(this.nativeElement, 'href', 'javascript:void(0)');
@@ -144,10 +147,10 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     ngAfterViewInit() {
         super.ngAfterViewInit();
         this.init();
-        if(this.hasGoToPageExpr) {
+        if (this.hasGoToPageExpr) {
             // In SPA, it highlights active page link when we navigate within the same layout
             this.cancelSubscription = this.app.subscribe("highlightActiveLink", (data) => {
-                if(this.hasNavigationToCurrentPageExpr && this.goToPageName !== this.app.activePageName) {
+                if (this.hasNavigationToCurrentPageExpr && this.goToPageName !== this.app.activePageName) {
                     this.hasNavigationToCurrentPageExpr = false;
                     removeClass(this.nativeElement, 'active');
                     removeAttr(this.nativeElement, 'aria-current');
@@ -168,7 +171,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
 
     public ngOnDestroy() {
         this._eventNotifier.destroy();
-        if(this.cancelSubscription) {
+        if (this.cancelSubscription) {
             this.cancelSubscription();
         }
         super.ngOnDestroy();

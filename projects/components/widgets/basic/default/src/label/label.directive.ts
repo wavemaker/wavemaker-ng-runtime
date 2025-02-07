@@ -1,10 +1,10 @@
-import {Directive, Inject, ElementRef, Injector, Optional, SecurityContext} from '@angular/core';
+import { Directive, Inject, Injector, Optional, SecurityContext } from '@angular/core';
 
-import {setProperty, toggleClass} from '@wm/core';
+import { setProperty, toggleClass } from '@wm/core';
 import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, SanitizePipe } from '@wm/components/base';
 
 import { registerProps } from './label.props';
-import {isObject} from "lodash-es";
+import { isObject } from "lodash-es";
 
 const DEFAULT_CLS = 'app-label';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -18,12 +18,13 @@ const WIDGET_CONFIG: IWidgetConfig = {
     providers: [
         provideAsWidgetRef(LabelDirective)
     ],
-    exportAs: 'wmLabel'
+    exportAs: 'wmLabel',
+    standalone: true
 })
 export class LabelDirective extends StylableComponent {
     static initializeProps = registerProps();
 
-    constructor(inj: Injector, private sanitizePipe:SanitizePipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, private sanitizePipe: SanitizePipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext) {
         super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this);
@@ -33,13 +34,13 @@ export class LabelDirective extends StylableComponent {
 
         if (key === 'caption') {
             // Check for trustPipe safe values
-            let bindContent = this.nativeElement.getAttribute('caption.bind');
-            let safeValue = bindContent ? nv && bindContent.includes('trustAs:') : false;
+            const bindContent = this.nativeElement.getAttribute('caption.bind');
+            const safeValue = bindContent ? nv && bindContent.includes('trustAs:') : false;
             if (isObject(nv) && !safeValue) {
                 setProperty(this.nativeElement, 'textContent', JSON.stringify(nv));
             } else if (isObject(nv) && safeValue) {
                 setProperty(this.nativeElement, 'innerHTML', nv[Object.keys(nv)[0]]);
-            }  else {
+            } else {
                 setProperty(this.nativeElement, 'innerHTML', this.sanitizePipe.transform(nv, SecurityContext.HTML));
             }
 

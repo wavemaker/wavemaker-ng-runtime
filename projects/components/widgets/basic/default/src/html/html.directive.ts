@@ -1,6 +1,6 @@
-import {Attribute, Directive, Inject, Injector, OnInit, Optional, SecurityContext} from '@angular/core';
+import { Attribute, Directive, Inject, Injector, OnInit, Optional, SecurityContext } from '@angular/core';
 
-import {setCSS, setProperty} from '@wm/core';
+import { setCSS, setProperty } from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, SanitizePipe, StylableComponent, styler } from '@wm/components/base';
 
 import { registerProps } from './html.props';
@@ -16,7 +16,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
     providers: [
         provideAsWidgetRef(HtmlDirective)
     ],
-    exportAs: 'wmHtml'
+    exportAs: 'wmHtml',
+    standalone: true
 })
 export class HtmlDirective extends StylableComponent implements OnInit {
     static initializeProps = registerProps();
@@ -26,7 +27,7 @@ export class HtmlDirective extends StylableComponent implements OnInit {
         inj: Injector,
         @Attribute('height') height: string,
         @Attribute('content.bind') private boundContent: string,
-        private sanitizePipe:SanitizePipe,
+        private sanitizePipe: SanitizePipe,
         @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         super(inj, WIDGET_CONFIG, explicitContext);
@@ -56,7 +57,7 @@ export class HtmlDirective extends StylableComponent implements OnInit {
             let safeValue = bindContent ? nv && bindContent.includes('trustAs:') : false;
             if (typeof nv === 'object' && safeValue) {
                 setProperty(this.nativeElement, 'innerHTML', nv[Object.keys(nv)[0]]);
-            }  else {
+            } else {
                 setProperty(this.nativeElement, 'innerHTML', this.sanitizePipe.transform(nv, SecurityContext.HTML));
             }
         } else {

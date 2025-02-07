@@ -22,7 +22,7 @@ import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 import { App, getWmProjectProperties, PartialRefProvider, CustomWidgetRefProvider } from '@wm/core';
 // Basic widgets
 
-import { BasicModule } from '@wm/components/basic';
+import { AnchorComponent, AudioComponent, HtmlDirective, IconComponent, IframeComponent, LabelDirective, PictureDirective, SpinnerComponent, VideoComponent } from "@wm/components/basic";
 import { ProgressModule } from '@wm/components/basic/progress';
 import { RichTextEditorComponent } from '@wm/components/basic/rich-text-editor';
 import { SearchModule } from '@wm/components/basic/search';
@@ -153,7 +153,15 @@ const componentsModule = [
     TooltipModule,
 
     // Basic widgets
-    BasicModule,
+    AnchorComponent, 
+    AudioComponent, 
+    HtmlDirective, 
+    IconComponent, 
+    IframeComponent, 
+    LabelDirective, 
+    PictureDirective, 
+    SpinnerComponent, 
+    VideoComponent,
     ProgressModule,
     RichTextEditorComponent,
     SearchModule,

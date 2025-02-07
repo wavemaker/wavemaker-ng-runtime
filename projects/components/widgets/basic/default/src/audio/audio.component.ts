@@ -1,7 +1,7 @@
-import {Component, Inject, Injector, Optional} from '@angular/core';
-
-import {DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
-import {registerProps} from './audio.props';
+import { Component, Inject, Injector, Optional } from '@angular/core';
+import { DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, WmComponentsModule } from '@wm/components/base';
+import { registerProps } from './audio.props';
+import { CommonModule } from '@angular/common';
 
 const DEFAULT_CLS = 'app-audio';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -15,7 +15,9 @@ const WIDGET_CONFIG: IWidgetConfig = {
     templateUrl: './audio.component.html',
     providers: [
         provideAsWidgetRef(AudioComponent)
-    ]
+    ],
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule]
 })
 export class AudioComponent extends StylableComponent {
     static initializeProps = registerProps();
@@ -24,14 +26,14 @@ export class AudioComponent extends StylableComponent {
     public muted: boolean;
     public controls: boolean;
     public loop: boolean;
-    public audiopreload: any;
-    public audiosupportmessage: any;
+    public audiopreload;
+    public audiosupportmessage;
     public autoplay: boolean;
     public hint: string;
     public arialabel: string;
     public tabindex: string;
 
-    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext) {
         super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this);

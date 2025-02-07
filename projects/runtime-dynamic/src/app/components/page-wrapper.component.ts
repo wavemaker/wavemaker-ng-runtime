@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 import { AbstractSpinnerService, App, noop} from '@wm/core';
 import { MetadataService } from '@wm/variables';
 import { SecurityService } from '@wm/security';
-import { AppManagerService, BasePageComponent, ComponentRefProvider, ComponentType } from '@wm/runtime/base';
+import { AppManagerService, BasePageComponent, ComponentRefProvider, ComponentType } from  '@wm/runtime/base';
 
 @Component({
     selector: 'app-page-outlet',

@@ -5,8 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
-import { WmComponentsModule } from '@wm/components/base';
-import { BasicModule } from '@wm/components/basic';
+import { WmComponentsModule } from '@wm/components/base'; 
 import { InputModule } from '@wm/components/input';
 import { MenuModule } from '@wm/components/navigation/menu';
 import { ListModule } from '@wm/components/data/list';
@@ -20,6 +19,7 @@ import { TableColumnDirective } from './table-column/table-column.directive';
 import { TableColumnGroupDirective } from './table-column-group/table-column-group.directive';
 import { TableRowDirective } from './table-row/table-row.directive';
 import { TableRowActionDirective } from './table-row-action/table-row-action.directive';
+import { AnchorComponent } from '@wm/components/basic';
 
 const components = [
     TableComponent,
@@ -34,7 +34,7 @@ const components = [
 
 @NgModule({
     imports: [
-        BasicModule,
+        AnchorComponent,
         BsDropdownModule,
         CommonModule,
         FormsModule,

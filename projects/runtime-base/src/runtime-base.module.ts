@@ -1,9 +1,9 @@
-import {APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule} from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ɵSharedStylesHost } from '@angular/platform-browser';
-import {ɵDomRendererFactory2} from "@angular/platform-browser";
+import { ɵDomRendererFactory2 } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ToastrModule } from 'ngx-toastr';
@@ -67,61 +67,61 @@ import { MAX_CACHE_AGE, MAX_CACHE_SIZE } from './util/wm-route-reuse-strategy';
 //angular overrides
 import { WMDomSharedStylesHost } from "./overrides/wm_shared_styles_host";
 import { WMDomRendererFactory2 } from "./overrides/wm_dom_renderer";
-import {PageModule} from "@wm/components/page";
-import {FooterModule} from "@wm/components/page/footer";
-import {HeaderComponent} from "@wm/components/page/header";
-import {LeftPanelModule} from "@wm/components/page/left-panel";
-import {RightPanelModule} from "@wm/components/page/right-panel";
-import {TopNavModule} from "@wm/components/page/top-nav";
-import {BasicModule} from "@wm/components/basic";
-import {ProgressModule} from "@wm/components/basic/progress";
-import {RichTextEditorComponent} from "@wm/components/basic/rich-text-editor";
-import {SearchModule} from "@wm/components/basic/search";
-import {TreeComponent} from "@wm/components/basic/tree";
-import {CalendarModule} from "@wm/components/input/calendar";
-import {ChipsModule} from "@wm/components/input/chips";
-import {ColorPickerComponent} from "@wm/components/input/color-picker";
-import {EpochModule} from "@wm/components/input/epoch";
-import {FileUploadComponent} from "@wm/components/input/file-upload";
-import {InputModule} from "@wm/components/input";
-import {RatingComponent} from "@wm/components/input/rating";
-import {SliderComponent} from "@wm/components/input/slider";
-import {CardModule} from "@wm/components/data/card";
-import {FormModule} from "@wm/components/data/form";
-import {ListModule} from "@wm/components/data/list";
-import {LiveTableComponent} from "@wm/components/data/live-table";
-import {PaginationModule} from "@wm/components/data/pagination";
-import {TableModule} from "@wm/components/data/table";
-import {ChartComponent} from "@wm/components/chart";
-import {AccordionModule} from "@wm/components/containers/accordion";
-import {LinearLayoutModule} from "@wm/components/containers/linear-layout";
-import {LayoutGridModule} from "@wm/components/containers/layout-grid";
-import {PanelModule} from "@wm/components/containers/panel";
-import {TabsModule} from "@wm/components/containers/tabs";
-import {TileModule} from "@wm/components/containers/tile";
-import {WizardModule} from "@wm/components/containers/wizard";
-import {AlertDialogComponent} from "@wm/components/dialogs/alert-dialog";
-import {IframeDialogComponent} from "@wm/components/dialogs/iframe-dialog";
-import {LoginDialogModule} from "@wm/components/dialogs/login-dialog";
-import {PartialDialogComponent} from "@wm/components/dialogs/partial-dialog";
-import {BreadcrumbComponent} from "@wm/components/navigation/breadcrumb";
-import {MenuModule} from "@wm/components/navigation/menu";
-import {NavbarComponent} from "@wm/components/navigation/navbar";
-import {PopoverComponent} from "@wm/components/navigation/popover";
-import {CarouselModule} from "@wm/components/advanced/carousel";
-import {LoginComponent} from "@wm/components/advanced/login";
-import {MarqueeModule} from "@wm/components/advanced/marquee";
-import {CustomModule} from "@wm/components/advanced/custom";
-import {BsDatepickerModule} from "ngx-bootstrap/datepicker";
-import {TimepickerModule as ngxTimepickerModule} from "ngx-bootstrap/timepicker";
-import {BsDropdownModule} from "ngx-bootstrap/dropdown";
-import {PaginationModule as ngxPaginationModule} from "ngx-bootstrap/pagination";
-import {TypeaheadModule} from "ngx-bootstrap/typeahead";
-import {ProgressbarModule} from "ngx-bootstrap/progressbar";
-import {CarouselModule as ngxCarouselModule} from "ngx-bootstrap/carousel";
-import {PopoverModule as ngxPopoverModule} from "ngx-bootstrap/popover";
-import {NgCircleProgressModule} from "ng-circle-progress";
-import {TooltipModule} from "ngx-bootstrap/tooltip";
+import { PageModule } from "@wm/components/page";
+import { FooterModule } from "@wm/components/page/footer";
+import { HeaderComponent } from "@wm/components/page/header";
+import { LeftPanelModule } from "@wm/components/page/left-panel";
+import { RightPanelModule } from "@wm/components/page/right-panel";
+import { TopNavModule } from "@wm/components/page/top-nav";
+import { AnchorComponent, AudioComponent, HtmlDirective, IconComponent, IframeComponent, LabelDirective, PictureDirective, SpinnerComponent, VideoComponent } from "@wm/components/basic";
+import { ProgressModule } from "@wm/components/basic/progress";
+import { RichTextEditorComponent } from "@wm/components/basic/rich-text-editor";
+import { SearchModule } from "@wm/components/basic/search";
+import { TreeComponent } from "@wm/components/basic/tree";
+import { CalendarModule } from "@wm/components/input/calendar";
+import { ChipsModule } from "@wm/components/input/chips";
+import { ColorPickerComponent } from "@wm/components/input/color-picker";
+import { EpochModule } from "@wm/components/input/epoch";
+import { FileUploadComponent } from "@wm/components/input/file-upload";
+import { InputModule } from "@wm/components/input";
+import { RatingComponent } from "@wm/components/input/rating";
+import { SliderComponent } from "@wm/components/input/slider";
+import { CardModule } from "@wm/components/data/card";
+import { FormModule } from "@wm/components/data/form";
+import { ListModule } from "@wm/components/data/list";
+import { LiveTableComponent } from "@wm/components/data/live-table";
+import { PaginationModule } from "@wm/components/data/pagination";
+import { TableModule } from "@wm/components/data/table";
+import { ChartComponent } from "@wm/components/chart";
+import { AccordionModule } from "@wm/components/containers/accordion";
+import { LinearLayoutModule } from "@wm/components/containers/linear-layout";
+import { LayoutGridModule } from "@wm/components/containers/layout-grid";
+import { PanelModule } from "@wm/components/containers/panel";
+import { TabsModule } from "@wm/components/containers/tabs";
+import { TileModule } from "@wm/components/containers/tile";
+import { WizardModule } from "@wm/components/containers/wizard";
+import { AlertDialogComponent } from "@wm/components/dialogs/alert-dialog";
+import { IframeDialogComponent } from "@wm/components/dialogs/iframe-dialog";
+import { LoginDialogModule } from "@wm/components/dialogs/login-dialog";
+import { PartialDialogComponent } from "@wm/components/dialogs/partial-dialog";
+import { BreadcrumbComponent } from "@wm/components/navigation/breadcrumb";
+import { MenuModule } from "@wm/components/navigation/menu";
+import { NavbarComponent } from "@wm/components/navigation/navbar";
+import { PopoverComponent } from "@wm/components/navigation/popover";
+import { CarouselModule } from "@wm/components/advanced/carousel";
+import { LoginComponent } from "@wm/components/advanced/login";
+import { MarqueeModule } from "@wm/components/advanced/marquee";
+import { CustomModule } from "@wm/components/advanced/custom";
+import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
+import { TimepickerModule as ngxTimepickerModule } from "ngx-bootstrap/timepicker";
+import { BsDropdownModule } from "ngx-bootstrap/dropdown";
+import { PaginationModule as ngxPaginationModule } from "ngx-bootstrap/pagination";
+import { TypeaheadModule } from "ngx-bootstrap/typeahead";
+import { ProgressbarModule } from "ngx-bootstrap/progressbar";
+import { CarouselModule as ngxCarouselModule } from "ngx-bootstrap/carousel";
+import { PopoverModule as ngxPopoverModule } from "ngx-bootstrap/popover";
+import { NgCircleProgressModule } from "ng-circle-progress";
+import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { CurrencyComponent } from '@wm/components/input/currency';
 
 declare const _WM_APP_PROPERTIES;
@@ -131,7 +131,7 @@ const initializeProjectDetails = () => {
     _WM_APP_PROJECT.isPreview = cdnUrl ? false : true;
     let apiUrl = document.querySelector('[name="apiUrl"]') && document.querySelector('[name="apiUrl"]').getAttribute('content');
     //for preview
-    if(!cdnUrl) {
+    if (!cdnUrl) {
         cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
     }
     _WM_APP_PROJECT.id = hasCordova() ? _WM_APP_PROPERTIES.displayName : location.href.split('/')[3];
@@ -142,7 +142,7 @@ const initializeProjectDetails = () => {
     try {
         //@ts-ignore
         __webpack_require__.p = __webpack_public_path__ = cdnUrl;
-    } catch(e) {
+    } catch (e) {
         //for app preview there is no webpack. Don't do anything.
     }
 };
@@ -200,7 +200,15 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     TooltipModule,
 
     // Basic widgets
-    BasicModule,
+    AnchorComponent, 
+    AudioComponent, 
+    HtmlDirective, 
+    IconComponent, 
+    IframeComponent, 
+    LabelDirective, 
+    PictureDirective, 
+    SpinnerComponent, 
+    VideoComponent,
     ProgressModule,
     RichTextEditorComponent,
     SearchModule,
@@ -267,7 +275,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
 ($.fn as any).swipeAnimation.expressionEvaluator = $parseExpr;
 
 @NgModule({
-    declarations: [ ...definitions ],
+    declarations: [...definitions],
     imports: [
         CommonModule,
         RouterModule,
@@ -306,41 +314,41 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     providers: [
-        {provide: ɵSharedStylesHost, useClass: WMDomSharedStylesHost},
-        {provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2}
+        { provide: ɵSharedStylesHost, useClass: WMDomSharedStylesHost },
+        { provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2 }
     ]
 })
 export class RuntimeBaseModule {
 
     // this polyfill is to add support for CustomEvent in IE11
     static addCustomEventPolyfill() {
-            if ( typeof window['CustomEvent'] === 'function' ) {
-                return false;
-            }
-            // Adding type as any to avoid error TS2322
-            const CustomEvent: any = (event, params) => {
-                params = params || { bubbles: false, cancelable: false, detail: null };
-                const evt = document.createEvent( 'CustomEvent' );
-                evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
-                return evt;
-            };
+        if (typeof window['CustomEvent'] === 'function') {
+            return false;
+        }
+        // Adding type as any to avoid error TS2322
+        const CustomEvent: any = (event, params) => {
+            params = params || { bubbles: false, cancelable: false, detail: null };
+            const evt = document.createEvent('CustomEvent');
+            evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+            return evt;
+        };
 
-            CustomEvent.prototype = window['Event'].prototype;
-            // ### ANGULAR9TODO ###
-            window['CustomEvent'] = CustomEvent;
+        CustomEvent.prototype = window['Event'].prototype;
+        // ### ANGULAR9TODO ###
+        window['CustomEvent'] = CustomEvent;
     }
 
     static forRoot(): ModuleWithProviders<RuntimeBaseModule> {
         return {
             ngModule: RuntimeBaseModule,
             providers: [
-                {provide: App, useClass: AppRef},
-                {provide: AbstractToasterService, useClass: ToasterServiceImpl},
-                {provide: AbstractI18nService, useClass: I18nServiceImpl},
-                {provide: AbstractSpinnerService, useClass: SpinnerServiceImpl},
-                {provide: AbstractNavigationService, useClass: NavigationServiceImpl},
-                {provide: AppDefaults, useClass: AppDefaultsService},
-                {provide: DynamicComponentRefProvider, useClass: DynamicComponentRefProviderService},
+                { provide: App, useClass: AppRef },
+                { provide: AbstractToasterService, useClass: ToasterServiceImpl },
+                { provide: AbstractI18nService, useClass: I18nServiceImpl },
+                { provide: AbstractSpinnerService, useClass: SpinnerServiceImpl },
+                { provide: AbstractNavigationService, useClass: NavigationServiceImpl },
+                { provide: AppDefaults, useClass: AppDefaultsService },
+                { provide: DynamicComponentRefProvider, useClass: DynamicComponentRefProviderService },
                 {
                     provide: APP_INITIALIZER,
                     useFactory: InitializeApp,
@@ -376,8 +384,8 @@ export class RuntimeBaseModule {
     }
 
     constructor(mobileRuntimeModule: MobileRuntimeModule,
-                app: App,
-                viewport: Viewport) {
+        app: App,
+        viewport: Viewport) {
         RuntimeBaseModule.addCustomEventPolyfill();
 
         this.getDeviceDetails().then(details => {
@@ -393,7 +401,7 @@ export class RuntimeBaseModule {
 
     private getDeviceDetails(): Promise<any> {
         return new Promise<any>(function (resolve, reject) {
-            const msgContent = {key: 'on-load'};
+            const msgContent = { key: 'on-load' };
             // Notify preview window that application is ready. Otherwise, identify the OS.
             if (window.top !== window) {
                 window.top.postMessage(msgContent, '*');
@@ -405,9 +413,9 @@ export class RuntimeBaseModule {
                     }
                 };
             } else if (isIphone() || isIpod() || isIpad()) {
-                resolve({'os': OS.IOS});
+                resolve({ 'os': OS.IOS });
             } else {
-                resolve({'os': OS.ANDROID});
+                resolve({ 'os': OS.ANDROID });
             }
         });
     }

@@ -38,9 +38,9 @@ import {
     replace,
     split,
     uniq
-} from "lodash-es";
-import { BasicModule } from '@wm/components/basic';
+} from "lodash-es"; 
 import { CommonModule } from '@angular/common';
+import { SpinnerComponent } from '@wm/components/basic';
 
 declare const $;
 
@@ -136,7 +136,7 @@ const angle = d => {
     ],
     encapsulation: ViewEncapsulation.None,
     standalone: true,
-    imports: [BasicModule, CommonModule, WmComponentsModule]
+    imports: [SpinnerComponent, CommonModule, WmComponentsModule]
 })
 export class ChartComponent extends StylableComponent implements AfterViewInit, OnDestroy, IRedrawableComponent {
     static initializeProps = registerProps();
