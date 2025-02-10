@@ -11,7 +11,7 @@ register('wm-repeat-template', (): IBuildTaskDef => {
         pre: (attrs, shared, parentAccordion, parentTab) => {
             const widgetRef = (parentAccordion && parentAccordion.get('accordion_ref')) || (parentTab && parentTab.get('tabs_ref'));
             if (widgetRef) {
-                return `<div *ngIf="${widgetRef}.fieldDefs && !${widgetRef}.fieldDefs.length">{{${widgetRef}.nodatamessage}}</div>
+                return `@if(${widgetRef}.fieldDefs && !${widgetRef}.fieldDefs.length){<div>{{${widgetRef}.nodatamessage}}</div>}
                     <${dynamicTemplateTagName} wmRepeatTemplate #repeatItemRef="repeatItemRef" ${getAttrMarkup(attrs)} *ngFor="let item of ${widgetRef}.fieldDefs; let i = index;">
                         <ng-container [ngTemplateOutlet]="widgetRef${counter}"
                             [ngTemplateOutletContext]="{item:item, index:i}"
