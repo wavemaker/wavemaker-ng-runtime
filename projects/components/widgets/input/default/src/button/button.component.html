@@ -1,6 +1,14 @@
-<img data-identifier="img" alt="button image" class="button-image-icon" [src]="iconurl | image" *ngIf="iconurl" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
-<i class="app-icon {{iconclass}}" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}" *ngIf="iconclass"></i>
-<span class="sr-only" *ngIf="iconclass">{{caption}} {{appLocale.LABEL_ICON}}</span>
+@if (iconurl) {
+  <img data-identifier="img" alt="button image" class="button-image-icon" [src]="iconurl | image" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin}"/>
+}
+@if (iconclass) {
+  <i class="app-icon {{iconclass}}" aria-hidden="true" [ngStyle]="{width:iconwidth, height:iconheight, margin:iconmargin, fontSize:iconwidth}"></i>
+}
+@if (iconclass) {
+  <span class="sr-only">{{caption}} {{appLocale.LABEL_ICON}}</span>
+}
 <span class="btn-caption" [innerHTML]="caption"></span>
 <ng-content select=".caret"></ng-content>
-<span *ngIf="badgevalue" class="badge pull-right" [textContent]="badgevalue"></span>
+@if (badgevalue) {
+  <span class="badge pull-right" [textContent]="badgevalue"></span>
+}

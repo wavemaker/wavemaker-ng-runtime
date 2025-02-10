@@ -1,11 +1,17 @@
 <a href="javascript:void(0);" [title]="item.label" [wmNavigationControl]="item.link" [disableMenuContext]="menuRef.disableMenuContext || !!item.action">
-    <span *ngIf="item.children.length" class="pull-right fa caret {{menualign}}"></span>
-    <i class="app-icon {{item.icon}}"></i>
-    <span class="anchor-caption">{{item.label}}</span>
-    <span *ngIf="item.badge" class="badge pull-right" [textContent]="item.badge"></span>
+  @if (item.children.length) {
+    <span class="pull-right fa caret {{menualign}}"></span>
+  }
+  <i class="app-icon {{item.icon}}"></i>
+  <span class="anchor-caption">{{item.label}}</span>
+  @if (item.badge) {
+    <span class="badge pull-right" [textContent]="item.badge"></span>
+  }
 </a>
-<ng-container [ngTemplateOutlet]="nestedMenuDropdown" *ngIf="item.children.length" [ngTemplateOutletContext]="{item: item}"></ng-container>
+@if (item.children.length) {
+  <ng-container [ngTemplateOutlet]="nestedMenuDropdown" [ngTemplateOutletContext]="{item: item}"></ng-container>
+}
 
 <ng-template #nestedMenuDropdown let-item="item">
-    <ul wmMenuDropdown [items]="item.children"></ul>
+  <ul wmMenuDropdown [items]="item.children"></ul>
 </ng-template>

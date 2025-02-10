@@ -1,79 +1,79 @@
-    <input class="form-control app-textbox app-dateinput display-input"
-        focus-target
-        type="text"
-        [name]="name"
-        #dateInput
-        [imask]="mask"
-        [unmask]="true"
-        [tabindex]="loadNativeDateInput ? '-1' : tabindex"
-        [attr.aria-hidden]="!!loadNativeDateInput"
-        [value]="displayValue"
-        (click)="toggleDpDropdown($event, true)"
-        (focus)="onDateTimeInputFocus(); invokeOnFocus($event); updateIMask()"
-        (blur)="onInputBlur($event)"
-        [disabled]="disabled || readonly"
-        [autofocus]="autofocus"
-        [required]="required"
-        [readOnly]="isReadOnly"
-        [attr.placeholder]="placeholder"
-        [attr.accesskey]="shortcutkey"
-           [attr.aria-label]="arialabel"
-        (change)="onDisplayDateChange($event)"
-        (keydown)="this._triggeredByUser = true; onDisplayKeydown($event);">
+<input class="form-control app-textbox app-dateinput display-input"
+  focus-target
+  type="text"
+  [name]="name"
+  #dateInput
+  [imask]="mask"
+  [unmask]="true"
+  [tabindex]="loadNativeDateInput ? '-1' : tabindex"
+  [attr.aria-hidden]="!!loadNativeDateInput"
+  [value]="displayValue"
+  (click)="toggleDpDropdown($event, true)"
+  (focus)="onDateTimeInputFocus(); invokeOnFocus($event); updateIMask()"
+  (blur)="onInputBlur($event)"
+  [disabled]="disabled || readonly"
+  [autofocus]="autofocus"
+  [required]="required"
+  [readOnly]="isReadOnly"
+  [attr.placeholder]="placeholder"
+  [attr.accesskey]="shortcutkey"
+  [attr.aria-label]="arialabel"
+  (change)="onDisplayDateChange($event)"
+  (keydown)="this._triggeredByUser = true; onDisplayKeydown($event);">
 
-    <span class="input-group-btn">
-        <button type="button"
-            class="btn btn-default btn-time"
-            [tabindex]="loadNativeDateInput ? '-1' : tabindex"
-            [attr.aria-hidden]="!!loadNativeDateInput"
-            [disabled]="disabled || readonly"
-            [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : 'Choose date by pressing enter'"
-            aria-haspopup="true"
-                [attr.aria-expanded]="isOpen"
-            (click)="toggleDpDropdown($event, false)">
-            <i aria-hidden="true"
-                class="app-icon wm-sl-l sl-calendar"></i>
-        </button>
-    </span>
-    <div style="width: 0;display: inline-block;">
-    <input class="model-holder"
-        aria-label="datepicker dropdownmenu"
-        aria-controls="date"
-        [tabindex]="-1"
-        [attr.aria-hidden]="!!loadNativeDateInput"
-        [container]="containerTarget || '.wm-app'"
-        [bsConfig]="_dateOptions"
-        [isOpen]="isOpen"
-        #datepicker="bsDatepicker"
-        bsDatepicker
-        [daysDisabled]="excludedDaysToDisable"
-        [datesDisabled]="excludedDatesToDisable"
-        placement="bottom right"
-        [isDisabled]="disabled || readonly"
-        [bsValue]="bsDataValue"
-        (onShown)="onDatePickerOpen()"
-        (onHidden)="hideDatepickerDropdown()"
-        (bsValueChange)="onDateChange($event)">
+<span class="input-group-btn">
+  <button type="button"
+    class="btn btn-default btn-time"
+    [tabindex]="loadNativeDateInput ? '-1' : tabindex"
+    [attr.aria-hidden]="!!loadNativeDateInput"
+    [disabled]="disabled || readonly"
+    [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : 'Choose date by pressing enter'"
+    aria-haspopup="true"
+    [attr.aria-expanded]="isOpen"
+    (click)="toggleDpDropdown($event, false)">
+    <i aria-hidden="true"
+    class="app-icon wm-sl-l sl-calendar"></i>
+  </button>
+</span>
+<div style="width: 0;display: inline-block;">
+  <input class="model-holder"
+    aria-label="datepicker dropdownmenu"
+    aria-controls="date"
+    [tabindex]="-1"
+    [attr.aria-hidden]="!!loadNativeDateInput"
+    [container]="containerTarget || '.wm-app'"
+    [bsConfig]="_dateOptions"
+    [isOpen]="isOpen"
+    #datepicker="bsDatepicker"
+    bsDatepicker
+    [daysDisabled]="excludedDaysToDisable"
+    [datesDisabled]="excludedDatesToDisable"
+    placement="bottom right"
+    [isDisabled]="disabled || readonly"
+    [bsValue]="bsDataValue"
+    (onShown)="onDatePickerOpen()"
+    (onHidden)="hideDatepickerDropdown()"
+    (bsValueChange)="onDateChange($event)">
 </div>
 
-<ng-template [ngIf]="loadNativeDateInput">
-    <wm-datetimepicker
-        dateTimePicker
-        mode="DATE"
-        [config]="_dateOptions"
-        [placement]="modal"
-        [excludedDaysToDisable]="excludedDaysToDisable"
-        [excludedDatesToDisable]="excludedDatesToDisable"
-        [displayFormat]="dateInputFormat"
-        [value]="bsDataValue"
-        (change)="onDateChange($event)">
-    </wm-datetimepicker>
-    <div class="mobile-input mobile-datepicker-container"
-        [tabindex]="tabindex || 0"
-         (click)="!(disabled || readonly) && showDatePickerModal(bsDataValue)"
-        (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
-        (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
-         [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : arialabel || 'Choose Date'"
-         role="button">
-    </div>
-</ng-template>
+@if (loadNativeDateInput) {
+  <wm-datetimepicker
+    dateTimePicker
+    mode="DATE"
+    [config]="_dateOptions"
+    [placement]="modal"
+    [excludedDaysToDisable]="excludedDaysToDisable"
+    [excludedDatesToDisable]="excludedDatesToDisable"
+    [displayFormat]="dateInputFormat"
+    [value]="bsDataValue"
+    (change)="onDateChange($event)">
+  </wm-datetimepicker>
+  <div class="mobile-input mobile-datepicker-container"
+    [tabindex]="tabindex || 0"
+    (click)="!(disabled || readonly) && showDatePickerModal(bsDataValue)"
+    (focus)="onDateTimeInputFocus(true); invokeOnFocus($event);"
+    (blur)="onDateTimeInputBlur(); invokeOnTouched($event)"
+    [attr.aria-label]="displayValue ? 'Change Date ' + displayValue : arialabel || 'Choose Date'"
+    role="button">
+  </div>
+}

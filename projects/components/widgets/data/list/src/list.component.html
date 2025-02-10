@@ -1,135 +1,164 @@
-<div class="panel-heading" *ngIf="title || subheading || iconclass">
+@if (title || subheading || iconclass) {
+  <div class="panel-heading">
     <h3 class="panel-title">
-        <div class="pull-left">
-            <i class="app-icon panel-icon {{iconclass}}" aria-hidden="true" [hidden]="!iconclass"></i>
-        </div>
-        <div class="pull-left">
-            <div class="heading" [innerHTML]="title"></div>
-            <div class="description" [innerHTML]="subheading"></div>
-        </div>
+      <div class="pull-left">
+        <i class="app-icon panel-icon {{iconclass}}" aria-hidden="true" [hidden]="!iconclass"></i>
+      </div>
+      <div class="pull-left">
+        <div class="heading" [innerHTML]="title"></div>
+        <div class="description" [innerHTML]="subheading"></div>
+      </div>
     </h3>
-</div>
+  </div>
+}
 
-<div class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisablePrevious" aria-label="Page navigation" *ngIf="navigation === 'Inline' && !noDataFound">
+@if (navigation === 'Inline' && !noDataFound) {
+  <div class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisablePrevious" aria-label="Page navigation">
     <ul class="pager">
-        <li class="previous" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisablePrevious : true)}">
-            <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('prev', $event)"
-               [attr.aria-disabled]="dataNavigator.isDisablePrevious">
-                <i class="wi wi-chevron-left" aria-hidden="true"></i>
-                <span class="sr-only">Go to Previous page {{dataNavigator.isDisablePrevious ? ', Disabled' : ''}}</span>
-            </a>
-        </li>
+      <li class="previous" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisablePrevious : true)}">
+        <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('prev', $event)"
+          [attr.aria-disabled]="dataNavigator.isDisablePrevious">
+          <i class="wi wi-chevron-left" aria-hidden="true"></i>
+          <span class="sr-only">Go to Previous page {{dataNavigator.isDisablePrevious ? ', Disabled' : ''}}</span>
+        </a>
+      </li>
     </ul>
-</div>
-<div *ngIf="navigation === 'Inline' && !noDataFound" aria-live="polite" aria-atomic="true" class="sr-only"> {{'Page ' + dataNavigator.dn.currentPage + ' of ' + dataNavigator.pageCount }}</div>
+  </div>
+}
+@if (navigation === 'Inline' && !noDataFound) {
+  <div aria-live="polite" aria-atomic="true" class="sr-only"> {{'Page ' + dataNavigator.dn.currentPage + ' of ' + dataNavigator.pageCount }}</div>
+}
 
 <div>
-    <div id={{titleId}} class="sr-only" *ngIf="enablereorder">
-        Press space bar to toggle drag drop mode, use arrow keys to move selected elements.
+  @if (enablereorder) {
+    <div id={{titleId}} class="sr-only">
+      Press space bar to toggle drag drop mode, use arrow keys to move selected elements.
     </div>
+  }
 
-    <div aria-live="assertive" *ngIf="listItems && enablereorder && currentIndex" class="sr-only" >
-        {{ariaText + currentIndex + ' of ' +  listItems.length}}
+  @if (listItems && enablereorder && currentIndex) {
+    <div aria-live="assertive" class="sr-only" >
+      {{ariaText + currentIndex + ' of ' +  listItems.length}}
     </div>
+  }
 </div>
 
 <ul [attr.tabindex]="tabindex"  class="app-livelist-container clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}} {{listclass}}" role="list"
-    (keydown.enter)="handleKeyDown($event, 'select')"
+  (keydown.enter)="handleKeyDown($event, 'select')"
 
-    (keydown.space)="handleKeyDown($event, 'space')"
+  (keydown.space)="handleKeyDown($event, 'space')"
 
-    (keydown.arrowup)="handleKeyDown($event, 'focusPrev')"
-    (keydown.arrowdown)="handleKeyDown($event, 'focusNext')"
-    (keydown.arrowleft)="handleKeyDown($event, 'focusPrev')"
-    (keydown.arrowright)="handleKeyDown($event, 'focusNext')"
+  (keydown.arrowup)="handleKeyDown($event, 'focusPrev')"
+  (keydown.arrowdown)="handleKeyDown($event, 'focusNext')"
+  (keydown.arrowleft)="handleKeyDown($event, 'focusPrev')"
+  (keydown.arrowright)="handleKeyDown($event, 'focusNext')"
 
-    (keydown.shift.arrowup)="handleKeyDown($event, 'selectPrev')"
-    (keydown.shift.arrowdown)="handleKeyDown($event, 'selectNext')"
-    (keydown.shift.arrowleft)="handleKeyDown($event, 'selectPrev')"
-    (keydown.shift.arrowright)="handleKeyDown($event, 'selectNext')"
-    [hidden]="noDataFound && !variableInflight"
->
-    <ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
-        <li *ngFor="let item of fieldDefs; index as $index; first as $first; last as $last;" class="app-list-item {{direction === 'horizontal' ? '' : itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
-            [wmListItem]="item"
-            #listItemRef="listItemRef"
-            [attr.tabindex]="tabindex"
-            role="listitem">
-            <ng-container [ngTemplateOutlet]="listTemplate"
-                          [ngTemplateOutletInjector]="createCustomInjector('falt_' + listItemRef.trackId, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
-                          [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
-        </li>
-    </ng-template>
-    <ng-container [ngTemplateOutlet]="listLeftActionTemplate"></ng-container>
-    <ng-container [ngTemplateOutlet]="listRightActionTemplate"></ng-container>
+  (keydown.shift.arrowup)="handleKeyDown($event, 'selectPrev')"
+  (keydown.shift.arrowdown)="handleKeyDown($event, 'selectNext')"
+  (keydown.shift.arrowleft)="handleKeyDown($event, 'selectPrev')"
+  (keydown.shift.arrowright)="handleKeyDown($event, 'selectNext')"
+  [hidden]="noDataFound && !variableInflight"
+  >
+  @if (!groupby) {
+    @for (item of fieldDefs; track item) {
+      <li class="app-list-item {{direction === 'horizontal' ? '' : itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
+        [wmListItem]="item"
+        #listItemRef="listItemRef"
+        [attr.tabindex]="tabindex"
+        role="listitem">
+        <ng-container [ngTemplateOutlet]="listTemplate"
+          [ngTemplateOutletInjector]="createCustomInjector('falt_' + listItemRef.trackId, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
+        [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
+      </li>
+    }
+  } @else {
+    @for (groupObj of groupedData; track groupObj; let groupIndex = $index) {
+      <li class="app-list-item-group clearfix">
+        <ul [attr.tabindex]="tabindex" class="list-group item-group" [ngClass]="listclass">
+          <li class="app-list-item-header list-item list-group-header" (click)="handleHeaderClick($event)" [ngClass]="{'collapsible-content': collapsible}">
+            <h4>{{groupObj.key}}
+              <div class="header-action">
+                @if (collapsible) {
+                  <i class="app-icon wi action wi-chevron-up"></i>
+                }
+                @if (showcount) {
+                  <span class="label label-default">{{groupObj.data.length}}</span>
+                }
+              </div>
+            </h4>
+          </li>
+          <li class="list-group-container">
+            <ul class="list-group clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}}">
+              @for (item of groupObj.data; track trackByFn($index, item)) {
+                <li [attr.tabindex]="tabindex"
+                  class="app-list-item group-list-item {{itemsPerRowClass}}"
+                  [ngClass]="listItemRef.itemClass"
+                  [wmListItem]="item" #listItemRef="listItemRef">
+                  <ng-container [ngTemplateOutlet]="listTemplate"
+                    [ngTemplateOutletInjector]="createCustomInjector('group_' + listItemRef.trackId, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
+                  [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
+                </li>
+              }
+            </ul>
+          </li>
+        </ul>
+      </li>
+    }
+  }
+  <ng-container [ngTemplateOutlet]="listLeftActionTemplate"></ng-container>
+  <ng-container [ngTemplateOutlet]="listRightActionTemplate"></ng-container>
 </ul>
 
-<div class="no-data-msg" *ngIf="noDataFound && !variableInflight" [textContent]="nodatamessage"></div>
+@if (noDataFound && !variableInflight) {
+  <div class="no-data-msg" [textContent]="nodatamessage"></div>
+}
 
-<div class="loading-data-msg" *ngIf="variableInflight && !pulltorefresh">
+@if (variableInflight && !pulltorefresh) {
+  <div class="loading-data-msg">
     <span>
-        <i class="app-icon panel-icon fa-spin" aria-hidden="true" [ngClass]="loadingicon"></i>
-        <span class="sr-only">Loading</span>
-        <span class="loading-text" [textContent]="loadingdatamsg"></span>
+      <i class="app-icon panel-icon fa-spin" aria-hidden="true" [ngClass]="loadingicon"></i>
+      <span class="sr-only">Loading</span>
+      <span class="loading-text" [textContent]="loadingdatamsg"></span>
     </span>
-</div>
+  </div>
+}
 
-<div class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisableNext" *ngIf="navigation === 'Inline' && !noDataFound">
+@if (navigation === 'Inline' && !noDataFound) {
+  <div class="app-datanavigator" [attr.aria-disabled]="dataNavigator.isDisableNext">
     <ul class="pager">
-        <li class="next" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisableNext  : true)}">
-            <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('next', $event)"
-               [attr.aria-disabled]="dataNavigator.isDisableNext">
-                <i class="wi wi-chevron-right" aria-hidden="true"></i>
-                <span class="sr-only">Go to Next page {{dataNavigator.isDisableNext ? ', Disabled' : ''}}</span>
-            </a>
-        </li>
+      <li class="next" [ngClass]="{'disabled': (dataNavigator ? dataNavigator.isDisableNext  : true)}">
+        <a href="javascript:void(0);" (click)="dataNavigator.navigatePage('next', $event)"
+          [attr.aria-disabled]="dataNavigator.isDisableNext">
+          <i class="wi wi-chevron-right" aria-hidden="true"></i>
+          <span class="sr-only">Go to Next page {{dataNavigator.isDisableNext ? ', Disabled' : ''}}</span>
+        </a>
+      </li>
     </ul>
-</div>
+  </div>
+}
 
-<div class="panel-footer" *ngIf="navigation !== 'None'" [hidden]="!showNavigation || (onDemandLoad && dataNavigator.isDisableNext) || (dataNavigator.dataSize <= pagesize) || (!dataNavigator.dataSize && !dataNavigator.datasource?.pagination?.next)">
+@if (navigation !== 'None') {
+  <div class="panel-footer" [hidden]="!showNavigation || (onDemandLoad && dataNavigator.isDisableNext) || (dataNavigator.dataSize <= pagesize) || (!dataNavigator.dataSize && !dataNavigator.datasource?.pagination?.next)">
     <nav wmPagination
-         navigationalign.bind="navigationalign"
-         navigation.bind="navControls"
-         showrecordcount.bind="showrecordcount"
-         maxsize.bind="maxsize"
-         boundarylinks.bind="boundarylinks"
-         forceellipses.bind="forceellipses"
-         directionlinks.bind="directionlinks"
-         show.bind="!onDemandLoad"
-         paginationchange.event="beforePaginationChange($event, $index)"
+      navigationalign.bind="navigationalign"
+      navigation.bind="navControls"
+      showrecordcount.bind="showrecordcount"
+      maxsize.bind="maxsize"
+      boundarylinks.bind="boundarylinks"
+      forceellipses.bind="forceellipses"
+      directionlinks.bind="directionlinks"
+      show.bind="!onDemandLoad"
+      paginationchange.event="beforePaginationChange($event, $index)"
     ></nav>
-    <a *ngIf="onDemandLoad" href="javascript:void(0);"
-       (click)="dataNavigator.navigatePage('next', $event)"
-       class="app-button btn btn-block"
-       [ngClass]="paginationclass"
-       [textContent]="ondemandmessage"
-    ></a>
-</div>
+    @if (onDemandLoad) {
+      <a href="javascript:void(0);"
+        (click)="dataNavigator.navigatePage('next', $event)"
+        class="app-button btn btn-block"
+        [ngClass]="paginationclass"
+        [textContent]="ondemandmessage"
+      ></a>
+    }
+  </div>
+}
 
 <!--This template will be displayed when groupby is specified-->
-<ng-template #groupedListTemplate>
-    <li *ngFor="let groupObj of groupedData; let groupIndex = index;" class="app-list-item-group clearfix">
-        <ul [attr.tabindex]="tabindex" class="list-group item-group" [ngClass]="listclass">
-            <li class="app-list-item-header list-item list-group-header" (click)="handleHeaderClick($event)" [ngClass]="{'collapsible-content': collapsible}">
-            <h4>{{groupObj.key}}
-                <div class="header-action">
-                    <i class="app-icon wi action wi-chevron-up" *ngIf="collapsible"></i>
-                    <span *ngIf="showcount" class="label label-default">{{groupObj.data.length}}</span>
-                    </div>
-                </h4>
-            </li>
-            <li class="list-group-container">
-                <ul class="list-group clearfix {{direction === 'horizontal' ? 'app-horizontal-list': ''}}">
-                    <li *ngFor="let item of groupObj.data; index as $index; trackBy: trackByFn; first as $first; last as $last;" [attr.tabindex]="tabindex"
-                        class="app-list-item group-list-item {{itemsPerRowClass}}"
-                        [ngClass]="listItemRef.itemClass"
-                        [wmListItem]="item" #listItemRef="listItemRef">
-                        <ng-container [ngTemplateOutlet]="listTemplate"
-                                      [ngTemplateOutletInjector]="createCustomInjector('group_' + listItemRef.trackId, {item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets})"
-                                      [ngTemplateOutletContext]="{item: item, $index: $index, itemRef: listItemRef, $first: $first, $last: $last, currentItemWidgets: listItemRef.currentItemWidgets}"></ng-container>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-</ng-template>

@@ -13,10 +13,12 @@ declare const $;
         <div class="parent-custom-toast"></div>
         <ng-container #customToast></ng-container>
         <ng-template #customToastTmpl>
-            <div wmContainer partialContainer content.bind="pagename">
-                <div *ngFor="let param of params | keyvalue" wmParam hidden
-                    [name]="param.key" [value]="param.value"></div>
-            </div>
+          <div wmContainer partialContainer content.bind="pagename">
+            @for (param of params | keyvalue; track param) {
+              <div wmParam hidden
+              [name]="param.key" [value]="param.value"></div>
+            }
+          </div>
         </ng-template>`,
     preserveWhitespaces: false
 })

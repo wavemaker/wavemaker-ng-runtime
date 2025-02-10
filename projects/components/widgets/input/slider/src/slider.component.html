@@ -1,18 +1,20 @@
 <span [textContent]="minvalue" class="app-slider-value pull-left"></span>
 <span [textContent]="maxvalue" class="app-slider-value pull-right"></span>
 <input class="range-input" aria-orientation="horizontal"
-       focus-target
-       type="range" [title]="datavalue"
-       [attr.min]="minvalue"
-       [attr.max]="maxvalue"
-       [attr.step]="step"
-       [(ngModel)]="datavalue"
-       [ngModelOptions]="{standalone: true}"
-       [disabled]="disabled"
-       [attr.accesskey]="shortcutkey"
-       [attr.aria-label]="arialabel"
-       (blur)="invokeOnTouched($event)"
-       (ngModelChange)="handleChange($event)"
-       [attr.name]="name"
-       [tabindex]="tabindex"/>
-<div *ngIf="readonly || disabled" aria-readonly="true" class="readonly-wrapper"></div>
+  focus-target
+  type="range" [title]="datavalue"
+  [attr.min]="minvalue"
+  [attr.max]="maxvalue"
+  [attr.step]="step"
+  [(ngModel)]="datavalue"
+  [ngModelOptions]="{standalone: true}"
+  [disabled]="disabled"
+  [attr.accesskey]="shortcutkey"
+  [attr.aria-label]="arialabel"
+  (blur)="invokeOnTouched($event)"
+  (ngModelChange)="handleChange($event)"
+  [attr.name]="name"
+  [tabindex]="tabindex"/>
+@if (readonly || disabled) {
+  <div aria-readonly="true" class="readonly-wrapper"></div>
+}

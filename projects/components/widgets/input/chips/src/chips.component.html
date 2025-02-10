@@ -1,47 +1,52 @@
-<li class="chip-item {{chipclass && !bindChipclass ? chipclass : ''}}"
-    *ngFor="let item of chipsList; let $index = index;"
+@for (item of chipsList; track item) {
+  <li class="chip-item {{chipclass && !bindChipclass ? chipclass : ''}}"
     [ngClass]="{'active': item.active, 'disabled': disabled}">
     <a href="javascript:void(0)" class="app-chip"
-       (click)="handleChipClick($event, item)"
-       (keydown.delete)="onDelete($event, item, $index)"
-       (keydown.backspace)="onBackspace($event, item, $index)"
-       (keydown.arrowleft)="onArrowLeft(item, $index)"
-       (keydown.arrowright)="onArrowRight(item, $index)"
-       (focus)="handleChipFocus($event, item)"
-       (blur)="readonly ? 0 : item.active = false"
-       [ngClass]="{'no-drag': !enablereorder,'chip-duplicate bg-danger': item.isDuplicate, 'chip-picture': item.imgSrc}">
-        <img data-identifier="img" alt="Chip Image" class="button-image-icon" [src]="item.imgSrc" *ngIf="item.imgSrc"/>
-        <span class="app-chip-title" [textContent]="item.label" [title]="item.label"></span>
+      (click)="handleChipClick($event, item)"
+      (keydown.delete)="onDelete($event, item, $index)"
+      (keydown.backspace)="onBackspace($event, item, $index)"
+      (keydown.arrowleft)="onArrowLeft(item, $index)"
+      (keydown.arrowright)="onArrowRight(item, $index)"
+      (focus)="handleChipFocus($event, item)"
+      (blur)="readonly ? 0 : item.active = false"
+      [ngClass]="{'no-drag': !enablereorder,'chip-duplicate bg-danger': item.isDuplicate, 'chip-picture': item.imgSrc}">
+      @if (item.imgSrc) {
+        <img data-identifier="img" alt="Chip Image" class="button-image-icon" [src]="item.imgSrc"/>
+      }
+      <span class="app-chip-title" [textContent]="item.label" [title]="item.label"></span>
+      @if (!readonly) {
         <button type="button" [attr.aria-label]="'Clear ' + item.label" class="btn btn-transparent"
-                (click)="removeItem($event, item, $index);" *ngIf="!readonly">
-            <i class="app-icon wi wi-close"></i>
+          (click)="removeItem($event, item, $index);">
+          <i class="app-icon wi wi-close"></i>
         </button>
+      }
     </a>
-</li>
+  </li>
+}
 <li class="app-chip-search" [ngClass]="{'full-width': inputwidth === 'full'}">
-    <div #search wmSearch class="app-chip-input"
-         name="app-chip-search"
-         submit.event="addItem($event, widget)"
-         beforeservicecall.event="invokeOnBeforeServiceCall(inputData)"
-         disabled.bind="disabled || readonly || saturate"
-         datafield.bind="datafield"
-         allowonlyselect.bind="allowonlyselect"
-         searchkey.bind="searchkey"
-         orderby.bind="orderby"
-         placeholder.bind="saturate ? maxSizeReached : placeholder"
-         showsearchicon.bind="showsearchicon"
-         tabindex.bind="tabindex"
-         minchars.bind="minchars"
-         debouncetime.bind="debouncetime"
-         matchmode.bind="matchmode"
-         datacompletemsg.bind = "datacompletemsg"
-         groupby.bind="groupby"
-         match.bind="match"
-         dateformat.bind="dateformat"
-         (keydown.enter)="stopEvent($event)"
-         (keydown.delete)="onTextDelete($event)"
-         (keydown.backspace)="onInputClear($event)"
-         (keydown.arrowleft)="onArrowLeft()"
-         (keydown.arrowright)="onArrowRight()">
-    </div>
+  <div #search wmSearch class="app-chip-input"
+    name="app-chip-search"
+    submit.event="addItem($event, widget)"
+    beforeservicecall.event="invokeOnBeforeServiceCall(inputData)"
+    disabled.bind="disabled || readonly || saturate"
+    datafield.bind="datafield"
+    allowonlyselect.bind="allowonlyselect"
+    searchkey.bind="searchkey"
+    orderby.bind="orderby"
+    placeholder.bind="saturate ? maxSizeReached : placeholder"
+    showsearchicon.bind="showsearchicon"
+    tabindex.bind="tabindex"
+    minchars.bind="minchars"
+    debouncetime.bind="debouncetime"
+    matchmode.bind="matchmode"
+    datacompletemsg.bind = "datacompletemsg"
+    groupby.bind="groupby"
+    match.bind="match"
+    dateformat.bind="dateformat"
+    (keydown.enter)="stopEvent($event)"
+    (keydown.delete)="onTextDelete($event)"
+    (keydown.backspace)="onInputClear($event)"
+    (keydown.arrowleft)="onArrowLeft()"
+    (keydown.arrowright)="onArrowRight()">
+  </div>
 </li>

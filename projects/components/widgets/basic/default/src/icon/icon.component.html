@@ -1,3 +1,7 @@
 <i class="app-icon {{iconclass}}"></i>
-<span *ngIf="iconclass" class="sr-only">{{ arialabel || caption || appLocale.LABEL_ICON }}</span>
-<label *ngIf="caption" [textContent]="caption" aria-hidden="true" class="app-label"></label>
+@if (iconclass) {
+  <span class="sr-only">{{ arialabel || caption || appLocale.LABEL_ICON }}</span>
+}
+@if (caption) {
+  <label [textContent]="caption" aria-hidden="true" class="app-label"></label>
+}

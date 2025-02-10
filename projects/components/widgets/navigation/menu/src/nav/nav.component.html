@@ -1,43 +1,51 @@
 <ng-template #menuRef let-item="item" let-index="index">
-    <div wmMenu dropdown
-         type="anchor"
-         autoclose.bind="autoclose"
-         iconclass.bind="item.icon"
-         autoopen.bind="autoopen"
-         caption.bind="item.label"
-         hint.bind="item.hint"
-         dataset.bind="item.children"
-         badgevalue.bind="item.badge"
-         iconposition.bind="iconposition"
-         showonhover.bind="showonhover"
-         select.event="onMenuItemSelect($event, widget, $item)"></div>
+  <div wmMenu dropdown
+    type="anchor"
+    autoclose.bind="autoclose"
+    iconclass.bind="item.icon"
+    autoopen.bind="autoopen"
+    caption.bind="item.label"
+    hint.bind="item.hint"
+    dataset.bind="item.children"
+    badgevalue.bind="item.badge"
+    iconposition.bind="iconposition"
+    showonhover.bind="showonhover"
+  select.event="onMenuItemSelect($event, widget, $item)"></div>
 </ng-template>
 
 <ng-template #anchorRef let-item="item" let-index="index" let-liRef="liRef">
-    <a wmAnchor
-       [disableMenuContext]="disableMenuContext || !!item.action"
-       [wmNavigationControl]="item.link"
-       [attr.aria-current]="item._selected || (!isactive && item.link === '#/' + activePageName) ? 'page' : ''"
-       caption.bind="item.label"
-       hint.bind="item.hint"
-       iconclass.bind="item.icon"
-       badgevalue.bind="item.badge"
-       iconposition.bind="iconposition"
-       click.event="onNavSelect($event, item)"></a>
+  <a wmAnchor
+    [disableMenuContext]="disableMenuContext || !!item.action"
+    [wmNavigationControl]="item.link"
+    [attr.aria-current]="item._selected || (!isactive && item.link === '#/' + activePageName) ? 'page' : ''"
+    caption.bind="item.label"
+    hint.bind="item.hint"
+    iconclass.bind="item.icon"
+    badgevalue.bind="item.badge"
+    iconposition.bind="iconposition"
+  click.event="onNavSelect($event, item)"></a>
 </ng-template>
 
-<li #liRef="navItemRef" *ngFor="let item of nodes; let index = index;"
+@for (item of nodes; track item; let index = $index) {
+  <li #liRef="navItemRef"
     [ngClass]="{active: item._selected || (!isactive && item.link === '#/' + activePageName)}"
     class="app-nav-item {{item.class}}"
     wmNavItem>
-    <ng-container [ngTemplateOutlet]="anchorRef"
-                  [ngTemplateOutletContext]="{item: item, index:index, liRef: liRef}"
-                  [ngTemplateOutletInjector]="createCustomInjector('anchor_' + liRef.trackId, {item: item, index:index, liRef: liRef})"
-                  *ngIf="!item.children.length"></ng-container>
-    <ng-container [ngTemplateOutlet]="menuRef"
-                  [ngTemplateOutletContext]="{item: item, index:index}"
-                  [ngTemplateOutletInjector]="createCustomInjector('menu_' + liRef.trackId, {item: item, index:index})"
-                  *ngIf="item.children.length"></ng-container>
-</li>
+    @if (!item.children.length) {
+      <ng-container [ngTemplateOutlet]="anchorRef"
+        [ngTemplateOutletContext]="{item: item, index:index, liRef: liRef}"
+        [ngTemplateOutletInjector]="createCustomInjector('anchor_' + liRef.trackId, {item: item, index:index, liRef: liRef})"
+      ></ng-container>
+    }
+    @if (item.children.length) {
+      <ng-container [ngTemplateOutlet]="menuRef"
+        [ngTemplateOutletContext]="{item: item, index:index}"
+        [ngTemplateOutletInjector]="createCustomInjector('menu_' + liRef.trackId, {item: item, index:index})"
+      ></ng-container>
+    }
+  </li>
+}
 
-<ng-content *ngIf="!nodes.length" select="[wmNavItem]"></ng-content>
+@if (!nodes.length) {
+  <ng-content select="[wmNavItem]"></ng-content>
+}
