@@ -41,10 +41,9 @@ class IframeDialogWrapperComponent {
 }
 
 const testModuleDef = {
-    imports: [FormsModule],
+    imports: [IframeDialogComponent],
     declarations: [
         IframeDialogWrapperComponent,
-        IframeDialogComponent
     ],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [

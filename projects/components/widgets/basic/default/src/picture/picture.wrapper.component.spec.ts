@@ -1,10 +1,10 @@
-import {Component, ViewChild} from "@angular/core";
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
-import {PictureDirective} from "./picture.directive";
-import {App, switchClass} from "@wm/core";
-import {ImagePipe} from "@wm/components/base";
-import {ComponentFixture} from "@angular/core/testing";
-import {compileTestComponent, mockApp} from "projects/components/base/src/test/util/component-test-util";
+import { Component, ViewChild } from "@angular/core";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
+import { PictureDirective } from "./picture.directive";
+import { App, switchClass } from "@wm/core";
+import { ImagePipe } from "@wm/components/base";
+import { ComponentFixture } from "@angular/core/testing";
+import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -22,8 +22,8 @@ class PictureWrapperDirective {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [],
-    declarations: [PictureWrapperDirective, PictureDirective],
+    imports: [PictureDirective],
+    declarations: [PictureWrapperDirective],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ImagePipe, useClass: ImagePipe },

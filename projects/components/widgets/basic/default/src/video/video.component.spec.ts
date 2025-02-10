@@ -31,8 +31,8 @@ class TestComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [VideoComponent, TestComponent],
-    imports: [FormsModule, ComponentsTestModule],
+    declarations: [TestComponent],
+    imports: [VideoComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },

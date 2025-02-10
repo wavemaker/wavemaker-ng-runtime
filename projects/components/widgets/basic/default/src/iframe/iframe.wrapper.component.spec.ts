@@ -17,8 +17,8 @@ class IframeWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [],
-    declarations: [IframeWrapperComponent, IframeComponent],
+    imports: [IframeComponent],
+    declarations: [IframeWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: TrustAsPipe, useClass: TrustAsPipe },

@@ -42,10 +42,9 @@ class PartialDialogWrapperComponent {
 }
 
 const testModuleDef = {
-    imports: [FormsModule],
+    imports: [PartialDialogComponent],
     declarations: [
         PartialDialogWrapperComponent,
-        PartialDialogComponent
     ],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
