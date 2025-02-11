@@ -32,15 +32,11 @@ const addMobileSpecificStyles = async (deployUrl) => {
     }
 
     if (isProdBuild) {
-        let hash = await generateHash(`${global.opPath}/wm-android-styles.css`);
-        copyMobileCssFiles(hash, 'wm-android-styles');
         $("head").append(
-            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}wm-android-styles.${hash}.css" >`
+            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}wm-android-styles.css" >`
         );
-        hash = await generateHash(`${global.opPath}/wm-ios-styles.css`);
-        copyMobileCssFiles(hash, 'wm-ios-styles');
         $("head").append(
-            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}wm-ios-styles.${hash}.css" >`
+            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}wm-ios-styles.css" >`
         );
     }
 }
@@ -249,8 +245,6 @@ const generateSha1 = (content) => {
 
         const htmlContent = $.html();
         await writeFile(`./dist/index.html`, htmlContent);
-
-        await generateHashForScripts(updatedFilenames);
 
         if (serviceWorkerEnabled) {
             // re-generate hash for index.html since its been modified
