@@ -12,6 +12,7 @@ let isProdBuild;
 let isDevBuild;
 let $;
 
+// TODO: remove mobile specific code.
 const setMobileProjectType = (angularJson) => {
     let styles = angularJson['projects']['angular-app']['architect']['build']['options']['styles'];
     const androidStyles = styles.find((style) => {
