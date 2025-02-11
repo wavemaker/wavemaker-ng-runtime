@@ -7,8 +7,13 @@ module.exports = {
     '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|@wavemaker/foundation-css|@wavemaker/custom-widgets-m3|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
   ],
   testMatch: [
+<<<<<<< Updated upstream
     //"**/projects/**/*.spec.ts",
       "**/projects/components/widgets/basic/search/src/search.wrapper.component.spec.ts",
+=======
+      "**/projects/components/widgets/input/epoch/src/date-time/datetime.wrapper.component.spec.ts"
+  //  "**/projects/**/*.spec.ts",
+>>>>>>> Stashed changes
       //   "**/projects/components/widgets/containers/panel/src/panel.wrapper.component.spec.ts",
   //    "**/projects/components/widgets/basic/search/src/search.wrapper.component.spec.ts",
     //  "**/projects/components/widgets/navigation/menu/src/menu.wrapper.component.spec.ts",

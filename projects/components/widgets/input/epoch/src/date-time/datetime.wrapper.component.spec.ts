@@ -188,6 +188,7 @@ describe("DatetimeComponent", () => {
 
 
     /************************* Properties starts ****************************************** **/
+<<<<<<< Updated upstream
     it('should not add the hidden property, element always visible', fakeAsync(async () => {
         await notHavingTheAttribute(fixture, '.app-datetime', 'hidden');
     }));
@@ -196,7 +197,23 @@ describe("DatetimeComponent", () => {
         fixture.whenStable().then(() => {
             onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'bs-datepicker-container', 0);
         });
+=======
+    it('should not add the hidden property, element always visible', fakeAsync(() => {
+        fixture.detectChanges();
+        tick();
+        const element = fixture.debugElement.query(By.css('.app-datetime'));
+        expect(element.nativeElement.hasAttribute('hidden')).toBeFalsy();
+    }));
 
+    it("should not show the calendar panel on click the input control (show date picker on only button click) ", fakeAsync(() => {
+        const inputElement = fixture.debugElement.query(By.css('.app-textbox')).nativeElement;
+        inputElement.click();
+        fixture.detectChanges();
+        tick();
+>>>>>>> Stashed changes
+
+        const datepickerContainer = document.querySelector('bs-datepicker-container');
+        expect(datepickerContainer).toBeNull();
     }));
 
     // TypeError: Cannot read properties of undefined (reading 'getElementsByClassName')
@@ -208,17 +225,35 @@ describe("DatetimeComponent", () => {
             let hoursValue = +getTimeFieldValue(0);
             expect(hoursValue).toBe(1);
 
+<<<<<<< Updated upstream
         });
     }));
 
     it("should not show the calendar panel on click the input control ", waitForAsync(() => {
+=======
+    it("should not show the calendar panel on click the input control ", fakeAsync(() => {
+        const inputElement = fixture.debugElement.query(By.css('.app-textbox')).nativeElement;
+        inputElement.click();
+        fixture.detectChanges();
+        tick();
+>>>>>>> Stashed changes
 
-        onClickCheckTaglengthOnBody(fixture, '.app-textbox', 'bs-datepicker-container', 0);
+        const containers = document.querySelectorAll('bs-datepicker-container');
+        expect(containers.length).toBe(0);
     }));
 
+<<<<<<< Updated upstream
     it('should assign the shortkey to the input control as attribute accesskey ', waitForAsync(() => {
         let dateInputControl = getHtmlSelectorElement(fixture, '.app-textbox');
         expect(dateInputControl.nativeElement.getAttribute('accesskey')).toEqual('t');
+=======
+    it('should assign the shortkey to the input control as attribute accesskey ', fakeAsync(() => {
+        fixture.detectChanges();
+        tick();
+
+        const inputElement = fixture.debugElement.query(By.css('.app-textbox')).nativeElement;
+        expect(inputElement.getAttribute('accesskey')).toBe('t');
+>>>>>>> Stashed changes
     }));
 
     it('should show the date pattern as yyyy-MM-ddTHH:mm:ss format', fakeAsync(() => {
@@ -229,6 +264,7 @@ describe("DatetimeComponent", () => {
         tick();  // Allow time for the whenStable promise to resolve
     }));
 
+<<<<<<< Updated upstream
     it('should be disabled mode ', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
         fixture.detectChanges();
@@ -237,10 +273,27 @@ describe("DatetimeComponent", () => {
 
     it('should be disabled mode (picker button)', waitForAsync(() => {
         wmComponent.getWidget().disabled = true;
+=======
+    it('should be disabled mode', fakeAsync(() => {
+        wmComponent.disabled = true;
         fixture.detectChanges();
-        hasAttributeCheck(fixture, '.btn-time', 'disabled');
-        hasAttributeCheck(fixture, '.btn-date', 'disabled');
+        tick();
 
+        const inputElement = fixture.debugElement.query(By.css('.app-textbox')).nativeElement;
+        expect(inputElement.hasAttribute('disabled')).toBe(true);
+    }));
+
+    it('should be disabled mode (picker button)', fakeAsync(() => {
+        wmComponent.disabled = true;
+>>>>>>> Stashed changes
+        fixture.detectChanges();
+        tick();
+
+        const timeButton = fixture.debugElement.query(By.css('.btn-time')).nativeElement;
+        const dateButton = fixture.debugElement.query(By.css('.btn-date')).nativeElement;
+
+        expect(timeButton.hasAttribute('disabled')).toBe(true);
+        expect(dateButton.hasAttribute('disabled')).toBe(true);
     }));
 
 
@@ -265,6 +318,7 @@ describe("DatetimeComponent", () => {
 
     /************************* Validation starts ****************************************** **/
 
+<<<<<<< Updated upstream
     it('should be required validation ', waitForAsync(() => {
         fixture.whenStable().then(() => {
             let dateInputControl = getHtmlSelectorElement(fixture, '.app-textbox');
@@ -276,15 +330,42 @@ describe("DatetimeComponent", () => {
         wmComponent.getWidget().datavalue = getFormatedDate('2019-11-01');
 
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
+=======
+    it('should be required validation', fakeAsync(() => {
+        fixture.detectChanges();
+        tick();
 
+        const inputElement = fixture.debugElement.query(By.css('.app-textbox')).nativeElement;
+        expect(inputElement.hasAttribute('required')).toBe(true);
+    }));
+
+    it('should respect the mindate validation', fakeAsync(() => {
+        wmComponent.datavalue = getFormatedDate('2019-11-01');
+        wmComponent.mindate = '2019-12-10';
+        fixture.detectChanges();
+        tick();
+>>>>>>> Stashed changes
+
+        const dateTimeElement = fixture.debugElement.query(By.css('.app-datetime'));
+        expect(dateTimeElement.nativeElement.classList.contains('ng-invalid')).toBe(true);
     }));
 
 
+<<<<<<< Updated upstream
     it('should ignore the  excluded days', waitForAsync(() => {
         wmComponent.getWidget().excludedays = '1,6';
         wmComponent.getWidget().datavalue = getFormatedDate('2019-12-30');
         checkElementClass(fixture, '.app-datetime', 'ng-invalid');
+=======
+    it('should ignore the  excluded days', fakeAsync(() => {
+        wmComponent.excludedays = '1,6';
+        wmComponent.datavalue = getFormatedDate('2019-12-30'); // Assuming this is a Monday (day 1)
+        fixture.detectChanges();
+        tick();
+>>>>>>> Stashed changes
 
+        const dateTimeElement = fixture.debugElement.query(By.css('.app-datetime'));
+        expect(dateTimeElement.nativeElement.classList.contains('ng-invalid')).toBe(true);
     }));
 
 
