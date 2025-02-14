@@ -7,6 +7,33 @@ const exec = util.promisify(require('child_process').exec);
 const cheerio = require(`cheerio`);
 const crypto = require(`crypto`);
 
+const generateHashForScripts = (updatedFilenames) => {
+    //from angular 12(IVY), scripts array in angular json, doesn't allow `@` symbol in the name/value
+    //so removed `@` from wavemaker.com in the file name and adding it back in the post-build.js file
+    const scriptsMap = {};
+    return new Promise(resolve => {
+        fs.readdir(global.opPath, (err, items) => {
+            const promises = items.map(i => {
+                const nohashIndex = i.indexOf('-NOHASH.js');
+                if (nohashIndex > 0) {
+                    const key = i.substring(0, nohashIndex);
+                    const filename = `${key}-NOHASH.js`;
+                    const updatedFilename = `${key}.js`
+                    scriptsMap[`${key}.js`] = updatedFilename;
+                    updatedFilenames[filename] = updatedFilename;
+                    return Promise.all([
+                        copyFile(`${global.opPath}/${filename}`, `${global.opPath}/${updatedFilename}`),
+                        // copyFile(`${opPath}/${key}-NOHASH.br.js`, `${opPath}/${key}.${hash}.br.js`),
+                        // copyFile(`${opPath}/${key}-NOHASH.gzip.js`, `${opPath}/${key}.${hash}.gzip.js`)
+                    ]);
+                }
+            });
+            Promise.all(promises).then(() => {
+                return writeFile(`${global.opPath}/path_mapping.json`, JSON.stringify(scriptsMap, null, 2));
+            }).then(resolve);
+        });
+    });
+};
 let isMobileProject = false;
 let isProdBuild;
 let isDevBuild;
@@ -245,6 +272,8 @@ const generateSha1 = (content) => {
 
         const htmlContent = $.html();
         await writeFile(`./dist/index.html`, htmlContent);
+
+        await generateHashForScripts(updatedFilenames);
 
         if (serviceWorkerEnabled) {
             // re-generate hash for index.html since its been modified
