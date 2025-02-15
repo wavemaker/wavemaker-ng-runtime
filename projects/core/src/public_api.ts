@@ -173,3 +173,4 @@ export { PaginationService } from './services/pagination.service';
 export * from './core.module';
 export * from './utils/wm-project-properties';
 export * from './utils/lru-cache';
+export * from './services/navigation-focus.service';
