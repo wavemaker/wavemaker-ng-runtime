@@ -21,7 +21,9 @@ export class TableRowDirective extends BaseComponent implements OnInit {
     closeothers;
     content;
     expandicon;
+    expandtitle;
     collapseicon;
+    collapsetitle;
     height;
     position;
 
@@ -37,6 +39,8 @@ export class TableRowDirective extends BaseComponent implements OnInit {
             content: this.content,
             columnwidth: this.columnwidth,
             expandicon: this.expandicon,
+            expandtitle: this.expandtitle,
+            collapsetitle: this.collapsetitle,
             collapseicon: this.collapseicon,
             height: this.height,
             position: this.position
