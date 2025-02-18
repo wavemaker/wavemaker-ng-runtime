@@ -166,6 +166,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     enablesort = true;
     filtermode;
     filteronkeypress;
+    caseinsensitive;
     isrowselectable;
     searchlabel;
     formposition;
@@ -312,6 +313,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         },
         filtermode: '',
         filteronkeypress: false,
+        caseinsensitive: false,
         isrowselectable: false,
         searchLabel: '',
         rowActions: [],
@@ -1146,6 +1148,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.formPosition = this.formposition;
         this.gridOptions.filtermode = this.filtermode;
         this.gridOptions.filteronkeypress = this.filteronkeypress;
+        this.gridOptions.caseinsensitive = this.caseinsensitive;
         this.gridOptions.isrowselectable = this.isrowselectable;
         this.gridOptions.searchLabel = this.searchlabel;
         this.gridOptions.isMobile = isMobile();
