@@ -133,10 +133,10 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const widgetType = attrs.get('widget') || FormWidgetType.TEXT;
             const dataRole = isFormField ? 'form-field' : 'filter-field';
             const formFieldErrorMsgId = 'wmform-field-error-' + generateGUId();
-            const validationMsg = isFormField ? `@if (${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode) {
+            const validationMsg = `@if (${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode) {
                                                   <p class="help-block text-danger" aria-hidden="false" role="alert" aria-live="assertive" [attr.aria-label]="${counter}.validationmessage" id="${formFieldErrorMsgId}">
                                                     <span aria-hidden="true" [textContent]="${counter}.validationmessage"></span>
-                                                  </p>}` : '';
+                                                  </p>}`;
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             const isInList = pCounter === (parentList && parentList.get('parent_form_reference'));

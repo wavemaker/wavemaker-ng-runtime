@@ -2918,6 +2918,7 @@ $.widget('wm.datatable', {
         }
         if (isClosed) {
             $row.addClass(self.options.cssClassNames.expandedRowClass);
+            $row.find( 'button, a').attr('title', self.options.rowDef.collapsetitle);
             $row.find( 'button, a').attr('aria-expanded', 'true');
             if (e && self.preparedData[rowId]._selected) {
                 e.stopPropagation();
@@ -2940,6 +2941,7 @@ $.widget('wm.datatable', {
                     $nextDetailRow.show();
                 });
         } else {
+            $row.find( 'button, a').attr('title', self.options.rowDef.expandtitle);
             self._collapseRow(e, rowData, rowId, $nextDetailRow, $icon);
         }
     },
