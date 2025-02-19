@@ -3,7 +3,7 @@ import {forEach, includes, invert, isArray, isFinite, isString, isUndefined, spl
 
 declare const $;
 
-declare const moment;
+import moment from 'moment';
 declare const d3, nv;
 
 export const chartTypes = ['Column', 'Line', 'Area', 'Cumulative Line', 'Bar', 'Pie', 'Donut', 'Bubble'],

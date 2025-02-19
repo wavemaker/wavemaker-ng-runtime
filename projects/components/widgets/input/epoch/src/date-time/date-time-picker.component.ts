@@ -5,7 +5,7 @@ import { App } from '@wm/core';
 import {filter} from "lodash-es";
 
 declare const $;
-declare const moment;
+import moment from 'moment';
 
 @Component({
     selector: 'wm-datetimepicker',

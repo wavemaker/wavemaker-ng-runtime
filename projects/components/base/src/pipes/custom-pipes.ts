@@ -4,7 +4,7 @@ import {AbstractI18nService, CURRENCY_INFO, CustomPipeManager, hasOffsetStr, isD
 import {WmPipe} from "./wm-pipe";
 import {filter, includes, isDate, isFunction, isObject, isUndefined, startsWith} from "lodash-es";
 
-declare const moment;
+import moment from 'moment';
 
 const getEpochValue = data => {
     let epoch;
@@ -65,7 +65,7 @@ export class ToDatePipe extends WmPipe implements PipeTransform {
             let formattedVal;
             const timeZone = this.i18nService ? this.i18nService.getTimezone(compInstance) : timezone;
             if (timeZone && (data === timestamp || hasOffsetStr(data))) {
-                formattedVal = moment(timestamp).tz(timeZone).format(format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A'));
+                formattedVal = (moment(timestamp) as any).tz(timeZone).format(format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A'));
             } else {
                 formattedVal = this.datePipe.transform(timestamp, format);
             }

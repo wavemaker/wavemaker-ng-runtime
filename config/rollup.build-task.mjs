@@ -43,7 +43,8 @@ export default [
                 entries: [
                     { find: 'rxjs/Subject', replacement: 'node_modules/rxjs/_esm5/internal/Subject.js' },
                     { find: '@wm/core', replacement: 'libraries/core/fesm2022/index.mjs' },
-                    { find: '@wm/transpiler', replacement: 'libraries/transpiler/fesm2022/index.mjs' }
+                    { find: '@wm/transpiler', replacement: 'libraries/transpiler/fesm2022/index.mjs' },
+                    { find: 'moment', replacement: 'node_modules/moment/dist/moment.js'}
                 ]
             }),
             nodeResolve({
@@ -51,7 +52,10 @@ export default [
                 main: true
             }),
             commonjs({
-                include: 'node_modules/!**',
+                include: [
+                    'node_modules/!**',
+                    'node_modules/x2js/x2js.js'
+                ],
                 ignoreGlobal: true
             })
         ]

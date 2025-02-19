@@ -19,9 +19,9 @@ import {
 } from "lodash-es";
 
 declare const $;
-declare const moment;
+import moment from 'moment';
 
-const momentLocale = moment.localeData();
+const momentLocale: any = moment.localeData();
 const momentCalendarOptions = getClonedObject(momentLocale._calendar);
 const momentCalendarDayOptions = momentLocale._calendarDay || {
         lastDay: '[Yesterday]',
@@ -341,7 +341,6 @@ const getGroupedData = (fieldDefs: Array<Object | DataSetItem>, groupby: string,
 
     // extract the grouped data based on the field obtained from 'groupDataByField'.
     const groupedLiData = groupBy(fieldDefs, groupDataByField.bind(undefined, groupby, match, innerItem, dateFormat, datePipe, AppDefaults));
-
     momentLocale._calendar = momentCalendarOptions; // Reset to default moment calendar options
 
     return groupedLiData;
