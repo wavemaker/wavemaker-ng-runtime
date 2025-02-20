@@ -10,6 +10,9 @@ interface SkeletonConfig {
     width?: string;
     shimmerColor?: string;
     chartType?: string;
+    cardClass?: string;
+    cardLayout?: string;
+
 }
 export class WMSkeletonLoader extends HTMLElement {
     private _config: SkeletonConfig;
@@ -33,7 +36,7 @@ export class WMSkeletonLoader extends HTMLElement {
 
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        // this.attachShadow({ mode: 'open' });
         this._config = { ...this.defaultConfig };
 
         Object.defineProperty(this, 'config', {
@@ -132,7 +135,8 @@ export class WMSkeletonLoader extends HTMLElement {
             card: this.getCardStyles(),
             tabs: this.getTabStyles(),
             accordion: this.getAccordionStyles(),
-            default: this.getDefaultStyles()
+            default: this.getDefaultStyles(),
+            prefab: this.getPrefabStyles()
         };
 
         return `${baseStyles}${typeStyles[widgetType] || typeStyles.default}`;
@@ -143,19 +147,23 @@ export class WMSkeletonLoader extends HTMLElement {
             .card-loader {
                 background-color: ${this._config.backgroundColor};
                 padding: 0;
-                display: flex;
-                gap: ${this._config.spacing};
             }
-            .card-column {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                gap: ${this._config.spacing};
+            .card-loader .card-column {
                 background-color: ${this._config.backgroundColor};
-                padding: 0;
-                border-radius: ${this._config.borderRadius};
             }
             ${this.getListStyles()}
+            .card-loader .card-column .list-loader{
+                flex-direction: row;
+                display: flex
+            }
+            .card-loader .card-column .list-item{
+                display: flex;
+                border-bottom: 0px solid #ccc;
+                background-color: #fff;
+                margin: 1em;
+                padding: 10px;
+                border-radius: ${this._config.borderRadius};
+            }
         `;
     }
 
@@ -166,33 +174,34 @@ export class WMSkeletonLoader extends HTMLElement {
                 padding: ${this._config.spacing};
                 display: flex;
                 flex-direction: column;
-                gap: ${this._config.spacing};
+                gap: 2px;
             }
-            .list-item {
+            .list-loader .list-item {
                 display: flex;
-                padding: ${this._config.spacing} 0;
-                border-bottom: 1px solid ${this._config.foregroundColor};
+                padding: ${this._config.spacing} 10px;
+                background-color: #fff;
+                border-radius: ${this._config.borderRadius};
             }
-            .list-item-avatar {
+            .list-loader .list-item-avatar {
                 width: 50px;
                 height: 50px;
                 background-color: ${this._config.foregroundColor};
                 border-radius: 50%;
                 margin-right: ${this._config.spacing};
             }
-            .list-item-content {
+            .list-loader .list-item-content {
                 flex: 1;
             }
-            .list-item-title {
+            .list-loader .list-item-title {
                 height: 15px;
-                width: 70%;
+                width: 90%;
                 background-color: ${this._config.foregroundColor};
                 margin-bottom: 10px;
                 border-radius: ${this._config.borderRadius};
             }
-            .list-item-subtitle {
+            .list-loader .list-item-subtitle {
                 height: 15px;
-                width: 50%;
+                width: 65%;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
                 margin-top:10px;
@@ -202,11 +211,11 @@ export class WMSkeletonLoader extends HTMLElement {
 
     private getTableStyles(): string {
         return `
-            .table-loader {
+            .skeleton-loader .table-loader {
                 border-radius: ${this._config.borderRadius};
                 overflow: hidden;
             }
-            .table-header {
+            .skeleton-loader .table-header {
                 display: flex;
                 margin-bottom: 10px;
                 gap: ${this._config.spacing};
@@ -214,22 +223,22 @@ export class WMSkeletonLoader extends HTMLElement {
                 border-radius: ${this._config.borderRadius};
                 padding: ${this._config.spacing};
             }
-            .table-header-cell {
+            .skeleton-loader .table-header-cell {
                 flex: 1;
                 height: 15px;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
             }
-            .table-row {
+            .skeleton-loader .table-row {
                 display: flex;
                 gap: ${this._config.spacing};
                 border-radius: ${this._config.borderRadius};
                 padding: ${this._config.spacing};
             }
-            .table-row:hover {
+            .skeleton-loader .table-row:hover {
                 background-color: ${this._config.shimmerColor};
             }
-            .table-cell {
+            .skeleton-loader .table-cell {
                 flex: 1;
                 height: 15px;
                 background-color: ${this._config.foregroundColor};
@@ -293,7 +302,7 @@ export class WMSkeletonLoader extends HTMLElement {
                     width: 100%;
                     height: 160px;
                     position: relative;
-                    top: 0px;
+                    top: -15px;
                     border: 1px solid ${this._config.foregroundColor};
                     border-top: none;
                     border-right: none;
@@ -308,23 +317,6 @@ export class WMSkeletonLoader extends HTMLElement {
                   transform: rotate(173deg);
 
            }
-         .line-loader .bubble {
-                position: absolute;
-                bottom: 20%;
-                left: 0;
-                right: 0;
-                height: 4px;
-            }
-            .line-loader .point {
-                position: absolute;
-                width: 12px;
-                height: 12px;
-                background-color: ${this._config.foregroundColor};
-                border-radius: 50%;
-                animation: pointMove 2s infinite ease-in-out;
-                box-shadow: 0 0 5px ${this._config.foregroundColor};
-            }
-
             .area-loader .area {
                 position: absolute;
                 bottom: 0;
@@ -346,6 +338,53 @@ export class WMSkeletonLoader extends HTMLElement {
                     100% 100%
                 );
             }
+
+
+           /* bubble Charts */
+           .bubble-loader .chart-data,
+            .area-loader .chart-data {
+                position: relative;
+                height: 100%;
+            }
+
+            .bubble-loader .bubble {
+                    width: 100%;
+                    height: 150px;
+                    position: relative;
+                    top: 0px;
+                    border: 1px solid ${this._config.foregroundColor};
+                    border-top: none;
+                    border-right: none;
+                    display: flex;
+                    justify-content: space-between;
+            }
+
+            .bubble-loader .point {
+                width: 12px;
+                height: 12px;
+                background-color: ${this._config.foregroundColor};
+                border-radius: 50%;
+                box-shadow: 0 0 5px ${this._config.foregroundColor};
+            }
+            .bubble-loader .point:nth-child(1){
+                top:100px;
+            }
+                 .bubble-loader .point:nth-child(3){
+                top:50px;
+            }
+                 .bubble-loader .point:nth-child(4){
+                top:20px;
+            }
+                 .bubble-loader .point:nth-child(5){
+                top:100px;
+            }
+        /* Cumulative Charts */
+        .cumulativeline-loader .chart-data,
+            .area-loader .chart-data {
+                position: relative;
+                height: 100%;
+            }
+
         
             /* Pie/Donut Charts */
             .pie-loader .chart-area,
@@ -425,14 +464,14 @@ export class WMSkeletonLoader extends HTMLElement {
                 background-color: ${this._config.backgroundColor};
                 border-radius: ${this._config.borderRadius};
             }
-            .form-field {
+            .form-loader .form-field {
                 height: 40px;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
                 position: relative;
                 margin-bottom: ${this._config.spacing};
             }
-            .form-label {
+            .form-loader .form-label {
                 position: absolute;
                 top: -20px;
                 left: 0;
@@ -441,7 +480,7 @@ export class WMSkeletonLoader extends HTMLElement {
                 background-color: ${this._config.shimmerColor};
                 border-radius: ${this._config.borderRadius};
             }
-            .form-section {
+            .form-loader .form-section {
                 margin-bottom: 20px;
                 font-size: 14px;
                 font-weight: bold;
@@ -460,24 +499,25 @@ export class WMSkeletonLoader extends HTMLElement {
                 border-radius: ${this._config.borderRadius};
             }
     
-            .accordion-item {
+            .accordion-loader .accordion-item {
                 border-bottom: 1px solid ${this._config.foregroundColor}20;
             }
     
-            .accordion-item:last-child {
+            .accordion-loader .accordion-item:last-child {
                 border-bottom: none;
             }
     
-            .accordion-header {
+            .accordion-loader .accordion-header {
                 display: flex;
                 align-items: center;
                 padding: 16px ${this._config.spacing};
                 position: relative;
                 cursor: wait;
+                background-color: #fff;
             }
     
             /* Chevron indicator for expand/collapse */
-            .accordion-chevron {
+            .accordion-loader .accordion-chevron {
                 width: 20px;
                 height: 20px;
                 position: relative;
@@ -485,8 +525,8 @@ export class WMSkeletonLoader extends HTMLElement {
                 flex-shrink: 0;
             }
     
-            .accordion-chevron::before,
-            .accordion-chevron::after {
+           .accordion-loader .accordion-chevron::before,
+            .accordion-loader .accordion-chevron::after {
                 content: '';
                 position: absolute;
                 background-color: ${this._config.foregroundColor};
@@ -494,7 +534,7 @@ export class WMSkeletonLoader extends HTMLElement {
                 transform-origin: center;
             }
     
-            .accordion-chevron::before {
+            .accordion-loader .accordion-chevron::before {
                 width: 2px;
                 height: 10px;
                 left: 50%;
@@ -502,7 +542,7 @@ export class WMSkeletonLoader extends HTMLElement {
                 transform: translate(-50%, -50%);
             }
     
-            .accordion-chevron::after {
+            .accordion-loader .accordion-chevron::after {
                 width: 10px;
                 height: 2px;
                 left: 50%;
@@ -510,25 +550,25 @@ export class WMSkeletonLoader extends HTMLElement {
                 transform: translate(-50%, -50%);
             }
     
-            .accordion-item.expanded .accordion-chevron::before {
+            .accordion-loader .accordion-item.expanded .accordion-chevron::before {
                 opacity: 0;
             }
     
-            .accordion-title-block {
+            .accordion-loader .accordion-title-block {
                 flex-grow: 1;
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
             }
     
-            .accordion-title {
+            .accordion-loader .accordion-title {
                 height: 18px;
                 width: 60%;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
             }
     
-            .accordion-subtitle {
+            .accordion-loader .accordion-subtitle {
                 height: 14px;
                 width: 40%;
                 background-color: ${this._config.foregroundColor};
@@ -537,7 +577,7 @@ export class WMSkeletonLoader extends HTMLElement {
             }
     
             /* Badge indicator */
-            .accordion-badge {
+            .accordion-loader .accordion-badge {
                 width: 32px;
                 height: 20px;
                 background-color: ${this._config.foregroundColor};
@@ -547,35 +587,35 @@ export class WMSkeletonLoader extends HTMLElement {
             }
     
             /* Content panel */
-            .accordion-content {
+            .accordion-loader .accordion-content {
                 overflow: hidden;
                 padding: 0 ${this._config.spacing} 16px 48px;
-                border-top: 1px solid ${this._config.foregroundColor};
-                margin-top: -1px;
+                border-top: 1px solid ${this._config.foregroundColor}20;
+                background-color: #fff;
             }
     
             /* Nested content structure */
-            .content-block {
+            .accordion-loader .content-block {
                 display: flex;
                 flex-direction: column;
                 gap: 16px;
                 padding-top: 16px;
             }
     
-            .content-section {
+            .accordion-loader .content-section {
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
             }
     
-            .content-heading {
+            .accordion-loader .content-heading {
                 height: 15px;
                 width: 30%;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
             }
     
-            .content-line {
+            .accordion-loader .content-line {
                 height: 15px;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
@@ -586,14 +626,9 @@ export class WMSkeletonLoader extends HTMLElement {
             .content-line-medium { width: 75%; }
             .content-line-short { width: 60%; }
     
-            /* Interactive states */
-            .accordion-header:hover {
-                background-color: ${this._config.foregroundColor}05;
-            }
+            
     
-            .accordion-item.expanded .accordion-header {
-                background-color: ${this._config.foregroundColor}08;
-            }
+            
     
             /* Shimmer animation applied selectively */
             .skeleton-animated {
@@ -640,21 +675,21 @@ export class WMSkeletonLoader extends HTMLElement {
             border-radius: ${this._config.borderRadius};
             overflow: hidden;
         }
-        .tabs-header {
+        .tabs-loader  .tabs-header {
             display: flex;
             gap: 50px;
             padding: ${this._config.spacing};
             border-bottom: 1px solid ${this._config.foregroundColor};
             background-color: ${this._config.backgroundColor};
         }
-        .tab-item {
+        .tabs-loader .tab-item {
             height: 25px;
             padding: 0 20px;
             background-color: ${this._config.foregroundColor};
             border-radius: ${this._config.borderRadius};
             position: relative;
         }
-        .tab-item.active::after {
+        .tabs-loader .tab-item.active::after {
             content: '';
             position: absolute;
             bottom: -2px;
@@ -663,10 +698,10 @@ export class WMSkeletonLoader extends HTMLElement {
             height: 2px;
             background-color: ${this._config.shimmerColor};
         }
-        .tab-content {
+        .tabs-loader .tab-content {
             padding: ${this._config.spacing};
         }
-        .tab-panel {
+        .tabs-loader .tab-panel {
             display: flex;
             flex-direction: column;
             gap: ${this._config.spacing};
@@ -746,6 +781,17 @@ export class WMSkeletonLoader extends HTMLElement {
             }
         `;
     }
+    private getPrefabStyles(): string {
+        return `     
+            .main {
+                height: 300px;
+                background: ${this._config.foregroundColor};
+                border-radius:${this._config.borderRadius};
+                margin-bottom: 10px;
+
+            }          
+        `;
+    }
 
     private createLoaderContent(widgetType: string): HTMLElement {
         const loaderContent = document.createElement('div');
@@ -753,14 +799,15 @@ export class WMSkeletonLoader extends HTMLElement {
 
         const creators: { [key: string]: () => void } = {
             app: () => this.createAppContent(loaderContent),
-            list: () => this.createListContent(loaderContent, widgetType),
+            list: () => this.createListContent(loaderContent, widgetType, this._config.cardClass, this._config.cardLayout),
             table: () => this.createTableContent(loaderContent),
             chart: () => this.createChartContent(loaderContent, this._config.chartType?.toLowerCase()),
             form: () => this.createFormContent(loaderContent),
             card: () => this.createCardContent(loaderContent, widgetType),
             tabs: () => this.createTabsContent(loaderContent),
             accordion: () => this.createAccordionContent(loaderContent),
-            default: () => this.createDefaultContent(loaderContent)
+            default: () => this.createDefaultContent(loaderContent),
+            prefab: () => this.createPrefabContent(loaderContent)
         };
 
         (creators[widgetType] || creators.default)();
@@ -798,6 +845,14 @@ export class WMSkeletonLoader extends HTMLElement {
         container.appendChild(nav);
         container.appendChild(main);
         container.appendChild(footer);
+    }
+    private createPrefabContent(container: HTMLElement): void {
+
+
+        const main = document.createElement('div');
+        main.className = 'main skeleton-animated';
+        container.appendChild(main);
+        // container.appendChild(footer);
     }
 
     private createTabsContent(container: HTMLElement): void {
@@ -837,30 +892,34 @@ export class WMSkeletonLoader extends HTMLElement {
         container.className = 'card-loader';
 
         const leftColumn = document.createElement('div');
-        leftColumn.className = 'card-column';
-        const rightColumn = document.createElement('div');
-        rightColumn.className = 'card-column';
+        leftColumn.className = "card-column";
+        // const rightColumn = document.createElement('div');
+        // rightColumn.className = 'card-column';
 
         const leftList = document.createElement('div');
         leftList.className = 'list-loader';
         const rightList = document.createElement('div');
         rightList.className = 'list-loader';
 
-        this.createListContent(leftList, widget);
-        this.createListContent(rightList, widget);
+        this.createListContent(leftList, widget, this._config.cardClass, this._config.cardLayout);
+        // this.createListContent(rightList, widget);
 
         leftColumn.appendChild(leftList);
-        rightColumn.appendChild(rightList);
+        // rightColumn.appendChild(rightList);
 
         container.appendChild(leftColumn);
-        container.appendChild(rightColumn);
+        // container.appendChild(rightColumn);
     }
 
-    private createListContent(container: HTMLElement, widget: string): void {
-        const count = widget === 'card' ? 2 : 3;
+    private createListContent(container: HTMLElement, widget: string, cardClass: string, cardLayout: string): void {
+        const count = widget === 'card' ? 4 : 3;
+        console.log(cardLayout);
         for (let i = 0; i < count; i++) {
             const listItem = document.createElement('div');
             listItem.className = 'list-item';
+            if (widget === 'card') {
+                listItem.className = 'list-item ' + cardClass;
+            }
 
             const avatar = document.createElement('div');
             avatar.className = 'list-item-avatar skeleton-animated';
@@ -946,25 +1005,29 @@ export class WMSkeletonLoader extends HTMLElement {
             case 'line': {
                 const line = document.createElement('div');
                 line.className = 'line skeleton-animated';
-                // for (let i = 0; i < 5; i++) {
-                //     const point = document.createElement('div');
-                //     point.className = 'point skeleton-animated';
-                //     point.style.animationDelay = `${i * 0.4}s`;
-                //     chartData.appendChild(point);
-                // }
                 chartData.appendChild(line);
                 const lineSegment = document.createElement('div');
                 lineSegment.className = 'line-segment';
                 line.appendChild(lineSegment);
                 break;
             }
+            case 'cumulative line':{
+                const line = document.createElement('div');
+                line.className = 'line skeleton-animated';
+                chartData.appendChild(line);
+                const lineSegment = document.createElement('div');
+                lineSegment.className = 'line-segment';
+                line.appendChild(lineSegment);
+                break;
+
+            }
             case 'bubble': {
                 const bubble = document.createElement('div');
-                bubble.className = 'bubble skeleton-animated';
+                bubble.className = 'bubble';
                 for (let i = 0; i < 5; i++) {
                     const point = document.createElement('div');
                     point.className = 'point skeleton-animated';
-                    chartData.appendChild(point);
+                    bubble.appendChild(point);
                 }
                 chartData.appendChild(bubble);
                 break;
@@ -1101,9 +1164,9 @@ export class WMSkeletonLoader extends HTMLElement {
 
         const content = this.createLoaderContent(widgetType);
 
-        this.shadowRoot.innerHTML = '';
-        this.shadowRoot.appendChild(style);
-        this.shadowRoot.appendChild(content);
+        this.innerHTML = '';
+        this.appendChild(style);
+        this.appendChild(content);
     }
 }
 
