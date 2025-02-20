@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {Attribute, Component, Inject, Injector, Optional} from '@angular/core';
 
 import {findValueOf, isDefined} from '@wm/core';
@@ -33,6 +35,8 @@ interface IProgressInfo {
 }
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: '[wmProgressBar]',
     templateUrl: './progress-bar.component.html',
     providers: [

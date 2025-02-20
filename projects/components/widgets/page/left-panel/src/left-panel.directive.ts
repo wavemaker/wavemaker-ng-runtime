@@ -20,6 +20,7 @@ export enum AnimationType {
 }
 
 @Directive({
+  standalone: true,
     selector: '[wmLeftPanel]',
     providers: [
         provideAsWidgetRef(LeftPanelDirective)

@@ -7,6 +7,7 @@ declare const $;
 declare const IScroll;
 
 @Directive({
+  standalone: true,
     selector: '[wmSmoothscroll]'
 })
 export class SmoothScrollDirective implements OnInit, DoCheck, OnDestroy {

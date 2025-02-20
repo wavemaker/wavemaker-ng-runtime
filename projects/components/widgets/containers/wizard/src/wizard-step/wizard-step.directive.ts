@@ -19,6 +19,7 @@ const enum STEP_STATUS {
 }
 
 @Directive({
+  standalone: true,
     selector: 'form[wmWizardStep]',
     providers: [
         provideAsWidgetRef(WizardStepDirective),

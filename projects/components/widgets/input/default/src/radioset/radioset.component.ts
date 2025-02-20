@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {Component, Inject, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
@@ -14,6 +16,8 @@ const DEFAULT_CLS = 'app-radioset list-group inline';
 const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: '[wmRadioset]',
     exportAs: 'wmRadioset',
     templateUrl: './radioset.component.html',

@@ -1,3 +1,6 @@
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
+import { ColorPickerModule } from 'ngx-color-picker';
 import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 import {ColorPickerDirective} from 'ngx-color-picker';
@@ -16,6 +19,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+  standalone: true,
+  imports: [WmComponentsModule, FormsModule, ColorPickerModule],
     selector: '[wmColorPicker]',
     templateUrl: './color-picker.component.html',
     providers: [

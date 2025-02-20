@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterViewInit,
     Attribute,
@@ -82,6 +84,8 @@ const DEFAULT_CLS = 'app-livelist app-panel';
 const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, PaginationComponent],
     selector: 'div[wmList]',
     templateUrl: './list.component.html',
     providers: [

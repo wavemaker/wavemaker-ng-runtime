@@ -1,9 +1,8 @@
-import {ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
-import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
-
-import {BsDatepickerDirective} from 'ngx-bootstrap/datepicker';
-
-
+import { WmComponentsModule } from "@wm/components/base";
+import { IMaskModule } from 'angular-imask';
+import { ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild } from '@angular/core';
+import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { BsDatepickerDirective, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import {
     addEventListenerOnElement,
     adjustContainerPosition,
@@ -16,12 +15,13 @@ import {
     getFormattedDate,
     getMomentLocaleObject
 } from '@wm/core';
-import {IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler} from '@wm/components/base';
-import {BaseDateTimeComponent} from './../base-date-time.component';
-import {registerProps} from './date.props';
-import {validateTheMaskedDate} from './imaskUtil';
-import {IMaskDirective} from 'angular-imask';
-import {includes, isNaN, parseInt} from "lodash-es";
+import { IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler } from '@wm/components/base';
+import { BaseDateTimeComponent } from './../base-date-time.component';
+import { registerProps } from './date.props';
+import { validateTheMaskedDate } from './imaskUtil';
+import { IMaskDirective } from 'angular-imask';
+import { includes, isNaN, parseInt } from "lodash-es";
+import { DateTimePickerComponent } from "../date-time/date-time-picker.component";
 
 declare const _, $;
 
@@ -33,6 +33,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+    standalone: true,
+    imports: [WmComponentsModule, DateTimePickerComponent, IMaskModule, BsDatepickerModule],
     selector: '[wmDate]',
     templateUrl: './date.component.html',
     providers: [
@@ -70,7 +72,7 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     get displayValue() {
-        if(this.showdateformatasplaceholder && this.imask?.maskRef && this.maskDateInputFormat) {
+        if (this.showdateformatasplaceholder && this.imask?.maskRef && this.maskDateInputFormat) {
             return getFormattedDate(this.datePipe, this.bsDataValue, this.maskDateInputFormat, this.timeZone, null, this.isCurrentDate, this) || '';
         }
         return getFormattedDate(this.datePipe, this.bsDataValue, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this) || '';
@@ -95,7 +97,7 @@ export class DateComponent extends BaseDateTimeComponent {
             }, 50);
             this.isCurrentDate = true;
         } else {
-            this.bsDataValue = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}, this.timeZone) : undefined;
+            this.bsDataValue = newVal ? getDateObj(newVal, { isNativePicker: this.loadNativeDateInput }, this.timeZone) : undefined;
             this.isCurrentDate = false;
         }
         // update the previous datavalue.
@@ -104,7 +106,7 @@ export class DateComponent extends BaseDateTimeComponent {
     }
 
     @ViewChild(BsDatepickerDirective) protected bsDatePickerDirective;
-    @ViewChild('dateInput', {read: IMaskDirective}) imask: IMaskDirective<any>;
+    @ViewChild('dateInput', { read: IMaskDirective }) imask: IMaskDirective<any>;
 
     // TODO use BsLocaleService to set the current user's locale to see the localized labels
     constructor(
@@ -135,10 +137,10 @@ export class DateComponent extends BaseDateTimeComponent {
         let inputVal = $event.target.value;
         // When the input is cleared, the input value becomes maskDateInputFormatPlaceholder. This causes a validation error.
         // When the input value is equal to maskDateInputFormatPlaceholder, it means that the input is in an empty state.
-        if(this.showdateformatasplaceholder && inputVal === this.maskDateInputFormatPlaceholder) {
+        if (this.showdateformatasplaceholder && inputVal === this.maskDateInputFormatPlaceholder) {
             inputVal = "";
         }
-        const newVal = getDateObj(inputVal, {pattern: this.datepattern, isNativePicker: isNativePicker});
+        const newVal = getDateObj(inputVal, { pattern: this.datepattern, isNativePicker: isNativePicker });
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, inputVal, isNativePicker)) {
@@ -192,11 +194,11 @@ export class DateComponent extends BaseDateTimeComponent {
         adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
         adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
 
-        if(this.timeZone) {
+        if (this.timeZone) {
             const todayBtn = document.querySelector(`.${this.dateContainerCls} .bs-datepicker-buttons .btn-today-wrapper button`) as HTMLElement;
             const setTodayTZHandler = (event) => {
                 const todayTZ = getMomentLocaleObject(this.timeZone);
-                if(new Date(this.bsDataValue).toDateString() !== new Date(todayTZ).toDateString()) {
+                if (new Date(this.bsDataValue).toDateString() !== new Date(todayTZ).toDateString()) {
                     this.bsDataValue = todayTZ;
                 }
                 todayBtn.removeEventListener('click', setTodayTZHandler);
@@ -237,16 +239,16 @@ export class DateComponent extends BaseDateTimeComponent {
     /**
      * This is an internal method used to toggle the dropdown of the date widget
      */
-     public toggleDpDropdown($event, skipFocus: boolean = false) {
+    public toggleDpDropdown($event, skipFocus: boolean = false) {
         if (this.loadNativeDateInput) {
-             // Fixes click event getting triggred twice in Mobile devices.
+            // Fixes click event getting triggred twice in Mobile devices.
             if (!skipFocus) {
                 this.onDateTimeInputFocus();
             }
         }
         if ($event.type === 'click') {
             this.invokeEventCallback('click', { $event: $event });
-          //  this.focusOnInputEl();
+            //  this.focusOnInputEl();
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             $event.stopPropagation();
@@ -276,7 +278,7 @@ export class DateComponent extends BaseDateTimeComponent {
         if (this.isDropDownDisplayEnabledOnInput(this.showdropdownon)) {
             event.stopPropagation();
             if (event.key === 'Enter') {
-                const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
+                const newVal = getDateObj(event.target.value, { pattern: this.datepattern });
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this);
                 let inputVal = event.target.value.trim();
@@ -294,7 +296,7 @@ export class DateComponent extends BaseDateTimeComponent {
                 } else {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
-                    this.bsDatePickerDirective.bsValue =  inputVal ? newVal : '';
+                    this.bsDatePickerDirective.bsValue = inputVal ? newVal : '';
                     this.updateIMask();
                 }
                 this.toggleDpDropdown(event);

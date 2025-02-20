@@ -54,6 +54,7 @@ const FILE_TYPES = {
 };
 
 @Directive({
+  standalone: true,
     selector: '[wmFormField]',
     exportAs: 'wmFormField',
     providers: [
@@ -546,7 +547,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     }
 
     reset() {
-      if(this._control) 
+      if(this._control)
         this._control.reset();
     }
 

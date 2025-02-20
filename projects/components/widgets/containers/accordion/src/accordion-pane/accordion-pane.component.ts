@@ -1,6 +1,8 @@
-import {AfterViewInit, Component, ContentChildren, Inject, Injector, Optional} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { AfterViewInit, Component, ContentChildren, forwardRef, Inject, Injector, Optional } from '@angular/core';
 
-import {noop, removeAttr} from '@wm/core';
+import { noop, removeAttr } from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     IWidgetConfig,
@@ -10,17 +12,20 @@ import {
     styler,
 } from '@wm/components/base';
 
-import {registerProps} from './accordion-pane.props';
-import {AccordionDirective} from '../accordion.directive';
+import { registerProps } from './accordion-pane.props';
+import { AccordionDirective } from '../accordion.directive';
 
 const DEFAULT_CLS = 'app-accordion-panel panel';
-const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS };
 
 @Component({
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule],
     selector: 'div[wmAccordionPane]',
     templateUrl: './accordion-pane.component.html',
     providers: [
-        provideAsWidgetRef(AccordionPaneComponent)
+        provideAsWidgetRef(AccordionPaneComponent),
+        provideAsWidgetRef(AccordionDirective)
     ],
     exportAs: 'wmAccordionPane'
 })
@@ -41,7 +46,7 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
     public name: string;
 
     // reference to the components which needs a redraw(eg, grid, chart) when the height of this component changes
-    @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
+    @ContentChildren(RedrawableDirective, { descendants: true }) reDrawableComponents;
 
     constructor(inj: Injector, private accordionRef: AccordionDirective, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
@@ -68,7 +73,7 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
         this.isActive = true;
         this.$lazyLoad();
         this.redrawChildren();
-        this.invokeEventCallback('expand', {$event: evt});
+        this.invokeEventCallback('expand', { $event: evt });
         this.notifyParent(true, evt);
     }
 
@@ -83,7 +88,7 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
             return;
         }
         this.isActive = false;
-        this.invokeEventCallback('collapse', {$event: evt});
+        this.invokeEventCallback('collapse', { $event: evt });
         this.notifyParent(false, evt);
     }
 

@@ -9,6 +9,7 @@ const DEFAULT_CLS = 'app-page container';
 const WIDGET_CONFIG = {widgetType: 'wm-layout', hostClass: DEFAULT_CLS};
 
 @Directive({
+  standalone: true,
     selector: '[wmLayout]',
     providers: [
         provideAsWidgetRef(LayoutDirective)

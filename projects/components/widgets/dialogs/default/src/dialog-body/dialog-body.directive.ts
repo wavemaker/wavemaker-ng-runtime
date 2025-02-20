@@ -11,6 +11,7 @@ declare const $;
 const DEFAULT_CLS = 'app-dialog-body modal-body';
 
 @Directive({
+  standalone: true,
     selector: 'div[wmDialogBody]',
 })
 export class DialogBodyDirective {

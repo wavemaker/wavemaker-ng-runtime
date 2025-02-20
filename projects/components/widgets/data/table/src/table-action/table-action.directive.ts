@@ -9,6 +9,7 @@ import {isUndefined} from "lodash-es";
 const WIDGET_CONFIG = {widgetType: 'wm-table-action', hostClass: ''};
 
 @Directive({
+  standalone: true,
     selector: '[wmTableAction]',
     providers: [
         provideAsWidgetRef(TableActionDirective)

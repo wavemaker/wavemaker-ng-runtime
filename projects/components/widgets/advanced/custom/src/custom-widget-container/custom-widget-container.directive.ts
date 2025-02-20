@@ -19,6 +19,7 @@ const DEFAULT_CLS = 'app-html-container';
 declare const _;
 
 @Directive({
+  standalone: true,
     selector: '[wmWidgetContainer]',
     providers: [
         provideAs(CustomWidgetContainerDirective, NG_VALUE_ACCESSOR, true),

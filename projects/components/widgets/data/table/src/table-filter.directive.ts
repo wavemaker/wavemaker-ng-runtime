@@ -173,6 +173,7 @@ const addToFilterFields = (filterFields, searchObj) => {
 };
 
 @Directive({
+  standalone: true,
     selector: '[wmTableFilterSort]'
 })
 export class TableFilterSortDirective {

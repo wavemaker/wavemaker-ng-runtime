@@ -1,8 +1,11 @@
+import { WmComponentsModule } from "@wm/components/base";
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Injector, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
 
 declare const $;
 
 @Component({
+  standalone: true,
+  imports: [WmComponentsModule],
     selector: 'wm-pickergroup',
     template: `
         <div class="app-picker-group">
@@ -16,6 +19,7 @@ export class PickerGroupComponent {
 
 @Component({
     selector: 'wm-picker',
+    standalone: true,
     template: `
         <div class="app-picker">
           <div class="app-picker-option-container">

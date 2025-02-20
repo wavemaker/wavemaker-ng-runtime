@@ -10,6 +10,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Directive({
+  standalone: true,
     selector: '[wmFooter]',
     providers: [
         provideAsWidgetRef(FooterDirective)

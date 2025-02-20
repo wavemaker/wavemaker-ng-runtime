@@ -12,6 +12,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Directive({
+  standalone: true,
     selector: '[wmRightPanel]',
     providers: [
         provideAsWidgetRef(RightPanelDirective)
