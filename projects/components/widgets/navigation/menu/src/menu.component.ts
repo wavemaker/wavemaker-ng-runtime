@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { ButtonComponent } from '@wm/components/input';
+import { MenuDropdownComponent } from './menu-dropdown/menu-dropdown.component';
 import {
     AfterViewInit,
     Attribute,
@@ -34,6 +38,7 @@ import {NavComponent} from './nav/nav.component';
 
 import {registerProps} from './menu.props';
 import {clone, forEach, includes, isEmpty} from "lodash-es";
+import { AnchorComponent } from '@wm/components/basic';
 
 export const KEYBOARD_MOVEMENTS = {
     MOVE_UP: 'UP-ARROW',
@@ -80,6 +85,8 @@ const AUTO_OPEN = {
 
 const WIDGET_CONFIG = { widgetType: 'wm-menu', hostClass: 'dropdown app-menu' };
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, AnchorComponent, ButtonComponent, MenuDropdownComponent],
     selector: '[wmMenu]',
     templateUrl: './menu.component.html',
     providers: [

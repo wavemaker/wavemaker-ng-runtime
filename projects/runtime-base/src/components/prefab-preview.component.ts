@@ -1,3 +1,4 @@
+import { WmComponentsModule } from "@wm/components/base";
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 
 import { PrefabDirective } from '@wm/components/prefab';
@@ -7,6 +8,8 @@ import { PrefabManagerService } from '../services/prefab-manager.service';
 const PREFAB = 'PREFAB';
 
 @Component({
+  standalone: true,
+  imports: [WmComponentsModule, PrefabDirective, PrefabDirective],
     selector: 'wm-prefab-preview',
     template: `
         <div class="prefab-preview row">

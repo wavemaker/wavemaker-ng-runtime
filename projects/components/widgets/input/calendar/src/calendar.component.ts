@@ -1,3 +1,4 @@
+import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterContentInit,
     AfterViewInit,
@@ -91,6 +92,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-calendar', hostClass: DEFAULT_CLS};
 const dateFormat = 'YYYY/MM/DD';
 
 @Component({
+  standalone: true,
+  imports: [WmComponentsModule],
     selector: '[wmCalendar]',
     templateUrl: './calendar.component.html',
     styleUrls: ['../../../../../../node_modules/fullcalendar/main.css'],

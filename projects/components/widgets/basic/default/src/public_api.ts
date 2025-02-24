@@ -1,5 +1,4 @@
 export * from './anchor/anchor.component';
-export * from './basic.module';
 export * from './audio/audio.component';
 export * from './html/html.directive';
 export * from './icon/icon.component';

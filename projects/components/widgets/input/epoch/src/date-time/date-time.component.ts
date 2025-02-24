@@ -1,3 +1,6 @@
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
+import { DateTimePickerComponent } from '../date-time/date-time-picker.component';
 import {
     AfterViewInit,
     ChangeDetectorRef,
@@ -9,9 +12,9 @@ import {
     Optional,
     ViewChild
 } from '@angular/core';
-import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {BsDatepickerDirective} from 'ngx-bootstrap/datepicker';
-import {TimepickerConfig} from 'ngx-bootstrap/timepicker';
+import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { BsDatepickerDirective, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
 
 import {
     AbstractI18nService,
@@ -29,11 +32,12 @@ import {
     getMomentLocaleObject,
     getNativeDateObject
 } from '@wm/core';
-import {provideAs, provideAsWidgetRef, setFocusTrap, styler} from '@wm/components/base';
+import { provideAs, provideAsWidgetRef, setFocusTrap, styler } from '@wm/components/base';
 
-import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
-import {registerProps} from './date-time.props';
-import {debounce, forEach, includes, isNaN, parseInt} from "lodash-es";
+import { BaseDateTimeComponent, getTimepickerConfig } from './../base-date-time.component';
+import { registerProps } from './date-time.props';
+import { debounce, forEach, includes, isNaN, parseInt } from "lodash-es";
+import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 
 declare const $;
 declare const moment;
@@ -44,13 +48,15 @@ const WIDGET_CONFIG = { widgetType: 'wm-datetime', hostClass: DEFAULT_CLS };
 const CURRENT_DATE = 'CURRENT_DATE';
 
 @Component({
+    standalone: true,
+    imports: [WmComponentsModule, FormsModule, DateTimePickerComponent, BsDropdownModule, BsDatepickerModule],
     selector: '[wmDateTime]',
     templateUrl: './date-time.component.html',
     providers: [
         provideAs(DatetimeComponent, NG_VALUE_ACCESSOR, true),
         provideAs(DatetimeComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(DatetimeComponent),
-        { provide: TimepickerConfig,  deps: [AbstractI18nService], useFactory: getTimepickerConfig }
+        { provide: TimepickerConfig, deps: [AbstractI18nService], useFactory: getTimepickerConfig }
     ]
 })
 export class DatetimeComponent extends BaseDateTimeComponent implements AfterViewInit, OnDestroy {
@@ -135,7 +141,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             this.isCurrentDate = true;
             this.setTimeInterval();
         } else {
-            this.proxyModel = newVal ? getDateObj(newVal, {isNativePicker: this.loadNativeDateInput}, this.timeZone) : undefined;
+            this.proxyModel = newVal ? getDateObj(newVal, { isNativePicker: this.loadNativeDateInput }, this.timeZone) : undefined;
             this.clearTimeInterval();
             this.isCurrentDate = false;
         }
@@ -229,7 +235,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
         if (parentEl.length > 0) {
-            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+            this.app.notify('captionPositionAnimate', { displayVal: this.displayValue, nativeEl: parentEl });
         }
     }
 
@@ -284,7 +290,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             }
         }
 
-        if(newVal && !this.bsDateValue && this.timeZone) {
+        if (newVal && !this.bsDateValue && this.timeZone) {
             newVal = getMomentLocaleObject(this.timeZone, newVal);
         }
         // min date and max date validation in web.
@@ -349,7 +355,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         const meridianField = $('timepicker button.text-center');
         const formattedArr = date.split(' ');
         const formattedTime = formattedArr[0].split(':');
-        for (let i=0; i<timePickerFields.length; i++) {
+        for (let i = 0; i < timePickerFields.length; i++) {
             timePickerFields[i].value = formattedTime[i]
         }
         if (meridianField?.html()?.trim() !== formattedArr[1]) {
@@ -367,10 +373,10 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     /**
      * This is an internal method used to toggle the dropdown of the date widget
      */
-     public toggleDpDropdown($event, skipFocus: boolean = false) {
+    public toggleDpDropdown($event, skipFocus: boolean = false) {
         if (this.loadNativeDateInput) {
             //Fixes click event getting triggred twice in Mobile devices.
-            if(!skipFocus){
+            if (!skipFocus) {
                 this.onDateTimeInputFocus();
             }
             return;
@@ -407,7 +413,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.bsDatePickerDirective.hide();
 
         // To open the timepicker menu when user wants to update time without changing the date.
-        if(this.bsDateValue) {
+        if (this.bsDateValue) {
             this.toggleTimePicker(true);
         }
         this.isEnterPressedOnDateInput = false;
@@ -416,7 +422,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         }
         const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
         if (parentEl.length > 0) {
-            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+            this.app.notify('captionPositionAnimate', { displayVal: this.displayValue, nativeEl: parentEl });
         }
         this.blurDateInput(this.isDateOpen);
     }
@@ -427,7 +433,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             return;
         }
         let newVal = $event.target.value.trim();
-        newVal = newVal ? getNativeDateObject(newVal, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians, isNativePicker: this.loadNativeDateInput}) : undefined;
+        newVal = newVal ? getNativeDateObject(newVal, { pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians, isNativePicker: this.loadNativeDateInput }) : undefined;
         // datetime pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
@@ -450,7 +456,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             event.stopPropagation();
             let newVal = event.target.value.trim();
             if (event.key === 'Enter' || event.key === 'ArrowDown') {
-                newVal = newVal ? getNativeDateObject(newVal, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians}) : undefined;
+                newVal = newVal ? getNativeDateObject(newVal, { pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians }) : undefined;
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, (this as any).key, this.isCurrentDate, this);
                 const inputVal = event.target.value.trim();
@@ -481,7 +487,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
     private isValid(event) {
         if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
-            const newVal = getNativeDateObject(enteredDate, {pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians, isNativePicker: this.loadNativeDateInput});
+            const newVal = getNativeDateObject(enteredDate, { pattern: this.loadNativeDateInput ? this.outputformat : this.datepattern, meridians: this.meridians, isNativePicker: this.loadNativeDateInput });
             if (!this.formatValidation(newVal, enteredDate)) {
                 return;
             }

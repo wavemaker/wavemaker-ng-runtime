@@ -8,6 +8,7 @@ const WIDGET_INFO: IWidgetConfig = {
 };
 
 @Directive({
+  standalone: true,
     selector: 'div[wmWizardAction]',
     providers: [
         provideAsWidgetRef(WizardActionDirective)

@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {Component, HostBinding, Inject, Injector, Optional} from '@angular/core';
 
 import {IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
@@ -10,6 +12,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: '[wmIcon]',
     templateUrl: './icon.component.html',
     providers: [

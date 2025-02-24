@@ -2,6 +2,7 @@ import {Directive, ElementRef, HostBinding, OnDestroy} from '@angular/core';
 import {NavigationFocusService} from '@wm/core';
 
 @Directive({
+    standalone: true,
     selector: '[focusOnNavigation]',
 })
 export class NavigationFocusDirective implements OnDestroy {

@@ -25,8 +25,9 @@ import {
 } from '@wm/runtime/base';
 
 import { AppResourceManagerService } from './app-resource-manager.service';
-import {isString, isUndefined} from "lodash-es";
+import { isString, isUndefined } from "lodash-es";
 import * as customWidgets from '@wavemaker/custom-widgets-m3';
+import { PageDirective } from '@wm/components/page';
 
 interface IPageMinJSON {
     markup: string;
@@ -56,8 +57,8 @@ const getFragmentUrl = (fragmentName: string, type: ComponentType, options?) => 
         return options && options.prefab ? getPrefabPartialJsonUrl(options.prefab, fragmentName) : `./pages/${fragmentName}/page.min.json`;
     } else if (type === ComponentType.PREFAB) {
         return getPrefabMinJsonUrl(fragmentName);
-    } else if (type === ComponentType.WIDGET){
-        return `./custom-widgets/${fragmentName}/page.min.json`    
+    } else if (type === ComponentType.WIDGET) {
+        return `./custom-widgets/${fragmentName}/page.min.json`
     }
 };
 
@@ -80,17 +81,17 @@ const execScript = (
 };
 
 class BaseDynamicComponent {
-    init() {}
+    init() { }
 }
 
 const getDynamicModule = (componentRef: any) => {
-        return NgModule({
-            declarations: [componentRef],
-            imports: [
-                RuntimeBaseModule,
-            ],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-    })(class DynamicModule {});
+    return NgModule({
+        declarations: [componentRef],
+        imports: [
+            RuntimeBaseModule,
+        ],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+    })(class DynamicModule { });
 };
 
 const getDynamicComponent = (
@@ -183,7 +184,8 @@ const getDynamicComponent = (
             {
                 provide: UserDefinedExecutionContext,
                 useExisting: DynamicComponent
-            }
+            },
+            PageDirective,
         ]
     })(DynamicComponent)
     return component;
@@ -200,14 +202,14 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         if (resource) {
             return resource;
         }
-        const promise = (((componentType === ComponentType.WIDGET && !customWidgets[componentName]) || componentType !== ComponentType.WIDGET)  ? this.resouceMngr.get(url, true) : Promise.resolve(customWidgets[componentName]))
-            .then(({markup, script, styles, variables, config}: IPageMinJSON) => {
+        const promise = (((componentType === ComponentType.WIDGET && !customWidgets[componentName]) || componentType !== ComponentType.WIDGET) ? this.resouceMngr.get(url, true) : Promise.resolve(customWidgets[componentName]))
+            .then(({ markup, script, styles, variables, config }: IPageMinJSON) => {
                 const response = {
                     markup: transpile(_decodeURIComponent(markup)).markup,
                     script: _decodeURIComponent(script),
                     styles: scopeComponentStyles(componentName, componentType, _decodeURIComponent(styles)),
                     variables: getValidJSON(_decodeURIComponent(variables)),
-                    ...(config? {config : getValidJSON(_decodeURIComponent(config))} : {})
+                    ...(config ? { config: getValidJSON(_decodeURIComponent(config)) } : {})
                 };
                 fragmentCache.set(url, Promise.resolve(response));
 
@@ -215,13 +217,13 @@ export class ComponentRefProviderService extends ComponentRefProvider {
             }, e => {
                 const status = e.details.status;
                 const errorMsgMap = {
-                    404 : this.app.appLocale.MESSAGE_PAGE_NOT_FOUND || 'The page you are trying to reach is not available',
-                    403 : this.app.appLocale.LABEL_ACCESS_DENIED || 'Access Denied'
+                    404: this.app.appLocale.MESSAGE_PAGE_NOT_FOUND || 'The page you are trying to reach is not available',
+                    403: this.app.appLocale.LABEL_ACCESS_DENIED || 'Access Denied'
                 };
                 return Promise.reject(errorMsgMap[status]);
             });
-            fragmentCache.set(url, promise);
-            return promise;
+        fragmentCache.set(url, promise);
+        return promise;
     }
 
     constructor(
@@ -238,7 +240,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         const componentFactoryMap = componentFactoryRefCache.get(componentType);
         let componentFactoryRef;
         if (componentFactoryMap) {
-            const updatedComponentName = (options && options['prefab']) ? options['prefab'] +  componentName : componentName;
+            const updatedComponentName = (options && options['prefab']) ? options['prefab'] + componentName : componentName;
             componentFactoryRef = componentFactoryMap.get(updatedComponentName);
 
             if (componentFactoryRef) {
@@ -247,7 +249,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         }
 
         return this.loadResourcesOfFragment(componentName, componentType, options)
-            .then(({markup, script, styles, variables})  => {
+            .then(({ markup, script, styles, variables }) => {
                 const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, JSON.stringify(variables));
                 const moduleDef = getDynamicModule(componentDef);
 
@@ -256,7 +258,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                     .componentFactories
                     .filter(factory => // @ts-ignore
                         factory.componentType === componentDef)[0];
-                const updatedComponentName = (options && options['prefab']) ? options['prefab'] +  componentName : componentName;
+                const updatedComponentName = (options && options['prefab']) ? options['prefab'] + componentName : componentName;
                 componentFactoryRefCache.get(componentType).set(updatedComponentName, componentFactoryRef);
 
                 return componentFactoryRef;

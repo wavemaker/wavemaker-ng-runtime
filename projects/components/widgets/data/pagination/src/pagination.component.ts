@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
 import {Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit, Optional} from '@angular/core';
 
 import {
@@ -32,6 +35,8 @@ const sizeClasses = {
     }
 };
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, FormsModule],
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html',
     providers: [

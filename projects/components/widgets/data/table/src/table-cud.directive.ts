@@ -15,6 +15,7 @@ const OPERATION = {
 };
 
 @Directive({
+  standalone: true,
     selector: '[wmTableCUD]'
 })
 export class TableCUDDirective {

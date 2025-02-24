@@ -1,3 +1,4 @@
+import { WmComponentsModule } from "@wm/components/base";
 import {Component, Inject, Injector, Optional} from '@angular/core';
 
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
@@ -8,6 +9,8 @@ const DEFAULT_CLS = 'app-content clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-content', hostClass: DEFAULT_CLS};
 
 @Component({
+  standalone: true,
+  imports: [WmComponentsModule],
     selector: '[wmContent]',
     templateUrl: './content.component.html',
     providers: [

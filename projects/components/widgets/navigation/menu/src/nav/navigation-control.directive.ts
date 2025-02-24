@@ -6,7 +6,10 @@ export const disableContextMenu = ($event: Event) => {
     $event.preventDefault();
 };
 
-@Directive({selector: '[wmNavigationControl]'})
+@Directive({
+    standalone: true,
+    selector: '[wmNavigationControl]'
+})
 export class NavigationControlDirective {
 
     private nativeElement: HTMLElement;

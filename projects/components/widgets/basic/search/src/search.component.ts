@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
+import { ScrollableDirective } from './scrollable.directive';
 import {
     AfterViewChecked,
     AfterViewInit,
@@ -55,6 +59,8 @@ import {
 const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, FormsModule, ScrollableDirective],
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
     providers: [

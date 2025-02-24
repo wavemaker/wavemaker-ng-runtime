@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
 import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -15,6 +18,8 @@ const MAX_RATING = 10;
 const DEFAULT_RATING = 5;
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, FormsModule],
     selector: '[wmRating]',
     templateUrl: './rating.component.html',
     providers: [

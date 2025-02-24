@@ -12,6 +12,7 @@ const DEFAULT_CLS = 'app-nav-item';
 const WIDGET_CONFIG = {widgetType: 'wm-nav-item', hostClass: DEFAULT_CLS};
 
 @Directive({
+  standalone: true,
     selector: '[wmNavItem]',
     exportAs: 'navItemRef',
     providers: [

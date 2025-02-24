@@ -6,6 +6,7 @@ import { WidgetRef } from "../../framework/types";
 declare const _;
 
 @Directive({
+  standalone: true,
     selector: '[customWidgetContainer][widgetname]'
 })
 export class CustomWidgetContainerDirective {

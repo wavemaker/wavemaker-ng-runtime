@@ -20,6 +20,7 @@ const DEFAULT_CLS = 'app-prefab';
 const registeredPropsSet = new Set<string>();
 
 @Directive({
+  standalone: true,
     selector: 'section[wmPrefab]',
     providers: [
         provideAsWidgetRef(PrefabDirective)

@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import { AfterViewInit, Component, ViewChild, ViewContainerRef, TemplateRef, OnDestroy } from '@angular/core';
 
 import { Toast, ToastPackage, ToastrService } from 'ngx-toastr';
@@ -8,6 +10,8 @@ import {forEach, isString} from "lodash-es";
 declare const $;
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: '[custom-toaster-component]',
     template: `
         <div class="parent-custom-toast"></div>

@@ -2,7 +2,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 
 import { AbstractDialogService } from '@wm/core';
-import { SecurityModule } from '@wm/security';
+import { SecurityService } from '@wm/security';
 
 import { ContainerDirective } from './widgets/common/container/container.directive';
 import { ImagePipe } from './pipes/image.pipe';
@@ -15,8 +15,8 @@ import {
     PartialParamDirective,
     PartialParamHandlerDirective
 } from './widgets/common/partial-param/partial-param.directive';
-import { PartialContainerDirective} from "./widgets/common/base/partial-container.directive";
-import { CustomWidgetContainerDirective} from "./widgets/common/base/custom-widget-container.directive";
+import { PartialContainerDirective } from "./widgets/common/base/partial-container.directive";
+import { CustomWidgetContainerDirective } from "./widgets/common/base/custom-widget-container.directive";
 import { RedrawableDirective } from './widgets/common/redraw/redrawable.directive';
 import { ShowInDeviceDirective } from './directives/show-in-device.directive';
 import { SmoothScrollDirective } from './widgets/common/smooth-scroll/smooth-scroll.directive';
@@ -85,9 +85,8 @@ const PIPES = [
 @NgModule({
     imports: [
         CommonModule,
-        SecurityModule
+        ...wmComponents, ...PIPES
     ],
-    declarations: [...wmComponents, ...PIPES],
     exports: [...wmComponents, ...PIPES]
 })
 export class WmComponentsModule {
@@ -104,7 +103,8 @@ export class WmComponentsModule {
                 CustomPipe,
                 SanitizePipe,
                 Location,
-                {provide: AbstractDialogService, useClass: DialogServiceImpl}
+                SecurityService,
+                { provide: AbstractDialogService, useClass: DialogServiceImpl }
             ]
         };
     }

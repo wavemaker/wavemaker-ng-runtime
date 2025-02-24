@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
 import {
     AfterViewInit,
     Attribute,
@@ -48,6 +51,8 @@ export const unStringify = (val, defaultVal?) => {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, FormsModule],
     selector: '[wmCheckbox]',
     templateUrl: './checkbox.component.html',
     providers: [
