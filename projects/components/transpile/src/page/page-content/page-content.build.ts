@@ -28,7 +28,7 @@ register('wm-page-content', (): IBuildTaskDef => {
                 }
             }
         },
-        pre: attrs => `<${tagName} wmPageContent ${attrs.get('spa') && 'wmSpaPage focusOnNavigation' || ''} wmSmoothscroll="${attrs.get('smoothscroll') || 'false'}" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => `<${tagName} wmPageContent ${attrs.get('spa') && 'wmSpaPage' || ''} #wm_page_content="wmPageContent" [focusOnNavigation]="wm_page_content.app.onLoadPageContentFocus" wmSmoothscroll="${attrs.get('smoothscroll') || 'false'}" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`
     };
 });

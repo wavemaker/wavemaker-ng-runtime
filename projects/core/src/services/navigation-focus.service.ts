@@ -17,7 +17,6 @@ export class NavigationFocusService implements OnDestroy {
         this.subscriptions.add(this.navigationEndEvents.subscribe(() => {
             setTimeout(() => {
                 if (this.navigationFocusRequests.length) {
-                    console.log("Focus", this.navigationFocusRequests);
                     this.navigationFocusRequests[this.navigationFocusRequests.length - 1]
                         .focus({preventScroll: true});
                 }

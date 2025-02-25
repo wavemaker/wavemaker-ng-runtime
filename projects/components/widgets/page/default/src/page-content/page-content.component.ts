@@ -13,7 +13,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
     templateUrl: './page-content.component.html',
     providers: [
         provideAsWidgetRef(PageContentComponent)
-    ]
+    ],
+    exportAs: 'wmPageContent'
 })
 export class PageContentComponent extends StylableComponent {
     static initializeProps = registerProps();
