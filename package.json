@@ -67,6 +67,7 @@
         "jssha": "3.1.2",
         "lodash": "4.17.21",
         "lodash-es": "4.17.21",
+        "moment-locales-webpack-plugin": "^1.2.0",
         "ng-circle-progress": "1.7.1",
         "ngx-bootstrap": "9.0.0",
         "ngx-color-picker": "16.0.0",
@@ -135,10 +136,10 @@
         "yargs": "^17.3.1"
     },
     "optionalDependencies": {
+        "@lmdb/lmdb-linux-x64": "3.0.13",
         "@rollup/rollup-darwin-arm64": "4.9.5",
         "@rollup/rollup-linux-x64-gnu": "4.9.5",
-        "@rollup/rollup-win32-x64": "4.9.5",
-        "@lmdb/lmdb-linux-x64": "3.0.13"
+        "@rollup/rollup-win32-x64": "4.9.5"
     },
     "engines": {
         "node": "~22.11.0",
