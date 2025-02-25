@@ -343,12 +343,12 @@ export class TableFilterSortDirective {
             const isValidDateString = this.parseDateString(get(find(data, sortObj.field), sortObj.field));
             if (!isNaN(isValidDateString)) { // if the field is a date string
                 data = orderBy(data, [(item) => this.parseDateString(item[sortObj.field])], [sortObj.direction]);
-            } else if (this.table.gridOptions.caseinsensitive) {
+            } else if (this.table.columns[sortObj.field]?.caseinsensitive) {
                 //Fix for [WMS-27505]: Added case-insensitive sorting so that uppercase and lowercase letters are treated the same when sorting.
                 if (sortObj.direction === 'asc') {
-                    data = orderBy(data, [(item) => item[sortObj.field].toLowerCase(), (item) => item[sortObj.field]]);
+                    data = orderBy(data, [(item) => get(item, sortObj.field)?.toLowerCase(), (item) => item[sortObj.field]]);
                 } else {
-                    data = orderBy(data,[(item) => item[sortObj.field].toLowerCase(),(item) => item[sortObj.field]], ['desc', 'desc']);
+                    data = orderBy(data,[(item) => get(item, sortObj.field)?.toLowerCase(),(item) => item[sortObj.field]], ['desc', 'desc']);
                 }
             } else {
                 data = orderBy(data, sortObj.field, sortObj.direction);
