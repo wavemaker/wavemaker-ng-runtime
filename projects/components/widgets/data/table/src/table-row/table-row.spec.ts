@@ -22,7 +22,8 @@ describe('TableRowDirective', () => {
         } as unknown as jest.Mocked<TableComponent>;
 
         TestBed.configureTestingModule({
-            declarations: [TestComponent, TableRowDirective],
+            imports: [TableRowDirective],
+            declarations: [TestComponent],
             providers: [
                 { provide: TableComponent, useValue: tableMock },
                 { provide: 'EXPLICIT_CONTEXT', useValue: {} },

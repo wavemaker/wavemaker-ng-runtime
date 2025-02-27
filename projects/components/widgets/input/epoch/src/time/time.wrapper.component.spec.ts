@@ -13,20 +13,18 @@ import {
 import {
     getTimeFieldValue,
     triggerTimerClickonArrowsByIndex,
-    datepatternTest,
     outputpatternTest,
     getTimePickerElement,
-    localizedTimePickerTest, localizedValueOnInputTest, MockAbstractI18nService, MockAbstractI18nServiceDe, MockAbstractI18nServiceRO
+    localizedValueOnInputTest, MockAbstractI18nService, MockAbstractI18nServiceDe, MockAbstractI18nServiceRO
 } from '../../../../../base/src/test/util/date-test-util';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { waitForAsync, ComponentFixture, fakeAsync, tick, TestBed, flush } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync } from '@angular/core/testing';
 import {
     UserDefinedExecutionContext,
     AppDefaults,
     AbstractI18nService,
-    getNativeDateObject,
-    getFormattedDate, App
+    App
 } from '@wm/core';
 import { FormsModule } from '@angular/forms';
 import { ToDatePipe } from '../../../../../base/src/pipes/custom-pipes';
@@ -85,8 +83,8 @@ class TimeWrapperComponent {
 }
 
 const dateComponentModuleDef: ITestModuleDef = {
-    declarations: [TimeWrapperComponent, TimeComponent],
-    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    declarations: [TimeWrapperComponent],
+    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
@@ -425,8 +423,8 @@ describe("TimeComponent", () => {
 
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
-    declarations: [TimeWrapperComponent, TimeComponent],
-    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    declarations: [TimeWrapperComponent],
+    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
@@ -488,8 +486,8 @@ describe('TimeComponent with localization', () => {
 });
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
-    declarations: [TimeWrapperComponent, TimeComponent],
-    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    declarations: [TimeWrapperComponent],
+    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },

@@ -39,9 +39,9 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
         TypeaheadModule.forRoot(),
-        WmComponentsModule
+        WmComponentsModule, ChipsComponent, SearchComponent
     ],
-    declarations: [ChipsWrapperComponent, ChipsComponent, SearchComponent],
+    declarations: [ChipsWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

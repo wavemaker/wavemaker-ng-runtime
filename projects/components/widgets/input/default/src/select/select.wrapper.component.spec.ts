@@ -21,8 +21,8 @@ class SelectWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [SelectWrapperComponent, SelectComponent],
+    imports: [FormsModule, SelectComponent],
+    declarations: [SelectWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

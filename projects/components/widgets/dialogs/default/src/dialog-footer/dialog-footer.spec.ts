@@ -24,7 +24,7 @@ describe('DialogFooterDirective', () => {
         } as unknown as jest.Mocked<Injector>;
 
         TestBed.configureTestingModule({
-            declarations: [DialogFooterDirective],
+            imports: [DialogFooterDirective],
             providers: [
                 { provide: Injector, useValue: mockInjector },
                 { provide: 'EXPLICIT_CONTEXT', useValue: null }

@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { AnchorComponent } from '@wm/components/basic';
+import { ButtonComponent } from '@wm/components/input';
 import {
     AfterContentInit,
     AfterViewInit,
@@ -142,7 +146,7 @@ const setTouchedState = (self, ngForm, fieldName) => {
             element = self.$element.find(`[wmformfield][name="${fieldName}"]`);
         }
         element[0].setAttribute('__errormsg', element[0].getAttribute('__validationId'));
-        let activeElement = getActiveElement(element[0]);
+        const activeElement = getActiveElement(element[0]);
         activeElement?.setAttribute('aria-invalid', ngForm.invalid);
         activeElement?.setAttribute('aria-describedby', element[0].getAttribute('__validationId'));
         ngForm.markAsTouched();
@@ -150,6 +154,8 @@ const setTouchedState = (self, ngForm, fieldName) => {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, AnchorComponent, ButtonComponent, MessageComponent],
     selector: 'form[wmForm]',
     templateUrl: './form.component.html',
     providers: [

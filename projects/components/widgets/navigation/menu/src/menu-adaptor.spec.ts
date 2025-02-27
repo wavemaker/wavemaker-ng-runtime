@@ -55,7 +55,8 @@ describe('MenuAdapterComponent', () => {
         } as any;
 
         await TestBed.configureTestingModule({
-            declarations: [TestMenuAdapterComponent, MenuComponent],
+            declarations: [TestMenuAdapterComponent],
+            imports: [MenuComponent],
             providers: [
                 { provide: Injector, useValue: injectorMock },
                 { provide: 'WIDGET_CONFIG', useValue: { widgetType: 'wm-menu' } },

@@ -22,6 +22,7 @@ import { StylableComponent } from '../base/stylable.component';
 const WIDGET_CONFIG = {widgetType: 'wm-item-template'};
 
 @Directive({
+  standalone: true,
     selector: '[wmItemTemplate]',
     exportAs: 'itemTemplateRef',
     providers: [

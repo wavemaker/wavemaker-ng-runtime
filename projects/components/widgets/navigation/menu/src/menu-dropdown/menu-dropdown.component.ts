@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { MenuDropdownItemComponent } from '../menu-dropdown-item/menu-dropdown-item.component';
 import { AfterViewInit, Component, ElementRef, Input } from '@angular/core';
 
 import { addClass } from '@wm/core';
@@ -31,6 +34,8 @@ const animationClasses = {
 const DEFAULT_CLS = 'dropdown-menu';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, MenuDropdownItemComponent],
     selector: 'ul[wmMenuDropdown]',
     templateUrl: './menu-dropdown.component.html'
 })

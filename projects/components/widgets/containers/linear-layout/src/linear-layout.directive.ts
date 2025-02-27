@@ -21,6 +21,7 @@ vAlignValues = {
 };
 
 @Directive({
+  standalone: true,
     selector: '[wmLinearLayout]',
     providers: [
         provideAsWidgetRef(LinearLayoutDirective)

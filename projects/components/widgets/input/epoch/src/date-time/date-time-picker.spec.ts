@@ -9,6 +9,7 @@ import { filter } from 'lodash-es';
 
 jest.mock('lodash-es', () => ({
     filter: jest.fn(),
+    cloneDeep: jest.fn(obj => JSON.parse(JSON.stringify(obj))),
 }));
 
 describe('DateTimePickerComponent', () => {
@@ -23,7 +24,7 @@ describe('DateTimePickerComponent', () => {
         } as any;
 
         TestBed.configureTestingModule({
-            declarations: [DateTimePickerComponent],
+            imports: [DateTimePickerComponent],
             providers: [
                 { provide: BsModalService, useValue: mockBsModalService },
                 { provide: App, useValue: mockApp },
@@ -370,7 +371,6 @@ describe('DateTimePickerComponent', () => {
         });
     });
 });
-
 
 describe('TimePickerComponent', () => {
     let component: TimePickerComponent;

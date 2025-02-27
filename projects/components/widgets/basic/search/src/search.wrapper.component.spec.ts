@@ -14,7 +14,6 @@ import { DatePipe } from '@angular/common';
 import { ScrollableDirective } from './scrollable.directive';
 import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
 import { PartialRefProvider, AppDefaults } from '@wm/core';
-import { BaseFormComponent } from 'projects/components/widgets/input/default/src/base-form.component';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
@@ -78,9 +77,9 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
         TypeaheadModule.forRoot(),
-        WmComponentsModule
+        WmComponentsModule, SearchComponent, ScrollableDirective
     ],
-    declarations: [SearchWrapperComponent, SearchComponent, ScrollableDirective],
+    declarations: [SearchWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

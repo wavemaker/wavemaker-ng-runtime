@@ -22,8 +22,8 @@ class checkboxSetWrapperComponent {
 
 
 const checkboxSetModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [checkboxSetWrapperComponent, CheckboxsetComponent],
+    imports: [FormsModule, CheckboxsetComponent],
+    declarations: [checkboxSetWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

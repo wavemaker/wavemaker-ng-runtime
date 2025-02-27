@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {
     Attribute,
     Component,
@@ -11,16 +13,19 @@ import {
     ViewChild
 } from '@angular/core';
 
-import {App, toBoolean} from '@wm/core';
+import { App, toBoolean } from '@wm/core';
 import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog } from '@wm/components/dialogs';
+import { BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 
 import { registerProps } from './partial-dialog.props';
+import { ButtonComponent } from '@wm/components/input';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-page-dialog';
-const WIDGET_INFO = {widgetType: 'wm-partialdialog'};
+const WIDGET_INFO = { widgetType: 'wm-partialdialog' };
 
 @Component({
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
     selector: 'div[wmPartialDialog]',
     templateUrl: './partial-dialog.component.html',
     providers: [
@@ -81,7 +86,7 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onOk($event: Event) {
-        this.invokeEventCallback('ok', {$event});
+        this.invokeEventCallback('ok', { $event });
     }
 
     ngOnInit() {
@@ -94,10 +99,10 @@ export class PartialDialogComponent extends BaseDialog implements OnInit {
             const parEle = this.partialRef.nativeElement;
             let partialScope;
             if (parEle) {
-                partialScope  = parEle.widget;
-                this.Widgets   = partialScope.Widgets;
+                partialScope = parEle.widget;
+                this.Widgets = partialScope.Widgets;
                 this.Variables = partialScope.Variables;
-                this.Actions   = partialScope.Actions;
+                this.Actions = partialScope.Actions;
             }
             cancelSubscription();
         });

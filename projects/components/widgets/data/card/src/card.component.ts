@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { PictureDirective } from '@wm/components/basic';
+import { MenuComponent } from '@wm/components/navigation/menu';
 import {
     AfterViewInit,
     Component,
@@ -24,6 +28,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, PictureDirective, MenuComponent],
     selector: '[wmCard]',
     templateUrl: './card.component.html',
     providers: [

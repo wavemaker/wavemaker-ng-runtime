@@ -5,7 +5,7 @@ import { CarouselDirective } from "./carousel.directive";
 import { CarouselTemplateDirective } from "./carousel-template/carousel-template.directive";
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
 import { App, setPipeProvider, AbstractI18nService } from '@wm/core';
-import { BasicModule } from '@wm/components/basic';
+import { BasicModule, LabelDirective } from '@wm/components/basic';
 import { WmComponentsModule } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import 'libraries/scripts/swipey/swipey.jquery.plugin.js';
@@ -52,8 +52,8 @@ describe('wm-carousel: Widget specific test cases', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [CarouselModule, BasicModule, WmComponentsModule.forRoot()],
-            declarations: [CarouselSpec, CarouselDirective, CarouselTemplateDirective],
+            imports: [CarouselModule, LabelDirective, WmComponentsModule.forRoot(), CarouselDirective],
+            declarations: [CarouselSpec],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: AbstractI18nService, useClass: MockAbstractI18nService }

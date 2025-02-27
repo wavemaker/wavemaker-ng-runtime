@@ -9,6 +9,7 @@ import {isUndefined} from "lodash-es";
 const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
 
 @Directive({
+  standalone: true,
     selector: '[wmFormAction]',
     providers: [
         provideAsWidgetRef(FormActionDirective)

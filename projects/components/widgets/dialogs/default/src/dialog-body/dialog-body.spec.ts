@@ -65,7 +65,7 @@ describe('DialogBodyDirective', () => {
         }));
 
         TestBed.configureTestingModule({
-            declarations: [DialogBodyDirective],
+            imports: [DialogBodyDirective],
             providers: [
                 { provide: ElementRef, useValue: mockElementRef },
                 { provide: DialogRef, useValue: mockDialogRef },

@@ -26,7 +26,8 @@ describe('NavItemDirective', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, NavItemDirective, AnchorComponent],
+            imports: [NavItemDirective, AnchorComponent],
+            declarations: [TestComponent],
             providers: [
                 { provide: 'EXPLICIT_CONTEXT', useValue: null },
                 { provide: App, useValue: mockApp }

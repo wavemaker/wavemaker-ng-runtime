@@ -41,7 +41,8 @@ describe('PrefabContainerDirective', () => {
         });
 
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, PrefabContainerDirective],
+            declarations: [TestComponent],
+            imports: [PrefabContainerDirective],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: Viewport, useValue: viewportMock },

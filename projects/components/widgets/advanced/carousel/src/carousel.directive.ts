@@ -28,6 +28,7 @@ const navigationClassMap = {
 };
 
 @Directive({
+  standalone: true,
     selector: '[wmCarousel]',
     exportAs: 'wmCarousel'
 })

@@ -17,8 +17,8 @@ class CheckboxWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [CheckboxWrapperComponent, CheckboxComponent],
+    imports: [FormsModule, CheckboxComponent],
+    declarations: [CheckboxWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
     ]

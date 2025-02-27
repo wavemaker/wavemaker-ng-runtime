@@ -9,6 +9,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-custom-widget-container', hostClass: DEFA
 declare const _;
 
 @Directive({
+  standalone: true,
     selector: '[wmCustomWidget]',
     providers: [
         provideAsWidgetRef(CustomWidgetDirective)

@@ -22,6 +22,7 @@ import {BaseFormComponent} from "@wm/components/input";
 declare const $;
 
 @Directive({
+  standalone: true,
     selector: '[wmListItem]',
     exportAs: 'listItemRef'
 })

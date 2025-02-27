@@ -1,19 +1,18 @@
-import {ComponentFixture} from '@angular/core/testing';
-import {PanelComponent} from './panel.component';
-import {Component, ViewChild} from '@angular/core';
-import {By} from '@angular/platform-browser';
-import {MenuDropdownItemComponent} from "../../../navigation/menu/src/menu-dropdown-item/menu-dropdown-item.component";
-import {MenuDropdownComponent} from "../../../navigation/menu/src//menu-dropdown/menu-dropdown.component";
-import {NavigationControlDirective} from "../../../navigation/menu/src/nav/navigation-control.directive";
-import {MenuComponent} from "../../../navigation/menu/src//menu.component";
-import {Router} from '@angular/router';
-import {App, UserDefinedExecutionContext} from '@wm/core';
-import {SecurityService} from '@wm/security';
-import {DatasetAwareNavComponent} from '../../../../base/src/widgets/common/base/dataset-aware-nav.component';
-import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../base/src/test/common-widget.specs";
-import {ComponentsTestModule} from "../../../../base/src/test/components.test.module";
-import {compileTestComponent, mockApp} from "../../../../base/src/test/util/component-test-util";
+import { ComponentFixture } from '@angular/core/testing';
+import { PanelComponent } from './panel.component';
+import { Component, ViewChild } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { MenuDropdownItemComponent } from "../../../navigation/menu/src/menu-dropdown-item/menu-dropdown-item.component";
+import { MenuDropdownComponent } from "../../../navigation/menu/src//menu-dropdown/menu-dropdown.component";
+import { NavigationControlDirective } from "../../../navigation/menu/src/nav/navigation-control.directive";
+import { MenuComponent } from "../../../navigation/menu/src//menu.component";
+import { Router } from '@angular/router';
+import { App, UserDefinedExecutionContext } from '@wm/core';
+import { SecurityService } from '@wm/security';
+import { DatasetAwareNavComponent } from '../../../../base/src/widgets/common/base/dataset-aware-nav.component';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
+import { compileTestComponent, mockApp } from "../../../../base/src/test/util/component-test-util";
 
 const markup = `<div wmPanel badgevalue="Test val" #wm_panel1="wmPanel" expanded="true" helptext="samplePanel" partialContainer wm-navigable-element="true"  subheading="subheading" iconclass="wi wi-account-circle" actions="testData" autoclose="outsideClick" title="Title" enablefullscreen="true" closable="true" collapsible="true" name="panel1" hint="panel hint" actionsclick.event="panel1Actionsclick($item)">`;
 @Component({
@@ -31,8 +30,8 @@ class PanelWrapperComponent {
 }
 
 const panelComponentModuleDef: ITestModuleDef = {
-    declarations: [PanelWrapperComponent, PanelComponent, MenuComponent, MenuDropdownItemComponent, MenuDropdownComponent, NavigationControlDirective],
-    imports: [ComponentsTestModule, BsDropdownModule.forRoot()],
+    declarations: [PanelWrapperComponent,],
+    imports: [BsDropdownModule.forRoot(), PanelComponent, MenuComponent, MenuDropdownItemComponent, MenuDropdownComponent, NavigationControlDirective],
     providers: [
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },

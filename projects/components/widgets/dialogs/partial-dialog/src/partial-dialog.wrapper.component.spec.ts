@@ -1,14 +1,14 @@
-import { Component, NO_ERRORS_SCHEMA, ViewChild, TemplateRef, ContentChild, ElementRef } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA, ViewChild, TemplateRef, ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { PartialDialogComponent } from './partial-dialog.component';
 import { Context, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog } from '@wm/components/dialogs';
 import { By } from '@angular/platform-browser';
-import { ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
+import { ITestComponentDef } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { AbstractDialogService, App } from '@wm/core';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 
 // Mock Services
@@ -42,11 +42,8 @@ class PartialDialogWrapperComponent {
 }
 
 const testModuleDef = {
-    imports: [FormsModule],
-    declarations: [
-        PartialDialogWrapperComponent,
-        PartialDialogComponent
-    ],
+    imports: [FormsModule, PartialDialogComponent],
+    declarations: [PartialDialogWrapperComponent,],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(PartialDialogComponent),

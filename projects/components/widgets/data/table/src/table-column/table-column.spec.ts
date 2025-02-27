@@ -65,8 +65,8 @@ describe('TableColumnDirective', () => {
         };
 
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, TableColumnDirective],
-            imports: [ReactiveFormsModule],
+            declarations: [TestComponent],
+            imports: [ReactiveFormsModule, TableColumnDirective],
             providers: [
                 { provide: TableComponent, useValue: mockTable },
                 { provide: AppDefaults, useValue: mockAppDefaults },

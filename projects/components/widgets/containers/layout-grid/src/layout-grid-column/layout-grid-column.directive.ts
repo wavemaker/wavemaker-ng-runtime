@@ -13,6 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Directive({
+  standalone: true,
     selector: '[wmLayoutGridColumn]',
     providers: [
         provideAsWidgetRef(LayoutGridColumnDirective)

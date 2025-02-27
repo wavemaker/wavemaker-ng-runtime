@@ -1,3 +1,4 @@
+import { WmComponentsModule } from "@wm/components/base";
 import {
     ApplicationRef,
     Component,
@@ -19,6 +20,8 @@ import { SecurityService } from '@wm/security';
 import { AppManagerService, BasePageComponent, ComponentRefProvider, ComponentType } from '@wm/runtime/base';
 
 @Component({
+  standalone: true,
+  imports: [WmComponentsModule],
     selector: 'app-page-outlet',
     template: '<div></div>'
 })

@@ -11,10 +11,10 @@ import { AbstractI18nService, App, UserDefinedExecutionContext } from '@wm/core'
 import { SecurityService } from '@wm/security';
 import { ButtonComponent } from '@wm/components/input';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
 import { AUTOCLOSE_TYPE } from '@wm/components/base';
+import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 
 const markup = `<div
                 wmMenu
@@ -65,15 +65,16 @@ class MenuWrapperComponent {
 }
 
 const menuComponentModuleDef: ITestModuleDef = {
-    declarations: [MenuWrapperComponent, MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective,],
-    imports: [ComponentsTestModule, BsDropdownModule.forRoot()],
+    declarations: [MenuWrapperComponent],
+    imports: [MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective, BsDropdownModule.forRoot(), BrowserAnimationsModule],
     providers: [
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
         { provide: SecurityService, useValue: SecurityService },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: ComponentFixtureAutoDetect, useValue: true },
-        { provide: AbstractI18nService, useClass: MockAbstractI18nService }
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+        provideAnimations()
     ],
     teardown: { destroyAfterEach: false }
 };

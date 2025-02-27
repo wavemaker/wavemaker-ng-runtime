@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {Component, Inject, Injector, Optional, SecurityContext} from '@angular/core';
 import {SafeResourceUrl} from '@angular/platform-browser';
 
@@ -13,6 +15,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: '[wmIframe]',
     templateUrl: './iframe.component.html',
     providers: [

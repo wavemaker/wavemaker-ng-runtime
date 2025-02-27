@@ -8,6 +8,7 @@ import { TableComponent } from '../table.component';
 const WIDGET_CONFIG = {widgetType: 'wm-table-row', hostClass: ''};
 
 @Directive({
+  standalone: true,
     selector: '[wmTableRow]',
     providers: [
         provideAsWidgetRef(TableRowDirective)

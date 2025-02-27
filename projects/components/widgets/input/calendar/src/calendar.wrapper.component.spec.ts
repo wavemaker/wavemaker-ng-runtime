@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { CalendarComponent } from './calendar.component';
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
-import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
 import { FormsModule } from '@angular/forms';
 import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
@@ -48,8 +47,8 @@ class CalendarWrapperComponent {
 }
 
 const calendarComponentModuleDef: ITestModuleDef = {
-    declarations: [CalendarWrapperComponent, CalendarComponent],
-    imports: [ComponentsTestModule, FormsModule, BsDatepickerModule, IMaskModule],
+    declarations: [CalendarWrapperComponent],
+    imports: [FormsModule, BsDatepickerModule, IMaskModule, CalendarComponent],
     providers: [{ provide: ToDatePipe, useClass: ToDatePipe },
     { provide: App, useValue: mockApp },
     { provide: DatePipe, useClass: DatePipe },

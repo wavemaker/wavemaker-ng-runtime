@@ -10,6 +10,7 @@ const DEFAULT_CLS = 'app-spa-page';
 const WIDGET_CONFIG = {widgetType: 'wm-spa-page', hostClass: DEFAULT_CLS};
 
 @Directive({
+  standalone: true,
     selector: '[wmSpaPage]',
     providers: [
         provideAsWidgetRef(SpaPageDirective)

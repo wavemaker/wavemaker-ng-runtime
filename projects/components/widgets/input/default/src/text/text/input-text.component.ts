@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
+import { IMaskModule } from 'angular-imask';
 import {Component, ElementRef, Inject, Injector, OnInit, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
@@ -12,6 +16,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, FormsModule, IMaskModule],
     selector: 'wm-input[type="text"], wm-input:not([type]), wm-input[type="password"], wm-input[type="search"], wm-input[type="tel"], wm-input[type="url"]',
     templateUrl: './input-text.component.html',
     providers: [
