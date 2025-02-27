@@ -21,7 +21,6 @@ import { RedrawableDirective } from './widgets/common/redraw/redrawable.directiv
 import { ShowInDeviceDirective } from './directives/show-in-device.directive';
 import { SmoothScrollDirective } from './widgets/common/smooth-scroll/smooth-scroll.directive';
 import { TextContentDirective } from './widgets/common/base/text-content.directive';
-import { NavigationFocusDirective } from './directives/navigation-focus.directive';
 import {
     FileExtensionFromMimePipe,
     FileIconClassPipe,
@@ -57,8 +56,7 @@ const wmComponents = [
     RedrawableDirective,
     ShowInDeviceDirective,
     SmoothScrollDirective,
-    TextContentDirective,
-    NavigationFocusDirective
+    TextContentDirective
 ];
 
 const PIPES = [
