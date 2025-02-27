@@ -104,8 +104,8 @@ class DatetimeWrapperComponent {
 }
 
 const dateComponentModuleDef: ITestModuleDef = {
-    declarations: [DatetimeWrapperComponent, DatetimeComponent],
-    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    declarations: [DatetimeWrapperComponent],
+    imports: [BrowserAnimationsModule, DatetimeComponent, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
@@ -378,8 +378,8 @@ describe("DatetimeComponent", () => {
 });
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
-    declarations: [DatetimeWrapperComponent, DatetimeComponent],
-    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    declarations: [DatetimeWrapperComponent],
+    imports: [BrowserAnimationsModule, DatetimeComponent, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
