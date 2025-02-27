@@ -37,15 +37,10 @@ const globPatternMoment = [];
 const globPatternFullCalendar = [];
 
 // Extract supported language configurations from wmProperties
-for (const lang in wmProperties.supportedLanguages) {
-    if (wmProperties.supportedLanguages.hasOwnProperty(lang)) {
-        const languageConfig = wmProperties.supportedLanguages[lang];
-
-        // Populate respective glob pattern arrays based on available configurations
-        if (languageConfig.angular) globPatternAngular.push(`${languageConfig.angular}.js`);
-        if (languageConfig.fullCalendar) globPatternFullCalendar.push(`${languageConfig.fullCalendar}.js`);
-        if (languageConfig.moment) globPatternMoment.push(`${languageConfig.moment}.js`);
-    }
+for (const languageConfig of Object.values(wmProperties.supportedLanguages)) {
+    if (languageConfig.angular) globPatternAngular.push(`${languageConfig.angular}.js`);
+    if (languageConfig.fullCalendar) globPatternFullCalendar.push(`${languageConfig.fullCalendar}.js`);
+    if (languageConfig.moment) globPatternMoment.push(`${languageConfig.moment}.js`);
 }
 
 /**
