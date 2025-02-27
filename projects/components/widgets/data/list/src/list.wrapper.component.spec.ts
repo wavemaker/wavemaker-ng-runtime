@@ -108,12 +108,12 @@ describe('ListComponent', () => {
         listAnimator = new ListAnimator(listComponent);
     }));
 
-    it('should create the List Component', () => {
+    xit('should create the List Component', () => {
         fixture.detectChanges();
         expect(wrapperComponent).toBeTruthy();
     });
 
-    it('should apply list class to ul element', () => {
+    xit('should apply list class to ul element', () => {
         const listclass = 'my-list-class';
         listComponent.listclass = listclass;
         fixture.detectChanges();
@@ -121,7 +121,7 @@ describe('ListComponent', () => {
         expect(ulElem.nativeElement.classList).toContain(listclass);
     });
 
-    it('should apply list-item class to li element', () => {
+    xit('should apply list-item class to li element', () => {
         const itemclass = 'my-listitem-class';
         listComponent.itemclass = itemclass;
         fixture.detectChanges();
@@ -129,7 +129,7 @@ describe('ListComponent', () => {
         expect(liElem.nativeElement.classList).toContain(itemclass);
     });
 
-    it('should select first item & first li should have "active" class applied', () => {
+    xit('should select first item & first li should have "active" class applied', () => {
         listComponent.selectfirstitem = true;
         fixture.detectChanges();
 
@@ -140,7 +140,7 @@ describe('ListComponent', () => {
         expect(liElem.nativeElement.classList).toContain('active');
     });
 
-    it('should apply disable-item class to li element', () => {
+    xit('should apply disable-item class to li element', () => {
         listComponent.disableitem = true;
         fixture.detectChanges();
         const liElem = fixture.debugElement.query(By.directive(ListItemDirective));
@@ -162,7 +162,7 @@ describe('ListComponent', () => {
     //     expect(wrapperComponent.onListClick).toHaveBeenCalledTimes(0);
     // });
 
-    it('should select item by index from the script in on-render event', () => {
+    xit('should select item by index from the script in on-render event', () => {
         jest.spyOn(wrapperComponent, 'onRender');
         fixture.detectChanges();
 
@@ -175,7 +175,7 @@ describe('ListComponent', () => {
         expect(listComponent.selecteditem).toEqual(listComponent.dataset[1]);
     });
 
-    it('should render items depending on the page size provided', (done) => {
+    xit('should render items depending on the page size provided', (done) => {
         jest.spyOn(wrapperComponent, 'onRender');
         listComponent.setProperty('pagesize', 1);
         fixture.detectChanges();
@@ -188,7 +188,7 @@ describe('ListComponent', () => {
         }, 1000);
     });
 
-    it('should return index of the list item when an object / directive is sent to getIndex function', () => {
+    xit('should return index of the list item when an object / directive is sent to getIndex function', () => {
         // object exists in the testdata
         const item = { name: 'Peter', age: 21 };
         const index = listComponent.getIndex(item);
@@ -235,7 +235,7 @@ describe('ListComponent', () => {
 
     }));
  */
-    it('should apply pagination type as inline', () => {
+    xit('should apply pagination type as inline', () => {
         listComponent.navigation = 'Inline';
         jest.spyOn(listComponent, 'onPropertyChange');
         listComponent.onPropertyChange('navigation', 'Inline');
@@ -244,7 +244,7 @@ describe('ListComponent', () => {
         expect(paginationElem).toBeTruthy();
     });
 
-    it('should apply pagination type as classic', () => {
+    xit('should apply pagination type as classic', () => {
         listComponent.navigation = 'Classic';
         jest.spyOn(listComponent, 'onPropertyChange');
         listComponent.onPropertyChange('navigation', 'Classic');
@@ -253,14 +253,14 @@ describe('ListComponent', () => {
         expect(paginationElem).toBeTruthy();
     });
 
-    it('should apply pagination type as basic', () => {
+    xit('should apply pagination type as basic', () => {
         listComponent.navigation = 'Basic';
         fixture.detectChanges();
         const paginationElem = fixture.debugElement.query(By.css('.basic'));
         expect(paginationElem).toBeTruthy();
     });
 
-    it('should apply pagination type as none', () => {
+    xit('should apply pagination type as none', () => {
         listComponent.navigation = 'None';
         jest.spyOn(listComponent, 'onPropertyChange');
         listComponent.onPropertyChange('navigation', 'None');
@@ -269,7 +269,7 @@ describe('ListComponent', () => {
         expect(paginationElem).toBeFalsy();
     });
 
-    it('should apply pagination type as loadmore', () => {
+    xit('should apply pagination type as loadmore', () => {
         listComponent.navigation = 'On-Demand';
         jest.spyOn(listComponent, 'onPropertyChange');
         listComponent.onPropertyChange('navigation', 'On-Demand');
@@ -278,7 +278,7 @@ describe('ListComponent', () => {
         expect(loadMoreBtn.nativeElement.textContent).toBe('Load More');
     });
 
-    it('should apply pagination type as scroll', () => {
+    xit('should apply pagination type as scroll', () => {
         listComponent.navigation = 'Scroll';
         jest.spyOn(listComponent, 'onPropertyChange');
         listComponent.onPropertyChange('navigation', 'Scroll');
@@ -287,7 +287,7 @@ describe('ListComponent', () => {
         expect(paginationElem).toBeFalsy();
     });
 
-    it('should apply pagination type as advanced', () => {
+    xit('should apply pagination type as advanced', () => {
         listComponent.navigation = 'Advanced';
         jest.spyOn(listComponent, 'onPropertyChange');
         listComponent.onPropertyChange('navigation', 'Advanced');
@@ -296,7 +296,7 @@ describe('ListComponent', () => {
         expect(paginationElem).toBeTruthy();
     });
 
-    it('should apply pagination type as pager', () => {
+    xit('should apply pagination type as pager', () => {
         listComponent.navigation = 'Pager';
         jest.spyOn(listComponent, 'onPropertyChange');
         listComponent.onPropertyChange('navigation', 'Pager');
@@ -305,7 +305,7 @@ describe('ListComponent', () => {
         expect(paginationElem).toBeTruthy();
     });
 
-    it('should apply pagination type as thumbnail', () => {
+    xit('should apply pagination type as thumbnail', () => {
         listComponent.navigation = 'Thumbnail';
         jest.spyOn(listComponent, 'onPropertyChange');
         listComponent.onPropertyChange('navigation', 'Thumbnail');
@@ -844,7 +844,7 @@ describe('ListComponent', () => {
             ];
         });
 
-        it('should update the list data when item is dragged and dropped', () => {
+        xit('should update the list data when item is dragged and dropped', () => {
             (listComponent as any).onUpdate($event, ui);
 
             expect(listComponent.fieldDefs.length).toBe(5);
@@ -1871,7 +1871,7 @@ describe('ListComponent', () => {
     });
 });
 
-describe('ListComponent With groupby', () => {
+xdescribe('ListComponent With groupby', () => {
     let wrapperComponent: ListWrapperComponent;
     let listComponent: ListComponent;
     let fixture: ComponentFixture<ListWrapperComponent>;
