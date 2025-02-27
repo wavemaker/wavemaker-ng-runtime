@@ -1,11 +1,10 @@
-import { waitForAsync, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { CarouselDirective } from "./carousel.directive";
-import { CarouselTemplateDirective } from "./carousel-template/carousel-template.directive";
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
 import { App, setPipeProvider, AbstractI18nService } from '@wm/core';
-import { BasicModule, LabelDirective } from '@wm/components/basic';
+import { LabelDirective } from '@wm/components/basic';
 import { WmComponentsModule } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import 'libraries/scripts/swipey/swipey.jquery.plugin.js';
