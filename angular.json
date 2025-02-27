@@ -32,13 +32,13 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "libraries/locales/",
-                "output": "/locales/"
+                "input": "libraries/locales/moment-timezone",
+                "output": "/locales/moment-timezone"
               },
               {
                 "glob": "**/*",
-                "input": "node_modules/@wavemaker/app-ng-runtime/locales/",
-                "output": "/locales/"
+                "input": "node_modules/@wavemaker/app-ng-runtime/locales/moment-timezone",
+                "output": "/locales/moment-timezone"
               },
               {
                 "glob": "**/*",
