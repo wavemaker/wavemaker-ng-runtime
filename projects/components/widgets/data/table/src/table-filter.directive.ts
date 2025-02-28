@@ -325,11 +325,34 @@ export class TableFilterSortDirective {
         }
         return data;
     }
+    // Function that checks if a given string is a valid date and returns the timestamp if it is, or NaN if it's not.
+    parseDateString(dateString) {
+        const timestamp = Date.parse(dateString);
+        if (!isNaN(timestamp)) {
+            return timestamp;
+        } else { // Since Date.parse() doesn't support all date formats, manually validating the date.
+            const parts = dateString?.split(/[-/\s]+/)?.map(Number) || [];
+            return  new Date(parts[2], parts[1] - 1, parts[0]).getTime();
+        }
+        return NaN;
+    }
 
     // Returns data sorted using sortObj
     getSortResult(data, sortObj) {
         if (sortObj && sortObj.direction) {
-            data = orderBy(data, sortObj.field, sortObj.direction);
+            const isValidDateString = this.parseDateString(get(find(data, sortObj.field), sortObj.field));
+            if (!isNaN(isValidDateString)) { // if the field is a date string
+                data = orderBy(data, [(item) => this.parseDateString(item[sortObj.field])], [sortObj.direction]);
+            } else if (this.table.columns[sortObj.field]?.caseinsensitive) {
+                //Fix for [WMS-27505]: Added case-insensitive sorting so that uppercase and lowercase letters are treated the same when sorting.
+                if (sortObj.direction === 'asc') {
+                    data = orderBy(data, [(item) => get(item, sortObj.field)?.toLowerCase(), (item) => item[sortObj.field]]);
+                } else {
+                    data = orderBy(data,[(item) => get(item, sortObj.field)?.toLowerCase(),(item) => item[sortObj.field]], ['desc', 'desc']);
+                }
+            } else {
+                data = orderBy(data, sortObj.field, sortObj.direction);
+            }
         }
         return data;
     }

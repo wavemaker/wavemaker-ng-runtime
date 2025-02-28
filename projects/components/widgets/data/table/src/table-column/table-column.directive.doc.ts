@@ -164,6 +164,10 @@ export class TableColumn {
      */
     @Input() sortable: boolean = true;
     /**
+     * This property is used to make sorting case-insensitive, treating uppercase and lowercase letters the same. e.g: A,a,B,b,C,c
+     */
+    @Input() caseinsensitive: boolean = false;
+    /**
      * Text to append to the start of each column data.
      */
     @Input() prefix: string;
