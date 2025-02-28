@@ -203,6 +203,7 @@ describe('wm-chips: Component Specific Tests', () => {
         fixture.detectChanges();
         applyIgnoreCaseMatchMode('exactignorecase', 'java', 'Java', done);
     });
+
     it('should add chipitems with "IS_EQUAL_WITH_IGNORE_CASE" matchmode with search key', (done) => {
         wmComponent.getWidget().dataset = wrapperComponent.testdata;
         wmComponent.getWidget().displayfield = 'name';
@@ -213,15 +214,17 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
 
-    it('should delete chip item', waitForAsync(() => {
+    it('should delete chip item', async () => {
         const testValue = 'Option 3';
-        addItem(testValue, 'keyup').then(() => {
+        addItem(testValue, 'keyup').then(async () => {
             expect(wmComponent.chipsList.length).toEqual(1);
             const chipItem = wmComponent.chipsList[0];
             chipItem.removeChipItem();
+            fixture.detectChanges();
+            await fixture.whenStable();
             expect(wmComponent.chipsList.length).toEqual(0);
         });
-    }));
+    });
 
     it('should trigger onArrowLeft when left arrow key is pressed', () => {
         wmComponent.readonly = true;
@@ -945,38 +948,64 @@ describe('wm-chips: Component Specific Tests', () => {
         });
     });
 
-    function applyIgnoreCaseMatchMode(matchMode, value1, value2, done) {
-        wmComponent.setProperty('matchmode', matchMode);
-        fixture.detectChanges();
-        addItem(value1, 'keyup').then(async () => {
+    function applyIgnoreCaseMatchMode(matchMode: string, value1: string, value2: string, done: jest.DoneCallback) {
+        try {
+            wmComponent.setProperty('matchmode', matchMode);
             fixture.detectChanges();
-            expect(wmComponent.chipsList.length).toEqual(1);
-            addItem(value2, 'keyup').then(() => {
-                expect(wmComponent.chipsList.length).toEqual(1);
-                done();
-            });
-        });
-    }
-    function applyMatchMode(matchMode, value1, value2) {
-        wmComponent.setProperty('matchmode', matchMode);
-        fixture.detectChanges();
-        addItem(value1, 'keyup').then(async () => {
-            fixture.detectChanges();
-            expect(wmComponent.chipsList.length).toEqual(1);
-            addItem(value2, 'keydown').then(() => {
-                expect(wmComponent.chipsList.length).toEqual(2);
-            });
-        });
+
+            addItem(value1, 'keyup')
+                .then(() => {
+                    fixture.detectChanges();
+                    expect(wmComponent.chipsList.length).toEqual(1);
+
+                    return addItem(value2, 'keyup');
+                })
+                .then(() => {
+                    fixture.detectChanges();
+                    expect(wmComponent.chipsList.length).toEqual(1);
+                    done();
+                })
+                .catch(error => {
+                    done.fail(error);
+                });
+        } catch (error) {
+            done.fail(error);
+        }
     }
 
-    function addItem(testValue, eventName) {
-        return setInputValue(fixture, '.app-search-input', testValue).then(async () => {
-            const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
-            const options = { 'key': 'Enter', 'keyCode': 13, 'code': 'Enter' };
-            input.dispatchEvent(new KeyboardEvent(eventName, options));
+    function applyMatchMode(matchMode: string, value1: string, value2: string) {
+        return async () => {
+            wmComponent.setProperty('matchmode', matchMode);
             fixture.detectChanges();
-            return await fixture.whenStable();
-        });
+            await addItem(value1, 'keyup');
+            fixture.detectChanges();
+            await fixture.whenStable();
+            console.log(`After adding ${value1}, chipsList length: ${wmComponent.chipsList.length}`);
+            expect(wmComponent.chipsList.length).toEqual(1);
+            await addItem(value2, 'keydown');
+            fixture.detectChanges();
+            await fixture.whenStable();
+            console.log(`After adding ${value2}, chipsList length: ${wmComponent.chipsList.length}`);
+            expect(wmComponent.chipsList.length).toEqual(2);
+        };
+    }
+
+    async function addItem(testValue: string, eventName: string) {
+        // Set input value
+        await setInputValue(fixture, '.app-search-input', testValue);
+
+        // Get input element
+        const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
+
+        // Create proper keyboard event
+        const options = { 'key': 'Enter', 'keyCode': 13, 'code': 'Enter', 'bubbles': true };
+        input.dispatchEvent(new KeyboardEvent(eventName, options));
+
+        // Ensure Angular processes the event
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        return fixture.whenStable();
     }
 
 });

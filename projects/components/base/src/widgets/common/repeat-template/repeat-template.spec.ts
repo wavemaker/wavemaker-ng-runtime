@@ -20,7 +20,8 @@ describe('RepeatTemplateDirective', () => {
         } as any;
 
         TestBed.configureTestingModule({
-            declarations: [TestComponent, RepeatTemplateDirective],
+            imports: [RepeatTemplateDirective],
+            declarations: [TestComponent],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: Injector, useValue: mockInjector },
