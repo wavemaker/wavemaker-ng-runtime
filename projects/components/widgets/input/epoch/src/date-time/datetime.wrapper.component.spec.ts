@@ -1024,8 +1024,8 @@ describe(('Datetime Component with Localization'), () => {
 
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
-    declarations: [DatetimeWrapperComponent, DatetimeComponent],
-    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    declarations: [DatetimeWrapperComponent],
+    imports: [BrowserAnimationsModule, DatetimeComponent, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },
