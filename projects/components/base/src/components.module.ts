@@ -20,6 +20,7 @@ import { CustomWidgetContainerDirective } from "./widgets/common/base/custom-wid
 import { RedrawableDirective } from './widgets/common/redraw/redrawable.directive';
 import { ShowInDeviceDirective } from './directives/show-in-device.directive';
 import { TextContentDirective } from './widgets/common/base/text-content.directive';
+import { NavigationFocusDirective } from './directives/navigation-focus.directive';
 import {
     FileExtensionFromMimePipe,
     FileIconClassPipe,
@@ -54,7 +55,8 @@ const wmComponents = [
     CustomWidgetContainerDirective,
     RedrawableDirective,
     ShowInDeviceDirective,
-    TextContentDirective
+    TextContentDirective,
+    NavigationFocusDirective
 ];
 
 const PIPES = [

@@ -169,3 +169,4 @@ export { StatePersistence } from './services/state-persistence.service';
 export { PaginationService } from './services/pagination.service';
 export * from './utils/wm-project-properties';
 export * from './utils/lru-cache';
+export * from './services/navigation-focus.service';
