@@ -28,7 +28,11 @@ register('wm-page-content', (): IBuildTaskDef => {
                 }
             }
         },
-        pre: attrs => `<${tagName} wmPageContent ${attrs.get('spa') && 'wmSpaPage' || ''} wmSmoothscroll="${attrs.get('smoothscroll') || 'false'}" ${getAttrMarkup(attrs)}>`,
+        pre: attrs => {
+            const pagefocus = attrs.get('pagefocus');
+            const focusOnNavigation = pagefocus === 'true' ? "focusOnNavigation" : ""
+            return `<${tagName} wmPageContent ${attrs.get('spa') && 'wmSpaPage' || ''} focusOnNavigation wmSmoothscroll="${attrs.get('smoothscroll') || 'false'}" ${getAttrMarkup(attrs)}>`
+        },
         post: () => `</${tagName}>`
     };
 });
