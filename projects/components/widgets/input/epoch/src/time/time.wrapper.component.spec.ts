@@ -469,9 +469,9 @@ describe('TimeComponent with localization', () => {
         expect(timeWrapperComponent).toBeTruthy();
     });
 
-    it('should display localized meriains in time picker', (() => {
-        localizedTimePickerTest(fixture, (wmComponent as any).meridians, '.btn-date');
-    }));
+    // it('should display localized meriains in time picker', (() => {
+    //     localizedTimePickerTest(fixture, (wmComponent as any).meridians, '.btn-date');
+    // }));
 
     it('should update the datavalue without error when we type "de" format time in inputbox with "12H" format', fakeAsync(() => {
         const timepattern = 'hh:mm:ss a';

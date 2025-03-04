@@ -8,8 +8,10 @@ export const registerProps = () => {
                 ['class', PROP_STRING],
                 ['closeothers', {value: true, ...PROP_BOOLEAN}],
                 ['content', PROP_STRING],
-                ['columnwidth', {value: '30px', ...PROP_STRING}],
+                ['columnwidth', {value: '50px', ...PROP_STRING}],
                 ['collapseicon', PROP_STRING],
+                ['collapsetitle', PROP_STRING],
+                ['expandtitle', PROP_STRING],
                 ['expandicon', PROP_STRING],
                 ['height', PROP_STRING],
                 ['position', {value: '0', ...PROP_STRING}]

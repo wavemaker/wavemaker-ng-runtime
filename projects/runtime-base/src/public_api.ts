@@ -7,6 +7,7 @@ export * from './services/app.manager.service';
 export * from './services/prefab-manager.service';
 export * from './components/base-page.component';
 export * from './components/base-partial.component';
+export * from './components/base-custom-widget.component';
 export * from './components/base-prefab.component';
 export * from './components/base-layout.component';
 export * from './components/base-spa-page.component'
@@ -49,7 +50,7 @@ export * from './services/http-interceptor.services';
 export * from './services/i18n.service';
 export * from './services/navigation.service';
 export * from './services/pipe-provider.service';
-export * from './services/pipe.service'
+export * from './services/pipe.service';
 export {
     PrefabManagerService
 } from './services/prefab-manager.service';

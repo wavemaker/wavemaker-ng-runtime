@@ -2,7 +2,7 @@ import { Injector, ModuleWithProviders, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy, RouterModule } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
@@ -19,7 +19,7 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
 import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 
-import {App, getWmProjectProperties, PartialRefProvider} from '@wm/core';
+import {App, getWmProjectProperties, PartialRefProvider, CustomWidgetRefProvider} from '@wm/core';
 // Basic widgets
 
 import { BasicModule } from '@wm/components/basic';
@@ -77,6 +77,7 @@ import { PopoverModule } from '@wm/components/navigation/popover';
 import { CarouselModule } from '@wm/components/advanced/carousel';
 import { LoginModule } from '@wm/components/advanced/login';
 import { MarqueeModule } from '@wm/components/advanced/marquee';
+import { CustomModule } from '@wm/components/advanced/custom';
 
 import { PageModule } from '@wm/components/page';
 import { FooterModule } from '@wm/components/page/footer';
@@ -95,6 +96,7 @@ import {
     PrefabConfigProvider,
     WmRouteReuseStrategy,
     WM_MODULES_FOR_ROOT,
+    CustomwidgetConfigProvider,
     REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS,
     AppExtensionProvider
 } from '@wm/runtime/base';
@@ -105,14 +107,24 @@ import { AppJSProviderService } from './services/app-js-provider.service';
 import { AppVariablesProviderService } from './services/app-variables-provider.service';
 import { AppExtensionProviderService } from './services/app-extension.service';
 import { ComponentRefProviderService } from './services/component-ref-provider.service';
+import { CustomwidgetConfigProviderService } from './services/customwidget-config-provider.service';
 import { PrefabConfigProviderService } from './services/prefab-config-provider.service';
 import { AppResourceManagerService } from './services/app-resource-manager.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { XsrfConfigModule } from './xsrfconfig.module';
 
 export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });
 
+// In angular 15, xsrf headerName should not be null. Angular 15 is not using default header value like it used to send in calls
+// for angular 12 if the headerName is null . The user has to take care of not sending null values. Then ng 15 uses default value for headerName
+let xsrfHeaderName = getWmProjectProperties().xsrf_header_name;
+let xsrfOptions = {
+    cookieName: 'wm_xsrf_token'
+}
+if(xsrfHeaderName) {
+    xsrfOptions['headerName'] = xsrfHeaderName;
+}
+export const httpClientXsrfModule = HttpClientXsrfModule.withOptions(xsrfOptions);
 
 export const modalModule: ModuleWithProviders<ModalModule> = ModalModule.forRoot();
 export const bsDatePickerModule: ModuleWithProviders<BsDatepickerModule> = BsDatepickerModule.forRoot();
@@ -193,6 +205,7 @@ const componentsModule = [
     CarouselModule,
     LoginModule,
     MarqueeModule,
+    CustomModule,
 
     PageModule,
     FooterModule,
@@ -233,7 +246,7 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
 
         routerModule,
         toastrModule,
-        XsrfConfigModule,
+        httpClientXsrfModule,
         MobileRuntimeDynamicModule,
         WM_MODULES_FOR_ROOT
     ],
@@ -244,6 +257,8 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule, ReactiveFormsModule);
         { provide: AppExtensionProvider,useClass:AppExtensionProviderService},
         { provide: ComponentRefProvider, useClass: ComponentRefProviderService },
         { provide: PartialRefProvider, useClass: ComponentRefProviderService },
+        { provide: CustomWidgetRefProvider, useClass: ComponentRefProviderService },
+        { provide: CustomwidgetConfigProvider, useClass: CustomwidgetConfigProviderService },
         { provide: PrefabConfigProvider, useClass: PrefabConfigProviderService },
         { provide: RouteReuseStrategy, useClass: WmRouteReuseStrategy },
     ],

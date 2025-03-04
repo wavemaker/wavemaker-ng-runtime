@@ -11,6 +11,15 @@ import { MockAbstractI18nService } from './util/date-test-util';
 
 declare const moment;
 
+jest.mock('@wm/core', () => ({
+    ...jest.requireActual('@wm/core'),
+    _WM_APP_PROJECT: {
+        isPreview: true,
+        cdnUrl: 'undefined'
+    },
+    transformFileURI: jest.fn(url => url)
+}));
+
 @Component({
     template: '<div></div>'
 })
@@ -610,9 +619,7 @@ describe('fileExtensionFromMime pipe', () => {
     });
 });
 
-
 describe('Image pipe', () => {
-
     let fixture: ComponentFixture<PipeWrapperComponent>;
     let pipe: ImagePipe;
     beforeEach(() => {

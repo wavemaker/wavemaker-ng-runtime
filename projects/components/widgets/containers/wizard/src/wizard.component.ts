@@ -2,16 +2,26 @@ import {
     AfterContentInit,
     AfterViewInit,
     Component,
+    ContentChild,
     ContentChildren,
     Inject,
     Injector,
     OnInit,
     Optional,
-    QueryList
+    QueryList,
+    Self,
+    TemplateRef
 } from '@angular/core';
 
 import {noop} from '@wm/core';
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, StylableComponent } from '@wm/components/base';
+import {
+    APPLY_STYLES_TYPE,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    styler,
+    StylableComponent,
+    Context
+} from '@wm/components/base';
 
 import { registerProps } from './wizard.props';
 import { WizardStepDirective } from './wizard-step/wizard-step.directive';
@@ -26,23 +36,31 @@ const WIDGET_CONFIG: IWidgetConfig = {
     selector: 'div[wmWizard]',
     templateUrl: './wizard.component.html',
     providers: [
-        provideAsWidgetRef(WizardComponent)
+        provideAsWidgetRef(WizardComponent),
+        {provide: Context, useFactory: () => { return {} }, multi: true}
     ]
 })
 export class WizardComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit {
     static initializeProps = registerProps();
 
     @ContentChildren(WizardStepDirective) steps: QueryList<WizardStepDirective>;
+    @ContentChild('wizardAction', { read: TemplateRef, descendants: false }) wizardAction: TemplateRef<any>;
 
     public message: {caption: string, type: string};
     public currentStep: WizardStepDirective;
 
     public stepClass: string;
     public class;
+    public name;
     private readonly promiseResolverFn: Function;
     public actionsalignment: any;
     public cancelable: any;
     public enablenext: any;
+    public wizContext: any;
+    public cancelbtnlabel: any;
+    public donebtnlabel: any;
+    public previousbtnlabel: any;
+    public nextbtnlabel: any;
 
     get hasPrevStep(): boolean {
         return !this.isFirstStep(this.currentStep);
@@ -80,7 +98,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         return this.currentStep.enableDone && this.currentStep.isValid;
     }
 
-    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, @Self() @Inject(Context) contexts: Array<any>, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         let resolveFn: Function = noop;
 
         super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
@@ -93,6 +111,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             caption: '',
             type: ''
         };
+        this.wizContext = contexts[0];
     }
 
     /**
@@ -348,6 +367,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         return this.steps.last === stepRef;
     }
 
+
     // Define the property change handler. This Method will be triggered when there is a change in the widget property
     onPropertyChange(key: string, nv: any, ov?: any) {
         // Monitoring changes for properties and accordingly handling respective changes
@@ -356,6 +376,8 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             this.stepClass =  nv === 'justified' ? 'nav-justified' : '';
         } else if (key === 'defaultstep') {
             this.setDefaultStep(this.getStepRefByName(nv));
+        } else if (key === 'actionsalignment') {
+            this.nativeElement.querySelector('div.app-wizard-actions')?.classList.replace(ov, nv);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -364,6 +386,24 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     ngAfterContentInit() {
         super.ngAfterContentInit();
         this.promiseResolverFn();
+        this.wizContext.hasNextStep = () => this.hasNextStep;
+        this.wizContext.hasPreviousStep = () => this.hasPrevStep;
+        this.wizContext.hasNoNextStep = () => this.showDoneBtn;
+        this.wizContext.cancelable = () => this.cancelable;
+        this.wizContext.skippable = () => this.currentStep?.enableskip;
+        this.wizContext.next = () => this.next();
+        this.wizContext.previous = () => this.prev();
+        this.wizContext.done = () => this.done();
+        this.wizContext.cancel = () => this.cancel();
+        this.wizContext.skip = () => this.skip();
+        this.wizContext.nextbtnlabel = () => this.nextbtnlabel;
+        this.wizContext.previousbtnlabel = () => this.previousbtnlabel;
+        this.wizContext.donebtnlabel = () => this.donebtnlabel;
+        this.wizContext.cancelbtnlabel = () => this.cancelbtnlabel;
+        this.wizContext.actionsalignment = () => this.actionsalignment;
+        this.wizContext.disableNext = () => !this.enableNext;
+        this.wizContext.disablePrevious = () => !this.enablePrev;
+        this.wizContext.disableDone = () => !this.enableDone;
     }
 
     ngAfterViewInit() {
@@ -373,9 +413,11 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             this,
             APPLY_STYLES_TYPE.INNER_SHELL
         );
-        setTimeout(() => { if($(window).width()<768){
+        setTimeout(() => { if($(window).width()<768) {
             $(".app-wizard").removeClass("vertical");
-      }
-    });
+        }
+        this.nativeElement.querySelector('div.app-wizard-actions-right')?.classList.remove('app-container');
+        this.nativeElement.querySelector('div.app-wizard-actions')?.classList.add(this.actionsalignment);
+        });
     }
 }

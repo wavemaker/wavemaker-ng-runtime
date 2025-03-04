@@ -42,6 +42,8 @@ cp ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js libraries/scrip
 mkdir -p libraries/scripts/tree-keyboard-navigation/
 cp projects/components/widgets/basic/tree/src/keyboard-navigation.js libraries/scripts/tree-keyboard-navigation/
 
+cp -r dist/bundles/wmapp/locales libraries
+
 node --trace-warnings node_modules/.bin/rollup -c ./config/rollup.build-task.mjs
 
 cp ./wm.package.json libraries/package.json
@@ -74,4 +76,3 @@ else
 
     cd -
 fi
-

@@ -59,6 +59,7 @@ export class DateComponent extends BaseDateTimeComponent {
     private showdateformatasplaceholder = false;
     mask;
     private maskDateInputFormat;
+    private maskDateInputFormatPlaceholder;
 
     get timestamp() {
         return this.bsDataValue ? this.bsDataValue.valueOf() : undefined;
@@ -131,10 +132,16 @@ export class DateComponent extends BaseDateTimeComponent {
             this.isEnterPressedOnDateInput = false;
             return;
         }
-        const newVal = getDateObj($event.target.value, {pattern: this.datepattern, isNativePicker: isNativePicker});
+        let inputVal = $event.target.value;
+        // When the input is cleared, the input value becomes maskDateInputFormatPlaceholder. This causes a validation error.
+        // When the input value is equal to maskDateInputFormatPlaceholder, it means that the input is in an empty state.
+        if(this.showdateformatasplaceholder && inputVal === this.maskDateInputFormatPlaceholder) {
+            inputVal = "";
+        }
+        const newVal = getDateObj(inputVal, {pattern: this.datepattern, isNativePicker: isNativePicker});
         // date pattern validation
         // if invalid pattern is entered, device is showing an error.
-        if (!this.formatValidation(newVal, $event.target.value, isNativePicker)) {
+        if (!this.formatValidation(newVal, inputVal, isNativePicker)) {
             return;
         }
         // min date and max date validation in mobile view.
@@ -272,7 +279,10 @@ export class DateComponent extends BaseDateTimeComponent {
                 const newVal = getDateObj(event.target.value, {pattern: this.datepattern});
                 event.preventDefault();
                 const formattedDate = getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this);
-                const inputVal = event.target.value.trim();
+                let inputVal = event.target.value.trim();
+                if (this.showdateformatasplaceholder && inputVal === this.maskDateInputFormatPlaceholder) {
+                    inputVal = "";
+                }
                 if (inputVal && this.datepattern === 'timestamp') {
                     if (!isNaN(inputVal) && parseInt(inputVal) !== formattedDate) {
                         this.invalidDateTimeFormat = true;
@@ -284,7 +294,7 @@ export class DateComponent extends BaseDateTimeComponent {
                 } else {
                     this.invalidDateTimeFormat = false;
                     this.isEnterPressedOnDateInput = true;
-                    this.bsDatePickerDirective.bsValue =  event.target.value ? newVal : '';
+                    this.bsDatePickerDirective.bsValue =  inputVal ? newVal : '';
                     this.updateIMask();
                 }
                 this.toggleDpDropdown(event);
@@ -323,6 +333,7 @@ export class DateComponent extends BaseDateTimeComponent {
                 this.maskDateInputFormat = this.dateInputFormat;
                 this.maskDateInputFormat = (this.dateInputFormat.split('d').length - 1) === 1 ? this.maskDateInputFormat.replace('d', 'dd') : this.maskDateInputFormat;
                 this.maskDateInputFormat = (this.dateInputFormat.split('M').length - 1) === 1 ? this.maskDateInputFormat.replace('M', 'MM') : this.maskDateInputFormat;
+                this.maskDateInputFormatPlaceholder = this.maskDateInputFormat.toUpperCase().replace('EEEE', 'EEEEEE').replace('MMMM', 'MMM');
                 this.updateIMask();
             }
         } else {

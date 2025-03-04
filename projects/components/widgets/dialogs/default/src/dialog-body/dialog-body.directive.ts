@@ -2,7 +2,7 @@ import { Directive, ElementRef, HostBinding, Inject, Renderer2 } from '@angular/
 
 import { BsModalService } from 'ngx-bootstrap/modal';
 
-import { addClass, setAttr, setCSS } from '@wm/core';
+import { addClass, getSheetPositionClass, setAttr, setCSS } from '@wm/core';
 
 import { DialogRef } from '@wm/components/base';
 
@@ -25,6 +25,7 @@ export class DialogBodyDirective {
 
         const subscription = bsModal.onShown.subscribe(() => {
             const dialogRoot = $(elRef.nativeElement).closest('.app-dialog')[0];
+            const dialogContent = $(elRef.nativeElement).closest('.modal-content')[0];
             let dialogRootContainer = $('body.wm-app')[0];
             // To identify the microfrontend, if body tag doesn't have wm-app class then app loading as micro-frontend
             if(!dialogRootContainer) {
@@ -38,6 +39,17 @@ export class DialogBodyDirective {
                     this.renderer.appendChild(dialogRootContainer, parentContainer);
 
                }
+            }
+            const isSheet = this.dialogRef.sheet;
+            const sheetPosition = this.dialogRef.sheetPosition;
+            if(isSheet) {
+                $(dialogRoot).addClass('modal-sheet');
+                $(dialogRoot).addClass(getSheetPositionClass(sheetPosition));
+            }
+            const animation = this.dialogRef.animation;
+            if(animation) {
+                $(dialogContent).addClass('animated');
+                $(dialogContent).addClass(animation);
             }
             const width = this.dialogRef.width;
             const height = this.dialogRef.height;

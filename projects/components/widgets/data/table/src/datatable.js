@@ -20,6 +20,7 @@ $.widget('wm.datatable', {
         enableSort: true,
         filtermode: '',
         filteronkeypress: false,
+        caseinsensitive: false,
         activeRow: undefined,
         isrowselectable: false,
         height: '100%',
@@ -71,7 +72,7 @@ $.widget('wm.datatable', {
         rowDef: {
             position: '0',
             closeothers: false,
-            columnwidth: '30px'
+            columnwidth: '50px'
         },
         summaryRow: false,
         summaryRowDefs: [],
@@ -121,7 +122,7 @@ $.widget('wm.datatable', {
             'style': 'text-align: center;',
             'textAlignment': 'center',
             'show': true,
-            'width': '30px'
+            'width': '50px'
         },
         'rowIndex': {
             'field': 'rowIndex',
@@ -329,7 +330,7 @@ $.widget('wm.datatable', {
             $th.addClass(headerClasses);
             /* For custom columns, show display name if provided, else don't show any label. */
             if (field === 'checkbox') {
-                $th.append('<input type="checkbox" />');
+                $th.append(self._getCheckbox());
             }
             if (field === 'radio') {
                 $th.attr('aria-label', "Select row");
@@ -582,16 +583,10 @@ $.widget('wm.datatable', {
             $tbody.append(rowTemplate);
             if (self.options.rowExpansionEnabled) {
                 var rowHeight = self.options.rowDef.height;
-                var rowPosition = self.options.rowDef.position;
-                var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length - 1;
-                var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td></td><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
+                var colSpanLength = _.filter(self.preparedHeaderData, function(c) {return c.show}).length;
+                var $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
                     '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
                     '</td></tr>');
-                if(rowPosition === "-1"){
-                    $tr = $('<tr class="app-datagrid-detail-row" tabindex="0" role="row" data-row-id="' + row.$$pk + '"><td colspan="' + colSpanLength + '" class="app-datagrid-row-details-cell">' +
-                    '<div class="row-overlay"><div class="row-status"><i class="' + self.options.loadingicon + '"></i></div></div><div class="details-section"></div>' +
-                    '</td><td></td></tr>');
-                }
                 if (rowHeight) {
                     $tr.find('div.row-overlay').css('min-height', rowHeight);
                 }
@@ -646,15 +641,40 @@ $.widget('wm.datatable', {
     _getCheckboxTemplate: function (row, isMultiSelectCol) {
         var checked = row._checked === true ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '',
-            chkBoxName = isMultiSelectCol ? 'gridMultiSelect' : '';
-        return '<input name="' + chkBoxName + '" type="checkbox"' + checked + disabled + '/>';
+            chkBoxName = isMultiSelectCol ? 'gridMultiSelect' : '',
+            labelClass = row._checked === true ? '' : 'unchecked';
+
+        return this._getCheckbox(labelClass, chkBoxName, checked, disabled);
     },
 
+    /* Return checkbox literal */
+    _getCheckbox: function (labelClass = '', chkBoxName = '', checked = '', disabled = '') {
+        return `<div class="app-checkbox checkbox">
+        <label class="${labelClass}">
+            <span class="sr-only" aria-live="assertive">${this._getCheckboxLabel(chkBoxName)}</span>
+            <input type="checkbox" name="${chkBoxName}" ${checked} ${disabled} role="checkbox">
+            <span class="caption"></span>
+        </label>
+    </div>`
+    },
+
+    _getCheckboxLabel: function (chkBoxName) {
+        if (chkBoxName) { // it is a row
+            return 'Select row';
+        } else {
+            return 'Select all rows';
+        }
+    },
     /* Returns the radio template. */
     _getRadioTemplate: function (row) {
         var checked = row._checked === true ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '';
-        return '<input type="radio" rowSelectInput name="" value=""' + checked + disabled + '/>';
+        return `<div class="radio app-radio">
+            <label>
+                <input type="radio" rowSelectInput name="" value="" ${checked} ${disabled}>
+                <span class="caption"></span>
+            </label>
+        </div>`;
     },
 
     /* Returns the table cell template. */
@@ -1638,6 +1658,7 @@ $.widget('wm.datatable', {
         if (this.options.multiselect) {
             $checkbox = $row.find('td input[name="gridMultiSelect"]:checkbox:not(:disabled)');
             $checkbox.prop('checked', selected);
+            $checkbox.siblings('span.sr-only').text(selected ? 'Row Selected' : 'Row Deselected');
             this.preparedData[rowId]._checked = selected;
             // if we check header checkbox(select/unselect all the records) then updating selectAll checkbox state is not required.
             if (!isSelectAll) {
@@ -1968,6 +1989,12 @@ $.widget('wm.datatable', {
             if (!colDef.readonly) {
                 value = _.get(rowData, colDef.field);
                 editableTemplate = self.options.getInlineEditWidget(colDef.field, value, alwaysNewRow);
+                // Fix for [WMS-27289]: In Edit mode (inline and quick edit),
+                // pressing the Tab key initially focuses on the `<td>` element, and pressing Tab again moves the focus to the input widget.
+                // To address this, the `tabindex` and `title` attributes are removed from the `<td>` element during Edit mode
+                // and are re-applied when switching back to View mode.
+                $el.removeAttr('title');
+                $el.removeAttr('tabindex');
                 if (!(colDef.customExpression || (colDef.formatpattern && colDef.formatpattern !== 'None'))) {
                     $el.addClass('cell-editing').html(editableTemplate).data('originalText', cellText);
                 } else {
@@ -2251,6 +2278,8 @@ $.widget('wm.datatable', {
                 }
             } else {
                 if (isNewRow) {
+                    // close the typeahead dropdown when cancel btn is clicked
+                    $("typeahead-container").removeClass("open");
                     self.removeNewRow($row);
                     return;
                 }
@@ -2276,9 +2305,12 @@ $.widget('wm.datatable', {
         $editableElements.each(function () {
             var $el = $(this),
                 value = $el.data('originalValue');
+            // Fix for [WMS-27289]: Reassigning `tabindex` and `title` attributes to the `<td>` element when the cancel button is clicked in Edit mode.
+            $el.attr('tabindex', 0);
             $el.removeClass('datetime-wrapper cell-editing required-field form-group');
             if (!value) {
                 $el.text($el.data('originalText') || '');
+                $el.attr('title', $el.text());
             } else {
                 $el.html(self.options.getCustomExpression(value.fieldName, value.rowIndex));
             }
@@ -2325,11 +2357,14 @@ $.widget('wm.datatable', {
                 value = $el.data('originalValue'),
                 text,
                 colDef;
+            //Fix for [WMS-27289]: Reassigning `tabindex` and `title` attributes to the `<td>` element when the save button is clicked in Edit mode.
+            $el.attr('tabindex', 0);
             $el.removeClass('datetime-wrapper cell-editing required-field form-group');
             if (!value) {
                 colDef = self.preparedHeaderData[$el.attr('data-col-id')];
                 text = self.getTextValue(colDef.field);
                 $el.text(self.Utils.isDefined(text) ? text : '');
+                $el.attr('title', $el.text());
             } else {
                 $el.html(self.options.getCustomExpression(value.fieldName, value.rowIndex));
             }
@@ -2723,6 +2758,11 @@ $.widget('wm.datatable', {
         var colId = column.attr('data-col-id');
         return colId;
     },
+    keydownHandler: function(event) {
+        if (event && event.key === 'Enter') {
+            this.sortHandler(event);
+        }
+    },
     /* Attaches all event handlers for the table. */
     attachEventHandlers: function ($htm) {
         var $header = this.gridHeaderElement,
@@ -2751,9 +2791,13 @@ $.widget('wm.datatable', {
                 if (this.options.enableColumnSelection) {
                     $header.find('th[data-col-sortable] .header-data').off('click', this.sortHandler.bind(this));
                     $header.find('th[data-col-sortable] .header-data').on('click', this.sortHandler.bind(this));
+                    $header.find('th[data-col-sortable]').off('keydown', this.keydownHandler.bind(this));
+                    $header.find('th[data-col-sortable]').on('keydown', this.keydownHandler.bind(this));
                 } else {
                     $header.find('th[data-col-sortable]').off('click', this.sortHandler.bind(this));
                     $header.find('th[data-col-sortable]').on('click', this.sortHandler.bind(this));
+                    $header.find('th[data-col-sortable]').off('keydown', this.keydownHandler.bind(this));
+                    $header.find('th[data-col-sortable]').on('keydown', this.keydownHandler.bind(this));
                 }
             } else {
                 if (this.options.enableColumnSelection) {
@@ -2875,6 +2919,7 @@ $.widget('wm.datatable', {
         }
         if (isClosed) {
             $row.addClass(self.options.cssClassNames.expandedRowClass);
+            $row.find( 'button, a').attr('title', self.options.rowDef.collapsetitle);
             $row.find( 'button, a').attr('aria-expanded', 'true');
             if (e && self.preparedData[rowId]._selected) {
                 e.stopPropagation();
@@ -2897,6 +2942,7 @@ $.widget('wm.datatable', {
                     $nextDetailRow.show();
                 });
         } else {
+            $row.find( 'button, a').attr('title', self.options.rowDef.expandtitle);
             self._collapseRow(e, rowData, rowId, $nextDetailRow, $icon);
         }
     },
@@ -3021,7 +3067,9 @@ $.widget('wm.datatable', {
 
         function toggleSelectAll(e) {
             var $checkboxes = $('tr.app-datagrid-row:not(.always-new-row):visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),
-                checked = this.checked;
+                checked = this.checked,
+                $headerCheckbox = self.gridHeaderElement.find("th.app-datagrid-header-cell input:checkbox");
+            $headerCheckbox.siblings('span.sr-only').text(checked ? 'All Rows Selected' : 'All Rows Deselected');
             $checkboxes.prop('checked', checked);
             $checkboxes.each(function () {
                 var $row = $(this).closest('tr.app-datagrid-row'),
@@ -3453,8 +3501,11 @@ $.widget('wm.datatable', {
 
     applyColNgClass: function (val, rowIndex, colIndex) {
         var $cell = this.gridElement.find('tr.app-datagrid-row[data-row-id="' + rowIndex + '"] td.app-datagrid-cell[data-col-id="' + colIndex + '"]');
+        var $head = this.tableContainer.find('thead tr th.app-datagrid-header-cell[data-col-id="' + colIndex + '"]');
         $cell.removeClass(val.toRemove);
         $cell.addClass(val.toAdd);
+        $head.removeClass(val.toRemove);
+        $head.addClass(val.toAdd);
     },
 
     _destroy: function () {

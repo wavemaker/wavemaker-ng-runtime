@@ -104,8 +104,15 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         $firstInput.select();
     }
 
-    onDialogOpen() {
-        this.focusFirstInput();
+    onDialogOpen(action) {
+        if (action == 'update') {
+            const firstFormField = $("form [wmformfield]").first();
+            if (firstFormField.find("div[widget='autocomplete']").length != 1) { // prevent focusing first form field if widget is  autocomplete
+                this.focusFirstInput();
+            }
+        } else {
+            this.focusFirstInput();
+        }
     }
 
     setFormData(val) {
@@ -121,7 +128,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         this.form.new();
 
         if (this.isLayoutDialog) {
-            this.onDialogOpen();
+            this.onDialogOpen('add');
         }
     }
 
@@ -142,7 +149,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
 
         if (this.isLayoutDialog) {
             this.form.isUpdateMode = (eventName === 'dblclick') ? this.form.updateMode : true;
-            this.onDialogOpen();
+            this.onDialogOpen('update');
         }
     }
 

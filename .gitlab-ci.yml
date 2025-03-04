@@ -65,13 +65,21 @@ unit_tests:
   script:
     - node --version
     - npm --version
-    - rm -rf ../wavemaker-ui-variables ; git clone --depth 1 https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/wavemaker-ui-variables.git ../wavemaker-ui-variables
+    - rm -rf ../wavemaker-ui-variables ; git clone --depth 1 --branch $CI_MERGE_REQUEST_TARGET_BRANCH_NAME https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/wavemaker-ui-variables.git ../wavemaker-ui-variables
     - cd ../wavemaker-ui-variables ; npm install ; npm install --save-dev @types/babel__core @types/babel__generator @types/babel__template @types/babel__traverse @types/graceful-fs @types/istanbul-lib-coverage @types/istanbul-lib-report @types/istanbul-reports @types/stack-utils @types/yargs @types/yargs-parser
+    - npm i yalc -g
     - npm run build 
+    - rm -rf ../custom-widgets-m3 ; git clone --depth 1 --branch $CI_MERGE_REQUEST_TARGET_BRANCH_NAME https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/custom-widgets-m3.git ../custom-widgets-m3
+    - cd ../custom-widgets-m3 ; npm install ;
+    - npm run build 
+    - rm -rf ../wavemaker-foundation-css ; git clone --depth 1 --branch $CI_MERGE_REQUEST_TARGET_BRANCH_NAME https://oauth2:$GITLAB_TOKEN@gitlab.wavemaker.com/wm-eng/wavemaker-foundation-css.git ../wavemaker-foundation-css
+    - cd ../wavemaker-foundation-css ; npm install ;
+    - npm run build
     - cd ../wavemaker-ng-runtime
     - npm install 
-    - npm i yalc -g
     - yalc add @wavemaker/variables
+    - yalc add @wavemaker/custom-widgets-m3
+    - yalc add @wavemaker/foundation-css
     - bash build.sh
     - bash bundle-runtime-cli.sh
     - echo "npm_test starting"

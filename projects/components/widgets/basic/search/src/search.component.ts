@@ -94,6 +94,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     public binddisplaylabel: string;
     public typeaheadContainer: TypeaheadContainerComponent;
     public containerTarget: string;
+    public clearsearchiconclass: string;
+    public backsearchiconclass: string;
+    public searchiconclass: string;
 
     @ViewChild(TypeaheadDirective) typeahead: TypeaheadDirective;
     @ViewChild('ulElement') ulElement: ElementRef;

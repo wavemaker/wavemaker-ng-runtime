@@ -93,6 +93,7 @@ export * from './widgets/common/video/video.build';
 export * from './widgets/common/wizard/wizard.build';
 export * from './widgets/common/wizard/wizard-step/wizard-step.build';
 export * from './widgets/common/file-upload/file-upload.build';
+export * from './widgets/common/custom-widget/custom-widget.build';
 
 export * from '@wm/transpiler';
 

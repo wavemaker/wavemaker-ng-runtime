@@ -222,11 +222,11 @@ export class AppManagerService {
         const supportedLocaleVar = get(this.$app, 'Variables.supportedLocale');
     }
 
-    handleSSOLogin(config) {
+    handleSSOLogin(config, options) {
         const SSO_URL = 'services/security/ssologin',
             PREVIEW_WINDOW_NAME = 'WM_PREVIEW_WINDOW';
         let page,
-            pageParams;
+            queryParams;
 
         // do not provide redirectTo page if fetching HOME page resulted 401
         // on app load, by default Home page is loaded
@@ -247,12 +247,17 @@ export class AppManagerService {
                 });
         } else {
             page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
-            pageParams = this.$security.getQueryString(this.$security.getRedirectedRouteQueryParams());
-            pageParams = pageParams ? '?' + pageParams : '';
+            /*
+             * For preview, this.$security.getRedirectedRouteQueryParams() gets the queryparams form the activated route(pagewrappercomponent)
+             * For deployed app, canactivate guard resolved to false and gets the queryparams from the canactivate gurard(no active route component)
+             */
+            queryParams = (options && options.queryParams) || this.$security.getRedirectedRouteQueryParams();
+            queryParams = this.$security.getQueryString(queryParams);
+            queryParams = queryParams ? '?' + queryParams : '';
             // showing a redirecting message
             document.body.textContent = get(this.getAppLocale(), ['MESSAGE_LOGIN_REDIRECTION']) || 'Redirecting to sso login...';
             // appending redirect to page and page params
-            const ssoUrl = this.getDeployedURL() + SSO_URL + page + pageParams;
+            const ssoUrl = this.getDeployedURL() + SSO_URL + page + queryParams;
             /*
              * remove iFrame when redirected to IdP login page.
              * this is being done as IDPs do not allow to get themselves loaded into iFrames.
@@ -324,7 +329,7 @@ export class AppManagerService {
                     }
                     break;
                 case LOGIN_METHOD.SSO:
-                    this.handleSSOLogin(config);
+                    this.handleSSOLogin(config, options);
                     break;
             }
             this.setLandingPage();
@@ -349,7 +354,7 @@ export class AppManagerService {
                     this.$app.landingPageName = loginConfig.pageName;
                     break;
                 case LOGIN_METHOD.SSO:
-                    this.handleSSOLogin(config);
+                    this.handleSSOLogin(config, options);
                     break;
             }
         }

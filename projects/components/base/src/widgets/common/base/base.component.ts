@@ -41,7 +41,7 @@ import {widgetIdGenerator} from '../../framework/widget-id-generator';
 import {DISPLAY_TYPE, EVENTS_MAP} from '../../framework/constants';
 import {WidgetProxyProvider} from '../../framework/widget-proxy-provider';
 import {getWatchIdentifier} from '../../../utils/widget-utils';
-import {camelCase, extend, forEach, isArray, isObject, join, map} from "lodash-es";
+import {camelCase, extend, forEach, isArray, isObject, join, last, map} from "lodash-es";
 
 declare const $;
 
@@ -68,6 +68,11 @@ const updateStyles = (nv, ov, el) => {
     }
 
 };
+
+interface Child {
+    widget: any,
+    nativeElement: any
+}
 
 @Injectable()
 export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit, AfterContentInit {
@@ -196,10 +201,12 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      */
     public trackId: string;
 
+    customWidgetSubType: string;
+
     protected constructor(
         protected inj: Injector,
         @Inject(WidgetConfig) config: IWidgetConfig,
-        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext?: any,
         initPromise?: Promise<any> // Promise on which the initialization has to wait
     ) {
         const elementRef = inj.get(ElementRef);
@@ -273,9 +280,16 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             this.initWidget();
         } else {
             this.delayedInit = true;
-            initPromise.then(() => {
+            initPromise.then((resolveFn) => {
+                let formFieldCW = this.widgetSubType === 'wm-form-field-custom-widget',
+                    cw          = this.widgetSubType.startsWith('wm-custom-');
+                if( formFieldCW || cw ) {
+                    this.customWidgetSubType = formFieldCW ? 'wm-form-field-' + last(this["formWidget"].config.widgetType.split('-')) : this["config"].widgetType;
+                }
+
                 this.initWidget();
                 this.setInitProps();
+                resolveFn && resolveFn()
             });
         }
         if(explicitContext) {
@@ -452,6 +466,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         }  else if (key === 'disabled') {
             // WMS-19321: In IE, widget is in disabled state when disabled="false" attribute is present
             (nv === true) ? setAttr(this.nativeElement, 'disabled', 'true', true) : removeAttr(this.nativeElement, 'disabled', true);
+        } else if (key === "autofocus") {
+            if (nv) {
+                this.focus();
+            }
         }
     }
 
@@ -501,11 +519,14 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * @param {string} eventName
      * @param {string} expr
      */
-    protected processEventAttr(eventName: string, expr: string, meta?: string) {
+    protected processEventAttr(eventName: string, expr: string, meta?: string, child?: Child) {
         const fn = $parseEvent(expr);
         const locals = this.context;
-        locals.widget = this.widget;
-        const boundFn = fn.bind(undefined, this.viewParent, locals);
+        locals.widget = child ? child.widget : this.widget;
+        const boundFn = fn.bind(undefined, child ? this.viewParent.viewParent : this.viewParent, locals);
+
+        let widget          = child ? child.widget : this,
+            nativeElement   = child ? child.nativeElement : this.nativeElement;
 
         const eventCallback = () => {
             let boundFnVal;
@@ -524,17 +545,20 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 console.error(e);
             }
         };
+        if(child && !child.widget.eventHandlers)
+            child.widget.eventHandlers = new Map<string, {callback: Function, locals: any}>()
 
-        this.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
+        widget.eventHandlers.set(this.getMappedEventName(eventName), {callback: eventCallback, locals});
         // prepend eventName with on and convert it to camelcase.
         // eg, "click" ---> onClick
         const onEventName = camelCase(`on-${eventName}`);
         // save the eventCallback in widgetScope.
-        this[onEventName] = eventCallback;
+
+        widget[onEventName] = eventCallback;
 
         // events needs to be setup after viewInit
         this.toBeSetupEventsQueue.push(() => {
-            this.handleEvent(this.nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta);
+            this.handleEvent(nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta);
         });
     }
 
@@ -542,19 +566,29 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Process the bound property
      * Register a watch on the bound expression
      */
-    protected processBindAttr(propName: string, expr: string) {
-
-        this.initState.delete(propName);
+    protected processBindAttr(propName: string, expr: string, child ?: any) {
+        if(!child)
+            this.initState.delete(propName);
+        let viewParent  = child ? child.widget.viewParent.viewParent : this.viewParent,
+            context     = child ? child.widget.context : this.context,
+            widget      = child ? child.widget : this.widget,
+            isMuted     = child ? child.widget.isMuted : this.isMuted,
+            widgetProps = child ? child.widget.widgetProps : this.widgetProps,
+            widgetId    = child ? child.widget.widgetId : this.widgetId;
         this.registerDestroyListener(
             $watch(
                 expr,
-                this.viewParent,
-                this.context,
-                nv => this.widget[propName] = nv,
-                getWatchIdentifier(this.widgetId, propName),
+                viewParent,
+                context,
+                nv => {
+                    if(propName.startsWith('base-') && widget.updateData)
+                        widget.updateData(propName, nv);
+                    widget[propName] = nv
+                },
+                getWatchIdentifier(widgetId, propName),
                 propName === 'datasource',
-                this.widgetProps.get(propName),
-                () => this.isMuted
+                widgetProps.get(propName),
+                () => isMuted
             )
         );
     }
@@ -582,24 +616,23 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             }
         }
     }
-
     /**
      * Process the attribute
      * If the attribute is an event expression, generate a functional representation of the expression
      *      and keep in eventHandlers
      * If the attribute is a bound expression, register a watch on the expression
      */
-    protected processAttr(attrName: string, attrValue: string) {
-        // console.log("====attrName=====", attrName, "=====typeof attrname=====", typeof attrName, "-----attrValue----", attrValue);
+    protected processAttr(attrName: string, attrValue: string, child?: Child) {
+         // console.log("====attrName=====", attrName, "=====typeof attrname=====", typeof attrName, "-----attrValue----", attrValue);
         const {0: propName, 1: type, 2: meta, length} = attrName.split('.');
         if (type === 'bind') {
             // if the show property is bound, set the initial value to false
-            if (propName === 'show') {
+            if (propName === 'show' && !this.widgetSubType.startsWith('wm-custom-')) {
                 this.nativeElement.hidden = true;
             }
-            this.processBindAttr(propName, attrValue);
-        } else if (type === 'event') {
-            this.processEventAttr(propName, attrValue, meta);
+            this.processBindAttr(propName, attrValue, child);
+        } else if (type === 'event' && !this.nativeElement.hasAttribute('wmwidgetcontainer')) {
+            this.processEventAttr(propName, attrValue, meta, child);
         } else if (length === 1) {
             // remove class and name attributes. Component will set them on the proper node
             if (attrName === 'class') {
@@ -621,7 +654,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * @private
      * _tNode.attrs attributes are stored in array(even index: key, odd index: value)
      */
-    private getAttributes() {
+    protected getAttributes() {
         let _tNodeAttrs = (this.inj as any)._tNode.attrs, actualAttrs = Array.from(this.nativeElement.attributes).map(attr => attr.name);
         if(_tNodeAttrs === null) {
             return actualAttrs.sort();
@@ -670,6 +703,12 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
         // get the widget properties
         const widgetProps: Map<string, any> = getWidgetPropsByType(this.widgetSubType);
+        if(this.customWidgetSubType) {
+            const customWidgetProps: Map<string, any> = getWidgetPropsByType(this.customWidgetSubType);
+            customWidgetProps.forEach((v, k) => {
+                widgetProps.set(k, v);
+            });
+        }
         widgetProps.forEach((v, k) => {
             if (isDefined(v.value)) {
                 this.initState.set(k, v.value);

@@ -3,7 +3,7 @@ import { ElementRef } from '@angular/core';
 import { DialogHeaderComponent } from './dialog-header.component';
 import { DialogRef } from '@wm/components/base';
 import { BaseDialog } from '../base-dialog';
-import { App, toBoolean } from '@wm/core';
+import { App } from '@wm/core';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
 describe('DialogHeaderComponent', () => {
@@ -14,7 +14,10 @@ describe('DialogHeaderComponent', () => {
 
     beforeEach(async () => {
         mockDialogRef = {
-            close: jest.fn()
+            close: jest.fn(),
+            appLocale: {
+                LABEL_CLOSE: 'Close'
+            }
         } as unknown as jest.Mocked<BaseDialog>;
 
         mockElementRef = {

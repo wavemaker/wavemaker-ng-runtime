@@ -6,6 +6,7 @@ if (processArgs.findIndex(arg => arg.startsWith('--max-old-space-size')) !== -1)
     process.env.NODE_OPTIONS = processArgs.pop();
     console.log("Setting node options: ", process.env.NODE_OPTIONS);
 }
+
 const args = processArgs.slice(2);
 const ngBuildArgs = ['build', ...args];
 console.log("\x1b[33m", "Angular build params: ", ngBuildArgs);

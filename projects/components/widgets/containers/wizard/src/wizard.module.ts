@@ -5,9 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { WmComponentsModule } from '@wm/components/base';
 
 import { WizardComponent } from './wizard.component';
-import { WizardStepDirective} from './wizard-step/wizard-step.directive';
+import { WizardStepDirective } from './wizard-step/wizard-step.directive';
+import { WizardActionDirective } from './wizard-action/wizard-action.directive';
 
 const components = [
+    WizardActionDirective,
     WizardStepDirective,
     WizardComponent
 ];

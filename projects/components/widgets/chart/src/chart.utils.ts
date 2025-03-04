@@ -747,9 +747,9 @@ export const initChart = (widgetContext, xDomainValues, yDomainValues, propertyV
             .axisLabel(yaxislabel)
             .axisLabelDistance(propertyValueMap.yaxislabeldistance)
             .staggerLabels(propertyValueMap.staggerlabels)
-            .tickFormat(d => getNumberFormatedData(propertyValueMap.ynumberformat, d));
+            .tickFormat(d => getNumberFormatedData(propertyValueMap?.ynumberformat, d));
         if (isBarChart(widgetContext.type)) {
-            chart.valueFormat(d => getNumberFormatedData(propertyValueMap.ynumberformat, d));
+            chart.valueFormat(d => getNumberFormatedData(propertyValueMap?.ynumberformat, d));
         }
     }
 

@@ -9,6 +9,7 @@ import {
 } from '@wm/core';
 
 import {ALLFIELDS, isDataSetWidget} from '../../../utils/utils';
+import {forEach} from "lodash-es";
 
 const tagName = 'div';
 const idGen = new IDGenerator('formfield_');
@@ -64,13 +65,21 @@ const setDefaultPlaceholder = (attrs, widgetType, index) => {
 };
 
 const getWidgetTemplate = (attrs, options) => {
+    let customAttrs = ``;
+    if(options.widgetType === "custom-widget") {
+        for (let [key, value] of attrs) {
+            if(key.startsWith('prop-'))
+                customAttrs += key + '="' + value + '" ';
+        }
+    }
     const name = attrs.get('name');
+    const customWidgetName = attrs.get('widgetname');
     const fieldName = (attrs.get('key') || name || '').trim();
     const formControl = options.isMaxWidget ? `formControlName="${fieldName}_max"` : (options.isInList ? `[formControlName]="${options.counter}._fieldName"` : `formControlName="${fieldName}"`);
     const tmplRef = options.isMaxWidget ? `#formWidgetMax` : `#formWidget`;
     const widgetName = name ? (options.isMaxWidget ? `name="${name}_formWidgetMax"` : `name="${name}_formWidget"`) : '';
     const conditionalClass = `[ngClass]="${attrs.get('ngclass')}"`;
-    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${conditionalClass} ${tmplRef} ${widgetName}`;
+    const defaultTmpl = `[class.hidden]="!${options.pCounter}.isUpdateMode && ${options.counter}.viewmodewidget !== 'default'" ${formControl} ${options.eventsTmpl} ${conditionalClass} ${tmplRef} ${widgetName} ${customWidgetName ? `widgetname=${customWidgetName} ${customAttrs}`:''}` ;
     return getFormWidgetTemplate(options.widgetType, defaultTmpl, attrs, {counter: options.counter, pCounter: options.pCounter});
 };
 
@@ -124,9 +133,9 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const widgetType = attrs.get('widget') || FormWidgetType.TEXT;
             const dataRole = isFormField ? 'form-field' : 'filter-field';
             const formFieldErrorMsgId = 'wmform-field-error-' + generateGUId();
-            const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
+            const validationMsg = `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
                                    class="help-block text-danger" aria-hidden="false" role="alert"
-                                   aria-live="assertive" [attr.aria-label]="${counter}.validationmessage" id="${formFieldErrorMsgId}"><span aria-hidden="true" [textContent]="${counter}.validationmessage"></span></p>` : '';
+                                   aria-live="assertive" [attr.aria-label]="${counter}.validationmessage" id="${formFieldErrorMsgId}"><span aria-hidden="true" [textContent]="${counter}.validationmessage"></span></p>`;
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             const isInList = pCounter === (parentList && parentList.get('parent_form_reference'));

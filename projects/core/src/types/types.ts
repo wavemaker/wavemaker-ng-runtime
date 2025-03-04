@@ -1,7 +1,8 @@
 export enum ComponentType {
     PAGE,
     PREFAB,
-    PARTIAL
+    PARTIAL,
+    WIDGET
 }
 
 export class IDataSource {
@@ -72,6 +73,7 @@ export abstract class App {
     isPrefabType: boolean;
     isApplicationType: boolean;
     setwidgetLocale: Function;
+    setAppMode: Function;
     isTabletApplicationType: boolean;
     isTemplateBundleType: boolean;
     changeLocale: Function;
@@ -221,4 +223,8 @@ export abstract class DynamicComponentRefProvider {
 
 export abstract class PartialRefProvider {
     abstract getComponentFactoryRef(partialName: string, componentType: ComponentType, options?: any): Promise<any>;
+}
+
+export abstract class CustomWidgetRefProvider {
+    abstract getComponentFactoryRef(customWidgetName: string, componentType: ComponentType, options?: any): Promise<any>;
 }
