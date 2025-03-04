@@ -12,7 +12,7 @@ export const switchProps = new Map(
         ['disabled', PROP_BOOLEAN],
         ['displayexpression', PROP_STRING],
         ['displayfield', PROP_STRING],
-        ['hint', PROP_STRING],
+        ['hint', PROP_ANY],
         ['arialabel', PROP_STRING],
         ['iconclass', PROP_STRING],
         ['checkediconclass', {value: '', ...PROP_STRING}],

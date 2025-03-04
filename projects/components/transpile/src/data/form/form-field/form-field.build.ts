@@ -133,9 +133,9 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             const widgetType = attrs.get('widget') || FormWidgetType.TEXT;
             const dataRole = isFormField ? 'form-field' : 'filter-field';
             const formFieldErrorMsgId = 'wmform-field-error-' + generateGUId();
-            const validationMsg = isFormField ? `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
+            const validationMsg = `<p *ngIf="${counter}._control?.invalid && ${counter}._control?.touched && ${pCounter}.isUpdateMode"
                                    class="help-block text-danger" aria-hidden="false" role="alert"
-                                   aria-live="assertive" [attr.aria-label]="${counter}.validationmessage" id="${formFieldErrorMsgId}"><span aria-hidden="true" [textContent]="${counter}.validationmessage"></span></p>` : '';
+                                   aria-live="assertive" [attr.aria-label]="${counter}.validationmessage" id="${formFieldErrorMsgId}"><span aria-hidden="true" [textContent]="${counter}.validationmessage"></span></p>`;
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
             const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
             const isInList = pCounter === (parentList && parentList.get('parent_form_reference'));

@@ -72,9 +72,7 @@ export class PictureDirective extends StylableComponent implements OnInit {
             this.setImgSource();
         } else if (key === 'shape') {
             switchClass(this.nativeElement, `img-${nv}`, `img-${ov}`);
-        } else if (key === 'hint') {
-            setAttr(this.nativeElement, 'alt', nv);
-        } else if (key === 'resizemode') {
+        }  else if (key === 'resizemode') {
             setCSS(this.nativeElement, 'object-fit', nv);
         }
         super.onPropertyChange(key, nv, ov);

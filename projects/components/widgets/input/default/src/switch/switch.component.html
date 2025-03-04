@@ -3,8 +3,10 @@
        focus-target
        href="javascript:void(0);"
        class="btn btn-default"
+       [title]="hint?hint:opt.key"
        [name]="'wm-switch-' + opt.key"
        role="button"
+       [title]="hint?.[opt.index-1]?hint[opt.index-1]:(hint?.[0]?hint[0]:(opt[displayfield]||opt.label))"
        [ngClass]="{'selected': opt.selected, 'disabled': disabled}"
        [attr.aria-pressed]="opt.selected ? true : false"
        (click)="selectOpt($event, $index, opt)"

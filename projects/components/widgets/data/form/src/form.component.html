@@ -19,7 +19,7 @@
                               [ngTemplateOutletContext]="{btn:btn}"
                               [ngTemplateOutletInjector]="createCustomInjector('action_header_' + index, {btn:btn})">
                 </ng-container>
-                <button type="button" class="app-icon wi panel-action" *ngIf="collapsible" title="Collapse/Expand"
+                <button type="button" class="app-icon wi panel-action" *ngIf="collapsible" [title]="expanded? (this.appLocale?.LABEL_COLLAPSE||'Collapse'):(this.appLocale?.LABEL_EXPAND||'Expand')"
                         [ngClass]="expanded ? 'wi-minus': 'wi-plus'" (click)="expandCollapsePanel();"></button>
             </div>
         </h3>

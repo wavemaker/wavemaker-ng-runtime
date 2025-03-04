@@ -55,8 +55,10 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
         // In case of list widget context will be the listItem.
         if (has(this.context, binddatavalue.split('.')[0]) && has(this.context, binddatavalue)) {
             set(this.context, binddatavalue, value);
-        } else if(has(this.viewParent, binddatavalue)) {
+        } else if(has(this.viewParent, binddatavalue) && this.datavaluesource.owner === "Page") {
             set(this.viewParent, binddatavalue, value);
+        } else if(has(this.viewParent?.App, binddatavalue) && this.datavaluesource.owner === "App") {
+            set(this.viewParent.App, binddatavalue, value);
         }
     }
 
