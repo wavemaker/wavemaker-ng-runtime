@@ -20,6 +20,7 @@ $.widget('wm.datatable', {
         enableSort: true,
         filtermode: '',
         filteronkeypress: false,
+        caseinsensitive: false,
         activeRow: undefined,
         isrowselectable: false,
         height: '100%',
