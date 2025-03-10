@@ -127,15 +127,23 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadMomentLocaleBundle(momentLocale) {
-        const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
         if (this.selectedLocale === this.defaultSupportedLocale) {
             moment.locale(this.defaultSupportedLocale);
             return;
         }
-        const path = _cdnUrl + `locales/moment/${momentLocale}.js`;
-        loadScripts([path], true).then(()=>{
+        if (_WM_APP_PROJECT.isPreview) {
+            const path = `${_WM_APP_PROJECT.cdnUrl}locales/moment/${momentLocale}.js`;
+            loadScripts([path], true).then(()=>{
+                this.loadScriptForMoment(momentLocale);
+            })
+        }
+        else{
+            this.loadScriptForMoment(momentLocale);
+        }
+    }
+    
+    protected loadScriptForMoment(momentLocale){
             moment.locale(this.selectedLocale);
-
             // For ngx bootstrap locale, get the config from script and apply locale
             // moment.localeData(momentLocale) will return moment locale instance. _config inside will have actual config
             let _config: any = moment.localeData(momentLocale);
@@ -144,7 +152,6 @@ export class I18nServiceImpl extends AbstractI18nService {
             this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
             this.bundleLoaded.moment = true;
             this.notifyLocaleChanged();
-        })
     }
 
     protected loadAngularLocaleBundle(angLocale) {
