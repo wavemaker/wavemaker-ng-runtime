@@ -1,5 +1,5 @@
-import {AfterContentInit, ContentChildren, Directive, Inject, Injector, Optional, QueryList} from '@angular/core';
-import {DynamicComponentRefProvider, noop, StatePersistence} from '@wm/core';
+import { AfterContentInit, ContentChildren, Directive, forwardRef, Inject, Injector, Optional, QueryList } from '@angular/core';
+import { DynamicComponentRefProvider, noop, StatePersistence } from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     createArrayFrom,
@@ -9,9 +9,9 @@ import {
     styler
 } from '@wm/components/base';
 
-import {registerProps} from './accordion.props';
-import {AccordionPaneComponent} from './accordion-pane/accordion-pane.component';
-import {find, forEach, get, indexOf, isArray, isNumber} from "lodash-es";
+import { registerProps } from './accordion.props';
+import { AccordionPaneComponent } from './accordion-pane/accordion-pane.component';
+import { find, forEach, get, indexOf, isArray, isNumber } from "lodash-es";
 
 const DEFAULT_CLS = 'app-accordion panel-group';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -20,6 +20,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Directive({
+    standalone: true,
     selector: 'div[wmAccordion]',
     exportAs: 'wmAccordion',
     providers: [
@@ -43,7 +44,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     private dynamicPanes;
     public fieldDefs;
 
-    @ContentChildren(AccordionPaneComponent) panes: QueryList<AccordionPaneComponent>;
+    @ContentChildren(forwardRef(() => AccordionPaneComponent)) panes: QueryList<AccordionPaneComponent>;
 
     constructor(inj: Injector, statePersistence: StatePersistence, dynamicComponentProvider: DynamicComponentRefProvider, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         let resolveFn: Function = noop;
@@ -82,9 +83,9 @@ export class AccordionDirective extends StylableComponent implements AfterConten
             this.activePaneIndex = index;
         }
         const mode = this.statePersistence.computeMode(this.statehandler);
-        if (evt &&  mode && mode.toLowerCase() !== 'none') {
+        if (evt && mode && mode.toLowerCase() !== 'none') {
             const activePanes = [];
-            this.panes.forEach(function(pane) {
+            this.panes.forEach(function (pane) {
                 if (pane.isActive) {
                     activePanes.push(pane.name);
                 }
@@ -104,7 +105,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
      */
     public registerDynamicPane(paneRef) {
         this.dynamicPanes.push(paneRef);
-        const isLastPane =  this.dynamicPanes.length === this.dynamicPaneIndex;
+        const isLastPane = this.dynamicPanes.length === this.dynamicPaneIndex;
         if (isLastPane) {
             for (let i = 0; i < this.dynamicPanes.length; i++) {
                 const newPaneRef = find(this.dynamicPanes, pane => pane.dynamicPaneIndex === i);
@@ -129,7 +130,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         }
         const paneNamesList = [];
         forEach(tabpanes, (pane, index) => {
-            const isPaneAlreadyCreated = find(this.panes.toArray(), {name: pane.name});
+            const isPaneAlreadyCreated = find(this.panes.toArray(), { name: pane.name });
             const isPaneNameExist = indexOf(paneNamesList, pane.name);
             // If user tries to add tabpane with the same name which is already exists then do not create the pane
             if (isPaneAlreadyCreated || isPaneNameExist > 0) {
@@ -161,7 +162,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
                 this._dynamicContext[this.getAttr('wmAccordian')] = this;
             }
 
-            this.dynamicComponentProvider.addComponent(this.getNativeElement(), markup, this._dynamicContext, {inj: this.inj});
+            this.dynamicComponentProvider.addComponent(this.getNativeElement(), markup, this._dynamicContext, { inj: this.inj });
         });
         return paneNamesList;
     }
@@ -173,7 +174,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     public removePane(paneName) {
         const paneRef = this.getPaneRefByName(paneName);
         if (paneRef) {
-           paneRef.remove();
+            paneRef.remove();
         }
     }
 
@@ -182,7 +183,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     }
 
     private getPaneRefByName(name: string): AccordionPaneComponent {
-        return find(this.panes.toArray(), {name: name});
+        return find(this.panes.toArray(), { name: name });
     }
 
     private getPaneIndexByRef(paneRef: AccordionPaneComponent): number {
@@ -225,7 +226,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
             let paneToSelect: any = [];
             if (nv !== 'none' && isArray(widgetState)) {
                 widgetState.forEach(paneName => {
-                    paneToSelect = this.panes.filter(function(pane) {
+                    paneToSelect = this.panes.filter(function (pane) {
                         return paneName === pane.name;
                     });
                     if (!paneToSelect.length) {
@@ -249,7 +250,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     ngAfterContentInit() {
         super.ngAfterContentInit();
         this.promiseResolverFn();
-        this.panes.changes.subscribe( slides => {
+        this.panes.changes.subscribe(slides => {
             if (this.panes.length) {
                 this.expandPane(this.defaultpaneindex);
             }

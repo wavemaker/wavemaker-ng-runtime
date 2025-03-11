@@ -14,7 +14,7 @@ describe('MessageComponent', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [MessageComponent],
+            imports: [MessageComponent],
             providers: [
                 { provide: Injector, useValue: Injector.create({ providers: [], parent: null }) },
                 { provide: App, useValue: mockApp },

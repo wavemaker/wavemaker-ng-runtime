@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {
     Attribute,
     Component,
@@ -13,7 +15,7 @@ import {
 
 import {toBoolean} from '@wm/core';
 import { Context, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog } from '@wm/components/dialogs';
+import { BaseDialog, DialogBodyDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 
 import { registerProps } from './dialog.props';
 
@@ -22,6 +24,8 @@ const DIALOG_CLS = 'app-dialog modal-dialog';
 const WIDGET_INFO = {widgetType: 'wm-dialog'};
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, DialogBodyDirective, DialogHeaderComponent],
     selector: 'div[wmDialog]',
     templateUrl: './dialog.component.html',
     providers: [

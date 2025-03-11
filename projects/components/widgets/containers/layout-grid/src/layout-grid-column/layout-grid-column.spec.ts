@@ -41,11 +41,12 @@ describe('LayoutGridColumnDirective', () => {
         } as any;
 
         TestBed.configureTestingModule({
-            declarations: [TestComponent, LayoutGridColumnDirective],
+            declarations: [TestComponent],
+            imports: [LayoutGridColumnDirective],
             providers: [
                 { provide: Viewport, useValue: viewportMock },
                 { provide: 'EXPLICIT_CONTEXT', useValue: null },
-                { provide: coreModule.App, useValue:  mockApp }
+                { provide: coreModule.App, useValue: mockApp }
             ]
         });
 

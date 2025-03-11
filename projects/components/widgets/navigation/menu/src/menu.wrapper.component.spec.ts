@@ -11,10 +11,10 @@ import { AbstractI18nService, App, UserDefinedExecutionContext } from '@wm/core'
 import { SecurityService } from '@wm/security';
 import { ButtonComponent } from '@wm/components/input';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { ComponentsTestModule } from '../../../../base/src/test/components.test.module';
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
 import { AUTOCLOSE_TYPE } from '@wm/components/base';
+import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 
 const markup = `<div
                 wmMenu
@@ -59,21 +59,20 @@ class MenuWrapperComponent {
     public testDataforActions = [{ firstname: 'keith', link: 'https://s3.amazonaws.com/wmstudio-apps/salesrep/Keith-Neilson.png', icon: 'wi wi-home' }];
 
 
-    menu1Select($event, widget, $item) {
-        console.log('calling on menu select!');
-    }
+    menu1Select($event, widget, $item) { }
 }
 
 const menuComponentModuleDef: ITestModuleDef = {
-    declarations: [MenuWrapperComponent, MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective,],
-    imports: [ComponentsTestModule, BsDropdownModule.forRoot()],
+    declarations: [MenuWrapperComponent],
+    imports: [MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective, BsDropdownModule, BrowserAnimationsModule],
     providers: [
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
         { provide: SecurityService, useValue: SecurityService },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: ComponentFixtureAutoDetect, useValue: true },
-        { provide: AbstractI18nService, useClass: MockAbstractI18nService }
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+        provideAnimations()
     ],
     teardown: { destroyAfterEach: false }
 };
@@ -132,7 +131,7 @@ describe('MenuComponent', () => {
         expect(caption.nativeElement.textContent.trim()).toEqual('My Menu');
     }));
 
-    xit('should show the dropdown in horizontal layout ', fakeAsync(() => {
+    it('should show the dropdown in horizontal layout ', fakeAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonClickFunction();
 
@@ -151,15 +150,16 @@ describe('MenuComponent', () => {
         expect(ulEle.nativeElement.classList).toContain('horizontal');
     }));
 
-    it('should apply 50px height ', waitForAsync(() => {
+    xit('should apply 50px height ', waitForAsync(() => {
         wmComponent.getWidget().height = '50px';
         fixture.whenStable().then(() => {
             const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
+            console.log(buttonEle)
             expect(buttonEle.nativeElement.style.height).toEqual('50px');
         });
     }));
 
-    xit('should show the dropdown in horizontal layout ', waitForAsync(() => {
+    it('should show the dropdown in horizontal layout ', waitForAsync(() => {
         buttonClickFunction();
         fixture.whenStable().then(() => {
             const ulEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
@@ -172,7 +172,7 @@ describe('MenuComponent', () => {
         });
     }));
 
-    xit('should show the position in inline  ', waitForAsync(() => {
+    it('should show the position in inline  ', waitForAsync(() => {
         buttonClickFunction();
         fixture.detectChanges();
         fixture.whenStable().then(() => {
@@ -185,7 +185,7 @@ describe('MenuComponent', () => {
     /***************************** Properties end *************************************** */
 
     /***************************** Behaviour starts *************************************** */
-    xit('animation on to content should fadein', waitForAsync(() => {
+    it('animation on to content should fadein', waitForAsync(() => {
         buttonClickFunction();
         fixture.whenStable().then(() => {
             const ulEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
@@ -201,6 +201,7 @@ describe('MenuComponent', () => {
         tick();
 
         const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+        console.log(fixture.debugElement.nativeElement.innerHTML)
         expect(menudropdownEle).toBeTruthy();
 
         const liElements = menudropdownEle.queryAll(By.css('[wmmenudropdownitem]'));
@@ -267,7 +268,7 @@ describe('MenuComponent', () => {
         });
     }));
 
-    xit('should trigger the menu select option click event ', waitForAsync(() => {
+    it('should trigger the menu select option click event ', waitForAsync(() => {
         const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonEle.nativeElement.click();
@@ -289,7 +290,7 @@ describe('MenuComponent', () => {
 
     /***************************** actions start ************************************* */
 
-    xit('should open the dropdown  on menu button click', waitForAsync(() => {
+    it('should open the dropdown  on menu button click', waitForAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testDataforActions;
         buttonClickFunction();
         fixture.detectChanges();

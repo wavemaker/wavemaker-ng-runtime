@@ -1,20 +1,20 @@
-import { ApplicationRef, enableProdMode, NgModuleRef } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-import { AppModule } from './app/app.module';
+import { ApplicationRef, enableProdMode } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
 import { environment } from './environments/environment';
-
 import initWmProjectProperties from './app/wm-project-properties';
 import { WMAppProperties } from './app/wmProperties';
 import * as fontConfig from './font.config';
+import { appConfig } from './app/app.config';
+import { AppComponent } from '@wm/runtime/base';
+import { BootstrapWrapperComponent } from './app/bootstrap-wrapper.component';
 
-
-let formatAcceptHeader = (languages: any) => {
-  let result: string[] = [];
-  let addedLanguages = new Set<string>(); // To track already added languages
+// Format Accept-Language header
+const formatAcceptHeader = (languages: string[]): string => {
+  const result: string[] = [];
+  const addedLanguages = new Set<string>(); // To track already added languages
   let qValue = 1.0;
 
-  languages.forEach((lang: any) => {
+  languages.forEach((lang: string) => {
     if (!addedLanguages.has(lang)) {
       // Add the full language (e.g., en-US or en) if not already added
       result.push(`${lang}${qValue === 1.0 ? '' : `;q=${qValue.toFixed(1)}`}`);
@@ -37,31 +37,31 @@ let formatAcceptHeader = (languages: any) => {
   });
 
   return result.join(',');
-}
-WMAppProperties['preferredLanguage'] = formatAcceptHeader(navigator.languages);
+};
+
+// Initialize WMAppProperties
+WMAppProperties['preferredLanguage'] = formatAcceptHeader((navigator as any).languages);
 WMAppProperties['fontConfig'] = fontConfig;
-
-
-(window as any)._WM_APP_PROPERTIES  = WMAppProperties
+(window as any)._WM_APP_PROPERTIES = WMAppProperties;
 initWmProjectProperties();
 
 if (environment.production) {
-    enableProdMode();
+  enableProdMode();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new Promise<Event | void>( resolve => {
-        if (window['cordova']) {
-            document.addEventListener('deviceready', resolve);
-        } else {
-            resolve();
-        }
-    }).then(() => platformBrowserDynamic().bootstrapModule(AppModule))
-        .then((appModuleRef: NgModuleRef<AppModule>) => {
-            const applicationRef = appModuleRef.injector.get(ApplicationRef);
-            window.addEventListener('unload', () => {
-                applicationRef.components.map(c => c && c.destroy());
-            });
-            //console.timeEnd('bootstrap'), err => console.log(err);
-        }, err => console.log(err));
+  new Promise<Event | void>(resolve => {
+    if (window['cordova']) {
+      document.addEventListener('deviceready', resolve);
+    } else {
+      resolve();
+    }
+  }).then(() => bootstrapApplication(AppComponent, appConfig))
+    .then((appRef: ApplicationRef) => {
+      appRef.bootstrap(BootstrapWrapperComponent);
+      window.addEventListener('unload', () => {
+        appRef.components.map(c => c?.destroy());
+      });
+    })
+    .catch(err => console.error('Error bootstrapping app:', err));
 });

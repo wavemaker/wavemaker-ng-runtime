@@ -1,3 +1,4 @@
+import { WmComponentsModule } from "@wm/components/base";
 import {
     Attribute,
     Component,
@@ -12,15 +13,18 @@ import {
 
 import { toBoolean } from '@wm/core';
 import { IWidgetConfig, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog } from '@wm/components/dialogs';
+import { BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 
 import { registerProps } from './alert-dialog.props';
+import { ButtonComponent } from "@wm/components/input";
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-alert-dialog';
 
-const WIDGET_INFO: IWidgetConfig = {widgetType: 'wm-alertdialog'};
+const WIDGET_INFO: IWidgetConfig = { widgetType: 'wm-alertdialog' };
 
 @Component({
+    standalone: true,
+    imports: [WmComponentsModule, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
     selector: 'div[wmAlertDialog]',
     templateUrl: './alert-dialog.component.html',
     providers: [
@@ -31,7 +35,7 @@ const WIDGET_INFO: IWidgetConfig = {widgetType: 'wm-alertdialog'};
 export class AlertDialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
 
-    @ViewChild('dialogTemplate',{ static: true }) dialogTemplate: TemplateRef<any>;
+    @ViewChild('dialogTemplate', { static: true }) dialogTemplate: TemplateRef<any>;
 
     constructor(
         inj: Injector,
@@ -73,7 +77,7 @@ export class AlertDialogComponent extends BaseDialog implements OnInit {
      * @param {Event} $event
      */
     onOk($event: Event) {
-        this.invokeEventCallback('ok', {$event});
+        this.invokeEventCallback('ok', { $event });
     }
 
     ngOnInit() {

@@ -6,7 +6,6 @@ import { PopoverConfig, PopoverModule } from 'ngx-bootstrap/popover';
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { AnchorComponent } from '../../../basic/default/src/anchor/anchor.component';
-import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
 import { AUTOCLOSE_TYPE } from '@wm/components/base';
 
 jest.mock('@wm/core', () => ({
@@ -80,11 +79,8 @@ class PopoverwrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [
-        ComponentsTestModule,
-        PopoverModule.forRoot(),
-    ],
-    declarations: [PopoverwrapperComponent, PopoverComponent, AnchorComponent],
+    imports: [PopoverModule.forRoot(), PopoverComponent, AnchorComponent],
+    declarations: [PopoverwrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: PopoverConfig },

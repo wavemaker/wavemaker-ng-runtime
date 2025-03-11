@@ -1,7 +1,8 @@
-import {Component, ViewChild} from "@angular/core";
-import {IconComponent} from "./icon.component";
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
-import {ComponentsTestModule} from "../../../../../base/src/test/components.test.module";
+import { Component, ViewChild } from "@angular/core";
+import { IconComponent } from "./icon.component";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { App } from "@wm/core";
 
 const markup = `<span wmIcon name="icon1" caption="star" hint="icon"></span>`;
 
@@ -10,12 +11,15 @@ const markup = `<span wmIcon name="icon1" caption="star" hint="icon"></span>`;
 })
 
 class IconWrapperComponent {
-    @ViewChild(IconComponent, /* TODO: add static flag */ {static: true}) wmComponent: IconComponent
+    @ViewChild(IconComponent, /* TODO: add static flag */ { static: true }) wmComponent: IconComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [ComponentsTestModule],
-    declarations: [IconWrapperComponent, IconComponent]
+    imports: [IconComponent],
+    declarations: [IconWrapperComponent,],
+    providers: [
+        { provide: App, useValue: mockApp },
+    ]
 };
 
 const componentDef: ITestComponentDef = {

@@ -19,7 +19,8 @@ describe('NavigationControlDirective', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, NavigationControlDirective]
+            declarations: [TestComponent],
+            imports: [NavigationControlDirective],
         }).compileComponents();
 
         fixture = TestBed.createComponent(TestComponent);

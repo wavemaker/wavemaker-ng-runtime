@@ -24,8 +24,8 @@ class InputTextWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule],
-    declarations: [InputTextWrapperComponent, InputTextComponent],
+    imports: [FormsModule, IMaskModule, InputTextComponent],
+    declarations: [InputTextWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

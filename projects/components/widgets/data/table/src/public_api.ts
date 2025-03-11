@@ -1,8 +1,6 @@
 import { TableComponent } from './table.component';
 import { TableFilterSortDirective } from './table-filter.directive';
 import { TableRowActionDirective } from './table-row-action/table-row-action.directive';
-
-export * from './table.module';
 export {
     TableComponent
 } from './table.component';

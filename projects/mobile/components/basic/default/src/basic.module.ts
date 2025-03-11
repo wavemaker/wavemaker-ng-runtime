@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { WmComponentsModule } from '@wm/components/base';
-import { ProgressModule } from '@wm/components/basic/progress';
+import { ProgressBarComponent } from '@wm/components/basic/progress';
 
 import { AnchorDirective } from './anchor/anchor.directive';
 import { AppUpdateComponent } from './app-update/app-update.component';
@@ -23,7 +23,7 @@ const components = [
 @NgModule({
     imports: [
         CommonModule,
-        ProgressModule,
+        ProgressBarComponent,
         WmComponentsModule
     ],
     declarations: [...components],

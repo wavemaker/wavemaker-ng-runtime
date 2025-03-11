@@ -1,31 +1,25 @@
-import {waitForAsync, ComponentFixture} from '@angular/core/testing';
-import {AbstractI18nService, App, setPipeProvider} from '@wm/core';
-import {Component, ViewChild} from '@angular/core';
-import {NumberComponent} from './number.component';
-import {FormsModule} from '@angular/forms';
-import {DecimalPipe, registerLocaleData} from '@angular/common';
-import {TrailingZeroDecimalPipe} from '@wm/components/base';
-import {PipeProvider} from '../../../../../../runtime-base/src/services/pipe-provider.service';
+import { waitForAsync, ComponentFixture } from '@angular/core/testing';
+import { AbstractI18nService, App, setPipeProvider } from '@wm/core';
+import { Component, ViewChild } from '@angular/core';
+import { NumberComponent } from './number.component';
+import { FormsModule } from '@angular/forms';
+import { DecimalPipe, registerLocaleData } from '@angular/common';
+import { TrailingZeroDecimalPipe } from '@wm/components/base';
+import { PipeProvider } from '../../../../../../runtime-base/src/services/pipe-provider.service';
 import localePT from '@angular/common/locales/pt';
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
-import {compileTestComponent, mockApp} from "../../../../../base/src/test/util/component-test-util";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
+import { compileTestComponent, mockApp } from "../../../../../base/src/test/util/component-test-util";
 import { By } from '@angular/platform-browser';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 
 const markup = `<div wmNumber hint="Number" name="testnumber" tabindex="1" ngModel change.event="onChange($event, widget, newVal, oldVal)"></div>`;
-
-class MockAbstractI18nServicePt {
-    public getSelectedLocale() {
-        return 'pt';
-    }
-}
 
 @Component({
     template: markup
 })
 
 class NumberWrapperComponent {
-    @ViewChild(NumberComponent, /* TODO: add static flag */ {static: true}) wmComponent: NumberComponent;
+    @ViewChild(NumberComponent, /* TODO: add static flag */ { static: true }) wmComponent: NumberComponent;
     public testDefaultValue = 123.4;
 
     public onChange($event, widget, newVal, oldVal) {
@@ -37,13 +31,13 @@ class NumberWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [NumberWrapperComponent, NumberComponent],
+    imports: [FormsModule, NumberComponent],
+    declarations: [NumberWrapperComponent],
     providers: [
-        {provide: App, useValue: mockApp},
-        {provide: AbstractI18nService, useClass: MockAbstractI18nService},
-        {provide: DecimalPipe, useClass: DecimalPipe},
-        {provide: TrailingZeroDecimalPipe, useClass: TrailingZeroDecimalPipe}
+        { provide: App, useValue: mockApp },
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+        { provide: DecimalPipe, useClass: DecimalPipe },
+        { provide: TrailingZeroDecimalPipe, useClass: TrailingZeroDecimalPipe }
     ]
 };
 
@@ -75,7 +69,7 @@ describe('NumberComponent', () => {
     }));
 
     it('should create the Number Component', () => {
-        expect(wrapperComponent).toBeTruthy() ;
+        expect(wrapperComponent).toBeTruthy();
     });
 
     it('should display the default value in english language', () => {
@@ -133,7 +127,7 @@ describe('NumberComponent with Localization', () => {
     }));
 
     it('should create the Number Component', () => {
-        expect(wrapperComponent).toBeTruthy() ;
+        expect(wrapperComponent).toBeTruthy();
     });
 
     it('should display the default value in portugues language', () => {

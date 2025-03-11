@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { AlertDialogComponent } from '@wm/components/dialogs/alert-dialog';
+import { ConfirmDialogComponent } from '@wm/components/dialogs/confirm-dialog';
 import {
     AfterViewInit,
     ApplicationRef,
@@ -9,9 +13,9 @@ import {
     ViewContainerRef,
     ViewEncapsulation
 } from '@angular/core';
-import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterOutlet} from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterOutlet } from '@angular/router';
 
-import {setTheme} from 'ngx-bootstrap/utils';
+import { setTheme } from 'ngx-bootstrap/utils';
 
 import {
     $invokeWatchers,
@@ -28,9 +32,11 @@ import {
     setNgZone,
     setPipeProvider
 } from '@wm/core';
-import {OAuthService} from '@wm/oAuth';
-import {AppManagerService} from '../../services/app.manager.service';
-import {PipeProvider} from '../../services/pipe-provider.service';
+import { OAuthService } from '@wm/oAuth';
+import { AppManagerService } from '../../services/app.manager.service';
+import { PipeProvider } from '../../services/pipe-provider.service';
+import { AppSpinnerComponent } from '../app-spinner.component';
+import { DialogComponent } from '@wm/components/dialogs/design-dialog';
 
 interface SPINNER {
     show: boolean;
@@ -39,6 +45,8 @@ interface SPINNER {
 }
 
 @Component({
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule, RouterOutlet, AlertDialogComponent, ConfirmDialogComponent, DialogComponent, AppSpinnerComponent],
     selector: 'app-root',
     templateUrl: './app.component.html',
     encapsulation: ViewEncapsulation.None
@@ -49,9 +57,9 @@ export class AppComponent implements DoCheck, AfterViewInit {
 
     @ViewChild(RouterOutlet) routerOutlet: RouterOutlet;
 
-    @ViewChild('dynamicComponent', {read: ViewContainerRef}) dynamicComponentContainerRef: ViewContainerRef;
+    @ViewChild('dynamicComponent', { read: ViewContainerRef }) dynamicComponentContainerRef: ViewContainerRef;
 
-    spinner: SPINNER = {show: false, messages: [], arialabel: ''};
+    spinner: SPINNER = { show: false, messages: [], arialabel: '' };
     constructor(
         _pipeProvider: PipeProvider,
         _appRef: ApplicationRef,
@@ -70,7 +78,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
         setAppRef(_appRef);
 
         this.isApplicationType = getWmProjectProperties().type === 'APPLICATION';
-        if(this.isApplicationType) {
+        if (this.isApplicationType) {
             this.customIconsLoaderService.load();
         }
 
@@ -112,7 +120,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
                     this.app.activeLayoutName = '';
                     this.app.layoutPages = [];
                 }
-                if(this.app.activeLayoutName && this.app.layoutPages && this.app.layoutPages.length && this.app.layoutPages.includes(page)) {
+                if (this.app.activeLayoutName && this.app.layoutPages && this.app.layoutPages.length && this.app.layoutPages.includes(page)) {
                     spinnerId = this.spinnerService.show('', 'wmRouterOutlet', '', 'wmRouterOutlet');
                 } else {
                     spinnerId = this.spinnerService.show('', 'globalSpinner');
@@ -134,7 +142,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
                     this.app.activePageLoadTime = Date.now() - pageLoadStartTime;
                 };
             } else if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) {
-                setTimeout(() =>{
+                setTimeout(() => {
                     onPageRendered();
                 }, 1000);
             }
@@ -195,7 +203,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
     ngAfterViewInit() {
         document.documentElement.setAttribute('lang', getWmProjectProperties().defaultLanguage);
         if (hasCordova() && !window['wmDeviceReady']) {
-            document.addEventListener('wmDeviceReady' , () => this.start());
+            document.addEventListener('wmDeviceReady', () => this.start());
         } else {
             this.start();
         }

@@ -19,8 +19,8 @@ class SliderWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [SliderWrapperComponent, SliderComponent],
+    imports: [FormsModule, SliderComponent],
+    declarations: [SliderWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

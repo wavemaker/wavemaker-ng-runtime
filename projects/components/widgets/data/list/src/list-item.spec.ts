@@ -27,7 +27,8 @@ describe('ListItemDirective', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, ListItemDirective],
+            declarations: [TestComponent,],
+            imports: [ListItemDirective],
             providers: [
                 {
                     provide: ListComponent, useValue: {

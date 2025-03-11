@@ -1,7 +1,3 @@
-import { PrefabManagerService } from './services/prefab-manager.service';
-import { AppRef } from './services/app.service';
-import { DynamicComponentRefProviderService } from './services/dynamic-component-ref-provider.service';
-
 export * from './types/types';
 export * from './services/app.manager.service';
 export * from './services/prefab-manager.service';

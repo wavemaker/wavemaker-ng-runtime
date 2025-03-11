@@ -18,6 +18,7 @@ const getEpochValue = data => {
 };
 
 @Pipe({
+    standalone: true,
     name: 'trailingZeroDecimalPipe'
 })
 export class TrailingZeroDecimalPipe implements PipeTransform {
@@ -32,6 +33,7 @@ export class TrailingZeroDecimalPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'toDate'
 })
 export class ToDatePipe extends WmPipe implements PipeTransform {
@@ -80,6 +82,7 @@ export class ToDatePipe extends WmPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'toNumber'
 })
 export class ToNumberPipe implements PipeTransform {
@@ -98,6 +101,7 @@ export class ToNumberPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'toCurrency'
 })
 export class ToCurrencyPipe implements PipeTransform {
@@ -116,6 +120,7 @@ export class ToCurrencyPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'prefix'
 })
 export class PrefixPipe implements PipeTransform {
@@ -125,6 +130,7 @@ export class PrefixPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'suffix'
 })
 export class SuffixPipe implements PipeTransform {
@@ -138,6 +144,7 @@ export class SuffixPipe implements PipeTransform {
  * Custom pipe: It is work as interceptor between the user custom pipe function and angular pipe
  */
 @Pipe({
+    standalone: true,
     name: 'custom'
 })
 export class CustomPipe implements PipeTransform {
@@ -166,6 +173,7 @@ export class CustomPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'timeFromNow'
 })
 export class TimeFromNowPipe implements PipeTransform {
@@ -180,11 +188,13 @@ export class TimeFromNowPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'numberToString'
 })
 export class NumberToStringPipe extends ToNumberPipe implements PipeTransform { }
 
 @Pipe({
+    standalone: true,
     name: 'stringToNumber'
 })
 export class StringToNumberPipe implements PipeTransform {
@@ -194,6 +204,7 @@ export class StringToNumberPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'filter'
 })
 export class FilterPipe implements PipeTransform {
@@ -213,6 +224,7 @@ export class FilterPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'filesize'
 })
 export class FileSizePipe implements PipeTransform {
@@ -240,6 +252,7 @@ export class FileSizePipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'fileIconClass'
 })
 export class FileIconClassPipe implements PipeTransform {
@@ -278,6 +291,7 @@ export class FileIconClassPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'stateClass'
 })
 export class StateClassPipe implements PipeTransform {
@@ -291,6 +305,7 @@ export class StateClassPipe implements PipeTransform {
 }
 
 @Pipe({
+    standalone: true,
     name: 'fileExtensionFromMime'
 })
 export class FileExtensionFromMimePipe implements PipeTransform {

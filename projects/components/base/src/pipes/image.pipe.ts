@@ -6,6 +6,7 @@ import { transformFileURI } from '@wm/core';
 import { getImageUrl } from '../utils/widget-utils';
 
 @Pipe({
+  standalone: true,
     name: 'image'
 })
 export class ImagePipe implements PipeTransform {

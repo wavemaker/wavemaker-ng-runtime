@@ -23,8 +23,8 @@ class InputEmailWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule],
-    declarations: [InputEmailWrapperComponent, InputEmailComponent],
+    imports: [FormsModule, IMaskModule, InputEmailComponent],
+    declarations: [InputEmailWrapperComponent],
     providers: [
         {provide: App, useValue: mockApp},
         {provide: ToDatePipe, useClass: ToDatePipe},

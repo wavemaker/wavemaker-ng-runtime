@@ -4,7 +4,6 @@ import {
     ITestComponentDef,
     ComponentTestBase
 } from "../../../../base/src/test/common-widget.specs";
-import { ComponentsTestModule } from "../../../../base/src/test/components.test.module";
 import { FormsModule } from "@angular/forms";
 import { DatePipe } from '@angular/common';
 import { ToDatePipe } from '@wm/components/base';
@@ -24,8 +23,8 @@ class TestComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [RatingComponent, TestComponent],
-    imports: [FormsModule, ComponentsTestModule],
+    declarations: [TestComponent],
+    imports: [FormsModule, RatingComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },

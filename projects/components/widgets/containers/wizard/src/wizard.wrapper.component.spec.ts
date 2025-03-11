@@ -49,8 +49,9 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
         WmComponentsModule.forRoot(),
+        WizardComponent, WizardStepDirective
     ],
-    declarations: [WizardWrapperComponent, WizardComponent, WizardStepDirective],
+    declarations: [WizardWrapperComponent,],
     providers: [
         { provide: App, useValue: mockApp },
     ]
@@ -224,5 +225,5 @@ describe('wm-wizard: Component Specific Tests', () => {
         });
     });
 
-   
+
 });

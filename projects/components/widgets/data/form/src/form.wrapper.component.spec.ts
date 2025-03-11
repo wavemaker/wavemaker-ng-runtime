@@ -2,7 +2,7 @@ import { waitForAsync, ComponentFixture, fakeAsync, tick, discardPeriodicTasks }
 import { App, AppDefaults, DynamicComponentRefProvider, AbstractI18nService, UserDefinedExecutionContext, Viewport, $appDigest, isElementInViewport, scrollToElement, $invokeWatchers, getValidJSON, extendProto, $parseEvent } from '@wm/core';
 import { FormComponent } from './form.component';
 import { FormWidgetDirective } from './form-widget.directive';
-import { InputModule } from '@wm/components/input';
+import { InputTextComponent } from '@wm/components/input';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Component, ViewChild } from '@angular/core';
 import { IMaskModule } from 'angular-imask';
@@ -12,8 +12,7 @@ import { compileTestComponent, setInputValue, onClickCheckTaglengthOnBody, check
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { performDataOperation, WmComponentsModule } from '@wm/components/base';
-import { LayoutGridModule } from '@wm/components/containers/layout-grid';
-import { BasicModule } from '@wm/components/basic';
+import { LayoutGridRowDirective } from '@wm/components/containers/layout-grid';
 import { VALIDATOR } from '@wm/core';
 import { DatePipe, CommonModule, DecimalPipe } from '@angular/common';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
@@ -24,6 +23,7 @@ import { triggerTimerClickonArrowsByIndex, getTimePickerElement, MockAbstractI18
 import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
 import { DateComponent } from "../../../input/epoch/src/date/date.component";
 import { TimeComponent } from "../../../input/epoch/src/time/time.component";
+import { LabelDirective } from '@wm/components/basic';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -221,13 +221,13 @@ class FormWrapperComponent {
 const testModuleDef: ITestModuleDef = {
     imports: [
         BrowserAnimationsModule,
-        InputModule,
+        InputTextComponent,
         FormsModule,
         ReactiveFormsModule,
         IMaskModule,
         WmComponentsModule.forRoot(),
-        LayoutGridModule,
-        BasicModule,
+        LayoutGridRowDirective,
+        LabelDirective,
         CommonModule,
         BsDatepickerModule.forRoot(),
         TimepickerModule.forRoot(),

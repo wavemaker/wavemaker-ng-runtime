@@ -12,6 +12,7 @@ const FILTER_CONSTANTS = {
 const noop = () => {};
 
 @Directive({
+  standalone: true,
     selector: '[wmLiveFilter]'
 })
 export class LiveFilterDirective {

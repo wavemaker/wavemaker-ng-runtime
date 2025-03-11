@@ -6,8 +6,7 @@ import {
     UserDefinedExecutionContext,
     AppDefaults,
     AbstractI18nService,
-    getDateObj,
-    getFormattedDate, App
+    App
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
 import { DatePipe, registerLocaleData } from '@angular/common';
@@ -25,12 +24,8 @@ import {
     disableMaxDatePanel,
     disableMindatePanel,
     excludedDaysDisable,
-    expectCheckEleHasDisabled,
-    localizedDatePickerTest,
     MockAbstractI18nService,
-    MockAbstractI18nServiceDe,
-    localizedTimePickerTest
-} from '../../../../../base/src/test/util/date-test-util';
+    MockAbstractI18nServiceDe} from '../../../../../base/src/test/util/date-test-util';
 import { ToDatePipe } from 'projects/components/base/src/pipes/custom-pipes';
 import localeDE from '@angular/common/locales/de';
 import { IMaskDirective, IMaskModule } from 'angular-imask';
@@ -87,8 +82,8 @@ class DateWrapperComponent {
 }
 
 const dateComponentModuleDef: ITestModuleDef = {
-    declarations: [DateWrapperComponent, DateComponent],
-    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot(), IMaskModule],
+    declarations: [DateWrapperComponent],
+    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot(), IMaskModule, DateComponent],
     providers: [
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
@@ -464,8 +459,8 @@ describe('DateComponent', () => {
 });
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
-    declarations: [DateWrapperComponent, DateComponent],
-    imports: [FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot(), IMaskModule],
+    declarations: [DateWrapperComponent],
+    imports: [FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot(), IMaskModule, DateComponent],
     providers: [
         { provide: LOCALE_ID, useValue: 'de' },
         { provide: Router, useValue: Router },

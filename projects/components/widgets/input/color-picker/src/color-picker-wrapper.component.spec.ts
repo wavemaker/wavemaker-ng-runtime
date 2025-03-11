@@ -25,8 +25,8 @@ class ColorPickerWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, ColorPickerModule],
-    declarations: [ColorPickerWrapperComponent, ColorPickerComponent],
+    imports: [FormsModule, ColorPickerModule, ColorPickerComponent],
+    declarations: [ColorPickerWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
     ]

@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {Component, Inject, Injector, OnInit, Optional} from '@angular/core';
 
 import {DataSource, validateDataSourceCtx} from '@wm/core';
@@ -10,6 +12,8 @@ const DEFAULT_CLS = 'app-spinner';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAULT_CLS};
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: '[wmSpinner]',
     templateUrl: './spinner.component.html',
     providers: [

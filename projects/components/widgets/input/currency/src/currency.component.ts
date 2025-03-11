@@ -1,3 +1,5 @@
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
 import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
@@ -15,6 +17,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+  standalone: true,
+  imports: [WmComponentsModule, FormsModule],
     selector: '[wmCurrency]',
     templateUrl: './currency.component.html',
     providers: [

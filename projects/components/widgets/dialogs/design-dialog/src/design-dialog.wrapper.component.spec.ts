@@ -77,10 +77,9 @@ class MockMessageComponent {
 }
 
 const testModuleDef = {
-    imports: [FormsModule],
+    imports: [FormsModule, DialogComponent,],
     declarations: [
         DialogWrapperComponent,
-        DialogComponent,
         MockFormComponent,
         MockButtonComponent,
         MockMessageComponent
@@ -140,14 +139,14 @@ describe('DialogComponent', () => {
         const dialogElement = fixture.debugElement.query(By.css('[wmDialog]'));
         expect(dialogElement).not.toBeNull();
     });
-    it('should open the dialog correctly', () => {       
+    it('should open the dialog correctly', () => {
         const openSpy = jest.spyOn(dialogComponent, 'open');
         dialogComponent.open();
         expect(openSpy).toHaveBeenCalled();
-    }); 
+    });
     it("should close the dialog correctly", () => {
         const closeSpy = jest.spyOn(dialogComponent, 'close');
         dialogComponent.close();
         expect(closeSpy).toHaveBeenCalled();
-    }); 
+    });
 });

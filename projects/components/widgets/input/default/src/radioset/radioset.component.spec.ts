@@ -3,7 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { RadiosetComponent } from './radioset.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { AbstractI18nService, App, AppDefaults } from '@wm/core';
+import { AbstractI18nService, App, AppDefaults, PartialRefProvider } from '@wm/core';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { DatePipe } from '@angular/common';
 import { ToDatePipe } from '@wm/components/base';
@@ -22,15 +22,16 @@ describe('RadiosetComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestRadiosetComponent],
-            imports: [FormsModule, ReactiveFormsModule],
+            declarations: [],
+            imports: [FormsModule, ReactiveFormsModule, TestRadiosetComponent],
             schemas: [NO_ERRORS_SCHEMA],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: ToDatePipe, useClass: ToDatePipe },
                 { provide: DatePipe, useClass: DatePipe },
                 { provide: AppDefaults, useClass: AppDefaults },
-                { provide: AbstractI18nService, useClass: MockAbstractI18nService }
+                { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+                PartialRefProvider
             ]
         }).compileComponents();
     });

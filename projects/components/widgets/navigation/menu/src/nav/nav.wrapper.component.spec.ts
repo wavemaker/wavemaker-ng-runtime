@@ -5,7 +5,6 @@ import { App, UserDefinedExecutionContext } from '@wm/core';
 import { NavComponent } from './nav.component';
 import { NavigationControlDirective } from './navigation-control.directive';
 import { ITestComponentDef, ITestModuleDef, ComponentTestBase } from '../../../../../base/src/test/common-widget.specs';
-import { ComponentsTestModule } from '../../../../../base/src/test/components.test.module';
 import { compileTestComponent, mockApp } from '../../../../../base/src/test/util/component-test-util';
 import { SecurityService } from '@wm/security';
 import { NavNode } from '@wm/components/base';
@@ -59,8 +58,8 @@ class NavWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [NavWrapperComponent, NavComponent, NavigationControlDirective],
-    imports: [ComponentsTestModule],
+    declarations: [NavWrapperComponent,],
+    imports: [NavComponent, NavigationControlDirective],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: Router, useValue: mockApp },
