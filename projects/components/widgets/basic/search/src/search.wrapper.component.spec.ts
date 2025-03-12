@@ -177,21 +177,47 @@ describe('SearchComponent', () => {
         expect(wrapperComponent.onChange).toHaveBeenCalledTimes(1);
     }));
 
-    // TypeError: The provided value is not of type 'Element'.
-
-    it('should show clear icon and on click should call clearsearch function when search type is autocomplete', waitForAsync(async () => {
+    it('should show clear icon and on click should call clearsearch function when search type is autocomplete', fakeAsync(() => {
+        // Set properties on the component
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         wmComponent.getWidget().type = 'autocomplete';
         wmComponent.getWidget().showclear = true;
+
+        // Initial change detection
+        fixture.detectChanges();
+
+        // Mock TypeaheadDirective behavior to prevent aria-owns changes
+        if (wmComponent.typeahead) {
+            wmComponent.typeahead._container = null;
+            // Disable typeahead's internal change detection triggers if possible
+            if (wmComponent.typeahead['_subscriptions']) {
+                wmComponent.typeahead['_subscriptions'].forEach(sub => sub.unsubscribe());
+            }
+        }
+
         const testValue = 'te';
         jest.spyOn(wmComponent as any, 'clearSearch' as any);
-        await setInputValue(fixture, '.app-search-input', testValue);
-        let searchBtnEle = fixture.debugElement.query(By.css('.clear-btn'));
+
+        // Set input value
+        const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
+        input.value = testValue;
+        input.dispatchEvent(new Event('input'));
+
+        // Run through all pending timers
+        tick(500);
+        fixture.detectChanges();
+
+        // Find and click the clear button
+        const searchBtnEle = fixture.debugElement.query(By.css('.clear-btn'));
         searchBtnEle.nativeElement.click();
-        await fixture.whenStable();
+
+        // Run through any remaining timers
+        tick(500);
+        fixture.detectChanges();
+
+        // Verify the clearSearch was called
         expect((wmComponent as any).clearSearch).toHaveBeenCalled();
     }));
-
     /******************************** EVents end ***************************************** */
 
 
@@ -308,7 +334,7 @@ describe('SearchComponent', () => {
 
     /*********************************** Method invoking starts************************** */
 
-    xit('should invoke getDatasource method on entering the query', waitForAsync(() => {
+    it('should invoke getDatasource method on entering the query', waitForAsync(() => {
         const testValue = 'abc';
         jest.spyOn(wmComponent, 'getDataSource').mockReturnValue(Promise.resolve([]));
 
