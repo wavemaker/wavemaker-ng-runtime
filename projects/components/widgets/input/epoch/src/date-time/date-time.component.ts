@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BsDatepickerDirective, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { TimepickerConfig } from 'ngx-bootstrap/timepicker';
+import { TimepickerConfig, TimepickerModule } from 'ngx-bootstrap/timepicker';
 
 import {
     AbstractI18nService,
@@ -49,7 +49,7 @@ const CURRENT_DATE = 'CURRENT_DATE';
 
 @Component({
     standalone: true,
-    imports: [WmComponentsModule, FormsModule, DateTimePickerComponent, BsDropdownModule, BsDatepickerModule],
+    imports: [WmComponentsModule, FormsModule, DateTimePickerComponent, BsDropdownModule, BsDatepickerModule, TimepickerModule],
     selector: '[wmDateTime]',
     templateUrl: './date-time.component.html',
     providers: [
