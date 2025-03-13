@@ -30,6 +30,14 @@ import {capitalize, clone, each, extend, get, includes, isDate, isEmpty, isObjec
 
 declare const $;
 import moment from 'moment';
+import {Calendar} from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from '@fullcalendar/list'
+import interactionPlugin from '@fullcalendar/interaction';
+import allLocales from '@fullcalendar/core/locales-all';
+
+import {_WM_APP_PROJECT} from '@wm/core';
 
 const DEFAULT_CLS = 'app-calendar';
 const dateFormats = ['yyyy-MM-dd', 'yyyy-M-dd', 'M-dd-yyyy', 'MM-dd-yy', 'yyyy, dd MMMM', 'yyyy, MMM dd', 'MM/dd/yyyy', 'M/d/yyyy', 'EEE, dd MMM yyyy', 'EEE MMM dd yyyy', 'EEEE, MMMM dd, yyyy', 'timestamp'];
@@ -96,7 +104,7 @@ const dateFormat = 'YYYY/MM/DD';
   imports: [WmComponentsModule],
     selector: '[wmCalendar]',
     templateUrl: './calendar.component.html',
-    styleUrls: ['../../../../../../node_modules/fullcalendar/main.css'],
+    styleUrls: [],
     providers: [
         provideAsWidgetRef(CalendarComponent)
     ],
@@ -120,6 +128,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     public eventend;
     public eventallday;
     public eventclass;
+    private FullCalendar:any  ;
 
     private eventSources: Array<any> = [];
 
@@ -408,10 +417,10 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         super(inj, WIDGET_CONFIG, explicitContext);
 
         this.eventSources.push(this.dataSetEvents);
-        const FullCalendar = window['FullCalendar'];
-        if (!FullCalendar.__wm_locale_initialized) {
+        _WM_APP_PROJECT.isPreview ? this.FullCalendar = window['FullCalendar']: this.FullCalendar = Calendar;
+        if (!this.FullCalendar.__wm_locale_initialized) {
             i18nService.initCalendarLocale();
-            FullCalendar.__wm_locale_initialized = true;
+            this.FullCalendar.__wm_locale_initialized = true;
         }
 
         this.cancelLocaleChangeSubscription = this.getAppInstance().subscribe("locale-changed", (libLocale) => {
@@ -512,8 +521,14 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     ngAfterViewInit() {
         super.ngAfterViewInit();
         const calendarEl = this._calendar.nativeElement;
-        const FullCalendar = window['FullCalendar'];
-        const calendar = new FullCalendar.Calendar(calendarEl, this.calendarOptions.calendar);
+        if(!_WM_APP_PROJECT.isPreview){
+            this.calendarOptions.calendar = {...this.calendarOptions.calendar, plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin], locales: allLocales}
+        }
+        //(For Preview)@fullcalendar/core/global.min.js had the Calendar Class inside FullCalendar 
+        //In ES we Direct Calendar we can access
+        else this.FullCalendar = this.FullCalendar.Calendar
+        
+        const calendar = new this.FullCalendar(calendarEl, this.calendarOptions.calendar);
         this.$fullCalendar =  calendar;
         this.invokeEventCallback('beforerender', {'$event' : {}});
         calendar.render();

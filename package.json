@@ -46,6 +46,11 @@
         "@awesome-cordova-plugins/sqlite": "5.39.1",
         "@awesome-cordova-plugins/vibration": "5.39.1",
         "@babel/runtime": "7.14.8",
+        "@fullcalendar/core": "6.1.15",
+        "@fullcalendar/daygrid": "6.1.15",
+        "@fullcalendar/interaction": "6.1.15",
+        "@fullcalendar/list": "6.1.15",
+        "@fullcalendar/timegrid": "6.1.15",
         "@metrichor/jmespath": "0.3.1",
         "@wavemaker/custom-widgets-m3": "file:.yalc/@wavemaker/custom-widgets-m3",
         "@wavemaker/focus-trap": "1.0.1",
@@ -58,7 +63,6 @@
         "core-js": "3.35.1",
         "d3": "7.8.5",
         "esbuild-wasm": "^0.24.2",
-        "fullcalendar": "5.3.1",
         "hammerjs": "2.0.8",
         "iscroll": "5.2.0",
         "jquery": "3.7.1",
@@ -136,10 +140,10 @@
         "yargs": "^17.3.1"
     },
     "optionalDependencies": {
+        "@lmdb/lmdb-linux-x64": "3.0.13",
         "@rollup/rollup-darwin-arm64": "4.9.5",
         "@rollup/rollup-linux-x64-gnu": "4.9.5",
-        "@rollup/rollup-win32-x64": "4.9.5",
-        "@lmdb/lmdb-linux-x64": "3.0.13"
+        "@rollup/rollup-win32-x64": "4.9.5"
     },
     "engines": {
         "node": "~22.11.0",
