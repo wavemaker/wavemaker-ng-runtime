@@ -11,7 +11,7 @@ import { IMaskModule } from 'angular-imask';
 import { AbstractI18nService, App } from '@wm/core';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { StylableComponent, BaseComponent } from '@wm/components/base';
-import "fullcalendar/main.min.js";
+import "@fullcalendar/core/index.global.min.js"
 import moment from 'moment';
 
 declare global {

@@ -30,6 +30,14 @@ import {capitalize, clone, each, extend, get, includes, isDate, isEmpty, isObjec
 
 declare const $;
 import moment from 'moment';
+import {Calendar} from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from '@fullcalendar/list'
+import interactionPlugin from '@fullcalendar/interaction';
+import allLocales from '@fullcalendar/core/locales-all';
+
+import {_WM_APP_PROJECT} from '@wm/core';
 
 const DEFAULT_CLS = 'app-calendar';
 const dateFormats = ['yyyy-MM-dd', 'yyyy-M-dd', 'M-dd-yyyy', 'MM-dd-yy', 'yyyy, dd MMMM', 'yyyy, MMM dd', 'MM/dd/yyyy', 'M/d/yyyy', 'EEE, dd MMM yyyy', 'EEE MMM dd yyyy', 'EEEE, MMMM dd, yyyy', 'timestamp'];
@@ -96,7 +104,7 @@ const dateFormat = 'YYYY/MM/DD';
   imports: [WmComponentsModule],
     selector: '[wmCalendar]',
     templateUrl: './calendar.component.html',
-    styleUrls: ['../../../../../../node_modules/fullcalendar/main.css'],
+    styleUrls: [],
     providers: [
         provideAsWidgetRef(CalendarComponent)
     ],
@@ -408,7 +416,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         super(inj, WIDGET_CONFIG, explicitContext);
 
         this.eventSources.push(this.dataSetEvents);
-        const FullCalendar = window['FullCalendar'];
+        let FullCalendar = window['FullCalendar'] ? window['FullCalendar'] : Calendar;
         if (!FullCalendar.__wm_locale_initialized) {
             i18nService.initCalendarLocale();
             FullCalendar.__wm_locale_initialized = true;
@@ -512,8 +520,14 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     ngAfterViewInit() {
         super.ngAfterViewInit();
         const calendarEl = this._calendar.nativeElement;
-        const FullCalendar = window['FullCalendar'];
-        const calendar = new FullCalendar.Calendar(calendarEl, this.calendarOptions.calendar);
+        let FullCalendar:any ;
+        if(window['FullCalendar']) FullCalendar = window['FullCalendar'].Calendar 
+        else {
+            FullCalendar = Calendar;
+            this.calendarOptions.calendar = {...this.calendarOptions.calendar, plugins: [dayGridPlugin, timeGridPlugin, listPlugin,listPlugin, interactionPlugin], locales: allLocales}
+        }
+
+        const calendar = new FullCalendar(calendarEl, this.calendarOptions.calendar);
         this.$fullCalendar =  calendar;
         this.invokeEventCallback('beforerender', {'$event' : {}});
         calendar.render();

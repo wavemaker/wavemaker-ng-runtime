@@ -460,7 +460,6 @@ copyLocale() {
         local mobileDest=./dist/bundles/wmmobile/locales
 
         local angularSrc=./node_modules/@angular/common/locales
-        local fullCalendarSrc=./node_modules/fullcalendar/locales
         local momentSrc=./node_modules/moment/locale
         local timezoneSrc=./node_modules/moment-timezone/builds/moment-timezone-with-data.js
 
@@ -468,8 +467,6 @@ copyLocale() {
         mkdir -p ${appDest}/angular/global
         mkdir -p ${mobileDest}/angular
         mkdir -p ${mobileDest}/angular/global
-        mkdir -p ${appDest}/fullcalendar
-        mkdir -p ${mobileDest}/fullcalendar
         mkdir -p ${appDest}/moment
         mkdir -p ${mobileDest}/moment
         mkdir -p ${appDest}/moment-timezone
@@ -487,8 +484,6 @@ copyLocale() {
         cp  ${appDest}/angular/*.js  ${mobileDest}/angular/
         cp  ${appDest}/angular/global/*.js  ${mobileDest}/angular/global/
 
-        cp ${fullCalendarSrc}/*.js ${appDest}/fullcalendar/
-        cp ${fullCalendarSrc}/*.js ${mobileDest}/fullcalendar/
 
         cp ${momentSrc}/*.js ${appDest}/moment/
         cp ${momentSrc}/*.js ${mobileDest}/moment/
@@ -588,7 +583,12 @@ bundleJS() {
         ./node_modules/he/he.js \
         ./node_modules/@wavemaker/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
-        ./node_modules/fullcalendar/main.min.js \
+        ./node_modules/@fullcalendar/core/index.global.min.js \
+        ./node_modules/@fullcalendar/daygrid/index.global.min.js \
+        ./node_modules/@fullcalendar/interaction/index.global.min.js \
+        ./node_modules/@fullcalendar/timegrid/index.global.min.js \
+        ./node_modules/@fullcalendar/core/locales-all.global.min.js \
+        ./node_modules/@fullcalendar/list/index.global.min.js \
         ./node_modules/jssha/dist/sha256.js \
         ./node_modules/summernote/dist/summernote-lite.js \
         ./node_modules/jquery-ui/ui/disable-selection.js \
@@ -681,7 +681,6 @@ bundleMobileLibs() {
         ./node_modules/he/he.js \
         ./node_modules/@wavemaker/nvd3/build/nv.d3.min.js \
         ./node_modules/jquery/dist/jquery.min.js \
-        ./node_modules/fullcalendar/main.min.js \
         ./node_modules/jssha/dist/sha256.js \
         ./node_modules/summernote/dist/summernote-lite.js \
         ./node_modules/jquery-ui/ui/disable-selection.js \

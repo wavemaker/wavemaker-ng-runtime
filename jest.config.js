@@ -4,7 +4,7 @@ module.exports = {
   roots: ["<rootDir>/projects"],
   testEnvironment: "jsdom",
   transformIgnorePatterns: [
-    '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|@wavemaker/foundation-css|@wavemaker/custom-widgets-m3|ngx-toastr|ngx-bootstrap|ngx-color-picker)/)',
+    '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|@wavemaker/foundation-css|@wavemaker/custom-widgets-m3|ngx-toastr|ngx-bootstrap|ngx-color-picker|@fullcalendar|preact)/)',
   ],
   testMatch: [
     "**/projects/**/*.spec.ts",
@@ -35,6 +35,7 @@ module.exports = {
   // ],
   coverageDirectory: "coverage",
   moduleNameMapper: {
+    "@fullcalendar/(.*)$": "<rootDir>/node_modules/@fullcalendar/core/index.cjs",
     "^jQuery$": "jquery",
     "@wm/security": "<rootDir>/projects/security/src/public_api.ts",
     "@wm/swipey": "<rootDir>/projects/swipey/src/public_api.ts",
