@@ -95,7 +95,7 @@ describe('wm-wizard: Component Specific Tests', () => {
         jest.spyOn(frstStepRef, 'invokeEventCallback');
 
         // Trigger the next step
-        wmComponent.next();
+        await wmComponent.next();
         fixture.detectChanges();
 
         // Assert that the invokeEventCallback was called correctly for the first step
@@ -224,5 +224,5 @@ describe('wm-wizard: Component Specific Tests', () => {
         });
     });
 
-   
+
 });
