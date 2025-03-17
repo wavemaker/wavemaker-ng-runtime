@@ -60,7 +60,9 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             const prevDataValue =  (this as any).prevDatavalue;
             this.displayValue = input.value = this.proxyModel = null;
             this.resetValidations();
-            if ((prevDataValue || prevDataValue == 0) && !this.isDefaultQuery) {
+            // Fix for [WMS-27648]: When a decimal value is entered (e.g., "3."), datavalue and prevDatavalue become null as it is an invalid number.
+            // handleChange() should be called when the invalid datavalue (e.g., "3.") is removed, and the value becomes an empty string ("").
+            if ((prevDataValue || prevDataValue == 0 || prevDataValue == null) && !this.isDefaultQuery) {
                 this.handleChange(value);
                 this._onChange();
             }

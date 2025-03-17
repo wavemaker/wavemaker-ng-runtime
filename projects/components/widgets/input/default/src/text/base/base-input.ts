@@ -41,7 +41,7 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
             this._onChange(this.datavalue);
         }
         if (key === 'updateon') {
-            this.ngModelOptions.updateOn = nv === 'default' ? 'change' : ov;
+            this.ngModelOptions.updateOn = nv === 'default' ? 'change' : 'blur';
         }
         if (key === 'class') {
             if (this.inputEl.nativeElement) {
