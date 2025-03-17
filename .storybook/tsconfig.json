@@ -85,7 +85,8 @@
         "libraries/components/navigation/navbar/index.d.ts"
       ],
       "@wm/components/navigation/menu": [
-        "libraries/components/navigation/menu/index.d.ts"
+ //       "libraries/components/navigation/menu/index.d.ts"
+      "projects/components/widgets/navigation/menu/src/public_api.ts"
       ],
       "@wm/components/navigation/breadcrumb": [
         "libraries/components/navigation/breadcrumb/index.d.ts"
