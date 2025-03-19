@@ -131,7 +131,8 @@
         "libraries/components/data/table/index.d.ts"
       ],
       "@wm/components/data/pagination": [
-        "libraries/components/data/pagination/index.d.ts"
+        //"libraries/components/data/pagination/index.d.ts"
+        "projects/components/widgets/data/pagination/src/public_api.ts"
       ],
       "@wm/components/data/live-table": [
         "libraries/components/data/live-table/index.d.ts"
