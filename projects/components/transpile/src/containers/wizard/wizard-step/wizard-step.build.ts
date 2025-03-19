@@ -8,7 +8,7 @@ register('wm-wizardstep', (): IBuildTaskDef => {
     return {
         pre: attrs => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmWizardStep #${counter}="wmWizardStep" ${getAttrMarkup(attrs)}>
+            return `<${tagName} wmWizardStep partialContainer #${counter}="wmWizardStep" ${getAttrMarkup(attrs)}>
                        <ng-template [ngIf]="${counter}.isInitialized">`;
         },
         post: () => `</ng-template></${tagName}>`
