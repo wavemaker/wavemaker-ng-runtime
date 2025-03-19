@@ -1,28 +1,3 @@
-// import type { Meta, StoryObj } from '@storybook/angular';
-// import { fn } from '@storybook/test';
-// import { CardComponent } from './card.component';
-
-
-// const meta: Meta<CardComponent> = {
-//   title: 'Data/Card',
-//   component: CardComponent,
-//   tags: ['autodocs'],
-// //   argTypes: {
-// //     iconsize: { control: 'select', options: ['Base', 'fa-lg', 'fa-2x','fa-3x', 'fa-4x','fa-5x'] },
-// //     iconposition:{control: 'select', options:['right', 'left']},
-// //     },
-// };
-
-// export default meta;
-// type Story = StoryObj<CardComponent>;
-
-// export const WithCustomApplicationProvider: Story = {
-//   render: () => ({
-//     // Apply application config to a specific story
-    
-//   })
-// }
-
 import type { Meta, StoryObj } from '@storybook/angular';
 import { CardComponent } from './card.component';
 import { fn } from '@storybook/test';
@@ -67,4 +42,32 @@ export const Basic: Story = {
 //     iconurl: 'https://via.placeholder.com/150',
 //   },
 // };
+
+
+
+
+// import type { Meta, StoryObj } from '@storybook/angular';
+// import { fn } from '@storybook/test';
+// import { CardComponent } from './card.component';
+
+
+// const meta: Meta<CardComponent> = {
+//   title: 'Data/Card',
+//   component: CardComponent,
+//   tags: ['autodocs'],
+// //   argTypes: {
+// //     iconsize: { control: 'select', options: ['Base', 'fa-lg', 'fa-2x','fa-3x', 'fa-4x','fa-5x'] },
+// //     iconposition:{control: 'select', options:['right', 'left']},
+// //     },
+// };
+
+// export default meta;
+// type Story = StoryObj<CardComponent>;
+
+// export const WithCustomApplicationProvider: Story = {
+//   render: () => ({
+//     // Apply application config to a specific story
+    
+//   })
+// }
 
