@@ -2,15 +2,15 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { WmComponentsModule } from '@wm/components/base';
+import {WmComponentsModule} from '@wm/components/base';
 
 import { WizardComponent } from './wizard.component';
-import { WizardStepDirective } from './wizard-step/wizard-step.directive';
 import { WizardActionDirective } from './wizard-action/wizard-action.directive';
+import {WizardStepComponent} from "./wizard-step/wizard-step.component";
 
 const components = [
     WizardActionDirective,
-    WizardStepDirective,
+    WizardStepComponent,
     WizardComponent
 ];
 
