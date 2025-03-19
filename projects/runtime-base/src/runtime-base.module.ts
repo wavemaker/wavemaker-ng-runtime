@@ -184,6 +184,7 @@ import { PopoverModule as ngxPopoverModule } from "ngx-bootstrap/popover";
 import { NgCircleProgressModule } from "ng-circle-progress";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { SecurityService } from '@wm/security';
+import { PrefabDirective as PrefabLoader } from './directives/prefab.directive';
 
 declare const _WM_APP_PROPERTIES;
 
@@ -239,6 +240,7 @@ const definitions = [
     AppSpinnerComponent,
     CustomToasterComponent,
     AppComponent,
+    PrefabLoader,
     PrefabPreviewComponent,
     EmptyPageComponent
 ];
@@ -399,7 +401,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     exports: [
         FormsModule,
         ReactiveFormsModule,
-
+        PrefabLoader,
         CommonModule,
         RouterModule,
         HttpClientModule,
