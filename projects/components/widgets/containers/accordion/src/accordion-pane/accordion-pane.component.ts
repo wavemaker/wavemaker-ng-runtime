@@ -24,8 +24,7 @@ const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-accordionpane', hostClass
     selector: 'div[wmAccordionPane]',
     templateUrl: './accordion-pane.component.html',
     providers: [
-        provideAsWidgetRef(AccordionPaneComponent),
-        provideAsWidgetRef(AccordionDirective)
+        provideAsWidgetRef(AccordionPaneComponent)
     ],
     exportAs: 'wmAccordionPane'
 })
@@ -42,7 +41,6 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
     private $lazyLoad = noop;
     private isdynamic: boolean;
     public tabindex;
-
     public name: string;
 
     // reference to the components which needs a redraw(eg, grid, chart) when the height of this component changes
