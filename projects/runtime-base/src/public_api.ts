@@ -39,6 +39,7 @@ export * from './components/base-partial.component';
 export * from './components/custom-toaster.component';
 export * from './directives/accessroles.directive';
 export * from './directives/prefab.directive';
+export * from './directives/dynamiccomponent.directive';
 export {
     AppRef
 } from './services/app.service';

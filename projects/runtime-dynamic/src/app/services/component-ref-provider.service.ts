@@ -203,7 +203,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         const promise = (((componentType === ComponentType.WIDGET && !customWidgets[componentName]) || componentType !== ComponentType.WIDGET)  ? this.resouceMngr.get(url, true) : Promise.resolve(customWidgets[componentName]))
             .then(({markup, script, styles, variables, config}: IPageMinJSON) => {
                 const response = {
-                    markup: transpile(_decodeURIComponent(markup)).markup,
+                    markup: transpile(_decodeURIComponent(markup))?.markup,
                     script: _decodeURIComponent(script),
                     styles: scopeComponentStyles(componentName, componentType, _decodeURIComponent(styles)),
                     variables: getValidJSON(_decodeURIComponent(variables)),

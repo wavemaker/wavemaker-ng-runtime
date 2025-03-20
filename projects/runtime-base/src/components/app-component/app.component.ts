@@ -22,6 +22,7 @@ import {
     CustomIconsLoaderService,
     getWmProjectProperties,
     hasCordova,
+    loadScripts,
     noop,
     removeClass,
     setAppRef,
@@ -65,6 +66,19 @@ export class AppComponent implements DoCheck, AfterViewInit {
         private appManager: AppManagerService,
         private customIconsLoaderService: CustomIconsLoaderService
     ) {
+        const _scripts = [
+            './resources/polyfills.js',
+            './resources/runtime.js',
+            './resources/styles.js',
+            './resources/main.js'];
+        // const _scripts = [
+        //     './resources/polyfills-es5.js',
+        //     './resources/vendor-es5.js',
+        //     './resources/runtime-es5.js',
+        //     './resources/styles-es5.js',
+        //     './resources/main-es5.js'];
+        // loadScripts(_scripts, true);
+
         setPipeProvider(_pipeProvider);
         setNgZone(ngZone);
         setAppRef(_appRef);

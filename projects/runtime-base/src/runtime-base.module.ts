@@ -42,6 +42,7 @@ import { AppSpinnerComponent } from './components/app-spinner.component';
 import { CustomToasterComponent } from './components/custom-toaster.component';
 import { EmptyPageComponent } from './components/empty-component/empty-page.component';
 import { PrefabDirective } from './directives/prefab.directive';
+import { DynamicComponentDirective } from './directives/dynamiccomponent.directive';
 import { AppRef } from './services/app.service';
 import { ToasterServiceImpl } from './services/toaster.service';
 import { I18nServiceImpl } from './services/i18n.service';
@@ -177,6 +178,7 @@ const definitions = [
     AppSpinnerComponent,
     CustomToasterComponent,
     PrefabDirective,
+    DynamicComponentDirective,
     AppComponent,
     PrefabPreviewComponent,
     EmptyPageComponent
