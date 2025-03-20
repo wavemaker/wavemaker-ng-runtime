@@ -11,6 +11,7 @@ import { APPLY_STYLES_TYPE, DatasetAwareNavComponent, provideAsWidgetRef, styler
 
 import { registerProps } from './nav.props';
 import { find, forEach, isEmpty, omit } from "lodash-es";
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 const DEFAULT_CLS = 'nav app-nav';
 const WIDGET_CONFIG = { widgetType: 'wm-nav', hostClass: DEFAULT_CLS };
@@ -23,7 +24,7 @@ const NavClassMap = {
 
 @Component({
     standalone: true,
-    imports: [CommonModule, WmComponentsModule, AnchorComponent, forwardRef(() => MenuComponent), NavItemDirective],
+    imports: [CommonModule, WmComponentsModule, BsDropdownModule, AnchorComponent, forwardRef(() => MenuComponent), NavItemDirective, ],
     selector: '[wmNav]',
     templateUrl: './nav.component.html',
     providers: [
