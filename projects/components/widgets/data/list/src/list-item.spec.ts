@@ -159,7 +159,7 @@ describe('ListItemDirective', () => {
     describe('getters', () => {
         beforeEach(() => {
             directive.context = {
-                index: 2,
+                $index: 2,
                 even: false,
                 odd: true,
                 first: false,

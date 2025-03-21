@@ -53,7 +53,7 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     }
 
     get $index() {
-        return this.context.index;
+        return this.context.$index;
     }
 
     get $even() {
