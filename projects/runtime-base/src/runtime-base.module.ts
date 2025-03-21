@@ -402,6 +402,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         FormsModule,
         ReactiveFormsModule,
         PrefabLoader,
+        AccessrolesDirective,
         CommonModule,
         RouterModule,
         HttpClientModule,
