@@ -14,7 +14,6 @@
        [required]="required"
        [tabindex]="tabindex"
        [(ngModel)]="datavalue"
-       (ngModelChange)="handleChange($event);"
        [ngModelOptions]="{updateOn: 'change', standalone: true}"
        (blur)="invokeOnTouched($event)"
        [attr.accesskey]="shortcutkey">
