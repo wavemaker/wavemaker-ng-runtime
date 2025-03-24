@@ -615,6 +615,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.callDataGridMethod('applyColNgClass', getConditionalClasses(nv, ov), rowIndex, colIndex);
             }, watchName));
         },
+        registerCollapseOrExpandTitleWatch:(expr, rowData, index,titleName, element) => {
+            const row = this.getClonedRowObject(rowData);
+            const watchName = `${this.widgetId}_${titleName}_${index}`;
+            $unwatch(watchName);
+            this.registerDestroyListener($watch(expr, this.viewParent, {row}, (nv,ov) => {
+                element.removeAttribute(`${titleName}.bind`);
+                element.setAttribute(titleName, nv);
+                if(titleName === 'expandtitle') element.setAttribute('title', nv);
+            }, watchName));
+        },
         clearCustomExpression: () => {
             this.customExprViewRef.clear();
             this.customExprCompiledTl = {};
