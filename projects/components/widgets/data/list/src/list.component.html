@@ -60,7 +60,7 @@
   [hidden]="noDataFound && !variableInflight"
   >
   @if (!groupby) {
-    @for (item of fieldDefs; track item) {
+    @for (item of fieldDefs; track $index) {
       <li class="app-list-item {{direction === 'horizontal' ? '' : itemsPerRowClass}}" [ngClass]="listItemRef.itemClass"
         [wmListItem]="item"
         #listItemRef="listItemRef"

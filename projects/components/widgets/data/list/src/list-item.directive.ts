@@ -51,9 +51,8 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         // maintains which element is focused/selected most recently.
         this.listComponent.lastSelectedItem = this;
     }
-
     get $index() {
-        return this.context.index;
+        return this.context.$index;
     }
 
     get $even() {
