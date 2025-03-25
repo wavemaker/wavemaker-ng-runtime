@@ -47,9 +47,19 @@ export class MenuAdapterComponent extends BaseContainerComponent implements Afte
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
+        if(this.menuRefQL['first'])
+        {this.setMenuProperty();}
         const subscriber = this.menuRefQL.changes.subscribe((menuRefQL: QueryList<MenuComponent>) => {
             if (menuRefQL.first) {
-                this.menuRef = menuRefQL.first;
+                this.setMenuProperty()
+                subscriber.unsubscribe();
+            }
+        });
+    }
+    protected setMenuProperty(){
+        if(this.menuRefQL['first']) {
+            if (this.menuRefQL.first) {
+                this.menuRef = this.menuRefQL.first;
                 menuProps.forEach((prop) => {
                     const bindProp = `bind${prop}`;
                     if (this[bindProp]) {
@@ -57,8 +67,8 @@ export class MenuAdapterComponent extends BaseContainerComponent implements Afte
                     }
                     this.menuRef[prop] = this[prop];
                 });
-                subscriber.unsubscribe();
             }
-        });
+        }
     }
+
 }

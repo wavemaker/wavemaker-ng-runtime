@@ -296,14 +296,14 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
      * whether to change route or not based on return value.
      */
     @HostListener('window:beforeunload')
-    canDeactivate() {
+    canDeactivate(nextState?: string){
         let retVal;
         // Calling onBeforePageLeave method present at page level
         retVal = this.onBeforePageLeave();
         // Calling onBeforePageLeave method present at app level only if page level method return true
         // or if there is no page level method
         if (retVal !== false ) {
-            retVal =  (this.App.onBeforePageLeave || noop)(this.App.activePageName, this.App.activePage);
+            retVal =  (this.App.onBeforePageLeave || noop)(this.App.activePageName, this.App.activePage, nextState);
         }
         return retVal === undefined ? true : retVal;
     }
