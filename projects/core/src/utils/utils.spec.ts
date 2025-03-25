@@ -1352,7 +1352,7 @@ describe('getFormattedDate', () => {
     it('should use moment for formatting with timezone', () => {
         const testDate = new Date('2023-05-20T12:34:56Z');
         const result = getFormattedDate(mockDatePipe, testDate, 'YYYY-MM-DD', 'UTC');
-        expect(result).toBe(moment(testDate).utc().format('YYYY-MM-DD'));
+        expect(result).toBe((moment(testDate)as any).utc().format('YYYY-MM-DD'));
     });
 
     it('should use datePipe for default formatting', () => {
