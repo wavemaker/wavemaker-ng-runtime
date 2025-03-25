@@ -743,13 +743,13 @@ export const getValidDateObject = (val, options?) => {
     const pattern = isNativePicker ? (get(options, 'pattern') || 'YYYY/MM/DD HH:mm:ss') : (momentPattern(get(options, 'pattern')) || '');
     // Handling localization
     if (options && options.pattern && options.pattern !== 'timestamp') {
-        if (!isNaN((new Date(val)).getTime())) {
+        if (!isNaN(moment(val, pattern).valueOf())) { // Fix for [WMS-27658]: Date() doesn't support some formats like 'dd/MM/yyyy'  so using moment() to format the value
             // check whether val is a valid date or not
             if (isIos()) {
                 // For iOS, explicitly setting the format to consider even the seconds.
                 val = moment(val).format('YYYY/MM/DD HH:mm:ss');
             }
-            val = moment(new Date(val), pattern);
+            val = moment(val, pattern);
         } else {
             val = moment(val, pattern);
         }

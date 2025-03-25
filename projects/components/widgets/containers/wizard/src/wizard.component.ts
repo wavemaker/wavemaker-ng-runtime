@@ -236,18 +236,20 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     }
 
     // Method to navigate to next step
-    public next(eventName: string = 'next') {
+    public async next(eventName: string = 'next') {
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
 
         // abort if onSkip method returns false
         if (eventName === 'skip') {
-            if (currentStep.invokeSkipCB(currentStepIndex) === false) {
+            const response = await currentStep.invokeSkipCB(currentStepIndex);
+            if (response === false) {
                 return;
             }
             this.extendNextFn(currentStep, currentStepIndex);
         } else if (this.currentStep.isValid && eventName === 'next') {
-            if (currentStep.invokeNextCB(currentStepIndex) === false) {
+            const response  = await currentStep.invokeNextCB(currentStepIndex);
+            if (response === false) {
                 return;
             }
             this.extendNextFn(currentStep, currentStepIndex);
@@ -273,14 +275,15 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         this.addMoreText();
     }
     // Method to navigate to previous step
-    public prev() {
+    public async prev() {
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
 
         let prevStep: WizardStepDirective;
 
         // abort if onPrev method returns false.
-        if (currentStep.invokePrevCB(currentStepIndex) === false) {
+        const response = await currentStep.invokePrevCB(currentStepIndex);
+        if (response === false) {
             return;
         }
 

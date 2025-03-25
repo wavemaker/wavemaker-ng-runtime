@@ -99,6 +99,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     private isClosingProgrammatically = false;
     private static activePopovers: PopoverComponent[] = [];
     private isHandlingClick = false;
+    private preventFocusShift: boolean = false;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
@@ -187,8 +188,12 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     private isChildPopover(): boolean {
         return !!$(this.nativeElement).closest('.popover').length;
     }
-    // This mehtod is used to show/open the popover. This refers to the same method showPopover.
-    public open() {
+    /**
+     * Opens the popover, similar to the showPopover method.
+     * @param preventFocusShift Optional parameter (default: false). When false, focus shifts to the popover upon opening. If set to true, focus remains on the triggering element.
+     */
+    public open(preventFocusShift?:boolean) {
+        this.preventFocusShift = preventFocusShift ?? false;
         if (this.isHandlingClick) return;
         this.showPopover();
         if (!PopoverComponent.activePopovers.includes(this)) {
@@ -349,8 +354,16 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (this.autoclose === AUTOCLOSE_TYPE.ALWAYS) {
             popoverContainer.onclick = () => this.close();
         }
+        // Fix for [WMS-27656]: Added 'preventFocusShift' parameter (default: false).
+        // By default, focus moves to the popover when it appears.
+        // If 'preventFocusShift' is set to true, focus remains on the triggering element.
+        if (this.preventFocusShift) {
+            const activeElement = document.activeElement as HTMLElement; // Capture current focused element
+            setTimeout(() => activeElement?.focus(), 0);
+        } else {
+            setTimeout(() => popoverStartBtn.focus(), 50);
+        }
 
-        setTimeout(() => popoverStartBtn.focus(), 50);
         // Adjusting popover position if the popover placement is top or bottom
         setTimeout( () => {
             if (!this.adaptiveposition ) {

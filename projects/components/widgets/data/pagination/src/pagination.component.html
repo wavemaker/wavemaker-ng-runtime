@@ -1,41 +1,52 @@
 
 @if (navcontrols === 'Classic') {
-  <ul class="pagination advanced {{navigationClass}}">
+<ul class="pagination advanced {{navigationClass}}">
+    @if (!(dataSize<=maxResults)) {
     <li [ngClass]="{'disabled':isDisableFirst}">
-      <a [title]="appLocale.LABEL_FIRST" name="first" href="javascript:void(0);"
-        [attr.aria-disabled]="isDisableFirst"
-        (click)="navigatePage('first', $event)">
-        <span aria-hidden="true"><i class="wi wi-first-page"></i></span>
-        <span class="sr-only">Go to first page {{ isDisableFirst ? ' , Disabled' : ''}}</span>
-      </a>
+        <a [title]="appLocale.LABEL_FIRST" name="first" href="javascript:void(0);"
+           [attr.aria-disabled]="isDisableFirst"
+           (click)="navigatePage('first', $event)">
+            <span aria-hidden="true"><i class="wi wi-first-page"></i></span>
+            <span class="sr-only">Go to first page {{ isDisableFirst ? ' , Disabled' : ''}}</span>
+        </a>
     </li>
+    }}
+    @if (!(dataSize<=maxResults)) {
     <li [ngClass]="{'disabled':isDisablePrevious}">
-      <a [title]="appLocale.LABEL_PREVIOUS" name="prev" href="javascript:void(0);"
-        [attr.aria-disabled]="isDisablePrevious"
-        (click)="navigatePage('prev', $event)">
-        <span aria-hidden="true"><i class="wi wi-chevron-left"></i></span>
-        <span class="sr-only">Go to previous page {{ isDisablePrevious ? ', Disabled' : ''}}</span>
-      </a>
+        <a [title]="appLocale.LABEL_PREVIOUS" name="prev" href="javascript:void(0);"
+            [attr.aria-disabled]="isDisablePrevious"
+            (click)="navigatePage('prev', $event)">
+            <span aria-hidden="true"><i class="wi wi-chevron-left"></i></span>
+            <span class="sr-only">Go to previous page {{ isDisablePrevious ? ', Disabled' : ''}}</span>
+        </a>
     </li>
+    }
+    @if (!(dataSize<=maxResults)) {
     <li class="pagecount disabled">
-      <a href="javascript:void(0);" aria-label="Change Page Number">
-        <input [(ngModel)]="dn.currentPage" [attr.aria-label]="'Showing Page ' + dn.currentPage + ' of ' + pageCount" [disabled]="isDisableCurrent"
-          [ngModelOptions]="{standalone: true}"
-          type="number"
-          (keydown)="onKeyDown($event)" (change)="onModelChange($event)" class="form-control"/>
-      </a>
+        <a href="javascript:void(0);" aria-label="Change Page Number">
+            <input [(ngModel)]="dn.currentPage" [attr.aria-label]="'Showing Page ' + dn.currentPage + ' of ' + pageCount" [disabled]="isDisableCurrent"
+                   [ngModelOptions]="{standalone: true}"
+                   type="number"
+                  (keydown)="onKeyDown($event)" (change)="onModelChange($event)" class="form-control"/>
+        </a>
     </li>
+    }
+    @if (!(dataSize<=maxResults)) {
     <li class="disabled">
-      <a [hidden]="isDisableCount"> / {{pageCount}}</a>
+        <a [hidden]="isDisableCount"> / {{pageCount}}</a>
     </li>
+    }
+    @if (!(dataSize<=maxResults)) {
     <li [ngClass]="{'disabled':isDisableNext}">
-      <a [title]="appLocale.LABEL_NEXT" name="next" href="javascript:void(0);"
-        [attr.aria-disabled]="isDisableNext"
-        (click)="navigatePage('next', $event)">
-        <span aria-hidden="true"><i class="wi wi-chevron-right"></i></span>
-        <span class="sr-only">Go to next page {{ isDisableNext ? ' , Disabled' : ''}}</span>
-      </a>
+        <a [title]="appLocale.LABEL_NEXT" name="next" href="javascript:void(0);"
+           [attr.aria-disabled]="isDisableNext"
+           (click)="navigatePage('next', $event)">
+            <span aria-hidden="true"><i class="wi wi-chevron-right"></i></span>
+            <span class="sr-only">Go to next page {{ isDisableNext ? ' , Disabled' : ''}}</span>
+        </a>
     </li>
+    }
+    @if (!(dataSize<=maxResults)) {
     <li [ngClass]="{'disabled':isDisableLast}">
       <a [title]="appLocale.LABEL_LAST" name="last" href="javascript:void(0);"
         [attr.aria-disabled]="isDisableLast"
@@ -44,6 +55,7 @@
         <span class="sr-only">Go to last page {{ isDisableLast ? ' , Disabled' : ''}}</span>
       </a>
     </li>
+    }
     @if (showrecordcount) {
       <li class="totalcount disabled">
         <a href="javascript:void(0);" tabindex="-1" aria-disabled="true">{{appLocale.LABEL_TOTAL_RECORDS}}: {{dataSize}}</a>
@@ -72,7 +84,7 @@
   </ul>
 }
 
-@if (navcontrols === 'Basic') {
+@if (navcontrols === 'Basic' && !(dataSize<=maxResults)) {
   <pagination class="pagination basic" [ngClass]="navigationClass" role="navigation"
     [itemsPerPage]="maxResults" [totalItems]="dataSize"
     (pageChanged)="pageChanged($event)" [ngModelOptions]="{standalone:true}" [ngModel]="dn.currentPage"
