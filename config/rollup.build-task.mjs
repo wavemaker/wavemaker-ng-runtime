@@ -54,7 +54,8 @@ export default [
             commonjs({
                 include: [
                     'node_modules/!**',
-                    'node_modules/x2js/x2js.js'
+                    'node_modules/x2js/x2js.js',
+                    'node_modules/moment-timezone/moment-timezone.js'
                 ],
                 ignoreGlobal: true
             })

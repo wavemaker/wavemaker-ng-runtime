@@ -4,7 +4,7 @@ import {AbstractI18nService, CURRENCY_INFO, CustomPipeManager, hasOffsetStr, isD
 import {WmPipe} from "./wm-pipe";
 import {filter, includes, isDate, isFunction, isObject, isUndefined, startsWith} from "lodash-es";
 
-import moment from 'moment';
+import moment from 'moment-timezone/moment-timezone';
 
 const getEpochValue = data => {
     let epoch;

@@ -20,7 +20,7 @@ import {
 import { CONSTANTS } from '@wm/variables';
 import {find, forEach, get, includes, intersection, isObject, map, toLower} from "lodash-es";
 
-import moment from 'moment';
+import moment from 'moment-timezone/moment-timezone';
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
 const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',

@@ -23,7 +23,7 @@ import {
 
 import X2JS from 'x2js';
 declare const $;
-import moment from 'moment';
+import moment from 'moment-timezone/moment-timezone';
 declare const document;
 declare const resolveLocalFileSystemURL;
 declare const WM_CUSTOM_FORMATTERS;
