@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 
 import { $appDigest, noop, removeAttr, setCSS, toggleClass } from '@wm/core';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, RedrawableDirective, styler } from '@wm/components/base';
 import { MenuAdapterComponent, MenuComponent } from '@wm/components/navigation/menu';
 import { registerProps } from './panel.props';
@@ -23,7 +24,7 @@ const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-panel', hostClass: DEFAUL
 
 @Component({
     standalone: true,
-    imports: [CommonModule, WmComponentsModule, MenuComponent],
+    imports: [BsDropdownModule, CommonModule, WmComponentsModule, MenuComponent],
     selector: '[wmPanel]',
     templateUrl: './panel.component.html',
     providers: [
