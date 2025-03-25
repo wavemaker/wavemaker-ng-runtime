@@ -1,5 +1,6 @@
 import {
     AfterContentInit,
+    AfterViewChecked,
     AfterViewInit,
     Component,
     ContentChild,
@@ -43,7 +44,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ],
     exportAs: 'wmWizard'
 })
-export class WizardComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit {
+export class WizardComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit, AfterViewChecked {
     static initializeProps = registerProps();
 
     @ContentChildren(WizardStepComponent) steps: QueryList<WizardStepComponent>;
@@ -230,9 +231,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
      */
     public removeStep(stepName) {
         const stepRef = this.getStepRefByName(stepName);
-        if (stepRef) {
-            stepRef.remove();
-        }
+        stepRef ? stepRef.remove() : console.warn(`Could not find step with name '${stepName}'`);
     }
 
 
@@ -568,8 +567,10 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         setTimeout(() => { if($(window).width()<768) {
             $(".app-wizard").removeClass("vertical");
         }
-        this.nativeElement.querySelectorAll('div.app-wizard-actions-right').forEach(el => el?.classList.remove('app-container'));
-        this.nativeElement.querySelectorAll('div.app-wizard-actions').forEach(el => el?.classList.add(this.actionsalignment));
         });
+    }
+    ngAfterViewChecked() {
+        this.nativeElement.querySelectorAll('div.app-wizard-actions').forEach(el => el?.classList.add(this.actionsalignment));
+        this.nativeElement.querySelectorAll('div.app-wizard-actions-right').forEach(el => el?.classList.remove('app-container'));
     }
 }
