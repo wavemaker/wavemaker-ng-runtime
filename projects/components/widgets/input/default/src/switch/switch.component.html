@@ -1,5 +1,5 @@
 <div role="group" class="btn-group btn-group-justified" [ngClass]="{'multi-select': multiple}">
-  @for (opt of datasetItems; track opt) {
+  @for (opt of datasetItems; track $index) {
     <a
       focus-target
       href="javascript:void(0);"
@@ -12,7 +12,7 @@
       [attr.aria-pressed]="opt.selected ? true : false"
       (click)="selectOpt($event, $index, opt)"
       >
-      @if (opt.dataObject && opt.dataObject[iconclass] && !opt.selected) {
+      @if (opt.dataObject && opt.dataObject[iconclass] && (!opt.selected ||!checkediconclass)) {
         <i aria-hidden="true" [ngClass]="['app-icon', opt.dataObject[iconclass] || opt['icon']]"></i>
       }
       @if (opt.selected && checkediconclass) {
