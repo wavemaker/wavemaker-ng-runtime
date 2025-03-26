@@ -4,7 +4,8 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { App } from '@wm/core';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 import { filter } from 'lodash-es';
 
 jest.mock('lodash-es', () => ({

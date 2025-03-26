@@ -1,7 +1,8 @@
 import { _WM_APP_PROJECT, hasCordova, isIE, getWmProjectProperties } from '@wm/core';
 import {get, isUndefined} from "lodash-es";
 
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 declare const jsSHA;
 
 const accessTokenSuffix = '.access_token', pkceIdentifier = 'pkce', implicitIdentifier = 'implicit';

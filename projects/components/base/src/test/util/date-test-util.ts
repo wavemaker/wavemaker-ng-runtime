@@ -3,7 +3,8 @@ import { tick } from '@angular/core/testing';
 import { deLocale } from "ngx-bootstrap/locale";
 import { getFormattedDate, getNativeDateObject } from "@wm/core";
 import { defineLocale } from "ngx-bootstrap/chronos";
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 
 export const datepatternTest = (fixture, selector: string, inputSelector: string, attr?: string, isLower?: boolean) => {
     fixture.whenStable().then(() => {

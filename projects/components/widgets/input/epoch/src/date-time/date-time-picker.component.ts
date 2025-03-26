@@ -9,7 +9,8 @@ import { PickerGroupComponent, PickerComponent } from "../picker/picker.componen
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 declare const $;
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 
 @Component({
   standalone: true,

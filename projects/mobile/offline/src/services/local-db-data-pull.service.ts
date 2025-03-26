@@ -28,7 +28,8 @@ import {
     startsWith
 } from "lodash-es";
 
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 const  LAST_PULL_INFO_KEY = 'localDBManager.lastPullInfo';
 
 /**

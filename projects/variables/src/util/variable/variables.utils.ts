@@ -29,7 +29,8 @@ import {
 
 declare const $;
 declare const he;
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 declare const window;
 
 const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};

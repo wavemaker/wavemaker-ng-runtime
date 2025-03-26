@@ -85,7 +85,8 @@ import {
 import {getWmProjectProperties, setWmProjectProperties} from './wm-project-properties';
 
 jest.mock('x2js'); 
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 jest.mock('rxjs');
 // Define the type for window.matchMedia
 type MatchMediaFn = (query: string) => MediaQueryList;

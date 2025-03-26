@@ -38,7 +38,8 @@ import {
     values,
     isArray, assignIn
 } from "lodash-es";
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 declare const cordova;
 declare const Zeep;
 
