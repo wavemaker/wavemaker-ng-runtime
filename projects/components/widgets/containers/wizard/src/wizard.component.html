@@ -44,10 +44,16 @@
     }
   </ul>
 </div>
-<div class="app-wizard-body panel-body">
+<div class="app-wizard-body panel-body"  *ngIf="type !== 'dynamic'">
   @if (message.caption) {
     <p wmMessage caption.bind="message.caption" type.bind="message.type"></p>
   }
   <ng-content ngProjectAs="form[wmWizardStep]"></ng-content>
 </div>
-<ng-container *ngTemplateOutlet="wizardAction"></ng-container>
+<div class="app-wizard-body panel-body" *ngIf="type === 'dynamic'">
+    <div *ngIf="!fieldDefs?.length">{{nodatamessage}}</div>
+    <ng-content select="div[wmRepeatTemplate]"></ng-content>
+</div>
+@if(fieldDefs && fieldDefs.length || type !== 'dynamic') {
+    <ng-container *ngTemplateOutlet="wizardAction"></ng-container>
+}

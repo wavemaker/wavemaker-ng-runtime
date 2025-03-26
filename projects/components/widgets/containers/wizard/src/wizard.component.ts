@@ -1,5 +1,6 @@
 import {
     AfterContentInit,
+    AfterViewChecked,
     AfterViewInit,
     Component,
     ContentChild,
@@ -13,18 +14,20 @@ import {
     TemplateRef
 } from '@angular/core';
 
-import {noop} from '@wm/core';
+import {DynamicComponentRefProvider, noop} from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     IWidgetConfig,
     provideAsWidgetRef,
     styler,
     StylableComponent,
-    Context
+    Context, createArrayFrom
 } from '@wm/components/base';
 
 import { registerProps } from './wizard.props';
-import { WizardStepDirective } from './wizard-step/wizard-step.directive';
+
+import {WizardStepComponent} from "./wizard-step/wizard-step.component";
+import {find, forEach, get, indexOf, isArray, isNumber, isString} from "lodash-es";
 
 const DEFAULT_CLS = 'app-wizard panel clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -38,16 +41,17 @@ const WIDGET_CONFIG: IWidgetConfig = {
     providers: [
         provideAsWidgetRef(WizardComponent),
         {provide: Context, useFactory: () => { return {} }, multi: true}
-    ]
+    ],
+    exportAs: 'wmWizard'
 })
-export class WizardComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit {
+export class WizardComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit, AfterViewChecked {
     static initializeProps = registerProps();
 
-    @ContentChildren(WizardStepDirective) steps: QueryList<WizardStepDirective>;
+    @ContentChildren(WizardStepComponent) steps: QueryList<WizardStepComponent>;
     @ContentChild('wizardAction', { read: TemplateRef, descendants: false }) wizardAction: TemplateRef<any>;
 
     public message: {caption: string, type: string};
-    public currentStep: WizardStepDirective;
+    public currentStep: WizardStepComponent;
 
     public stepClass: string;
     public class;
@@ -61,13 +65,23 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     public donebtnlabel: any;
     public previousbtnlabel: any;
     public nextbtnlabel: any;
+    public defaultstep;
+    public fieldDefs;
+    public type;
+    public nodatamessage;
+    private dynamicComponentProvider;
+    private _dynamicContext;
+    private dynamicStepIndex;
+    public dynamicWizard;
+    public defaultstepindex;
+    private _isFirstLoad: boolean = true;
 
     get hasPrevStep(): boolean {
-        return !this.isFirstStep(this.currentStep);
+        return !this._isFirstStep(this.currentStep);
     }
 
     get hasNextStep(): boolean {
-        return !this.isLastStep(this.currentStep);
+        return !this._isLastStep(this.currentStep);
     }
 
     get showDoneBtn(): boolean {
@@ -98,7 +112,28 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         return this.currentStep.enableDone && this.currentStep.isValid;
     }
 
-    constructor(inj: Injector, @Self() @Inject(Context) contexts: Array<any>, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    /**
+     * returns current step index of the Wizard's current step
+     */
+    get currentStepIndex() {
+        return this.getStepIndexByRef(this.currentStep);
+    }
+
+    /**
+     * returns weather the current step is first step or not
+     */
+    get isFirstStep(): boolean {
+        return this._isFirstStep(this.currentStep);
+    }
+
+    /**
+     * returns weather the current step is last step or not
+     */
+    get isLastStep(): boolean {
+        return this._isLastStep(this.currentStep);
+    }
+
+    constructor(inj: Injector, dynamicComponentProvider: DynamicComponentRefProvider, @Self() @Inject(Context) contexts: Array<any>, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         let resolveFn: Function = noop;
 
         super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
@@ -112,14 +147,100 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             type: ''
         };
         this.wizContext = contexts[0];
+        this.dynamicComponentProvider = dynamicComponentProvider;
+        this.dynamicWizard = [];
+        this.dynamicStepIndex = 0;
     }
+
+    /**
+     * This method is used to register the dynamic steps.
+     * After all steps are initialzed, update the querylist manually based on index.
+     * @param stepRef - refrence of the wizardstep
+     */
+    public registerDynamicStep(stepRef) {
+        this.dynamicWizard.push(stepRef);
+        const isLastStep =  this.dynamicWizard.length === this.dynamicStepIndex;
+        if (isLastStep) {
+            for (let i = 0; i < this.dynamicWizard.length; i++) {
+                const newStepRef  = find(this.dynamicWizard, step => step.dynamicStepIndex === i);
+                const isStepAlreadyExist = find(this.steps.toArray(), newStepRef);
+                if (!isStepAlreadyExist) {
+                    this.steps.reset([...this.steps.toArray(), newStepRef]);
+                    if (newStepRef.active) {
+                        setTimeout(() => {
+                            newStepRef.select();
+                        }, 20);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * This method is to add the wizard step dynamically
+     * @param wizardSteps - list of wizardsteps
+     */
+    public addStep(wizardSteps) {
+        if (!isArray(wizardSteps)) {
+            wizardSteps = [wizardSteps];
+        }
+        const stepNamesList = [];
+        forEach(wizardSteps, (step, index) => {
+            const isStepAlreadyCreated = find(this.steps.toArray(), {name: step.name});
+            const isStepNameExist = indexOf(stepNamesList, step.name);
+            // If user tries to add wizardstep with the same name which is already exists then do not create the step
+            if (isStepAlreadyCreated || isStepNameExist > 0) {
+                console.warn(`The wizard step with name ${step.name} already exists`);
+                return;
+            }
+
+            let paramMarkup = '';
+            let propsTmpl = '';
+            this.dynamicStepIndex++;
+            const name = step.name ? step.name : `wizardstep${this.steps.toArray().length + (index + 1)}`;
+            stepNamesList.push(name);
+            const partialParams = get(step, 'params');
+
+            forEach(step, (value, key) => {
+                if (key !== 'params') {
+                    propsTmpl = `${propsTmpl} ${key}="${value}"`;
+                }
+            });
+
+            forEach(partialParams, (value, key) => {
+                paramMarkup = `${paramMarkup} <wm-param name="${key}" value="${value}"></wm-param>`;
+            });
+            const markup = `<wm-wizardstep dynamicStepIndex="${this.dynamicStepIndex - 1}" isdynamic="true" name="${name}" ${propsTmpl}>
+                            ${paramMarkup}
+                        </wm-wizardstep>`;
+
+            if (!this._dynamicContext) {
+                this._dynamicContext = Object.create(this.viewParent);
+                this._dynamicContext[this.getAttr('wmWizard')] = this;
+            }
+
+            this.dynamicComponentProvider.addComponent(this.getNativeElement().querySelector('.app-wizard-body'), markup, this._dynamicContext, {inj: this.inj});
+
+        });
+        return stepNamesList;
+    }
+
+    /**
+     * This method is to remove the wizard step
+     * @param stepName - index of the step
+     */
+    public removeStep(stepName) {
+        const stepRef = this.getStepRefByName(stepName);
+        stepRef ? stepRef.remove() : console.warn(`Could not find step with name '${stepName}'`);
+    }
+
 
     /**
      * returns next valid step. the index passed is also checked if its valid step
      * @param index
-     * @returns {WizardStepDirective}
+     * @returns {WizardStepComponent}
      */
-    private getNextValidStepFormIndex(index: number): WizardStepDirective {
+    private getNextValidStepFormIndex(index: number): WizardStepComponent {
         for (let i = index; i < this.steps.length; i++) {
             const step = this.getStepRefByIndex(i);
             if (step.show) {
@@ -131,9 +252,9 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     /**
      * returns previous valid step. the index passed is also checked if its valid step
      * @param index
-     * @returns {WizardStepDirective}
+     * @returns {WizardStepComponent}
      */
-    private getPreviousValidStepFormIndex(index: number): WizardStepDirective {
+    private getPreviousValidStepFormIndex(index: number): WizardStepComponent {
         for (let i = index; i >= 0; i--) {
             const step = this.getStepRefByIndex(i);
             if (step.show) {
@@ -153,36 +274,36 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     /**
      * returns stepRef when index is passed.
      * @param {number} index
-     * @returns {WizardStepDirective}
+     * @returns {WizardStepComponent}
      */
-    private getStepRefByIndex(index: number): WizardStepDirective {
+    private getStepRefByIndex(index: number): WizardStepComponent {
         return this.steps.toArray()[index];
     }
 
     /**
      * returns the index value of the step.
-     * @param {WizardStepDirective} wizardStep
+     * @param {WizardStepComponent} wizardStep
      * @returns {number}
      */
-    private getStepIndexByRef(wizardStep: WizardStepDirective): number {
+    private getStepIndexByRef(wizardStep: WizardStepComponent): number {
         return this.steps.toArray().indexOf(wizardStep);
     }
 
     /**
      * gets stepRef by searching on the name property.
      * @param {string} name
-     * @returns {WizardStepDirective}
+     * @returns {WizardStepComponent}
      */
-    private getStepRefByName(name: string): WizardStepDirective {
+    private getStepRefByName(name: string): WizardStepComponent {
         return this.steps.find(step => step.name === name);
     }
 
     /**
      * sets default step as current step if configured
      * or finds first valid step and set it as current step.
-     * @param {WizardStepDirective} step
+     * @param {WizardStepComponent} step
      */
-    private setDefaultStep(step: WizardStepDirective) {
+    private setDefaultStep(step: WizardStepComponent) {
         // If the default step has show true then only update the currentStep
         if (step && step.show) {
             this.currentStep = step;
@@ -209,9 +330,9 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     /**
      * Selects the associated step when the wizard header is clicked.
      * @param $event
-     * @param {WizardStepDirective} currentStep
+     * @param {WizardStepComponent} currentStep
      */
-    private onWizardHeaderClick($event: Event, currentStep: WizardStepDirective) {
+    private onWizardHeaderClick($event: Event, currentStep: WizardStepComponent) {
         // select the step if it's status is done
         if (currentStep.done) {
             // set all the next steps status as disabled and previous steps as done
@@ -257,7 +378,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     }
 
     extendNextFn(currentStep, currentStepIndex){
-        let nextStep: WizardStepDirective;
+        let nextStep: WizardStepComponent;
         nextStep = this.getNextValidStepFormIndex(currentStepIndex + 1);
         nextStep.isInitialized = true;
 
@@ -275,7 +396,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
 
-        let prevStep: WizardStepDirective;
+        let prevStep: WizardStepComponent;
 
         // abort if onPrev method returns false.
         const response = await currentStep.invokePrevCB(currentStepIndex);
@@ -299,19 +420,32 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         this.next('skip');
     }
 
-    public gotoStep(stepName: string) {
-        if(stepName) {
-            const gotoStepIndex = this.steps.toArray().map(step => step.name).indexOf(stepName);
-            if(gotoStepIndex !== -1) {
-                const gotoStep: WizardStepDirective = this.getStepRefByIndex(gotoStepIndex);
-                if(gotoStep?.show) {
-                    this.onWizardHeaderClick(event, gotoStep);
-                } else {
-                    console.error("The gotoStep function cannot navigate to hidden steps");
-                }
-            } else {
-                console.error(`Could not find step '${stepName}'`);
+    /**
+     * Navigates to the given step based on step name or step index
+     * This will work only if the step is already in done state
+     * @param step
+     */
+    public gotoStep(step: string | number) {
+        let gotoStepIndex: number;
+        if (isString(step)) {
+            gotoStepIndex = this.steps.toArray().map(step => step.name).indexOf(step);
+            if (gotoStepIndex === -1) {
+                console.error(`Could not find step '${step}'`);
+                return;
             }
+        } else if (isNumber(step) && step >= 0) {
+            gotoStepIndex = step;
+        } else {
+            console.error("Invalid step name or index provided");
+            return;
+        }
+
+        const gotoStep: WizardStepComponent = this.getStepRefByIndex(gotoStepIndex);
+
+        if (gotoStep?.show) {
+            this.onWizardHeaderClick(event, gotoStep);
+        } else {
+            console.error("The gotoStep function cannot navigate to hidden steps");
         }
     }
 
@@ -362,12 +496,16 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         });
     }
 
-    private isFirstStep(stepRef: WizardStepDirective) {
+    private _isFirstStep(stepRef: WizardStepComponent) {
         return this.steps.first === stepRef;
     }
 
-    private isLastStep(stepRef: WizardStepDirective) {
+    private _isLastStep(stepRef: WizardStepComponent) {
         return this.steps.last === stepRef;
+    }
+
+    private onDataChange(newVal) {
+        this.fieldDefs = createArrayFrom(newVal);
     }
 
 
@@ -377,9 +515,13 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
 
         if (key === 'stepstyle') {
             this.stepClass =  nv === 'justified' ? 'nav-justified' : '';
+        } else if (key === 'dataset') {
+            this.onDataChange(nv);
         } else if (key === 'defaultstep') {
             this.setDefaultStep(this.getStepRefByName(nv));
-        } else if (key === 'actionsalignment') {
+        }  else if (key === 'defaultstepindex') {
+            this.setDefaultStep(this.getStepRefByIndex(nv));
+        }  else if (key === 'actionsalignment') {
             this.nativeElement.querySelector('div.app-wizard-actions')?.classList.replace(ov, nv);
         } else {
             super.onPropertyChange(key, nv, ov);
@@ -407,6 +549,12 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         this.wizContext.disableNext = () => !this.enableNext;
         this.wizContext.disablePrevious = () => !this.enablePrev;
         this.wizContext.disableDone = () => !this.enableDone;
+        this.steps.changes.subscribe( slides => {
+            if (this.steps.length && this.type === 'dynamic' && this._isFirstLoad) {
+                this.setDefaultStep(this.getStepRefByIndex(this.defaultstepindex));
+                this._isFirstLoad = false;
+            }
+        });
     }
 
     ngAfterViewInit() {
@@ -419,8 +567,10 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         setTimeout(() => { if($(window).width()<768) {
             $(".app-wizard").removeClass("vertical");
         }
-        this.nativeElement.querySelector('div.app-wizard-actions-right')?.classList.remove('app-container');
-        this.nativeElement.querySelector('div.app-wizard-actions')?.classList.add(this.actionsalignment);
         });
+    }
+    ngAfterViewChecked() {
+        this.nativeElement.querySelectorAll('div.app-wizard-actions').forEach(el => el?.classList.add(this.actionsalignment));
+        this.nativeElement.querySelectorAll('div.app-wizard-actions-right').forEach(el => el?.classList.remove('app-container'));
     }
 }
