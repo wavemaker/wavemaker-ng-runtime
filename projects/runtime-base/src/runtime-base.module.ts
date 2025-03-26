@@ -21,9 +21,9 @@ import {
     isIpod,
     isIpad,
     Viewport,
-    hasCordova
+    hasCordova,
+    AbstractDialogService
 } from '@wm/core';
-import { WmComponentsModule } from '@wm/components/base';
 import { DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 import { ConfirmDialogComponent } from '@wm/components/dialogs/confirm-dialog';
 import { DialogComponent } from '@wm/components/dialogs/design-dialog';
@@ -185,6 +185,7 @@ import { NgCircleProgressModule } from "ng-circle-progress";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { SecurityService } from '@wm/security';
 import { PrefabDirective as PrefabLoader } from './directives/prefab.directive';
+import { ContainerDirective, CustomPipe, DialogServiceImpl, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, ItemTemplateDirective, LazyLoadDirective, MessageComponent, NumberToStringPipe, PartialContainerDirective, PartialDirective, PartialParamDirective, PartialParamHandlerDirective, PrefixPipe, RedrawableDirective, RepeatTemplateDirective, SanitizePipe, ShowInDeviceDirective, SmoothScrollDirective, StateClassPipe, StringToNumberPipe, SuffixPipe, TextContentDirective, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe, TrailingZeroDecimalPipe, TrustAsPipe } from '@wm/components/base';
 
 declare const _WM_APP_PROPERTIES;
 
@@ -251,6 +252,42 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     DialogBodyDirective,
     DialogFooterDirective,
     DialogHeaderComponent,
+
+    // Components Module changes
+    ContainerDirective,
+    ItemTemplateDirective,
+    RepeatTemplateDirective,
+    LazyLoadDirective,
+    MessageComponent,
+    PartialDirective,
+    PartialParamHandlerDirective,
+    PartialParamDirective,
+    PartialContainerDirective,
+    CustomWidgetContainerDirective,
+    RedrawableDirective,
+    ShowInDeviceDirective,
+    SmoothScrollDirective,
+    TextContentDirective,
+
+    // Pipes
+    ToDatePipe,
+    FileIconClassPipe,
+    FileExtensionFromMimePipe,
+    FilterPipe,
+    FileSizePipe,
+    ToNumberPipe,
+    ToCurrencyPipe,
+    PrefixPipe,
+    SuffixPipe,
+    TimeFromNowPipe,
+    NumberToStringPipe,
+    StateClassPipe,
+    StringToNumberPipe,
+    TrailingZeroDecimalPipe,
+    TrustAsPipe,
+    ImagePipe,
+    CustomPipe,
+    SanitizePipe,
 
     // NGX Bootstrap
     BsDatepickerModule,
@@ -393,7 +430,6 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         ReactiveFormsModule,
         ...definitions,
         ToastrModule,
-        WmComponentsModule,
         MobileRuntimeModule,
         // CoreModule, 
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
@@ -406,9 +442,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         CommonModule,
         RouterModule,
         HttpClientModule,
-
         ToastrModule,
-        WmComponentsModule,
         MobileRuntimeModule,
         // CoreModule, 
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
@@ -416,6 +450,16 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     providers: [
         { provide: ɵSharedStylesHost, useClass: WMDomSharedStylesHost },
         { provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2 },
+        { provide: AbstractDialogService, useClass: DialogServiceImpl },
+        ToDatePipe,
+        FilterPipe,
+        TrailingZeroDecimalPipe,
+        TrustAsPipe,
+        ImagePipe,
+        CustomPipe,
+        SanitizePipe,
+        Location,
+        SecurityService,
         HttpServiceImpl,
     ]
 })
@@ -527,7 +571,6 @@ export class RuntimeBaseModule {
 }
 
 export const WM_MODULES_FOR_ROOT = [
-    WmComponentsModule.forRoot(),
     MobileRuntimeModule.forRoot(),
     RuntimeBaseModule.forRoot()
 ];

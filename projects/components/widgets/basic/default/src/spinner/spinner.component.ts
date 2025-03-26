@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
+import { TextContentDirective } from "@wm/components/base";
 import {Component, Inject, Injector, OnInit, Optional} from '@angular/core';
 
 import {DataSource, validateDataSourceCtx} from '@wm/core';
@@ -13,7 +13,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAU
 
 @Component({
   standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+  imports: [CommonModule, TextContentDirective],
     selector: '[wmSpinner]',
     templateUrl: './spinner.component.html',
     providers: [

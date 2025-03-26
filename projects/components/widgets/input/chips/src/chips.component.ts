@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterViewInit,
     Attribute,
@@ -21,7 +20,7 @@ import {
     isDefined,
     toBoolean
 } from '@wm/core';
-import { ALLFIELDS, configureDnD, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { ALLFIELDS, configureDnD, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAs, provideAsWidgetRef, styler, TextContentDirective } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input';
 import { SearchComponent } from '@wm/components/basic/search';
 
@@ -45,8 +44,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, SearchComponent],
+    standalone: true,
+    imports: [CommonModule, TextContentDirective, SearchComponent],
     selector: '[wmChips]',
     templateUrl: './chips.component.html',
     providers: [

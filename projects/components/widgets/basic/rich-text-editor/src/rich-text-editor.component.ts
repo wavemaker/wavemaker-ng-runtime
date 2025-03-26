@@ -1,5 +1,3 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {Component, Inject, Injector, NgZone, OnDestroy, OnInit, Optional, SecurityContext} from '@angular/core';
 import {NG_VALUE_ACCESSOR} from '@angular/forms';
 
@@ -50,8 +48,7 @@ const overrideSummerNote = () => {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+    standalone: true,
     selector: 'div[wmRichTextEditor]',
     templateUrl: './rich-text-editor.component.html',
     providers: [

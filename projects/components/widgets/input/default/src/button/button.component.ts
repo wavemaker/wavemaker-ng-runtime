@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {Component, HostBinding, Inject, Injector, Optional} from '@angular/core';
 
-import {DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {DISPLAY_TYPE, ImagePipe, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TextContentDirective} from '@wm/components/base';
 
 import {registerProps} from './button.props';
 
@@ -14,8 +13,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+    standalone: true,
+    imports: [CommonModule, TextContentDirective, ImagePipe],
     selector: 'button[wmButton]',
     templateUrl: './button.component.html',
     providers: [

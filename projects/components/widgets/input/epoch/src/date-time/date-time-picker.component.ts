@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import { AfterViewInit, Component, EventEmitter, Injector, Input, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -13,8 +12,8 @@ import * as momentLib  from 'moment';
 const moment = momentLib.default || window['moment'];
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, BsDatepickerModule, BsDropdownModule],
+    standalone: true,
+    imports: [CommonModule, BsDatepickerModule, BsDropdownModule],
     selector: 'wm-datetimepicker',
     template: `
     <ng-template #datetimepickerTemplate>

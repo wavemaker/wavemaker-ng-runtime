@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, OnInit, Optional} from '@angular/core';
 
 import { Subject, Subscription } from 'rxjs';
@@ -19,8 +18,8 @@ const WIDGET_CONFIG = {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+    standalone: true,
+    imports: [CommonModule],
     selector: '[wmFileUpload]',
     templateUrl: './file-upload.component.html',
     providers: [

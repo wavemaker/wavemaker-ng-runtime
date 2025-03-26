@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import { FormsModule } from '@angular/forms';
 import { ScrollableDirective } from './scrollable.directive';
 import {
@@ -34,6 +33,7 @@ import {
     provideAs,
     provideAsWidgetRef,
     styler,
+    TextContentDirective,
     transformFormData
 } from '@wm/components/base';
 import {DatasetAwareFormComponent} from '@wm/components/input';
@@ -59,8 +59,8 @@ import {
 const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, FormsModule, ScrollableDirective, TypeaheadModule],
+    standalone: true,
+    imports: [CommonModule, FormsModule, ScrollableDirective, TypeaheadModule, TextContentDirective],
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
     providers: [

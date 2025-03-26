@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import {Attribute, Component, HostListener, Inject, Injector, Optional} from '@angular/core';
+import {Component, HostListener, Inject, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
-import {AppDefaults, noop, setListClass, switchClass} from '@wm/core';
-import { convertDataToObject, IWidgetConfig, groupData, handleHeaderClick, provideAs, provideAsWidgetRef, styler, toggleAllHeaders } from '@wm/components/base';
+import {setListClass} from '@wm/core';
+import { IWidgetConfig, provideAs, provideAsWidgetRef, styler, TextContentDirective } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '../dataset-aware-form.component';
 
 import { registerProps } from '../checkboxset/checkboxset.props';
@@ -16,8 +15,8 @@ const DEFAULT_CLS = 'app-checkboxset list-group inline';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: DEFAULT_CLS};
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+    standalone: true,
+    imports: [CommonModule, TextContentDirective],
     selector: '[wmCheckboxset]',
     exportAs: 'wmCheckboxset',
     templateUrl: 'checkboxset.component.html',

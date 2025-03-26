@@ -1,8 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {Component, HostBinding, Inject, Injector, Optional} from '@angular/core';
 
-import {IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TextContentDirective} from '@wm/components/base';
 import {registerProps} from './icon.props';
 
 const DEFAULT_CLS = 'app-icon-wrapper';
@@ -12,8 +10,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+    standalone: true,
+    imports: [TextContentDirective],
     selector: '[wmIcon]',
     templateUrl: './icon.component.html',
     providers: [

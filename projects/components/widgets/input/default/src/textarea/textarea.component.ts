@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import { FormsModule } from '@angular/forms';
 import {AfterViewChecked, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
@@ -15,8 +14,8 @@ const WIDGET_CONFIG = {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, FormsModule],
+    standalone: true,
+    imports: [CommonModule, FormsModule],
     selector: 'wm-textarea',
     templateUrl: './textarea.component.html',
     providers: [
