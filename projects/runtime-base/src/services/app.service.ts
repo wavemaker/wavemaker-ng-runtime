@@ -24,6 +24,8 @@ import { SecurityService } from '@wm/security';
 import { WmDefaultRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
 import { PipeService } from "./pipe.service";
 import {each, get, isEmpty, isString} from "lodash-es";
+import * as momentLib from 'moment-timezone/moment-timezone';
+const moment = momentLib.default || window['moment'];
 
 const injectorMap = {
     DialogService: AbstractDialogService,
@@ -142,6 +144,12 @@ export class AppRef {
 
     public notify(eventName: string, ...data: Array<any>) {
         this._eventNotifier.notify.apply(this._eventNotifier, arguments);
+    }
+    
+    public importModule(moduleName: string) {
+        if (moduleName === 'moment') {
+            return moment;
+        }
     }
 
     public getDependency(injToken) {
