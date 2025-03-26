@@ -71,14 +71,9 @@ const getEventName = key => key.substr(3);
 
 const processBinding = (attr, expr) => [`${attr.name}.bind`, quoteAttr(expr)];
 
-const EVENTS_MAP = new Map<string, string>([
-    // ['enterkeypress', 'keypress.enter']
-    ['tap', 'click']
-]);
 const processEvent = attr => {
     const evtName = getEventName(attr.name);
-    const eventAttrName = EVENTS_MAP.get(evtName) || evtName;
-    return [`(${eventAttrName})`, attr.value];
+    return [`${evtName}.event`, attr.value];
 };
 
 /**
