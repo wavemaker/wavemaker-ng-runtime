@@ -9,7 +9,8 @@ import { CustomPipe, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe,
 import { AbstractI18nService, App, CustomPipeManager } from '@wm/core';
 import { MockAbstractI18nService } from './util/date-test-util';
 
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),

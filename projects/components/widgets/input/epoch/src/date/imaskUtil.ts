@@ -1,5 +1,6 @@
 import IMask from "imask";
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 
 export function validateTheMaskedDate (format, locale)  {
     if(format == 'timestamp') {

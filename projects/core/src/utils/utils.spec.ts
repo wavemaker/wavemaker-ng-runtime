@@ -83,7 +83,8 @@ import {
 import {getWmProjectProperties, setWmProjectProperties} from './wm-project-properties';
 
 jest.mock('x2js'); 
-declare const moment: any;
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 jest.mock('rxjs');
 // Define the type for window.matchMedia
 type MatchMediaFn = (query: string) => MediaQueryList;
@@ -1329,7 +1330,7 @@ describe('hasOffsetStr', () => {
 
 describe('getFormattedDate', () => {
     const mockDatePipe = {
-        transform: jest.fn((date, format) => moment(date).format(format))
+        transform: jest.fn((date, format) => (moment(date)as any).format(format))
     };
     it('should return undefined for falsy dateObj', () => {
         expect(getFormattedDate(mockDatePipe, null, 'yyyy-MM-dd')).toBeUndefined();
