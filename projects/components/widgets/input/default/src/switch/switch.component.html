@@ -1,5 +1,5 @@
 <div role="group" class="btn-group btn-group-justified" [ngClass]="{'multi-select': multiple}">
-  @for (opt of datasetItems; track $index) {
+  @for (opt of datasetItems; track opt) {
     <a
       focus-target
       href="javascript:void(0);"
