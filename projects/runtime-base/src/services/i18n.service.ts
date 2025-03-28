@@ -18,7 +18,7 @@ import {
     App
 } from '@wm/core';
 import { CONSTANTS } from '@wm/variables';
-import {find, forEach, get, includes, intersection, isObject, map, toLower} from "lodash-es";
+import {find, forEach, get, includes, intersection, isEmpty, isObject, map, toLower, trim} from "lodash-es";
 
 declare const moment;
 
@@ -115,8 +115,13 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadAppLocaleBundle() {
-        const basePath = _WM_APP_PROJECT.isPreview || (window as any)._WM_APP_PROPERTIES?.languageBundleSources === 'DYNAMIC' ? '' :  _WM_APP_PROJECT.cdnUrl
-        this.loadResource( basePath + `${APP_LOCALE_ROOT_PATH}/${this.selectedLocale}.json`)
+        let rootPath = APP_LOCALE_ROOT_PATH;
+        const localeBundleBaseUrl = getWmProjectProperties().localeBundleBaseUrl;
+        if( !(isEmpty(trim(localeBundleBaseUrl))) ) {
+            rootPath = localeBundleBaseUrl;
+        }
+
+        this.loadResource(`${rootPath}/${this.selectedLocale}.json`)
             .then(bundle => {
                 this.extendMessages(bundle.messages);
                 this.extendPrefabMessages(bundle);
