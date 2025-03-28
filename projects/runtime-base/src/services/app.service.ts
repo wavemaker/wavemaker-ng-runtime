@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import {Injectable, Injector, NgZone} from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
 
 import {
@@ -106,7 +106,8 @@ export class AppRef {
         private statePersistence: StatePersistence,
         private httpService: AbstractHttpService,
         private securityService: SecurityService,
-        private routeReuseStrategy: RouteReuseStrategy
+        private routeReuseStrategy: RouteReuseStrategy,
+        private ngZone: NgZone,
     ) {
 
         const wmProjectProperties = getWmProjectProperties();
@@ -134,6 +135,9 @@ export class AppRef {
     }
 
     public getDependency(injToken) {
+        if ('ngZone') {
+            return this.ngZone
+        }
         if (isString(injToken)) {
             if (injToken === 'HttpService') {
                 return getHttpDependency.call(this);
