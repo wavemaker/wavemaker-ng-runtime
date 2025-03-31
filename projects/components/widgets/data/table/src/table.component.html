@@ -30,21 +30,20 @@
 }
 <div class="app-datagrid" #datagridElement></div>
 
-<div class="panel-footer clearfix" [hidden]="!_actions.footer.length && (!shownavigation || (onDemandLoad && dataNavigator.isDisableNext) || dataNavigator?.dataSize <= pagesize)">
-  <div class="app-datagrid-paginator" [hidden]="(!dataNavigator?.dataSize && !dataNavigator.datasource?.pagination?.next) || !shownavigation || (onDemandLoad && dataNavigator.isDisableNext) ">
-    <nav wmPagination show.bind="shownavigation" navigationalign.bind="navigationalign"
-      navigationsize.bind="navigationSize"
-      navigation.bind="navControls" showrecordcount.bind="showrecordcount" maxsize.bind="maxsize"
-      boundarylinks.bind="boundarylinks"
-    forceellipses.bind="forceellipses" directionlinks.bind="directionlinks"></nav>
-  </div>
-  @if (_actions.footer.length) {
-    <div class="app-datagrid-actions">
-      @for (btn of _actions.footer; track btn; let index = $index) {
-        <ng-container
-          [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef"
-          [ngTemplateOutletContext]="{btn:btn}"
-          [ngTemplateOutletInjector]="createCustomInjector('actions_footer_' + index, {btn:btn})">
+
+<div class="panel-footer clearfix" [hidden]="!_actions.footer.length && (!shownavigation || (onDemandLoad && dataNavigator.isDisableNext))">
+    <div class="app-datagrid-paginator" [hidden]="(!dataNavigator?.dataSize && !dataNavigator.datasource?.pagination?.next) || !shownavigation || (onDemandLoad && dataNavigator.isDisableNext) ">
+        <nav wmPagination show.bind="shownavigation" navigationalign.bind="navigationalign"
+             navigationsize.bind="navigationSize"
+             navigation.bind="navControls" showrecordcount.bind="showrecordcount" maxsize.bind="maxsize"
+             boundarylinks.bind="boundarylinks"
+             forceellipses.bind="forceellipses" directionlinks.bind="directionlinks"></nav>
+    </div>
+    <div class="app-datagrid-actions" *ngIf="_actions.footer.length">
+        <ng-container *ngFor="let btn of _actions.footer; let index = index;"
+                      [ngTemplateOutlet]="btn.widgetType === 'button' ? buttonRef : anchorRef"
+                      [ngTemplateOutletContext]="{btn:btn}"
+                      [ngTemplateOutletInjector]="createCustomInjector('actions_footer_' + index, {btn:btn})">
         </ng-container>
       }
     </div>
