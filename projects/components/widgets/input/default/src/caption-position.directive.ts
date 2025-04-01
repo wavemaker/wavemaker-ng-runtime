@@ -1,6 +1,6 @@
-import {AfterViewInit, Directive, ElementRef, Injector, OnDestroy, OnInit} from '@angular/core';
-import {App} from '@wm/core';
-import {forEach} from "lodash-es";
+import { AfterViewInit, Directive, ElementRef, Injector, OnDestroy, OnInit } from '@angular/core';
+import { App } from '@wm/core';
+import { forEach } from "lodash-es";
 
 declare const $;
 @Directive({
@@ -39,6 +39,10 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
         }
         if (!this.inputEl.val() && !mobileInputVal) {
             this.compositeEle.classList.remove('float-active');
+            if (this.compositeEle.widget?.viewParent?.containerWidget?._isCustom) {
+                const parentFloatActive = $(this.compositeEle).parent().closest(".float-active");
+                parentFloatActive?.removeClass('float-active');
+            }
             this.inputEl.removeAttr('placeholder');
         }
     }
