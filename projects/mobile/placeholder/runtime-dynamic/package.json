@@ -1,7 +1,0 @@
-{
-    "name": "@wm/mobile/placeholder/runtime/dynamic",
-    "sideEffects": false,
-    "dependencies": {
-      "tslib": "^2.0.0"
-    }
-}

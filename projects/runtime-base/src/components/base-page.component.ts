@@ -17,7 +17,6 @@ import {
     getWmProjectProperties,
     isAndroid,
     isIos,
-    isMobileApp,
     muteWatchers,
     noop,
     registerFnByExpr,
@@ -254,19 +253,11 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         });
     }
 
-    private restoreLastPageSnapshot() {
-        if (isMobileApp() && BasePageComponent.lastPageSnapShot && this.$page) {
-            this.$page.parent().prepend(BasePageComponent.lastPageSnapShot);
-        }
-    }
+    private restoreLastPageSnapshot() {}
 
     private savePageSnapShot() {
         if (BasePageComponent.lastPageSnapShot) {
             BasePageComponent.lastPageSnapShot.remove();
-        }
-        if (isMobileApp() && this.$page) {
-            BasePageComponent.lastPageSnapShot = this.$page.clone();
-            this.$page.parents('app-root').prepend(BasePageComponent.lastPageSnapShot);
         }
     }
 

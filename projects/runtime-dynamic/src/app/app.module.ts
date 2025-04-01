@@ -72,9 +72,6 @@ import {
 import { FileUploadComponent } from '@wm/components/input/file-upload';
 import { RatingComponent } from '@wm/components/input/rating';
 import { SliderComponent } from '@wm/components/input/slider';
-
-import { MobileRuntimeDynamicModule, MOBILE_COMPONENT_MODULES_FOR_ROOT } from '@wm/mobile/runtime/dynamic';
-
 // Data
 import {
     CardComponent,
@@ -334,7 +331,6 @@ const componentsModule = [
 ];
 
 REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(...componentsModule as any);
-REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(...MOBILE_COMPONENT_MODULES_FOR_ROOT as any);
 REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule as any, ReactiveFormsModule as any);
 
 @NgModule({
@@ -363,7 +359,6 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule as any, ReactiveFormsMo
         routerModule,
         toastrModule,
         httpClientXsrfModule,
-        MobileRuntimeDynamicModule,
         WM_MODULES_FOR_ROOT
     ],
     providers: [

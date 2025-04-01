@@ -4,8 +4,7 @@ import {
     generateGUId,
     getFormWidgetTemplate,
     getRequiredFormWidget,
-    IDGenerator,
-    isMobileApp
+    IDGenerator
 } from '@wm/core';
 
 import {ALLFIELDS, isDataSetWidget} from '../../../utils/utils';
@@ -89,7 +88,7 @@ const getTemplate = (attrs, widgetType, eventsTmpl, counter, pCounter, isInList)
     if (!isRange) {
         return getWidgetTemplate(attrs, {widgetType, eventsTmpl, counter, pCounter, isInList});
     }
-    const layoutClass = isMobileApp() ? 'col-xs-6' : 'col-sm-6';
+    const layoutClass = 'col-sm-6';
     return `<div class="${layoutClass}">${getWidgetTemplate(attrs, {widgetType, eventsTmpl, counter, pCounter})}</div>
                 <div class="${layoutClass}">${getWidgetTemplate(attrs, {widgetType, eventsTmpl, counter, pCounter, isMaxWidget: true})}</div>`;
 };
@@ -138,7 +137,7 @@ const registerFormField = (isFormField): IBuildTaskDef => {
                                                     <span aria-hidden="true" [textContent]="${counter}.validationmessage"></span>
                                                   </p>}`;
             const eventsTmpl = widgetType === FormWidgetType.UPLOAD ? '' : getEventsTemplate(attrs);
-            const controlLayout = isMobileApp() ? 'col-xs-12' : 'col-sm-12';
+            const controlLayout = 'col-sm-12';
             const isInList = pCounter === (parentList && parentList.get('parent_form_reference'));
             attrs.set('__validationId', formFieldErrorMsgId);
             attrs.set('__widgetType', widgetType);

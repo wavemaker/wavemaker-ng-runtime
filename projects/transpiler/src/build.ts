@@ -6,7 +6,6 @@ import {
     getHtmlTagDefinition, ParseSourceSpan
 } from '@angular/compiler';
 import { WIDGET_IMPORTS } from './imports';
-import { isMobileApp } from '@wm/core';
 import {find, isEqual, isFunction, remove, sortBy, uniqWith} from "lodash-es";
 
 const CSS_REGEX = {
@@ -89,10 +88,6 @@ const processAttr = attr => {
     let overridden = OVERRIDES[attr.name];
     const value = attr.valueSpan ? attr.value : undefined;
 
-    // do not append showInDevice attribute for mobile application.
-    if (attr.name === 'showindevice' && isMobileApp()) {
-        overridden = '';
-    }
     if (overridden) {
         /**
          * wrap value for accessroles with ''.

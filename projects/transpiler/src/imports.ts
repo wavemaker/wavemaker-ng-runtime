@@ -20,11 +20,8 @@ const NGX_TYPE_HEAD_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/typeahead', na
 const PROGRESS_BAR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/progress', name: 'ProgressBarComponent' }];
 const PROGRESS_CIRCLE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/progress', name: 'ProgressCircleComponent' }];
 // Mobile-Specific Modules
-const MOBILE_BASIC_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/basic', name: 'BasicModule', as: 'WM_MobileBasicModule', platformType: 'MOBILE' }];
-const MOBILE_FILE_UPLOAD_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/input/file-upload', name: 'FileUploadModule', as: 'WM_MobileFileUploadModule', platformType: 'MOBILE' }];
 const PAGE_COMPONENT: ImportDef[] = [
-    { from: '@wm/components/page', name: 'PageDirective' },
-    { from: '@wm/mobile/components/page', name: 'PageModule', as: 'WM_MobilePageModule', platformType: 'MOBILE' }];
+    { from: '@wm/components/page', name: 'PageDirective' }];
 
 // General Modules (Desktop and Mobile) 
 // const INPUT_MODULE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputModule' }];
@@ -71,11 +68,6 @@ const IFRAME_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/if
 const LOGIN_DIALOG_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/dialogs/login-dialog', name: 'LoginDialogDirective' }];
 const PARTIAL_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/partial-dialog', name: 'PartialDialogComponent' }];
 
-// Device Modules (Mobile)
-const BARCODE_SCANNER_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/device/barcode-scanner', name: 'BarcodeScannerModule' }];
-const CAMERA_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/device/camera', name: 'CameraModule' }];
-const SEGMENTED_CONTROL_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/containers/segmented-control', name: 'SegmentedControlModule' }];
-
 // Navigation Modules
 const NAV_ITEM_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'NavItemDirective' }];
 const NAV_COMPONENT: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'NavComponent' }];
@@ -102,7 +94,7 @@ const DATE_TIME_COMPONENT: ImportDef[] = [
 const TIME_COMPONENT: ImportDef[] = [
     ...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE,
     { from: '@wm/components/input/epoch', name: 'TimeComponent' }];
-const FILE_UPLOAD_COMPONENT: ImportDef[] = [...MOBILE_FILE_UPLOAD_MODULE, { from: '@wm/components/input/file-upload', name: 'FileUploadComponent' }];
+const FILE_UPLOAD_COMPONENT: ImportDef[] = [{ from: '@wm/components/input/file-upload', name: 'FileUploadComponent' }];
 const RATING_COMPONENT: ImportDef[] = [{ from: '@wm/components/input/rating', name: 'RatingComponent' }];
 const SLIDER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/slider', name: 'SliderComponent' }];
 const BUTTON_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'ButtonComponent' }];
@@ -182,8 +174,7 @@ const FORM_COMPONENT: ImportDef[] = [
 // Page Structure Components
 const FOOTER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page/footer', name: 'FooterDirective' }];
 const HEADER_COMPONENT: ImportDef[] = [{ from: '@wm/components/page/header', name: 'HeaderComponent' }];
-const LEFT_PANEL_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page/left-panel', name: 'LeftPanelDirective' },
-{ from: '@wm/mobile/components/page/left-panel', name: 'LeftPanelModule', as: 'WM_MobileLeftPanelModule', platformType: 'MOBILE' }];
+const LEFT_PANEL_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page/left-panel', name: 'LeftPanelDirective' }];
 const RIGHT_PANEL_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page/right-panel', name: 'RightPanelDirective' }];
 const PAGE_CONTENT_COMPONENT: ImportDef[] = [{ from: '@wm/components/page', name: 'PageContentComponent' }];
 const LAYOUT_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page', name: 'LayoutDirective' }];
@@ -201,9 +192,6 @@ const PREFAB_CONTAINER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab'
 const PREFAB_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab', name: 'PrefabDirective' }];
 const RICH_TEXT_EDITOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/rich-text-editor', name: 'RichTextEditorComponent' }];
 const TREE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/tree', name: 'TreeComponent' }];
-const MOBILE_NAV_BAR_MODULE: ImportDef[] = [...LEFT_PANEL_DIRECTIVE, ...SEARCH_COMPONENT, { from: '@wm/mobile/components/page/mobile-navbar', name: 'MobileNavbarModule' }];
-const MEDIA_LIST_MODULE: ImportDef[] = [...MOBILE_NAV_BAR_MODULE, { from: '@wm/mobile/components/data/media-list', name: 'MediaListModule' }];
-const MOBILE_TAB_BAR_MODULE: ImportDef[] = [{ from: '@wm/mobile/components/page/tab-bar', name: 'TabBarModule' }];
 
 export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-accordion', ACCORDION_DIRECTIVE],
@@ -211,11 +199,9 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-anchor', ANCHOR_COMPONENT],
     ['wm-alertdialog', ALERT_DIALOG_COMPONENT],
     ['wm-audio', AUDIO_COMPONENT],
-    ['wm-barcodescanner', BARCODE_SCANNER_MODULE],
     ['wm-button', BUTTON_COMPONENT],
     ['wm-buttongroup', BUTTON_GROUP_DIRECTIVE],
     ['wm-breadcrumb', BREAD_CRUMB_COMPONENT],
-    ['wm-camera', CAMERA_MODULE],
     ['wm-calendar', CALENDAR_COMPONENT],
     ['wm-card', CARD_COMPONENT],
     ['wm-card-actions', CARD_ACTIONS_DIRECTIVE],
@@ -260,13 +246,9 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-logindialog', LOGIN_DIALOG_DIRECTIVE],
     ['wm-marquee', MARQUEE_DIRECTIVE],
     ['wm-menu', MENU_COMPONENT],
-    ['wm-media-list', MEDIA_LIST_MODULE],
-    ['wm-mobile-navbar', MOBILE_NAV_BAR_MODULE],
-    ['wm-mobile-tabbar', MOBILE_TAB_BAR_MODULE],
     ['wm-nav', NAV_COMPONENT],
     ['wm-navbar', NAVBAR_COMPONENT],
     ['wm-nav-item', NAV_ITEM_DIRECTIVE],
-    ['wm-network-info-toaster', MOBILE_BASIC_MODULE],
     ['wm-number', NUMBER_COMPONENT],
     ['wm-page', PAGE_COMPONENT],
     ['wm-layout', LAYOUT_DIRECTIVE],
@@ -287,8 +269,6 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-right-panel', RIGHT_PANEL_DIRECTIVE],
     ['wm-select', SELECT_COMPONENT],
     ['wm-search', SEARCH_COMPONENT],
-    ['wm-segmented-content', SEGMENTED_CONTROL_MODULE],
-    ['wm-segmented-control', SEGMENTED_CONTROL_MODULE],
     ['wm-slider', SLIDER_COMPONENT],
     ['wm-spinner', SPINNER_COMPONENT],
     ['wm-switch', SWITCH_COMPONENT],

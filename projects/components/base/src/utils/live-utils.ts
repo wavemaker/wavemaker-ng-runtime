@@ -1,4 +1,4 @@
-import { isNumberType, FormWidgetType, DataType, isMobileApp, isAndroid } from '@wm/core';
+import { isNumberType, FormWidgetType, DataType, isAndroid } from '@wm/core';
 import {forEach, get, includes, split} from "lodash-es";
 
 const  VIEW_MODE_OPTIONS = {
@@ -71,11 +71,8 @@ export const getFieldLayoutConfig = (captionWidth, captionPosition, os): any => 
     captionPosition = captionPosition || 'top';
 
     if (captionPosition === 'top' || captionPosition === 'floating') {
-        if ((os && os === 'android') || !isMobileApp() || isAndroid()) { // Is android or not a mobile application
+        if ((os && os === 'android') || isAndroid()) { // Is android or not a mobile application
             captionCls = widgetCls = 'col-xs-12';
-        } else if (isMobileApp()) { // Is a mobile application and not android
-            captionCls = 'col-xs-4';
-            widgetCls = 'col-xs-8';
         }
     } else if (captionWidth) {
         // handling itemsperrow containing string of classes

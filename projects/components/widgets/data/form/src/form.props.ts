@@ -1,5 +1,3 @@
-import { isMobileApp } from '@wm/core';
-
 import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
 
 const propsMap = new Map(
@@ -27,9 +25,6 @@ const propsMap = new Map(
 
 
 export const registerFormProps = () => {
-    if (isMobileApp()) {
-        propsMap.set('captionwidth', {value: 'xs-4 sm-4 md-4 lg-4', ...PROP_STRING});
-    }
     const formMap = new Map(propsMap);
     formMap.set('action', PROP_STRING);
     formMap.set('defaultmode', {value: 'Edit', ...PROP_STRING});
@@ -52,9 +47,6 @@ export const registerFormProps = () => {
 };
 
 export const registerLiveFormProps = () => {
-    if (isMobileApp()) {
-        propsMap.set('captionwidth', {value: 'xs-4 sm-4 md-4 lg-4', ...PROP_STRING});
-    }
     const liveFormMap = new Map(propsMap);
     liveFormMap.set('defaultmode', {value: 'View', ...PROP_STRING});
     liveFormMap.set('formlayout', {value: 'inline', ...PROP_STRING});
@@ -75,9 +67,6 @@ export const registerLiveFormProps = () => {
 };
 
 export const registerLiveFilterProps = () => {
-    if (isMobileApp()) {
-        propsMap.set('captionwidth', {value: 'xs-4 sm-4 md-4 lg-4', ...PROP_STRING});
-    }
     const liveFilterMap = new Map(propsMap);
     liveFilterMap.set('autoupdate', PROP_BOOLEAN);
     liveFilterMap.set('enableemptyfilter', {value: ' ', ...PROP_STRING});

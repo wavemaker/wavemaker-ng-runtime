@@ -1,6 +1,0 @@
-{
-    "name": "@wm/mobile/components/page/mobile-navbar",
-    "dependencies": {
-      "tslib": "^2.0.0"
-    }
-}

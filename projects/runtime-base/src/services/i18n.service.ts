@@ -10,7 +10,6 @@ import {
     getSessionStorageItem,
     getWmProjectProperties,
     isMobile,
-    isMobileApp,
     loadScripts,
     replace,
     setCSS,

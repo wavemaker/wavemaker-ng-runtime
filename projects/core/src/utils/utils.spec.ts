@@ -51,7 +51,6 @@ import {
     isInsecureContentRequest,
     isLargeTabletLandscape,
     isLargeTabletPortrait,
-    isMobileApp,
     isNumberType,
     isTablet,
     isValidWebURL,
@@ -936,17 +935,6 @@ describe('isTablet', () => {
         });
         const result = isTablet();
         expect(result).toBe(true);
-    });
-});
-
-describe('isMobileApp', () => {
-    it('should return false for non-mobile application', () => {
-        (global as any).getWmProjectProperties = jest.fn().mockReturnValue({
-            platformType: 'WEB',
-            type: 'APPLICATION'
-        });
-        const result = isMobileApp();
-        expect(result).toBe(false);
     });
 });
 

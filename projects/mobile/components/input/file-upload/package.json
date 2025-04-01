@@ -1,7 +1,0 @@
-{
-    "name": "@wm/mobile/components/input/file-upload",
-    "sideEffects": false,
-    "dependencies": {
-      "tslib": "^2.0.0"
-    }
-}
