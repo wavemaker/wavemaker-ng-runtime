@@ -30,38 +30,6 @@ export default [
     },
     {
         input: [
-            'libraries/build-task/fesm2022/index.mjs',
-            'libraries/mobile-build-task/fesm2022/index.mjs'
-        ],
-        output: {
-            file: 'dist/transpilation/transpilation-mobile.cjs.js',
-            format: 'cjs'
-        },
-        plugins: [
-            multi(),
-            alias({
-                entries: [
-                    { find: 'rxjs/Subject', replacement: 'node_modules/rxjs/_esm5/internal/Subject.js' },
-                    { find: '@wm/core', replacement: 'libraries/core/fesm2022/index.mjs' },
-                    { find: '@wm/transpiler', replacement: 'libraries/transpiler/fesm2022/index.mjs' },
-                    { find: 'moment', replacement: 'node_modules/moment/dist/moment.js'}
-                ]
-            }),
-            nodeResolve({
-                jsnext: true,
-                main: true
-            }),
-            commonjs({
-                include: [
-                    'node_modules/!**',
-                    'node_modules/x2js/x2js.js'
-                ],
-                ignoreGlobal: true
-            })
-        ]
-    },
-    {
-        input: [
             'libraries/core/esm2022/utils/expression-parser.mjs'
         ],
         output: {

@@ -13,14 +13,13 @@ import { MockAbstractI18nService } from 'projects/components/base/src/test/util/
 import { DatePipe } from '@angular/common';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { configureDnD } from '@wm/components/base';
-import { isMobile, isMobileApp } from '@wm/core';
+import { isMobile } from '@wm/core';
 import { ListAnimator } from './list.animator';
 import { ButtonComponent } from '@wm/components/input';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
     isMobile: jest.fn(),
-    isMobileApp: jest.fn(),
 }));
 
 jest.mock('@wm/components/base', () => ({
@@ -776,20 +775,6 @@ describe('ListComponent', () => {
             nativeElement = fixture.nativeElement;
             nativeElement.innerHTML = '<div class="app-livelist-container"></div>';
         })
-        it('should set appendTo to parent if height attribute is present', () => {
-            jest.spyOn(listComponent, 'getAttr').mockReturnValue('100px');
-            (isMobileApp as jest.Mock).mockReturnValue(false);
-
-            listComponent['configureDnD']();
-
-            expect(configureDnD).toHaveBeenCalledWith(
-                expect.anything(),
-                { appendTo: 'parent' },
-                expect.any(Function),
-                expect.any(Function),
-                expect.any(Function)
-            );
-        });
 
         it('should set appendTo to the modal element if modal is present', () => {
             jest.spyOn(listComponent, 'getAttr').mockReturnValue(null);
@@ -808,39 +793,6 @@ describe('ListComponent', () => {
             );
 
             document.body.removeChild(modalElement);
-        });
-
-        it('should set appendTo to body by default', () => {
-            jest.spyOn(listComponent, 'getAttr').mockReturnValue(null);
-            (isMobileApp as jest.Mock).mockReturnValue(false);
-
-            listComponent['configureDnD']();
-
-            expect(configureDnD).toHaveBeenCalledWith(
-                expect.anything(),
-                { appendTo: 'body' },
-                expect.any(Function),
-                expect.any(Function),
-                expect.any(Function)
-            );
-        });
-
-        it('should handle touchstart event on mobile app', () => {
-            (isMobileApp as jest.Mock).mockReturnValue(true);
-            const touchstartEvent = $.Event('touchstart', { cancelable: true });
-            const touchendEvent = $.Event('touchend');
-            const touchmoveEvent = $.Event('touchmove');
-            const sortableSpy = jest.fn();
-            //@ts-ignore
-            $.fn.sortable = sortableSpy;
-
-            listComponent['configureDnD']();
-
-            // Simulate touchstart event
-            (listComponent as any).$ulEle.trigger(touchstartEvent);
-
-            // Verify touchstart behavior
-            expect((listComponent as any).$ulEle.hasClass('no-selection')).toBe(false);
         });
     });
     describe('onUpdate', () => {

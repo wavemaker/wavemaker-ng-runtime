@@ -1,6 +1,0 @@
-{
-    "name": "@wm/mobile/components/page/left-panel",
-    "dependencies": {
-      "tslib": "^2.0.0"
-    }
-}

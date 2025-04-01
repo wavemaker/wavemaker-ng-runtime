@@ -1,5 +1,3 @@
-import {isMobileApp} from '@wm/core';
-
 import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
@@ -23,8 +21,5 @@ export const registerProps = () => {
             ['tabindex', {value: 0, ...PROP_NUMBER}]
         ]
     );
-    if (isMobileApp()) {
-        props.set('offline', {value: true, ...PROP_BOOLEAN});
-    }
     register('wm-picture', props);
 };

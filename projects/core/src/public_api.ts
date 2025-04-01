@@ -49,7 +49,6 @@ export {
     isLargeTabletLandscape,
     isLargeTabletPortrait,
     isMobile,
-    isMobileApp,
     getAndroidVersion,
     isKitkatDevice,
     encodeUrl,

@@ -1,10 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { DialogServiceImpl } from './dialog.service';
-import { isMobile, isMobileApp } from '@wm/core';
+import { isMobile } from '@wm/core';
 
 jest.mock('@wm/core', () => ({
     isMobile: jest.fn(),
-    isMobileApp: jest.fn()
 }));
 
 describe('DialogServiceImpl', () => {
@@ -145,7 +144,6 @@ describe('DialogServiceImpl', () => {
         const dialogRef = { close: jest.fn() };
 
         isMobile();
-        isMobileApp();
 
         document.body.innerHTML = '<body><app-root></app-root></body>';
 
@@ -268,7 +266,6 @@ describe('DialogServiceImpl', () => {
             service.addToOpenedDialogs(dialog1);
 
             (isMobile as jest.Mock).mockReturnValue(true);
-            (isMobileApp as jest.Mock).mockReturnValue(false);
 
             const removeAttributeSpy = jest.spyOn(appRoot, 'removeAttribute');
 
@@ -307,7 +304,6 @@ describe('DialogServiceImpl', () => {
             service.addToOpenedDialogs(dialog1);
 
             (isMobile as jest.Mock).mockReturnValue(false);
-            (isMobileApp as jest.Mock).mockReturnValue(false);
 
             const removeAttributeSpy = jest.spyOn(appRoot, 'removeAttribute');
 

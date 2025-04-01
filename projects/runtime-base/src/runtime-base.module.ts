@@ -28,7 +28,6 @@ import { DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } fro
 import { ConfirmDialogComponent } from '@wm/components/dialogs/confirm-dialog';
 import { DialogComponent } from '@wm/components/dialogs/design-dialog';
 import { PrefabDirective, PrefabContainerDirective } from '@wm/components/prefab';
-import { MobileRuntimeModule } from '@wm/mobile/runtime';
 import { HttpServiceImpl } from '@wm/http';
 import { VariablesService, MetadataService } from '@wm/variables';
 import { OAuthService } from '@wm/oAuth';
@@ -394,8 +393,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         ...definitions,
         ToastrModule,
         WmComponentsModule,
-        MobileRuntimeModule,
-        // CoreModule,
+        // CoreModule, 
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     exports: [
@@ -409,8 +407,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
 
         ToastrModule,
         WmComponentsModule,
-        MobileRuntimeModule,
-        // CoreModule,
+        // CoreModule, 
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     providers: [
@@ -488,7 +485,7 @@ export class RuntimeBaseModule {
         };
     }
 
-    constructor(mobileRuntimeModule: MobileRuntimeModule,
+    constructor(
         app: App,
         viewport: Viewport) {
         RuntimeBaseModule.addCustomEventPolyfill();
@@ -528,6 +525,5 @@ export class RuntimeBaseModule {
 
 export const WM_MODULES_FOR_ROOT = [
     WmComponentsModule.forRoot(),
-    MobileRuntimeModule.forRoot(),
     RuntimeBaseModule.forRoot()
 ];

@@ -1,9 +1,8 @@
-import { DataType, FormWidgetType, isAndroid, isMobileApp } from "@wm/core";
+import { DataType, FormWidgetType, isAndroid } from "@wm/core";
 import { getDataTableFilterWidget, getDefaultValue, getDefaultViewModeWidget, getEditModeWidget, getFieldLayoutConfig, getFieldTypeWidgetTypesMap, parseValueByType, setHeaderConfig, setHeaderConfigForTable } from "./live-utils";
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
-    isMobileApp: jest.fn(),
     isAndroid: jest.fn()
 }));
 
@@ -155,31 +154,9 @@ describe('getFieldLayoutConfig', () => {
     });
 
     it('should return correct classes for top caption position on Android', () => {
-        (isMobileApp as jest.Mock).mockReturnValue(true);
         (isAndroid as jest.Mock).mockReturnValue(true);
 
         const result = getFieldLayoutConfig(null, 'top', 'android');
-        expect(result).toEqual({
-            captionCls: 'col-xs-12',
-            widgetCls: 'col-xs-12',
-        });
-    });
-
-    it('should return correct classes for top caption position on non-Android mobile', () => {
-        (isMobileApp as jest.Mock).mockReturnValue(true);
-        (isAndroid as jest.Mock).mockReturnValue(false);
-
-        const result = getFieldLayoutConfig(null, 'top', 'ios');
-        expect(result).toEqual({
-            captionCls: 'col-xs-4',
-            widgetCls: 'col-xs-8',
-        });
-    });
-
-    it('should return correct classes for top caption position on non-mobile app', () => {
-        (isMobileApp as jest.Mock).mockReturnValue(false);
-
-        const result = getFieldLayoutConfig(null, 'top', null);
         expect(result).toEqual({
             captionCls: 'col-xs-12',
             widgetCls: 'col-xs-12',

@@ -11,7 +11,6 @@ import {
     AbstractNavigationService,
     addClass,
     App,
-    isMobileApp,
     muteWatchers,
     noop,
     removeClass,
@@ -240,19 +239,11 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
         });
     }
 
-    private restoreLastPageSnapshot() {
-        if (isMobileApp() && BaseSpaPageComponent.lastPageSnapShot && this.$page) {
-            this.$page.parent().prepend(BaseSpaPageComponent.lastPageSnapShot);
-        }
-    }
+    private restoreLastPageSnapshot() {}
 
     private savePageSnapShot() {
         if (BaseSpaPageComponent.lastPageSnapShot) {
             BaseSpaPageComponent.lastPageSnapShot.remove();
-        }
-        if (isMobileApp() && this.$page) {
-            BaseSpaPageComponent.lastPageSnapShot = this.$page.clone();
-            this.$page.parents('app-root').prepend(BaseSpaPageComponent.lastPageSnapShot);
         }
     }
 

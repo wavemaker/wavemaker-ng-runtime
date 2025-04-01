@@ -19,7 +19,6 @@ import { PartialContainerDirective } from "./widgets/common/base/partial-contain
 import { CustomWidgetContainerDirective } from "./widgets/common/base/custom-widget-container.directive";
 import { RedrawableDirective } from './widgets/common/redraw/redrawable.directive';
 import { ShowInDeviceDirective } from './directives/show-in-device.directive';
-import { SmoothScrollDirective } from './widgets/common/smooth-scroll/smooth-scroll.directive';
 import { TextContentDirective } from './widgets/common/base/text-content.directive';
 import {
     FileExtensionFromMimePipe,
@@ -55,7 +54,6 @@ const wmComponents = [
     CustomWidgetContainerDirective,
     RedrawableDirective,
     ShowInDeviceDirective,
-    SmoothScrollDirective,
     TextContentDirective
 ];
 

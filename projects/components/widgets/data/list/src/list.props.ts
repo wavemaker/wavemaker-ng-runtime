@@ -1,5 +1,3 @@
-import { isMobileApp } from '@wm/core';
-
 import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
 
 export const registerProps = () => {
@@ -36,7 +34,7 @@ export const registerProps = () => {
                 ['orderby', PROP_STRING],
                 ['paginationclass', PROP_STRING],
                 ['pagesize', PROP_NUMBER],
-                ['pulltorefresh', {value: isMobileApp(), ...PROP_BOOLEAN}],
+                ['pulltorefresh', {value: false, ...PROP_BOOLEAN}],
                 ['selectfirstitem', PROP_BOOLEAN],
                 ['selectionlimit', PROP_NUMBER],
                 ['show', {value: true, ...PROP_BOOLEAN}],

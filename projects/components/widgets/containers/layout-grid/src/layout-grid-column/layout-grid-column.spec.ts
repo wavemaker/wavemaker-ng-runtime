@@ -9,7 +9,6 @@ import { mockApp } from 'projects/components/base/src/test/util/component-test-u
 // Mock the external dependencies
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
-    isMobileApp: jest.fn(),
     setCSS: jest.fn(),
     switchClass: jest.fn(),
     Viewport: jest.fn()
@@ -68,45 +67,5 @@ describe('LayoutGridColumnDirective', () => {
     it('should call styler with correct parameters', () => {
         const stylerSpy = jest.spyOn(baseModule, 'styler');
         expect(stylerSpy).toHaveBeenCalledWith(expect.any(Element), directive, 'container');
-    });
-
-    describe('onPropertyChange', () => {
-        beforeEach(() => {
-            jest.clearAllMocks();
-        });
-
-        it('should handle xscolumnwidth change for mobile app', () => {
-            const isMobileAppSpy = jest.spyOn(coreModule, 'isMobileApp').mockReturnValue(true);
-            viewportMock.isMobileType = true;
-            directive.onPropertyChange('xscolumnwidth', '6', '4');
-
-            expect(isMobileAppSpy).toHaveBeenCalled();
-            expect(coreModule.switchClass).toHaveBeenCalledWith(expect.any(Element), 'col-xs-6', 'col-xs-4');
-        });
-
-        it('should handle columnwidth change for non-mobile app', () => {
-            jest.spyOn(coreModule, 'isMobileApp').mockReturnValue(false);
-            directive.onPropertyChange('columnwidth', '6', '4');
-
-            expect(coreModule.switchClass).toHaveBeenCalledWith(expect.any(Element), 'col-sm-6', 'col-sm-4');
-        });
-
-        it('should handle columnwidth change for mobile app without xscolumnwidth', () => {
-            jest.spyOn(coreModule, 'isMobileApp').mockReturnValue(true);
-            viewportMock.isMobileType = true;
-            jest.spyOn(directive, 'getAttr').mockReturnValue(undefined);
-            directive.onPropertyChange('columnwidth', '6', '4');
-
-            expect(coreModule.switchClass).toHaveBeenCalledWith(expect.any(Element), 'col-xs-6', 'col-xs-4');
-        });
-
-        it('should handle columnwidth change for mobile app with xscolumnwidth', () => {
-            jest.spyOn(coreModule, 'isMobileApp').mockReturnValue(true);
-            viewportMock.isMobileType = true;
-            jest.spyOn(directive, 'getAttr').mockReturnValue('5');
-            directive.onPropertyChange('columnwidth', '6', '4');
-
-            expect(coreModule.switchClass).not.toHaveBeenCalled();
-        });
     });
 });

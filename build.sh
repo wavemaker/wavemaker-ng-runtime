@@ -48,7 +48,6 @@ fi
 
 mkdir -p ./dist/tmp/libs/core-js
 mkdir -p ./dist/bundles/wmapp/scripts
-mkdir -p ./dist/bundles/wmmobile/scripts
 
 execCommand() {
     local task=$1
@@ -207,8 +206,6 @@ bundleWeb() {
         ./libraries/components/advanced/login/bundles/index.umd.js \
         ./libraries/components/advanced/custom/bundles/index.umd.js \
         ./libraries/variables/bundles/index.umd.js \
-        ./libraries/mobile/placeholder/runtime/bundles/index.umd.js \
-        ./libraries/mobile/placeholder/runtime-dynamic/bundles/index.umd.js \
         ./libraries/runtime/base/bundles/index.umd.js \
         ./libraries/runtime/dynamic/bundles/index.umd.js \
         -o ./dist/bundles/wmapp/scripts/wm-loader.js -b
@@ -223,97 +220,6 @@ bundleWeb() {
     fi
 }
 
-bundleMobile() {
-    echo "uglify: mobile"
-    ${TERSER} \
-        ./libraries/core/bundles/index.umd.js \
-        ./libraries/swipey/bundles/index.umd.js \
-        ./libraries/transpiler/bundles/index.umd.js \
-        ./libraries/http/bundles/index.umd.js \
-        ./libraries/oAuth/bundles/index.umd.js \
-        ./libraries/security/bundles/index.umd.js \
-        ./libraries/components/base/bundles/index.umd.js \
-        ./libraries/build-task/bundles/index.umd.js \
-        ./libraries/components/input/default/bundles/index.umd.js \
-        ./libraries/components/basic/default/bundles/index.umd.js \
-        ./libraries/components/basic/progress//bundles/index.umd.js \
-        ./libraries/components/basic/rich-text-editor/bundles/index.umd.js \
-        ./libraries/components/basic/search/bundles/index.umd.js \
-        ./libraries/components/basic/tree/bundles/index.umd.js \
-        ./libraries/components/input/calendar/bundles/index.umd.js \
-        ./libraries/components/input/chips/bundles/index.umd.js \
-        ./libraries/components/input/color-picker/bundles/index.umd.js \
-        ./libraries/components/input/currency/bundles/index.umd.js \
-        ./libraries/components/input/epoch/bundles/index.umd.js \
-        ./libraries/components/input/file-upload/bundles/index.umd.js \
-        ./libraries/components/input/rating/bundles/index.umd.js \
-        ./libraries/components/input/slider/bundles/index.umd.js \
-        ./libraries/components/chart/bundles/index.umd.js \
-        ./libraries/components/navigation/menu/bundles/index.umd.js \
-        ./libraries/components/navigation/navbar/bundles/index.umd.js \
-        ./libraries/components/navigation/breadcrumb/bundles/index.umd.js \
-        ./libraries/components/navigation/popover/bundles/index.umd.js \
-        ./libraries/components/dialogs/default/bundles/index.umd.js \
-        ./libraries/components/dialogs/alert-dialog/bundles/index.umd.js \
-        ./libraries/components/dialogs/confirm-dialog/bundles/index.umd.js \
-        ./libraries/components/dialogs/design-dialog/bundles/index.umd.js \
-        ./libraries/components/page/default/bundles/index.umd.js \
-        ./libraries/components/page/footer/bundles/index.umd.js \
-        ./libraries/components/page/header/bundles/index.umd.js \
-        ./libraries/components/page/left-panel/bundles/index.umd.js \
-        ./libraries/components/page/right-panel/bundles/index.umd.js \
-        ./libraries/components/page/top-nav/bundles/index.umd.js \
-        ./libraries/components/prefab/bundles/index.umd.js \
-        ./libraries/components/data/pagination/bundles/index.umd.js \
-        ./libraries/components/data/card/bundles/index.umd.js \
-        ./libraries/components/data/list/bundles/index.umd.js \
-        ./libraries/components/data/table/bundles/index.umd.js \
-        ./libraries/components/data/live-table/bundles/index.umd.js \
-        ./libraries/components/data/form/bundles/index.umd.js \
-        ./libraries/components/dialogs/iframe-dialog/bundles/index.umd.js \
-        ./libraries/components/dialogs/login-dialog/bundles/index.umd.js \
-        ./libraries/components/dialogs/partial-dialog/bundles/index.umd.js \
-        ./libraries/components/containers/accordion/bundles/index.umd.js \
-        ./libraries/components/containers/layout-grid/bundles/index.umd.js \
-        ./libraries/components/containers/linear-layout/bundles/index.umd.js \
-        ./libraries/components/containers/panel/bundles/index.umd.js \
-        ./libraries/components/containers/tabs/bundles/index.umd.js \
-        ./libraries/components/containers/tile/bundles/index.umd.js \
-        ./libraries/components/containers/wizard/bundles/index.umd.js \
-        ./libraries/components/advanced/carousel/bundles/index.umd.js \
-        ./libraries/components/advanced/marquee/bundles/index.umd.js \
-        ./libraries/components/advanced/login/bundles/index.umd.js \
-        ./libraries/components/advanced/custom/bundles/index.umd.js \
-        ./libraries/mobile/core/bundles/index.umd.js \
-        ./libraries/mobile/components/basic/default/bundles/index.umd.js \
-        ./libraries/mobile/components/basic/search/bundles/index.umd.js \
-        ./libraries/mobile/components/containers/segmented-control/bundles/index.umd.js \
-        ./libraries/mobile/components/device/barcode-scanner/bundles/index.umd.js \
-        ./libraries/mobile/components/device/camera/bundles/index.umd.js \
-        ./libraries/mobile/components/input/file-upload/bundles/index.umd.js \
-        ./libraries/mobile/components/page/default/bundles/index.umd.js \
-        ./libraries/mobile/components/page/left-panel/bundles/index.umd.js \
-        ./libraries/mobile/components/page/mobile-navbar/bundles/index.umd.js \
-        ./libraries/mobile/components/page/tab-bar/bundles/index.umd.js \
-        ./libraries/mobile/components/data/media-list/bundles/index.umd.js \
-        ./libraries/variables/bundles/index.umd.js \
-        ./libraries/mobile/offline/bundles/index.umd.js \
-        ./libraries/mobile/variables/bundles/index.umd.js \
-        ./libraries/mobile/runtime/bundles/index.umd.js \
-        ./libraries/mobile/runtime-dynamic/bundles/index.umd.js \
-        ./libraries/runtime/base/bundles/index.umd.js \
-        ./libraries/runtime/dynamic/bundles/index.umd.js \
-        -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.js -b
-
-    ./node_modules/.bin/terser ./dist/bundles/wmmobile/scripts/wm-mobileloader.js \
-        -c -o ./dist/bundles/wmmobile/scripts/wm-mobileloader.min.js -m   -b beautify=false,ascii_only=true
-
-    if [[ "$?" -eq "0" ]]; then
-        echo "uglify: mobile - success"
-    else
-        echo -e "uglify: mobile - failure"
-    fi
-}
 
 buildApp() {
     ngPackagrBuild core projects/core '@wm/core'
@@ -386,32 +292,6 @@ buildApp() {
     ngPackagrBuild components-advanced-login projects/components/widgets/advanced/login '@wm/components/advanced/login'
     ngPackagrBuild components-advanced-custom projects/components/widgets/advanced/custom '@wm/components/advanced/custom'
 
-    ngPackagrBuild mobile-core projects/mobile/core '@wm/mobile/core'
-    ngPackagrBuild mobile-offline projects/mobile/offline '@wm/mobile/offline'
-
-    ngPackagrBuild mobile-components-basic projects/mobile/components/basic/default '@wm/mobile/components/basic'
-    ngPackagrBuild mobile-components-basic-search projects/mobile/components/basic/search '@wm/mobile/components/basic/search'
-
-    ngPackagrBuild mobile-components-containers-segmented projects/mobile/components/containers/segmented-control '@wm/mobile/components/containers/segmented-control'
-
-    ngPackagrBuild mobile-components-device-barcodescanner projects/mobile/components/device/barcode-scanner '@wm/mobile/components/device/barcode-scanner'
-    ngPackagrBuild mobile-components-device-camera projects/mobile/components/device/camera '@wm/mobile/components/device/camera'
-
-    ngPackagrBuild mobile-components-input-fileupload projects/mobile/components/input/file-upload '@wm/mobile/components/input/file-upload'
-
-    ngPackagrBuild mobile-components-page projects/mobile/components/page/default '@wm/mobile/components/page'
-    ngPackagrBuild mobile-components-page-leftpanel projects/mobile/components/page/left-panel '@wm/mobile/components/page/left-panel'
-    ngPackagrBuild mobile-components-page-mobilenavbar projects/mobile/components/page/mobile-navbar '@wm/mobile/components/page/mobile-navbar'
-    ngPackagrBuild mobile-components-page-tabbar projects/mobile/components/page/tab-bar '@wm/mobile/components/page/tab-bar'
-
-    ngPackagrBuild mobile-components-data-medialist projects/mobile/components/data/media-list '@wm/mobile/components/data/media-list'
-
-    ngPackagrBuild mobile-variables projects/mobile/variables '@wm/mobile/variables'
-    ngPackagrBuild mobile-runtime projects/mobile/runtime '@wm/mobile/runtime'
-    ngPackagrBuild mobile-runtime-dynamic projects/mobile/runtime-dynamic '@wm/mobile/runtime/dynamic'
-    ngPackagrBuild mobile-placeholder-runtime projects/mobile/placeholder/runtime '@wm/mobile/placeholder/runtime'
-    ngPackagrBuild mobile-placeholder-runtimedynamic projects/mobile/placeholder/runtime-dynamic '@wm/mobile/placeholder/runtime/dynamic'
-
     buildNeeded components-transpilation projects/components/transpile
     if [[ $? -ne 0 ]]; then
         ./node_modules/.bin/ng-packagr -p projects/components/transpile/ng-package.json -c ./projects/components/transpile/tsconfig.lib.prod.json
@@ -427,7 +307,6 @@ buildApp() {
     if [[ "${sourceModified}" == true ]]; then
         buildWMComponentUmdLibs
         bundleWeb
-        bundleMobile
     fi
 }
 
@@ -448,7 +327,6 @@ copyDist() {
         fi
         if [[ "${locale}" == true ]]; then
             cp -r ./dist/bundles/wmapp/locales/* ../wavemaker-studio-editor/src/main/webapp/wmapp/locales/
-            cp -r ./dist/bundles/wmmobile/locales/* ../wavemaker-studio-editor/src/main/webapp/wmmobile/locales/
         fi
     fi
 }
@@ -457,7 +335,6 @@ copyLocale() {
     if [[ "${locale}" == true ]]; then
 
         local appDest=./dist/bundles/wmapp/locales
-        local mobileDest=./dist/bundles/wmmobile/locales
 
         local angularSrc=./node_modules/@angular/common/locales
         local momentSrc=./node_modules/moment/locale
@@ -465,12 +342,8 @@ copyLocale() {
 
         mkdir -p ${appDest}/angular
         mkdir -p ${appDest}/angular/global
-        mkdir -p ${mobileDest}/angular
-        mkdir -p ${mobileDest}/angular/global
         mkdir -p ${appDest}/moment
-        mkdir -p ${mobileDest}/moment
         mkdir -p ${appDest}/moment-timezone
-        mkdir -p ${mobileDest}/moment-timezone
 
         for file in ${angularSrc}/*.js; do
             local destFileName=`echo $(basename ${file}) | tr 'A-Z' 'a-z'`;
@@ -481,15 +354,9 @@ copyLocale() {
             cp ${file} ${appDest}/angular/global/${destFileName}
         done
 
-        cp  ${appDest}/angular/*.js  ${mobileDest}/angular/
-        cp  ${appDest}/angular/global/*.js  ${mobileDest}/angular/global/
-
-
         cp ${momentSrc}/*.js ${appDest}/moment/
-        cp ${momentSrc}/*.js ${mobileDest}/moment/
 
         cp ${timezoneSrc} ${appDest}/moment-timezone/
-        cp ${timezoneSrc} ${mobileDest}/moment-timezone/
     fi
 }
 
@@ -649,81 +516,6 @@ cpRuntimeFoundationCss() {
     fi
 }
 
-bundleMobileLibs() {
-    echo "uglify: mobile-libs"
-    ${TERSER} \
-        ./dist/tmp/libs/tslib/tslib.umd.js \
-        ./dist/tmp/libs/core-js/core-js.umd.js \
-        ./node_modules/zone.js/bundles/zone.umd.js \
-        ./node_modules/rxjs/bundles/rxjs.umd.js \
-        ./node_modules/@angular/compiler/bundles/compiler.umd.js \
-        ./node_modules/@angular/core/bundles/core-signals.umd.js \
-        ./node_modules/@angular/core/bundles/core.umd.js \
-        ./node_modules/@angular/common/bundles/common.umd.js \
-        ./node_modules/@angular/animations/bundles/animations.umd.js \
-        ./node_modules/@angular/animations/bundles/animations-browser.umd.js \
-        ./node_modules/@angular/platform-browser/bundles/platform-browser.umd.js \
-        ./node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js \
-        ./node_modules/@angular/platform-browser/bundles/platform-browser-animations.umd.js \
-        ./node_modules/@angular/common/bundles/common-http.umd.js \
-        ./node_modules/@angular/router/bundles/router.umd.js \
-        ./node_modules/@angular/forms/bundles/forms.umd.js \
-        ./dist/tmp/libs/ngx-bootstrap/ngx-bootstrap.umd.js \
-        ./node_modules/ngx-toastr/bundles/ngx-toastr.umd.js \
-        ./dist/tmp/libs/angular-websocket/angular-websocket.umd.js \
-        ./dist/tmp/libs/ng-circle-progress/ng-circle-progress.umd.js \
-        ./node_modules/ngx-color-picker/bundles/ngx-color-picker.umd.js \
-        ./node_modules/lodash/lodash.js \
-        ./node_modules/moment/moment.js \
-        ./node_modules/moment-timezone/moment-timezone.js \
-        ./node_modules/x2js/x2js.js \
-        ./node_modules/d3/dist/d3.min.js \
-        ./node_modules/he/he.js \
-        ./node_modules/@wavemaker/nvd3/build/nv.d3.min.js \
-        ./node_modules/jquery/dist/jquery.min.js \
-        ./node_modules/jssha/dist/sha256.js \
-        ./node_modules/summernote/dist/summernote-lite.js \
-        ./node_modules/jquery-ui/ui/disable-selection.js \
-        ./node_modules/jquery-ui/ui/version.js \
-        ./node_modules/jquery-ui/ui/widget.js \
-        ./node_modules/jquery-ui/ui/scroll-parent.js \
-        ./node_modules/jquery-ui/ui/plugin.js \
-        ./node_modules/jquery-ui/ui/data.js \
-        ./node_modules/jquery-ui/ui/widgets/mouse.js \
-        ./node_modules/jquery-ui/ui/widgets/resizable.js \
-        ./node_modules/jquery-ui/ui/widgets/sortable.js \
-        ./node_modules/jquery-ui/ui/widgets/draggable.js \
-        ./node_modules/jquery-ui/ui/widgets/droppable.js \
-        ./node_modules/hammerjs/hammer.min.js \
-        ./projects/components/widgets/data/table/src/datatable.js \
-        ./dist/tmp/libs/awesome-cordova/awesome-cordova-core.umd.js \
-        ./dist/tmp/libs/awesome-cordova/awesome-cordova-plugins.umd.js \
-        ./node_modules/iscroll/build/iscroll.js \
-        ./node_modules/js-cookie/src/js.cookie.js \
-        ./projects/swipey/src/swipey.jquery.plugin.js \
-        ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
-        ./node_modules/imask/dist/imask.min.js \
-        ../wavemaker-ui-variables/dist/umd/index.js \
-        ../custom-widgets-m3/dist/umd/index.js \
-        ./node_modules/@metrichor/jmespath/dist/jmespath.umd.js \
-        ./node_modules/angular-imask/bundles/angular-imask.umd.js \
-        ./node_modules/tabbable/dist/index.umd.js   \
-        ./node_modules/@wavemaker/focus-trap/dist/focus-trap.umd.js \
-        ./node_modules/@ztree/ztree_v3/js/jquery.ztree.all.js \
-        ./projects/components/widgets/basic/tree/src/keyboard-navigation.js \
-        -o ./dist/bundles/wmmobile/scripts/wm-libs.js -b
-
-    ./node_modules/.bin/terser ./dist/bundles/wmmobile/scripts/wm-libs.js \
-        -c -o ./dist/bundles/wmmobile/scripts/wm-libs.min.js -m   -b beautify=false,ascii_only=true
-
-
-    if [[ "$?" -eq "0" ]]; then
-        echo "uglify: mobile-libs - success"
-    else
-        echo -e "uglify: mobile-libs - failure"
-    fi
-}
-
 buildWebLibs() {
     buildCoreJs
     buildTsLib
@@ -734,16 +526,6 @@ buildWebLibs() {
     bundleWebLibs
 }
 
-buildIonicNative() {
-    execCommand "rollup" "awesome-cordova" "${ROLLUP} -c ./projects/mobile/awesome-cordova/rollup.awesome-cordova.config.mjs"
-}
-
-buildMobileLibs() {
-    buildIonicNative
-
-    bundleMobileLibs
-}
-
 buildLibs() {
     hasLibChanges
 
@@ -751,7 +533,6 @@ buildLibs() {
         npm install
         npm update
         buildWebLibs
-        buildMobileLibs
 
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/LIB_${SUCCESS_FILE}
@@ -761,7 +542,6 @@ buildLibs() {
 
         if [[ "$?" -eq "0" ]]; then
         bundleWebLibs
-        bundleMobileLibs
         if [[ "$?" -eq "0" ]]; then
             touch ./dist/LIB_${SUCCESS_FILE}
         fi
