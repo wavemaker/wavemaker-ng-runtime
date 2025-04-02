@@ -49,8 +49,9 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
         WmComponentsModule.forRoot(),
+        WizardComponent, WizardStepComponent
     ],
-    declarations: [WizardWrapperComponent, WizardComponent, WizardStepComponent],
+    declarations: [WizardWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp }, DynamicComponentRefProvider
     ]

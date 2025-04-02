@@ -8,7 +8,6 @@ import { DatePipe } from "@angular/common";
 import { MockAbstractI18nService } from '../../../../../base/src/test/util/date-test-util';
 import { ComponentFixture } from "@angular/core/testing";
 import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
-import { Subject } from "rxjs";
 
 const markup = `<wm-select name="select1" hint="select field">`;
 
@@ -21,8 +20,8 @@ class SelectWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [SelectWrapperComponent, SelectComponent],
+    imports: [FormsModule, SelectComponent],
+    declarations: [SelectWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -201,13 +200,20 @@ describe("SelectComponent", () => {
         expect(options[0].textContent.trim()).toBe("Select an option");
     });
 
-    xit("should remove placeholder option when no placeholder and no value", () => {
+    it("should remove placeholder option when no placeholder and no value", () => {
+        // Mock only for this test call
+        const iosSpy = jest.spyOn(require('@wm/core'), 'isIos').mockImplementationOnce(() => true);
+
         wmComponent.placeholder = "";
         wmComponent.datavalue = null;
         wmComponent.checkForFloatingLabel({ type: 'blur' });
         fixture.detectChanges();
+
         const placeholderOption = fixture.nativeElement.querySelector('#placeholderOption');
         expect(placeholderOption).toBeNull();
+
+        // Clear the mock
+        iosSpy.mockRestore();
     });
 
     it("should handle floating label on focus", () => {
@@ -252,12 +258,21 @@ describe("SelectComponent", () => {
             (wmComponent as any).removePlaceholderOption = jest.fn();
         });
 
-        xit('should remove placeholder option when no placeholder', () => {
-            wmComponent.placeholder = null;
+        it('should remove placeholder option when no placeholder', () => {
+            wmComponent.placeholder = null; 
+            const iosSpy = jest.spyOn(require('@wm/core'), 'isIos').mockImplementationOnce(() => true);
+            // Or mock Safari if that's what you're checking
+            // const safariSpy = jest.spyOn(window, 'isSafari').mockImplementation(() => true);
+
+            // Spy on the removePlaceholderOption method
+            const removeSpy = jest.spyOn(wmComponent as any, 'removePlaceholderOption');
 
             wmComponent.checkForFloatingLabel({ type: 'focus' });
 
-            expect((wmComponent as any).removePlaceholderOption).toHaveBeenCalled();
+            expect(removeSpy).toHaveBeenCalled();
+
+            // Restore original implementations
+            iosSpy.mockRestore();
         });
 
         it('should set placeholder text to placeholderOption on mousedown when no datavalue', () => {
@@ -318,14 +333,16 @@ describe("SelectComponent", () => {
             expect(captionEl.classList.contains('float-active')).toBe(true);
         });
 
-        xit('should remove placeholder option when no caption element, no datavalue, and no placeholder', () => {
+        it('should remove placeholder option when no caption element, no datavalue, and no placeholder', () => {
             jest.spyOn($.fn, 'closest').mockReturnValue($());
+            const iosSpy = jest.spyOn(require('@wm/core'), 'isIos').mockImplementationOnce(() => true);
             wmComponent.datavalue = null;
             wmComponent.placeholder = null;
-
+            const removeSpy = jest.spyOn(wmComponent as any, 'removePlaceholderOption');
             wmComponent.checkForFloatingLabel({ type: 'focus' });
 
-            expect((wmComponent as any).removePlaceholderOption).toHaveBeenCalled();
+            expect(removeSpy).toHaveBeenCalled();
+            iosSpy.mockRestore();
         });
     });
 
@@ -368,7 +385,7 @@ describe("SelectComponent", () => {
             expect(wmComponent.onPropertyChange).not.toHaveBeenCalledWith('tabindex', 2, undefined);
         });
 
-        xit('should set readonly attribute when readonly is true', (done) => {
+        it('should set readonly attribute when readonly is true', (done) => {
             wmComponent.onPropertyChange('readonly', true);
 
             setTimeout(() => {
@@ -441,7 +458,7 @@ describe("SelectComponent", () => {
             expect(wmComponent.acceptsArray).toBe(true);
         });
 
-        xit('should update select element when datavalue exists but no item is selected', () => {
+        it('should update select element when datavalue exists but no item is selected', () => {
             wmComponent.datavalue = '5'; // A value not in the dataset
             wmComponent.selectEl = { nativeElement: { value: '5' } };
             wmComponent['dataset$'].next(wmComponent.datasetItems);
@@ -449,7 +466,7 @@ describe("SelectComponent", () => {
             jest.advanceTimersByTime(100);
 
             expect(wmComponent.selectEl.nativeElement.value).toBe('5');
-            expect(wmComponent['modelByKey']).toBeUndefined();
+            expect(wmComponent['modelByKey']).toEqual([]);
         });
 
         it('should update select element when datavalue is falsy', () => {

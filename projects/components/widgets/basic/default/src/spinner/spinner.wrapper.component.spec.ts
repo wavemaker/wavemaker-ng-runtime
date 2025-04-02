@@ -1,11 +1,11 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {Component, ViewChild} from "@angular/core";
-import {SpinnerComponent} from "./spinner.component";
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
-import {App, AppDefaults} from "@wm/core";
-import {ImagePipe, StylableComponent, ToDatePipe, TrustAsPipe} from "@wm/components/base";
-import {DatePipe} from "@angular/common";
-import {mockApp} from "projects/components/base/src/test/util/component-test-util";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, ViewChild } from "@angular/core";
+import { SpinnerComponent } from "./spinner.component";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
+import { App, AppDefaults } from "@wm/core";
+import { ImagePipe, StylableComponent, ToDatePipe, TrustAsPipe } from "@wm/components/base";
+import { DatePipe } from "@angular/common";
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
 
 const markup = `<div wmSpinner #wm_spinner1="wmSpinner" [attr.aria-label]="wm_spinner1.arialabel || 'Loading...'" hint="Loading..." name="spinner1">`;
 
@@ -17,8 +17,8 @@ class SpinnerWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [],
-    declarations: [SpinnerWrapperComponent, SpinnerComponent, ImagePipe, TrustAsPipe],
+    imports: [SpinnerComponent, ImagePipe, TrustAsPipe],
+    declarations: [SpinnerWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

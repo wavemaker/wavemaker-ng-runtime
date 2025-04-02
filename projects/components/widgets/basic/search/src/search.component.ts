@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
+import { ScrollableDirective } from './scrollable.directive';
 import {
     AfterViewChecked,
     AfterViewInit,
@@ -17,7 +21,7 @@ import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {from, Observable, of} from 'rxjs';
 import {filter, mergeMap} from 'rxjs/operators';
 
-import {TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch} from 'ngx-bootstrap/typeahead';
+import {TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, TypeaheadModule} from 'ngx-bootstrap/typeahead';
 
 import {addClass, adjustContainerPosition, App, DataSource, isDefined, isMobile, toBoolean} from '@wm/core';
 import {
@@ -55,6 +59,8 @@ import {
 const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, FormsModule, ScrollableDirective, TypeaheadModule],
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
     providers: [

@@ -29,7 +29,7 @@ import {
 
 declare const $;
 declare const he;
-declare const moment;
+import moment from 'moment';
 declare const window;
 
 const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};

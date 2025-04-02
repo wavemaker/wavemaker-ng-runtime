@@ -25,8 +25,8 @@ class InputNumberWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule],
-    declarations: [InputNumberWrapperComponent, InputNumberComponent],
+    imports: [FormsModule, IMaskModule, InputNumberComponent],
+    declarations: [InputNumberWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

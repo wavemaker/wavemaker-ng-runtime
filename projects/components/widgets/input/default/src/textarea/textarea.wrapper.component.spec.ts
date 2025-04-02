@@ -19,8 +19,8 @@ class TextareaWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [TextareaWrapperComponent, TextareaComponent],
+    imports: [FormsModule, TextareaComponent],
+    declarations: [TextareaWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

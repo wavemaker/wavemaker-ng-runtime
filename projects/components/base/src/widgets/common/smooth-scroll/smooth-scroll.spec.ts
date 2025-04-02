@@ -25,7 +25,8 @@ describe('SmoothScrollDirective', () => {
     let jQueryMock
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, SmoothScrollDirective],
+            imports: [SmoothScrollDirective],
+            declarations: [TestComponent, ],
             providers: [
                 { provide: App, useValue: mockApp }
             ]

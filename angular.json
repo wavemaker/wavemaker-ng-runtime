@@ -32,13 +32,13 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "libraries/locales/",
-                "output": "/locales/"
+                "input": "libraries/locales/moment-timezone",
+                "output": "/locales/moment-timezone"
               },
               {
                 "glob": "**/*",
-                "input": "node_modules/@wavemaker/app-ng-runtime/locales/",
-                "output": "/locales/"
+                "input": "node_modules/@wavemaker/app-ng-runtime/locales/moment-timezone",
+                "output": "/locales/moment-timezone"
               },
               {
                 "glob": "**/*",
@@ -75,7 +75,6 @@
               }
             ],
             "scripts": [
-              "./node_modules/x2js/x2js.js",
               "./node_modules/d3/dist/d3.min.js",
               "./node_modules/@wavemaker/nvd3/build/nv.d3.min.js",
               "./node_modules/jquery/dist/jquery.min.js",
@@ -94,9 +93,7 @@
               "./libraries/scripts/datatable/datatable.js",
               "./libraries/scripts/swipey/swipey.jquery.plugin.js",
               "./libraries/scripts/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js",
-              "./node_modules/moment/min/moment.min.js",
               "./node_modules/moment-timezone/builds/moment-timezone.min.js",
-              "./node_modules/fullcalendar/main.min.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
               "./node_modules/hammerjs/hammer.min.js",
               "./node_modules/iscroll/build/iscroll.js",
@@ -243,9 +240,7 @@
               "./node_modules/jquery-ui/ui/widgets/sortable.js",
               "./node_modules/jquery-ui/ui/widgets/droppable.js",
               "./libraries/scripts/datatable/datatable.js",
-              "./node_modules/moment/min/moment.min.js",
               "./node_modules/moment-timezone/builds/moment-timezone.min.js",
-              "./node_modules/fullcalendar/main.min.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
               "./node_modules/hammerjs/hammer.min.js",
               "./node_modules/iscroll/build/iscroll.js",

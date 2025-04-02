@@ -8,6 +8,7 @@ const DEFAULT_CLS = 'app-tile';
 const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-tile', hostClass: DEFAULT_CLS};
 
 @Directive({
+  standalone: true,
     selector: '[wmTile]',
     providers: [
         provideAsWidgetRef(TileDirective)

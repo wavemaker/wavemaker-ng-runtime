@@ -1,15 +1,15 @@
-import {Component, ViewChild} from "@angular/core";
-import {FormsModule} from "@angular/forms";
-import {App, AppDefaults} from "@wm/core";
-import {ToDatePipe} from "@wm/components/base";
-import {DatePipe} from "@angular/common";
+import { Component, ViewChild } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { App, AppDefaults } from "@wm/core";
+import { ToDatePipe } from "@wm/components/base";
+import { DatePipe } from "@angular/common";
 import {
     ComponentTestBase,
     ITestComponentDef,
     ITestModuleDef
 } from "../../../../../../base/src/test/common-widget.specs";
-import {IMaskModule} from "angular-imask";
-import {InputCalendarComponent} from "./input-calendar.component";
+import { IMaskModule } from "angular-imask";
+import { InputCalendarComponent } from "./input-calendar.component";
 import { mockApp } from "projects/components/base/src/test/util/component-test-util";
 
 const markup = `<wm-input type="date" name="text1" hint="date field">`;
@@ -19,17 +19,17 @@ const markup = `<wm-input type="date" name="text1" hint="date field">`;
 })
 
 class InputCalendarWrapperComponent {
-    @ViewChild(InputCalendarComponent, /* TODO: add static flag */ {static: true}) wmComponent: InputCalendarComponent
+    @ViewChild(InputCalendarComponent, /* TODO: add static flag */ { static: true }) wmComponent: InputCalendarComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule],
-    declarations: [InputCalendarWrapperComponent, InputCalendarComponent],
+    imports: [FormsModule, IMaskModule, InputCalendarComponent],
+    declarations: [InputCalendarWrapperComponent],
     providers: [
-        {provide: App, useValue: mockApp},
-        {provide: ToDatePipe, useClass: ToDatePipe},
-        {provide: DatePipe, useClass: DatePipe},
-        {provide: AppDefaults, useClass: AppDefaults}
+        { provide: App, useValue: mockApp },
+        { provide: ToDatePipe, useClass: ToDatePipe },
+        { provide: DatePipe, useClass: DatePipe },
+        { provide: AppDefaults, useClass: AppDefaults }
     ]
 };
 

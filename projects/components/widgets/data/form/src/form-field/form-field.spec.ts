@@ -31,8 +31,8 @@ class TestComponent {
 }
 
 const testModuleDef = {
-    declarations: [TestComponent, FormFieldDirective],
-    imports: [ReactiveFormsModule],
+    declarations: [TestComponent,],
+    imports: [ReactiveFormsModule, FormFieldDirective],
     providers: [
         FormBuilder,
         { provide: App, useValue: mockApp },

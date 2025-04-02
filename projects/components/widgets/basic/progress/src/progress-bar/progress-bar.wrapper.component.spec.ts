@@ -1,12 +1,12 @@
-import {Component, ViewChild} from "@angular/core";
-import {FormsModule} from "@angular/forms";
-import {App} from "@wm/core";
-import {ProgressBarComponent} from "./progress-bar.component";
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../../base/src/test/common-widget.specs";
-import {compileTestComponent, mockApp} from "projects/components/base/src/test/util/component-test-util";
-import {ComponentFixture, fakeAsync, tick, waitForAsync} from "@angular/core/testing";
-import {By} from "@angular/platform-browser";
-import {provideAsWidgetRef} from "@wm/components/base";
+import { Component, ViewChild } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { App } from "@wm/core";
+import { ProgressBarComponent } from "./progress-bar.component";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
+import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { ComponentFixture, fakeAsync, tick, waitForAsync } from "@angular/core/testing";
+import { By } from "@angular/platform-browser";
+import { provideAsWidgetRef } from "@wm/components/base";
 
 const markup = `<div wmProgressBar name="progress_bar1" hint="Progress bar" arialabel="Progress bar" tabindex="0"></div>`;
 
@@ -18,8 +18,8 @@ class ProgressBarWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [ProgressBarWrapperComponent, ProgressBarComponent],
+    imports: [FormsModule, ProgressBarComponent],
+    declarations: [ProgressBarWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         provideAsWidgetRef(ProgressBarComponent)

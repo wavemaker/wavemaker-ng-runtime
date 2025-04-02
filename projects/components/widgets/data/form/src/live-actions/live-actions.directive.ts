@@ -5,6 +5,7 @@ import { Live_Operations, performDataOperation } from '@wm/components/base';
 import { ListComponent } from '@wm/components/data/list';
 
 @Directive({
+  standalone: true,
     selector: '[wmLiveActions]'
 })
 export class LiveActionsDirective {

@@ -21,9 +21,9 @@ import {
     startsWith, toLower, toUpper, trim
 } from "lodash-es";
 
-declare const X2JS;
+import X2JS from 'x2js';
 declare const $;
-declare const moment;
+import moment from 'moment';
 declare const document;
 declare const resolveLocalFileSystemURL;
 declare const WM_CUSTOM_FORMATTERS;
@@ -377,8 +377,7 @@ export const getFormattedDate = (datePipe, dateObj, format, timeZone?, isTimeSta
     if (format === 'UTC') {
         return new Date(dateObj).toISOString();
     }
-
-    if (timeZone && timeZone !== moment.defaultZone?.name) {
+    if (timeZone && timeZone !== (moment as any).defaultZone?.name) {
         const momentFormat = format.replaceAll('y', 'Y').replaceAll('d', 'D').replace('a', 'A');
         if (isIntervalDateTime ) { // dates which are of type time widget (value is hh:mm:ss) but returned as date string from time comp
             return moment(dateObj).format(momentFormat);
@@ -531,7 +530,8 @@ export const getValidJSON = (content) => {
 };
 
 export const xmlToJson = (xmlString) => {
-    const x2jsObj = new X2JS({ 'emptyNodeForm': 'content', 'attributePrefix': '', 'enableToStringFunc': false });
+    //TODO: import x2js dynamically
+    const x2jsObj = new X2JS({ 'emptyNodeForm': 'object', 'attributePrefix': '', 'enableToStringFunc': false });
     let json = x2jsObj.xml2js(xmlString);
     if (json) {
         json = get(json, Object.keys(json)[0]);
@@ -730,7 +730,7 @@ const momentPattern = (pattern) => {
 /*  This function returns date object. If val is undefined it returns invalid date */
 export const getValidDateObject = (val, options?) => {
    const defaultMeridian = ['AM', 'PM'];
-   const momentMeridian = moment()._locale.meridiem();
+   const momentMeridian = (moment() as any)._locale.meridiem();
     // Updating localized meridians with default meridians when moment meridian is not defined
     if (options && options.meridians && includes(defaultMeridian, momentMeridian)) {
         forEach(options.meridians, (meridian, index) => {
@@ -881,9 +881,9 @@ const isScriptLoaded = src => !!getNode(`script[src="${src}"], script[data-src="
 
 export const getMomentLocaleObject = (timeZone, dateObj?) => {
     if (dateObj) {
-        return new Date(new Date(moment(dateObj).tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
+        return new Date(new Date((moment(dateObj) as any).tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
     } else {
-        return new Date(new Date(moment().tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
+        return new Date(new Date((moment() as any).tz(timeZone).format()).toLocaleString("en-US", {timeZone: timeZone}));
     }
 }
 

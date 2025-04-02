@@ -1,9 +1,9 @@
-import {ComponentFixture, waitForAsync} from '@angular/core/testing';
-import {ButtonComponent} from './button.component';
-import {Component, ViewChild} from '@angular/core';
-import {ComponentsTestModule} from '../../../../../base/src/test/components.test.module';
-import {compileTestComponent} from '../../../../../base/src/test/util/component-test-util';
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../../base/src/test/common-widget.specs';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
+import { ButtonComponent } from './button.component';
+import { Component, ViewChild } from '@angular/core';
+import { compileTestComponent, mockApp } from '../../../../../base/src/test/util/component-test-util';
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
+import { App } from '@wm/core';
 
 const markup = `
         <button wmButton name="testbutton"
@@ -50,7 +50,10 @@ class TestComponent {
 
 const testModuleDef: ITestModuleDef = {
     declarations: [TestComponent],
-    imports: [ComponentsTestModule]
+    imports: [ButtonComponent],
+    providers: [
+        { provide: App, useValue: mockApp }
+    ]
 };
 
 const componentDef: ITestComponentDef = {
@@ -223,7 +226,10 @@ class BtnTestComponent {
 }
 const btnTestModuleDef: ITestModuleDef = {
     declarations: [BtnTestComponent],
-    imports: [ComponentsTestModule]
+    imports: [ButtonComponent],
+    providers: [
+        { provide: App, useValue: mockApp }
+    ]
 };
 describe('wm-button: Component Specific tests', () => {
     let wrapperComponent: BtnTestComponent;

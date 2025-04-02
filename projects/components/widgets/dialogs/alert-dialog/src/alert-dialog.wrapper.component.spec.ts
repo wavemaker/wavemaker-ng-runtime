@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { AlertDialogComponent } from './alert-dialog.component';
 import { Context, provideAsWidgetRef } from '@wm/components/base';
 import { By } from '@angular/platform-browser';
-import { ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
+import { ITestComponentDef } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { AbstractDialogService, App } from '@wm/core';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 
 // Mock Services
@@ -40,11 +40,8 @@ class AlertDialogWrapperComponent {
 }
 
 const testModuleDef = {
-    imports: [FormsModule],
-    declarations: [
-        AlertDialogWrapperComponent,
-        AlertDialogComponent
-    ],
+    imports: [FormsModule, AlertDialogComponent],
+    declarations: [AlertDialogWrapperComponent],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(AlertDialogComponent),

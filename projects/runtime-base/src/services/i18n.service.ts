@@ -20,7 +20,7 @@ import {
 import { CONSTANTS } from '@wm/variables';
 import {find, forEach, get, includes, intersection, isObject, map, toLower} from "lodash-es";
 
-declare const moment;
+import moment from 'moment';
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
 const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',
@@ -127,24 +127,31 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadMomentLocaleBundle(momentLocale) {
-        const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
         if (this.selectedLocale === this.defaultSupportedLocale) {
             moment.locale(this.defaultSupportedLocale);
             return;
         }
-        const path = _cdnUrl + `locales/moment/${momentLocale}.js`;
-        loadScripts([path], true).then(()=>{
+        if (_WM_APP_PROJECT.isPreview) {
+            const path = `${_WM_APP_PROJECT.cdnUrl}locales/moment/${momentLocale}.js`;
+            loadScripts([path], true).then(()=>{
+                this.loadScriptForMoment(momentLocale);
+            })
+        }
+        else{
+            this.loadScriptForMoment(momentLocale);
+        }
+    }
+    
+    protected loadScriptForMoment(momentLocale){
             moment.locale(this.selectedLocale);
-
             // For ngx bootstrap locale, get the config from script and apply locale
             // moment.localeData(momentLocale) will return moment locale instance. _config inside will have actual config
-            let _config = moment.localeData(momentLocale);
+            let _config: any = moment.localeData(momentLocale);
             _config = _config && _config._config;
             defineLocale(this.selectedLocale, _config);
             this.bsLocaleService.use(this.getSelectedLocale() || this.defaultSupportedLocale);
             this.bundleLoaded.moment = true;
             this.notifyLocaleChanged();
-        })
     }
 
     protected loadAngularLocaleBundle(angLocale) {
@@ -161,25 +168,6 @@ export class I18nServiceImpl extends AbstractI18nService {
                 resolve();
             }, resolve);
         });
-    }
-
-    protected loadCalendarLocaleBundle(calendarLocale, force = false) {
-        const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
-        let path: string;
-        if (calendarLocale) {
-            path = _cdnUrl + `locales/fullcalendar/${calendarLocale}.js`;
-        } else {
-            return Promise.resolve();
-        }
-
-        // return in case of mobile app or if selected locale is default supported locale.
-        if (!force && (isMobile() || isMobileApp() || this.selectedLocale === this.defaultSupportedLocale)) {
-            this.bundleLoaded.fullCalendar = true;
-            return;
-        }
-
-        // Call the script. In script, moment defines the loaded locale
-        return loadScripts([path], true);
     }
 
     protected loadMomentTimeZoneBundle(locale, compInstance?) {
@@ -199,11 +187,11 @@ export class I18nServiceImpl extends AbstractI18nService {
                     if (localeIndex > 0) {
                         locale = locale.substr(localeIndex);
                     }
-                    localeObj['timezone'] = find(moment.tz.names(), (timezoneName) => {
-                        return locale === moment.tz(timezoneName).format('Z');
+                    localeObj['timezone'] = find((moment as any).tz.names(), (timezoneName) => {
+                        return locale === (moment as any).tz(timezoneName).format('Z');
                     });
                 }
-                moment.tz.setDefault(locale);
+                (moment as any).tz.setDefault(locale);
                 const localeData =  compInstance && compInstance.formatsByLocale ? compInstance.formatsByLocale : this.formatsByLocale;
                 Object.assign(localeData, localeObj);
                 resolve();
@@ -219,10 +207,8 @@ export class I18nServiceImpl extends AbstractI18nService {
             this.bundleLoaded.moment = true;
         }
         if (libLocale.fullCalendar && window['FullCalendar']) {
-            this.loadCalendarLocaleBundle(libLocale.fullCalendar)?.then(() => {
                 this.bundleLoaded.fullCalendar = true;
                 this.notifyLocaleChanged();
-            });
         } else {
             this.bundleLoaded.fullCalendar = true;
         }
@@ -368,9 +354,6 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     public initCalendarLocale(): Promise<any> {
-        if (this.selectedLocale !== 'en') {
-            return this.loadCalendarLocaleBundle(this.selectedLocale, true);
-        }
         return Promise.resolve();
     }
 

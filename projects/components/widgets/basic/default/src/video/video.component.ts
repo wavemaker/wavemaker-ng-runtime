@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {Component, Inject, Injector, Optional, SecurityContext} from '@angular/core';
 
 import {appendNode, createElement, removeNode, transformFileURI} from '@wm/core';
@@ -13,6 +15,8 @@ const WIDGET_CONFIG = {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: '[wmVideo]',
     templateUrl: './video.component.html',
     providers: [

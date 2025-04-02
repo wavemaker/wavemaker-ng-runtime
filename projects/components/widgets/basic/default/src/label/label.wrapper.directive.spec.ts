@@ -1,11 +1,11 @@
-import {ComponentFixture} from '@angular/core/testing';
-import {Component, SecurityContext, ViewChild} from "@angular/core";
-import {LabelDirective} from "./label.directive";
-import {App, setProperty, toggleClass} from "@wm/core";
-import {SanitizePipe} from "@wm/components/base";
-import {compileTestComponent, mockApp} from "projects/components/base/src/test/util/component-test-util";
-import {By} from '@angular/platform-browser';
-import {ComponentTestBase} from 'projects/components/base/src/test/common-widget.specs';
+import { ComponentFixture } from '@angular/core/testing';
+import { Component, SecurityContext, ViewChild } from "@angular/core";
+import { LabelDirective } from "./label.directive";
+import { App, setProperty, toggleClass } from "@wm/core";
+import { SanitizePipe } from "@wm/components/base";
+import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { By } from '@angular/platform-browser';
+import { ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -23,8 +23,8 @@ class LabelWrapperDirective {
     @ViewChild(LabelDirective, { static: true }) wmComponent: LabelDirective;
 }
 const testModuleDef = {
-    imports: [],
-    declarations: [LabelWrapperDirective, LabelDirective],
+    imports: [LabelDirective],
+    declarations: [LabelWrapperDirective,],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: SanitizePipe, useClass: SanitizePipe },

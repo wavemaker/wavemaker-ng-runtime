@@ -27,7 +27,7 @@ describe('DialogHeaderComponent', () => {
         } as ElementRef;
 
         await TestBed.configureTestingModule({
-            declarations: [DialogHeaderComponent],
+            imports: [DialogHeaderComponent],
             providers: [
                 { provide: ElementRef, useValue: mockElementRef },
                 { provide: DialogRef, useValue: mockDialogRef },

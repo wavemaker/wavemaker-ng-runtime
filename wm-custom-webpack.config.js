@@ -2,6 +2,18 @@ const CompressionPlugin = require(`compression-webpack-plugin`);
 const path = require(`path`);
 const {ConcatSource} = require("webpack-sources");
 
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+
+const wmPropertiesPath = path.join(__dirname, '/src/app/wmProperties.js');
+
+const { WMAppProperties } = require(wmPropertiesPath);
+
+const localesToKeep = Object.values(WMAppProperties.supportedLanguages)
+  .map(lang => lang.moment)
+  .filter(locale => locale !== null);
+
+  const includeMomentPlugin = WMAppProperties.languageBundleSources === "STATIC";
+
 class ModifyCssAssetUrlsPlugin {
     apply(compiler) {
         compiler.hooks.compilation.tap('ModifyCssAssetUrlsPlugin', compilation => {
@@ -78,6 +90,12 @@ module.exports = {
             filename: "[name].br[ext]",
             algorithm: "brotliCompress"
         }),
+        // On STATIC WMAppProperties.languageBundleSources, required moment locales are included in the bundle
+        
+        /**
+         * MomentLocalesPlugin is used to include only the required moment locales in the bundle.
+         */
+        ...(includeMomentPlugin ? [ new MomentLocalesPlugin({ localesToKeep }) ] : [])
     ],
     optimization: {
         splitChunks: {

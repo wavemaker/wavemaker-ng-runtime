@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
 import {Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit, Optional} from '@angular/core';
 
 import {
@@ -13,6 +16,7 @@ import {
 import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, styler, WidgetRef, unsupportedStatePersistenceTypes} from '@wm/components/base';
 import { registerProps } from './pagination.props';
 import {forEach, get, isArray, isEmpty, isNull, isString} from "lodash-es";
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 const DEFAULT_CLS = 'app-datanavigator clearfix';
 const WIDGET_CONFIG = {widgetType: 'wm-pagination', hostClass: DEFAULT_CLS};
@@ -32,6 +36,8 @@ const sizeClasses = {
     }
 };
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, FormsModule, PaginationModule],
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html',
     providers: [

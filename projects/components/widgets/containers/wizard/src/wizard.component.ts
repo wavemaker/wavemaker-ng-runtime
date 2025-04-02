@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterContentInit,
     AfterViewChecked,
@@ -36,6 +38,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: 'div[wmWizard]',
     templateUrl: './wizard.component.html',
     providers: [

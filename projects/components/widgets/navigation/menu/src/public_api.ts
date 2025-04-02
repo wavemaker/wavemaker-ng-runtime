@@ -1,4 +1,3 @@
-export * from './menu.module';
 export * from './menu.component';
 export * from './menu-adapator.component';
 export * from './nav/nav-item/nav-item.directive';

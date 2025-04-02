@@ -1,12 +1,11 @@
-import {ComponentFixture} from '@angular/core/testing';
-import {Component, ViewChild} from '@angular/core';
-import {AbstractDialogService, App} from '@wm/core';
-import {FileUploadComponent} from './file-upload.component';
-import {ComponentsTestModule} from '../../../../base/src/test/components.test.module';
-import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../base/src/test/common-widget.specs';
-import {compileTestComponent, mockApp} from '../../../../base/src/test/util/component-test-util';
-import {FileIconClassPipe, FileSizePipe, StateClassPipe} from '../../../../base/src/pipes/custom-pipes';
-import {Subject} from 'rxjs/internal/Subject';
+import { ComponentFixture } from '@angular/core/testing';
+import { Component, ViewChild } from '@angular/core';
+import { AbstractDialogService, App } from '@wm/core';
+import { FileUploadComponent } from './file-upload.component';
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
+import { compileTestComponent, mockApp } from '../../../../base/src/test/util/component-test-util';
+import { FileIconClassPipe, FileSizePipe, StateClassPipe } from '../../../../base/src/pipes/custom-pipes';
+import { Subject } from 'rxjs/internal/Subject';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -37,8 +36,8 @@ class FileUploadWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [FileUploadWrapperComponent, FileUploadComponent, FileSizePipe, FileIconClassPipe, StateClassPipe],
-    imports: [ComponentsTestModule],
+    declarations: [FileUploadWrapperComponent],
+    imports: [FileUploadComponent, FileSizePipe, FileIconClassPipe, StateClassPipe],
     providers: [{ provide: App, useValue: mockApp }, AbstractDialogService]
 };
 

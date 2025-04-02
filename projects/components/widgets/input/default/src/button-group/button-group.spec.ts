@@ -24,7 +24,8 @@ describe('ButtonGroupDirective', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, ButtonGroupDirective],
+            imports: [ButtonGroupDirective],
+            declarations: [TestComponent,],
             providers: [Injector,
                 { provide: App, useValue: mockApp },
             ]

@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { CalendarComponent } from './calendar.component';
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
-import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
 import { FormsModule } from '@angular/forms';
 import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
@@ -12,7 +11,7 @@ import { IMaskModule } from 'angular-imask';
 import { AbstractI18nService, App } from '@wm/core';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { StylableComponent, BaseComponent } from '@wm/components/base';
-import "fullcalendar/main.min.js";
+import "@fullcalendar/core/index.global.min.js"
 import moment from 'moment';
 
 declare global {
@@ -48,8 +47,8 @@ class CalendarWrapperComponent {
 }
 
 const calendarComponentModuleDef: ITestModuleDef = {
-    declarations: [CalendarWrapperComponent, CalendarComponent],
-    imports: [ComponentsTestModule, FormsModule, BsDatepickerModule, IMaskModule],
+    declarations: [CalendarWrapperComponent],
+    imports: [FormsModule, BsDatepickerModule, IMaskModule, CalendarComponent],
     providers: [{ provide: ToDatePipe, useClass: ToDatePipe },
     { provide: App, useValue: mockApp },
     { provide: DatePipe, useClass: DatePipe },

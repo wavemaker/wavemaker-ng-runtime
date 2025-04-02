@@ -1,7 +1,6 @@
 /*
  * Public API Surface of core
  */
-
 export * from './utils/build-utils';
 export * from './constants/currency-constants';
 export {
@@ -170,6 +169,5 @@ export * from './services/user-custom-pipe-manager.service';
 export * from './services/custom-icons-loader.service';
 export { StatePersistence } from './services/state-persistence.service';
 export { PaginationService } from './services/pagination.service';
-export * from './core.module';
 export * from './utils/wm-project-properties';
 export * from './utils/lru-cache';

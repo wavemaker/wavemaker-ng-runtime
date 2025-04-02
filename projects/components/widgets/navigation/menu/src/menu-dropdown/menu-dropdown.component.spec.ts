@@ -3,6 +3,8 @@ import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core';
 import { MenuDropdownComponent } from './menu-dropdown.component';
 import { MenuComponent } from '../menu.component';
 import { By } from '@angular/platform-browser';
+import { App, UserDefinedExecutionContext } from '@wm/core';
+import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
 describe('MenuDropdownComponent', () => {
     let component: MenuDropdownComponent;
@@ -19,8 +21,10 @@ describe('MenuDropdownComponent', () => {
         } as unknown as MenuComponent;
 
         await TestBed.configureTestingModule({
-            declarations: [MenuDropdownComponent],
+            imports: [MenuDropdownComponent],
             providers: [
+                { provide: App, useValue: mockApp },
+                UserDefinedExecutionContext,
                 { provide: MenuComponent, useValue: mockMenuComponent },
                 {
                     provide: ElementRef,

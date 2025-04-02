@@ -31,7 +31,8 @@ describe('LazyLoadDirective', () => {
         };
 
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, LazyLoadDirective],
+            imports: [LazyLoadDirective],
+            declarations: [TestComponent],
             providers: [
                 { provide: App, useValue: {} },
                 { provide: 'EXPLICIT_CONTEXT', useValue: {} },

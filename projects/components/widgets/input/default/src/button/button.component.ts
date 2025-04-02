@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {Component, HostBinding, Inject, Injector, Optional} from '@angular/core';
 
 import {DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
@@ -12,6 +14,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: 'button[wmButton]',
     templateUrl: './button.component.html',
     providers: [
@@ -33,7 +37,7 @@ export class ButtonComponent extends StylableComponent {
     @HostBinding('attr.accesskey') shortcutkey: string;
     @HostBinding('attr.icon-position') iconposition: string;
 
-    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
     }

@@ -22,8 +22,8 @@ class ProgressCircleWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [ProgressCircleWrapperComponent, ProgressCircleComponent, CircleProgressComponent],
+    imports: [FormsModule, ProgressCircleComponent],
+    declarations: [ProgressCircleWrapperComponent, CircleProgressComponent],
     providers: [
         { provide: App, useValue: mockApp },
         provideAsWidgetRef(ProgressCircleComponent),

@@ -25,5 +25,4 @@ export {
     formatExportExpression,
     debounceVariableCall,
     formatDate
-} from './util/variable/variables.utils';
-export * from './variables.module';
+} from './util/variable/variables.utils'; 

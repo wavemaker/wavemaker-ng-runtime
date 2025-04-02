@@ -35,6 +35,7 @@ const enum STEP_STATUS {
 }
 
 @Component({
+    standalone: true,
     selector: 'form[wmWizardStep]',
     template: `<ng-content partial-container-target></ng-content>`,
     providers: [
