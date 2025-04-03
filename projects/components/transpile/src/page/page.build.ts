@@ -1,6 +1,6 @@
 import {Attribute, Element, ParseSourceSpan, Text} from '@angular/compiler';
 
-import {IDGenerator, isMobileApp} from '@wm/core';
+import {IDGenerator} from '@wm/core';
 import {getAttrMarkup, IBuildTaskDef, register} from '@wm/transpiler';
 import {forEach} from "lodash-es";
 
@@ -54,12 +54,6 @@ register('wm-page', (): IBuildTaskDef => {
                 conditionalNode.children = conditionalNode.children.concat(pageContentNode.children);
                 conditionalNode.children.push(new Text('{{onPageContentReady()}}', null, undefined, undefined));
                 pageContentNode.children = [conditionalNode];
-                if (isMobileApp()) {
-                    const loader = createElement('div');
-                    addAtrribute(loader, 'wmPageContentLoader', '');
-                    addAtrribute(loader, '*ngIf', '!showPageContent');
-                    pageContentNode.children.push(loader);
-                }
             }
         },
         pre: (attrs) => {

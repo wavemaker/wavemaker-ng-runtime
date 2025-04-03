@@ -21,14 +21,12 @@ import {
     isIpod,
     isIpad,
     Viewport,
-    hasCordova,
     AbstractDialogService
 } from '@wm/core';
 import { DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 import { ConfirmDialogComponent } from '@wm/components/dialogs/confirm-dialog';
 import { DialogComponent } from '@wm/components/dialogs/design-dialog';
 import { PrefabDirective, PrefabContainerDirective } from '@wm/components/prefab';
-import { MobileRuntimeModule } from '@wm/mobile/runtime';
 import { HttpServiceImpl } from '@wm/http';
 import { VariablesService, MetadataService } from '@wm/variables';
 import { OAuthService } from '@wm/oAuth';
@@ -185,7 +183,7 @@ import { NgCircleProgressModule } from "ng-circle-progress";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { SecurityService } from '@wm/security';
 import { PrefabDirective as PrefabLoader } from './directives/prefab.directive';
-import { ContainerDirective, CustomPipe, DialogServiceImpl, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, ItemTemplateDirective, LazyLoadDirective, MessageComponent, NumberToStringPipe, PartialContainerDirective, PartialDirective, PartialParamDirective, PartialParamHandlerDirective, PrefixPipe, RedrawableDirective, RepeatTemplateDirective, SanitizePipe, ShowInDeviceDirective, SmoothScrollDirective, StateClassPipe, StringToNumberPipe, SuffixPipe, TextContentDirective, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe, TrailingZeroDecimalPipe, TrustAsPipe } from '@wm/components/base';
+import { ContainerDirective, CustomPipe, DialogServiceImpl, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, ItemTemplateDirective, LazyLoadDirective, MessageComponent, NumberToStringPipe, PartialContainerDirective, PartialDirective, PartialParamDirective, PartialParamHandlerDirective, PrefixPipe, RedrawableDirective, RepeatTemplateDirective, SanitizePipe, ShowInDeviceDirective, SmoothScrollDirective, StateClassPipe, StringToNumberPipe, SuffixPipe, TextContentDirective, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe, TrailingZeroDecimalPipe, TrustAsPipe, WmComponentsModule } from '@wm/components/base';
 
 declare const _WM_APP_PROPERTIES;
 
@@ -197,7 +195,7 @@ const initializeProjectDetails = () => {
     if (!cdnUrl) {
         cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
     }
-    _WM_APP_PROJECT.id = hasCordova() ? _WM_APP_PROPERTIES.displayName : location.href.split('/')[3];
+    _WM_APP_PROJECT.id = location.href.split('/')[3];
     // Integration with third party apps like in SSPA/WebComponents, this meta tag with cdnUrl will not be there then default it to ng-bundle/
     _WM_APP_PROJECT.apiUrl = apiUrl || './';
     _WM_APP_PROJECT.cdnUrl = cdnUrl || 'ng-bundle/';
@@ -430,7 +428,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         ReactiveFormsModule,
         ...definitions,
         ToastrModule,
-        MobileRuntimeModule,
+        WmComponentsModule,
         // CoreModule, 
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
@@ -443,7 +441,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         RouterModule,
         HttpClientModule,
         ToastrModule,
-        MobileRuntimeModule,
+        WmComponentsModule,
         // CoreModule, 
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
@@ -532,7 +530,7 @@ export class RuntimeBaseModule {
         };
     }
 
-    constructor(mobileRuntimeModule: MobileRuntimeModule,
+    constructor(
         app: App,
         viewport: Viewport) {
         RuntimeBaseModule.addCustomEventPolyfill();
@@ -571,6 +569,5 @@ export class RuntimeBaseModule {
 }
 
 export const WM_MODULES_FOR_ROOT = [
-    MobileRuntimeModule.forRoot(),
     // RuntimeBaseModule.forRoot()
 ];

@@ -9,7 +9,6 @@ import {
     getDateObj,
     getFormattedDate,
     getNativeDateObject,
-    hasCordova,
     isIos,
     isMobile,
     setAttr
@@ -874,7 +873,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     onDateTimeInputBlur() {
         // removing the opacity on blur of the mobile widget
         const displayInputElem = this.getMobileInput();
-        if (displayInputElem && !hasCordova()) {
+        if (displayInputElem) {
             const children = this.nativeElement.children;
             for (let i = 0; i < children.length; i++) {
                 children[i].classList.remove('add-opacity');
@@ -889,7 +888,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
         const displayInputElem = this.getMobileInput();
         // toggling the classes to show and hide the native widget using opacity
-        if (skipFocus && !hasCordova()) {
+        if (skipFocus) {
             const children = this.nativeElement.children;
             for (let i = 0; i < children.length; i++) {
                 children[i].classList.add('add-opacity');
@@ -901,12 +900,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         if (displayInputElem && this._triggeredByUser) {
             displayInputElem.focus();
             displayInputElem.click();
-        }
-    }
-
-    getCordovaPluginDatePickerApi() {
-        if (isIos()) {
-            return get(window, 'cordova.wavemaker.datePicker.selectDate');
         }
     }
 

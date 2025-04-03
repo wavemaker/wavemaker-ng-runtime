@@ -235,9 +235,6 @@ export class ServiceVariableUtils {
         operationInfo.proxySettings = operationInfo.proxySettings || {web: true, mobile: false};
         method = operationInfo.httpMethod || operationInfo.methodType;
         isProxyCall = (function () {
-            if (CONSTANTS.hasCordova) {
-                return operationInfo.proxySettings.mobile;
-            }
             return operationInfo.proxySettings.web;
         }());
         withCredentials = operationInfo.proxySettings.withCredentials;

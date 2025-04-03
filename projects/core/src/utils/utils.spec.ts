@@ -40,7 +40,6 @@ import {
     getUrlParams,
     getValidDateObject,
     getValidJSON,
-    hasCordova,
     hasOffsetStr,
     initCaps,
     isAudioFile,
@@ -51,7 +50,6 @@ import {
     isInsecureContentRequest,
     isLargeTabletLandscape,
     isLargeTabletPortrait,
-    isMobileApp,
     isNumberType,
     isTablet,
     isValidWebURL,
@@ -936,17 +934,6 @@ describe('isTablet', () => {
         });
         const result = isTablet();
         expect(result).toBe(true);
-    });
-});
-
-describe('isMobileApp', () => {
-    it('should return false for non-mobile application', () => {
-        (global as any).getWmProjectProperties = jest.fn().mockReturnValue({
-            platformType: 'WEB',
-            type: 'APPLICATION'
-        });
-        const result = isMobileApp();
-        expect(result).toBe(false);
     });
 });
 
@@ -2066,19 +2053,6 @@ describe('convertToBlob', () => {
     });
 });
 
-
-describe('hasCordova', () => {
-    it('should return true when window.cordova exists', () => {
-        (window as any)['cordova'] = {};
-        expect(hasCordova()).toBe(true);
-        delete window['cordova'];
-    });
-
-    it('should return false when window.cordova does not exist', () => {
-        expect(hasCordova()).toBe(false);
-    });
-});
-
 describe('openLink', () => {
     let originalWindowOpen;
     let originalLocationHash;
@@ -2096,13 +2070,6 @@ describe('openLink', () => {
     afterEach(() => {
         window.open = originalWindowOpen;
         location.hash = originalLocationHash;
-    });
-
-    it('should set location.hash when hasCordova is true and link starts with #', () => {
-        (window as any)['cordova'] = {};
-        openLink('#test');
-        expect(location.hash).toBe('#test');
-        delete window['cordova'];
     });
 
     it('should call window.open when hasCordova is false', () => {

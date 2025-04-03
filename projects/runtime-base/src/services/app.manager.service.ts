@@ -232,20 +232,6 @@ export class AppManagerService {
         // on app load, by default Home page is loaded
         page = this.$security.getRedirectPage(config);
 
-        if (CONSTANTS.hasCordova) {
-            // get previously loggedInUser name (if any)
-            const lastLoggedInUsername = get(this.$security.get(), 'userInfo.userName');
-            this.$security.authInBrowser()
-                .then(() => this.reloadAppData())
-                .then(() => {
-                    const presentLoggedInUsername = get(this.$security.get(), 'userInfo.userName');
-                    if (presentLoggedInUsername && presentLoggedInUsername === lastLoggedInUsername) {
-                        routerService.navigate([page]);
-                    } else {
-                        routerService.navigate([`/`]);
-                    }
-                });
-        } else {
             page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
             /*
              * For preview, this.$security.getRedirectedRouteQueryParams() gets the queryparams form the activated route(pagewrappercomponent)
@@ -280,7 +266,6 @@ export class AppManagerService {
             } else {
                 window.location.href = ssoUrl;
             }
-        }
     }
 
     /**

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {isMobile, isMobileApp} from '@wm/core';
+import {isMobile} from '@wm/core';
 import {forEach} from "lodash-es";
 
 const openedDialogs = [];
@@ -156,7 +156,7 @@ export class DialogServiceImpl {
         if (openedDialogs.indexOf(ref) !== -1) {
             openedDialogs.splice(openedDialogs.indexOf(ref), 1);
         }
-        if (openedDialogs.length === 0 && (isMobile() || isMobileApp())) {
+        if (openedDialogs.length === 0 && (isMobile())) {
             //Fix for [WMS-23948]: remove aria-hidden attribute only after all dialogs are closed
             const parentSelector = $('body > app-root')[0];
             parentSelector.removeAttribute('aria-hidden');

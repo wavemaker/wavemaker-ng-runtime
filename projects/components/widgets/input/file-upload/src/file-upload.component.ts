@@ -58,7 +58,6 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     FILESIZE_MB = 1048576;
     widgetProps;
     _isMobileType;
-    _isCordova;
     // parentPrefabScope = element.closest('.app-prefab').isolateScope(),
     CONSTANT_FILE_SERVICE = 'FileService';
     uploadData = {

@@ -21,8 +21,6 @@ import {
     prettifyLabels,
     removeAttr,
     triggerFn,
-    isMobileApp,
-    noop
 } from '@wm/core';
 import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler,  } from '@wm/components/base';
 

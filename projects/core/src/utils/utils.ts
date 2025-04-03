@@ -30,7 +30,6 @@ declare const resolveLocalFileSystemURL;
 declare const WM_CUSTOM_FORMATTERS;
 declare const MSCSSMatrix;
 declare const _WM_APP_PROPERTIES;
-declare const cordova;
 
 const userAgent = window.navigator.userAgent;
 const REGEX = {
@@ -133,7 +132,6 @@ export const isTablet = () => {
     return scope && scope.viewParent.Viewport.isTabletType;
 };
 
-export const isMobileApp = () => getWmProjectProperties().platformType === 'MOBILE' && getWmProjectProperties().type === 'APPLICATION';
 
 export const getAndroidVersion = () => {
     const match = (window.navigator.userAgent.toLowerCase()).match(/android\s([0-9\.]*)/);
@@ -647,19 +645,11 @@ export const isEmptyObject = (obj: any): boolean => {
 export const scrollToElement = (element) => {
     const $element = $(element);
     const formPosition = $element.offset().top;
-    const $scrollParent = $element.closest('[wmsmoothscroll="true"]');
-    if (isMobileApp() && $scrollParent.length) {
-        const iScroll = get($scrollParent[0], 'iscroll');
-        let to = -(formPosition - iScroll.y);
-        to = (iScroll.maxScrollY > to) ? iScroll.maxScrollY : to;
-        iScroll.scrollTo(0, to);
-    } else {
-        window.scroll({
-            top: formPosition,
-            left: 0,
-            behavior: 'smooth'
-        });
-    }
+    window.scroll({
+        top: formPosition,
+        left: 0,
+        behavior: 'smooth'
+    });
 }
 
 // Function will return whether the given element is in viewport or not
@@ -997,20 +987,13 @@ export const convertToBlob = (filepath): Promise<any> => {
     });
 };
 
-export const hasCordova = () => {
-    return !!window['cordova'];
-};
 
 export const AppConstants = {
     INT_MAX_VALUE: 2147483647
 };
 
 export const openLink = (link: string, target: string = '_self') => {
-    if (hasCordova() && startsWith(link, '#')) {
-        location.hash = link;
-    } else {
         window.open(link, target);
-    }
 };
 
 /* util function to load the content from a url */
@@ -1567,17 +1550,6 @@ export const VALIDATOR = {
 };
 
 export const transformFileURI = (url) => {
-    if (isString(url) && hasCordova() && url.startsWith('file://')) {
-        if (isIos()) {
-            return url.replace('file://', '/_app_file_');
-        } else if (isAndroid() && location.href.startsWith('http')) {
-            if (url.startsWith(cordova.file.applicationDirectory)) {
-                return url.replace(cordova.file.applicationDirectory + 'www', '');
-            } else if (url.startsWith('file://')) {
-                return url.replace('file://', '/_app_file_');
-            }
-        }
-    }
     return url;
 };
 
