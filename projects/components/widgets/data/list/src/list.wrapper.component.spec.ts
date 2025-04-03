@@ -8,7 +8,7 @@ import { ListItemDirective } from './list-item.directive';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
 import { PaginationComponent as WmPaginationModule } from '@wm/components/data/pagination';
-import { WmComponentsModule, ToDatePipe, NAVIGATION_TYPE } from '@wm/components/base';
+import { ToDatePipe, NAVIGATION_TYPE, TextContentDirective } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { DatePipe } from '@angular/common';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
@@ -82,7 +82,6 @@ describe('ListComponent', () => {
                 FormsModule,
                 PaginationModule.forRoot(),
                 WmPaginationModule,
-                WmComponentsModule.forRoot(),
                 ListComponent, ListItemDirective
             ],
             declarations: [ListWrapperComponent],
@@ -91,7 +90,8 @@ describe('ListComponent', () => {
                 { provide: ToDatePipe, useClass: ToDatePipe },
                 { provide: AppDefaults, useClass: AppDefaults },
                 { provide: AbstractI18nService, useClass: MockAbstractI18nService },
-                { provide: DatePipe, useValue: DatePipe }
+                { provide: DatePipe, useValue: DatePipe },
+                TextContentDirective
             ]
         })
             .compileComponents();
@@ -1861,8 +1861,7 @@ describe('ListComponent With groupby', () => {
             imports: [
                 FormsModule,
                 PaginationModule.forRoot(),
-                WmPaginationModule,
-                WmComponentsModule.forRoot(), ListComponent, ListItemDirective
+                WmPaginationModule,  ListComponent, ListItemDirective
             ],
             declarations: [ListWrapperComponent],
             providers: [
@@ -1870,7 +1869,8 @@ describe('ListComponent With groupby', () => {
                 { provide: ToDatePipe, useClass: ToDatePipe },
                 { provide: AppDefaults, useClass: AppDefaults },
                 { provide: AbstractI18nService, useClass: MockAbstractI18nService },
-                { provide: DatePipe, useValue: DatePipe }
+                { provide: DatePipe, useValue: DatePipe },
+                TextContentDirective
             ]
         })
             .compileComponents();

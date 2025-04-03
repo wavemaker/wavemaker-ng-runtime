@@ -29,11 +29,10 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ToDatePipe } from '../../../../../base/src/pipes/custom-pipes';
 import { DatePipe, registerLocaleData } from '@angular/common';
-import { WmComponentsModule } from '@wm/components/base';
 import localeDE from '@angular/common/locales/de';
 import localeRO from '@angular/common/locales/ro';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
-import * as momentLib  from 'moment';
+import * as momentLib from 'moment';
 const moment = momentLib.default || window['moment'];
 import { By } from '@angular/platform-browser';
 
@@ -85,7 +84,7 @@ class TimeWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [TimeWrapperComponent],
-    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
@@ -425,7 +424,7 @@ describe("TimeComponent", () => {
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
     declarations: [TimeWrapperComponent],
-    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
@@ -488,7 +487,7 @@ describe('TimeComponent with localization', () => {
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
     declarations: [TimeWrapperComponent],
-    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, WmComponentsModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },

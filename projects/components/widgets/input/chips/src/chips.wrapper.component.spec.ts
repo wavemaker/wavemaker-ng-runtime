@@ -7,8 +7,8 @@ import { DatePipe } from '@angular/common';
 import { $unwatch, $watch, AbstractI18nService, App, AppDefaults, isAppleProduct } from '@wm/core';
 import { ChipsComponent } from './chips.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { compileTestComponent, mockApp, setInputValue } from '../../../../base/src/test/util/component-test-util';
-import { WmComponentsModule, ToDatePipe, DataSetItem } from '@wm/components/base';
+import { compileTestComponent, mockApp } from '../../../../base/src/test/util/component-test-util';
+import { ToDatePipe, DataSetItem, TextContentDirective } from '@wm/components/base';
 import { SearchComponent } from '@wm/components/basic/search';
 import { PartialRefProvider } from '@wm/core';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
@@ -39,7 +39,7 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
         TypeaheadModule.forRoot(),
-        WmComponentsModule, ChipsComponent, SearchComponent
+        ChipsComponent, SearchComponent
     ],
     declarations: [ChipsWrapperComponent],
     providers: [
@@ -48,7 +48,8 @@ const testModuleDef: ITestModuleDef = {
         { provide: DatePipe, useClass: DatePipe },
         { provide: AppDefaults, useClass: AppDefaults },
         { provide: PartialRefProvider, useClass: PartialRefProvider },
-        { provide: AbstractI18nService, useClass: MockAbstractI18nService }
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+        TextContentDirective
     ]
 };
 

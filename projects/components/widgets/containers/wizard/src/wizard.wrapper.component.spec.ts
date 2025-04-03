@@ -1,12 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
 import { WizardComponent } from './wizard.component';
 import { WizardStepDirective } from './wizard-step/wizard-step.directive';
-import { WmComponentsModule } from '@wm/components/base';
 import { FormsModule } from '@angular/forms';
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { App } from '@wm/core';
+import { TextContentDirective } from '@wm/components/base';
 
 const markup = `
         <div wmWizard role="tablist" stepstyle="justified" name="wizard1" class="classic" show="true" width="800" height="200"
@@ -47,8 +47,7 @@ class WizardWrapperComponent {
 }
 const testModuleDef: ITestModuleDef = {
     imports: [
-        FormsModule,
-        WmComponentsModule.forRoot(),
+        FormsModule, TextContentDirective,
         WizardComponent, WizardStepDirective
     ],
     declarations: [WizardWrapperComponent,],

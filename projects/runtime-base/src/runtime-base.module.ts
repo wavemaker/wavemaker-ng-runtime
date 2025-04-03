@@ -183,7 +183,7 @@ import { NgCircleProgressModule } from "ng-circle-progress";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { SecurityService } from '@wm/security';
 import { PrefabDirective as PrefabLoader } from './directives/prefab.directive';
-import { ContainerDirective, CustomPipe, DialogServiceImpl, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, ItemTemplateDirective, LazyLoadDirective, MessageComponent, NumberToStringPipe, PartialContainerDirective, PartialDirective, PartialParamDirective, PartialParamHandlerDirective, PrefixPipe, RedrawableDirective, RepeatTemplateDirective, SanitizePipe, ShowInDeviceDirective, StateClassPipe, StringToNumberPipe, SuffixPipe, TextContentDirective, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe, TrailingZeroDecimalPipe, TrustAsPipe, WmComponentsModule } from '@wm/components/base';
+import { ContainerDirective, CustomPipe, DialogServiceImpl, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, ItemTemplateDirective, LazyLoadDirective, MessageComponent, NumberToStringPipe, PartialContainerDirective, PartialDirective, PartialParamDirective, PartialParamHandlerDirective, PrefixPipe, RedrawableDirective, RepeatTemplateDirective, SanitizePipe, ShowInDeviceDirective, StateClassPipe, StringToNumberPipe, SuffixPipe, TextContentDirective, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe, TrailingZeroDecimalPipe, TrustAsPipe } from '@wm/components/base';
 
 const initializeProjectDetails = () => {
     let cdnUrl = document.querySelector('[name="deployUrl"]') && document.querySelector('[name="deployUrl"]').getAttribute('content');
@@ -425,7 +425,6 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         ReactiveFormsModule,
         ...definitions,
         ToastrModule,
-        WmComponentsModule,
         // CoreModule, 
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
@@ -438,7 +437,6 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         RouterModule,
         HttpClientModule,
         ToastrModule,
-        WmComponentsModule,
         // CoreModule, 
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
