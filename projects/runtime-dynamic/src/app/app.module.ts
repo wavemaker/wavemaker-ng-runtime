@@ -116,7 +116,7 @@ import { LayoutgridDirective, LayoutGridRowDirective, LayoutGridColumnDirective 
 import { PanelComponent } from '@wm/components/containers/panel';
 import { TabPaneComponent, TabsComponent } from '@wm/components/containers/tabs';
 import { TileDirective } from '@wm/components/containers/tile';
-import { WizardActionDirective, WizardStepDirective, WizardComponent } from '@wm/components/containers/wizard';
+import { WizardActionDirective, WizardStepComponent, WizardComponent } from '@wm/components/containers/wizard';
 
 // Dialogs
 import { AlertDialogComponent } from '@wm/components/dialogs/alert-dialog';
@@ -298,7 +298,7 @@ const componentsModule = [
     PanelComponent,
     TabPaneComponent, TabsComponent,
     TileDirective,
-    WizardActionDirective, WizardStepDirective, WizardComponent,
+    WizardActionDirective, WizardStepComponent, WizardComponent,
 
     // dialogs
     AlertDialogComponent,
