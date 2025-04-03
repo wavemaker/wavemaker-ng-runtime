@@ -1,8 +1,9 @@
-import { ApplicationRef, enableProdMode, NgModuleRef } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { ApplicationRef, enableProdMode } from '@angular/core';
 
-import { AppModule } from './app/app.module';
-import {isEmpty} from "lodash-es";
+import { isEmpty } from "lodash-es";
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from '@wm/runtime/base';
+import { appConfig } from './app/app.config';
 
 const DEBUG_MODE = 'debugMode';
 
@@ -14,23 +15,22 @@ console.time('bootstrap');
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    new Promise<void|Event>( resolve => {
+    new Promise<Event | void>(resolve => {
         if (window['cordova']) {
             document.addEventListener('deviceready', resolve);
         } else {
             resolve();
         }
-    }).then(() => platformBrowserDynamic().bootstrapModule(AppModule))
-        .then((appModuleRef: NgModuleRef<AppModule>) => {
-            const applicationRef = appModuleRef.injector.get(ApplicationRef);
+    }).then(() => bootstrapApplication(AppComponent, appConfig))
+        .then((appRef: ApplicationRef) => {
             window.addEventListener('unload', () => {
-                applicationRef.components.map(c => c && c.destroy());
+                appRef.components.map(c => c?.destroy());
             });
-            console.timeEnd('bootstrap');
-        }, err => console.log(err));
+        })
+        .catch(err => console.error('Error bootstrapping app:', err));
 });
 
-(window as any).debugMode = function(on) {
+(window as any).debugMode = function (on) {
     if (isEmpty(on)) {
         on = true;
     }
@@ -41,4 +41,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 };
 
-export default () => {};
+export default () => { };
