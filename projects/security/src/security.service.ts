@@ -7,7 +7,6 @@ import {
     App,
     getClonedObject,
     getWmProjectProperties,
-    hasCordova,
     triggerFn
 } from '@wm/core';
 import {each, forEach, get, isEmpty, join, set} from "lodash-es";
@@ -135,10 +134,8 @@ export class SecurityService {
             return;
         }
 
-        if (!hasCordova()) {
             // for web project, return config returned from backend API call.
             this.getWebConfig(onSuccess.bind(this), onError.bind(this));
-        }
         /* else {
          /!*
          * for mobile app, first get the mobile config (saved in the apk)
@@ -323,9 +320,6 @@ export class SecurityService {
 
             // override the default xsrf cookie name and xsrf header names with WaveMaker specific values
             if (xsrfCookieValue) {
-                if (hasCordova()) {
-                    localStorage.setItem(XSRF_COOKIE_NAME, xsrfCookieValue || '');
-                }
             }
             // After the successful login in device, this function triggers the pending onLoginCallbacks.
             this.injector.get(App).notify('userLoggedIn', {});
@@ -361,9 +355,6 @@ export class SecurityService {
         }).then((response) => {
             set(this.get(), 'authenticated', false);
             set(this.get(), 'userInfo', null);
-            /*if (CONSTANTS.hasCordova) {
-                localStorage.setItem(CONSTANTS.XSRF_COOKIE_NAME, '');
-            }*/
             this.injector.get(App).notify('userLoggedOut', {});
             triggerFn(successCallback, response);
         }, failureCallback);
@@ -385,9 +376,6 @@ export class SecurityService {
      * @returns xsrf cookie value
      */
     isXsrfEnabled() {
-        if (hasCordova()) {
-            return localStorage.getItem(XSRF_COOKIE_NAME);
-        }
         return this.getCookieByName(XSRF_COOKIE_NAME);
     }
 

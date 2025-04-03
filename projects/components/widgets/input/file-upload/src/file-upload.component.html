@@ -26,7 +26,7 @@
     </div>
   }
   <!-- single file upload in web and single , multiple file upload UI in mobile runmode -->
-  @if (!_isCordova && (!multiple || _isMobileType)) {
+  @if ((!multiple || _isMobileType)) {
     <div class="app-single-file-upload">
       <div class="app-button-wrapper">
         <form class="form-horizontal" name="{{formName}}">
@@ -49,13 +49,6 @@
       </div>
       <div class="app-files-upload-status single"></div>
     </div>
-  }
-  <!-- support for file upload in Mobile Application (device) -->
-  @if (_isCordova) {
-    <button focus-target class="app-button btn btn-default" (click)="openFileSelector()" [disabled]="disabled">
-      <i class="{{iconclass}}"></i>
-      <span class="caption" [innerHTML]="caption"></span>
-    </button>
   }
   <!-- list of selectedfiles UI -->
   @if (uploadedFiles.length > 0) {

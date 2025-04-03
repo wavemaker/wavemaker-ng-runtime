@@ -1,4 +1,4 @@
-import { _WM_APP_PROJECT, hasCordova, isIE, getWmProjectProperties } from '@wm/core';
+import { _WM_APP_PROJECT, isIE, getWmProjectProperties } from '@wm/core';
 import {get, isUndefined} from "lodash-es";
 
 import * as momentLib  from 'moment';
@@ -316,22 +316,9 @@ function postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfi
 
 function startoAuthFlow(url, providerId, onSuccess, removeProviderConfigCallBack, securityObj?, requestSourceType?, customUriScheme?, deployedURL?, http?) {
     let oAuthWindow;
-    if (hasCordova()) {
-        window.open(url, '_system');
-        window['OAuthInMobile'](providerId).then(accessToken => {
-            const key = providerId + accessTokenSuffix;
-            if (accessToken) {
-                localStorage.setItem(key, accessToken);
-                checkAuthenticationStatus(providerId, onSuccess, removeProviderConfigCallBack, null, http, securityObj);
-            } else {
-                onSuccess('error');
-            }
-        });
-    } else {
         oAuthWindow = window.open(url, '_blank', newWindowProps);
         onAuthWindowOpen(providerId, onSuccess, removeProviderConfigCallBack, http, securityObj);
         checkForWindowExistence(oAuthWindow, providerId, onSuccess, securityObj);
-    }
 }
 
 /**
@@ -448,9 +435,6 @@ export const performAuthorization = (url, providerId, onSuccess, onError, http, 
             postGetAuthorizationURL(url, providerId, onSuccess, removeProviderConfigCallBack, securityObj, requestSourceType, http);
         }
     } else {
-        if (hasCordova()) {
-            requestSourceType = 'MOBILE';
-        }
         if (isPassedFlow(securityObj, implicitIdentifier) || isPassedFlow(securityObj, pkceIdentifier)) {
             triggerProviderConfigCallBack(url, providerId, onSuccess, onError, http, addProviderConfigCallBack, removeProviderConfigCallBack, securityObj, requestSourceType, customUriScheme, deployedURL);
         } else {
