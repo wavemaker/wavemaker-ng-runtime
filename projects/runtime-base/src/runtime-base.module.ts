@@ -183,9 +183,7 @@ import { NgCircleProgressModule } from "ng-circle-progress";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { SecurityService } from '@wm/security';
 import { PrefabDirective as PrefabLoader } from './directives/prefab.directive';
-import { ContainerDirective, CustomPipe, DialogServiceImpl, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, ItemTemplateDirective, LazyLoadDirective, MessageComponent, NumberToStringPipe, PartialContainerDirective, PartialDirective, PartialParamDirective, PartialParamHandlerDirective, PrefixPipe, RedrawableDirective, RepeatTemplateDirective, SanitizePipe, ShowInDeviceDirective, SmoothScrollDirective, StateClassPipe, StringToNumberPipe, SuffixPipe, TextContentDirective, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe, TrailingZeroDecimalPipe, TrustAsPipe, WmComponentsModule } from '@wm/components/base';
-
-declare const _WM_APP_PROPERTIES;
+import { ContainerDirective, CustomPipe, DialogServiceImpl, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, ItemTemplateDirective, LazyLoadDirective, MessageComponent, NumberToStringPipe, PartialContainerDirective, PartialDirective, PartialParamDirective, PartialParamHandlerDirective, PrefixPipe, RedrawableDirective, RepeatTemplateDirective, SanitizePipe, ShowInDeviceDirective, StateClassPipe, StringToNumberPipe, SuffixPipe, TextContentDirective, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe, TrailingZeroDecimalPipe, TrustAsPipe, WmComponentsModule } from '@wm/components/base';
 
 const initializeProjectDetails = () => {
     let cdnUrl = document.querySelector('[name="deployUrl"]') && document.querySelector('[name="deployUrl"]').getAttribute('content');
@@ -264,7 +262,6 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     CustomWidgetContainerDirective,
     RedrawableDirective,
     ShowInDeviceDirective,
-    SmoothScrollDirective,
     TextContentDirective,
 
     // Pipes

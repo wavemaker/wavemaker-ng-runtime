@@ -46,8 +46,7 @@ import {
     CustomWidgetRefProvider,
     DynamicComponentRefProvider,
     PartialRefProvider,
-    _WM_APP_PROJECT,
-    hasCordova
+    _WM_APP_PROJECT, 
 } from "@wm/core";
 import { ModalModule } from "ngx-bootstrap/modal";
 import { ToastNoAnimationModule } from "ngx-toastr";
@@ -75,7 +74,7 @@ const wmModules = [
 export const xsrfHeaderName = "X-WM-XSRF-TOKEN";
 
 
-declare const _WM_APP_PROPERTIES;
+
 
 const initializeProjectDetails = () => {
     let cdnUrl = document.querySelector('[name="deployUrl"]') && document.querySelector('[name="deployUrl"]').getAttribute('content');
@@ -85,7 +84,7 @@ const initializeProjectDetails = () => {
     if (!cdnUrl) {
         cdnUrl = document.querySelector('[name="cdnUrl"]') && document.querySelector('[name="cdnUrl"]').getAttribute('content');
     }
-    _WM_APP_PROJECT.id = hasCordova() ? _WM_APP_PROPERTIES.displayName : location.href.split('/')[3];
+    _WM_APP_PROJECT.id = location.href.split('/')[3];
     // Integration with third party apps like in SSPA/WebComponents, this meta tag with cdnUrl will not be there then default it to ng-bundle/
     _WM_APP_PROJECT.apiUrl = apiUrl || './';
     _WM_APP_PROJECT.cdnUrl = cdnUrl || 'ng-bundle/';

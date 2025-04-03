@@ -6,7 +6,6 @@ import {
     IWidgetConfig,
     provideAsWidgetRef,
     RedrawableDirective,
-    SmoothScrollDirective,
     StylableComponent,
     styler,
 } from '@wm/components/base';
@@ -19,7 +18,7 @@ const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-accordionpane', hostClass
 
 @Component({
     standalone: true,
-    imports: [CommonModule, SmoothScrollDirective],
+    imports: [CommonModule],
     selector: 'div[wmAccordionPane]',
     templateUrl: './accordion-pane.component.html',
     providers: [
