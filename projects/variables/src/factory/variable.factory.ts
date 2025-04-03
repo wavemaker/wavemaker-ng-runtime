@@ -1,4 +1,3 @@
-import { DeviceVariable } from '../model/variable/device-variable';
 import { NavigationAction } from '../model/action/navigation-action';
 import { NotificationAction } from '../model/action/notification-action';
 import { ModelVariable, ServiceVariable, LiveVariable, CrudVariable, TimerAction, VARIABLE_CONSTANTS } from '@wavemaker/variables';
@@ -22,9 +21,6 @@ export class VariableFactory {
                 break;
             case VARIABLE_CONSTANTS.CATEGORY.CRUD:
                 variableInstance = new CrudVariable(variable);
-                break;
-            case VARIABLE_CONSTANTS.CATEGORY.DEVICE:
-                variableInstance = new DeviceVariable(variable);
                 break;
             case VARIABLE_CONSTANTS.CATEGORY.NAVIGATION:
                 variableInstance = new NavigationAction(variable);

@@ -15,11 +15,7 @@ console.time('bootstrap');
 
 document.addEventListener('DOMContentLoaded', () => {
     new Promise<void|Event>( resolve => {
-        if (window['cordova']) {
-            document.addEventListener('deviceready', resolve);
-        } else {
             resolve();
-        }
     }).then(() => platformBrowserDynamic().bootstrapModule(AppModule))
         .then((appModuleRef: NgModuleRef<AppModule>) => {
             const applicationRef = appModuleRef.injector.get(ApplicationRef);

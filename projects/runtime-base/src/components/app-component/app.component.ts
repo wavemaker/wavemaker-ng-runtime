@@ -25,7 +25,6 @@ import {
     App,
     CustomIconsLoaderService,
     getWmProjectProperties,
-    hasCordova,
     noop,
     removeClass,
     setAppRef,
@@ -202,11 +201,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
 
     ngAfterViewInit() {
         document.documentElement.setAttribute('lang', getWmProjectProperties().defaultLanguage);
-        if (hasCordova() && !window['wmDeviceReady']) {
-            document.addEventListener('wmDeviceReady', () => this.start());
-        } else {
             this.start();
-        }
     }
 
     ngDoCheck() {

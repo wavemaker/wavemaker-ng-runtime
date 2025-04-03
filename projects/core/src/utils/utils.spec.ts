@@ -40,7 +40,6 @@ import {
     getUrlParams,
     getValidDateObject,
     getValidJSON,
-    hasCordova,
     hasOffsetStr,
     initCaps,
     isAudioFile,
@@ -2053,19 +2052,6 @@ describe('convertToBlob', () => {
     });
 });
 
-
-describe('hasCordova', () => {
-    it('should return true when window.cordova exists', () => {
-        (window as any)['cordova'] = {};
-        expect(hasCordova()).toBe(true);
-        delete window['cordova'];
-    });
-
-    it('should return false when window.cordova does not exist', () => {
-        expect(hasCordova()).toBe(false);
-    });
-});
-
 describe('openLink', () => {
     let originalWindowOpen;
     let originalLocationHash;
@@ -2083,13 +2069,6 @@ describe('openLink', () => {
     afterEach(() => {
         window.open = originalWindowOpen;
         location.hash = originalLocationHash;
-    });
-
-    it('should set location.hash when hasCordova is true and link starts with #', () => {
-        (window as any)['cordova'] = {};
-        openLink('#test');
-        expect(location.hash).toBe('#test');
-        delete window['cordova'];
     });
 
     it('should call window.open when hasCordova is false', () => {
