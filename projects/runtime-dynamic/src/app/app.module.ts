@@ -383,9 +383,5 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule as any, ReactiveFormsMo
 })
 export class AppModule {
     constructor(private app: App, private inj: Injector, private componentRefProvider: ComponentRefProvider) {
-        if (window['cordova']) {
-            // clear the cached urls on logout, to load the Login Page and not the Main Page as app reload(window.location.reload) is not invoked in mobile
-            this.app.subscribe('userLoggedOut', this.componentRefProvider.clearComponentFactoryRefCache.bind(this.componentRefProvider));
-        }
     }
 }

@@ -102,7 +102,6 @@ export {
     getSessionStorageItem,
     noop,
     convertToBlob,
-    hasCordova,
     AppConstants,
     openLink,
     fetchContent,

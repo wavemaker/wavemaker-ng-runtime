@@ -219,7 +219,7 @@ export class WebSocketVariableManager extends BaseVariableManager {
             return _socket;
         }
 
-        if (!CONSTANTS.hasCordova && isInsecureContentRequest(url)) {
+        if (isInsecureContentRequest(url)) {
             triggerFn(this._onSocketError.bind(this, variable));
             return;
         }

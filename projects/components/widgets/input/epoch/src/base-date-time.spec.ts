@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, Injector, LOCALE_ID } from '@angular/core';
-import { AbstractI18nService, App, AppDefaults, hasCordova, isIos } from '@wm/core';
+import { AbstractI18nService, App, AppDefaults, isIos } from '@wm/core';
 import { BaseDateTimeComponent, getTimepickerConfig } from './base-date-time.component';
 import { ToDatePipe } from '@wm/components/base';
 import { DatePipe, FormStyle, getLocaleDayPeriods, TranslationWidth } from '@angular/common';
@@ -33,7 +33,6 @@ const mockJQuery = jest.fn().mockImplementation(() => createMockJQueryElement())
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
     isIos: jest.fn(),
-    hasCordova: jest.fn()
 }));
 
 jest.mock('@angular/common', () => ({
@@ -663,8 +662,6 @@ describe('BaseDateTimeComponent', () => {
             mockElement.appendChild(mockChild2);
             (component as any).nativeElement = mockElement;
 
-            // Mock hasCordova function
-            (global as any).hasCordova = jest.fn().mockReturnValue(false);
 
             component.onDateTimeInputBlur();
 
@@ -673,24 +670,12 @@ describe('BaseDateTimeComponent', () => {
             expect(mockInput.classList.contains('remove-opacity')).toBeFalsy();
         });
 
-        it('should not modify classes when in Cordova', () => {
-            const mockElement = document.createElement('div');
-            (component as any).nativeElement = mockElement;
-
-            // Mock hasCordova function
-            (global as any).hasCordova = jest.fn().mockReturnValue(true);
-
-            component.onDateTimeInputBlur();
-
-            expect(mockElement.children.length).toBe(0);
-        });
     });
 
     describe('onDateTimeInputFocus', () => {
         beforeEach(() => {
             component.loadNativeDateInput = true;
             (component as any)._triggeredByUser = true;
-            (hasCordova as jest.Mock).mockReturnValue(false);
         });
 
         it('should add opacity classes when skipFocus is true', () => {
@@ -797,52 +782,6 @@ describe('BaseDateTimeComponent', () => {
         });
     });
 
-    describe('getCordovaPluginDatePickerApi', () => {
-        beforeEach(() => {
-            (isIos as jest.Mock).mockReset();
-        });
-
-        it('should return undefined when not on iOS', () => {
-            (isIos as jest.Mock).mockReturnValue(false);
-            const result = component.getCordovaPluginDatePickerApi();
-            expect(result).toBeUndefined();
-        });
-
-        it('should return the selectDate function when on iOS', () => {
-            (isIos as jest.Mock).mockReturnValue(true);
-            const mockSelectDate = jest.fn();
-            Object.defineProperty(window, 'cordova', {
-                value: {
-                    wavemaker: {
-                        datePicker: {
-                            selectDate: mockSelectDate
-                        }
-                    }
-                },
-                writable: true
-            });
-
-            const result = component.getCordovaPluginDatePickerApi();
-            expect(result).toBe(mockSelectDate);
-        });
-
-        it('should return undefined when on iOS but cordova.wavemaker.datePicker.selectDate is not available', () => {
-            (isIos as jest.Mock).mockReturnValue(true);
-            Object.defineProperty(window, 'cordova', {
-                value: {},
-                writable: true
-            });
-
-            const result = component.getCordovaPluginDatePickerApi();
-            expect(result).toBeUndefined();
-        });
-
-        afterEach(() => {
-            if ('cordova' in window) {
-                delete (window as any).cordova;
-            }
-        });
-    });
 
     describe('addEventsOnTimePicker', () => {
 

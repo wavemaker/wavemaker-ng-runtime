@@ -51,11 +51,7 @@ if (environment.production) {
 
 document.addEventListener('DOMContentLoaded', () => {
   new Promise<Event | void>(resolve => {
-    if (window['cordova']) {
-      document.addEventListener('deviceready', resolve);
-    } else {
       resolve();
-    }
   }).then(() => bootstrapApplication(AppComponent, appConfig))
     .then((appRef: ApplicationRef) => {
       appRef.bootstrap(BootstrapWrapperComponent);

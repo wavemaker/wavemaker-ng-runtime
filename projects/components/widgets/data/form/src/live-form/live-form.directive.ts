@@ -144,10 +144,6 @@ export class LiveFormDirective {
         }
         primaryKeys = this.form.datasource.execute(DataSource.Operation.GET_PRIMARY_KEY) || [];
         primaryKey  = dataObj[primaryKeys[0]];
-        // TODO: Handle mobile case
-        // if (CONSTANTS.hasCordova && CONSTANTS.isRunMode) {
-        //     href += $rootScope.project.deployedUrl;
-        // }
         href += this.form.datasource.execute(DataSource.Operation.GET_BLOB_URL, {
             primaryValue: primaryKey,
             columnName: key

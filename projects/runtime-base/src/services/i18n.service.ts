@@ -298,21 +298,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         let _selectedDefaultLang = preferBrowserLang ? undefined : _defaultLanguage;
 
         let _appSupportedLang;
-        /**
-         * for cordova, check for language ignoring the locale
-         * As the navigator.languages always returns the language with locale (en-us)
-         * The supportedLanguages from BE doesn't include locale (en) which leads to mismatch
-         */
-        if (CONSTANTS.hasCordova) {
-            let supportedLang = [];
-            forEach(_acceptLang, function (lang) {
-                let matchedLang = find(_supportedLang, (val) => lang === val) || find(_supportedLang, (val) => lang.startsWith(val));
-                if (matchedLang) {
-                    supportedLang.push(matchedLang);
-                }
-             })
-            _appSupportedLang = supportedLang[0];
-        }
+        
         // check for the session storage to load any pre-requested locale
         const _defaultLang = getSessionStorageItem('selectedLocale') || _selectedDefaultLang || _appSupportedLang || intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
         // if the supportedLocale is not available set it to defaultLocale
@@ -335,21 +321,18 @@ export class I18nServiceImpl extends AbstractI18nService {
     // This function returns the accepted languages list
     public getAcceptedLanguages() {
         let languages;
-        if (CONSTANTS.hasCordova) {
-            languages = navigator.languages || [navigator.language];
-        } else {
-            languages = decodeURIComponent(getWmProjectProperties().preferredLanguage || '');
-            /**
-             * Accept-Language Header will contain set of supported locale, so try splitting the string to proper locale set
-             * Ex: en,en-US;q=0.9,de;q=0.6,ar;q=0.2,hi
-             *
-             * Split the above into [en,en-us,de,ar,hi]
-             * @type {Array}
-             */
-            languages = languages.split(',').map(function(locale) {
-                return locale.split(';')[0];
-            });
-        }
+       
+        languages = decodeURIComponent(getWmProjectProperties().preferredLanguage || '');
+        /**
+         * Accept-Language Header will contain set of supported locale, so try splitting the string to proper locale set
+         * Ex: en,en-US;q=0.9,de;q=0.6,ar;q=0.2,hi
+         *
+         * Split the above into [en,en-us,de,ar,hi]
+         * @type {Array}
+         */
+        languages = languages.split(',').map(function(locale) {
+            return locale.split(';')[0];
+        });
         return map(languages, toLower);
     }
 
