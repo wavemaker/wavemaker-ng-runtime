@@ -572,5 +572,5 @@ export class RuntimeBaseModule {
 
 export const WM_MODULES_FOR_ROOT = [
     MobileRuntimeModule.forRoot(),
-    RuntimeBaseModule.forRoot()
+    // RuntimeBaseModule.forRoot()
 ];
