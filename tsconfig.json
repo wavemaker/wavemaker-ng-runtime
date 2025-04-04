@@ -82,7 +82,7 @@
             ],
             "@wm/runtime/dynamic": [
                 "libraries/runtime/dynamic"
-            ],
+            ]
         },
         "useDefineForClassFields": false
     },
