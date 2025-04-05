@@ -72,7 +72,7 @@
             ],
             "@wm/runtime/dynamic": [
                 "libraries/runtime/dynamic"
-            ],
+            ]
         }
     },
     "angularCompilerOptions":{
