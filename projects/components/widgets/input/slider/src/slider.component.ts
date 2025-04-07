@@ -1,10 +1,8 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import { FormsModule } from '@angular/forms';
 import {Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
-import {IWidgetConfig, provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
+import {IWidgetConfig, provideAs, provideAsWidgetRef, styler, TextContentDirective} from '@wm/components/base';
 import {BaseFormCustomComponent} from '@wm/components/input';
 
 import {registerProps} from './slider.props';
@@ -17,8 +15,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, FormsModule],
+    standalone: true,
+    imports: [TextContentDirective, FormsModule],
     selector: '[wmSlider]',
     templateUrl: './slider.component.html',
     providers: [

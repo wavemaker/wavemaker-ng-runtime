@@ -12,7 +12,6 @@ import {
     EVENT_LIFE,
     getMomentLocaleObject,
 } from '@wm/core';
-import { WmComponentsModule } from '@wm/components/base';
 import { SecurityService } from '@wm/security';
 import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
@@ -105,7 +104,7 @@ class DatetimeWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent],
-    imports: [BrowserAnimationsModule, DatetimeComponent, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, DatetimeComponent, FormsModule, BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
@@ -379,7 +378,7 @@ describe("DatetimeComponent", () => {
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent],
-    imports: [BrowserAnimationsModule, DatetimeComponent, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, DatetimeComponent, FormsModule, BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
@@ -1025,7 +1024,7 @@ describe(('Datetime Component with Localization'), () => {
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
     declarations: [DatetimeWrapperComponent],
-    imports: [BrowserAnimationsModule, DatetimeComponent, FormsModule, WmComponentsModule.forRoot(), BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    imports: [BrowserAnimationsModule, DatetimeComponent, FormsModule, BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },

@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import { IMaskModule } from 'angular-imask';
 import { ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild } from '@angular/core';
 import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -34,7 +33,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     standalone: true,
-    imports: [WmComponentsModule, DateTimePickerComponent, IMaskModule, BsDatepickerModule],
+    imports: [DateTimePickerComponent, IMaskModule, BsDatepickerModule],
     selector: '[wmDate]',
     templateUrl: './date.component.html',
     providers: [

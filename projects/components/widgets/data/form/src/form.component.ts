@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import { AnchorComponent } from '@wm/components/basic';
 import { ButtonComponent } from '@wm/components/input';
 import {
@@ -41,6 +40,7 @@ import {
     scrollToElement,
 } from '@wm/core';
 import {
+    FilterPipe,
     getFieldLayoutConfig,
     Live_Operations,
     MessageComponent,
@@ -155,7 +155,7 @@ const setTouchedState = (self, ngForm, fieldName) => {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, WmComponentsModule, AnchorComponent, ButtonComponent, MessageComponent],
+  imports: [CommonModule, FilterPipe, AnchorComponent, ButtonComponent, MessageComponent],
     selector: 'form[wmForm]',
     templateUrl: './form.component.html',
     providers: [

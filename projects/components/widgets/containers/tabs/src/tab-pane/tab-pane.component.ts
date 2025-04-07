@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterViewInit,
     Attribute,
@@ -23,8 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule],
+    standalone: true, 
     selector: 'div[wmTabPane]',
     templateUrl: './tab-pane.component.html',
     providers: [

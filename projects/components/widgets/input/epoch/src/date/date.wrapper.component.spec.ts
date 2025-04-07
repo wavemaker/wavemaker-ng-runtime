@@ -11,8 +11,6 @@ import {
 import { SecurityService } from '@wm/security';
 import { DatePipe, registerLocaleData } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { WmComponentsModule } from '@wm/components/base';
-
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { DateComponent } from './date.component';
@@ -83,7 +81,7 @@ class DateWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [DateWrapperComponent],
-    imports: [BrowserAnimationsModule, FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot(), IMaskModule, DateComponent],
+    imports: [BrowserAnimationsModule, FormsModule, BsDatepickerModule.forRoot(), IMaskModule, DateComponent],
     providers: [
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
@@ -460,7 +458,7 @@ describe('DateComponent', () => {
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
     declarations: [DateWrapperComponent],
-    imports: [FormsModule, WmComponentsModule.forRoot(), BsDatepickerModule.forRoot(), IMaskModule, DateComponent],
+    imports: [FormsModule, BsDatepickerModule.forRoot(), IMaskModule, DateComponent],
     providers: [
         { provide: LOCALE_ID, useValue: 'de' },
         { provide: Router, useValue: Router },

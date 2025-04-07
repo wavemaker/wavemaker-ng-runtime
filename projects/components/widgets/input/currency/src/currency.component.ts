@@ -1,10 +1,9 @@
-import { WmComponentsModule } from "@wm/components/base";
 import { FormsModule } from '@angular/forms';
 import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
 import {AbstractI18nService, AppDefaults, CURRENCY_INFO} from '@wm/core';
-import {IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe} from '@wm/components/base';
+import {IWidgetConfig, provideAs, provideAsWidgetRef, TextContentDirective, TrailingZeroDecimalPipe} from '@wm/components/base';
 import {NumberLocale} from '@wm/components/input';
 
 import {registerProps} from './currency.props';
@@ -18,7 +17,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
   standalone: true,
-  imports: [WmComponentsModule, FormsModule],
+  imports: [TextContentDirective, FormsModule],
     selector: '[wmCurrency]',
     templateUrl: './currency.component.html',
     providers: [

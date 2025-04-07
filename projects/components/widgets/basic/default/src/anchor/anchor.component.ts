@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {AfterViewInit, Component, HostBinding, Inject, Injector, OnDestroy, Optional} from '@angular/core';
 
 import {
@@ -12,9 +11,9 @@ import {
     removeClass,
     setAttr
 } from '@wm/core';
-import {DISPLAY_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {DISPLAY_TYPE, ImagePipe, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TextContentDirective} from '@wm/components/base';
 
-import {registerProps} from './anchor.props';
+import {registerProps} from './anchor.props'; 
 
 const DEFAULT_CLS = 'app-anchor';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -29,8 +28,8 @@ export const disableContextMenu = ($event: Event) => {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+    standalone: true,
+    imports: [CommonModule, ImagePipe, TextContentDirective],
     selector: 'a[wmAnchor]',
     templateUrl: './anchor.component.html',
     providers: [

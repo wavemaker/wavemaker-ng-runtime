@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import {AfterViewInit, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {CircleProgressComponent, CircleProgressOptionsInterface} from 'ng-circle-progress';
@@ -39,8 +38,8 @@ export const TYPE_CLASS_MAP_PC = {
 
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule, NgCircleProgressModule],
+    standalone: true,
+    imports: [NgCircleProgressModule],
     selector: '[wmProgressCircle]',
     templateUrl: './progress-circle.component.html',
     providers: [

@@ -8,11 +8,11 @@ import { Component, ViewChild } from '@angular/core';
 import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 import { TypeaheadDirective, TypeaheadMatch, TypeaheadModule } from 'ngx-bootstrap/typeahead';
-import { BaseComponent } from '@wm/components/base';
+import { BaseComponent, TextContentDirective } from '@wm/components/base';
 import { By } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 import { ScrollableDirective } from './scrollable.directive';
-import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
+import { ToDatePipe } from '@wm/components/base';
 import { PartialRefProvider, AppDefaults } from '@wm/core';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck, mockApp } from 'projects/components/base/src/test/util/component-test-util';
@@ -78,7 +78,7 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
         TypeaheadModule.forRoot(),
-        WmComponentsModule, SearchComponent, ScrollableDirective, InputTextComponent
+        SearchComponent, ScrollableDirective, InputTextComponent
     ],
     declarations: [SearchWrapperComponent],
     providers: [
@@ -90,7 +90,8 @@ const testModuleDef: ITestModuleDef = {
         { provide: ComponentFixtureAutoDetect, useValue: true },
         { provide: PartialRefProvider, useClass: PartialRefProvider },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },
-        { provide: BaseComponent, useClass: BaseComponent }
+        { provide: BaseComponent, useClass: BaseComponent },
+        TextContentDirective
     ]
 };
 

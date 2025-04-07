@@ -1,11 +1,9 @@
-import { WmComponentsModule } from "@wm/components/base";
-import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Injector, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Injector, Input, Output } from '@angular/core';
 
 declare const $;
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule],
+    standalone: true,
     selector: 'wm-pickergroup',
     template: `
         <div class="app-picker-group">
