@@ -15,16 +15,15 @@ console.time('bootstrap');
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    new Promise<void|Event>( resolve => {
-            resolve();
-        }
-    }).then(() => bootstrapApplication(AppComponent, appConfig))
-        .then((appRef: ApplicationRef) => {
-            window.addEventListener('unload', () => {
-                appRef.components.map(c => c?.destroy());
-            });
-        })
-        .catch(err => console.error('Error bootstrapping app:', err));
+  new Promise<Event | void>(resolve => {
+      resolve();
+  }).then(() => bootstrapApplication(AppComponent, appConfig))
+    .then((appRef: ApplicationRef) => { 
+      window.addEventListener('unload', () => {
+        appRef.components.map(c => c?.destroy());
+      });
+    })
+    .catch(err => console.error('Error bootstrapping app:', err));
 });
 
 (window as any).debugMode = function (on) {
