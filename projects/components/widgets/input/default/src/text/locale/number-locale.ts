@@ -374,20 +374,20 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         if (num === 0) {
             return 0;
         }
-    
+
         // Convert to number and handle scientific notation
         if (Number.isNaN(num)) return 0;
-        
+
         // Get the exponential form to handle scientific notation properly
         const exponentialStr = num.toExponential();
         const match = exponentialStr.match(/^-?\d*\.?(\d+)?e([+-]\d+)$/);
-        
+
         if (match) {
             const decimals = match[1] ? match[1].length : 0;
             const exponent = parseInt(match[2]);
             return Math.max(0, decimals - exponent);
         }
-        
+
         // Fallback to regular decimal counting
         const decimalStr = num.toString();
         const isLocalizedNumber = includes(decimalStr, this.DECIMAL);
@@ -482,7 +482,7 @@ export abstract class NumberLocale extends BaseInput implements Validator {
         }
 
         const validity = new RegExp(`^[\\d\\s-,.e+${this.GROUP}${this.DECIMAL}]$`, 'i');
-        const inputValue = $event.target.value;
+        const inputValue = $event.target?.value||"";
 
         // when input mode is financial, do not restrict user on entering the value when step value limit is reached.
         const skipStepValidation = this.inputmode === INPUTMODE.FINANCIAL;
@@ -573,4 +573,16 @@ export abstract class NumberLocale extends BaseInput implements Validator {
             super.onPropertyChange(key, nv, ov);
         }
     }
+    public onPaste($event: ClipboardEvent) {
+        const pastedData = $event.clipboardData.getData('text');
+
+        for (const char of pastedData) {
+            const mockEvent = new KeyboardEvent('keypress', { key: char });
+            if (this.validateInputEntry(mockEvent)===false) {
+                $event.preventDefault();
+                return;
+            }
+        }
+    }
+
 }
