@@ -52,7 +52,7 @@ const LINEAR_LAYOUT_DIRECTIVE: ImportDef[] = [...LINEAR_LAYOUT_ITEM_DIRECTIVE, {
 const TAB_PANE_COMPONENT: ImportDef[] = [{ from: '@wm/components/containers/tabs', name: 'TabPaneComponent' }];
 const TABS_COMPONENT: ImportDef[] = [...TAB_PANE_COMPONENT, { from: '@wm/components/containers/tabs', name: 'TabsComponent' }];
 const WIZARD_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/wizard', name: 'WizardActionDirective' }];
-const WIZARD_STEP_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/wizard', name: 'WizardStepDirective' }];
+const WIZARD_STEP_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/wizard', name: 'WizardStepComponent' }];
 const WIZARD_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...WIZARD_ACTION_DIRECTIVE, ...WIZARD_STEP_DIRECTIVE, { from: '@wm/components/containers/wizard', name: 'WizardComponent' }];
 const LAYOUT_GRID_COLUMN_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/layout-grid', name: 'LayoutGridColumnDirective' }];
 const LAYOUT_GRID_ROW_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/layout-grid', name: 'LayoutGridRowDirective' }];
@@ -189,7 +189,7 @@ const CUSTOM_WIDGET_DIRECTIVE: ImportDef[] = [...CUSTOM_WIDGET_CONTAINER_DIRECTI
 const LOGIN_COMPONENT: ImportDef[] = [{ from: '@wm/components/advanced/login', name: 'LoginComponent' }];
 const MARQUEE_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/advanced/marquee', name: 'MarqueeDirective' }];
 const PREFAB_CONTAINER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab', name: 'PrefabContainerDirective' }];
-const PREFAB_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab', name: 'PrefabDirective' }, { from: '@wm/runtime/base', name: 'PrefabDirective', as: 'PrefabLoader' }];
+const PREFAB_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab', name: 'PrefabDirective' }];
 const RICH_TEXT_EDITOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/rich-text-editor', name: 'RichTextEditorComponent' }];
 const TREE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/tree', name: 'TreeComponent' }];
 
