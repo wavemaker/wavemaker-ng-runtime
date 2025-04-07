@@ -1,3 +1,5 @@
 <div richTextEditor></div>
-<div [innerHTML]="proxyModel" class="ta-preview" *ngIf="showpreview"></div>
+@if (showpreview) {
+  <div [innerHTML]="proxyModel" class="ta-preview"></div>
+}
 <input class="model-holder" [disabled]="disabled" hidden>

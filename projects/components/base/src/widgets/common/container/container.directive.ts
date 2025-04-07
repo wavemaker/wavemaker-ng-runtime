@@ -15,6 +15,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Directive({
+  standalone: true,
     selector: '[wmContainer]',
     providers: [
         provideAsWidgetRef(ContainerDirective)

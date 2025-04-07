@@ -10,6 +10,7 @@ const DEFAULT_CLS = 'app-partial clearfix';
 const WIDGET_CONFIG = {widgetType: 'wm-partial', hostClass: DEFAULT_CLS};
 
 @Directive({
+  standalone: true,
     selector: '[wmPartial]',
     providers: [
         provideAsWidgetRef(PartialDirective)

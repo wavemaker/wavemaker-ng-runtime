@@ -1,8 +1,11 @@
+import { WmComponentsModule } from "@wm/components/base";
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Injector, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
 
 declare const $;
 
 @Component({
+  standalone: true,
+  imports: [WmComponentsModule],
     selector: 'wm-pickergroup',
     template: `
         <div class="app-picker-group">
@@ -16,20 +19,23 @@ export class PickerGroupComponent {
 
 @Component({
     selector: 'wm-picker',
+    standalone: true,
     template: `
         <div class="app-picker">
-            <div class="app-picker-option-container">
-                <div class="app-picker-option app-picker-empty-option">E</div>
-                <div class="app-picker-option app-picker-empty-option">E</div>
-                <div *ngFor="let option of options; index as i;" class="app-picker-option">
-                    {{option.label}}
-                </div>
-                <div class="app-picker-option app-picker-empty-option">E</div>
-                <div class="app-picker-option app-picker-empty-option">E</div>
-            </div>
-            <div class="app-picker-ruler"></div>
+          <div class="app-picker-option-container">
+            <div class="app-picker-option app-picker-empty-option">E</div>
+            <div class="app-picker-option app-picker-empty-option">E</div>
+            @for (option of options; track option; let i = $index) {
+              <div class="app-picker-option">
+                {{option.label}}
+              </div>
+            }
+            <div class="app-picker-option app-picker-empty-option">E</div>
+            <div class="app-picker-option app-picker-empty-option">E</div>
+          </div>
+          <div class="app-picker-ruler"></div>
         </div>
-    `
+        `
 })
 export class PickerComponent implements AfterViewInit {
 

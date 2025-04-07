@@ -1,5 +1,5 @@
 import IMask from "imask";
-declare const moment;
+import moment from 'moment';
 
 export function validateTheMaskedDate (format, locale)  {
     if(format == 'timestamp') {

@@ -1,7 +1,0 @@
-{
-    "name": "@wm/mobile/components/device/camera",
-    "sideEffects": false,
-    "dependencies": {
-      "tslib": "^2.0.0"
-    }
-}

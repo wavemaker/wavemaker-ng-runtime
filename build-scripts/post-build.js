@@ -34,39 +34,9 @@ const generateHashForScripts = (updatedFilenames) => {
         });
     });
 };
-let isMobileProject = false;
 let isProdBuild;
 let isDevBuild;
 let $;
-
-const setMobileProjectType = (angularJson) => {
-    let styles = angularJson['projects']['angular-app']['architect']['build']['options']['styles'];
-    const androidStyles = styles.find((style) => {
-        let isObject = typeof (style) === 'object';
-        if (isObject) {
-            return style.bundleName === 'wm-android-styles';
-        }
-        return false;
-    });
-    isMobileProject = androidStyles ? true : false;
-    return isMobileProject;
-}
-const addMobileSpecificStyles = async (deployUrl) => {
-    if (isDevBuild) {
-        $("body").append(
-            `<script type="text/javascript" defer="true" src="${deployUrl}wm-android-styles.js"></script>`
-        );
-    }
-
-    if (isProdBuild) {
-        $("head").append(
-            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}wm-android-styles.css" >`
-        );
-        $("head").append(
-            `<link rel="stylesheet" theme="wmtheme" href="${deployUrl}wm-ios-styles.css" >`
-        );
-    }
-}
 
 const addScriptForWMStylesPath = (wm_styles_path) => {
     // wm_styles_path will not be present for mobile apps
@@ -226,14 +196,8 @@ const generateSha1 = (content) => {
         let outputPath = global.opPath = args['output-path'] || build['options']['outputPath']
         const contents = await readFile(`./dist/index.html`, `utf8`);
         $ = cheerio.load(contents);
-        setMobileProjectType(angularJson);
-        if (!isMobileProject) {
-            isProdBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-styles.css`);
-            isDevBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-styles.js`);
-        } else {
-            isDevBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-android-styles.js`);
-            isProdBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-android-styles.css`);
-        }
+        isProdBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-styles.css`);
+        isDevBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-styles.js`);
 
         if (isProdBuild) {
             const isOptimizeCss = $('meta[optimizecss]').length;
@@ -250,16 +214,12 @@ const generateSha1 = (content) => {
         const updatedFileHashes = {}
         let wm_styles_path;
 
-        if (isMobileProject) {
-            await addMobileSpecificStyles(deployUrl);
+        if (isDevBuild) {
+            wm_styles_path = `${deployUrl}wm-styles.js`;
         } else {
-            if (isDevBuild) {
-                wm_styles_path = `${deployUrl}wm-styles.js`;
-            } else {
-                const fileName = 'wm-styles';
-                const updatedFileName = `${fileName}.css`
-                wm_styles_path = `${deployUrl}${updatedFileName}`;
-            }
+            const fileName = 'wm-styles';
+            const updatedFileName = `${fileName}.css`
+            wm_styles_path = `${deployUrl}${updatedFileName}`;
         }
 
         addScriptForWMStylesPath(wm_styles_path);

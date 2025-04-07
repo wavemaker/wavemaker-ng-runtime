@@ -1,43 +1,49 @@
 <!--Updated focus with mousedown event. IOS devices not allow update of option value after opening dropdown-->
 <select #select
-        focus-target
-        [ngClass]="['app-select form-control', class]"
-        [disabled]="disabled"
-        [required]="required"
-        [tabindex]="tabindex"
-        [attr.accesskey]="shortcutkey"
-        [(ngModel)]="modelByKey"
-        [ngModelOptions]="{standalone: true}"
-        [multiple]="multiple"
-        (change)="onSelectValueChange($event)"
-        (mousedown)="checkForFloatingLabel($event)"
-        (blur)="invokeOnTouched($event); checkForFloatingLabel($event)"
-        [attr.name]="name"
-        [attr.aria-label]="arialabel"
-        [autofocus]="autofocus">
+  focus-target
+  [ngClass]="['app-select form-control', class]"
+  [disabled]="disabled"
+  [required]="required"
+  [tabindex]="tabindex"
+  [attr.accesskey]="shortcutkey"
+  [(ngModel)]="modelByKey"
+  [ngModelOptions]="{standalone: true}"
+  [multiple]="multiple"
+  (change)="onSelectValueChange($event)"
+  (mousedown)="checkForFloatingLabel($event)"
+  (blur)="invokeOnTouched($event); checkForFloatingLabel($event)"
+  [attr.name]="name"
+  [attr.aria-label]="arialabel"
+  [autofocus]="autofocus">
 
-        <option selected
-                value="undefined"
-                [textContent]="placeholder"
-                id="placeholderOption"
-                [hidden]="!placeholder"></option>
+  <option selected
+    value="undefined"
+    [textContent]="placeholder"
+    id="placeholderOption"
+  [hidden]="!placeholder"></option>
 
-    <ng-container *ngIf="groupby">
-        <optgroup *ngFor="let groupObj of groupedData"
-            [label]="groupObj.key">
-            <option *ngFor="let item of groupObj.data;"
-                [value]="item.key"
-                [selected]="item.selected"
-                [textContent]="item.label"
-            ></option>
-        </optgroup>
-    </ng-container>
-
-    <ng-container *ngIf="!groupby">
-        <option *ngFor="let item of datasetItems"
+  @if (groupby) {
+    @for (groupObj of groupedData; track groupObj) {
+      <optgroup
+        [label]="groupObj.key">
+        @for (item of groupObj.data; track item) {
+          <option
             [value]="item.key"
             [selected]="item.selected"
             [textContent]="item.label"
-        ></option>
-    </ng-container>
+          ></option>
+        }
+      </optgroup>
+    }
+  }
+
+  @if (!groupby) {
+    @for (item of datasetItems; track item) {
+      <option
+        [value]="item.key"
+        [selected]="item.selected"
+        [textContent]="item.label"
+      ></option>
+    }
+  }
 </select>

@@ -1,64 +1,82 @@
-<ng-template [ngIf]="!groupby" [ngIfElse]="groupedListTemplate">
+@if (!groupby) {
+  @for (item of datasetItems; track item; let i = $index) {
     <li [ngClass]="['checkbox', 'app-checkbox', itemclass, itemsPerRowClass]"
-        [class.active]="item.selected"
-        *ngFor="let item of datasetItems; let i = index"
-        [wmItemTemplate]="content" [userComponentParams]="item" partialContainer
-        (click)="onCheckboxLabelClick($event, item.key)" role="presentation">
-        <!-- Default item template -->
-        <label *ngIf="!content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" [title]="item.label">
-            <input [name]="'checkboxset_' + widgetId" [tabindex]="tabindex"
-                   type="checkbox"
-                   [disabled]="disabled || readonly" [attr.data-attr-index]="i"
-                   [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
-            <span class="caption" [textContent]="item.label"></span>
+      [class.active]="item.selected"
+      [wmItemTemplate]="content" [userComponentParams]="item" partialContainer
+      (click)="onCheckboxLabelClick($event, item.key)" role="presentation">
+      <!-- Default item template -->
+      @if (!content) {
+        <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" [title]="item.label">
+          <input [name]="'checkboxset_' + widgetId" [tabindex]="tabindex"
+            type="checkbox"
+            [disabled]="disabled || readonly" [attr.data-attr-index]="i"
+            [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
+          <span class="caption" [textContent]="item.label"></span>
         </label>
-        <!-- Custom partial template -->
-        <label *ngIf="content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" >
-            <input [name]="'checkboxset_' + widgetId" [tabindex]="tabindex"
-                   type="checkbox"
-                   [disabled]="disabled || readonly" [attr.data-attr-index]="i"
-                   [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
-            <span class="caption customTemplate" partial-container-target></span>
+      }
+      <!-- Custom partial template -->
+      @if (content) {
+        <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" >
+          <input [name]="'checkboxset_' + widgetId" [tabindex]="tabindex"
+            type="checkbox"
+            [disabled]="disabled || readonly" [attr.data-attr-index]="i"
+            [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
+          <span class="caption customTemplate" partial-container-target></span>
         </label>
+      }
     </li>
-</ng-template>
+  }
+} @else {
+  @for (groupObj of groupedData; track groupObj; let groupindex = $index) {
+    <li class="app-list-item-group" role="presentation">
+      <ul class="item-group" [attr.aria-labelledby]="'group_' + widgetId + '_' + groupindex">
+        <li [id]="'group_' + widgetId + '_' + groupindex" aria-hidden="true" class="list-group-header" (click)="handleHeaderClick($event)" [title]="groupObj.key" [ngClass]="{'collapsible-content': collapsible}">
+          <h4 class="group-title" [attr.aria-label]="'Group '+groupObj.key">{{groupObj.key}}
+            <div class="header-action">
+              @if (collapsible) {
+                <i class="app-icon wi action wi-chevron-up" title="{{appLocale.LABEL_COLLAPSE}}/{{appLocale.LABEL_EXPAND}}"></i>
+              }
+              @if (showcount) {
+                <span class="label label-default" [textContent]="groupObj.data.length"></span>
+              }
+            </div>
+          </h4>
+        </li>
+        @for (item of groupObj.data; track item; let i = $index) {
+          <li
+            [ngClass]="['checkbox', 'app-checkbox', 'group-list-item', itemclass, itemsPerRowClass]"
+            [class.active]="item.selected"
+            [wmItemTemplate]="content" [userComponentParams]="item" partialContainer
+            (click)="onCheckboxLabelClick($event, item)">
+            <!-- Default item template -->
+            @if (!content) {
+              <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" [title]="item.label">
+                <input [name]="'checkboxset_' + widgetId" type="checkbox"
+                  [tabindex]="tabindex"
+                  [disabled]="disabled || readonly" [attr.data-attr-index]="i"
+                  [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
+                <span class="caption" [textContent]="item.label"></span>
+              </label>
+            }
+            <!-- Custom partial template -->
+            @if (content) {
+              <label class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" >
+                <input [name]="'checkboxset_' + widgetId" type="checkbox"
+                  [tabindex]="tabindex"
+                  [disabled]="disabled || readonly" [attr.data-attr-index]="i"
+                  [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
+                <span class="caption" partial-container-target></span>
+              </label>
+            }
+          </li>
+        }
+      </ul>
+    </li>
+  }
+}
 <input [disabled]="disabled || readonly" hidden class="model-holder">
-<div *ngIf="readonly || disabled" class="readonly-wrapper"></div>
+@if (readonly || disabled) {
+  <div class="readonly-wrapper"></div>
+}
 
 <!-- This template will be displayed when groupby is specified. -->
-<ng-template #groupedListTemplate>
-    <li *ngFor="let groupObj of groupedData; let groupindex = index;" class="app-list-item-group" role="presentation">
-        <ul class="item-group" [attr.aria-labelledby]="'group_' + widgetId + '_' + groupindex">
-            <li [id]="'group_' + widgetId + '_' + groupindex" aria-hidden="true" class="list-group-header" (click)="handleHeaderClick($event)" [title]="groupObj.key" [ngClass]="{'collapsible-content': collapsible}">
-                <h4 class="group-title" [attr.aria-label]="'Group '+groupObj.key">{{groupObj.key}}
-                    <div class="header-action">
-                        <i class="app-icon wi action wi-chevron-up" *ngIf="collapsible" title="{{appLocale.LABEL_COLLAPSE}}/{{appLocale.LABEL_EXPAND}}"></i>
-                        <span *ngIf="showcount" class="label label-default" [textContent]="groupObj.data.length"></span>
-                    </div>
-                </h4>
-            </li>
-            <li *ngFor="let item of groupObj.data; let i = index;"
-                [ngClass]="['checkbox', 'app-checkbox', 'group-list-item', itemclass, itemsPerRowClass]"
-                [class.active]="item.selected"
-                [wmItemTemplate]="content" [userComponentParams]="item" partialContainer
-                (click)="onCheckboxLabelClick($event, item)">
-                <!-- Default item template -->
-                <label *ngIf="!content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" [title]="item.label">
-                    <input [name]="'checkboxset_' + widgetId" type="checkbox"
-                           [tabindex]="tabindex"
-                           [disabled]="disabled || readonly" [attr.data-attr-index]="i"
-                           [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
-                    <span class="caption" [textContent]="item.label"></span>
-                </label>
-                <!-- Custom partial template -->
-                <label *ngIf="content" class="app-checkboxset-label" [ngClass]="{'disabled':disabled || readonly}" >
-                    <input [name]="'checkboxset_' + widgetId" type="checkbox"
-                           [tabindex]="tabindex"
-                           [disabled]="disabled || readonly" [attr.data-attr-index]="i"
-                           [value]="item.key" [tabindex]="tabindex" [checked]="item.selected"/>
-                    <span class="caption" partial-container-target></span>
-                </label>
-            </li>
-        </ul>
-    </li>
-</ng-template>

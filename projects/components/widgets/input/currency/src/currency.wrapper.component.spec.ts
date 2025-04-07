@@ -39,8 +39,8 @@ class CurrencyWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [CurrencyWrapperComponent, CurrencyComponent],
+    imports: [FormsModule, CurrencyComponent],
+    declarations: [CurrencyWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AppDefaults, useValue: AppDefaults },

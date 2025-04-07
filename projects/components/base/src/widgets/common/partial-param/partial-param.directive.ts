@@ -8,6 +8,7 @@ import { WidgetRef } from '../../framework/types';
 import {get} from "lodash-es";
 
 @Directive({
+  standalone: true,
     selector: '[partialContainer]',
 })
 export class PartialParamHandlerDirective {
@@ -37,6 +38,7 @@ export class PartialParamHandlerDirective {
 }
 
 @Directive({
+    standalone: true,
     selector: '[wmParam]',
 })
 export class PartialParamDirective implements OnInit {

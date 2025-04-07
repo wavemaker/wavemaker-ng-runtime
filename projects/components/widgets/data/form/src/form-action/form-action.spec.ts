@@ -23,7 +23,8 @@ describe('FormActionDirective', () => {
         } as any;
 
         TestBed.configureTestingModule({
-            declarations: [TestComponent, FormActionDirective],
+            imports: [FormActionDirective],
+            declarations: [TestComponent,],
             providers: [
                 { provide: FormComponent, useValue: mockFormComponent },
                 { provide: App, useValue: mockApp }

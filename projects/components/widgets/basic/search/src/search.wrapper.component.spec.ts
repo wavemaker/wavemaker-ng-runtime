@@ -14,12 +14,12 @@ import { DatePipe } from '@angular/common';
 import { ScrollableDirective } from './scrollable.directive';
 import { WmComponentsModule, ToDatePipe } from '@wm/components/base';
 import { PartialRefProvider, AppDefaults } from '@wm/core';
-import { BaseFormComponent } from 'projects/components/widgets/input/default/src/base-form.component';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttributeCheck, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { Observable } from 'rxjs';
 import { DataProvider } from './data-provider/data-provider';
+import { InputTextComponent } from '@wm/components/input';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -78,9 +78,9 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
         TypeaheadModule.forRoot(),
-        WmComponentsModule
+        WmComponentsModule, SearchComponent, ScrollableDirective, InputTextComponent
     ],
-    declarations: [SearchWrapperComponent, SearchComponent, ScrollableDirective],
+    declarations: [SearchWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -177,21 +177,47 @@ describe('SearchComponent', () => {
         expect(wrapperComponent.onChange).toHaveBeenCalledTimes(1);
     }));
 
-    // TypeError: The provided value is not of type 'Element'.
-
-    xit('should show clear icon and on click should call clearsearch function when search type is autocomplete', waitForAsync(async () => {
+    it('should show clear icon and on click should call clearsearch function when search type is autocomplete', fakeAsync(() => {
+        // Set properties on the component
         wmComponent.getWidget().dataset = 'test1, test2, test3, test4';
         wmComponent.getWidget().type = 'autocomplete';
         wmComponent.getWidget().showclear = true;
+
+        // Initial change detection
+        fixture.detectChanges();
+
+        // Mock TypeaheadDirective behavior to prevent aria-owns changes
+        if (wmComponent.typeahead) {
+            wmComponent.typeahead._container = null;
+            // Disable typeahead's internal change detection triggers if possible
+            if (wmComponent.typeahead['_subscriptions']) {
+                wmComponent.typeahead['_subscriptions'].forEach(sub => sub.unsubscribe());
+            }
+        }
+
         const testValue = 'te';
         jest.spyOn(wmComponent as any, 'clearSearch' as any);
-        await setInputValue(fixture, '.app-search-input', testValue);
-        let searchBtnEle = fixture.debugElement.query(By.css('.clear-btn'));
+
+        // Set input value
+        const input = fixture.debugElement.query(By.css('.app-search-input')).nativeElement;
+        input.value = testValue;
+        input.dispatchEvent(new Event('input'));
+
+        // Run through all pending timers
+        tick(500);
+        fixture.detectChanges();
+
+        // Find and click the clear button
+        const searchBtnEle = fixture.debugElement.query(By.css('.clear-btn'));
         searchBtnEle.nativeElement.click();
-        await fixture.whenStable();
+
+        // Run through any remaining timers
+        tick(500);
+        fixture.detectChanges();
+
+        // Verify the clearSearch was called
         expect((wmComponent as any).clearSearch).toHaveBeenCalled();
     }));
-
     /******************************** EVents end ***************************************** */
 
 
@@ -346,7 +372,6 @@ describe('SearchComponent', () => {
 
         expect(wmComponent.getTransformedData).toHaveBeenCalled();
     }));
-
     /*********************************** Method invoking end ************************** */
 
 
@@ -1135,6 +1160,13 @@ describe('SearchComponent', () => {
     });
 
     describe('triggerSearch', () => {
+
+        beforeEach(() => {
+            wmComponent.typeahead = {
+                onInput: jest.fn()
+            } as any;
+        });
+
         it('should not trigger search if dataProvider.isLastPage is true', () => {
             (wmComponent as any).dataProvider.isLastPage = true;
             const loadMoreDataSpy = jest.spyOn((wmComponent as any), 'loadMoreData');
@@ -1154,7 +1186,6 @@ describe('SearchComponent', () => {
         it('should trigger loadMoreData if conditions are met', () => {
             (wmComponent as any).dataProvider.isLastPage = false;
             wmComponent.$element.addClass('full-screen');
-
             const mockLastItem = {
                 length: 1,
                 height: () => 50,
@@ -1298,6 +1329,9 @@ describe('SearchComponent', () => {
 
         beforeEach(() => {
             mockEvent = {} as Event;
+            wmComponent.typeahead = {
+                onInput: jest.fn()
+            } as any;
             wmComponent.query = 'test query';
             (wmComponent as any).eventData = jest.fn().mockReturnValue(mockEvent);
             (wmComponent as any).isUpdateOnKeyPress = jest.fn();
@@ -1454,6 +1488,11 @@ describe('SearchComponent', () => {
     });
 
     describe('clearSearch', () => {
+        beforeEach(() => {
+            wmComponent.typeahead = {
+                onInput: jest.fn()
+            } as any;
+        });
         it('should clear the query and trigger search when loadOnClear is true', () => {
             wmComponent.query = 'test';
             (wmComponent as any).listenQuery = true;

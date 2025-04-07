@@ -4,7 +4,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { Subscription } from 'rxjs';
 
-import { AbstractDialogService, findRootContainer, generateGUId, isMobile, isMobileApp, getSheetPositionClass } from '@wm/core';
+import { AbstractDialogService, findRootContainer, generateGUId, isMobile, getSheetPositionClass } from '@wm/core';
 
 import { BaseComponent, IDialog, IWidgetConfig, WidgetConfig } from '@wm/components/base';
 import { createFocusTrap } from '@wavemaker/focus-trap';
@@ -165,7 +165,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         this.modalOptions.ariaLabelledBy = this.titleId;
         this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
         // Fix for [WMS-23948]: Focus moving out of active Dialog widget
-        if (this.dialogService.getOpenedDialogs().length === 1 && (isMobile() || isMobileApp())) {
+        if (this.dialogService.getOpenedDialogs().length === 1 && (isMobile())) {
             const parentSelector = $('body > app-root')[0];
             parentSelector.setAttribute('aria-hidden', 'true');
         }

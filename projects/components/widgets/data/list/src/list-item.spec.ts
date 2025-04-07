@@ -27,7 +27,8 @@ describe('ListItemDirective', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, ListItemDirective],
+            declarations: [TestComponent,],
+            imports: [ListItemDirective],
             providers: [
                 {
                     provide: ListComponent, useValue: {
@@ -158,7 +159,7 @@ describe('ListItemDirective', () => {
     describe('getters', () => {
         beforeEach(() => {
             directive.context = {
-                index: 2,
+                $index: 2,
                 even: false,
                 odd: true,
                 first: false,

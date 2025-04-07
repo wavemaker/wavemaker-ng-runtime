@@ -29,7 +29,7 @@ import {
 
 declare const $;
 declare const he;
-declare const moment;
+import moment from 'moment';
 declare const window;
 
 const exportTypesMap   = { 'EXCEL' : '.xlsx', 'CSV' : '.csv'};
@@ -106,12 +106,6 @@ const processVariablePostBindUpdate = (nodeName, nodeVal, nodeType, variable, no
             break;
         case VARIABLE_CONSTANTS.CATEGORY.SERVICE:
         case VARIABLE_CONSTANTS.CATEGORY.LOGIN:
-            if (variable.autoUpdate && !isUndefined(nodeVal) && isFunction(variable.invoke) && !noUpdate) {
-                _invoke(variable, 'invoke');
-            }
-            break;
-        case VARIABLE_CONSTANTS.CATEGORY.DEVICE:
-            variable[nodeName] = nodeVal;
             if (variable.autoUpdate && !isUndefined(nodeVal) && isFunction(variable.invoke) && !noUpdate) {
                 _invoke(variable, 'invoke');
             }
@@ -449,9 +443,6 @@ const getCookieByName = (name) => {
  * @returns xsrf cookie value
  */
 const isXsrfEnabled = () => {
-    if (CONSTANTS.hasCordova) {
-        return localStorage.getItem(CONSTANTS.XSRF_COOKIE_NAME);
-    }
     return false;
 };
 
@@ -686,13 +677,7 @@ export const processBinding = (variable: any, context: any, bindSource?: string,
 export const simulateFileDownload = (requestParams, fileName, exportFormat, success, error, dataBinding) => {
     /*success and error callbacks are executed incase of downloadThroughAnchor
      Due to technical limitation cannot be executed incase of iframe*/
-    if (CONSTANTS.hasCordova) {
-        let fileExtension;
-        if (exportFormat) {
-            fileExtension = exportTypesMap[exportFormat];
-        }
-        appManager.notify('device-file-download', { url: requestParams.url, name: fileName, extension: fileExtension, headers: requestParams.headers, successCb: success, errorCb: error});
-    } else if (!isEmpty(requestParams.headers) || isXsrfEnabled()) {
+    if (!isEmpty(requestParams.headers) || isXsrfEnabled()) {
         downloadThroughAnchor(requestParams, success, error);
     } else {
         downloadThroughIframe(requestParams, success, dataBinding);

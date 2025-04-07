@@ -11,6 +11,7 @@ import {
 } from './build-utils';
 import {EventNotifier} from './event-notifier';
 import {Subject, Subscription} from 'rxjs';
+import  X2JS  from 'x2js';
 import {
     _WM_APP_PROJECT,
     addEventListenerOnElement,
@@ -39,7 +40,6 @@ import {
     getUrlParams,
     getValidDateObject,
     getValidJSON,
-    hasCordova,
     hasOffsetStr,
     initCaps,
     isAudioFile,
@@ -50,7 +50,6 @@ import {
     isInsecureContentRequest,
     isLargeTabletLandscape,
     isLargeTabletPortrait,
-    isMobileApp,
     isNumberType,
     isTablet,
     isValidWebURL,
@@ -83,6 +82,7 @@ import {
 } from './expression-parser';
 import {getWmProjectProperties, setWmProjectProperties} from './wm-project-properties';
 
+jest.mock('x2js'); 
 declare const moment: any;
 jest.mock('rxjs');
 // Define the type for window.matchMedia
@@ -936,17 +936,6 @@ describe('isTablet', () => {
     });
 });
 
-describe('isMobileApp', () => {
-    it('should return false for non-mobile application', () => {
-        (global as any).getWmProjectProperties = jest.fn().mockReturnValue({
-            platformType: 'WEB',
-            type: 'APPLICATION'
-        });
-        const result = isMobileApp();
-        expect(result).toBe(false);
-    });
-});
-
 describe('getAndroidVersion', () => {
     const originalUserAgent = window.navigator.userAgent;
 
@@ -1488,36 +1477,38 @@ describe('getValidJSON', () => {
 });
 
 describe('xmlToJson', () => {
-    let originalX2JS: any;
-
+    let mockX2JSInstance: any;
     beforeEach(() => {
-        originalX2JS = (global as any).X2JS;
+        // Create a mock instance of X2JS
+        mockX2JSInstance = {
+            xml2js: jest.fn()
+        };
+
+        // Mock the X2JS constructor to return the mock instance
+        (X2JS as jest.Mock).mockImplementation(() => mockX2JSInstance);
     });
 
     afterEach(() => {
-        (global as any).X2JS = originalX2JS;
+        jest.clearAllMocks();
     });
 
     it('should convert XML to JSON', () => {
         const xmlString = '<root><item>value</item></root>';
-        const expectedJson = { item: 'value' };
+        const expectedJson =  { item: 'value' } ;
 
-        const mockX2JS = function () {
-            return {
-                xml2js: jest.fn().mockReturnValue({ root: expectedJson })
-            };
-        };
-        (global as any).X2JS = jest.fn().mockImplementation(mockX2JS);
+        // Mock the xml2js method to return the expected JSON
+        mockX2JSInstance.xml2js.mockReturnValue({ root: expectedJson });
 
         const result = xmlToJson(xmlString);
+
         expect(result).toEqual(expectedJson);
-        expect((global as any).X2JS).toHaveBeenCalledWith({
-            'emptyNodeForm': 'content',
+        expect(X2JS).toHaveBeenCalledWith({
+            'emptyNodeForm': 'object',
             'attributePrefix': '',
             'enableToStringFunc': false
         });
+        expect(mockX2JSInstance.xml2js).toHaveBeenCalledWith(xmlString);
     });
-
 });
 
 describe('addEventListenerOnElement', () => {
@@ -2061,19 +2052,6 @@ describe('convertToBlob', () => {
     });
 });
 
-
-describe('hasCordova', () => {
-    it('should return true when window.cordova exists', () => {
-        (window as any)['cordova'] = {};
-        expect(hasCordova()).toBe(true);
-        delete window['cordova'];
-    });
-
-    it('should return false when window.cordova does not exist', () => {
-        expect(hasCordova()).toBe(false);
-    });
-});
-
 describe('openLink', () => {
     let originalWindowOpen;
     let originalLocationHash;
@@ -2091,13 +2069,6 @@ describe('openLink', () => {
     afterEach(() => {
         window.open = originalWindowOpen;
         location.hash = originalLocationHash;
-    });
-
-    it('should set location.hash when hasCordova is true and link starts with #', () => {
-        (window as any)['cordova'] = {};
-        openLink('#test');
-        expect(location.hash).toBe('#test');
-        delete window['cordova'];
     });
 
     it('should call window.open when hasCordova is false', () => {

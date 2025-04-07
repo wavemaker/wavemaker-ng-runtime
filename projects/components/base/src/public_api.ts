@@ -1,5 +1,4 @@
 import { Live_Operations } from './utils/data-utils';
-
 export * from './components.module';
 export {
     Live_Operations,
@@ -134,6 +133,5 @@ export * from './pipes/image.pipe';
 export * from './widgets/common/container/container.directive';
 export * from './widgets/common/lazy-load/lazy-load.directive';
 export * from './widgets/common/partial-param/partial-param.directive';
-export * from './widgets/common/smooth-scroll/smooth-scroll.directive';
 export * from './widgets/common/base/text-content.directive';
 export * from './directives/show-in-device.directive';

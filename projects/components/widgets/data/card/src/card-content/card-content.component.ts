@@ -1,3 +1,4 @@
+import { WmComponentsModule } from "@wm/components/base";
 import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 
 import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
@@ -10,6 +11,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+  standalone: true,
+  imports: [WmComponentsModule],
     selector: 'div[wmCardContent]',
     templateUrl: './card-content.component.html',
     providers: [

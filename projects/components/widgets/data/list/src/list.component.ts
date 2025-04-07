@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterViewInit,
     Attribute,
@@ -29,7 +31,6 @@ import {
     isDataSourceEqual,
     isDefined,
     isMobile,
-    isMobileApp,
     isObject,
     noop,
     switchClass,
@@ -82,6 +83,8 @@ const DEFAULT_CLS = 'app-livelist app-panel';
 const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, PaginationComponent, ListItemDirective],
     selector: 'div[wmList]',
     templateUrl: './list.component.html',
     providers: [
@@ -693,9 +696,6 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 $ul.removeAttribute('aria-describedby');
             }
         }
-        if (isMobileApp() && $ul.querySelector('.app-list-item-action-panel')) {
-            this._listAnimator = new ListAnimator(this);
-        }
     }
 
     ngOnDestroy() {
@@ -1143,20 +1143,15 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         if (this.fieldDefs.length && this.infScroll) {
             const smoothScrollEl = this.$element.closest('[wmsmoothscroll]');
-            // if smoothscroll is set to false, then native scroll has to be applied
-            // otherwise smoothscroll events will be binded.
-            if (isMobileApp() && smoothScrollEl.length && smoothScrollEl.attr('wmsmoothscroll') === 'true') {
-                this.paginationService.bindIScrollEvt(this, DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
-            } else {
-                // In case of mobile app when modal exists, and list items height is greater than the modal content provide ccontainer a scrollable height
-                const modalBody = this.$element.closest('.modal-body');
-                const listHt = this.$element.find('ul').height();
-                const modalHt = window.innerHeight - 140;
-                if (isMobile() && modalBody.length && listHt > modalHt) {
-                    this.$element.css('height', modalHt + 'px');
-                }
-                this.paginationService.bindScrollEvt(this, '> ul', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+            // In case of mobile app when modal exists, and list items height is greater than the modal content provide ccontainer a scrollable height
+            const modalBody = this.$element.closest('.modal-body');
+            const listHt = this.$element.find('ul').height();
+            const modalHt = window.innerHeight - 140;
+            if (isMobile() && modalBody.length && listHt > modalHt) {
+                this.$element.css('height', modalHt + 'px');
             }
+            this.paginationService.bindScrollEvt(this, '> ul', DEBOUNCE_TIMES.PAGINATION_DEBOUNCE_TIME);
+
         }
 
         this.isDataChanged = false;
@@ -1243,7 +1238,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             appendTo = 'body';
         }
 
-        const options = isMobileApp() ? {} : {
+        const options = {
             appendTo: appendTo,
         };
 
@@ -1254,46 +1249,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
 
         this.$ulEle.droppable({'accept': '.app-list-item'});
 
-        if (isMobileApp()) {
-            this.$ulEle.sortable('disable');
-            this.$ulEle.on('touchstart', function (event) {
-                let self = this;
-                if (!self.touching) {
-                    if (self.touched) {
-                        clearTimeout(self.touched);
-                    }
-                    setTimeout(() => {
-                        //Prevent context menu on mobile (IOS/ANDROID)
-                        if (event.cancelable) {
-                            event.preventDefault();
-                        }
-                    }, 50);
-                    self.touched = setTimeout(() => {
-                        $(event.currentTarget).addClass('no-selection');
-                        //Enable draggable
-                        $(event.currentTarget).sortable('enable');
 
-                        //Set internal flag
-                        self.touching = true;
-
-                        //trigger touchstart again to enable draggable through touch punch
-                        $(self).trigger(event);
-
-                        //Choose preferred duration for taphold
-                    }, 350);
-                }
-            }).on('touchend', function (event) {
-                this.touching = false;
-                $(event.currentTarget).removeClass('no-selection');
-
-                //Disable draggable to enable default behaviour
-                $(event.currentTarget).sortable('disable');
-
-                clearTimeout(this.touched);
-            }).on('touchmove', function () {
-                clearTimeout(this.touched);
-            });
-        }
 
     }
 

@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, OnInit, Optional} from '@angular/core';
 
 import { Subject, Subscription } from 'rxjs';
@@ -17,6 +19,8 @@ const WIDGET_CONFIG = {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: '[wmFileUpload]',
     templateUrl: './file-upload.component.html',
     providers: [
@@ -55,7 +59,6 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     FILESIZE_MB = 1048576;
     widgetProps;
     _isMobileType;
-    _isCordova;
     // parentPrefabScope = element.closest('.app-prefab').isolateScope(),
     CONSTANT_FILE_SERVICE = 'FileService';
     uploadData = {

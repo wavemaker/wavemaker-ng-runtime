@@ -1,15 +1,16 @@
-import {AfterViewInit, Directive, Inject, Injector, OnDestroy, Optional, SkipSelf} from '@angular/core';
+import { AfterViewInit, Directive, Inject, Injector, OnDestroy, Optional, SkipSelf } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import {EventNotifier, Viewport, ViewportEvent} from '@wm/core';
+import { EventNotifier, Viewport, ViewportEvent } from '@wm/core';
 import { updateDeviceView, provideAsWidgetRef, StylableComponent } from '@wm/components/base';
 
 import { registerProps } from './page.props';
 
 const DEFAULT_CLS = 'app-page container';
-const WIDGET_CONFIG = {widgetType: 'wm-page', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG = { widgetType: 'wm-page', hostClass: DEFAULT_CLS };
 
 @Directive({
+    standalone: true,
     selector: '[wmPage]',
     providers: [
         provideAsWidgetRef(PageDirective)
@@ -75,7 +76,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
         this.titleService.setTitle(this.pagetitle);
         this.invokeEventCallback('attach', { widget: this });
         this.notify('attach', {
-            refreshData : this.refreshdataonattach
+            refreshData: this.refreshdataonattach
         });
     }
 

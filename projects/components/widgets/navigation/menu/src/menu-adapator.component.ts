@@ -1,9 +1,7 @@
-import {AfterViewInit, QueryList, ViewChildren, Directive, Optional, Inject} from '@angular/core';
-
-import { StylableComponent } from '@wm/components/base';
+import { AfterViewInit, QueryList, ViewChildren, Directive, Optional, Inject } from '@angular/core';
 import { MenuComponent } from './menu.component';
-import {BaseContainerComponent} from '@wm/components/base';
-import {includes} from "lodash-es";
+import { BaseContainerComponent } from '@wm/components/base';
+import { includes } from "lodash-es";
 
 const menuProps = ['itemlabel', 'itemicon', 'itemlink', 'itemaction', 'itemchildren', 'userrole'];
 

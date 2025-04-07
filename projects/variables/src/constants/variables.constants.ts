@@ -1,6 +1,5 @@
 import {$rootScope as rootScope} from '@wavemaker/variables';
 export const CONSTANTS = {
-    hasCordova: window['cordova'] !== undefined,
     isStudioMode: false,
     isRunMode: true,
     XSRF_COOKIE_NAME: 'wm_xsrf_token',
@@ -19,7 +18,6 @@ export const VARIABLE_CONSTANTS = {
         TIMER: 'wm.TimerVariable',
         LOGIN: 'wm.LoginVariable',
         LOGOUT: 'wm.LogoutVariable',
-        DEVICE: 'wm.DeviceVariable'
     },
     EVENTS: ['onBefore',
         'onBeforeUpdate',

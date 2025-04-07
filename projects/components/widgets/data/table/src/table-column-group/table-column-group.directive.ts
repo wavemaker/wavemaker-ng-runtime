@@ -7,6 +7,7 @@ import { TableComponent } from '../table.component';
 const WIDGET_CONFIG = {widgetType: 'wm-table-column-group', hostClass: ''};
 
 @Directive({
+  standalone: true,
     selector: '[wmTableColumnGroup]',
     providers: [
         provideAsWidgetRef(TableColumnGroupDirective)

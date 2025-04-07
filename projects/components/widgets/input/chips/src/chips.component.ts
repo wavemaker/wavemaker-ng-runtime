@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterViewInit,
     Attribute,
@@ -43,6 +45,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, SearchComponent],
     selector: '[wmChips]',
     templateUrl: './chips.component.html',
     providers: [
@@ -690,7 +694,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             } else if (nv) {
                 this.configureDnD();
             }
-            
+
             // Add this block to handle drag prevention
             const chipElements = this.$element.find('.chip-item a.app-chip');
             if (!nv) {

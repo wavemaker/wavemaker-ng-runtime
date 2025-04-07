@@ -1,11 +1,10 @@
-import { waitForAsync, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { CarouselDirective } from "./carousel.directive";
-import { CarouselTemplateDirective } from "./carousel-template/carousel-template.directive";
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
 import { App, setPipeProvider, AbstractI18nService } from '@wm/core';
-import { BasicModule } from '@wm/components/basic';
+import { LabelDirective } from '@wm/components/basic';
 import { WmComponentsModule } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import 'libraries/scripts/swipey/swipey.jquery.plugin.js';
@@ -19,10 +18,12 @@ const markup = `
             type="dynamic" name="carousel1"
             change.event="onChangeCB(widget, newIndex, oldIndex)"
             interval="0" [ngClass]="wm_carousel_ref.navigationClass">
-            <div *ngIf="!wm_carousel_ref.fieldDefs">{{wm_carousel_ref.nodatamessage}}</div>
-            <slide wmCarouselTemplate horizontalalign="center" name="carousel_template1" *ngFor="let item of wm_carousel_ref.fieldDefs; let i = index;">
+            @if(!wm_carousel_ref.fieldDefs){<div>{{wm_carousel_ref.nodatamessage}}</div>}
+            @for (item of wm_carousel_ref.fieldDefs; track item; let i = $index) {
+                <slide wmCarouselTemplate horizontalalign="center" name="carousel_template1">
                 <ng-container [ngTemplateOutlet]="tempRef" [ngTemplateOutletContext]="{item:item, index:i}"></ng-container>
-            </slide>
+                </slide>
+            }
             <ng-template #tempRef let-item="item" let-index="index">
                 <label wmLabel name="label1" class="h1" caption="'Label' + index" paddingright="0.5em" paddingleft="0.5em"></label>
             </ng-template>
@@ -50,8 +51,8 @@ describe('wm-carousel: Widget specific test cases', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [CarouselModule, BasicModule, WmComponentsModule.forRoot()],
-            declarations: [CarouselSpec, CarouselDirective, CarouselTemplateDirective],
+            imports: [CarouselModule, LabelDirective, WmComponentsModule.forRoot(), CarouselDirective],
+            declarations: [CarouselSpec],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: AbstractI18nService, useClass: MockAbstractI18nService }
@@ -128,7 +129,7 @@ describe('wm-carousel: Widget specific test cases', () => {
 
         expect(triggerAnimationSpy).toHaveBeenCalledWith(component.carousel.slides);
     });
-    
+
     it('should call onChangeCB with correct parameters', () => {
         const onChangeSpy = jest.spyOn(component.carousel as any, 'invokeEventCallback');
         const newIndex = 1;

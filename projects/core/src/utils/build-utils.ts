@@ -101,10 +101,14 @@ export const getFormWidgetTemplate = (widgetType: string, innerTmpl: string, att
                             <input focus-target class="file-upload" type="file" name="${uploadProps.name}" ${eventTmpl} ${showTmpl}/>
                         </form>`;
             } else {
-                tmpl = `<a class="form-control-static" href="{{${counter}.href}}" target="_blank" *ngIf="${counter}.filetype === 'image' && ${counter}.href">
-                        <img style="height:2em" class="wi wi-file" [src]="${counter}.href"/></a>
-                        <a class="form-control-static" target="_blank" href="{{${counter}.href}}" *ngIf="${counter}.filetype !== 'image' && ${counter}.href">
-                        <i class="wi wi-file"></i></a>
+                tmpl = `@if (${counter}.filetype === 'image' && ${counter}.href) {
+                            <a class="form-control-static" href="{{${counter}.href}}" target="_blank">
+                            <img style="height:2em" class="wi wi-file" [src]="${counter}.href"/></a>
+                        }
+                        @if (${counter}.filetype !== 'image' && ${counter}.href) {
+                            <a class="form-control-static" target="_blank" href="{{${counter}.href}}">
+                            <i class="wi wi-file"></i></a>
+                        }
                         <input ${innerTmpl} class="app-blob-upload" [ngClass]="{'file-readonly': ${counter}.readonly}" ${eventTmpl}
                         [required]="${counter}.required" type="file" name="${attrs.get('key') || attrs.get('name')}_formWidget" [readonly]="${counter}.readonly"
                         [class.hidden]="!${pCounter}.isUpdateMode" [accept]="${counter}.permitted" ${showTmpl}>`;

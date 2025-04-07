@@ -3,6 +3,7 @@ import {isLargeTabletLandscape, isLargeTabletPortrait} from '@wm/core';
 import {extend} from "lodash-es";
 
 @Directive({
+  standalone: true,
     selector: '[wmShowInDevice]'
 })
 export class ShowInDeviceDirective implements OnDestroy {

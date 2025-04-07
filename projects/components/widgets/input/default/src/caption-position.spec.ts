@@ -30,7 +30,8 @@ describe('CaptionPositionDirective', () => {
         };
 
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, CaptionPositionDirective],
+            imports: [CaptionPositionDirective],
+            declarations: [TestComponent],
             providers: [
                 { provide: App, useValue: mockApp }
             ]

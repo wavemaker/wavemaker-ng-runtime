@@ -1,5 +1,3 @@
-import { isMobileApp } from '@wm/core';
-
 import { PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
 
 export const registerProps = () => {
@@ -11,7 +9,7 @@ export const registerProps = () => {
                 ['columnwidth', PROP_NUMBER],
                 ['content', PROP_STRING],
                 ['name', PROP_STRING],
-                ['pulltorefresh', {value: isMobileApp(), ...PROP_BOOLEAN}]
+                ['pulltorefresh', {value: false, ...PROP_BOOLEAN}]
             ]
         )
     );

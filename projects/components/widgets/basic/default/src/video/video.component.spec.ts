@@ -8,7 +8,6 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { ITestModuleDef, ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
-import { ComponentsTestModule } from 'projects/components/base/src/test/components.test.module';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 
 const markup = `<video wmVideo
@@ -31,8 +30,8 @@ class TestComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [VideoComponent, TestComponent],
-    imports: [FormsModule, ComponentsTestModule],
+    declarations: [TestComponent],
+    imports: [FormsModule, VideoComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },

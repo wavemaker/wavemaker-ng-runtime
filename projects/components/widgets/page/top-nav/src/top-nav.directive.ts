@@ -7,6 +7,7 @@ const DEFAULT_CLS = 'app-top-nav';
 const WIDGET_CONFIG = {widgetType: 'wm-top-nav', hostClass: DEFAULT_CLS};
 
 @Directive({
+  standalone: true,
     selector: '[wmTopNav]',
     providers: [
         provideAsWidgetRef(TopNavDirective)

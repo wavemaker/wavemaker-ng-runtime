@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { AnchorComponent } from '@wm/components/basic';
 import {
     AfterViewInit,
     ChangeDetectorRef,
@@ -12,7 +15,7 @@ import {
     ViewChild
 } from '@angular/core';
 
-import {PopoverDirective} from 'ngx-bootstrap/popover';
+import {PopoverDirective, PopoverModule} from 'ngx-bootstrap/popover';
 
 import {
     addClass,
@@ -50,6 +53,8 @@ const eventsMap = {
 let activePopover: PopoverComponent;
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, AnchorComponent, PopoverModule],
     selector: 'wm-popover',
     templateUrl: './popover.component.html',
     providers: [
@@ -110,26 +115,26 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (this.documentClickHandler) {
             document.removeEventListener('click', this.documentClickHandler, true);
         }
-    
+
         this.documentClickHandler = (event: MouseEvent) => {
             if (!this.isOpen) return;
-    
+
             const target = event.target as HTMLElement;
-            
+
             // Set flag to prevent open() from running during click handling
             this.isHandlingClick = true;
-            
+
             try {
                 // Check for special containers as before
                 const isInsideSpecialContainer = !!(
-                    target.closest('.bs-datepicker-container') || 
+                    target.closest('.bs-datepicker-container') ||
                     target.closest(".dropdown-menu")
                 );
-        
+
                 if (isInsideSpecialContainer) {
                     return;
                 }
-        
+
                 const clickedPopoverIndex = PopoverComponent.activePopovers.findIndex(popover => {
                     const popoverContainer = document.querySelector(`.${popover.popoverContainerCls}`);
                     return popoverContainer?.contains(target);
@@ -142,7 +147,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                     this.isOpen ? this.close() : this.open()
                     return;
                 }
-        
+
                 if (clickedPopoverIndex === -1) {
                     if (this.outsideclick) {
                         this.closeAllPopovers();
@@ -157,9 +162,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
                 }, 0);
             }
         };
-    
+
         document.addEventListener('click', this.documentClickHandler, true);
-    }    
+    }
 
     private closeAllPopovers() {
         PopoverComponent.activePopovers.forEach(popover => {
@@ -277,7 +282,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         }
         // Fix for [WMS-25125]: Not closing the existing opened popovers when the autoclose property is DISABLED
         if (!this.isChildPopover()) {
-            if (activePopover && activePopover !== this && 
+            if (activePopover && activePopover !== this &&
                 activePopover.autoclose !== AUTOCLOSE_TYPE.DISABLED) {
                 activePopover.isClosingProgrammatically = true;
                 activePopover.close();
@@ -292,7 +297,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         const popoverContainer  = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
         if (popoverContainer) {
             popoverContainer.setAttribute('data-popover-id', this.widgetId);
-            
+
             // Add click event listener to stop propagation
             popoverContainer.addEventListener('click', (event: Event) => {
                 event.stopPropagation();

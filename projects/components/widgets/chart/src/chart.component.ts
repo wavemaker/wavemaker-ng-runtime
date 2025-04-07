@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { SpinnerComponent } from '@wm/components/basic';
 import {
     AfterViewInit,
     OnDestroy,
@@ -19,8 +22,6 @@ import {
     prettifyLabels,
     removeAttr,
     triggerFn,
-    isMobileApp,
-    noop
 } from '@wm/core';
 import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler,  } from '@wm/components/base';
 
@@ -128,6 +129,8 @@ const angle = d => {
 };
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, SpinnerComponent],
     selector: 'div[wmChart]',
     templateUrl: './chart.component.html',
     styleUrls: ['../../../../../node_modules/@wavemaker/nvd3/build/nv.d3.min.css'],

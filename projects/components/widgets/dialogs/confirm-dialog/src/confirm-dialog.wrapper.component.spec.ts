@@ -3,12 +3,11 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 import { Context, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog } from '@wm/components/dialogs';
 import { By } from '@angular/platform-browser';
-import { ITestComponentDef, ComponentTestBase } from 'projects/components/base/src/test/common-widget.specs';
+import { ITestComponentDef } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { AbstractDialogService, App } from '@wm/core';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 
 // Mock Services
@@ -42,11 +41,8 @@ class ConfirmDialogWrapperComponent {
 }
 
 const testModuleDef = {
-    imports: [FormsModule],
-    declarations: [
-        ConfirmDialogWrapperComponent,
-        ConfirmDialogComponent
-    ],
+    imports: [FormsModule, ConfirmDialogComponent],
+    declarations: [ConfirmDialogWrapperComponent],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(ConfirmDialogComponent),

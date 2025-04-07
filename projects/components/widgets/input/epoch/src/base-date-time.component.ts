@@ -9,7 +9,6 @@ import {
     getDateObj,
     getFormattedDate,
     getNativeDateObject,
-    hasCordova,
     isIos,
     isMobile,
     setAttr
@@ -22,7 +21,7 @@ import {DateTimePickerComponent} from './date-time//date-time-picker.component';
 import {filter, forEach, get, includes, isNaN as _isNaN, isString, isUndefined, parseInt, split} from "lodash-es";
 
 declare const $;
-declare const moment;
+import moment from 'moment';
 
 const CURRENT_DATE = 'CURRENT_DATE';
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -291,7 +290,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
         const month = new Date(newDate).toLocaleString('default', { month: 'long' });
         const year = newDate.getFullYear().toString();
-
         if(activeMonth == month && activeYear == new Date().getFullYear() && newDate.getDate() === new Date().getDate() && newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
             const toDay = new Date().getDate().toString();
             filter($(`span:contains(${toDay})`).not('.is-other-month'), (obj) => {
@@ -874,7 +872,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     onDateTimeInputBlur() {
         // removing the opacity on blur of the mobile widget
         const displayInputElem = this.getMobileInput();
-        if (displayInputElem && !hasCordova()) {
+        if (displayInputElem) {
             const children = this.nativeElement.children;
             for (let i = 0; i < children.length; i++) {
                 children[i].classList.remove('add-opacity');
@@ -889,7 +887,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
         const displayInputElem = this.getMobileInput();
         // toggling the classes to show and hide the native widget using opacity
-        if (skipFocus && !hasCordova()) {
+        if (skipFocus) {
             const children = this.nativeElement.children;
             for (let i = 0; i < children.length; i++) {
                 children[i].classList.add('add-opacity');
@@ -901,12 +899,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         if (displayInputElem && this._triggeredByUser) {
             displayInputElem.focus();
             displayInputElem.click();
-        }
-    }
-
-    getCordovaPluginDatePickerApi() {
-        if (isIos()) {
-            return get(window, 'cordova.wavemaker.datePicker.selectDate');
         }
     }
 

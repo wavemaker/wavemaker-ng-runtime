@@ -1,6 +1,9 @@
-import {Component, Inject, Injector, NgZone, OnDestroy, Optional} from '@angular/core';
-import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {TimepickerConfig} from 'ngx-bootstrap/timepicker';
+import { WmComponentsModule } from "@wm/components/base";
+import { FormsModule } from '@angular/forms';
+import { DateTimePickerComponent } from '../date-time/date-time-picker.component';
+import { Component, Inject, Injector, NgZone, OnDestroy, Optional } from '@angular/core';
+import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { TimepickerConfig, TimepickerModule } from 'ngx-bootstrap/timepicker';
 import {
     $appDigest,
     AbstractI18nService,
@@ -16,27 +19,30 @@ import {
     getMomentLocaleObject,
     getNativeDateObject
 } from '@wm/core';
-import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
+import { provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
 
-import {BaseDateTimeComponent, getTimepickerConfig} from './../base-date-time.component';
-import {registerProps} from './time.props';
-import {forEach, get, includes} from "lodash-es";
+import { BaseDateTimeComponent, getTimepickerConfig } from './../base-date-time.component';
+import { registerProps } from './time.props';
+import { forEach, get, includes } from "lodash-es";
+import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 
 declare const $;
-declare const moment;
+import moment from 'moment';
 
 const CURRENT_TIME = 'CURRENT_TIME';
 const DEFAULT_CLS = 'input-group app-timeinput';
-const WIDGET_CONFIG = {widgetType: 'wm-time', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG = { widgetType: 'wm-time', hostClass: DEFAULT_CLS };
 
 @Component({
+    standalone: true,
+    imports: [WmComponentsModule, FormsModule, DateTimePickerComponent, BsDropdownModule, TimepickerModule],
     selector: '[wmTime]',
     templateUrl: './time.component.html',
     providers: [
         provideAs(TimeComponent, NG_VALUE_ACCESSOR, true),
         provideAs(TimeComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(TimeComponent),
-        { provide: TimepickerConfig,  deps: [AbstractI18nService], useFactory: getTimepickerConfig }
+        { provide: TimepickerConfig, deps: [AbstractI18nService], useFactory: getTimepickerConfig }
     ]
 })
 export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
@@ -84,7 +90,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
                 this.setTimeInterval();
             } else {
                 this.clearTimeInterval();
-                this.bsTimeValue = getNativeDateObject(newVal, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput});
+                this.bsTimeValue = getNativeDateObject(newVal, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
                 this.isCurrentTime = false;
                 this.mintimeMaxtimeValidation();
             }
@@ -155,7 +161,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             return;
         }
         if (key === 'timepattern') {
-           this.updateFormat('timepattern');
+            this.updateFormat('timepattern');
         }
         if (key === 'mintime') {
             this.minTime = getNativeDateObject(nv, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput }); // TODO it is supposed to be time conversion, not to the day
@@ -190,16 +196,16 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     /**
      * This is an internal method used to toggle the dropdown of the time widget
      */
-     public toggleDropdown($event, skipFocus: boolean = false): void {
+    public toggleDropdown($event, skipFocus: boolean = false): void {
         if (this.loadNativeDateInput) {
             //Fixes click event getting triggred twice in Mobile devices.
-            if(!skipFocus){
+            if (!skipFocus) {
                 this.onDateTimeInputFocus();
             }
             return;
         }
         if ($event.type === 'click') {
-            this.invokeEventCallback('click', {$event: $event});
+            this.invokeEventCallback('click', { $event: $event });
             //this.focusOnInputEl();
         }
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
@@ -218,7 +224,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         $event.stopImmediatePropagation();
         const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
         if (parentEl.length > 0) {
-            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+            this.app.notify('captionPositionAnimate', { displayVal: this.displayValue, nativeEl: parentEl });
         }
     }
 
@@ -256,7 +262,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method triggered when the time input changes
      */
     onDisplayTimeChange($event) {
-        const newVal = getNativeDateObject($event.target.value, {meridians: this.meridians, pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
+        const newVal = getNativeDateObject($event.target.value, { meridians: this.meridians, pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
         // time pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value)) {
@@ -269,7 +275,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     onInputBlur($event) {
         if (!$($event.relatedTarget).hasClass('bs-timepicker-field')) {
             this.invokeOnTouched();
-            this.invokeEventCallback('blur', {$event});
+            this.invokeEventCallback('blur', { $event });
         }
     }
 
@@ -296,7 +302,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
                 minTimeMeridian = moment(new Date(this.bsTimePicker.min)).format('A');
                 maxTimeMeridian = moment(new Date(this.bsTimePicker.max)).format('A');
                 timeValue = this.bsTimePicker.hours + ':' + (this.bsTimePicker.minutes || 0) + ':' + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian) : '');
-                timeInputValue =  getNativeDateObject(timeValue, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
+                timeInputValue = getNativeDateObject(timeValue, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
                 this.bsTimePicker.meridian = minTimeMeridian;
                 this.timeNotInRange = (this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue);
                 this.setValidateType(this.bsTimePicker.min, this.bsTimePicker.max, timeInputValue);
@@ -314,7 +320,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         if (this.timeinterval) {
             return;
         }
-        this.timeinterval = setInterval( () => {
+        this.timeinterval = setInterval(() => {
             const now = this.timeZone ? getMomentLocaleObject(this.timeZone) : new Date();
             now.setSeconds(now.getSeconds() + 1);
             this.datavalue = CURRENT_TIME;
@@ -356,7 +362,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         this.removeKeyupListener();
         const parentEl = $(this.nativeElement).closest('.app-composite-widget.caption-floating');
         if (parentEl.length > 0) {
-            this.app.notify('captionPositionAnimate', {displayVal: this.displayValue, nativeEl: parentEl});
+            this.app.notify('captionPositionAnimate', { displayVal: this.displayValue, nativeEl: parentEl });
         }
         this.blurDateInput(true);
     }
@@ -364,7 +370,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     private isValid(event) {
         if (!event) {
             const enteredDate = $(this.nativeElement).find('input').val();
-            const newVal = getNativeDateObject(enteredDate, {meridians: this.meridians, pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
+            const newVal = getNativeDateObject(enteredDate, { meridians: this.meridians, pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
             if (!this.formatValidation(newVal, enteredDate)) {
                 return;
             }
@@ -374,7 +380,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method to add css class for dropdown while opening the time dropdown
      */
     public onShown() {
-        const tpElements  = document.querySelectorAll('timepicker');
+        const tpElements = document.querySelectorAll('timepicker');
         forEach(tpElements, element => {
             addClass(element.parentElement as HTMLElement, 'app-datetime', true);
         });

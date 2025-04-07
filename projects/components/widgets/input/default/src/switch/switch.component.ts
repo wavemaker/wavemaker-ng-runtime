@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {AfterViewInit, Component, Inject, Injector, Optional} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -14,6 +16,8 @@ const DEFAULT_CLS = 'app-switch';
 const WIDGET_CONFIG = {widgetType: 'wm-switch', hostClass: DEFAULT_CLS};
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: '[wmSwitch]',
     templateUrl: './switch.component.html',
     providers: [

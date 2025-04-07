@@ -24,7 +24,6 @@ import {
     App,
     findParent,
     isDefined,
-    isMobileApp,
     removeAttr,
     removeClass,
     setAttr,
@@ -440,9 +439,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         if (key === 'show') {
             this.nativeElement.hidden = !nv;
         } else if (key === 'hint') {
-            if (!isMobileApp()) {
-                setAttr(this.nativeElement, 'title', nv);
-            }
+            setAttr(this.nativeElement, 'title', nv);
         } else if (key === 'class') {
             switchClass(this.nativeElement, nv, ov);
         } else if (key === 'name' || key === 'tabindex') {

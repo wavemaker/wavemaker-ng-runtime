@@ -24,7 +24,8 @@ describe('PrefabDirective', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestComponent, PrefabDirective],
+            declarations: [TestComponent],
+            imports: [PrefabDirective],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: 'EXPLICIT_CONTEXT', useValue: null }

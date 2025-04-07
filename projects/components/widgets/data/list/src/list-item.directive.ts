@@ -22,6 +22,7 @@ import {BaseFormComponent} from "@wm/components/input";
 declare const $;
 
 @Directive({
+  standalone: true,
     selector: '[wmListItem]',
     exportAs: 'listItemRef'
 })
@@ -52,7 +53,7 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     }
 
     get $index() {
-        return this.context.index;
+        return this.context.$index;
     }
 
     get $even() {

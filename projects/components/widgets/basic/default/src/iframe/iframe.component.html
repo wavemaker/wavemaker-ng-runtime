@@ -1,13 +1,15 @@
 <iframe  class="embed-responsive-item iframe-content" role="document"
-        scrolling="auto"
-        marginheight="0"
-        marginwidth="0"
-        frameborder="0"
-        [name]="name"
-        [attr.src]="_iframesrc"
-         [attr.aria-label]="arialabel || 'iframe'"
-        seamless="seamless">
+  scrolling="auto"
+  marginheight="0"
+  marginwidth="0"
+  frameborder="0"
+  [name]="name"
+  [attr.src]="_iframesrc"
+  [attr.aria-label]="arialabel || 'iframe'"
+  seamless="seamless">
 </iframe>
-<div class="wm-content-info readonly-wrapper" *ngIf="showContentLoadError">
+@if (showContentLoadError) {
+  <div class="wm-content-info readonly-wrapper">
     <p class="wm-message" [title]="hintMsg" [textContent]="errMsg"></p>
-</div>
+  </div>
+}

@@ -1,6 +1,6 @@
-import {Component, Inject, Injector, Optional} from '@angular/core';
+import { Component, Inject, Injector, Optional } from '@angular/core';
 
-import {switchClass} from '@wm/core';
+import { switchClass } from '@wm/core';
 
 import { styler } from '../../framework/styler';
 import { IWidgetConfig } from '../../framework/types';
@@ -9,9 +9,10 @@ import { registerProps } from './message.props';
 import { provideAsWidgetRef } from '../../../utils/widget-utils';
 
 const DEFAULT_CLS = 'alert app-message';
-const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-message', hostClass: DEFAULT_CLS};
+const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-message', hostClass: DEFAULT_CLS };
 
 @Component({
+    standalone: true,
     selector: '[wmMessage]',
     templateUrl: './message.component.html',
     providers: [
@@ -48,7 +49,7 @@ export class MessageComponent extends StylableComponent {
 
     public dismiss($event) {
         this.hideMessage();
-        this.invokeEventCallback('close', {$event});
+        this.invokeEventCallback('close', { $event });
     }
 
     private onMessageTypeChange(nv: string) {

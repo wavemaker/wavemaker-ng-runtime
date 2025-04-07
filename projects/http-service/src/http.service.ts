@@ -3,20 +3,24 @@ import { HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpRespon
 
 import { Observable, Subject } from 'rxjs';
 
-import {AbstractHttpService} from '@wm/core';
+import { AbstractHttpService } from '@wm/core';
 import { HttpClientService, getErrMessage } from '@wavemaker/variables';
-import {includes, isBoolean, isFunction, isNumber} from "lodash-es";
+import { includes, isBoolean, isFunction, isNumber } from "lodash-es";
 
 enum HTTP_EVENT_TYPE {
     Sent = 0,
     UploadProgress = 1,
     ResponseHeader = 2,
     DownloadProgress = 3,
-    Response= 4,
+    Response = 4,
     User = 5
 }
 
-@Injectable()
+@Injectable(
+    {
+        providedIn: 'root'
+    }
+)
 export class HttpServiceImpl extends AbstractHttpService implements HttpClientService {
     nonBodyTypeMethods = ['GET', 'DELETE', 'HEAD', 'OPTIONS', 'JSONP'];
     sessionTimeoutObservable = new Subject();
@@ -96,7 +100,7 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
      * Make a http call and returns an observable that can be cancelled
      * @param options, options using which the call needs to be made
      */
-    sendCallAsObservable(options: any, params? : any): any {
+    sendCallAsObservable(options: any, params?: any): any {
         const req = this.generateRequest(options);
         return this.httpClient.request(req);
     }
@@ -108,7 +112,7 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
                     resolve(response);
                 }
             }, (err: any) => {
-                    reject(err);
+                reject(err);
             });
         });
     }
@@ -123,7 +127,7 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
         return new Promise((resolve, reject) => {
             this.httpClient.request(req).toPromise().then((response) => {
                 resolve(response);
-            } , (err) => {
+            }, (err) => {
                 if (this.isPlatformSessionTimeout(err)) {
                     err._401Subscriber.asObservable().subscribe((response) => {
                         resolve(response);
@@ -145,9 +149,9 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
         if (variable._observable) {
             variable._observable.unsubscribe();
         }
-         if ($file && $file._uploadProgress) {
-             $file._uploadProgress.unsubscribe();
-         }
+        if ($file && $file._uploadProgress) {
+            $file._uploadProgress.unsubscribe();
+        }
     }
 
     setLocale(locale) {
@@ -231,15 +235,15 @@ export class HttpServiceImpl extends AbstractHttpService implements HttpClientSe
 
     uploadFile(url, data, variable, options?) {
         return new Promise((resolve, reject) => {
-             variable.request = this.upload(url, data, options).subscribe((event: any) => {
-                 if (event.type === HTTP_EVENT_TYPE.UploadProgress) {
-                     const uploadProgress = Math.round(100 * event.loaded / event.total);
-                     options.notify(uploadProgress);
-                 }
+            variable.request = this.upload(url, data, options).subscribe((event: any) => {
+                if (event.type === HTTP_EVENT_TYPE.UploadProgress) {
+                    const uploadProgress = Math.round(100 * event.loaded / event.total);
+                    options.notify(uploadProgress);
+                }
 
-                 if (event.type === HTTP_EVENT_TYPE.Response) {
-                     resolve(event.body);
-                 }
+                if (event.type === HTTP_EVENT_TYPE.Response) {
+                    resolve(event.body);
+                }
             }, error => {
                 reject(error);
             });

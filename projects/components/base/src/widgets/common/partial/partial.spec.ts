@@ -21,7 +21,8 @@ describe('PartialDirective', () => {
         } as unknown as jest.Mocked<Viewport>;
 
         TestBed.configureTestingModule({
-            declarations: [TestComponent, PartialDirective],
+            imports: [PartialDirective],
+            declarations: [TestComponent],
             providers: [
                 { provide: Viewport, useValue: viewportMock },
                 { provide: 'EXPLICIT_CONTEXT', useValue: null },

@@ -1,10 +1,10 @@
-import {ComponentFixture, waitForAsync} from '@angular/core/testing';
-import {Component, ViewChild} from "@angular/core";
-import {CompositeDirective} from "./composite.directive";
-import {App} from "@wm/core";
-import {WidgetRef} from '@wm/components/base';
-import {compileTestComponent, mockApp} from 'projects/components/base/src/test/util/component-test-util';
-import {ComponentTestBase, ITestComponentDef} from 'projects/components/base/src/test/common-widget.specs';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
+import { Component, ViewChild } from "@angular/core";
+import { CompositeDirective } from "./composite.directive";
+import { App } from "@wm/core";
+import { WidgetRef } from '@wm/components/base';
+import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
+import { ComponentTestBase, ITestComponentDef } from 'projects/components/base/src/test/common-widget.specs';
 
 const markup = `<div wmComposite #wm_composite
      hint="Composite content" name="composite1" captionposition="left" [attr.required]="true">
@@ -18,12 +18,12 @@ class CompositeWrapperComponent {
 }
 
 const testModuleDef = {
-    declarations: [CompositeWrapperComponent, CompositeDirective],
+    declarations: [CompositeWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: WidgetRef, useValue: { widget: {} } }
     ],
-    imports: [],
+    imports: [CompositeDirective],
 };
 
 const componentDef: ITestComponentDef = {

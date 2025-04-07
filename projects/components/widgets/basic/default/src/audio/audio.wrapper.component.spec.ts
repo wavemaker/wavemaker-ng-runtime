@@ -1,16 +1,16 @@
-import {ComponentFixture, waitForAsync} from '@angular/core/testing';
-import {Component, Pipe, PipeTransform, ViewChild} from '@angular/core';
-import {AudioComponent} from './audio.component';
-import {FormsModule} from '@angular/forms';
-import {App} from '@wm/core';
-import {provideAsWidgetRef} from '@wm/components/base';
-import {By} from '@angular/platform-browser';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
+import { Component, Pipe, PipeTransform, ViewChild } from '@angular/core';
+import { AudioComponent } from './audio.component';
+import { FormsModule } from '@angular/forms';
+import { App } from '@wm/core';
+import { provideAsWidgetRef } from '@wm/components/base';
+import { By } from '@angular/platform-browser';
 import {
     ComponentTestBase,
     ITestComponentDef,
     ITestModuleDef
 } from 'projects/components/base/src/test/common-widget.specs';
-import {compileTestComponent, mockApp} from 'projects/components/base/src/test/util/component-test-util';
+import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
 @Pipe({ name: 'trustAs' })
 class MockTrustAsPipe implements PipeTransform {
@@ -29,8 +29,8 @@ class AudioWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule],
-    declarations: [AudioWrapperComponent, AudioComponent, MockTrustAsPipe],  // Declare the mock pipe
+    imports: [FormsModule, AudioComponent],
+    declarations: [AudioWrapperComponent, MockTrustAsPipe],
     providers: [
         { provide: App, useValue: mockApp },
         provideAsWidgetRef(AudioComponent)

@@ -1,183 +1,287 @@
 import { ImportDef } from './build';
 
-const NG_FORM_MODULE: ImportDef[] = [{from: '@angular/forms', name: 'FormsModule', as: 'ngFormsModule'}];
-const NG_REACTIVE_FORM_MODULE: ImportDef[] = [{from: '@angular/forms', name: 'ReactiveFormsModule', as: 'ngReactiveFormsModule'}];
-const NGX_BS_DATE_PICKER: ImportDef[] = [{from: 'ngx-bootstrap/datepicker', name: 'BsDatepickerModule', as: 'ngx_BsDatepickerModule'}];
-const NGX_CAROUSEL_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/carousel', name: 'CarouselModule', as: 'ngxCarouselModule', forRoot: true}];
-const NGX_COLOR_PICKER_MODULE: ImportDef[] = [{from: 'ngx-color-picker', name: 'ColorPickerModule', as: 'ngx_ColorPickerModule'}];
-const NGX_DROP_DOWN_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/dropdown', name: 'BsDropdownModule', as: 'ngxBsDropdownModule', forRoot: true}];
-const NGX_MODAL_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/modal', name: 'ModalModule', as: 'ngx_ModalModule'}];
-const NGX_PAGINATION_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/pagination', name: 'PaginationModule', as: 'ngxPaginationModule', forRoot: true}];
-const NGX_POPOVER_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/popover', name: 'PopoverModule', as: 'ngxPopoverModule', forRoot: true}];
-const NGX_TIME_PICKER: ImportDef[] = [{from: 'ngx-bootstrap/timepicker', name: 'TimepickerModule', as: 'ngx_TimepickerModule', forRoot: true}];
-const NGX_TOOL_TIP_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/tooltip', name: 'TooltipModule', as: 'ngxTooltipModule', forRoot: true}];
-const NGX_TYPE_HEAD_MODULE: ImportDef[] = [{from: 'ngx-bootstrap/typeahead', name: 'TypeaheadModule', as: 'ngxTypeaheadModule', forRoot: true}];
-const PROGRESS_MODULE: ImportDef[] = [{from: '@wm/components/basic/progress', name: 'ProgressModule'}];
+// Angular Core Modules
+const NG_FORM_MODULE: ImportDef[] = [{ from: '@angular/forms', name: 'FormsModule', as: 'ngFormsModule' }];
+const NG_REACTIVE_FORM_MODULE: ImportDef[] = [{ from: '@angular/forms', name: 'ReactiveFormsModule', as: 'ngReactiveFormsModule' }];
 
+// NGX Bootstrap Modules
+const NGX_BS_DATE_PICKER: ImportDef[] = [{ from: 'ngx-bootstrap/datepicker', name: 'BsDatepickerModule', as: 'ngx_BsDatepickerModule' }];
+const NGX_CAROUSEL_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/carousel', name: 'CarouselModule', as: 'ngxCarouselModule', forRoot: true }];
+const NGX_COLOR_PICKER_MODULE: ImportDef[] = [{ from: 'ngx-color-picker', name: 'ColorPickerModule', as: 'ngx_ColorPickerModule' }];
+const NGX_DROP_DOWN_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/dropdown', name: 'BsDropdownModule', as: 'ngxBsDropdownModule', forRoot: true }];
+//const NGX_MODAL_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/modal', name: 'ModalModule', as: 'ngx_ModalModule' }];
+const NGX_PAGINATION_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/pagination', name: 'PaginationModule', as: 'ngxPaginationModule', forRoot: true }];
+const NGX_POPOVER_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/popover', name: 'PopoverModule', as: 'ngxPopoverModule', forRoot: true }];
+const NGX_TIME_PICKER: ImportDef[] = [{ from: 'ngx-bootstrap/timepicker', name: 'TimepickerModule', as: 'ngx_TimepickerModule', forRoot: true }];
+const NGX_TOOL_TIP_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/tooltip', name: 'TooltipModule', as: 'ngxTooltipModule', forRoot: true }];
+const NGX_TYPE_HEAD_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/typeahead', name: 'TypeaheadModule', as: 'ngxTypeaheadModule', forRoot: true }];
 
-const MOBILE_BASIC_MODULE: ImportDef[] = [...PROGRESS_MODULE, {from: '@wm/mobile/components/basic', name: 'BasicModule', as: 'WM_MobileBasicModule', platformType: 'MOBILE'}];
-const MOBILE_FILE_UPLOAD_MODULE: ImportDef[] = [{from: '@wm/mobile/components/input/file-upload', name: 'FileUploadModule', as: 'WM_MobileFileUploadModule', platformType: 'MOBILE'}];
-const PAGE_MODULE: ImportDef[] = [{from: '@wm/components/page', name: 'PageModule'},
-    {from: '@wm/mobile/components/page', name: 'PageModule', as: 'WM_MobilePageModule', platformType: 'MOBILE'}];
-const BASIC_MODULE: ImportDef[] = [{from: '@wm/components/basic', name: 'BasicModule'}, ...MOBILE_BASIC_MODULE];
-const INPUT_MODULE: ImportDef[] = [...NG_FORM_MODULE, {from: '@wm/components/input', name: 'InputModule'}];
-const DIALOG_MODULE: ImportDef[] = [...NGX_MODAL_MODULE, ...INPUT_MODULE, {from: '@wm/components/dialogs', name: 'DialogModule'}];
-const PAGINATION_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_PAGINATION_MODULE, {from: '@wm/components/data/pagination', name: 'PaginationModule'}];
-const SEARCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_TYPE_HEAD_MODULE, {from: '@wm/components/basic/search', name: 'SearchModule'}];
+// Progess Modules
+const PROGRESS_BAR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/progress', name: 'ProgressBarComponent' }];
+const PROGRESS_CIRCLE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/progress', name: 'ProgressCircleComponent' }];
+// Mobile-Specific Modules
+const PAGE_COMPONENT: ImportDef[] = [
+    { from: '@wm/components/page', name: 'PageDirective' }];
 
-const ACCORDION_MODULE: ImportDef[] = [{from: '@wm/components/containers/accordion', name: 'AccordionModule'}];
-const LINEAR_LAYOUT_MODULE: ImportDef[] = [{from: '@wm/components/containers/linear-layout', name: 'LinearLayoutModule'}];
-const ALERT_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/alert-dialog', name: 'AlertDialogModule'}];
-const BARCODE_SCANNER_MODULE: ImportDef[] = [{from: '@wm/mobile/components/device/barcode-scanner', name: 'BarcodeScannerModule'}];
-const MENU_MODULE: ImportDef[] = [...BASIC_MODULE, ...NGX_DROP_DOWN_MODULE, ...INPUT_MODULE, {from: '@wm/components/navigation/menu', name: 'MenuModule'}];
-const BREAD_CRUMB_MODULE: ImportDef[] = [...MENU_MODULE, {from: '@wm/components/navigation/breadcrumb', name: 'BreadcrumbModule'}];
-const CAMERA_MODULE: ImportDef[] = [{from: '@wm/mobile/components/device/camera', name: 'CameraModule'}];
-const CALENDAR_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, {from: '@wm/components/input/calendar', name: 'CalendarModule'}];
-const CAROUSEL_MODULE: ImportDef[] = [...NGX_CAROUSEL_MODULE, {from: '@wm/components/advanced/carousel', name: 'CarouselModule'}];
-const CHART_MODULE: ImportDef[] = [...BASIC_MODULE, {from: '@wm/components/chart', name: 'ChartModule'}];
-const CHIPS_MODULE: ImportDef[] = [...SEARCH_MODULE, {from: '@wm/components/input/chips', name: 'ChipsModule'}];
-const COLOR_PICKER_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_COLOR_PICKER_MODULE, {from: '@wm/components/input/color-picker', name: 'ColorPickerModule'}];
-const CONFIRM_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/confirm-dialog', name: 'ConfirmDialogModule'}];
-const CONTENT_MODULE: ImportDef[] = [{from: '@wm/components/page', name: 'PageModule'}];
-const CURRENCY_MODULE: ImportDef[] = [...INPUT_MODULE, {from: '@wm/components/input/currency', name: 'CurrencyModule'}];
-const DESIGN_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/design-dialog', name: 'DesignDialogModule'}];
-const EPOCH_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE, {from: '@wm/components/input/epoch', name: 'EpochModule'}];
-const FILE_UPLOAD_MODULE: ImportDef[] = [...MOBILE_FILE_UPLOAD_MODULE, {from: '@wm/components/input/file-upload', name: 'FileUploadModule'}];
-const FOOTER_MODULE: ImportDef[] = [{from: '@wm/components/page/footer', name: 'FooterModule'}];
-const HEADER_MODULE: ImportDef[] = [{from: '@wm/components/page/header', name: 'HeaderModule'}];
-const IFRAME_DIALOG_MODULE: ImportDef[] = [...BASIC_MODULE, ...DIALOG_MODULE, {from: '@wm/components/dialogs/iframe-dialog', name: 'IframeDialogModule'}];
-const LAYOUT_GRID_MODULE: ImportDef[] = [{from: '@wm/components/containers/layout-grid', name: 'LayoutGridModule'}];
-const LOGIN_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/login-dialog', name: 'LoginDialogModule'}];
-const CARD_MODULE: ImportDef[] = [...NGX_DROP_DOWN_MODULE, ...MENU_MODULE, ...BASIC_MODULE, {from: '@wm/components/data/card', name: 'CardModule'}];
-const MARQUEE_MODULE: ImportDef[] = [{from: '@wm/components/advanced/marquee', name: 'MarqueeModule'}];
-const LEFT_PANEL_MODULE: ImportDef[] = [{from: '@wm/components/page/left-panel', name: 'LeftPanelModule'},
-    {from: '@wm/mobile/components/page/left-panel', name: 'LeftPanelModule', as: 'WM_MobileLeftPanelModule', platformType: 'MOBILE'}];
-const LIST_MODULE: ImportDef[] = [...PAGINATION_MODULE, ...INPUT_MODULE, {from: '@wm/components/data/list', name: 'ListModule'}];
-const LOGIN_MODULE: ImportDef[] = [{from: '@wm/components/advanced/login', name: 'LoginModule'}];
-const CUSTOM_MODULE: ImportDef[] = [{from: '@wm/components/advanced/custom', name: 'CustomModule'}];
-const MOBILE_NAV_BAR_MODULE: ImportDef[] = [...LEFT_PANEL_MODULE, ...SEARCH_MODULE, ...PAGE_MODULE, {from: '@wm/mobile/components/page/mobile-navbar', name: 'MobileNavbarModule'}];
-const MEDIA_LIST_MODULE: ImportDef[] = [...BASIC_MODULE, ...PAGE_MODULE, ...MOBILE_NAV_BAR_MODULE, {from: '@wm/mobile/components/data/media-list', name: 'MediaListModule'}];
-const MOBILE_TAB_BAR_MODULE: ImportDef[] = [{from: '@wm/mobile/components/page/tab-bar', name: 'TabBarModule'}];
-const NAVBAR_MODULE: ImportDef[] = [{from: '@wm/components/navigation/navbar', name: 'NavbarModule'}];
-const POPOVER_MODULE: ImportDef[] = [...NGX_POPOVER_MODULE, ...BASIC_MODULE, {from: '@wm/components/navigation/popover', name: 'PopoverModule'}];
-const PANEL_MODULE: ImportDef[] = [...MENU_MODULE, {from: '@wm/components/containers/panel', name: 'PanelModule'}];
-const PARTIAL_DIALOG_MODULE: ImportDef[] = [...DIALOG_MODULE, {from: '@wm/components/dialogs/partial-dialog', name: 'PartialDialogModule'}];
-const PREFAB_MODULE: ImportDef[] = [{from: '@wm/components/prefab', name: 'PrefabModule'}];
-const RATING_MODULE: ImportDef[] = [{from: '@wm/components/input/rating', name: 'RatingModule'}];
-const RICH_TEXT_EDITOR_MODULE: ImportDef[] = [{from: '@wm/components/basic/rich-text-editor', name: 'RichTextEditorModule'}];
-const RIGHT_PANEL_MODULE: ImportDef[] = [{from: '@wm/components/page/right-panel', name: 'RightPanelModule'}];
-const SEGMENTED_CONTROL_MODULE: ImportDef[] = [{from: '@wm/mobile/components/containers/segmented-control', name: 'SegmentedControlModule'}];
-const SLIDER_MODULE: ImportDef[] = [...NG_FORM_MODULE, {from: '@wm/components/input/slider', name: 'SliderModule'}];
-const TABS_MODULE: ImportDef[] = [{from: '@wm/components/containers/tabs', name: 'TabsModule'}];
-const TABLE_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NG_REACTIVE_FORM_MODULE, ...PAGINATION_MODULE, ...MENU_MODULE, ...BASIC_MODULE, ...INPUT_MODULE, ...NGX_TOOL_TIP_MODULE, ...LIST_MODULE, {from: '@wm/components/data/table', name: 'TableModule'}];
-const TILE_MODULE: ImportDef[] = [{from: '@wm/components/containers/tile', name: 'TileModule'}];
-const TOP_NAV_MODULE: ImportDef[] = [{from: '@wm/components/page/top-nav', name: 'TopNavModule'}];
-const TREE_MODULE: ImportDef[] = [{from: '@wm/components/basic/tree', name: 'TreeModule'}];
-const WIZARD_MODULE: ImportDef[] = [...NG_FORM_MODULE, {from: '@wm/components/containers/wizard', name: 'WizardModule'}];
+// General Modules (Desktop and Mobile) 
+// const INPUT_MODULE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputModule' }];
+// const DIALOG_MODULE: ImportDef[] = [...NGX_MODAL_MODULE, { from: '@wm/components/dialogs', name: 'DialogModule' }];
+const PAGINATION_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_PAGINATION_MODULE, { from: '@wm/components/data/pagination', name: 'PaginationComponent' }];
 
+// Basic Components
+const ANCHOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'AnchorComponent' }];
+const AUDIO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'AudioComponent' }];
+const HTML_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'HtmlDirective' }];
+const ICON_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'IconComponent' }];
+const IFRAME_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'IframeComponent' }];
+const LABEL_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'LabelDirective' }];
+const PICTURE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'PictureDirective' }];
+const SEARCH_COMPONENT: ImportDef[] = [
+    ...NG_FORM_MODULE,
+    ...NGX_TYPE_HEAD_MODULE,
+    { from: '@wm/components/basic/search', name: 'ScrollableDirective' },
+    { from: '@wm/components/basic/search', name: 'SearchComponent' }];
+const SPINNER_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'SpinnerComponent' }];
+const VIDEO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'VideoComponent' }];
 
-const LIVE_TABLE_MODULE: ImportDef[] = [...TABLE_MODULE, {from: '@wm/components/data/live-table', name: 'LiveTableModule'}];
-const FORM_MODULE: ImportDef[] = [...NG_FORM_MODULE, ...NG_REACTIVE_FORM_MODULE, ...BASIC_MODULE, ...INPUT_MODULE, ...PAGE_MODULE, ...DESIGN_DIALOG_MODULE, {from: '@wm/components/data/form', name: 'FormModule'}];
+// Container Components
+const ACCORDION_PANE_COMPONENT: ImportDef[] = [{ from: '@wm/components/containers/accordion', name: 'AccordionPaneComponent' }];
+const ACCORDION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/accordion', name: 'AccordionDirective' }];
+const LINEAR_LAYOUT_ITEM_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/linear-layout', name: 'LinearLayoutItemDirective' }];
+const LINEAR_LAYOUT_DIRECTIVE: ImportDef[] = [...LINEAR_LAYOUT_ITEM_DIRECTIVE, { from: '@wm/components/containers/linear-layout', name: 'LinearLayoutDirective' }];
+const TAB_PANE_COMPONENT: ImportDef[] = [{ from: '@wm/components/containers/tabs', name: 'TabPaneComponent' }];
+const TABS_COMPONENT: ImportDef[] = [...TAB_PANE_COMPONENT, { from: '@wm/components/containers/tabs', name: 'TabsComponent' }];
+const WIZARD_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/wizard', name: 'WizardActionDirective' }];
+const WIZARD_STEP_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/wizard', name: 'WizardStepComponent' }];
+const WIZARD_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...WIZARD_ACTION_DIRECTIVE, ...WIZARD_STEP_DIRECTIVE, { from: '@wm/components/containers/wizard', name: 'WizardComponent' }];
+const LAYOUT_GRID_COLUMN_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/layout-grid', name: 'LayoutGridColumnDirective' }];
+const LAYOUT_GRID_ROW_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/layout-grid', name: 'LayoutGridRowDirective' }];
+const LAYOUT_GRID_DIRECTIVE: ImportDef[] = [...LAYOUT_GRID_ROW_DIRECTIVE, ...LAYOUT_GRID_COLUMN_DIRECTIVE, { from: '@wm/components/containers/layout-grid', name: 'LayoutgridDirective' }];
+const PANEL_COMPONENT: ImportDef[] = [{ from: '@wm/components/containers/panel', name: 'PanelComponent' }];
+const TILE_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/tile', name: 'TileDirective' }];
+
+// Dialog Modules
+const ALERT_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/alert-dialog', name: 'AlertDialogComponent' }];
+const CONFIRM_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/confirm-dialog', name: 'ConfirmDialogComponent' }];
+const DESIGN_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/design-dialog', name: 'DialogComponent' }];
+const IFRAME_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/iframe-dialog', name: 'IframeDialogComponent' }];
+const LOGIN_DIALOG_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/dialogs/login-dialog', name: 'LoginDialogDirective' }];
+const PARTIAL_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/partial-dialog', name: 'PartialDialogComponent' }];
+
+// Navigation Modules
+const NAV_ITEM_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'NavItemDirective' }];
+const NAV_COMPONENT: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'NavComponent' }];
+const NAVIGATION_CONTROL_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'NavigationControlDirective' }];
+const MENU_DROPDOWN_ITEM_COMPONENT: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'MenuDropdownComponent' }];
+const MENU_DROPDOWN_COMPONENT: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'MenuDropdownComponent' }]; // Duplicate, consider removing one
+const MENU_COMPONENT: ImportDef[] = [...NGX_DROP_DOWN_MODULE, ...MENU_DROPDOWN_COMPONENT, ...MENU_DROPDOWN_ITEM_COMPONENT, ...NAVIGATION_CONTROL_DIRECTIVE, ...NAV_COMPONENT, ...NAV_ITEM_DIRECTIVE, { from: '@wm/components/navigation/menu', name: 'MenuComponent' }];
+const BREAD_CRUMB_COMPONENT: ImportDef[] = [...MENU_COMPONENT, { from: '@wm/components/navigation/breadcrumb', name: 'BreadcrumbComponent' }];
+const NAVBAR_COMPONENT: ImportDef[] = [{ from: '@wm/components/navigation/navbar', name: 'NavbarComponent' }];
+const POPOVER_COMPONENT: ImportDef[] = [...NGX_POPOVER_MODULE, { from: '@wm/components/navigation/popover', name: 'PopoverComponent' }];
+const TOP_NAV_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page/top-nav', name: 'TopNavDirective' }];
+
+// Input Components
+const CALENDAR_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, { from: '@wm/components/input/calendar', name: 'CalendarComponent' }];
+const CHIPS_COMPONENT: ImportDef[] = [...SEARCH_COMPONENT, { from: '@wm/components/input/chips', name: 'ChipsComponent' }];
+const COLOR_PICKER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_COLOR_PICKER_MODULE, { from: '@wm/components/input/color-picker', name: 'ColorPickerComponent' }];
+const CURRENCY_COMPONENT: ImportDef[] = [{ from: '@wm/components/input/currency', name: 'CurrencyComponent' }];
+const DATE_COMPONENT: ImportDef[] = [
+    ...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_DROP_DOWN_MODULE,
+    { from: '@wm/components/input/epoch', name: 'DateComponent' }];
+const DATE_TIME_COMPONENT: ImportDef[] = [
+    ...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE,
+    { from: '@wm/components/input/epoch', name: 'DatetimeComponent' }];
+const TIME_COMPONENT: ImportDef[] = [
+    ...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE,
+    { from: '@wm/components/input/epoch', name: 'TimeComponent' }];
+const FILE_UPLOAD_COMPONENT: ImportDef[] = [{ from: '@wm/components/input/file-upload', name: 'FileUploadComponent' }];
+const RATING_COMPONENT: ImportDef[] = [{ from: '@wm/components/input/rating', name: 'RatingComponent' }];
+const SLIDER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/slider', name: 'SliderComponent' }];
+const BUTTON_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'ButtonComponent' }];
+const BUTTON_GROUP_DIRECTIVE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'ButtonGroupDirective' }];
+// const CAPTION_POSITION_DIRECTIVE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'CaptionPositionDirective' }];
+const CHECKBOX_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'CheckboxComponent' }];
+const CHECKBOXSET_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'CheckboxsetComponent' }];
+// const COMPOSITE_DIRECTIVE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'CompositeDirective' }];
+const NUMBER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'NumberComponent' }];
+const RADIOSET_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'RadiosetComponent' }];
+const SELECT_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'SelectComponent' }];
+const SWITCH_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'SwitchComponent' }];
+// const INPUT_CALENDER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputCalendarComponent' }];
+// const INPUT_COLOR_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputColorComponent' }];
+// const INPUT_EMAIL_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputEmailComponent' }];
+// const INPUT_NUMBER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputNumberComponent' }];
+const INPUT_TEXT_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputTextComponent' }];
+const TEXTAREA_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'TextareaComponent' }];
+
+// Data Components
+const CARD_ACTIONS_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/card', name: 'CardActionsDirective' }];
+const CARD_CONTENT_COMPONENT: ImportDef[] = [{ from: '@wm/components/data/card', name: 'CardContentComponent' }];
+const CARD_FOOTER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/card', name: 'CardFooterDirective' }];
+const CARD_COMPONENT: ImportDef[] = [
+    ...NGX_DROP_DOWN_MODULE,
+    ...MENU_COMPONENT,
+    ...CARD_ACTIONS_DIRECTIVE,
+    ...CARD_CONTENT_COMPONENT,
+    ...CARD_FOOTER_DIRECTIVE,
+    { from: '@wm/components/data/card', name: 'CardComponent' }];
+const LIST_ITEM_DIRECTIVE: ImportDef[] = [...PAGINATION_COMPONENT, { from: '@wm/components/data/list', name: 'ListItemDirective' }];
+const LIST_COMPONENT: ImportDef[] = [...PAGINATION_COMPONENT, ...LIST_ITEM_DIRECTIVE, { from: '@wm/components/data/list', name: 'ListComponent' }];
+const TABLE_CUD_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableCUDDirective' }];
+const TABLE_FILTER_SORT_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableFilterSortDirective' }];
+const TABLE_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableActionDirective' }];
+const TABLE_COLUMN_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableColumnDirective' }];
+const TABLE_COLUMN_GROUP_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableColumnGroupDirective' }];
+const TABLE_ROW_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableRowDirective' }];
+const TABLE_ROW_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableRowActionDirective' }];
+const TABLE_COMPONENT: ImportDef[] = [
+    ...NG_FORM_MODULE,
+    ...NG_REACTIVE_FORM_MODULE,
+    ...PAGINATION_COMPONENT,
+    ...MENU_COMPONENT,
+    ...NGX_TOOL_TIP_MODULE,
+    ...LIST_COMPONENT,
+    ...TABLE_ACTION_DIRECTIVE,
+    ...TABLE_CUD_DIRECTIVE,
+    ...TABLE_FILTER_SORT_DIRECTIVE,
+    ...TABLE_COLUMN_DIRECTIVE,
+    ...TABLE_COLUMN_GROUP_DIRECTIVE,
+    ...TABLE_ROW_DIRECTIVE,
+    ...TABLE_ROW_ACTION_DIRECTIVE,
+    { from: '@wm/components/data/table', name: 'TableComponent' }];
+const LIVE_TABLE_COMPONENT: ImportDef[] = [{ from: '@wm/components/data/live-table', name: 'LiveTableComponent' }];
+
+// Form Components and Directives
+const FORM_WIDGET_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/form', name: 'FormWidgetDirective' }];
+const FORM_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/form', name: 'FormActionDirective' }];
+const FORM_FIELD_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/form', name: 'FormFieldDirective' }];
+const LIVE_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/form', name: 'LiveActionsDirective' }];
+const DEPENDS_ON_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/form', name: 'DependsonDirective' }];
+const LIVE_FILTER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/form', name: 'LiveFilterDirective' }];
+const LIVE_FORM_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/form', name: 'LiveFormDirective' }];
+const FORM_COMPONENT: ImportDef[] = [
+    ...NG_FORM_MODULE,
+    ...NG_REACTIVE_FORM_MODULE,
+    ...FORM_ACTION_DIRECTIVE,
+    ...FORM_WIDGET_DIRECTIVE,
+    ...FORM_FIELD_DIRECTIVE,
+    ...LIVE_ACTION_DIRECTIVE,
+    ...DEPENDS_ON_DIRECTIVE,
+    ...LIVE_FILTER_DIRECTIVE,
+    ...LIVE_FORM_DIRECTIVE,
+    { from: '@wm/components/data/form', name: 'FormComponent' }];
+
+// Page Structure Components
+const FOOTER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page/footer', name: 'FooterDirective' }];
+const HEADER_COMPONENT: ImportDef[] = [{ from: '@wm/components/page/header', name: 'HeaderComponent' }];
+const LEFT_PANEL_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page/left-panel', name: 'LeftPanelDirective' }];
+const RIGHT_PANEL_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page/right-panel', name: 'RightPanelDirective' }];
+const PAGE_CONTENT_COMPONENT: ImportDef[] = [{ from: '@wm/components/page', name: 'PageContentComponent' }];
+const LAYOUT_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page', name: 'LayoutDirective' }];
+const CONTENT_COMPONENT: ImportDef[] = [{ from: '@wm/components/page', name: 'ContentComponent' }];
+
+// Advanced Components
+const CAROUSEL_TEMPLATE_DIRECTIVE: ImportDef[] = [...NGX_CAROUSEL_MODULE, { from: '@wm/components/advanced/carousel', name: 'CarouselTemplateDirective' }];
+const CAROUSEL_COMPONENT: ImportDef[] = [...NGX_CAROUSEL_MODULE, ...CAROUSEL_TEMPLATE_DIRECTIVE, { from: '@wm/components/advanced/carousel', name: 'CarouselDirective' }];
+const CHART_COMPONENT: ImportDef[] = [{ from: '@wm/components/chart', name: 'ChartComponent' }];
+const CUSTOM_WIDGET_CONTAINER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/advanced/custom', name: 'CustomWidgetContainerDirective' }];
+const CUSTOM_WIDGET_DIRECTIVE: ImportDef[] = [...CUSTOM_WIDGET_CONTAINER_DIRECTIVE, { from: '@wm/components/advanced/custom', name: 'CustomWidgetDirective' }];
+const LOGIN_COMPONENT: ImportDef[] = [{ from: '@wm/components/advanced/login', name: 'LoginComponent' }];
+const MARQUEE_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/advanced/marquee', name: 'MarqueeDirective' }];
+const PREFAB_CONTAINER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab', name: 'PrefabContainerDirective' }];
+const PREFAB_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab', name: 'PrefabDirective' }];
+const RICH_TEXT_EDITOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/rich-text-editor', name: 'RichTextEditorComponent' }];
+const TREE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/tree', name: 'TreeComponent' }];
 
 export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
-    ['wm-accordion', ACCORDION_MODULE],
-    ['wm-accordionpane', ACCORDION_MODULE],
-    ['wm-anchor', BASIC_MODULE],
-    ['wm-alertdialog', ALERT_DIALOG_MODULE],
-    ['wm-audio', BASIC_MODULE],
-    ['wm-barcodescanner', BARCODE_SCANNER_MODULE],
-    ['wm-button', INPUT_MODULE],
-    ['wm-buttongroup', INPUT_MODULE],
-    ['wm-breadcrumb', BREAD_CRUMB_MODULE],
-    ['wm-camera', CAMERA_MODULE],
-    ['wm-calendar', CALENDAR_MODULE],
-    ['wm-card', CARD_MODULE],
-    ['wm-card-actions', CARD_MODULE],
-    ['wm-card-content', CARD_MODULE],
-    ['wm-card-footer', CARD_MODULE],
-    ['wm-carousel', CAROUSEL_MODULE],
-    ['wm-carousel-content', CAROUSEL_MODULE],
-    ['wm-carousel-template', CAROUSEL_MODULE],
-    ['wm-chart', CHART_MODULE],
-    ['wm-checkbox', INPUT_MODULE],
-    ['wm-checkboxset', INPUT_MODULE],
-    ['wm-chips', CHIPS_MODULE],
-    ['wm-colorpicker', COLOR_PICKER_MODULE],
-    ['wm-confirmdialog', CONFIRM_DIALOG_MODULE],
-    ['wm-content', CONTENT_MODULE],
-    ['wm-currency', CURRENCY_MODULE],
-    ['wm-date', EPOCH_MODULE],
-    ['wm-datetime', EPOCH_MODULE],
-    ['wm-dialog', DESIGN_DIALOG_MODULE],
-    ['wm-footer', FOOTER_MODULE],
-    ['wm-form', FORM_MODULE],
-    ['wm-form-action', FORM_MODULE],
-    ['wm-form-field', FORM_MODULE],
-    ['wm-filter-field', FORM_MODULE],
-    ['wm-fileupload', FILE_UPLOAD_MODULE],
-    ['wm-gridrow', LAYOUT_GRID_MODULE],
-    ['wm-gridcolumn', LAYOUT_GRID_MODULE],
-    ['wm-header', HEADER_MODULE],
-    ['wm-html', BASIC_MODULE],
-    ['wm-icon', BASIC_MODULE],
-    ['wm-iframe', BASIC_MODULE],
-    ['wm-iframedialog', IFRAME_DIALOG_MODULE],
-    ['wm-label', BASIC_MODULE],
-    ['wm-layoutgrid', LAYOUT_GRID_MODULE],
-    ['wm-left-panel', LEFT_PANEL_MODULE],
-    ['wm-linearlayout', LINEAR_LAYOUT_MODULE],
-    ['wm-linearlayoutitem', LINEAR_LAYOUT_MODULE],
-    ['wm-list', LIST_MODULE],
-    ['wm-livetable', LIVE_TABLE_MODULE],
-    ['wm-login', LOGIN_MODULE],
-    ['wm-custom', CUSTOM_MODULE],
-    ['wm-logindialog', LOGIN_DIALOG_MODULE],
-    ['wm-marquee', MARQUEE_MODULE],
-    ['wm-menu', MENU_MODULE],
-    ['wm-media-list',  MEDIA_LIST_MODULE],
-    ['wm-mobile-navbar', MOBILE_NAV_BAR_MODULE],
-    ['wm-mobile-tabbar', MOBILE_TAB_BAR_MODULE],
-    ['wm-nav', MENU_MODULE],
-    ['wm-navbar', NAVBAR_MODULE],
-    ['wm-nav-item', MENU_MODULE],
-    ['wm-network-info-toaster', BASIC_MODULE],
-    ['wm-number', INPUT_MODULE],
-    ['wm-page', PAGE_MODULE],
-    ['wm-layout', PAGE_MODULE],
-    ['wm-page-content', PAGE_MODULE],
-    ['wm-pagedialog', PARTIAL_DIALOG_MODULE],
-    ['wm-pagination', PAGINATION_MODULE],
-    ['wm-panel', PANEL_MODULE],
-    ['wm-panel-footer', PANEL_MODULE],
-    ['wm-picture', BASIC_MODULE],
-    ['wm-popover', POPOVER_MODULE],
-    ['wm-progress-bar', PROGRESS_MODULE],
-    ['wm-prefab', PREFAB_MODULE],
-    ['wm-prefab-container', PREFAB_MODULE],
-    ['wm-progress-circle', PROGRESS_MODULE],
-    ['wm-radioset', INPUT_MODULE],
-    ['wm-rating', RATING_MODULE],
-    ['wm-richtexteditor', RICH_TEXT_EDITOR_MODULE],
-    ['wm-right-panel', RIGHT_PANEL_MODULE],
-    ['wm-select', INPUT_MODULE],
-    ['wm-search', SEARCH_MODULE],
-    ['wm-segmented-content', SEGMENTED_CONTROL_MODULE],
-    ['wm-segmented-control', SEGMENTED_CONTROL_MODULE],
-    ['wm-slider', SLIDER_MODULE],
-    ['wm-spinner', BASIC_MODULE],
-    ['wm-switch', INPUT_MODULE],
-    ['wm-table', TABLE_MODULE],
-    ['wm-tabs', TABS_MODULE],
-    ['wm-tabpane', TABS_MODULE],
-    ['wm-text', INPUT_MODULE],
-    ['wm-textarea', INPUT_MODULE],
-    ['wm-time', EPOCH_MODULE],
-    ['wm-tile', TILE_MODULE],
-    ['wm-top-nav', TOP_NAV_MODULE],
-    ['wm-tree', TREE_MODULE],
-    ['wm-video', BASIC_MODULE],
-    ['wm-wizard', WIZARD_MODULE],
-    ['wm-wizardstep', WIZARD_MODULE],
+    ['wm-accordion', ACCORDION_DIRECTIVE],
+    ['wm-accordionpane', ACCORDION_PANE_COMPONENT],
+    ['wm-anchor', ANCHOR_COMPONENT],
+    ['wm-alertdialog', ALERT_DIALOG_COMPONENT],
+    ['wm-audio', AUDIO_COMPONENT],
+    ['wm-button', BUTTON_COMPONENT],
+    ['wm-buttongroup', BUTTON_GROUP_DIRECTIVE],
+    ['wm-breadcrumb', BREAD_CRUMB_COMPONENT],
+    ['wm-calendar', CALENDAR_COMPONENT],
+    ['wm-card', CARD_COMPONENT],
+    ['wm-card-actions', CARD_ACTIONS_DIRECTIVE],
+    ['wm-card-content', CARD_CONTENT_COMPONENT],
+    ['wm-card-footer', CARD_FOOTER_DIRECTIVE],
+    ['wm-carousel', CAROUSEL_COMPONENT],
+    ['wm-carousel-content', CAROUSEL_TEMPLATE_DIRECTIVE],
+    ['wm-carousel-template', CAROUSEL_TEMPLATE_DIRECTIVE],
+    ['wm-chart', CHART_COMPONENT],
+    ['wm-checkbox', CHECKBOX_COMPONENT],
+    ['wm-checkboxset', CHECKBOXSET_COMPONENT],
+    ['wm-chips', CHIPS_COMPONENT],
+    ['wm-colorpicker', COLOR_PICKER_COMPONENT],
+    ['wm-confirmdialog', CONFIRM_DIALOG_COMPONENT],
+    ['wm-content', CONTENT_COMPONENT],
+    ['wm-currency', CURRENCY_COMPONENT],
+    ['wm-date', DATE_COMPONENT],
+    ['wm-datetime', DATE_TIME_COMPONENT],
+    ['wm-dialog', DESIGN_DIALOG_COMPONENT],
+    ['wm-footer', FOOTER_DIRECTIVE],
+    ['wm-form', FORM_COMPONENT],
+    ['wm-form-action', FORM_ACTION_DIRECTIVE],
+    ['wm-form-field', FORM_FIELD_DIRECTIVE],
+    ['wm-filter-field', LIVE_FILTER_DIRECTIVE],
+    ['wm-fileupload', FILE_UPLOAD_COMPONENT],
+    ['wm-gridrow', LAYOUT_GRID_ROW_DIRECTIVE],
+    ['wm-gridcolumn', LAYOUT_GRID_COLUMN_DIRECTIVE],
+    ['wm-header', HEADER_COMPONENT],
+    ['wm-html', HTML_COMPONENT],
+    ['wm-icon', ICON_COMPONENT],
+    ['wm-iframe', IFRAME_COMPONENT],
+    ['wm-iframedialog', IFRAME_DIALOG_COMPONENT],
+    ['wm-label', LABEL_COMPONENT],
+    ['wm-layoutgrid', LAYOUT_GRID_DIRECTIVE],
+    ['wm-left-panel', LEFT_PANEL_DIRECTIVE],
+    ['wm-linearlayout', LINEAR_LAYOUT_DIRECTIVE],
+    ['wm-linearlayoutitem', LINEAR_LAYOUT_ITEM_DIRECTIVE],
+    ['wm-list', LIST_COMPONENT],
+    ['wm-livetable', LIVE_TABLE_COMPONENT],
+    ['wm-login', LOGIN_COMPONENT],
+    ['wm-custom', CUSTOM_WIDGET_DIRECTIVE],
+    ['wm-logindialog', LOGIN_DIALOG_DIRECTIVE],
+    ['wm-marquee', MARQUEE_DIRECTIVE],
+    ['wm-menu', MENU_COMPONENT],
+    ['wm-nav', NAV_COMPONENT],
+    ['wm-navbar', NAVBAR_COMPONENT],
+    ['wm-nav-item', NAV_ITEM_DIRECTIVE],
+    ['wm-number', NUMBER_COMPONENT],
+    ['wm-page', PAGE_COMPONENT],
+    ['wm-layout', LAYOUT_DIRECTIVE],
+    ['wm-page-content', PAGE_CONTENT_COMPONENT],
+    ['wm-pagedialog', PARTIAL_DIALOG_COMPONENT],
+    ['wm-pagination', PAGINATION_COMPONENT],
+    ['wm-panel', PANEL_COMPONENT],
+    ['wm-panel-footer', PANEL_COMPONENT],
+    ['wm-picture', PICTURE_COMPONENT],
+    ['wm-popover', POPOVER_COMPONENT],
+    ['wm-progress-bar', PROGRESS_BAR_COMPONENT],
+    ['wm-prefab', PREFAB_DIRECTIVE],
+    ['wm-prefab-container', PREFAB_CONTAINER_DIRECTIVE],
+    ['wm-progress-circle', PROGRESS_CIRCLE_COMPONENT],
+    ['wm-radioset', RADIOSET_COMPONENT],
+    ['wm-rating', RATING_COMPONENT],
+    ['wm-richtexteditor', RICH_TEXT_EDITOR_COMPONENT],
+    ['wm-right-panel', RIGHT_PANEL_DIRECTIVE],
+    ['wm-select', SELECT_COMPONENT],
+    ['wm-search', SEARCH_COMPONENT],
+    ['wm-slider', SLIDER_COMPONENT],
+    ['wm-spinner', SPINNER_COMPONENT],
+    ['wm-switch', SWITCH_COMPONENT],
+    ['wm-table', TABLE_COMPONENT],
+    ['wm-tabs', TABS_COMPONENT],
+    ['wm-tabpane', TAB_PANE_COMPONENT],
+    ['wm-text', INPUT_TEXT_COMPONENT],
+    ['wm-textarea', TEXTAREA_COMPONENT],
+    ['wm-time', TIME_COMPONENT],
+    ['wm-tile', TILE_DIRECTIVE],
+    ['wm-top-nav', TOP_NAV_DIRECTIVE],
+    ['wm-tree', TREE_COMPONENT],
+    ['wm-video', VIDEO_COMPONENT],
+    ['wm-wizard', WIZARD_COMPONENT],
+    ['wm-wizardstep', WIZARD_COMPONENT],
 ]);
-
-

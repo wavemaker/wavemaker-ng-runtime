@@ -32,9 +32,6 @@
             "@wm/build-task": [
                 "libraries/build-task/"
             ],
-            "@wm/mobile-build-task": [
-                "libraries/mobile-build-task"
-            ],
             "@wm/core": [
                 "libraries/core"
             ],
@@ -56,17 +53,8 @@
             "@wm/components/page": [
                 "libraries/components/page/default"
             ],
-            "@wm/mobile/components/basic": [
-                "libraries/mobile/components/basic/default"
-            ],
-            "@wm/mobile/components/page": [
-                "libraries/mobile/components/page/default"
-            ],
             "@wm/components/dialogs": [
                 "libraries/components/dialogs/default"
-            ],
-            "@wm/mobile/components/*": [
-                "libraries/mobile/components/*"
             ],
             "@wm/components/*": [
                 "libraries/components/*"
@@ -89,29 +77,11 @@
             "@wm/variables": [
                 "libraries/variables"
             ],
-            "@wm/mobile/core": [
-                "libraries/mobile/core"
-            ],
-            "@wm/mobile/components": [
-                "libraries/mobile/components"
-            ],
-            "@wm/mobile/offline": [
-                "libraries/mobile/offline"
-            ],
-            "@wm/mobile/variables": [
-                "libraries/mobile/variables"
-            ],
             "@wm/runtime/base": [
                 "libraries/runtime/base"
             ],
             "@wm/runtime/dynamic": [
                 "libraries/runtime/dynamic"
-            ],
-            "@wm/mobile/runtime": [
-                "libraries/mobile/runtime"
-            ],
-            "@wm/mobile/runtime/dynamic": [
-                "libraries/mobile/runtime-dynamic"
             ]
         },
         "useDefineForClassFields": false
