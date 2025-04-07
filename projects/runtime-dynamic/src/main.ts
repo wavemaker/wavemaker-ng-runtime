@@ -15,10 +15,7 @@ console.time('bootstrap');
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    new Promise<Event | void>(resolve => {
-        if (window['cordova']) {
-            document.addEventListener('deviceready', resolve);
-        } else {
+    new Promise<void|Event>( resolve => {
             resolve();
         }
     }).then(() => bootstrapApplication(AppComponent, appConfig))

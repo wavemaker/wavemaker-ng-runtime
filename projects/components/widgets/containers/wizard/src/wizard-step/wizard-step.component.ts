@@ -1,12 +1,28 @@
-import {ContentChildren, Directive, HostBinding, Inject, Injector, Optional, Self} from '@angular/core';
-import { NgForm } from '@angular/forms';
-
-import { BaseComponent, IWidgetConfig, provideAsWidgetRef, RedrawableDirective } from '@wm/components/base';
-import { WizardComponent } from '../wizard.component';
-
-import { registerProps } from './wizard-step.props';
+import {
+    AfterViewInit,
+    Component,
+    ContentChildren,
+    HostBinding,
+    Inject,
+    Injector,
+    OnInit,
+    Optional,
+    Self
+} from "@angular/core";
+import {
+    BaseComponent,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    RedrawableDirective,
+    StylableComponent
+} from "@wm/components/base";
+import {NgForm} from "@angular/forms";
+import {registerProps} from "./wizard-step.props";
+import {noop} from "@wm/core";
+import {WizardComponent} from "../wizard.component";
 
 const DEFAULT_CLS = 'app-wizard-step-content';
+
 const WIDGET_CONFIG: IWidgetConfig = {
     widgetType: 'wm-wizardstep',
     hostClass: DEFAULT_CLS,
@@ -18,16 +34,17 @@ const enum STEP_STATUS {
     COMPLETED
 }
 
-@Directive({
-  standalone: true,
+@Component({
+    standalone: true,
     selector: 'form[wmWizardStep]',
+    template: `<ng-content partial-container-target></ng-content>`,
     providers: [
-        provideAsWidgetRef(WizardStepDirective),
+        provideAsWidgetRef(WizardStepComponent),
         NgForm
     ],
     exportAs: 'wmWizardStep'
 })
-export class WizardStepDirective extends BaseComponent {
+export class WizardStepComponent extends StylableComponent implements OnInit, AfterViewInit {
     static initializeProps = registerProps();
 
     public show: boolean;
@@ -37,7 +54,9 @@ export class WizardStepDirective extends BaseComponent {
     public disabledone: boolean;
     public disableprevious: boolean;
     public isInitialized: boolean;
-    isDone: boolean = false ;
+    private isdynamic: boolean;
+    public $lazyLoad = noop;
+    isDone: boolean = false;
 
     private status: STEP_STATUS = STEP_STATUS.DISABLED;
     private wizardComponent: WizardComponent;
@@ -147,5 +166,34 @@ export class WizardStepDirective extends BaseComponent {
             const stepIndex = (this as any).wizardComponent.getCurrentStepIndex();
             this.invokeEventCallback('load', { stepIndex });
         }, 100);
+    }
+
+    public remove() {
+        if (this.active) {
+            this === this.wizardComponent.steps.last ? this.wizardComponent.prev() : this.wizardComponent.next();
+        }
+        const availablePanes = this.wizardComponent.steps.toArray();
+        availablePanes.splice((this as any).wizardComponent.getStepIndexByRef(this), 1);
+        this.wizardComponent.steps.reset([...availablePanes]);
+        this.nativeElement.remove();
+    }
+
+    onPropertyChange(key: string, nv: any, ov?: any) {
+        if (key === 'content') {
+            setTimeout(() => this.$lazyLoad(), 100);
+        } else {
+            super.onPropertyChange(key, nv, ov);
+        }
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+    }
+
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        if (this.isdynamic) {
+            this.wizardComponent.registerDynamicStep(this);
+        }
     }
 }

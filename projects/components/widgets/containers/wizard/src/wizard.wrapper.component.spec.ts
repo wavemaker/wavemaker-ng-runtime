@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { WizardComponent } from './wizard.component';
-import { WizardStepDirective } from './wizard-step/wizard-step.directive';
 import { FormsModule } from '@angular/forms';
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { App } from '@wm/core';
+import {App, DynamicComponentRefProvider} from '@wm/core';
+import { WizardStepComponent } from "./wizard-step/wizard-step.component";
 import { TextContentDirective } from '@wm/components/base';
 
 const markup = `
@@ -48,11 +48,11 @@ class WizardWrapperComponent {
 const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule, TextContentDirective,
-        WizardComponent, WizardStepDirective
+        WizardComponent, WizardStepComponent
     ],
-    declarations: [WizardWrapperComponent,],
+    declarations: [WizardWrapperComponent],
     providers: [
-        { provide: App, useValue: mockApp },
+        { provide: App, useValue: mockApp }, DynamicComponentRefProvider
     ]
 };
 
