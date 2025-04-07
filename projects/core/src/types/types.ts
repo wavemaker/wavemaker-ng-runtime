@@ -82,6 +82,7 @@ export abstract class App {
     reload: Function;
     on401: Function;
     notifyApp: Function;
+    importModule: Function;
     getDependency: Function;
     networkStatus: any;
     notify: (eventName: string, data?: any) => void;
