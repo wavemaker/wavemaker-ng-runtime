@@ -21,6 +21,7 @@
        [ngModelOptions]="ngModelOptions"
        [required]="required"
        (keypress)="validateInputEntry($event)"
+       (paste)="onPaste($event)"
        (keydown.backspace)="onBackspace($event)"
        (keydown.delete)="onDelete($event)"
        (keydown.enter)="onEnter($event)"

@@ -158,7 +158,7 @@ import { LayoutgridDirective, LayoutGridRowDirective, LayoutGridColumnDirective 
 import { PanelComponent } from "@wm/components/containers/panel";
 import { TabPaneComponent, TabsComponent } from "@wm/components/containers/tabs";
 import { TileDirective } from "@wm/components/containers/tile";
-import { WizardActionDirective, WizardStepDirective, WizardComponent } from "@wm/components/containers/wizard";
+import { WizardActionDirective, WizardStepComponent, WizardComponent } from "@wm/components/containers/wizard";
 import { AlertDialogComponent } from "@wm/components/dialogs/alert-dialog";
 import { IframeDialogComponent } from "@wm/components/dialogs/iframe-dialog";
 import { LoginDialogDirective } from "@wm/components/dialogs/login-dialog";
@@ -345,7 +345,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     PanelComponent,
     TabPaneComponent, TabsComponent,
     TileDirective,
-    WizardActionDirective, WizardStepDirective, WizardComponent,
+    WizardActionDirective, WizardStepComponent, WizardComponent,
 
     // dialogs
     AlertDialogComponent,

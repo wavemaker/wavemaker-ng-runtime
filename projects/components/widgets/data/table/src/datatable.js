@@ -456,6 +456,16 @@ $.widget('wm.datatable', {
             _rowData.$index = rowIndex + 1;
             self.options.generateRowExpansionCell(_rowData, rowIndex);
             $(this).empty().append(self.options.getRowExpansionAction(rowIndex));
+            var expandtitleExpr = $(this).children()[0].getAttribute('expandtitle.bind'),
+                collapsetitleExpr = $(this).children()[0].getAttribute('collapsetitle.bind');
+
+            if(expandtitleExpr) {
+                self.options.registerCollapseOrExpandTitleWatch(expandtitleExpr, _rowData, rowIndex, "expandtitle", $(this).children()[0]);
+            }
+            if(collapsetitleExpr) {
+                self.options.registerCollapseOrExpandTitleWatch(collapsetitleExpr, _rowData, rowIndex, "collapsetitle", $(this).children()[0]);
+            }
+
         });
     },
 
@@ -2908,8 +2918,8 @@ $.widget('wm.datatable', {
             rowData = _.clone(self.options.data[rowId]),
             $nextDetailRow = $row.next('tr.app-datagrid-detail-row'),
             isClosed = !$nextDetailRow.is(':visible'),
-            $icon = $row.find('[data-identifier="rowExpansionButtons"] i.app-icon');
-
+            $icon = $row.find('[data-identifier="rowExpansionButtons"] i.app-icon'),
+            expandRowBtn = $row.find( 'button, a');
         rowData.$index = rowId + 1;
         if (isExpand && !isClosed) {
             return;
@@ -2919,7 +2929,10 @@ $.widget('wm.datatable', {
         }
         if (isClosed) {
             $row.addClass(self.options.cssClassNames.expandedRowClass);
-            $row.find( 'button, a').attr('title', self.options.rowDef.collapsetitle);
+            if(self.options.rowDef.collapsetitle)  expandRowBtn.attr('title', self.options.rowDef.collapsetitle);
+            else {
+                    expandRowBtn.attr('title', expandRowBtn.attr('collapsetitle'));
+            }
             $row.find( 'button, a').attr('aria-expanded', 'true');
             if (e && self.preparedData[rowId]._selected) {
                 e.stopPropagation();
@@ -2942,7 +2955,10 @@ $.widget('wm.datatable', {
                     $nextDetailRow.show();
                 });
         } else {
-            $row.find( 'button, a').attr('title', self.options.rowDef.expandtitle);
+            if(self.options.rowDef.expandtitle) expandRowBtn.attr('title', self.options.rowDef.expandtitle);
+            else {
+                expandRowBtn.attr('title', expandRowBtn.attr('expandtitle'));
+            }
             self._collapseRow(e, rowData, rowId, $nextDetailRow, $icon);
         }
     },
