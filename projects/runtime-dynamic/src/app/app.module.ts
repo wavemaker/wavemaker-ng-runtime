@@ -19,7 +19,7 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { ToastNoAnimationModule } from 'ngx-toastr';
 import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 
-import {App, getWmProjectProperties, PartialRefProvider, CustomWidgetRefProvider, loadScripts} from '@wm/core';
+import {App, getWmProjectProperties, PartialRefProvider, CustomWidgetRefProvider, loadScripts, loadStyleSheets} from '@wm/core';
 // Basic widgets
 
 import { BasicModule } from '@wm/components/basic';
@@ -141,11 +141,9 @@ export const tooltipModule: ModuleWithProviders<TooltipModule> = TooltipModule.f
 // Function that loads external scripts and returns a promise
 export function loadExternalScriptsFactory () {
     return () => {
-        console.log('.......');
+        loadStyleSheets(['./resources/styles.css']);
         const _scripts = [
           './resources/polyfills.js',
-          './resources/runtime.js',
-          './resources/styles.js',
           './resources/main.js'
         ];
         return loadScripts(_scripts, true);

@@ -68,8 +68,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
     ) {
         const _scripts = [
             './resources/polyfills.js',
-            './resources/runtime.js',
-            './resources/styles.js',
+            './resources/styles.css',
             './resources/main.js'];
         // const _scripts = [
         //     './resources/polyfills-es5.js',
