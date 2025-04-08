@@ -554,7 +554,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         this.wizContext.disablePrevious = () => !this.enablePrev;
         this.wizContext.disableDone = () => !this.enableDone;
         this.steps.changes.subscribe( slides => {
-            if (this.steps.length && this.type === 'dynamic' && this._isFirstLoad) {
+            if (this.steps.length > 1 && this.type === 'dynamic' && this._isFirstLoad) {
                 this.setDefaultStep(this.getStepRefByIndex(this.defaultstepindex));
                 this._isFirstLoad = false;
             }
