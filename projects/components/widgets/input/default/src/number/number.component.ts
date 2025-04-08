@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import { FormsModule } from '@angular/forms';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
@@ -17,7 +16,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, WmComponentsModule, FormsModule],
+  imports: [CommonModule, FormsModule],
     selector: '[wmNumber]',
     templateUrl: './number.component.html',
     providers: [

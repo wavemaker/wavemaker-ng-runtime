@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import { FormsModule } from '@angular/forms';
 import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {DataSource, isIos, removeAttr, setAttr, isSafari} from '@wm/core';
-import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
+import {provideAs, provideAsWidgetRef, styler, TextContentDirective} from '@wm/components/base';
 import {DatasetAwareFormComponent} from '../dataset-aware-form.component';
 
 import {registerProps} from './select.props';
@@ -13,7 +12,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
 
 @Component({
   standalone: true,
-  imports: [CommonModule, WmComponentsModule, FormsModule],
+  imports: [CommonModule, TextContentDirective, FormsModule],
     selector: 'wm-select',
     templateUrl: './select.component.html',
     providers: [

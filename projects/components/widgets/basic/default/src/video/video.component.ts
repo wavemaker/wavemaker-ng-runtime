@@ -1,9 +1,7 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {Component, Inject, Injector, Optional, SecurityContext} from '@angular/core';
 
 import {appendNode, createElement, removeNode, transformFileURI} from '@wm/core';
-import {DISPLAY_TYPE, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe} from '@wm/components/base';
+import {DISPLAY_TYPE, ImagePipe, provideAsWidgetRef, StylableComponent, styler, TrustAsPipe} from '@wm/components/base';
 
 import {registerProps} from './video.props';
 
@@ -15,8 +13,8 @@ const WIDGET_CONFIG = {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+    standalone: true,
+    imports: [TrustAsPipe, ImagePipe],
     selector: '[wmVideo]',
     templateUrl: './video.component.html',
     providers: [

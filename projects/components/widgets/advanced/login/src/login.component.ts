@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterViewInit,
     Component,
@@ -21,8 +20,7 @@ import {includes} from "lodash-es";
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule],
+    standalone: true, 
     selector: 'div[wmLogin]',
     templateUrl: './login.component.html',
     providers: [

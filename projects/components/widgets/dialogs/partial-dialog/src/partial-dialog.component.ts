@@ -1,5 +1,3 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {
     Attribute,
     Component,
@@ -8,7 +6,6 @@ import {
     Injector,
     OnInit,
     Optional,
-    SkipSelf,
     TemplateRef,
     ViewChild
 } from '@angular/core';
@@ -25,7 +22,7 @@ const WIDGET_INFO = { widgetType: 'wm-partialdialog' };
 
 @Component({
     standalone: true,
-    imports: [CommonModule, WmComponentsModule, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
+    imports: [DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
     selector: 'div[wmPartialDialog]',
     templateUrl: './partial-dialog.component.html',
     providers: [

@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {Component, Inject, Injector, Optional} from '@angular/core';
 
 import {App, switchClass} from '@wm/core';
@@ -10,8 +9,7 @@ const DEFAULT_CLS = 'app-page-content app-content-column';
 const WIDGET_CONFIG = {widgetType: 'wm-page-content', hostClass: DEFAULT_CLS};
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule],
+    standalone: true,
     selector: '[wmPageContent]',
     templateUrl: './page-content.component.html',
     providers: [

@@ -1,5 +1,3 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {
     Attribute,
     Component,
@@ -7,7 +5,6 @@ import {
     Injector,
     OnInit,
     Optional,
-    SkipSelf,
     TemplateRef,
     ViewChild
 } from '@angular/core';
@@ -24,8 +21,8 @@ const DIALOG_CLS = 'app-dialog modal-dialog app-iframe-dialog';
 const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, IframeComponent, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
+    standalone: true,
+    imports: [IframeComponent, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
     selector: 'div[wmIframeDialog]',
     templateUrl: './iframe-dialog.component.html',
     providers: [

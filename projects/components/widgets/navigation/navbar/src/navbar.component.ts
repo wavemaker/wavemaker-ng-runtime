@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 
-import { APPLY_STYLES_TYPE, styler, StylableComponent, provideAsWidgetRef } from '@wm/components/base';
+import { APPLY_STYLES_TYPE, styler, StylableComponent, provideAsWidgetRef, TextContentDirective } from '@wm/components/base';
 
 import { registerProps } from './navbar.props';
 
@@ -12,8 +11,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-navbar', hostClass: DEFAULT_CLS};
 declare const $;
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+    standalone: true,
+    imports: [CommonModule, TextContentDirective],
     selector: '[wmNavbar]',
     templateUrl: './navbar.component.html',
     providers: [

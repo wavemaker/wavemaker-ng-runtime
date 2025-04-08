@@ -1,5 +1,3 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {
     Attribute,
     Component,
@@ -8,7 +6,7 @@ import {
     Injector,
     OnInit,
     Optional,
-    Self, SkipSelf,
+    Self,
     TemplateRef,
     ViewChild
 } from '@angular/core';
@@ -24,8 +22,8 @@ const DIALOG_CLS = 'app-dialog modal-dialog';
 const WIDGET_INFO = {widgetType: 'wm-dialog'};
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, DialogBodyDirective, DialogHeaderComponent],
+    standalone: true,
+    imports: [DialogBodyDirective, DialogHeaderComponent],
     selector: 'div[wmDialog]',
     templateUrl: './dialog.component.html',
     providers: [

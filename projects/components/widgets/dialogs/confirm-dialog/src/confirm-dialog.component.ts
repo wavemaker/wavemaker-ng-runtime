@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {
     Attribute,
     Component,
@@ -7,8 +6,7 @@ import {
     TemplateRef,
     ViewChild,
     HostListener,
-    Optional,
-    SkipSelf,
+    Optional, 
     Inject
 } from '@angular/core';
 
@@ -23,8 +21,8 @@ const DIALOG_CLS = 'app-dialog modal-dialog app-confirm-dialog';
 const WIDGET_INFO = {widgetType: 'wm-confirmdialog'};
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
+    standalone: true,
+    imports: [DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
     selector: 'div[wmConfirmDialog]',
     templateUrl: './confirm-dialog.component.html',
     providers: [

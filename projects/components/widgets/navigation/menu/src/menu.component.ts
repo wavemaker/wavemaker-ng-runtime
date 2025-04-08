@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import { ButtonComponent } from '@wm/components/input';
 import { MenuDropdownComponent } from './menu-dropdown/menu-dropdown.component';
 import {
@@ -32,7 +31,8 @@ import {
     DatasetAwareNavComponent,
     hasLinkToCurrentPage,
     provideAsWidgetRef,
-    styler
+    styler,
+    TextContentDirective
 } from '@wm/components/base';
 import {NavComponent} from './nav/nav.component';
 
@@ -85,12 +85,13 @@ const AUTO_OPEN = {
 
 const WIDGET_CONFIG = { widgetType: 'wm-menu', hostClass: 'dropdown app-menu' };
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, AnchorComponent, ButtonComponent, MenuDropdownComponent, BsDropdownModule],
+    standalone: true,
+    imports: [BsDropdownModule, CommonModule, TextContentDirective, AnchorComponent, ButtonComponent, MenuDropdownComponent],
     selector: '[wmMenu]',
     templateUrl: './menu.component.html',
     providers: [
-        provideAsWidgetRef(MenuComponent)
+        provideAsWidgetRef(MenuComponent),
+        BsDropdownDirective
     ]
 })
 export class MenuComponent extends DatasetAwareNavComponent implements OnInit, OnDestroy, AfterViewInit {

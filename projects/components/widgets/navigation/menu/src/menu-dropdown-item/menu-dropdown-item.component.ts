@@ -1,11 +1,9 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import { MenuDropdownComponent } from '../menu-dropdown/menu-dropdown.component';
 import { NavigationControlDirective } from '../nav/navigation-control.directive';
 import { Component, ElementRef, forwardRef, HostListener, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 
 import { addClass, triggerItemAction, UserDefinedExecutionContext, App, toggleClass } from '@wm/core';
-import { hasLinkToCurrentPage } from '@wm/components/base';
+import { hasLinkToCurrentPage, TextContentDirective } from '@wm/components/base';
 import { NavComponent } from '../nav/nav.component';
 
 import { KEYBOARD_MOVEMENTS, MENU_POSITION, MenuComponent } from '../menu.component';
@@ -26,7 +24,7 @@ const MENU_LAYOUT_TYPE = {
 
 @Component({
     standalone: true,
-    imports: [CommonModule, WmComponentsModule, forwardRef(() => MenuDropdownComponent), NavigationControlDirective],
+    imports: [TextContentDirective, forwardRef(() => MenuDropdownComponent), NavigationControlDirective],
     selector: 'li[wmMenuDropdownItem]',
     templateUrl: './menu-dropdown-item.component.html',
 })
