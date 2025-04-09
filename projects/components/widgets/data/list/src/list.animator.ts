@@ -6,7 +6,6 @@ import { ButtonComponent } from '@wm/components/input';
 
 import { ListComponent } from './list.component';
 import {map, reduce} from "lodash-es";
-import { Inject, forwardRef } from '@angular/core';
 
 declare const $;
 
@@ -22,7 +21,7 @@ export class ListAnimator extends SwipeAnimation {
     private actionItems: QueryList<ButtonComponent>;
     public $btnSubscription: Subscription;
 
-    constructor(@Inject(forwardRef(() => ListComponent)) private list: ListComponent) {
+    constructor(private list: ListComponent) {
         super();
         this.$el = $(this.list.getNativeElement()).find('ul.app-livelist-container').first();
 

@@ -85,8 +85,7 @@
         "libraries/components/navigation/navbar/index.d.ts"
       ],
       "@wm/components/navigation/menu": [
- //       "libraries/components/navigation/menu/index.d.ts"
-      "projects/components/widgets/navigation/menu/src/public_api.ts"
+        "libraries/components/navigation/menu/index.d.ts"
       ],
       "@wm/components/navigation/breadcrumb": [
         "libraries/components/navigation/breadcrumb/index.d.ts"
@@ -131,8 +130,7 @@
         "libraries/components/data/table/index.d.ts"
       ],
       "@wm/components/data/pagination": [
-        //"libraries/components/data/pagination/index.d.ts"
-        "projects/components/widgets/data/pagination/src/public_api.ts"
+        "libraries/components/data/pagination/index.d.ts"
       ],
       "@wm/components/data/live-table": [
         "libraries/components/data/live-table/index.d.ts"

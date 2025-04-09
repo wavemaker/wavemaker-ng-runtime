@@ -15,10 +15,8 @@ import {Observable, Subject} from 'rxjs';
 
 import {$watch, App} from '@wm/core';
 
-//import {ListComponent} from './list.component';
+import {ListComponent} from './list.component';
 import {widgetIdGenerator} from "@wm/components/base";
-import { forwardRef, Inject } from '@angular/core';
-import type { ListComponent } from './list.component';
 
 declare const $;
 
@@ -84,7 +82,7 @@ export class ListItemDirective implements OnInit, AfterViewInit {
         this.item = val;
     }
 
-    constructor(private inj: Injector, elRef: ElementRef, private app: App,  @Optional() @Inject(forwardRef(() => Object)) public _viewParent?: ListComponent) { 
+    constructor(private inj: Injector, elRef: ElementRef, private app: App, @Optional() public _viewParent: ListComponent) {
         this.viewContainerRef = inj.get(ViewContainerRef);
         this.nativeElement = elRef.nativeElement;
         this.listComponent = _viewParent;
