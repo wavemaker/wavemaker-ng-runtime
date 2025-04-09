@@ -231,6 +231,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     filterOnDefault: Function;
     onMaxDefaultValueChange: Function;
     numberOfFields: number;
+    readonly :boolean;
 
     private _debouncedUpdateFieldSource: Function = _debounce(this.updateFieldSource, 350);
     private operationType;
@@ -647,6 +648,12 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                         field.formWidget.dataset$.next();
                     }
                 });
+                break;
+            case 'readonly':
+                if(nv){
+                    this.setReadonlyFields();
+                    this.buttonArray.forEach((button)=>button.disabled=true);
+                }
                 break;
             default:
                 super.onPropertyChange(key, nv, ov);

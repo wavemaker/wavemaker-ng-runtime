@@ -55,7 +55,7 @@ export class FormActionDirective extends BaseComponent implements OnInit {
             action: this.action,
             accessroles: this.accessroles,
             shortcutkey: this.shortcutkey,
-            disabled: this.disabled,
+            disabled: this.disabled||this.form.readonly,
             tabindex: this.tabindex,
             iconname: this.iconname,
             type: this.type,

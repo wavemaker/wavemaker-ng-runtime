@@ -39,6 +39,7 @@ export const registerFormProps = () => {
     formMap.set('novalidate', PROP_BOOLEAN);
     formMap.set('validationtype', {value: 'default', ...PROP_STRING});
     formMap.set('iconclass', PROP_STRING);
+    formMap.set('readonly',{value: false, ...PROP_BOOLEAN});
 
     register(
         'wm-form',
