@@ -57,6 +57,11 @@ export class Tabs {
     @Input() horizontalalign: string = 'right';
 
     /**
+     * This property determines whether tabs are automatically activated when using arrow keys.
+     */
+    @Input() autotabactivation: boolean = true;
+
+    /**
      * Callback function which will be triggered when the active tab changed from one to another.
      * @param event  Instance of the change event
      * @param widget  Instance of the tabs widget

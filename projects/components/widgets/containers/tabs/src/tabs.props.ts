@@ -15,6 +15,7 @@ export const registerProps = () => {
             ['transition', PROP_STRING],
             ['type', PROP_STRING],
             ['iconposition', PROP_STRING],
+            ['autotabactivation', {value: true, ...PROP_BOOLEAN}]
         ]
     );
     register('wm-tabs', props);
