@@ -31,6 +31,10 @@ $.widget('wm.datatable', {
         enableRowSelection: true,
         enableColumnSelection: false,
         multiselect: false,
+        multiselecttitle: '',
+        multiselectarialabel: '',
+        radioselecttitle:'',
+        radioselectarialabel: '',
         filterNullRecords: true,
         navigation: '',
         isdynamictable: '',
@@ -95,7 +99,9 @@ $.widget('wm.datatable', {
             'style': 'width: 50px; text-align: center;',
             'textAlignment': 'center',
             'isMultiSelectCol': true,
-            'show': true
+            'show': true,
+            'multiselecttitle': '',
+            'multiselectarialabel': ''
         },
         'radio': {
             'field': 'radio',
@@ -108,7 +114,9 @@ $.widget('wm.datatable', {
             'readonly': true,
             'style': 'width: 50px; text-align: center;',
             'textAlignment': 'center',
-            'show': true
+            'show': true,
+            'radioselecttitle': '',
+            'radioselectarialabel': ''
         },
         '__expand': {
             'field': '__expand',
@@ -659,8 +667,11 @@ $.widget('wm.datatable', {
 
     /* Return checkbox literal */
     _getCheckbox: function (labelClass = '', chkBoxName = '', checked = '', disabled = '') {
+        const self = this,
+        title = self.options.multiselecttitle,
+        ariaLabel = self.options.multiselectarialabel;
         return `<div class="app-checkbox checkbox">
-        <label class="${labelClass}">
+        <label class="${labelClass}" title="${title}" aria-label="${ariaLabel}">
             <span class="sr-only" aria-live="assertive">${this._getCheckboxLabel(chkBoxName)}</span>
             <input type="checkbox" name="${chkBoxName}" ${checked} ${disabled} role="checkbox">
             <span class="caption"></span>
@@ -679,8 +690,11 @@ $.widget('wm.datatable', {
     _getRadioTemplate: function (row) {
         var checked = row._checked === true ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '';
+        const self = this,
+            title = self.options.radioselecttitle,
+            ariaLabel = self.options.radioselectarialabel;
         return `<div class="radio app-radio">
-            <label>
+            <label title="${title}" aria-label="${ariaLabel}">
                 <input type="radio" rowSelectInput name="" value="" ${checked} ${disabled}>
                 <span class="caption"></span>
             </label>

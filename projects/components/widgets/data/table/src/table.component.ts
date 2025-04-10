@@ -246,6 +246,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     fieldDefs = [];
     rowDef: any = {};
     rowInstance: any = {};
+    multiselecttitle;
+    multiselectarialabel;
+    radioselecttitle;
+    radioselectarialabel;
 
     private fullFieldDefs = [];
     private __fullData;
@@ -350,6 +354,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         viewlessmessage: '',
         loadingdatamsg: '',
         isNextPageData: undefined,
+        multiselecttitle: '',
+        multiselectarialabel: '',
+        radioselecttitle: '',
+        radioselectarialabel: '',
         ACTIONS: {
             'DELETE': 'delete',
             'EDIT': 'edit',
@@ -1174,6 +1182,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.ondemandmessage = this.ondemandmessage;
         this.gridOptions.viewlessmessage = this.viewlessmessage;
         this.gridOptions.loadingdatamsg = this.loadingdatamsg;
+        this.gridOptions.multiselecttitle = this.multiselecttitle;
+        this.gridOptions.multiselectarialabel = this.multiselectarialabel;
+        this.gridOptions.radioselecttitle = this.radioselecttitle;
+        this.gridOptions.radioselectarialabel = this.radioselectarialabel;
 
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
@@ -1997,6 +2009,22 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     this.$element.find('.on-demand-datagrid > a').text(nv);
                 }
                 this.gridOptions.ondemandmessage = nv;
+                break;
+            case 'multiselecttitle':
+                this.setDataGridOption('multiselecttitle', nv);
+                this.gridOptions.multiselecttitle = nv;
+                break;
+             case 'multiselectarialabel':
+                this.setDataGridOption('multiselectarialabel', nv);
+                this.gridOptions.multiselectarialabel = nv;
+                break;
+            case 'radioselecttitle':
+                this.setDataGridOption('radioselecttitle', nv);
+                this.gridOptions.radioselecttitle = nv;
+                break;
+            case 'radioselectarialabel':
+                this.setDataGridOption('radioselectarialabel', nv);
+                this.gridOptions.radioselectarialabel = nv;
                 break;
             case 'viewlessmessage':
                 this.gridOptions.viewlessmessage = nv;
