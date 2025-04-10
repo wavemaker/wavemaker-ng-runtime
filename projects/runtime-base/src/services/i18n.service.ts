@@ -173,6 +173,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     protected loadMomentTimeZoneBundle(locale, compInstance?) {
         return new Promise<void>(resolve => {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
+            window['moment'] = moment; //moment-timezone-with-data.js need moment as require('moment') to be available in window
             const path = _cdnUrl + `locales/moment-timezone/moment-timezone-with-data.js`;
             loadScripts([path], true).then(()=>{
                 /**
