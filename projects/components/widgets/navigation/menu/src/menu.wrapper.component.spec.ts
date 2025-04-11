@@ -74,7 +74,7 @@ const menuComponentModuleDef: ITestModuleDef = {
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },
         provideAnimations()
     ],
-    teardown: { destroyAfterEach: false }
+    teardown: { destroyAfterEach: true }
 };
 
 const menuComponentDef: ITestComponentDef = {
@@ -150,7 +150,7 @@ describe('MenuComponent', () => {
         expect(ulEle.nativeElement.classList).toContain('horizontal');
     }));
 
-    xit('should apply 50px height ', waitForAsync(() => {
+    it('should apply 50px height ', waitForAsync(() => {
         wmComponent.getWidget().height = '50px';
         fixture.whenStable().then(() => {
             const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
