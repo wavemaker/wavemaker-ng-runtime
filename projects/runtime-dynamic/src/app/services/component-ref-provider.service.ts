@@ -248,8 +248,7 @@ const getDynamicComponent = (
             {
                 provide: UserDefinedExecutionContext,
                 useExisting: DynamicComponent
-            },
-            PageDirective,
+            }
         ]
     })(DynamicComponent)
     return component;
