@@ -12,3 +12,5 @@ export const getPrefabConfigUrl = (prefabName: string) => `${getPrefabBaseUrl(pr
 export const getPrefabMinJsonUrl = (prefabName: string) => `${getPrefabBaseUrl(prefabName)}/pages/Main/page.min.json`;
 
 export const getPrefabPartialJsonUrl = (prefabName: string, partialName: string) => `${getPrefabBaseUrl(prefabName)}/pages/${partialName}/page.min.json`;
+
+export const CUSTOM_WIDGETS_BASE_FOLDER = "web_widgets";

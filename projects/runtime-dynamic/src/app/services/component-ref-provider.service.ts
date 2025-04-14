@@ -28,6 +28,7 @@ import { AppResourceManagerService } from './app-resource-manager.service';
 import { isString, isUndefined } from "lodash-es";
 import * as customWidgets from '@wavemaker/custom-widgets-m3';
 import { PageDirective } from '@wm/components/page';
+import { CUSTOM_WIDGETS_BASE_FOLDER } from '@wm/runtime/base';
 
 interface IPageMinJSON {
     markup: string;
@@ -58,7 +59,7 @@ const getFragmentUrl = (fragmentName: string, type: ComponentType, options?) => 
     } else if (type === ComponentType.PREFAB) {
         return getPrefabMinJsonUrl(fragmentName);
     } else if (type === ComponentType.WIDGET) {
-        return `./custom-widgets/${fragmentName}/page.min.json`
+        return `./custom-widgets/${CUSTOM_WIDGETS_BASE_FOLDER}/${fragmentName}/page.min.json`
     }
 };
 
@@ -202,7 +203,7 @@ export class ComponentRefProviderService extends ComponentRefProvider {
         if (resource) {
             return resource;
         }
-        const promise = (((componentType === ComponentType.WIDGET && !customWidgets[componentName]) || componentType !== ComponentType.WIDGET) ? this.resouceMngr.get(url, true) : Promise.resolve(customWidgets[componentName]))
+        const promise = (((componentType === ComponentType.WIDGET && !customWidgets[CUSTOM_WIDGETS_BASE_FOLDER][componentName]) || componentType !== ComponentType.WIDGET) ? this.resouceMngr.get(url, true) : Promise.resolve(customWidgets[CUSTOM_WIDGETS_BASE_FOLDER][componentName]))
             .then(({ markup, script, styles, variables, config }: IPageMinJSON) => {
                 const response = {
                     markup: transpile(_decodeURIComponent(markup)).markup,
