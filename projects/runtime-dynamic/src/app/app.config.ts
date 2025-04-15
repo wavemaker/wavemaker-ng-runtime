@@ -1,6 +1,6 @@
 import { ApplicationConfig, importProvidersFrom, APP_INITIALIZER, LOCALE_ID } from "@angular/core";
 import { provideRouter, RouteReuseStrategy, withComponentInputBinding, withHashLocation } from "@angular/router";
-import { provideHttpClient, withXsrfConfiguration, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { provideHttpClient, withXsrfConfiguration, HTTP_INTERCEPTORS, withInterceptorsFromDi } from "@angular/common/http";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { routes } from "./app.routes";
 import { HttpServiceImpl } from "@wm/http";
@@ -46,7 +46,7 @@ import {
     CustomWidgetRefProvider,
     DynamicComponentRefProvider,
     PartialRefProvider,
-    _WM_APP_PROJECT, 
+    _WM_APP_PROJECT,
 } from "@wm/core";
 import { ModalModule } from "ngx-bootstrap/modal";
 import { ToastNoAnimationModule } from "ngx-toastr";
@@ -61,6 +61,7 @@ import { ComponentRefProviderService } from "./services/component-ref-provider.s
 import { PrefabConfigProviderService } from "./services/prefab-config-provider.service";
 import { AppResourceManagerService } from "./services/app-resource-manager.service";
 import { CustomPipe, DialogServiceImpl, FilterPipe, ImagePipe, SanitizePipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe } from "@wm/components/base";
+import {PageDirective} from "@wm/components/page";
 
 
 const wmModules = [
@@ -116,13 +117,14 @@ export const appConfig: ApplicationConfig = {
         // Provide Angular core services
         provideRouter(routes, withHashLocation(), withComponentInputBinding()),
         provideHttpClient(
+            withInterceptorsFromDi(),
             withXsrfConfiguration({
                 cookieName: "wm_xsrf_token",
                 headerName: xsrfHeaderName
             })
         ),
         provideAnimations(),
-        // Provide application-specific services 
+        // Provide application-specific services
         {
             provide: APP_INITIALIZER,
             useFactory: InitializeApp,
@@ -183,5 +185,6 @@ export const appConfig: ApplicationConfig = {
         VariablesService,
         MetadataService,
         ...wmModules,
+        PageDirective
     ]
 };
