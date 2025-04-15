@@ -27,7 +27,6 @@ import {
 import { AppResourceManagerService } from './app-resource-manager.service';
 import { isString, isUndefined } from "lodash-es";
 import * as customWidgets from '@wavemaker/custom-widgets-m3';
-import { PageDirective } from '@wm/components/page';
 
 interface IPageMinJSON {
     markup: string;
@@ -184,8 +183,7 @@ const getDynamicComponent = (
             {
                 provide: UserDefinedExecutionContext,
                 useExisting: DynamicComponent
-            },
-            PageDirective,
+            }
         ]
     })(DynamicComponent)
     return component;
