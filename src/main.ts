@@ -6,7 +6,6 @@ import { WMAppProperties } from './app/wmProperties';
 import * as fontConfig from './font.config';
 import { appConfig } from './app/app.config';
 import { AppComponent } from '@wm/runtime/base';
-import { BootstrapWrapperComponent } from './app/bootstrap-wrapper.component';
 
 // Format Accept-Language header
 const formatAcceptHeader = (languages: string[]): string => {
@@ -51,10 +50,9 @@ if (environment.production) {
 
 document.addEventListener('DOMContentLoaded', () => {
   new Promise<Event | void>(resolve => {
-      resolve();
+    resolve();
   }).then(() => bootstrapApplication(AppComponent, appConfig))
     .then((appRef: ApplicationRef) => {
-      appRef.bootstrap(BootstrapWrapperComponent);
       window.addEventListener('unload', () => {
         appRef.components.map(c => c?.destroy());
       });
