@@ -36,8 +36,7 @@ import {
     TextContentDirective,
     transformFormData
 } from '@wm/components/base';
-import {DatasetAwareFormComponent} from '@wm/components/input';
-
+import {DatasetAwareFormComponent} from '@wm/components/input/dataset-aware-form';
 import {registerProps} from './search.props';
 import {DataProvider, IDataProvider, IDataProviderConfig} from './data-provider/data-provider';
 import {

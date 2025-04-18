@@ -7,7 +7,7 @@ import {ColorPickerDirective} from 'ngx-color-picker';
 
 import {addClass, removeClass} from '@wm/core';
 import {AUTOCLOSE_TYPE, IWidgetConfig, provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
-import {BaseFormCustomComponent} from '@wm/components/input';
+import {BaseFormCustomComponent} from '@wm/components/input/base-form-custom';
 import {registerProps} from './color-picker.props';
 
 

@@ -57,7 +57,7 @@ import {
     extractDataSourceName
 } from '@wm/components/base';
 import {PaginationComponent} from '@wm/components/data/pagination';
-import {ButtonComponent} from '@wm/components/input';
+import {ButtonComponent} from '@wm/components/input/button';
 
 import {registerProps} from './list.props';
 import {ListItemDirective} from './list-item.directive';

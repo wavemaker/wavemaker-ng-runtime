@@ -14,7 +14,7 @@ import { IWidgetConfig, provideAsDialogRef, provideAsWidgetRef, TextContentDirec
 import { BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 
 import { registerProps } from './alert-dialog.props';
-import { ButtonComponent } from "@wm/components/input";
+import { ButtonComponent } from "@wm/components/input/button";
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-alert-dialog';
 

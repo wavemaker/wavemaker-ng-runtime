@@ -5,7 +5,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import {generateGUId, noop} from '@wm/core';
 import { getOrderedDataset, provideAs, provideAsWidgetRef, styler, TextContentDirective } from '@wm/components/base';
-import { DatasetAwareFormComponent } from '@wm/components/input';
+import { DatasetAwareFormComponent } from '@wm/components/input/dataset-aware-form';
 
 import { registerProps } from './rating.props';
 import {find, isEmpty, isUndefined, slice, toString} from "lodash-es";

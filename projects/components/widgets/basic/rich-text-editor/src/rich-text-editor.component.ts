@@ -3,7 +3,7 @@ import {NG_VALUE_ACCESSOR} from '@angular/forms';
 
 import {setAttr, setCSS, setHtml} from '@wm/core';
 import {APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, SanitizePipe, styler} from '@wm/components/base';
-import {BaseFormCustomComponent} from '@wm/components/input';
+import {BaseFormCustomComponent} from '@wm/components/input/base-form-custom';
 
 import {registerProps} from './rich-text-editor.props';
 import {extend} from "lodash-es";

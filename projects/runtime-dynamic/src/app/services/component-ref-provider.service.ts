@@ -48,7 +48,7 @@ import { OAuthService } from '@wm/oAuth';
 import { SecurityService } from '@wm/security';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { PartialDirective } from '@wm/components/base';
-import { ProgressBarComponent } from '@wm/components/basic/progress';
+import { ProgressBarComponent } from '@wm/components/basic/progress/progress-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PrefabContainerDirective } from '@wm/components/prefab';
 

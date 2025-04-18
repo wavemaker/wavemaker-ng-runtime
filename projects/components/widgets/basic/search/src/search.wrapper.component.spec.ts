@@ -19,7 +19,7 @@ import { compileTestComponent, setInputValue, getElementByTagOnDocQuery, hasAttr
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import { Observable } from 'rxjs';
 import { DataProvider } from './data-provider/data-provider';
-import { InputTextComponent } from '@wm/components/input';
+import { InputTextComponent } from '@wm/components/input/text';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),

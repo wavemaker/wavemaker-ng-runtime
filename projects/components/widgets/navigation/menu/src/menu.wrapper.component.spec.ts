@@ -9,7 +9,7 @@ import { NavigationControlDirective } from './nav/navigation-control.directive';
 import { Router } from '@angular/router';
 import { AbstractI18nService, App, UserDefinedExecutionContext } from '@wm/core';
 import { SecurityService } from '@wm/security';
-import { ButtonComponent } from '@wm/components/input';
+import { ButtonComponent } from '@wm/components/input/button';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';

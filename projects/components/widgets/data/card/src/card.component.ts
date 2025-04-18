@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { TextContentDirective } from "@wm/components/base";
-import { PictureDirective } from '@wm/components/basic';
+import { PictureDirective } from '@wm/components/basic/picture';
 import { MenuComponent } from '@wm/components/navigation/menu';
 import {
     AfterViewInit,

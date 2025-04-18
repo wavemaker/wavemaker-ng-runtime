@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AnchorComponent } from '@wm/components/basic';
+import { AnchorComponent } from '@wm/components/basic/anchor';
 import {
     AfterViewInit,
     ChangeDetectorRef,

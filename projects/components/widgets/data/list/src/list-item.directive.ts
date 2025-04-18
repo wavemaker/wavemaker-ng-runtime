@@ -17,7 +17,7 @@ import {$watch, App} from '@wm/core';
 
 import {ListComponent} from './list.component';
 import {widgetIdGenerator} from "@wm/components/base";
-import {BaseFormComponent} from "@wm/components/input";
+import {BaseFormComponent} from "@wm/components/input/base-form";
 
 declare const $;
 

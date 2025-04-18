@@ -4,7 +4,7 @@ import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
 import {AbstractI18nService, AppDefaults, CURRENCY_INFO} from '@wm/core';
 import {IWidgetConfig, provideAs, provideAsWidgetRef, TextContentDirective, TrailingZeroDecimalPipe} from '@wm/components/base';
-import {NumberLocale} from '@wm/components/input';
+import { NumberLocale } from '@wm/components/input/text';
 
 import {registerProps} from './currency.props';
 

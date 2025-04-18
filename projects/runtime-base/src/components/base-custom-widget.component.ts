@@ -32,7 +32,8 @@ import { FragmentMonitor } from '../util/fragment-monitor';
 import { AppManagerService } from '../services/app.manager.service';
 import {commonPartialWidgets} from "./base-partial.component";
 import {capitalize, forEach} from "lodash-es";
-import {CheckboxsetComponent, RadiosetComponent} from "@wm/components/input";
+import {CheckboxsetComponent} from "@wm/components/input/checkboxset";
+import {RadiosetComponent} from "@wm/components/input/radioset";
 
 declare const _;
 

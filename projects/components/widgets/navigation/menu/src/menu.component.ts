@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ButtonComponent } from '@wm/components/input';
+import { ButtonComponent } from '@wm/components/input/button';
 import { MenuDropdownComponent } from './menu-dropdown/menu-dropdown.component';
 import {
     AfterViewInit,
@@ -38,7 +38,7 @@ import {NavComponent} from './nav/nav.component';
 
 import {registerProps} from './menu.props';
 import {clone, forEach, includes, isEmpty} from "lodash-es";
-import { AnchorComponent } from '@wm/components/basic';
+import { AnchorComponent } from '@wm/components/basic/anchor';
 
 export const KEYBOARD_MOVEMENTS = {
     MOVE_UP: 'UP-ARROW',

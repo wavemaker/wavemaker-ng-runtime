@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { SpinnerComponent } from '@wm/components/basic';
+import { SpinnerComponent } from '@wm/components/basic/spinner';
 import {
     AfterViewInit,
     OnDestroy,

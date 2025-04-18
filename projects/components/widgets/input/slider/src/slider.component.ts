@@ -3,7 +3,7 @@ import {Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
 import {IWidgetConfig, provideAs, provideAsWidgetRef, styler, TextContentDirective} from '@wm/components/base';
-import {BaseFormCustomComponent} from '@wm/components/input';
+import {BaseFormCustomComponent} from '@wm/components/input/base-form-custom';
 
 import {registerProps} from './slider.props';
 

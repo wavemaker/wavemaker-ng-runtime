@@ -21,7 +21,7 @@ import {
     toBoolean
 } from '@wm/core';
 import { ALLFIELDS, configureDnD, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAs, provideAsWidgetRef, styler, TextContentDirective } from '@wm/components/base';
-import { DatasetAwareFormComponent } from '@wm/components/input';
+import { DatasetAwareFormComponent } from '@wm/components/input/dataset-aware-form';
 import { SearchComponent } from '@wm/components/basic/search';
 
 import { registerProps } from './chips.props';

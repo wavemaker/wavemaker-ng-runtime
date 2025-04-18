@@ -14,8 +14,8 @@ import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 
 import { registerProps } from './iframe-dialog.props';
-import { IframeComponent } from '@wm/components/basic';
-import { ButtonComponent } from '@wm/components/input';
+import { IframeComponent } from '@wm/components/basic/iframe';
+import { ButtonComponent } from '@wm/components/input/button';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-iframe-dialog';
 const WIDGET_INFO = {widgetType: 'wm-iframedialog'};

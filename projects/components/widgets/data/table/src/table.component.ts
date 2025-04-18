@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { AnchorComponent } from '@wm/components/basic';
-import { ButtonComponent } from '@wm/components/input';
+import { AnchorComponent } from '@wm/components/basic/anchor';
+import { ButtonComponent } from '@wm/components/input/button';
 import { MenuComponent } from '@wm/components/navigation/menu';
 import {
     AfterContentInit,

@@ -15,7 +15,7 @@ import { mockApp } from 'projects/components/base/src/test/util/component-test-u
 import { configureDnD } from '@wm/components/base';
 import { isMobile } from '@wm/core';
 import { ListAnimator } from './list.animator';
-import { ButtonComponent } from '@wm/components/input';
+import { ButtonComponent } from '@wm/components/input/button';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),

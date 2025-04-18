@@ -17,26 +17,26 @@ const NGX_TOOL_TIP_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/tooltip', name:
 const NGX_TYPE_HEAD_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/typeahead', name: 'TypeaheadModule', as: 'ngxTypeaheadModule', forRoot: true }];
 
 // Progess Modules
-const PROGRESS_BAR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/progress', name: 'ProgressBarComponent' }];
-const PROGRESS_CIRCLE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/progress', name: 'ProgressCircleComponent' }];
+const PROGRESS_BAR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/progress/progress-bar', name: 'ProgressBarComponent' }];
+const PROGRESS_CIRCLE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/progress/progress-circle', name: 'ProgressCircleComponent' }];
 const PAGE_COMPONENT: ImportDef[] = [{ from: '@wm/components/page', name: 'PageDirective' }];
 const PAGINATION_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_PAGINATION_MODULE, { from: '@wm/components/data/pagination', name: 'PaginationComponent' }];
 
 // Basic Components
-const ANCHOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'AnchorComponent' }];
-const AUDIO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'AudioComponent' }];
-const HTML_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'HtmlDirective' }];
-const ICON_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'IconComponent' }];
-const IFRAME_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'IframeComponent' }];
-const LABEL_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'LabelDirective' }];
-const PICTURE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'PictureDirective' }];
+const ANCHOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/anchor', name: 'AnchorComponent' }];
+const AUDIO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/audio', name: 'AudioComponent' }];
+const HTML_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/html', name: 'HtmlDirective' }];
+const ICON_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/icon', name: 'IconComponent' }];
+const IFRAME_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/iframe', name: 'IframeComponent' }];
+const LABEL_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/label', name: 'LabelDirective' }];
+const PICTURE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/picture', name: 'PictureDirective' }];
 const SEARCH_COMPONENT: ImportDef[] = [
     ...NG_FORM_MODULE,
     ...NGX_TYPE_HEAD_MODULE,
     { from: '@wm/components/basic/search', name: 'ScrollableDirective' },
     { from: '@wm/components/basic/search', name: 'SearchComponent' }];
-const SPINNER_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'SpinnerComponent' }];
-const VIDEO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'VideoComponent' }];
+const SPINNER_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/spinner', name: 'SpinnerComponent' }];
+const VIDEO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/video', name: 'VideoComponent' }];
 
 // Container Components
 const PARTIAL_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/base', name: 'PartialDirective' }];
@@ -84,32 +84,32 @@ const COLOR_PICKER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_COLOR_PIC
 const CURRENCY_COMPONENT: ImportDef[] = [{ from: '@wm/components/input/currency', name: 'CurrencyComponent' }];
 const DATE_COMPONENT: ImportDef[] = [
     ...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_DROP_DOWN_MODULE,
-    { from: '@wm/components/input/epoch', name: 'DateComponent' }];
+    { from: '@wm/components/input/epoch/date', name: 'DateComponent' }];
 const DATE_TIME_COMPONENT: ImportDef[] = [
     ...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE,
-    { from: '@wm/components/input/epoch', name: 'DatetimeComponent' }];
+    { from: '@wm/components/input/epoch/date-time', name: 'DatetimeComponent' }];
 const TIME_COMPONENT: ImportDef[] = [
     ...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_TIME_PICKER, ...NGX_DROP_DOWN_MODULE,
-    { from: '@wm/components/input/epoch', name: 'TimeComponent' }];
+    { from: '@wm/components/input/epoch/time', name: 'TimeComponent' }];
 const FILE_UPLOAD_COMPONENT: ImportDef[] = [{ from: '@wm/components/input/file-upload', name: 'FileUploadComponent' }];
 const RATING_COMPONENT: ImportDef[] = [{ from: '@wm/components/input/rating', name: 'RatingComponent' }];
 const SLIDER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/slider', name: 'SliderComponent' }];
-const BUTTON_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'ButtonComponent' }];
-const BUTTON_GROUP_DIRECTIVE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'ButtonGroupDirective' }];
+const BUTTON_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/button', name: 'ButtonComponent' }];
+const BUTTON_GROUP_DIRECTIVE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/button-group', name: 'ButtonGroupDirective' }];
 // const CAPTION_POSITION_DIRECTIVE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'CaptionPositionDirective' }];
-const CHECKBOX_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'CheckboxComponent' }];
-const CHECKBOXSET_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'CheckboxsetComponent' }];
+const CHECKBOX_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/checkbox', name: 'CheckboxComponent' }];
+const CHECKBOXSET_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/checkboxset', name: 'CheckboxsetComponent' }];
 // const COMPOSITE_DIRECTIVE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'CompositeDirective' }];
-const NUMBER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'NumberComponent' }];
-const RADIOSET_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'RadiosetComponent' }];
-const SELECT_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'SelectComponent' }];
-const SWITCH_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'SwitchComponent' }];
-const INPUT_CALENDER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputCalendarComponent' }];
-const INPUT_COLOR_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputColorComponent' }];
-const INPUT_EMAIL_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputEmailComponent' }];
-const INPUT_NUMBER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputNumberComponent' }];
-const INPUT_TEXT_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputTextComponent' }];
-const TEXTAREA_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'TextareaComponent' }];
+const NUMBER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/number', name: 'NumberComponent' }];
+const RADIOSET_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/radioset', name: 'RadiosetComponent' }];
+const SELECT_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/select', name: 'SelectComponent' }];
+const SWITCH_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/switch', name: 'SwitchComponent' }];
+const INPUT_CALENDER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/text', name: 'InputCalendarComponent' }];
+const INPUT_COLOR_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/text', name: 'InputColorComponent' }];
+const INPUT_EMAIL_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/text', name: 'InputEmailComponent' }];
+const INPUT_NUMBER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/text', name: 'InputNumberComponent' }];
+const INPUT_TEXT_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/text', name: 'InputTextComponent' }];
+const TEXTAREA_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input/textarea', name: 'TextareaComponent' }];
 
 // Data Components
 const CARD_ACTIONS_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/card', name: 'CardActionsDirective' }];
