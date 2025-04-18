@@ -21,7 +21,8 @@ import {DateTimePickerComponent} from './date-time//date-time-picker.component';
 import {filter, forEach, get, includes, isNaN as _isNaN, isString, isUndefined, parseInt, split} from "lodash-es";
 
 declare const $;
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 
 const CURRENT_DATE = 'CURRENT_DATE';
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

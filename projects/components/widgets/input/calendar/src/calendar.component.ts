@@ -29,7 +29,8 @@ import {registerProps} from './calendar.props';
 import {capitalize, clone, each, extend, get, includes, isDate, isEmpty, isObject, mapKeys} from "lodash-es";
 
 declare const $;
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 import {Calendar} from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -539,6 +540,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             });
             this.changesStack.length = 0;
         }
+        $(".fc-prev-button").attr("aria-label", "prev");
+        $(".fc-next-button").attr("aria-label", "next");
+        $(".fc-today-button").attr("aria-label", "today");
 
         //WMS-22412 : change calender's view based on the configuration set from studio
         setTimeout(() => {

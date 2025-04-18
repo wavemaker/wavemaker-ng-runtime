@@ -18,7 +18,8 @@ import {
 } from "lodash-es";
 
 declare const $;
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 
 const emptyMatchModes = ['null', 'empty', 'nullorempty', 'isnotnull', 'isnotempty'];
 

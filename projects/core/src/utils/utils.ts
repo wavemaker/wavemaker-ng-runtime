@@ -23,7 +23,8 @@ import {
 
 import X2JS from 'x2js';
 declare const $;
-import moment from 'moment';
+import * as momentLib from 'moment-timezone/moment-timezone';
+const moment = momentLib.default || window['moment'];
 declare const document;
 declare const resolveLocalFileSystemURL;
 declare const WM_CUSTOM_FORMATTERS;

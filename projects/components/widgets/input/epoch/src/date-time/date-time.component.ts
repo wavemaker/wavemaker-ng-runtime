@@ -40,7 +40,8 @@ import { debounce, forEach, includes, isNaN, parseInt } from "lodash-es";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 
 declare const $;
-import moment from 'moment';
+import * as momentLib  from 'moment';
+const moment = momentLib.default || window['moment'];
 
 const DEFAULT_CLS = 'app-datetime input-group';
 const WIDGET_CONFIG = { widgetType: 'wm-datetime', hostClass: DEFAULT_CLS };

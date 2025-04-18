@@ -19,7 +19,8 @@ import {
 import { CONSTANTS } from '@wm/variables';
 import {find, forEach, get, includes, intersection, isObject, map, toLower} from "lodash-es";
 
-import moment from 'moment';
+import * as momentLib from 'moment-timezone/moment-timezone';
+const moment = momentLib.default || window['moment'];
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
 const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',
@@ -172,6 +173,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     protected loadMomentTimeZoneBundle(locale, compInstance?) {
         return new Promise<void>(resolve => {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
+            window['moment'] = moment; //moment-timezone-with-data.js need moment as require('moment') to be available in window
             const path = _cdnUrl + `locales/moment-timezone/moment-timezone-with-data.js`;
             loadScripts([path], true).then(()=>{
                 /**
