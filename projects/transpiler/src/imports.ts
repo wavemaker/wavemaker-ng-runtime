@@ -23,20 +23,20 @@ const PAGE_COMPONENT: ImportDef[] = [{ from: '@wm/components/page', name: 'PageD
 const PAGINATION_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_PAGINATION_MODULE, { from: '@wm/components/data/pagination', name: 'PaginationComponent' }];
 
 // Basic Components
-const ANCHOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'AnchorComponent' }];
-const AUDIO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'AudioComponent' }];
-const HTML_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'HtmlDirective' }];
-const ICON_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'IconComponent' }];
-const IFRAME_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'IframeComponent' }];
-const LABEL_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'LabelDirective' }];
-const PICTURE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'PictureDirective' }];
+const ANCHOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/anchor', name: 'AnchorComponent' }];
+const AUDIO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/audio', name: 'AudioComponent' }];
+const HTML_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/html', name: 'HtmlDirective' }];
+const ICON_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/icon', name: 'IconComponent' }];
+const IFRAME_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/iframe', name: 'IframeComponent' }];
+const LABEL_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/label', name: 'LabelDirective' }];
+const PICTURE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/picture', name: 'PictureDirective' }];
 const SEARCH_COMPONENT: ImportDef[] = [
     ...NG_FORM_MODULE,
     ...NGX_TYPE_HEAD_MODULE,
     { from: '@wm/components/basic/search', name: 'ScrollableDirective' },
     { from: '@wm/components/basic/search', name: 'SearchComponent' }];
-const SPINNER_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'SpinnerComponent' }];
-const VIDEO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic', name: 'VideoComponent' }];
+const SPINNER_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/spinner', name: 'SpinnerComponent' }];
+const VIDEO_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/video', name: 'VideoComponent' }];
 
 // Container Components
 const PARTIAL_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/base', name: 'PartialDirective' }];

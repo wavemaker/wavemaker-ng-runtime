@@ -73,17 +73,17 @@ import { HeaderComponent } from "@wm/components/page/header";
 import { LeftPanelDirective } from "@wm/components/page/left-panel";
 import { RightPanelDirective } from "@wm/components/page/right-panel";
 import { TopNavDirective } from "@wm/components/page/top-nav";
-import {
-    AnchorComponent,
-    AudioComponent,
-    HtmlDirective,
-    IconComponent,
-    IframeComponent,
-    LabelDirective,
-    PictureDirective,
-    SpinnerComponent,
-    VideoComponent
-} from "@wm/components/basic";
+
+import { AnchorComponent } from '@wm/components/basic/anchor';
+import { AudioComponent } from '@wm/components/basic/audio';
+import { HtmlDirective } from '@wm/components/basic/html';
+import { IconComponent } from '@wm/components/basic/icon';
+import { IframeComponent } from '@wm/components/basic/iframe';
+import { LabelDirective } from '@wm/components/basic/label';
+import { PictureDirective } from '@wm/components/basic/picture';
+import { SpinnerComponent } from '@wm/components/basic/spinner';
+import { VideoComponent } from '@wm/components/basic/video';
+
 import { ProgressBarComponent, ProgressCircleComponent } from "@wm/components/basic/progress";
 import { RichTextEditorComponent } from "@wm/components/basic/rich-text-editor";
 import { SearchComponent, ScrollableDirective } from "@wm/components/basic/search";

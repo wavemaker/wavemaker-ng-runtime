@@ -38,7 +38,7 @@ import {NavComponent} from './nav/nav.component';
 
 import {registerProps} from './menu.props';
 import {clone, forEach, includes, isEmpty} from "lodash-es";
-import { AnchorComponent } from '@wm/components/basic';
+import { AnchorComponent } from '@wm/components/basic/anchor';
 
 export const KEYBOARD_MOVEMENTS = {
     MOVE_UP: 'UP-ARROW',

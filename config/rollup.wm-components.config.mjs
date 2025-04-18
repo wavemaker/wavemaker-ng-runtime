@@ -93,12 +93,92 @@ export default [
         }
     },
     {
-        input: './libraries/components/basic/default/fesm2022/index.mjs',
+        input: './libraries/components/basic/anchor/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
-            file: './libraries/components/basic/default/bundles/index.umd.js',
+            file: './libraries/components/basic/anchor/bundles/index.umd.js',
             format: 'umd',
-            name: 'wm.components.basic',
+            name: 'wm.components.basic.anchor',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/audio/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/audio/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.audio',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/html/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/html/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.html',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/icon/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/icon/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.icon',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/iframe/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/iframe/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.iframe',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/label/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/label/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.label',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/picture/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/picture/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.picture',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/spinner/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/spinner/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.spinner',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/video/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/video/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.video',
             globals: rollupGlobals
         }
     },

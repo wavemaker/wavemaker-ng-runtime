@@ -23,7 +23,7 @@ import { triggerTimerClickonArrowsByIndex, getTimePickerElement, MockAbstractI18
 import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
 import { DateComponent } from "../../../input/epoch/src/date/date.component";
 import { TimeComponent } from "../../../input/epoch/src/time/time.component";
-import { LabelDirective } from '@wm/components/basic';
+import { LabelDirective } from '@wm/components/basic/label';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),

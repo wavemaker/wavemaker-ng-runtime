@@ -156,7 +156,15 @@ bundleWeb() {
         ./libraries/components/base/bundles/index.umd.js \
         ./libraries/build-task/bundles/index.umd.js \
         ./libraries/components/input/default/bundles/index.umd.js \
-        ./libraries/components/basic/default/bundles/index.umd.js \
+        ./libraries/components/basic/anchor/bundles/index.umd.js \
+        ./libraries/components/basic/audio/bundles/index.umd.js \
+        ./libraries/components/basic/html/bundles/index.umd.js \
+        ./libraries/components/basic/icon/bundles/index.umd.js \
+        ./libraries/components/basic/iframe/bundles/index.umd.js \
+        ./libraries/components/basic/label/bundles/index.umd.js \
+        ./libraries/components/basic/picture/bundles/index.umd.js \
+        ./libraries/components/basic/spinner/bundles/index.umd.js \
+        ./libraries/components/basic/video/bundles/index.umd.js \
         ./libraries/components/basic/progress/bundles/index.umd.js \
         ./libraries/components/basic/rich-text-editor/bundles/index.umd.js \
         ./libraries/components/basic/search/bundles/index.umd.js \
@@ -232,7 +240,15 @@ buildApp() {
     ngPackagrBuild components-base projects/components/base '@wm/components/base'
 
     ngPackagrBuild components-input projects/components/widgets/input/default '@wm/components/input'
-    ngPackagrBuild components-basic projects/components/widgets/basic/default '@wm/components/basic'
+    ngPackagrBuild components-basic projects/components/widgets/basic/anchor '@wm/components/basic/anchor'
+    ngPackagrBuild components-basic projects/components/widgets/basic/audio '@wm/components/basic/audio'
+    ngPackagrBuild components-basic projects/components/widgets/basic/html '@wm/components/basic/html'
+    ngPackagrBuild components-basic projects/components/widgets/basic/icon '@wm/components/basic/icon'
+    ngPackagrBuild components-basic projects/components/widgets/basic/iframe '@wm/components/basic/iframe'
+    ngPackagrBuild components-basic projects/components/widgets/basic/label '@wm/components/basic/label'
+    ngPackagrBuild components-basic projects/components/widgets/basic/picture '@wm/components/basic/picture'
+    ngPackagrBuild components-basic projects/components/widgets/basic/spinner '@wm/components/basic/spinner'
+    ngPackagrBuild components-basic projects/components/widgets/basic/video '@wm/components/basic/video'
     ngPackagrBuild components-basic-progress projects/components/widgets/basic/progress '@wm/components/basic/progress'
     ngPackagrBuild components-basic-richtexteditor projects/components/widgets/basic/rich-text-editor '@wm/components/basic/rich-text-editor'
     ngPackagrBuild components-basic-search projects/components/widgets/basic/search '@wm/components/basic/search'

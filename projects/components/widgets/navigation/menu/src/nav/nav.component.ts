@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AnchorComponent } from '@wm/components/basic';
+import { AnchorComponent } from '@wm/components/basic/anchor';
 import { MenuComponent } from '../menu.component';
 import { NavItemDirective } from './nav-item/nav-item.directive';
 import { Attribute, ChangeDetectorRef, Component, forwardRef, Inject, Injector, OnInit, Optional } from '@angular/core';
