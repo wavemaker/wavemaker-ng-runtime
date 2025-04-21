@@ -329,7 +329,7 @@ function startoAuthFlow(url, providerId, onSuccess, removeProviderConfigCallBack
  * @returns url string
  */
 function constructURLForImplicitOrPKCE(providerId, providerInfo, requestSourceType, code_challenge, customUriScheme?, deployedURL?) {
-    redirectUri = window.location.href.split('/#/')[0] + '/oAuthCallback.html';
+    redirectUri = window.location.href + '/oAuthCallback.html';
     const clientId = providerInfo.clientId;
     const scopes = providerInfo.scopes.map(function(scope) { return scope.name }).join(' ');
     let state;

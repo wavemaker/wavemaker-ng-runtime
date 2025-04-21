@@ -83,18 +83,18 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent {
 
     }
 
-    onItemClick ($event: Event, $item: any) {
+    onItemClick($event: Event, $item: any) {
         $event.preventDefault();
-        const locals = {$item: $item.value, $event};
+        const locals = { $item: $item.value, $event };
         const canNavigate = !(this.invokeEventCallback('beforenavigate', locals) === false);
         const linkTarget = $item.target;
         let itemLink = $item.link;
 
         if (itemLink && canNavigate) {
-            if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
+            if (itemLink.startsWith('/') && (!linkTarget || linkTarget === '_self')) {
                 const queryParams = getUrlParams(itemLink);
                 itemLink = getRouteNameFromLink(itemLink);
-                this.route.navigate([itemLink], { queryParams});
+                this.route.navigate([itemLink], { queryParams });
             } else {
                 openLink(itemLink, linkTarget);
             }

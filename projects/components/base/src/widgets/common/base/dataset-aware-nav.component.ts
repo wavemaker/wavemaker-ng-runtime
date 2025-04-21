@@ -11,20 +11,19 @@ import { getOrderedDataset } from '../../../utils/form-utils';
 import { StylableComponent } from './stylable.component';
 import {debounce, first, get, isUndefined, omitBy, startsWith} from "lodash-es";
 
-const getValidLink = (link) => {
-    const routRegex = /^(\/|#\/|#)(?!\W).*/;
-    if (link) {
-        if (routRegex.test(link)) {
-            link = first(link.match(/[\w]+.*/g)) || '';
-            return `#/${link}`;
-        }
-        if (startsWith(link, 'www.')) {
-            return `//${link}`;
-        }
-        return link;
-    }
-};
+const getValidLink = (link: string) => {
+    if (!link) return;
+    const routeRegex = /^\/(?!\W).*/;
 
+    if (routeRegex.test(link)) {
+        link = first(link.match(/[\w]+.*/g)) || '';
+        return `/${link}`;
+    }
+    if (startsWith(link, 'www.')) {
+        return `//${link}`;
+    }
+    return link;
+};
 export class DatasetAwareNavComponent extends StylableComponent {
 
     public nodes: Array<NavNode> = [];

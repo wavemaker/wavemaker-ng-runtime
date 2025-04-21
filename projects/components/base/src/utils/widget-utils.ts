@@ -146,8 +146,13 @@ export const isActiveNavItem = (link, routeName) => {
     }
     routeName = routeName.indexOf('?') === -1 ? routeName : routeName.substring(0, routeName.indexOf('?'));
     link = link.indexOf('?') === -1 ? link : link.substring(0, link.indexOf('?'));
-    const routeRegex = new RegExp('^(#\/|#)' + routeName + '$');
-    return routeRegex.test(link);
+
+    // Remove trailing slashes for consistency
+    routeName = routeName.replace(/\/+$/, '');
+    link = link.replace(/\/+$/, '');
+
+    // Check for exact path match (no hash)
+    return link === routeName;
 };
 
 /**

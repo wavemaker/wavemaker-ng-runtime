@@ -1099,8 +1099,8 @@ export const getUrlParams = (link) => {
     return params;
 };
 
-export const getRouteNameFromLink = (link) => {
-    link = link.replace('#/', '/');
+export const getRouteNameFromLink = (link: string) => {
+    if (!link) return '';
     const index = link.indexOf('?');
     if (index !== -1) {
         link = link.substring(0, index);
@@ -1464,7 +1464,7 @@ export const triggerItemAction = (scope, item) => {
         scope.itemActionFn(scope.userDefinedExecutionContext, Object.create(item));
     }
     if (itemLink) {
-        if (itemLink.startsWith('#/') && (!linkTarget || linkTarget === '_self')) {
+        if ((!linkTarget || linkTarget === '_self')) {
             const queryParams = getUrlParams(itemLink);
             itemLink = getRouteNameFromLink(itemLink);
             const router = get(scope, 'route') || get(scope, 'menuRef.route');
@@ -1472,7 +1472,7 @@ export const triggerItemAction = (scope, item) => {
         } else {
             openLink(itemLink, linkTarget);
         }
-    }
+    }    
 };
 
 /**
