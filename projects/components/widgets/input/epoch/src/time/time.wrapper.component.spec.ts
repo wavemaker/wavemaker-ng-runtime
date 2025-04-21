@@ -32,7 +32,7 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 import localeDE from '@angular/common/locales/de';
 import localeRO from '@angular/common/locales/ro';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
-import * as momentLib from 'moment';
+import * as momentLib  from 'moment';
 const moment = momentLib.default || window['moment'];
 import { By } from '@angular/platform-browser';
 

@@ -79,6 +79,7 @@ import {
     set,
     some, split, startsWith, toNumber, values
 } from "lodash-es";
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 declare const $;
 
@@ -116,8 +117,8 @@ const isInputBodyWrapper = target => {
 };
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, AnchorComponent, PaginationComponent, ButtonComponent, MenuComponent],
+      standalone: true,
+      imports: [CommonModule, AnchorComponent, PaginationComponent, ButtonComponent, BsDropdownModule, MenuComponent],
     selector: '[wmTable]',
     templateUrl: './table.component.html',
     providers: [

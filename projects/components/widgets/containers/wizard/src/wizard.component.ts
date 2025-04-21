@@ -382,12 +382,10 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     }
 
     extendNextFn(currentStep, currentStepIndex){
-        let nextStep: WizardStepComponent;
-        nextStep = this.getNextValidStepFormIndex(currentStepIndex + 1);
-        nextStep.isInitialized = true;
-
+        const nextStep: WizardStepComponent = this.getNextValidStepFormIndex(currentStepIndex + 1);
         // If there are any steps which has show then only change state of current step else remain same
         if (nextStep) {
+            nextStep.isInitialized = true;
             currentStep.isDone = true;
             currentStep.done = true;
             nextStep.active = true;
@@ -554,7 +552,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         this.wizContext.disablePrevious = () => !this.enablePrev;
         this.wizContext.disableDone = () => !this.enableDone;
         this.steps.changes.subscribe( slides => {
-            if (this.steps.length && this.type === 'dynamic' && this._isFirstLoad) {
+            if (this.steps.length > 1 && this.type === 'dynamic' && this._isFirstLoad) {
                 this.setDefaultStep(this.getStepRefByIndex(this.defaultstepindex));
                 this._isFirstLoad = false;
             }

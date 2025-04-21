@@ -64,7 +64,8 @@ export class BaseFieldValidations {
     // this method returns the collection of supported default validators
     private getDefaultValidators() {
         const _validator = [];
-        if (this.instance.required && this.instance.show !== false) {
+        if(!this.instance.show) return _validator;
+        if (this.instance.required) {
             // For checkbox/toggle widget, required validation should consider true value only
             if (this.widgettype === FormWidgetType.CHECKBOX || this.widgettype === FormWidgetType.TOGGLE) {
                 _validator.push(Validators.requiredTrue);
@@ -186,7 +187,7 @@ export class BaseFieldValidations {
         } else {
             if (this.widgettype === 'custom-widget') {
                 this.instance.formWidget.baseWidget[key] = value;
-            } 
+            }
             this.instance.widget[key] = value;
             this.instance[key] = value;
         }
