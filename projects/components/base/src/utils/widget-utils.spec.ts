@@ -356,56 +356,58 @@ describe('Utility Functions', () => {
         });
 
         it('should return true for matching routes', () => {
-            expect(isActiveNavItem('#/home', 'home')).toBe(true);
-            expect(isActiveNavItem('#home', 'home')).toBe(true);
+            expect(isActiveNavItem('/home', '/home')).toBe(true);
+            expect(isActiveNavItem('home', 'home')).toBe(true);
         });
-
+        
         it('should ignore query parameters', () => {
-            expect(isActiveNavItem('#/home?param=value', 'home')).toBe(true);
-            expect(isActiveNavItem('#/home', 'home?param=value')).toBe(true);
+            expect(isActiveNavItem('/home?param=value', '/home')).toBe(true);
+            expect(isActiveNavItem('/home', '/home?param=value')).toBe(true);
+            expect(isActiveNavItem('home?param=value', 'home')).toBe(true);
         });
+        
 
         it('should return false for non-matching routes', () => {
-            expect(isActiveNavItem('#/home', 'about')).toBe(false);
-            expect(isActiveNavItem('#/home/sub', 'home')).toBe(false);
+            expect(isActiveNavItem('/home', 'about')).toBe(false);
+            expect(isActiveNavItem('/home/sub', 'home')).toBe(false);
         });
     });
 
     describe('hasLinkToCurrentPage', () => {
         const mockNodes: Array<NavNode> = [
             {
-                link: '#/home',
+                link: '/home',
                 label: ""
             },
             {
-                link: '#/about',
+                link: '/about',
                 children: [
                     {
-                        link: '#/about/team',
+                        link: '/about/team',
                         label: ""
                     },
                     {
-                        link: '#/about/history',
+                        link: '/about/history',
                         label: ""
                     }
                 ],
                 label: ""
             },
             {
-                link: '#/contact',
+                link: '/contact',
                 label: ""
             }
         ];
 
         it('should return true if any node matches the route', () => {
-            expect(hasLinkToCurrentPage(mockNodes, 'home')).toBe(true);
-            expect(hasLinkToCurrentPage(mockNodes, 'about')).toBe(true);
-            expect(hasLinkToCurrentPage(mockNodes, 'contact')).toBe(true);
+            expect(hasLinkToCurrentPage(mockNodes, '/home')).toBe(true);
+            expect(hasLinkToCurrentPage(mockNodes, '/about')).toBe(true);
+            expect(hasLinkToCurrentPage(mockNodes, '/contact')).toBe(true);
         });
-
+    
         it('should return true if any child node matches the route', () => {
-            expect(hasLinkToCurrentPage(mockNodes, 'about/team')).toBe(true);
-            expect(hasLinkToCurrentPage(mockNodes, 'about/history')).toBe(true);
+            expect(hasLinkToCurrentPage(mockNodes, '/about/team')).toBe(true);
+            expect(hasLinkToCurrentPage(mockNodes, '/about/history')).toBe(true);
         });
 
         it('should return false if no node matches the route', () => {
