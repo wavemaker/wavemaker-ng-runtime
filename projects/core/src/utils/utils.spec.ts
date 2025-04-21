@@ -1889,7 +1889,7 @@ describe('getUrlParams', () => {
 
 describe('getRouteNameFromLink', () => {
     it('should return the route without hash and parameters', () => {
-        const link = '#/route/to/page?param1=value1';
+        const link = '/route/to/page?param1=value1';
         expect(getRouteNameFromLink(link)).toBe('/route/to/page');
     });
 
@@ -1899,12 +1899,12 @@ describe('getRouteNameFromLink', () => {
     });
 
     it('should return the full path if there are no parameters', () => {
-        const link = '#/route/to/page';
+        const link = '/route/to/page';
         expect(getRouteNameFromLink(link)).toBe('/route/to/page');
     });
 
     it('should handle root path', () => {
-        const link = '#/?param1=value1';
+        const link = '/?param1=value1';
         expect(getRouteNameFromLink(link)).toBe('/');
     });
 
@@ -1914,7 +1914,7 @@ describe('getRouteNameFromLink', () => {
     });
 
     it('should handle links with multiple question marks', () => {
-        const link = '#/route/to/page?param1=value1?param2=value2';
+        const link = '/route/to/page?param1=value1?param2=value2';
         expect(getRouteNameFromLink(link)).toBe('/route/to/page');
     });
 });
@@ -2158,8 +2158,8 @@ describe('triggerItemAction', () => {
         );
     });
 
-    test('should navigate using router when link starts with "#/" and target is "_self"', () => {
-        mockItem.link = '#/some/route?param1=value1';
+    test('should navigate using router when link starts with "/" and target is "_self"', () => {
+        mockItem.link = '/some/route?param1=value1';
         mockItem.target = '_self';
 
         triggerItemAction(mockScope, mockItem);
@@ -2170,7 +2170,7 @@ describe('triggerItemAction', () => {
         );
     });
     test('should use menuRef.route if scope.route is not available', () => {
-        mockItem.link = '#/some/route';
+        mockItem.link = '/some/route';
         mockItem.target = '_self';
         mockScope.route = undefined;
         mockScope.menuRef = {
