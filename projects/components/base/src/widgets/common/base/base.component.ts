@@ -508,7 +508,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         );
     }
 
-    watchEvt($event, fn, args) {
+    watchEvt($event, fn, args?: Array<any>) {
         fn.apply(null, [$event, this.widget]);
      }
 
@@ -864,20 +864,22 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         const locals = this.context;
         locals.widget = this.widget;
 
-        const eventCallback = ($event) => {
-            const extraLocals = {$event};
-            const evtName = $event.type;
-            if (evtName == 'click' && this['wmclick']) {
-                this['wmclick'].emit(Object.assign({widget: this.widget}, extraLocals));
-            }
-            if (evtName == 'focus' && this['wmfocus']) {
-                this['wmfocus'].emit(Object.assign({widget: this.widget}, extraLocals));
-            }
-        };
-        const events = ['focus', 'blur'];
-        events.forEach((evtType: string) => {
-            this.registerEventHandlers(evtType, eventCallback, locals);
-        });
+        // TODO: implement the callback handlers on the widget.
+
+        // const eventCallback = ($event) => {
+        //     const extraLocals = {$event};
+        //     const evtName = $event.type;
+        //     if (evtName == 'click' && this['wmclick']) {
+        //         this['wmclick'].emit(Object.assign({widget: this.widget}, extraLocals));
+        //     }
+        //     if (evtName == 'focus' && this['wmfocus']) {
+        //         this['wmfocus'].emit(Object.assign({widget: this.widget}, extraLocals));
+        //     }
+        // };
+        // const events = ['focus', 'blur'];
+        // events.forEach((evtType: string) => {
+        //     this.registerEventHandlers(evtType, eventCallback, locals);
+        // });
 
 
 
