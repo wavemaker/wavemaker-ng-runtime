@@ -72,7 +72,15 @@ const processBinding = (attr, expr) => [`${attr.name}.bind`, quoteAttr(expr)];
 
 const processEvent = attr => {
     const evtName = getEventName(attr.name);
-    return [`${evtName}.event`, attr.value];
+    const input = attr.value;
+
+    // Add the supported events here
+    if (evtName === 'click' || evtName == 'focus' || evtName === 'blur') {
+        return [`(${evtName})`, "watchEvt($event," + "'" + input + "'" + ")"];
+    }
+    // when some internal wavemaker code logic has to execute when event is triggered.
+    // Then use this way of adding event emitters
+    return [`(wm${evtName})`, attr.value];
 };
 
 /**

@@ -35,7 +35,7 @@ import {VariablesService} from '@wm/variables';
 import {AppManagerService} from '../services/app.manager.service';
 import {FragmentMonitor} from '../util/fragment-monitor';
 import {CACHE_PAGE} from '../util/wm-route-reuse-strategy';
-import {each, extend} from "lodash-es";
+import {each, extend, get, isEmpty} from "lodash-es";
 
 declare const $;
 declare const html2canvas;
@@ -440,6 +440,49 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         if(BasePageComponent.lastPageSnapShot) {
             BasePageComponent.lastPageSnapShot.remove();
             BasePageComponent.lastPageSnapShot = null;
+        }
+    }
+
+    watchEvt($event, callbacksString: string) {
+        const callbacks = callbacksString.split(';');
+        callbacks.forEach(callback => {
+            const trimmedCallback = callback.trim();
+            if (trimmedCallback) {
+                this.executeCallback(trimmedCallback, event);
+            }
+        });
+    }
+
+    executeCallback(callback: string, event: Event) {
+        const functionMatch = callback.match(/(\w+)\(([^)]*)\)/);
+        if (functionMatch) {
+            const functionName = functionMatch[1];
+            const paramsString = functionMatch[2];
+            let params;
+            if (isEmpty(paramsString)) {
+                params = paramsString.split(',').map(p => p.trim());
+            }
+            const target = event.currentTarget && (event.currentTarget as any).widget;
+
+            if (target && this[functionName]) {
+                target.watchEvt(event, this[functionName], ...(params !== undefined ? params : []));
+            } else {
+                let callbackPrefix = callback.split(functionName)[0];
+                if (callbackPrefix) {
+                    if (callbackPrefix.endsWith('.')) {
+                        callbackPrefix = callbackPrefix.slice(0, -1);
+                        let x = get(this, callbackPrefix);
+                        params.length ? x[functionName](params) : x[functionName]();
+
+                    } else {
+                        this[callbackPrefix].call(params);
+                    }
+                }
+
+            }
+            console.warn(`Callback function "${functionName}" not found.`);
+        } else {
+            console.warn(`Invalid callback format: "${callback}"`);
         }
     }
 }

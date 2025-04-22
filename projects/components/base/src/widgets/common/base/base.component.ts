@@ -500,13 +500,17 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             e => {
                 locals.$event = e;
                 if (meta === 'delayed') {
-                   setTimeout(() => eventCallback(), 150);
+                   setTimeout(() => eventCallback(e), 150);
                 } else {
-                    return eventCallback();
+                    return eventCallback(e);
                 }
             }
         );
     }
+
+    watchEvt($event, fn, args?: Array<any>) {
+        fn.apply(null, [$event, this.widget]);
+     }
 
     /**
      * parse the event expression and save reference to the function inside eventHandlers map
@@ -603,14 +607,23 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * @param extraLocals
      */
     public invokeEventCallback(eventName: string, extraLocals?: any) {
+        console.log('**************into invokeEventCallback.........')
         const callbackInfo = this.eventHandlers.get(eventName);
         if (callbackInfo) {
+            console.log('-------has Callback.........', eventName);
             const fn = callbackInfo.callback;
             const locals = callbackInfo.locals || {};
 
             if (fn) {
                 return fn(Object.assign(locals, extraLocals));
             }
+        } else {
+            if (eventName && this['wm' + eventName]) {
+                this['wm' + eventName].emit(Object.assign({widget: this.widget}, extraLocals));
+            }
+            // if (eventName === 'change' && this['wmchange']) {
+            //     this['wmchange'].emit(Object.assign({widget: this.widget}, extraLocals));
+            // }
         }
     }
     /**
@@ -829,16 +842,79 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         }
     }
 
+    registerEventHandlers(eventName: string, eventCallback: any, locals: any) {
+        const wmEventName = `wm${eventName}`
+        if (this[wmEventName] && this[wmEventName]['observers']?.length) {
+            this.widget.eventHandlers.set(this.getMappedEventName('click'), {callback: eventCallback, locals});
+            this.handleEvent(this.nativeElement, this.getMappedEventName('click'), eventCallback, locals);
+            // prepend eventName with on and convert it to camelcase.
+            // eg, "click" ---> onClick
+            const onEventName = camelCase(`on-${eventName}`);
+            // save the eventCallback in widgetScope.
+
+            this.widget[onEventName] = eventCallback;
+        }
+    }
+
     /**
      * Register the events
      */
     ngAfterViewInit() {
-        if (this.toBeSetupEventsQueue.length) {
-            for (const fn of this.toBeSetupEventsQueue) {
-                fn();
-            }
-        }
-        this.toBeSetupEventsQueue.length = 0;
+
+        const locals = this.context;
+        locals.widget = this.widget;
+
+        // TODO: implement the callback handlers on the widget.
+
+        // const eventCallback = ($event) => {
+        //     const extraLocals = {$event};
+        //     const evtName = $event.type;
+        //     if (evtName == 'click' && this['wmclick']) {
+        //         this['wmclick'].emit(Object.assign({widget: this.widget}, extraLocals));
+        //     }
+        //     if (evtName == 'focus' && this['wmfocus']) {
+        //         this['wmfocus'].emit(Object.assign({widget: this.widget}, extraLocals));
+        //     }
+        // };
+        // const events = ['focus', 'blur'];
+        // events.forEach((evtType: string) => {
+        //     this.registerEventHandlers(evtType, eventCallback, locals);
+        // });
+
+
+
+        // if (this['wmclick'] && this['wmclick']['observers']?.length) {
+        //     this.widget.eventHandlers.set(this.getMappedEventName('click'), {callback: eventCallback, locals});
+        //     this.handleEvent(this.nativeElement, this.getMappedEventName('click'), eventCallback, locals);
+        //     // prepend eventName with on and convert it to camelcase.
+        //     // eg, "click" ---> onClick
+        //     const onEventName = camelCase(`on-click`);
+        //     // save the eventCallback in widgetScope.
+        //
+        //     this.widget[onEventName] = eventCallback;
+        // }
+        //
+        // if (this['wmfocus'] && this['wmfocus']['observers']?.length) {
+        //     this.widget.eventHandlers.set(this.getMappedEventName('focus'), {callback: eventCallback, locals});
+        //     this.handleEvent(this.nativeElement, this.getMappedEventName('focus'), eventCallback, locals);
+        //     // prepend eventName with on and convert it to camelcase.
+        //     // eg, "click" ---> onClick
+        //     const onEventName = camelCase(`on-focus`);
+        //     // save the eventCallback in widgetScope.
+        //
+        //     this.widget[onEventName] = eventCallback;
+        // }
+        //
+        // if (this['wmblur'] && this['wmblur']['observers']?.length) {
+        //     this.widget.eventHandlers.set(this.getMappedEventName('blur'), {callback: eventCallback, locals});
+        //     this.handleEvent(this.nativeElement, this.getMappedEventName('blur'), eventCallback, locals);
+        //     // prepend eventName with on and convert it to camelcase.
+        //     // eg, "click" ---> onClick
+        //     const onEventName = camelCase(`on-blur`);
+        //     // save the eventCallback in widgetScope.
+        //
+        //     this.widget[onEventName] = eventCallback;
+        // }
         this.isAttached = true;
     }
 
