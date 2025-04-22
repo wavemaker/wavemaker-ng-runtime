@@ -1,6 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {AfterViewInit, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    Injector,
+    Optional,
+    Output,
+    ViewChild
+} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {DataSource, isIos, removeAttr, setAttr, isSafari} from '@wm/core';
 import {provideAs, provideAsWidgetRef, styler, TextContentDirective} from '@wm/components/base';
@@ -23,6 +33,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
 })
 export class SelectComponent extends DatasetAwareFormComponent implements AfterViewInit {
     static initializeProps = registerProps();
+    @Output() wmchange = new EventEmitter<{[key: string]: any}>();
+    @Output() wmblur = new EventEmitter<{[key: string]: any}>();
 
     public readonly: boolean;
     public placeholder: string;

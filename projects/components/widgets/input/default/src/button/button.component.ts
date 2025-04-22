@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {Component, HostBinding, Inject, Injector, Optional} from '@angular/core';
+import {Component, EventEmitter, HostBinding, Inject, Injector, Optional, Output} from '@angular/core';
 
 import {DISPLAY_TYPE, ImagePipe, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TextContentDirective} from '@wm/components/base';
 
