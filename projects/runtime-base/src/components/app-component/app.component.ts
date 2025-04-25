@@ -35,6 +35,7 @@ import { AppManagerService } from '../../services/app.manager.service';
 import { PipeProvider } from '../../services/pipe-provider.service';
 import { AppSpinnerComponent } from '../app-spinner.component';
 import { DialogComponent } from '@wm/components/dialogs/design-dialog';
+import { ContainerDirective, PartialContainerDirective, PartialParamHandlerDirective } from '@wm/components/base';
 
 interface SPINNER {
     show: boolean;
@@ -44,7 +45,7 @@ interface SPINNER {
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterOutlet, AlertDialogComponent, ConfirmDialogComponent, DialogComponent, AppSpinnerComponent],
+    imports: [CommonModule, RouterOutlet, AlertDialogComponent, ConfirmDialogComponent, DialogComponent, AppSpinnerComponent, ContainerDirective, PartialParamHandlerDirective , PartialContainerDirective],
     selector: 'app-root',
     templateUrl: './app.component.html',
     encapsulation: ViewEncapsulation.None
