@@ -1,11 +1,12 @@
 
 @if (navcontrols === 'Classic') {
 <ul class="pagination advanced {{navigationClass}}">
-    @if (allowPageSizeChange) {
-        <li>
+    @if (allowpagesizechange) {
+        <li class="items-per-page">
+          <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label control-label">{{appLocale.LABEL_ITEMS_PER_PAGE}}</label>
+
             <div class="btn-group" dropdown  container="body">
-                <label caption="Items per page" class="app-label control-label">Items per page </label>
-                <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+                <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
                         aria-controls="dropdown-basic">
                     {{maxResults}} <span class="caret"></span>
                 </button>
@@ -20,11 +21,9 @@
             </div>
         </li>
         @if (rowSummary?.totalRecords) {
-        <li>
+        <li class="item-range">
         <div>
-            <span>{{rowSummary.startIndex}}</span>
-            <span>to</span>
-            <span>{{rowSummary.endIndex}}</span>
+            <span>{{rowSummary.startIndex}} - {{rowSummary.endIndex}}</span>
             <span>of</span>
             <span>{{rowSummary.totalRecords}}</span>
             </div>
@@ -95,11 +94,12 @@
 }
 @if (navcontrols === 'Pager') {
   <ul class="pager {{navigationClass}}">
-        @if (allowPageSizeChange) {
-        <li>
+        @if (allowpagesizechange) {
+        <li class="items-per-page">
+          <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label control-label">{{appLocale.LABEL_ITEMS_PER_PAGE}}</label>
+
             <div class="btn-group" dropdown container="body">
-                <label caption="Items per page" class="app-label control-label">Items per page </label>
-                <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+                <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
                         aria-controls="dropdown-basic">
                     {{maxResults}} <span class="caret"></span>
                 </button>
@@ -114,11 +114,9 @@
             </div>
         </li>
         @if (rowSummary?.totalRecords) {
-        <li>
+        <li class="item-range">
             <div>
-                <span>{{rowSummary.startIndex}}</span>
-                <span>to</span>
-                <span>{{rowSummary.endIndex}}</span>
+                <span>{{rowSummary.startIndex}} - {{rowSummary.endIndex}}</span>
                 <span>of</span>
                 <span>{{rowSummary.totalRecords}}</span>
             </div>
@@ -146,10 +144,12 @@
 }
 
 @if (navcontrols === 'Basic') {
-    @if (allowPageSizeChange) {
+    @if (allowpagesizechange) {
+      <div class="items-per-page">
+        <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label control-label">{{appLocale.LABEL_ITEMS_PER_PAGE }}</label>
+
         <div class="btn-group" dropdown container="body">
-            <label caption="Items per page" class="app-label control-label">Items per page </label>
-            <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+            <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
                     aria-controls="dropdown-basic">
                 {{maxResults}} <span class="caret"></span>
             </button>
@@ -162,13 +162,14 @@
                 }
             </ul>
         </div>
+      </div>
         @if (rowSummary?.totalRecords) {
+        <div class="item-range">
         <div>
-            <span>{{rowSummary.startIndex}}</span>
-            <span>to</span>
-            <span>{{rowSummary.endIndex}}</span>
+            <span>{{rowSummary.startIndex}} - {{rowSummary.endIndex}}</span>
             <span>of</span>
             <span>{{rowSummary.totalRecords}}</span>
+        </div>
         </div>
         }
     }

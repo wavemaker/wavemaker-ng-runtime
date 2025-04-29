@@ -181,7 +181,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     gridfirstrowselect;
     iconclass;
     ondemandmessage;
-    allowPageSizeChange = true;
+    allowpagesizechange;
     viewlessmessage;
     showviewlessbutton = false;
     _triggeredByUser;
@@ -351,7 +351,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         isDataUpdatedByUser: false,
         showviewlessbutton: false,
         ondemandmessage: '',
-        allowPageSizeChange: true,
+        allowpagesizechange: false,
         viewlessmessage: '',
         loadingdatamsg: '',
         isNextPageData: undefined,
@@ -1143,7 +1143,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             enablecolumnselection: 'enableColumnSelection',
             shownewrow: 'showNewRow',
             gridfirstrowselect: 'selectFirstRow',
-            isrowselectable: 'isrowselectable'
+            isrowselectable: 'isrowselectable',
+            allowpagesizechange: 'allowpagesizechange'
         };
 
         if (this._liveTableParent) {
@@ -1171,6 +1172,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.filtermode = this.filtermode;
         this.gridOptions.filteronkeypress = this.filteronkeypress;
         this.gridOptions.isrowselectable = this.isrowselectable;
+        this.gridOptions.allowpagesizechange = this.allowpagesizechange;
         this.gridOptions.searchLabel = this.searchlabel;
         this.gridOptions.isMobile = isMobile();
         this.gridOptions.name = this.name;
@@ -1179,7 +1181,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.isdynamictable = this.isdynamictable;
         this.gridOptions.showviewlessbutton = this.showviewlessbutton;
         this.gridOptions.ondemandmessage = this.ondemandmessage;
-        this.gridOptions.allowPageSizeChange = this.allowPageSizeChange;
         this.gridOptions.viewlessmessage = this.viewlessmessage;
         this.gridOptions.loadingdatamsg = this.loadingdatamsg;
 
@@ -1363,7 +1364,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                this.searchSortHandler(widgetState.sort, undefined, 'sort', true);
                 this.sortStateHandler(widgetState);
             }
-            if (this.gridOptions.allowPageSizeChange) { // maintain updated page size in the statePersistence
+            if (this.gridOptions.allowpagesizechange) { // maintain updated page size in the statePersistence
                 if (get(widgetState, 'pagination') || get(widgetState, 'pagesize')) {
                     this.dataNavigator.pageChanged({page: widgetState.pagination || 1, pagesize: widgetState.pagesize}, true);
                 }
@@ -2001,13 +2002,12 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             case 'pagesize':
                 widgetState = this.statePersistence.getWidgetState(this);
                 this.actualPageSize = nv; // maintain default page size to calculate pagesize options
-                if (this.gridOptions.allowPageSizeChange) {
+                if (this.gridOptions.allowpagesizechange) {
                     if (get(widgetState, 'pagesize')) {
                         nv = get(widgetState, 'pagesize');
                         this.pagesize = nv; // updating the default pagesize to user selected pagesize
                     }
                     this.updatedPageSize = nv;
-                    this.dataNavigator.updatedPageSize = nv;
                 }
                 this.dataNavigator.options = {
                     maxResults: nv
@@ -2024,8 +2024,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 }
                 this.gridOptions.ondemandmessage = nv;
                 break;
-            case 'allowPageSizeChange':
-                this.gridOptions.allowPageSizeChange = nv;
+            case 'allowpagesizechange':
+                this.gridOptions.allowpagesizechange = nv;
+                this.allowpagesizechange = nv;
                 break;
             case 'viewlessmessage':
                 this.gridOptions.viewlessmessage = nv;
