@@ -231,13 +231,13 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
 
     /**
      * This method is to remove the wizard step
-     * @param stepName - index of the step
+     * @param step - index or name of the step
      */
-    public removeStep(stepName) {
-        const stepRef = this.getStepRefByName(stepName);
-        stepRef ? stepRef.remove() : console.warn(`Could not find step with name '${stepName}'`);
+    public removeStep(step: number | string) {
+        const stepRef = isString(step) ? this.getStepRefByName(step) : isNumber(step)
+            ? this.getStepRefByIndex(step) : null;
+        stepRef ? stepRef.remove() : console.warn(`Could not find step with name or index '${step}' to remove`);
     }
-
 
     /**
      * returns next valid step. the index passed is also checked if its valid step

@@ -168,7 +168,7 @@ const FORM_COMPONENT: ImportDef[] = [
     ...LIVE_FORM_DIRECTIVE,
     { from: '@wm/components/data/form', name: 'FormComponent' }];
 
-// Page Structure Components
+// Page Structure Components // TODO: PARTIAL_CONTAINER these needed ? appComponent has imports at root
 const FOOTER_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/page/footer', name: 'FooterDirective' }];
 const HEADER_COMPONENT: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/page/header', name: 'HeaderComponent' }];
 const LEFT_PANEL_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/page/left-panel', name: 'LeftPanelDirective' }];

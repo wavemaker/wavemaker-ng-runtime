@@ -21,7 +21,6 @@ import {
     isIpod,
     isIpad,
     Viewport,
-    AbstractDialogService
 } from '@wm/core';
 import { DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 import { ConfirmDialogComponent } from '@wm/components/dialogs/confirm-dialog';
@@ -425,7 +424,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         ReactiveFormsModule,
         ...definitions,
         ToastrModule,
-        // CoreModule, 
+        // CoreModule,
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     exports: [
@@ -437,7 +436,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         RouterModule,
         HttpClientModule,
         ToastrModule,
-        // CoreModule, 
+        // CoreModule,
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     providers: [

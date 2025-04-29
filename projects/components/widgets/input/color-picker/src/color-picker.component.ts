@@ -27,7 +27,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAs(ColorPickerComponent, NG_VALUE_ACCESSOR, true),
         provideAs(ColorPickerComponent, NG_VALIDATORS, true),
         provideAsWidgetRef(ColorPickerComponent),
-        ColorPickerService,
+        ColorPickerService
     ]
 })
 export class ColorPickerComponent extends BaseFormCustomComponent {
