@@ -21,6 +21,7 @@ import {
     isIpod,
     isIpad,
     Viewport,
+    AbstractDialogService
 } from '@wm/core';
 import { DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 import { ConfirmDialogComponent } from '@wm/components/dialogs/confirm-dialog';
