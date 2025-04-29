@@ -54,8 +54,9 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     datasource;
     maxResults;
     pageSizeOptions;
-    updatedPageSize;
-    allowPageSizeChange;
+    prevPageSize;
+    actualPageSize;
+    allowpagesizechange;
     rowSummary;
     navigationsize;
     showrecordcount;
@@ -129,7 +130,9 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     constructor(inj: Injector, @SkipSelf() @Inject(WidgetRef) public parent, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
         styler(this.nativeElement, this);
-        this.allowPageSizeChange = this.parent.allowPageSizeChange;
+        setTimeout(()=> {
+            this.allowpagesizechange = this.parent.allowpagesizechange;
+        }, 0);
     }
 
     setResult(result) {
@@ -241,7 +244,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         dataSize = isArray(newVal) ? newVal.length : (isEmpty(newVal) ? 0 : 1);
         maxResults = (this.options && this.options.maxResults) || dataSize;
 
-        if (this.allowPageSizeChange) { // when default page size is not given then use maxResults instead of options.maxResults
+        if (this.allowpagesizechange) { // when default page size is not given then use maxResults instead of options.maxResults
             maxResults = this.maxResults;
         }
         // For static variable, keep the current page. For other variables without pagination reset the page to 1
@@ -265,6 +268,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         let dataSize,
             maxResults,
             currentPage,
+            startIndex,
             dataSource;
         let variableOptions: any = {};
         // Store the data in __fullData. This is used for client side searching witvah out modifying the actual dataset.
@@ -296,6 +300,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                     this.setDefaultPagingValues(dataSize, maxResults, currentPage);
                     this.disableNavigation();
                     this.checkDataSize(dataSize, this.pagination.numberOfElements, this.pagination.size);
+                    startIndex = (currentPage - 1) * this.maxResults;
+                    this.getPageDetails(startIndex + 1, startIndex + this.pagination.numberOfElements, dataSize);
                     this.setResult(newVal);
                 } else if (!isString(newVal)) {
                     this.setNonPageableData(newVal);
@@ -348,15 +354,15 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     goToPage(event?, callback?) {
         this.firstRow = (this.dn.currentPage - 1) * this.maxResults;
         const mode = this.parent.statePersistence.computeMode(this.statehandler),
-            allowPageSizeChange = this.parent.allowPageSizeChange;
+            allowpagesizechange = this.parent.allowpagesizechange;
         if (mode && mode.toLowerCase() !== 'none' && (this.parent.widgetType === 'wm-table' || this.parent.widgetType === 'wm-list')) {
             this.parent._selectedItemsExist = true;
-            if (this.isFirstPage() && !allowPageSizeChange) {
+            if (this.isFirstPage() && !allowpagesizechange) {
                 this.parent.statePersistence.removeWidgetState(this.parent, 'pagination');
             } else {
                 if (unsupportedStatePersistenceTypes.indexOf(this.parent.navigation) < 0) {
                     const state: { pagination: number; pagesize?: number } = { pagination: this.dn.currentPage };
-                    if (allowPageSizeChange) {
+                    if (allowpagesizechange) {
                         state.pagesize = this.maxResults;
                     }
                     this.parent.statePersistence.setWidgetState(this.parent, state);
@@ -395,12 +401,15 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             }
             this.datasource.execute(DataSource.Operation.LIST_RECORDS, {
                 'page': pageIndex,
+                'size': this.maxResults,
                 'filterFields': this.filterFields,
                 'orderBy': this.sortOptions,
                 'logicalOp': this.logicalOp,
                 'matchMode': 'anywhereignorecase'
             }).then(response => {
                 this.onPageDataReady(event, response && response.data, callback);
+                startIndex = (this.dn.currentPage - 1) * this.maxResults;
+                this.getPageDetails(startIndex + 1 , startIndex + this.pagination?.numberOfElements, this.pagination?.totalElements);
                 $appDigest();
             }, error => {
                 // If error is undefined, do not show any message as this may be discarded request
@@ -601,6 +610,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     }
 
     onPropertyChange(key: string, nv, ov) {
+        let pageSize, prevPageSize;
         if (key === 'dataset') {
             let data;
             if (this.parent && this.parent.onDataNavigatorDataSetChange) {
@@ -613,8 +623,31 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 this.parent._triggeredByUser = false;
             }
             if (data.length) { // calculate Pagesize options based on actual page size
-                const pageSize = this.parent.getActualPageSize();
-                this.pageSizeOptions = range(pageSize, data.length + pageSize, pageSize);
+                if (this.isDataSourceHasPaging()) { // for Live variables
+                    const currentPageSize = get(data, 'pagination.size') || get(this.datasource, 'pagination.size'),
+                        totalElements = get(data, 'pagination.totalElements') || get(this.datasource, 'pagination.totalElements'),
+                        widgetState = this.parent.statePersistence.getWidgetState(this.parent);
+                    this.actualPageSize = widgetState?.actualpagesize || currentPageSize;
+                    this.pageSizeOptions = range(this.actualPageSize,  Math.max(this.actualPageSize + 1, this.actualPageSize + totalElements), this.actualPageSize); // here data has only that page data and pagesize has totalNoof Elements
+                    if (widgetState?.selectedItem && widgetState.actualpagesize !== widgetState.pagesize) {
+                        if (!this.prevPageSize) {
+                            this.prevPageSize = this.actualPageSize || data?.length;
+                        }
+                        const updatedItems = this.handleStateParamsforNewPageSize(widgetState.selectedItem, this.prevPageSize, data?.length);
+                        if (updatedItems) {
+                            this.parent.statePersistence.setWidgetState(this.parent, {
+                                pagination: 1,
+                                pagesize: this.maxResults,
+                                actualpagesize: this.actualPageSize || this.maxResults,
+                                selectedItem: updatedItems
+                            })
+                            this.prevPageSize = undefined;
+                        }
+                    }
+                } else {
+                    pageSize = this.parent.getActualPageSize();
+                    this.pageSizeOptions = range(pageSize, data.length + pageSize, pageSize);
+                }
             }
             // When the dataset is not in current page, but in previous ones directly set the result without setting page values
             if (this.isEditNotInCurrentPage()) {
@@ -661,19 +694,24 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         if (widgetState?.selectedItem) {
             updatedItems = this.handleStateParamsforNewPageSize(widgetState.selectedItem, this.maxResults, +newPageSize);
         }
+        this.actualPageSize = this.actualPageSize || this.maxResults;
         this.maxResults = +newPageSize;
-        this.updatedPageSize = this.maxResults;
         this.maxResultsEmitter.emit(this.maxResults);
+        if (this.isDataSourceHasPaging() && this.datasource) {
+            this.datasource.maxResults = this.maxResults;
+        }
         if (updatedItems) {
             this.parent.statePersistence.setWidgetState(this.parent, {
                 pagination: 1,
                 pagesize: this.maxResults,
+                actualpagesize: this.actualPageSize || this.maxResults,
                 selectedItem: updatedItems
             })
         } else {
             this.parent.statePersistence.setWidgetState(this.parent, {
                 pagination: 1,
-                pagesize: this.maxResults
+                pagesize: this.maxResults,
+                actualpagesize: this.actualPageSize || this.maxResults
             })
         }
         this.navigatePage('first', $event, true);

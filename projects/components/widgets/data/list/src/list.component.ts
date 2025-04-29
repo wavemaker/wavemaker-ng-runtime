@@ -146,7 +146,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public statehandler: any;
     public currentIndex: number;
     public titleId: string;
-    public allowPageSizeChange = true;
+    public allowpagesizechange: boolean = false;
     public updatedPageSize;
     public actualPageSize;
     _isDependent;
@@ -550,7 +550,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         } else if (key === 'pagesize') {
             const widgetState = this.statePersistence.getWidgetState(this);
             this.actualPageSize = nv; // maintain default page size to calculate pagesize options
-            if (this.allowPageSizeChange) {
+            if (this.allowpagesizechange) {
                 if (get(widgetState, 'pagesize')) {
                     nv = get(widgetState, 'pagesize');
                     this.pagesize = nv; // updating the default pagesize to user selected pagesize
@@ -572,8 +572,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.$ulEle.removeAttr('aria-describedby');
                 this.$ulEle.sortable('disable');
             }
-        } else if (key === 'allowPageSizeChange') {
-            this.allowPageSizeChange = nv;
+        } else if (key === 'allowpagesizechange') {
+            this.allowpagesizechange = nv;
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -971,7 +971,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none' && this._pageLoad) {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
-            if (this.allowPageSizeChange) { // maintain updated page size in the statePersistence
+            if (this.allowpagesizechange) { // maintain updated page size in the statePersistence
                 if (get(widgetState, 'pagination') || get(widgetState, 'pagesize')) {
                     this.dataNavigator.pageChanged({page: widgetState.pagination || 1, pagesize: widgetState.pagesize}, true);
                 }
