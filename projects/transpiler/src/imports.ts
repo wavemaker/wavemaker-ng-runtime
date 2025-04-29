@@ -19,7 +19,13 @@ const NGX_TYPE_HEAD_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/typeahead', na
 // Progess Modules
 const PROGRESS_BAR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/progress', name: 'ProgressBarComponent' }];
 const PROGRESS_CIRCLE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/progress', name: 'ProgressCircleComponent' }];
-const PAGE_COMPONENT: ImportDef[] = [{ from: '@wm/components/page', name: 'PageDirective' }];
+// Mobile-Specific Modules
+const PAGE_COMPONENT: ImportDef[] = [
+    { from: '@wm/components/page', name: 'PageDirective' }];
+
+// General Modules (Desktop and Mobile)
+// const INPUT_MODULE: ImportDef[] = [...NG_FORM_MODULE, { from: '@wm/components/input', name: 'InputModule' }];
+// const DIALOG_MODULE: ImportDef[] = [...NGX_MODAL_MODULE, { from: '@wm/components/dialogs', name: 'DialogModule' }];
 const PAGINATION_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_PAGINATION_MODULE, { from: '@wm/components/data/pagination', name: 'PaginationComponent' }];
 
 // Basic Components
@@ -49,7 +55,7 @@ const LINEAR_LAYOUT_DIRECTIVE: ImportDef[] = [...LINEAR_LAYOUT_ITEM_DIRECTIVE, {
 const TAB_PANE_COMPONENT: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/containers/tabs', name: 'TabPaneComponent' }];
 const TABS_COMPONENT: ImportDef[] = [...TAB_PANE_COMPONENT, { from: '@wm/components/containers/tabs', name: 'TabsComponent' }];
 const WIZARD_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/wizard', name: 'WizardActionDirective' }];
-const WIZARD_STEP_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/containers/wizard', name: 'WizardStepComponent' }];
+const WIZARD_STEP_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/wizard', name: 'WizardStepComponent' }];
 const WIZARD_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...WIZARD_ACTION_DIRECTIVE, ...WIZARD_STEP_DIRECTIVE, { from: '@wm/components/containers/wizard', name: 'WizardComponent' }];
 const LAYOUT_GRID_COLUMN_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/layout-grid', name: 'LayoutGridColumnDirective' }];
 const LAYOUT_GRID_ROW_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/layout-grid', name: 'LayoutGridRowDirective' }];

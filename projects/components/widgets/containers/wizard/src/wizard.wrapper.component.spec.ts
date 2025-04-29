@@ -52,7 +52,7 @@ const testModuleDef: ITestModuleDef = {
     ],
     declarations: [WizardWrapperComponent],
     providers: [
-        { provide: App, useValue: mockApp }, 
+        { provide: App, useValue: mockApp },
         DynamicComponentRefProvider
     ]
 };
