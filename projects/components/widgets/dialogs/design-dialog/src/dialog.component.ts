@@ -16,6 +16,7 @@ import { Context, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/
 import { BaseDialog, DialogBodyDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 
 import { registerProps } from './dialog.props';
+import { NgTemplateOutlet } from '@angular/common';
 
 const DIALOG_CLS = 'app-dialog modal-dialog';
 
@@ -23,7 +24,7 @@ const WIDGET_INFO = {widgetType: 'wm-dialog'};
 
 @Component({
     standalone: true,
-    imports: [DialogBodyDirective, DialogHeaderComponent],
+    imports: [DialogBodyDirective, DialogHeaderComponent, NgTemplateOutlet],
     selector: 'div[wmDialog]',
     templateUrl: './dialog.component.html',
     providers: [

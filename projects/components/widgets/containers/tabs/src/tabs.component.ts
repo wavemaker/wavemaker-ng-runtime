@@ -75,6 +75,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public fieldDefs;
     public type;
     public nodatamessage;
+    public autoActivation:boolean;
 
     @HostBinding('attr.icon-position') iconposition: string = '';
 
@@ -410,6 +411,8 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
             } else {
                 setTimeout(() => this.selectDefaultPaneByIndex(this.defaultpaneindex || 0), 20);
             }
+        } else if (key === 'autotabactivation'){
+            this.autoActivation = nv;
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -434,21 +437,36 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         });
     }
     onkeydown(event) {
+        let newPane;
         switch (event.key) {
             case 'ArrowLeft':
             case 'ArrowUp':
-                this.prev(null, true);
-                event.preventDefault();
+                newPane = this.autoActivation ? (this.prev(null, true), null) : this.getSelectableTabBeforeIndex(this.getSelectedPaneIndex());
                 break;
 
             case 'ArrowRight':
             case 'ArrowDown':
-                this.next(null, true);
+                newPane = this.autoActivation ? (this.next(null, true), null) : this.getSelectableTabAfterIndex(this.getSelectedPaneIndex());
+                break;
+
+            case 'Enter': {
+                const pane = this.getSelectableTabAfterIndex(this.getSelectedPaneIndex()-1);
+                if (pane) {
+                    const enterEvent = new KeyboardEvent('keydown', {key: 'Enter', code: 'Enter', bubbles: true, cancelable: true});
+                    pane.nativeElement.dispatchEvent(enterEvent);
+                    pane.select(enterEvent, true);
+                }
                 event.preventDefault();
-                break;
+                return ;
+            }
             default:
-                break;
+                return;
         }
+        if (newPane) {
+            this.nativeElement.querySelector('li.select')?.classList.remove('select');
+            this.nativeElement.querySelector(`li[data-paneid="${newPane.widgetId}"]`)?.classList.add('select');
+        }
+        event.preventDefault();
     }
 
     ngAfterContentInit() {
@@ -465,5 +483,11 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     ngAfterViewInit() {
         super.ngAfterViewInit();
         this.registerTabsScroll();
+    }
+
+    getSelectedPaneIndex() {
+        const index = this.panes.toArray().findIndex(pane =>
+            this.nativeElement.querySelector(`li[data-paneid="${pane.widgetId}"]`)?.classList.contains("select"));
+        return index >= 0 ? index : this.getActiveTabIndex();
     }
 }

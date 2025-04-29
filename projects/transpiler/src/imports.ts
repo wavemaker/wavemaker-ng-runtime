@@ -174,6 +174,7 @@ const HEADER_COMPONENT: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/compon
 const LEFT_PANEL_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/page/left-panel', name: 'LeftPanelDirective' }];
 const RIGHT_PANEL_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/page/right-panel', name: 'RightPanelDirective' }];
 const PAGE_CONTENT_COMPONENT: ImportDef[] = [{ from: '@wm/components/page', name: 'PageContentComponent' }];
+const SPA_PAGE_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page', name: 'SpaPageDirective' }];
 const LAYOUT_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/page', name: 'LayoutDirective' }];
 const CONTENT_COMPONENT: ImportDef[] = [{ from: '@wm/components/page', name: 'ContentComponent' }];
 
@@ -252,6 +253,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-partial', PARTIAL_DIRECTIVE],
     ['wm-page', PAGE_COMPONENT],
     ['wm-page-content', PAGE_CONTENT_COMPONENT],
+    ['spa-page-content', SPA_PAGE_DIRECTIVE],
     ['wm-pagedialog', PARTIAL_DIALOG_COMPONENT],
     ['wm-pagination', PAGINATION_COMPONENT],
     ['wm-panel', PANEL_COMPONENT],

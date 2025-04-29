@@ -536,6 +536,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
             });
             this.changesStack.length = 0;
         }
+        $(".fc-prev-button").attr("aria-label", "prev");
+        $(".fc-next-button").attr("aria-label", "next");
+        $(".fc-today-button").attr("aria-label", "today");
 
         //WMS-22412 : change calender's view based on the configuration set from studio
         setTimeout(() => {

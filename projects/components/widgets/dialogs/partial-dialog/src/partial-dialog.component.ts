@@ -16,13 +16,14 @@ import { BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderCom
 
 import { registerProps } from './partial-dialog.props';
 import { ButtonComponent } from '@wm/components/input';
+import { NgTemplateOutlet } from '@angular/common';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-page-dialog';
 const WIDGET_INFO = { widgetType: 'wm-partialdialog' };
 
 @Component({
     standalone: true,
-    imports: [DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
+    imports: [DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent, NgTemplateOutlet],
     selector: 'div[wmPartialDialog]',
     templateUrl: './partial-dialog.component.html',
     providers: [
