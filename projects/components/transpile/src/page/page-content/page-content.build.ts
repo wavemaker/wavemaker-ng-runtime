@@ -34,6 +34,7 @@ register('wm-page-content', (): IBuildTaskDef => {
             if (attrs.get('spa')) {
                 return ['spa-page-content']
             }
+            return [];
         }
     };
 });
