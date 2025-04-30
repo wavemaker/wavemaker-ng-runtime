@@ -80,7 +80,7 @@ unit_tests:
     - yalc add @wavemaker/variables
     - yalc add @wavemaker/custom-widgets-m3
     - yalc add @wavemaker/foundation-css
-    - bash build.sh --copy --force
+    - bash build.sh
     - bash bundle-runtime-cli.sh
     - echo "npm_test starting"
     - npm run test 
