@@ -342,16 +342,21 @@ export class TableFilterSortDirective {
     // Returns data sorted using sortObj
     getSortResult(data, sortObj) {
         if (sortObj && sortObj.direction) {
-            const isValidDateString = this.parseDateString(get(find(data, sortObj.field), sortObj.field));
+            const fieldValue = get(find(data, sortObj.field), sortObj.field)
+            const isValidDateString = typeof fieldValue === 'string' ?  this.parseDateString(fieldValue) : NaN;
             if (!isNaN(isValidDateString)) { // if the field is a date string
                 data = orderBy(data, [(item) => this.parseDateString(item[sortObj.field])], [sortObj.direction]);
             } else if (this.table.columns[sortObj.field]?.caseinsensitive) {
                 //Fix for [WMS-27505]: Added case-insensitive sorting so that uppercase and lowercase letters are treated the same when sorting.
-                if (sortObj.direction === 'asc') {
-                    data = orderBy(data, [(item) => get(item, sortObj.field)?.toLowerCase(), (item) => item[sortObj.field]]);
-                } else {
-                    data = orderBy(data,[(item) => get(item, sortObj.field)?.toLowerCase(),(item) => item[sortObj.field]], ['desc', 'desc']);
-                }
+                    data = orderBy(data, [
+                          (item) => {
+                            const val = get(item, sortObj.field);
+                            return typeof val === 'string' ? val.toLowerCase() : val;
+                          },
+                          (item) => get(item, sortObj.field) // fallback to original value
+                        ],
+                        [sortObj.direction, sortObj.direction]
+                      );                      
             } else {
                 data = orderBy(data, sortObj.field, sortObj.direction);
             }
