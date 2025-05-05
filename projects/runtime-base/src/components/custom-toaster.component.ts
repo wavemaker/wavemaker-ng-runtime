@@ -5,12 +5,13 @@ import { Toast, ToastPackage, ToastrService } from 'ngx-toastr';
 
 import { $watch, $appDigest } from '@wm/core';
 import {forEach, isString} from "lodash-es";
+import { ContainerDirective, PartialContainerDirective, PartialParamDirective, PartialParamHandlerDirective } from '@wm/components/base';
 
 declare const $;
 
 @Component({
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, ContainerDirective, PartialParamHandlerDirective, PartialContainerDirective, PartialParamDirective],
     selector: '[custom-toaster-component]',
     template: `
         <div class="parent-custom-toast"></div>
