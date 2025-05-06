@@ -390,6 +390,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             currentStep.done = true;
             nextStep.active = true;
             this.currentStep = nextStep;
+            this.updateStepFocus();       
         }
         this.addMoreText();
     }
@@ -414,6 +415,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             currentStep.disabled = true;
             prevStep.active = true;
             this.currentStep = prevStep;
+            this.updateStepFocus();
         }
         this.addMoreText();
     }
@@ -510,6 +512,11 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         this.fieldDefs = createArrayFrom(newVal);
     }
 
+    private updateStepFocus() {
+        setTimeout(() => {
+            $(".app-wizard-heading li.current a").focus();
+        });
+    }
 
     // Define the property change handler. This Method will be triggered when there is a change in the widget property
     onPropertyChange(key: string, nv: any, ov?: any) {
