@@ -378,6 +378,9 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             Array.from((<any>this).currentStep.getAllEmbeddedForms())?.forEach((form:any) => {
                 form.widget.highlightInvalidFields();
             });
+            const invalidFormInputElement = this.currentStep.nativeElement?.querySelector("input.ng-invalid") as HTMLInputElement;
+            invalidFormInputElement?.focus();
+
         }
     }
 
