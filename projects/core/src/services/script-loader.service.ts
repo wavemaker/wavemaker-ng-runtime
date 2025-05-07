@@ -16,7 +16,6 @@ declare var document: any;
 export class ScriptLoaderService {
 
     private scripts: any = {};
-    private pathMappings;
 
     constructor(private http: HttpClient) {
         ScriptStore.forEach((script: any) => {
@@ -29,24 +28,11 @@ export class ScriptLoaderService {
 
     load(...scripts: string[]): Promise<any> {
         if (scripts && scripts.length) {
-            return Promise.resolve()
-                .then(() => this.pathMappings || this.loadPathMappings())
-                .then(() => {
-                    return Promise.all(scripts.map( s => {
-                        return this.loadScript(s);
-                    }));
-                });
+            return Promise.all(scripts.map( s => {
+                return this.loadScript(s);
+            }));
         }
         return Promise.resolve();
-    }
-
-    private loadPathMappings() {
-        const path = (_WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest) + 'path_mapping.json';
-        return this.http.get(path).toPromise().then((data) => {
-            this.pathMappings = data;
-        }, () => {
-            this.pathMappings = {};
-        })
     }
 
     private loadScript(name: string) {
@@ -64,8 +50,7 @@ export class ScriptLoaderService {
             let script = document.createElement('script');
             script.type = 'text/javascript';
             script.async = false;
-            let src = this.scripts[name].src;
-            src = this.pathMappings[src] || src;
+            const src = this.scripts[name].src;
             if (src.startsWith("http")) {
                 script.src = src;
             } else {
