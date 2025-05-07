@@ -4,7 +4,7 @@ import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import {setListClass} from '@wm/core';
 
-import { provideAsWidgetRef, styler, provideAs, TextContentDirective } from '@wm/components/base';
+import { provideAsWidgetRef, styler, provideAs, TextContentDirective, ItemTemplateDirective, PartialContainerDirective, PartialParamHandlerDirective } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input/dataset-aware-form';
 import { registerProps } from './radioset.props';
 import { includes} from "lodash-es";
@@ -16,7 +16,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-radioset', hostClass: DEFAULT_CLS};
 
 @Component({
   standalone: true,
-  imports: [CommonModule, TextContentDirective],
+  imports: [CommonModule, TextContentDirective, ItemTemplateDirective, PartialParamHandlerDirective, PartialContainerDirective],
     selector: '[wmRadioset]',
     exportAs: 'wmRadioset',
     templateUrl: './radioset.component.html',

@@ -30,6 +30,9 @@ import {
     extractDataAsArray,
     getContainerTargetClass,
     getUniqObjsByDataField,
+    ItemTemplateDirective,
+    PartialContainerDirective,
+    PartialParamHandlerDirective,
     provideAs,
     provideAsWidgetRef,
     styler,
@@ -59,7 +62,7 @@ const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
 
 @Component({
     standalone: true,
-    imports: [CommonModule, FormsModule, ScrollableDirective, TypeaheadModule, TextContentDirective],
+    imports: [CommonModule, FormsModule, ScrollableDirective, TypeaheadModule, TextContentDirective, ItemTemplateDirective, PartialParamHandlerDirective, PartialContainerDirective],
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
     providers: [
