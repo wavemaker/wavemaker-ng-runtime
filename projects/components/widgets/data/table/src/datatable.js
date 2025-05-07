@@ -2627,7 +2627,10 @@ $.widget('wm.datatable', {
         }
         if (quickEdit && $target.hasClass('app-datagrid-row') && !$target.hasClass('row-editing')) {
             $row.trigger('click', [undefined, {action: 'edit'}]);
-        } else {
+        } else if(quickEdit && $target.hasClass('app-datagrid-cell') && !$target.hasClass('row-editing')) {
+            $row.trigger('click', [$row, {action: 'edit'}]);
+            this.options.timeoutCall(() => $target.find('[tabindex], a, button, input, select, textarea').filter(':visible:not(:disabled)').first().focus(), 500);
+        }else {
             //On click of enter while inside a widget in editing row, save the row
             if ($row.hasClass('row-editing') && $target.closest('[data-field-name]').length) {
                 $target.blur(); //Blur the input, to update the model
@@ -2692,7 +2695,9 @@ $.widget('wm.datatable', {
         }
         if (event.which === 13) { //Enter key
             event.stopPropagation();
-            this._debounceOnEnter($target, $row, quickEdit, event);
+            if ($target.prop('tagName') !== 'SELECT') {
+                this._debounceOnEnter($target, $row, quickEdit, event);
+            }
             return;
         }
         if (event.which === 38) { // up-arrow action
