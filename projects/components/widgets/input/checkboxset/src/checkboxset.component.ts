@@ -3,7 +3,7 @@ import {Component, HostListener, Inject, Injector, Optional} from '@angular/core
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 
 import {setListClass} from '@wm/core';
-import { IWidgetConfig, provideAs, provideAsWidgetRef, styler, TextContentDirective } from '@wm/components/base';
+import { ItemTemplateDirective, IWidgetConfig, PartialContainerDirective, PartialParamHandlerDirective, provideAs, provideAsWidgetRef, styler, TextContentDirective } from '@wm/components/base';
 import { DatasetAwareFormComponent } from '@wm/components/input/dataset-aware-form';
 
 import { registerProps } from './checkboxset.props';
@@ -16,7 +16,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-checkboxset', hostClass: D
 
 @Component({
     standalone: true,
-    imports: [CommonModule, TextContentDirective],
+    imports: [CommonModule, TextContentDirective, ItemTemplateDirective, PartialParamHandlerDirective, PartialContainerDirective],
     selector: '[wmCheckboxset]',
     exportAs: 'wmCheckboxset',
     templateUrl: 'checkboxset.component.html',
