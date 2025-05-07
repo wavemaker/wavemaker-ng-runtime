@@ -77,6 +77,10 @@ export abstract class BaseInput extends BaseFormCustomComponent implements After
         this.invokeOnTouched($event);
     }
 
+    handleInputEvent($event: Event) {
+        this.invokeEventCallback($event.type, {$event});
+    }
+
     // Update the model on enter key press
     flushViewChanges(val) {
         // when val contains masked value, update the model with unmasked value

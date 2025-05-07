@@ -443,7 +443,9 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         }
     }
 
-    watchEvt($event, callbacksString: string) {
+    watchEvt(event: Event, callbacksString: string) {
+        if (!callbacksString) return;
+
         const callbacks = callbacksString.split(';');
         callbacks.forEach(callback => {
             const trimmedCallback = callback.trim();
@@ -455,34 +457,48 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
     executeCallback(callback: string, event: Event) {
         const functionMatch = callback.match(/(\w+)\(([^)]*)\)/);
-        if (functionMatch) {
-            const functionName = functionMatch[1];
-            const paramsString = functionMatch[2];
-            let params;
-            if (isEmpty(paramsString)) {
-                params = paramsString.split(',').map(p => p.trim());
-            }
-            const target = event.currentTarget && (event.currentTarget as any).widget;
-
-            if (target && this[functionName]) {
-                target.watchEvt(event, this[functionName], ...(params !== undefined ? params : []));
-            } else {
-                let callbackPrefix = callback.split(functionName)[0];
-                if (callbackPrefix) {
-                    if (callbackPrefix.endsWith('.')) {
-                        callbackPrefix = callbackPrefix.slice(0, -1);
-                        let x = get(this, callbackPrefix);
-                        params.length ? x[functionName](params) : x[functionName]();
-
-                    } else {
-                        this[callbackPrefix].call(params);
-                    }
-                }
-
-            }
-            console.warn(`Callback function "${functionName}" not found.`);
-        } else {
+        if (!functionMatch) {
             console.warn(`Invalid callback format: "${callback}"`);
+            return;
+        }
+
+        const functionName = functionMatch[1];
+        const paramsString = functionMatch[2] || '';
+        let params = [];
+
+        if (isEmpty(paramsString)) {
+            params = paramsString.split(',').map(p => p.trim());
+        }
+
+        const target = event.currentTarget && (event.currentTarget as any).widget;
+
+        // Case 1: Direct target widget method
+        if (target && this[functionName]) {
+            target.watchEvt(event, this[functionName], ...params);
+            return;
+        }
+
+        // Case 2: Object.method() format
+        const callbackPrefix = callback.split(functionName)[0];
+        if (!callbackPrefix) return;
+
+        if (callbackPrefix.endsWith('.')) {
+            const objName = callbackPrefix.slice(0, -1);
+
+            // Handle $event special case
+            if (objName === '$event') {
+                event[functionName]()
+                return;
+            }
+
+            const obj = get(this, objName);
+            if (obj && typeof obj[functionName] === 'function') {
+                params.length ? obj[functionName](...params) : obj[functionName]();
+            }
+        }
+        // Case 3: Direct method call on prefix object
+        else if (this[callbackPrefix] && typeof this[callbackPrefix] === 'function') {
+            this[callbackPrefix].call(this, params);
         }
     }
 }

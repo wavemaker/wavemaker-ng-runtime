@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IMaskModule } from 'angular-imask';
-import {Component, ElementRef, Inject, Injector, OnInit, Optional, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Injector, OnInit, Optional, Output, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
 import {IWidgetConfig, provideAs, provideAsWidgetRef} from '@wm/components/base';
@@ -52,7 +52,16 @@ export class InputTextComponent extends BaseInput implements OnInit{
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('input', {read: IMaskDirective}) imask: IMaskDirective<any>;
-
+    @Output() wmchange = new EventEmitter<{[key: string]: any}>();
+    @Output() wmblur = new EventEmitter<{[key: string]: any}>();
+    @Output() wmfocus = new EventEmitter<{[key: string]: any}>();
+    @Output() wmclick = new EventEmitter<{[key: string]: any}>();
+    @Output() wmmouseenter = new EventEmitter<{[key: string]: any}>();
+    @Output() wmmouseleave = new EventEmitter<{[key: string]: any}>();
+    @Output() wmkeydown = new EventEmitter<{[key: string]: any}>();
+    @Output() wmkeyup = new EventEmitter<{[key: string]: any}>();
+    @Output() wmkeypress = new EventEmitter<{[key: string]: any}>();
+    
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
     }

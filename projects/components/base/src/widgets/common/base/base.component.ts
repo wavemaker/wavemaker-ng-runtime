@@ -621,9 +621,6 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             if (eventName && this['wm' + eventName]) {
                 this['wm' + eventName].emit(Object.assign({widget: this.widget}, extraLocals));
             }
-            // if (eventName === 'change' && this['wmchange']) {
-            //     this['wmchange'].emit(Object.assign({widget: this.widget}, extraLocals));
-            // }
         }
     }
     /**

@@ -3,7 +3,8 @@ import {
     Element,
     Text,
     Comment,
-    getHtmlTagDefinition, ParseSourceSpan
+    getHtmlTagDefinition, ParseSourceSpan,
+    Attribute
 } from '@angular/compiler';
 import { WIDGET_IMPORTS } from './imports';
 import {find, isEqual, isFunction, remove, sortBy, uniqWith} from "lodash-es";
@@ -70,17 +71,29 @@ const getEventName = key => key.substr(3);
 
 const processBinding = (attr, expr) => [`${attr.name}.bind`, quoteAttr(expr)];
 
-const processEvent = attr => {
+const ANGULAR_DEFAULT_EVENTS = [
+    'click', 'dblclick', 'focus', 'blur',
+    'mouseover', 'mouseout', 'mouseenter', 'mouseleave',
+    'keydown', 'keyup', 'keypress', 'tap'
+];
+
+// Components that should use the (event)="watchEvt()" pattern
+const CUSTOM_COMPONENTS = ['wm-text'];
+
+const processEvent = (attr: Attribute, widgetName: string) => {
     const evtName = getEventName(attr.name);
     const input = attr.value;
-
-    // Add the supported events here
-    if (evtName === 'click' || evtName == 'focus' || evtName === 'blur') {
-        return [`(${evtName})`, "watchEvt($event," + "'" + input + "'" + ")"];
+    let returnValue = [];
+    // Apply different binding formats based on widget type
+    if (CUSTOM_COMPONENTS.some(comp => widgetName.includes(comp))) {
+        console.log(`Binding event ${evtName} to ${widgetName} using custom event handler`);
+        // For custom wavemaker components
+        returnValue = [`(wm${evtName})`, input];
+    } else {
+        console.log(`Binding event ${evtName} to ${widgetName} using watchEvt()`);
+        returnValue = [`(${evtName})`, `watchEvt($event,'${input}')`];
     }
-    // when some internal wavemaker code logic has to execute when event is triggered.
-    // Then use this way of adding event emitters
-    return [`(wm${evtName})`, attr.value];
+    return returnValue
 };
 
 /**
@@ -92,8 +105,8 @@ const wrapWithApos = (val: string) => {
 };
 const ELE_PREFIX = '.wm-app';
 
-const processAttr = attr => {
-    let overridden = OVERRIDES[attr.name];
+const processAttr = (attr: Attribute, widgetName: string) => {
+    const overridden = OVERRIDES[attr.name];
     const value = attr.valueSpan ? attr.value : undefined;
 
     if (overridden) {
@@ -109,7 +122,7 @@ const processAttr = attr => {
     }
 
     if (isEvent(attr.name)) {
-        return processEvent(attr);
+        return processEvent(attr, widgetName);
     }
 
     const boundExpr = getBoundToExpr(attr.value);
@@ -169,10 +182,10 @@ export const getFormMarkupAttr = attrs => {
     return getAttrMarkup(attrs);
 };
 
-const getAttrMap = attrs => {
+const getAttrMap = (attrs: Attribute[], widgetName: string) => {
     const attrMap = new Map<string, string>();
     attrs.forEach(attr => {
-        let [attrName, attrValue] = processAttr(attr);
+        const [attrName, attrValue] = processAttr(attr, widgetName);
         attrMap.set(attrName, attrValue);
     });
 
@@ -343,7 +356,7 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
             template(node, shared, ...requiredProviders);
         }
 
-        attrMap = getAttrMap(node.attrs);
+        attrMap = getAttrMap(node.attrs, node.name);
         processDimensionAttributes(attrMap);
 
         const nodeName = getNodeName(node.name);
