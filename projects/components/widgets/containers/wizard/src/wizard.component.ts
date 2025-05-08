@@ -540,7 +540,8 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
 
     private updateStepFocus() {
         setTimeout(() => {
-            $(".app-wizard-heading li.current a").focus();
+            const currentStepElement = this.nativeElement.querySelector(".app-wizard-heading li.current a") as HTMLElement;
+            currentStepElement?.focus();
         });
     }
 
