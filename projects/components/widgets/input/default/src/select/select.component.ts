@@ -33,8 +33,8 @@ const WIDGET_CONFIG = {widgetType: 'wm-select', hostClass: 'app-select-wrapper'}
 })
 export class SelectComponent extends DatasetAwareFormComponent implements AfterViewInit {
     static initializeProps = registerProps();
-    @Output() wmchange = new EventEmitter<{[key: string]: any}>();
     @Output() wmblur = new EventEmitter<{[key: string]: any}>();
+    @Output() wmfocus = new EventEmitter<{[key: string]: any}>();
 
     public readonly: boolean;
     public placeholder: string;

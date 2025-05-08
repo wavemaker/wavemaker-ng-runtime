@@ -52,15 +52,8 @@ export class InputTextComponent extends BaseInput implements OnInit{
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('input', {read: IMaskDirective}) imask: IMaskDirective<any>;
-    @Output() wmchange = new EventEmitter<{[key: string]: any}>();
     @Output() wmblur = new EventEmitter<{[key: string]: any}>();
     @Output() wmfocus = new EventEmitter<{[key: string]: any}>();
-    @Output() wmclick = new EventEmitter<{[key: string]: any}>();
-    @Output() wmmouseenter = new EventEmitter<{[key: string]: any}>();
-    @Output() wmmouseleave = new EventEmitter<{[key: string]: any}>();
-    @Output() wmkeydown = new EventEmitter<{[key: string]: any}>();
-    @Output() wmkeyup = new EventEmitter<{[key: string]: any}>();
-    @Output() wmkeypress = new EventEmitter<{[key: string]: any}>();
     
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);

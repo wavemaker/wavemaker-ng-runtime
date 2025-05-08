@@ -78,14 +78,15 @@ const ANGULAR_DEFAULT_EVENTS = [
 ];
 
 // Components that should use the (event)="watchEvt()" pattern
-const CUSTOM_COMPONENTS = ['wm-text'];
+const WM_COMPONENTS = ['wm-text', 'wm-select'];
+const NON_BUBBLING_EVENTS = ['focus', 'blur'];
 
 const processEvent = (attr: Attribute, widgetName: string) => {
     const evtName = getEventName(attr.name);
     const input = attr.value;
     let returnValue = [];
     // Apply different binding formats based on widget type
-    if (CUSTOM_COMPONENTS.some(comp => widgetName.includes(comp))) {
+    if (WM_COMPONENTS.some(comp => widgetName.includes(comp)) && NON_BUBBLING_EVENTS.includes(evtName)) {
         console.log(`Binding event ${evtName} to ${widgetName} using custom event handler`);
         // For custom wavemaker components
         returnValue = [`(wm${evtName})`, input];

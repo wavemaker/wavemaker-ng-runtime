@@ -12,6 +12,7 @@
   (change)="onSelectValueChange($event)"
   (mousedown)="checkForFloatingLabel($event)"
   (blur)="invokeOnTouched($event); checkForFloatingLabel($event)"
+  (focus)="invokeOnFocus($event); checkForFloatingLabel($event)"
   [attr.name]="name"
   [attr.aria-label]="arialabel"
   [autofocus]="autofocus">
