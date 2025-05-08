@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {AfterViewChecked, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, EventEmitter, Inject, Injector, Optional, Output, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
 
 import {provideAs, provideAsWidgetRef} from '@wm/components/base';
@@ -44,6 +44,8 @@ export class TextareaComponent extends BaseInput implements AfterViewChecked {
 
     @ViewChild('textarea', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel) ngModel: NgModel;
+    @Output() wmblur = new EventEmitter<{ [key: string]: any }>();
+    @Output() wmfocus = new EventEmitter<{ [key: string]: any }>();
 
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, explicitContext);

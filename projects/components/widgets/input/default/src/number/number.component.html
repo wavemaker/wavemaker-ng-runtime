@@ -16,7 +16,7 @@
        [ngStyle]="conditionalstyle"
        (ngModelChange)="onModelChange($event)"
        (blur)="handleBlur($event); checkForTrailingZeros($event);"
-       (focus)="checkForTrailingZeros($event)"
+       (focus)="handleInputEvent($event); checkForTrailingZeros($event)"
        (input)="onInputChange($event.target.value)"
        [ngModelOptions]="ngModelOptions"
        [required]="required"

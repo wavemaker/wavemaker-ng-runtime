@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
-import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Injector, Optional, Output, ViewChild} from '@angular/core';
 
 import {AbstractI18nService} from '@wm/core';
 import {IWidgetConfig, provideAs, provideAsWidgetRef, TrailingZeroDecimalPipe} from '@wm/components/base';
@@ -41,7 +41,9 @@ export class NumberComponent extends NumberLocale {
     public autofocus: boolean;
     @ViewChild('input', {static: true}) inputEl: ElementRef;
     @ViewChild(NgModel, {static: true}) ngModel: NgModel;
-
+    @Output() wmblur = new EventEmitter<{ [key: string]: any }>();
+    @Output() wmfocus = new EventEmitter<{ [key: string]: any }>();
+ 
     constructor(inj: Injector, i18nService: AbstractI18nService, trailingZeroDecimalPipe: TrailingZeroDecimalPipe, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
         super(inj, WIDGET_CONFIG, i18nService, trailingZeroDecimalPipe, explicitContext);
     }

@@ -16,6 +16,7 @@
   [ngClass]="conditionalclass"
   [ngStyle]="conditionalstyle"
   (blur)="handleBlur($event)"
+  (focus)="handleInputEvent($event)"
   (input)="onInputChange()"
   (ngModelChange)="handleChange($event); onInputChange();"
   #textarea

@@ -78,7 +78,7 @@ const ANGULAR_DEFAULT_EVENTS = [
 ];
 
 // Components that should use the (event)="watchEvt()" pattern
-const WM_COMPONENTS = ['wm-text', 'wm-select'];
+const WM_COMPONENTS = ['wm-text', 'wm-select', 'wm-textarea', 'wm-number'];
 const NON_BUBBLING_EVENTS = ['focus', 'blur'];
 
 const processEvent = (attr: Attribute, widgetName: string) => {
