@@ -511,7 +511,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
     }
     getActualPageSize()  {
-        return this.actualPageSize || 5;
+        return this.actualPageSize || 20;
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
