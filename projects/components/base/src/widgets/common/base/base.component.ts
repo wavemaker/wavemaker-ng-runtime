@@ -534,7 +534,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 // the promise returned by the variable call.
                 boundFnVal = boundFn();
                 if (boundFnVal instanceof Promise) {
-                    boundFnVal.then( response => response, err => err);
+                    return boundFnVal.then( response => response, err => err);
                 } else {
                     return boundFnVal;
                 }

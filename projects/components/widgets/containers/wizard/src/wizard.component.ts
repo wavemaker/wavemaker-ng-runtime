@@ -356,24 +356,37 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         }
     }
 
+    private isPromise = (obj) => obj instanceof Promise || (obj !== null && typeof obj === 'object' && typeof obj.then === 'function' && typeof obj.catch === 'function');
+
     // Method to navigate to next step
-    public async next(eventName: string = 'next') {
+
+    private handleNext(value: boolean | Promise<boolean>, currentStep, currentStepIndex) {
+        if (this.isPromise(value)) {
+            (value as Promise<boolean>).then(response => {
+                if (response === false) {
+                    return;
+                }
+                this.extendNextFn(currentStep, currentStepIndex);
+            }, err => err);
+        } else {
+            if (value === false) {
+                return;
+            }
+            this.extendNextFn(currentStep, currentStepIndex);
+        }
+    }
+
+    public next(eventName: string = 'next') {
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
 
         // abort if onSkip method returns false
         if (eventName === 'skip') {
-            const response = await currentStep.invokeSkipCB(currentStepIndex);
-            if (response === false) {
-                return;
-            }
-            this.extendNextFn(currentStep, currentStepIndex);
+            const response =  currentStep.invokeSkipCB(currentStepIndex);
+            this.handleNext(response, currentStep, currentStepIndex);
         } else if (this.currentStep.isValid && eventName === 'next') {
-            const response  = await currentStep.invokeNextCB(currentStepIndex);
-            if (response === false) {
-                return;
-            }
-            this.extendNextFn(currentStep, currentStepIndex);
+            const response  =  currentStep.invokeNextCB(currentStepIndex);
+            this.handleNext(response, currentStep, currentStepIndex);
         } else if (this.enablenext && !this.currentStep.isValid){
             Array.from((<any>this).currentStep.getAllEmbeddedForms())?.forEach((form:any) => {
                 form.widget.highlightInvalidFields();
@@ -384,7 +397,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         }
     }
 
-    extendNextFn(currentStep, currentStepIndex){
+    private extendNextFn(currentStep, currentStepIndex){
         const nextStep: WizardStepComponent = this.getNextValidStepFormIndex(currentStepIndex + 1);
         // If there are any steps which has show then only change state of current step else remain same
         if (nextStep) {
@@ -393,24 +406,34 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             currentStep.done = true;
             nextStep.active = true;
             this.currentStep = nextStep;
-            this.updateStepFocus();       
+            this.updateStepFocus();
         }
         this.addMoreText();
     }
     // Method to navigate to previous step
-    public async prev() {
+    public prev() {
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
 
-        let prevStep: WizardStepComponent;
-
         // abort if onPrev method returns false.
-        const response = await currentStep.invokePrevCB(currentStepIndex);
-        if (response === false) {
-            return;
+        const response = currentStep.invokePrevCB(currentStepIndex);
+        if (this.isPromise(response)) {
+            (response as Promise<boolean>).then( response => {
+                if (response === false) {
+                    return;
+                }
+                this.extendPrevFn(currentStep, currentStepIndex);
+            }, err => err);
+        } else {
+            if (response === false) {
+                return;
+            }
+            this.extendPrevFn(currentStep, currentStepIndex);
         }
+    }
 
-        prevStep = this.getPreviousValidStepFormIndex(currentStepIndex - 1);
+    private extendPrevFn(currentStep, currentStepIndex){
+        const prevStep: WizardStepComponent = this.getPreviousValidStepFormIndex(currentStepIndex - 1);
 
         // If there are any steps which has show then only change state of current step else remain same
         if (prevStep) {
