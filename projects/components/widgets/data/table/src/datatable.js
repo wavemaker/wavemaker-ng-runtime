@@ -2824,6 +2824,12 @@ $.widget('wm.datatable', {
             $htm.find('.save-edit-row-button').on('click', {action: 'save'}, this.toggleEditRow.bind(this));
         }
         if (self.options.editmode === self.CONSTANTS.QUICK_EDIT) {
+            $htm.on('focus', 'tr.app-datagrid-row', function (e) {
+                var $row = $(e.currentTarget);
+                if ($row.find('[data-col-id="0"]').length > 0 && !$row.hasClass('row-editing')) {
+                    self.toggleEditRow(e, { $row: $row, action: 'edit' });
+                }
+            });
             //On tab out of a row, save the current row and make next row editable
             $htm.on('focusout', 'tr.app-datagrid-row', function (e) {
                 var $target = $(e.target),
@@ -2869,7 +2875,7 @@ $.widget('wm.datatable', {
                         'noMsg': true,
                         'success': function (skipFocus, error, isNewRow) {
                             if (!isNewRow) {
-                                self.editSuccessHandler(skipFocus, error, e, $row);
+                                self.editSuccessHandler(skipFocus, error, e, $row,false);
                             }
                         }
                     });
