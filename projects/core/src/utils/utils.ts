@@ -75,7 +75,16 @@ export const getNavClass = (suffix: string) : string => {
     const APP_NAV_CLASS_PREFIX = 'app-nav-';
     return APP_NAV_CLASS_PREFIX + suffix;
 }
-  
+
+export function isValidUrl(nv: string): boolean {
+    try {
+        new URL(nv);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 export const getSheetPositionClass = (suffix: string): string => {
     const SHEET_POSITION_CLASS_PREFIX = 'sheet-position-';
     return SHEET_POSITION_CLASS_PREFIX + suffix;
@@ -993,7 +1002,7 @@ export const AppConstants = {
 };
 
 export const openLink = (link: string, target: string = '_self') => {
-        window.open(link, target);
+    window.open("page/" + link, target);
 };
 
 /* util function to load the content from a url */
@@ -1468,7 +1477,7 @@ export const triggerItemAction = (scope, item) => {
             const queryParams = getUrlParams(itemLink);
             itemLink = getRouteNameFromLink(itemLink);
             const router = get(scope, 'route') || get(scope, 'menuRef.route');
-            router.navigate([itemLink], { queryParams });
+            router.navigate(["page/" + itemLink], { queryParams });
         } else {
             openLink(itemLink, linkTarget);
         }

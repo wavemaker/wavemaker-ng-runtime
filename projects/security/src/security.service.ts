@@ -236,7 +236,7 @@ export class SecurityService {
                 if (that.getCurrentRoutePage() === page) {
                     (window.location as any).reload();
                 } else {
-                    that.routerService.navigate([`/${page}`]);
+                    that.routerService.navigate([`page/${page}`]);
                 }
             }
         });

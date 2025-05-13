@@ -138,7 +138,8 @@ export {
     setListClass,
     findParent,
     getNavClass,
-    getSheetPositionClass
+    getSheetPositionClass,
+    isValidUrl
 } from './utils/utils';
 export {
     FIRST_TIME_WATCH,

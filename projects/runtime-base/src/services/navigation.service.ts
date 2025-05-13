@@ -81,7 +81,7 @@ export class NavigationServiceImpl implements AbstractNavigationService {
        *
        *  */
         this.zone.run(() => {
-            return this.router.navigate([`/${pageName}`], { queryParams: options.urlParams});
+            return this.router.navigate([`page/${pageName}`], { queryParams: options.urlParams});
         });
 
     }

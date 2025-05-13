@@ -7,6 +7,7 @@ import {
     encodeUrl,
     EventNotifier,
     getRouteNameFromLink,
+    isValidUrl,
     removeAttr,
     removeClass,
     setAttr
@@ -119,12 +120,16 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
                 this.nativeElement.addEventListener('contextmenu', disableContextMenu);
                 return;
             }
+            
             if (this.encodeurl) {
                 nv = encodeUrl(nv);
             }
             // if hyperlink starts with 'www.' append '//' in the beginning
             if (nv.startsWith('www.')) {
                 nv = `//${nv}`;
+            }
+            if (!isValidUrl(nv)) {
+                nv = "page/" + nv;
             }
             setAttr(this.nativeElement, 'href', nv);
             this.nativeElement.removeEventListener('contextmenu', disableContextMenu);

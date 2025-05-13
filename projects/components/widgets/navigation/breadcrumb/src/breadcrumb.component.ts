@@ -94,7 +94,7 @@ export class BreadcrumbComponent extends DatasetAwareNavComponent {
             if (itemLink.startsWith('/') && (!linkTarget || linkTarget === '_self')) {
                 const queryParams = getUrlParams(itemLink);
                 itemLink = getRouteNameFromLink(itemLink);
-                this.route.navigate([itemLink], { queryParams });
+                this.route.navigate(["page/" + itemLink], { queryParams });
             } else {
                 openLink(itemLink, linkTarget);
             }
