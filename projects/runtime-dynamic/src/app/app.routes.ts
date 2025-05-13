@@ -24,7 +24,7 @@ export const routes: Routes = [
         component: PrefabPreviewComponent
     },
     {
-        path: ':pageName',
+        path: 'page/:pageName',
         pathMatch: 'full',
         resolve: appDependenciesResolve,
         component: PageWrapperComponent,

@@ -27,7 +27,7 @@ export class EmptyPageComponent implements OnInit {
             this.router.navigate(['prefab-preview']);
         } else if (this.app.isApplicationType) {
             this.securityService.getPageByLoggedInUser().then(page => {
-                this.router.navigate([page]);
+                this.router.navigate(["page/" + page]);
             });
         } else {
             this.router.navigate([getWmProjectProperties().homePage]);
