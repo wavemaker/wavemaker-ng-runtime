@@ -1896,7 +1896,9 @@ $.widget('wm.datatable', {
     },
     //Focus the active row
     focusActiveRow: function () {
-        this.gridElement.find('tr.app-datagrid-row.active').focus();
+        if(this.options.editmode!==this.CONSTANTS.QUICK_EDIT){
+            this.gridElement.find('tr.app-datagrid-row.active').focus();
+        }
     },
     focusNewRow: function () {
         var newRow = this.gridElement.find('tr.always-new-row');
@@ -2639,7 +2641,9 @@ $.widget('wm.datatable', {
                             $target.focus();
                         } else {
                             self.focusActiveRow();
-                            self.focusNewRow();
+                            self.options.timeoutCall(function () {
+                                self.focusNewRow();
+                            }, 400);
                         }
                     }
                 });
@@ -2830,9 +2834,9 @@ $.widget('wm.datatable', {
             $htm.find('.save-edit-row-button').on('click', {action: 'save'}, this.toggleEditRow.bind(this));
         }
         if (self.options.editmode === self.CONSTANTS.QUICK_EDIT) {
-            $htm.on('focus', 'tr.app-datagrid-row', function (e) {
+            $htm.on('focus', 'tr.app-datagrid-row[data-row-id="0"]', function (e) {
                 var $row = $(e.currentTarget);
-                if ($row.find('[data-col-id="0"]').length > 0 && !$row.hasClass('row-editing')) {
+                if (!$row.hasClass('row-editing')) {
                     self.toggleEditRow(e, { $row: $row, action: 'edit' });
                 }
             });
