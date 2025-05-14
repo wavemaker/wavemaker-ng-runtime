@@ -358,6 +358,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     handleLoading(data) {
         const dataSource = this.datasource;
         if (dataSource && dataSource.execute(DataSource.Operation.IS_API_AWARE) && isDataSourceEqual(data.variable, dataSource)) {
+            var ele = $(this.nativeElement).find('.app-livelist-container');
+        ele.addClass("loader-fade");
             this.ngZone.run(() => {
                 this.handleStateParams(data);
                 this.variableInflight = data.active;
@@ -368,6 +370,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 } else { // totalelements is undefined
                     this.noDataFound = isEmpty(data.data?.data);
                 }
+                setTimeout(() => {
+                ele.removeClass("loader-fade");}, 500);
             });
         }
     }

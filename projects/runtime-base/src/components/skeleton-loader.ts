@@ -11,7 +11,6 @@ interface SkeletonConfig {
     shimmerColor?: string;
     chartType?: string;
     cardClass?: string;
-    cardLayout?: string;
 
 }
 export class WMSkeletonLoader extends HTMLElement {
@@ -153,16 +152,21 @@ export class WMSkeletonLoader extends HTMLElement {
             }
             ${this.getListStyles()}
             .card-loader .card-column .list-loader{
-                flex-direction: row;
-                display: flex
+                width:100%;
+                display:inline-block;
             }
             .card-loader .card-column .list-item{
-                display: flex;
                 border-bottom: 0px solid #ccc;
-                background-color: #fff;
-                margin: 1em;
+                background-color: transparent;
                 padding: 10px;
-                border-radius: ${this._config.borderRadius};
+               
+                display:inline-block;
+            }
+            .card-loader .background{
+            background-color: #fff;
+            display:flex;
+            padding:10px;
+             border-radius: ${this._config.borderRadius};
             }
         `;
     }
@@ -174,19 +178,19 @@ export class WMSkeletonLoader extends HTMLElement {
                 padding: ${this._config.spacing};
                 display: flex;
                 flex-direction: column;
-                gap: 2px;
+                gap: 6px;
             }
             .list-loader .list-item {
-                display: flex;
+                display: inline-block;
                 padding: ${this._config.spacing} 10px;
                 background-color: #fff;
                 border-radius: ${this._config.borderRadius};
             }
             .list-loader .list-item-avatar {
-                width: 50px;
-                height: 50px;
+                width: 35px;
+                height: 16px;
                 background-color: ${this._config.foregroundColor};
-                border-radius: 50%;
+                border-radius: ${this._config.borderRadius};
                 margin-right: ${this._config.spacing};
             }
             .list-loader .list-item-content {
@@ -194,17 +198,29 @@ export class WMSkeletonLoader extends HTMLElement {
             }
             .list-loader .list-item-title {
                 height: 15px;
-                width: 90%;
+                width: 97%;
                 background-color: ${this._config.foregroundColor};
                 margin-bottom: 10px;
                 border-radius: ${this._config.borderRadius};
             }
-            .list-loader .list-item-subtitle {
+            .list-loader .list-item-subtitle{
                 height: 15px;
-                width: 65%;
                 background-color: ${this._config.foregroundColor};
                 border-radius: ${this._config.borderRadius};
                 margin-top:10px;
+            }
+            .list-loader .list-item-subtitle:nth-child(2){
+                width:85%;
+              }
+             .list-loader .list-item-subtitle:nth-child(3){
+                width:72%;
+              }
+             .list-loader .list-item-subtitle:nth-child(4){
+                width:60%;
+              }
+                .list-loader .background{
+            background-color: #fff;
+            display:flex;
             }
         `;
     }
@@ -219,7 +235,7 @@ export class WMSkeletonLoader extends HTMLElement {
                 display: flex;
                 margin-bottom: 10px;
                 gap: ${this._config.spacing};
-                background-color: ${this._config.backgroundColor};
+                background-color: #f0f0f0;
                 border-radius: ${this._config.borderRadius};
                 padding: ${this._config.spacing};
             }
@@ -799,7 +815,7 @@ export class WMSkeletonLoader extends HTMLElement {
 
         const creators: { [key: string]: () => void } = {
             app: () => this.createAppContent(loaderContent),
-            list: () => this.createListContent(loaderContent, widgetType, this._config.cardClass, this._config.cardLayout),
+            list: () => this.createListContent(loaderContent, widgetType, this._config.cardClass),
             table: () => this.createTableContent(loaderContent),
             chart: () => this.createChartContent(loaderContent, this._config.chartType?.toLowerCase()),
             form: () => this.createFormContent(loaderContent),
@@ -901,7 +917,7 @@ export class WMSkeletonLoader extends HTMLElement {
         const rightList = document.createElement('div');
         rightList.className = 'list-loader';
 
-        this.createListContent(leftList, widget, this._config.cardClass, this._config.cardLayout);
+        this.createListContent(leftList, widget, this._config.cardClass);
         // this.createListContent(rightList, widget);
 
         leftColumn.appendChild(leftList);
@@ -911,15 +927,17 @@ export class WMSkeletonLoader extends HTMLElement {
         // container.appendChild(rightColumn);
     }
 
-    private createListContent(container: HTMLElement, widget: string, cardClass: string, cardLayout: string): void {
-        const count = widget === 'card' ? 4 : 3;
-        console.log(cardLayout);
+    private createListContent(container: HTMLElement, widget: string, cardClass: string): void {
+        const count = widget === 'card' ? 5 : 3;
         for (let i = 0; i < count; i++) {
             const listItem = document.createElement('div');
             listItem.className = 'list-item';
             if (widget === 'card') {
                 listItem.className = 'list-item ' + cardClass;
+                
             }
+            const colordiv = document.createElement('div');
+                colordiv.className = 'background';
 
             const avatar = document.createElement('div');
             avatar.className = 'list-item-avatar skeleton-animated';
@@ -942,9 +960,9 @@ export class WMSkeletonLoader extends HTMLElement {
                 subtitle.className = 'list-item-subtitle skeleton-animated';
                 content.appendChild(subtitle);
             }
-
-            listItem.appendChild(avatar);
-            listItem.appendChild(content);
+            listItem.appendChild(colordiv);
+            colordiv.appendChild(avatar);
+            colordiv.appendChild(content);
             container.appendChild(listItem);
         }
     }
@@ -952,7 +970,7 @@ export class WMSkeletonLoader extends HTMLElement {
         const header = document.createElement('div');
         header.className = 'table-header';
 
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 3; i++) {
             const headerCell = document.createElement('div');
             headerCell.className = 'table-header-cell skeleton-animated';
             header.appendChild(headerCell);
@@ -963,7 +981,7 @@ export class WMSkeletonLoader extends HTMLElement {
             const row = document.createElement('div');
             row.className = 'table-row';
 
-            for (let j = 0; j < 6; j++) {
+            for (let j = 0; j < 3; j++) {
                 const cell = document.createElement('div');
                 cell.className = 'table-cell skeleton-animated';
                 row.appendChild(cell);

@@ -3320,6 +3320,7 @@ $.widget('wm.datatable', {
         }
         if (state === 'ready') {
             this.dataStatusContainer.hide();
+            $(".app-datagrid").addClass("table-loader-fade");
         } else {
             // [WMS-23839] always show load more btn if show view less btn is true
             if (this.options.isNavTypeScrollOrOndemand() && (state === 'nodata' || ((this.options.getCurrentPage() == this.options.getPageCount())  && !this.options.showviewlessbutton))) {

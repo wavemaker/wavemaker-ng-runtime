@@ -75,7 +75,7 @@
 </div>
 
 <div *ngIf="variableInflight && !pulltorefresh && this.app.Variables?.showSkeletonLoader?.dataSet.dataValue || false">
-    <wm-skeleton-loader [attr.widget-type]="this.$attrs.get('class') === 'list-card' ? 'card' : 'list'">
+    <wm-skeleton-loader [attr.widget-type]="this.$attrs.get('class') === 'list-card' ? 'card' : 'list'" [config]='{"cardClass": itemsPerRowClass}'>
     </wm-skeleton-loader>
 </div>
 
