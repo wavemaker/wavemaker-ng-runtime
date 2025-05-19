@@ -3150,9 +3150,29 @@ $.widget('wm.datatable', {
         }
         /**Add event handler, to the select all checkbox on the header**/
         $header.on('click', '.app-datagrid-header-cell input:checkbox', toggleSelectAll);
+        $header.on('keydown', '.app-datagrid-header-cell input:checkbox', function(event) {
+            if (event.key === 'Enter' || event.keyCode === 13) {
+                event.preventDefault(); // Prevent default behavior
+
+                // Simulate a click on the checkbox
+                const checkbox = this;
+                setTimeout(() => checkbox.click(), 0);
+            }
+        });
 
         if (_.isFunction(this.options.onHeaderClick)) {
             this.gridHeaderElement.find('th.app-datagrid-header-cell').on('click', this.headerClickHandler.bind(this));
+            this.gridHeaderElement.find('th.app-datagrid-header-cell').on('keydown', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    var $target = $(e.target);
+                    // Only run if on the checkbox column
+                    if ($target.attr('data-col-field') === 'checkbox') {
+                        e.preventDefault();
+                        // Trigger native click on the checkbox inside the header
+                        $target.find('input[type="checkbox"]').trigger('click');
+                    }
+                }
+            });
         }
 
         if (!this.options.isMobile && this.gridHeaderElement.length) {
