@@ -2696,9 +2696,6 @@ $.widget('wm.datatable', {
         }
         if (event.which === 13) { //Enter key
             event.stopPropagation();
-            if ($target.prop('tagName') !== 'SELECT') {
-                this._debounceOnEnter($target, $row, quickEdit, event);
-            }
             // Fix for [WMS-28247]: prevent row getting selected when pressing Enter on a data table field in view mode when  isrowselectable flag is false.
             if (this.options.editmode !== this.CONSTANTS.QUICK_EDIT && !$row.hasClass('row-editing')) {
                 if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable && Number(this.getColInfo(event))) {
