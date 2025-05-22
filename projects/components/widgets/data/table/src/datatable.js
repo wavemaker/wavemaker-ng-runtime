@@ -21,6 +21,8 @@ $.widget('wm.datatable', {
         filtermode: '',
         filteronkeypress: false,
         caseinsensitive: false,
+        showandhidecolumn: false,
+        showandhidecolumn: false,
         activeRow: undefined,
         isrowselectable: false,
         height: '100%',
@@ -88,6 +90,7 @@ $.widget('wm.datatable', {
             'type': 'custom',
             'displayName': '',
             'sortable': false,
+            'showandhidecolumn':false,
             'searchable': false,
             'resizable': false,
             'selectable': false,
@@ -102,6 +105,7 @@ $.widget('wm.datatable', {
             'type': 'custom',
             'displayName': '',
             'sortable': false,
+            'showandhidecolumn':false,
             'searchable': false,
             'resizable': false,
             'selectable': false,
@@ -288,9 +292,13 @@ $.widget('wm.datatable', {
                 $th,
                 $col,
                 $sortSpan,
-                $sortIcon;
+                $sortIcon,
+                sortDropDown;
+                $sortIcon,
+                sortDropDown;
             headerLabel = (!self.Utils.isDefined(headerLabel) || headerLabel === '') ? '&nbsp;' : headerLabel; //If headername is empty, add an empty space
             $col = $('<col/>');
+            console.log(value.showandhidecolumn)
             if (value.style) {
                 self._setStyles($col, value.style);
             }
@@ -324,7 +332,8 @@ $.widget('wm.datatable', {
                 'title': titleLabel,
                 'tabindex': 0,
                 'scope': 'col',
-                'role':'columnheader'
+                'role':'columnheader',
+                'data-table-name': self.options.name
             });
             self._setStyles($th, 'text-align: ' + value.textAlignment)
             $th.addClass(headerClasses);
@@ -335,6 +344,8 @@ $.widget('wm.datatable', {
             if (field === 'radio') {
                 $th.attr('aria-label', "Select row");
             }
+            
+            
             $th.append('<span class="header-data">' + headerLabel + '</span>');
             if (sortEnabled) { //If sort info is present, show the sort icon for that column on grid render
                 $sortSpan = $('<span class="sort-buttons-container"></span>');
@@ -346,7 +357,134 @@ $.widget('wm.datatable', {
                 }
                 $th.append($sortSpan.append($sortIcon));
             }
+            // self.options?.enableShowandhide
+            sortDropDown =  (_.isUndefined(value.show) || value.show) && (_.isUndefined(value.showandhidecolumn) || value.showandhidecolumn)
+            // sortDropDown = self.options.colDefs[index]?.showandhidecolumn
+            if(sortDropDown){
+                let columnList = '';
+                self.options.colDefs.forEach(function (colDef, index) {
+                    if(colDef.field != "rowOperations"){
+                        const checkedStatus = colDef.show;
+                        columnList += `
+                        <li>
+                            <a class="dropdown-item column-toggle" data-col-index="${index}" data-table-name="${self.options.name}">
+                                <input type="checkbox" class="columnNameIndex${index}" id="columnNameIndex${index}" name="columnNameIndex${index}" ${checkedStatus === true ? 'checked' : ''}  /> <label for="columnNameIndex${index}">  ${colDef.caption}</label>
+                            </a>
+                        </li>`;
+                    }
+                });
+                let dropdownHTML = `
+                    <div class="dropdown dropstart table-column-list-icon">
+                    <span class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        ▼
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item column-sort-option" href="javascript:void(0)" data-sort="asc" data-col-name="${self.options.colDefs[index].field}" data-col-index="${index}"><i class="sort-icon asc wi wi-long-arrow-up"></i> Sort Ascending</a></li>
+                        <li><a class="dropdown-item column-sort-option" href="javascript:void(0)" data-sort="desc" data-col-name="${self.options.colDefs[index].field}" data-col-index="${index}"><i class="sort-icon desc wi wi-long-arrow-down"></i> Sort Descending</a></li>
+                        <li class="dropdown-submenu table-column-list">
+                        <a class="dropdown-item dropdown-toggle" href="javascript:void(0)"><i aria-hidden="true" class="app-icon wi wi-view-column"></i> Columns</a>
+                        <ul class="dropdown-menu">
+                        `+columnList+`
+                        </ul>
+                        </li>
+                    </ul>
+                    </div>
+                    `;
+            
+                $th.append(dropdownHTML)
+            
+                setTimeout(() => {
+                    $(document).on('click', function (e) {
+                        // If the click target is not inside the dropdown or toggle, hide it
+                        if (!$(e.target).closest('.dropdown-toggle, .dropdown-menu').length) { 
+                            $('.dropdown-menu').hide();
+                        }
+                    });
+                    $th.on('click', '.dropdown-toggle', function (e) {
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        $('.dropdown-menu').not($(this).siblings('.dropdown-menu')).hide();     // Hide other open menus
+                        $('.table-column-list').removeClass('open-submenu');
+                        $(this).siblings('.dropdown-menu').toggle();     // Toggle the current one
+
+                    });
+
+                    $th.on('click', '.column-toggle input[type="checkbox"]', function (event) {
+                        event.stopPropagation(); // ✅ Prevent sorting
+                        event.stopImmediatePropagation();
+                    });
+                    $th.on('click', '.column-toggle', function (event) {
+                        event.stopPropagation(); // ✅ Prevent sorting from <a> tag
+                        event.stopImmediatePropagation();
+                        const $checkbox = $(this).find('input[type="checkbox"]');
+                        // $checkbox.prop('checked', !$checkbox.prop('checked')).trigger('change');
+                    });
+
+                    $th.on('change','.column-toggle input[type="checkbox"]', function () {
+                        const index = $(this).closest('.column-toggle').data('col-index');
+                        const tablename = $(this).closest('.column-toggle').data('table-name');
+                        const isChecked = $(this).is(':checked');
+                        $('.columnNameIndex' + index).prop('checked', isChecked);
+                        // Update the showcolumn flag
+                        self.options.colDefs[index].showcolumn = isChecked;
+                        self.options.colDefs[index].show = isChecked
+
+                        // Toggle column visibility
+                        showHideColumn(index, tablename);
+                    });
+
+                    $th.on('mouseenter', '.table-column-list', function () {
+                        $(this).addClass('open-submenu');
+                    });
+                    
+                    $th.on('mouseenter', '.column-sort-option', function () {
+                        $('.table-column-list').removeClass('open-submenu');
+                    });
+
+                    $th.on('click', '.column-sort-option', function (e) {
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        console.log($(this).data('sort'))
+                        let direction = $(this).data('sort')
+                        self.options.sortInfo = {
+                            direction: direction,
+                            field: $(this).data('col-name')
+                        }
+
+                    let $e = $(e.target),
+                        $th = $e.closest('th.app-datagrid-header-cell'),
+                        $sortContainer = $th.find('.sort-buttons-container'),
+                        $sortIcon = $sortContainer.find('i.sort-icon');
+                        self.resetSortIcons($sortIcon);
+                        $sortIcon.addClass(direction);
+                        //Add the classes based on the direction
+                        if (direction === 'asc') {
+                            $sortIcon.addClass(self.options.cssClassNames.ascIcon);
+                            $sortContainer.addClass('active');
+                        } else if (direction === 'desc') {
+                            $sortIcon.addClass(self.options.cssClassNames.descIcon);
+                            $sortContainer.addClass('active');
+                        }
+                        self.options.sortHandler.call(self, self.options.sortInfo, e, 'sort');
+                    });
+                    
+                },0)
+            }
             return $th;
+        }
+
+        function showHideColumn(index, tableName){
+            // Hide/show data cells
+            $(`th[data-table-name="${tableName}"] [data-col-id="${index}"]` ).each(function () {
+                const $cell = $(this);
+                const isHidden = $cell.css('display') === 'none';
+                if (!isHidden) {
+                    $cell.css('display', 'none');
+                } else {
+                    $cell.css('display', '')
+                }
+            });
+            self.setColGroupWidths();
         }
 
         //Method to generate the header row based on the column group config
@@ -1686,11 +1824,10 @@ $.widget('wm.datatable', {
         }
         //As rows visibility is checked, remove loading icon
         this.__setStatus();
-        var $headerCheckbox = this.gridHeaderElement.find('th.app-datagrid-header-cell input:checkbox'),
+        var $headerCheckbox = this.gridHeaderElement.find('th.app-datagrid-header-cell input[name="gridMultiSelect"]:checkbox'),
             $tbody = this.gridElement,
             checkedItemsLength = $tbody.find('tr.app-datagrid-row:visible input[name="gridMultiSelect"]:checkbox:checked').length,
             visibleRowsLength = $tbody.find('tr.app-datagrid-row:visible').length;
-
         if (!visibleRowsLength) {
             $headerCheckbox.prop('checked', false);
             return;

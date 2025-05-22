@@ -197,4 +197,6 @@ export class TableColumn {
      * This property is to show the column in mobile view.
      */
     @Input() mobiledisplay: string;
+    // Enable this property to allow users to show or hide table columns using a dropdown menu
+    @Input() showandhidecolumn: boolean
 }

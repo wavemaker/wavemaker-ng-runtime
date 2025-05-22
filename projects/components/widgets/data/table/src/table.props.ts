@@ -25,6 +25,7 @@ export const registerProps = () => {
                 ['filtermode', PROP_STRING],
                 ['filteronkeypress', {value: false, ...PROP_BOOLEAN}],
                 ['caseinsensitive', {value: false, ...PROP_BOOLEAN}],
+                ['showandhidecolumn', {value: false, ...PROP_BOOLEAN}],
                 ['filternullrecords', {value: true, ...PROP_BOOLEAN}],
                 ['forceellipses', {value: true, ...PROP_BOOLEAN}],
                 ['formposition', PROP_STRING],
