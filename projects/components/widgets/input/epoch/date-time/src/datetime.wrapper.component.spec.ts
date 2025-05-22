@@ -597,7 +597,7 @@ describe(('Datetime Component with Localization'), () => {
 
         beforeEach(() => {
             originalSetTimeout = global.setTimeout;
-            global.setTimeout = jest.fn().mockImplementation(cb => cb());
+            (global.setTimeout as any) = jest.fn().mockImplementation(cb => cb());
 
             mockBodyElement = document.createElement('body');
             mockDropdownElement = document.createElement('div');

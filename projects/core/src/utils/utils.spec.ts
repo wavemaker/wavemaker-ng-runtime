@@ -11,7 +11,7 @@ import {
 } from './build-utils';
 import {EventNotifier} from './event-notifier';
 import {Subject, Subscription} from 'rxjs';
-import  X2JS  from 'x2js';
+import { XMLParser } from 'fast-xml-parser';
 import {
     _WM_APP_PROJECT,
     addEventListenerOnElement,
@@ -82,7 +82,7 @@ import {
 } from './expression-parser';
 import {getWmProjectProperties, setWmProjectProperties} from './wm-project-properties';
 
-jest.mock('x2js'); 
+jest.mock('fast-xml-parser');
 import * as momentLib  from 'moment';
 const moment = momentLib.default || window['moment'];
 jest.mock('rxjs');
@@ -1478,15 +1478,16 @@ describe('getValidJSON', () => {
 });
 
 describe('xmlToJson', () => {
-    let mockX2JSInstance: any;
+    let mockXMLParserInstance: any;
+
     beforeEach(() => {
-        // Create a mock instance of X2JS
-        mockX2JSInstance = {
-            xml2js: jest.fn()
+        // Create a mock instance of XMLParser
+        mockXMLParserInstance = {
+            parse: jest.fn()
         };
 
-        // Mock the X2JS constructor to return the mock instance
-        (X2JS as jest.Mock).mockImplementation(() => mockX2JSInstance);
+        // Mock the XMLParser constructor to return the mock instance
+        (XMLParser as unknown as jest.Mock).mockImplementation(() => mockXMLParserInstance);
     });
 
     afterEach(() => {
@@ -1495,20 +1496,21 @@ describe('xmlToJson', () => {
 
     it('should convert XML to JSON', () => {
         const xmlString = '<root><item>value</item></root>';
-        const expectedJson =  { item: 'value' } ;
+        const expectedJson = { item: 'value' };
 
-        // Mock the xml2js method to return the expected JSON
-        mockX2JSInstance.xml2js.mockReturnValue({ root: expectedJson });
+        // Mock the parse method to return the expected JSON
+        mockXMLParserInstance.parse.mockReturnValue({ root: expectedJson });
 
         const result = xmlToJson(xmlString);
 
         expect(result).toEqual(expectedJson);
-        expect(X2JS).toHaveBeenCalledWith({
-            'emptyNodeForm': 'object',
-            'attributePrefix': '',
-            'enableToStringFunc': false
+        expect(XMLParser).toHaveBeenCalledWith({
+            ignoreAttributes: false,
+            attributeNamePrefix: '',
+            allowBooleanAttributes: true,
+            parseTagValue: true
         });
-        expect(mockX2JSInstance.xml2js).toHaveBeenCalledWith(xmlString);
+        expect(mockXMLParserInstance.parse).toHaveBeenCalledWith(xmlString);
     });
 });
 

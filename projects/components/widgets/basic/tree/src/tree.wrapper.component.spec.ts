@@ -634,7 +634,7 @@ describe('wm-tree: Component Specific Tests', () => {
 
         beforeEach(() => {
             mockChangeTreeIcons = jest.spyOn(TreeComponent.prototype as any, 'changeTreeIcons').mockImplementation();
-            mockSetTimeout = jest.spyOn(global, 'setTimeout').mockImplementation((cb) => cb() as any);
+            mockSetTimeout = jest.spyOn(global, 'setTimeout').mockImplementation((cb) => (cb as Function)());
 
             // Mock jQuery and zTree
             (global as any).$ = jest.fn(() => ({

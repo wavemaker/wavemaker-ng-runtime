@@ -24,6 +24,7 @@ import {
 import X2JS from 'x2js';
 declare const $;
 import * as momentLib from 'moment-timezone/moment-timezone';
+import { XMLParser } from 'fast-xml-parser';
 const moment = momentLib.default || window['moment'];
 declare const document;
 declare const resolveLocalFileSystemURL;
@@ -529,9 +530,13 @@ export const getValidJSON = (content) => {
 };
 
 export const xmlToJson = (xmlString) => {
-    //TODO: import x2js dynamically
-    const x2jsObj = new X2JS({ 'emptyNodeForm': 'object', 'attributePrefix': '', 'enableToStringFunc': false });
-    let json = x2jsObj.xml2js(xmlString);
+    const xmlParserObj = new XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix: '',
+        allowBooleanAttributes: true,
+        parseTagValue: true,
+    });
+    let json = xmlParserObj.parse(xmlString);
     if (json) {
         json = get(json, Object.keys(json)[0]);
     }

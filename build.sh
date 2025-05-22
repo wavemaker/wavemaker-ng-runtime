@@ -457,6 +457,7 @@ buildNgxBootstrap() {
 }
 
 buildUmdFiles() {
+    execCommand "rollup" "fast-xml-parser" "${ROLLUP} -c ./config/rollup-fast-xml-parser.config.mjs"
     execCommand "rollup" "ngx-toastr" "${ROLLUP} -c ./config/rollup.ngx-toastr.config.mjs"
     execCommand "rollup" "angular-websocket" "${ROLLUP} -c ./config/rollup.angular-websocket.config.mjs"
     execCommand "rollup" "ng-circle-progress" "${ROLLUP} -c ./config/rollup.ng-circle-progress.config.mjs"
@@ -502,7 +503,7 @@ bundleJS() {
         ./node_modules/lodash/lodash.js \
         ./node_modules/moment/moment.js \
         ./node_modules/moment-timezone/moment-timezone.js \
-        ./node_modules/x2js/x2js.js \
+        ./node_modules/fast-xml-parser/src/bundles/fxp.umd.js \
         ./node_modules/d3/dist/d3.min.js \
         ./node_modules/he/he.js \
         ./node_modules/@wavemaker/nvd3/build/nv.d3.min.js \

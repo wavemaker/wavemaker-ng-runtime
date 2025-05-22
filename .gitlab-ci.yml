@@ -76,6 +76,7 @@ unit_tests:
     - cd ../wavemaker-foundation-css ; npm install ;
     - npm run build
     - cd ../wavemaker-ng-runtime
+    - rm -rf package-lock.json
     - npm install 
     - yalc add @wavemaker/variables
     - yalc add @wavemaker/custom-widgets-m3
