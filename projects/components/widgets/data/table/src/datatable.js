@@ -18,6 +18,7 @@ $.widget('wm.datatable', {
         },
         isMobile: false,
         enableSort: true,
+        enableReOrderColumn: true,
         filtermode: '',
         filteronkeypress: false,
         caseinsensitive: false,
@@ -3096,6 +3097,37 @@ $.widget('wm.datatable', {
             this.gridHeaderElement.show();
         }
         $header = headerTemplate.header;
+
+        if (this.options.enableReOrderColumn) {
+            const $theadTr = $header.find('tr');
+            const options = {
+                containment: $theadTr,
+                delay: 100,
+                opacity: 0.8,
+                helper: 'clone',
+                zIndex: 1050,
+                tolerance: 'pointer',
+                start: (event, ui ) =>  {
+                    $theadTr.data('oldIndex', ui.item.index());
+                },
+                sort: (event, ui ) =>  {},
+                update: (event, ui ) =>  {
+                    const newIndex = ui.item.index();
+                    const oldIndex = $theadTr.data('oldIndex');
+                    $theadTr.removeData('oldIndex');
+
+                    const [movedColDef] = this.options.colDefs.splice(oldIndex, 1);
+                    this.options.colDefs.splice(newIndex, 0, movedColDef);
+                    debugger
+
+                    const [movedHeader] = this.options.headerConfig.splice(oldIndex, 1);
+                    this.options.headerConfig.splice(newIndex, 0, movedHeader);
+
+                    this.refreshGrid();
+                }
+            }
+            $theadTr.sortable(options);
+        }
 
         function toggleSelectAll(e) {
             var $checkboxes = $('tr.app-datagrid-row:not(.always-new-row):visible td input[name="gridMultiSelect"]:checkbox', self.gridElement),

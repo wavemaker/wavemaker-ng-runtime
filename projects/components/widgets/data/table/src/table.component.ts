@@ -172,6 +172,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     editmode;
     enablecolumnselection;
     enablesort = true;
+    enablereordercolumn = true;
     filtermode;
     filteronkeypress;
     isrowselectable;
@@ -1137,7 +1138,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             enablecolumnselection: 'enableColumnSelection',
             shownewrow: 'showNewRow',
             gridfirstrowselect: 'selectFirstRow',
-            isrowselectable: 'isrowselectable'
+            isrowselectable: 'isrowselectable',
+            enablereordercolumn: 'enableReOrderColumn',
         };
 
         if (this._liveTableParent) {
@@ -1815,6 +1817,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         /*call utility function to prepare fieldDefs for grid against given data (A MAX OF 10 COLUMNS ONLY)*/
         defaultFieldDefs = prepareFieldDefs(properties);
 
+        let fields = [];
+        if (this.gridOptions.isdynamictable && this.enablereordercolumn && this.gridOptions.colDefs.length) {
+            fields = this.gridOptions.colDefs.map( col => col.field);
+        }
+
         /*append additional properties*/
         forEach(defaultFieldDefs, columnDef => {
             columnDef.binding = columnDef.field;
@@ -1827,10 +1834,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             columnDef.type  = 'string';
             // Fix for [WMS-19668] and [WMS-19669]- Adding index and headerIndex for Dynamic DB columns.
             // Note: we don't have column groups for Dynamic DB
-            columnDef.index = columnIndex;
-            columnDef.headerIndex = headerIndex;
-            columnIndex++;
-            headerIndex++;
+            if (fields.length && fields.includes(columnDef.field)) {
+                const columnIndex = fields.indexOf(columnDef.field)
+                columnDef.index = columnIndex;
+                columnDef.headerIndex = columnIndex;
+            } else {
+                columnDef.index = columnIndex;
+                columnDef.headerIndex = headerIndex;
+                columnIndex++;
+                headerIndex++;
+            }
         });
 
         defaultFieldDefs.forEach(col => {
