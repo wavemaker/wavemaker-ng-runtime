@@ -18,10 +18,10 @@ $.widget('wm.datatable', {
         },
         isMobile: false,
         enableSort: true,
+        enableShowHideColumn: false,
         filtermode: '',
         filteronkeypress: false,
         caseinsensitive: false,
-        showandhidecolumn: false,
         showandhidecolumn: false,
         activeRow: undefined,
         isrowselectable: false,
@@ -119,6 +119,7 @@ $.widget('wm.datatable', {
             'type': 'custom',
             'displayName': '',
             'sortable': false,
+            'showandhidecolumn':false,
             'searchable': false,
             'resizable': false,
             'selectable': false,
@@ -133,6 +134,7 @@ $.widget('wm.datatable', {
             'type': 'custom',
             'displayName': 'S. No.',
             'sortable': false,
+            'showandhidecolumn': false,
             'searchable': false,
             'selectable': false,
             'readonly': true,
@@ -293,12 +295,10 @@ $.widget('wm.datatable', {
                 $col,
                 $sortSpan,
                 $sortIcon,
-                sortDropDown;
                 $sortIcon,
-                sortDropDown;
+                showhideDropdown;
             headerLabel = (!self.Utils.isDefined(headerLabel) || headerLabel === '') ? '&nbsp;' : headerLabel; //If headername is empty, add an empty space
             $col = $('<col/>');
-            console.log(value.showandhidecolumn)
             if (value.style) {
                 self._setStyles($col, value.style);
             }
@@ -357,10 +357,9 @@ $.widget('wm.datatable', {
                 }
                 $th.append($sortSpan.append($sortIcon));
             }
-            // self.options?.enableShowandhide
-            sortDropDown =  (_.isUndefined(value.show) || value.show) && (_.isUndefined(value.showandhidecolumn) || value.showandhidecolumn)
-            // sortDropDown = self.options.colDefs[index]?.showandhidecolumn
-            if(sortDropDown){
+            showhideDropdown = self.options.enableShowHideColumn && (_.isUndefined(value.show) || value.show) && (_.isUndefined(value.showandhidecolumn) || value.showandhidecolumn);
+
+            if(showhideDropdown){
                 let columnList = '';
                 self.options.colDefs.forEach(function (colDef, index) {
                     if(colDef.field != "rowOperations"){
@@ -444,7 +443,6 @@ $.widget('wm.datatable', {
                     $th.on('click', '.column-sort-option', function (e) {
                         e.stopPropagation();
                         e.stopImmediatePropagation();
-                        console.log($(this).data('sort'))
                         let direction = $(this).data('sort')
                         self.options.sortInfo = {
                             direction: direction,

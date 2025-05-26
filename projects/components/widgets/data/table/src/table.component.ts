@@ -172,6 +172,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     editmode;
     enablecolumnselection;
     enablesort = true;
+    enableshowhidecolumn = true;
     filtermode;
     filteronkeypress;
     isrowselectable;
@@ -1137,7 +1138,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             enablecolumnselection: 'enableColumnSelection',
             shownewrow: 'showNewRow',
             gridfirstrowselect: 'selectFirstRow',
-            isrowselectable: 'isrowselectable'
+            isrowselectable: 'isrowselectable',
+            enableshowhidecolumn: 'enableShowHideColumn'
         };
 
         if (this._liveTableParent) {

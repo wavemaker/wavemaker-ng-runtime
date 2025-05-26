@@ -198,5 +198,5 @@ export class TableColumn {
      */
     @Input() mobiledisplay: string;
     // Enable this property to allow users to show or hide table columns using a dropdown menu
-    @Input() showandhidecolumn: boolean
+    @Input() showandhidecolumn: boolean = true;
 }

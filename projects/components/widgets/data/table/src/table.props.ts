@@ -19,6 +19,7 @@ export const registerProps = () => {
                 ['errorstyle', {value: 'hover', ...PROP_STRING}],
                 ['enablecolumnselection', {value: false, ...PROP_BOOLEAN}],
                 ['enablesort', {value: true, ...PROP_BOOLEAN}],
+                ['enableshowhidecolumn', {value: false, ...PROP_BOOLEAN}],
                 ['errormessage', PROP_STRING],
                 ['exportformat', PROP_STRING],
                 ['exportdatasize', {value: 100, ...PROP_NUMBER}],

@@ -43,6 +43,10 @@ export class Table {
      * If this property is enabled, data table can be sorted by clicking the column header cells.
      */
     @Input() enablesort: boolean = true;
+     /**
+     * If this property is enabled, data table can be sorted by clicking the column header cells.
+     */
+    @Input() enableShowHideColumn:boolean = false;
     /**
      * This message will be displayed, if there is an error during the CRUD operation.
      * <p><em>Bindable: </em><code>true</code></p>
