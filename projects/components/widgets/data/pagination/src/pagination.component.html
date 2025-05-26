@@ -5,16 +5,17 @@
         <li class="items-per-page">
           <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label control-label">{{appLocale.LABEL_ITEMS_PER_PAGE}}</label>
 
-            <div class="btn-group" dropdown  container="body">
+            <div class="btn-group" dropdown  container="body" (isOpenChange)="onOpenChange($event)">
                 <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
                         aria-controls="dropdown-basic">
                     {{maxResults}} <span class="caret"></span>
                 </button>
                 <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pagesize-options"
                     role="menu" aria-labelledby="button-basic">
-                    @for (option of pageSizeOptions; track option) {
+                    @for (option of pageSizeOptions; track option; let i = $index) {
                     <li role="menuitem" [ngClass]="{ 'active': option == maxResults }">
-                        <a class="dropdown-item" (click)="onPageSizeChange($event, option)">{{option}}</a>
+                        <a class="dropdown-item" (click)="onPageSizeChange($event, option)" (keydown)="onDropdownKeydown($event, i)"
+                         [attr.tabindex]="i === focusedIndex ? 0 : -1">{{option}}</a>
                     </li>
                     }
                 </ul>
@@ -98,16 +99,17 @@
         <li class="items-per-page">
           <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label control-label">{{appLocale.LABEL_ITEMS_PER_PAGE}}</label>
 
-            <div class="btn-group" dropdown container="body">
+            <div class="btn-group" dropdown container="body" (isOpenChange)="onOpenChange($event)">
                 <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
                         aria-controls="dropdown-basic">
                     {{maxResults}} <span class="caret"></span>
                 </button>
                 <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pagesize-options"
                     role="menu" aria-labelledby="button-basic">
-                    @for (option of pageSizeOptions; track option) {
+                    @for (option of pageSizeOptions; track option; let i = $index) {
                         <li role="menuitem" [ngClass]="{ 'active': option == maxResults }">
-                            <a class="dropdown-item" (click)="onPageSizeChange($event, option)">{{option}}</a>
+                            <a class="dropdown-item" (click)="onPageSizeChange($event, option)" (keydown)="onDropdownKeydown($event, i)"
+                         [attr.tabindex]="i === focusedIndex ? 0 : -1">{{option}}</a>
                         </li>
                     }
                 </ul>
@@ -148,16 +150,17 @@
       <div class="items-per-page">
         <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label control-label">{{appLocale.LABEL_ITEMS_PER_PAGE }}</label>
 
-        <div class="btn-group" dropdown container="body">
+        <div class="btn-group" dropdown container="body"  (isOpenChange)="onOpenChange($event)">
             <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
                     aria-controls="dropdown-basic">
                 {{maxResults}} <span class="caret"></span>
             </button>
             <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pagesize-options"
                 role="menu" aria-labelledby="button-basic">
-                @for (option of pageSizeOptions; track option) {
+                @for (option of pageSizeOptions; track option; let i = $index) {
                     <li role="menuitem" [ngClass]="{ 'active': option == maxResults }">
-                        <a class="dropdown-item" (click)="onPageSizeChange($event, option)">{{option}}</a>
+                        <a class="dropdown-item" (click)="onPageSizeChange($event, option)" (keydown)="onDropdownKeydown($event, i)"
+                         [attr.tabindex]="i === focusedIndex ? 0 : -1">{{option}}</a>
                     </li>
                 }
             </ul>
