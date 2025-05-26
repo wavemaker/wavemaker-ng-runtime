@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { WmComponentsModule } from "@wm/components/base";
 import { FormsModule } from '@angular/forms';
-import {Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit, Optional} from '@angular/core';
+import {Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit, Optional, ViewChild} from '@angular/core';
 
 import {
     $appDigest,
@@ -17,7 +17,7 @@ import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, 
 import { registerProps } from './pagination.props';
 import {forEach, get, isArray, isEmpty, isNull, isString, range} from "lodash-es";
 import { PaginationModule } from 'ngx-bootstrap/pagination';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { BsDropdownModule, BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { MenuComponent } from '@wm/components/navigation/menu';
 
 const DEFAULT_CLS = 'app-datanavigator clearfix';
@@ -50,6 +50,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     static initializeProps = registerProps();
     @Output() resultEmitter: EventEmitter<any> = new EventEmitter();
     @Output() maxResultsEmitter: EventEmitter<any> = new EventEmitter();
+    @ViewChild(BsDropdownDirective) protected bsDropdown;
 
     datasource;
     maxResults;
@@ -57,6 +58,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     prevPageSize;
     actualPageSize;
     allowpagesizechange;
+    focusedIndex = 0;
     rowSummary;
     navigationsize;
     showrecordcount;
@@ -687,6 +689,71 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                 index: newIndex
             };
         });
+    }
+
+    onDropdownKeydown(event, index) {
+        const $items = $('ul#dropdown-basic a.dropdown-item');
+        const maxIndex = this.pageSizeOptions.length - 1;
+        let selectedOption;
+
+        switch (event.key) {
+            case 'ArrowDown':
+            case 'Tab':
+                event.preventDefault();
+                if (event.key === 'Tab' && event.shiftKey) {
+                    // Treat Shift+Tab as ArrowUp
+                    this.focusedIndex = (index - 1) < 0 ? maxIndex : index - 1;
+                } else {
+                    // Treat Tab or ArrowDown as ArrowDown
+                    this.focusedIndex = (index + 1) > maxIndex ? 0 : index + 1;
+                }
+                break;
+            case 'ArrowUp':
+                event.preventDefault();
+                this.focusedIndex = (index - 1) < 0 ? maxIndex : index - 1;
+                break;
+
+            case 'Enter':
+                event.preventDefault();
+                selectedOption = this.pageSizeOptions[this.focusedIndex];
+                this.onPageSizeChange(event, selectedOption);
+                this.closeDropdown();
+                return;
+
+            case 'Escape':
+                event.preventDefault();
+                this.closeDropdown();
+                return;
+
+            default:
+                return;
+        }
+
+        // Move focus after index is updated
+        setTimeout(() => {
+            $items.eq(this.focusedIndex)?.focus();
+        });
+
+    }
+
+    closeDropdown() {
+        // Close dropdown
+        this.bsDropdown.hide();
+        const $toggleButton = $('button[aria-controls="dropdown-basic"]');
+        $toggleButton.focus(); // Return focus to button
+    }
+
+    // Function gets called on dropdown open & close
+    onOpenChange(isOpen) {
+        if (isOpen) {
+            this.focusedIndex = 0;
+            setTimeout(() => {
+                // manually focus the dropdown as dropdown has container="body"
+                const $items = $('ul#dropdown-basic a.dropdown-item');
+                const $firstItem = $items.eq(this.focusedIndex);
+                $firstItem?.focus();
+            }, 0);
+        }
     }
     onPageSizeChange($event, newPageSize) {
         const widgetState = this.parent.statePersistence.getWidgetState(this.parent);
