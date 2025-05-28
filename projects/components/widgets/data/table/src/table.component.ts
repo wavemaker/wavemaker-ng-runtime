@@ -172,7 +172,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     editmode;
     enablecolumnselection;
     enablesort = true;
-    enablereordercolumn = true;
+    enablecolumnreorder = true;
     filtermode;
     filteronkeypress;
     isrowselectable;
@@ -1145,7 +1145,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             shownewrow: 'showNewRow',
             gridfirstrowselect: 'selectFirstRow',
             isrowselectable: 'isrowselectable',
-            enablereordercolumn: 'enableReOrderColumn',
+            enablecolumnreorder: 'enableColumnReorder',
         };
 
         if (this._liveTableParent) {
@@ -1824,7 +1824,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         defaultFieldDefs = prepareFieldDefs(properties);
 
         let fields = [];
-        if (this.gridOptions.isdynamictable && this.enablereordercolumn && this.gridOptions.colDefs.length) {
+        if (this.gridOptions.isdynamictable && this.enablecolumnreorder && this.gridOptions.colDefs.length) {
             fields = this.gridOptions.colDefs.map( col => col.field);
         }
 

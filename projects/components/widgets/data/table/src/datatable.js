@@ -18,7 +18,7 @@ $.widget('wm.datatable', {
         },
         isMobile: false,
         enableSort: true,
-        enableReOrderColumn: true,
+        enableColumnReorder: true,
         filtermode: '',
         filteronkeypress: false,
         caseinsensitive: false,
@@ -3098,7 +3098,7 @@ $.widget('wm.datatable', {
         }
         $header = headerTemplate.header;
 
-        if (this.options.enableReOrderColumn) {
+        if (this.options.enableColumnReorder) {
             const $theadTr = $header.find('tr');
             const options = {
                 containment: $theadTr,
