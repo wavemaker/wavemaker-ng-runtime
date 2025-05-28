@@ -366,8 +366,8 @@ $.widget('wm.datatable', {
                         const checkedStatus = colDef.show;
                         columnList += `
                         <li>
-                            <a class="dropdown-item column-toggle" data-col-index="${index}" data-table-name="${self.options.name}">
-                                <input type="checkbox" class="columnNameIndex${index}" id="columnNameIndex${index}" name="columnNameIndex${index}" ${checkedStatus === true ? 'checked' : ''}  /> <label for="columnNameIndex${index}">  ${colDef.caption}</label>
+                            <a class="dropdown-item column-toggle ${self.options.name}column${index}" data-col-index="${index}" data-table-name="${self.options.name}">
+                                <input type="checkbox" class="${self.options.name}columnNameIndex${index}" id="${self.options.name}columnNameIndex${index}" name="${self.options.name}columnNameIndex${index}" ${checkedStatus === true ? 'checked' : ''}  /> <label for="${self.options.name}columnNameIndex${index}">  ${colDef.caption}</label>
                             </a>
                         </li>`;
                     }
@@ -378,8 +378,11 @@ $.widget('wm.datatable', {
                         ▼
                     </span>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item column-sort-option" href="javascript:void(0)" data-sort="asc" data-col-name="${self.options.colDefs[index].field}" data-col-index="${index}"><i class="sort-icon asc wi wi-long-arrow-up"></i> Sort Ascending</a></li>
-                        <li><a class="dropdown-item column-sort-option" href="javascript:void(0)" data-sort="desc" data-col-name="${self.options.colDefs[index].field}" data-col-index="${index}"><i class="sort-icon desc wi wi-long-arrow-down"></i> Sort Descending</a></li>
+                      ${sortEnabled ? `
+                            <li><a class="dropdown-item column-sort-option" href="javascript:void(0)" data-sort="asc" data-col-name="${self.options.colDefs[index].field}" data-col-index="${index}"><i class="sort-icon asc wi wi-long-arrow-up"></i> Sort Ascending</a></li>
+                            <li><a class="dropdown-item column-sort-option" href="javascript:void(0)" data-sort="desc" data-col-name="${self.options.colDefs[index].field}" data-col-index="${index}"><i class="sort-icon desc wi wi-long-arrow-down"></i> Sort Descending</a></li>`
+                        : ''
+                        }
                         <li class="dropdown-submenu table-column-list">
                         <a class="dropdown-item dropdown-toggle" href="javascript:void(0)"><i aria-hidden="true" class="app-icon wi wi-view-column"></i> Columns</a>
                         <ul class="dropdown-menu">
@@ -387,9 +390,9 @@ $.widget('wm.datatable', {
                         </ul>
                         </li>
                     </ul>
-                    </div>
-                    `;
+                    </div>`;
             
+                if(value.field != "rowOperations")
                 $th.append(dropdownHTML)
             
                 setTimeout(() => {
@@ -399,31 +402,40 @@ $.widget('wm.datatable', {
                             $('.dropdown-menu').hide();
                         }
                     });
-                    $th.on('click', '.dropdown-toggle', function (e) {
+                    $('th').on('click', '.dropdown-toggle', function (e) {
                         e.stopPropagation();
                         e.stopImmediatePropagation();
                         $('.dropdown-menu').not($(this).siblings('.dropdown-menu')).hide();     // Hide other open menus
                         $('.table-column-list').removeClass('open-submenu');
                         $(this).siblings('.dropdown-menu').toggle();     // Toggle the current one
-
                     });
 
-                    $th.on('click', '.column-toggle input[type="checkbox"]', function (event) {
+                    $(document).on('click', '.column-toggle input[type="checkbox"]', function (event) {
                         event.stopPropagation(); // ✅ Prevent sorting
                         event.stopImmediatePropagation();
                     });
-                    $th.on('click', '.column-toggle', function (event) {
+
+                    $(document).on('click', '.column-toggle', function (event) {
                         event.stopPropagation(); // ✅ Prevent sorting from <a> tag
                         event.stopImmediatePropagation();
+
                         const $checkbox = $(this).find('input[type="checkbox"]');
+                        const index = $(this).data('col-index'); // ✅ Directly from `.column-toggle`
+                        const tablename = $(this).data('table-name'); // ✅ Directly from `.column-toggle`
+
+                        console.log(tablename, index);
+
+                        // If you want to toggle the checkbox manually:
                         // $checkbox.prop('checked', !$checkbox.prop('checked')).trigger('change');
                     });
 
-                    $th.on('change','.column-toggle input[type="checkbox"]', function () {
+
+                    $(document).on('change','.table-column-list-icon .column-toggle input[type="checkbox"]', function () {
                         const index = $(this).closest('.column-toggle').data('col-index');
                         const tablename = $(this).closest('.column-toggle').data('table-name');
                         const isChecked = $(this).is(':checked');
-                        $('.columnNameIndex' + index).prop('checked', isChecked);
+
+                        $('.' + tablename + 'columnNameIndex' + index).prop('checked', isChecked);
                         // Update the showcolumn flag
                         self.options.colDefs[index].showcolumn = isChecked;
                         self.options.colDefs[index].show = isChecked
@@ -432,15 +444,15 @@ $.widget('wm.datatable', {
                         showHideColumn(index, tablename);
                     });
 
-                    $th.on('mouseenter', '.table-column-list', function () {
+                    $(document).on('mouseenter', '.table-column-list', function () {
                         $(this).addClass('open-submenu');
                     });
                     
-                    $th.on('mouseenter', '.column-sort-option', function () {
+                    $(document).on('mouseenter', '.column-sort-option', function () {
                         $('.table-column-list').removeClass('open-submenu');
                     });
 
-                    $th.on('click', '.column-sort-option', function (e) {
+                    $(document).on('click', '.column-sort-option', function (e) {
                         e.stopPropagation();
                         e.stopImmediatePropagation();
                         let direction = $(this).data('sort')
@@ -2031,7 +2043,9 @@ $.widget('wm.datatable', {
     },
     //Focus the active row
     focusActiveRow: function () {
-        this.gridElement.find('tr.app-datagrid-row.active').focus();
+        if(this.options.editmode!==this.CONSTANTS.QUICK_EDIT){
+            this.gridElement.find('tr.app-datagrid-row.active').focus();
+        }
     },
     focusNewRow: function () {
         var newRow = this.gridElement.find('tr.always-new-row');
@@ -2774,7 +2788,9 @@ $.widget('wm.datatable', {
                             $target.focus();
                         } else {
                             self.focusActiveRow();
-                            self.focusNewRow();
+                            self.options.timeoutCall(function () {
+                                self.focusNewRow();
+                            }, 400);
                         }
                     }
                 });
@@ -2827,6 +2843,12 @@ $.widget('wm.datatable', {
         }
         if (event.which === 13) { //Enter key
             event.stopPropagation();
+            // Fix for [WMS-28247]: prevent row getting selected when pressing Enter on a data table field in view mode when  isrowselectable flag is false.
+            if (this.options.editmode !== this.CONSTANTS.QUICK_EDIT && !$row.hasClass('row-editing')) {
+                if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable && Number(this.getColInfo(event))) {
+                   return;
+                }
+            }
             this._debounceOnEnter($target, $row, quickEdit, event);
             return;
         }
@@ -2959,6 +2981,12 @@ $.widget('wm.datatable', {
             $htm.find('.save-edit-row-button').on('click', {action: 'save'}, this.toggleEditRow.bind(this));
         }
         if (self.options.editmode === self.CONSTANTS.QUICK_EDIT) {
+            $htm.on('focus', 'tr.app-datagrid-row[data-row-id="0"]', function (e) {
+                var $row = $(e.currentTarget);
+                if (!$row.hasClass('row-editing')) {
+                    self.toggleEditRow(e, { $row: $row, action: 'edit' });
+                }
+            });
             //On tab out of a row, save the current row and make next row editable
             $htm.on('focusout', 'tr.app-datagrid-row', function (e) {
                 var $target = $(e.target),
@@ -3004,7 +3032,7 @@ $.widget('wm.datatable', {
                         'noMsg': true,
                         'success': function (skipFocus, error, isNewRow) {
                             if (!isNewRow) {
-                                self.editSuccessHandler(skipFocus, error, e, $row);
+                                self.editSuccessHandler(skipFocus, error, e, $row,false);
                             }
                         }
                     });
@@ -3269,9 +3297,29 @@ $.widget('wm.datatable', {
         }
         /**Add event handler, to the select all checkbox on the header**/
         $header.on('click', '.app-datagrid-header-cell input:checkbox', toggleSelectAll);
+        $header.on('keydown', '.app-datagrid-header-cell input:checkbox', function(event) {
+            if (event.key === 'Enter' || event.keyCode === 13) {
+                event.preventDefault(); // Prevent default behavior
+
+                // Simulate a click on the checkbox
+                const checkbox = this;
+                setTimeout(() => checkbox.click(), 0);
+            }
+        });
 
         if (_.isFunction(this.options.onHeaderClick)) {
             this.gridHeaderElement.find('th.app-datagrid-header-cell').on('click', this.headerClickHandler.bind(this));
+            this.gridHeaderElement.find('th.app-datagrid-header-cell').on('keydown', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    var $target = $(e.target);
+                    // Only run if on the checkbox column
+                    if ($target.attr('data-col-field') === 'checkbox') {
+                        e.preventDefault();
+                        // Trigger native click on the checkbox inside the header
+                        $target.find('input[type="checkbox"]').trigger('click');
+                    }
+                }
+            });
         }
 
         if (!this.options.isMobile && this.gridHeaderElement.length) {

@@ -350,6 +350,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         showviewlessbutton: false,
         ondemandmessage: '',
         viewlessmessage: '',
+        enableSort: true,
+        enableShowHideColumn: true,
         loadingdatamsg: '',
         isNextPageData: undefined,
         ACTIONS: {
@@ -1217,6 +1219,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.documentClickBind = this._documentClickBind.bind(this);
             document.addEventListener('click', this.documentClickBind);
         }
+        
     }
     private getConfiguredState() {
         const mode = this.statePersistence.computeMode(this.statehandler);
@@ -2010,6 +2013,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 } else {
                     this.invokeEventCallback('hide');
                 }
+            case 'enablesort':
+                this.gridOptions.enableSort = nv;
+                this.redraw(true);
+                break;
+            case 'enableshowhidecolumn':
+                this.gridOptions.enableShowHideColumn = nv;
+                this.redraw(true);
+                break;
             default:
                 super.onPropertyChange(key, nv, ov);
         }

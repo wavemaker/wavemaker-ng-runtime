@@ -747,6 +747,14 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
             case 'showinfilter':
                 this.showinfilter = nv;
                 break;
+            case 'sortable':
+                this.sortable = nv;
+                this.table.redraw(true);
+                break;
+            case 'showandhidecolumn':
+                this.showandhidecolumn = nv;
+                this.table.redraw(true);
+                break;
             default:
                 if (inlineWidgetProps.includes(key)) {
                     this.setInlineWidgetProp('inlineInstance', key, nv);
