@@ -1219,7 +1219,22 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.documentClickBind = this._documentClickBind.bind(this);
             document.addEventListener('click', this.documentClickBind);
         }
-        
+        const self = this
+         $(document).on('change','.table-column-list-icon .column-toggle input[type="checkbox"]', function () {
+            const index = $(this).closest('.column-toggle').data('col-index');
+            const tablename = $(this).closest('.column-toggle').data('table-name');
+            const columnName = $(this).closest('.column-toggle').data('column-name');
+            const isChecked = $(this).is(':checked');
+
+            $('.' + tablename + 'columnNameIndex' + index).prop('checked', isChecked);
+            
+                if (self.name === tablename) {
+                    self.columns[columnName].show = isChecked
+                } 
+             setTimeout(() => {
+                self.callDataGridMethod('setColGroupWidths');
+            });
+        });
     }
     private getConfiguredState() {
         const mode = this.statePersistence.computeMode(this.statehandler);

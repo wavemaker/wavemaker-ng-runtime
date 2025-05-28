@@ -332,8 +332,7 @@ $.widget('wm.datatable', {
                 'title': titleLabel,
                 'tabindex': 0,
                 'scope': 'col',
-                'role':'columnheader',
-                'data-table-name': self.options.name
+                'role':'columnheader'
             });
             self._setStyles($th, 'text-align: ' + value.textAlignment)
             $th.addClass(headerClasses);
@@ -366,7 +365,7 @@ $.widget('wm.datatable', {
                         const checkedStatus = colDef.show;
                         columnList += `
                         <li>
-                            <a class="dropdown-item column-toggle ${self.options.name}column${index}" data-col-index="${index}" data-table-name="${self.options.name}">
+                            <a class="dropdown-item column-toggle ${self.options.name}column${index}" data-col-index="${index}" data-table-name="${self.options.name}" data-column-name="${colDef.field}">
                                 <input type="checkbox" class="${self.options.name}columnNameIndex${index}" id="${self.options.name}columnNameIndex${index}" name="${self.options.name}columnNameIndex${index}" ${checkedStatus === true ? 'checked' : ''}  /> <label for="${self.options.name}columnNameIndex${index}">  ${colDef.caption}</label>
                             </a>
                         </li>`;
@@ -394,7 +393,6 @@ $.widget('wm.datatable', {
             
                 if(value.field != "rowOperations")
                 $th.append(dropdownHTML)
-            
                 setTimeout(() => {
                     $(document).on('click', function (e) {
                         // If the click target is not inside the dropdown or toggle, hide it
@@ -409,13 +407,20 @@ $.widget('wm.datatable', {
                         $('.table-column-list').removeClass('open-submenu');
                         $(this).siblings('.dropdown-menu').toggle();     // Toggle the current one
                     });
+                    $(document).on('mouseenter', '.table-column-list', function () {
+                        $(this).addClass('open-submenu');
+                    });
+                    
+                    $(document).on('mouseenter', '.column-sort-option', function () {
+                        $('.table-column-list').removeClass('open-submenu');
+                    });
 
                     $(document).on('click', '.column-toggle input[type="checkbox"]', function (event) {
                         event.stopPropagation(); // ✅ Prevent sorting
                         event.stopImmediatePropagation();
                     });
 
-                    $(document).on('click', '.column-toggle', function (event) {
+                    $th.on('click', '.column-toggle', function (event) {
                         event.stopPropagation(); // ✅ Prevent sorting from <a> tag
                         event.stopImmediatePropagation();
 
@@ -429,30 +434,7 @@ $.widget('wm.datatable', {
                         // $checkbox.prop('checked', !$checkbox.prop('checked')).trigger('change');
                     });
 
-
-                    $(document).on('change','.table-column-list-icon .column-toggle input[type="checkbox"]', function () {
-                        const index = $(this).closest('.column-toggle').data('col-index');
-                        const tablename = $(this).closest('.column-toggle').data('table-name');
-                        const isChecked = $(this).is(':checked');
-
-                        $('.' + tablename + 'columnNameIndex' + index).prop('checked', isChecked);
-                        // Update the showcolumn flag
-                        self.options.colDefs[index].showcolumn = isChecked;
-                        self.options.colDefs[index].show = isChecked
-
-                        // Toggle column visibility
-                        showHideColumn(index, tablename);
-                    });
-
-                    $(document).on('mouseenter', '.table-column-list', function () {
-                        $(this).addClass('open-submenu');
-                    });
-                    
-                    $(document).on('mouseenter', '.column-sort-option', function () {
-                        $('.table-column-list').removeClass('open-submenu');
-                    });
-
-                    $(document).on('click', '.column-sort-option', function (e) {
+                    $th.on('click', '.column-sort-option', function (e) {
                         e.stopPropagation();
                         e.stopImmediatePropagation();
                         let direction = $(this).data('sort')
@@ -477,25 +459,12 @@ $.widget('wm.datatable', {
                         }
                         self.options.sortHandler.call(self, self.options.sortInfo, e, 'sort');
                     });
-                    
+
                 },0)
             }
             return $th;
         }
 
-        function showHideColumn(index, tableName){
-            // Hide/show data cells
-            $(`th[data-table-name="${tableName}"] [data-col-id="${index}"]` ).each(function () {
-                const $cell = $(this);
-                const isHidden = $cell.css('display') === 'none';
-                if (!isHidden) {
-                    $cell.css('display', 'none');
-                } else {
-                    $cell.css('display', '')
-                }
-            });
-            self.setColGroupWidths();
-        }
 
         //Method to generate the header row based on the column group config
         function generateRow(cols, i) {
@@ -2044,7 +2013,7 @@ $.widget('wm.datatable', {
     //Focus the active row
     focusActiveRow: function () {
         if(this.options.editmode!==this.CONSTANTS.QUICK_EDIT){
-            this.gridElement.find('tr.app-datagrid-row.active').focus();
+        this.gridElement.find('tr.app-datagrid-row.active').focus();
         }
     },
     focusNewRow: function () {
@@ -2789,7 +2758,7 @@ $.widget('wm.datatable', {
                         } else {
                             self.focusActiveRow();
                             self.options.timeoutCall(function () {
-                                self.focusNewRow();
+                            self.focusNewRow();
                             }, 400);
                         }
                     }
