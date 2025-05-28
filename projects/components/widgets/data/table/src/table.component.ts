@@ -172,6 +172,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     editmode;
     enablecolumnselection;
     enablesort = true;
+    enableshowhidecolumn = true;
     enablecolumnreorder = true;
     filtermode;
     filteronkeypress;
@@ -352,6 +353,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         viewlessmessage: '',
         loadingdatamsg: '',
         isNextPageData: undefined,
+        enableSort: true,
+        enableShowHideColumn: true,
         ACTIONS: {
             'DELETE': 'delete',
             'EDIT': 'edit',
@@ -1146,6 +1149,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             gridfirstrowselect: 'selectFirstRow',
             isrowselectable: 'isrowselectable',
             enablecolumnreorder: 'enableColumnReorder',
+            enableshowhidecolumn: 'enableShowHideColumn'
         };
 
         if (this._liveTableParent) {
@@ -1223,6 +1227,24 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.documentClickBind = this._documentClickBind.bind(this);
             document.addEventListener('click', this.documentClickBind);
         }
+
+        const self = this
+         $(document).on('change','.table-column-list-icon .column-toggle input[type="checkbox"]', function () {
+            const index = $(this).closest('.column-toggle').data('col-index');
+            const tablename = $(this).closest('.column-toggle').data('table-name');
+            const columnName = $(this).closest('.column-toggle').data('column-name');
+            const isChecked = $(this).is(':checked');
+
+            $('.' + tablename + 'columnNameIndex' + index).prop('checked', isChecked);
+            
+                if (self.name === tablename) {
+                    self.columns[columnName].show = isChecked
+                } 
+             setTimeout(() => {
+                self.callDataGridMethod('setColGroupWidths');
+            });
+        });
+
     }
     private getConfiguredState() {
         const mode = this.statePersistence.computeMode(this.statehandler);
@@ -2027,6 +2049,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 } else {
                     this.invokeEventCallback('hide');
                 }
+            case 'enablesort':
+                this.gridOptions.enableSort = nv;
+                this.redraw(true);
+                break;
+            case 'enableshowhidecolumn':
+                this.gridOptions.enableShowHideColumn = nv;
+                this.redraw(true);
+                break;
             default:
                 super.onPropertyChange(key, nv, ov);
         }

@@ -83,6 +83,7 @@ export const registerProps = () => {
                 ['showdropdownon', {value: 'default', ...PROP_STRING}],
                 ['sortable', {value: true, ...PROP_BOOLEAN}],
                 ['caseinsensitive', {value: false, ...PROP_BOOLEAN}],
+                ['showandhidecolumn', {value: true, ...PROP_BOOLEAN}],
                 ['tabletdisplay', {value: true, ...PROP_BOOLEAN}],
                 ['textalignment', {value: 'left', ...PROP_STRING}],
                 ['textcolor', PROP_STRING],

@@ -18,10 +18,12 @@ $.widget('wm.datatable', {
         },
         isMobile: false,
         enableSort: true,
+        enableShowHideColumn: false,
         enableColumnReorder: true,
         filtermode: '',
         filteronkeypress: false,
         caseinsensitive: false,
+        showandhidecolumn: false,
         activeRow: undefined,
         isrowselectable: false,
         height: '100%',
@@ -89,6 +91,7 @@ $.widget('wm.datatable', {
             'type': 'custom',
             'displayName': '',
             'sortable': false,
+            'showandhidecolumn':false,
             'searchable': false,
             'resizable': false,
             'selectable': false,
@@ -103,6 +106,7 @@ $.widget('wm.datatable', {
             'type': 'custom',
             'displayName': '',
             'sortable': false,
+            'showandhidecolumn': false,
             'searchable': false,
             'resizable': false,
             'selectable': false,
@@ -116,6 +120,7 @@ $.widget('wm.datatable', {
             'type': 'custom',
             'displayName': '',
             'sortable': false,
+            'showandhidecolumn': false,
             'searchable': false,
             'resizable': false,
             'selectable': false,
@@ -130,6 +135,7 @@ $.widget('wm.datatable', {
             'type': 'custom',
             'displayName': 'S. No.',
             'sortable': false,
+            'showandhidecolumn': false,
             'searchable': false,
             'selectable': false,
             'readonly': true,
@@ -289,7 +295,8 @@ $.widget('wm.datatable', {
                 $th,
                 $col,
                 $sortSpan,
-                $sortIcon;
+                $sortIcon,
+                showhideDropdown;
             headerLabel = (!self.Utils.isDefined(headerLabel) || headerLabel === '') ? '&nbsp;' : headerLabel; //If headername is empty, add an empty space
             $col = $('<col/>');
             if (value.style) {
@@ -346,6 +353,112 @@ $.widget('wm.datatable', {
                     $sortIcon.addClass(sortClass + ' ' + sortInfo.direction);
                 }
                 $th.append($sortSpan.append($sortIcon));
+            }
+            // show/hide column dropdown
+            showhideDropdown = self.options.enableShowHideColumn && (_.isUndefined(value.show) || value.show) && (_.isUndefined(value.showandhidecolumn) || value.showandhidecolumn);
+            if(showhideDropdown){
+                let columnList = '';
+                self.options.colDefs.forEach(function (colDef, i) {
+                    if(colDef.field != "rowOperations"){
+                        const checkedStatus = colDef.show;
+                        const colIndex = self.options.multiselect ? i + 1 : i
+                        console.log(colDef.field, colIndex)
+                        columnList += `
+                        <li>
+                            <div class="dropdown-item column-toggle ${self.options.name}column${colIndex}" data-col-index="${colIndex}" data-table-name="${self.options.name}" data-column-name="${colDef.field}">
+                            <label class="column-toggle-label" for="${self.options.name}columnNameIndex${colIndex}">
+                                <input type="checkbox" 
+                                    class="${self.options.name}columnNameIndex${colIndex}" 
+                                    id="${self.options.name}columnNameIndex${colIndex}" 
+                                    name="${self.options.name}columnNameIndex${colIndex}" 
+                                    ${checkedStatus === true ? 'checked' : ''} />
+                                ${colDef.caption}
+                                </label>
+                            </div>
+                        </li>`;
+                    }
+                });
+                let dropdownHTML = `
+                    <div class="dropdown dropstart table-column-list-icon">
+                    <span class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        ▼
+                    </span>
+                    <ul class="dropdown-menu">
+                      ${sortEnabled ? `
+                            <li><a class="dropdown-item column-sort-option" href="javascript:void(0)" data-sort="asc" data-col-name="${self.options.colDefs[index].field}" data-col-index="${index}"><i class="sort-icon asc wi wi-long-arrow-up"></i> Sort Ascending</a></li>
+                            <li><a class="dropdown-item column-sort-option" href="javascript:void(0)" data-sort="desc" data-col-name="${self.options.colDefs[index].field}" data-col-index="${index}"><i class="sort-icon desc wi wi-long-arrow-down"></i> Sort Descending</a></li>`
+                        : ''
+                        }
+                        <li class="dropdown-submenu table-column-list">
+                        <a class="dropdown-item dropdown-toggle" href="javascript:void(0)"><i aria-hidden="true" class="app-icon wi wi-view-column"></i> Columns</a>
+                        <ul class="dropdown-menu">
+                        `+columnList+`
+                        </ul>
+                        </li>
+                    </ul>
+                    </div>`;
+            
+                if(value.field != "rowOperations")
+                $th.append(dropdownHTML)
+                setTimeout(() => {
+                    $(document).on('click', function (e) {
+                        // If the click target is not inside the dropdown or toggle, hide it
+                        if (!$(e.target).closest('.dropdown-toggle, .dropdown-menu').length) { 
+                            $('.dropdown-menu').hide();
+                        }
+                    });
+                    $('th').on('click', '.dropdown-toggle', function (e) {
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        $('.dropdown-menu').not($(this).siblings('.dropdown-menu')).hide();     // Hide other open menus
+                        $('.table-column-list').removeClass('open-submenu');
+                        $(this).siblings('.dropdown-menu').toggle();     // Toggle the current one
+                    });
+                    $(document).on('mouseenter', '.table-column-list', function () {
+                        $(this).addClass('open-submenu');
+                    });
+                    
+                    $(document).on('mouseenter', '.column-sort-option', function () {
+                        $('.table-column-list').removeClass('open-submenu');
+                    });
+
+                    $(document).on('click', '.column-toggle input[type="checkbox"]', function (event) {
+                        event.stopPropagation(); // ✅ Prevent sorting
+                        event.stopImmediatePropagation();
+                    });
+
+                    $th.on('click', '.column-toggle', function (event) {
+                        event.stopPropagation(); // ✅ Prevent sorting from <a> tag
+                        event.stopImmediatePropagation();
+                    });
+
+                    $th.on('click', '.column-sort-option', function (e) {
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        let direction = $(this).data('sort')
+                        self.options.sortInfo = {
+                            direction: direction,
+                            field: $(this).data('col-name')
+                        }
+
+                    let $e = $(e.target),
+                        $th = $e.closest('th.app-datagrid-header-cell'),
+                        $sortContainer = $th.find('.sort-buttons-container'),
+                        $sortIcon = $sortContainer.find('i.sort-icon');
+                        self.resetSortIcons($sortIcon);
+                        $sortIcon.addClass(direction);
+                        //Add the classes based on the direction
+                        if (direction === 'asc') {
+                            $sortIcon.addClass(self.options.cssClassNames.ascIcon);
+                            $sortContainer.addClass('active');
+                        } else if (direction === 'desc') {
+                            $sortIcon.addClass(self.options.cssClassNames.descIcon);
+                            $sortContainer.addClass('active');
+                        }
+                        self.options.sortHandler.call(self, self.options.sortInfo, e, 'sort');
+                    });
+
+                },0)
             }
             return $th;
         }
@@ -1687,7 +1800,7 @@ $.widget('wm.datatable', {
         }
         //As rows visibility is checked, remove loading icon
         this.__setStatus();
-        var $headerCheckbox = this.gridHeaderElement.find('th.app-datagrid-header-cell input:checkbox'),
+        var $headerCheckbox = this.gridHeaderElement.find('th.app-datagrid-header-cell input[name="gridMultiSelect"]:checkbox'),
             $tbody = this.gridElement,
             checkedItemsLength = $tbody.find('tr.app-datagrid-row:visible input[name="gridMultiSelect"]:checkbox:checked').length,
             visibleRowsLength = $tbody.find('tr.app-datagrid-row:visible').length;

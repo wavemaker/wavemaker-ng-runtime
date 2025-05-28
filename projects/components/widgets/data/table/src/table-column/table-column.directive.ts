@@ -114,6 +114,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     show;
     sortable;
     caseinsensitive;
+    showandhidecolumn;
     textalignment;
     textcolor;
     type;
@@ -733,7 +734,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);
                 break;
             case 'show':
-                this.table.redraw(true);
+                // this.table.redraw(true);
                 this.showinfilter = this.nativeElement.hasAttribute('showinfilter') ? this.nativeElement.getAttribute('showinfilter') : nv;
                 break;
             case 'filterdataset':
@@ -746,6 +747,14 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
                 break;
             case 'showinfilter':
                 this.showinfilter = nv;
+                break;
+            case 'sortable':
+                this.sortable = nv;
+                this.table.redraw(true);
+                break;
+            case 'showandhidecolumn':
+                this.showandhidecolumn = nv;
+                this.table.redraw(true);
                 break;
             default:
                 if (inlineWidgetProps.includes(key)) {
