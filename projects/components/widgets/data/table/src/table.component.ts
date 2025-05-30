@@ -172,8 +172,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     editmode;
     enablecolumnselection;
     enablesort = true;
-    enableshowhidecolumn = true;
-    enablecolumnreorder = true;
+    enableshowhidecolumn = false;
+    enablecolumnreorder = false;
     filtermode;
     filteronkeypress;
     isrowselectable;
@@ -354,7 +354,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         loadingdatamsg: '',
         isNextPageData: undefined,
         enableSort: true,
-        enableShowHideColumn: true,
+        enableShowHideColumn: false,
+        enableColumnReorder: false,
         ACTIONS: {
             'DELETE': 'delete',
             'EDIT': 'edit',
@@ -2055,6 +2056,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 break;
             case 'enableshowhidecolumn':
                 this.gridOptions.enableShowHideColumn = nv;
+                this.redraw(true);
+                break;
+            case 'enablecolumnreorder':
+                this.gridOptions.enableColumnReorder = nv;
                 this.redraw(true);
                 break;
             default:

@@ -19,7 +19,7 @@ $.widget('wm.datatable', {
         isMobile: false,
         enableSort: true,
         enableShowHideColumn: false,
-        enableColumnReorder: true,
+        enableColumnReorder: false,
         filtermode: '',
         filteronkeypress: false,
         caseinsensitive: false,
@@ -362,7 +362,6 @@ $.widget('wm.datatable', {
                     if(colDef.field != "rowOperations"){
                         const checkedStatus = colDef.show;
                         const colIndex = self.options.multiselect ? i + 1 : i
-                        console.log(colDef.field, colIndex)
                         columnList += `
                         <li>
                             <div class="dropdown-item column-toggle ${self.options.name}column${colIndex}" data-col-index="${colIndex}" data-table-name="${self.options.name}" data-column-name="${colDef.field}">
