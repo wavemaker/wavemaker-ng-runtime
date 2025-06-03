@@ -249,7 +249,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         forEach(tpElements, (element) => {
             addClass(element.parentElement as HTMLElement, 'app-datetime', true);
         });
-
+        if (this.bsDropdown && (this.dateNotInRange || this.invalidDateTimeFormat)) {
+            this.bsTimeValue = null;
+        }
         this.bsDatePickerDirective.hide();
         this.focusTimePickerPopover(this);
         this.bindTimePickerKeyboardEvents();
@@ -318,9 +320,16 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
                 this.toggleTimePicker(true);
             }
         }
-        this.proxyModel = newVal;
-        if (this.proxyModel) {
-            this.bsDateValue = this.bsTimeValue = newVal;
+        if (!this.dateNotInRange && !this.invalidDateTimeFormat) {
+            this.proxyModel = newVal;
+            if (this.proxyModel) {
+                this.bsDateValue = this.bsTimeValue = newVal;
+            }
+            if(this.datavalue=== this.getPrevDataValue()){
+                const time=getFormattedDate(this.datePipe, this.datavalue, this.datepattern, this.timeZone, null, null, this) || ''
+                $(this.nativeElement).find('.display-input').val(time);}
+        }else {
+            this.proxyModel = newVal;
         }
         this._debouncedOnChange(this.datavalue, {}, true);
         this.cdRef.detectChanges();
@@ -392,6 +401,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             $event.stopPropagation();
             return;
+        }
+        if (this.bsDatePickerDirective && (this.dateNotInRange||this.invalidDateTimeFormat)) {
+            this.bsDatePickerDirective._bsValue = null;
         }
         this.bsDatePickerDirective.toggle();
         this.addBodyClickListener(this.bsDatePickerDirective.isOpen);

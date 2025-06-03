@@ -156,6 +156,9 @@ export class DateComponent extends BaseDateTimeComponent {
 
     // sets the dataValue and computes the display model values
     private setDataValue(newVal): void {
+        if(!newVal && $(this.nativeElement).find('.display-input').val()){
+            return ;
+        }
         this.invalidDateTimeFormat = false;
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
@@ -163,11 +166,16 @@ export class DateComponent extends BaseDateTimeComponent {
         if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this) === this.displayValue) {
             $(this.nativeElement).find('.display-input').val(this.displayValue);
         }
-        if (newVal) {
-            this.bsDataValue = newVal;
-            this.updateIMask();
-        } else {
-            this.bsDataValue = undefined;
+        if(!this.dateNotInRange){
+            if (newVal) {
+                this.bsDataValue = newVal;
+                this.updateIMask();
+            } else {
+                this.bsDataValue = undefined;
+            }
+            if(this.datavalue=== this.getPrevDataValue()){
+                const date=getFormattedDate(this.datePipe, this.datavalue, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this)
+                $(this.nativeElement).find('.display-input').val(date);}
         }
         this.invokeOnChange(this.datavalue, {}, true);
     }
@@ -179,6 +187,9 @@ export class DateComponent extends BaseDateTimeComponent {
             this.hightlightToday(this.activeDate);
         }
         this.updateIMask();
+        if (this.bsDatePickerDirective && (this.dateNotInRange||this.invalidDateTimeFormat)) {
+            this.bsDatePickerDirective._bsValue = null;
+        }
 
         // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
         // So actual bootstrap input target width we made it to 0, so bootstrap calculating the calendar container top position improperly.
