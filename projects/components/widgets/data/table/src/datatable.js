@@ -23,6 +23,7 @@ $.widget('wm.datatable', {
         caseinsensitive: false,
         activeRow: undefined,
         isrowselectable: false,
+        allowpagesizechange: false,
         height: '100%',
         showHeader: true,
         selectFirstRow: false,

@@ -17,6 +17,7 @@ export class ScriptLoaderService {
 
     private scripts: any = {};
     private pathMappings;
+    private pathMappingsLoadingPromise: Promise<any> | null = null;
 
     constructor(private http: HttpClient) {
         ScriptStore.forEach((script: any) => {
@@ -30,7 +31,19 @@ export class ScriptLoaderService {
     load(...scripts: string[]): Promise<any> {
         if (scripts && scripts.length) {
             return Promise.resolve()
-                .then(() => this.pathMappings || this.loadPathMappings())
+                .then(() => {
+                    if (this.pathMappings) {
+                        return this.pathMappings;
+                    }
+
+                    if(!this.pathMappingsLoadingPromise) {
+                        this.pathMappingsLoadingPromise = this.loadPathMappings()
+                            .finally(() => {
+                                this.pathMappingsLoadingPromise = null;
+                            });
+                    }
+                    return this.pathMappingsLoadingPromise;
+                })
                 .then(() => {
                     return Promise.all(scripts.map( s => {
                         return this.loadScript(s);
