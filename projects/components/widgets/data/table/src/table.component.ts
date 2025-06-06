@@ -216,6 +216,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     onRowupdate;
     onRowdelete;
     statehandler;
+    showHideStateMap:any = {};
     selectedItemChange = new Subject();
     selectedItemChange$: Observable<any> = this.selectedItemChange.asObservable();
 
@@ -1235,17 +1236,35 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             const tablename = $(this).closest('.column-toggle').data('table-name');
             const columnName = $(this).closest('.column-toggle').data('column-name');
             const isChecked = $(this).is(':checked');
-
-            $('.' + tablename + 'columnNameIndex' + index).prop('checked', isChecked);
-            
-                if (self.name === tablename) {
-                    self.columns[columnName].show = isChecked
-                } 
-             setTimeout(() => {
-                self.callDataGridMethod('setColGroupWidths');
-            });
+            const colinfo = {
+                index : index, 
+                tablename: tablename,
+                columnName:columnName,
+                isChecked: isChecked
+            }
+            self.showhideHandler(colinfo)
         });
 
+    }
+
+    showhideHandler(colinfo:any ){
+        if(colinfo.tablename === this.name){
+            $('.' + colinfo.tablename + 'columnNameIndex' + colinfo.index).prop('checked', colinfo.isChecked);
+            // Initialize state for the table if not present
+                if (!this.showHideStateMap[colinfo.tablename]) {
+                    this.showHideStateMap[colinfo.tablename] = {};
+                }
+                this.showHideStateMap[colinfo.tablename][colinfo.columnName] = colinfo.isChecked;
+                if (this.name === colinfo.tablename) {
+                    this.columns[colinfo.columnName].show = colinfo.isChecked
+                } 
+                setTimeout(() => {
+                    this.callDataGridMethod('setColGroupWidths');
+                });
+            if (this.statehandler !== 'none'){
+                this.statePersistence.setWidgetState(this, {'showHide' : this.showHideStateMap[colinfo.tablename]});
+            }
+        }
     }
     private getConfiguredState() {
         const mode = this.statePersistence.computeMode(this.statehandler);
@@ -1256,6 +1275,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (get(widgetState, 'selectedItem')) {
             this._selectedItemsExist = true;
         }
+        if (get(widgetState, 'showHide')) {
+                this.showhideColumnHandler(widgetState.showHide)
+            }
         options.options = options.options || {};
         if (get(widgetState, 'pagination')) {
             options.options.page = widgetState.pagination;
@@ -1283,6 +1305,17 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
         }
         return options;
+    }
+
+    private showhideColumnHandler(tableShowHideMap : any){
+        Object.keys(tableShowHideMap).forEach(columnName => {
+            const isChecked = tableShowHideMap[columnName];
+            this.columns?.[columnName] && (this.columns[columnName].show = isChecked);
+
+            // Also update the checkbox UI 
+            const index = this.columns?.[columnName] && this.columns[columnName].index;
+            $('.' + this.name + 'columnNameIndex' + index).prop('checked', isChecked);
+        });
     }
 
     private triggerWMEvent(newVal) {
@@ -1387,6 +1420,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             }
             if (get(widgetState, 'pagination')) {
                 this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
+            }
+            if (get(widgetState, 'showHide')) {
+                this.showhideColumnHandler(widgetState.showHide)
             }
         }
         // After the setting the watch on navigator, dataset is triggered with undefined. In this case, return here.

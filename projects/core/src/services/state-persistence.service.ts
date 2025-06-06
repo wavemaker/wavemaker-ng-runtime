@@ -37,7 +37,7 @@ export class StatePersistence {
             out = out + '.' + viewParent.containerWidget.name;
             return this.getNestedPath(viewParent.containerWidget.viewParent, widgetName, out);
         }
-        return out.split('.').reverse().join('.');
+        return out?.split('.').reverse().join('.');
     }
 
     /**
