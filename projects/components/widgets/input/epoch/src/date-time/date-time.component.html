@@ -90,9 +90,15 @@
       [arrowkeys]="true"
       (isValid)="isValid($event)"
       [showSeconds]="showseconds"
-    (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
+      (ngModelChange)="onModelUpdate($event, 'time')"></timepicker>
+      @if (ismeridian) {
+          <div class="ampm-toggle text-center">
+              <button class="meridian-btn mb-1" [ngClass]="{ 'active': getPeriod() === 'AM' }" (click)="setPeriod('AM')">AM</button><br>
+              <button class="meridian-btn" [ngClass]="{ 'active': getPeriod() === 'PM' }" (click)="setPeriod('PM')">PM</button>
+          </div>
+      }
+    </div>
   </div>
-</div>
 @if (loadNativeDateInput) {
   <wm-datetimepicker
     dateTimePicker

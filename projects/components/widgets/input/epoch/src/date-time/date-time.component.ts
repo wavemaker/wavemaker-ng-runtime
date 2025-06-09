@@ -1,5 +1,6 @@
 import { WmComponentsModule } from "@wm/components/base";
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { DateTimePickerComponent } from '../date-time/date-time-picker.component';
 import {
     AfterViewInit,
@@ -50,7 +51,7 @@ const CURRENT_DATE = 'CURRENT_DATE';
 
 @Component({
     standalone: true,
-    imports: [WmComponentsModule, FormsModule, DateTimePickerComponent, BsDropdownModule, BsDatepickerModule, TimepickerModule],
+    imports: [WmComponentsModule, FormsModule, DateTimePickerComponent, BsDropdownModule, BsDatepickerModule, TimepickerModule,CommonModule],
     selector: '[wmDateTime]',
     templateUrl: './date-time.component.html',
     providers: [

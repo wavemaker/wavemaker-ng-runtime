@@ -22,21 +22,27 @@
     <button type="button" class="btn btn-default btn-date" [tabindex]="tabindex" [disabled]="disabled || readonly || isCurrentTime" aria-label="Select time" aria-haspopup="true" aria-expanded="false" (click)="toggleDropdown($event, false)"><i aria-hidden="true" class="app-icon wm-sl-l sl-time"></i></button>
   </span>
   <div *dropdownMenu class="dropdown-menu" (click)="preventTpClose($event)">
-    <timepicker class="model-holder"
-      [showMeridian]="ismeridian"
-      [readonlyInput]="isDisabled"
-      [(ngModel)]="bsTimeValue"
-      [ngModelOptions]="{standalone: true}"
-      [disabled]="disabled || readonly || isCurrentTime"
-      [min]="minTime"
-      [max]="maxTime"
-      [hourStep]="hourstep"
-      [minuteStep]="minutestep"
-      [secondsStep]="secondsstep"
-      [mousewheel]="true"
-      [arrowkeys]="true"
-      (isValid)="isValid($event)"
-    [showSeconds]="showseconds" (ngModelChange)="onTimeChange($event)"></timepicker>
+      <timepicker class="model-holder"
+          [showMeridian]="ismeridian"
+          [readonlyInput]="isDisabled"
+          [(ngModel)]="bsTimeValue"
+          [ngModelOptions]="{standalone: true}"
+          [disabled]="disabled || readonly || isCurrentTime"
+          [min]="minTime"
+          [max]="maxTime"
+          [hourStep]="hourstep"
+          [minuteStep]="minutestep"
+          [secondsStep]="secondsstep"
+          [mousewheel]="true"
+          [arrowkeys]="true"
+          (isValid)="isValid($event)"
+          [showSeconds]="showseconds" (ngModelChange)="onTimeChange($event)"></timepicker>
+      @if (ismeridian) {
+          <div class="ampm-toggle text-center">
+              <button class="meridian-btn mb-1" [ngClass]="{ 'active': getPeriod() === 'AM' }" (click)="setPeriod('AM')">AM</button><br>
+              <button class="meridian-btn" [ngClass]="{ 'active': getPeriod() === 'PM' }" (click)="setPeriod('PM')">PM</button>
+          </div>
+      }
   </div>
 </div>
 @if (loadNativeDateInput) {

@@ -1001,6 +1001,31 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             });
         }
     }
+    getPeriod(): 'AM' | 'PM' {
+        if (!this.elementScope.bsTimeValue) return 'AM';
+        const hours =this.elementScope.bsTimeValue.getHours();
+        return hours >= 12 ? 'PM' : 'AM';
+    }
+
+    setPeriod(period: 'AM' | 'PM'): void {
+        const current = this.elementScope.bsTimeValue;
+        if (!current || !(current instanceof Date)) return;
+        const updatedDate = new Date(current);
+        const hours = updatedDate.getHours();
+        if (period === 'AM' && hours >= 12) {
+            updatedDate.setHours(hours - 12);
+        } else if (period === 'PM' && hours < 12) {
+            updatedDate.setHours(hours + 12);
+        }
+        if(this.elementScope.widgetType==='wm-time'){
+           const isInvalid= this.elementScope.minTime && this.elementScope.maxTime && (updatedDate < this.elementScope.minTime || updatedDate > this.elementScope.maxTime);
+           if(!isInvalid)
+            this.elementScope.onTimeChange(updatedDate);
+        }
+        else{
+            this.elementScope.onModelUpdate(updatedDate);
+        }
+    }
 
     onPropertyChange(key, nv, ov?) {
 
