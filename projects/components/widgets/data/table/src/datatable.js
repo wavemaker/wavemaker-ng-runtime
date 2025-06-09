@@ -751,6 +751,8 @@ $.widget('wm.datatable', {
             } else {
                 switch (colDef.field) {
                     case 'checkbox':
+                         $htm.attr('title',this.options.multiselecttitle)
+                         $htm.attr('aria-label',this.options.multiselectarialabel)
                         innerTmpl = this._getCheckboxTemplate(row, colDef.isMultiSelectCol);
                         break;
                     case '__expand':
@@ -1520,6 +1522,12 @@ $.widget('wm.datatable', {
                     this.gridSearch.find('[data-element="dgSearchText"]').attr('placeholder', value);
                     this.gridSearch.find('[data-element="dgSearchButton"]').attr('title', value);
                 }
+                break;
+            case 'multiselecttitle':
+                $('.app-datagrid-cell .app-checkbox').find('label').attr('title', value);
+                break;
+            case 'multiselectarialabel':
+                $('.app-datagrid-cell .app-checkbox').find('label').attr('aria-label', value);
                 break;
             case 'selectFirstRow':
                 this.selectFirstRow(value);
