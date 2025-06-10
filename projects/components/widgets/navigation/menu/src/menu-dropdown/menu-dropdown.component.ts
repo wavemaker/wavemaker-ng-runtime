@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { MenuDropdownItemComponent } from '../menu-dropdown-item/menu-dropdown-item.component';
-import { AfterViewInit, Component, ElementRef, Input } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, Input } from '@angular/core';
 
 import { addClass } from '@wm/core';
 
@@ -42,8 +42,8 @@ export class MenuDropdownComponent implements AfterViewInit {
     private readonly nativeElement;
     private hasExecutedCallback;
     @Input() items;
-
-    constructor(elRef: ElementRef, private menuRef: MenuComponent) {
+    private menuRef = inject(MenuComponent);
+    constructor(elRef: ElementRef) {
         this.nativeElement = elRef.nativeElement;
         this.hasExecutedCallback = false;
         addClass(this.nativeElement, DEFAULT_CLS);

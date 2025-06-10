@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {AfterViewChecked, Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
-import { LazyLoadDirective } from '@wm/components/base';
 
 import {provideAs, provideAsWidgetRef} from '@wm/components/base';
 
@@ -16,7 +15,7 @@ const WIDGET_CONFIG = {
 
 @Component({
     standalone: true,
-    imports: [CommonModule, FormsModule, LazyLoadDirective],
+    imports: [CommonModule, FormsModule],
     selector: 'wm-textarea',
     templateUrl: './textarea.component.html',
     providers: [

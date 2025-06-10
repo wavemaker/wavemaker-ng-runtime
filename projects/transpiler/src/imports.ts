@@ -62,7 +62,7 @@ const ALERT_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/ale
 const CONFIRM_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/confirm-dialog', name: 'ConfirmDialogComponent' }];
 const DESIGN_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/design-dialog', name: 'DialogComponent' }];
 const IFRAME_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/iframe-dialog', name: 'IframeDialogComponent' }];
-const LOGIN_DIALOG_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/dialogs/login-dialog', name: 'LoginDialogDirective' }];
+const LOGIN_DIALOG_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/dialogs/login-dialog', name: 'LoginDialogDirective' }, ...DESIGN_DIALOG_COMPONENT];
 const PARTIAL_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/partial-dialog', name: 'PartialDialogComponent' }, ...CONTAINER_DIRECTIVE];
 
 // Navigation Modules

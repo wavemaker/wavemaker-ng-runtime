@@ -3,7 +3,7 @@ import {
     Attribute,
     Component,
     ContentChildren,
-    HostBinding, Inject,
+    HostBinding, inject, Inject,
     Injector,
     OnInit,
     Optional
@@ -47,9 +47,9 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
     // reference to the components which needs a redraw(eg, grid, chart) when the height of this component changes
     @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
 
+    private tabsRef = inject(TabsComponent);
     constructor(
         inj: Injector,
-        private tabsRef: TabsComponent,
         @Attribute('heading') public heading,
         @Attribute('title') public title,
         @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any

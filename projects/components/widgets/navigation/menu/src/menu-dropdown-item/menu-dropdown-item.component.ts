@@ -1,6 +1,6 @@
 import { MenuDropdownComponent } from '../menu-dropdown/menu-dropdown.component';
 import { NavigationControlDirective } from '../nav/navigation-control.directive';
-import { Component, ElementRef, forwardRef, HostListener, Input, OnDestroy, OnInit, Optional } from '@angular/core';
+import { Component, ElementRef, forwardRef, HostListener, inject, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 
 import { addClass, triggerItemAction, UserDefinedExecutionContext, App, toggleClass } from '@wm/core';
 import { hasLinkToCurrentPage, TextContentDirective } from '@wm/components/base';
@@ -38,10 +38,9 @@ export class MenuDropdownItemComponent implements OnInit, OnDestroy {
 
     private readonly nativeElement;
     private highlightActiveLinkSubscription: () => void;
-
+    public menuRef =  inject(MenuComponent);
     constructor(
         private app: App,
-        public menuRef: MenuComponent,
         private userDefinedExecutionContext: UserDefinedExecutionContext,
         @Optional() private parentNav: NavComponent,
         elRef: ElementRef,
