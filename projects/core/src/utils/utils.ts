@@ -1,7 +1,7 @@
 import {Subject} from 'rxjs';
 
 import {getWmProjectProperties} from './wm-project-properties';
-
+import {getPreviewProperties} from "./wm-project-properties";
 import {$appDigest, $watch} from './watcher';
 import {DataType} from '../enums/enums';
 import {DataSource} from '../types/types';
@@ -1624,7 +1624,7 @@ export const findViewParent = (lView: any) => {
 }
 
 export const getFontConfig = () => {
-    return _WM_APP_PROPERTIES.fontConfig ? _WM_APP_PROPERTIES.fontConfig : {}
+    return _WM_APP_PROPERTIES.fontConfig || getPreviewProperties();
 }
 
 /*export const getParent = (parent: any) => {

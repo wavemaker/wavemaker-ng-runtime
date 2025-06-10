@@ -474,6 +474,8 @@ describe('TimeComponent with localization', () => {
     it('should update the datavalue without error when we type "de" format time in inputbox with "12H" format', fakeAsync(() => {
         const timepattern = 'hh:mm:ss a';
         wmComponent.getWidget().timepattern = timepattern;
+        wmComponent.getWidget().minTime = '';
+        wmComponent.getWidget().maxTime = '';
         localizedValueOnInputTest(fixture, '03:15:00 AM', wmComponent);
     }));
 
@@ -481,6 +483,8 @@ describe('TimeComponent with localization', () => {
     it('should update the datavalue without error when we type "de" format time in inputbox with "24H" format', fakeAsync(() => {
         const time = '15:15:00', timepattern = 'HH:mm:ss';
         wmComponent.getWidget().timepattern = timepattern;
+        wmComponent.getWidget().minTime = '';
+        wmComponent.getWidget().maxTime = '';
         localizedValueOnInputTest(fixture, '15:15:00', wmComponent);
     }));
 });
@@ -523,6 +527,8 @@ describe('TimeComponent with ro (Romania) localization', () => {
     it('should update the datavalue without error when we type "ro" format time in inputbox with "12H" format', fakeAsync(() => {
         const timepattern = 'hh:mm:ss a';
         wmComponent.getWidget().timepattern = timepattern;
+        wmComponent.getWidget().minTime = '';
+        wmComponent.getWidget().maxTime = '';
         localizedValueOnInputTest(fixture, '03:15:00 a.m.', wmComponent);
     }));
 });

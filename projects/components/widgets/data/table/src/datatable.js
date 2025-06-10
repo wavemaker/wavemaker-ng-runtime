@@ -1896,7 +1896,9 @@ $.widget('wm.datatable', {
     },
     //Focus the active row
     focusActiveRow: function () {
-        this.gridElement.find('tr.app-datagrid-row.active').focus();
+        if(this.options.editmode!==this.CONSTANTS.QUICK_EDIT){
+            this.gridElement.find('tr.app-datagrid-row.active').focus();
+        }
     },
     focusNewRow: function () {
         var newRow = this.gridElement.find('tr.always-new-row');
@@ -2639,7 +2641,9 @@ $.widget('wm.datatable', {
                             $target.focus();
                         } else {
                             self.focusActiveRow();
-                            self.focusNewRow();
+                            self.options.timeoutCall(function () {
+                                self.focusNewRow();
+                            }, 400);
                         }
                     }
                 });
@@ -2692,6 +2696,12 @@ $.widget('wm.datatable', {
         }
         if (event.which === 13) { //Enter key
             event.stopPropagation();
+            // Fix for [WMS-28247]: prevent row getting selected when pressing Enter on a data table field in view mode when  isrowselectable flag is false.
+            if (this.options.editmode !== this.CONSTANTS.QUICK_EDIT && !$row.hasClass('row-editing')) {
+                if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable && Number(this.getColInfo(event))) {
+                   return;
+                }
+            }
             this._debounceOnEnter($target, $row, quickEdit, event);
             return;
         }
@@ -2824,6 +2834,12 @@ $.widget('wm.datatable', {
             $htm.find('.save-edit-row-button').on('click', {action: 'save'}, this.toggleEditRow.bind(this));
         }
         if (self.options.editmode === self.CONSTANTS.QUICK_EDIT) {
+            $htm.on('focus', 'tr.app-datagrid-row[data-row-id="0"]', function (e) {
+                var $row = $(e.currentTarget);
+                if (!$row.hasClass('row-editing')) {
+                    self.toggleEditRow(e, { $row: $row, action: 'edit' });
+                }
+            });
             //On tab out of a row, save the current row and make next row editable
             $htm.on('focusout', 'tr.app-datagrid-row', function (e) {
                 var $target = $(e.target),
@@ -2869,7 +2885,7 @@ $.widget('wm.datatable', {
                         'noMsg': true,
                         'success': function (skipFocus, error, isNewRow) {
                             if (!isNewRow) {
-                                self.editSuccessHandler(skipFocus, error, e, $row);
+                                self.editSuccessHandler(skipFocus, error, e, $row,false);
                             }
                         }
                     });
@@ -3134,9 +3150,29 @@ $.widget('wm.datatable', {
         }
         /**Add event handler, to the select all checkbox on the header**/
         $header.on('click', '.app-datagrid-header-cell input:checkbox', toggleSelectAll);
+        $header.on('keydown', '.app-datagrid-header-cell input:checkbox', function(event) {
+            if (event.key === 'Enter' || event.keyCode === 13) {
+                event.preventDefault(); // Prevent default behavior
+
+                // Simulate a click on the checkbox
+                const checkbox = this;
+                setTimeout(() => checkbox.click(), 0);
+            }
+        });
 
         if (_.isFunction(this.options.onHeaderClick)) {
             this.gridHeaderElement.find('th.app-datagrid-header-cell').on('click', this.headerClickHandler.bind(this));
+            this.gridHeaderElement.find('th.app-datagrid-header-cell').on('keydown', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    var $target = $(e.target);
+                    // Only run if on the checkbox column
+                    if ($target.attr('data-col-field') === 'checkbox') {
+                        e.preventDefault();
+                        // Trigger native click on the checkbox inside the header
+                        $target.find('input[type="checkbox"]').trigger('click');
+                    }
+                }
+            });
         }
 
         if (!this.options.isMobile && this.gridHeaderElement.length) {

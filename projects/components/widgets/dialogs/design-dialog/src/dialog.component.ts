@@ -98,5 +98,8 @@ export class DialogComponent extends BaseDialog implements OnInit {
         if(key === 'sheetposition') {
             this.sheetPosition = nv;
         }
+        if(key === 'title') {
+            this.nativeElement.setAttribute('title', nv);
+        }
     }
 }

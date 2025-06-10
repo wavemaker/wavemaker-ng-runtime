@@ -292,22 +292,37 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             newVal = getNativeDateObject(newVal.target.value, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
         }
         if (newVal) {
-            this.bsTimeValue = newVal;
             // if the newVal is valid but not in the given range then highlight the input field
             this.timeNotInRange = this.minTime && this.maxTime && (newVal < this.minTime || newVal > this.maxTime);
             this.setValidateType(this.minTime, this.maxTime, newVal);
-        } else {
-            // sometimes library is not returning the correct value when the min and max time are given, displaying the datavalue based on the value given by the user
-            if (this.bsTimePicker && this.bsTimePicker.min && this.bsTimePicker.max) {
-                minTimeMeridian = moment(new Date(this.bsTimePicker.min)).format('A');
-                maxTimeMeridian = moment(new Date(this.bsTimePicker.max)).format('A');
-                timeValue = this.bsTimePicker.hours + ':' + (this.bsTimePicker.minutes || 0) + ':' + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian) : '');
-                timeInputValue = getNativeDateObject(timeValue, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
-                this.bsTimePicker.meridian = minTimeMeridian;
-                this.timeNotInRange = (this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue);
-                this.setValidateType(this.bsTimePicker.min, this.bsTimePicker.max, timeInputValue);
+            if(!this.timeNotInRange) {
+                this.bsTimeValue = newVal;
             }
-            this.bsTimeValue = timeInputValue;
+        } // sometimes library is not returning the correct value when the min and max time are given, displaying the datavalue based on the value given by the user
+        else if (this.bsTimePicker && this.bsTimePicker.min && this.bsTimePicker.max) {
+            minTimeMeridian = moment(new Date(this.bsTimePicker.min)).format('A');
+            maxTimeMeridian = moment(new Date(this.bsTimePicker.max)).format('A');
+            timeValue = this.bsTimePicker.hours + ':' + (this.bsTimePicker.minutes || 0) + ':' + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian) : '');
+            timeInputValue = getNativeDateObject(timeValue, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
+            this.bsTimePicker.meridian = minTimeMeridian;
+            this.timeNotInRange =  this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue;
+
+            if (this.timeNotInRange || this.invalidDateTimeFormat) {
+                this.bsTimeValue = this.getPrevDataValue();
+                setTimeout(() => {
+                    const timeStr = getFormattedDate(this.datePipe, timeValue, this.timepattern, this.timeZone, null, null, this) || '';
+                    $(this.nativeElement).find('.display-input').val(timeStr);
+                });
+            }
+            this.setValidateType(this.bsTimePicker.min, this.bsTimePicker.max, timeInputValue);
+            if (!this.timeNotInRange) {
+                this.bsTimeValue = timeInputValue;
+            }
+        }
+        // Update UI display if value hasn't changed
+        if (!this.timeNotInRange && this.datavalue === this.getPrevDataValue()) {
+            const displayTime = getFormattedDate(this.datePipe, this.datavalue, this.timepattern, this.timeZone, null, null, this) || '';
+            $(this.nativeElement).find('.display-input').val(displayTime);
         }
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, {}, true);
@@ -384,6 +399,9 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         forEach(tpElements, element => {
             addClass(element.parentElement as HTMLElement, 'app-datetime', true);
         });
+        if (this.bsDropdown && (this.timeNotInRange || this.invalidDateTimeFormat)) {
+            this.bsTimeValue = null;
+        }
         this.focusTimePickerPopover(this);
         this.bindTimePickerKeyboardEvents();
         adjustContainerPosition($('bs-dropdown-container'), this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
