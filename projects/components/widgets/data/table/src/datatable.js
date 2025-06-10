@@ -355,7 +355,7 @@ $.widget('wm.datatable', {
                 $th.append($sortSpan.append($sortIcon));
             }
             // show/hide column dropdown
-            showhideDropdown = self.options.enableShowHideColumn && (_.isUndefined(value.show) || value.show) && (_.isUndefined(value.showandhidecolumn) || value.showandhidecolumn);
+            showhideDropdown = self.options.enableShowHideColumn && (_.isUndefined(value.showandhidecolumn) || value.showandhidecolumn);
             if(showhideDropdown){
                 let columnList = '';
                 self.options.colDefs.forEach(function (colDef, i) {

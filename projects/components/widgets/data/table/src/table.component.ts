@@ -1254,16 +1254,27 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (!this.showHideStateMap[colinfo.tablename]) {
                     this.showHideStateMap[colinfo.tablename] = {};
                 }
-                this.showHideStateMap[colinfo.tablename][colinfo.columnName] = colinfo.isChecked;
+                if (!colinfo.isChecked) {
+                    // Add false value when column is hidden
+                    this.showHideStateMap[colinfo.tablename][colinfo.columnName] = false;
+                } else if (this.showHideStateMap[colinfo.tablename]?.hasOwnProperty(colinfo.columnName)) {
+                    // Remove the column from the state when it's visible
+                    delete this.showHideStateMap[colinfo.tablename][colinfo.columnName];
+                }
                 if (this.name === colinfo.tablename) {
                     this.columns[colinfo.columnName].show = colinfo.isChecked
                 } 
                 setTimeout(() => {
                     this.callDataGridMethod('setColGroupWidths');
                 });
-            if (this.statehandler !== 'none'){
-                this.statePersistence.setWidgetState(this, {'showHide' : this.showHideStateMap[colinfo.tablename]});
-            }
+                if (this.statehandler !== 'none') {
+                    if (Object.keys(this.showHideStateMap[colinfo.tablename]).length > 0) {
+                        this.statePersistence.setWidgetState(this, {'showHide' : this.showHideStateMap[colinfo.tablename] });
+                    } else {
+                        this.statePersistence.removeWidgetState(this, `showHide`);
+                    }
+                }
+
         }
     }
     private getConfiguredState() {
@@ -1276,6 +1287,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this._selectedItemsExist = true;
         }
         if (get(widgetState, 'showHide')) {
+                this.showHideStateMap[this.name] = widgetState.showHide;
                 this.showhideColumnHandler(widgetState.showHide)
             }
         options.options = options.options || {};
@@ -1311,7 +1323,6 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         Object.keys(tableShowHideMap).forEach(columnName => {
             const isChecked = tableShowHideMap[columnName];
             this.columns?.[columnName] && (this.columns[columnName].show = isChecked);
-
             // Also update the checkbox UI 
             const index = this.columns?.[columnName] && this.columns[columnName].index;
             $('.' + this.name + 'columnNameIndex' + index).prop('checked', isChecked);
@@ -1422,6 +1433,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
             }
             if (get(widgetState, 'showHide')) {
+                this.showHideStateMap[this.name] = widgetState.showHide;
                 this.showhideColumnHandler(widgetState.showHide)
             }
         }
