@@ -1,6 +1,7 @@
 import { WmComponentsModule } from "@wm/components/base";
 import { FormsModule } from '@angular/forms';
 import { DateTimePickerComponent } from '../date-time/date-time-picker.component';
+import { CommonModule } from '@angular/common';
 import { Component, Inject, Injector, NgZone, OnDestroy, Optional } from '@angular/core';
 import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TimepickerConfig, TimepickerModule } from 'ngx-bootstrap/timepicker';
@@ -36,7 +37,7 @@ const WIDGET_CONFIG = { widgetType: 'wm-time', hostClass: DEFAULT_CLS };
 
 @Component({
     standalone: true,
-    imports: [WmComponentsModule, FormsModule, DateTimePickerComponent, BsDropdownModule, TimepickerModule],
+    imports: [WmComponentsModule, FormsModule, DateTimePickerComponent, BsDropdownModule, TimepickerModule,CommonModule],
     selector: '[wmTime]',
     templateUrl: './time.component.html',
     providers: [
