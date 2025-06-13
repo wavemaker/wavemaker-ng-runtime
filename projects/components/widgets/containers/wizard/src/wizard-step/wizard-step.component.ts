@@ -145,15 +145,15 @@ export class WizardStepComponent extends StylableComponent implements OnInit, Af
         this.wizardComponent = this.inj.get(WizardComponent);
     }
 
-    public invokeNextCB(index: number): boolean {
+    public invokeNextCB(index: number): boolean | Promise<boolean> {
         return this.invokeEventCallback('next', {currentStep: this, stepIndex: index});
     }
 
-    public invokePrevCB(index: number): boolean {
+    public invokePrevCB(index: number): boolean | Promise<boolean> {
         return this.invokeEventCallback('prev', {currentStep: this, stepIndex: index});
     }
 
-    public invokeSkipCB(index: number): boolean {
+    public invokeSkipCB(index: number): boolean | Promise<boolean> {
         return this.invokeEventCallback('skip', {currentStep: this, stepIndex: index});
     }
 

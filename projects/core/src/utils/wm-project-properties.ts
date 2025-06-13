@@ -1,5 +1,5 @@
 const properties: any = {};
-
+const previewProp: any ={};
 declare const window;
 
 export function getWmProjectProperties() {
@@ -12,4 +12,19 @@ export function getWmProjectProperties() {
 
 export function setWmProjectProperties(props: any) {
     Object.setPrototypeOf(properties, props);
+}
+export function setPreviewProperties(props: any) {
+    Object.assign(previewProp, props);
+}
+export function getPreviewProperties() {
+    const fontConfig = previewProp.fontConfig || '';
+    const cssPaths = [...fontConfig.matchAll(/"csspath":\s*"([^"]+)"/g)]
+        .map(match => match[1]);
+
+    properties.default = {
+        baseFont: '',
+        fonts: cssPaths.map(csspath => ({ csspath }))
+    };
+
+    return properties;
 }

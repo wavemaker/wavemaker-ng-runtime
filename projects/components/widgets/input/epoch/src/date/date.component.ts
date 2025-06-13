@@ -156,6 +156,9 @@ export class DateComponent extends BaseDateTimeComponent {
 
     // sets the dataValue and computes the display model values
     private setDataValue(newVal): void {
+        if(!newVal && $(this.nativeElement).find('.display-input').val()){
+            return ;
+        }
         this.invalidDateTimeFormat = false;
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
@@ -163,11 +166,16 @@ export class DateComponent extends BaseDateTimeComponent {
         if (getFormattedDate(this.datePipe, newVal, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this) === this.displayValue) {
             $(this.nativeElement).find('.display-input').val(this.displayValue);
         }
-        if (newVal) {
-            this.bsDataValue = newVal;
-            this.updateIMask();
-        } else {
-            this.bsDataValue = undefined;
+        if(!this.dateNotInRange){
+            if (newVal) {
+                this.bsDataValue = newVal;
+                this.updateIMask();
+            } else {
+                this.bsDataValue = undefined;
+            }
+            if(this.datavalue=== this.getPrevDataValue()){
+                const date=getFormattedDate(this.datePipe, this.datavalue, this.dateInputFormat, this.timeZone, null, this.isCurrentDate, this)
+                $(this.nativeElement).find('.display-input').val(date);}
         }
         this.invokeOnChange(this.datavalue, {}, true);
     }
@@ -179,21 +187,24 @@ export class DateComponent extends BaseDateTimeComponent {
             this.hightlightToday(this.activeDate);
         }
         this.updateIMask();
+        if (this.bsDatePickerDirective && (this.dateNotInRange||this.invalidDateTimeFormat)) {
+            this.bsDatePickerDirective._bsValue = null;
+        }
 
         // We are using the two input tags(To maintain the modal and proxy modal) for the date control.
         // So actual bootstrap input target width we made it to 0, so bootstrap calculating the calendar container top position improperly.
         // To fix the container top position set the width 1px;
         this.$element.find('.model-holder').width('1px');
-        const dpContainerEl = $('bs-datepicker-container');
-        dpContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
+        const datePickerContainerEl = $('bs-datepicker-container');
+        datePickerContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
         $('.bs-calendar-container').removeAttr('role');
         const datePickerContainer = $('.bs-datepicker-container')[0];
         this.focusTrap = setFocusTrap(datePickerContainer, true);
         this.focusTrap.activate();
         this.addDatepickerKeyboardEvents(this, false);
-        adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
-        adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
-
+        adjustContainerPosition(datePickerContainerEl, this.nativeElement, this.bsDatePickerDirective._datepicker);
+        adjustContainerRightEdges(datePickerContainerEl, this.nativeElement, this.bsDatePickerDirective._datepicker);
+        this.adjustDateTimePickerInModel(datePickerContainerEl[0], this.bsDatePickerDirective);
         if (this.timeZone) {
             const todayBtn = document.querySelector(`.${this.dateContainerCls} .bs-datepicker-buttons .btn-today-wrapper button`) as HTMLElement;
             const setTodayTZHandler = (event) => {

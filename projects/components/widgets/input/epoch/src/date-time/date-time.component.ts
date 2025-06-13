@@ -250,12 +250,16 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         forEach(tpElements, (element) => {
             addClass(element.parentElement as HTMLElement, 'app-datetime', true);
         });
-
+        if (this.bsDropdown && (this.dateNotInRange || this.invalidDateTimeFormat)) {
+            this.bsTimeValue = null;
+        }
         this.bsDatePickerDirective.hide();
         this.focusTimePickerPopover(this);
         this.bindTimePickerKeyboardEvents();
-        adjustContainerPosition($('bs-dropdown-container'), this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
-        adjustContainerRightEdges($('bs-dropdown-container'), this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
+        const dropdownContainerEl = $('bs-dropdown-container');
+        adjustContainerPosition(dropdownContainerEl, this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
+        adjustContainerRightEdges(dropdownContainerEl, this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
+        this.adjustDateTimePickerInModel(dropdownContainerEl[0], this.bsDatePickerDirective);
     }
 
     public onDatePickerOpen() {
@@ -265,8 +269,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         // So actual bootstrap input target width we made it to 0 so bootstrap calculating the calendar container top position impropery.
         // To fix the container top position set the width 1px;
         this.$element.find('.model-holder').width('1px');
-        const dpContainerEl = $('bs-datepicker-container');
-        dpContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
+        const datePickerContainerEl = $('bs-datepicker-container');
+        datePickerContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
         $('.bs-calendar-container').removeAttr('role');
         const datePickerContainer = $('.bs-datepicker-container')[0];
         this.focusTrap = setFocusTrap(datePickerContainer, true);
@@ -277,7 +281,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             this.hightlightToday(this.activeDate);
         }
         this.addDatepickerKeyboardEvents(this, true);
-        adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
+        adjustContainerPosition(datePickerContainerEl, this.nativeElement, this.bsDatePickerDirective._datepicker);
+        this.adjustDateTimePickerInModel(datePickerContainerEl[0], this.bsDatePickerDirective);
     }
 
     /**
@@ -316,9 +321,16 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
                 this.toggleTimePicker(true);
             }
         }
-        this.proxyModel = newVal;
-        if (this.proxyModel) {
-            this.bsDateValue = this.bsTimeValue = newVal;
+        if (!this.dateNotInRange && !this.invalidDateTimeFormat) {
+            this.proxyModel = newVal;
+            if (this.proxyModel) {
+                this.bsDateValue = this.bsTimeValue = newVal;
+            }
+            if(this.datavalue=== this.getPrevDataValue()){
+                const time=getFormattedDate(this.datePipe, this.datavalue, this.datepattern, this.timeZone, null, null, this) || ''
+                $(this.nativeElement).find('.display-input').val(time);}
+        }else {
+            this.proxyModel = newVal;
         }
         this._debouncedOnChange(this.datavalue, {}, true);
         this.cdRef.detectChanges();
@@ -390,6 +402,9 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         if ($event.target && $($event.target).is('input') && !(this.isDropDownDisplayEnabledOnInput(this.showdropdownon))) {
             $event.stopPropagation();
             return;
+        }
+        if (this.bsDatePickerDirective && (this.dateNotInRange||this.invalidDateTimeFormat)) {
+            this.bsDatePickerDirective._bsValue = null;
         }
         this.bsDatePickerDirective.toggle();
         this.addBodyClickListener(this.bsDatePickerDirective.isOpen);
