@@ -123,13 +123,13 @@ describe('ScriptLoaderService', () => {
         jest.spyOn(document, 'createElement').mockReturnValue(mockScriptElement as any);
 
         // Act
-        const promise = service['loadScript']('testScript');
+        const promise = service['loadScript']('testScript.js');
         mockScriptElement.onload!(); // Simulate successful load
         const result = await promise;
 
         // Assert
-        expect(mockScriptElement.src).toBe(cdnUrl + 'mockPath/testScript.js');
-        expect(result).toEqual({ script: 'testScript', loaded: true });
+        expect(mockScriptElement.src).toBe(cdnUrl + 'testScript.js');
+        expect(result).toEqual({ script: 'testScript.js', loaded: true });
         expect(appendChildSpy).toHaveBeenCalled();
     });
 
@@ -195,51 +195,13 @@ describe('ScriptLoaderService', () => {
             expect(result).toBeUndefined();
         });
 
-        it('should load scripts and path mappings when scripts are provided and pathMappings is not initialized', async () => {
+        it('should load scripts when scripts are provided', async () => {
             // Arrange
             const loadScriptSpy = jest.spyOn(service as any, 'loadScript').mockResolvedValue({ script: 'testScript', loaded: true });
-            const loadPathMappingsSpy = jest.spyOn(service as any, 'loadPathMappings').mockResolvedValue({});
             const scripts = ['testScript'];
-            const result = await service.load(...scripts); 
-            expect(loadScriptSpy).toHaveBeenCalledWith('testScript');
-            expect(result).toEqual([{ script: 'testScript', loaded: true }]);
-        });
-
-        it('should skip loading path mappings when already initialized and just load scripts', async () => {
-            // Arrange
-            service['pathMappings'] = {};  // Already initialized path mappings
-            const loadScriptSpy = jest.spyOn(service as any, 'loadScript').mockResolvedValue({ script: 'testScript', loaded: true });
-            const loadPathMappingsSpy = jest.spyOn(service as any, 'loadPathMappings');
-            const scripts = ['testScript'];
-
             const result = await service.load(...scripts);
-            expect(loadPathMappingsSpy).not.toHaveBeenCalled();
             expect(loadScriptSpy).toHaveBeenCalledWith('testScript');
             expect(result).toEqual([{ script: 'testScript', loaded: true }]);
         });
     });
-
-    describe('loadPathMappings', () => {
-        it('should successfully load path mappings from the server', async () => {
-            const mockPathMappings = { test: 'test/path.js' };
-            const path = 'https://cdn.example.com/path_mapping.json';
-            service['pathMappings'] = undefined;
-            const loadPathMappingsPromise = service['loadPathMappings']();
-            const req = httpMock.expectOne(path);
-            req.flush(mockPathMappings);
-            await loadPathMappingsPromise;
-            expect(service['pathMappings']).toEqual(mockPathMappings);
-        });
-
-        it('should set pathMappings to an empty object if loading fails', async () => {
-            const path = 'https://cdn.example.com/path_mapping.json';
-            service['pathMappings'] = undefined;
-            const loadPathMappingsPromise = service['loadPathMappings']();
-            const req = httpMock.expectOne(path);
-            req.error(new ErrorEvent('Network error'));
-            await loadPathMappingsPromise;
-            expect(service['pathMappings']).toEqual({});
-        });
-    });
-
 });
