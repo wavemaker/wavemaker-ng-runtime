@@ -65,14 +65,12 @@ export class BaseFieldValidations {
     private getDefaultValidators() {
         const _validator = [];
         if(!this.instance.show) return _validator;
-        if(this.widgettype!== FormWidgetType.DATE&& this.widgettype!==FormWidgetType.TIME &&this.widgettype!==FormWidgetType.DATETIME) {
-            if (this.instance.required) {
-                // For checkbox/toggle widget, required validation should consider true value only
-                if (this.widgettype === FormWidgetType.CHECKBOX || this.widgettype === FormWidgetType.TOGGLE) {
-                    _validator.push(Validators.requiredTrue);
-                } else {
-                    _validator.push(Validators.required);
-                }
+        if (this.instance.required) {
+            // For checkbox/toggle widget, required validation should consider true value only
+            if (this.widgettype === FormWidgetType.CHECKBOX || this.widgettype === FormWidgetType.TOGGLE) {
+                _validator.push(Validators.requiredTrue);
+            } else {
+                _validator.push(Validators.required);
             }
         }
         if (this.instance.maxchars) {
@@ -90,10 +88,7 @@ export class BaseFieldValidations {
         if (this.formwidget && isFunction(this.formwidget.validate)) {
             _validator.push(this.formwidget.validate.bind(this.formwidget));
         }
-        if(this.widgettype=== FormWidgetType.DATE|| this.widgettype===FormWidgetType.TIME ||this.widgettype===FormWidgetType.DATETIME){
-            _validator.push(Validators.required);
-        }
-            return _validator;
+        return _validator;
     }
 
     // On change of any validation property, set the angular form validators
