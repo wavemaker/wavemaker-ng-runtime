@@ -11,7 +11,7 @@ import {
     forEach,
     get, head,
     includes, isArray, isEmpty,
-    isEqual, isNull, isObject, orderBy, range, split,
+    isEqual, isNull, isObject, isUndefined, orderBy, range, split,
     startsWith, toLower,
     toNumber,
     toString
@@ -339,26 +339,66 @@ export class TableFilterSortDirective {
         return NaN;
     }
 
+    iscustomColumn(data, sortObj) {
+        const fieldValue = get(find(data, sortObj.field), sortObj.field);
+        return this.table.columns[sortObj.field]?.customExpression && (this.table.columns[sortObj.field]?.iscustomcolumn || isUndefined(fieldValue));
+    }
+
     // Returns data sorted using sortObj
     getSortResult(data, sortObj) {
         if (sortObj && sortObj.direction) {
             const fieldValue = get(find(data, sortObj.field), sortObj.field)
             const isValidDateString = typeof fieldValue === 'string' ?  this.parseDateString(fieldValue) : NaN;
             if (!isNaN(isValidDateString)) { // if the field is a date string
-                data = orderBy(data, [(item) => this.parseDateString(item[sortObj.field])], [sortObj.direction]);
+                if (this.iscustomColumn(data, sortObj)) { // if it is a custom column
+                    data = orderBy(
+                        data,
+                        item => {
+                            const val = this.table.columns[sortObj.field].invokeEventCallback('getvalue', {
+                                row: this.table.getClonedRowObject(item)
+                            });
+                            return this.parseDateString(val);
+                        },
+                        sortObj.direction
+                    );
+                } else { // if it isn't a custom column
+                    data = orderBy(data, item => this.parseDateString(item[sortObj.field]), sortObj.direction);
+                }
             } else if (this.table.columns[sortObj.field]?.caseinsensitive) {
                 //Fix for [WMS-27505]: Added case-insensitive sorting so that uppercase and lowercase letters are treated the same when sorting.
+                if (this.iscustomColumn(data, sortObj)) { // if custom column
+                    data = orderBy(data, (item) => {
+                        // Get the evaluated value of the custom field
+                        const value = this.table.columns[sortObj.field].invokeEventCallback("getvalue", {
+                            row: this.table.getClonedRowObject(item)
+                        });
+
+                        // If it's a string, convert to lowercase for case-insensitive sort
+                        if (typeof value === "string") {
+                            return value.toLowerCase();
+                        }
+                        return value;
+                    }, sortObj.direction);
+
+                } else { // if it is not a custom column
                     data = orderBy(data, [
-                          (item) => {
-                            const val = get(item, sortObj.field);
-                            return typeof val === 'string' ? val.toLowerCase() : val;
-                          },
-                          (item) => get(item, sortObj.field) // fallback to original value
+                            (item) => {
+                                const val = get(item, sortObj.field);
+                                return typeof val === 'string' ? val.toLowerCase() : val;
+                            },
+                            (item) => get(item, sortObj.field) // fallback to original value
                         ],
                         [sortObj.direction, sortObj.direction]
-                      );                      
+                    );
+                }
             } else {
-                data = orderBy(data, sortObj.field, sortObj.direction);
+                if (this.iscustomColumn(data, sortObj)) { // if it is a custom column
+                    data = orderBy(data, item =>
+                        this.table.columns[sortObj.field].invokeEventCallback('getvalue',
+                            {row: this.table.getClonedRowObject(item)}), sortObj.direction);
+                } else { // if not a custom column
+                    data = orderBy(data, sortObj.field, sortObj.direction);
+                }
             }
         }
         return data;

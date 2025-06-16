@@ -114,6 +114,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     show;
     sortable;
     caseinsensitive;
+    iscustomcolumn;
     textalignment;
     textcolor;
     type;
@@ -688,6 +689,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.isFilterDataSetBound = !!this.bindfilterdataset;
         this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);
         this.caseinsensitive =  !!this.getAttr('caseinsensitive');
+        this.iscustomcolumn = !!this.getAttr('iscustomcolumn');
 
         // For date time data types, if date pattern is not specified, set the app format or default format
         if (isDateTimeType(this.type) && this.formatpattern === 'toDate' && !this.datepattern) {
