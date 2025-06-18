@@ -1896,9 +1896,7 @@ $.widget('wm.datatable', {
     },
     //Focus the active row
     focusActiveRow: function () {
-        if(this.options.editmode!==this.CONSTANTS.QUICK_EDIT){
             this.gridElement.find('tr.app-datagrid-row.active').focus();
-        }
     },
     focusNewRow: function () {
         var newRow = this.gridElement.find('tr.always-new-row');
@@ -2632,6 +2630,7 @@ $.widget('wm.datatable', {
         } else {
             //On click of enter while inside a widget in editing row, save the row
             if ($row.hasClass('row-editing') && $target.closest('[data-field-name]').length) {
+                const $editingRow = $row;
                 $target.blur(); //Blur the input, to update the model
                 self.toggleEditRow(event, {
                     'action': 'save',
@@ -2640,8 +2639,22 @@ $.widget('wm.datatable', {
                         if (error) {
                             $target.focus();
                         } else {
-                            self.focusActiveRow();
+                            if(!quickEdit){
+                                self.focusActiveRow();
+                            }
                             self.options.timeoutCall(function () {
+                                if(quickEdit){
+                                    var rowId = $editingRow[0]?.getAttribute('data-row-id');
+                                    if($editingRow.hasClass('always-new-row'))return;
+                                    var matchingRow = self.gridElement[0].querySelector("tr[data-row-id='" + rowId + "']");
+                                    if (matchingRow) {
+                                        if (!self.options.multiselect) {
+                                            $(self.gridElement).find('tr.app-datagrid-row.active').removeClass('active');
+                                        }
+                                        matchingRow.classList.remove('active');
+                                        self.hideRowEditMode($(matchingRow));
+                                    }
+                                }
                                 self.focusNewRow();
                             }, 400);
                         }
@@ -2834,14 +2847,14 @@ $.widget('wm.datatable', {
             $htm.find('.save-edit-row-button').on('click', {action: 'save'}, this.toggleEditRow.bind(this));
         }
         if (self.options.editmode === self.CONSTANTS.QUICK_EDIT) {
-            $htm.on('focus', 'tr.app-datagrid-row[data-row-id="0"]', function (e) {
+            $htm.on('focus', 'tr.app-datagrid-row', function (e) {
                 var $row = $(e.currentTarget);
                 if (!$row.hasClass('row-editing')) {
-                    self.toggleEditRow(e, { $row: $row, action: 'edit' });
+                    self.toggleEditRow(e, { $row: $row, action: 'edit'});
                 }
             });
             //On tab out of a row, save the current row and make next row editable
-            $htm.on('focusout', 'tr.app-datagrid-row', function (e) {
+            $htm.on('focusout', 'tr.app-datagrid-row','thead.table-header', function (e) {
                 var $target = $(e.target),
                     $row = $target.closest('tr.app-datagrid-row'),
                     $relatedTarget = $(e.relatedTarget),
