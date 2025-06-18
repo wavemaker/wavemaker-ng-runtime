@@ -982,26 +982,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
-    protected adjustDateTimePickerInModel(element, elementDirective) {
-        if (this.containerTarget === '.modal-container' && element) {
-            setTimeout(() => {
-                elementDirective._datepicker._posService.disable();
-                const inputRect = this.nativeElement.getBoundingClientRect();
-                const elementHeight = $('timepicker')[0]?.offsetHeight || element.offsetHeight;
-                let top: number;
-                if (inputRect.bottom + elementHeight > window.innerHeight) {
-                    top = inputRect.top - elementHeight + window.scrollY;
-                } else {
-                    top = inputRect.bottom + window.scrollY;
-                }
-                const left = inputRect.left + window.scrollX;
-                element.style.top = `${top}px`;
-                element.style.left = `${left}px`;
-                element.style.transform = 'none';
-            });
-        }
-    }
-
     onPropertyChange(key, nv, ov?) {
 
         if (key === 'tabindex') {
@@ -1061,7 +1041,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        this.containerTarget = this.nativeElement.closest('modal-container') ? '.modal-container' : getContainerTargetClass(this.nativeElement);
+        this.containerTarget = getContainerTargetClass(this.nativeElement);
         this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
 
         // this mobileinput width varies in ios hence setting width here.
