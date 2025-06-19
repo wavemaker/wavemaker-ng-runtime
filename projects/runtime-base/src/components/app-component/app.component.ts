@@ -9,6 +9,7 @@ import {
     DoCheck,
     ElementRef,
     NgZone,
+    OnDestroy,
     ViewChild,
     ViewContainerRef,
     ViewEncapsulation
@@ -44,6 +45,8 @@ import { AppManagerService } from '../../services/app.manager.service';
 import { PipeProvider } from '../../services/pipe-provider.service';
 import { AppSpinnerComponent } from '../app-spinner.component';
 import { DialogComponent } from '@wm/components/dialogs/design-dialog';
+import { filter } from "rxjs/operators";
+import { Subscription}  from "rxjs";
 
 interface SPINNER {
     show: boolean;
@@ -58,9 +61,12 @@ interface SPINNER {
     templateUrl: './app.component.html',
     encapsulation: ViewEncapsulation.None
 })
-export class AppComponent implements DoCheck, AfterViewInit {
+export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
     public startApp = false;
     public isApplicationType = false;
+    public skipToMainContentEnabled = getWmProjectProperties().skipToMainContentEnabled || true;
+    private retryCount = 0;
+    private navigationEndSubscription!: Subscription;
 
     @ViewChild(RouterOutlet) routerOutlet: RouterOutlet;
 
@@ -76,7 +82,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
         private spinnerService: AbstractSpinnerService,
         ngZone: NgZone,
         private router: Router,
-        private app: App,
+        public app: App,
         private appManager: AppManagerService,
         private customIconsLoaderService: CustomIconsLoaderService
     ) {
@@ -207,12 +213,48 @@ export class AppComponent implements DoCheck, AfterViewInit {
         };
     }
 
+    skipToAppContent(event: Event): void {
+        event.preventDefault();
+        this.retryCount = 0;
+        this.tryFocusContent();
+    }
+
+    private tryFocusContent(): void {
+        const contentEl = document.querySelector('.app-page-content') as HTMLElement;
+
+        if (contentEl) {
+            contentEl.setAttribute('tabindex', '-1'); // Ensure it's focusable
+            contentEl.focus({ preventScroll: false });
+            contentEl.scrollIntoView({ behavior: 'smooth' });
+        } else if (this.retryCount < 10) {
+            this.retryCount++;
+            setTimeout(() => this.tryFocusContent(), 100); // Retry every 100ms
+        }
+    }
+
     ngAfterViewInit() {
         document.documentElement.setAttribute('lang', getWmProjectProperties().defaultLanguage);
-            this.start();
+        this.start();
+
+        if (this.skipToMainContentEnabled) {
+           this.navigationEndSubscription = this.router.events
+                .pipe(filter((e) => e instanceof NavigationEnd))
+                .subscribe(() => {
+                    const el = document.getElementById('app-focus-start');
+                    if (el) {
+                        el.focus();
+                    }
+                });
+        }
     }
 
     ngDoCheck() {
         $invokeWatchers();
+    }
+
+    ngOnDestroy() {
+        if (this.navigationEndSubscription){
+            this.navigationEndSubscription.unsubscribe();
+        }
     }
 }

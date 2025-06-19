@@ -1,5 +1,9 @@
 @if (startApp) {
-  <router-outlet></router-outlet>
+    @if(skipToMainContentEnabled) {
+        <div id="app-focus-start" tabindex="-1"></div>
+        <a href="javascript:void(0);" class="skip" (click)="skipToAppContent($event)">{{app.appLocale.LABEL_SKIP_TO_MAIN_CONTENT || 'Skip to main content'}}</a>
+    }
+    <router-outlet></router-outlet>
   @if (isApplicationType) {
     <div wmContainer partialContainer content="Common" hidden class="ng-hide"></div>
   }
