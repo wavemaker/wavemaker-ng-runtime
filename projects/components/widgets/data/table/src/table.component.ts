@@ -250,6 +250,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     fieldDefs:any = [];
     rowDef: any = {};
     rowInstance: any = {};
+    pagesizeoptions;
 
     private fullFieldDefs = [];
     private __fullData;
@@ -352,6 +353,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         showviewlessbutton: false,
         ondemandmessage: '',
         allowpagesizechange: false,
+        pagesizeoptions: '',
         viewlessmessage: '',
         loadingdatamsg: '',
         isNextPageData: undefined,
@@ -1183,7 +1185,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.ondemandmessage = this.ondemandmessage;
         this.gridOptions.viewlessmessage = this.viewlessmessage;
         this.gridOptions.loadingdatamsg = this.loadingdatamsg;
-
+        this.gridOptions.pagesizeoptions = this.pagesizeoptions
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
         // Because the griddata is setting before the datatable dom is rendered but we are sending empty data to the datatable.
         if (!isEmpty(this.gridData)) {
@@ -1904,6 +1906,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             case 'datasource':
                 // Fix for [WMS-23653] when startUpdate is false (request on page load property is unchecked),
                 // then set status msg as "No data found"
+                if (this.allowpagesizechange) {
+                    this.datasource.maxResults = this.pagesize || this.datasource.maxResults
+                }
                 if (nv.startUpdate === false) {
                     this.variableInflight = false;
                     this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
@@ -2000,20 +2005,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.callDataGridMethod('option', 'actionsEnabled.new', enableNewRow);
                 break;
             case 'pagesize':
-                widgetState = this.statePersistence.getWidgetState(this);
                 this.actualPageSize = nv; // maintain default page size to calculate pagesize options
-                if (this.gridOptions.allowpagesizechange) {
-                    if (get(widgetState, 'pagesize')) {
-                        nv = get(widgetState, 'pagesize');
-                        this.pagesize = nv; // updating the default pagesize to user selected pagesize
-                    }
-                    this.updatedPageSize = nv;
-                }
-                this.dataNavigator.options = {
-                    maxResults: nv
-                };
-                this.dataNavigator.widget.maxResults = nv;
-                this.dataNavigator.maxResults = nv;
+               this.setDefaultPageSize(nv)
                 break;
             case 'currentpage':
                 this.nativeElement?.setAttribute('currentpage', nv);
@@ -2028,6 +2021,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 this.gridOptions.allowpagesizechange = nv;
                 this.allowpagesizechange = nv;
                 break;
+            case 'pagesizeoptions':
+                this.gridOptions.pagesizeoptions = nv;
+                this.pagesizeoptions = nv;
+                this.setDefaultPageSize(nv)
+                break;
             case 'viewlessmessage':
                 this.gridOptions.viewlessmessage = nv;
                 break;
@@ -2040,6 +2038,25 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             default:
                 super.onPropertyChange(key, nv, ov);
         }
+    }
+
+    setDefaultPageSize(nv: any){
+        let widgetState = this.statePersistence.getWidgetState(this);
+        if (this.gridOptions.allowpagesizechange) {
+            if (get(widgetState, 'pagesize')) {
+                nv = get(widgetState, 'pagesize');
+                this.pagesize = nv; // updating the default pagesize to user selected pagesize
+            }else if (this.pagesizeoptions) {
+                nv = this.pagesizeoptions?.split(',')[0]
+                this.pagesize = nv;
+            }
+            this.updatedPageSize = nv;
+        }
+        this.dataNavigator.options = {
+            maxResults: nv
+        };
+        this.dataNavigator.widget.maxResults = nv;
+        this.dataNavigator.maxResults = nv;
     }
 
     onDataSourceChange() {
