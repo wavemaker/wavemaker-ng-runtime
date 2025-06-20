@@ -32,6 +32,10 @@ $.widget('wm.datatable', {
         enableRowSelection: true,
         enableColumnSelection: false,
         multiselect: false,
+        multiselecttitle: '',
+        multiselectarialabel: '',
+        radioselecttitle:'',
+        radioselectarialabel: '',
         filterNullRecords: true,
         navigation: '',
         isdynamictable: '',
@@ -96,7 +100,9 @@ $.widget('wm.datatable', {
             'style': 'width: 50px; text-align: center;',
             'textAlignment': 'center',
             'isMultiSelectCol': true,
-            'show': true
+            'show': true,
+            'multiselecttitle': '',
+            'multiselectarialabel': ''
         },
         'radio': {
             'field': 'radio',
@@ -109,7 +115,9 @@ $.widget('wm.datatable', {
             'readonly': true,
             'style': 'width: 50px; text-align: center;',
             'textAlignment': 'center',
-            'show': true
+            'show': true,
+            'radioselecttitle': '',
+            'radioselectarialabel': ''
         },
         '__expand': {
             'field': '__expand',
@@ -737,12 +745,32 @@ $.widget('wm.datatable', {
             } else {
                 switch (colDef.field) {
                     case 'checkbox':
+                        if(Array.isArray(this.options.multiselecttitle)) {
+                            $htm.attr('title',this.options.multiselecttitle[row.$$index-1])
+                        } else{
+                            $htm.attr('title',this.options.multiselecttitle);
+                        }
+                        if(Array.isArray(this.options.multiselectarialabel)) {
+                            $htm.attr('aria-label',this.options.multiselectarialabel[row.$$index-1])
+                        } else{
+                            $htm.attr('aria-label',this.options.multiselectarialabel);
+                        }
                         innerTmpl = this._getCheckboxTemplate(row, colDef.isMultiSelectCol);
                         break;
                     case '__expand':
                         innerTmpl = '<span class="row-expansion-column" data-identifier="rowExpansionButtons"></span>';
                         break;
                     case 'radio':
+                        if(Array.isArray(this.options.radioselecttitle)) {
+                            $htm.attr('title',this.options.radioselecttitle[row.$$index-1])
+                        } else{
+                            $htm.attr('title',this.options.radioselecttitle);
+                        }
+                        if(Array.isArray(this.options.radioselectarialabel)) {
+                            $htm.attr('aria-label',this.options.radioselectarialabel[row.$$index-1])
+                        } else{
+                            $htm.attr('aria-label',this.options.radioselectarialabel);
+                        }
                         innerTmpl = this._getRadioTemplate(row);
                         break;
                     case 'rowOperations':
@@ -1506,6 +1534,12 @@ $.widget('wm.datatable', {
                     this.gridSearch.find('[data-element="dgSearchText"]').attr('placeholder', value);
                     this.gridSearch.find('[data-element="dgSearchButton"]').attr('title', value);
                 }
+                break;
+            case 'multiselecttitle':
+                $('.app-datagrid-cell .app-checkbox').find('label').attr('title', value);
+                break;
+            case 'multiselectarialabel':
+                $('.app-datagrid-cell .app-checkbox').find('label').attr('aria-label', value);
                 break;
             case 'selectFirstRow':
                 this.selectFirstRow(value);

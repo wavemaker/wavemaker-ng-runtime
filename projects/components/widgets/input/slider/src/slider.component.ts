@@ -66,7 +66,7 @@ export class SliderComponent extends BaseFormCustomComponent {
         if (key === 'tabindex') {
             return;
         }
-        else if(key === 'showmarkers') {
+        else if(key === 'showmarkers'||key === 'markerlabeltext' || key === 'minvalue'||key === 'maxvalue'||key === 'step') {
             this.renderMarkers();
         }
         super.onPropertyChange(key, nv, ov);
