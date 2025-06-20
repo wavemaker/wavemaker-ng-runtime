@@ -44,7 +44,9 @@ export const registerProps = () => {
                 ['subheading', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', PROP_STRING],
-                ['allowpagesizechange', {value: false, ...PROP_BOOLEAN}]
+                ['allowpagesizechange', {value: false, ...PROP_BOOLEAN}],
+                ['pagesizeoptions', {value : '', ...PROP_STRING}]
+
             ]
         )
     );

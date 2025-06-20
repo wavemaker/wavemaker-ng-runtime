@@ -147,6 +147,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public currentIndex: number;
     public titleId: string;
     public allowpagesizechange: boolean = false;
+    public pagesizeoptions: string;
     public updatedPageSize;
     public actualPageSize;
     _isDependent;
@@ -521,6 +522,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
             this.onDataSetChange(nv);
         } else if (key === 'datasource') {
+            if(this.allowpagesizechange){
+                this.datasource.maxResults = this.pagesize || this.datasource.maxResults
+            }
             if (this.dataset) {
                 this.onDataSetChange(this.dataset);
             }
@@ -548,21 +552,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 setTimeout(() => this.dataNavigator.navigationClass = nv);
             }
         } else if (key === 'pagesize') {
-            const widgetState = this.statePersistence.getWidgetState(this);
             this.actualPageSize = nv; // maintain default page size to calculate pagesize options
-            if (this.allowpagesizechange) {
-                if (get(widgetState, 'pagesize')) {
-                    nv = get(widgetState, 'pagesize');
-                    this.pagesize = nv; // updating the default pagesize to user selected pagesize
-                }
-                this.updatedPageSize = nv;
-                this.dataNavigator.updatedPageSize = nv;
-            }
-            this.dataNavigator.options = {
-                maxResults: nv
-            };
-            this.dataNavigator.widget.maxResults = nv;
-            this.dataNavigator.maxResults = nv;
+            this.setDefaultPageSize(nv)
         } else if (key === 'enablereorder') {
             if (nv && this.$ulEle) {
                 this.$ulEle.attr('aria-describedby', this.titleId);
@@ -574,9 +565,33 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
         } else if (key === 'allowpagesizechange') {
             this.allowpagesizechange = nv;
-        } else {
+        } else if(key === 'pagesizeoptions') {
+                this.pagesizeoptions = nv;
+                this.setDefaultPageSize(nv)
+        }else {
             super.onPropertyChange(key, nv, ov);
         }
+    }
+
+    setDefaultPageSize(nv: any){
+     if (this.allowpagesizechange) {
+        const widgetState = this.statePersistence.getWidgetState(this);
+        if (get(widgetState, 'pagesize')) {
+            nv = get(widgetState, 'pagesize');
+            this.pagesize = nv; // updating the default pagesize to user selected pagesize
+        } else if (this.pagesizeoptions) {
+            nv = this.pagesizeoptions?.split(',')[0]
+            this.pagesize = nv;
+        }
+    }
+        this.updatedPageSize = nv;
+        this.dataNavigator.updatedPageSize = nv;
+
+        this.dataNavigator.options = {
+            maxResults: nv
+        };
+        this.dataNavigator.widget.maxResults = nv;
+        this.dataNavigator.maxResults = nv;
     }
 
     public onItemClick(evt: any, $listItem: ListItemDirective) {

@@ -13,7 +13,7 @@ export class OAuthService {
 
     providers = new Subject();
 
-    providersConfig = [];
+    providersConfig:any = [];
 
     getOAuthProvidersAsObservable(): Observable<any> {
         return this.providers.asObservable();

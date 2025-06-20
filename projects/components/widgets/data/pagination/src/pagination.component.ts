@@ -58,6 +58,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     prevPageSize;
     actualPageSize;
     allowpagesizechange;
+    defaultPageSizeOptions = [];
     focusedIndex = 0;
     rowSummary;
     navigationsize;
@@ -99,7 +100,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     private _debouncedPageChanged = debounce(event => {
         const currentPage = event && event.page;
         const maxResults = event && (event.pagesize || event.itemsPerPage) || this.maxResults;
-
+        
         // Do not call goToPage if page has not changed
         if (currentPage !== this.dn.currentPage || this.maxResults !== maxResults) {
             const inst = (this as any).parent || this;
@@ -134,6 +135,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         styler(this.nativeElement, this);
         setTimeout(()=> {
             this.allowpagesizechange = this.parent.allowpagesizechange;
+            if(this.allowpagesizechange)
+                this.defaultPageSizeOptions = this.parent?.pagesizeoptions ? this.parent.pagesizeoptions?.split(',') : [];
         }, 0);
     }
 
@@ -630,7 +633,11 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                         totalElements = get(data, 'pagination.totalElements') || get(this.datasource, 'pagination.totalElements'),
                         widgetState = this.parent.statePersistence.getWidgetState(this.parent);
                     this.actualPageSize = widgetState?.actualpagesize || currentPageSize;
-                    this.pageSizeOptions = range(this.actualPageSize,  Math.max(this.actualPageSize + 1, this.actualPageSize + totalElements), this.actualPageSize); // here data has only that page data and pagesize has totalNoof Elements
+                    if(this.defaultPageSizeOptions.length > 0){
+                         this.pageSizeOptions = [...this.defaultPageSizeOptions];
+                    }else{
+                        this.pageSizeOptions = range(this.actualPageSize,  Math.max(this.actualPageSize + 1, this.actualPageSize + totalElements), this.actualPageSize); // here data has only that page data and pagesize has totalNoof Elements
+                    }
                     if (widgetState?.selectedItem && widgetState.actualpagesize !== widgetState.pagesize) {
                         if (!this.prevPageSize) {
                             this.prevPageSize = this.actualPageSize || data?.length;
@@ -648,7 +655,11 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                     }
                 } else {
                     pageSize = this.parent.getActualPageSize();
-                    this.pageSizeOptions = range(pageSize, data.length + pageSize, pageSize);
+                    if(this.defaultPageSizeOptions.length > 0){
+                         this.pageSizeOptions = [...this.defaultPageSizeOptions];
+                    }else{
+                        this.pageSizeOptions = range(pageSize, data.length + pageSize, pageSize);
+                    }
                 }
             }
             // When the dataset is not in current page, but in previous ones directly set the result without setting page values

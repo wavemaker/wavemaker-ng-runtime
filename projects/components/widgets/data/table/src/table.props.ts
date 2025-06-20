@@ -36,6 +36,7 @@ export const registerProps = () => {
                 ['isrowexpansionenabled', PROP_BOOLEAN],
                 ['isrowselectable', {value: false, ...PROP_BOOLEAN}],
                 ['allowpagesizechange', {value: false, ...PROP_BOOLEAN}],
+                ['pagesizeoptions', {value : '', ...PROP_STRING}],
                 ['loadingdatamsg', {value: 'Loading...', ...PROP_STRING}],
                 ['loadingicon', {value: 'fa fa-circle-o-notch fa-spin', ...PROP_STRING}],
                 ['maxsize', {value: 5, ...PROP_NUMBER}],

@@ -11,6 +11,8 @@ export const registerProps = () => {
                 ['directionlinks', {value: true, ...PROP_BOOLEAN}],
                 ['forceellipses', {value: true, ...PROP_BOOLEAN}],
                 ['allowpagesizechange', {value: false, ...PROP_BOOLEAN}],
+                ['allowpagesizechange', {value: false, ...PROP_BOOLEAN}],
+                ['pagesizeoptions', {value: '', ...PROP_STRING}],
                 ['maxResults', PROP_NUMBER],
                 ['maxsize', {value: 5, ...PROP_NUMBER}],
                 ['name', PROP_STRING],
