@@ -1125,7 +1125,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     ngAfterContentInit() {
         super.ngAfterContentInit();
         this.headerConfig = this.headerConfig.filter(this.filterEmptyValues.bind(this));
-        remove(this.fieldDefs, f => f === undefined);
+        remove<any>(this.fieldDefs, f => f === undefined);
         const runModeInitialProperties = {
             showrowindex: 'showRowIndex',
             multiselect: 'multiselect',
@@ -1609,8 +1609,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
 
         rowActionCol = find(this.fullFieldDefs, {'field': ROW_OPS_FIELD, type: 'custom'}); // Check if column is fetched from markup
-        remove(this.fieldDefs, {type: 'custom', field: ROW_OPS_FIELD}); // Removing operations column
-        remove(this.headerConfig, {field: rowOperationsColumn.field});
+        remove<any>(this.fieldDefs, {type: 'custom', field: ROW_OPS_FIELD}); // Removing operations column
+        remove<any>(this.headerConfig, {field: rowOperationsColumn.field});
 
         /*Add the column for row operations only if at-least one operation has been enabled.*/
         if (this.rowActions.length) {
