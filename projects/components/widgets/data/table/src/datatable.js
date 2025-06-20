@@ -691,9 +691,19 @@ $.widget('wm.datatable', {
     _getRadioTemplate: function (row) {
         var checked = row._checked === true ? ' checked' : '',
             disabled = row.disabed ? ' disabled' : '';
-        const self = this,
-            title = self.options.radioselecttitle,
+        const self = this;
+        const index=row.$$index;
+        var title,ariaLabel;
+        if(Array.isArray(self.options.radioselecttitle)) {
+            title = self.options.radioselecttitle[index-1]
+        }else{
+           title = self.options.radioselecttitle;
+        }
+        if(Array.isArray(self.options.radioselectarialabel)) {
+            ariaLabel = self.options.radioselectarialabel[index-1]
+        }else{
             ariaLabel = self.options.radioselectarialabel;
+        }
         return `<div class="radio app-radio">
             <label title="${title}" aria-label="${ariaLabel}">
                 <input type="radio" rowSelectInput name="" value="" ${checked} ${disabled}>
@@ -751,8 +761,16 @@ $.widget('wm.datatable', {
             } else {
                 switch (colDef.field) {
                     case 'checkbox':
-                         $htm.attr('title',this.options.multiselecttitle)
-                         $htm.attr('aria-label',this.options.multiselectarialabel)
+                        if(Array.isArray(this.options.multiselecttitle)) {
+                            $htm.attr('title',this.options.multiselecttitle[row.$$index-1])
+                        } else{
+                            $htm.attr('title',this.options.multiselecttitle);
+                        }
+                        if(Array.isArray(this.options.multiselectarialabel)) {
+                            $htm.attr('aria-label',this.options.multiselectarialabel[row.$$index-1])
+                        } else{
+                            $htm.attr('aria-label',this.options.multiselectarialabel);
+                        }
                         innerTmpl = this._getCheckboxTemplate(row, colDef.isMultiSelectCol);
                         break;
                     case '__expand':
