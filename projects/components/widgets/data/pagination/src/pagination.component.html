@@ -3,7 +3,7 @@
 <ul class="pagination advanced {{navigationClass}}">
     @if (allowpagesizechange) {
         <li class="items-per-page">
-          <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE}}</label>
+          <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE}} :</label>
 
             <div class="btn-group" dropdown  container="body" (isOpenChange)="onOpenChange($event)">
                 <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
@@ -97,7 +97,7 @@
   <ul class="pager {{navigationClass}}">
         @if (allowpagesizechange) {
         <li class="items-per-page">
-          <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE}}</label>
+          <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE}} :</label>
 
             <div class="btn-group" dropdown container="body" (isOpenChange)="onOpenChange($event)">
                 <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
@@ -148,7 +148,7 @@
 @if (navcontrols === 'Basic') {
     @if (allowpagesizechange) {
       <div class="items-per-page">
-        <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE }}</label>
+        <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE }} :</label>
 
         <div class="btn-group" dropdown container="body"  (isOpenChange)="onOpenChange($event)">
             <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
