@@ -67,7 +67,9 @@ export class SliderComponent extends BaseFormCustomComponent {
             return;
         }
         else if(key === 'showmarkers'||key === 'markerlabeltext' || key === 'minvalue'||key === 'maxvalue'||key === 'step') {
-            this.renderMarkers();
+            if(this.showmarkers) {
+                this.renderMarkers();
+            }
         }
         super.onPropertyChange(key, nv, ov);
     }
@@ -93,7 +95,7 @@ export class SliderComponent extends BaseFormCustomComponent {
     ngAfterViewInit() {
         super.ngAfterViewInit();
         if(this.showmarkers) {
-            setTimeout(() => {this.renderMarkers();}, 0);
+            setTimeout(() => {this.renderMarkers();}, 40);
         }
     }
 }
