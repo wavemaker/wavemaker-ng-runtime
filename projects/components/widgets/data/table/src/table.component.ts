@@ -2076,7 +2076,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 nv = get(widgetState, 'pagesize');
                 this.pagesize = nv; // updating the default pagesize to user selected pagesize
             }else if (this.pagesizeoptions) {
-                nv = this.pagesizeoptions?.split(',')[0]
+                nv = this.pagesizeoptions?.split(',').map(Number).sort((a, b) => a - b)[0]
                 this.pagesize = nv;
             }
             this.updatedPageSize = nv;

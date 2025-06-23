@@ -118,6 +118,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         const basePath = _WM_APP_PROJECT.isPreview || (window as any)._WM_APP_PROPERTIES?.languageBundleSources === 'DYNAMIC' ? '' :  _WM_APP_PROJECT.cdnUrl
         this.loadResource( basePath + `${APP_LOCALE_ROOT_PATH}/${this.selectedLocale}.json`)
             .then(bundle => {
+                bundle.messages['LABEL_ITEMS_PER_PAGE'] = 'Items per page:';
                 this.extendMessages(bundle.messages);
                 this.extendPrefabMessages(bundle);
                 this.appDefaults.setFormats(bundle.formats);

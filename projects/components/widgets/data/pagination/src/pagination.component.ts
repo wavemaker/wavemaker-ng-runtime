@@ -136,7 +136,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         setTimeout(()=> {
             this.allowpagesizechange = this.parent.allowpagesizechange;
             if(this.allowpagesizechange)
-                this.defaultPageSizeOptions = this.parent?.pagesizeoptions ? this.parent.pagesizeoptions?.split(',') : [];
+                this.defaultPageSizeOptions = this.parent?.pagesizeoptions ? this.parent.pagesizeoptions?.split(',').map(Number).sort((a, b) => a - b) : [];
         }, 0);
     }
 
