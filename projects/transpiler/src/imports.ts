@@ -72,6 +72,7 @@ const NAVIGATION_CONTROL_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/navig
 const MENU_DROPDOWN_ITEM_COMPONENT: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'MenuDropdownComponent' }];
 const MENU_DROPDOWN_COMPONENT: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'MenuDropdownComponent' }]; // Duplicate, consider removing one
 const MENU_COMPONENT: ImportDef[] = [...NGX_DROP_DOWN_MODULE, ...MENU_DROPDOWN_COMPONENT, ...MENU_DROPDOWN_ITEM_COMPONENT, ...NAVIGATION_CONTROL_DIRECTIVE, ...NAV_COMPONENT, ...NAV_ITEM_DIRECTIVE, { from: '@wm/components/navigation/menu', name: 'MenuComponent' }];
+const MESSAGE_COMPONENT: ImportDef[] = [{ from: '@wm/components/base', name: 'MessageComponent' }];
 const BREAD_CRUMB_COMPONENT: ImportDef[] = [...MENU_COMPONENT, { from: '@wm/components/navigation/breadcrumb', name: 'BreadcrumbComponent' }];
 const NAVBAR_COMPONENT: ImportDef[] = [{ from: '@wm/components/navigation/navbar', name: 'NavbarComponent' }];
 const POPOVER_COMPONENT: ImportDef[] = [...NGX_POPOVER_MODULE, { from: '@wm/components/navigation/popover', name: 'PopoverComponent' }, ...CONTAINER_DIRECTIVE];
@@ -246,6 +247,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-logindialog', LOGIN_DIALOG_DIRECTIVE],
     ['wm-marquee', MARQUEE_DIRECTIVE],
     ['wm-menu', MENU_COMPONENT],
+    ['wm-message', MESSAGE_COMPONENT],
     ['wm-nav', NAV_COMPONENT],
     ['wm-navbar', NAVBAR_COMPONENT],
     ['wm-nav-item', NAV_ITEM_DIRECTIVE],
