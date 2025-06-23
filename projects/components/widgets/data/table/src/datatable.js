@@ -2680,8 +2680,8 @@ $.widget('wm.datatable', {
                             self.options.timeoutCall(function () {
                                 if(quickEdit){
                                     var rowId = $editingRow[0]?.getAttribute('data-row-id');
-                                    if($editingRow.hasClass('always-new-row'))return;
                                     var matchingRow = self.gridElement[0].querySelector("tr[data-row-id='" + rowId + "']");
+                                    if($(matchingRow).hasClass('always-new-row')){return;}
                                     if (matchingRow) {
                                         if (!self.options.multiselect) {
                                             $(self.gridElement).find('tr.app-datagrid-row.active').removeClass('active');
@@ -2737,7 +2737,7 @@ $.widget('wm.datatable', {
                 $row.trigger('click', [undefined, {action: 'cancel'}]);
             }
 
-            if (!isNewRow) {
+            if (!isNewRow && self.options.editmode!==this.CONSTANTS.QUICK_EDIT) {
                 $row.focus();
             }
             return;
