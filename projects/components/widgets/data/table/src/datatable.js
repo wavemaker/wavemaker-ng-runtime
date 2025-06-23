@@ -2609,7 +2609,7 @@ $.widget('wm.datatable', {
             colDef.sortInfo = {'sorted': false, 'direction': ''};
         }
         sortInfo.direction = direction;
-        sortInfo.field = field;
+        sortInfo.field = this.preparedHeaderData && this.preparedHeaderData[e.currentTarget.getAttribute('data-col-id')].sortby || field;
         if (direction !== '') {
             this.preparedHeaderData[id].sortInfo = {'sorted': true, 'direction': direction};
         }
