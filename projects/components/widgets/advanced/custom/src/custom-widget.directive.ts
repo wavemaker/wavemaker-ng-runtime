@@ -36,12 +36,15 @@ export class CustomWidgetDirective extends StylableComponent implements OnDestro
     }
 
     processChildren(children: any, inheritedProps: { [key: string]: string }) {
-        let baseWidgetName = this.$element.attr('base');
+        let baseWidgetName = this.$element.attr('as');
         Array.from(children).forEach((child: any) => {
             if(child.getAttribute('name') !== baseWidgetName)
                 this.processChildren(child.children, inheritedProps);
             else {
                 for (const [key, value] of Object.entries(inheritedProps)) {
+                    if(!child.widget.widgetProps) {
+                        child.widget.widgetProps = getWidgetPropsByType(child.widget.widgetType)
+                    }
                     if(key.includes(".event") || key.includes('.bind'))
                         this.processAttr(key, value, {widget: child.widget, nativeElement: child});
                     else

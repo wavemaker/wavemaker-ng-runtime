@@ -156,16 +156,15 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
     }
 
     updateData(key: string, value: any) {
-        let modifiedKey = key.replace('base-', '');
-        if(this.asAttr) {
-            this[this.baseWidgetName][modifiedKey] = value;
-            this.nativeElement.children[0].children[0]['widget'].viewParent[this.baseWidgetName][modifiedKey] = value;
+        if(this.asAttr && this[this.baseWidgetName]) {
+            this[this.baseWidgetName][key] = value;
+            this.nativeElement.children[0].children[0]['widget'].viewParent[this.baseWidgetName][key] = value;
             this[this.baseWidgetName].initDatasetItems();
         } else {
-            this[modifiedKey] = value;
-            this.nativeElement.children[0].children[0]['widget'].viewParent[modifiedKey] = value;
+            this[key] = value;
+            this.nativeElement.children[0].children[0]['widget'].viewParent[key] = value;
         }
-        if(this.formControl && modifiedKey === 'datavalue'){
+        if(this.formControl && key === 'datavalue'){
             this.updateDataValue(value);
         }
     }

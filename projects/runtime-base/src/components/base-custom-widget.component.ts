@@ -148,46 +148,43 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
                 if (!asAttr) {
                     return;
                 }
-                let baseWidget, splitArr = asAttr.split('-'), modifiedArr = [];
-                modifiedArr = splitArr.map((item: any) => {
-                    item = item !== 'wm' ? capitalize(item) : item;
-                    return item;
-                });
-                baseWidget = modifiedArr.join('');
-                switch (baseWidget) {
-                    case 'wmCheckboxset':
-                        this[baseWidget] = new CheckboxsetComponent(this.injector, undefined);
-                        this[baseWidget]["_select"] = (item: any, $event: any) => {
+                let base = child.widget.nativeElement.querySelector(`[name=${asAttr}]`)?.widget;
+                let baseWidgetType = base?.widgetType;
+                switch (baseWidgetType) {
+                    case 'wm-checkboxset':
+                        this[asAttr] = new CheckboxsetComponent(this.injector, undefined);
+                        this[asAttr]["_select"] = (item: any, $event: any) => {
                             const keys = [];
-                            forEach(this[baseWidget].datasetItems, (datasetItem: any) => {
+                            forEach(this[asAttr].datasetItems, (datasetItem: any) => {
                                 if(datasetItem.key === item.key)
                                     datasetItem.selected = !datasetItem.selected;
 
                                 if(datasetItem.selected)
                                     keys.push(datasetItem.key);
                             });
-                            this[baseWidget].triggerInvokeOnChange(keys, $event);
+                            this[asAttr].triggerInvokeOnChange(keys, $event);
                         }
                         break;
-                    case 'wmRadioset':
-                        this[baseWidget] = new RadiosetComponent(this.injector, undefined);
-                        this[baseWidget]["_select"] = (item: any, $event: any) => {
-                            this[baseWidget].triggerInvokeOnChange(item.key, $event);
+                    case 'wm-radioset':
+                        this[asAttr] = new RadiosetComponent(this.injector, undefined);
+                        this[asAttr]["_select"] = (item: any, $event: any) => {
+                            this[asAttr].triggerInvokeOnChange(item.key, $event);
                         }
                         break;
                 }
 
-                for (let [key, value] of this.containerWidget.$attrs) {
-                    if(key.startsWith('base-')) {
-                        let modifiedKey = key.replace('base-', '');
-                        this[baseWidget][modifiedKey] = value;
-
-                        if(modifiedKey === 'datavalue' && this.containerWidget.formControl)
-                            this.containerWidget.updateDataValue(value);
+                if(['wm-checkboxset','wm-radioset'].includes(baseWidgetType)) {
+                    for (let [key, value] of this.containerWidget.$attrs) {
+                        if(!key.startsWith('props-')) {
+                            this[asAttr][key] = value;
+    
+                            if(key === 'datavalue' && this.containerWidget.formControl)
+                                this.containerWidget.updateDataValue(value);
+                        }
                     }
+                    this[asAttr].initDatasetItems();
+                    this.containerWidget[asAttr] = this[asAttr];
                 }
-                this[baseWidget].initDatasetItems();
-                this.containerWidget[baseWidget] = this[baseWidget];
             }
         });
     }
