@@ -67,6 +67,7 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
     public skipToMainContentEnabled = getWmProjectProperties().skipToMainContentEnabled || true;
     private retryCount = 0;
     private navigationEndSubscription!: Subscription;
+    appLocale: any = {};
 
     @ViewChild(RouterOutlet) routerOutlet: RouterOutlet;
 
@@ -90,6 +91,7 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
         setNgZone(ngZone);
         setAppRef(_appRef);
 
+        this.appLocale = app.appLocale;
         this.isApplicationType = getWmProjectProperties().type === 'APPLICATION';
         if (this.isApplicationType) {
             this.customIconsLoaderService.load();
