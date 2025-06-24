@@ -627,7 +627,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
             if (this.parent.widgetType === 'wm-table') {
                 this.parent._triggeredByUser = false;
             }
-            if (data.length) { // calculate Pagesize options based on actual page size
+            if (data?.length) { // calculate Pagesize options based on actual page size
                 if (this.isDataSourceHasPaging()) { // for Live variables
                     const currentPageSize = get(data, 'pagination.size') || get(this.datasource, 'pagination.size'),
                         totalElements = get(data, 'pagination.totalElements') || get(this.datasource, 'pagination.totalElements'),
