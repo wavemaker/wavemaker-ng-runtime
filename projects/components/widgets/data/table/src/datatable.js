@@ -1535,12 +1535,6 @@ $.widget('wm.datatable', {
                     this.gridSearch.find('[data-element="dgSearchButton"]').attr('title', value);
                 }
                 break;
-            case 'multiselecttitle':
-                $('.app-datagrid-cell .app-checkbox').find('label').attr('title', value);
-                break;
-            case 'multiselectarialabel':
-                $('.app-datagrid-cell .app-checkbox').find('label').attr('aria-label', value);
-                break;
             case 'selectFirstRow':
                 this.selectFirstRow(value);
                 break;
@@ -1572,6 +1566,10 @@ $.widget('wm.datatable', {
                     this.addOrRemoveScroll();
                     break;
                 }
+            case 'multiselecttitle':
+            case 'multiselectarialabel':
+            case 'radioselecttitle':
+            case 'radioselectarialabel':
             case 'multiselect': // Fallthrough
             case 'showRadioColumn':
             case 'isrowselectable' :
