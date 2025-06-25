@@ -64,7 +64,7 @@ interface SPINNER {
 export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
     public startApp = false;
     public isApplicationType = false;
-    public skipToMainContentEnabled = getWmProjectProperties().skipToMainContentEnabled || true;
+    public enableSkipToMainContent = getWmProjectProperties().enableSkipToMainContent;
     private retryCount = 0;
     private navigationEndSubscription!: Subscription;
     appLocale: any = {};
@@ -238,7 +238,7 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
         document.documentElement.setAttribute('lang', getWmProjectProperties().defaultLanguage);
         this.start();
 
-        if (this.skipToMainContentEnabled) {
+        if (this.enableSkipToMainContent) {
            this.navigationEndSubscription = this.router.events
                 .pipe(filter((e) => e instanceof NavigationEnd))
                 .subscribe(() => {
