@@ -13,7 +13,15 @@ import {
     ViewContainerRef,
     ViewEncapsulation
 } from '@angular/core';
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterOutlet } from '@angular/router';
+import {
+    ActivatedRoute,
+    NavigationCancel,
+    NavigationEnd,
+    NavigationError,
+    NavigationStart,
+    Router,
+    RouterOutlet
+} from '@angular/router';
 
 import { setTheme } from 'ngx-bootstrap/utils';
 
@@ -188,8 +196,8 @@ export class AppComponent implements DoCheck, AfterViewInit {
         //override the attach/detach methods
         const oAttach = this.routerOutlet.attach;
         const oDetach = this.routerOutlet.detach;
-        this.routerOutlet.attach = (componentRef: any) => {
-            oAttach.call(this.routerOutlet, componentRef);
+        this.routerOutlet.attach = (componentRef: any, activatedRoute:  ActivatedRoute) => {
+            oAttach.call(this.routerOutlet, componentRef, activatedRoute);
             componentRef.instance.ngOnAttach();
         };
         this.routerOutlet.detach = () => {
