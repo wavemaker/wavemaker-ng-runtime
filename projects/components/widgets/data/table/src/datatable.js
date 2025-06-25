@@ -1535,12 +1535,6 @@ $.widget('wm.datatable', {
                     this.gridSearch.find('[data-element="dgSearchButton"]').attr('title', value);
                 }
                 break;
-            case 'multiselecttitle':
-                $('.app-datagrid-cell .app-checkbox').find('label').attr('title', value);
-                break;
-            case 'multiselectarialabel':
-                $('.app-datagrid-cell .app-checkbox').find('label').attr('aria-label', value);
-                break;
             case 'selectFirstRow':
                 this.selectFirstRow(value);
                 break;
@@ -1572,6 +1566,10 @@ $.widget('wm.datatable', {
                     this.addOrRemoveScroll();
                     break;
                 }
+            case 'multiselecttitle':
+            case 'multiselectarialabel':
+            case 'radioselecttitle':
+            case 'radioselectarialabel':
             case 'multiselect': // Fallthrough
             case 'showRadioColumn':
             case 'isrowselectable' :
@@ -2609,7 +2607,7 @@ $.widget('wm.datatable', {
             colDef.sortInfo = {'sorted': false, 'direction': ''};
         }
         sortInfo.direction = direction;
-        sortInfo.field = field;
+        sortInfo.field = this.preparedHeaderData && this.preparedHeaderData[e.currentTarget.getAttribute('data-col-id')].sortby || field;
         if (direction !== '') {
             this.preparedHeaderData[id].sortInfo = {'sorted': true, 'direction': direction};
         }
@@ -2680,8 +2678,8 @@ $.widget('wm.datatable', {
                             self.options.timeoutCall(function () {
                                 if(quickEdit){
                                     var rowId = $editingRow[0]?.getAttribute('data-row-id');
-                                    if($editingRow.hasClass('always-new-row'))return;
                                     var matchingRow = self.gridElement[0].querySelector("tr[data-row-id='" + rowId + "']");
+                                    if($(matchingRow).hasClass('always-new-row')){return;}
                                     if (matchingRow) {
                                         if (!self.options.multiselect) {
                                             $(self.gridElement).find('tr.app-datagrid-row.active').removeClass('active');
@@ -2737,7 +2735,7 @@ $.widget('wm.datatable', {
                 $row.trigger('click', [undefined, {action: 'cancel'}]);
             }
 
-            if (!isNewRow) {
+            if (!isNewRow && self.options.editmode!==this.CONSTANTS.QUICK_EDIT) {
                 $row.focus();
             }
             return;
