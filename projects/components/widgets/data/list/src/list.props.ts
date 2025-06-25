@@ -45,7 +45,7 @@ export const registerProps = () => {
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', PROP_STRING],
                 ['allowpagesizechange', {value: false, ...PROP_BOOLEAN}],
-                ['pagesizeoptions', {value : '', ...PROP_STRING}]
+                ['pagesizeoptions', {value : '5,10,20,50,100', ...PROP_STRING}]
 
             ]
         )
