@@ -27,7 +27,7 @@ export class OAuthService {
     }
 
     removeProviderConfig(providerId) {
-        remove(this.providersConfig, provider => provider.name === providerId);
+        remove<any>(this.providersConfig, provider => provider.name === providerId);
         this.providers.next(this.providersConfig);
     }
 
