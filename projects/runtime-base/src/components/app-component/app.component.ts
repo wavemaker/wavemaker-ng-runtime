@@ -64,7 +64,7 @@ interface SPINNER {
 export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
     public startApp = false;
     public isApplicationType = false;
-    public enableSkipToMainContent = getWmProjectProperties().enableSkipToMainContent;
+    public enableSkipToMainContent = getWmProjectProperties().enableSkipToMainContent === 'true' || getWmProjectProperties().enableSkipToMainContent === true;
     private retryCount = 0;
     private navigationEndSubscription!: Subscription;
     appLocale: any = {};
