@@ -292,7 +292,8 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                     this.sortOptions = variableOptions.orderBy ||
                         (isArray(this.pagination.sort) ? getOrderByExpr(this.pagination.sort) : '');
                     dataSize = this.pagination.totalElements;
-                    maxResults = this.pagination.size;
+                    maxResults = this.pagination.size = Number(this.pagination.size) ? this.pagination.size : get(this.datasource.dataSet, this.pagination.size);
+                    this.pagination.numberOfElements = Number(this.pagination.numberOfElements) ? this.pagination.numberOfElements : get(this.datasource.dataSet, this.pagination.numberOfElements)
                     if (this.pagination.numberOfElements > 0) {
                         if (isDefined(this.pagination.number)) { // number is page number received from backend
                             this.dn.currentPage = this.pagination.number + 1;
@@ -633,6 +634,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
                         totalElements = get(data, 'pagination.totalElements') || get(this.datasource, 'pagination.totalElements'),
                         widgetState = this.parent.statePersistence.getWidgetState(this.parent);
                     this.actualPageSize = widgetState?.actualpagesize || currentPageSize;
+                    this.actualPageSize = Number(this.actualPageSize) ? this.actualPageSize : get(this.datasource.dataSet, this.actualPageSize)
                     if(this.defaultPageSizeOptions.length > 0){
                          this.pageSizeOptions = [...this.defaultPageSizeOptions];
                     }else{
