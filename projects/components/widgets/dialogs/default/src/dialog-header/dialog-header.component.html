@@ -1,6 +1,6 @@
 @if (isClosable) {
   <button (click)="closeDialog();"
-    [attr.aria-label]="'Close ' + (title ? title : '') + ' dialog'" class="app-dialog-close close" title="{{dialogRef.appLocale.LABEL_CLOSE}}" >
+    [attr.aria-label]="'Close ' + (title ? title : '') + ' dialog'" class="app-dialog-close close" title="{{closehint||dialogRef.appLocale.LABEL_CLOSE}}" >
     <span class="app-icon wi wi-clear" aria-hidden="true"></span>
   </button>
 }

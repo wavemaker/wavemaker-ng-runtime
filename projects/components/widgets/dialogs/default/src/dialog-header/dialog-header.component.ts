@@ -29,6 +29,7 @@ export class DialogHeaderComponent {
     @Input() public subheading: string;
     @Input() public titleid:string;
     @Input() public title: string;
+    @Input() public closehint: string;
 
     public get isClosable() {
         return toBoolean(this.closable);

@@ -19,7 +19,8 @@ export const registerProps = () => {
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
                 ['title', {value: 'Information', ...PROP_STRING}],
                 ['headinglevel', {value: 'h4', ...PROP_STRING}],
-                ['eventsource', PROP_ANY]
+                ['eventsource', PROP_ANY],
+                ['closehint',PROP_STRING]
             ]
         )
     );

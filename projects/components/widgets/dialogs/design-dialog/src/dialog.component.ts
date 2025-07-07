@@ -37,7 +37,7 @@ const WIDGET_INFO = {widgetType: 'wm-dialog'};
 export class DialogComponent extends BaseDialog implements OnInit {
     static initializeProps = registerProps();
     isDialogComponent: boolean = true;
-
+    public closehint:string;
     @ViewChild('dialogTemplate', { static: true, read: TemplateRef }) dialogTemplate: TemplateRef<any>;
     @ContentChild('dialogBody', /* TODO: add static flag */ { read: TemplateRef }) dialogBody: TemplateRef<any>;
     @ContentChild('dialogFooter', /* TODO: add static flag */ { read: TemplateRef }) dialogFooter: TemplateRef<any>;
@@ -98,6 +98,9 @@ export class DialogComponent extends BaseDialog implements OnInit {
         }
         if(key === 'sheetposition') {
             this.sheetPosition = nv;
+        }
+        if(key === 'closehint'){
+            this.closehint=nv;
         }
         if(key === 'title') {
             this.nativeElement.setAttribute('title', nv);
