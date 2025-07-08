@@ -1293,6 +1293,7 @@ $.widget('wm.datatable', {
     /* Sets the selected rows in the table. */
     selectRows: function (rows) {
         var self = this;
+        var _rows = _.isArray(rows) ? rows.slice() : [rows];
         /*Deselect all the previous selected rows in the table*/
         self.gridElement.find('tr.app-datagrid-row').each(function (index) {
             if (self.preparedData[index] && self.preparedData[index]._selected === true) {
@@ -1300,12 +1301,12 @@ $.widget('wm.datatable', {
             }
         });
         /*Select the given row. If rows is an array, loop through the array and set the row*/
-        if (_.isArray(rows)) {
-            _.forEach(rows, function (row) {
+        if (_.isArray(_rows)) {
+            _.forEach(_rows, function (row) {
                 self.selectRow(row, true);
             });
         } else {
-            self.selectRow(rows, true);
+            self.selectRow(_rows, true);
         }
     },
     toggleRowFilter: function(show) {
