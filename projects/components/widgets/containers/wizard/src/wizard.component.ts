@@ -681,11 +681,13 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         switch (event.key) {
             case 'ArrowLeft':
             case 'ArrowUp':
+                event.preventDefault();
                 newStep = this.autoActivation ? null : this.getSelectableStepBeforeIndex(this.getSelectedStepIndex());
                 break;
 
             case 'ArrowRight':
             case 'ArrowDown':
+                event.preventDefault();
                 newStep = this.autoActivation ? null : this.getSelectableStepAfterIndex(this.getSelectedStepIndex());
                 break;
             case 'Enter':
