@@ -2608,6 +2608,7 @@ $.widget('wm.datatable', {
         }
         sortInfo.direction = direction;
         sortInfo.field = this.preparedHeaderData && this.preparedHeaderData[e.currentTarget.getAttribute('data-col-id')].sortby || field;
+        sortInfo.sortBy = this.preparedHeaderData && this.preparedHeaderData[e.currentTarget.getAttribute('data-col-id')].sortby ? field : '';
         if (direction !== '') {
             this.preparedHeaderData[id].sortInfo = {'sorted': true, 'direction': direction};
         }
