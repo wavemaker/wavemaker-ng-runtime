@@ -23,6 +23,7 @@ $.widget('wm.datatable', {
         caseinsensitive: false,
         activeRow: undefined,
         isrowselectable: false,
+        allowpagesizechange: false,
         height: '100%',
         showHeader: true,
         selectFirstRow: false,
@@ -31,6 +32,10 @@ $.widget('wm.datatable', {
         enableRowSelection: true,
         enableColumnSelection: false,
         multiselect: false,
+        multiselecttitle: '',
+        multiselectarialabel: '',
+        radioselecttitle:'',
+        radioselectarialabel: '',
         filterNullRecords: true,
         navigation: '',
         isdynamictable: '',
@@ -95,7 +100,9 @@ $.widget('wm.datatable', {
             'style': 'width: 50px; text-align: center;',
             'textAlignment': 'center',
             'isMultiSelectCol': true,
-            'show': true
+            'show': true,
+            'multiselecttitle': '',
+            'multiselectarialabel': ''
         },
         'radio': {
             'field': 'radio',
@@ -108,7 +115,9 @@ $.widget('wm.datatable', {
             'readonly': true,
             'style': 'width: 50px; text-align: center;',
             'textAlignment': 'center',
-            'show': true
+            'show': true,
+            'radioselecttitle': '',
+            'radioselectarialabel': ''
         },
         '__expand': {
             'field': '__expand',
@@ -736,12 +745,32 @@ $.widget('wm.datatable', {
             } else {
                 switch (colDef.field) {
                     case 'checkbox':
+                        if(Array.isArray(this.options.multiselecttitle)) {
+                            $htm.attr('title',this.options.multiselecttitle[row.$$index-1])
+                        } else{
+                            $htm.attr('title',this.options.multiselecttitle);
+                        }
+                        if(Array.isArray(this.options.multiselectarialabel)) {
+                            $htm.attr('aria-label',this.options.multiselectarialabel[row.$$index-1])
+                        } else{
+                            $htm.attr('aria-label',this.options.multiselectarialabel);
+                        }
                         innerTmpl = this._getCheckboxTemplate(row, colDef.isMultiSelectCol);
                         break;
                     case '__expand':
                         innerTmpl = '<span class="row-expansion-column" data-identifier="rowExpansionButtons"></span>';
                         break;
                     case 'radio':
+                        if(Array.isArray(this.options.radioselecttitle)) {
+                            $htm.attr('title',this.options.radioselecttitle[row.$$index-1])
+                        } else{
+                            $htm.attr('title',this.options.radioselecttitle);
+                        }
+                        if(Array.isArray(this.options.radioselectarialabel)) {
+                            $htm.attr('aria-label',this.options.radioselectarialabel[row.$$index-1])
+                        } else{
+                            $htm.attr('aria-label',this.options.radioselectarialabel);
+                        }
                         innerTmpl = this._getRadioTemplate(row);
                         break;
                     case 'rowOperations':
@@ -1537,6 +1566,10 @@ $.widget('wm.datatable', {
                     this.addOrRemoveScroll();
                     break;
                 }
+            case 'multiselecttitle':
+            case 'multiselectarialabel':
+            case 'radioselecttitle':
+            case 'radioselectarialabel':
             case 'multiselect': // Fallthrough
             case 'showRadioColumn':
             case 'isrowselectable' :
@@ -1896,9 +1929,7 @@ $.widget('wm.datatable', {
     },
     //Focus the active row
     focusActiveRow: function () {
-        if(this.options.editmode!==this.CONSTANTS.QUICK_EDIT){
             this.gridElement.find('tr.app-datagrid-row.active').focus();
-        }
     },
     focusNewRow: function () {
         var newRow = this.gridElement.find('tr.always-new-row');
@@ -2576,7 +2607,8 @@ $.widget('wm.datatable', {
             colDef.sortInfo = {'sorted': false, 'direction': ''};
         }
         sortInfo.direction = direction;
-        sortInfo.field = field;
+        sortInfo.field = this.preparedHeaderData && this.preparedHeaderData[e.currentTarget.getAttribute('data-col-id')].sortby || field;
+        sortInfo.sortBy = this.preparedHeaderData && this.preparedHeaderData[e.currentTarget.getAttribute('data-col-id')].sortby ? field : '';
         if (direction !== '') {
             this.preparedHeaderData[id].sortInfo = {'sorted': true, 'direction': direction};
         }
@@ -2632,6 +2664,7 @@ $.widget('wm.datatable', {
         } else {
             //On click of enter while inside a widget in editing row, save the row
             if ($row.hasClass('row-editing') && $target.closest('[data-field-name]').length) {
+                const $editingRow = $row;
                 $target.blur(); //Blur the input, to update the model
                 self.toggleEditRow(event, {
                     'action': 'save',
@@ -2640,8 +2673,22 @@ $.widget('wm.datatable', {
                         if (error) {
                             $target.focus();
                         } else {
-                            self.focusActiveRow();
+                            if(!quickEdit){
+                                self.focusActiveRow();
+                            }
                             self.options.timeoutCall(function () {
+                                if(quickEdit){
+                                    var rowId = $editingRow[0]?.getAttribute('data-row-id');
+                                    var matchingRow = self.gridElement[0].querySelector("tr[data-row-id='" + rowId + "']");
+                                    if($(matchingRow).hasClass('always-new-row')){return;}
+                                    if (matchingRow) {
+                                        if (!self.options.multiselect) {
+                                            $(self.gridElement).find('tr.app-datagrid-row.active').removeClass('active');
+                                        }
+                                        matchingRow.classList.remove('active');
+                                        self.hideRowEditMode($(matchingRow));
+                                    }
+                                }
                                 self.focusNewRow();
                             }, 400);
                         }
@@ -2689,7 +2736,7 @@ $.widget('wm.datatable', {
                 $row.trigger('click', [undefined, {action: 'cancel'}]);
             }
 
-            if (!isNewRow) {
+            if (!isNewRow && self.options.editmode!==this.CONSTANTS.QUICK_EDIT) {
                 $row.focus();
             }
             return;
@@ -2834,14 +2881,14 @@ $.widget('wm.datatable', {
             $htm.find('.save-edit-row-button').on('click', {action: 'save'}, this.toggleEditRow.bind(this));
         }
         if (self.options.editmode === self.CONSTANTS.QUICK_EDIT) {
-            $htm.on('focus', 'tr.app-datagrid-row[data-row-id="0"]', function (e) {
+            $htm.on('focus', 'tr.app-datagrid-row', function (e) {
                 var $row = $(e.currentTarget);
                 if (!$row.hasClass('row-editing')) {
-                    self.toggleEditRow(e, { $row: $row, action: 'edit' });
+                    self.toggleEditRow(e, { $row: $row, action: 'edit'});
                 }
             });
             //On tab out of a row, save the current row and make next row editable
-            $htm.on('focusout', 'tr.app-datagrid-row', function (e) {
+            $htm.on('focusout', 'tr.app-datagrid-row','thead.table-header', function (e) {
                 var $target = $(e.target),
                     $row = $target.closest('tr.app-datagrid-row'),
                     $relatedTarget = $(e.relatedTarget),

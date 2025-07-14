@@ -82,7 +82,7 @@
     [attr.aria-label]="arialabel || 'Search field'"/>
   <i class="btn-close wi wi-cancel" [hidden]="!showClosebtn" (click)="clearSearch($event);"></i>
 } @else {
-  <button class="btn btn-icon form-control-feedback back-btn" aria-hidden="true" (click)="closeSearch()"><i class="app-icon {{backsearchiconclass}}"></i></button>
+  <button type="button" class="btn btn-icon form-control-feedback back-btn" aria-hidden="true" (click)="closeSearch()"><i class="app-icon {{backsearchiconclass}}"></i></button>
   <span class="sr-only">Back button</span>
   <input [title]="query || ''" type="text" class="app-textbox form-control list-of-objs app-search-input" [placeholder]="placeholder || ''"
     focus-target

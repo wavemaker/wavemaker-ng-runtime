@@ -36,7 +36,14 @@
       [mousewheel]="true"
       [arrowkeys]="true"
       (isValid)="isValid($event)"
-    [showSeconds]="showseconds" (ngModelChange)="onTimeChange($event)"></timepicker>
+      [showSeconds]="showseconds" (ngModelChange)="onTimeChange($event)"
+      [ngClass]="{ 'showbuttons': showampmbuttons }"></timepicker>
+      @if (ismeridian && showampmbuttons) {
+          <div class="ampm-toggle text-center">
+              <button class="meridian-btn mb-1" [ngClass]="{ 'active btn-secondary': getPeriod() === 'AM' }" (click)="setPeriod('AM')">AM</button><br>
+              <button class="meridian-btn" [ngClass]="{ 'active btn-secondary': getPeriod() === 'PM' }" (click)="setPeriod('PM')">PM</button>
+          </div>
+      }
   </div>
 </div>
 @if (loadNativeDateInput) {

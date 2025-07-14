@@ -1,6 +1,36 @@
 
 @if (navcontrols === 'Classic') {
 <ul class="pagination advanced {{navigationClass}}">
+    @if (allowpagesizechange) {
+        <li class="items-per-page">
+          <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE}} :</label>
+
+            <div class="btn-group" dropdown  container="body" (isOpenChange)="onOpenChange($event)">
+                <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
+                        aria-controls="dropdown-basic">
+                    {{maxResults}} <span class="caret"></span>
+                </button>
+                <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pagesize-options"
+                    role="menu" aria-labelledby="button-basic">
+                    @for (option of pageSizeOptions; track option; let i = $index) {
+                    <li role="menuitem" [ngClass]="{ 'active': option == maxResults }">
+                        <a class="dropdown-item" (click)="onPageSizeChange($event, option)" (keydown)="onDropdownKeydown($event, i)"
+                         [attr.tabindex]="i === focusedIndex ? 0 : -1">{{option}}</a>
+                    </li>
+                    }
+                </ul>
+            </div>
+        </li>
+        @if (rowSummary?.totalRecords) {
+        <li class="item-range">
+        <div>
+            <span>{{rowSummary.startIndex}} - {{rowSummary.endIndex}}</span>
+            <span>of</span>
+            <span>{{rowSummary.totalRecords}}</span>
+            </div>
+        </li>
+        }
+    }
     @if (!(dataSize<=maxResults)) {
     <li [ngClass]="{'disabled':isDisableFirst}">
         <a [title]="appLocale.LABEL_FIRST" name="first" href="javascript:void(0);"
@@ -61,10 +91,41 @@
         <a href="javascript:void(0);" tabindex="-1" aria-disabled="true">{{appLocale.LABEL_TOTAL_RECORDS}}: {{dataSize}}</a>
       </li>
     }
-  </ul>
+</ul>
 }
 @if (navcontrols === 'Pager') {
   <ul class="pager {{navigationClass}}">
+        @if (allowpagesizechange) {
+        <li class="items-per-page">
+          <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE}} :</label>
+
+            <div class="btn-group" dropdown container="body" (isOpenChange)="onOpenChange($event)">
+                <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
+                        aria-controls="dropdown-basic">
+                    {{maxResults}} <span class="caret"></span>
+                </button>
+                <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pagesize-options"
+                    role="menu" aria-labelledby="button-basic">
+                    @for (option of pageSizeOptions; track option; let i = $index) {
+                        <li role="menuitem" [ngClass]="{ 'active': option == maxResults }">
+                            <a class="dropdown-item" (click)="onPageSizeChange($event, option)" (keydown)="onDropdownKeydown($event, i)"
+                         [attr.tabindex]="i === focusedIndex ? 0 : -1">{{option}}</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </li>
+        @if (rowSummary?.totalRecords) {
+        <li class="item-range">
+            <div>
+                <span>{{rowSummary.startIndex}} - {{rowSummary.endIndex}}</span>
+                <span>of</span>
+                <span>{{rowSummary.totalRecords}}</span>
+            </div>
+        </li>
+        }
+    }
+
     <li class="previous" [ngClass]="{'disabled':isDisablePrevious}">
       <a href="javascript:void(0);" (click)="navigatePage('prev', $event)"
         [attr.aria-disabled]="isDisablePrevious">
@@ -84,17 +145,49 @@
   </ul>
 }
 
-@if (navcontrols === 'Basic' && !(dataSize<=maxResults)) {
-  <pagination class="pagination basic" [ngClass]="navigationClass" role="navigation"
-    [itemsPerPage]="maxResults" [totalItems]="dataSize"
-    (pageChanged)="pageChanged($event)" [ngModelOptions]="{standalone:true}" [ngModel]="dn.currentPage"
-    [attr.aria-label]="'Showing Page ' + dn.currentPage + ' of ' + pageCount + ' pages'"
-    [boundaryLinks]="boundarylinks" [maxSize]="maxsize"
-    [directionLinks]="directionlinks"
-    firstText="Firtst" lastText="Last"
-    [customPreviousTemplate]="prevTemplate"
-    [customNextTemplate]="nextTemplate"
-  [customPageTemplate]="pageTemplate"></pagination>
+@if (navcontrols === 'Basic') {
+    @if (allowpagesizechange) {
+      <div class="items-per-page">
+        <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE }} :</label>
+
+        <div class="btn-group" dropdown container="body"  (isOpenChange)="onOpenChange($event)">
+            <button id="button-basic" dropdownToggle type="button" class="btn app-button dropdown-toggle"
+                    aria-controls="dropdown-basic">
+                {{maxResults}} <span class="caret"></span>
+            </button>
+            <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pagesize-options"
+                role="menu" aria-labelledby="button-basic">
+                @for (option of pageSizeOptions; track option; let i = $index) {
+                    <li role="menuitem" [ngClass]="{ 'active': option == maxResults }">
+                        <a class="dropdown-item" (click)="onPageSizeChange($event, option)" (keydown)="onDropdownKeydown($event, i)"
+                         [attr.tabindex]="i === focusedIndex ? 0 : -1">{{option}}</a>
+                    </li>
+                }
+            </ul>
+        </div>
+      </div>
+        @if (rowSummary?.totalRecords) {
+        <div class="item-range">
+        <div>
+            <span>{{rowSummary.startIndex}} - {{rowSummary.endIndex}}</span>
+            <span>of</span>
+            <span>{{rowSummary.totalRecords}}</span>
+        </div>
+        </div>
+        }
+    }
+    @if (!(dataSize<=maxResults)) {
+      <pagination class="pagination basic" [ngClass]="navigationClass" role="navigation"
+        [itemsPerPage]="maxResults" [totalItems]="dataSize"
+        (pageChanged)="pageChanged($event)" [ngModelOptions]="{standalone:true}" [ngModel]="dn.currentPage"
+        [attr.aria-label]="'Showing Page ' + dn.currentPage + ' of ' + pageCount + ' pages'"
+        [boundaryLinks]="boundarylinks" [maxSize]="maxsize"
+        [directionLinks]="directionlinks"
+        firstText="Firtst" lastText="Last"
+        [customPreviousTemplate]="prevTemplate"
+        [customNextTemplate]="nextTemplate"
+        [customPageTemplate]="pageTemplate"></pagination>
+    }
 }
 
 @if (navcontrols === 'Basic' && showrecordcount) {

@@ -83,7 +83,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public next;
     public prev;
     public clicked = false;
-
+    public showampmbuttons=true;
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
     protected invalidDateTimeFormat: boolean;
@@ -982,23 +982,29 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
-    protected adjustDateTimePickerInModel(element, elementDirective) {
-        if (this.containerTarget === '.modal-container' && element) {
-            setTimeout(() => {
-                elementDirective._datepicker._posService.disable();
-                const inputRect = this.nativeElement.getBoundingClientRect();
-                const elementHeight = $('timepicker')[0]?.offsetHeight || element.offsetHeight;
-                let top: number;
-                if (inputRect.bottom + elementHeight > window.innerHeight) {
-                    top = inputRect.top - elementHeight + window.scrollY;
-                } else {
-                    top = inputRect.bottom + window.scrollY;
-                }
-                const left = inputRect.left + window.scrollX;
-                element.style.top = `${top}px`;
-                element.style.left = `${left}px`;
-                element.style.transform = 'none';
-            });
+    getPeriod(): 'AM' | 'PM' {
+        if (!this.elementScope.bsTimeValue) return 'AM';
+        const hours =this.elementScope.bsTimeValue.getHours();
+        return hours >= 12 ? 'PM' : 'AM';
+    }
+
+    setPeriod(period: 'AM' | 'PM'): void {
+        const current = this.elementScope.bsTimeValue;
+        if (!current || !(current instanceof Date)) return;
+        const updatedDate = new Date(current);
+        const hours = updatedDate.getHours();
+        if (period === 'AM' && hours >= 12) {
+            updatedDate.setHours(hours - 12);
+        } else if (period === 'PM' && hours < 12) {
+            updatedDate.setHours(hours + 12);
+        }
+        if(this.elementScope.widgetType==='wm-time'){
+           const isInvalid= this.elementScope.minTime && this.elementScope.maxTime && (updatedDate < this.elementScope.minTime || updatedDate > this.elementScope.maxTime);
+           if(!isInvalid)
+            this.elementScope.onTimeChange(updatedDate);
+        }
+        else{
+            this.elementScope.onModelUpdate(updatedDate);
         }
     }
 
@@ -1006,6 +1012,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
         if (key === 'tabindex') {
             return;
+        }
+        if(key === 'showampmbuttons') {
+            this.showampmbuttons=nv;
         }
         if (key === 'required') {
             this._onChange(this.datavalue);
@@ -1061,7 +1070,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        this.containerTarget = this.nativeElement.closest('modal-container') ? '.modal-container' : getContainerTargetClass(this.nativeElement);
+        this.containerTarget = getContainerTargetClass(this.nativeElement);
         this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
 
         // this mobileinput width varies in ios hence setting width here.

@@ -537,6 +537,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
             // In view mode, set widget state to readonly always
             readOnly = true;
         }
+        readOnly = readOnly || this.form.readonly;
         this.setFormWidget('readonly', readOnly);
     }
 
