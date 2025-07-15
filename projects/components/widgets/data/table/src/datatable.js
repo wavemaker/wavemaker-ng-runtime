@@ -1971,6 +1971,9 @@ $.widget('wm.datatable', {
             if (!$firstEl.length) {
                 $firstEl = $($el).first().find('select');
             }
+            if(!($(e.target).find('td').first().hasClass('td.cell-editing'))){
+                $firstEl=$el.find('td');
+            }
         }
         //Focus and select the first element
         if ($firstEl.length) {
