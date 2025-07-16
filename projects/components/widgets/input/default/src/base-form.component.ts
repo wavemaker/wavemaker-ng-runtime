@@ -56,7 +56,10 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
             (_match, key) => {
                 try {
                     const value = eval(`this.viewParent.${key}`);
-                    return `[${value}]`;
+                    if (typeof value === 'string' || typeof value === 'number') 
+                     return `[${value}]`;
+                    else 
+                     return '[0]' 
                 } catch {
                     return '[0]'; // fallback if evaluation fails
                 }
