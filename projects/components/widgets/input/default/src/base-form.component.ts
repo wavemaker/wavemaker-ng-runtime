@@ -51,6 +51,18 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
         }
 
         binddatavalue = binddatavalue.replace(/\[\$i\]/g, '[0]');
+        binddatavalue = binddatavalue.replace(
+            /\[(.*?)\]/g,
+            (_match, key) => {
+                try {
+                    const value = eval(`this.viewParent.${key}`);
+                    return `[${value}]`;
+                } catch {
+                    return '[0]'; // fallback if evaluation fails
+                }
+            }
+        );
+
 
         // In case of list widget context will be the listItem.
         if (has(this.context, binddatavalue.split('.')[0]) && has(this.context, binddatavalue)) {
