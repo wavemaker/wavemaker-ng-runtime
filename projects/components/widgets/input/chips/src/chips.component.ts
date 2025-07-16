@@ -441,7 +441,7 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
 
     // To avoid form submit on pressing enter key
     public stopEvent($event: Event) {
-      const inputValue = ($event.target as HTMLInputElement).value;
+      const inputValue = ($event.target as HTMLInputElement)?.value ?? '';
       if(inputValue.trim()){
         $event.stopPropagation();
         $event.preventDefault();
