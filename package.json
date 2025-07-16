@@ -134,10 +134,5 @@
         "node": "~22.11.0",
         "npm": "~10.9.0"
     },
-    "overrides": {
-    "ng-packagr": {
-        "@rollup/wasm-node": "4.40.2"
-    }
-},
     "engineStrict": true
 }
