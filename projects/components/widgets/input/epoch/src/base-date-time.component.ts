@@ -921,7 +921,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForDate(-1);
             }
             var prevMon = this.getMonth(this.activeDate, -1);
-
+            const current = new Date();
+            if(prevMon.date.getMonth()===current.getMonth() && prevMon.date.getFullYear()===current.getFullYear()) {
+                this.hightlightToday(new Date());
+            }
             setTimeout(() => {
                 $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
                 $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
@@ -945,6 +948,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForDate(1);
             }
             var nextMon = this.getMonth(this.activeDate, 1);
+            const current = new Date();
+            if (nextMon.date.getMonth() === current.getMonth() && nextMon.date.getFullYear() === current.getFullYear()) {
+                this.hightlightToday(current);
+            }
             setTimeout(() => {
                 $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
                 $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
