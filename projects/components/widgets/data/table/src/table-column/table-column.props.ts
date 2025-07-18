@@ -75,6 +75,7 @@ export const registerProps = () => {
                 ['required', PROP_BOOLEAN],
                 ['rowactionsposition', PROP_STRING],
                 ['searchkey', PROP_STRING],
+                ['sortby', PROP_STRING],
                 ['searchable', {value: true, ...PROP_BOOLEAN}],
                 ['showinfilter', {value: false, ...PROP_BOOLEAN}],
                 ['suffix', PROP_STRING],
