@@ -35,7 +35,7 @@ import {
     ToDatePipe,
     ToNumberPipe,
     CustomPipe,
-    TrailingZeroDecimalPipe
+    TrailingZeroDecimalPipe, TemplateReplacePipe
 } from './pipes/custom-pipes';
 import { TrustAsPipe } from './pipes/trust-as.pipe';
 import { DialogServiceImpl } from './widgets/common/dialog/dialog.service';
@@ -75,7 +75,8 @@ const PIPES = [
     TrustAsPipe,
     ImagePipe,
     CustomPipe,
-    SanitizePipe
+    SanitizePipe,
+    TemplateReplacePipe
 ];
 
 @NgModule({
