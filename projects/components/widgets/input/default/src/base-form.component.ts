@@ -56,10 +56,10 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
             (_match, key) => {
                 try {
                     const value = eval(`this.viewParent.${key}`);
-                    if (typeof value === 'string' || typeof value === 'number') 
+                    if (typeof value === 'string' || typeof value === 'number')
                      return `[${value}]`;
-                    else 
-                     return '[0]' 
+                    else
+                     return '[0]'
                 } catch {
                     return '[0]'; // fallback if evaluation fails
                 }
@@ -74,9 +74,9 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
         // Parent widget must update on custom widget datavalue change for bindings to work
         else if (has(this.viewParent, binddatavalue) && this.viewParent.containerWidget?._isCustom) {
             set(this.viewParent, binddatavalue, value);
-        } else if (has(this.viewParent, binddatavalue) && this.datavaluesource.owner === "Page") {
+        } else if (has(this.viewParent, binddatavalue) && this.datavaluesource?.owner === "Page") {
             set(this.viewParent, binddatavalue, value);
-        } else if (has(this.viewParent?.App, binddatavalue) && this.datavaluesource.owner === "App") {
+        } else if (has(this.viewParent?.App, binddatavalue) && this.datavaluesource?.owner === "App") {
             set(this.viewParent.App, binddatavalue, value);
         }
     }
