@@ -122,7 +122,7 @@
   @if (_loadingItems) {
     <span aria-hidden="true" class="fa fa-circle-o-notch fa-spin form-control-feedback"></span>
   }
-  <button class="btn btn-icon form-control-feedback clear-btn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"><i class="app-icon {{clearsearchiconclass}}"></i></button>
+  <button type="button" class="btn btn-icon form-control-feedback clear-btn" [ngClass]="{'show-btn': isQueryEntered()}" (click)="clearSearch($event, true)"><i class="app-icon {{clearsearchiconclass}}"></i></button>
   <span class="sr-only">Clear button</span>
   @if (showsearchicon) {
     <span [ngClass]="{'disabled': disabled}" class="input-group-addon">

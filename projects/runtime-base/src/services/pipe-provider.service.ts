@@ -31,7 +31,8 @@ import {
     StringToNumberPipe,
     CustomPipe,
     TrustAsPipe,
-    SanitizePipe
+    SanitizePipe,
+    TemplateReplacePipe
 } from '@wm/components/base';
 import { getSessionStorageItem, CustomPipeManager, AbstractI18nService } from '@wm/core';
 import {DomSanitizer} from "@angular/platform-browser";
@@ -105,7 +106,8 @@ export class PipeProvider {
             this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true),
             this.preparePipeMeta(CustomPipe, 'custom', true, [this.injector.get(CustomPipeManager)]),
             this.preparePipeMeta(TrustAsPipe, 'trustAs', true, [this.domSanitizer]),
-            this.preparePipeMeta(SanitizePipe, 'sanitize', true, [this.domSanitizer])
+            this.preparePipeMeta(SanitizePipe, 'sanitize', true, [this.domSanitizer]),
+            this.preparePipeMeta(TemplateReplacePipe, 'templateReplace', true),
         ];
     }
 

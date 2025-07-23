@@ -230,7 +230,7 @@ export class AppManagerService {
 
         // do not provide redirectTo page if fetching HOME page resulted 401
         // on app load, by default Home page is loaded
-        page = this.$security.getRedirectPage(config);
+        page = this.$security.getCurrentRoutePage();
 
             page = page ? '?redirectPage=' + encodeURIComponent(page) : '';
             /*
