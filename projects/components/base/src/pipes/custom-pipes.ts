@@ -1,6 +1,6 @@
-import {Inject, Pipe, PipeTransform} from '@angular/core';
+import {inject, Inject, Pipe, PipeTransform} from '@angular/core';
 import {DatePipe, DecimalPipe} from '@angular/common';
-import {AbstractI18nService, CURRENCY_INFO, CustomPipeManager, hasOffsetStr, isDefined, replace} from '@wm/core';
+import {AbstractI18nService, App, CURRENCY_INFO, CustomPipeManager, hasOffsetStr, isDefined, replace} from '@wm/core';
 import {WmPipe} from "./wm-pipe";
 import {filter, includes, isDate, isFunction, isObject, isUndefined, startsWith} from "lodash-es";
 
@@ -38,13 +38,14 @@ export class TrailingZeroDecimalPipe implements PipeTransform {
     name: 'toDate'
 })
 export class ToDatePipe extends WmPipe implements PipeTransform {
+    private app = inject(App);
     // This method calls the custom formatter fn after applying the exisitng date pattern
-    returnFn(data, args) {
+    returnFn(data, args, variables) {
         if (this.isCustomPipe) {
             if (args) {
                 args[0] = data;
             }
-            return this.customFormatter(data, args);
+            return this.customFormatter(data, args, variables);
         }
         return data;
     }
@@ -52,18 +53,18 @@ export class ToDatePipe extends WmPipe implements PipeTransform {
         let timestamp;
         // 'null' is to be treated as a special case, If user wants to enter null value, empty string will be passed to the backend
         if (data === 'null' || data === '') {
-            return this.returnFn('', arguments);
+            return this.returnFn('', arguments, this.app.Variables);
         }
         if (!isDefined(data)) {
-            return this.returnFn('',arguments);
+            return this.returnFn('',arguments, this.app.Variables);
         }
         timestamp = getEpochValue(data);
         if (timestamp) {
             if (format === 'timestamp') {
-                return this.returnFn(timestamp, arguments);
+                return this.returnFn(timestamp, arguments, this.app.Variables);
             }
             if (format === 'UTC') {
-                return this.returnFn(new Date(timestamp).toISOString(), arguments);
+                return this.returnFn(new Date(timestamp).toISOString(), arguments, this.app.Variables);
             }
             let formattedVal;
             const timeZone = this.i18nService ? this.i18nService.getTimezone(compInstance) : timezone;
@@ -72,9 +73,9 @@ export class ToDatePipe extends WmPipe implements PipeTransform {
             } else {
                 formattedVal = this.datePipe.transform(timestamp, format);
             }
-            return this.returnFn(formattedVal, arguments);
+            return this.returnFn(formattedVal, arguments, this.app.Variables);
         }
-        return this.returnFn('', arguments);
+        return this.returnFn('', arguments,this.app.Variables);
     }
 
     constructor(private datePipe: DatePipe, private i18nService: AbstractI18nService, protected customPipeManager: CustomPipeManager) {
@@ -149,6 +150,8 @@ export class SuffixPipe implements PipeTransform {
     name: 'custom'
 })
 export class CustomPipe implements PipeTransform {
+    private app = inject(App);
+
     constructor(private custmeUserPipe: CustomPipeManager) {
 
     }
@@ -165,7 +168,7 @@ export class CustomPipe implements PipeTransform {
         }
 
         try{
-            return pipeRef.formatter(data, ...argumentArr);
+            return pipeRef.formatter(data, ...argumentArr, this.app.Variables);
         } catch(error){
             console.error('Pipe name: '+pipename, error);
             return data;
