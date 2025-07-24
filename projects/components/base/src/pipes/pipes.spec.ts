@@ -19,6 +19,13 @@ jest.mock('lodash-es', () => ({
 
 describe('WmPipe', () => {
     let customPipeManagerMock: jest.Mocked<CustomPipeManager>;
+    const mockVariables = {
+    staticVariable1: {
+        dataSet: {
+        dateformat: 'MM-dd-yyyy'
+        }
+    }
+    };
 
     beforeEach(() => {
         customPipeManagerMock = {
@@ -53,10 +60,10 @@ describe('WmPipe', () => {
             customPipeManagerMock.getCustomPipe.mockReturnValue(mockPipe);
 
             const wmPipe = new WmPipe('customPipe', customPipeManagerMock);
-            const result = wmPipe.customFormatter('input data', ['arg1', 'arg2']);
+            const result = wmPipe.customFormatter('input data', ['arg1', 'arg2'], mockVariables);
 
             expect(result).toBe('formatted data');
-            expect(mockPipe.formatter).toHaveBeenCalledWith('arg1', 'arg2');
+            expect(mockPipe.formatter).toHaveBeenCalledWith('arg1', 'arg2', mockVariables);
         });
 
         it('should return the original data if an error occurs', () => {
@@ -68,10 +75,10 @@ describe('WmPipe', () => {
             customPipeManagerMock.getCustomPipe.mockReturnValue(mockPipe);
 
             const wmPipe = new WmPipe('customPipe', customPipeManagerMock);
-            const result = wmPipe.customFormatter('input data', ['arg1', 'arg2']);
+            const result = wmPipe.customFormatter('input data', ['arg1', 'arg2'], mockVariables);
 
             expect(result).toBe('input data');
-            expect(mockPipe.formatter).toHaveBeenCalledWith('arg1', 'arg2');
+            expect(mockPipe.formatter).toHaveBeenCalledWith('arg1', 'arg2', mockVariables);
         });
     });
 });
