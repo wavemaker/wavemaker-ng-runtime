@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import { FormsModule } from '@angular/forms';
 import {Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit, Optional, ViewChild} from '@angular/core';
 
@@ -39,7 +38,7 @@ const sizeClasses = {
 };
 @Component({
   standalone: true,
-  imports: [CommonModule, WmComponentsModule, FormsModule, PaginationModule, BsDropdownModule, MenuComponent],
+  imports: [CommonModule, FormsModule, PaginationModule, BsDropdownModule, MenuComponent],
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html',
     providers: [
@@ -100,7 +99,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     private _debouncedPageChanged = debounce(event => {
         const currentPage = event && event.page;
         const maxResults = event && (event.pagesize || event.itemsPerPage) || this.maxResults;
-        
+
         // Do not call goToPage if page has not changed
         if (currentPage !== this.dn.currentPage || this.maxResults !== maxResults) {
             const inst = (this as any).parent || this;

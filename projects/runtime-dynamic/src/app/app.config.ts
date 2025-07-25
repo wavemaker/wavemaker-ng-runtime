@@ -1,40 +1,46 @@
-import { ApplicationConfig, importProvidersFrom, APP_INITIALIZER, LOCALE_ID } from "@angular/core";
-import { provideRouter, RouteReuseStrategy, withComponentInputBinding, withHashLocation } from "@angular/router";
-import { provideHttpClient, withXsrfConfiguration, HTTP_INTERCEPTORS, withInterceptorsFromDi } from "@angular/common/http";
-import { provideAnimations } from "@angular/platform-browser/animations";
-import { routes } from "./app.routes";
-import { HttpServiceImpl } from "@wm/http";
-import { SecurityService } from "@wm/security";
-import { VariablesService, MetadataService } from "@wm/variables";
-import { OAuthService } from "@wm/oAuth";
+import {APP_INITIALIZER, ApplicationConfig, importProvidersFrom, LOCALE_ID} from "@angular/core";
+import {provideRouter, RouteReuseStrategy, withComponentInputBinding, withHashLocation} from "@angular/router";
 import {
-    AppJSProvider,
-    AppVariablesProvider,
-    ComponentRefProvider,
-    PrefabConfigProvider,
-    AppExtensionProvider,
-    CustomwidgetConfigProvider,
+    HTTP_INTERCEPTORS,
+    provideHttpClient,
+    withInterceptorsFromDi,
+    withXsrfConfiguration
+} from "@angular/common/http";
+import {provideAnimations} from "@angular/platform-browser/animations";
+import {routes} from "./app.routes";
+import {HttpServiceImpl} from "@wm/http";
+import {SecurityService} from "@wm/security";
+import {MetadataService, VariablesService} from "@wm/variables";
+import {OAuthService} from "@wm/oAuth";
+import {
     AppDefaultsService,
     AppExtensionJSResolve,
+    AppExtensionProvider,
+    AppJSProvider,
     AppJSResolve,
     AppManagerService,
     AppRef,
-    I18nServiceImpl,
-    NavigationServiceImpl,
-    SpinnerServiceImpl,
-    ToasterServiceImpl,
+    AppVariablesProvider,
+    AuthGuard,
+    CanDeactivatePageGuard,
+    ComponentRefProvider,
+    CustomwidgetConfigProvider,
     DynamicComponentRefProviderService,
     HttpCallInterceptor,
-    PrefabManagerService,
-    CanDeactivatePageGuard,
-    PageNotFoundGuard,
     I18nResolve,
-    RoleGuard,
+    I18nServiceImpl,
+    NavigationServiceImpl,
+    PageNotFoundGuard,
     PipeService,
-    AuthGuard,
+    PrefabConfigProvider,
+    PrefabManagerService,
+    RoleGuard,
+    SpinnerServiceImpl,
+    ToasterServiceImpl,
     WmRouteReuseStrategy
 } from "@wm/runtime/base";
 import {
+    _WM_APP_PROJECT,
     AbstractDialogService,
     AbstractHttpService,
     AbstractI18nService,
@@ -46,21 +52,29 @@ import {
     CustomWidgetRefProvider,
     DynamicComponentRefProvider,
     PartialRefProvider,
-    _WM_APP_PROJECT,
 } from "@wm/core";
-import { ModalModule } from "ngx-bootstrap/modal";
-import { ToastNoAnimationModule } from "ngx-toastr";
-import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
-import { NgCircleProgressModule } from "ng-circle-progress";
-import { DatePipe, DecimalPipe } from "@angular/common";
-import { CustomwidgetConfigProviderService } from "./services/customwidget-config-provider.service";
-import { AppJSProviderService } from "./services/app-js-provider.service";
-import { AppVariablesProviderService } from "./services/app-variables-provider.service";
-import { AppExtensionProviderService } from "./services/app-extension.service";
-import { ComponentRefProviderService } from "./services/component-ref-provider.service";
-import { PrefabConfigProviderService } from "./services/prefab-config-provider.service";
-import { AppResourceManagerService } from "./services/app-resource-manager.service";
-import { CustomPipe, DialogServiceImpl, FilterPipe, ImagePipe, SanitizePipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe } from "@wm/components/base";
+import {ModalModule} from "ngx-bootstrap/modal";
+import {ToastNoAnimationModule} from "ngx-toastr";
+import {BsDatepickerModule} from "ngx-bootstrap/datepicker";
+import {NgCircleProgressModule} from "ng-circle-progress";
+import {DatePipe, DecimalPipe} from "@angular/common";
+import {CustomwidgetConfigProviderService} from "./services/customwidget-config-provider.service";
+import {AppJSProviderService} from "./services/app-js-provider.service";
+import {AppVariablesProviderService} from "./services/app-variables-provider.service";
+import {AppExtensionProviderService} from "./services/app-extension.service";
+import {ComponentRefProviderService} from "./services/component-ref-provider.service";
+import {PrefabConfigProviderService} from "./services/prefab-config-provider.service";
+import {AppResourceManagerService} from "./services/app-resource-manager.service";
+import {
+    CustomPipe,
+    DialogServiceImpl,
+    FilterPipe,
+    ImagePipe,
+    SanitizePipe,
+    ToDatePipe,
+    TrailingZeroDecimalPipe,
+    TrustAsPipe
+} from "@wm/components/base";
 import {PageDirective} from "@wm/components/page";
 
 
@@ -114,6 +128,7 @@ export function setAngularLocale(I18nService) {
 
 export const appConfig: ApplicationConfig = {
     providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: HttpCallInterceptor, multi: true },
         // Provide Angular core services
         provideRouter(routes, withHashLocation(), withComponentInputBinding()),
         provideHttpClient(
@@ -135,11 +150,6 @@ export const appConfig: ApplicationConfig = {
             provide: LOCALE_ID,
             useFactory: setAngularLocale,
             deps: [AbstractI18nService]
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: HttpCallInterceptor,
-            multi: true
         },
         { provide: App, useClass: AppRef },
         { provide: AbstractToasterService, useClass: ToasterServiceImpl },

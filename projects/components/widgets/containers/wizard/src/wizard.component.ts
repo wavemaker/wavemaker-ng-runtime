@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
+import { TextContentDirective } from "@wm/components/base";
 import {
     AfterContentInit,
     AfterViewChecked,
@@ -39,7 +39,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+  imports: [CommonModule, TextContentDirective],
     selector: 'div[wmWizard]',
     templateUrl: './wizard.component.html',
     providers: [
@@ -590,7 +590,9 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             this.onDataChange(nv);
         } else if (key === 'defaultstep') {
             this.setDefaultStep(this.getStepRefByName(nv));
-        } else if (key === 'actionsalignment') {
+        }  else if (key === 'defaultstepindex') {
+            this.setDefaultStep(this.getStepRefByIndex(nv));
+        }  else if (key === 'actionsalignment') {
             this.nativeElement.querySelector('div.app-wizard-actions')?.classList.replace(ov, nv);
         } else {
             super.onPropertyChange(key, nv, ov);

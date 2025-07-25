@@ -1,13 +1,13 @@
 import {Attribute, Directive, ElementRef, Inject, Injector, OnInit, Optional} from '@angular/core';
 
-import { addClass, noop } from '@wm/core';
-import {PROP_TYPE, provideAs, provideAsWidgetRef, register, StylableComponent, styler} from '@wm/components/base';
+import {addClass, noop} from '@wm/core';
+import {PROP_TYPE, provideAs, provideAsWidgetRef, register, styler} from '@wm/components/base';
 
-import { customWidgetProps } from './custom-widget.props';
-import { registerProps } from "../custom-widget-container/custom-widget.props";
+import {customWidgetProps} from './custom-widget.props';
+import {registerProps} from "../custom-widget-container/custom-widget.props";
 import {capitalize, cloneDeep} from 'lodash-es';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {DatasetAwareFormComponent} from "@wm/components/input";
+import {DatasetAwareFormComponent} from "@wm/components/input/dataset-aware-form";
 import {Subject} from "rxjs";
 
 const registeredPropsSet = new Set<string>();

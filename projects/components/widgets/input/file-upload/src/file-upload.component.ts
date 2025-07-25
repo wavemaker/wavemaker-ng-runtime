@@ -1,11 +1,26 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
+import {CommonModule} from '@angular/common';
 import {AfterViewInit, Attribute, Component, Inject, Injector, OnDestroy, OnInit, Optional} from '@angular/core';
 
-import { Subject, Subscription } from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 
-import { App, DataSource, getWmProjectProperties, isAudioFile, isImageFile, isVideoFile, AbstractDialogService, IDGenerator } from '@wm/core';
-import {provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {
+    AbstractDialogService,
+    App,
+    DataSource,
+    getWmProjectProperties,
+    IDGenerator,
+    isAudioFile,
+    isImageFile,
+    isVideoFile
+} from '@wm/core';
+import {
+    FileIconClassPipe,
+    FileSizePipe,
+    provideAsWidgetRef,
+    StateClassPipe,
+    StylableComponent,
+    styler
+} from '@wm/components/base';
 
 import {registerProps} from './file-upload.props';
 import {forEach, includes, isEmpty, toLower} from "lodash-es";
@@ -19,8 +34,8 @@ const WIDGET_CONFIG = {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+    standalone: true,
+    imports: [CommonModule, FileIconClassPipe, StateClassPipe, FileSizePipe],
     selector: '[wmFileUpload]',
     templateUrl: './file-upload.component.html',
     providers: [

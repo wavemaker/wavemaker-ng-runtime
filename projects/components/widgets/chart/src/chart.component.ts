@@ -1,15 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import { SpinnerComponent } from '@wm/components/basic';
+import {CommonModule} from '@angular/common';
+import {SpinnerComponent} from '@wm/components/basic/spinner';
 import {
     AfterViewInit,
-    OnDestroy,
     Component,
     HostBinding,
+    Inject,
     Injector,
-    ViewEncapsulation,
+    OnDestroy,
     Optional,
-    Inject
+    ViewEncapsulation
 } from '@angular/core';
 
 import {
@@ -23,18 +22,47 @@ import {
     removeAttr,
     triggerFn,
 } from '@wm/core';
-import { APPLY_STYLES_TYPE, IRedrawableComponent, provideAsWidgetRef, StylableComponent, styler,  } from '@wm/components/base';
-
-import { registerProps } from './chart.props';
-import { allShapes, getDateList, getSampleData, initChart, isAreaChart, isAxisDomainValid, isBarChart, isBubbleChart, isChartDataArray, isChartDataJSON, isLineTypeChart, isPieType, postPlotChartProcess } from './chart.utils';
 import {
-    concat, debounce, fill,
+    APPLY_STYLES_TYPE,
+    IRedrawableComponent,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+} from '@wm/components/base';
+
+import {registerProps} from './chart.props';
+import {
+    allShapes,
+    getDateList,
+    getSampleData,
+    initChart,
+    isAreaChart,
+    isAxisDomainValid,
+    isBarChart,
+    isBubbleChart,
+    isChartDataArray,
+    isChartDataJSON,
+    isLineTypeChart,
+    isPieType,
+    postPlotChartProcess
+} from './chart.utils';
+import {
+    concat,
+    debounce,
+    fill,
     first,
-    forEach, forEachRight,
-    get, groupBy, includes,
+    forEach,
+    forEachRight,
+    get,
+    groupBy,
+    includes,
     intersection,
-    isArray, isEmpty, isObject, keys,
-    map, max,
+    isArray,
+    isEmpty,
+    isObject,
+    keys,
+    map,
+    max,
     maxBy,
     minBy,
     orderBy,
@@ -129,8 +157,8 @@ const angle = d => {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, SpinnerComponent],
+    standalone: true,
+    imports: [CommonModule, SpinnerComponent],
     selector: 'div[wmChart]',
     templateUrl: './chart.component.html',
     styleUrls: ['../../../../../node_modules/@wavemaker/nvd3/build/nv.d3.min.css'],

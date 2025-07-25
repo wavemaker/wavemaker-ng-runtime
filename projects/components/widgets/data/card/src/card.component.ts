@@ -1,24 +1,20 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import { PictureDirective } from '@wm/components/basic';
-import { MenuComponent } from '@wm/components/navigation/menu';
+import {CommonModule} from '@angular/common';
+import {APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler, TextContentDirective} from "@wm/components/base";
+import {PictureDirective} from '@wm/components/basic/picture';
+import {MenuAdapterComponent, MenuComponent} from '@wm/components/navigation/menu';
 import {
     AfterViewInit,
     Component,
     ElementRef,
+    Inject,
     Injector,
     OnInit,
-    Renderer2,
     Optional,
-    SkipSelf,
-    ViewChild,
-    Inject
+    Renderer2,
+    ViewChild
 } from '@angular/core';
 
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, styler } from '@wm/components/base';
-import { MenuAdapterComponent } from '@wm/components/navigation/menu';
-
-import { registerProps } from './card.props';
+import {registerProps} from './card.props';
 import {removeAttr, setAttr} from '@wm/core';
 
 const DEFAULT_CLS = 'app-card card app-panel';
@@ -28,8 +24,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, PictureDirective, MenuComponent],
+    standalone: true,
+    imports: [CommonModule, TextContentDirective, PictureDirective, MenuComponent],
     selector: '[wmCard]',
     templateUrl: './card.component.html',
     providers: [

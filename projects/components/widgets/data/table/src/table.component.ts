@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import { AnchorComponent } from '@wm/components/basic';
-import { ButtonComponent } from '@wm/components/input';
+import { AnchorComponent } from '@wm/components/basic/anchor';
+import { ButtonComponent } from '@wm/components/input/button';
 import { MenuComponent } from '@wm/components/navigation/menu';
 import {
     AfterContentInit,
@@ -118,8 +117,8 @@ const isInputBodyWrapper = target => {
 };
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, WmComponentsModule, AnchorComponent, PaginationComponent, ButtonComponent, BsDropdownModule, MenuComponent],
+      standalone: true,
+      imports: [CommonModule, AnchorComponent, PaginationComponent, ButtonComponent, BsDropdownModule, MenuComponent],
     selector: '[wmTable]',
     templateUrl: './table.component.html',
     providers: [

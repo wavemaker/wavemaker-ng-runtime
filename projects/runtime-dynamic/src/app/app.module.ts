@@ -1,178 +1,182 @@
-import { Injector, ModuleWithProviders, NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
-import { RouteReuseStrategy, RouterModule } from '@angular/router';
-import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
-import { TimepickerModule as ngxTimepickerModule } from 'ngx-bootstrap/timepicker';
-import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
-import { PaginationModule as ngxPaginationModule } from 'ngx-bootstrap/pagination';
-import { ModalModule } from 'ngx-bootstrap/modal';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { PopoverModule as ngxPopoverModule } from 'ngx-bootstrap/popover';
+import {Injector, ModuleWithProviders, NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {CommonModule} from '@angular/common';
+import {RouteReuseStrategy, RouterModule} from '@angular/router';
+import {HttpClientModule, HttpClientXsrfModule} from '@angular/common/http';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {TypeaheadModule} from 'ngx-bootstrap/typeahead';
+import {TimepickerModule as ngxTimepickerModule} from 'ngx-bootstrap/timepicker';
+import {ProgressbarModule} from 'ngx-bootstrap/progressbar';
+import {PaginationModule as ngxPaginationModule} from 'ngx-bootstrap/pagination';
+import {ModalModule} from 'ngx-bootstrap/modal';
+import {TooltipModule} from 'ngx-bootstrap/tooltip';
+import {BsDatepickerModule} from 'ngx-bootstrap/datepicker';
+import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
+import {PopoverModule as ngxPopoverModule} from 'ngx-bootstrap/popover';
 
-import { NgCircleProgressModule } from 'ng-circle-progress';
-import { ToastNoAnimationModule } from 'ngx-toastr';
-import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
+import {NgCircleProgressModule} from 'ng-circle-progress';
+import {ToastNoAnimationModule} from 'ngx-toastr';
+import {CarouselModule as ngxCarouselModule,} from 'ngx-bootstrap/carousel';
 
-import { App, getWmProjectProperties, PartialRefProvider, CustomWidgetRefProvider, AbstractHttpService } from '@wm/core';
+import {AbstractHttpService, App, CustomWidgetRefProvider, getWmProjectProperties, PartialRefProvider} from '@wm/core';
 // Basic widgets
+import {AnchorComponent} from '@wm/components/basic/anchor';
+import {AudioComponent} from '@wm/components/basic/audio';
+import {HtmlDirective} from '@wm/components/basic/html';
+import {IconComponent} from '@wm/components/basic/icon';
+import {IframeComponent} from '@wm/components/basic/iframe';
+import {LabelDirective} from '@wm/components/basic/label';
+import {PictureDirective} from '@wm/components/basic/picture';
+import {SpinnerComponent} from '@wm/components/basic/spinner';
+import {VideoComponent} from '@wm/components/basic/video';
 
-import {
-    AnchorComponent,
-    AudioComponent,
-    HtmlDirective,
-    IconComponent,
-    IframeComponent,
-    LabelDirective,
-    PictureDirective,
-    SpinnerComponent,
-    VideoComponent
-} from '@wm/components/basic';
-import { ProgressBarComponent, ProgressCircleComponent } from '@wm/components/basic/progress';
-import { RichTextEditorComponent } from '@wm/components/basic/rich-text-editor';
-import { SearchComponent, ScrollableDirective } from '@wm/components/basic/search';
-import { TreeComponent } from '@wm/components/basic/tree';
+import {ProgressBarComponent} from '@wm/components/basic/progress/progress-bar';
+import {ProgressCircleComponent} from '@wm/components/basic/progress/progress-circle';
+import {RichTextEditorComponent} from '@wm/components/basic/rich-text-editor';
+import {ScrollableDirective, SearchComponent} from '@wm/components/basic/search';
+import {TreeComponent} from '@wm/components/basic/tree';
 
 // input
+import {ButtonComponent} from "@wm/components/input/button";
+import {ButtonGroupDirective} from "@wm/components/input/button-group";
+import {CaptionPositionDirective} from "@wm/components/input/caption-position";
+import {CheckboxComponent} from "@wm/components/input/checkbox";
+import {CheckboxsetComponent} from "@wm/components/input/checkboxset";
+import {CompositeDirective} from "@wm/components/input/composite";
+import {NumberComponent} from "@wm/components/input/number";
+import {RadiosetComponent} from "@wm/components/input/radioset";
+import {SelectComponent} from "@wm/components/input/select";
+import {SwitchComponent} from "@wm/components/input/switch";
 import {
-    ButtonComponent,
-    ButtonGroupDirective,
-    CaptionPositionDirective,
-    CheckboxComponent,
-    CheckboxsetComponent,
-    CompositeDirective,
-    NumberComponent,
-    RadiosetComponent,
-    SelectComponent,
-    SwitchComponent,
     InputCalendarComponent,
     InputColorComponent,
     InputEmailComponent,
     InputNumberComponent,
-    InputTextComponent,
-    TextareaComponent
-} from '@wm/components/input';
-import { CalendarComponent } from '@wm/components/input/calendar';
-import { ChipsComponent } from '@wm/components/input/chips';
-import { ColorPickerComponent } from '@wm/components/input/color-picker';
-import { CurrencyComponent } from '@wm/components/input/currency';
-import {
-    DateComponent,
-    DatetimeComponent,
-    TimeComponent,
-    DateTimePickerComponent,
-    TimePickerComponent,
-    PickerComponent,
-    PickerGroupComponent
-} from '@wm/components/input/epoch';
-import { FileUploadComponent } from '@wm/components/input/file-upload';
-import { RatingComponent } from '@wm/components/input/rating';
-import { SliderComponent } from '@wm/components/input/slider';
+    InputTextComponent
+} from "@wm/components/input/text";
+import {TextareaComponent} from "@wm/components/input/textarea";
+
+import {CalendarComponent} from '@wm/components/input/calendar';
+import {ChipsComponent} from '@wm/components/input/chips';
+import {ColorPickerComponent} from '@wm/components/input/color-picker';
+import {CurrencyComponent} from '@wm/components/input/currency';
+
+import {DateComponent} from '@wm/components/input/epoch/date';
+import {DatetimeComponent} from '@wm/components/input/epoch/date-time';
+import {TimeComponent} from '@wm/components/input/epoch/time';
+import {DateTimePickerComponent, TimePickerComponent} from '@wm/components/input/epoch/date-time-picker';
+import {PickerComponent, PickerGroupComponent} from '@wm/components/input/epoch/picker';
+
+import {FileUploadComponent} from '@wm/components/input/file-upload';
+import {RatingComponent} from '@wm/components/input/rating';
+import {SliderComponent} from '@wm/components/input/slider';
 // Data
+import {CardActionsDirective, CardComponent, CardContentComponent, CardFooterDirective} from '@wm/components/data/card';
 import {
-    CardComponent,
-    CardActionsDirective,
-    CardContentComponent,
-    CardFooterDirective
-} from '@wm/components/data/card';
-import {
-    FormComponent,
-    FormWidgetDirective,
-    FormActionDirective,
-    FormFieldDirective,
-    LiveActionsDirective,
     DependsonDirective,
+    FormActionDirective,
+    FormComponent,
+    FormFieldDirective,
+    FormWidgetDirective,
+    LiveActionsDirective,
     LiveFilterDirective,
     LiveFormDirective
 } from '@wm/components/data/form';
-import { ListComponent, ListItemDirective } from '@wm/components/data/list';
-import { LiveTableComponent } from '@wm/components/data/live-table';
-import { PaginationComponent } from '@wm/components/data/pagination';
+import {ListComponent, ListItemDirective} from '@wm/components/data/list';
+import {LiveTableComponent} from '@wm/components/data/live-table';
+import {PaginationComponent} from '@wm/components/data/pagination';
 import {
-    TableComponent,
-    TableCUDDirective,
-    TableFilterSortDirective,
     TableActionDirective,
     TableColumnDirective,
     TableColumnGroupDirective,
-    TableRowDirective,
-    TableRowActionDirective
+    TableComponent,
+    TableCUDDirective,
+    TableFilterSortDirective,
+    TableRowActionDirective,
+    TableRowDirective
 } from '@wm/components/data/table';
 
 // Chart
-import { ChartComponent } from '@wm/components/chart';
+import {ChartComponent} from '@wm/components/chart';
 
 // Containers
-import { AccordionPaneComponent, AccordionDirective } from '@wm/components/containers/accordion';
-import { LinearLayoutDirective, LinearLayoutItemDirective } from '@wm/components/containers/linear-layout';
-import { LayoutgridDirective, LayoutGridRowDirective, LayoutGridColumnDirective } from '@wm/components/containers/layout-grid';
-import { PanelComponent } from '@wm/components/containers/panel';
-import { TabPaneComponent, TabsComponent } from '@wm/components/containers/tabs';
-import { TileDirective } from '@wm/components/containers/tile';
-import { WizardActionDirective, WizardStepComponent, WizardComponent } from '@wm/components/containers/wizard';
+import {AccordionDirective, AccordionPaneComponent} from '@wm/components/containers/accordion';
+import {LinearLayoutDirective, LinearLayoutItemDirective} from '@wm/components/containers/linear-layout';
+import {
+    LayoutGridColumnDirective,
+    LayoutgridDirective,
+    LayoutGridRowDirective
+} from '@wm/components/containers/layout-grid';
+import {PanelComponent} from '@wm/components/containers/panel';
+import {TabPaneComponent, TabsComponent} from '@wm/components/containers/tabs';
+import {TileDirective} from '@wm/components/containers/tile';
+import {WizardActionDirective, WizardComponent, WizardStepComponent} from '@wm/components/containers/wizard';
 
 // Dialogs
-import { AlertDialogComponent } from '@wm/components/dialogs/alert-dialog';
-import { IframeDialogComponent } from '@wm/components/dialogs/iframe-dialog';
-import { LoginDialogDirective } from '@wm/components/dialogs/login-dialog';
-import { PartialDialogComponent } from '@wm/components/dialogs/partial-dialog';
+import {AlertDialogComponent} from '@wm/components/dialogs/alert-dialog';
+import {IframeDialogComponent} from '@wm/components/dialogs/iframe-dialog';
+import {LoginDialogDirective} from '@wm/components/dialogs/login-dialog';
+import {PartialDialogComponent} from '@wm/components/dialogs/partial-dialog';
 
 // Navigation
-import { BreadcrumbComponent } from '@wm/components/navigation/breadcrumb';
-import { MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective, NavComponent, NavItemDirective } from '@wm/components/navigation/menu';
-import { NavbarComponent } from '@wm/components/navigation/navbar';
-import { PopoverComponent } from '@wm/components/navigation/popover';
+import {BreadcrumbComponent} from '@wm/components/navigation/breadcrumb';
+import {
+    MenuComponent,
+    MenuDropdownComponent,
+    MenuDropdownItemComponent,
+    NavComponent,
+    NavigationControlDirective,
+    NavItemDirective
+} from '@wm/components/navigation/menu';
+import {NavbarComponent} from '@wm/components/navigation/navbar';
+import {PopoverComponent} from '@wm/components/navigation/popover';
 
 // Advanced
-import { CarouselDirective, CarouselTemplateDirective } from '@wm/components/advanced/carousel';
-import { LoginComponent } from '@wm/components/advanced/login';
-import { MarqueeDirective } from '@wm/components/advanced/marquee';
-import { CustomWidgetDirective, CustomWidgetContainerDirective } from '@wm/components/advanced/custom';
+import {CarouselDirective, CarouselTemplateDirective} from '@wm/components/advanced/carousel';
+import {LoginComponent} from '@wm/components/advanced/login';
+import {MarqueeDirective} from '@wm/components/advanced/marquee';
+import {CustomWidgetContainerDirective, CustomWidgetDirective} from '@wm/components/advanced/custom';
 
 import {
-    PageDirective,
-    LayoutDirective,
     ContentComponent,
+    LayoutDirective,
     PageContentComponent,
-    SpaPageDirective,
-    RouterOutletDirective
+    PageDirective,
+    RouterOutletDirective,
+    SpaPageDirective
 } from '@wm/components/page';
-import { FooterDirective } from '@wm/components/page/footer';
-import { HeaderComponent } from '@wm/components/page/header';
-import { LeftPanelDirective } from '@wm/components/page/left-panel';
-import { RightPanelDirective } from '@wm/components/page/right-panel';
-import { TopNavDirective } from '@wm/components/page/top-nav';
+import {FooterDirective} from '@wm/components/page/footer';
+import {HeaderComponent} from '@wm/components/page/header';
+import {LeftPanelDirective} from '@wm/components/page/left-panel';
+import {RightPanelDirective} from '@wm/components/page/right-panel';
+import {TopNavDirective} from '@wm/components/page/top-nav';
 
-import { PrefabDirective, PrefabContainerDirective } from '@wm/components/prefab';
+import {PrefabContainerDirective, PrefabDirective} from '@wm/components/prefab';
 
 import {
     AppComponent,
+    AppExtensionProvider,
     AppJSProvider,
     AppVariablesProvider,
     ComponentRefProvider,
-    PrefabConfigProvider,
-    WmRouteReuseStrategy,
-    WM_MODULES_FOR_ROOT,
     CustomwidgetConfigProvider,
+    PrefabConfigProvider,
     REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS,
-    AppExtensionProvider
+    WM_MODULES_FOR_ROOT,
+    WmRouteReuseStrategy
 } from '@wm/runtime/base';
 
-import { routes } from './app.routes';
-import { PageWrapperComponent } from './components/page-wrapper.component';
-import { AppJSProviderService } from './services/app-js-provider.service';
-import { AppVariablesProviderService } from './services/app-variables-provider.service';
-import { AppExtensionProviderService } from './services/app-extension.service';
-import { ComponentRefProviderService } from './services/component-ref-provider.service';
-import { CustomwidgetConfigProviderService } from './services/customwidget-config-provider.service';
-import { PrefabConfigProviderService } from './services/prefab-config-provider.service';
-import { AppResourceManagerService } from './services/app-resource-manager.service';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpServiceImpl } from '@wm/http';
+import {routes} from './app.routes';
+import {PageWrapperComponent} from './components/page-wrapper.component';
+import {AppJSProviderService} from './services/app-js-provider.service';
+import {AppVariablesProviderService} from './services/app-variables-provider.service';
+import {AppExtensionProviderService} from './services/app-extension.service';
+import {ComponentRefProviderService} from './services/component-ref-provider.service';
+import {CustomwidgetConfigProviderService} from './services/customwidget-config-provider.service';
+import {PrefabConfigProviderService} from './services/prefab-config-provider.service';
+import {AppResourceManagerService} from './services/app-resource-manager.service';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {HttpServiceImpl} from '@wm/http';
 
 export const routerModule = RouterModule.forRoot(routes, { useHash: true, scrollPositionRestoration: 'top' });
 export const toastrModule = ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true });

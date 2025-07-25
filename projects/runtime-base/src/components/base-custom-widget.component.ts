@@ -1,38 +1,31 @@
-import {
-    AfterViewInit,
-    Injector,
-    OnDestroy,
-    ViewChild,
-    Directive,
-    inject
-} from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {AfterViewInit, Directive, inject, Injector, OnDestroy} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {Subject} from 'rxjs';
 
 import {
     $invokeWatchers,
+    $watch,
     AbstractI18nService,
     AbstractNavigationService,
     App,
+    isIE,
     noop,
-    Viewport,
     ScriptLoaderService,
     UtilsService,
-    registerFnByExpr,
-    $watch,
-    isIE, isDefined
+    Viewport
 } from '@wm/core';
-import {getWidgetPropsByType, WidgetRef} from '@wm/components/base';
-import { PageDirective, SpaPageDirective } from '@wm/components/page';
+import {WidgetRef} from '@wm/components/base';
+import {PageDirective, SpaPageDirective} from '@wm/components/page';
 import {PrefabDirective} from '@wm/components/prefab';
-import { VariablesService } from '@wm/variables';
-import { CustomwidgetConfigProvider } from '../types/types';
-import { FragmentMonitor } from '../util/fragment-monitor';
-import { AppManagerService } from '../services/app.manager.service';
+import {VariablesService} from '@wm/variables';
+import {CustomwidgetConfigProvider} from '../types/types';
+import {FragmentMonitor} from '../util/fragment-monitor';
+import {AppManagerService} from '../services/app.manager.service';
 import {commonPartialWidgets} from "./base-partial.component";
 import {capitalize, forEach} from "lodash-es";
-import {CheckboxsetComponent, RadiosetComponent} from "@wm/components/input";
+import {CheckboxsetComponent} from "@wm/components/input/checkboxset";
+import {RadiosetComponent} from "@wm/components/input/radioset";
 
 declare const _;
 

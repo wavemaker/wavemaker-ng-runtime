@@ -1,8 +1,7 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {Component, Inject, Injector, Optional} from '@angular/core';
 
-import { APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { registerProps } from './header.props';
+import {APPLY_STYLES_TYPE, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler} from '@wm/components/base';
+import {registerProps} from './header.props';
 
 const DEFAULT_CLS = 'app-header clearfix';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -11,8 +10,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule],
+    standalone: true,
     selector: '[wmHeader]',
     templateUrl: './header.component.html',
     providers: [

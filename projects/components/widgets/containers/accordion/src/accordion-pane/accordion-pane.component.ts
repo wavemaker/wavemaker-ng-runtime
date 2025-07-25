@@ -1,8 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import { AfterViewInit, Component, ContentChildren, forwardRef, Inject, Injector, Optional } from '@angular/core';
-
-import { noop, removeAttr } from '@wm/core';
+import {CommonModule} from '@angular/common';
+import {AfterViewInit, Component, ContentChildren, Inject, Injector, Optional} from '@angular/core';
+import {noop, removeAttr} from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     IWidgetConfig,
@@ -12,15 +10,15 @@ import {
     styler,
 } from '@wm/components/base';
 
-import { registerProps } from './accordion-pane.props';
-import { AccordionDirective } from '../accordion.directive';
+import {registerProps} from './accordion-pane.props';
+import {AccordionDirective} from '../accordion.directive';
 
 const DEFAULT_CLS = 'app-accordion-panel panel';
 const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-accordionpane', hostClass: DEFAULT_CLS };
 
 @Component({
     standalone: true,
-    imports: [CommonModule, WmComponentsModule],
+    imports: [CommonModule],
     selector: 'div[wmAccordionPane]',
     templateUrl: './accordion-pane.component.html',
     providers: [

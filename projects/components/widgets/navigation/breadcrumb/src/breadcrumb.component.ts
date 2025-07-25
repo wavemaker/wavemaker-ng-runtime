@@ -1,20 +1,25 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
 import {Attribute, Component, Inject, Injector, Optional} from '@angular/core';
-import { Router } from '@angular/router';
-import { Location } from '@angular/common';
+import {Router} from '@angular/router';
+import {Location} from '@angular/common';
 
-import { getRouteNameFromLink, getUrlParams, openLink } from '@wm/core';
-import { APPLY_STYLES_TYPE, provideAsWidgetRef, DatasetAwareNavComponent, NavNode, styler  } from '@wm/components/base';
+import {getRouteNameFromLink, getUrlParams, openLink} from '@wm/core';
+import {
+    APPLY_STYLES_TYPE,
+    DatasetAwareNavComponent,
+    NavNode,
+    provideAsWidgetRef,
+    styler,
+    TextContentDirective
+} from '@wm/components/base';
 
-import { registerProps } from './breadcrumb.props';
+import {registerProps} from './breadcrumb.props';
 
 const DEFAULT_CLS = 'breadcrumb app-breadcrumb';
 const WIDGET_CONFIG = {widgetType: 'wm-breadcrumb', hostClass: DEFAULT_CLS};
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+    standalone: true,
+    imports: [TextContentDirective],
     selector: '[wmBreadcrumb]',
     templateUrl: './breadcrumb.component.html',
     providers: [

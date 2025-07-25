@@ -1,30 +1,28 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {
     Attribute,
     Component,
+    HostListener,
+    Inject,
     Injector,
     OnInit,
-    TemplateRef,
-    ViewChild,
-    HostListener,
     Optional,
-    SkipSelf,
-    Inject
+    TemplateRef,
+    ViewChild
 } from '@angular/core';
 
 import {toBoolean} from '@wm/core';
-import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
+import {provideAsDialogRef, provideAsWidgetRef} from '@wm/components/base';
+import {BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent} from '@wm/components/dialogs';
 
-import { registerProps } from './confirm-dialog.props';
-import { ButtonComponent } from "@wm/components/input";
+import {registerProps} from './confirm-dialog.props';
+import {ButtonComponent} from "@wm/components/input/button";
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-confirm-dialog';
 const WIDGET_INFO = {widgetType: 'wm-confirmdialog'};
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
+    standalone: true,
+    imports: [DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
     selector: 'div[wmConfirmDialog]',
     templateUrl: './confirm-dialog.component.html',
     providers: [

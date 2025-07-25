@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterContentInit,
     AfterViewInit,
@@ -27,10 +26,7 @@ import {
 
 import {registerProps} from './calendar.props';
 import {capitalize, clone, each, extend, get, includes, isDate, isEmpty, isObject, mapKeys} from "lodash-es";
-
-declare const $;
-import * as momentLib  from 'moment';
-const moment = momentLib.default || window['moment'];
+import * as momentLib from 'moment';
 import {Calendar} from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -38,7 +34,8 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 
-import {_WM_APP_PROJECT} from '@wm/core';
+declare const $;
+const moment = momentLib.default || window['moment'];
 
 const DEFAULT_CLS = 'app-calendar';
 const dateFormats = ['yyyy-MM-dd', 'yyyy-M-dd', 'M-dd-yyyy', 'MM-dd-yy', 'yyyy, dd MMMM', 'yyyy, MMM dd', 'MM/dd/yyyy', 'M/d/yyyy', 'EEE, dd MMM yyyy', 'EEE MMM dd yyyy', 'EEEE, MMMM dd, yyyy', 'timestamp'];
@@ -101,8 +98,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-calendar', hostClass: DEFAULT_CLS};
 const dateFormat = 'YYYY/MM/DD';
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule],
+    standalone: true,
     selector: '[wmCalendar]',
     templateUrl: './calendar.component.html',
     styleUrls: [],
@@ -522,7 +518,7 @@ export class CalendarComponent extends StylableComponent implements AfterContent
         super.ngAfterViewInit();
         const calendarEl = this._calendar.nativeElement;
         let FullCalendar:any ;
-        if(window['FullCalendar']) FullCalendar = window['FullCalendar'].Calendar 
+        if(window['FullCalendar']) FullCalendar = window['FullCalendar'].Calendar
         else {
             FullCalendar = Calendar;
             this.calendarOptions.calendar = {...this.calendarOptions.calendar, plugins: [dayGridPlugin, timeGridPlugin, listPlugin,listPlugin, interactionPlugin], locales: allLocales}

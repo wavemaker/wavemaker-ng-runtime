@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { NavItemDirective } from './nav-item.directive';
-import { AnchorComponent } from '@wm/components/basic';
+import { AnchorComponent } from '@wm/components/basic/anchor';
 import { App, removeClass } from '@wm/core';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 

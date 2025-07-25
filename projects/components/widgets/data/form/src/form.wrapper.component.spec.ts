@@ -1,29 +1,56 @@
-import { waitForAsync, ComponentFixture, fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
-import { App, AppDefaults, DynamicComponentRefProvider, AbstractI18nService, UserDefinedExecutionContext, Viewport, $appDigest, isElementInViewport, scrollToElement, $invokeWatchers, getValidJSON, extendProto, $parseEvent } from '@wm/core';
-import { FormComponent } from './form.component';
-import { FormWidgetDirective } from './form-widget.directive';
-import { InputTextComponent } from '@wm/components/input';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Component, ViewChild } from '@angular/core';
-import { IMaskModule } from 'angular-imask';
-import { FormActionDirective } from './form-action/form-action.directive';
-import { FormFieldDirective } from './form-field/form-field.directive';
-import { compileTestComponent, setInputValue, onClickCheckTaglengthOnBody, checkCustomElementClass, mockViewport, mockApp } from '../../../../base/src/test/util/component-test-util';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { performDataOperation, WmComponentsModule } from '@wm/components/base';
-import { LayoutGridRowDirective } from '@wm/components/containers/layout-grid';
-import { VALIDATOR } from '@wm/core';
-import { DatePipe, CommonModule, DecimalPipe } from '@angular/common';
-import { TimepickerModule } from 'ngx-bootstrap/timepicker';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { ToDatePipe } from '../../../../base/src/pipes/custom-pipes';
-import { triggerTimerClickonArrowsByIndex, getTimePickerElement, MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
-import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
-import { DateComponent } from "../../../input/epoch/src/date/date.component";
-import { TimeComponent } from "../../../input/epoch/src/time/time.component";
-import { LabelDirective } from '@wm/components/basic';
+import {ComponentFixture, discardPeriodicTasks, fakeAsync, tick, waitForAsync} from '@angular/core/testing';
+import {
+    $invokeWatchers,
+    AbstractI18nService,
+    App,
+    AppDefaults,
+    DynamicComponentRefProvider,
+    extendProto,
+    getValidJSON,
+    isElementInViewport,
+    scrollToElement,
+    UserDefinedExecutionContext,
+    VALIDATOR,
+    Viewport
+} from '@wm/core';
+import {FormComponent} from './form.component';
+import {FormWidgetDirective} from './form-widget.directive';
+import {InputTextComponent} from '@wm/components/input';
+import {FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {Component, ViewChild} from '@angular/core';
+import {IMaskModule} from 'angular-imask';
+import {FormActionDirective} from './form-action/form-action.directive';
+import {FormFieldDirective} from './form-field/form-field.directive';
+import {
+    checkCustomElementClass,
+    compileTestComponent,
+    mockApp,
+    mockViewport,
+    onClickCheckTaglengthOnBody,
+    setInputValue
+} from '../../../../base/src/test/util/component-test-util';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../base/src/test/common-widget.specs';
+import {performDataOperation} from '@wm/components/base';
+import {LayoutGridRowDirective} from '@wm/components/containers/layout-grid';
+import {CommonModule, DatePipe, DecimalPipe} from '@angular/common';
+import {TimepickerModule} from 'ngx-bootstrap/timepicker';
+import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
+import {BsDatepickerModule} from 'ngx-bootstrap/datepicker';
+import {ToDatePipe} from '../../../../base/src/pipes/custom-pipes';
+import {
+    getTimePickerElement,
+    MockAbstractI18nService,
+    triggerTimerClickonArrowsByIndex
+} from 'projects/components/base/src/test/util/date-test-util';
+import {
+    fullNameValidator,
+    nameComparisionValidator,
+    registerFullNameValidator
+} from 'projects/components/base/src/test/util/validations-test-util';
+import {DateComponent} from "../../../input/epoch/src/date/date.component";
+import {TimeComponent} from "../../../input/epoch/src/time/time.component";
+import {LabelDirective} from '@wm/components/basic';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -225,7 +252,6 @@ const testModuleDef: ITestModuleDef = {
         FormsModule,
         ReactiveFormsModule,
         IMaskModule,
-        WmComponentsModule.forRoot(),
         LayoutGridRowDirective,
         LabelDirective,
         CommonModule,

@@ -1,15 +1,15 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, ViewChild } from '@angular/core';
-import { CarouselModule } from 'ngx-bootstrap/carousel';
-import { CarouselDirective } from "./carousel.directive";
-import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
-import { App, setPipeProvider, AbstractI18nService } from '@wm/core';
-import { LabelDirective } from '@wm/components/basic';
-import { WmComponentsModule } from '@wm/components/base';
-import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
+import {Component, ViewChild} from '@angular/core';
+import {CarouselModule} from 'ngx-bootstrap/carousel';
+import {CarouselDirective} from "./carousel.directive";
+import {PipeProvider} from '../../../../../runtime-base/src/services/pipe-provider.service';
+import {AbstractI18nService, App, setPipeProvider} from '@wm/core';
+import {LabelDirective} from '@wm/components/basic/label';
+import {MockAbstractI18nService} from 'projects/components/base/src/test/util/date-test-util';
 import 'libraries/scripts/swipey/swipey.jquery.plugin.js';
-import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
-import { Subject } from 'rxjs';
+import {mockApp} from 'projects/components/base/src/test/util/component-test-util';
+import {Subject} from 'rxjs';
+import {SanitizePipe} from '@wm/components/base';
 
 const markup = `
     <div class="app-carousel carousel">
@@ -51,11 +51,12 @@ describe('wm-carousel: Widget specific test cases', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [CarouselModule, LabelDirective, WmComponentsModule.forRoot(), CarouselDirective],
+            imports: [CarouselModule, LabelDirective, CarouselDirective],
             declarations: [CarouselSpec],
             providers: [
                 { provide: App, useValue: mockApp },
-                { provide: AbstractI18nService, useClass: MockAbstractI18nService }
+                { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+                SanitizePipe
             ]
         }).compileComponents();
 

@@ -1,15 +1,15 @@
-import { Component, ViewChild } from "@angular/core";
-import { CurrencyComponent } from "./currency.component";
-import { AbstractControl, FormControl, FormsModule } from "@angular/forms";
-import { AbstractI18nService, App, AppDefaults, CURRENCY_INFO, setPipeProvider } from "@wm/core";
-import { TrailingZeroDecimalPipe } from "@wm/components/base";
-import { DecimalPipe } from "@angular/common";
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
-import { PipeProvider } from "../../../../../runtime-base/src/services/pipe-provider.service";
-import { waitForAsync, ComponentFixture } from '@angular/core/testing';
-import { compileTestComponent, mockApp, setInputValue } from "../../../../base/src/test/util/component-test-util";
-import { MockAbstractI18nService } from "projects/components/base/src/test/util/date-test-util";
-import { NumberLocale } from "../../default/src/public_api";
+import {Component, ViewChild} from "@angular/core";
+import {CurrencyComponent} from "./currency.component";
+import {AbstractControl, FormControl, FormsModule} from "@angular/forms";
+import {AbstractI18nService, App, AppDefaults, setPipeProvider} from "@wm/core";
+import {TrailingZeroDecimalPipe} from "@wm/components/base";
+import {DecimalPipe} from "@angular/common";
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from "../../../../base/src/test/common-widget.specs";
+import {PipeProvider} from "../../../../../runtime-base/src/services/pipe-provider.service";
+import {ComponentFixture, waitForAsync} from '@angular/core/testing';
+import {compileTestComponent, mockApp, setInputValue} from "../../../../base/src/test/util/component-test-util";
+import {MockAbstractI18nService} from "projects/components/base/src/test/util/date-test-util";
+import {NumberLocale} from "../../text/src/public_api";
 
 const markup = `<div blur.event="onBlur($event, widget)"
                  focus.event="onFocus($event, widget)"

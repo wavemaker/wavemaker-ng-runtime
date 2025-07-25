@@ -1,31 +1,19 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import {
-    Attribute,
-    Component,
-    Inject,
-    Injector,
-    OnInit,
-    Optional,
-    SkipSelf,
-    TemplateRef,
-    ViewChild
-} from '@angular/core';
+import {Attribute, Component, Inject, Injector, OnInit, Optional, TemplateRef, ViewChild} from '@angular/core';
 
 import {toBoolean} from '@wm/core';
-import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
+import {provideAsDialogRef, provideAsWidgetRef} from '@wm/components/base';
+import {BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent} from '@wm/components/dialogs';
 
-import { registerProps } from './iframe-dialog.props';
-import { IframeComponent } from '@wm/components/basic';
-import { ButtonComponent } from '@wm/components/input';
+import {registerProps} from './iframe-dialog.props';
+import {IframeComponent} from '@wm/components/basic/iframe';
+import {ButtonComponent} from '@wm/components/input/button';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-iframe-dialog';
 const WIDGET_INFO = {widgetType: 'wm-iframedialog'};
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, IframeComponent, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
+    standalone: true,
+    imports: [IframeComponent, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
     selector: 'div[wmIframeDialog]',
     templateUrl: './iframe-dialog.component.html',
     providers: [

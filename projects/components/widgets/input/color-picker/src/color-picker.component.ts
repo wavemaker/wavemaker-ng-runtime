@@ -1,14 +1,11 @@
-import { WmComponentsModule } from "@wm/components/base";
-import { FormsModule } from '@angular/forms';
-import { ColorPickerModule, ColorPickerService } from 'ngx-color-picker';
-import { Component, ElementRef, Inject, Injector, Optional, ViewChild } from '@angular/core';
-import { CommonModule } from "@angular/common";
-import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
-import {ColorPickerDirective} from 'ngx-color-picker';
+import {FormsModule, NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
+import {ColorPickerDirective, ColorPickerModule, ColorPickerService} from 'ngx-color-picker';
+import {Component, ElementRef, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import {CommonModule} from "@angular/common";
 
 import {addClass, removeClass} from '@wm/core';
 import {AUTOCLOSE_TYPE, IWidgetConfig, provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
-import {BaseFormCustomComponent} from '@wm/components/input';
+import {BaseFormCustomComponent} from '@wm/components/input/base-form-custom';
 import {registerProps} from './color-picker.props';
 
 
@@ -20,8 +17,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-  standalone: true,
-  imports: [ CommonModule, ColorPickerModule, FormsModule, WmComponentsModule ],
+    standalone: true,
+    imports: [CommonModule, ColorPickerModule, FormsModule],
     selector: '[wmColorPicker]',
     templateUrl: './color-picker.component.html',
     providers: [
