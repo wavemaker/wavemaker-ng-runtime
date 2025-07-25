@@ -1,8 +1,8 @@
-import { FormsModule } from '@angular/forms';
-import { DateTimePickerComponent } from '@wm/components/input/epoch/date-time-picker';
-import { Component, Inject, Injector, NgZone, OnDestroy, Optional } from '@angular/core';
-import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { TimepickerConfig, TimepickerModule } from 'ngx-bootstrap/timepicker';
+import {FormsModule, NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {DateTimePickerComponent} from '@wm/components/input/epoch/date-time-picker';
+import {CommonModule} from '@angular/common';
+import {Component, Inject, Injector, NgZone, OnDestroy, Optional} from '@angular/core';
+import {TimepickerConfig, TimepickerModule} from 'ngx-bootstrap/timepicker';
 import {
     $appDigest,
     AbstractI18nService,
@@ -18,15 +18,15 @@ import {
     getMomentLocaleObject,
     getNativeDateObject
 } from '@wm/core';
-import { provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import {provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
 
-import { BaseDateTimeComponent, getTimepickerConfig } from '@wm/components/input/epoch/base-date-time';
-import { registerProps } from './time.props';
-import { forEach, get, includes } from "lodash-es";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
+import {BaseDateTimeComponent, getTimepickerConfig} from '@wm/components/input/epoch/base-date-time';
+import {registerProps} from './time.props';
+import {forEach, get, includes} from "lodash-es";
+import {BsDropdownModule} from "ngx-bootstrap/dropdown";
+import * as momentLib from 'moment';
 
 declare const $;
-import * as momentLib  from 'moment';
 const moment = momentLib.default || window['moment'];
 
 const CURRENT_TIME = 'CURRENT_TIME';
@@ -35,7 +35,7 @@ const WIDGET_CONFIG = { widgetType: 'wm-time', hostClass: DEFAULT_CLS };
 
 @Component({
     standalone: true,
-    imports: [FormsModule, DateTimePickerComponent, BsDropdownModule, TimepickerModule],
+    imports: [FormsModule, DateTimePickerComponent, BsDropdownModule, TimepickerModule,CommonModule],
     selector: '[wmTime]',
     templateUrl: './time.component.html',
     providers: [

@@ -1,5 +1,6 @@
-import { FormsModule } from '@angular/forms';
-import { DateTimePickerComponent } from '@wm/components/input/epoch/date-time-picker';
+import {FormsModule, NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {DateTimePickerComponent} from '@wm/components/input/epoch/date-time-picker';
 import {
     AfterViewInit,
     ChangeDetectorRef,
@@ -11,9 +12,8 @@ import {
     Optional,
     ViewChild
 } from '@angular/core';
-import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { BsDatepickerDirective, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { TimepickerConfig, TimepickerModule } from 'ngx-bootstrap/timepicker';
+import {BsDatepickerDirective, BsDatepickerModule} from 'ngx-bootstrap/datepicker';
+import {TimepickerConfig, TimepickerModule} from 'ngx-bootstrap/timepicker';
 
 import {
     AbstractI18nService,
@@ -31,15 +31,15 @@ import {
     getMomentLocaleObject,
     getNativeDateObject
 } from '@wm/core';
-import { provideAs, provideAsWidgetRef, setFocusTrap, styler } from '@wm/components/base';
+import {provideAs, provideAsWidgetRef, setFocusTrap, styler} from '@wm/components/base';
 
-import { BaseDateTimeComponent, getTimepickerConfig } from '@wm/components/input/epoch/base-date-time';
-import { registerProps } from './date-time.props';
-import { debounce, forEach, includes, isNaN, parseInt } from "lodash-es";
-import { BsDropdownModule } from "ngx-bootstrap/dropdown";
+import {BaseDateTimeComponent, getTimepickerConfig} from '@wm/components/input/epoch/base-date-time';
+import {registerProps} from './date-time.props';
+import {debounce, forEach, includes, isNaN, parseInt} from "lodash-es";
+import {BsDropdownModule} from "ngx-bootstrap/dropdown";
+import * as momentLib from 'moment';
 
 declare const $;
-import * as momentLib  from 'moment';
 const moment = momentLib.default || window['moment'];
 
 const DEFAULT_CLS = 'app-datetime input-group';
@@ -49,7 +49,7 @@ const CURRENT_DATE = 'CURRENT_DATE';
 
 @Component({
     standalone: true,
-    imports: [FormsModule, DateTimePickerComponent, BsDropdownModule, BsDatepickerModule, TimepickerModule],
+    imports: [FormsModule, DateTimePickerComponent, BsDropdownModule, BsDatepickerModule, TimepickerModule,CommonModule],
     selector: '[wmDateTime]',
     templateUrl: './date-time.component.html',
     providers: [
@@ -254,10 +254,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         this.bsDatePickerDirective.hide();
         this.focusTimePickerPopover(this);
         this.bindTimePickerKeyboardEvents();
-        const dropdownContainerEl = $('bs-dropdown-container');
-        adjustContainerPosition(dropdownContainerEl, this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
-        adjustContainerRightEdges(dropdownContainerEl, this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
-        this.adjustDateTimePickerInModel(dropdownContainerEl[0], this.bsDatePickerDirective);
+        adjustContainerPosition($('bs-dropdown-container'), this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
+        adjustContainerRightEdges($('bs-dropdown-container'), this.nativeElement, this.bsDropdown._dropdown, $('bs-dropdown-container .dropdown-menu'));
     }
 
     public onDatePickerOpen() {
@@ -267,8 +265,8 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
         // So actual bootstrap input target width we made it to 0 so bootstrap calculating the calendar container top position impropery.
         // To fix the container top position set the width 1px;
         this.$element.find('.model-holder').width('1px');
-        const datePickerContainerEl = $('bs-datepicker-container');
-        datePickerContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
+        const dpContainerEl = $('bs-datepicker-container');
+        dpContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
         $('.bs-calendar-container').removeAttr('role');
         const datePickerContainer = $('.bs-datepicker-container')[0];
         this.focusTrap = setFocusTrap(datePickerContainer, true);
@@ -279,8 +277,7 @@ export class DatetimeComponent extends BaseDateTimeComponent implements AfterVie
             this.hightlightToday(this.activeDate);
         }
         this.addDatepickerKeyboardEvents(this, true);
-        adjustContainerPosition(datePickerContainerEl, this.nativeElement, this.bsDatePickerDirective._datepicker);
-        this.adjustDateTimePickerInModel(datePickerContainerEl[0], this.bsDatePickerDirective);
+        adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
     }
 
     /**

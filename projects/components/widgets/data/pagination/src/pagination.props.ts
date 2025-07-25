@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(
@@ -10,6 +10,9 @@ export const registerProps = () => {
                 ['dataset', PROP_ANY],
                 ['directionlinks', {value: true, ...PROP_BOOLEAN}],
                 ['forceellipses', {value: true, ...PROP_BOOLEAN}],
+                ['allowpagesizechange', {value: false, ...PROP_BOOLEAN}],
+                ['allowpagesizechange', {value: false, ...PROP_BOOLEAN}],
+                ['pagesizeoptions', {value: '', ...PROP_STRING}],
                 ['maxResults', PROP_NUMBER],
                 ['maxsize', {value: 5, ...PROP_NUMBER}],
                 ['name', PROP_STRING],

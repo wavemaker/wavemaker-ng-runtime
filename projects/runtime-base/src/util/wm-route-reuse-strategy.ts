@@ -1,4 +1,4 @@
-import { Inject } from '@angular/core';
+import {Inject} from '@angular/core';
 /*
 Custom Route Reuse Strategies:
 * WmDefaultRouteReuseStrategy: Base Function & Utils
@@ -12,14 +12,11 @@ Reuse Route : False,
                     if the Page1 & Page 2 are different,
                     if the Page1 & Page 2 are same, but the query params are different
 */
-import {
-    ActivatedRouteSnapshot,
-    DetachedRouteHandle,
-    RouteReuseStrategy,
-} from '@angular/router';
+import {ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy,} from '@angular/router';
 
-import { LRUCache } from '@wm/core';
+import {LRUCache} from '@wm/core';
 import {isNil} from "lodash-es";
+
 export const CACHE_PAGE = '_cache_page';
 export const MAX_CACHE_SIZE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_SIZE';
 export const MAX_CACHE_AGE = 'REUSE_ROUTE_STRATEGY.MAX_CACHE_AGE';
@@ -50,7 +47,7 @@ export class WmDefaultRouteReuseStrategy {
             .map(k => k + '=' + route.queryParams[k])
             .sort().join('&');
         let pageName = route.params.pageName;
-        if (route.data.pageName && route.routeConfig.path === '') {
+        if (route.data.pageName && route.routeConfig.path === route.data.pageName) {
             pageName = route.data.pageName;
         }
         return pageName && (pageName + (queryParams ? `?${queryParams}`: ''));

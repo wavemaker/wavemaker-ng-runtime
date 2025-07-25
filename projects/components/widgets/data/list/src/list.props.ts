@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(
@@ -43,7 +43,10 @@ export const registerProps = () => {
                 ['statehandler', {value: 'none', ...PROP_STRING}],
                 ['subheading', PROP_STRING],
                 ['tabindex', {value: 0, ...PROP_NUMBER}],
-                ['title', PROP_STRING]
+                ['title', PROP_STRING],
+                ['allowpagesizechange', {value: false, ...PROP_BOOLEAN}],
+                ['pagesizeoptions', {value : '5,10,20,50,100', ...PROP_STRING}]
+
             ]
         )
     );

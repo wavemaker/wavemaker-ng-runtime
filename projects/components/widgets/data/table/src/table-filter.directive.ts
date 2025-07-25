@@ -1,24 +1,48 @@
-import { Directive, Inject, Self } from '@angular/core';
+import {Directive, Inject, Self} from '@angular/core';
 
-import { $appDigest, DataSource, DataType, FormWidgetType, getClonedObject, isDefined, isNumberType, adjustContainerRightEdges } from '@wm/core';
-import { getMatchModeMsgs, getMatchModeTypesMap, isDataSetWidget, refreshDataSource, unsupportedStatePersistenceTypes } from '@wm/components/base';
+import {
+    $appDigest,
+    adjustContainerRightEdges,
+    DataSource,
+    DataType,
+    FormWidgetType,
+    getClonedObject,
+    isDefined,
+    isNumberType
+} from '@wm/core';
+import {
+    getMatchModeMsgs,
+    getMatchModeTypesMap,
+    isDataSetWidget,
+    refreshDataSource,
+    unsupportedStatePersistenceTypes
+} from '@wm/components/base';
 
-import { TableComponent } from './table.component';
+import {TableComponent} from './table.component';
 import {
     endsWith,
     filter,
     find,
     forEach,
-    get, head,
-    includes, isArray, isEmpty,
-    isEqual, isNull, isObject, orderBy, range, split,
-    startsWith, toLower,
+    get,
+    head,
+    includes,
+    isArray,
+    isEmpty,
+    isEqual,
+    isNull,
+    isObject,
+    orderBy,
+    range,
+    split,
+    startsWith,
+    toLower,
     toNumber,
     toString
 } from "lodash-es";
+import * as momentLib from 'moment';
 
 declare const $;
-import * as momentLib  from 'moment';
 const moment = momentLib.default || window['moment'];
 
 const emptyMatchModes = ['null', 'empty', 'nullorempty', 'isnotnull', 'isnotempty'];
@@ -346,7 +370,7 @@ export class TableFilterSortDirective {
             const isValidDateString = typeof fieldValue === 'string' ?  this.parseDateString(fieldValue) : NaN;
             if (!isNaN(isValidDateString)) { // if the field is a date string
                 data = orderBy(data, [(item) => this.parseDateString(item[sortObj.field])], [sortObj.direction]);
-            } else if (this.table.columns[sortObj.field]?.caseinsensitive) {
+            } else if (sortObj.sortBy ? this.table.columns[sortObj.sortBy]?.caseinsensitive : this.table.columns[sortObj.field]?.caseinsensitive) {
                 //Fix for [WMS-27505]: Added case-insensitive sorting so that uppercase and lowercase letters are treated the same when sorting.
                     data = orderBy(data, [
                           (item) => {
@@ -356,7 +380,7 @@ export class TableFilterSortDirective {
                           (item) => get(item, sortObj.field) // fallback to original value
                         ],
                         [sortObj.direction, sortObj.direction]
-                      );                      
+                      );
             } else {
                 data = orderBy(data, sortObj.field, sortObj.direction);
             }

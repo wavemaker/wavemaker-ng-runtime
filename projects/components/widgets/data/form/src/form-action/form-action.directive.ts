@@ -1,9 +1,9 @@
 import {Directive, Inject, Injector, OnInit, Optional} from '@angular/core';
 
-import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
+import {BaseComponent, provideAsWidgetRef} from '@wm/components/base';
 
-import { registerProps } from './form-action.props';
-import { FormComponent } from '../form.component';
+import {registerProps} from './form-action.props';
+import {FormComponent} from '../form.component';
 import {isUndefined} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};
@@ -55,7 +55,7 @@ export class FormActionDirective extends BaseComponent implements OnInit {
             action: this.action,
             accessroles: this.accessroles,
             shortcutkey: this.shortcutkey,
-            disabled: this.disabled,
+            disabled: this.disabled||this.form.readonly,
             tabindex: this.tabindex,
             iconname: this.iconname,
             type: this.type,
@@ -79,6 +79,9 @@ export class FormActionDirective extends BaseComponent implements OnInit {
             return;
         }
         switch (key) {
+            case 'disabled':
+                this.buttonDef[key] = nv || this.form.readonly;
+                break;
             case 'display-name':
                 this.buttonDef.displayName = nv;
             default:

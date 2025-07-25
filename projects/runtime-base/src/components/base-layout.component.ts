@@ -1,8 +1,8 @@
-import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {AfterViewInit, Directive, Injector, OnDestroy, ViewChild} from '@angular/core';
+import {ActivatedRoute, RouterOutlet} from '@angular/router';
 
-import { PageDirective } from "@wm/components/page";
-import { registerFnByExpr, App } from "@wm/core";
+import {PageDirective} from "@wm/components/page";
+import {App, registerFnByExpr} from "@wm/core";
 import {each, extend} from "lodash-es";
 
 @Directive()
@@ -33,8 +33,8 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
         //override the attach/detach methods
         const oAttach = this.routerOutlet.attach;
         const oDetach = this.routerOutlet.detach;
-        this.routerOutlet.attach = (componentRef: any) => {
-            oAttach.call(this.routerOutlet, componentRef);
+        this.routerOutlet.attach = (componentRef: any, activatedRoute:  ActivatedRoute) => {
+            oAttach.call(this.routerOutlet, componentRef, activatedRoute);
             componentRef.instance.ngOnAttach();
         };
         this.routerOutlet.detach = () => {

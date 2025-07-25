@@ -2,7 +2,7 @@ import {AfterViewInit, Inject, Injectable, Injector, Optional} from '@angular/co
 
 import {DataSource} from '@wm/core';
 
-import { IWidgetConfig, StylableComponent, WidgetConfig } from '@wm/components/base';
+import {IWidgetConfig, StylableComponent, WidgetConfig} from '@wm/components/base';
 import {has, set} from "lodash-es";
 
 @Injectable()
@@ -51,6 +51,21 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
         }
 
         binddatavalue = binddatavalue.replace(/\[\$i\]/g, '[0]');
+        binddatavalue = binddatavalue.replace(
+            /\[(.*?)\]/g,
+            (_match, key) => {
+                try {
+                    const value = eval(`this.viewParent.${key}`);
+                    if (typeof value === 'string' || typeof value === 'number')
+                     return `[${value}]`;
+                    else
+                     return '[0]'
+                } catch {
+                    return '[0]'; // fallback if evaluation fails
+                }
+            }
+        );
+
 
         // In case of list widget context will be the listItem.
         if (has(this.context, binddatavalue.split('.')[0]) && has(this.context, binddatavalue)) {
@@ -59,9 +74,9 @@ export abstract class BaseFormComponent extends StylableComponent implements Aft
         // Parent widget must update on custom widget datavalue change for bindings to work
         else if (has(this.viewParent, binddatavalue) && this.viewParent.containerWidget?._isCustom) {
             set(this.viewParent, binddatavalue, value);
-        } else if (has(this.viewParent, binddatavalue) && this.datavaluesource.owner === "Page") {
+        } else if (has(this.viewParent, binddatavalue) && this.datavaluesource?.owner === "Page") {
             set(this.viewParent, binddatavalue, value);
-        } else if (has(this.viewParent?.App, binddatavalue) && this.datavaluesource.owner === "App") {
+        } else if (has(this.viewParent?.App, binddatavalue) && this.datavaluesource?.owner === "App") {
             set(this.viewParent.App, binddatavalue, value);
         }
     }

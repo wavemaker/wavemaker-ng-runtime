@@ -1,6 +1,6 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { EventNotifier } from '../utils/event-notifier';
-import { isAndroid, isAndroidTablet, isIos, isIpad } from '../utils/utils';
+import {Injectable, OnDestroy} from '@angular/core';
+import {EventNotifier} from '../utils/event-notifier';
+import {isAndroid, isAndroidTablet, isIos} from '../utils/utils';
 import {get} from "lodash-es";
 
 let MINIMUM_MOBILE_WIDTH = 480;
@@ -70,6 +70,10 @@ export class Viewport implements IViewportService, OnDestroy {
     }
 
     private resizeFn($event) {
+        const $el = document.querySelector('.wm-app');
+        if (!$el) {
+            return;
+        }
         this.setScreenType();
         this.orientationChange($event, this.screenWidth >= this.screenHeight);
         this.notify(ViewportEvent.RESIZE, {$event, data: {screenWidth: this.screenWidth, screenHeight: this.screenHeight}});

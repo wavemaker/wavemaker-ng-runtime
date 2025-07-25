@@ -1,5 +1,22 @@
-import { CommonModule } from '@angular/common';
-import { TextContentDirective } from "@wm/components/base";
+import {CommonModule} from '@angular/common';
+import {
+    APPLY_STYLES_TYPE,
+    configureDnD,
+    DEBOUNCE_TIMES,
+    extractDataSourceName,
+    getOrderedDataset,
+    groupData,
+    handleHeaderClick,
+    NAVIGATION_TYPE,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+    TextContentDirective,
+    ToDatePipe,
+    toggleAllHeaders,
+    unsupportedStatePersistenceTypes,
+    WidgetRef
+} from "@wm/components/base";
 import {
     AfterViewInit,
     Attribute,
@@ -7,7 +24,8 @@ import {
     Component,
     ContentChild,
     ContentChildren,
-    ElementRef, Inject,
+    ElementRef,
+    Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -27,35 +45,18 @@ import {
     App,
     AppDefaults,
     DataSource,
+    generateGUId,
     getClonedObject,
     isDataSourceEqual,
     isDefined,
     isMobile,
     isObject,
     noop,
-    switchClass,
-    StatePersistence,
     PaginationService,
     setListClass,
-    generateGUId
+    StatePersistence,
+    switchClass
 } from '@wm/core';
-import {
-    APPLY_STYLES_TYPE,
-    configureDnD,
-    DEBOUNCE_TIMES,
-    getOrderedDataset,
-    groupData,
-    handleHeaderClick,
-    NAVIGATION_TYPE,
-    unsupportedStatePersistenceTypes,
-    provideAsWidgetRef,
-    StylableComponent,
-    styler,
-    ToDatePipe,
-    toggleAllHeaders,
-    WidgetRef,
-    extractDataSourceName
-} from '@wm/components/base';
 import {PaginationComponent} from '@wm/components/data/pagination';
 import {ButtonComponent} from '@wm/components/input/button';
 
@@ -66,7 +67,8 @@ import {
     clone,
     cloneDeep,
     forEach,
-    get, has,
+    get,
+    has,
     includes,
     isArray,
     isEmpty,
@@ -74,7 +76,14 @@ import {
     isNumber,
     isString,
     isUndefined,
-    last, max, min, pullAllWith, pullAt, remove, some, toNumber
+    last,
+    max,
+    min,
+    pullAllWith,
+    pullAt,
+    remove,
+    some,
+    toNumber
 } from "lodash-es";
 
 declare const $;
@@ -146,6 +155,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public statehandler: any;
     public currentIndex: number;
     public titleId: string;
+    public allowpagesizechange: boolean = false;
+    public pagesizeoptions: string;
+    public updatedPageSize;
+    public actualPageSize;
     _isDependent;
     private itemsPerRowClass: string;
     private firstSelectedItem: ListItemDirective;
@@ -323,6 +336,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             return this.fieldDefs.findIndex((obj) => isEqual(obj, item));
         }
     }
+     public getUpdatedPageSize() {
+         return this.updatedPageSize;
+     }
 
     create() {
         if (this._isDependent) {
@@ -504,6 +520,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
         }
     }
+    getActualPageSize()  {
+        return this.actualPageSize || 20;
+    }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'dataset') {
@@ -512,6 +531,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
             this.onDataSetChange(nv);
         } else if (key === 'datasource') {
+            if(this.allowpagesizechange){
+                this.datasource.maxResults = this.pagesize || this.datasource.maxResults
+            }
             if (this.dataset) {
                 this.onDataSetChange(this.dataset);
             }
@@ -539,11 +561,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 setTimeout(() => this.dataNavigator.navigationClass = nv);
             }
         } else if (key === 'pagesize') {
-            this.dataNavigator.options = {
-                maxResults: nv
-            };
-            this.dataNavigator.widget.maxResults = nv;
-            this.dataNavigator.maxResults = nv;
+            this.actualPageSize = nv; // maintain default page size to calculate pagesize options
+            this.setDefaultPageSize(nv)
         } else if (key === 'enablereorder') {
             if (nv && this.$ulEle) {
                 this.$ulEle.attr('aria-describedby', this.titleId);
@@ -553,9 +572,35 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.$ulEle.removeAttr('aria-describedby');
                 this.$ulEle.sortable('disable');
             }
-        } else {
+        } else if (key === 'allowpagesizechange') {
+            this.allowpagesizechange = nv;
+        } else if(key === 'pagesizeoptions') {
+                this.pagesizeoptions = nv;
+                this.setDefaultPageSize(nv)
+        }else {
             super.onPropertyChange(key, nv, ov);
         }
+    }
+
+    setDefaultPageSize(nv: any){
+     if (this.allowpagesizechange) {
+        const widgetState = this.statePersistence.getWidgetState(this);
+        if (get(widgetState, 'pagesize')) {
+            nv = get(widgetState, 'pagesize');
+            this.pagesize = nv; // updating the default pagesize to user selected pagesize
+        } else if (this.pagesizeoptions) {
+            nv = this.pagesizeoptions?.split(',').map(Number).sort((a, b) => a - b)[0]
+            this.pagesize = nv;
+        }
+    }
+        this.updatedPageSize = nv;
+        this.dataNavigator.updatedPageSize = nv;
+
+        this.dataNavigator.options = {
+            maxResults: nv
+        };
+        this.dataNavigator.widget.maxResults = nv;
+        this.dataNavigator.maxResults = nv;
     }
 
     public onItemClick(evt: any, $listItem: ListItemDirective) {
@@ -950,8 +995,14 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none' && this._pageLoad) {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
-            if (get(widgetState, 'pagination')) {
-                this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
+            if (this.allowpagesizechange) { // maintain updated page size in the statePersistence
+                if (get(widgetState, 'pagination') || get(widgetState, 'pagesize')) {
+                    this.dataNavigator.pageChanged({page: widgetState.pagination || 1, pagesize: widgetState.pagesize}, true);
+                }
+            } else {
+                if (get(widgetState, 'pagination')) {
+                    this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
+                }
             }
             if (get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = true;

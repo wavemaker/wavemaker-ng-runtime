@@ -1,4 +1,4 @@
-import {PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register, registerFormWidget} from '@wm/components/base';
 import {FormWidgetType} from '@wm/core';
 
 export const sliderProps = new Map(
@@ -15,7 +15,9 @@ export const sliderProps = new Map(
         ['shortcutkey', PROP_STRING],
         ['show', {value: true, ...PROP_BOOLEAN}],
         ['step', PROP_NUMBER],
-        ['tabindex', {value: 0, ...PROP_NUMBER}]
+        ['tabindex', {value: 0, ...PROP_NUMBER}],
+        ['showmarkers',{value: false, ...PROP_BOOLEAN}],
+        ['markerlabeltext',PROP_ANY],
     ]
 );
 

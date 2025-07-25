@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 export const registerProps = () => {
     register(
@@ -75,6 +75,7 @@ export const registerProps = () => {
                 ['required', PROP_BOOLEAN],
                 ['rowactionsposition', PROP_STRING],
                 ['searchkey', PROP_STRING],
+                ['sortby', PROP_STRING],
                 ['searchable', {value: true, ...PROP_BOOLEAN}],
                 ['showinfilter', {value: false, ...PROP_BOOLEAN}],
                 ['suffix', PROP_STRING],

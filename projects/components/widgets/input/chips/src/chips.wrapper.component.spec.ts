@@ -1,17 +1,16 @@
-import { ComponentFixture, waitForAsync } from '@angular/core/testing';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { By } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
-import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
-import { DatePipe } from '@angular/common';
-import { $unwatch, $watch, AbstractI18nService, App, AppDefaults, isAppleProduct } from '@wm/core';
-import { ChipsComponent } from './chips.component';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { compileTestComponent, mockApp } from '../../../../base/src/test/util/component-test-util';
-import { ToDatePipe, DataSetItem, TextContentDirective } from '@wm/components/base';
-import { SearchComponent } from '@wm/components/basic/search';
-import { PartialRefProvider } from '@wm/core';
-import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
+import {ComponentFixture, waitForAsync} from '@angular/core/testing';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {By} from '@angular/platform-browser';
+import {FormsModule} from '@angular/forms';
+import {TypeaheadModule} from 'ngx-bootstrap/typeahead';
+import {DatePipe} from '@angular/common';
+import {$unwatch, $watch, AbstractI18nService, App, AppDefaults, isAppleProduct, PartialRefProvider} from '@wm/core';
+import {ChipsComponent} from './chips.component';
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../base/src/test/common-widget.specs';
+import {compileTestComponent, mockApp} from '../../../../base/src/test/util/component-test-util';
+import {DataSetItem, TextContentDirective, ToDatePipe} from '@wm/components/base';
+import {SearchComponent} from '@wm/components/basic/search';
+import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -369,7 +368,11 @@ describe('wm-chips: Component Specific Tests', () => {
 
     describe('onInputClear', () => {
         it('should focus on last chip when conditions are met', () => {
-            const mockEvent = new Event('keydown');
+           const mockEvent = {
+                target: { value: 'chip text' },
+                stopPropagation: jest.fn(),
+                preventDefault: jest.fn()
+            } as unknown as KeyboardEvent;
             wmComponent.chipsList = [{}, {}];
             wmComponent.searchComponent = { query: '' } as any;
             const lastChipMock = { focus: jest.fn() };

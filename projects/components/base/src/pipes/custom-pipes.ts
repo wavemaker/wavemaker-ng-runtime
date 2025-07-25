@@ -1,10 +1,11 @@
 import {Inject, Pipe, PipeTransform} from '@angular/core';
 import {DatePipe, DecimalPipe} from '@angular/common';
-import {AbstractI18nService, CURRENCY_INFO, CustomPipeManager, hasOffsetStr, isDefined} from '@wm/core';
+import {AbstractI18nService, CURRENCY_INFO, CustomPipeManager, hasOffsetStr, isDefined, replace} from '@wm/core';
 import {WmPipe} from "./wm-pipe";
 import {filter, includes, isDate, isFunction, isObject, isUndefined, startsWith} from "lodash-es";
 
 import * as momentLib from 'moment-timezone/moment-timezone';
+
 const moment = momentLib.default || window['moment'];
 
 const getEpochValue = data => {
@@ -302,6 +303,16 @@ export class StateClassPipe implements PipeTransform {
             'error'     : 'wi wi-error text-danger'
         };
         return stateClassMap[state.toLowerCase()];
+    }
+}
+
+@Pipe({
+    standalone: true,
+    name: 'templateReplace'
+})
+export class TemplateReplacePipe implements PipeTransform {
+    transform(data:any, replaceObj:any) {
+        return replace(data, replaceObj);
     }
 }
 

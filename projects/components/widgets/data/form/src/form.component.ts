@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { AnchorComponent } from '@wm/components/basic/anchor';
-import { ButtonComponent } from '@wm/components/input/button';
+import {CommonModule} from '@angular/common';
+import {AnchorComponent} from '@wm/components/basic/anchor';
+import {ButtonComponent} from '@wm/components/input/button';
 import {
     AfterContentInit,
     AfterViewInit,
@@ -8,7 +8,8 @@ import {
     Component,
     ContentChildren,
     HostBinding,
-    HostListener, Inject,
+    HostListener,
+    Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -59,12 +60,14 @@ import {registerFormProps} from './form.props';
 import {
     debounce as _debounce,
     filter,
-    find, findIndex,
+    find,
+    findIndex,
     forEach,
     get,
     includes,
     isArray,
-    isEmpty, isEqual,
+    isEmpty,
+    isEqual,
     isUndefined,
     keys,
     last,
@@ -231,6 +234,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     filterOnDefault: Function;
     onMaxDefaultValueChange: Function;
     numberOfFields: number;
+    readonly :boolean;
 
     private _debouncedUpdateFieldSource: Function = _debounce(this.updateFieldSource, 350);
     private operationType;
@@ -647,6 +651,19 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                         field.formWidget.dataset$.next();
                     }
                 });
+                break;
+            case 'readonly':
+                this.setReadonlyFields();
+                if (nv) {
+                    this?.buttonArray?.forEach((button) => button.disabled = true);
+                } else if (this.formWidgets) {
+                    Object.values(this.formWidgets).forEach(widget => {
+                        const w = widget as any;
+                        if (w.widgetType === 'wm-form-action' && w.buttonDef) {
+                            w.buttonDef.disabled = w.disabled ?? false;
+                        }
+                    });
+                }
                 break;
             default:
                 super.onPropertyChange(key, nv, ov);

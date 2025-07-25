@@ -1,39 +1,40 @@
-import { Compiler, Injectable, Injector, ChangeDetectorRef, InjectionToken, KeyValueDiffers, Pipe, Inject } from '@angular/core';
+import {ChangeDetectorRef, Compiler, Injectable, Injector, KeyValueDiffers, Pipe} from '@angular/core';
 import {
     AsyncPipe,
-    UpperCasePipe,
-    LowerCasePipe,
-    JsonPipe,
-    SlicePipe,
-    DecimalPipe,
-    PercentPipe,
-    TitleCasePipe,
     CurrencyPipe,
     DatePipe,
+    DecimalPipe,
     I18nPluralPipe,
     I18nSelectPipe,
+    JsonPipe,
     KeyValuePipe,
-    NgLocalization
+    LowerCasePipe,
+    NgLocalization,
+    PercentPipe,
+    SlicePipe,
+    TitleCasePipe,
+    UpperCasePipe
 } from '@angular/common'
 import {
-    SuffixPipe,
-    ToDatePipe,
-    FileIconClassPipe,
+    CustomPipe,
     FileExtensionFromMimePipe,
-    FilterPipe,
+    FileIconClassPipe,
     FileSizePipe,
-    ToNumberPipe,
-    ToCurrencyPipe,
-    PrefixPipe,
-    TimeFromNowPipe,
+    FilterPipe,
     NumberToStringPipe,
+    PrefixPipe,
+    SanitizePipe,
     StateClassPipe,
     StringToNumberPipe,
-    CustomPipe,
-    TrustAsPipe,
-    SanitizePipe
+    SuffixPipe,
+    TemplateReplacePipe,
+    TimeFromNowPipe,
+    ToCurrencyPipe,
+    ToDatePipe,
+    ToNumberPipe,
+    TrustAsPipe
 } from '@wm/components/base';
-import { getSessionStorageItem, CustomPipeManager, AbstractI18nService } from '@wm/core';
+import {AbstractI18nService, CustomPipeManager, getSessionStorageItem} from '@wm/core';
 import {DomSanitizer} from "@angular/platform-browser";
 
 @Injectable({
@@ -105,7 +106,8 @@ export class PipeProvider {
             this.preparePipeMeta(StringToNumberPipe, 'stringToNumber', true),
             this.preparePipeMeta(CustomPipe, 'custom', true, [this.injector.get(CustomPipeManager)]),
             this.preparePipeMeta(TrustAsPipe, 'trustAs', true, [this.domSanitizer]),
-            this.preparePipeMeta(SanitizePipe, 'sanitize', true, [this.domSanitizer])
+            this.preparePipeMeta(SanitizePipe, 'sanitize', true, [this.domSanitizer]),
+            this.preparePipeMeta(TemplateReplacePipe, 'templateReplace', true),
         ];
     }
 

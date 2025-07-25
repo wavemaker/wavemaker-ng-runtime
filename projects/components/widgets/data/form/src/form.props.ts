@@ -1,4 +1,4 @@
-import { PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register } from '@wm/components/base';
+import {PROP_ANY, PROP_BOOLEAN, PROP_NUMBER, PROP_STRING, register} from '@wm/components/base';
 
 const propsMap = new Map(
     [
@@ -39,6 +39,7 @@ export const registerFormProps = () => {
     formMap.set('novalidate', PROP_BOOLEAN);
     formMap.set('validationtype', {value: 'default', ...PROP_STRING});
     formMap.set('iconclass', PROP_STRING);
+    formMap.set('readonly',{value: false, ...PROP_BOOLEAN});
 
     register(
         'wm-form',

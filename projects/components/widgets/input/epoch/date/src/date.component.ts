@@ -1,7 +1,7 @@
-import { IMaskModule } from 'angular-imask';
-import { ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild } from '@angular/core';
-import { NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { BsDatepickerDirective, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import {IMaskDirective, IMaskModule} from 'angular-imask';
+import {ChangeDetectorRef, Component, Inject, Injector, Optional, ViewChild} from '@angular/core';
+import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {BsDatepickerDirective, BsDatepickerModule} from 'ngx-bootstrap/datepicker';
 import {
     addEventListenerOnElement,
     adjustContainerPosition,
@@ -14,13 +14,12 @@ import {
     getFormattedDate,
     getMomentLocaleObject
 } from '@wm/core';
-import { IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler } from '@wm/components/base';
-import { BaseDateTimeComponent } from '@wm/components/input/epoch/base-date-time';
-import { registerProps } from './date.props';
-import { validateTheMaskedDate } from './imaskUtil';
-import { IMaskDirective } from 'angular-imask';
-import { includes, isNaN, parseInt } from "lodash-es";
-import { DateTimePickerComponent } from "@wm/components/input/epoch/date-time-picker";
+import {IWidgetConfig, provideAs, provideAsWidgetRef, setFocusTrap, styler} from '@wm/components/base';
+import {BaseDateTimeComponent} from '@wm/components/input/epoch/base-date-time';
+import {registerProps} from './date.props';
+import {validateTheMaskedDate} from './imaskUtil';
+import {includes, isNaN, parseInt} from "lodash-es";
+import {DateTimePickerComponent} from "@wm/components/input/epoch/date-time-picker";
 
 declare const _, $;
 
@@ -194,16 +193,16 @@ export class DateComponent extends BaseDateTimeComponent {
         // So actual bootstrap input target width we made it to 0, so bootstrap calculating the calendar container top position improperly.
         // To fix the container top position set the width 1px;
         this.$element.find('.model-holder').width('1px');
-        const datePickerContainerEl = $('bs-datepicker-container');
-        datePickerContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
+        const dpContainerEl = $('bs-datepicker-container');
+        dpContainerEl.attr('aria-label', 'Use Arrow keys to navigate dates, Choose Date from datepicker');
         $('.bs-calendar-container').removeAttr('role');
         const datePickerContainer = $('.bs-datepicker-container')[0];
         this.focusTrap = setFocusTrap(datePickerContainer, true);
         this.focusTrap.activate();
         this.addDatepickerKeyboardEvents(this, false);
-        adjustContainerPosition(datePickerContainerEl, this.nativeElement, this.bsDatePickerDirective._datepicker);
-        adjustContainerRightEdges(datePickerContainerEl, this.nativeElement, this.bsDatePickerDirective._datepicker);
-        this.adjustDateTimePickerInModel(datePickerContainerEl[0], this.bsDatePickerDirective);
+        adjustContainerPosition($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
+        adjustContainerRightEdges($('bs-datepicker-container'), this.nativeElement, this.bsDatePickerDirective._datepicker);
+
         if (this.timeZone) {
             const todayBtn = document.querySelector(`.${this.dateContainerCls} .bs-datepicker-buttons .btn-today-wrapper button`) as HTMLElement;
             const setTodayTZHandler = (event) => {
