@@ -116,7 +116,7 @@
         "rimraf": "2.6.3",
         "rollup": "4.28.1",
         "rollup-plugin-includepaths": "0.2.3",
-        "sonarqube-scanner": "4.2.6",
+        "sonarqube-scanner": "4.3.0",
         "terser": "^5.15.1",
         "ts-node": "7.0.1",
         "tslint": "~6.1.0",
@@ -134,5 +134,8 @@
         "node": "~22.11.0",
         "npm": "~10.9.0"
     },
-    "engineStrict": true
+    "engineStrict": true,
+    "overrides": {
+      "form-data": "4.0.4"
+    }
 }
