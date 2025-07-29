@@ -125,7 +125,8 @@ export {
     FileIconClassPipe,
     StateClassPipe,
     FileExtensionFromMimePipe,
-    TrailingZeroDecimalPipe
+    TrailingZeroDecimalPipe,
+    TemplateReplacePipe
 } from './pipes/custom-pipes';
 export * from './pipes/trust-as.pipe';
 export * from './pipes/sanitize.pipe';

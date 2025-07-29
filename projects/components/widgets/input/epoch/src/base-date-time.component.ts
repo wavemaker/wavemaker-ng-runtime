@@ -287,6 +287,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * This method is used to highlight the current date
      */
     protected hightlightToday(newDate) {
+        if(this.datavalue) return;
         const activeMonth = $(`.bs-datepicker-head .current`).first().text();
         const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
         const month = new Date(newDate).toLocaleString('default', { month: 'long' });
@@ -347,9 +348,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param fromKeyboardEvents
      */
     private setActiveDateFocus(newDate, isMouseEvent?: boolean, fromKeyboardEvents?: boolean) {
-        if (this.mindate && !this.datavalue && fromKeyboardEvents) {
-            this.activeDate = newDate = new Date(this.mindate);
-        }
         this.setNextData(newDate);
         this.clicked = false;
         const activeMonth = this.activeDate.getMonth();
@@ -455,7 +453,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this.setActiveYearFocus(newDate, true);
         } else if (datePickerBody.find('table.days').length > 0) {
             this.loadDays();
-            const newDate = new Date(this.activeDate.getFullYear(), this.activeDate.getMonth() + count, 1);
+            const [monthText, yearText] = $('.bs-datepicker-head .current').map((_, el) => $(el).text().trim()).get();
+            const monthIndex = new Date(`${monthText} 1, ${yearText}`).getMonth();
+            const year = parseInt(yearText, 10);
+            const inMonth = (d: Date) => d.getFullYear() === year && d.getMonth() === monthIndex;
+            let newDate = this.mindate && inMonth(new Date(this.mindate)) ? new Date(this.mindate) : this.maxdate && inMonth(new Date(this.maxdate)) ? new Date(this.maxdate) : new Date(year, monthIndex, 1);
             this.setActiveDateFocus(newDate, true);
         }
     }
@@ -919,7 +921,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForDate(-1);
             }
             var prevMon = this.getMonth(this.activeDate, -1);
-
+            const current = new Date();
+            if(prevMon.date.getMonth()===current.getMonth() && prevMon.date.getFullYear()===current.getFullYear()) {
+                this.hightlightToday(new Date());
+            }
             setTimeout(() => {
                 $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
                 $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
@@ -943,6 +948,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForDate(1);
             }
             var nextMon = this.getMonth(this.activeDate, 1);
+            const current = new Date();
+            if (nextMon.date.getMonth() === current.getMonth() && nextMon.date.getFullYear() === current.getFullYear()) {
+                this.hightlightToday(current);
+            }
             setTimeout(() => {
                 $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
                 $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');

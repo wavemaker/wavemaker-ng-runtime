@@ -3,10 +3,10 @@
     @for (step of steps; track step; let i = $index) {
       <li class="app-wizard-step" [hidden]="!step.show"
         [ngClass]="{active: step.done, current: step.active, disabled: step.disabled}"
-        (click)="onWizardHeaderClick($event, step)">
+        (click)="onWizardHeaderClick($event, step)" [attr.data-stepid]="step.widgetId">
         <a href="javascript:void(0)" [attr.aria-current]="step.active ? 'step' : null"
           [attr.aria-disabled]="step.disabled" [attr.aria-label]='step.subtitle ? "step " + (i + 1) + " " +  step.title + " " + step.subtitle : "step " + (i + 1) + " " +  step.title' [attr.title]= "step.title"
-          [ngClass]="{'title-center-align':class && class.includes('classic') && !step.subtitle}" [tabindex]="step.active ? '0' : '-1'">
+          [ngClass]="{'title-center-align':class && class.includes('classic') && !step.subtitle}" [tabindex]="step.active ? '0' : '-1'" (keydown)="onkeydown($event)">
           @if (class && class.includes('classic')) {
             <span class="arrow"></span>
           }
