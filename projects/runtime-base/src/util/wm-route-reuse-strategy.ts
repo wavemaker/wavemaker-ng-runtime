@@ -50,7 +50,7 @@ export class WmDefaultRouteReuseStrategy {
             .map(k => k + '=' + route.queryParams[k])
             .sort().join('&');
         let pageName = route.params.pageName;
-        if (route.data.pageName && route.routeConfig.path === '') {
+        if (route.data.pageName && route.routeConfig.path === route.data.pageName) {
             pageName = route.data.pageName;
         }
         return pageName && (pageName + (queryParams ? `?${queryParams}`: ''));
