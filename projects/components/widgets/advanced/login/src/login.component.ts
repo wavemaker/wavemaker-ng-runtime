@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterViewInit,
     Component,
@@ -13,7 +12,7 @@ import {
 
 import { APPLY_STYLES_TYPE, MessageComponent, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { FormComponent } from '@wm/components/data/form';
-import { ButtonComponent } from '@wm/components/input';
+import { ButtonComponent } from '@wm/components/input/button';
 
 import { registerProps } from './login.props';
 import {includes} from "lodash-es";
@@ -21,8 +20,7 @@ import {includes} from "lodash-es";
 const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule],
+    standalone: true, 
     selector: 'div[wmLogin]',
     templateUrl: './login.component.html',
     providers: [

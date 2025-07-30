@@ -9,7 +9,7 @@ import { NavigationControlDirective } from './nav/navigation-control.directive';
 import { Router } from '@angular/router';
 import { AbstractI18nService, App, UserDefinedExecutionContext } from '@wm/core';
 import { SecurityService } from '@wm/security';
-import { ButtonComponent } from '@wm/components/input';
+import { ButtonComponent } from '@wm/components/input/button';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
@@ -74,7 +74,7 @@ const menuComponentModuleDef: ITestModuleDef = {
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },
         provideAnimations()
     ],
-    teardown: { destroyAfterEach: false }
+    teardown: { destroyAfterEach: true }
 };
 
 const menuComponentDef: ITestComponentDef = {
@@ -150,7 +150,7 @@ describe('MenuComponent', () => {
         expect(ulEle.nativeElement.classList).toContain('horizontal');
     }));
 
-    xit('should apply 50px height ', waitForAsync(() => {
+    it('should apply 50px height ', waitForAsync(() => {
         wmComponent.getWidget().height = '50px';
         fixture.whenStable().then(() => {
             const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');

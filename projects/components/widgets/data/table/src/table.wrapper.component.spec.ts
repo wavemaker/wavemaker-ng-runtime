@@ -5,7 +5,7 @@ import { FormBuilder } from "@angular/forms";
 import { App, AppDefaults, DynamicComponentRefProvider, AbstractI18nService, Viewport, DataSource, extendProto } from "@wm/core";
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { WidgetRef, WmComponentsModule } from '@wm/components/base';
+import { WidgetRef } from '@wm/components/base';
 import { IMaskModule } from 'angular-imask';
 import { TableComponent } from './table.component';
 import { TableCUDDirective } from './table-cud.directive';
@@ -384,7 +384,6 @@ let imports = [
     FormWidgetDirective,
     MenuComponent,
     IMaskModule,
-    WmComponentsModule.forRoot(),
     BsDatepickerModule.forRoot(),
     TimepickerModule.forRoot(),
     BsDropdownModule.forRoot()

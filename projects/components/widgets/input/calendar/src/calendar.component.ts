@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterContentInit,
     AfterViewInit,
@@ -37,8 +36,6 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
-
-import {_WM_APP_PROJECT} from '@wm/core';
 
 const DEFAULT_CLS = 'app-calendar';
 const dateFormats = ['yyyy-MM-dd', 'yyyy-M-dd', 'M-dd-yyyy', 'MM-dd-yy', 'yyyy, dd MMMM', 'yyyy, MMM dd', 'MM/dd/yyyy', 'M/d/yyyy', 'EEE, dd MMM yyyy', 'EEE MMM dd yyyy', 'EEEE, MMMM dd, yyyy', 'timestamp'];
@@ -101,8 +98,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-calendar', hostClass: DEFAULT_CLS};
 const dateFormat = 'YYYY/MM/DD';
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule],
+    standalone: true,
     selector: '[wmCalendar]',
     templateUrl: './calendar.component.html',
     styleUrls: [],

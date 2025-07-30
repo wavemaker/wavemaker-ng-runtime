@@ -9,7 +9,7 @@ import { PipeProvider } from "../../../../../runtime-base/src/services/pipe-prov
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent, mockApp, setInputValue } from "../../../../base/src/test/util/component-test-util";
 import { MockAbstractI18nService } from "projects/components/base/src/test/util/date-test-util";
-import { NumberLocale } from "../../default/src/public_api";
+import { NumberLocale } from "../../text/src/public_api";
 
 const markup = `<div blur.event="onBlur($event, widget)"
                  focus.event="onFocus($event, widget)"
