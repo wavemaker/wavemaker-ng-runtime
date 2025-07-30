@@ -4,6 +4,7 @@ import {
     ElementRef,
     HostBinding,
     HostListener,
+    inject,
     Injector,
     Input,
     OnInit,
@@ -17,7 +18,7 @@ import {$watch, App} from '@wm/core';
 
 import {ListComponent} from './list.component';
 import {widgetIdGenerator} from "@wm/components/base";
-import {BaseFormComponent} from "@wm/components/input";
+import {BaseFormComponent} from "@wm/components/input/base-form";
 
 declare const $;
 
@@ -83,11 +84,11 @@ export class ListItemDirective implements OnInit, AfterViewInit {
     @Input() set wmListItem(val) {
         this.item = val;
     }
-
-    constructor(private inj: Injector, elRef: ElementRef, private app: App, @Optional() public _viewParent: ListComponent) {
+    private _viewParent = inject(ListComponent, {optional: true});
+    constructor(private inj: Injector, elRef: ElementRef, private app: App) {
         this.viewContainerRef = inj.get(ViewContainerRef);
         this.nativeElement = elRef.nativeElement;
-        this.listComponent = _viewParent;
+        this.listComponent = this._viewParent;
         // this.context = (<NgForOfContext<ListItemDirective>>(<any>inj).view.context);
         this.context = (this.inj as any)._lView[8];
         //this.context = (this.viewContainerRef as any)._hostLView.find(t => t && !!t.$implicit);

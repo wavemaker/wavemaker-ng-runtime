@@ -1,9 +1,9 @@
 import {Directive, Inject, Injector, OnInit, Optional} from '@angular/core';
 
-import { BaseComponent, provideAsWidgetRef } from '@wm/components/base';
+import {BaseComponent, provideAsWidgetRef} from '@wm/components/base';
 
-import { registerProps } from './form-action.props';
-import { FormComponent } from '../form.component';
+import {registerProps} from './form-action.props';
+import {FormComponent} from '../form.component';
 import {isUndefined} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-form-action', hostClass: ''};

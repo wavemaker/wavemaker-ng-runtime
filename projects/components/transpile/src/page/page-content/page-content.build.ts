@@ -27,7 +27,13 @@ register('wm-page-content', (): IBuildTaskDef => {
             }
         },
         pre: attrs => `<${tagName} wmPageContent ${attrs.get('spa') && 'wmSpaPage' || ''} wmSmoothscroll="${attrs.get('smoothscroll') || 'false'}" ${getAttrMarkup(attrs)}>`,
-        post: () => `</${tagName}>`
+        post: () => `</${tagName}>`,
+        imports: (attrs) => {
+            if (attrs.get('spa')) {
+                return ['spa-page-content']
+            }
+            return [];
+        }
     };
 });
 

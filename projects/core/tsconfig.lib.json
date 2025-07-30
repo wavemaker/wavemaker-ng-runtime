@@ -16,7 +16,7 @@
     },
     "angularCompilerOptions": {
         "skipTemplateCodegen": true,
-
+        "compilationMode": "partial",
         "strictInjectionParameters": true,
         "enableResourceInlining": true
     },

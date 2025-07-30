@@ -1,11 +1,11 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { PaginationComponent } from './pagination.component';
-import { App, AppConstants, DataSource } from '@wm/core';
-import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
-import { DEBOUNCE_TIMES, WidgetRef } from '@wm/components/base';
-import { NO_ERRORS_SCHEMA } from '@angular/compiler';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { EventEmitter } from '@angular/core';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {PaginationComponent} from './pagination.component';
+import {App, AppConstants, DataSource} from '@wm/core';
+import {mockApp} from 'projects/components/base/src/test/util/component-test-util';
+import {WidgetRef} from '@wm/components/base';
+import {NO_ERRORS_SCHEMA} from '@angular/compiler';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {EventEmitter} from '@angular/core';
 
 describe('PaginationComponent', () => {
     let component: PaginationComponent;
