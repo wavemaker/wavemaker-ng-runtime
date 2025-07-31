@@ -47,12 +47,16 @@ import { AppSpinnerComponent } from '../app-spinner.component';
 import { DialogComponent } from '@wm/components/dialogs/design-dialog';
 import { filter } from "rxjs/operators";
 import { Subscription}  from "rxjs";
+import { MODE_CONSTANTS } from '@wm/variables';
 
 interface SPINNER {
     show: boolean;
     messages: Array<string>;
     arialabel: string;
 }
+
+// Restore all modes from localStorage on startup
+const defaultModes : string[] = [MODE_CONSTANTS.COLOR, MODE_CONSTANTS.SPACE, MODE_CONSTANTS.FONT, MODE_CONSTANTS.RADIUS];
 
 @Component({
     standalone: true,
@@ -98,6 +102,15 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
         }
 
         this.appManager.beforeAppReady();
+
+        // Restore saved modes and setup mode change listeners
+        this.initAppModes();
+
+        // Subscribe to mode changes
+        this.appManager.subscribe('MODE_CHANGED', (data: { modes: Record<string, string>, shouldPersist?: boolean }) => {
+            const { modes, shouldPersist = true } = data;
+            this.app.setAppMode(modes, shouldPersist);
+        });
 
         // subscribe to OAuth changes
         oAuthService.getOAuthProvidersAsObservable().subscribe((providers: any) => {
@@ -232,6 +245,28 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
             this.retryCount++;
             setTimeout(() => this.tryFocusContent(), 100); // Retry every 100ms
         }
+    }
+    
+    private initAppModes(): void {
+        // Restore modes from localStorage
+        const restoredModes: Record<string, string> = {};
+        defaultModes.forEach((key) => {
+            const storedValue = localStorage.getItem(`${MODE_CONSTANTS.MODE_KEY}-${key}`);
+            if (storedValue !== null) {
+                restoredModes[key] = storedValue;
+            }
+        });
+
+        // Apply restored modes
+        this.app.setAppMode(restoredModes, true);
+
+        // Listener for postMessage-based mode changes
+        window.addEventListener('message', (event) => {
+            const { key, modes, shouldPersist } = event.data || {};
+            if (key === 'switch-mode' && modes) {
+                this.app.setAppMode(modes, !shouldPersist);
+            }
+        });
     }
 
     ngAfterViewInit() {

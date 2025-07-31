@@ -148,6 +148,16 @@ export const WS_CONSTANTS = {
     }
 };
 
+export const MODE_CONSTANTS = {
+    LIGHT: 'light',
+    DEFAULT: 'default',
+    COLOR: 'color',
+    FONT: 'font',
+    SPACE: 'space',
+    RADIUS: 'radius',
+    MODE_KEY: 'app-mode'
+};
+
 export const DB_CONSTANTS = {
     'DATABASE_MATCH_MODES': {
         'like'             : 'LIKE',
@@ -219,6 +229,7 @@ export const SWAGGER_CONSTANTS = {
     WM_DATA_JSON: 'wm_data_json',
     WM_HTTP_JSON: 'wm_httpRequestDetails'
 };
+
 
 export const VARIABLE_URLS = {
     DATABASE: {

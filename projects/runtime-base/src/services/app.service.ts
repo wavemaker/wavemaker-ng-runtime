@@ -25,6 +25,7 @@ import { WmDefaultRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
 import { PipeService } from "./pipe.service";
 import {each, get, isEmpty, isString} from "lodash-es";
 import * as momentLib from 'moment-timezone/moment-timezone';
+import { MODE_CONSTANTS } from '@wm/variables';
 const moment = momentLib.default || window['moment'];
 
 const injectorMap = {
@@ -94,15 +95,22 @@ export class AppRef {
     setTimezone = this.i18nService.setTimezone.bind(this.i18nService);
     setwidgetLocale = this.i18nService.setwidgetLocale.bind(this.i18nService);
     
-    setAppMode = (mode) => {
+    setAppMode = (modes: Record<string, string>, shouldPersist = true) => {
         const htmlEl = document.getElementsByTagName('html')[0];
-        if (mode === 'default') {
-          localStorage.removeItem('app-mode');
-          htmlEl.removeAttribute('app-mode');
-        } else {
-          localStorage.setItem('app-mode', mode);
-          htmlEl.setAttribute('app-mode', mode);
-        }
+        if (!htmlEl) return;
+
+        (Object.entries(modes)).forEach(([modeKey, modeValue]) => {
+            const storageKey = `${MODE_CONSTANTS.MODE_KEY}-${modeKey}`;
+            const isDefault = modeValue === MODE_CONSTANTS.LIGHT || modeValue === MODE_CONSTANTS.DEFAULT;
+
+            if (isDefault) {
+                if (shouldPersist) localStorage.removeItem(storageKey);
+                htmlEl.removeAttribute(modeKey);
+            } else {
+                if (shouldPersist) localStorage.setItem(storageKey, modeValue);
+                htmlEl.setAttribute(modeKey, modeValue);
+            }
+        });
     };
 
     private _eventNotifier = new EventNotifier();
