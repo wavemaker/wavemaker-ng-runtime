@@ -8,7 +8,7 @@ register('wm-header', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid()
-            return `<${tagName} wmHeader #${counter}="wmHeader" partialContainer data-role="page-header" role="banner" [attr.aria-label]="${counter}.arialabel || 'Page header'" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmHeader #${counter}="wmHeader" show.bind="Variables.showLayout.dataSet.header" partialContainer data-role="page-header" role="banner" [attr.aria-label]="${counter}.arialabel || 'Page header'" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };

@@ -8,7 +8,7 @@ register('wm-left-panel', (): IBuildTaskDef => {
     return {
         pre: (attrs) => {
             const counter = idGen.nextUid();
-            return `<${tagName} wmLeftPanel #${counter}="wmLeftPanel" partialContainer data-role="page-left-panel" [attr.aria-label]="${counter}.arialabel || 'Left navigation panel'" wmSmoothscroll="${attrs.get('smoothscroll') || 'false'}" ${getAttrMarkup(attrs)}>`;
+            return `<${tagName} wmLeftPanel #${counter}="wmLeftPanel" show.bind="Variables.showLayout.dataSet.leftnav" partialContainer data-role="page-left-panel" [attr.aria-label]="${counter}.arialabel || 'Left navigation panel'" wmSmoothscroll="${attrs.get('smoothscroll') || 'false'}" ${getAttrMarkup(attrs)}>`;
         },
         post: () => `</${tagName}>`
     };
