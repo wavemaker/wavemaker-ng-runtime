@@ -15,7 +15,16 @@ export class RedrawableDirective implements IRedrawableComponent {
             if ((tabEl.length && !tabEl.hasClass('active')) || (accordionEl.length && !accordionEl.hasClass('active'))) {
                 return;
             }
+            if (widget.widgetType.startsWith('wm-prefab')) {
+                Object.entries(widget.Widgets || {}).forEach(([key, innerWidget]: [string, any]) => {
+                    if (typeof innerWidget.redraw === 'function') {
+                        innerWidget.redraw();
+                    }
+                });
+                return
+            } else {
             return widget.redraw && widget.redraw();
+            }
         }
     }
 }

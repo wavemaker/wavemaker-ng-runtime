@@ -208,7 +208,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 // if prev datavalue is not equal to current datavalue then clear the modelByKey and queryModel
                 if (!isObject(val) && (this as any).prevDatavalue !== val) {
                     this._modelByKey = undefined;
-                    this.query = this.queryModel = '';
+                    if (this.queryModel === '' || this.queryModel === undefined) {
+                        this.query = '';
+                    } this.queryModel = '';
                 }
                 // if the datafield is ALLFILEDS do not fetch the records
                 // update the query model with the values we have
@@ -638,7 +640,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             // resetting the queryModel only when prevDatavalue is equal to data
             if ((this as any).prevDatavalue !== data) {
                 this.queryModel = undefined;
-                this.query = '';
+                if (!data || data === '') {
+                    this.query = '';
+                }
                 return;
             }
         }
@@ -654,6 +658,15 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (this.type === 'search' && this.query === this._lastQuery && this._lastResult) {
             (this.typeahead as any).keyUpEventEmitter.emit(this.query);
         }
+    }
+    handleInputBlur($event: FocusEvent) {
+            this.queryModel = [{
+                key: this.query,
+                value: this.query,
+                label: this.query
+            }];
+            this._modelByValue = this.query;
+            this.datavalue = this.query;
     }
 
     public notifySubscriber() {
@@ -821,6 +834,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         styler(this.nativeElement as HTMLElement, this);
         this.containerTarget = getContainerTargetClass(this.nativeElement);
+        this.nativeElement.querySelector('input')?.addEventListener('blur', this.handleInputBlur.bind(this));
     }
 
     public ngAfterViewChecked() {

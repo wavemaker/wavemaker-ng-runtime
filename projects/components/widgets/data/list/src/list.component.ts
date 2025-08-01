@@ -146,6 +146,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     public statehandler: any;
     public currentIndex: number;
     public titleId: string;
+    public allowpagesizechange: boolean = false;
+    public pagesizeoptions: string;
+    public updatedPageSize;
+    public actualPageSize;
     _isDependent;
     private itemsPerRowClass: string;
     private firstSelectedItem: ListItemDirective;
@@ -323,6 +327,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             return this.fieldDefs.findIndex((obj) => isEqual(obj, item));
         }
     }
+     public getUpdatedPageSize() {
+         return this.updatedPageSize;
+     }
 
     create() {
         if (this._isDependent) {
@@ -504,6 +511,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
         }
     }
+    getActualPageSize()  {
+        return this.actualPageSize || 20;
+    }
 
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'dataset') {
@@ -512,6 +522,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             }
             this.onDataSetChange(nv);
         } else if (key === 'datasource') {
+            if(this.allowpagesizechange){
+                this.datasource.maxResults = this.pagesize || this.datasource.maxResults
+            }
             if (this.dataset) {
                 this.onDataSetChange(this.dataset);
             }
@@ -539,11 +552,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 setTimeout(() => this.dataNavigator.navigationClass = nv);
             }
         } else if (key === 'pagesize') {
-            this.dataNavigator.options = {
-                maxResults: nv
-            };
-            this.dataNavigator.widget.maxResults = nv;
-            this.dataNavigator.maxResults = nv;
+            this.actualPageSize = nv; // maintain default page size to calculate pagesize options
+            this.setDefaultPageSize(nv)
         } else if (key === 'enablereorder') {
             if (nv && this.$ulEle) {
                 this.$ulEle.attr('aria-describedby', this.titleId);
@@ -553,9 +563,35 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 this.$ulEle.removeAttr('aria-describedby');
                 this.$ulEle.sortable('disable');
             }
-        } else {
+        } else if (key === 'allowpagesizechange') {
+            this.allowpagesizechange = nv;
+        } else if(key === 'pagesizeoptions') {
+                this.pagesizeoptions = nv;
+                this.setDefaultPageSize(nv)
+        }else {
             super.onPropertyChange(key, nv, ov);
         }
+    }
+
+    setDefaultPageSize(nv: any){
+     if (this.allowpagesizechange) {
+        const widgetState = this.statePersistence.getWidgetState(this);
+        if (get(widgetState, 'pagesize')) {
+            nv = get(widgetState, 'pagesize');
+            this.pagesize = nv; // updating the default pagesize to user selected pagesize
+        } else if (this.pagesizeoptions) {
+            nv = this.pagesizeoptions?.split(',').map(Number).sort((a, b) => a - b)[0]
+            this.pagesize = nv;
+        }
+    }
+        this.updatedPageSize = nv;
+        this.dataNavigator.updatedPageSize = nv;
+
+        this.dataNavigator.options = {
+            maxResults: nv
+        };
+        this.dataNavigator.widget.maxResults = nv;
+        this.dataNavigator.maxResults = nv;
     }
 
     public onItemClick(evt: any, $listItem: ListItemDirective) {
@@ -950,8 +986,14 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         if (get(this.datasource, 'category') === 'wm.Variable' && this.getConfiguredState() !== 'none' && this._pageLoad) {
             const widgetState = this.statePersistence.getWidgetState(this);
             this._pageLoad = false;
-            if (get(widgetState, 'pagination')) {
-                this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
+            if (this.allowpagesizechange) { // maintain updated page size in the statePersistence
+                if (get(widgetState, 'pagination') || get(widgetState, 'pagesize')) {
+                    this.dataNavigator.pageChanged({page: widgetState.pagination || 1, pagesize: widgetState.pagesize}, true);
+                }
+            } else {
+                if (get(widgetState, 'pagination')) {
+                    this.dataNavigator.pageChanged({page: widgetState.pagination}, true);
+                }
             }
             if (get(widgetState, 'selectedItem')) {
                 this._selectedItemsExist = true;
