@@ -138,7 +138,7 @@
 }
 
 @if (navigation !== 'None') {
-  <div class="panel-footer" [hidden]="!showNavigation || (onDemandLoad && dataNavigator.isDisableNext) || (dataNavigator.dataSize <= pagesize) || (!dataNavigator.dataSize && !dataNavigator.datasource?.pagination?.next)">
+  <div class="panel-footer" [hidden]="!showNavigation || (onDemandLoad && dataNavigator.isDisableNext) || (dataNavigator?.dataSize <= pagesize && !allowpagesizechange) || (!dataNavigator.dataSize && !dataNavigator.datasource?.pagination?.next)">
     <nav wmPagination
       navigationalign.bind="navigationalign"
       navigation.bind="navControls"

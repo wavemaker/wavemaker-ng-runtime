@@ -28,7 +28,8 @@ export const timeProps = new Map(
         ['secondsstep', {value: 1, ...PROP_NUMBER}],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
         ['timepattern', PROP_STRING],
-        ['timestamp', PROP_STRING]
+        ['timestamp', PROP_STRING],
+        ['showampmbuttons',{ value: false, ...PROP_BOOLEAN }]
     ]
 );
 

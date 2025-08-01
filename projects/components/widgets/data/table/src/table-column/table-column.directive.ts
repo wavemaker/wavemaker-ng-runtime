@@ -32,7 +32,7 @@ import {cloneDeep, forEach, head, includes, last, map, max, mean, min, round, sp
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};
 
-let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey', 'matchmode', 'displaylabel', 'groupby', 'match', 'dateformat', 'showcount', 'collapsible',
+let inlineWidgetProps = ['datafield', 'displayfield', 'placeholder', 'searchkey','sortby', 'matchmode', 'displaylabel', 'groupby', 'match', 'dateformat', 'showcount', 'collapsible',
                             'checkedvalue', 'uncheckedvalue', 'showdropdownon', 'dataentrymode', 'autoclose', 'dataset', 'outputformat'];
 const validationProps = ['maxchars', 'regexp', 'minvalue', 'maxvalue', 'step', 'required', 'mindate', 'maxdate',
                             'excludedates', 'excludedays', 'mintime', 'maxtime'];
@@ -124,6 +124,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
     filterdisplayfield;
     filterdisplaylabel;
     filtersearchkey;
+    sortby;
     filterplaceholder;
     datafield;
     displayfield;
@@ -688,6 +689,7 @@ export class TableColumnDirective extends BaseComponent implements OnInit, After
         this.isFilterDataSetBound = !!this.bindfilterdataset;
         this.defaultvalue = getDefaultValue(this.defaultvalue, this.type, this.editWidgetType);
         this.caseinsensitive =  !!this.getAttr('caseinsensitive');
+        this.sortby =  this.sortby||this.getAttr('sortby') || "";
 
         // For date time data types, if date pattern is not specified, set the app format or default format
         if (isDateTimeType(this.type) && this.formatpattern === 'toDate' && !this.datepattern) {
