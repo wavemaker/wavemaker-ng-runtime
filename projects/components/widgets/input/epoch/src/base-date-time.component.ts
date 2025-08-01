@@ -83,7 +83,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public next;
     public prev;
     public clicked = false;
-
+    public showampmbuttons=true;
     protected dateNotInRange: boolean;
     protected timeNotInRange: boolean;
     protected invalidDateTimeFormat: boolean;
@@ -287,6 +287,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * This method is used to highlight the current date
      */
     protected hightlightToday(newDate) {
+        if(this.datavalue) return;
         const activeMonth = $(`.bs-datepicker-head .current`).first().text();
         const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
         const month = new Date(newDate).toLocaleString('default', { month: 'long' });
@@ -347,9 +348,6 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * @param fromKeyboardEvents
      */
     private setActiveDateFocus(newDate, isMouseEvent?: boolean, fromKeyboardEvents?: boolean) {
-        if (this.mindate && !this.datavalue && fromKeyboardEvents) {
-            this.activeDate = newDate = new Date(this.mindate);
-        }
         this.setNextData(newDate);
         this.clicked = false;
         const activeMonth = this.activeDate.getMonth();
@@ -455,7 +453,11 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             this.setActiveYearFocus(newDate, true);
         } else if (datePickerBody.find('table.days').length > 0) {
             this.loadDays();
-            const newDate = new Date(this.activeDate.getFullYear(), this.activeDate.getMonth() + count, 1);
+            const [monthText, yearText] = $('.bs-datepicker-head .current').map((_, el) => $(el).text().trim()).get();
+            const monthIndex = new Date(`${monthText} 1, ${yearText}`).getMonth();
+            const year = parseInt(yearText, 10);
+            const inMonth = (d: Date) => d.getFullYear() === year && d.getMonth() === monthIndex;
+            let newDate = this.mindate && inMonth(new Date(this.mindate)) ? new Date(this.mindate) : this.maxdate && inMonth(new Date(this.maxdate)) ? new Date(this.maxdate) : new Date(year, monthIndex, 1);
             this.setActiveDateFocus(newDate, true);
         }
     }
@@ -919,7 +921,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForDate(-1);
             }
             var prevMon = this.getMonth(this.activeDate, -1);
-
+            const current = new Date();
+            if(prevMon.date.getMonth()===current.getMonth() && prevMon.date.getFullYear()===current.getFullYear()) {
+                this.hightlightToday(new Date());
+            }
             setTimeout(() => {
                 $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
                 $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
@@ -943,6 +948,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.setFocusForDate(1);
             }
             var nextMon = this.getMonth(this.activeDate, 1);
+            const current = new Date();
+            if (nextMon.date.getMonth() === current.getMonth() && nextMon.date.getFullYear() === current.getFullYear()) {
+                this.hightlightToday(current);
+            }
             setTimeout(() => {
                 $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
                 $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
@@ -982,23 +991,29 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
     }
 
-    protected adjustDateTimePickerInModel(element, elementDirective) {
-        if (this.containerTarget === '.modal-container' && element) {
-            setTimeout(() => {
-                elementDirective._datepicker._posService.disable();
-                const inputRect = this.nativeElement.getBoundingClientRect();
-                const elementHeight = $('timepicker')[0]?.offsetHeight || element.offsetHeight;
-                let top: number;
-                if (inputRect.bottom + elementHeight > window.innerHeight) {
-                    top = inputRect.top - elementHeight + window.scrollY;
-                } else {
-                    top = inputRect.bottom + window.scrollY;
-                }
-                const left = inputRect.left + window.scrollX;
-                element.style.top = `${top}px`;
-                element.style.left = `${left}px`;
-                element.style.transform = 'none';
-            });
+    getPeriod(): 'AM' | 'PM' {
+        if (!this.elementScope.bsTimeValue) return 'AM';
+        const hours =this.elementScope.bsTimeValue.getHours();
+        return hours >= 12 ? 'PM' : 'AM';
+    }
+
+    setPeriod(period: 'AM' | 'PM'): void {
+        const current = this.elementScope.bsTimeValue;
+        if (!current || !(current instanceof Date)) return;
+        const updatedDate = new Date(current);
+        const hours = updatedDate.getHours();
+        if (period === 'AM' && hours >= 12) {
+            updatedDate.setHours(hours - 12);
+        } else if (period === 'PM' && hours < 12) {
+            updatedDate.setHours(hours + 12);
+        }
+        if(this.elementScope.widgetType==='wm-time'){
+           const isInvalid= this.elementScope.minTime && this.elementScope.maxTime && (updatedDate < this.elementScope.minTime || updatedDate > this.elementScope.maxTime);
+           if(!isInvalid)
+            this.elementScope.onTimeChange(updatedDate);
+        }
+        else{
+            this.elementScope.onModelUpdate(updatedDate);
         }
     }
 
@@ -1006,6 +1021,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
         if (key === 'tabindex') {
             return;
+        }
+        if(key === 'showampmbuttons') {
+            this.showampmbuttons=nv;
         }
         if (key === 'required') {
             this._onChange(this.datavalue);
@@ -1061,7 +1079,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
-        this.containerTarget = this.nativeElement.closest('modal-container') ? '.modal-container' : getContainerTargetClass(this.nativeElement);
+        this.containerTarget = getContainerTargetClass(this.nativeElement);
         this.isReadOnly = this.dataentrymode != 'undefined' && !this.isDataEntryModeEnabledOnInput(this.dataentrymode);
 
         // this mobileinput width varies in ios hence setting width here.

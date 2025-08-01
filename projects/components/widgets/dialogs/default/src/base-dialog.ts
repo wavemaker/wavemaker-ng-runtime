@@ -7,13 +7,8 @@ import { Subscription } from 'rxjs';
 import { AbstractDialogService, findRootContainer, generateGUId, isMobile, getSheetPositionClass } from '@wm/core';
 
 import { BaseComponent, IDialog, IWidgetConfig, WidgetConfig } from '@wm/components/base';
-import { createFocusTrap } from '@wavemaker/focus-trap';
 
 const eventsRegistered = false;
-
-const focusTrapObj = {
-    activeElement: null
-};
 
 const invokeOpenedCallback = (ref) => {
     if (ref) {
@@ -24,25 +19,16 @@ const invokeOpenedCallback = (ref) => {
                 $('body > modal-container > div').wrap('<' + root + '/>');
             }
             ref.invokeEventCallback('opened', { $event: { type: 'opened' } });
-            // focusTrapObj will create focus trap for the respective dialog according to the titleId assigned to them which is unique.
+            // Focusing the first focusable element when the dialog is opened
             const container = $('[aria-labelledby= ' + ref.titleId + ']')[0];
-
             const keyboardFocusableElements = [container.querySelectorAll(
                 'a, button, input, textarea, select, details, iframe, embed, object, summary dialog, audio[controls], video[controls], [contenteditable], [tabindex]:not([tabindex="-1"])'
             )].filter(el => {
                 return (
                     !el[0].hasAttribute('disabled') && !el[0].hasAttribute('hidden'));
             })[0];
-
             $(keyboardFocusableElements[0]).focus();
 
-            focusTrapObj[ref.titleId] = createFocusTrap(container, {
-                onActivate: () => container.classList.add('is-active'),
-                onDeactivate: () => container.classList.remove('is-active'),
-                allowOutsideClick: true,
-                setReturnFocus: focusTrapObj.activeElement,
-            });
-            focusTrapObj[ref.titleId].activate();
             const openedDialogs = ref.dialogService.getOpenedDialogs();
             if (openedDialogs.length > 1) {
                 let zIndex = Number($("[aria-labelledby= " + openedDialogs[openedDialogs.length - 2].titleId + "]").css('z-index'));
@@ -78,7 +64,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
     public titleId: string = 'wmdialog-' + generateGUId();
     public sheet: string | boolean;
     public sheetPosition: string;
-
+    private dialogOriginFocusStack: HTMLElement[] = [];
 
     protected constructor(
         inj: Injector,
@@ -100,9 +86,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
                     this.dialogId = id;
                 }
             }),
-            this.bsModal.onShow.subscribe(() => {
-                focusTrapObj.activeElement = document.activeElement;
-            }),
+            this.bsModal.onShow.subscribe(() => {}),
             this.bsModal.onHidden.subscribe((closeReason) => {
                 let ref = this.dialogService.getDialogRefFromClosedDialogs();
                 if (this.dialogId && closeReason?.id === this.dialogId) {
@@ -121,13 +105,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
                     }
                 }
             }),
-            this.bsModal.onHide.subscribe(() => {
-                //  Will de-activate focus trap for the respective dialog when they are closed.
-                const ref = this.dialogService.getDialogRefFromClosedDialogs();
-                if (ref && focusTrapObj[ref.titleId] !== undefined) {
-                    focusTrapObj[ref.titleId].deactivate();
-                }
-            }),
+            this.bsModal.onHide.subscribe(() => {}),
             router.events.subscribe(e => {
                 if (e instanceof NavigationEnd) {
                     this.close();
@@ -163,6 +141,7 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         // extend the context with the initState
         Object.assign(this.context, initState);
         this.modalOptions.ariaLabelledBy = this.titleId;
+        this.dialogOriginFocusStack.push(document.activeElement as HTMLElement);
         this.dialogRef = this.bsModal.show(this.getTemplateRef(), this.modalOptions);
         // Fix for [WMS-23948]: Focus moving out of active Dialog widget
         if (this.dialogService.getOpenedDialogs().length === 1 && (isMobile())) {
@@ -180,8 +159,11 @@ export abstract class BaseDialog extends BaseComponent implements IDialog, OnDes
         // remove the popovers in the page to avoid the overlap with dialog
         // closePopover(this.$element); Commenting this line because it is causing regression(if we have dialog inside popover as partail content, then the dialog close is not working because on closing the popover the partial get destroyed.)
         if (this.dialogRef) {
+            const lastDialogOrigin = this.dialogOriginFocusStack.pop();
             this.dialogService.addToClosedDialogs(this);
             this.dialogRef.hide();
+            // Return focus to the originating element upon dialog closure
+            lastDialogOrigin?.focus();
         }
     }
 

@@ -55,7 +55,8 @@ describe('PaginationComponent', () => {
                 setWidgetState: jest.fn()
             },
             invokeEventCallback: jest.fn(),
-            widgetType: 'wm-table'
+            getActualPageSize: jest.fn().mockReturnValue(5),
+            widgetType: 'wm-table',
         } as any;
     });
 
@@ -341,6 +342,7 @@ describe('PaginationComponent', () => {
                     setWidgetState: jest.fn()
                 },
                 invokeEventCallback: jest.fn(),
+                getActualPageSize: jest.fn().mockReturnValue(5),
                 gridOptions: { lastActionPerformed: '' },
                 actionRowPage: 1
             } as any;
@@ -356,6 +358,7 @@ describe('PaginationComponent', () => {
 
             expect(mockDataSource.execute).toHaveBeenCalledWith(DataSource.Operation.LIST_RECORDS, {
                 'page': 1,
+                'size': 10,
                 'filterFields': component.filterFields,
                 'orderBy': component.sortOptions,
                 'logicalOp': component.logicalOp,
@@ -525,7 +528,8 @@ describe('PaginationComponent', () => {
                     setLastActionPerformed: jest.fn(),
                     setIsDatasetUpdated: jest.fn(),
                     ACTIONS: { DEFAULT: 'default' }
-                }
+                },
+                getActualPageSize: jest.fn().mockReturnValue(5)
             } as any;
             component.dn = { currentPage: 1 };
             component.datasource = { pagination: {} } as any;
@@ -628,7 +632,8 @@ describe('PaginationComponent', () => {
             const mockData = [{ id: 1 }, { id: 2 }];
             component.parent = {
                 onDataNavigatorDataSetChange: jest.fn().mockReturnValue(mockData),
-                widgetType: 'wm-table'
+                widgetType: 'wm-table',
+                getActualPageSize: jest.fn().mockReturnValue(5)
             };
             component.setResult = jest.fn();
             (component as any).setPagingValues = jest.fn();
@@ -643,7 +648,7 @@ describe('PaginationComponent', () => {
 
         it('should handle dataset change without parent onDataNavigatorDataSetChange', () => {
             const mockData = [{ id: 1 }, { id: 2 }];
-            component.parent = { widgetType: 'other' };
+            component.parent = { widgetType: 'other', getActualPageSize: jest.fn().mockReturnValue(5) };
             component.setResult = jest.fn();
             (component as any).setPagingValues = jest.fn();
             component.isEditNotInCurrentPage = jest.fn().mockReturnValue(false);
@@ -653,7 +658,7 @@ describe('PaginationComponent', () => {
 
         it('should call setResult when isEditNotInCurrentPage returns true', () => {
             const mockData = [{ id: 1 }, { id: 2 }];
-            component.parent = {};
+            component.parent = {getActualPageSize: jest.fn().mockReturnValue(5)};
             component.setResult = jest.fn();
             (component as any).setPagingValues = jest.fn();
             component.isEditNotInCurrentPage = jest.fn().mockReturnValue(true);
@@ -848,7 +853,8 @@ describe('PaginationComponent', () => {
                     isNavTypeScrollOrOndemand: jest.fn().mockReturnValue(true),
                     lastActionPerformed: 'DATASET_UPDATE',
                     ACTIONS: { DATASET_UPDATE: 'DATASET_UPDATE' }
-                }
+                },
+                getActualPageSize: jest.fn().mockReturnValue(5)
             };
             component.setNonPageableData([1, 2, 3, 4, 5]);
             expect(component.setDefaultPagingValues).toHaveBeenCalledWith(5, 5, 2);
