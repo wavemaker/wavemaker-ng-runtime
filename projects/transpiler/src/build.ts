@@ -446,8 +446,8 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
     importCollector(WIDGET_IMPORTS.get(node.name));
 
     if (node.name === 'wm-table-column') {
-        const formatpattern = attrMap.get('formatpattern');
-        console.log('formatpattern', formatpattern);
+        const formatpattern = attrMap.get('custompipeformat') || attrMap.get('formatpattern');
+
         switch (formatpattern) {
             case 'toDate':
                 importCollector(PIPE_IMPORTS.get('toDate'));
@@ -471,8 +471,7 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
                 importCollector(PIPE_IMPORTS.get('suffix'));
                 break;
             default:
-                const custompipeformat = attrMap.get('custompipeformat');
-                if(checkIsCustomPipeExpression(custompipeformat)){
+                if(checkIsCustomPipeExpression(formatpattern)){
                     importCollector(PIPE_IMPORTS.get('custom'));
                 }
         }
