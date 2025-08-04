@@ -9,11 +9,20 @@ import {
     DoCheck,
     ElementRef,
     NgZone,
+    OnDestroy,
     ViewChild,
     ViewContainerRef,
     ViewEncapsulation
 } from '@angular/core';
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterOutlet } from '@angular/router';
+import {
+    ActivatedRoute,
+    NavigationCancel,
+    NavigationEnd,
+    NavigationError,
+    NavigationStart,
+    Router,
+    RouterOutlet
+} from '@angular/router';
 
 import { setTheme } from 'ngx-bootstrap/utils';
 
@@ -36,6 +45,8 @@ import { AppManagerService } from '../../services/app.manager.service';
 import { PipeProvider } from '../../services/pipe-provider.service';
 import { AppSpinnerComponent } from '../app-spinner.component';
 import { DialogComponent } from '@wm/components/dialogs/design-dialog';
+import { filter } from "rxjs/operators";
+import { Subscription}  from "rxjs";
 
 interface SPINNER {
     show: boolean;
@@ -50,9 +61,13 @@ interface SPINNER {
     templateUrl: './app.component.html',
     encapsulation: ViewEncapsulation.None
 })
-export class AppComponent implements DoCheck, AfterViewInit {
+export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
     public startApp = false;
     public isApplicationType = false;
+    public enableSkipToMainContent = getWmProjectProperties().enableSkipToMainContent === 'true' || getWmProjectProperties().enableSkipToMainContent === true;
+    private retryCount = 0;
+    private navigationEndSubscription!: Subscription;
+    appLocale: any = {};
 
     @ViewChild(RouterOutlet) routerOutlet: RouterOutlet;
 
@@ -68,7 +83,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
         private spinnerService: AbstractSpinnerService,
         ngZone: NgZone,
         private router: Router,
-        private app: App,
+        public app: App,
         private appManager: AppManagerService,
         private customIconsLoaderService: CustomIconsLoaderService
     ) {
@@ -76,6 +91,7 @@ export class AppComponent implements DoCheck, AfterViewInit {
         setNgZone(ngZone);
         setAppRef(_appRef);
 
+        this.appLocale = app.appLocale;
         this.isApplicationType = getWmProjectProperties().type === 'APPLICATION';
         if (this.isApplicationType) {
             this.customIconsLoaderService.load();
@@ -188,8 +204,8 @@ export class AppComponent implements DoCheck, AfterViewInit {
         //override the attach/detach methods
         const oAttach = this.routerOutlet.attach;
         const oDetach = this.routerOutlet.detach;
-        this.routerOutlet.attach = (componentRef: any) => {
-            oAttach.call(this.routerOutlet, componentRef);
+        this.routerOutlet.attach = (componentRef: any, activatedRoute:  ActivatedRoute) => {
+            oAttach.call(this.routerOutlet, componentRef, activatedRoute);
             componentRef.instance.ngOnAttach();
         };
         this.routerOutlet.detach = () => {
@@ -199,12 +215,48 @@ export class AppComponent implements DoCheck, AfterViewInit {
         };
     }
 
+    skipToAppContent(event: Event): void {
+        event.preventDefault();
+        this.retryCount = 0;
+        this.tryFocusContent();
+    }
+
+    private tryFocusContent(): void {
+        const contentEl = document.querySelector('.app-page-content') as HTMLElement;
+
+        if (contentEl) {
+            contentEl.setAttribute('tabindex', '-1'); // Ensure it's focusable
+            contentEl.focus({ preventScroll: false });
+            contentEl.scrollIntoView({ behavior: 'smooth' });
+        } else if (this.retryCount < 10) {
+            this.retryCount++;
+            setTimeout(() => this.tryFocusContent(), 100); // Retry every 100ms
+        }
+    }
+
     ngAfterViewInit() {
         document.documentElement.setAttribute('lang', getWmProjectProperties().defaultLanguage);
-            this.start();
+        this.start();
+
+        if (this.enableSkipToMainContent) {
+           this.navigationEndSubscription = this.router.events
+                .pipe(filter((e) => e instanceof NavigationEnd))
+                .subscribe(() => {
+                    const el = document.getElementById('app-focus-start');
+                    if (el) {
+                        el.focus();
+                    }
+                });
+        }
     }
 
     ngDoCheck() {
         $invokeWatchers();
+    }
+
+    ngOnDestroy() {
+        if (this.navigationEndSubscription){
+            this.navigationEndSubscription.unsubscribe();
+        }
     }
 }

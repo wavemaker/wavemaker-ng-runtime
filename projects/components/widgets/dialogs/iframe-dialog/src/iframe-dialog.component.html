@@ -11,6 +11,10 @@
       [title]="title"
       [titleid]="titleId"
     ></div>
+  }@else if (!showheader && title) {
+      <h4 *ngIf="(!showHeader && title)" [id]="titleId" class="sr-only">
+          {{ title }}
+      </h4>
   }
   <div wmDialogBody>
     <div wmIframe encodeurl.bind="encodeurl" iframesrc.bind="url" height.bind="height" width.bind="width" hint.bind="hint"></div>

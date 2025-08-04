@@ -368,7 +368,11 @@ describe('wm-chips: Component Specific Tests', () => {
 
     describe('onInputClear', () => {
         it('should focus on last chip when conditions are met', () => {
-            const mockEvent = new Event('keydown');
+           const mockEvent = {
+                target: { value: 'chip text' },
+                stopPropagation: jest.fn(),
+                preventDefault: jest.fn()
+            } as unknown as KeyboardEvent;
             wmComponent.chipsList = [{}, {}];
             wmComponent.searchComponent = { query: '' } as any;
             const lastChipMock = { focus: jest.fn() };

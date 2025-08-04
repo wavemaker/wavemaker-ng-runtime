@@ -1,5 +1,7 @@
-<span [textContent]="minvalue" class="app-slider-value pull-left"></span>
-<span [textContent]="maxvalue" class="app-slider-value pull-right"></span>
+@if(!showmarkers){
+  <span [textContent]="minvalue" class="app-slider-value pull-left"></span>
+  <span [textContent]="maxvalue" class="app-slider-value pull-right"></span>
+}
 <input class="range-input" aria-orientation="horizontal"
   focus-target
   type="range" [title]="datavalue"
@@ -17,4 +19,18 @@
   [tabindex]="tabindex"/>
 @if (readonly || disabled) {
   <div aria-readonly="true" class="readonly-wrapper"></div>
+}
+@if(showmarkers){
+    <div class="marker-container">
+        <div *ngFor="let marker of markerItems"
+             class="marker-wrapper"
+             [ngStyle]="{ left: marker.left + 'px' }"
+             [attr.title]="marker.label">
+            <div class="marker-label" [ngClass]="marker.position" [attr.title]="marker.label">
+                {{ marker.label }}
+            </div>
+            <div class="marker-dot" [attr.title]="marker.label"></div>
+        </div>
+    </div>
+
 }

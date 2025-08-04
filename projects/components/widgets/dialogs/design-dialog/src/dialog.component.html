@@ -11,6 +11,10 @@
       [title]="title"
       [titleid]="titleId"
     ></div>
+  } @else if (!showheader && title) {
+      <h4 *ngIf="(!showHeader && title)" [id]="titleId" class="sr-only">
+          {{ title }}
+      </h4>
   }
   <div wmDialogBody>
     <ng-container *ngTemplateOutlet="dialogBody"></ng-container>

@@ -4,6 +4,8 @@ import { WidgetRef } from '../../framework/types';
 interface MockWidgetRef extends WidgetRef {
     $element: any;
     redraw?: jest.Mock;
+    widgetType : string;
+    Widgets  : any
 }
 
 describe('RedrawableDirective', () => {
@@ -20,7 +22,8 @@ describe('RedrawableDirective', () => {
 
         mockWidget = {
             $element: mockElement,
-            redraw: jest.fn()
+            redraw: jest.fn(),
+            widgetType : 'wm-widget'
         } as MockWidgetRef;
 
         directive = new RedrawableDirective(mockWidget);
@@ -115,5 +118,38 @@ describe('RedrawableDirective', () => {
 
             expect(() => directive.redraw()).not.toThrow();
         });
+
+        it('should call innerWidget.redraw for each widget in prefab', () => {
+            const innerWidget1 = { redraw: jest.fn() };
+            const innerWidget2 = { redraw: jest.fn() };
+
+            mockElement.closest.mockImplementation((selector) => {
+                if (selector === '[wmtabpane]') {
+                    return {
+                        length: 1,
+                        hasClass: jest.fn().mockReturnValue(true)
+                    };
+                }
+                return {
+                    length: 0,
+                    find: jest.fn().mockReturnThis(),
+                    hasClass: jest.fn().mockReturnValue(false)
+                };
+            });
+
+            mockWidget.widgetType = 'wm-prefab-custom';
+            mockWidget.Widgets = {
+                widget1: innerWidget1,
+                widget2: innerWidget2
+            };
+
+            delete mockWidget.redraw;
+
+            directive.redraw();
+
+            expect(innerWidget1.redraw).toHaveBeenCalled();
+            expect(innerWidget2.redraw).toHaveBeenCalled();
+        });
+
     });
 });
