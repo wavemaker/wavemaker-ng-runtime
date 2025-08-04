@@ -192,6 +192,16 @@ const PREFAB_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab', name: 'P
 const RICH_TEXT_EDITOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/rich-text-editor', name: 'RichTextEditorComponent' }];
 const TREE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/tree', name: 'TreeComponent' }];
 
+// Pipes
+const TO_DATE_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'ToDatePipe' }];
+const TO_CURRENCY_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'ToCurrencyPipe' }];
+const NUMBER_TO_STRING_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'NumberToStringPipe' }];
+const STRING_TO_NUMBER_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'StringToNumberPipe' }];
+const TIME_FROM_NOW_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'TimeFromNowPipe' }];
+const PREFIX_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'PrefixPipe' }];
+const SUFFIX_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'SuffixPipe' }];
+const CUSTOM_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'CustomPipe' }];
+
 export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-accordion', ACCORDION_DIRECTIVE],
     ['wm-accordionpane', ACCORDION_PANE_COMPONENT],
@@ -287,4 +297,15 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-video', VIDEO_COMPONENT],
     ['wm-wizard', WIZARD_COMPONENT],
     ['wm-wizardstep', WIZARD_COMPONENT],
+]);
+
+export  const PIPE_IMPORTS: Map<string, ImportDef[]> = new Map([
+    ['toDate', TO_DATE_PIPE],
+    ['toCurrency', TO_CURRENCY_PIPE],
+    ['numberToString', NUMBER_TO_STRING_PIPE],
+    ['stringToNumber', STRING_TO_NUMBER_PIPE],
+    ['timeFromNow', TIME_FROM_NOW_PIPE],
+    ['prefix', PREFIX_PIPE],
+    ['suffix', SUFFIX_PIPE],
+    ['custom', CUSTOM_PIPE],
 ]);
