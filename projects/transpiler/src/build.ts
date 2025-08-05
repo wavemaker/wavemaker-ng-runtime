@@ -478,6 +478,13 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
         }
     }
 
+    if (node.name === 'wm-liveform') {
+        const formlayout = attrMap.get('formlayout');
+        if (formlayout === 'dialog') {
+            importCollector(WIDGET_IMPORTS.get('wm-dialog'));
+        }
+    }
+
     if (nodeDef && nodeDef.imports) {
         let imports = [];
         if (typeof nodeDef.imports === 'function') {
