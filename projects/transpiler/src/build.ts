@@ -447,33 +447,34 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
 
     if (node.name === 'wm-table-column') {
         const formatpattern = attrMap.get('custompipeformat') || attrMap.get('formatpattern');
-
-        switch (formatpattern) {
-            case 'toDate':
-                importCollector(PIPE_IMPORTS.get('toDate'));
-                break;
-            case 'toCurrency':
-                importCollector(PIPE_IMPORTS.get('toCurrency'));
-                break;
-            case 'numberToString':
-                importCollector(PIPE_IMPORTS.get('numberToString'));
-                break;
-            case 'stringToNumber':
-                importCollector(PIPE_IMPORTS.get('stringToNumber'));
-                break;
-            case 'timeFromNow':
-                importCollector(PIPE_IMPORTS.get('timeFromNow'));
-                break;
-            case 'prefix':
-                importCollector(PIPE_IMPORTS.get('prefix'));
-                break;
-            case 'suffix':
-                importCollector(PIPE_IMPORTS.get('suffix'));
-                break;
-            default:
-                if(checkIsCustomPipeExpression(formatpattern)){
-                    importCollector(PIPE_IMPORTS.get('custom'));
-                }
+        if (!!formatpattern) {
+            switch (formatpattern) {
+                case 'toDate':
+                    importCollector(PIPE_IMPORTS.get('toDate'));
+                    break;
+                case 'toCurrency':
+                    importCollector(PIPE_IMPORTS.get('toCurrency'));
+                    break;
+                case 'numberToString':
+                    importCollector(PIPE_IMPORTS.get('numberToString'));
+                    break;
+                case 'stringToNumber':
+                    importCollector(PIPE_IMPORTS.get('stringToNumber'));
+                    break;
+                case 'timeFromNow':
+                    importCollector(PIPE_IMPORTS.get('timeFromNow'));
+                    break;
+                case 'prefix':
+                    importCollector(PIPE_IMPORTS.get('prefix'));
+                    break;
+                case 'suffix':
+                    importCollector(PIPE_IMPORTS.get('suffix'));
+                    break;
+                default:
+                    if(checkIsCustomPipeExpression(formatpattern)){
+                        importCollector(PIPE_IMPORTS.get('custom'));
+                    }
+            }
         }
     }
 
