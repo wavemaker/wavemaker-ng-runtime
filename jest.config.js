@@ -2,7 +2,7 @@ module.exports = {
   preset: "jest-preset-angular",
   testTimeout: 15000,
   roots: ["<rootDir>/projects"],
-  testEnvironment: "jsdom",
+    testEnvironment: 'jest-environment-jsdom',
   transformIgnorePatterns: [
     '/node_modules/(?!(@wavemaker/app-ng-runtime|lodash-es|@angular|angular-imask|ng-circle-progress|@wavemaker/variables|@wavemaker/foundation-css|@wavemaker/custom-widgets-m3|ngx-toastr|ngx-bootstrap|ngx-color-picker|@fullcalendar|preact)/)',
   ],

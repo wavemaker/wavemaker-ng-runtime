@@ -1,3 +1,4 @@
+
 // This file is automatically loaded when running `jest` commands
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
 import { ToastrModule } from 'ngx-toastr';
@@ -91,9 +92,8 @@ beforeEach(() => {
         reload: jest.fn(),
       },
     },
-  });
 });
-
+});
 // jest.setup.js
 Object.defineProperty(global.HTMLMediaElement.prototype, 'load', {
     configurable: true,
@@ -122,3 +122,5 @@ Object.defineProperty(global.HTMLMediaElement.prototype, 'addTextTrack', {
     writable: true,
     value: jest.fn(),
 });
+
+
