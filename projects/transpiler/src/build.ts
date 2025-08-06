@@ -7,7 +7,7 @@ import {
 } from '@angular/compiler';
 import { PIPE_IMPORTS, WIDGET_IMPORTS } from './imports';
 import {find, isEqual, isFunction, remove, sortBy, uniqWith} from "lodash-es";
-import { checkIsCustomPipeExpression } from "@wm/core";
+import { checkIsCustomPipeExpression, FormWidgetType } from "@wm/core";
 
 const CSS_REGEX = {
     COMMENTS_FORMAT : /\/\*((?!\*\/).|\n)+\*\//g,
@@ -482,6 +482,13 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
         const formlayout = attrMap.get('formlayout');
         if (formlayout === 'dialog') {
             importCollector(WIDGET_IMPORTS.get('wm-dialog'));
+        }
+    }
+
+    if (node.name === 'wm-form-field' || node.name === 'wm-filter-field') {
+        const formfieldtype = attrMap.get('type');
+        if (formfieldtype && [FormWidgetType.DATE, FormWidgetType.DATETIME, FormWidgetType.TIME, FormWidgetType.TIMESTAMP].includes(formfieldtype)) {
+            importCollector(PIPE_IMPORTS.get('toDate'));
         }
     }
 
