@@ -94,7 +94,6 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
     private formattedDataset: any;
     private isformfield: boolean;
     private $typeaheadEvent: Event;
-    private allowupdate:boolean=true;
 
     public tabindex: number;
     public startIndex: number;
@@ -209,9 +208,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 // if prev datavalue is not equal to current datavalue then clear the modelByKey and queryModel
                 if (!isObject(val) && (this as any).prevDatavalue !== val) {
                     this._modelByKey = undefined;
-                    if (this.datavalue && this.datavalue !== this.query) {
-                        this.query = '';
-                    } this.queryModel = '';
+                    this.query = this.queryModel = '';
                 }
                 // if the datafield is ALLFILEDS do not fetch the records
                 // update the query model with the values we have
@@ -607,7 +604,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             }
 
             // Make default query call only when datasource supports CRUD (live variable).
-            if (!this._defaultQueryInvoked && this.datasource.execute(DataSource.Operation.SUPPORTS_CRUD) && this.allowupdate) {
+            if (!this._defaultQueryInvoked && this.datasource.execute(DataSource.Operation.SUPPORTS_CRUD)) {
                 this.debounceDefaultQuery(data);
             }
         }
@@ -641,17 +638,14 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             // resetting the queryModel only when prevDatavalue is equal to data
             if ((this as any).prevDatavalue !== data) {
                 this.queryModel = undefined;
-                if (data && data!== this.query) {
-                    this.query = '';
-                }
+                this.query = '';
                 return;
             }
         }
         this.updateDatavalueFromQueryModel();
 
         // Show the label value on input.
-        this._lastQuery  = isDefined(this.queryModel) && this.queryModel.length ? get(this.queryModel[0], 'label') : '';
-        this.query=isDefined(this.queryModel) && this.queryModel.length ? get(this.queryModel[0], 'label') || this.queryModel : '';
+        this._lastQuery = this.query = isDefined(this.queryModel) && this.queryModel.length ? get(this.queryModel[0], 'label') : '';
         this.showClosebtn = (this.query !== '');
     }
 
@@ -746,15 +740,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                     }, 30))();
                     this.isScrolled = false;
                 }
-                if (!this.datavalue) {
-                    this.allowupdate=false;
-                    this.queryModel = this.query;
-                    this.widget.datavalue = this.query;
-                    this.allowupdate=true;
-                }
                 // When no result is found, set the datavalue to undefined.
                 if (!result.length) {
-                    this._modelByValue = query;
+                    this._modelByValue = undefined;
                     this.queryModel = (query as string);
                 }
                 // on focusout i.e. on other widget focus, if n/w is pending loading icon is shown, when data is available then dropdown is shown again.
