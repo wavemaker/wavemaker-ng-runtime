@@ -122,7 +122,7 @@ describe('wm-switch: Component specific tests: ', () => {
         expect(wmComponent.invokeOnChange).toHaveBeenCalled();
     });
 
-    xit('should not select option when disabled', () => {
+    it('should not select option when disabled', () => {
         const mockEvent = { preventDefault: jest.fn() };
         wmComponent.disabled = true;
         wmComponent.modelByKey = 'initial';

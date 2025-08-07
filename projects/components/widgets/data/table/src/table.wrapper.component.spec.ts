@@ -2363,7 +2363,7 @@ describe("DataTable", () => {
                 });
             });
 
-            xdescribe("Quick Edit", () => {
+            describe("Quick Edit", () => {
                 @Component({
                     template: quick_edit_markup
                 })
@@ -2676,7 +2676,7 @@ describe("DataTable", () => {
                 });
             });
 
-            xdescribe("Summary Row", () => {
+            describe("Summary Row", () => {
                 @Component({
                     template: summary_row_markup
                 })

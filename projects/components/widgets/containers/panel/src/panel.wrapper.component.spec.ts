@@ -101,7 +101,7 @@ describe("PanelComponent", () => {
         expect(panelWrapperComponent).toBeTruthy();
     });
 
-    xit("should trigger the panel action item click callback", async () => {
+    it("should trigger the panel action item click callback", async () => {
         // Get the necessary elements
         dropdownToggleEle = getdropdownToggleEle();
         let wmMenuEle = getwmMenuEle();
