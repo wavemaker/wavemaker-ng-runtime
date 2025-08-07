@@ -290,7 +290,7 @@ describe('ListComponent', () => {
         expect(paginationElem).toBeTruthy();
     });
 
-    xit('should apply pagination type as classic', () => {
+    it('should apply pagination type as classic', () => {
         listComponent.navigation = 'Classic';
         jest.spyOn(listComponent, 'onPropertyChange');
         listComponent.onPropertyChange('navigation', 'Classic');
@@ -299,7 +299,7 @@ describe('ListComponent', () => {
         expect(paginationElem).toBeTruthy();
     });
 
-    xit('should apply pagination type as basic', () => {
+    it('should apply pagination type as basic', () => {
         listComponent.navigation = 'Basic';
         fixture.detectChanges();
         const paginationElem = fixture.debugElement.query(By.css('.basic'));

@@ -8,7 +8,9 @@ module.exports = {
   ],
   testMatch: [
     "**/projects/**/*.spec.ts",
-    // "**/projects/components/widgets/prefab/src/prefab-container/prefab-container.spec.ts",
+    //"**/projects/core/src/services/state-persistence.spec.ts"
+     // "**/projects/core/src/utils/utils.spec.ts"
+   //  "**/projects/components/widgets/prefab/src/prefab-container/prefab-container.spec.ts",
   ],
   testPathIgnorePatterns: [
     'projects/components/widgets/data/table/src/table.wrapper.component.spec.ts',

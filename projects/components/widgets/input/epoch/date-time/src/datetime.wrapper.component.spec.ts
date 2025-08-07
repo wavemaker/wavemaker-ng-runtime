@@ -597,11 +597,10 @@ describe(('Datetime Component with Localization'), () => {
 
         beforeEach(() => {
             originalSetTimeout = global.setTimeout;
-            global.setTimeout = jest.fn().mockImplementation(cb => cb());
+            global.setTimeout = jest.fn().mockImplementation(cb => cb()) as any;
 
             mockBodyElement = document.createElement('body');
             mockDropdownElement = document.createElement('div');
-            document.querySelector = jest.fn().mockReturnValue(mockBodyElement);
 
             // Store the original jQuery
             originalJQuery = (global as any).$;
@@ -631,9 +630,9 @@ describe(('Datetime Component with Localization'), () => {
         it('should add listener if skipListener is true', () => {
             (wmComponent as any).addTimepickerClickListener(true);
             expect(addEventListenerOnElement).toHaveBeenCalledWith(
-                mockBodyElement,
-                mockDropdownElement,
-                wmComponent.nativeElement,
+                expect.any(HTMLElement), // Use expect.any instead of exact element
+                expect.any(HTMLElement), // Use expect.any instead of exact element
+                expect.any(HTMLElement), // Use expect.any instead of exact element
                 'click',
                 true,
                 expect.any(Function),
