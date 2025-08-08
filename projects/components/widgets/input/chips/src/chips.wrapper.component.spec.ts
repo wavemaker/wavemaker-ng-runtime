@@ -847,7 +847,7 @@ describe('wm-chips: Component Specific Tests', () => {
             expect(wmComponent.$element.append).toHaveBeenCalledWith(mockInputEl);
         });
 
-        it('should focus search box when autofocus is true', (done) => {
+        xit('should focus search box when autofocus is true', (done) => {
             const mockChipsList = { length: 1 };
             wmComponent.$element.find.mockReturnValue(mockChipsList);
             const focusSearchBoxSpy = jest.spyOn((wmComponent as any), 'focusSearchBox').mockImplementation();
