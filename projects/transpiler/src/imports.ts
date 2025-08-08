@@ -297,9 +297,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-video', VIDEO_COMPONENT],
     ['wm-wizard', WIZARD_COMPONENT],
     ['wm-wizardstep', WIZARD_COMPONENT],
-]);
 
-export  const PIPE_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['toDate', TO_DATE_PIPE],
     ['toCurrency', TO_CURRENCY_PIPE],
     ['numberToString', NUMBER_TO_STRING_PIPE],

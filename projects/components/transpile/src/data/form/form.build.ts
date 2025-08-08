@@ -152,6 +152,15 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const provider = new Map();
             provider.set('form_reference', shared.get('counter'));
             return provider;
+        },
+        imports: (attrs: Map<String, String>): string[] => {
+            if (directiveAttr === 'wmLiveForm') {
+                const formlayout = attrs.get('formlayout');
+                if (formlayout === 'dialog') {
+                    return ['wm-dialog'];
+                }
+            }
+            return [];
         }
     };
 };

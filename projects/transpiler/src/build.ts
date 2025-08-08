@@ -5,9 +5,8 @@ import {
     Comment,
     getHtmlTagDefinition, ParseSourceSpan
 } from '@angular/compiler';
-import { PIPE_IMPORTS, WIDGET_IMPORTS } from './imports';
+import { WIDGET_IMPORTS } from './imports';
 import {find, isEqual, isFunction, remove, sortBy, uniqWith} from "lodash-es";
-import { checkIsCustomPipeExpression, FormWidgetType } from "@wm/core";
 
 const CSS_REGEX = {
     COMMENTS_FORMAT : /\/\*((?!\*\/).|\n)+\*\//g,
@@ -430,54 +429,6 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
         }
     }
     importCollector(WIDGET_IMPORTS.get(node.name));
-
-    if (node.name === 'wm-table-column') {
-        const formatpattern = attrMap.get('custompipeformat') || attrMap.get('formatpattern');
-        if (!!formatpattern) {
-            switch (formatpattern) {
-                case 'toDate':
-                    importCollector(PIPE_IMPORTS.get('toDate'));
-                    break;
-                case 'toCurrency':
-                    importCollector(PIPE_IMPORTS.get('toCurrency'));
-                    break;
-                case 'numberToString':
-                    importCollector(PIPE_IMPORTS.get('numberToString'));
-                    break;
-                case 'stringToNumber':
-                    importCollector(PIPE_IMPORTS.get('stringToNumber'));
-                    break;
-                case 'timeFromNow':
-                    importCollector(PIPE_IMPORTS.get('timeFromNow'));
-                    break;
-                case 'prefix':
-                    importCollector(PIPE_IMPORTS.get('prefix'));
-                    break;
-                case 'suffix':
-                    importCollector(PIPE_IMPORTS.get('suffix'));
-                    break;
-                default:
-                    if(checkIsCustomPipeExpression(formatpattern)){
-                        importCollector(PIPE_IMPORTS.get('custom'));
-                    }
-            }
-        }
-    }
-
-    if (node.name === 'wm-liveform') {
-        const formlayout = attrMap.get('formlayout');
-        if (formlayout === 'dialog') {
-            importCollector(WIDGET_IMPORTS.get('wm-dialog'));
-        }
-    }
-
-    if (node.name === 'wm-form-field' || node.name === 'wm-filter-field') {
-        const formfieldtype = attrMap.get('type');
-        if (formfieldtype && [FormWidgetType.DATE, FormWidgetType.DATETIME, FormWidgetType.TIME, FormWidgetType.TIMESTAMP].includes(formfieldtype)) {
-            importCollector(PIPE_IMPORTS.get('toDate'));
-        }
-    }
-
     if (nodeDef && nodeDef.imports) {
         let imports = [];
         if (typeof nodeDef.imports === 'function') {

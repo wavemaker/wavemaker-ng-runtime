@@ -175,7 +175,14 @@ const registerFormField = (isFormField): IBuildTaskDef => {
         imports: (attrs: Map<String, String>): string[] => {
             const requiredWidget = getRequiredFormWidget(attrs.get('__widgetType') || attrs.get('type'));
             attrs.delete('__widgetType');
-            return [requiredWidget, 'wm-form'];
+
+            let pipeImports = [];
+            const formfieldtype: any = attrs.get('type');
+            if (formfieldtype && [FormWidgetType.DATE, FormWidgetType.DATETIME, FormWidgetType.TIME, FormWidgetType.TIMESTAMP].includes(formfieldtype)) {
+                pipeImports.push('toDate');
+            }
+
+            return [requiredWidget, 'wm-form', ...pipeImports];
         }
     };
 };
