@@ -128,8 +128,8 @@
         "@rollup/rollup-win32-x64": "4.9.5"
     },
     "engines": {
-        "node": "~22.12.0",
-        "npm": "~10.9.0"
+        "node": "22.18.0",
+        "npm": "10.9.3"
     },
     "engineStrict": true
 }
