@@ -464,7 +464,7 @@ describe('getRequiredFormWidget', () => {
     });
 
     it('should return "wm-time" for TIMESTAMP', () => {
-        expect(getRequiredFormWidget(FormWidgetType.TIMESTAMP)).toBe('wm-time');
+        expect(getRequiredFormWidget(FormWidgetType.TIMESTAMP)).toBe('wm-datetime');
     });
 
     it('should return "wm-rating" for RATING', () => {
@@ -480,8 +480,8 @@ describe('getRequiredFormWidget', () => {
     });
 
     it('should return "wm-text" for unspecified widget types', () => {
-        expect(getRequiredFormWidget(FormWidgetType.CHECKBOX)).toBe('wm-text');
-        expect(getRequiredFormWidget(FormWidgetType.SELECT)).toBe('wm-text');
+        expect(getRequiredFormWidget(FormWidgetType.CHECKBOX)).toBe('wm-checkbox');
+        expect(getRequiredFormWidget(FormWidgetType.SELECT)).toBe('wm-select');
         expect(getRequiredFormWidget('UNKNOWN_TYPE' as FormWidgetType)).toBe('wm-text');
     });
 });

@@ -137,9 +137,9 @@ export const getRequiredFormWidget = (widgetType): string => {
         case FormWidgetType.DATE:
             return 'wm-date';
         case FormWidgetType.DATETIME:
+        case FormWidgetType.TIMESTAMP:
             return 'wm-datetime';
         case FormWidgetType.TIME:
-        case FormWidgetType.TIMESTAMP:
             return 'wm-time';
         case FormWidgetType.RATING:
             return 'wm-rating';

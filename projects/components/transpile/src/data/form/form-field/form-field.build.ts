@@ -8,7 +8,6 @@ import {
 } from '@wm/core';
 
 import {ALLFIELDS, isDataSetWidget} from '../../../utils/utils';
-import {forEach} from "lodash-es";
 
 const tagName = 'div';
 const idGen = new IDGenerator('formfield_');
@@ -173,12 +172,12 @@ const registerFormField = (isFormField): IBuildTaskDef => {
             return provider;
         },
         imports: (attrs: Map<String, String>): string[] => {
-            const requiredWidget = getRequiredFormWidget(attrs.get('__widgetType') || attrs.get('type'));
+            const widgetType = attrs.get('__widgetType') || attrs.get('type');
+            const requiredWidget = getRequiredFormWidget(widgetType);
             attrs.delete('__widgetType');
 
             let pipeImports = [];
-            const formfieldtype: any = attrs.get('type');
-            if (formfieldtype && [FormWidgetType.DATE, FormWidgetType.DATETIME, FormWidgetType.TIME, FormWidgetType.TIMESTAMP].includes(formfieldtype)) {
+            if (widgetType && [FormWidgetType.DATE, FormWidgetType.DATETIME, FormWidgetType.TIME, FormWidgetType.TIMESTAMP].includes(widgetType as any)) {
                 pipeImports.push('toDate');
             }
 
