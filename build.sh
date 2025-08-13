@@ -482,7 +482,7 @@ bundleJS() {
         ./dist/tmp/libs/tslib/tslib.umd.js \
         ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/bundles/zone.umd.js \
-        ./node_modules/rxjs/bundles/rxjs.umd.js \
+        ./node_modules/rxjs/dist/bundles/rxjs.umd.js \
         ./node_modules/@angular/compiler/bundles/compiler.umd.js \
         ./node_modules/@angular/core/bundles/core-signals.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
@@ -527,7 +527,7 @@ bundleJS() {
         ./node_modules/jquery-ui/ui/widgets/draggable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/iscroll/build/iscroll.js \
-        ./node_modules/js-cookie/src/js.cookie.js \
+        ./node_modules/js-cookie/dist/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \
