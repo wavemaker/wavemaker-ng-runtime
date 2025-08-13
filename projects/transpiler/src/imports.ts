@@ -7,7 +7,7 @@ const NG_REACTIVE_FORM_MODULE: ImportDef[] = [{ from: '@angular/forms', name: 'R
 // NGX Bootstrap Modules
 const NGX_BS_DATE_PICKER: ImportDef[] = [{ from: 'ngx-bootstrap/datepicker', name: 'BsDatepickerModule', as: 'ngx_BsDatepickerModule' }];
 const NGX_CAROUSEL_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/carousel', name: 'CarouselModule', as: 'ngxCarouselModule', forRoot: true }];
-const NGX_COLOR_PICKER_MODULE: ImportDef[] = [{ from: 'ngx-color-picker', name: 'ColorPickerModule', as: 'ngx_ColorPickerModule' }];
+const NGX_COLOR_PICKER_DIRECTIVE: ImportDef[] = [{ from: 'ngx-color-picker', name: 'ColorPickerDirective', as: 'ngx_ColorPickerDirective' }];
 const NGX_DROP_DOWN_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/dropdown', name: 'BsDropdownModule', as: 'ngxBsDropdownModule', forRoot: true }];
 //const NGX_MODAL_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/modal', name: 'ModalModule', as: 'ngx_ModalModule' }];
 const NGX_PAGINATION_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/pagination', name: 'PaginationModule', as: 'ngxPaginationModule', forRoot: true }];
@@ -81,7 +81,7 @@ const TOP_NAV_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/compo
 // Input Components
 const CALENDAR_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, { from: '@wm/components/input/calendar', name: 'CalendarComponent' }];
 const CHIPS_COMPONENT: ImportDef[] = [...SEARCH_COMPONENT, { from: '@wm/components/input/chips', name: 'ChipsComponent' }];
-const COLOR_PICKER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_COLOR_PICKER_MODULE, { from: '@wm/components/input/color-picker', name: 'ColorPickerComponent' }];
+const COLOR_PICKER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_COLOR_PICKER_DIRECTIVE, { from: '@wm/components/input/color-picker', name: 'ColorPickerComponent' }];
 const CURRENCY_COMPONENT: ImportDef[] = [{ from: '@wm/components/input/currency', name: 'CurrencyComponent' }];
 const DATE_COMPONENT: ImportDef[] = [
     ...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_DROP_DOWN_MODULE,
