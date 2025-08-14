@@ -95,7 +95,6 @@
               "./libraries/scripts/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
               "./node_modules/iscroll/build/iscroll.js",
-              "./node_modules/js-cookie/dist/js.cookie.js",
               "./node_modules/jssha/dist/sha256.js",
               "./node_modules/@ztree/ztree_v3/js/jquery.ztree.all.js",
               "./libraries/scripts/tree-keyboard-navigation/keyboard-navigation.js"
