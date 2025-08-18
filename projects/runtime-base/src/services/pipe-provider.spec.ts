@@ -62,7 +62,7 @@ describe('PipeProvider', () => {
         });
 
         it('should throw an error if the pipe name is invalid', () => {
-            expect(() => pipeProvider.meta('invalidPipe')).toThrowError("The pipe 'invalidPipe' could not be found");
+            expect(() => pipeProvider.meta('invalidPipe')).toThrow("The pipe 'invalidPipe' could not be found");
         });
     });
 
@@ -97,7 +97,7 @@ describe('PipeProvider', () => {
         });
 
         it('should throw an error if the pipe name is invalid', () => {
-            expect(() => pipeProvider.getInstance('invalidPipe')).toThrowError("The pipe 'invalidPipe' could not be found");
+            expect(() => pipeProvider.getInstance('invalidPipe')).toThrow("The pipe 'invalidPipe' could not be found");
         });
     });
 });

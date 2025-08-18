@@ -155,9 +155,33 @@ bundleWeb() {
         ./libraries/security/bundles/index.umd.js \
         ./libraries/components/base/bundles/index.umd.js \
         ./libraries/build-task/bundles/index.umd.js \
-        ./libraries/components/input/default/bundles/index.umd.js \
-        ./libraries/components/basic/default/bundles/index.umd.js \
-        ./libraries/components/basic/progress/bundles/index.umd.js \
+        ./libraries/components/input/base-form/bundles/index.umd.js \
+        ./libraries/components/input/button/bundles/index.umd.js \
+        ./libraries/components/input/base-form-custom/bundles/index.umd.js \
+        ./libraries/components/input/dataset-aware-form/bundles/index.umd.js \
+        ./libraries/components/input/text/bundles/index.umd.js \
+        ./libraries/components/input/caption-position/bundles/index.umd.js \
+        ./libraries/components/input/button-group/bundles/index.umd.js \
+        ./libraries/components/input/checkbox/bundles/index.umd.js \
+        ./libraries/components/input/checkboxset/bundles/index.umd.js \
+        ./libraries/components/input/composite/bundles/index.umd.js \
+        ./libraries/components/input/radioset/bundles/index.umd.js \
+        ./libraries/components/input/select/bundles/index.umd.js \
+        ./libraries/components/input/switch/bundles/index.umd.js \
+        ./libraries/components/input/number/bundles/index.umd.js \
+        ./libraries/components/input/textarea/bundles/index.umd.js \
+        ./libraries/components/basic/anchor/bundles/index.umd.js \
+        ./libraries/components/basic/audio/bundles/index.umd.js \
+        ./libraries/components/basic/html/bundles/index.umd.js \
+        ./libraries/components/basic/icon/bundles/index.umd.js \
+        ./libraries/components/basic/iframe/bundles/index.umd.js \
+        ./libraries/components/basic/label/bundles/index.umd.js \
+        ./libraries/components/basic/picture/bundles/index.umd.js \
+        ./libraries/components/basic/spinner/bundles/index.umd.js \
+        ./libraries/components/basic/video/bundles/index.umd.js \
+        ./libraries/components/basic/progress/progress-utils/bundles/index.umd.js \
+        ./libraries/components/basic/progress/progress-bar/bundles/index.umd.js \
+        ./libraries/components/basic/progress/progress-circle/bundles/index.umd.js \
         ./libraries/components/basic/rich-text-editor/bundles/index.umd.js \
         ./libraries/components/basic/search/bundles/index.umd.js \
         ./libraries/components/basic/tree/bundles/index.umd.js \
@@ -165,7 +189,12 @@ bundleWeb() {
         ./libraries/components/input/chips/bundles/index.umd.js \
         ./libraries/components/input/color-picker/bundles/index.umd.js \
         ./libraries/components/input/currency/bundles/index.umd.js \
-        ./libraries/components/input/epoch/bundles/index.umd.js \
+        ./libraries/components/input/epoch/picker/bundles/index.umd.js \
+        ./libraries/components/input/epoch/date-time-picker/bundles/index.umd.js \
+        ./libraries/components/input/epoch/base-date-time/bundles/index.umd.js \
+        ./libraries/components/input/epoch/date/bundles/index.umd.js \
+        ./libraries/components/input/epoch/date-time/bundles/index.umd.js \
+        ./libraries/components/input/epoch/time/bundles/index.umd.js \
         ./libraries/components/input/file-upload/bundles/index.umd.js \
         ./libraries/components/input/rating/bundles/index.umd.js \
         ./libraries/components/input/slider/bundles/index.umd.js \
@@ -230,10 +259,33 @@ buildApp() {
     ngPackagrBuild security projects/security '@wm/security'
     ngPackagrBuild variables projects/variables '@wm/variables'
     ngPackagrBuild components-base projects/components/base '@wm/components/base'
-
-    ngPackagrBuild components-input projects/components/widgets/input/default '@wm/components/input'
-    ngPackagrBuild components-basic projects/components/widgets/basic/default '@wm/components/basic'
-    ngPackagrBuild components-basic-progress projects/components/widgets/basic/progress '@wm/components/basic/progress'
+    ngPackagrBuild components-input-button projects/components/widgets/input/button '@wm/components/input/button'
+    ngPackagrBuild components-input-base-form projects/components/widgets/input/base-form '@wm/components/input/base-form'
+    ngPackagrBuild components-input-base-form-custom projects/components/widgets/input/base-form-custom '@wm/components/input/base-form-custom'
+    ngPackagrBuild components-input-dataset-aware-form projects/components/widgets/input/dataset-aware-form '@wm/components/input/dataset-aware-form'
+    ngPackagrBuild components-input-text projects/components/widgets/input/text '@wm/components/input/text'
+    ngPackagrBuild components-input-buttongroup projects/components/widgets/input/button-group '@wm/components/input/button-group'
+    ngPackagrBuild components-input-caption-position projects/components/widgets/input/caption-position '@wm/components/input/caption-position'
+    ngPackagrBuild components-input-checkbox projects/components/widgets/input/checkbox '@wm/components/input/checkbox'
+    ngPackagrBuild components-input-checkboxset projects/components/widgets/input/checkboxset '@wm/components/input/checkboxset'
+    ngPackagrBuild components-input-composite projects/components/widgets/input/composite '@wm/components/input/composite'
+    ngPackagrBuild components-input-number projects/components/widgets/input/number '@wm/components/input/number'
+    ngPackagrBuild components-input-radioset projects/components/widgets/input/radioset '@wm/components/input/radioset'
+    ngPackagrBuild components-input-select projects/components/widgets/input/select '@wm/components/input/select'
+    ngPackagrBuild components-input-textarea projects/components/widgets/input/textarea '@wm/components/input/textarea'
+    ngPackagrBuild components-input-switch projects/components/widgets/input/switch '@wm/components/input/switch'
+    ngPackagrBuild components-basic-anchor projects/components/widgets/basic/anchor '@wm/components/basic/anchor'
+    ngPackagrBuild components-basic-audio projects/components/widgets/basic/audio '@wm/components/basic/audio'
+    ngPackagrBuild components-basic-html projects/components/widgets/basic/html '@wm/components/basic/html'
+    ngPackagrBuild components-basic-icon projects/components/widgets/basic/icon '@wm/components/basic/icon'
+    ngPackagrBuild components-basic-iframe projects/components/widgets/basic/iframe '@wm/components/basic/iframe'
+    ngPackagrBuild components-basic-label projects/components/widgets/basic/label '@wm/components/basic/label'
+    ngPackagrBuild components-basic-picture projects/components/widgets/basic/picture '@wm/components/basic/picture'
+    ngPackagrBuild components-basic-spinner projects/components/widgets/basic/spinner '@wm/components/basic/spinner'
+    ngPackagrBuild components-basic-video projects/components/widgets/basic/video '@wm/components/basic/video'
+    ngPackagrBuild components-basic-progress-progress-utils projects/components/widgets/basic/progress/progress-utils '@wm/components/basic/progress/progress-utils'
+    ngPackagrBuild components-basic-progress-progress-bar projects/components/widgets/basic/progress/progress-bar '@wm/components/basic/progress/progress-bar'
+    ngPackagrBuild components-basic-progress-progress-circle projects/components/widgets/basic/progress/progress-circle '@wm/components/basic/progress/progress-circle'
     ngPackagrBuild components-basic-richtexteditor projects/components/widgets/basic/rich-text-editor '@wm/components/basic/rich-text-editor'
     ngPackagrBuild components-basic-search projects/components/widgets/basic/search '@wm/components/basic/search'
     ngPackagrBuild components-basic-tree projects/components/widgets/basic/tree '@wm/components/basic/tree'
@@ -242,7 +294,12 @@ buildApp() {
     ngPackagrBuild components-input-chips projects/components/widgets/input/chips '@wm/components/input/chips'
     ngPackagrBuild components-input-colorpicker projects/components/widgets/input/color-picker '@wm/components/input/color-picker'
     ngPackagrBuild components-input-currency projects/components/widgets/input/currency '@wm/components/input/currency'
-    ngPackagrBuild components-input-epoch projects/components/widgets/input/epoch '@wm/components/input/epoch'
+    ngPackagrBuild components-input-epoch-picker projects/components/widgets/input/epoch/picker '@wm/components/input/epoch/picker'
+    ngPackagrBuild components-input-epoch-date-time-picker projects/components/widgets/input/epoch/date-time-picker '@wm/components/input/epoch/date-time-picker'
+    ngPackagrBuild components-input-epoch-base-date-time projects/components/widgets/input/epoch/base-date-time '@wm/components/input/epoch/base-date-time'
+    ngPackagrBuild components-input-epoch-date projects/components/widgets/input/epoch/date '@wm/components/input/epoch/date'
+    ngPackagrBuild components-input-epoch-date-time projects/components/widgets/input/epoch/date-time '@wm/components/input/epoch/date-time'
+    ngPackagrBuild components-input-epoch-time projects/components/widgets/input/epoch/time '@wm/components/input/epoch/time'
     ngPackagrBuild components-input-fileupload projects/components/widgets/input/file-upload '@wm/components/input/file-upload'
     ngPackagrBuild components-input-rating projects/components/widgets/input/rating '@wm/components/input/rating'
     ngPackagrBuild components-input-slider projects/components/widgets/input/slider '@wm/components/input/slider'
@@ -425,7 +482,7 @@ bundleJS() {
         ./dist/tmp/libs/tslib/tslib.umd.js \
         ./dist/tmp/libs/core-js/core-js.umd.js \
         ./node_modules/zone.js/bundles/zone.umd.js \
-        ./node_modules/rxjs/bundles/rxjs.umd.js \
+        ./node_modules/rxjs/dist/bundles/rxjs.umd.js \
         ./node_modules/@angular/compiler/bundles/compiler.umd.js \
         ./node_modules/@angular/core/bundles/core-signals.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
@@ -469,9 +526,8 @@ bundleJS() {
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/draggable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
-        ./node_modules/hammerjs/hammer.min.js \
         ./node_modules/iscroll/build/iscroll.js \
-        ./node_modules/js-cookie/src/js.cookie.js \
+        ./node_modules/js-cookie/dist/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \

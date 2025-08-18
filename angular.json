@@ -94,9 +94,8 @@
               "./libraries/scripts/swipey/swipey.jquery.plugin.js",
               "./libraries/scripts/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
-              "./node_modules/hammerjs/hammer.min.js",
               "./node_modules/iscroll/build/iscroll.js",
-              "./node_modules/js-cookie/src/js.cookie.js",
+              "./node_modules/js-cookie/dist/js.cookie.js",
               "./node_modules/jssha/dist/sha256.js",
               "./node_modules/@ztree/ztree_v3/js/jquery.ztree.all.js",
               "./libraries/scripts/tree-keyboard-navigation/keyboard-navigation.js"
@@ -240,9 +239,8 @@
               "./node_modules/jquery-ui/ui/widgets/droppable.js",
               "./libraries/scripts/datatable/datatable.js",
               "./node_modules/summernote/dist/summernote-lite.min.js",
-              "./node_modules/hammerjs/hammer.min.js",
               "./node_modules/iscroll/build/iscroll.js",
-              "./node_modules/js-cookie/src/js.cookie.js",
+              "./node_modules/js-cookie/dist/js.cookie.js",
               "./node_modules/jssha/dist/sha256.js",
               "./node_modules/@ztree/ztree_v3/js/jquery.ztree.all.js",
               "./libraries/scripts/tree-keyboard-navigation/keyboard-navigation.js"
