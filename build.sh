@@ -527,7 +527,6 @@ bundleJS() {
         ./node_modules/jquery-ui/ui/widgets/draggable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
         ./node_modules/iscroll/build/iscroll.js \
-        ./node_modules/js-cookie/dist/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
         ./projects/swipey/src/swipey.jquery.plugin.js \
         ./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js \

@@ -191,8 +191,18 @@ describe('DateComponent', () => {
         // Check if the property was set correctly
         expect(wmComponent.getWidget().showweeks).toBe(false);
         
-        // The calendar might not be rendered in the test environment
-        // So we'll just verify the property was set correctly
+        // Open the datepicker dropdown to test the actual UI behavior
+        const dateButton = getHtmlSelectorElement(fixture, '.btn-time');
+        dateButton.nativeElement.click();
+        fixture.detectChanges();
+        
+        // Wait for the datepicker to be rendered
+        fixture.whenStable().then(() => {
+            // Check that week numbers are not displayed when showweeks is false
+            // The table.weeks class should not be present
+            const weekElements = document.getElementsByClassName('table.weeks');
+            expect(weekElements.length).toBe(0);
+        });
     }));
 
     it('should assign the shortkey to the input control as attribute accesskey ', waitForAsync(() => {
