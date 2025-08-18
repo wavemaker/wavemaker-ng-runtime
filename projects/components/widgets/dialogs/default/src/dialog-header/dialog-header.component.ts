@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ImagePipe, TextContentDirective } from "@wm/components/base";
+import { WmComponentsModule } from "@wm/components/base";
 import {Component, ElementRef, Inject, Input} from '@angular/core';
 
 import {addClass, toBoolean} from '@wm/core';
@@ -11,8 +11,8 @@ const DEFAULT_CLS = 'app-dialog-header modal-header';
 const DEFAULT_ICON_DIMENSIONS = '21px';
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, TextContentDirective, ImagePipe],
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: 'div[wmDialogHeader]',
     templateUrl: './dialog-header.component.html'
 })

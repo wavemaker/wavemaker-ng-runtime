@@ -114,7 +114,6 @@ export function setAngularLocale(I18nService) {
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        { provide: HTTP_INTERCEPTORS, useClass: HttpCallInterceptor, multi: true },
         // Provide Angular core services
         provideRouter(routes, withHashLocation(), withComponentInputBinding()),
         provideHttpClient(
@@ -136,6 +135,11 @@ export const appConfig: ApplicationConfig = {
             provide: LOCALE_ID,
             useFactory: setAngularLocale,
             deps: [AbstractI18nService]
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpCallInterceptor,
+            multi: true
         },
         { provide: App, useClass: AppRef },
         { provide: AbstractToasterService, useClass: ToasterServiceImpl },

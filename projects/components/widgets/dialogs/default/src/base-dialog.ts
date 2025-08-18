@@ -1,12 +1,12 @@
-import {Inject, Injectable, Injector, OnDestroy, Optional, TemplateRef} from '@angular/core';
-import {NavigationEnd, Router} from '@angular/router';
-import {BsModalRef, BsModalService, ModalOptions} from 'ngx-bootstrap/modal';
+import { Inject, Injectable, Injector, OnDestroy, Optional, TemplateRef } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import {AbstractDialogService, findRootContainer, generateGUId, isMobile} from '@wm/core';
+import { AbstractDialogService, findRootContainer, generateGUId, isMobile, getSheetPositionClass } from '@wm/core';
 
-import {BaseComponent, IDialog, IWidgetConfig, WidgetConfig} from '@wm/components/base';
+import { BaseComponent, IDialog, IWidgetConfig, WidgetConfig } from '@wm/components/base';
 
 const eventsRegistered = false;
 

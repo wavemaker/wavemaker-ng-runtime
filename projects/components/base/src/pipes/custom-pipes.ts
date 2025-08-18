@@ -5,7 +5,6 @@ import {WmPipe} from "./wm-pipe";
 import {filter, includes, isDate, isFunction, isObject, isUndefined, startsWith} from "lodash-es";
 
 import * as momentLib from 'moment-timezone/moment-timezone';
-
 const moment = momentLib.default || window['moment'];
 
 const getEpochValue = data => {

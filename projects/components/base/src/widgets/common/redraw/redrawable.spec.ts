@@ -1,5 +1,5 @@
-import {RedrawableDirective} from './redrawable.directive';
-import {WidgetRef} from '../../framework/types';
+import { RedrawableDirective } from './redrawable.directive';
+import { WidgetRef } from '../../framework/types';
 
 interface MockWidgetRef extends WidgetRef {
     $element: any;

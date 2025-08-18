@@ -4,12 +4,12 @@ import {
     Attribute,
     ContentChild,
     ContentChildren,
+    TemplateRef,
     Directive,
-    Inject,
     Injector,
     OnInit,
     Optional,
-    TemplateRef
+    Inject
 } from '@angular/core';
 
 import {
@@ -17,32 +17,17 @@ import {
     AppDefaults,
     DataSource,
     DataType,
+    debounce,
     FormWidgetType,
     getDisplayDateTimeFormat,
     isDateTimeType,
     isDefined
 } from '@wm/core';
-import {
-    applyFilterOnField,
-    BaseComponent,
-    BaseFieldValidations,
-    EDIT_MODE,
-    fetchRelatedFieldData,
-    getDataTableFilterWidget,
-    getDefaultValue,
-    getDistinctFieldProperties,
-    getDistinctValues,
-    getDistinctValuesForField,
-    getEditModeWidget,
-    getWatchIdentifier,
-    isDataSetWidget,
-    provideAsWidgetRef,
-    setHeaderConfigForTable
-} from '@wm/components/base';
-import {registerProps} from './table-column.props';
-import {TableComponent} from '../table.component';
-import {TableColumnGroupDirective} from '../table-column-group/table-column-group.directive';
-import {debounceTime} from 'rxjs/operators';
+import { applyFilterOnField, BaseFieldValidations, EDIT_MODE, fetchRelatedFieldData, getDataTableFilterWidget, getDefaultValue, getDistinctFieldProperties, getDistinctValues, getDistinctValuesForField, getEditModeWidget, getWatchIdentifier, isDataSetWidget, provideAsWidgetRef, setHeaderConfigForTable, BaseComponent } from '@wm/components/base';
+import { registerProps } from './table-column.props';
+import { TableComponent } from '../table.component';
+import { TableColumnGroupDirective } from '../table-column-group/table-column-group.directive';
+import { debounceTime } from 'rxjs/operators';
 import {cloneDeep, forEach, head, includes, last, map, max, mean, min, round, split, sum} from "lodash-es";
 
 const WIDGET_CONFIG = {widgetType: 'wm-table-column', hostClass: ''};

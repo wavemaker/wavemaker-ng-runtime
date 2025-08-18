@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import { Component, Input } from '@angular/core';
-import { TextContentDirective } from '@wm/components/base';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, TextContentDirective],
+  imports: [CommonModule, WmComponentsModule],
     selector: 'app-spinner',
     template: `
         @if (show) {

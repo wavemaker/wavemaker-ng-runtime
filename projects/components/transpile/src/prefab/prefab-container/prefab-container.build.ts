@@ -1,4 +1,4 @@
-import { Element, ParseSourceSpan, Text } from '@angular/compiler';
+import { Attribute, Element, ParseSourceSpan } from '@angular/compiler';
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 
@@ -7,17 +7,18 @@ const createElement = name => {
     return new Element(name, [], [], noSpan, noSpan, noSpan);
 };
 
+const addAtrribute = (node: Element, name: string, value: string) => {
+    const attr = new Attribute(name, value, noSpan, noSpan, noSpan, undefined, undefined);
+    node.attrs.push(attr);
+};
 const tagName = 'div';
 
 register('wm-prefab-container', (): IBuildTaskDef => {
     return {
         template: (node: Element)  => {
             const conditionalNode = createElement('ng-container');
-            const ifOpenText = new Text('@if (compileContent) {', null, undefined, undefined);
-            conditionalNode.children.push(ifOpenText);
+            addAtrribute(conditionalNode, '*ngIf', 'compileContent');
             conditionalNode.children = conditionalNode.children.concat(node.children);
-            const ifCloseText = new Text('}', null, undefined, undefined);
-            conditionalNode.children.push(ifCloseText);
             node.children.length = 0;
             node.children.push(conditionalNode);
         },

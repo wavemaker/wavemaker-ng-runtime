@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { TextContentDirective } from "@wm/components/base";
+import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterContentInit,
     AfterViewInit,
@@ -43,8 +43,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, TextContentDirective],
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: 'div[wmTabs]',
     templateUrl: './tabs.component.html',
     exportAs: 'wmTabs',

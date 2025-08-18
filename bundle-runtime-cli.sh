@@ -29,6 +29,8 @@ mkdir -p libraries/scripts/jquery-ui/ui/widgets/
 cp ./node_modules/jquery-ui/ui/widgets/sortable.js libraries/scripts/jquery-ui/ui/widgets/
 cp ./node_modules/jquery-ui/ui/widgets/droppable.js libraries/scripts/jquery-ui/ui/widgets/
 cp ./node_modules/jquery-ui/ui/widgets/resizable.js libraries/scripts/jquery-ui/ui/widgets/
+mkdir -p libraries/scripts/hammerjs
+cp ./node_modules/hammerjs/hammer.min.js libraries/scripts/hammerjs/
 mkdir -p libraries/scripts/iscroll/build
 cp ./node_modules/iscroll/build/iscroll.js libraries/scripts/iscroll/build/
 mkdir -p libraries/scripts/swipey

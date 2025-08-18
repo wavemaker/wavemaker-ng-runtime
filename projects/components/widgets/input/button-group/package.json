@@ -1,7 +1,0 @@
-{
-    "name": "@wm/components/input/button-group",
-    "sideEffects": false,
-    "dependencies": {
-      "tslib": "^2.0.0"
-    }
-}

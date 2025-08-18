@@ -25,10 +25,8 @@ register('wm-table-row', (): IBuildTaskDef => {
                     <ng-template #rowExpansionTmpl let-row="row" let-rowDef="rowDef" let-containerLoad="containerLoad">
                         <div wmContainer partialContainer content.bind="rowDef.content" load.event="containerLoad(widget)"
                             [ngStyle]="{'height': rowDef.height, 'overflow-y': 'auto'}">
-                        @for (param of rowDef.partialParams | keyvalue; track param) {
-                         <div wmParam hidden
-                            [name]="param.key" [value]="param.value"></div>
-                        }`;
+                         <div *ngFor="let param of rowDef.partialParams | keyvalue" wmParam hidden
+                            [name]="param.key" [value]="param.value"></div>`;
         },
         post: () => `</div></ng-template></${tagName}>`
     };

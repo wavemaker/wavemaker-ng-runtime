@@ -3,7 +3,7 @@ import { ColorPickerComponent } from "./color-picker.component";
 import { FormsModule } from "@angular/forms";
 import { addClass, App, removeClass } from "@wm/core";
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
-import { ColorPickerDirective } from "ngx-color-picker";
+import { ColorPickerModule } from "ngx-color-picker";
 import { AUTOCLOSE_TYPE } from "@wm/components/base";
 import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
 import { ComponentFixture } from "@angular/core/testing";
@@ -25,7 +25,7 @@ class ColorPickerWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, ColorPickerDirective, ColorPickerComponent],
+    imports: [FormsModule, ColorPickerModule, ColorPickerComponent],
     declarations: [ColorPickerWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },

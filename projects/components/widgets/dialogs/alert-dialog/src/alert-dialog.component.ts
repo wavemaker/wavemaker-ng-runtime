@@ -1,3 +1,4 @@
+import { WmComponentsModule } from "@wm/components/base";
 import {
     Attribute,
     Component,
@@ -5,16 +6,17 @@ import {
     Injector,
     OnInit,
     Optional,
+    SkipSelf,
     TemplateRef,
     ViewChild
 } from '@angular/core';
 
 import { toBoolean } from '@wm/core';
-import { IWidgetConfig, provideAsDialogRef, provideAsWidgetRef, TextContentDirective } from '@wm/components/base';
+import { IWidgetConfig, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 
 import { registerProps } from './alert-dialog.props';
-import { ButtonComponent } from "@wm/components/input/button";
+import { ButtonComponent } from "@wm/components/input";
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-alert-dialog';
 
@@ -22,7 +24,7 @@ const WIDGET_INFO: IWidgetConfig = { widgetType: 'wm-alertdialog' };
 
 @Component({
     standalone: true,
-    imports: [TextContentDirective, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
+    imports: [WmComponentsModule, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
     selector: 'div[wmAlertDialog]',
     templateUrl: './alert-dialog.component.html',
     providers: [

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { TextContentDirective, TrustAsPipe } from "@wm/components/base";
+import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterContentInit,
     Component,
@@ -24,7 +24,7 @@ const WIDGET_CONFIG: IWidgetConfig = { widgetType: 'wm-panel', hostClass: DEFAUL
 
 @Component({
     standalone: true,
-    imports: [BsDropdownModule, CommonModule, TextContentDirective, TrustAsPipe, MenuComponent],
+    imports: [BsDropdownModule, CommonModule, WmComponentsModule, MenuComponent],
     selector: '[wmPanel]',
     templateUrl: './panel.component.html',
     providers: [

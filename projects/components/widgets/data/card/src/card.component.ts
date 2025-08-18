@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { TextContentDirective } from "@wm/components/base";
-import { PictureDirective } from '@wm/components/basic/picture';
+import { WmComponentsModule } from "@wm/components/base";
+import { PictureDirective } from '@wm/components/basic';
 import { MenuComponent } from '@wm/components/navigation/menu';
 import {
     AfterViewInit,
@@ -10,6 +10,7 @@ import {
     OnInit,
     Renderer2,
     Optional,
+    SkipSelf,
     ViewChild,
     Inject
 } from '@angular/core';
@@ -27,8 +28,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, TextContentDirective, PictureDirective, MenuComponent],
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule, PictureDirective, MenuComponent],
     selector: '[wmCard]',
     templateUrl: './card.component.html',
     providers: [

@@ -1,7 +1,0 @@
-{
-    "name": "@wm/components/input/base-form-custom",
-    "sideEffects": false,
-    "dependencies": {
-      "tslib": "^2.0.0"
-    }
-}

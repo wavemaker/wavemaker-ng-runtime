@@ -1,7 +1,8 @@
-import {CommonModule} from '@angular/common';
-import {AnchorComponent} from '@wm/components/basic/anchor';
-import {ButtonComponent} from '@wm/components/input/button';
-import {MenuComponent} from '@wm/components/navigation/menu';
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { AnchorComponent } from '@wm/components/basic';
+import { ButtonComponent } from '@wm/components/input';
+import { MenuComponent } from '@wm/components/navigation/menu';
 import {
     AfterContentInit,
     Attribute,
@@ -9,8 +10,7 @@ import {
     ContentChild,
     ContentChildren,
     ElementRef,
-    HostListener,
-    Inject,
+    HostListener, Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -69,32 +69,18 @@ import {registerProps} from './table.props';
 import {debounceTime} from 'rxjs/operators';
 import {
     debounce,
-    extend,
-    find,
-    findIndex,
-    floor,
-    forEach,
-    get,
-    includes,
-    indexOf,
-    isArray,
-    isEmpty,
+    extend, find,
+    findIndex, floor, forEach,
+    get, includes, indexOf, isArray, isEmpty,
     isEqual,
-    isNaN,
-    isObject,
-    isUndefined,
-    keys,
-    omitBy,
+    isNaN, isObject,
+    isUndefined, keys, omitBy,
     pullAllWith,
     remove,
     set,
-    some,
-    split,
-    startsWith,
-    toNumber,
-    values
+    some, split, startsWith, toNumber, values
 } from "lodash-es";
-import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 declare const $;
 
@@ -132,8 +118,8 @@ const isInputBodyWrapper = target => {
 };
 
 @Component({
-      standalone: true,
-      imports: [CommonModule, AnchorComponent, PaginationComponent, ButtonComponent, BsDropdownModule, MenuComponent],
+    standalone: true,
+    imports: [CommonModule, WmComponentsModule, AnchorComponent, PaginationComponent, ButtonComponent, BsDropdownModule, MenuComponent],
     selector: '[wmTable]',
     templateUrl: './table.component.html',
     providers: [

@@ -11,12 +11,12 @@
         "types": [],
         "lib": [
             "dom",
-            "es2022"
+            "es2018"
         ]
     },
     "angularCompilerOptions": {
         "skipTemplateCodegen": true,
-        "compilationMode": "partial",
+
         "strictInjectionParameters": true,
         "enableResourceInlining": true
     },

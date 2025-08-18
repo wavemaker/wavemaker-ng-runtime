@@ -1,5 +1,5 @@
-import {getChildAttrs, getFormMarkupAttr, IBuildTaskDef, register} from '@wm/transpiler';
-import {getNgModelAttr} from '@wm/core';
+import { getFormMarkupAttr, IBuildTaskDef, register, getChildAttrs } from '@wm/transpiler';
+import { getNgModelAttr } from '@wm/core';
 
 const tagName = 'div';
 
