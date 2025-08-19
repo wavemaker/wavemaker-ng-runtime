@@ -13,7 +13,7 @@ import {
 
 import {toBoolean} from '@wm/core';
 import { Context, provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
-import { BaseDialog, DialogBodyDirective, DialogHeaderComponent, DialogFooterDirective } from '@wm/components/dialogs';
+import { BaseDialog, DialogBodyDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 
 import { registerProps } from './dialog.props';
 import { NgTemplateOutlet } from '@angular/common';
@@ -24,7 +24,7 @@ const WIDGET_INFO = {widgetType: 'wm-dialog'};
 
 @Component({
     standalone: true,
-    imports: [DialogBodyDirective, DialogHeaderComponent, DialogFooterDirective, NgTemplateOutlet],
+    imports: [DialogBodyDirective, DialogHeaderComponent, NgTemplateOutlet],
     selector: 'div[wmDialog]',
     templateUrl: './dialog.component.html',
     providers: [

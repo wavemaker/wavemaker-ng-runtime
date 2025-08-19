@@ -64,6 +64,7 @@ const DESIGN_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/de
 const IFRAME_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/iframe-dialog', name: 'IframeDialogComponent' }];
 const LOGIN_DIALOG_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/dialogs/login-dialog', name: 'LoginDialogDirective' }, ...DESIGN_DIALOG_COMPONENT];
 const PARTIAL_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/partial-dialog', name: 'PartialDialogComponent' }, ...CONTAINER_DIRECTIVE];
+const DIALOGACTIONS_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/dialogs', name: 'DialogFooterDirective' }];
 
 // Navigation Modules
 const NAV_ITEM_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'NavItemDirective' }];
@@ -231,6 +232,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-date', DATE_COMPONENT],
     ['wm-datetime', DATE_TIME_COMPONENT],
     ['wm-dialog', DESIGN_DIALOG_COMPONENT],
+    ['wm-dialogactions', DIALOGACTIONS_DIRECTIVE],
     ['wm-footer', FOOTER_DIRECTIVE],
     ['wm-form', FORM_COMPONENT],
     ['wm-form-action', FORM_ACTION_DIRECTIVE],
