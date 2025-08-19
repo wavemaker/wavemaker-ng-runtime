@@ -44,6 +44,7 @@ const PARTIAL_CONTAINER: ImportDef[] = [{ from: '@wm/components/base', name: 'Pa
 const ACCORDION_PANE_COMPONENT: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/containers/accordion', name: 'AccordionPaneComponent' }];
 const ACCORDION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/accordion', name: 'AccordionDirective' }];
 const CONTAINER_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/base', name: 'ContainerDirective' }]
+const PARTIAL_PARAM_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/base', name: 'PartialParamDirective' }];
 const LINEAR_LAYOUT_ITEM_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/linear-layout', name: 'LinearLayoutItemDirective' }];
 const LINEAR_LAYOUT_DIRECTIVE: ImportDef[] = [...LINEAR_LAYOUT_ITEM_DIRECTIVE, { from: '@wm/components/containers/linear-layout', name: 'LinearLayoutDirective' }];
 const TAB_PANE_COMPONENT: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/containers/tabs', name: 'TabPaneComponent' }];
@@ -131,7 +132,7 @@ const TABLE_FILTER_SORT_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/t
 const TABLE_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableActionDirective' }];
 const TABLE_COLUMN_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableColumnDirective' }];
 const TABLE_COLUMN_GROUP_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableColumnGroupDirective' }];
-const TABLE_ROW_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableRowDirective' }];
+const TABLE_ROW_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableRowDirective' }, ...CONTAINER_DIRECTIVE, ...PARTIAL_CONTAINER];
 const TABLE_ROW_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableRowActionDirective' }, ...BUTTON_COMPONENT];
 const TABLE_COMPONENT: ImportDef[] = [
     ...NG_FORM_MODULE,
@@ -183,7 +184,7 @@ const CONTENT_COMPONENT: ImportDef[] = [{ from: '@wm/components/page', name: 'Co
 // Advanced Components
 const CAROUSEL_TEMPLATE_DIRECTIVE: ImportDef[] = [...NGX_CAROUSEL_MODULE, { from: '@wm/components/advanced/carousel', name: 'CarouselTemplateDirective' }];
 const CAROUSEL_COMPONENT: ImportDef[] = [...NGX_CAROUSEL_MODULE, ...CAROUSEL_TEMPLATE_DIRECTIVE, { from: '@wm/components/advanced/carousel', name: 'CarouselDirective' }];
-const CHART_COMPONENT: ImportDef[] = [{ from: '@wm/components/chart', name: 'ChartComponent' }];
+const CHART_COMPONENT: ImportDef[] = [{ from: '@wm/components/chart', name: 'ChartComponent' }, {from: '@wm/components/base', name: 'RedrawableDirective'}];
 const CUSTOM_WIDGET_CONTAINER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/advanced/custom', name: 'CustomWidgetContainerDirective' }];
 const CUSTOM_WIDGET_DIRECTIVE: ImportDef[] = [...CUSTOM_WIDGET_CONTAINER_DIRECTIVE, { from: '@wm/components/advanced/custom', name: 'CustomWidgetDirective' }];
 const LOGIN_COMPONENT: ImportDef[] = [{ from: '@wm/components/advanced/login', name: 'LoginComponent' }];
@@ -227,6 +228,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-colorpicker', COLOR_PICKER_COMPONENT],
     ['wm-confirmdialog', CONFIRM_DIALOG_COMPONENT],
     ['wm-container', CONTAINER_DIRECTIVE],
+    ['wm-param', PARTIAL_PARAM_DIRECTIVE],
     ['wm-content', CONTENT_COMPONENT],
     ['wm-currency', CURRENCY_COMPONENT],
     ['wm-date', DATE_COMPONENT],
