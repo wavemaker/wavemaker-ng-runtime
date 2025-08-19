@@ -27,6 +27,7 @@ enum POST_MESSAGES {
     ON_LOAD                  = 'on-load'
 }
 
+
 @Injectable()
 export class AppManagerService {
     static readonly SERVICE_NAME = 'AppManagerService';
@@ -540,5 +541,18 @@ export class AppManagerService {
         if (this.isTemplateBundleType()) {
             return this.postTemplateBundleInfo();
         }
+    }
+
+    initAppModes(): void {    
+        // Apply restored modes
+        this.$app.setAppMode(undefined, true);
+    
+        // Listener for postMessage-based mode changes
+        window.addEventListener('message', (event) => {
+            const { key, modes, shouldPersist } = event.data || {};
+            if (key === 'switch-mode' && modes) {
+                this.$app.setAppMode(modes, !shouldPersist);
+            }
+        });
     }
 }

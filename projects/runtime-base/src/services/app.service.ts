@@ -23,8 +23,10 @@ import { SecurityService } from '@wm/security';
 
 import { WmDefaultRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
 import { PipeService } from "./pipe.service";
-import {each, get, isEmpty, isString} from "lodash-es";
+import { each, get, isEmpty, isString } from "lodash-es";
 import * as momentLib from 'moment-timezone/moment-timezone';
+import { MODE_CONSTANTS } from '@wm/variables';
+import { getModesFromLocalStorage } from '../public_api';
 const moment = momentLib.default || window['moment'];
 
 const injectorMap = {
@@ -49,10 +51,10 @@ const enum PROJECT_TYPE {
     TEMPLATE_BUNDLE = 'TEMPLATEBUNDLE'
 }
 
-const noop = (...args) => {};
+const noop = (...args) => { };
 
 // Wraps httpService to behave as angular 1.x $http service.
-const getHttpDependency = function() {
+const getHttpDependency = function () {
     const httpService = this.httpService;
     const fn = function (key, options?) {
         const args = Array.from(arguments).slice(1);
@@ -74,9 +76,9 @@ export class AppRef {
     onSessionTimeout = noop;
     onPageReady = noop;
     onBeforePageLeave = noop;
-    onBeforeServiceCall =  noop;
-    onServiceSuccess =  noop;
-    onServiceError =  noop;
+    onBeforeServiceCall = noop;
+    onServiceSuccess = noop;
+    onServiceError = noop;
     dynamicComponentContainerRef = {};
 
     projectName: string;
@@ -93,17 +95,6 @@ export class AppRef {
     getSelectedLocale = this.i18nService.getSelectedLocale.bind(this.i18nService);
     setTimezone = this.i18nService.setTimezone.bind(this.i18nService);
     setwidgetLocale = this.i18nService.setwidgetLocale.bind(this.i18nService);
-    
-    setAppMode = (mode) => {
-        const htmlEl = document.getElementsByTagName('html')[0];
-        if (mode === 'default') {
-          localStorage.removeItem('app-mode');
-          htmlEl.removeAttribute('app-mode');
-        } else {
-          localStorage.setItem('app-mode', mode);
-          htmlEl.setAttribute('app-mode', mode);
-        }
-    };
 
     private _eventNotifier = new EventNotifier();
 
@@ -137,7 +128,7 @@ export class AppRef {
     }
 
     public clearPageCache(pageName?: string) {
-        if(this.routeReuseStrategy instanceof WmDefaultRouteReuseStrategy) {
+        if (this.routeReuseStrategy instanceof WmDefaultRouteReuseStrategy) {
             (this.routeReuseStrategy as WmDefaultRouteReuseStrategy).reset(pageName);
         }
     }
@@ -145,7 +136,7 @@ export class AppRef {
     public notify(eventName: string, ...data: Array<any>) {
         this._eventNotifier.notify.apply(this._eventNotifier, arguments);
     }
-    
+
     public importModule(moduleName: string) {
         if (moduleName === 'moment') {
             return moment;
@@ -222,4 +213,23 @@ export class AppRef {
             registerFnByExpr(expr, fn[0], fn[1]);
         });
     }
+
+    setAppMode(modes: Record<string, string>, shouldPersist = true) {
+        const restoredModes: Record<string, string> = getModesFromLocalStorage(modes);
+        const htmlEl = document.getElementsByTagName('html')[0];
+        if (!htmlEl) return;
+
+        (Object.entries(restoredModes)).forEach(([modeKey, modeValue]) => {
+            const storageKey = `${MODE_CONSTANTS.MODE_KEY}-${modeKey}`;
+            const isDefault = modeValue === MODE_CONSTANTS.LIGHT || modeValue === MODE_CONSTANTS.DEFAULT;
+
+            if (isDefault) {
+                if (shouldPersist) localStorage.removeItem(storageKey);
+                htmlEl.removeAttribute(modeKey);
+            } else {
+                if (shouldPersist) localStorage.setItem(storageKey, modeValue);
+                htmlEl.setAttribute(modeKey, modeValue);
+            }
+        });
+    };
 }

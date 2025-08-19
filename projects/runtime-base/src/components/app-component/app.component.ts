@@ -53,7 +53,6 @@ interface SPINNER {
     messages: Array<string>;
     arialabel: string;
 }
-
 @Component({
     standalone: true,
     imports: [CommonModule, WmComponentsModule, RouterOutlet, AlertDialogComponent, ConfirmDialogComponent, DialogComponent, AppSpinnerComponent],
@@ -97,7 +96,11 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
             this.customIconsLoaderService.load();
         }
 
-        this.appManager.beforeAppReady();
+        // Subscribe to mode changes
+        this.appManager.subscribe('MODE_CHANGED', (data: { modes: Record<string, string>, shouldPersist?: boolean }) => {
+            const { modes, shouldPersist = true } = data;
+            this.app.setAppMode(modes, shouldPersist);
+        });
 
         // subscribe to OAuth changes
         oAuthService.getOAuthProvidersAsObservable().subscribe((providers: any) => {
