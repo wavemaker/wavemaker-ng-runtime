@@ -17,6 +17,7 @@ import {
     AppDefaultsService,
     AppExtensionJSResolve,
     AppJSResolve,
+    AppBeforeLoadResolve,
     AppManagerService,
     AppRef,
     I18nServiceImpl,
@@ -61,7 +62,7 @@ import { ComponentRefProviderService } from "./services/component-ref-provider.s
 import { PrefabConfigProviderService } from "./services/prefab-config-provider.service";
 import { AppResourceManagerService } from "./services/app-resource-manager.service";
 import { CustomPipe, DialogServiceImpl, FilterPipe, ImagePipe, SanitizePipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe } from "@wm/components/base";
-import {PageDirective} from "@wm/components/page";
+import { PageDirective } from "@wm/components/page";
 
 
 const wmModules = [
@@ -99,10 +100,11 @@ const initializeProjectDetails = () => {
     }
 };
 
-export function InitializeApp(I18nService, AppJSResolve) {
+export function InitializeApp(I18nService, AppJSResolve, AppBeforeLoadResolve) {
     return async () => {
         initializeProjectDetails();
         await AppJSResolve.resolve();
+        await AppBeforeLoadResolve.resolve();
         return I18nService.loadDefaultLocale();
     };
 }
@@ -128,7 +130,7 @@ export const appConfig: ApplicationConfig = {
         {
             provide: APP_INITIALIZER,
             useFactory: InitializeApp,
-            deps: [AbstractI18nService, AppJSResolve],
+            deps: [AbstractI18nService, AppJSResolve, AppBeforeLoadResolve],
             multi: true
         },
         {
@@ -180,6 +182,7 @@ export const appConfig: ApplicationConfig = {
         AppJSResolve,
         AppExtensionJSResolve,
         I18nResolve,
+        AppBeforeLoadResolve,
         SecurityService,
         OAuthService,
         VariablesService,

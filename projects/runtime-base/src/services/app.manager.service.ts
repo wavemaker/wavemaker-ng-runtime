@@ -15,8 +15,9 @@ import {
     getWmProjectProperties
 } from '@wm/core';
 import { SecurityService } from '@wm/security';
-import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService } from '@wm/variables';
+import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService, MODE_CONSTANTS } from '@wm/variables';
 import {extend, forEach, get, isEmpty, isObject, isUndefined, merge, trim} from "lodash-es";
+import { setAppMode } from '../util/utils';
 
 enum POST_MESSAGES {
     HIDE_TEMPLATES_SHOW_CASE = 'hide-templates-show-case',
@@ -26,6 +27,9 @@ enum POST_MESSAGES {
     TEMPLATEBUNDLE_CONFIG    = 'template-bundle-config',
     ON_LOAD                  = 'on-load'
 }
+
+const defaultModes: string[] = [MODE_CONSTANTS.COLOR, MODE_CONSTANTS.SPACE, MODE_CONSTANTS.FONT, MODE_CONSTANTS.RADIUS];
+
 
 @Injectable()
 export class AppManagerService {
@@ -540,5 +544,38 @@ export class AppManagerService {
         if (this.isTemplateBundleType()) {
             return this.postTemplateBundleInfo();
         }
+    }
+
+    initAppModes(): void {    
+        // Restore modes from localStorage
+        const restoredModes: Record<string, string> = {};
+        defaultModes.forEach((key) => {
+            const storedValue = localStorage.getItem(`${MODE_CONSTANTS.MODE_KEY}-${key}`);
+            if (storedValue !== null) {
+                restoredModes[key] = storedValue;
+            }
+        });
+    
+        // Apply restored modes
+        setAppMode(restoredModes, true);
+    
+        // Listener for postMessage-based mode changes
+        window.addEventListener('message', (event) => {
+            const { key, modes, shouldPersist } = event.data || {};
+            if (key === 'switch-mode' && modes) {
+                setAppMode(modes, !shouldPersist);
+            }
+        });
+    }
+
+    setAppMode(mode) {
+        const restoredModes: Record<string, string> = {};
+        defaultModes.forEach((key) => {
+            const storedValue = localStorage.getItem(`${MODE_CONSTANTS.MODE_KEY}-${key}`);
+            if (storedValue !== null) {
+                restoredModes[key] = storedValue;
+            }
+        });
+        return setAppMode(restoredModes, true);
     }
 }

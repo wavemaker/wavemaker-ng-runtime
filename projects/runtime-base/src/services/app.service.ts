@@ -94,24 +94,6 @@ export class AppRef {
     getSelectedLocale = this.i18nService.getSelectedLocale.bind(this.i18nService);
     setTimezone = this.i18nService.setTimezone.bind(this.i18nService);
     setwidgetLocale = this.i18nService.setwidgetLocale.bind(this.i18nService);
-    
-    setAppMode = (modes: Record<string, string>, shouldPersist = true) => {
-        const htmlEl = document.getElementsByTagName('html')[0];
-        if (!htmlEl) return;
-
-        (Object.entries(modes)).forEach(([modeKey, modeValue]) => {
-            const storageKey = `${MODE_CONSTANTS.MODE_KEY}-${modeKey}`;
-            const isDefault = modeValue === MODE_CONSTANTS.LIGHT || modeValue === MODE_CONSTANTS.DEFAULT;
-
-            if (isDefault) {
-                if (shouldPersist) localStorage.removeItem(storageKey);
-                htmlEl.removeAttribute(modeKey);
-            } else {
-                if (shouldPersist) localStorage.setItem(storageKey, modeValue);
-                htmlEl.setAttribute(modeKey, modeValue);
-            }
-        });
-    };
 
     private _eventNotifier = new EventNotifier();
 
