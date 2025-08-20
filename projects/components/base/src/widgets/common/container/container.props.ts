@@ -11,7 +11,13 @@ export const registerProps = () => {
                 ['conditionalstyle', PROP_ANY],
                 ['content', PROP_STRING],
                 ['name', PROP_STRING],
-                ['show', {value: true, ...PROP_BOOLEAN}]
+                ['show', {value: true, ...PROP_BOOLEAN}],
+                ['direction', PROP_STRING],
+                ['alignment', PROP_STRING],
+                ['gap', PROP_STRING],
+                ['wrap', PROP_BOOLEAN],
+                ['columngap', PROP_STRING],
+                ['rowgap', PROP_STRING]
             ]
         )
     );
