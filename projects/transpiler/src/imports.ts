@@ -57,6 +57,7 @@ const LAYOUT_GRID_ROW_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containe
 const LAYOUT_GRID_DIRECTIVE: ImportDef[] = [...LAYOUT_GRID_ROW_DIRECTIVE, ...LAYOUT_GRID_COLUMN_DIRECTIVE, { from: '@wm/components/containers/layout-grid', name: 'LayoutgridDirective' }];
 const PANEL_COMPONENT: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/containers/panel', name: 'PanelComponent' }];
 const TILE_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/tile', name: 'TileDirective' }];
+const REPEAT_TEMPLATE_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/base', name: 'RepeatTemplateDirective' }];
 
 // Dialog Modules
 const ALERT_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/alert-dialog', name: 'AlertDialogComponent' }];
@@ -301,6 +302,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-video', VIDEO_COMPONENT],
     ['wm-wizard', WIZARD_COMPONENT],
     ['wm-wizardstep', WIZARD_COMPONENT],
+    ['wm-repeat-template', REPEAT_TEMPLATE_DIRECTIVE],
 
     ['toDate', TO_DATE_PIPE],
     ['toCurrency', TO_CURRENCY_PIPE],
