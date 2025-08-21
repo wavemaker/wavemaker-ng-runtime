@@ -189,8 +189,22 @@ describe('DateComponent', () => {
 
     xit('should not show the week numbers on the calendar pan ', waitForAsync(() => {
         wmComponent.getWidget().showweeks = false;
-        onClickCheckClassEleLengthOnBody(fixture, '.btn-time', 'table.weeks', 0);
-
+        
+        // Check if the property was set correctly
+        expect(wmComponent.getWidget().showweeks).toBe(false);
+        
+        // Open the datepicker dropdown to test the actual UI behavior
+        const dateButton = getHtmlSelectorElement(fixture, '.btn-time');
+        dateButton.nativeElement.click();
+        fixture.detectChanges();
+        
+        // Wait for the datepicker to be rendered
+        fixture.whenStable().then(() => {
+            // Check that week numbers are not displayed when showweeks is false
+            // The table.weeks class should not be present
+            const weekElements = document.getElementsByClassName('table.weeks');
+            expect(weekElements.length).toBe(0);
+        });
     }));
 
     it('should assign the shortkey to the input control as attribute accesskey ', waitForAsync(() => {

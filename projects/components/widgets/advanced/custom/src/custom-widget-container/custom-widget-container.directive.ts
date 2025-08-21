@@ -101,7 +101,7 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
     public setProps(config, resolveFn: Function) {
         this.config = config;
         this.baseWidgetName = this.config.projectPropsOn || this.config.widgetType.split('wm-')[1];
-        this.configSubject.next();
+        this.configSubject.next(null);
         if(config.customClasses){
             addClass(this.nativeElement, config.customClasses);
         }
@@ -150,7 +150,7 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
         if(this.formControl && this.formControl.control && value !== this.formControl.control.value) {
             this.formControl.control.setValue(value);
             if (this.formControl.control.invalid) {
-                this.onErroSubject.next();
+                this.onErroSubject.next(null);
             }
         }
     }

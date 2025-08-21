@@ -5,10 +5,10 @@
     "outDir": "./out-tsc/spec",
     "types": [
       "jest",
-        "node",
-        "jquery"
+      "node",
+      "jquery"
     ],
-    "module": "ES2022",
+    "module": "ES2022"
   },
   "include": [
     "src/**/*.spec.ts",
