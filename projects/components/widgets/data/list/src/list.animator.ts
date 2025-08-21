@@ -2,7 +2,7 @@ import { QueryList } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { SwipeAnimation } from '@swipey';
-import { ButtonComponent } from '@wm/components/input/button';
+import { ButtonComponent } from '@wm/components/input';
 
 import { ListComponent } from './list.component';
 import {map, reduce} from "lodash-es";

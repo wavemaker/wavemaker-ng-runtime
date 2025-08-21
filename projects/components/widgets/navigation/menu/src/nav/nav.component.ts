@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { AnchorComponent } from '@wm/components/basic/anchor';
+import { WmComponentsModule } from "@wm/components/base";
+import { AnchorComponent } from '@wm/components/basic';
 import { MenuComponent } from '../menu.component';
 import { NavItemDirective } from './nav-item/nav-item.directive';
 import { Attribute, ChangeDetectorRef, Component, forwardRef, Inject, Injector, OnInit, Optional } from '@angular/core';
@@ -23,7 +24,7 @@ const NavClassMap = {
 
 @Component({
     standalone: true,
-    imports: [CommonModule, BsDropdownModule, AnchorComponent, forwardRef(() => MenuComponent), NavItemDirective, ],
+    imports: [CommonModule, WmComponentsModule, BsDropdownModule, AnchorComponent, forwardRef(() => MenuComponent), NavItemDirective, ],
     selector: '[wmNav]',
     templateUrl: './nav.component.html',
     providers: [

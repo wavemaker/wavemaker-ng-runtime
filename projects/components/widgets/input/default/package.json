@@ -1,0 +1,6 @@
+{
+    "name": "@wm/components/input",
+    "dependencies": {
+      "tslib": "^2.0.0"
+    }
+}

@@ -30,11 +30,12 @@
         "@angular/platform-browser-dynamic": "18.2.13",
         "@angular/router": "18.2.13",
         "@angular/service-worker": "18.2.13",
-        "@fullcalendar/core": "6.1.18",
-        "@fullcalendar/daygrid": "6.1.18",
-        "@fullcalendar/interaction": "6.1.18",
-        "@fullcalendar/list": "6.1.18",
-        "@fullcalendar/timegrid": "6.1.18",
+        "@babel/runtime": "7.14.8",
+        "@fullcalendar/core": "6.1.15",
+        "@fullcalendar/daygrid": "6.1.15",
+        "@fullcalendar/interaction": "6.1.15",
+        "@fullcalendar/list": "6.1.15",
+        "@fullcalendar/timegrid": "6.1.15",
         "@metrichor/jmespath": "0.3.1",
         "@wavemaker/custom-widgets-m3": "file:.yalc/@wavemaker/custom-widgets-m3",
         "@wavemaker/focus-trap": "1.0.1",
@@ -60,17 +61,17 @@
         "summernote": "0.9.1",
         "tslib": "2.8.1",
         "x2js": "3.4.4",
-        "zone.js": "0.15.1"
+        "zone.js": "0.14.10"
     },
     "devDependencies": {
         "@ampproject/rollup-plugin-closure-compiler": "^0.27.0",
         "@angular-builders/custom-webpack": "18.0.0",
-        "@angular-devkit/build-angular": "18.2.20",
-        "@angular-eslint/builder": "20.1.1",
-        "@angular-eslint/eslint-plugin": "20.1.1",
-        "@angular-eslint/eslint-plugin-template": "20.1.1",
-        "@angular-eslint/schematics": "20.1.1",
-        "@angular-eslint/template-parser": "20.1.1",
+        "@angular-devkit/build-angular": "18.2.12",
+        "@angular-eslint/builder": "16.2.0",
+        "@angular-eslint/eslint-plugin": "16.2.0",
+        "@angular-eslint/eslint-plugin-template": "16.2.0",
+        "@angular-eslint/schematics": "16.2.0",
+        "@angular-eslint/template-parser": "16.2.0",
         "@angular/cli": "18.2.12",
         "@angular/compiler-cli": "18.2.13",
         "@angular/language-service": "18.2.13",
@@ -91,11 +92,10 @@
         "core-js": "3.45.0",
         "eslint": "^9.32.0",
         "fs": "0.0.1-security",
-        "fs-extra": "11.3.1",
-        "jest": "^30.0.5",
+        "fs-extra": "7.0.1",
+        "jest": "^29.7.0",
         "jest-canvas-mock": "^2.5.2",
-        "jest-environment-jsdom": "^30.0.5",
-        "jest-preset-angular": "^15.0.0",
+        "jest-preset-angular": "^14.1.0",
         "license-checker": "25.0.1",
         "moment-locales-webpack-plugin": "^1.2.0",
         "ng-packagr": "17.3.0",
@@ -109,14 +109,19 @@
         "yargs": "^18.0.0"
     },
     "optionalDependencies": {
-        "@lmdb/lmdb-linux-x64": "3.4.2",
-        "@rollup/rollup-darwin-arm64": "4.46.2",
-        "@rollup/rollup-linux-x64-gnu": "4.46.2",
-        "@rollup/rollup-win32-x64": "4.9.5"
+        "@rollup/rollup-darwin-arm64": "4.9.5",
+        "@rollup/rollup-linux-x64-gnu": "4.9.5",
+        "@rollup/rollup-win32-x64": "4.9.5",
+        "@lmdb/lmdb-linux-x64": "3.0.13"
     },
     "engines": {
-        "node": "22.18.0",
-        "npm": "10.9.3"
+        "node": "~22.18.0",
+        "npm": "~10.9.3"
     },
+    "overrides": {
+    "ng-packagr": {
+        "@rollup/wasm-node": "4.40.2"
+    }
+},
     "engineStrict": true
 }

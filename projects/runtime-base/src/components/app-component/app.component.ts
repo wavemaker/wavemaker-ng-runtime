@@ -1,6 +1,7 @@
-import {CommonModule} from '@angular/common';
-import {AlertDialogComponent} from '@wm/components/dialogs/alert-dialog';
-import {ConfirmDialogComponent} from '@wm/components/dialogs/confirm-dialog';
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
+import { AlertDialogComponent } from '@wm/components/dialogs/alert-dialog';
+import { ConfirmDialogComponent } from '@wm/components/dialogs/confirm-dialog';
 import {
     AfterViewInit,
     ApplicationRef,
@@ -23,7 +24,7 @@ import {
     RouterOutlet
 } from '@angular/router';
 
-import {setTheme} from 'ngx-bootstrap/utils';
+import { setTheme } from 'ngx-bootstrap/utils';
 
 import {
     $invokeWatchers,
@@ -39,14 +40,13 @@ import {
     setNgZone,
     setPipeProvider
 } from '@wm/core';
-import {OAuthService} from '@wm/oAuth';
-import {AppManagerService} from '../../services/app.manager.service';
-import {PipeProvider} from '../../services/pipe-provider.service';
-import {AppSpinnerComponent} from '../app-spinner.component';
-import {DialogComponent} from '@wm/components/dialogs/design-dialog';
-import {ContainerDirective, PartialContainerDirective, PartialParamHandlerDirective} from '@wm/components/base';
-import {filter} from "rxjs/operators";
-import {Subscription} from "rxjs";
+import { OAuthService } from '@wm/oAuth';
+import { AppManagerService } from '../../services/app.manager.service';
+import { PipeProvider } from '../../services/pipe-provider.service';
+import { AppSpinnerComponent } from '../app-spinner.component';
+import { DialogComponent } from '@wm/components/dialogs/design-dialog';
+import { filter } from "rxjs/operators";
+import { Subscription}  from "rxjs";
 
 interface SPINNER {
     show: boolean;
@@ -56,7 +56,7 @@ interface SPINNER {
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterOutlet, AlertDialogComponent, ConfirmDialogComponent, DialogComponent, AppSpinnerComponent, ContainerDirective, PartialParamHandlerDirective , PartialContainerDirective],
+    imports: [CommonModule, WmComponentsModule, RouterOutlet, AlertDialogComponent, ConfirmDialogComponent, DialogComponent, AppSpinnerComponent],
     selector: 'app-root',
     templateUrl: './app.component.html',
     encapsulation: ViewEncapsulation.None

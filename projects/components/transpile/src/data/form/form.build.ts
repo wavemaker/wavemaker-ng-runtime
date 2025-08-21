@@ -120,13 +120,11 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
                                                      tabindex.bind="btn.tabindex" [class.hidden]="btn.updateMode ? !${counter}.isUpdateMode : ${counter}.isUpdateMode"></button>
                                         </ng-template>`;
                 mobileFormContentTmpl = `<header wmMobileNavbar name="${name}" ${getAttrMarkup(navbarAttrsMap)}>
-                                @for (btn of ${counter}.buttonArray; track btn; let i = $index) {
-                                            <ng-container
+                                            <ng-container *ngFor="let btn of ${counter}.buttonArray; let i = index"
                                                 [ngTemplateOutlet]="buttonRef"
                                                 [ngTemplateOutletContext]="{btn:btn}"
                                                 [ngTemplateOutletInjector]="${counter}.createCustomInjector('mobile_' + i, {item:item, index:i})">
                                             </ng-container>
-                                    }
                                         </header>
                                         <div class="form-elements panel-body" >`;
             }
@@ -152,15 +150,6 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             const provider = new Map();
             provider.set('form_reference', shared.get('counter'));
             return provider;
-        },
-        imports: (attrs: Map<String, String>): string[] => {
-            if (directiveAttr === 'wmLiveForm') {
-                const formlayout = attrs.get('formlayout');
-                if (formlayout === 'dialog') {
-                    return ['wm-dialog'];
-                }
-            }
-            return [];
         }
     };
 };

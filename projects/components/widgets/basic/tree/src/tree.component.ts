@@ -1,3 +1,4 @@
+import { WmComponentsModule } from "@wm/components/base";
 import {Attribute, Component, Inject, Injector, OnInit, Optional, ViewEncapsulation} from '@angular/core';
 import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
@@ -10,7 +11,8 @@ const WIDGET_INFO = {widgetType: 'wm-tree', hostClass: 'app-tree'};
 const defaultTreeIconClass = 'plus-minus';
 
 @Component({
-    standalone: true,
+  standalone: true,
+  imports: [WmComponentsModule],
     selector: 'ul[wmTree]',
     templateUrl: './tree.component.html',
     providers: [

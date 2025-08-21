@@ -9,5 +9,9 @@
   }
 </a>
 @if (item.children.length) {
-  <ul wmMenuDropdown [items]="item.children"></ul>
+  <ng-container [ngTemplateOutlet]="nestedMenuDropdown" [ngTemplateOutletContext]="{item: item}"></ng-container>
 }
+
+<ng-template #nestedMenuDropdown let-item="item">
+  <ul wmMenuDropdown [items]="item.children"></ul>
+</ng-template>

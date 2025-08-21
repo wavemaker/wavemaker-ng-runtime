@@ -1,8 +1,8 @@
-import {AfterViewInit, Directive, Injector, OnDestroy, ViewChild} from '@angular/core';
-import {ActivatedRoute, RouterOutlet} from '@angular/router';
+import { AfterViewInit, Injector, OnDestroy, ViewChild, Directive } from '@angular/core';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 
-import {PageDirective} from "@wm/components/page";
-import {App, registerFnByExpr} from "@wm/core";
+import { PageDirective } from "@wm/components/page";
+import { registerFnByExpr, App } from "@wm/core";
 import {each, extend} from "lodash-es";
 
 @Directive()

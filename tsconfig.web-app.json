@@ -34,8 +34,8 @@
             "@wm/core": [
                 "libraries/core"
             ],
-            "@wm/components/basic/*": [
-                "libraries/components/basic/*"
+            "@wm/components/basic": [
+                "libraries/components/basic/default"
             ],
             "@wm/components/input": [
                 "libraries/components/input/default"

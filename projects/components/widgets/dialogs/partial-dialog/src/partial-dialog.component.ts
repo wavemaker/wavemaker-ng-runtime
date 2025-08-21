@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {
     Attribute,
     Component,
@@ -6,6 +8,7 @@ import {
     Injector,
     OnInit,
     Optional,
+    SkipSelf,
     TemplateRef,
     ViewChild
 } from '@angular/core';
@@ -15,15 +18,14 @@ import { provideAsDialogRef, provideAsWidgetRef } from '@wm/components/base';
 import { BaseDialog, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 
 import { registerProps } from './partial-dialog.props';
-import { ButtonComponent } from '@wm/components/input/button';
-import { NgTemplateOutlet } from '@angular/common';
+import { ButtonComponent } from '@wm/components/input';
 
 const DIALOG_CLS = 'app-dialog modal-dialog app-page-dialog';
 const WIDGET_INFO = { widgetType: 'wm-partialdialog' };
 
 @Component({
     standalone: true,
-    imports: [DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent, NgTemplateOutlet],
+    imports: [CommonModule, WmComponentsModule, DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent, ButtonComponent],
     selector: 'div[wmPartialDialog]',
     templateUrl: './partial-dialog.component.html',
     providers: [

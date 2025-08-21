@@ -2,7 +2,7 @@ import {ContentChild, Directive, HostListener, Injector, AfterViewInit, Optional
 
 import {addClass, removeClass} from '@wm/core';
 import { APPLY_STYLES_TYPE, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
-import { AnchorComponent } from '@wm/components/basic/anchor';
+import { AnchorComponent } from '@wm/components/basic';
 
 import { registerProps } from './nav-item.props';
 

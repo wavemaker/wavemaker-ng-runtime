@@ -7,15 +7,15 @@
  * CONSOLE ARGUMENTS:-
  *  publishVersion: To generate the given version package.json file
  */
-import fs from 'fs';
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
+'use strict';
+const fs = require('fs');
 
-const argv = yargs(hideBin(process.argv))
+const argv = require("yargs")
     .options({
-        publishVersion: { type: "string" }
-    })
-    .argv;
+        "publishVersion": {
+            type: "string"
+        }
+    }).argv;
 
 const DEBUG_LOG = 'NG-RUNTIME: ';
 
@@ -36,7 +36,7 @@ const updateWMVersion = (path, wmPackageJSON) => {
  */
 const init = () => {
     const path = './libraries/package.json';
-    const wmPackageJSON = JSON.parse(fs.readFileSync(path, 'utf8'));
+    const wmPackageJSON = require(path);
     updateWMVersion(path, wmPackageJSON);
 };
 

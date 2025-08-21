@@ -1,40 +1,40 @@
-import {ChangeDetectorRef, Compiler, Injectable, Injector, KeyValueDiffers, Pipe} from '@angular/core';
+import { Compiler, Injectable, Injector, ChangeDetectorRef, InjectionToken, KeyValueDiffers, Pipe, Inject } from '@angular/core';
 import {
     AsyncPipe,
+    UpperCasePipe,
+    LowerCasePipe,
+    JsonPipe,
+    SlicePipe,
+    DecimalPipe,
+    PercentPipe,
+    TitleCasePipe,
     CurrencyPipe,
     DatePipe,
-    DecimalPipe,
     I18nPluralPipe,
     I18nSelectPipe,
-    JsonPipe,
     KeyValuePipe,
-    LowerCasePipe,
-    NgLocalization,
-    PercentPipe,
-    SlicePipe,
-    TitleCasePipe,
-    UpperCasePipe
+    NgLocalization
 } from '@angular/common'
 import {
-    CustomPipe,
-    FileExtensionFromMimePipe,
+    SuffixPipe,
+    ToDatePipe,
     FileIconClassPipe,
-    FileSizePipe,
+    FileExtensionFromMimePipe,
     FilterPipe,
-    NumberToStringPipe,
+    FileSizePipe,
+    ToNumberPipe,
+    ToCurrencyPipe,
     PrefixPipe,
-    SanitizePipe,
+    TimeFromNowPipe,
+    NumberToStringPipe,
     StateClassPipe,
     StringToNumberPipe,
-    SuffixPipe,
-    TemplateReplacePipe,
-    TimeFromNowPipe,
-    ToCurrencyPipe,
-    ToDatePipe,
-    ToNumberPipe,
-    TrustAsPipe
+    CustomPipe,
+    TrustAsPipe,
+    SanitizePipe,
+    TemplateReplacePipe
 } from '@wm/components/base';
-import {AbstractI18nService, CustomPipeManager, getSessionStorageItem} from '@wm/core';
+import { getSessionStorageItem, CustomPipeManager, AbstractI18nService } from '@wm/core';
 import {DomSanitizer} from "@angular/platform-browser";
 
 @Injectable({

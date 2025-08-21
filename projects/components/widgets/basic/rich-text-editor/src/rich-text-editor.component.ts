@@ -1,9 +1,11 @@
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {Component, Inject, Injector, NgZone, OnDestroy, OnInit, Optional, SecurityContext} from '@angular/core';
 import {NG_VALUE_ACCESSOR} from '@angular/forms';
 
 import {setAttr, setCSS, setHtml} from '@wm/core';
 import {APPLY_STYLES_TYPE, provideAs, provideAsWidgetRef, SanitizePipe, styler} from '@wm/components/base';
-import {BaseFormCustomComponent} from '@wm/components/input/base-form-custom';
+import {BaseFormCustomComponent} from '@wm/components/input';
 
 import {registerProps} from './rich-text-editor.props';
 import {extend} from "lodash-es";
@@ -48,7 +50,8 @@ const overrideSummerNote = () => {
 };
 
 @Component({
-    standalone: true,
+  standalone: true,
+  imports: [CommonModule, WmComponentsModule],
     selector: 'div[wmRichTextEditor]',
     templateUrl: './rich-text-editor.component.html',
     providers: [

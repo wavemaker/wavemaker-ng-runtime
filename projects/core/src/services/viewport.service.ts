@@ -1,6 +1,6 @@
-import {Injectable, OnDestroy} from '@angular/core';
-import {EventNotifier} from '../utils/event-notifier';
-import {isAndroid, isAndroidTablet, isIos} from '../utils/utils';
+import { Injectable, OnDestroy } from '@angular/core';
+import { EventNotifier } from '../utils/event-notifier';
+import { isAndroid, isAndroidTablet, isIos, isIpad } from '../utils/utils';
 import {get} from "lodash-es";
 
 let MINIMUM_MOBILE_WIDTH = 480;

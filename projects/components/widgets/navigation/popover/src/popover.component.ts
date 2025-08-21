@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { AnchorComponent } from '@wm/components/basic/anchor';
+import { WmComponentsModule } from "@wm/components/base";
+import { AnchorComponent } from '@wm/components/basic';
 import {
     AfterViewInit,
     ChangeDetectorRef,
@@ -53,7 +54,7 @@ let activePopover: PopoverComponent;
 
 @Component({
   standalone: true,
-  imports: [CommonModule, AnchorComponent, PopoverModule],
+  imports: [CommonModule, WmComponentsModule, AnchorComponent, PopoverModule],
     selector: 'wm-popover',
     templateUrl: './popover.component.html',
     providers: [

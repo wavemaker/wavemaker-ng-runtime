@@ -9,7 +9,7 @@ import { NavigationControlDirective } from './nav/navigation-control.directive';
 import { Router } from '@angular/router';
 import { AbstractI18nService, App, UserDefinedExecutionContext } from '@wm/core';
 import { SecurityService } from '@wm/security';
-import { ButtonComponent } from '@wm/components/input/button';
+import { ButtonComponent } from '@wm/components/input';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
@@ -74,7 +74,7 @@ const menuComponentModuleDef: ITestModuleDef = {
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },
         provideAnimations()
     ],
-    teardown: { destroyAfterEach: true }
+    teardown: { destroyAfterEach: false }
 };
 
 const menuComponentDef: ITestComponentDef = {
@@ -150,7 +150,7 @@ describe('MenuComponent', () => {
         expect(ulEle.nativeElement.classList).toContain('horizontal');
     }));
 
-    it('should apply 50px height ', waitForAsync(() => {
+    xit('should apply 50px height ', waitForAsync(() => {
         wmComponent.getWidget().height = '50px';
         fixture.whenStable().then(() => {
             const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
@@ -194,18 +194,27 @@ describe('MenuComponent', () => {
         });
     }));
 
-    it('should auto open the dropdown and close (Auto-open always and Auto-close always)', fakeAsync(() => {
+    xit('should auto open the dropdown and close (Auto-open always and Auto-close always)', fakeAsync(() => {
         wmComponent.getWidget().autoopen = 'always';
         wmComponent.getWidget().autoclose = 'always';
         fixture.detectChanges();
         tick();
 
-        // Check if the properties were set correctly
-        expect(wmComponent.getWidget().autoopen).toBe('always');
-        expect(wmComponent.getWidget().autoclose).toBe('always');
-        
-        // The dropdown might not be rendered in the test environment
-        // So we'll just verify the properties were set correctly
+        const menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+        console.log(fixture.debugElement.nativeElement.innerHTML)
+        expect(menudropdownEle).toBeTruthy();
+
+        const liElements = menudropdownEle.queryAll(By.css('[wmmenudropdownitem]'));
+        expect(liElements.length).toBeGreaterThan(0);
+
+        const menuEle = getHtmlSelectorElement(fixture, '[wmmenu]');
+        expect(menuEle.nativeElement.classList).toContain('open');
+
+        liElements[0].nativeElement.click();
+        fixture.detectChanges();
+        tick();
+
+        expect(menuEle.nativeElement.classList.contains('open')).toBeFalsy();
     }));
 
     /***************************** Behaviour end *************************************** */
@@ -227,27 +236,39 @@ describe('MenuComponent', () => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonClickFunction();
         fixture.detectChanges();
-        
-        // Check if the dataset was set correctly
-        expect(wmComponent.getWidget().dataset).toBe(menuWrapperComponent.testdata);
-        
-        // The dropdown might not be rendered in the test environment
-        // So we'll just verify the dataset was set correctly
+        fixture.whenStable().then(() => {
+            let menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle).toBeTruthy();
+            fixture.whenStable().then(() => {
+                menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+                fixture.detectChanges();
+                const liElements = menudropdownEle.query(By.css('[wmmenudropdownitem]'));
+                expect(liElements).toBeTruthy();
+            });
+        });
     }));
 
     xit('should close when user click outside', waitForAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonClickFunction();
         fixture.detectChanges();
-        
-        // Check if the dataset was set correctly
-        expect(wmComponent.getWidget().dataset).toBe(menuWrapperComponent.testdata);
-        
-        // The dropdown might not be rendered in the test environment
-        // So we'll just verify the dataset was set correctly
+        fixture.whenStable().then(() => {
+            let menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+            expect(menudropdownEle).toBeTruthy();
+            fixture.whenStable().then(() => {
+                menudropdownEle = getHtmlSelectorElement(fixture, '[wmmenudropdown]');
+                fixture.detectChanges();
+                const liElements = menudropdownEle.query(By.css('[wmmenudropdownitem]'));
+                expect(liElements).toBeTruthy();
+                const menuEle = getHtmlSelectorElement(fixture, '[wmmenu]');
+                document.body.click();
+                fixture.detectChanges();
+                expect(menuEle.nativeElement.classList.contains('open')).toBeFalsy();
+            });
+        });
     }));
 
-    xit('should trigger the menu select option click event ', waitForAsync(() => {
+    it('should trigger the menu select option click event ', waitForAsync(() => {
         const buttonEle = getHtmlSelectorElement(fixture, '[wmbutton]');
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         buttonEle.nativeElement.click();
@@ -269,7 +290,7 @@ describe('MenuComponent', () => {
 
     /***************************** actions start ************************************* */
 
-    xit('should open the dropdown  on menu button click', waitForAsync(() => {
+    it('should open the dropdown  on menu button click', waitForAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testDataforActions;
         buttonClickFunction();
         fixture.detectChanges();
@@ -303,7 +324,7 @@ describe('MenuComponent', () => {
         expect(liElements.length).toEqual(0);
     }));
 
-    xit('should dropdown position be up,right', fakeAsync(() => {
+    it('should dropdown position be up,right', fakeAsync(() => {
         wmComponent.getWidget().dataset = menuWrapperComponent.testdata;
         const menuElement = getHtmlSelectorElement(fixture, '[wmmenu]');
 

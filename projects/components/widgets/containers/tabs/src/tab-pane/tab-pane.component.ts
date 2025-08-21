@@ -1,9 +1,10 @@
+import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterViewInit,
     Attribute,
     Component,
     ContentChildren,
-    HostBinding, inject, Inject,
+    HostBinding, Inject,
     Injector,
     OnInit,
     Optional
@@ -22,7 +23,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-    standalone: true, 
+  standalone: true,
+  imports: [WmComponentsModule],
     selector: 'div[wmTabPane]',
     templateUrl: './tab-pane.component.html',
     providers: [
@@ -47,9 +49,9 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
     // reference to the components which needs a redraw(eg, grid, chart) when the height of this component changes
     @ContentChildren(RedrawableDirective, {descendants: true}) reDrawableComponents;
 
-    private tabsRef = inject(TabsComponent);
     constructor(
         inj: Injector,
+        private tabsRef: TabsComponent,
         @Attribute('heading') public heading,
         @Attribute('title') public title,
         @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any

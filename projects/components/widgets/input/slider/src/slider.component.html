@@ -22,8 +22,8 @@
 }
 @if(showmarkers){
     <div class="marker-container">
-@for (marker of markerItems; track marker) {
-        <div class="marker-wrapper"
+        <div *ngFor="let marker of markerItems"
+             class="marker-wrapper"
              [ngStyle]="{ left: marker.left + 'px' }"
              [attr.title]="marker.label">
             <div class="marker-label" [ngClass]="marker.position" [attr.title]="marker.label">
@@ -31,7 +31,6 @@
             </div>
             <div class="marker-dot" [attr.title]="marker.label"></div>
         </div>
-      }
     </div>
 
 }

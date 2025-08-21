@@ -1,6 +1,6 @@
-import {Directive, Inject, Self} from '@angular/core';
+import { Directive, Inject, Self } from '@angular/core';
 
-import {IRedrawableComponent, WidgetRef} from '../../framework/types';
+import { IRedrawableComponent, WidgetRef } from '../../framework/types';
 
 @Directive({
   standalone: true,

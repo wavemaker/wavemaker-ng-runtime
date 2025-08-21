@@ -190,7 +190,21 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
             if (k === 'show.bind' && attrs.get('deferload') === 'true') {
                 v = v + `" *lazyLoad="${wrapWithApos(v)}`;
             }
-            attrMarkup += `="${v}"`;         
+            attrMarkup += `="${v}"`;
+
+            if (k === 'showindevice' && v !== 'all') {
+                const condition = [];
+                if (v.includes('xs')) {
+                    condition.push('Viewport.isMobileType');
+                }
+                if (v.includes('sm')) {
+                    condition.push('(Viewport.isTabletType && Viewport.orientation.isPortrait)');
+                }
+                if (v.includes('md')) {
+                    condition.push('(Viewport.isTabletType && Viewport.orientation.isLandscape)');
+                }
+                attrMarkup += ` *ngIf="${condition.join(' || ')}"`;
+            }
         }
     });
 

@@ -1,21 +1,21 @@
-import {Injectable} from '@angular/core';
-import {Router} from '@angular/router';
-import {DatePipe} from '@angular/common';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 import {
-    $appDigest,
     AbstractDialogService,
     AbstractHttpService,
     AbstractI18nService,
     AbstractSpinnerService,
     App,
     fetchContent,
-    getWmProjectProperties,
     isDefined,
-    triggerFn
+    triggerFn,
+    $appDigest,
+    getWmProjectProperties
 } from '@wm/core';
-import {SecurityService} from '@wm/security';
-import {$rootScope, MetadataService, VariablesService} from '@wm/variables';
+import { SecurityService } from '@wm/security';
+import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService } from '@wm/variables';
 import {extend, forEach, get, isEmpty, isObject, isUndefined, merge, trim} from "lodash-es";
 
 enum POST_MESSAGES {

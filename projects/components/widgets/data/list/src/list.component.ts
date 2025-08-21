@@ -1,22 +1,5 @@
-import {CommonModule} from '@angular/common';
-import {
-    APPLY_STYLES_TYPE,
-    configureDnD,
-    DEBOUNCE_TIMES,
-    extractDataSourceName,
-    getOrderedDataset,
-    groupData,
-    handleHeaderClick,
-    NAVIGATION_TYPE,
-    provideAsWidgetRef,
-    StylableComponent,
-    styler,
-    TextContentDirective,
-    ToDatePipe,
-    toggleAllHeaders,
-    unsupportedStatePersistenceTypes,
-    WidgetRef
-} from "@wm/components/base";
+import { CommonModule } from '@angular/common';
+import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterViewInit,
     Attribute,
@@ -24,8 +7,7 @@ import {
     Component,
     ContentChild,
     ContentChildren,
-    ElementRef,
-    Inject,
+    ElementRef, Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -45,20 +27,37 @@ import {
     App,
     AppDefaults,
     DataSource,
-    generateGUId,
     getClonedObject,
     isDataSourceEqual,
     isDefined,
     isMobile,
     isObject,
     noop,
+    switchClass,
+    StatePersistence,
     PaginationService,
     setListClass,
-    StatePersistence,
-    switchClass
+    generateGUId
 } from '@wm/core';
+import {
+    APPLY_STYLES_TYPE,
+    configureDnD,
+    DEBOUNCE_TIMES,
+    getOrderedDataset,
+    groupData,
+    handleHeaderClick,
+    NAVIGATION_TYPE,
+    unsupportedStatePersistenceTypes,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+    ToDatePipe,
+    toggleAllHeaders,
+    WidgetRef,
+    extractDataSourceName
+} from '@wm/components/base';
 import {PaginationComponent} from '@wm/components/data/pagination';
-import {ButtonComponent} from '@wm/components/input/button';
+import {ButtonComponent} from '@wm/components/input';
 
 import {registerProps} from './list.props';
 import {ListItemDirective} from './list-item.directive';
@@ -67,8 +66,7 @@ import {
     clone,
     cloneDeep,
     forEach,
-    get,
-    has,
+    get, has,
     includes,
     isArray,
     isEmpty,
@@ -76,14 +74,7 @@ import {
     isNumber,
     isString,
     isUndefined,
-    last,
-    max,
-    min,
-    pullAllWith,
-    pullAt,
-    remove,
-    some,
-    toNumber
+    last, max, min, pullAllWith, pullAt, remove, some, toNumber
 } from "lodash-es";
 
 declare const $;
@@ -93,7 +84,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-list', hostClass: DEFAULT_CLS};
 
 @Component({
   standalone: true,
-  imports: [CommonModule, TextContentDirective, PaginationComponent, ListItemDirective],
+  imports: [CommonModule, WmComponentsModule, PaginationComponent, ListItemDirective],
     selector: 'div[wmList]',
     templateUrl: './list.component.html',
     providers: [

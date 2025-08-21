@@ -7,7 +7,7 @@ import { customWidgetProps } from './custom-widget.props';
 import { registerProps } from "../custom-widget-container/custom-widget.props";
 import {capitalize, cloneDeep} from 'lodash-es';
 import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {DatasetAwareFormComponent} from "@wm/components/input/dataset-aware-form";
+import {DatasetAwareFormComponent} from "@wm/components/input";
 import {Subject} from "rxjs";
 
 const registeredPropsSet = new Set<string>();

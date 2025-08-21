@@ -1,7 +1,0 @@
-{
-    "name": "@wm/components/basic/audio",
-    "sideEffects": false,
-    "dependencies": {
-      "tslib": "^2.0.0"
-    }
-}

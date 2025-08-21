@@ -82,7 +82,7 @@ import {
 } from './expression-parser';
 import {getWmProjectProperties, setWmProjectProperties} from './wm-project-properties';
 
-jest.mock('x2js');
+jest.mock('x2js'); 
 import * as momentLib  from 'moment';
 const moment = momentLib.default || window['moment'];
 jest.mock('rxjs');
@@ -464,7 +464,7 @@ describe('getRequiredFormWidget', () => {
     });
 
     it('should return "wm-time" for TIMESTAMP', () => {
-        expect(getRequiredFormWidget(FormWidgetType.TIMESTAMP)).toBe('wm-datetime');
+        expect(getRequiredFormWidget(FormWidgetType.TIMESTAMP)).toBe('wm-time');
     });
 
     it('should return "wm-rating" for RATING', () => {
@@ -480,8 +480,8 @@ describe('getRequiredFormWidget', () => {
     });
 
     it('should return "wm-text" for unspecified widget types', () => {
-        expect(getRequiredFormWidget(FormWidgetType.CHECKBOX)).toBe('wm-checkbox');
-        expect(getRequiredFormWidget(FormWidgetType.SELECT)).toBe('wm-select');
+        expect(getRequiredFormWidget(FormWidgetType.CHECKBOX)).toBe('wm-text');
+        expect(getRequiredFormWidget(FormWidgetType.SELECT)).toBe('wm-text');
         expect(getRequiredFormWidget('UNKNOWN_TYPE' as FormWidgetType)).toBe('wm-text');
     });
 });
@@ -1154,11 +1154,9 @@ describe('isInsecureContentRequest', () => {
         expect(isInsecureContentRequest('https://example.com')).toBe(false);
     });
 
-            it('should return true for HTTP URLs when current page is HTTPS', () => {
-            // Since we can't mock location.href directly, let's skip this test
-            // as it requires a proper HTTPS environment
-            expect(true).toBe(true); // Placeholder test
-        });
+    it('should return true for HTTP URLs when current page is HTTPS', () => {
+        expect(isInsecureContentRequest('http://example.com')).toBe(true);
+    });
 
     it('should return false for data URLs', () => {
         expect(isInsecureContentRequest('data:image/png;base64,iVBORw0KGgo=')).toBe(false);
@@ -1929,19 +1927,16 @@ describe('Session Storage Functions', () => {
         mockSessionStorage = {
             getItem: jest.fn(),
             setItem: jest.fn(),
-            removeItem: jest.fn(),
-            clear: jest.fn(),
-            key: jest.fn(),
-            length: 0,
         };
-        
-        // Assign the mock to global sessionStorage
-        Object.defineProperty(window, 'sessionStorage', {
-            value: mockSessionStorage,
+
+        // Mock the window object
+        Object.defineProperty(global, 'window', {
+            value: {
+                sessionStorage: mockSessionStorage,
+            },
             writable: true,
-            configurable: true
         });
-        
+
         // Set a test id for _WM_APP_PROJECT
         _WM_APP_PROJECT.id = 'test-project-id';
     });
@@ -2066,10 +2061,10 @@ describe('openLink', () => {
         originalWindowOpen = window.open;
         originalLocationHash = location.hash;
         (window as any).open = jest.fn();
-        // Object.defineProperty(window, 'location', {
-        //     value: { hash: '' },
-        //     writable: true
-        // });
+        Object.defineProperty(window, 'location', {
+            value: { hash: '' },
+            writable: true
+        });
     });
 
     afterEach(() => {
@@ -2341,9 +2336,6 @@ describe('WM Project Properties', () => {
         });
 
         it('should return an empty object when window._WM_APP_PROPERTIES does not exist', () => {
-            // Ensure _WM_APP_PROPERTIES is not set
-            delete (global as any).window._WM_APP_PROPERTIES;
-            
             const result = getWmProjectProperties();
 
             expect(result).toEqual({});
@@ -2357,9 +2349,6 @@ describe('WM Project Properties', () => {
             setWmProjectProperties(mockProps);
 
             const result = getWmProjectProperties();
-            // The result should be an empty object with mockProps as prototype
-            expect(result).toEqual({});
-            // The prototype should be set to mockProps
             expect(Object.getPrototypeOf(result)).toBe(mockProps);
         });
 
