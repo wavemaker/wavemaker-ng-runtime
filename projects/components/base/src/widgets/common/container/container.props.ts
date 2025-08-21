@@ -16,8 +16,7 @@ export const registerProps = () => {
                 ['alignment', PROP_STRING],
                 ['gap', PROP_STRING],
                 ['wrap', PROP_BOOLEAN],
-                ['columngap', PROP_STRING],
-                ['rowgap', PROP_STRING]
+                ['columngap', PROP_STRING]
             ]
         )
     );

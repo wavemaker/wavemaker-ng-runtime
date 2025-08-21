@@ -28,9 +28,9 @@ const alignmentMatrix = {
   'bottom-center':  { justifyContent: 'center',     alignItems: 'flex-end' },
   'bottom-right':   { justifyContent: 'flex-end',   alignItems: 'flex-end' },
 
-  'start':          {  alignItems: 'start' },
-  'center':         {  alignItems: 'center' },
-  'end':            {  alignItems: 'end' }
+  'start':          { justifyContent: 'space-between', alignItems: 'flex-start' },
+  'center':         { justifyContent: 'space-between',  alignItems: 'center' },
+  'end':            { justifyContent: 'space-between',  alignItems: 'flex-end' }
 };
 
 @Directive({
@@ -46,9 +46,7 @@ export class ContainerDirective extends BaseContainerComponent {
     public hasWrap: boolean = false;
     public alignment: string;
     public gap: string;
-    public spacing: string;
     public columngap:string;
-    public rowgap:string;
 
     constructor(inj: Injector, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext?: any) {
         super(inj, WIDGET_CONFIG, explicitContext);
@@ -78,10 +76,6 @@ export class ContainerDirective extends BaseContainerComponent {
                 break;
             case 'gap':
             case 'columngap':
-            case 'rowgap':
-                if(key === 'gap' || key === 'columngap'){
-                    this.spacing = nv
-                }
                 setTimeout(() => {
                     this.applySpacing(nv,key)
                 });
@@ -113,11 +107,7 @@ export class ContainerDirective extends BaseContainerComponent {
         let justifyContent = isRow ? base.justifyContent : base.alignItems;
         let alignItems = isRow ? base.alignItems : base.justifyContent;
 
-        // If gap is Auto, force space-between on main axis
-        if (this.spacing === 'auto') {
-            justifyContent = 'space-between';
-            alignItems = base.alignItems
-        }
+        
         this.$element.css({
             display: 'flex',
             'flex-wrap': this.hasWrap ? 'wrap' : 'nowrap',
@@ -134,23 +124,26 @@ export class ContainerDirective extends BaseContainerComponent {
         // Normalize values
         const gap = key === 'gap' ? nv : this.gap;
         const columngap = key === 'columngap' ? nv : this.columngap;
-        const rowgap = key === 'rowgap' ? nv : this.rowgap;
         const hasWrap = this.hasWrap;
 
         // Default gap values
         const colVal = (columngap && columngap !== 'auto') ? (columngap) : null;
-        const rowVal = (rowgap && rowgap !== 'auto') ? (rowgap) : null;
         const gapVal = (gap && gap !== 'auto') ? (gap) : null;
+        const rowVal = hasWrap  ? gapVal  : null;
 
+           let justifyContent = isRow ? base.justifyContent : base.alignItems;
+            let alignItems = isRow ? base.alignItems : base.justifyContent;
         // CASE: No wrap
         if (!hasWrap) {
             if (gap === 'auto') {
                 el.css({
-                    'justify-content': 'space-between'
+                    'justify-content': base.justifyContent,
+                    'align-items' :base.alignItems
                 });
             } else {
                 el.css({
-                    'justify-content': isRow ? base.justifyContent : base.alignItems,
+                    'justify-content': justifyContent,
+                    'align-items': alignItems,
                     gap: `${gapVal}px`
                 });
             }
@@ -158,23 +151,23 @@ export class ContainerDirective extends BaseContainerComponent {
 
         // CASE: Wrap enabled
         else {
-            // both auto
-            if (columngap === 'auto' && rowgap === 'auto') {
+            // both auto (gap as rowgap and columngap)
+            if (columngap === 'auto' && gap === 'auto') {
                 el.css({
-                    'justify-content': 'space-between',
-                    'align-content': 'space-between'
+                    'justify-content': justifyContent,
+                    'align-content': justifyContent
                 });
             }
-            // col auto, row fixed
-            else if (columngap === 'auto') {
+            // columngap auto, gap (rowgap) fixed
+            else if (columngap === 'auto' && gap !== 'auto') {
                 el.css({
-                    'justify-content': 'space-between',
-                    'align-content': base.alignItems,
+                    'justify-content': justifyContent,
+                    'align-content': alignItems,
                     'row-gap': `${rowVal}px`
                 });
             }
-            // row auto, col fixed
-            else if (rowgap === 'auto') {
+            // gap (rowgap) auto, columngap fixed
+            else if (gap === 'auto' && columngap !== 'auto') {
                 el.css({
                     'align-content': 'space-between',
                     'column-gap': `${colVal}px`
@@ -182,8 +175,6 @@ export class ContainerDirective extends BaseContainerComponent {
             }
             //  both fixed numbers
             else {
-                let justifyContent = isRow ? base.justifyContent : base.alignItems;
-                let alignItems = isRow ? base.alignItems : base.justifyContent;
                 if (colVal && rowVal) {
                     if (colVal === rowVal) {
                         el.css({ 'gap': `${colVal}px`, 'align-content': alignItems, 'justify-content': justifyContent });
@@ -193,8 +184,7 @@ export class ContainerDirective extends BaseContainerComponent {
                 }
             }
             this.columngap = columngap?.toString();
-            this.rowgap = rowgap?.toString();
         }
-   
-}
+           this.gap = gap?.toString();
+    }
 }
