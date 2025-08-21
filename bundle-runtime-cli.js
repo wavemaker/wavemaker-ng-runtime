@@ -38,7 +38,7 @@ const updateWMVersion = (path, wmPackageJSON) => {
  */
 const init = () => {
     const path = './libraries/package.json';
-    const wmPackageJSON = require(path);
+    const wmPackageJSON = JSON.parse(fs.readFileSync(path, 'utf8'));
     updateWMVersion(path, wmPackageJSON);
 };
 
