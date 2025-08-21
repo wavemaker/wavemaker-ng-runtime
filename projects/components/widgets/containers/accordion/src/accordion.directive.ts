@@ -1,4 +1,4 @@
-import { AfterContentInit, ContentChildren, Directive, forwardRef, Inject, Injector, Optional, QueryList } from '@angular/core';
+import { AfterContentInit, ContentChildren, Directive, forwardRef, Inject, Injector, Optional, QueryList, ChangeDetectorRef } from '@angular/core';
 import { DynamicComponentRefProvider, noop, StatePersistence } from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
@@ -34,6 +34,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     public closeothers: boolean;
     public statehandler: any;
     private statePersistence: StatePersistence;
+    public injector: Injector;
 
     private activePaneIndex: number;
     private activePane: AccordionPaneComponent;
@@ -46,56 +47,90 @@ export class AccordionDirective extends StylableComponent implements AfterConten
 
     @ContentChildren(forwardRef(() => AccordionPaneComponent)) panes: QueryList<AccordionPaneComponent>;
 
-    constructor(inj: Injector, statePersistence: StatePersistence, dynamicComponentProvider: DynamicComponentRefProvider, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
-        let resolveFn: Function = noop;
-        super(inj, WIDGET_CONFIG, explicitContext, new Promise(res => resolveFn = res));
-        this.promiseResolverFn = resolveFn;
-        this.statePersistence = statePersistence;
-        this.dynamicComponentProvider = dynamicComponentProvider;
-        this.dynamicPanes = [];
-        this.dynamicPaneIndex = 0;
-        styler(this.nativeElement, this, APPLY_STYLES_TYPE.SCROLLABLE_CONTAINER);
+    constructor(
+        inj: Injector,
+        private cdr: ChangeDetectorRef,
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
+    ) {
+        super(inj, WIDGET_CONFIG, explicitContext);
+        this.injector = inj;
     }
 
     /**
-     * AccordionPane children components invoke this method to communicate with the parent
-     * if isExpand is true and when closeothers is true, all the other panes are collapsed
-     * if the evt argument is defined on-change callback will be invoked.
-     * updates the activePane index property
-     * @param {AccordionPaneComponent} paneRef
-     * @param {boolean} isExpand
-     * @param {Event} evt
+     * Expand a specific pane and notify widget manager
      */
-    public notifyChange(paneRef: AccordionPaneComponent, isExpand: boolean, evt: Event) {
+    public expandPane(paneIndex: number, evt?: Event) {
+        if (!this.isValidPaneIndex(paneIndex)) {
+            console.warn(`Invalid pane index: ${paneIndex}`);
+            return;
+        }
+
+        const pane = this.panes.toArray()[paneIndex];
+        if (pane && !pane.isActive) {
+            // Close other panes if closeothers is true
+            if (this.closeothers) {
+                this.closePanesExcept(pane);
+            }
+            
+            // Expand the selected pane
+            pane.expand();
+            this.activePaneIndex = paneIndex;
+            this.activePane = pane;
+            
+            // Force change detection after pane expansion
+            setTimeout(() => {
+                this.cdr.detectChanges();
+            }, 50);
+        }
+    }
+
+    /**
+     * Collapse a specific pane and notify widget manager
+     */
+    public collapsePane(paneIndex: number, evt?: Event) {
+        if (!this.isValidPaneIndex(paneIndex)) {
+            return;
+        }
+
+        const pane = this.panes.toArray()[paneIndex];
+        if (pane && pane.isActive) {
+            pane.collapse(evt);
+            this.activePaneIndex = -1;
+            this.activePane = null;
+        }
+    }
+
+    /**
+     * Notify about pane changes (called by accordion panes)
+     */
+    notifyChange(pane: AccordionPaneComponent, isExpand: boolean, evt: Event) {
+        // Handle pane state change notification
         if (isExpand) {
-            this.closePanesExcept(paneRef);
-            const index = this.getPaneIndexByRef(paneRef);
-            this.activePane = paneRef.getWidget();
-            // if the event is defined invoke the change callback.
-            // programmatic invocations of expand/collapse on accordion-pane will not trigger change event
-            if (evt) {
-                this.invokeEventCallback('change', {
-                    $event: evt,
-                    newPaneIndex: index,
-                    oldPaneIndex: this.activePaneIndex
-                });
-            }
-            this.activePaneIndex = index;
-        }
-        const mode = this.statePersistence.computeMode(this.statehandler);
-        if (evt && mode && mode.toLowerCase() !== 'none') {
-            const activePanes = [];
-            this.panes.forEach(function (pane) {
-                if (pane.isActive) {
-                    activePanes.push(pane.name);
-                }
+            // Pane was expanded
+            this.invokeEventCallback('onPaneExpanded', { 
+                accordion: this, 
+                pane: pane,
+                event: evt 
             });
-            if (activePanes.length) {
-                this.statePersistence.setWidgetState(this, activePanes);
-            } else {
-                this.statePersistence.removeWidgetState(this);
-            }
+        } else {
+            // Pane was collapsed
+            this.invokeEventCallback('onPaneCollapsed', { 
+                accordion: this, 
+                pane: pane,
+                event: evt 
+            });
         }
+    }
+
+    /**
+     * Close all panes except the specified one
+     */
+    private closePanesExcept(exceptPane: AccordionPaneComponent) {
+        this.panes.forEach(pane => {
+            if (pane !== exceptPane && pane.isActive) {
+                pane.collapse();
+            }
+        });
     }
 
     /**
@@ -186,32 +221,17 @@ export class AccordionDirective extends StylableComponent implements AfterConten
         return find(this.panes.toArray(), { name: name });
     }
 
-    private getPaneIndexByRef(paneRef: AccordionPaneComponent): number {
-        return this.panes.toArray().indexOf(paneRef);
+    /**
+     * Get pane index by reference
+     */
+    getPaneIndexByRef(pane: AccordionPaneComponent): number {
+        return this.panes.toArray().indexOf(pane);
     }
 
     private getPaneRefByIndex(index: number): AccordionPaneComponent {
         return this.panes.toArray()[index];
     }
 
-    // Except the pane provided close all other panes
-    private closePanesExcept(paneRef: AccordionPaneComponent | number) {
-        if (isNumber(paneRef)) {
-            paneRef = this.getPaneRefByIndex(paneRef as number);
-        }
-        if (this.closeothers) {
-            this.panes.forEach(pane => {
-                if (pane !== paneRef) {
-                    pane.collapse();
-                }
-            });
-        }
-    }
-
-    private expandPane(index: number) {
-        this.closePanesExcept(index);
-        this.panes.toArray()[index].expand();
-    }
     private onDataChange(newVal) {
         this.fieldDefs = createArrayFrom(newVal);
     }
