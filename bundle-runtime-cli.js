@@ -8,9 +8,11 @@
  *  publishVersion: To generate the given version package.json file
  */
 'use strict';
-const fs = require('fs');
+import fs from 'fs';
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 
-const argv = require("yargs")
+const argv = yargs(hideBin(process.argv))
     .options({
         "publishVersion": {
             type: "string"
