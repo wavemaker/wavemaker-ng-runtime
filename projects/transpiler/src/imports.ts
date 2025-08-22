@@ -171,7 +171,6 @@ const FORM_COMPONENT: ImportDef[] = [
     ...LIVE_FILTER_DIRECTIVE,
     ...LIVE_FORM_DIRECTIVE,
     { from: '@wm/components/data/form', name: 'FormComponent' }];
-const COMPOSITE_DIRECTIVE = [{ from: '@wm/components/input/composite', name: 'CompositeDirective' }, { from: '@wm/components/input/caption-position', name: 'CaptionPositionDirective' }]
 
 // Page Structure Components // TODO: PARTIAL_CONTAINER these needed ? appComponent has imports at root
 const FOOTER_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/page/footer', name: 'FooterDirective' }];
@@ -304,7 +303,6 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-wizard', WIZARD_COMPONENT],
     ['wm-wizardstep', WIZARD_COMPONENT],
     ['wm-repeat-template', REPEAT_TEMPLATE_DIRECTIVE],
-    ['wm-composite', COMPOSITE_DIRECTIVE],
 
     ['toDate', TO_DATE_PIPE],
     ['toCurrency', TO_CURRENCY_PIPE],
