@@ -2683,6 +2683,9 @@ $.widget('wm.datatable', {
                             self.options.timeoutCall(function () {
                                 if(quickEdit){
                                     var rowId = $editingRow[0]?.getAttribute('data-row-id');
+                                    if($editingRow.hasClass("always-new-row")){
+                                        rowId= self.gridElement[0].querySelector("tr.always-new-row")?.getAttribute('data-row-id')-1;
+                                    }
                                     var matchingRow = self.gridElement[0].querySelector("tr[data-row-id='" + rowId + "']");
                                     if($(matchingRow).hasClass('always-new-row')){return;}
                                     if (matchingRow) {
