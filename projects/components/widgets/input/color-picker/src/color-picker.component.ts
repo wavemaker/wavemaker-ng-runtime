@@ -6,7 +6,7 @@ import { NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel } from '@angular/forms';
 
 import { addClass, removeClass } from '@wm/core';
 import { AUTOCLOSE_TYPE, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
-import { BaseFormCustomComponent } from '@wm/components/input';
+import { BaseFormCustomComponent } from '@wm/components/input/base-form-custom';
 import { registerProps } from './color-picker.props';
 
 const DEFAULT_CLS = 'input-group app-colorpicker';
@@ -60,16 +60,10 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     }
 
     colorPickerOpen(value: string) {
-        // Note: $ is not available in this context, need to use proper DOM manipulation
-        const hexInputs = this.nativeElement.querySelectorAll('.hex-text input');
-        hexInputs.forEach((input: HTMLInputElement) => {
-            input.setAttribute('placeholder', 'Enter hex color code');
-        });
+        $('.hex-text input').attr('placeholder', 'Enter hex color code');
         if (this.autoclose === AUTOCLOSE_TYPE.ALWAYS) {
             const colorPickerContainer = this.nativeElement.querySelector(`.color-picker`) as HTMLElement;
-            if (colorPickerContainer) {
-                colorPickerContainer.onclick = () => this.cpDirective.closeDialog();
-            }
+            colorPickerContainer.onclick = () => this.cpDirective.closeDialog();
         }
     }
 
