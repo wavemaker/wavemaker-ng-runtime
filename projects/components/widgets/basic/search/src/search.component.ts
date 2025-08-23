@@ -1,7 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import { FormsModule } from '@angular/forms';
-import { ScrollableDirective } from './scrollable.directive';
+import {CommonModule} from '@angular/common';
+import {FormsModule, NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ScrollableDirective} from './scrollable.directive';
 import {
     AfterViewChecked,
     AfterViewInit,
@@ -16,12 +15,16 @@ import {
     ViewChild,
     ViewChildren
 } from '@angular/core';
-import {NG_VALIDATORS, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 import {from, Observable, of} from 'rxjs';
 import {filter, mergeMap} from 'rxjs/operators';
 
-import {TypeaheadContainerComponent, TypeaheadDirective, TypeaheadMatch, TypeaheadModule} from 'ngx-bootstrap/typeahead';
+import {
+    TypeaheadContainerComponent,
+    TypeaheadDirective,
+    TypeaheadMatch,
+    TypeaheadModule
+} from 'ngx-bootstrap/typeahead';
 
 import {addClass, adjustContainerPosition, App, DataSource, isDefined, isMobile, toBoolean} from '@wm/core';
 import {
@@ -31,13 +34,16 @@ import {
     extractDataAsArray,
     getContainerTargetClass,
     getUniqObjsByDataField,
+    ItemTemplateDirective,
+    PartialContainerDirective,
+    PartialParamHandlerDirective,
     provideAs,
     provideAsWidgetRef,
     styler,
+    TextContentDirective,
     transformFormData
 } from '@wm/components/base';
-import {DatasetAwareFormComponent} from '@wm/components/input';
-
+import {DatasetAwareFormComponent} from '@wm/components/input/dataset-aware-form';
 import {registerProps} from './search.props';
 import {DataProvider, IDataProvider, IDataProviderConfig} from './data-provider/data-provider';
 import {
@@ -59,8 +65,8 @@ import {
 const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, FormsModule, ScrollableDirective, TypeaheadModule],
+    standalone: true,
+    imports: [CommonModule, FormsModule, ScrollableDirective, TypeaheadModule, TextContentDirective, ItemTemplateDirective, PartialParamHandlerDirective, PartialContainerDirective],
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
     providers: [
@@ -208,7 +214,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
                 // if prev datavalue is not equal to current datavalue then clear the modelByKey and queryModel
                 if (!isObject(val) && (this as any).prevDatavalue !== val) {
                     this._modelByKey = undefined;
-                    this.query = this.queryModel = '';
+                    if (this.queryModel === '' || this.queryModel === undefined) {
+                        this.query = '';
+                    } this.queryModel = '';
                 }
                 // if the datafield is ALLFILEDS do not fetch the records
                 // update the query model with the values we have
@@ -638,7 +646,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
             // resetting the queryModel only when prevDatavalue is equal to data
             if ((this as any).prevDatavalue !== data) {
                 this.queryModel = undefined;
-                this.query = '';
+                if (!data || data === '') {
+                    this.query = '';
+                }
                 return;
             }
         }
@@ -654,6 +664,15 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
         if (this.type === 'search' && this.query === this._lastQuery && this._lastResult) {
             (this.typeahead as any).keyUpEventEmitter.emit(this.query);
         }
+    }
+    handleInputBlur($event: FocusEvent) {
+            this.queryModel = [{
+                key: this.query,
+                value: this.query,
+                label: this.query
+            }];
+            this._modelByValue = this.query;
+            this.datavalue = this.query;
     }
 
     public notifySubscriber() {
@@ -821,6 +840,7 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
         styler(this.nativeElement as HTMLElement, this);
         this.containerTarget = getContainerTargetClass(this.nativeElement);
+        this.nativeElement.querySelector('input')?.addEventListener('blur', this.handleInputBlur.bind(this));
     }
 
     public ngAfterViewChecked() {

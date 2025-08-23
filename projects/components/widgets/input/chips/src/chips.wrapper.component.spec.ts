@@ -1,17 +1,16 @@
-import { ComponentFixture, waitForAsync } from '@angular/core/testing';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { By } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
-import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
-import { DatePipe } from '@angular/common';
-import { $unwatch, $watch, AbstractI18nService, App, AppDefaults, isAppleProduct } from '@wm/core';
-import { ChipsComponent } from './chips.component';
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { compileTestComponent, mockApp, setInputValue } from '../../../../base/src/test/util/component-test-util';
-import { WmComponentsModule, ToDatePipe, DataSetItem } from '@wm/components/base';
-import { SearchComponent } from '@wm/components/basic/search';
-import { PartialRefProvider } from '@wm/core';
-import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
+import {ComponentFixture, waitForAsync} from '@angular/core/testing';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {By} from '@angular/platform-browser';
+import {FormsModule} from '@angular/forms';
+import {TypeaheadModule} from 'ngx-bootstrap/typeahead';
+import {DatePipe} from '@angular/common';
+import {$unwatch, $watch, AbstractI18nService, App, AppDefaults, isAppleProduct, PartialRefProvider} from '@wm/core';
+import {ChipsComponent} from './chips.component';
+import {ComponentTestBase, ITestComponentDef, ITestModuleDef} from '../../../../base/src/test/common-widget.specs';
+import {compileTestComponent, mockApp} from '../../../../base/src/test/util/component-test-util';
+import {DataSetItem, TextContentDirective, ToDatePipe} from '@wm/components/base';
+import {SearchComponent} from '@wm/components/basic/search';
+import {MockAbstractI18nService} from '../../../../base/src/test/util/date-test-util';
 
 jest.mock('@wm/core', () => ({
     ...jest.requireActual('@wm/core'),
@@ -39,7 +38,7 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
         TypeaheadModule.forRoot(),
-        WmComponentsModule, ChipsComponent, SearchComponent
+        ChipsComponent, SearchComponent
     ],
     declarations: [ChipsWrapperComponent],
     providers: [
@@ -48,7 +47,8 @@ const testModuleDef: ITestModuleDef = {
         { provide: DatePipe, useClass: DatePipe },
         { provide: AppDefaults, useClass: AppDefaults },
         { provide: PartialRefProvider, useClass: PartialRefProvider },
-        { provide: AbstractI18nService, useClass: MockAbstractI18nService }
+        { provide: AbstractI18nService, useClass: MockAbstractI18nService },
+        TextContentDirective
     ]
 };
 

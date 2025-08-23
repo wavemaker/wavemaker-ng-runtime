@@ -1745,6 +1745,7 @@ $.widget('wm.datatable', {
             if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable) {
                 if (Number(this.getColInfo(e))) {
                     e.stopPropagation();
+                    this.closeDropdown(e);
                     return;
                 }
             }
@@ -1769,6 +1770,7 @@ $.widget('wm.datatable', {
             if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable) {
                 if (Number(this.getColInfo(e))) {
                     e.stopPropagation();
+                    this.closeDropdown(e);
                     return;
                 }
             }
@@ -1840,6 +1842,14 @@ $.widget('wm.datatable', {
     closePopover: function() {
         //If the DataTable is in the popover, popover shouldn't be closed
         this.options.closePopover(this.element);
+    },
+    closeDropdown: function(e){
+        this.element[0].querySelectorAll('.app-menu').forEach(el => {
+            if (el && el.classList.contains('open') && el.getAttribute('autoclose') === 'outsideClick' && e?.originalEvent?.isTrusted &&
+                e.target !== el.querySelector('[dropdowntoggle]')&& e.target.parentElement!== el.querySelector('[dropdowntoggle]')) {
+                    el?.widget?.bsDropdown?.hide();
+            }
+        });
     },
     headerClickHandler: function (e) {
         var $th = $(e.target).closest('th.app-datagrid-header-cell'),
@@ -2115,6 +2125,7 @@ $.widget('wm.datatable', {
     /* Toggles the edit state of a row. */
     toggleEditRow: function (e, options) {
         options = options || {};
+        this.closeDropdown(e);
         if (e) {
             e.stopPropagation();
         }

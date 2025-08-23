@@ -1,16 +1,8 @@
-import {
-    Injectable,
-    NgModuleRef,
-    Type,
-    Injector,
-    Compiler,
-    NgModuleFactory,
-} from '@angular/core';
+import { Injectable, ComponentFactoryResolver } from '@angular/core';
 import { PartialRefProvider } from '@wm/core';
 import { ComponentType } from '@wm/runtime/base';
 import { partialLazyModules, prefabLazyModules, prefabPartialLazyModules } from '../util/lazy-module-routes';
 
-type ModuleWithRoot = Type<any> & { rootComponent: Type<any> };
 type Options = {
     prefab: string
 };
@@ -19,15 +11,15 @@ type Options = {
     providedIn: 'root'
 })
 export class LazyComponentRefProviderService extends PartialRefProvider {
-    private moduleRef: NgModuleRef<any>;
-    
-    constructor(private injector: Injector, private compiler: Compiler) {
+    constructor(
+        private componentFactoryResolver: ComponentFactoryResolver
+    ) {
         super();
     }
 
     private getLazyModule(componentName: string, componentType: ComponentType, options?: Options) {
         if (componentType === ComponentType.PARTIAL && options && options.prefab) {
-           return prefabPartialLazyModules[`${options.prefab}_${componentName}`];
+            return prefabPartialLazyModules[`${options.prefab}_${componentName}`];
         }
         if (componentType === ComponentType.PARTIAL) {
             return partialLazyModules[componentName];
@@ -37,27 +29,27 @@ export class LazyComponentRefProviderService extends PartialRefProvider {
         }
     }
 
-    private async getModuleFactory(moduleOrFactory: NgModuleFactory<any> | Type<any>): Promise<NgModuleFactory<any>> {
-        if (moduleOrFactory instanceof NgModuleFactory) {
-            return moduleOrFactory;
-        } else {
-            return this.compiler.compileModuleAsync(moduleOrFactory);
-        }
-    }
-
     public async getComponentFactoryRef(componentName: string, componentType: ComponentType, options?: Options) {
         try {
-            const moduleOrFactory = await this.getLazyModule(componentName, componentType, options).loadChildren();
-            const moduleFactory = await this.getModuleFactory(moduleOrFactory);
+            const lazyModule = this.getLazyModule(componentName, componentType, options);
 
-            this.moduleRef = moduleFactory.create(this.injector);
-            const rootComponent = (moduleFactory.moduleType as ModuleWithRoot)
-                .rootComponent;
-            return this.moduleRef.componentFactoryResolver.resolveComponentFactory(
-                rootComponent
-            );
+            if (!lazyModule) {
+                console.error(`No lazy module found for ${componentName}`);
+                return null;
+            }
+
+            // Load the component
+            const loadedComponent = await lazyModule.loadComponent();
+
+            if (!loadedComponent) {
+                console.error(`Failed to load component ${componentName}`);
+                return null;
+            }
+
+            // For standalone components, create a component factory
+            return this.componentFactoryResolver.resolveComponentFactory(loadedComponent);
         } catch (e) {
-            console.error(e);
+            console.error('Error in getComponentFactoryRef:', e);
             return null;
         }
     }

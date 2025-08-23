@@ -1,39 +1,36 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import {
-    AfterViewInit,
-    Attribute,
-    Component,
-    Inject,
-    Injector,
-    OnInit,
-    Optional,
-    ViewChild
-} from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {AfterViewInit, Attribute, Component, Inject, Injector, OnInit, Optional, ViewChild} from '@angular/core';
+import {NG_VALUE_ACCESSOR} from '@angular/forms';
 
+import {$appDigest, $unwatch, $watch, debounce, isAppleProduct, isDefined, toBoolean} from '@wm/core';
 import {
-    $appDigest,
-    $unwatch,
-    $watch,
-    debounce,
-    isAppleProduct,
-    isDefined,
-    toBoolean
-} from '@wm/core';
-import { ALLFIELDS, configureDnD, DataSetItem, getConditionalClasses, getUniqObjsByDataField, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
-import { DatasetAwareFormComponent } from '@wm/components/input';
-import { SearchComponent } from '@wm/components/basic/search';
+    ALLFIELDS,
+    configureDnD,
+    DataSetItem,
+    getConditionalClasses,
+    getUniqObjsByDataField,
+    IWidgetConfig,
+    provideAs,
+    provideAsWidgetRef,
+    styler,
+    TextContentDirective
+} from '@wm/components/base';
+import {DatasetAwareFormComponent} from '@wm/components/input/dataset-aware-form';
+import {SearchComponent} from '@wm/components/basic/search';
 
-import { registerProps } from './chips.props';
+import {registerProps} from './chips.props';
 import {
     clone,
     filter,
     find,
     findIndex,
-    forEach, isArray,
+    forEach,
+    isArray,
     isEqual,
-    isObject, max, pullAt, reduce,
+    isObject,
+    max,
+    pullAt,
+    reduce,
     slice,
     toString,
     trim
@@ -45,8 +42,8 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, WmComponentsModule, SearchComponent],
+    standalone: true,
+    imports: [CommonModule, TextContentDirective, SearchComponent],
     selector: '[wmChips]',
     templateUrl: './chips.component.html',
     providers: [
