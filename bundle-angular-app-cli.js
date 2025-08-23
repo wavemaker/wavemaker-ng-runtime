@@ -36,7 +36,7 @@ const updateWMVersion = (path, wmPackageJSON) => {
  */
 const addWMDependency = () => {
 	const path = './dist/runtime-cli/angular-app/package.json';
-	const packageJSON = JSON.parse(fs.readFileSync(path, 'utf8'));
+	const packageJSON = require(path);
 
 	packageJSON.version = argv.publishVersion;
 	packageJSON["files"] = [];
@@ -55,7 +55,7 @@ const addWMDependency = () => {
  */
 const updateAngularJSON = (wm_pkg_name) => {
 	const path = './dist/runtime-cli/angular-app/angular.json';
-	const json = JSON.parse(fs.readFileSync(path, 'utf8'));
+	const json = require(path);
 	const scripts = json['projects']['angular-app']['architect']['build']['options']['scripts'];
 	scripts.forEach((v, i) => {
 		if (v.startsWith('./libraries/')) {
@@ -71,7 +71,7 @@ const updateAngularJSON = (wm_pkg_name) => {
  * @param {*} wm_pkg_name ng runtime pm package name @wavemaker/app-ng-runtime
  */
 const updateTSConfig = (path, wm_pkg_name) => {
-	const json = JSON.parse(fs.readFileSync(path, 'utf8'));
+	const json = require(path);
 	const paths = json['compilerOptions']['paths'];
 	for (let key in paths) {
 		const pathRefs = paths[key];
