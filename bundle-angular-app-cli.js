@@ -8,16 +8,14 @@
  *  publishVersion: To generate the given version package.json file
  */
 'use strict';
-import fs from 'fs';
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
+const fs = require('fs');
 
-const argv = yargs(hideBin(process.argv))
-    .options({
-        "publishVersion": {
-            type: "string"
-        }
-    }).argv;
+const argv = require("yargs")
+	.options({
+		"publishVersion": {
+			type: "string"
+		}
+	}).argv;
 
 const DEBUG_LOG = 'ANGULAR-APP: ';
 
