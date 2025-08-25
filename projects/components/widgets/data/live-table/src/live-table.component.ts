@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterContentInit,
     Attribute,
@@ -25,8 +24,7 @@ const DEFAULT_CLS = 'app-livegrid';
 const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule],
+    standalone: true,
     selector: '[wmLiveTable]',
     templateUrl: './live-table.component.html',
     providers: [

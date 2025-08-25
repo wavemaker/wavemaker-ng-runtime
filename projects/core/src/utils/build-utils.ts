@@ -137,9 +137,9 @@ export const getRequiredFormWidget = (widgetType): string => {
         case FormWidgetType.DATE:
             return 'wm-date';
         case FormWidgetType.DATETIME:
+        case FormWidgetType.TIMESTAMP:
             return 'wm-datetime';
         case FormWidgetType.TIME:
-        case FormWidgetType.TIMESTAMP:
             return 'wm-time';
         case FormWidgetType.RATING:
             return 'wm-rating';
@@ -147,6 +147,26 @@ export const getRequiredFormWidget = (widgetType): string => {
             return 'wm-richtexteditor';
         case FormWidgetType.SLIDER:
             return 'wm-slider';
+
+        case FormWidgetType.CHECKBOXSET:
+            return 'wm-checkboxset';
+        case FormWidgetType.NUMBER:
+            return 'wm-number';
+        case FormWidgetType.PASSWORD:
+            return 'wm-text';
+        case FormWidgetType.RADIOSET:
+            return 'wm-radioset';
+        case FormWidgetType.SWITCH:
+            return 'wm-switch';
+        case FormWidgetType.SELECT:
+            return 'wm-select';
+        case FormWidgetType.TEXTAREA:
+            return 'wm-textarea';
+        case FormWidgetType.CHECKBOX:
+        case FormWidgetType.TOGGLE:
+            return 'wm-checkbox';
+        case FormWidgetType.UPLOAD:
+            return 'wm-fileupload';
         default:
             return 'wm-text';
     }

@@ -1,7 +1,7 @@
 import {
     Compiler,
     Component,
-    CUSTOM_ELEMENTS_SCHEMA, forwardRef, Inject,
+    CUSTOM_ELEMENTS_SCHEMA, Inject,
     Injectable,
     Injector,
     NgModule,
@@ -19,14 +19,38 @@ import {
     BasePrefabComponent,
     ComponentRefProvider,
     ComponentType,
-    RuntimeBaseModule,
     getPrefabMinJsonUrl,
-    getPrefabPartialJsonUrl
+    getPrefabPartialJsonUrl,
+    I18nResolve,
+    AppExtensionJSResolve,
+    CanDeactivatePageGuard,
+    AppJSResolve,
+    PageNotFoundGuard,
+    RoleGuard,
+    AuthGuard,
+    PrefabManagerService,
+    PipeService,
+    AccessrolesDirective,
+    AppSpinnerComponent,
+    CustomToasterComponent,
+    AppComponent,
+    PrefabPreviewComponent,
+    EmptyPageComponent,
+    PrefabDirective as PrefabLoader,
+    REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS,
 } from '@wm/runtime/base';
-
 import { AppResourceManagerService } from './app-resource-manager.service';
 import { isString, isUndefined } from "lodash-es";
 import * as customWidgets from '@wavemaker/custom-widgets-m3';
+import { ContentComponent, LayoutDirective, PageContentComponent, PageDirective, RouterOutletDirective, SpaPageDirective } from '@wm/components/page';
+import { MetadataService, VariablesService } from '@wm/variables';
+import { OAuthService } from '@wm/oAuth';
+import { SecurityService } from '@wm/security';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
+import { PartialDirective } from '@wm/components/base';
+import { ProgressBarComponent } from '@wm/components/basic/progress/progress-bar';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PrefabContainerDirective } from '@wm/components/prefab';
 
 interface IPageMinJSON {
     markup: string;
@@ -83,11 +107,52 @@ class BaseDynamicComponent {
     init() { }
 }
 
+const imports = [
+    PartialDirective,
+    PageDirective,
+    AccessrolesDirective,
+    AppSpinnerComponent,
+    CustomToasterComponent,
+    AppComponent,
+    PrefabLoader,
+    PrefabPreviewComponent,
+    EmptyPageComponent,
+    LayoutDirective,
+    ContentComponent,
+    PageContentComponent,
+    SpaPageDirective,
+    RouterOutletDirective,
+    ProgressBarComponent,
+    PrefabContainerDirective,
+]
+
 const getDynamicModule = (componentRef: any) => {
     return NgModule({
         declarations: [componentRef],
         imports: [
-            RuntimeBaseModule,
+            ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS,
+            CommonModule,
+            FormsModule,
+            ReactiveFormsModule,
+            ...imports
+        ],
+        providers: [
+            PipeService,
+            DecimalPipe,
+            DatePipe,
+            AppManagerService,
+            PrefabManagerService,
+            AuthGuard,
+            RoleGuard,
+            PageNotFoundGuard,
+            CanDeactivatePageGuard,
+            AppJSResolve,
+            AppExtensionJSResolve,
+            I18nResolve,
+            SecurityService,
+            OAuthService,
+            VariablesService,
+            MetadataService,
         ],
         schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
     })(class DynamicModule { });

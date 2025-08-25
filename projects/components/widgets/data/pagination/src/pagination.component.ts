@@ -1,24 +1,31 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import { FormsModule } from '@angular/forms';
-import {Component, EventEmitter, Inject, Injector, Output, SkipSelf, AfterViewInit, Optional, ViewChild} from '@angular/core';
-
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import {
-    $appDigest,
-    $watch,
-    AppConstants,
-    DataSource,
-    debounce,
-    isDefined,
-    switchClass,
-    triggerFn
-} from '@wm/core';
-import { DEBOUNCE_TIMES, getOrderByExpr, provideAsWidgetRef, StylableComponent, styler, WidgetRef, unsupportedStatePersistenceTypes} from '@wm/components/base';
-import { registerProps } from './pagination.props';
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    Inject,
+    Injector,
+    Optional,
+    Output,
+    SkipSelf,
+    ViewChild
+} from '@angular/core';
+
+import {$appDigest, $watch, AppConstants, DataSource, debounce, isDefined, switchClass, triggerFn} from '@wm/core';
+import {
+    DEBOUNCE_TIMES,
+    getOrderByExpr,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+    unsupportedStatePersistenceTypes,
+    WidgetRef
+} from '@wm/components/base';
+import {registerProps} from './pagination.props';
 import {forEach, get, isArray, isEmpty, isNull, isString, range} from "lodash-es";
-import { PaginationModule } from 'ngx-bootstrap/pagination';
-import { BsDropdownModule, BsDropdownDirective } from 'ngx-bootstrap/dropdown';
-import { MenuComponent } from '@wm/components/navigation/menu';
+import {PaginationModule} from 'ngx-bootstrap/pagination';
+import {BsDropdownDirective, BsDropdownModule} from 'ngx-bootstrap/dropdown';
 
 const DEFAULT_CLS = 'app-datanavigator clearfix';
 const WIDGET_CONFIG = {widgetType: 'wm-pagination', hostClass: DEFAULT_CLS};
@@ -39,7 +46,7 @@ const sizeClasses = {
 };
 @Component({
   standalone: true,
-  imports: [CommonModule, WmComponentsModule, FormsModule, PaginationModule, BsDropdownModule, MenuComponent],
+    imports: [CommonModule, FormsModule, PaginationModule, BsDropdownModule],
     selector: '[wmPagination]',
     templateUrl: './pagination.component.html',
     providers: [
@@ -100,7 +107,7 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
     private _debouncedPageChanged = debounce(event => {
         const currentPage = event && event.page;
         const maxResults = event && (event.pagesize || event.itemsPerPage) || this.maxResults;
-        
+
         // Do not call goToPage if page has not changed
         if (currentPage !== this.dn.currentPage || this.maxResults !== maxResults) {
             const inst = (this as any).parent || this;

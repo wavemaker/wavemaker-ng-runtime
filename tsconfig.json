@@ -7,7 +7,7 @@
         "sourceMap": true,
         "declaration": false,
         "target": "es2022",
-        "module": "es2020",
+        "module": "es2022",
         "moduleResolution": "node",
         "esModuleInterop": true,
         "emitDecoratorMetadata": true,
@@ -16,7 +16,7 @@
             "node_modules/@types"
         ],
         "lib": [
-            "es2018",
+            "es2022",
             "dom"
         ],
         "paths": {
@@ -44,11 +44,11 @@
             "@wm/components/base": [
                 "libraries/components/base"
             ],
-            "@wm/components/basic": [
-                "libraries/components/basic/default"
+            "@wm/components/basic/*": [
+                "libraries/components/basic/*"
             ],
-            "@wm/components/input": [
-                "libraries/components/input/default"
+            "@wm/components/input/*": [
+                "libraries/components/input/*"
             ],
             "@wm/components/page": [
                 "libraries/components/page/default"

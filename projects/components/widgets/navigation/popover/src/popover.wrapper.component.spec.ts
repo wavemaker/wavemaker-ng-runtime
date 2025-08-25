@@ -5,7 +5,7 @@ import { PopoverComponent } from './popover.component';
 import { PopoverConfig, PopoverModule } from 'ngx-bootstrap/popover';
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
-import { AnchorComponent } from '../../../basic/default/src/anchor/anchor.component';
+import { AnchorComponent } from '../../../basic/anchor/src/anchor.component';
 import { AUTOCLOSE_TYPE } from '@wm/components/base';
 
 jest.mock('@wm/core', () => ({

@@ -290,7 +290,17 @@ register('wm-table-column', (): IBuildTaskDef => {
         imports: (attrs: Map<String, String>): string[] => {
             const editWidgetType = attrs.get('edit-widget-type');
             const filterWidgetType = attrs.get('filterwidget') || getDataTableFilterWidget(attrs.get('type') || DataType.STRING);
-            return [getRequiredFormWidget(editWidgetType), getRequiredFormWidget(filterWidgetType), 'wm-table'];
+
+            const formatpattern = attrs.get('custompipeformat') || attrs.get('formatpattern');
+            let pipeImports = [];
+            if (!!formatpattern) {
+                if(checkIsCustomPipeExpression(formatpattern)){
+                    pipeImports.push('custom');
+                } else {
+                    pipeImports.push(formatpattern);
+                }
+            }
+            return [getRequiredFormWidget(editWidgetType), getRequiredFormWidget(filterWidgetType), 'wm-table', ...pipeImports];
         }
     };
 });
