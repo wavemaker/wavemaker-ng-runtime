@@ -260,6 +260,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-livetable', LIVE_TABLE_COMPONENT],
     ['wm-login', LOGIN_COMPONENT],
     ['wm-custom', CUSTOM_WIDGET_DIRECTIVE],
+    ['wm-custom-widget', CUSTOM_WIDGET_DIRECTIVE],
     ['wm-logindialog', LOGIN_DIALOG_DIRECTIVE],
     ['wm-marquee', MARQUEE_DIRECTIVE],
     ['wm-menu', MENU_COMPONENT],
