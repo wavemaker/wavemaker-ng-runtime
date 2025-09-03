@@ -1,0 +1,7 @@
+{
+    "name": "@wm/components/input/switch",
+    "sideEffects": false,
+    "dependencies": {
+      "tslib": "^2.0.0"
+    }
+}

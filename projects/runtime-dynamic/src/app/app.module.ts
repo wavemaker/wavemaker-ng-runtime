@@ -21,54 +21,53 @@ import { CarouselModule as ngxCarouselModule, } from 'ngx-bootstrap/carousel';
 import { App, getWmProjectProperties, PartialRefProvider, CustomWidgetRefProvider, AbstractHttpService } from '@wm/core';
 // Basic widgets
 
-import {
-    AnchorComponent,
-    AudioComponent,
-    HtmlDirective,
-    IconComponent,
-    IframeComponent,
-    LabelDirective,
-    PictureDirective,
-    SpinnerComponent,
-    VideoComponent
-} from '@wm/components/basic';
-import { ProgressBarComponent, ProgressCircleComponent } from '@wm/components/basic/progress';
+import { AnchorComponent } from '@wm/components/basic/anchor';
+import { AudioComponent } from '@wm/components/basic/audio';
+import { HtmlDirective } from '@wm/components/basic/html';
+import { IconComponent } from '@wm/components/basic/icon';
+import { IframeComponent } from '@wm/components/basic/iframe';
+import { LabelDirective } from '@wm/components/basic/label';
+import { PictureDirective } from '@wm/components/basic/picture';
+import { SpinnerComponent } from '@wm/components/basic/spinner';
+import { VideoComponent } from '@wm/components/basic/video';
+
+import { ProgressBarComponent } from '@wm/components/basic/progress/progress-bar';
+import { ProgressCircleComponent } from '@wm/components/basic/progress/progress-circle';
 import { RichTextEditorComponent } from '@wm/components/basic/rich-text-editor';
 import { SearchComponent, ScrollableDirective } from '@wm/components/basic/search';
 import { TreeComponent } from '@wm/components/basic/tree';
 
 // input
-import {
-    ButtonComponent,
-    ButtonGroupDirective,
-    CaptionPositionDirective,
-    CheckboxComponent,
-    CheckboxsetComponent,
-    CompositeDirective,
-    NumberComponent,
-    RadiosetComponent,
-    SelectComponent,
-    SwitchComponent,
-    InputCalendarComponent,
-    InputColorComponent,
-    InputEmailComponent,
-    InputNumberComponent,
-    InputTextComponent,
-    TextareaComponent
-} from '@wm/components/input';
+import { ButtonComponent } from "@wm/components/input/button";
+import { ButtonGroupDirective } from "@wm/components/input/button-group";
+import { CaptionPositionDirective } from "@wm/components/input/caption-position";
+import { CheckboxComponent } from "@wm/components/input/checkbox";
+import { CheckboxsetComponent } from "@wm/components/input/checkboxset";
+import { CompositeDirective } from "@wm/components/input/composite";
+import { NumberComponent } from "@wm/components/input/number";
+import { RadiosetComponent } from "@wm/components/input/radioset";
+import { SelectComponent } from "@wm/components/input/select";
+import { SwitchComponent } from "@wm/components/input/switch";
+import { InputCalendarComponent } from "@wm/components/input/text";
+import { InputColorComponent } from "@wm/components/input/text";
+import { InputEmailComponent } from "@wm/components/input/text";
+import { InputNumberComponent } from "@wm/components/input/text";
+import { InputTextComponent } from "@wm/components/input/text";
+import { TextareaComponent } from "@wm/components/input/textarea";
+
 import { CalendarComponent } from '@wm/components/input/calendar';
 import { ChipsComponent } from '@wm/components/input/chips';
 import { ColorPickerComponent } from '@wm/components/input/color-picker';
 import { CurrencyComponent } from '@wm/components/input/currency';
-import {
-    DateComponent,
-    DatetimeComponent,
-    TimeComponent,
-    DateTimePickerComponent,
-    TimePickerComponent,
-    PickerComponent,
-    PickerGroupComponent
-} from '@wm/components/input/epoch';
+
+import { DateComponent } from '@wm/components/input/epoch/date';
+import { DatetimeComponent } from '@wm/components/input/epoch/date-time';
+import { TimeComponent } from '@wm/components/input/epoch/time';
+import { DateTimePickerComponent } from '@wm/components/input/epoch/date-time-picker';
+import { TimePickerComponent } from '@wm/components/input/epoch/date-time-picker';
+import { PickerComponent } from '@wm/components/input/epoch/picker';
+import { PickerGroupComponent } from '@wm/components/input/epoch/picker';
+
 import { FileUploadComponent } from '@wm/components/input/file-upload';
 import { RatingComponent } from '@wm/components/input/rating';
 import { SliderComponent } from '@wm/components/input/slider';

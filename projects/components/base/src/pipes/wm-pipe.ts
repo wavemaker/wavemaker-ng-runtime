@@ -10,9 +10,9 @@ export class WmPipe {
         this.isCustomPipe = this.pipeRef && isFunction(this.pipeRef.formatter);
     }
 
-    customFormatter(data, args) {
+    customFormatter(data, args, variables) {
         try {
-            return this.pipeRef.formatter(...args);
+            return this.pipeRef.formatter(...args, variables);
         } catch (error) {
             return data;
         }
