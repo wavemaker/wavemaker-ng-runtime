@@ -14,11 +14,18 @@ export const getPrefabMinJsonUrl = (prefabName: string) => `${getPrefabBaseUrl(p
 
 export const getPrefabPartialJsonUrl = (prefabName: string, partialName: string) => `${getPrefabBaseUrl(prefabName)}/pages/${partialName}/page.min.json`;
 
-export const getModesFromLocalStorage = (): Record<string, string> => {
+export const getModesFromLocalStorage = () => {
+    // get modes
+    let storedValue: any = localStorage.getItem(`wm-app-modes`) || '{}';
+
+    // parse the modes 
     try {
-        const storedValue = JSON.parse(localStorage.getItem(`wm-app-modes`));
-        return storedValue;
+        storedValue = JSON.parse(storedValue);
     } catch (error) {
         console.error("Error parsing modes", error.message);
+        storedValue = {}
     }
+    
+    // return parsed modes
+    return storedValue;
 };

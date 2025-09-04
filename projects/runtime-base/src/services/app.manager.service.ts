@@ -547,7 +547,9 @@ export class AppManagerService {
     }
 
     initAppModes(): void {    
+        // get modes from local storage
         let storedModes = getModesFromLocalStorage();
+        
         // Apply restored modes
         this.$app.setMode(storedModes);
     

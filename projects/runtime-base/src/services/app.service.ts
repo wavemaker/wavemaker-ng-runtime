@@ -23,7 +23,7 @@ import { SecurityService } from '@wm/security';
 
 import { WmDefaultRouteReuseStrategy } from '../util/wm-route-reuse-strategy';
 import { PipeService } from "./pipe.service";
-import { each, get, isEmpty, isString } from "lodash-es";
+import { each, get, isEmpty, isObject, isString } from "lodash-es";
 import * as momentLib from 'moment-timezone/moment-timezone';
 import { MODE_CONSTANTS } from '@wm/variables';
 const moment = momentLib.default || window['moment'];
@@ -216,19 +216,30 @@ export class AppRef {
 
     setMode(modes: Record<string, string>, shouldPersist = false) {
         const htmlEl = document.getElementsByTagName('html')[0];
+        //html element sanity check
         if (!htmlEl) return;
 
-        if (Object.keys(modes).length) {
-            (Object.entries(modes)).forEach(([modeKey, modeValue]) => {
-                const isDefault = modeValue === MODE_CONSTANTS.LIGHT || modeValue === MODE_CONSTANTS.DEFAULT;
-
-                if (isDefault) {
-                    htmlEl.removeAttribute(modeKey);
-                } else {
-                    htmlEl.setAttribute(modeKey, modeValue);
-                }
-            });
-            if (shouldPersist) localStorage.setItem('wm-app-modes', JSON.stringify(modes));
+        //modes object sanity check
+        if (!isObject(modes)) {
+            modes = {}
         }
+
+        //modes array sanity check
+        const modesArr = Object.entries(modes);
+        if (!modesArr.length) return;
+
+        //loop over modes and set each mode on the html element
+        modesArr.forEach(([modeKey, modeValue]) => {
+            const isDefault = modeValue === MODE_CONSTANTS.LIGHT || modeValue === MODE_CONSTANTS.DEFAULT;
+
+            if (isDefault) {
+                htmlEl.removeAttribute(modeKey);
+            } else {
+                htmlEl.setAttribute(modeKey, modeValue);
+            }
+        });
+
+        //if shoudlPersist is true, set the modes object in the localStorage
+        if (shouldPersist) localStorage.setItem('wm-app-modes', JSON.stringify(modes));
     };
 }
