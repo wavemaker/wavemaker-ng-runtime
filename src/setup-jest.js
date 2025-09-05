@@ -1,3 +1,4 @@
+
 // This file is automatically loaded when running `jest` commands
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
 import { ToastrModule } from 'ngx-toastr';
@@ -84,16 +85,11 @@ beforeEach(() => {
       ToastrModule.forRoot(),
     ],
   })
-  Object.defineProperties(window, {
-    location: {
-      writable: true,
-      value: {
-        reload: jest.fn(),
-      },
-    },
-  });
 });
 
+// Mock window.location for tests
+// We'll use a simpler approach that doesn't try to redefine read-only properties
+// The tests will handle their own window.location mocking as needed
 // jest.setup.js
 Object.defineProperty(global.HTMLMediaElement.prototype, 'load', {
     configurable: true,
@@ -122,3 +118,5 @@ Object.defineProperty(global.HTMLMediaElement.prototype, 'addTextTrack', {
     writable: true,
     value: jest.fn(),
 });
+
+

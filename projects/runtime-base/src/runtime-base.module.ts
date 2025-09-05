@@ -21,8 +21,8 @@ import {
     isIpod,
     isIpad,
     Viewport,
+    AbstractDialogService
 } from '@wm/core';
-import { WmComponentsModule } from '@wm/components/base';
 import { DialogBodyDirective, DialogFooterDirective, DialogHeaderComponent } from '@wm/components/dialogs';
 import { ConfirmDialogComponent } from '@wm/components/dialogs/confirm-dialog';
 import { DialogComponent } from '@wm/components/dialogs/design-dialog';
@@ -73,18 +73,19 @@ import { HeaderComponent } from "@wm/components/page/header";
 import { LeftPanelDirective } from "@wm/components/page/left-panel";
 import { RightPanelDirective } from "@wm/components/page/right-panel";
 import { TopNavDirective } from "@wm/components/page/top-nav";
-import {
-    AnchorComponent,
-    AudioComponent,
-    HtmlDirective,
-    IconComponent,
-    IframeComponent,
-    LabelDirective,
-    PictureDirective,
-    SpinnerComponent,
-    VideoComponent
-} from "@wm/components/basic";
-import { ProgressBarComponent, ProgressCircleComponent } from "@wm/components/basic/progress";
+
+import { AnchorComponent } from '@wm/components/basic/anchor';
+import { AudioComponent } from '@wm/components/basic/audio';
+import { HtmlDirective } from '@wm/components/basic/html';
+import { IconComponent } from '@wm/components/basic/icon';
+import { IframeComponent } from '@wm/components/basic/iframe';
+import { LabelDirective } from '@wm/components/basic/label';
+import { PictureDirective } from '@wm/components/basic/picture';
+import { SpinnerComponent } from '@wm/components/basic/spinner';
+import { VideoComponent } from '@wm/components/basic/video';
+
+import { ProgressBarComponent } from "@wm/components/basic/progress/progress-bar";
+import { ProgressCircleComponent } from "@wm/components/basic/progress/progress-circle";
 import { RichTextEditorComponent } from "@wm/components/basic/rich-text-editor";
 import { SearchComponent, ScrollableDirective } from "@wm/components/basic/search";
 import { TreeComponent } from "@wm/components/basic/tree";
@@ -92,34 +93,32 @@ import { CalendarComponent } from "@wm/components/input/calendar";
 import { ChipsComponent } from "@wm/components/input/chips";
 import { ColorPickerComponent } from "@wm/components/input/color-picker";
 import { CurrencyComponent } from "@wm/components/input/currency";
-import {
-    DateComponent,
-    DatetimeComponent,
-    TimeComponent,
-    DateTimePickerComponent,
-    TimePickerComponent,
-    PickerComponent,
-    PickerGroupComponent
-} from "@wm/components/input/epoch";
+
+import { DateComponent } from '@wm/components/input/epoch/date';
+import { DatetimeComponent } from '@wm/components/input/epoch/date-time';
+import { TimeComponent } from '@wm/components/input/epoch/time';
+import { DateTimePickerComponent } from '@wm/components/input/epoch/date-time-picker';
+import { TimePickerComponent } from '@wm/components/input/epoch/date-time-picker';
+import { PickerComponent } from '@wm/components/input/epoch/picker';
+import { PickerGroupComponent } from '@wm/components/input/epoch/picker';
 import { FileUploadComponent } from "@wm/components/input/file-upload";
-import {
-    ButtonComponent,
-    ButtonGroupDirective,
-    CaptionPositionDirective,
-    CheckboxComponent,
-    CheckboxsetComponent,
-    CompositeDirective,
-    NumberComponent,
-    RadiosetComponent,
-    SelectComponent,
-    SwitchComponent,
-    InputCalendarComponent,
-    InputColorComponent,
-    InputEmailComponent,
-    InputNumberComponent,
-    InputTextComponent,
-    TextareaComponent
-} from "@wm/components/input";
+import { ButtonComponent } from "@wm/components/input/button";
+import { ButtonGroupDirective } from "@wm/components/input/button-group";
+import { CaptionPositionDirective } from "@wm/components/input/caption-position";
+import { CheckboxComponent } from "@wm/components/input/checkbox";
+import { CheckboxsetComponent } from "@wm/components/input/checkboxset";
+import { CompositeDirective } from "@wm/components/input/composite";
+import { NumberComponent } from "@wm/components/input/number";
+import { RadiosetComponent } from "@wm/components/input/radioset";
+import { SelectComponent } from "@wm/components/input/select";
+import { SwitchComponent } from "@wm/components/input/switch";
+import { InputCalendarComponent } from "@wm/components/input/text";
+import { InputColorComponent } from "@wm/components/input/text";
+import { InputEmailComponent } from "@wm/components/input/text";
+import { InputNumberComponent } from "@wm/components/input/text";
+import { InputTextComponent } from "@wm/components/input/text";
+import { TextareaComponent } from "@wm/components/input/textarea";
+
 import { RatingComponent } from "@wm/components/input/rating";
 import { SliderComponent } from "@wm/components/input/slider";
 import {
@@ -183,8 +182,7 @@ import { NgCircleProgressModule } from "ng-circle-progress";
 import { TooltipModule } from "ngx-bootstrap/tooltip";
 import { SecurityService } from '@wm/security';
 import { PrefabDirective as PrefabLoader } from './directives/prefab.directive';
-
-declare const _WM_APP_PROPERTIES;
+import { ContainerDirective, CustomPipe, DialogServiceImpl, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, ItemTemplateDirective, LazyLoadDirective, MessageComponent, NumberToStringPipe, PartialContainerDirective, PartialDirective, PartialParamDirective, PartialParamHandlerDirective, PrefixPipe, RedrawableDirective, RepeatTemplateDirective, SanitizePipe, ShowInDeviceDirective, StateClassPipe, StringToNumberPipe, SuffixPipe, TextContentDirective, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, ToNumberPipe, TrailingZeroDecimalPipe, TrustAsPipe, CustomWidgetContainerDirective  as BaseCustomWidgetContainerDirective} from '@wm/components/base';
 
 const initializeProjectDetails = () => {
     let cdnUrl = document.querySelector('[name="deployUrl"]') && document.querySelector('[name="deployUrl"]').getAttribute('content');
@@ -249,6 +247,41 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     DialogBodyDirective,
     DialogFooterDirective,
     DialogHeaderComponent,
+
+    // Components Module changes
+    ContainerDirective,
+    ItemTemplateDirective,
+    RepeatTemplateDirective,
+    LazyLoadDirective,
+    MessageComponent,
+    PartialDirective,
+    PartialParamHandlerDirective,
+    PartialParamDirective,
+    PartialContainerDirective,
+    BaseCustomWidgetContainerDirective,
+    RedrawableDirective,
+    ShowInDeviceDirective,
+    TextContentDirective,
+
+    // Pipes
+    ToDatePipe,
+    FileIconClassPipe,
+    FileExtensionFromMimePipe,
+    FilterPipe,
+    FileSizePipe,
+    ToNumberPipe,
+    ToCurrencyPipe,
+    PrefixPipe,
+    SuffixPipe,
+    TimeFromNowPipe,
+    NumberToStringPipe,
+    StateClassPipe,
+    StringToNumberPipe,
+    TrailingZeroDecimalPipe,
+    TrustAsPipe,
+    ImagePipe,
+    CustomPipe,
+    SanitizePipe,
 
     // NGX Bootstrap
     BsDatepickerModule,
@@ -391,8 +424,7 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         ReactiveFormsModule,
         ...definitions,
         ToastrModule,
-        WmComponentsModule,
-        // CoreModule, 
+        // CoreModule,
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     exports: [
@@ -403,15 +435,23 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         CommonModule,
         RouterModule,
         HttpClientModule,
-
         ToastrModule,
-        WmComponentsModule,
-        // CoreModule, 
+        // CoreModule,
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
     ],
     providers: [
         { provide: ɵSharedStylesHost, useClass: WMDomSharedStylesHost },
         { provide: ɵDomRendererFactory2, useClass: WMDomRendererFactory2 },
+        { provide: AbstractDialogService, useClass: DialogServiceImpl },
+        ToDatePipe,
+        FilterPipe,
+        TrailingZeroDecimalPipe,
+        TrustAsPipe,
+        ImagePipe,
+        CustomPipe,
+        SanitizePipe,
+        Location,
+        SecurityService,
         HttpServiceImpl,
     ]
 })
@@ -523,6 +563,5 @@ export class RuntimeBaseModule {
 }
 
 export const WM_MODULES_FOR_ROOT = [
-    WmComponentsModule.forRoot(),
-    RuntimeBaseModule.forRoot()
+    // RuntimeBaseModule.forRoot()
 ];

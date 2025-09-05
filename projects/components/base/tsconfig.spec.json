@@ -9,6 +9,9 @@
       "jquery"
     ]
   },
+  "angularCompilerOptions": {
+    "compilerOptions" : "partial"
+  },
   "files": [
     "src/test.ts",
     "polyfills.ts"

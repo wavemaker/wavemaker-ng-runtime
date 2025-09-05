@@ -1,22 +1,23 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {DatePipe} from '@angular/common';
 
 import {
+    $appDigest,
     AbstractDialogService,
     AbstractHttpService,
     AbstractI18nService,
     AbstractSpinnerService,
     App,
     fetchContent,
+    getWmProjectProperties,
     isDefined,
-    triggerFn,
-    $appDigest,
-    getWmProjectProperties
+    triggerFn
 } from '@wm/core';
-import { SecurityService } from '@wm/security';
-import { CONSTANTS, $rootScope, routerService,  MetadataService, VariablesService } from '@wm/variables';
+import {SecurityService} from '@wm/security';
+import {$rootScope, MetadataService, VariablesService} from '@wm/variables';
 import {extend, forEach, get, isEmpty, isObject, isUndefined, merge, trim} from "lodash-es";
+import { getModesFromLocalStorage } from '../public_api';
 
 enum POST_MESSAGES {
     HIDE_TEMPLATES_SHOW_CASE = 'hide-templates-show-case',
@@ -26,6 +27,7 @@ enum POST_MESSAGES {
     TEMPLATEBUNDLE_CONFIG    = 'template-bundle-config',
     ON_LOAD                  = 'on-load'
 }
+
 
 @Injectable()
 export class AppManagerService {
@@ -360,7 +362,9 @@ export class AppManagerService {
     reloadAppData() {
         return this.loadSecurityConfig(true).then(() => {
             return this.loadMetadata().then(() => {
-                return this.updateLoggedInUserVariable();
+               return this.updateLoggedInUserVariable().then(() => {
+                return this.beforeAppReady();
+               })
             });
         });
     }
@@ -459,7 +463,7 @@ export class AppManagerService {
      * Triggers the onBeforeAppReady method defined in app.js of the app
      */
     beforeAppReady() {
-        triggerFn(this.$app.onBeforeAppReady);
+        return triggerFn(this.$app.onBeforeAppReady);
     }
 
     /**
@@ -540,5 +544,21 @@ export class AppManagerService {
         if (this.isTemplateBundleType()) {
             return this.postTemplateBundleInfo();
         }
+    }
+
+    initAppModes(): void {    
+        // get modes from local storage
+        let storedModes = getModesFromLocalStorage();
+        
+        // Apply restored modes
+        this.$app.setMode(storedModes);
+    
+        // Listener for postMessage-based mode changes
+        window.addEventListener('message', (event) => {
+            const { key, modes, shouldPersist } = event.data || {};
+            if (key === 'switch-mode' && modes) {
+                this.$app.setMode(modes, !shouldPersist);
+            }
+        });
     }
 }
