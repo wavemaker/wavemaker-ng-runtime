@@ -32,6 +32,7 @@ $.widget('wm.datatable', {
         enableRowSelection: true,
         enableColumnSelection: false,
         multiselect: false,
+        headerselectall: false,
         multiselecttitle: '',
         multiselectarialabel: '',
         radioselecttitle:'',
@@ -3178,13 +3179,16 @@ $.widget('wm.datatable', {
                     'rowId': rowId,
                     '_selected': self.preparedData[rowId]?._selected
                 });
-                if (checked && _.isFunction(self.options.onRowSelect)) {
-                    self.options.onRowSelect(rowData, e);
-                }
-                if (!checked && _.isFunction(self.options.onRowDeselect)) {
-                    self.options.onRowDeselect(rowData, e);
+                if(!(self.options.headerselectall && self.options.multiselect)){
+                    if (checked && _.isFunction(self.options.onRowSelect)) {
+                        self.options.onRowSelect(rowData, e);
+                    }
+                    if (!checked && _.isFunction(self.options.onRowDeselect)) {
+                        self.options.onRowDeselect(rowData, e);
+                    }
                 }
             });
+            self.options.selectAllRows(checked,e);
         }
 
         // WMS-17629: Hiding the table header column when show property is set to false
