@@ -576,6 +576,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 const $invalidForm = eleForm.ngForm;
                 let $invalidEle  = eleForm.$ele;
                 $invalidEle = $invalidEle.parent().find('[focus-target]');
+                const $target = eleForm?.$ele?.parent()?.find('input[type=checkbox], input[type=radio], input[type=file]')?.first();
                 if ($invalidEle.length) {
                     // on save click in page layout liveform, focus of autocomplete widget opens full-screen search.
                     if (!$invalidEle.hasClass('app-search-input')) {
@@ -587,6 +588,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                     }
                     $appDigest();
                     return true;
+                } else if ($target && $target.length) {
+                    $target.focus();
                 }
                 return true;
             }
