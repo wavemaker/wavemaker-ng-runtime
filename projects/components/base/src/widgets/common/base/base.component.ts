@@ -840,7 +840,48 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         }
         this.toBeSetupEventsQueue.length = 0;
         this.isAttached = true;
+        this.fixComponentEncapsulation();
     }
+
+    private fixComponentEncapsulation() {
+        if (!this.nativeElement) return;
+        let ngContentAttrs: string[] = Array.from(this.nativeElement.attributes)
+            .map(attr => attr.name)
+            .filter(name => name.startsWith('_ngcontent-'));
+        if (ngContentAttrs.length === 0 && this.viewParent?.pageDirective?.$attrs instanceof Map) {
+            ngContentAttrs = Array.from(this.viewParent.pageDirective.$attrs.keys() as IterableIterator<string>)
+                .filter((name: string) => String(name).startsWith('_ngcontent-'));
+        }
+
+        if (ngContentAttrs.length > 0) {
+            const ngContentAttr = ngContentAttrs[0];
+            this.observeAndApply( ngContentAttr);
+        }
+    }
+
+    private observeAndApply(ngContentAttr: string) {
+        const root = this.nativeElement as HTMLElement;
+        const applyAttrRecursively = (element: HTMLElement) => {
+            if (!element.hasAttribute(ngContentAttr)) {
+                element.setAttribute(ngContentAttr, '');
+            }
+            Array.from(element.children).forEach(child =>
+                applyAttrRecursively(child as HTMLElement)
+            );
+        };
+        applyAttrRecursively(root);
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node instanceof HTMLElement) {
+                        applyAttrRecursively(node);
+                    }
+                });
+            });
+        });
+        observer.observe(root, { childList: true, subtree: true });
+    }
+
 
     ngAfterContentInit() {}
 

@@ -525,7 +525,7 @@ export const scopeComponentStyles = (componentName, componentType, styles = '') 
                     }
 
                     if (componentType === 0 || componentType === 'PAGE') {
-                        s = `${prefix} app-page-${componentName} ${s}`;
+                        s = `${s}`;
                     } else if (componentType === 1 || componentType === 'PREFAB') {
                         s = `${prefix} app-prefab-${componentName} ${s}`;
                     } else if (componentType === 2 || componentType === 'PARTIAL') {

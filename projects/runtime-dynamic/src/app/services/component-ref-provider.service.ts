@@ -170,7 +170,7 @@ const getDynamicComponent = (
     const componentDef = {
         template,
         styles: [css],
-        encapsulation: ViewEncapsulation.None
+        encapsulation: type === ComponentType.PAGE ? ViewEncapsulation.Emulated : ViewEncapsulation.None
     };
 
     let BaseClass: any = BaseDynamicComponent;

@@ -18,6 +18,10 @@ const invokeOpenedCallback = (ref) => {
             if (root) {
                 $('body > modal-container > div').wrap('<' + root + '/>');
             }
+            const ngContentAttr = Array.from(ref?.$attrs as IterableIterator<[any, any]>).filter(([name]) => String(name).startsWith('_ngcontent-'));
+            if (ngContentAttr.length > 0) {
+                $('[aria-labelledby=' + ref?.titleId + '] *').attr(String(ngContentAttr[0][0]), '');
+            }
             ref.invokeEventCallback('opened', { $event: { type: 'opened' } });
             // Focusing the first focusable element when the dialog is opened
             const container = $('[aria-labelledby= ' + ref.titleId + ']')[0];
